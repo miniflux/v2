@@ -1,0 +1,50 @@
+{{ define "title"}}{{ t "Categories" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Categories" }} ({{ .total }})</h1>
+    <ul>
+        <li>
+            <a href="{{ route "createCategory" }}">{{ t "Create a category" }}</a>
+        </li>
+    </ul>
+</section>
+
+{{ if not .categories }}
+    <p class="alert alert-error">{{ t "There is no category." }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .categories }}
+        <article class="item">
+            <div class="item-header">
+                <span class="item-title">
+                    <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
+                </span>
+            </div>
+            <div class="item-meta">
+                <ul>
+                    <li>
+                        {{ if eq .FeedCount 0 }}
+                            {{ t "No feed." }}
+                        {{ else }}
+                            {{ plural "plural.categories.feed_count" .FeedCount .FeedCount }}
+                        {{ end }}
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ t "Edit" }}</a>
+                    </li>
+                    {{ if eq .FeedCount 0 }}
+                    <li>
+                        <a href="{{ route "removeCategory" "categoryID" .ID }}">{{ t "Remove" }}</a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ end }}

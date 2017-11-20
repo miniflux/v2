@@ -1,0 +1,45 @@
+{{ define "title"}}{{ t "New Subscription" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "New Subscription" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+        </li>
+    </ul>
+</section>
+
+{{ if not .categories }}
+    <p class="alert alert-error">{{ t "There is no category. You must have at least one category." }}</p>
+{{ else }}
+    <form action="{{ route "submitSubscription" }}" method="post" autocomplete="off">
+        <input type="hidden" name="csrf" value="{{ .csrf }}">
+
+        {{ if .errorMessage }}
+            <div class="alert alert-error">{{ t .errorMessage }}</div>
+        {{ end }}
+
+        <label for="form-url">{{ t "URL" }}</label>
+        <input type="url" name="url" id="form-url" placeholder="https://domain.tld/" value="{{ .form.URL }}" required autofocus>
+
+        <label for="form-category">{{ t "Category" }}</label>
+        <select id="form-category" name="category_id">
+            {{ range .categories }}
+                <option value="{{ .ID }}">{{ .Title }}</option>
+            {{ end }}
+        </select>
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Find a subscription" }}</button>
+        </div>
+    </form>
+{{ end }}
+
+{{ end }}

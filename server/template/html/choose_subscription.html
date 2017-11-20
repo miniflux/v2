@@ -1,0 +1,36 @@
+{{ define "title"}}{{ t "Choose a Subscription" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "New Subscription" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+        </li>
+    </ul>
+</section>
+
+<form action="{{ route "chooseSubscription" }}" method="POST">
+    <input type="hidden" name="csrf" value="{{ .csrf }}">
+    <input type="hidden" name="category_id" value="{{ .categoryID }}">
+
+    <h3>{{ t "Choose a Subscription" }}</h3>
+
+    {{ range .subscriptions }}
+        <div class="radio-group">
+            <label title="{{ .URL }}"><input type="radio" name="url" value="{{ .URL }}"> {{ .Title }}</label> ({{ .Type }})
+            <small title="Type = {{ .Type }}"><a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL }}</a></small>
+        </div>
+    {{ end }}
+
+    <div class="buttons">
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Subscribe" }}</button>
+    </div>
+</form>
+{{ end }}

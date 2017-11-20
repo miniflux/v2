@@ -1,0 +1,42 @@
+{{ define "title"}}{{ t "History" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "History" }} ({{ .total }})</h1>
+</section>
+
+{{ if not .entries }}
+    <p class="alert alert-info">{{ t "There is no history at the moment." }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .entries }}
+        <article class="item item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16">
+                    {{ end }}
+                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            <div class="item-meta">
+                <ul>
+                    <li>
+                        <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.Title }}">{{ domain .Feed.SiteURL }}</a>
+                    </li>
+                    <li>
+                        <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed .Date }}</time>
+                    </li>
+                    <li>
+                        <a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+    {{ template "pagination" .pagination }}
+{{ end }}
+
+{{ end }}

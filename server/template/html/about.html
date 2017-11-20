@@ -1,0 +1,37 @@
+{{ define "title"}}{{ t "About" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "About" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+        </li>
+        {{ if .user.IsAdmin }}
+        <li>
+            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+        </li>
+        {{ end }}
+    </ul>
+</section>
+
+<div class="panel">
+    <h3>{{ t "Version" }}</h3>
+    <ul>
+        <li><strong>{{ t "Version:" }}</strong> {{ .version }}</li>
+        <li><strong>{{ t "Build Date:" }}</strong> {{ .build_date }}</li>
+    </ul>
+</div>
+
+<div class="panel">
+    <h3>{{ t "Authors" }}</h3>
+    <ul>
+        <li><strong>{{ t "Author:" }}</strong> Frédéric Guillot</li>
+        <li><strong>{{ t "License:" }}</strong> Apache 2.0</li>
+    </ul>
+</div>
+
+{{ end }}

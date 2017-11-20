@@ -1,0 +1,75 @@
+{{ define "title"}}{{ .entry.Title }}{{ end }}
+
+{{ define "content"}}
+<section class="entry">
+    <header class="entry-header">
+        <h1>
+            <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+        </h1>
+        <div class="entry-meta">
+            <span class="entry-website">
+                {{ if ne .entry.Feed.Icon.IconID 0 }}
+                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16">
+                {{ end }}
+                <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+            </span>
+            {{ if .entry.Author }}
+                <span class="entry-author">
+                    {{ if contains .entry.Author "@" }}
+                        - <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
+                    {{ else }}
+                        – <em>{{ .entry.Author }}</em>
+                    {{ end }}
+                </span>
+            {{ end }}
+            <span class="category">
+                <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
+            </span>
+        </div>
+        <div class="entry-date">
+            <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .entry.Date }}</time>
+        </div>
+    </header>
+    <div class="pagination-top">
+        {{ template "entry_pagination" . }}
+    </div>
+    <article class="entry-content">
+        {{ noescape (proxyFilter .entry.Content) }}
+    </article>
+    {{ if .entry.Enclosures }}
+    <aside class="entry-enclosures">
+        <h3>{{ t "Attachments" }}</h3>
+        {{ range .entry.Enclosures }}
+            <div class="entry-enclosure">
+                {{ if hasPrefix .MimeType "audio/" }}
+                    <div class="enclosure-audio">
+                        <audio controls preload="metadata">
+                            <source src="{{ .URL }}" type="{{ .MimeType }}">
+                        </audio>
+                    </div>
+                {{ else if hasPrefix .MimeType "video/" }}
+                    <div class="enclosure-video">
+                        <video controls preload="metadata">
+                            <source src="{{ .URL }}" type="{{ .MimeType }}">
+                        </video>
+                    </div>
+                {{ else if hasPrefix .MimeType "image/" }}
+                    <div class="enclosure-image">
+                        <img src="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" alt="{{ .URL }} ({{ .MimeType }})">
+                    </div>
+                {{ end }}
+
+                <div class="entry-enclosure-download">
+                    <a href="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Download" }}</a>
+                    <small>({{ .URL }})</small>
+                </div>
+            </div>
+        {{ end }}
+    </aside>
+    {{ end }}
+</section>
+
+<div class="pagination-bottom">
+    {{ template "entry_pagination" . }}
+</div>
+{{ end }}

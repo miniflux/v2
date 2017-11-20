@@ -1,0 +1,10 @@
+{
+    "plural.feed.error_count": [
+        "%d error",
+        "%d errors"
+    ],
+    "plural.categories.feed_count": [
+        "There is %d feed.",
+        "There are %d feeds."
+    ]
+}

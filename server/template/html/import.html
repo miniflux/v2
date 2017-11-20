@@ -1,0 +1,34 @@
+{{ define "title"}}{{ t "Import" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Import" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+        </li>
+    </ul>
+</section>
+
+<form action="{{ route "uploadOPML" }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ .csrf }}">
+
+    {{ if .errorMessage }}
+        <div class="alert alert-error">{{ t .errorMessage }}</div>
+    {{ end }}
+
+    <label for="form-file">{{ t "OPML file" }}</label>
+    <input type="file" name="file" id="form-file">
+
+    <div class="buttons">
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Import" }}</button>
+    </div>
+</form>
+
+{{ end }}

@@ -1,0 +1,31 @@
+// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package payload
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/miniflux/miniflux2/model"
+	"io"
+)
+
+func DecodeEntryStatusPayload(data io.Reader) (entryIDs []int64, status string, err error) {
+	type payload struct {
+		EntryIDs []int64 `json:"entry_ids"`
+		Status   string  `json:"status"`
+	}
+
+	var p payload
+	decoder := json.NewDecoder(data)
+	if err = decoder.Decode(&p); err != nil {
+		return nil, "", fmt.Errorf("invalid JSON payload: %v", err)
+	}
+
+	if err := model.ValidateEntryStatus(p.Status); err != nil {
+		return nil, "", err
+	}
+
+	return p.EntryIDs, p.Status, nil
+}

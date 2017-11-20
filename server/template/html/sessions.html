@@ -1,0 +1,42 @@
+{{ define "title"}}{{ t "Sessions" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Sessions" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "createUser" }}">{{ t "Add user" }}</a>
+        </li>
+    </ul>
+</section>
+
+<table class="table-overflow">
+    <tr>
+        <th>{{ t "Date" }}</th>
+        <th>{{ t "IP Address" }}</th>
+        <th>{{ t "User Agent" }}</th>
+        <th>{{ t "Actions" }}</th>
+    </tr>
+    {{ range .sessions }}
+    <tr {{ if eq .Token $.currentSessionToken }}class="row-highlighted"{{ end }}>
+        <td class="column-20" title="{{ isodate .CreatedAt }}">{{ elapsed .CreatedAt }}</td>
+        <td class="column-20" title="{{ .IP }}">{{ .IP }}</td>
+        <td title="{{ .UserAgent }}">{{ .UserAgent }}</td>
+        <td class="column-20">
+            {{ if eq .Token $.currentSessionToken }}
+                {{ t "Current session" }}
+            {{ else }}
+                <a href="{{ route "removeSession" "sessionID" .ID }}">{{ t "Remove" }}</a>
+            {{ end }}
+        </td>
+    </tr>
+    {{ end }}
+</table>
+
+{{ end }}

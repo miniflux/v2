@@ -1,0 +1,51 @@
+{{ define "title"}}{{ t "Users" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Users" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "createUser" }}">{{ t "Add user" }}</a>
+        </li>
+    </ul>
+</section>
+
+{{ if eq (len .users) 1 }}
+    <p class="alert">{{ t "You are the only user." }}</p>
+{{ else }}
+    <table>
+        <tr>
+            <th class="column-20">{{ t "Username" }}</th>
+            <th>{{ t "Administrator" }}</th>
+            <th>{{ t "Last Login" }}</th>
+            <th>{{ t "Actions" }}</th>
+        </tr>
+        {{ range .users }}
+            {{ if ne .ID $.user.ID }}
+            <tr>
+                <td>{{ .Username }}</td>
+                <td>{{ if eq .IsAdmin true }}{{ t "Yes" }}{{ else }}{{ t "No" }}{{ end }}</td>
+                <td>
+                    {{ if .LastLoginAt }}
+                        <time datetime="{{ isodate .LastLoginAt }}" title="{{ isodate .LastLoginAt }}">{{ elapsed .LastLoginAt }}</time>
+                    {{ else }}
+                        {{ t "Never" }}
+                    {{ end }}
+                </td>
+                <td>
+                    <a href="{{ route "editUser" "userID" .ID }}">{{ t "Edit" }}</a>,
+                    <a href="{{ route "removeUser" "userID" .ID }}">{{ t "Remove" }}</a>
+                </td>
+            </tr>
+            {{ end }}
+        {{ end }}
+    </table>
+{{ end }}
+
+{{ end }}

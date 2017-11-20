@@ -1,0 +1,65 @@
+{{ define "title"}}{{ t "Feeds" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Feeds" }} ({{ .total }})</h1>
+    <ul>
+        <li>
+            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+        </li>
+    </ul>
+</section>
+
+{{ if not .feeds }}
+    <p class="alert">{{ t "You don't have any subscription." }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .feeds }}
+        <article class="item">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16">
+                    {{ end }}
+                    <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
+                </span>
+            </div>
+            <div class="item-meta">
+                <ul>
+                    <li>
+                        <a href="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
+                    </li>
+                    <li>
+                        {{ t "Last check:" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed .CheckedAt }}</time>
+                    </li>
+                    {{ if ne .ParsingErrorCount 0 }}
+                        <li><strong title="{{ .ParsingErrorMsg }}">{{ plural "plural.feed.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong></li>
+                    {{ end }}
+                </ul>
+                <ul>
+                    <li>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ t "Refresh" }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ t "Edit" }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route "removeFeed" "feedID" .ID }}">{{ t "Remove" }}</a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ end }}

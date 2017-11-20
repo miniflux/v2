@@ -1,0 +1,30 @@
+{{ define "title"}}{{ t "Edit Category: %s" .category.Title }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Edit Category: %s" .category.Title }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "categories" }}">{{ t "Categories" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "createCategory" }}">{{ t "Create a category" }}</a>
+        </li>
+    </ul>
+</section>
+
+<form action="{{ route "updateCategory" "categoryID" .category.ID }}" method="post" autocomplete="off">
+    <input type="hidden" name="csrf" value="{{ .csrf }}">
+
+    {{ if .errorMessage }}
+        <div class="alert alert-error">{{ t .errorMessage }}</div>
+    {{ end }}
+
+    <label for="form-title">{{ t "Title" }}</label>
+    <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
+
+    <div class="buttons">
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button> {{ t "or" }} <a href="{{ route "categories" }}">{{ t "cancel" }}</a>
+    </div>
+</form>
+{{ end }}
