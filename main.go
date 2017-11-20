@@ -5,12 +5,26 @@
 package main
 
 //go:generate go run generate.go
+//go:generate gofmt -s -w sql/sql.go
+//go:generate gofmt -s -w server/static/css.go
+//go:generate gofmt -s -w server/static/bin.go
+//go:generate gofmt -s -w server/static/js.go
+//go:generate gofmt -s -w server/template/views.go
+//go:generate gofmt -s -w server/template/common.go
+//go:generate gofmt -s -w locale/translations.go
 
 import (
 	"bufio"
 	"context"
 	"flag"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"runtime"
+	"strings"
+	"time"
+
 	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/feed"
@@ -18,12 +32,6 @@ import (
 	"github.com/miniflux/miniflux2/server"
 	"github.com/miniflux/miniflux2/storage"
 	"github.com/miniflux/miniflux2/version"
-	"log"
-	"os"
-	"os/signal"
-	"runtime"
-	"strings"
-	"time"
 
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/ssh/terminal"
