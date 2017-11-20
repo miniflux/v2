@@ -4,8 +4,11 @@
 
 package opml
 
-import "testing"
-import "bytes"
+import (
+	"bytes"
+	"fmt"
+	"testing"
+)
 
 func TestSerialize(t *testing.T) {
 	var subscriptions SubcriptionList
@@ -14,6 +17,7 @@ func TestSerialize(t *testing.T) {
 	subscriptions = append(subscriptions, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: "Category 2"})
 
 	output := Serialize(subscriptions)
+	fmt.Println(output)
 	feeds, err := Parse(bytes.NewBufferString(output))
 	if err != nil {
 		t.Error(err)
@@ -23,9 +27,16 @@ func TestSerialize(t *testing.T) {
 		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(feeds), 3)
 	}
 
-	for i := 0; i < len(feeds); i++ {
-		if !feeds[i].Equals(subscriptions[i]) {
-			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], feeds[i])
+	found := false
+	for _, feed := range feeds {
+		if feed.Title == "Feed 1" && feed.CategoryName == "Category 1" &&
+			feed.FeedURL == "http://example.org/feed/1" && feed.SiteURL == "http://example.org/1" {
+			found = true
+			break
 		}
+	}
+
+	if !found {
+		t.Error("Serialized feed is incorrect")
 	}
 }

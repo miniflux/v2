@@ -6,17 +6,18 @@ package template
 
 import (
 	"bytes"
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/locale"
-	"github.com/miniflux/miniflux2/server/route"
-	"github.com/miniflux/miniflux2/server/template/helper"
-	"github.com/miniflux/miniflux2/server/ui/filter"
 	"html/template"
 	"io"
 	"log"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/locale"
+	"github.com/miniflux/miniflux2/server/route"
+	"github.com/miniflux/miniflux2/server/template/helper"
+	"github.com/miniflux/miniflux2/server/ui/filter"
 
 	"github.com/gorilla/mux"
 )
@@ -61,11 +62,13 @@ func (t *TemplateEngine) ParseAll() {
 		},
 		"t": func(key interface{}, args ...interface{}) string {
 			switch key.(type) {
-			case string, error:
+			case string:
 				return t.currentLocale.Get(key.(string), args...)
 			case errors.LocalizedError:
 				err := key.(errors.LocalizedError)
 				return err.Localize(t.currentLocale)
+			case error:
+				return key.(error).Error()
 			default:
 				return ""
 			}

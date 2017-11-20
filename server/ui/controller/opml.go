@@ -5,8 +5,9 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/server/core"
 	"log"
+
+	"github.com/miniflux/miniflux2/server/core"
 )
 
 func (c *Controller) Export(ctx *core.Context, request *core.Request, response *core.Response) {
@@ -52,7 +53,7 @@ func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, respon
 		}
 
 		response.Html().Render("import", args.Merge(tplParams{
-			"errorMessage": impErr.Error(),
+			"errorMessage": impErr,
 			"menu":         "feeds",
 		}))
 

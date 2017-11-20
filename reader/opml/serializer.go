@@ -11,6 +11,7 @@ import (
 	"log"
 )
 
+// Serialize returns a SubcriptionList in OPML format.
 func Serialize(subscriptions SubcriptionList) string {
 	var b bytes.Buffer
 	writer := bufio.NewWriter(&b)
@@ -34,7 +35,7 @@ func Serialize(subscriptions SubcriptionList) string {
 	}
 
 	encoder := xml.NewEncoder(writer)
-	encoder.Indent("  ", "    ")
+	encoder.Indent("    ", "    ")
 	if err := encoder.Encode(opml); err != nil {
 		log.Println(err)
 		return ""
@@ -47,10 +48,6 @@ func groupSubscriptionsByFeed(subscriptions SubcriptionList) map[string]Subcript
 	groups := make(map[string]SubcriptionList)
 
 	for _, subscription := range subscriptions {
-		// if subs, ok := groups[subscription.CategoryName]; !ok {
-		// groups[subscription.CategoryName] = SubcriptionList{}
-		// }
-
 		groups[subscription.CategoryName] = append(groups[subscription.CategoryName], subscription)
 	}
 

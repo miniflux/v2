@@ -6,12 +6,13 @@ package opml
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 
+	"github.com/miniflux/miniflux2/errors"
 	"golang.org/x/net/html/charset"
 )
 
+// Parse reads an OPML file and returns a SubcriptionList.
 func Parse(data io.Reader) (SubcriptionList, error) {
 	opml := new(Opml)
 	decoder := xml.NewDecoder(data)
@@ -19,7 +20,7 @@ func Parse(data io.Reader) (SubcriptionList, error) {
 
 	err := decoder.Decode(opml)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse OPML file: %v\n", err)
+		return nil, errors.NewLocalizedError("Unable to parse OPML file: %v", err)
 	}
 
 	return opml.Transform(), nil

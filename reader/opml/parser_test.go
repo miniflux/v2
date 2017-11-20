@@ -133,6 +133,6 @@ func TestParseInvalidXML(t *testing.T) {
 
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
-		t.Error(err)
+		t.Error("Parse should generate an error")
 	}
 }
