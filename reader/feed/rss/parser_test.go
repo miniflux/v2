@@ -136,6 +136,31 @@ func TestParseEntryWithoutTitle(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithoutLink(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<guid isPermaLink="false">1234</guid>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/" {
+		t.Errorf("Incorrect entry link, got: %s", feed.Entries[0].URL)
+	}
+
+	if feed.Entries[0].Hash != "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4" {
+		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
+	}
+}
+
 func TestParseFeedURLWithAtomLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">

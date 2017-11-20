@@ -7,22 +7,23 @@ package rss
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/miniflux/miniflux2/model"
 	"io"
+
+	"github.com/miniflux/miniflux2/model"
 
 	"golang.org/x/net/html/charset"
 )
 
 // Parse returns a normalized feed struct.
 func Parse(data io.Reader) (*model.Feed, error) {
-	rssFeed := new(RssFeed)
+	feed := new(rssFeed)
 	decoder := xml.NewDecoder(data)
 	decoder.CharsetReader = charset.NewReaderLabel
 
-	err := decoder.Decode(rssFeed)
+	err := decoder.Decode(feed)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse RSS feed: %v", err)
+		return nil, fmt.Errorf("unable to parse RSS feed: %v", err)
 	}
 
-	return rssFeed.Transform(), nil
+	return feed.Transform(), nil
 }
