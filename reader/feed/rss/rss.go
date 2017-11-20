@@ -35,12 +35,13 @@ type rssLink struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
 	Href    string `xml:"href,attr"`
+	Rel     string `xml:"rel,attr"`
 }
 
 type rssItem struct {
 	GUID              string         `xml:"guid"`
 	Title             string         `xml:"title"`
-	Link              string         `xml:"link"`
+	Links             []rssLink      `xml:"link"`
 	OriginalLink      string         `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
 	Description       string         `xml:"description"`
 	Content           string         `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
@@ -65,9 +66,9 @@ type rssEnclosure struct {
 }
 
 func (r *rssFeed) GetSiteURL() string {
-	for _, elem := range r.Links {
-		if elem.XMLName.Space == "" {
-			return elem.Data
+	for _, element := range r.Links {
+		if element.XMLName.Space == "" {
+			return element.Data
 		}
 	}
 
@@ -75,9 +76,9 @@ func (r *rssFeed) GetSiteURL() string {
 }
 
 func (r *rssFeed) GetFeedURL() string {
-	for _, elem := range r.Links {
-		if elem.XMLName.Space == "http://www.w3.org/2005/Atom" {
-			return elem.Href
+	for _, element := range r.Links {
+		if element.XMLName.Space == "http://www.w3.org/2005/Atom" {
+			return element.Href
 		}
 	}
 
@@ -111,10 +112,10 @@ func (r *rssFeed) Transform() *model.Feed {
 
 	return feed
 }
-func (i *rssItem) GetDate() time.Time {
-	value := i.PubDate
-	if i.Date != "" {
-		value = i.Date
+func (r *rssItem) GetDate() time.Time {
+	value := r.PubDate
+	if r.Date != "" {
+		value = r.Date
 	}
 
 	if value != "" {
@@ -130,8 +131,8 @@ func (i *rssItem) GetDate() time.Time {
 	return time.Now()
 }
 
-func (i *rssItem) GetAuthor() string {
-	for _, element := range i.Authors {
+func (r *rssItem) GetAuthor() string {
+	for _, element := range r.Authors {
 		if element.Name != "" {
 			return element.Name
 		}
@@ -141,11 +142,11 @@ func (i *rssItem) GetAuthor() string {
 		}
 	}
 
-	return i.Creator
+	return r.Creator
 }
 
-func (i *rssItem) GetHash() string {
-	for _, value := range []string{i.GUID, i.Link} {
+func (r *rssItem) GetHash() string {
+	for _, value := range []string{r.GUID, r.GetURL()} {
 		if value != "" {
 			return helper.Hash(value)
 		}
@@ -154,33 +155,43 @@ func (i *rssItem) GetHash() string {
 	return ""
 }
 
-func (i *rssItem) GetContent() string {
-	if i.Content != "" {
-		return i.Content
+func (r *rssItem) GetContent() string {
+	if r.Content != "" {
+		return r.Content
 	}
 
-	return i.Description
+	return r.Description
 }
 
-func (i *rssItem) GetURL() string {
-	if i.OriginalLink != "" {
-		return i.OriginalLink
+func (r *rssItem) GetURL() string {
+	if r.OriginalLink != "" {
+		return r.OriginalLink
 	}
 
-	return i.Link
+	for _, link := range r.Links {
+		if link.XMLName.Space == "http://www.w3.org/2005/Atom" && link.Href != "" && isValidLinkRelation(link.Rel) {
+			return link.Href
+		}
+
+		if link.Data != "" {
+			return link.Data
+		}
+	}
+
+	return ""
 }
 
-func (i *rssItem) GetEnclosures() model.EnclosureList {
+func (r *rssItem) GetEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 
-	for _, enclosure := range i.Enclosures {
+	for _, enclosure := range r.Enclosures {
 		length, _ := strconv.Atoi(enclosure.Length)
 		enclosureURL := enclosure.URL
 
-		if i.OrigEnclosureLink != "" {
-			filename := path.Base(i.OrigEnclosureLink)
+		if r.OrigEnclosureLink != "" {
+			filename := path.Base(r.OrigEnclosureLink)
 			if strings.Contains(enclosureURL, filename) {
-				enclosureURL = i.OrigEnclosureLink
+				enclosureURL = r.OrigEnclosureLink
 			}
 		}
 
@@ -194,19 +205,31 @@ func (i *rssItem) GetEnclosures() model.EnclosureList {
 	return enclosures
 }
 
-func (i *rssItem) Transform() *model.Entry {
+func (r *rssItem) Transform() *model.Entry {
 	entry := new(model.Entry)
-	entry.URL = i.GetURL()
-	entry.Date = i.GetDate()
-	entry.Author = i.GetAuthor()
-	entry.Hash = i.GetHash()
-	entry.Content = processor.ItemContentProcessor(entry.URL, i.GetContent())
-	entry.Title = sanitizer.StripTags(strings.Trim(i.Title, " \n\t"))
-	entry.Enclosures = i.GetEnclosures()
+	entry.URL = r.GetURL()
+	entry.Date = r.GetDate()
+	entry.Author = r.GetAuthor()
+	entry.Hash = r.GetHash()
+	entry.Content = processor.ItemContentProcessor(entry.URL, r.GetContent())
+	entry.Title = sanitizer.StripTags(strings.Trim(r.Title, " \n\t"))
+	entry.Enclosures = r.GetEnclosures()
 
 	if entry.Title == "" {
 		entry.Title = entry.URL
 	}
 
 	return entry
+}
+
+func isValidLinkRelation(rel string) bool {
+	switch rel {
+	case "", "alternate", "enclosure", "related", "self", "via":
+		return true
+	default:
+		if strings.HasPrefix(rel, "http") {
+			return true
+		}
+		return false
+	}
 }

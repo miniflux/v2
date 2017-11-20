@@ -161,6 +161,51 @@ func TestParseEntryWithoutLink(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithAtomLink(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<title>Test</title>
+				<atom:link href="https://example.org/item" />
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/item" {
+		t.Errorf("Incorrect entry link, got: %s", feed.Entries[0].URL)
+	}
+}
+
+func TestParseEntryWithMultipleAtomLinks(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<title>Test</title>
+				<atom:link rel="payment" href="https://example.org/a" />
+				<atom:link rel="http://foobar.tld" href="https://example.org/b" />
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/b" {
+		t.Errorf("Incorrect entry link, got: %s", feed.Entries[0].URL)
+	}
+}
+
 func TestParseFeedURLWithAtomLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
@@ -487,5 +532,13 @@ func TestParseEntryWithFeedBurnerEnclosures(t *testing.T) {
 
 	if feed.Entries[0].Enclosures[0].Size != 76192460 {
 		t.Errorf("Incorrect enclosure length, got: %d", feed.Entries[0].Enclosures[0].Size)
+	}
+}
+
+func TestParseInvalidXml(t *testing.T) {
+	data := `garbage`
+	_, err := Parse(bytes.NewBufferString(data))
+	if err == nil {
+		t.Error("Parse should returns an error")
 	}
 }

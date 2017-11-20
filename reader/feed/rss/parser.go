@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-// Parse returns a normalized feed struct.
+// Parse returns a normalized feed struct from a RSS feed.
 func Parse(data io.Reader) (*model.Feed, error) {
 	feed := new(rssFeed)
 	decoder := xml.NewDecoder(data)
