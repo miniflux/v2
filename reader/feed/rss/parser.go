@@ -22,7 +22,7 @@ func Parse(data io.Reader) (*model.Feed, error) {
 
 	err := decoder.Decode(feed)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse RSS feed: %v", err)
+		return nil, errors.NewLocalizedError("Unable to parse RSS feed: %v.", err)
 	}
 
 	return feed.Transform(), nil

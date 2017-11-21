@@ -8,25 +8,30 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/feed/atom"
-	"github.com/miniflux/miniflux2/reader/feed/json"
-	"github.com/miniflux/miniflux2/reader/feed/rss"
 	"io"
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux2/reader/feed/atom"
+	"github.com/miniflux/miniflux2/reader/feed/json"
+	"github.com/miniflux/miniflux2/reader/feed/rdf"
+	"github.com/miniflux/miniflux2/reader/feed/rss"
+
 	"golang.org/x/net/html/charset"
 )
 
+// List of feed formats.
 const (
-	FormatRss     = "rss"
+	FormatRDF     = "rdf"
+	FormatRSS     = "rss"
 	FormatAtom    = "atom"
-	FormatJson    = "json"
+	FormatJSON    = "json"
 	FormatUnknown = "unknown"
 )
 
+// DetectFeedFormat detect feed format from input data.
 func DetectFeedFormat(data io.Reader) string {
 	defer helper.ExecutionTime(time.Now(), "[Feed:DetectFeedFormat]")
 
@@ -45,15 +50,17 @@ func DetectFeedFormat(data io.Reader) string {
 		if element, ok := token.(xml.StartElement); ok {
 			switch element.Name.Local {
 			case "rss":
-				return FormatRss
+				return FormatRSS
 			case "feed":
 				return FormatAtom
+			case "RDF":
+				return FormatRDF
 			}
 		}
 	}
 
 	if strings.HasPrefix(strings.TrimSpace(buffer.String()), "{") {
-		return FormatJson
+		return FormatJSON
 	}
 
 	return FormatUnknown
@@ -72,10 +79,12 @@ func parseFeed(data io.Reader) (*model.Feed, error) {
 	switch format {
 	case FormatAtom:
 		return atom.Parse(reader)
-	case FormatRss:
+	case FormatRSS:
 		return rss.Parse(reader)
-	case FormatJson:
+	case FormatJSON:
 		return json.Parse(reader)
+	case FormatRDF:
+		return rdf.Parse(reader)
 	default:
 		return nil, errors.New("Unsupported feed format")
 	}

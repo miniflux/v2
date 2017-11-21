@@ -2,26 +2,27 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package opml
+package rdf
 
 import (
 	"encoding/xml"
 	"io"
 
 	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/model"
 	"golang.org/x/net/html/charset"
 )
 
-// Parse reads an OPML file and returns a SubcriptionList.
-func Parse(data io.Reader) (SubcriptionList, error) {
-	opml := new(Opml)
+// Parse returns a normalized feed struct from a RDF feed.
+func Parse(data io.Reader) (*model.Feed, error) {
+	feed := new(rdfFeed)
 	decoder := xml.NewDecoder(data)
 	decoder.CharsetReader = charset.NewReaderLabel
 
-	err := decoder.Decode(opml)
+	err := decoder.Decode(feed)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse OPML file: %v.", err)
+		return nil, errors.NewLocalizedError("Unable to parse RDF feed: %v.", err)
 	}
 
-	return opml.Transform(), nil
+	return feed.Transform(), nil
 }

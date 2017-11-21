@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-// Parse returns a normalized feed struct.
+// Parse returns a normalized feed struct from a Atom feed.
 func Parse(data io.Reader) (*model.Feed, error) {
 	atomFeed := new(AtomFeed)
 	decoder := xml.NewDecoder(data)
@@ -22,7 +22,7 @@ func Parse(data io.Reader) (*model.Feed, error) {
 
 	err := decoder.Decode(atomFeed)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %v", err)
+		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %v.", err)
 	}
 
 	return atomFeed.Transform(), nil

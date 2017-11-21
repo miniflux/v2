@@ -9,12 +9,21 @@ import (
 	"testing"
 )
 
+func TestDetectRDF(t *testing.T) {
+	data := `<?xml version="1.0"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://my.netscape.com/rdf/simple/0.9/"></rdf:RDF>`
+	format := DetectFeedFormat(bytes.NewBufferString(data))
+
+	if format != FormatRDF {
+		t.Errorf("Wrong format detected: %s instead of %s", format, FormatRDF)
+	}
+}
+
 func TestDetectRSS(t *testing.T) {
 	data := `<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>`
 	format := DetectFeedFormat(bytes.NewBufferString(data))
 
-	if format != FormatRss {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatRss)
+	if format != FormatRSS {
+		t.Errorf("Wrong format detected: %s instead of %s", format, FormatRSS)
 	}
 }
 
@@ -45,8 +54,8 @@ func TestDetectJSON(t *testing.T) {
 	`
 	format := DetectFeedFormat(bytes.NewBufferString(data))
 
-	if format != FormatJson {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatJson)
+	if format != FormatJSON {
+		t.Errorf("Wrong format detected: %s instead of %s", format, FormatJSON)
 	}
 }
 
@@ -93,7 +102,7 @@ func TestParseAtom(t *testing.T) {
 	}
 }
 
-func TestParseRss(t *testing.T) {
+func TestParseRSS(t *testing.T) {
 	data := `<?xml version="1.0"?>
 	<rss version="2.0">
 	<channel>
@@ -115,6 +124,35 @@ func TestParseRss(t *testing.T) {
 	}
 
 	if feed.Title != "Liftoff News" {
+		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
+func TestParseRDF(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rdf:RDF
+		  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		  xmlns="http://purl.org/rss/1.0/"
+		>
+
+		  <channel>
+			<title>RDF Example</title>
+			<link>http://example.org/</link>
+		  </channel>
+
+		  <item>
+			<title>Title</title>
+			<link>http://example.org/item</link>
+			<description>Test</description>
+		  </item>
+		</rdf:RDF>`
+
+	feed, err := parseFeed(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Title != "RDF Example" {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
 	}
 }

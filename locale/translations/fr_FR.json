@@ -110,9 +110,10 @@
     "Unable to execute request: %v": "Impossible d'exécuter cette requête: %v",
     "Last Parsing Error": "Dernière erreur d'analyse",
     "There is a problem with this feed": "Il y a un problème avec cet abonnement",
-    "Unable to parse OPML file: %v": "Impossible de lire le fichier OPML : %v",
-    "Unable to parse RSS feed: %v": "Impossible de lire ce flux RSS: %v",
-    "Unable to parse Atom feed: %v": "Impossible de lire ce flux Atom: %v",
-    "Unable to parse JSON feed: %v": "Impossible de lire ce flux Json: %v",
+    "Unable to parse OPML file: %v.": "Impossible de lire ce fichier OPML : %v.",
+    "Unable to parse RSS feed: %v.": "Impossible de lire ce flux RSS: %v.",
+    "Unable to parse Atom feed: %v.": "Impossible de lire ce flux Atom: %v.",
+    "Unable to parse JSON feed: %v.": "Impossible de lire ce flux JSON: %v.",
+    "Unable to parse RDF feed: %v.": "Impossible de lire ce flux RDF: %v.",
     "Unable to normalize encoding: %v.": "Impossible de normaliser l'encodage : %v."
 }
