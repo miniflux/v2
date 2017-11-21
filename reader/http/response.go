@@ -28,7 +28,11 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 		return false
 	}
 
-	if r.ETag != "" && r.LastModified != "" && (r.ETag == etag || r.LastModified == lastModified) {
+	if r.ETag != "" && r.ETag == etag {
+		return false
+	}
+
+	if r.LastModified != "" && r.LastModified == lastModified {
 		return false
 	}
 
