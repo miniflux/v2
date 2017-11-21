@@ -6,14 +6,15 @@ package feed
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/http"
 	"github.com/miniflux/miniflux2/reader/icon"
 	"github.com/miniflux/miniflux2/storage"
-	"log"
-	"time"
 )
 
 var (
@@ -21,6 +22,7 @@ var (
 	errServerFailure = "Unable to fetch feed (statusCode=%d)."
 	errDuplicate     = "This feed already exists (%s)."
 	errNotFound      = "Feed %d not found"
+	errEncoding      = "Unable to normalize encoding: %v."
 )
 
 // Handler contains all the logic to create and refresh feeds.
@@ -32,7 +34,7 @@ type Handler struct {
 func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
-	client := http.NewHttpClient(url)
+	client := http.NewClient(url)
 	response, err := client.Get()
 	if err != nil {
 		return nil, errors.NewLocalizedError(errRequestFailed, err)
@@ -46,7 +48,12 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed,
 		return nil, errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 	}
 
-	subscription, err := parseFeed(response.Body)
+	body, err := response.NormalizeBodyEncoding()
+	if err != nil {
+		return nil, errors.NewLocalizedError(errEncoding, err)
+	}
+
+	subscription, err := parseFeed(body)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +96,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		return errors.NewLocalizedError(errNotFound, feedID)
 	}
 
-	client := http.NewHttpClientWithCacheHeaders(originalFeed.FeedURL, originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
+	client := http.NewClientWithCacheHeaders(originalFeed.FeedURL, originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
 	response, err := client.Get()
 	if err != nil {
 		customErr := errors.NewLocalizedError(errRequestFailed, err)
@@ -111,8 +118,12 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 
 	if response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		log.Printf("[Handler:RefreshFeed] Feed #%d has been modified\n", feedID)
+		body, err := response.NormalizeBodyEncoding()
+		if err != nil {
+			return errors.NewLocalizedError(errEncoding, err)
+		}
 
-		subscription, err := parseFeed(response.Body)
+		subscription, err := parseFeed(body)
 		if err != nil {
 			originalFeed.ParsingErrorCount++
 			originalFeed.ParsingErrorMsg = err.Error()

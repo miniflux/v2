@@ -7,14 +7,15 @@ package subscription
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"log"
+	"time"
+
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/reader/feed"
 	"github.com/miniflux/miniflux2/reader/http"
 	"github.com/miniflux/miniflux2/reader/url"
-	"io"
-	"log"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -28,7 +29,7 @@ var (
 func FindSubscriptions(websiteURL string) (Subscriptions, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[FindSubscriptions] url=%s", websiteURL))
 
-	client := http.NewHttpClient(websiteURL)
+	client := http.NewClient(websiteURL)
 	response, err := client.Get()
 	if err != nil {
 		return nil, errors.NewLocalizedError(errConnectionFailure, err)

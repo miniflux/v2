@@ -113,5 +113,6 @@
     "Unable to parse OPML file: %v": "Impossible de lire le fichier OPML : %v",
     "Unable to parse RSS feed: %v": "Impossible de lire ce flux RSS: %v",
     "Unable to parse Atom feed: %v": "Impossible de lire ce flux Atom: %v",
-    "Unable to parse JSON feed: %v": "Impossible de lire ce flux Json: %v"
+    "Unable to parse JSON feed: %v": "Impossible de lire ce flux Json: %v",
+    "Unable to normalize encoding: %v.": "Impossible de normaliser l'encodage : %v."
 }

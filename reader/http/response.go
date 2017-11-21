@@ -5,8 +5,10 @@
 package http
 
 import "io"
+import "golang.org/x/net/html/charset"
 
-type ServerResponse struct {
+// Response wraps a server response.
+type Response struct {
 	Body         io.Reader
 	StatusCode   int
 	EffectiveURL string
@@ -15,18 +17,25 @@ type ServerResponse struct {
 	ContentType  string
 }
 
-func (s *ServerResponse) HasServerFailure() bool {
-	return s.StatusCode >= 400
+// HasServerFailure returns true if the status code represents a failure.
+func (r *Response) HasServerFailure() bool {
+	return r.StatusCode >= 400
 }
 
-func (s *ServerResponse) IsModified(etag, lastModified string) bool {
-	if s.StatusCode == 304 {
+// IsModified returns true if the resource has been modified.
+func (r *Response) IsModified(etag, lastModified string) bool {
+	if r.StatusCode == 304 {
 		return false
 	}
 
-	if s.ETag != "" && s.LastModified != "" && (s.ETag == etag || s.LastModified == lastModified) {
+	if r.ETag != "" && r.LastModified != "" && (r.ETag == etag || r.LastModified == lastModified) {
 		return false
 	}
 
 	return true
+}
+
+// NormalizeBodyEncoding make sure the body is encoded in UTF-8.
+func (r *Response) NormalizeBodyEncoding() (io.Reader, error) {
+	return charset.NewReader(r.Body, r.ContentType)
 }

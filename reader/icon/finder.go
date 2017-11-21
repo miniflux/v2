@@ -6,13 +6,14 @@ package icon
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/http"
 	"github.com/miniflux/miniflux2/reader/url"
-	"io"
-	"io/ioutil"
-	"log"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -20,7 +21,7 @@ import (
 // FindIcon try to find the website's icon.
 func FindIcon(websiteURL string) (*model.Icon, error) {
 	rootURL := url.GetRootURL(websiteURL)
-	client := http.NewHttpClient(rootURL)
+	client := http.NewClient(rootURL)
 	response, err := client.Get()
 	if err != nil {
 		return nil, fmt.Errorf("unable to download website index page: %v", err)
@@ -80,7 +81,7 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 }
 
 func downloadIcon(iconURL string) (*model.Icon, error) {
-	client := http.NewHttpClient(iconURL)
+	client := http.NewClient(iconURL)
 	response, err := client.Get()
 	if err != nil {
 		return nil, fmt.Errorf("unable to download iconURL: %v", err)

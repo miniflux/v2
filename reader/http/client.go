@@ -7,23 +7,26 @@ package http
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/miniflux/miniflux2/helper"
 	"log"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/miniflux/miniflux2/helper"
 )
 
-const HTTP_USER_AGENT = "Miniflux <https://miniflux.net/>"
+const userAgent = "Miniflux <https://miniflux.net/>"
 
-type HttpClient struct {
+// Client is a HTTP Client :)
+type Client struct {
 	url                string
 	etagHeader         string
 	lastModifiedHeader string
 	Insecure           bool
 }
 
-func (h *HttpClient) Get() (*ServerResponse, error) {
+// Get execute a GET HTTP request.
+func (h *Client) Get() (*Response, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient:Get] url=%s", h.url))
 	u, _ := url.Parse(h.url)
 
@@ -39,7 +42,7 @@ func (h *HttpClient) Get() (*ServerResponse, error) {
 		return nil, err
 	}
 
-	response := &ServerResponse{
+	response := &Response{
 		Body:         resp.Body,
 		StatusCode:   resp.StatusCode,
 		EffectiveURL: resp.Request.URL.String(),
@@ -59,7 +62,7 @@ func (h *HttpClient) Get() (*ServerResponse, error) {
 	return response, err
 }
 
-func (h *HttpClient) buildClient() http.Client {
+func (h *Client) buildClient() http.Client {
 	if h.Insecure {
 		transport := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -71,9 +74,9 @@ func (h *HttpClient) buildClient() http.Client {
 	return http.Client{}
 }
 
-func (h *HttpClient) buildHeaders() http.Header {
+func (h *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
-	headers.Add("User-Agent", HTTP_USER_AGENT)
+	headers.Add("User-Agent", userAgent)
 
 	if h.etagHeader != "" {
 		headers.Add("If-None-Match", h.etagHeader)
@@ -86,10 +89,12 @@ func (h *HttpClient) buildHeaders() http.Header {
 	return headers
 }
 
-func NewHttpClient(url string) *HttpClient {
-	return &HttpClient{url: url, Insecure: false}
+// NewClient returns a new HTTP client.
+func NewClient(url string) *Client {
+	return &Client{url: url, Insecure: false}
 }
 
-func NewHttpClientWithCacheHeaders(url, etagHeader, lastModifiedHeader string) *HttpClient {
-	return &HttpClient{url: url, etagHeader: etagHeader, lastModifiedHeader: lastModifiedHeader, Insecure: false}
+// NewClientWithCacheHeaders returns a new HTTP client that send cache headers.
+func NewClientWithCacheHeaders(url, etagHeader, lastModifiedHeader string) *Client {
+	return &Client{url: url, etagHeader: etagHeader, lastModifiedHeader: lastModifiedHeader, Insecure: false}
 }
