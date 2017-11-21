@@ -4,6 +4,7 @@
 
 package opml
 
+// Subcription represents a feed that will be imported or exported.
 type Subcription struct {
 	Title        string
 	SiteURL      string
@@ -11,8 +12,11 @@ type Subcription struct {
 	CategoryName string
 }
 
+// Equals compare two subscriptions.
 func (s Subcription) Equals(subscription *Subcription) bool {
-	return s.Title == subscription.Title && s.SiteURL == subscription.SiteURL && s.FeedURL == subscription.FeedURL && s.CategoryName == subscription.CategoryName
+	return s.Title == subscription.Title && s.SiteURL == subscription.SiteURL &&
+		s.FeedURL == subscription.FeedURL && s.CategoryName == subscription.CategoryName
 }
 
+// SubcriptionList is a list of subscriptions.
 type SubcriptionList []*Subcription

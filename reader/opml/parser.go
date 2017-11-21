@@ -14,14 +14,14 @@ import (
 
 // Parse reads an OPML file and returns a SubcriptionList.
 func Parse(data io.Reader) (SubcriptionList, error) {
-	opml := new(Opml)
+	feeds := new(opml)
 	decoder := xml.NewDecoder(data)
 	decoder.CharsetReader = charset.NewReaderLabel
 
-	err := decoder.Decode(opml)
+	err := decoder.Decode(feeds)
 	if err != nil {
 		return nil, errors.NewLocalizedError("Unable to parse OPML file: %v.", err)
 	}
 
-	return opml.Transform(), nil
+	return feeds.Transform(), nil
 }

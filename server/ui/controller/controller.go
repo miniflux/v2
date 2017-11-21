@@ -25,7 +25,7 @@ func (t tplParams) Merge(d tplParams) tplParams {
 type Controller struct {
 	store       *storage.Storage
 	feedHandler *feed.Handler
-	opmlHandler *opml.OpmlHandler
+	opmlHandler *opml.Handler
 }
 
 func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error) {
@@ -47,7 +47,7 @@ func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error)
 	return params, nil
 }
 
-func NewController(store *storage.Storage, feedHandler *feed.Handler, opmlHandler *opml.OpmlHandler) *Controller {
+func NewController(store *storage.Storage, feedHandler *feed.Handler, opmlHandler *opml.Handler) *Controller {
 	return &Controller{
 		store:       store,
 		feedHandler: feedHandler,

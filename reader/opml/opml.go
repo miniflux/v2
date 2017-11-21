@@ -6,21 +6,21 @@ package opml
 
 import "encoding/xml"
 
-type Opml struct {
+type opml struct {
 	XMLName  xml.Name  `xml:"opml"`
 	Version  string    `xml:"version,attr"`
-	Outlines []Outline `xml:"body>outline"`
+	Outlines []outline `xml:"body>outline"`
 }
 
-type Outline struct {
+type outline struct {
 	Title    string    `xml:"title,attr,omitempty"`
 	Text     string    `xml:"text,attr"`
 	FeedURL  string    `xml:"xmlUrl,attr,omitempty"`
 	SiteURL  string    `xml:"htmlUrl,attr,omitempty"`
-	Outlines []Outline `xml:"outline,omitempty"`
+	Outlines []outline `xml:"outline,omitempty"`
 }
 
-func (o *Outline) GetTitle() string {
+func (o *outline) GetTitle() string {
 	if o.Title != "" {
 		return o.Title
 	}
@@ -40,7 +40,7 @@ func (o *Outline) GetTitle() string {
 	return ""
 }
 
-func (o *Outline) GetSiteURL() string {
+func (o *outline) GetSiteURL() string {
 	if o.SiteURL != "" {
 		return o.SiteURL
 	}
@@ -48,11 +48,11 @@ func (o *Outline) GetSiteURL() string {
 	return o.FeedURL
 }
 
-func (o *Outline) IsCategory() bool {
+func (o *outline) IsCategory() bool {
 	return o.Text != "" && o.SiteURL == "" && o.FeedURL == ""
 }
 
-func (o *Outline) Append(subscriptions SubcriptionList, category string) SubcriptionList {
+func (o *outline) Append(subscriptions SubcriptionList, category string) SubcriptionList {
 	if o.FeedURL != "" {
 		subscriptions = append(subscriptions, &Subcription{
 			Title:        o.GetTitle(),
@@ -65,7 +65,7 @@ func (o *Outline) Append(subscriptions SubcriptionList, category string) Subcrip
 	return subscriptions
 }
 
-func (o *Opml) Transform() SubcriptionList {
+func (o *opml) Transform() SubcriptionList {
 	var subscriptions SubcriptionList
 
 	for _, outline := range o.Outlines {

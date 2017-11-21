@@ -5,6 +5,8 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/miniflux/miniflux2/locale"
 	"github.com/miniflux/miniflux2/reader/feed"
 	"github.com/miniflux/miniflux2/reader/opml"
@@ -14,7 +16,6 @@ import (
 	"github.com/miniflux/miniflux2/server/template"
 	ui_controller "github.com/miniflux/miniflux2/server/ui/controller"
 	"github.com/miniflux/miniflux2/storage"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -25,7 +26,7 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 	templateEngine := template.NewTemplateEngine(router, translator)
 
 	apiController := api_controller.NewController(store, feedHandler)
-	uiController := ui_controller.NewController(store, feedHandler, opml.NewOpmlHandler(store))
+	uiController := ui_controller.NewController(store, feedHandler, opml.NewHandler(store))
 
 	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewMiddlewareChain(
 		middleware.NewBasicAuthMiddleware(store).Handler,

@@ -17,13 +17,13 @@ func Serialize(subscriptions SubcriptionList) string {
 	writer := bufio.NewWriter(&b)
 	writer.WriteString(xml.Header)
 
-	opml := new(Opml)
-	opml.Version = "2.0"
+	feeds := new(opml)
+	feeds.Version = "2.0"
 	for categoryName, subs := range groupSubscriptionsByFeed(subscriptions) {
-		outline := Outline{Text: categoryName}
+		category := outline{Text: categoryName}
 
 		for _, subscription := range subs {
-			outline.Outlines = append(outline.Outlines, Outline{
+			category.Outlines = append(category.Outlines, outline{
 				Title:   subscription.Title,
 				Text:    subscription.Title,
 				FeedURL: subscription.FeedURL,
@@ -31,12 +31,12 @@ func Serialize(subscriptions SubcriptionList) string {
 			})
 		}
 
-		opml.Outlines = append(opml.Outlines, outline)
+		feeds.Outlines = append(feeds.Outlines, category)
 	}
 
 	encoder := xml.NewEncoder(writer)
 	encoder.Indent("    ", "    ")
-	if err := encoder.Encode(opml); err != nil {
+	if err := encoder.Encode(feeds); err != nil {
 		log.Println(err)
 		return ""
 	}

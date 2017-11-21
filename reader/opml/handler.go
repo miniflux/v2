@@ -7,21 +7,24 @@ package opml
 import (
 	"errors"
 	"fmt"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/storage"
 	"io"
 	"log"
+
+	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux2/storage"
 )
 
-type OpmlHandler struct {
+// Handler handles the logic for OPML import/export.
+type Handler struct {
 	store *storage.Storage
 }
 
-func (o *OpmlHandler) Export(userID int64) (string, error) {
-	feeds, err := o.store.GetFeeds(userID)
+// Export exports user feeds to OPML.
+func (h *Handler) Export(userID int64) (string, error) {
+	feeds, err := h.store.GetFeeds(userID)
 	if err != nil {
 		log.Println(err)
-		return "", errors.New("Unable to fetch feeds.")
+		return "", errors.New("unable to fetch feeds")
 	}
 
 	var subscriptions SubcriptionList
@@ -37,27 +40,28 @@ func (o *OpmlHandler) Export(userID int64) (string, error) {
 	return Serialize(subscriptions), nil
 }
 
-func (o *OpmlHandler) Import(userID int64, data io.Reader) (err error) {
+// Import parses and create feeds from an OPML import.
+func (h *Handler) Import(userID int64, data io.Reader) (err error) {
 	subscriptions, err := Parse(data)
 	if err != nil {
 		return err
 	}
 
 	for _, subscription := range subscriptions {
-		if !o.store.FeedURLExists(userID, subscription.FeedURL) {
+		if !h.store.FeedURLExists(userID, subscription.FeedURL) {
 			var category *model.Category
 
 			if subscription.CategoryName == "" {
-				category, err = o.store.GetFirstCategory(userID)
+				category, err = h.store.GetFirstCategory(userID)
 				if err != nil {
 					log.Println(err)
-					return errors.New("Unable to find first category.")
+					return errors.New("unable to find first category")
 				}
 			} else {
-				category, err = o.store.GetCategoryByTitle(userID, subscription.CategoryName)
+				category, err = h.store.GetCategoryByTitle(userID, subscription.CategoryName)
 				if err != nil {
 					log.Println(err)
-					return errors.New("Unable to search category by title.")
+					return errors.New("unable to search category by title")
 				}
 
 				if category == nil {
@@ -66,10 +70,10 @@ func (o *OpmlHandler) Import(userID int64, data io.Reader) (err error) {
 						Title:  subscription.CategoryName,
 					}
 
-					err := o.store.CreateCategory(category)
+					err := h.store.CreateCategory(category)
 					if err != nil {
 						log.Println(err)
-						return fmt.Errorf(`Unable to create this category: "%s".`, subscription.CategoryName)
+						return fmt.Errorf(`unable to create this category: "%s"`, subscription.CategoryName)
 					}
 				}
 			}
@@ -82,13 +86,14 @@ func (o *OpmlHandler) Import(userID int64, data io.Reader) (err error) {
 				Category: category,
 			}
 
-			o.store.CreateFeed(feed)
+			h.store.CreateFeed(feed)
 		}
 	}
 
 	return nil
 }
 
-func NewOpmlHandler(store *storage.Storage) *OpmlHandler {
-	return &OpmlHandler{store: store}
+// NewHandler creates a new handler for OPML files.
+func NewHandler(store *storage.Storage) *Handler {
+	return &Handler{store: store}
 }
