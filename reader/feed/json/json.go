@@ -5,44 +5,45 @@
 package json
 
 import (
+	"log"
+	"strings"
+	"time"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/feed/date"
 	"github.com/miniflux/miniflux2/reader/processor"
 	"github.com/miniflux/miniflux2/reader/sanitizer"
-	"log"
-	"strings"
-	"time"
 )
 
-type JsonFeed struct {
+type jsonFeed struct {
 	Version string     `json:"version"`
 	Title   string     `json:"title"`
 	SiteURL string     `json:"home_page_url"`
 	FeedURL string     `json:"feed_url"`
-	Author  JsonAuthor `json:"author"`
-	Items   []JsonItem `json:"items"`
+	Author  jsonAuthor `json:"author"`
+	Items   []jsonItem `json:"items"`
 }
 
-type JsonAuthor struct {
+type jsonAuthor struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }
 
-type JsonItem struct {
+type jsonItem struct {
 	ID            string           `json:"id"`
 	URL           string           `json:"url"`
 	Title         string           `json:"title"`
 	Summary       string           `json:"summary"`
 	Text          string           `json:"content_text"`
-	Html          string           `json:"content_html"`
+	HTML          string           `json:"content_html"`
 	DatePublished string           `json:"date_published"`
 	DateModified  string           `json:"date_modified"`
-	Author        JsonAuthor       `json:"author"`
-	Attachments   []JsonAttachment `json:"attachments"`
+	Author        jsonAuthor       `json:"author"`
+	Attachments   []jsonAttachment `json:"attachments"`
 }
 
-type JsonAttachment struct {
+type jsonAttachment struct {
 	URL      string `json:"url"`
 	MimeType string `json:"mime_type"`
 	Title    string `json:"title"`
@@ -50,11 +51,11 @@ type JsonAttachment struct {
 	Duration int    `json:"duration_in_seconds"`
 }
 
-func (j *JsonFeed) GetAuthor() string {
+func (j *jsonFeed) GetAuthor() string {
 	return getAuthor(j.Author)
 }
 
-func (j *JsonFeed) Transform() *model.Feed {
+func (j *jsonFeed) Transform() *model.Feed {
 	feed := new(model.Feed)
 	feed.FeedURL = j.FeedURL
 	feed.SiteURL = j.SiteURL
@@ -76,7 +77,7 @@ func (j *JsonFeed) Transform() *model.Feed {
 	return feed
 }
 
-func (j *JsonItem) GetDate() time.Time {
+func (j *jsonItem) GetDate() time.Time {
 	for _, value := range []string{j.DatePublished, j.DateModified} {
 		if value != "" {
 			d, err := date.Parse(value)
@@ -92,12 +93,12 @@ func (j *JsonItem) GetDate() time.Time {
 	return time.Now()
 }
 
-func (j *JsonItem) GetAuthor() string {
+func (j *jsonItem) GetAuthor() string {
 	return getAuthor(j.Author)
 }
 
-func (j *JsonItem) GetHash() string {
-	for _, value := range []string{j.ID, j.URL, j.Text + j.Html + j.Summary} {
+func (j *jsonItem) GetHash() string {
+	for _, value := range []string{j.ID, j.URL, j.Text + j.HTML + j.Summary} {
 		if value != "" {
 			return helper.Hash(value)
 		}
@@ -106,8 +107,8 @@ func (j *JsonItem) GetHash() string {
 	return ""
 }
 
-func (j *JsonItem) GetTitle() string {
-	for _, value := range []string{j.Title, j.Summary, j.Text, j.Html} {
+func (j *jsonItem) GetTitle() string {
+	for _, value := range []string{j.Title, j.Summary, j.Text, j.HTML} {
 		if value != "" {
 			return truncate(value)
 		}
@@ -116,8 +117,8 @@ func (j *JsonItem) GetTitle() string {
 	return j.URL
 }
 
-func (j *JsonItem) GetContent() string {
-	for _, value := range []string{j.Html, j.Text, j.Summary} {
+func (j *jsonItem) GetContent() string {
+	for _, value := range []string{j.HTML, j.Text, j.Summary} {
 		if value != "" {
 			return value
 		}
@@ -126,7 +127,7 @@ func (j *JsonItem) GetContent() string {
 	return ""
 }
 
-func (j *JsonItem) GetEnclosures() model.EnclosureList {
+func (j *jsonItem) GetEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 
 	for _, attachment := range j.Attachments {
@@ -140,7 +141,7 @@ func (j *JsonItem) GetEnclosures() model.EnclosureList {
 	return enclosures
 }
 
-func (j *JsonItem) Transform() *model.Entry {
+func (j *jsonItem) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.URL = j.URL
 	entry.Date = j.GetDate()
@@ -152,7 +153,7 @@ func (j *JsonItem) Transform() *model.Entry {
 	return entry
 }
 
-func getAuthor(author JsonAuthor) string {
+func getAuthor(author jsonAuthor) string {
 	if author.Name != "" {
 		return author.Name
 	}

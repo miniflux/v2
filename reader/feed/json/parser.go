@@ -12,13 +12,13 @@ import (
 	"github.com/miniflux/miniflux2/model"
 )
 
-// Parse returns a normalized feed struct.
+// Parse returns a normalized feed struct from a JON feed.
 func Parse(data io.Reader) (*model.Feed, error) {
-	jsonFeed := new(JsonFeed)
+	feed := new(jsonFeed)
 	decoder := json.NewDecoder(data)
-	if err := decoder.Decode(&jsonFeed); err != nil {
+	if err := decoder.Decode(&feed); err != nil {
 		return nil, errors.NewLocalizedError("Unable to parse JSON Feed: %v", err)
 	}
 
-	return jsonFeed.Transform(), nil
+	return feed.Transform(), nil
 }
