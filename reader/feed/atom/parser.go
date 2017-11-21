@@ -6,9 +6,10 @@ package atom
 
 import (
 	"encoding/xml"
-	"fmt"
-	"github.com/miniflux/miniflux2/model"
 	"io"
+
+	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/model"
 
 	"golang.org/x/net/html/charset"
 )
@@ -21,7 +22,7 @@ func Parse(data io.Reader) (*model.Feed, error) {
 
 	err := decoder.Decode(atomFeed)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse Atom feed: %v\n", err)
+		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %v", err)
 	}
 
 	return atomFeed.Transform(), nil

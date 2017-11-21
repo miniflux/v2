@@ -6,9 +6,9 @@ package rss
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 
+	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/model"
 
 	"golang.org/x/net/html/charset"
@@ -22,7 +22,7 @@ func Parse(data io.Reader) (*model.Feed, error) {
 
 	err := decoder.Decode(feed)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse RSS feed: %v", err)
+		return nil, errors.NewLocalizedError("Unable to parse RSS feed: %v", err)
 	}
 
 	return feed.Transform(), nil

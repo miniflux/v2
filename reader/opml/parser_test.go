@@ -4,8 +4,12 @@
 
 package opml
 
-import "testing"
-import "bytes"
+import (
+	"bytes"
+	"testing"
+
+	"github.com/miniflux/miniflux2/errors"
+)
 
 func TestParseOpmlWithoutCategories(t *testing.T) {
 	data := `<?xml version="1.0" encoding="ISO-8859-1"?>
@@ -121,18 +125,13 @@ func TestParseOpmlWithEmptyTitleAndEmptySiteURL(t *testing.T) {
 }
 
 func TestParseInvalidXML(t *testing.T) {
-	data := `<?xml version="1.0" encoding="ISO-8859-1"?>
-	<opml version="2.0">
-	<head>
-	</head>
-	<body>
-		<outline
-	</body>
-	</opml>
-	`
-
+	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should generate an error")
+	}
+
+	if _, ok := err.(errors.LocalizedError); !ok {
+		t.Error("The error returned must be a LocalizedError")
 	}
 }

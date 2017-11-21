@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/miniflux/miniflux2/errors"
 )
 
 func TestParseJsonFeed(t *testing.T) {
@@ -341,5 +343,17 @@ func TestParseTruncateItemTitle(t *testing.T) {
 
 	if len(feed.Entries[0].Title) != 103 {
 		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseInvalidJSON(t *testing.T) {
+	data := `garbage`
+	_, err := Parse(bytes.NewBufferString(data))
+	if err == nil {
+		t.Error("Parse should returns an error")
+	}
+
+	if _, ok := err.(errors.LocalizedError); !ok {
+		t.Error("The error returned must be a LocalizedError")
 	}
 }

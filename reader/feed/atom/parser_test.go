@@ -8,6 +8,8 @@ import (
 	"bytes"
 	"testing"
 	"time"
+
+	"github.com/miniflux/miniflux2/errors"
 )
 
 func TestParseAtomSample(t *testing.T) {
@@ -315,5 +317,17 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 
 	if feed.Entries[0].Enclosures[1].Size != 4567 {
 		t.Errorf("Incorrect enclosure length, got: %d", feed.Entries[0].Enclosures[1].Size)
+	}
+}
+
+func TestParseInvalidXml(t *testing.T) {
+	data := `garbage`
+	_, err := Parse(bytes.NewBufferString(data))
+	if err == nil {
+		t.Error("Parse should returns an error")
+	}
+
+	if _, ok := err.(errors.LocalizedError); !ok {
+		t.Error("The error returned must be a LocalizedError")
 	}
 }
