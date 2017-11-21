@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/miniflux/miniflux2/errors"
 )
@@ -112,6 +113,10 @@ func TestParseRDFSample(t *testing.T) {
 
 	if strings.HasSuffix(feed.Entries[1].Content, "Tool and API support") {
 		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
+	}
+
+	if feed.Entries[1].Date.Year() != time.Now().Year() {
+		t.Errorf("Entry date should not be empty")
 	}
 }
 

@@ -6,6 +6,7 @@ package rdf
 
 import (
 	"encoding/xml"
+	"time"
 
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/reader/processor"
@@ -58,6 +59,7 @@ func (r *rdfItem) Transform() *model.Entry {
 	entry.URL = r.Link
 	entry.Content = processor.ItemContentProcessor(entry.URL, r.Description)
 	entry.Hash = getHash(r)
+	entry.Date = time.Now()
 	return entry
 }
 
