@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Entry statuses
 const (
 	EntryStatusUnread       = "unread"
 	EntryStatusRead         = "read"
@@ -17,6 +18,7 @@ const (
 	DefaultSortingDirection = "desc"
 )
 
+// Entry represents a feed item in the system.
 type Entry struct {
 	ID         int64         `json:"id"`
 	UserID     int64         `json:"user_id"`
@@ -33,8 +35,10 @@ type Entry struct {
 	Category   *Category     `json:"category,omitempty"`
 }
 
+// Entries represents a list of entries.
 type Entries []*Entry
 
+// ValidateEntryStatus makes sure the entry status is valid.
 func ValidateEntryStatus(status string) error {
 	switch status {
 	case EntryStatusRead, EntryStatusUnread, EntryStatusRemoved:
@@ -44,6 +48,7 @@ func ValidateEntryStatus(status string) error {
 	return fmt.Errorf(`Invalid entry status, valid status values are: "%s", "%s" and "%s"`, EntryStatusRead, EntryStatusUnread, EntryStatusRemoved)
 }
 
+// ValidateEntryOrder makes sure the sorting order is valid.
 func ValidateEntryOrder(order string) error {
 	switch order {
 	case "id", "status", "published_at", "category_title", "category_id":
@@ -53,6 +58,7 @@ func ValidateEntryOrder(order string) error {
 	return fmt.Errorf(`Invalid entry order, valid order values are: "id", "status", "published_at", "category_title", "category_id"`)
 }
 
+// ValidateDirection makes sure the sorting direction is valid.
 func ValidateDirection(direction string) error {
 	switch direction {
 	case "asc", "desc":
@@ -62,6 +68,7 @@ func ValidateDirection(direction string) error {
 	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
 }
 
+// GetOppositeDirection returns the opposite sorting direction.
 func GetOppositeDirection(direction string) string {
 	if direction == "asc" {
 		return "desc"

@@ -9,6 +9,7 @@ Miniflux is a minimalist and opinionated feed reader:
 - Works only with Postgresql
 - Doesn't use any ORM
 - Doesn't use any complicated framework
+- Use only modern vanilla Javascript (ES6 and fetch)
 - The number of features is volountary limited
 
 It's simple, fast, lightweight and super easy to install.
@@ -29,7 +30,7 @@ TODO
 - [ ] External integrations (Pinboard, Wallabag...)
 - [ ] Gzip compression
 - [ ] Integration tests
-- [ ] Flush history
+- [X] Flush history
 - [ ] OAuth2
 
 Credits

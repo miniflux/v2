@@ -9,6 +9,7 @@ import (
 	"github.com/miniflux/miniflux2/server/core"
 )
 
+// ShowHistoryPage renders the page with all read entries.
 func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	offset := request.GetQueryIntegerParam("offset", 0)
@@ -44,4 +45,17 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 		"pagination": c.getPagination(ctx.GetRoute("history"), count, offset),
 		"menu":       "history",
 	}))
+}
+
+// FlushHistory changes all "read" items to "removed".
+func (c *Controller) FlushHistory(ctx *core.Context, request *core.Request, response *core.Response) {
+	user := ctx.GetLoggedUser()
+
+	err := c.store.FlushHistory(user.ID)
+	if err != nil {
+		response.Html().ServerError(err)
+		return
+	}
+
+	response.Redirect(ctx.GetRoute("history"))
 }

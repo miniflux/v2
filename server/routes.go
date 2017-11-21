@@ -81,6 +81,7 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 
 	router.Handle("/unread/entry/{entryID}", uiHandler.Use(uiController.ShowUnreadEntry)).Name("unreadEntry").Methods("GET")
 	router.Handle("/history/entry/{entryID}", uiHandler.Use(uiController.ShowReadEntry)).Name("readEntry").Methods("GET")
+	router.Handle("/history/flush", uiHandler.Use(uiController.FlushHistory)).Name("flushHistory").Methods("GET")
 	router.Handle("/feed/{feedID}/entry/{entryID}", uiHandler.Use(uiController.ShowFeedEntry)).Name("feedEntry").Methods("GET")
 	router.Handle("/category/{categoryID}/entry/{entryID}", uiHandler.Use(uiController.ShowCategoryEntry)).Name("categoryEntry").Methods("GET")
 

@@ -54,7 +54,10 @@ func (j *JsonResponse) ServerError(err error) {
 	log.Println("[API:ServerError]", err)
 	j.writer.WriteHeader(http.StatusInternalServerError)
 	j.commonHeaders()
-	j.writer.Write(j.encodeError(err))
+
+	if err != nil {
+		j.writer.Write(j.encodeError(err))
+	}
 }
 
 func (j *JsonResponse) Forbidden() {

@@ -7,17 +7,20 @@ package storage
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
-	"time"
 
 	"github.com/lib/pq"
 )
 
+// GetEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) GetEntryQueryBuilder(userID int64, timezone string) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID, timezone)
 }
 
+// CreateEntry add a new entry.
 func (s *Storage) CreateEntry(entry *model.Entry) error {
 	query := `
 		INSERT INTO entries
@@ -55,6 +58,7 @@ func (s *Storage) CreateEntry(entry *model.Entry) error {
 	return nil
 }
 
+// UpdateEntry update an entry when a feed is refreshed.
 func (s *Storage) UpdateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE entries SET
@@ -76,6 +80,7 @@ func (s *Storage) UpdateEntry(entry *model.Entry) error {
 	return err
 }
 
+// EntryExists checks if an entry already exists based on its hash when refreshing a feed.
 func (s *Storage) EntryExists(entry *model.Entry) bool {
 	var result int
 	query := `SELECT count(*) as c FROM entries WHERE user_id=$1 AND feed_id=$2 AND hash=$3`
@@ -83,6 +88,7 @@ func (s *Storage) EntryExists(entry *model.Entry) bool {
 	return result >= 1
 }
 
+// UpdateEntries update a list of entries while refreshing a feed.
 func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (err error) {
 	for _, entry := range entries {
 		entry.UserID = userID
@@ -102,22 +108,36 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (er
 	return nil
 }
 
+// SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:SetEntriesStatus] userID=%d, entryIDs=%v, status=%s", userID, entryIDs, status))
 
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, status, userID, pq.Array(entryIDs))
 	if err != nil {
-		return fmt.Errorf("Unable to update entry status: %v", err)
+		return fmt.Errorf("unable to update entries status: %v", err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("Unable to update this entry: %v", err)
+		return fmt.Errorf("unable to update these entries: %v", err)
 	}
 
 	if count == 0 {
-		return errors.New("Nothing has been updated")
+		return errors.New("nothing has been updated")
+	}
+
+	return nil
+}
+
+// FlushHistory set all entries with the status "read" to "removed".
+func (s *Storage) FlushHistory(userID int64) error {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FlushHistory] userID=%d", userID))
+
+	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3`
+	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
+	if err != nil {
+		return fmt.Errorf("unable to flush history: %v", err)
 	}
 
 	return nil

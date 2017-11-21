@@ -6,12 +6,14 @@ package controller
 
 import (
 	"errors"
+	"log"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/payload"
-	"log"
 )
 
+// ShowFeedEntry shows a single feed entry in "feed" mode.
 func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
@@ -102,6 +104,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	}))
 }
 
+// ShowCategoryEntry shows a single feed entry in "category" mode.
 func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
@@ -192,6 +195,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	}))
 }
 
+// ShowUnreadEntry shows a single feed entry in "unread" mode.
 func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
@@ -275,6 +279,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	}))
 }
 
+// ShowReadEntry shows a single feed entry in "history" mode.
 func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
@@ -349,6 +354,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	}))
 }
 
+// UpdateEntriesStatus handles Ajax request to update a list of entries.
 func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
@@ -360,14 +366,14 @@ func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Reques
 	}
 
 	if len(entryIDs) == 0 {
-		response.Html().BadRequest(errors.New("The list of entryID is empty"))
+		response.Json().BadRequest(errors.New("The list of entryID is empty"))
 		return
 	}
 
 	err = c.store.SetEntriesStatus(user.ID, entryIDs, status)
 	if err != nil {
 		log.Println(err)
-		response.Html().ServerError(nil)
+		response.Json().ServerError(nil)
 		return
 	}
 
