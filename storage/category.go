@@ -8,10 +8,20 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
-	"time"
 )
+
+func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:AnotherCategoryExists] userID=%d, categoryID=%d, title=%s", userID, categoryID, title))
+
+	var result int
+	query := `SELECT count(*) as c FROM categories WHERE user_id=$1 AND id != $2 AND title=$3`
+	s.db.QueryRow(query, userID, categoryID, title).Scan(&result)
+	return result >= 1
+}
 
 func (s *Storage) CategoryExists(userID, categoryID int64) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoryExists] userID=%d, categoryID=%d", userID, categoryID))

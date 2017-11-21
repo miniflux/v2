@@ -6,10 +6,11 @@ package controller
 
 import (
 	"errors"
+	"log"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
-	"log"
 )
 
 func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, response *core.Response) {
@@ -104,6 +105,19 @@ func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
+	duplicateCategory, err := c.store.GetCategoryByTitle(user.ID, categoryForm.Title)
+	if err != nil {
+		response.Html().ServerError(err)
+		return
+	}
+
+	if duplicateCategory != nil {
+		response.Html().Render("create_category", args.Merge(tplParams{
+			"errorMessage": "This category already exists.",
+		}))
+		return
+	}
+
 	category := model.Category{Title: categoryForm.Title, UserID: user.ID}
 	err = c.store.CreateCategory(&category)
 	if err != nil {
@@ -154,6 +168,13 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 	if err := categoryForm.Validate(); err != nil {
 		response.Html().Render("edit_category", args.Merge(tplParams{
 			"errorMessage": err.Error(),
+		}))
+		return
+	}
+
+	if c.store.AnotherCategoryExists(user.ID, category.ID, categoryForm.Title) {
+		response.Html().Render("edit_category", args.Merge(tplParams{
+			"errorMessage": "This category already exists.",
 		}))
 		return
 	}

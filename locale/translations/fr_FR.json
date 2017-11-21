@@ -121,5 +121,7 @@
     "no": "non",
     "Are you sure?": "Êtes-vous sûr ?",
     "Work in progress...": "Travail en cours...",
-    "This user already exists.": "Cet utilisateur existe déjà."
+    "This user already exists.": "Cet utilisateur existe déjà.",
+    "This category already exists.": "Cette catégorie existe déjà.",
+    "Unable to update this category.": "Impossible de mettre à jour cette catégorie."
 }
