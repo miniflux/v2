@@ -16,6 +16,7 @@ import (
 )
 
 const userAgent = "Miniflux <https://miniflux.net/>"
+const requestTimeout = 300
 
 // Client is a HTTP Client :)
 type Client struct {
@@ -63,15 +64,14 @@ func (h *Client) Get() (*Response, error) {
 }
 
 func (h *Client) buildClient() http.Client {
+	client := http.Client{Timeout: time.Duration(requestTimeout * time.Second)}
 	if h.Insecure {
-		transport := &http.Transport{
+		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
-
-		return http.Client{Transport: transport}
 	}
 
-	return http.Client{}
+	return client
 }
 
 func (h *Client) buildHeaders() http.Header {
