@@ -11,7 +11,7 @@ import (
 
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/feed/date"
+	"github.com/miniflux/miniflux2/reader/date"
 	"github.com/miniflux/miniflux2/reader/processor"
 	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
