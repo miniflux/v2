@@ -115,5 +115,11 @@
     "Unable to parse Atom feed: %v.": "Impossible de lire ce flux Atom: %v.",
     "Unable to parse JSON feed: %v.": "Impossible de lire ce flux JSON: %v.",
     "Unable to parse RDF feed: %v.": "Impossible de lire ce flux RDF: %v.",
-    "Unable to normalize encoding: %v.": "Impossible de normaliser l'encodage : %v."
+    "Unable to normalize encoding: %v.": "Impossible de normaliser l'encodage : %v.",
+    "Unable to create this category.": "Impossible de créer cette catégorie.",
+    "yes": "oui",
+    "no": "non",
+    "Are you sure?": "Êtes-vous sûr ?",
+    "Work in progress...": "Travail en cours...",
+    "This user already exists.": "Cet utilisateur existe déjà."
 }

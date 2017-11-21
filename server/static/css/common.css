@@ -167,13 +167,6 @@ th {
     background: #fcfcfc;
 }
 
-.table-overflow td {
-    max-width: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
 tr:hover {
     background-color: #f9f9f9;
 }
@@ -213,7 +206,7 @@ input[type="password"],
 input[type="text"] {
     border: 1px solid #ccc;
     padding: 3px;
-    line-height: 15px;
+    line-height: 20px;
     width: 250px;
     font-size: 99%;
     margin-bottom: 10px;
@@ -651,4 +644,18 @@ a.button {
 .enclosure-video video,
 .enclosure-image img {
     max-width: 100%;
+}
+
+/* Confirmation */
+.confirm {
+    font-weight: 500;
+    color: #ed2d04;
+}
+
+.confirm a {
+    color: #ed2d04;
+}
+
+.loading {
+    font-style: italic;
 }

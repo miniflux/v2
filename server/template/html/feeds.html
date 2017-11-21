@@ -53,7 +53,13 @@
                         <a href="{{ route "editFeed" "feedID" .ID }}">{{ t "Edit" }}</a>
                     </li>
                     <li>
-                        <a href="{{ route "removeFeed" "feedID" .ID }}">{{ t "Remove" }}</a>
+                        <a href="#"
+                            data-confirm="true"
+                            data-label-question="{{ t "Are you sure?" }}"
+                            data-label-yes="{{ t "yes" }}"
+                            data-label-no="{{ t "no" }}"
+                            data-label-loading="{{ t "Work in progress..." }}"
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ t "Remove" }}</a>
                     </li>
                 </ul>
             </div>

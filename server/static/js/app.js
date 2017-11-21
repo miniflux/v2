@@ -120,11 +120,67 @@ class App {
 
         let mouseHandler = new MouseHandler();
         mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => this.markPageAsRead());
+        mouseHandler.onClick("a[data-confirm]", (event) => this.confirm(event));
 
         if (document.documentElement.clientWidth < 600) {
             mouseHandler.onClick(".logo", () => this.toggleMainMenu());
             mouseHandler.onClick(".header nav li", (event) => this.clickMenuListItem(event));
         }
+    }
+
+    remove(url) {
+        let request = new Request(url, {
+            method: "POST",
+            cache: "no-cache",
+            credentials: "include",
+            headers: new Headers({
+                "X-Csrf-Token": this.getCsrfToken()
+            })
+        });
+
+        fetch(request).then(() => {
+            window.location.reload();
+        });
+    }
+
+    confirm(event) {
+        let questionElement = document.createElement("span");
+        let linkElement = event.target;
+        let containerElement = linkElement.parentNode;
+        linkElement.style.display = "none";
+
+        let yesElement = document.createElement("a");
+        yesElement.href = "#";
+        yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
+        yesElement.onclick = (event) => {
+            event.preventDefault();
+
+            let loadingElement = document.createElement("span");
+            loadingElement.className = "loading";
+            loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
+
+            questionElement.remove();
+            containerElement.appendChild(loadingElement);
+
+            this.remove(linkElement.dataset.url);
+        };
+
+        let noElement = document.createElement("a");
+        noElement.href = "#";
+        noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
+        noElement.onclick = (event) => {
+            event.preventDefault();
+            linkElement.style.display = "inline";
+            questionElement.remove();
+        };
+
+        questionElement.className = "confirm";
+        questionElement.appendChild(document.createTextNode(linkElement.dataset.labelQuestion + " "));
+        questionElement.appendChild(yesElement);
+        questionElement.appendChild(document.createTextNode(", "));
+        questionElement.appendChild(noElement);
+
+        containerElement.appendChild(questionElement);
     }
 
     clickMenuListItem(event) {

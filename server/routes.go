@@ -74,7 +74,7 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 
 	router.Handle("/feed/{feedID}/refresh", uiHandler.Use(uiController.RefreshFeed)).Name("refreshFeed").Methods("GET")
 	router.Handle("/feed/{feedID}/edit", uiHandler.Use(uiController.EditFeed)).Name("editFeed").Methods("GET")
-	router.Handle("/feed/{feedID}/remove", uiHandler.Use(uiController.RemoveFeed)).Name("removeFeed").Methods("GET")
+	router.Handle("/feed/{feedID}/remove", uiHandler.Use(uiController.RemoveFeed)).Name("removeFeed").Methods("POST")
 	router.Handle("/feed/{feedID}/update", uiHandler.Use(uiController.UpdateFeed)).Name("updateFeed").Methods("POST")
 	router.Handle("/feed/{feedID}/entries", uiHandler.Use(uiController.ShowFeedEntries)).Name("feedEntries").Methods("GET")
 	router.Handle("/feeds", uiHandler.Use(uiController.ShowFeedsPage)).Name("feeds").Methods("GET")
@@ -92,7 +92,7 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 	router.Handle("/category/{categoryID}/entries", uiHandler.Use(uiController.ShowCategoryEntries)).Name("categoryEntries").Methods("GET")
 	router.Handle("/category/{categoryID}/edit", uiHandler.Use(uiController.EditCategory)).Name("editCategory").Methods("GET")
 	router.Handle("/category/{categoryID}/update", uiHandler.Use(uiController.UpdateCategory)).Name("updateCategory").Methods("POST")
-	router.Handle("/category/{categoryID}/remove", uiHandler.Use(uiController.RemoveCategory)).Name("removeCategory").Methods("GET")
+	router.Handle("/category/{categoryID}/remove", uiHandler.Use(uiController.RemoveCategory)).Name("removeCategory").Methods("POST")
 
 	router.Handle("/icon/{iconID}", uiHandler.Use(uiController.ShowIcon)).Name("icon").Methods("GET")
 	router.Handle("/proxy/{encodedURL}", uiHandler.Use(uiController.ImageProxy)).Name("proxy").Methods("GET")
@@ -102,7 +102,7 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 	router.Handle("/user/save", uiHandler.Use(uiController.SaveUser)).Name("saveUser").Methods("POST")
 	router.Handle("/users/{userID}/edit", uiHandler.Use(uiController.EditUser)).Name("editUser").Methods("GET")
 	router.Handle("/users/{userID}/update", uiHandler.Use(uiController.UpdateUser)).Name("updateUser").Methods("POST")
-	router.Handle("/users/{userID}/remove", uiHandler.Use(uiController.RemoveUser)).Name("removeUser").Methods("GET")
+	router.Handle("/users/{userID}/remove", uiHandler.Use(uiController.RemoveUser)).Name("removeUser").Methods("POST")
 
 	router.Handle("/about", uiHandler.Use(uiController.AboutPage)).Name("about").Methods("GET")
 
@@ -110,7 +110,7 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 	router.Handle("/settings", uiHandler.Use(uiController.UpdateSettings)).Name("updateSettings").Methods("POST")
 
 	router.Handle("/sessions", uiHandler.Use(uiController.ShowSessions)).Name("sessions").Methods("GET")
-	router.Handle("/sessions/{sessionID}/remove", uiHandler.Use(uiController.RemoveSession)).Name("removeSession").Methods("GET")
+	router.Handle("/sessions/{sessionID}/remove", uiHandler.Use(uiController.RemoveSession)).Name("removeSession").Methods("POST")
 
 	router.Handle("/export", uiHandler.Use(uiController.Export)).Name("export").Methods("GET")
 	router.Handle("/import", uiHandler.Use(uiController.Import)).Name("import").Methods("GET")
