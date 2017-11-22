@@ -13,7 +13,7 @@ import (
 )
 
 func (c *Controller) Stylesheet(ctx *core.Context, request *core.Request, response *core.Response) {
-	stylesheet := request.GetStringParam("name", "white")
+	stylesheet := request.StringParam("name", "white")
 	body := static.Stylesheets["common"]
 	etag := static.StylesheetsChecksums["common"]
 

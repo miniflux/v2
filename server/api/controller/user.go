@@ -17,7 +17,7 @@ func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	user, err := payload.DecodeUserPayload(request.GetBody())
+	user, err := payload.DecodeUserPayload(request.Body())
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
@@ -50,13 +50,13 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	userID, err := request.GetIntegerParam("userID")
+	userID, err := request.IntegerParam("userID")
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
 	}
 
-	user, err := payload.DecodeUserPayload(request.GetBody())
+	user, err := payload.DecodeUserPayload(request.Body())
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
@@ -110,7 +110,7 @@ func (c *Controller) GetUser(ctx *core.Context, request *core.Request, response 
 		return
 	}
 
-	userID, err := request.GetIntegerParam("userID")
+	userID, err := request.IntegerParam("userID")
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
@@ -137,7 +137,7 @@ func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	userID, err := request.GetIntegerParam("userID")
+	userID, err := request.IntegerParam("userID")
 	if err != nil {
 		response.Json().BadRequest(err)
 		return

@@ -16,7 +16,7 @@ import (
 )
 
 func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, response *core.Response) {
-	encodedURL := request.GetStringParam("encodedURL", "")
+	encodedURL := request.StringParam("encodedURL", "")
 	if encodedURL == "" {
 		response.Html().BadRequest(errors.New("No URL provided"))
 		return

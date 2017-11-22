@@ -39,7 +39,7 @@ func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, res
 // ShowFeedEntries shows all entries for the given feed.
 func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
-	offset := request.GetQueryIntegerParam("offset", 0)
+	offset := request.QueryIntegerParam("offset", 0)
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
@@ -108,7 +108,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	feedForm := form.NewFeedForm(request.GetRequest())
+	feedForm := form.NewFeedForm(request.Request())
 	args, err := c.getFeedFormTemplateArgs(ctx, user, feed, feedForm)
 	if err != nil {
 		response.Html().ServerError(err)
@@ -136,7 +136,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 
 // RemoveFeed delete a subscription from the database and redirect to the list of feeds page.
 func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	feedID, err := request.GetIntegerParam("feedID")
+	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.Html().ServerError(err)
 		return
@@ -153,7 +153,7 @@ func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, respon
 
 // RefreshFeed refresh a subscription and redirect to the feed entries page.
 func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	feedID, err := request.GetIntegerParam("feedID")
+	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
@@ -168,7 +168,7 @@ func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, respo
 }
 
 func (c *Controller) getFeedFromURL(request *core.Request, response *core.Response, user *model.User) (*model.Feed, error) {
-	feedID, err := request.GetIntegerParam("feedID")
+	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return nil, err

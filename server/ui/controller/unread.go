@@ -12,7 +12,7 @@ import (
 // ShowUnreadPage render the page with all unread entries.
 func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
-	offset := request.GetQueryIntegerParam("offset", 0)
+	offset := request.QueryIntegerParam("offset", 0)
 
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithStatus(model.EntryStatusUnread)

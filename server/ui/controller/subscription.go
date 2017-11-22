@@ -33,7 +33,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 		return
 	}
 
-	subscriptionForm := form.NewSubscriptionForm(request.GetRequest())
+	subscriptionForm := form.NewSubscriptionForm(request.Request())
 	if err := subscriptionForm.Validate(); err != nil {
 		response.Html().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
@@ -89,7 +89,7 @@ func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request
 		return
 	}
 
-	subscriptionForm := form.NewSubscriptionForm(request.GetRequest())
+	subscriptionForm := form.NewSubscriptionForm(request.Request())
 	if err := subscriptionForm.Validate(); err != nil {
 		response.Html().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,

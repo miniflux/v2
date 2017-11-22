@@ -12,7 +12,7 @@ import (
 // ShowHistoryPage renders the page with all read entries.
 func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
-	offset := request.GetQueryIntegerParam("offset", 0)
+	offset := request.QueryIntegerParam("offset", 0)
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {

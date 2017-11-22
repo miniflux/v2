@@ -34,7 +34,7 @@ func (c *Controller) Import(ctx *core.Context, request *core.Request, response *
 }
 
 func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, response *core.Response) {
-	file, fileHeader, err := request.GetFile("file")
+	file, fileHeader, err := request.File("file")
 	if err != nil {
 		log.Println(err)
 		response.Redirect(ctx.GetRoute("import"))

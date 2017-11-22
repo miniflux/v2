@@ -15,36 +15,34 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Request is a thin wrapper around "http.Request".
 type Request struct {
 	writer  http.ResponseWriter
 	request *http.Request
 }
 
-func (r *Request) GetRequest() *http.Request {
+// Request returns the raw Request struct.
+func (r *Request) Request() *http.Request {
 	return r.request
 }
 
-func (r *Request) GetBody() io.ReadCloser {
+// Body returns the request body.
+func (r *Request) Body() io.ReadCloser {
 	return r.request.Body
 }
 
-func (r *Request) GetHeaders() http.Header {
-	return r.request.Header
-}
-
-func (r *Request) GetScheme() string {
-	return r.request.URL.Scheme
-}
-
-func (r *Request) GetFile(name string) (multipart.File, *multipart.FileHeader, error) {
+// File returns uploaded file properties.
+func (r *Request) File(name string) (multipart.File, *multipart.FileHeader, error) {
 	return r.request.FormFile(name)
 }
 
+// IsHTTPS returns if the request is made over HTTPS.
 func (r *Request) IsHTTPS() bool {
 	return r.request.URL.Scheme == "https"
 }
 
-func (r *Request) GetCookie(name string) string {
+// Cookie returns the cookie value.
+func (r *Request) Cookie(name string) string {
 	cookie, err := r.request.Cookie(name)
 	if err == http.ErrNoCookie {
 		return ""
@@ -53,7 +51,8 @@ func (r *Request) GetCookie(name string) string {
 	return cookie.Value
 }
 
-func (r *Request) GetIntegerParam(param string) (int64, error) {
+// IntegerParam returns an URL parameter as integer.
+func (r *Request) IntegerParam(param string) (int64, error) {
 	vars := mux.Vars(r.request)
 	value, err := strconv.Atoi(vars[param])
 	if err != nil {
@@ -68,7 +67,8 @@ func (r *Request) GetIntegerParam(param string) (int64, error) {
 	return int64(value), nil
 }
 
-func (r *Request) GetStringParam(param, defaultValue string) string {
+// StringParam returns an URL parameter as string.
+func (r *Request) StringParam(param, defaultValue string) string {
 	vars := mux.Vars(r.request)
 	value := vars[param]
 	if value == "" {
@@ -77,7 +77,8 @@ func (r *Request) GetStringParam(param, defaultValue string) string {
 	return value
 }
 
-func (r *Request) GetQueryStringParam(param, defaultValue string) string {
+// QueryStringParam returns a querystring parameter as string.
+func (r *Request) QueryStringParam(param, defaultValue string) string {
 	value := r.request.URL.Query().Get(param)
 	if value == "" {
 		value = defaultValue
@@ -85,7 +86,8 @@ func (r *Request) GetQueryStringParam(param, defaultValue string) string {
 	return value
 }
 
-func (r *Request) GetQueryIntegerParam(param string, defaultValue int) int {
+// QueryIntegerParam returns a querystring parameter as string.
+func (r *Request) QueryIntegerParam(param string, defaultValue int) int {
 	value := r.request.URL.Query().Get(param)
 	if value == "" {
 		return defaultValue
@@ -103,6 +105,7 @@ func (r *Request) GetQueryIntegerParam(param string, defaultValue int) int {
 	return val
 }
 
+// NewRequest returns a new Request struct.
 func NewRequest(w http.ResponseWriter, r *http.Request) *Request {
 	return &Request{writer: w, request: r}
 }

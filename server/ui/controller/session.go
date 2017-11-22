@@ -23,7 +23,7 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	sessionCookie := request.GetCookie("sessionID")
+	sessionCookie := request.Cookie("sessionID")
 	response.Html().Render("sessions", args.Merge(tplParams{
 		"sessions":            sessions,
 		"currentSessionToken": sessionCookie,
@@ -34,7 +34,7 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
-	sessionID, err := request.GetIntegerParam("sessionID")
+	sessionID, err := request.IntegerParam("sessionID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return

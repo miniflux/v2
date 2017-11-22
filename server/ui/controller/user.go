@@ -72,7 +72,7 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	userForm := form.NewUserForm(request.GetRequest())
+	userForm := form.NewUserForm(request.Request())
 	if err := userForm.ValidateCreation(); err != nil {
 		response.Html().Render("create_user", args.Merge(tplParams{
 			"menu":         "settings",
@@ -153,7 +153,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	userForm := form.NewUserForm(request.GetRequest())
+	userForm := form.NewUserForm(request.Request())
 	if err := userForm.ValidateModification(); err != nil {
 		response.Html().Render("edit_user", args.Merge(tplParams{
 			"menu":          "settings",
@@ -210,7 +210,7 @@ func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, respon
 }
 
 func (c *Controller) getUserFromURL(ctx *core.Context, request *core.Request, response *core.Response) (*model.User, error) {
-	userID, err := request.GetIntegerParam("userID")
+	userID, err := request.IntegerParam("userID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return nil, err

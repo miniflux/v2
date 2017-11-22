@@ -18,13 +18,13 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
-	entryID, err := request.GetIntegerParam("entryID")
+	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
 	}
 
-	feedID, err := request.GetIntegerParam("feedID")
+	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
@@ -111,13 +111,13 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
-	categoryID, err := request.GetIntegerParam("categoryID")
+	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
 	}
 
-	entryID, err := request.GetIntegerParam("entryID")
+	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
@@ -205,7 +205,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
-	entryID, err := request.GetIntegerParam("entryID")
+	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
@@ -292,7 +292,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	user := ctx.GetLoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
-	entryID, err := request.GetIntegerParam("entryID")
+	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return
@@ -369,7 +369,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
-	entryIDs, status, err := payload.DecodeEntryStatusPayload(request.GetBody())
+	entryIDs, status, err := payload.DecodeEntryStatusPayload(request.Body())
 	if err != nil {
 		log.Println(err)
 		response.Json().BadRequest(nil)

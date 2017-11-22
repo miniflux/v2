@@ -12,7 +12,7 @@ import (
 
 // CreateCategory is the API handler to create a new category.
 func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
-	category, err := payload.DecodeCategoryPayload(request.GetBody())
+	category, err := payload.DecodeCategoryPayload(request.Body())
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
@@ -35,13 +35,13 @@ func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, re
 
 // UpdateCategory is the API handler to update a category.
 func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
-	categoryID, err := request.GetIntegerParam("categoryID")
+	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
 	}
 
-	category, err := payload.DecodeCategoryPayload(request.GetBody())
+	category, err := payload.DecodeCategoryPayload(request.Body())
 	if err != nil {
 		response.Json().BadRequest(err)
 		return
@@ -77,7 +77,7 @@ func (c *Controller) GetCategories(ctx *core.Context, request *core.Request, res
 // RemoveCategory is the API handler to remove a category.
 func (c *Controller) RemoveCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.GetUserID()
-	categoryID, err := request.GetIntegerParam("categoryID")
+	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
 		response.Json().BadRequest(err)
 		return

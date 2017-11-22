@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Controller) ShowIcon(ctx *core.Context, request *core.Request, response *core.Response) {
-	iconID, err := request.GetIntegerParam("iconID")
+	iconID, err := request.IntegerParam("iconID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return

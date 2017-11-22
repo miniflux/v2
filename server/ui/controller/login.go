@@ -26,7 +26,7 @@ func (c *Controller) ShowLoginPage(ctx *core.Context, request *core.Request, res
 }
 
 func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, response *core.Response) {
-	authForm := form.NewAuthForm(request.GetRequest())
+	authForm := form.NewAuthForm(request.Request())
 	tplParams := tplParams{
 		"errorMessage": "Invalid username or password.",
 		"csrf":         ctx.GetCsrfToken(),
@@ -46,8 +46,8 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 
 	sessionToken, err := c.store.CreateSession(
 		authForm.Username,
-		request.GetHeaders().Get("User-Agent"),
-		realip.RealIP(request.GetRequest()),
+		request.Request().UserAgent(),
+		realip.RealIP(request.Request()),
 	)
 	if err != nil {
 		response.Html().ServerError(err)
@@ -71,7 +71,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
-	sessionCookie := request.GetCookie("sessionID")
+	sessionCookie := request.Cookie("sessionID")
 	if err := c.store.RemoveSessionByToken(user.ID, sessionCookie); err != nil {
 		log.Printf("[UI:Logout] %v", err)
 	}

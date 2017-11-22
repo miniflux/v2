@@ -27,7 +27,7 @@ func (c *Controller) ShowSettings(ctx *core.Context, request *core.Request, resp
 func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
-	settingsForm := form.NewSettingsForm(request.GetRequest())
+	settingsForm := form.NewSettingsForm(request.Request())
 	args, err := c.getSettingsFormTemplateArgs(ctx, user, settingsForm)
 	if err != nil {
 		response.Html().ServerError(err)

@@ -14,7 +14,7 @@ import (
 
 // GetSubscriptions is the API handler to find subscriptions.
 func (c *Controller) GetSubscriptions(ctx *core.Context, request *core.Request, response *core.Response) {
-	websiteURL, err := payload.DecodeURLPayload(request.GetBody())
+	websiteURL, err := payload.DecodeURLPayload(request.Body())
 	if err != nil {
 		response.Json().BadRequest(err)
 		return

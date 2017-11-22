@@ -38,7 +38,7 @@ func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, re
 // ShowCategoryEntries shows all entries for the given category.
 func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
-	offset := request.GetQueryIntegerParam("offset", 0)
+	offset := request.QueryIntegerParam("offset", 0)
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
@@ -102,7 +102,7 @@ func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	categoryForm := form.NewCategoryForm(request.GetRequest())
+	categoryForm := form.NewCategoryForm(request.Request())
 	if err := categoryForm.Validate(); err != nil {
 		response.Html().Render("create_category", args.Merge(tplParams{
 			"errorMessage": err.Error(),
@@ -165,7 +165,7 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	categoryForm := form.NewCategoryForm(request.GetRequest())
+	categoryForm := form.NewCategoryForm(request.Request())
 	args, err := c.getCategoryFormTemplateArgs(ctx, user, category, categoryForm)
 	if err != nil {
 		response.Html().ServerError(err)
@@ -216,7 +216,7 @@ func (c *Controller) RemoveCategory(ctx *core.Context, request *core.Request, re
 }
 
 func (c *Controller) getCategoryFromURL(ctx *core.Context, request *core.Request, response *core.Response) (*model.Category, error) {
-	categoryID, err := request.GetIntegerParam("categoryID")
+	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
 		response.Html().BadRequest(err)
 		return nil, err
