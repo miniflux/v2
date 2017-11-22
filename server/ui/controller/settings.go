@@ -13,7 +13,7 @@ import (
 )
 
 func (c *Controller) ShowSettings(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	args, err := c.getSettingsFormTemplateArgs(ctx, user, nil)
 	if err != nil {
@@ -25,7 +25,7 @@ func (c *Controller) ShowSettings(ctx *core.Context, request *core.Request, resp
 }
 
 func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	settingsForm := form.NewSettingsForm(request.Request())
 	args, err := c.getSettingsFormTemplateArgs(ctx, user, settingsForm)
@@ -60,7 +60,7 @@ func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("settings"))
+	response.Redirect(ctx.Route("settings"))
 }
 
 func (c *Controller) getSettingsFormTemplateArgs(ctx *core.Context, user *model.User, settingsForm *form.SettingsForm) (tplParams, error) {

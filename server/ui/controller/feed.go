@@ -15,7 +15,7 @@ import (
 
 // ShowFeedsPage shows the page with all subscriptions.
 func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
@@ -38,7 +38,7 @@ func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, res
 
 // ShowFeedEntries shows all entries for the given feed.
 func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	offset := request.QueryIntegerParam("offset", 0)
 
 	args, err := c.getCommonTemplateArgs(ctx)
@@ -76,14 +76,14 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 		"feed":       feed,
 		"entries":    entries,
 		"total":      count,
-		"pagination": c.getPagination(ctx.GetRoute("feedEntries", "feedID", feed.ID), count, offset),
+		"pagination": c.getPagination(ctx.Route("feedEntries", "feedID", feed.ID), count, offset),
 		"menu":       "feeds",
 	}))
 }
 
 // EditFeed shows the form to modify a subscription.
 func (c *Controller) EditFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	feed, err := c.getFeedFromURL(request, response, user)
 	if err != nil {
@@ -101,7 +101,7 @@ func (c *Controller) EditFeed(ctx *core.Context, request *core.Request, response
 
 // UpdateFeed update a subscription and redirect to the feed entries page.
 func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	feed, err := c.getFeedFromURL(request, response, user)
 	if err != nil {
@@ -131,7 +131,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("feedEntries", "feedID", feed.ID))
+	response.Redirect(ctx.Route("feedEntries", "feedID", feed.ID))
 }
 
 // RemoveFeed delete a subscription from the database and redirect to the list of feeds page.
@@ -142,13 +142,13 @@ func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	if err := c.store.RemoveFeed(user.ID, feedID); err != nil {
 		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("feeds"))
+	response.Redirect(ctx.Route("feeds"))
 }
 
 // RefreshFeed refresh a subscription and redirect to the feed entries page.
@@ -159,12 +159,12 @@ func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, respo
 		return
 	}
 
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	if err := c.feedHandler.RefreshFeed(user.ID, feedID); err != nil {
 		log.Println("[UI:RefreshFeed]", err)
 	}
 
-	response.Redirect(ctx.GetRoute("feedEntries", "feedID", feedID))
+	response.Redirect(ctx.Route("feedEntries", "feedID", feedID))
 }
 
 func (c *Controller) getFeedFromURL(request *core.Request, response *core.Response, user *model.User) (*model.Feed, error) {

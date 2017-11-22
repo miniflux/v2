@@ -21,7 +21,7 @@ func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	categories, err := c.store.GetCategoriesWithFeedCount(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -37,7 +37,7 @@ func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, re
 
 // ShowCategoryEntries shows all entries for the given category.
 func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	offset := request.QueryIntegerParam("offset", 0)
 
 	args, err := c.getCommonTemplateArgs(ctx)
@@ -75,7 +75,7 @@ func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Reques
 		"category":   category,
 		"entries":    entries,
 		"total":      count,
-		"pagination": c.getPagination(ctx.GetRoute("categoryEntries", "categoryID", category.ID), count, offset),
+		"pagination": c.getPagination(ctx.Route("categoryEntries", "categoryID", category.ID), count, offset),
 		"menu":       "categories",
 	}))
 }
@@ -95,7 +95,7 @@ func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, re
 
 // SaveCategory validate and save the new category into the database.
 func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -133,12 +133,12 @@ func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("categories"))
+	response.Redirect(ctx.Route("categories"))
 }
 
 // EditCategory shows the form to modify a category.
 func (c *Controller) EditCategory(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	category, err := c.getCategoryFromURL(ctx, request, response)
 	if err != nil {
@@ -157,7 +157,7 @@ func (c *Controller) EditCategory(ctx *core.Context, request *core.Request, resp
 
 // UpdateCategory validate and update a category.
 func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	category, err := c.getCategoryFromURL(ctx, request, response)
 	if err != nil {
@@ -195,12 +195,12 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("categories"))
+	response.Redirect(ctx.Route("categories"))
 }
 
 // RemoveCategory delete a category from the database.
 func (c *Controller) RemoveCategory(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	category, err := c.getCategoryFromURL(ctx, request, response)
 	if err != nil {
@@ -212,7 +212,7 @@ func (c *Controller) RemoveCategory(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("categories"))
+	response.Redirect(ctx.Route("categories"))
 }
 
 func (c *Controller) getCategoryFromURL(ctx *core.Context, request *core.Request, response *core.Response) (*model.Category, error) {
@@ -222,7 +222,7 @@ func (c *Controller) getCategoryFromURL(ctx *core.Context, request *core.Request
 		return nil, err
 	}
 
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	category, err := c.store.GetCategory(user.ID, categoryID)
 	if err != nil {
 		response.HTML().ServerError(err)

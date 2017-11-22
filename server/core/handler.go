@@ -38,7 +38,7 @@ func (h *Handler) Use(f HandlerFunc) http.Handler {
 		response := NewResponse(w, r, h.template)
 
 		if ctx.IsAuthenticated() {
-			h.template.SetLanguage(ctx.GetUserLanguage())
+			h.template.SetLanguage(ctx.UserLanguage())
 		} else {
 			h.template.SetLanguage("en_US")
 		}

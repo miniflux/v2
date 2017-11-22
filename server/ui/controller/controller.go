@@ -29,7 +29,7 @@ type Controller struct {
 }
 
 func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithStatus(model.EntryStatusUnread)
 
@@ -42,7 +42,7 @@ func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error)
 		"menu":        "",
 		"user":        user,
 		"countUnread": countUnread,
-		"csrf":        ctx.GetCsrfToken(),
+		"csrf":        ctx.CsrfToken(),
 	}
 	return params, nil
 }

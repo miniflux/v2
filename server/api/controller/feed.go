@@ -12,7 +12,7 @@ import (
 
 // CreateFeed is the API handler to create a new feed.
 func (c *Controller) CreateFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedURL, categoryID, err := payload.DecodeFeedCreationPayload(request.Body())
 	if err != nil {
 		response.JSON().BadRequest(err)
@@ -30,7 +30,7 @@ func (c *Controller) CreateFeed(ctx *core.Context, request *core.Request, respon
 
 // RefreshFeed is the API handler to refresh a feed.
 func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)
@@ -48,7 +48,7 @@ func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, respo
 
 // UpdateFeed is the API handler that is used to update a feed.
 func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)
@@ -83,7 +83,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 
 // GetFeeds is the API handler that get all feeds that belongs to the given user.
 func (c *Controller) GetFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
-	feeds, err := c.store.GetFeeds(ctx.GetUserID())
+	feeds, err := c.store.GetFeeds(ctx.UserID())
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to fetch feeds from the database"))
 		return
@@ -94,7 +94,7 @@ func (c *Controller) GetFeeds(ctx *core.Context, request *core.Request, response
 
 // GetFeed is the API handler to get a feed.
 func (c *Controller) GetFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)
@@ -117,7 +117,7 @@ func (c *Controller) GetFeed(ctx *core.Context, request *core.Request, response 
 
 // RemoveFeed is the API handler to remove a feed.
 func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)

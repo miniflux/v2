@@ -11,7 +11,7 @@ import (
 
 // ShowUnreadPage render the page with all unread entries.
 func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	offset := request.QueryIntegerParam("offset", 0)
 
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
@@ -37,8 +37,8 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 		"user":        user,
 		"countUnread": countUnread,
 		"entries":     entries,
-		"pagination":  c.getPagination(ctx.GetRoute("unread"), countUnread, offset),
+		"pagination":  c.getPagination(ctx.Route("unread"), countUnread, offset),
 		"menu":        "unread",
-		"csrf":        ctx.GetCsrfToken(),
+		"csrf":        ctx.CsrfToken(),
 	})
 }

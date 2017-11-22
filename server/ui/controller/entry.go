@@ -15,7 +15,7 @@ import (
 
 // ShowFeedEntry shows a single feed entry in "feed" mode.
 func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
 	entryID, err := request.IntegerParam("entryID")
@@ -80,12 +80,12 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = ctx.GetRoute("feedEntry", "feedID", feedID, "entryID", nextEntry.ID)
+		nextEntryRoute = ctx.Route("feedEntry", "feedID", feedID, "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = ctx.GetRoute("feedEntry", "feedID", feedID, "entryID", prevEntry.ID)
+		prevEntryRoute = ctx.Route("feedEntry", "feedID", feedID, "entryID", prevEntry.ID)
 	}
 
 	if entry.Status == model.EntryStatusUnread {
@@ -108,7 +108,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 
 // ShowCategoryEntry shows a single feed entry in "category" mode.
 func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
 	categoryID, err := request.IntegerParam("categoryID")
@@ -173,12 +173,12 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = ctx.GetRoute("categoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
+		nextEntryRoute = ctx.Route("categoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = ctx.GetRoute("categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+		prevEntryRoute = ctx.Route("categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
 	}
 
 	if entry.Status == model.EntryStatusUnread {
@@ -202,7 +202,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 
 // ShowUnreadEntry shows a single feed entry in "unread" mode.
 func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
 	entryID, err := request.IntegerParam("entryID")
@@ -260,12 +260,12 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = ctx.GetRoute("unreadEntry", "entryID", nextEntry.ID)
+		nextEntryRoute = ctx.Route("unreadEntry", "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = ctx.GetRoute("unreadEntry", "entryID", prevEntry.ID)
+		prevEntryRoute = ctx.Route("unreadEntry", "entryID", prevEntry.ID)
 	}
 
 	if entry.Status == model.EntryStatusUnread {
@@ -289,7 +289,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 
 // ShowReadEntry shows a single feed entry in "history" mode.
 func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	sortingDirection := model.DefaultSortingDirection
 
 	entryID, err := request.IntegerParam("entryID")
@@ -347,12 +347,12 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = ctx.GetRoute("readEntry", "entryID", nextEntry.ID)
+		nextEntryRoute = ctx.Route("readEntry", "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = ctx.GetRoute("readEntry", "entryID", prevEntry.ID)
+		prevEntryRoute = ctx.Route("readEntry", "entryID", prevEntry.ID)
 	}
 
 	response.HTML().Render("entry", args.Merge(tplParams{
@@ -367,7 +367,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 
 // UpdateEntriesStatus handles Ajax request to update the status for a list of entries.
 func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	entryIDs, status, err := payload.DecodeEntryStatusPayload(request.Body())
 	if err != nil {

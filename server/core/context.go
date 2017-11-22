@@ -5,11 +5,12 @@
 package core
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/route"
 	"github.com/miniflux/miniflux2/storage"
-	"log"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -31,8 +32,8 @@ func (c *Context) IsAdminUser() bool {
 	return false
 }
 
-// GetUserTimezone returns the timezone used by the logged user.
-func (c *Context) GetUserTimezone() string {
+// UserTimezone returns the timezone used by the logged user.
+func (c *Context) UserTimezone() string {
 	if v := c.request.Context().Value("UserTimezone"); v != nil {
 		return v.(string)
 	}
@@ -47,19 +48,19 @@ func (c *Context) IsAuthenticated() bool {
 	return false
 }
 
-// GetUserID returns the UserID of the logged user.
-func (c *Context) GetUserID() int64 {
+// UserID returns the UserID of the logged user.
+func (c *Context) UserID() int64 {
 	if v := c.request.Context().Value("UserId"); v != nil {
 		return v.(int64)
 	}
 	return 0
 }
 
-// GetLoggedUser returns all properties related to the logged user.
-func (c *Context) GetLoggedUser() *model.User {
+// LoggedUser returns all properties related to the logged user.
+func (c *Context) LoggedUser() *model.User {
 	if c.user == nil {
 		var err error
-		c.user, err = c.store.GetUserById(c.GetUserID())
+		c.user, err = c.store.GetUserById(c.UserID())
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -72,14 +73,14 @@ func (c *Context) GetLoggedUser() *model.User {
 	return c.user
 }
 
-// GetUserLanguage get the locale used by the current logged user.
-func (c *Context) GetUserLanguage() string {
-	user := c.GetLoggedUser()
+// UserLanguage get the locale used by the current logged user.
+func (c *Context) UserLanguage() string {
+	user := c.LoggedUser()
 	return user.Language
 }
 
-// GetCsrfToken returns the current CSRF token.
-func (c *Context) GetCsrfToken() string {
+// CsrfToken returns the current CSRF token.
+func (c *Context) CsrfToken() string {
 	if v := c.request.Context().Value("CsrfToken"); v != nil {
 		return v.(string)
 	}
@@ -88,8 +89,8 @@ func (c *Context) GetCsrfToken() string {
 	return ""
 }
 
-// GetRoute returns the path for the given arguments.
-func (c *Context) GetRoute(name string, args ...interface{}) string {
+// Route returns the path for the given arguments.
+func (c *Context) Route(name string, args ...interface{}) string {
 	return route.GetRoute(c.router, name, args...)
 }
 

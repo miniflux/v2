@@ -11,7 +11,7 @@ import (
 
 // ShowHistoryPage renders the page with all read entries.
 func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	offset := request.QueryIntegerParam("offset", 0)
 
 	args, err := c.getCommonTemplateArgs(ctx)
@@ -42,14 +42,14 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 	response.HTML().Render("history", args.Merge(tplParams{
 		"entries":    entries,
 		"total":      count,
-		"pagination": c.getPagination(ctx.GetRoute("history"), count, offset),
+		"pagination": c.getPagination(ctx.Route("history"), count, offset),
 		"menu":       "history",
 	}))
 }
 
 // FlushHistory changes all "read" items to "removed".
 func (c *Controller) FlushHistory(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	err := c.store.FlushHistory(user.ID)
 	if err != nil {
@@ -57,5 +57,5 @@ func (c *Controller) FlushHistory(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("history"))
+	response.Redirect(ctx.Route("history"))
 }

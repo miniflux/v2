@@ -13,7 +13,7 @@ import (
 
 // GetEntry is the API handler to get a single feed entry.
 func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)
@@ -26,7 +26,7 @@ func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.GetUserTimezone())
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 
@@ -46,7 +46,7 @@ func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response
 
 // GetFeedEntries is the API handler to get all feed entries.
 func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)
@@ -76,7 +76,7 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 	limit := request.QueryIntegerParam("limit", 100)
 	offset := request.QueryIntegerParam("offset", 0)
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.GetUserTimezone())
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
 	builder.WithOrder(model.DefaultSortingOrder)
@@ -101,7 +101,7 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 
 // SetEntryStatus is the API handler to change the status of an entry.
 func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.GetUserID()
+	userID := ctx.UserID()
 
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
@@ -126,7 +126,7 @@ func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.GetUserTimezone())
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 

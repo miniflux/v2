@@ -13,7 +13,7 @@ import (
 )
 
 func (c *Controller) ShowUsers(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	if !user.IsAdmin {
 		response.HTML().Forbidden()
@@ -39,7 +39,7 @@ func (c *Controller) ShowUsers(ctx *core.Context, request *core.Request, respons
 }
 
 func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	if !user.IsAdmin {
 		response.HTML().Forbidden()
@@ -59,7 +59,7 @@ func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, respon
 }
 
 func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	if !user.IsAdmin {
 		response.HTML().Forbidden()
@@ -102,11 +102,11 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("users"))
+	response.Redirect(ctx.Route("users"))
 }
 
 func (c *Controller) EditUser(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	if !user.IsAdmin {
 		response.HTML().Forbidden()
@@ -135,7 +135,7 @@ func (c *Controller) EditUser(ctx *core.Context, request *core.Request, response
 }
 
 func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	if !user.IsAdmin {
 		response.HTML().Forbidden()
@@ -186,11 +186,11 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("users"))
+	response.Redirect(ctx.Route("users"))
 }
 
 func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	if !user.IsAdmin {
 		response.HTML().Forbidden()
 		return
@@ -206,7 +206,7 @@ func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("users"))
+	response.Redirect(ctx.Route("users"))
 }
 
 func (c *Controller) getUserFromURL(ctx *core.Context, request *core.Request, response *core.Response) (*model.User, error) {

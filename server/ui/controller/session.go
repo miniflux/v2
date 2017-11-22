@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -32,7 +32,7 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 }
 
 func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	sessionID, err := request.IntegerParam("sessionID")
 	if err != nil {
@@ -45,5 +45,5 @@ func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, res
 		log.Println("[UI:RemoveSession]", err)
 	}
 
-	response.Redirect(ctx.GetRoute("sessions"))
+	response.Redirect(ctx.Route("sessions"))
 }

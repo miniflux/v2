@@ -13,7 +13,7 @@ import (
 )
 
 func (c *Controller) AddSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
 	if err != nil {
@@ -25,7 +25,7 @@ func (c *Controller) AddSubscription(ctx *core.Context, request *core.Request, r
 }
 
 func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
 	if err != nil {
@@ -71,7 +71,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 			return
 		}
 
-		response.Redirect(ctx.GetRoute("feedEntries", "feedID", feed.ID))
+		response.Redirect(ctx.Route("feedEntries", "feedID", feed.ID))
 	case n > 1:
 		response.HTML().Render("choose_subscription", args.Merge(tplParams{
 			"categoryID":    subscriptionForm.CategoryID,
@@ -81,7 +81,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 }
 
 func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
 	if err != nil {
@@ -107,7 +107,7 @@ func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("feedEntries", "feedID", feed.ID))
+	response.Redirect(ctx.Route("feedEntries", "feedID", feed.ID))
 }
 
 func (c *Controller) getSubscriptionFormTemplateArgs(ctx *core.Context, user *model.User) (tplParams, error) {

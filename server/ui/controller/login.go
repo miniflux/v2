@@ -16,12 +16,12 @@ import (
 
 func (c *Controller) ShowLoginPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	if ctx.IsAuthenticated() {
-		response.Redirect(ctx.GetRoute("unread"))
+		response.Redirect(ctx.Route("unread"))
 		return
 	}
 
 	response.HTML().Render("login", tplParams{
-		"csrf": ctx.GetCsrfToken(),
+		"csrf": ctx.CsrfToken(),
 	})
 }
 
@@ -29,7 +29,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 	authForm := form.NewAuthForm(request.Request())
 	tplParams := tplParams{
 		"errorMessage": "Invalid username or password.",
-		"csrf":         ctx.GetCsrfToken(),
+		"csrf":         ctx.CsrfToken(),
 	}
 
 	if err := authForm.Validate(); err != nil {
@@ -65,11 +65,11 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 	}
 
 	response.SetCookie(cookie)
-	response.Redirect(ctx.GetRoute("unread"))
+	response.Redirect(ctx.Route("unread"))
 }
 
 func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 
 	sessionCookie := request.Cookie("sessionID")
 	if err := c.store.RemoveSessionByToken(user.ID, sessionCookie); err != nil {
@@ -87,5 +87,5 @@ func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *
 	}
 
 	response.SetCookie(cookie)
-	response.Redirect(ctx.GetRoute("login"))
+	response.Redirect(ctx.Route("login"))
 }

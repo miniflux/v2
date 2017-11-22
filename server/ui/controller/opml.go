@@ -11,7 +11,7 @@ import (
 )
 
 func (c *Controller) Export(ctx *core.Context, request *core.Request, response *core.Response) {
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	opml, err := c.opmlHandler.Export(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -37,12 +37,12 @@ func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, respon
 	file, fileHeader, err := request.File("file")
 	if err != nil {
 		log.Println(err)
-		response.Redirect(ctx.GetRoute("import"))
+		response.Redirect(ctx.Route("import"))
 		return
 	}
 	defer file.Close()
 
-	user := ctx.GetLoggedUser()
+	user := ctx.LoggedUser()
 	log.Printf("[UI:UploadOPML] User #%d uploaded this file: %s (%d bytes)\n", user.ID, fileHeader.Filename, fileHeader.Size)
 
 	if impErr := c.opmlHandler.Import(user.ID, file); impErr != nil {
@@ -60,5 +60,5 @@ func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("feeds"))
+	response.Redirect(ctx.Route("feeds"))
 }
