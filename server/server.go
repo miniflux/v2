@@ -5,10 +5,12 @@
 package server
 
 import (
+	"crypto/tls"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/miniflux/miniflux2/scheduler"
 
 	"github.com/miniflux/miniflux2/config"
@@ -18,20 +20,39 @@ import (
 
 // NewServer returns a new HTTP server.
 func NewServer(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler) *http.Server {
+	return startServer(cfg, getRoutes(cfg, store, feedHandler, pool))
+}
+
+func startServer(cfg *config.Config, handler *mux.Router) *http.Server {
+	certFile := cfg.Get("CERT_FILE", config.DefaultCertFile)
+	keyFile := cfg.Get("KEY_FILE", config.DefaultKeyFile)
 	server := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
 		Addr:         cfg.Get("LISTEN_ADDR", config.DefaultListenAddr),
-		Handler:      getRoutes(cfg, store, feedHandler, pool),
+		Handler:      handler,
 	}
 
-	go func() {
-		log.Printf("Listening on %s\n", server.Addr)
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal(err)
+	if certFile != "" && keyFile != "" {
+		server.TLSConfig = &tls.Config{
+			MinVersion: tls.VersionTLS12,
 		}
-	}()
+
+		go func() {
+			log.Printf(`Listening on "%s" by using certificate "%s" and key "%s"`, server.Addr, certFile, keyFile)
+			if err := server.ListenAndServeTLS(certFile, keyFile); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+	} else {
+		go func() {
+			log.Printf(`Listening on "%s" without TLS`, server.Addr)
+			if err := server.ListenAndServe(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+	}
 
 	return server
 }

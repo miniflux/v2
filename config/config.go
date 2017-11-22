@@ -18,6 +18,8 @@ const (
 	DefaultBatchSize        = 10
 	DefaultDatabaseMaxConns = 20
 	DefaultListenAddr       = "127.0.0.1:8080"
+	DefaultCertFile         = ""
+	DefaultKeyFile          = ""
 )
 
 // Config manages configuration parameters.
