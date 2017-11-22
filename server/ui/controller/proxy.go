@@ -7,15 +7,23 @@ package controller
 import (
 	"encoding/base64"
 	"errors"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/server/core"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"time"
+
+	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/reader/http"
+	"github.com/miniflux/miniflux2/server/core"
 )
 
+// ImageProxy fetch an image from a remote server and sent it back to the browser.
 func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, response *core.Response) {
+	// If we receive a "If-None-Match" header we assume the image in stored in browser cache
+	if request.Request().Header.Get("If-None-Match") != "" {
+		response.NotModified()
+		return
+	}
+
 	encodedURL := request.StringParam("encodedURL", "")
 	if encodedURL == "" {
 		response.HTML().BadRequest(errors.New("No URL provided"))
@@ -28,22 +36,21 @@ func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	resp, err := http.Get(string(decodedURL))
+	client := http.NewClient(string(decodedURL))
+	resp, err := client.Get()
 	if err != nil {
-		log.Println(err)
+		log.Println("[ImageProxy]", err)
 		response.HTML().NotFound()
 		return
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.HasServerFailure() {
 		response.HTML().NotFound()
 		return
 	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	etag := helper.HashFromBytes(body)
-	contentType := resp.Header.Get("Content-Type")
 
-	response.Cache(contentType, etag, body, 72*time.Hour)
+	response.Cache(resp.ContentType, etag, body, 72*time.Hour)
 }

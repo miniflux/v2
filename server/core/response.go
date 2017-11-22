@@ -46,6 +46,11 @@ func (r *Response) Redirect(path string) {
 	http.Redirect(r.writer, r.request, path, http.StatusFound)
 }
 
+// NotModified sends a response with a 304 status code.
+func (r *Response) NotModified() {
+	r.writer.WriteHeader(http.StatusNotModified)
+}
+
 // Cache returns a response with caching headers.
 func (r *Response) Cache(mimeType, etag string, content []byte, duration time.Duration) {
 	r.writer.Header().Set("Content-Type", mimeType)
