@@ -16,7 +16,6 @@ import (
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/date"
 	"github.com/miniflux/miniflux2/reader/processor"
-	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
 type rssFeed struct {
@@ -68,7 +67,7 @@ type rssEnclosure struct {
 func (r *rssFeed) GetSiteURL() string {
 	for _, element := range r.Links {
 		if element.XMLName.Space == "" {
-			return element.Data
+			return strings.TrimSpace(element.Data)
 		}
 	}
 
@@ -78,7 +77,7 @@ func (r *rssFeed) GetSiteURL() string {
 func (r *rssFeed) GetFeedURL() string {
 	for _, element := range r.Links {
 		if element.XMLName.Space == "http://www.w3.org/2005/Atom" {
-			return element.Href
+			return strings.TrimSpace(element.Href)
 		}
 	}
 
@@ -89,7 +88,7 @@ func (r *rssFeed) Transform() *model.Feed {
 	feed := new(model.Feed)
 	feed.SiteURL = r.GetSiteURL()
 	feed.FeedURL = r.GetFeedURL()
-	feed.Title = sanitizer.StripTags(r.Title)
+	feed.Title = strings.TrimSpace(r.Title)
 
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
@@ -101,7 +100,7 @@ func (r *rssFeed) Transform() *model.Feed {
 		if entry.Author == "" && r.ItunesAuthor != "" {
 			entry.Author = r.ItunesAuthor
 		}
-		entry.Author = sanitizer.StripTags(entry.Author)
+		entry.Author = strings.TrimSpace(entry.Author)
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
@@ -112,6 +111,7 @@ func (r *rssFeed) Transform() *model.Feed {
 
 	return feed
 }
+
 func (r *rssItem) GetDate() time.Time {
 	value := r.PubDate
 	if r.Date != "" {
@@ -170,11 +170,11 @@ func (r *rssItem) GetURL() string {
 
 	for _, link := range r.Links {
 		if link.XMLName.Space == "http://www.w3.org/2005/Atom" && link.Href != "" && isValidLinkRelation(link.Rel) {
-			return link.Href
+			return strings.TrimSpace(link.Href)
 		}
 
 		if link.Data != "" {
-			return link.Data
+			return strings.TrimSpace(link.Data)
 		}
 	}
 
@@ -212,7 +212,7 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Author = r.GetAuthor()
 	entry.Hash = r.GetHash()
 	entry.Content = processor.ItemContentProcessor(entry.URL, r.GetContent())
-	entry.Title = sanitizer.StripTags(strings.Trim(r.Title, " \n\t"))
+	entry.Title = strings.TrimSpace(r.Title)
 	entry.Enclosures = r.GetEnclosures()
 
 	if entry.Title == "" {

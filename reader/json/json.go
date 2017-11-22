@@ -9,11 +9,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux2/reader/sanitizer"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/date"
 	"github.com/miniflux/miniflux2/reader/processor"
-	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
 type jsonFeed struct {
@@ -59,7 +60,7 @@ func (j *jsonFeed) Transform() *model.Feed {
 	feed := new(model.Feed)
 	feed.FeedURL = j.FeedURL
 	feed.SiteURL = j.SiteURL
-	feed.Title = sanitizer.StripTags(j.Title)
+	feed.Title = strings.TrimSpace(j.Title)
 
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
@@ -110,7 +111,7 @@ func (j *jsonItem) GetHash() string {
 func (j *jsonItem) GetTitle() string {
 	for _, value := range []string{j.Title, j.Summary, j.Text, j.HTML} {
 		if value != "" {
-			return truncate(value)
+			return truncate(sanitizer.StripTags(value))
 		}
 	}
 
@@ -145,17 +146,17 @@ func (j *jsonItem) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.URL = j.URL
 	entry.Date = j.GetDate()
-	entry.Author = sanitizer.StripTags(j.GetAuthor())
+	entry.Author = j.GetAuthor()
 	entry.Hash = j.GetHash()
 	entry.Content = processor.ItemContentProcessor(entry.URL, j.GetContent())
-	entry.Title = sanitizer.StripTags(strings.Trim(j.GetTitle(), " \n\t"))
+	entry.Title = strings.TrimSpace(j.GetTitle())
 	entry.Enclosures = j.GetEnclosures()
 	return entry
 }
 
 func getAuthor(author jsonAuthor) string {
 	if author.Name != "" {
-		return author.Name
+		return strings.TrimSpace(author.Name)
 	}
 
 	return ""
@@ -163,6 +164,7 @@ func getAuthor(author jsonAuthor) string {
 
 func truncate(str string) string {
 	max := 100
+	str = strings.TrimSpace(str)
 	if len(str) > max {
 		return str[:max] + "..."
 	}

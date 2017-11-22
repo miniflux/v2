@@ -15,7 +15,6 @@ import (
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/date"
 	"github.com/miniflux/miniflux2/reader/processor"
-	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
 type atomFeed struct {
@@ -64,7 +63,7 @@ func (a *atomFeed) Transform() *model.Feed {
 	feed := new(model.Feed)
 	feed.FeedURL = getRelationURL(a.Links, "self")
 	feed.SiteURL = getURL(a.Links)
-	feed.Title = sanitizer.StripTags(a.Title)
+	feed.Title = strings.TrimSpace(a.Title)
 
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
@@ -86,10 +85,10 @@ func (a *atomEntry) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.URL = getURL(a.Links)
 	entry.Date = getDate(a)
-	entry.Author = sanitizer.StripTags(getAuthor(a.Author))
+	entry.Author = getAuthor(a.Author)
 	entry.Hash = getHash(a)
 	entry.Content = processor.ItemContentProcessor(entry.URL, getContent(a))
-	entry.Title = sanitizer.StripTags(strings.Trim(a.Title, " \n\t"))
+	entry.Title = strings.TrimSpace(a.Title)
 	entry.Enclosures = getEnclosures(a)
 
 	if entry.Title == "" {
@@ -102,11 +101,11 @@ func (a *atomEntry) Transform() *model.Entry {
 func getURL(links []atomLink) string {
 	for _, link := range links {
 		if strings.ToLower(link.Rel) == "alternate" {
-			return link.URL
+			return strings.TrimSpace(link.URL)
 		}
 
 		if link.Rel == "" && link.Type == "" {
-			return link.URL
+			return strings.TrimSpace(link.URL)
 		}
 	}
 
@@ -116,7 +115,7 @@ func getURL(links []atomLink) string {
 func getRelationURL(links []atomLink, relation string) string {
 	for _, link := range links {
 		if strings.ToLower(link.Rel) == relation {
-			return link.URL
+			return strings.TrimSpace(link.URL)
 		}
 	}
 
@@ -182,11 +181,11 @@ func getEnclosures(a *atomEntry) model.EnclosureList {
 
 func getAuthor(author atomAuthor) string {
 	if author.Name != "" {
-		return author.Name
+		return strings.TrimSpace(author.Name)
 	}
 
 	if author.Email != "" {
-		return author.Email
+		return strings.TrimSpace(author.Email)
 	}
 
 	return ""

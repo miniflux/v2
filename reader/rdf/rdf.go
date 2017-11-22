@@ -6,6 +6,7 @@ package rdf
 
 import (
 	"encoding/xml"
+	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux2/helper"
@@ -54,8 +55,8 @@ type rdfItem struct {
 
 func (r *rdfItem) Transform() *model.Entry {
 	entry := new(model.Entry)
-	entry.Title = sanitizer.StripTags(r.Title)
-	entry.Author = sanitizer.StripTags(r.Creator)
+	entry.Title = strings.TrimSpace(r.Title)
+	entry.Author = strings.TrimSpace(r.Creator)
 	entry.URL = r.Link
 	entry.Content = processor.ItemContentProcessor(entry.URL, r.Description)
 	entry.Hash = getHash(r)
