@@ -4,8 +4,12 @@
 
 package http
 
-import "io"
-import "golang.org/x/net/html/charset"
+import (
+	"io"
+	"strings"
+
+	"golang.org/x/net/html/charset"
+)
 
 // Response wraps a server response.
 type Response struct {
@@ -41,5 +45,8 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 
 // NormalizeBodyEncoding make sure the body is encoded in UTF-8.
 func (r *Response) NormalizeBodyEncoding() (io.Reader, error) {
-	return charset.NewReader(r.Body, r.ContentType)
+	if strings.Contains(r.ContentType, "charset=") {
+		return charset.NewReader(r.Body, r.ContentType)
+	}
+	return r.Body, nil
 }
