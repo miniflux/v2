@@ -7,6 +7,7 @@ package storage
 import (
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/miniflux/miniflux2/helper"
@@ -100,6 +101,7 @@ func (s *Storage) EntryExists(entry *model.Entry) bool {
 
 // UpdateEntries update a list of entries while refreshing a feed.
 func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (err error) {
+	var entryHashes []string
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
@@ -113,6 +115,26 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (er
 		if err != nil {
 			return err
 		}
+
+		entryHashes = append(entryHashes, entry.Hash)
+	}
+
+	if err := s.CleanupEntries(feedID, entryHashes); err != nil {
+		log.Println(err)
+	}
+
+	return nil
+}
+
+// CleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
+func (s *Storage) CleanupEntries(feedID int64, entryHashes []string) error {
+	query := `
+		DELETE FROM entries
+		WHERE feed_id=$1 AND
+		id IN (SELECT id FROM entries WHERE feed_id=$2 AND status=$3 AND NOT (hash=ANY($4)))
+	`
+	if _, err := s.db.Exec(query, feedID, feedID, model.EntryStatusRemoved, pq.Array(entryHashes)); err != nil {
+		return fmt.Errorf("unable to cleanup entries: %v", err)
 	}
 
 	return nil
