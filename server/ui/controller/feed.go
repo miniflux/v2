@@ -6,12 +6,14 @@ package controller
 
 import (
 	"errors"
+	"log"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
-	"log"
 )
 
+// ShowFeedsPage shows the page with all subscriptions.
 func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
@@ -34,6 +36,7 @@ func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, res
 	}))
 }
 
+// ShowFeedEntries shows all entries for the given feed.
 func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	offset := request.GetQueryIntegerParam("offset", 0)
@@ -51,6 +54,7 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithFeedID(feed.ID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(model.DefaultSortingDirection)
 	builder.WithOffset(offset)
@@ -77,6 +81,7 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 	}))
 }
 
+// EditFeed shows the form to modify a subscription.
 func (c *Controller) EditFeed(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
@@ -94,6 +99,7 @@ func (c *Controller) EditFeed(ctx *core.Context, request *core.Request, response
 	response.Html().Render("edit_feed", args)
 }
 
+// UpdateFeed update a subscription and redirect to the feed entries page.
 func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
@@ -125,9 +131,10 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	response.Redirect(ctx.GetRoute("feeds"))
+	response.Redirect(ctx.GetRoute("feedEntries", "feedID", feed.ID))
 }
 
+// RemoveFeed delete a subscription from the database and redirect to the list of feeds page.
 func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, response *core.Response) {
 	feedID, err := request.GetIntegerParam("feedID")
 	if err != nil {
@@ -144,6 +151,7 @@ func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, respon
 	response.Redirect(ctx.GetRoute("feeds"))
 }
 
+// RefreshFeed refresh a subscription and redirect to the feed entries page.
 func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, response *core.Response) {
 	feedID, err := request.GetIntegerParam("feedID")
 	if err != nil {

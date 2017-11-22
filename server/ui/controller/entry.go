@@ -33,6 +33,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
@@ -52,6 +53,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithFeedID(feedID)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", "<=", entry.Date)
@@ -64,6 +66,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithFeedID(feedID)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", ">=", entry.Date)
@@ -88,8 +91,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	if entry.Status == model.EntryStatusUnread {
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			log.Println(err)
-			response.Html().ServerError(nil)
+			response.Html().ServerError(err)
 			return
 		}
 	}
@@ -124,6 +126,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithCategoryID(categoryID)
 	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
@@ -143,6 +146,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithCategoryID(categoryID)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", "<=", entry.Date)
@@ -155,6 +159,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithCategoryID(categoryID)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", ">=", entry.Date)
@@ -208,6 +213,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
@@ -227,6 +233,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", "<=", entry.Date)
@@ -239,6 +246,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", ">=", entry.Date)
@@ -292,6 +300,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
@@ -311,6 +320,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", "<=", entry.Date)
@@ -323,6 +333,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithCondition("e.id", "!=", entryID)
 	builder.WithCondition("e.published_at", ">=", entry.Date)
@@ -354,7 +365,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	}))
 }
 
-// UpdateEntriesStatus handles Ajax request to update a list of entries.
+// UpdateEntriesStatus handles Ajax request to update the status for a list of entries.
 func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 

@@ -6,12 +6,14 @@ package storage
 
 import (
 	"fmt"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
 	"strings"
 	"time"
+
+	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/model"
 )
 
+// EntryQueryBuilder builds a SQL query to fetch entries.
 type EntryQueryBuilder struct {
 	store      *Storage
 	feedID     int64
@@ -19,73 +21,78 @@ type EntryQueryBuilder struct {
 	timezone   string
 	categoryID int64
 	status     string
+	notStatus  string
 	order      string
 	direction  string
 	limit      int
 	offset     int
 	entryID    int64
-	gtEntryID  int64
-	ltEntryID  int64
 	conditions []string
 	args       []interface{}
 }
 
+// WithCondition defines a new condition.
 func (e *EntryQueryBuilder) WithCondition(column, operator string, value interface{}) *EntryQueryBuilder {
 	e.args = append(e.args, value)
 	e.conditions = append(e.conditions, fmt.Sprintf("%s %s $%d", column, operator, len(e.args)+1))
 	return e
 }
 
+// WithEntryID set the entryID.
 func (e *EntryQueryBuilder) WithEntryID(entryID int64) *EntryQueryBuilder {
 	e.entryID = entryID
 	return e
 }
 
-func (e *EntryQueryBuilder) WithEntryIDGreaterThan(entryID int64) *EntryQueryBuilder {
-	e.gtEntryID = entryID
-	return e
-}
-
-func (e *EntryQueryBuilder) WithEntryIDLowerThan(entryID int64) *EntryQueryBuilder {
-	e.ltEntryID = entryID
-	return e
-}
-
+// WithFeedID set the feedID.
 func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
 	e.feedID = feedID
 	return e
 }
 
+// WithCategoryID set the categoryID.
 func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder {
 	e.categoryID = categoryID
 	return e
 }
 
+// WithStatus set the entry status.
 func (e *EntryQueryBuilder) WithStatus(status string) *EntryQueryBuilder {
 	e.status = status
 	return e
 }
 
+// WithoutStatus set the entry status that should not be returned.
+func (e *EntryQueryBuilder) WithoutStatus(status string) *EntryQueryBuilder {
+	e.notStatus = status
+	return e
+}
+
+// WithOrder set the sorting order.
 func (e *EntryQueryBuilder) WithOrder(order string) *EntryQueryBuilder {
 	e.order = order
 	return e
 }
 
+// WithDirection set the sorting direction.
 func (e *EntryQueryBuilder) WithDirection(direction string) *EntryQueryBuilder {
 	e.direction = direction
 	return e
 }
 
+// WithLimit set the limit.
 func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
 	e.limit = limit
 	return e
 }
 
+// WithOffset set the offset.
 func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 	e.offset = offset
 	return e
 }
 
+// CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	defer helper.ExecutionTime(
 		time.Now(),
@@ -102,6 +109,7 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	return count, nil
 }
 
+// GetEntry returns a single entry that match the condition.
 func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 	e.limit = 1
 	entries, err := e.GetEntries()
@@ -121,6 +129,7 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 	return entries[0], nil
 }
 
+// GetEntries returns a list of entries that match the condition.
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	debugStr := "[EntryQueryBuilder:GetEntries] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d"
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
@@ -219,19 +228,14 @@ func (e *EntryQueryBuilder) buildCondition() ([]interface{}, string) {
 		args = append(args, e.entryID)
 	}
 
-	if e.gtEntryID != 0 {
-		conditions = append(conditions, fmt.Sprintf("e.id > $%d", len(args)+1))
-		args = append(args, e.gtEntryID)
-	}
-
-	if e.ltEntryID != 0 {
-		conditions = append(conditions, fmt.Sprintf("e.id < $%d", len(args)+1))
-		args = append(args, e.ltEntryID)
-	}
-
 	if e.status != "" {
 		conditions = append(conditions, fmt.Sprintf("e.status=$%d", len(args)+1))
 		args = append(args, e.status)
+	}
+
+	if e.notStatus != "" {
+		conditions = append(conditions, fmt.Sprintf("e.status != $%d", len(args)+1))
+		args = append(args, e.notStatus)
 	}
 
 	return args, strings.Join(conditions, " AND ")
@@ -259,6 +263,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 	return strings.Join(queries, " ")
 }
 
+// NewEntryQueryBuilder returns a new EntryQueryBuilder.
 func NewEntryQueryBuilder(store *Storage, userID int64, timezone string) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
 		store:    store,

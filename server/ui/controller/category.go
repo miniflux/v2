@@ -13,6 +13,7 @@ import (
 	"github.com/miniflux/miniflux2/server/ui/form"
 )
 
+// ShowCategories shows the page with all categories.
 func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, response *core.Response) {
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
@@ -34,6 +35,7 @@ func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, re
 	}))
 }
 
+// ShowCategoryEntries shows all entries for the given category.
 func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	offset := request.GetQueryIntegerParam("offset", 0)
@@ -53,6 +55,7 @@ func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Reques
 	builder.WithCategoryID(category.ID)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOffset(offset)
 	builder.WithLimit(NbItemsPerPage)
 
@@ -77,6 +80,7 @@ func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Reques
 	}))
 }
 
+// CreateCategory shows the form to create a new category.
 func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
@@ -89,6 +93,7 @@ func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, re
 	}))
 }
 
+// SaveCategory validate and save the new category into the database.
 func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	args, err := c.getCommonTemplateArgs(ctx)
@@ -131,6 +136,7 @@ func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, resp
 	response.Redirect(ctx.GetRoute("categories"))
 }
 
+// EditCategory shows the form to modify a category.
 func (c *Controller) EditCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
@@ -149,6 +155,7 @@ func (c *Controller) EditCategory(ctx *core.Context, request *core.Request, resp
 	response.Html().Render("edit_category", args)
 }
 
+// UpdateCategory validate and update a category.
 func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 
@@ -191,6 +198,7 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 	response.Redirect(ctx.GetRoute("categories"))
 }
 
+// RemoveCategory delete a category from the database.
 func (c *Controller) RemoveCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 

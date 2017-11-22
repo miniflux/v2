@@ -9,6 +9,7 @@ import (
 	"github.com/miniflux/miniflux2/server/core"
 )
 
+// ShowUnreadPage render the page with all unread entries.
 func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	offset := request.GetQueryIntegerParam("offset", 0)
