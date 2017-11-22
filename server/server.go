@@ -20,7 +20,7 @@ func NewServer(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
-		Addr:         cfg.Get("LISTEN_ADDR", "127.0.0.1:8080"),
+		Addr:         cfg.Get("LISTEN_ADDR", config.DefaultListenAddr),
 		Handler:      getRoutes(cfg, store, feedHandler),
 	}
 

@@ -47,8 +47,17 @@ func run(cfg *config.Config, store *storage.Storage) {
 	server := server.NewServer(cfg, store, feedHandler)
 
 	go func() {
-		pool := scheduler.NewWorkerPool(feedHandler, cfg.GetInt("WORKER_POOL_SIZE", 5))
-		scheduler.NewScheduler(store, pool, cfg.GetInt("POLLING_FREQUENCY", 30), cfg.GetInt("BATCH_SIZE", 10))
+		pool := scheduler.NewWorkerPool(
+			feedHandler,
+			cfg.GetInt("WORKER_POOL_SIZE", config.DefaultWorkerPoolSize),
+		)
+
+		scheduler.NewScheduler(
+			store,
+			pool,
+			cfg.GetInt("POLLING_FREQUENCY", config.DefaultPollingFrequency),
+			cfg.GetInt("BATCH_SIZE", config.DefaultBatchSize),
+		)
 	}()
 
 	<-stop
@@ -82,8 +91,8 @@ func main() {
 
 	cfg := config.NewConfig()
 	store := storage.NewStorage(
-		cfg.Get("DATABASE_URL", "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"),
-		cfg.GetInt("DATABASE_MAX_CONNS", 20),
+		cfg.Get("DATABASE_URL", config.DefaultDatabaseURL),
+		cfg.GetInt("DATABASE_MAX_CONNS", config.DefaultDatabaseMaxConns),
 	)
 
 	if *flagInfo {

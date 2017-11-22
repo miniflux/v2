@@ -9,13 +9,21 @@ import (
 	"strconv"
 )
 
+// Default config parameters values
 const (
-	DefaultBaseURL = "http://localhost"
+	DefaultBaseURL          = "http://localhost"
+	DefaultDatabaseURL      = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
+	DefaultWorkerPoolSize   = 5
+	DefaultPollingFrequency = 60
+	DefaultBatchSize        = 10
+	DefaultDatabaseMaxConns = 20
+	DefaultListenAddr       = "127.0.0.1:8080"
 )
 
-type Config struct {
-}
+// Config manages configuration parameters.
+type Config struct{}
 
+// Get returns a config parameter value.
 func (c *Config) Get(key, fallback string) string {
 	value := os.Getenv(key)
 	if value == "" {
@@ -25,6 +33,7 @@ func (c *Config) Get(key, fallback string) string {
 	return value
 }
 
+// GetInt returns a config parameter as integer.
 func (c *Config) GetInt(key string, fallback int) int {
 	value := os.Getenv(key)
 	if value == "" {
@@ -35,6 +44,7 @@ func (c *Config) GetInt(key string, fallback int) int {
 	return v
 }
 
+// NewConfig returns a new Config.
 func NewConfig() *Config {
 	return &Config{}
 }
