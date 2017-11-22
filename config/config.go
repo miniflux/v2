@@ -20,6 +20,8 @@ const (
 	DefaultListenAddr       = "127.0.0.1:8080"
 	DefaultCertFile         = ""
 	DefaultKeyFile          = ""
+	DefaultCertDomain       = ""
+	DefaultCertCache        = "/tmp/cert_cache"
 )
 
 // Config manages configuration parameters.

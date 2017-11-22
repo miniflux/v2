@@ -4,8 +4,8 @@
         "%d erreurs"
     ],
     "plural.categories.feed_count": [
-        "Il y %d abonnement.",
-        "Il y %d abonnements."
+        "Il y a %d abonnement.",
+        "Il y a %d abonnements."
     ],
     "Username": "Nom d'utilisateur",
     "Password": "Mot de passe",
