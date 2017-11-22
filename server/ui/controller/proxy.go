@@ -18,26 +18,26 @@ import (
 func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, response *core.Response) {
 	encodedURL := request.StringParam("encodedURL", "")
 	if encodedURL == "" {
-		response.Html().BadRequest(errors.New("No URL provided"))
+		response.HTML().BadRequest(errors.New("No URL provided"))
 		return
 	}
 
 	decodedURL, err := base64.StdEncoding.DecodeString(encodedURL)
 	if err != nil {
-		response.Html().BadRequest(errors.New("Unable to decode this URL"))
+		response.HTML().BadRequest(errors.New("Unable to decode this URL"))
 		return
 	}
 
 	resp, err := http.Get(string(decodedURL))
 	if err != nil {
 		log.Println(err)
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 

@@ -17,11 +17,11 @@ func (c *Controller) ShowSettings(ctx *core.Context, request *core.Request, resp
 
 	args, err := c.getSettingsFormTemplateArgs(ctx, user, nil)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("settings", args)
+	response.HTML().Render("settings", args)
 }
 
 func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, response *core.Response) {
@@ -30,12 +30,12 @@ func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, re
 	settingsForm := form.NewSettingsForm(request.Request())
 	args, err := c.getSettingsFormTemplateArgs(ctx, user, settingsForm)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if err := settingsForm.Validate(); err != nil {
-		response.Html().Render("settings", args.Merge(tplParams{
+		response.HTML().Render("settings", args.Merge(tplParams{
 			"form":         settingsForm,
 			"errorMessage": err.Error(),
 		}))
@@ -43,7 +43,7 @@ func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, re
 	}
 
 	if c.store.AnotherUserExists(user.ID, settingsForm.Username) {
-		response.Html().Render("settings", args.Merge(tplParams{
+		response.HTML().Render("settings", args.Merge(tplParams{
 			"form":         settingsForm,
 			"errorMessage": "This user already exists.",
 		}))
@@ -53,7 +53,7 @@ func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, re
 	err = c.store.UpdateUser(settingsForm.Merge(user))
 	if err != nil {
 		log.Println(err)
-		response.Html().Render("settings", args.Merge(tplParams{
+		response.HTML().Render("settings", args.Merge(tplParams{
 			"form":         settingsForm,
 			"errorMessage": "Unable to update this user.",
 		}))

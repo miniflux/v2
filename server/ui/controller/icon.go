@@ -12,18 +12,18 @@ import (
 func (c *Controller) ShowIcon(ctx *core.Context, request *core.Request, response *core.Response) {
 	iconID, err := request.IntegerParam("iconID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
 	icon, err := c.store.GetIconByID(iconID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if icon == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 

@@ -16,20 +16,20 @@ import (
 func (c *Controller) GetSubscriptions(ctx *core.Context, request *core.Request, response *core.Response) {
 	websiteURL, err := payload.DecodeURLPayload(request.Body())
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	subscriptions, err := subscription.FindSubscriptions(websiteURL)
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to discover subscriptions"))
+		response.JSON().ServerError(errors.New("Unable to discover subscriptions"))
 		return
 	}
 
 	if subscriptions == nil {
-		response.Json().NotFound(fmt.Errorf("No subscription found"))
+		response.JSON().NotFound(fmt.Errorf("No subscription found"))
 		return
 	}
 
-	response.Json().Standard(subscriptions)
+	response.JSON().Standard(subscriptions)
 }

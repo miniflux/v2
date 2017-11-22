@@ -23,17 +23,17 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	countUnread, err := builder.CountEntries()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("unread", tplParams{
+	response.HTML().Render("unread", tplParams{
 		"user":        user,
 		"countUnread": countUnread,
 		"entries":     entries,

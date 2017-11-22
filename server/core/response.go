@@ -5,42 +5,50 @@
 package core
 
 import (
-	"github.com/miniflux/miniflux2/server/template"
 	"net/http"
 	"time"
+
+	"github.com/miniflux/miniflux2/server/template"
 )
 
+// Response handles HTTP responses.
 type Response struct {
 	writer   http.ResponseWriter
 	request  *http.Request
 	template *template.TemplateEngine
 }
 
+// SetCookie send a cookie to the client.
 func (r *Response) SetCookie(cookie *http.Cookie) {
 	http.SetCookie(r.writer, cookie)
 }
 
-func (r *Response) Json() *JsonResponse {
+// JSON returns a JSONResponse.
+func (r *Response) JSON() *JSONResponse {
 	r.commonHeaders()
-	return &JsonResponse{writer: r.writer, request: r.request}
+	return &JSONResponse{writer: r.writer, request: r.request}
 }
 
-func (r *Response) Html() *HtmlResponse {
+// HTML returns a HTMLResponse.
+func (r *Response) HTML() *HTMLResponse {
 	r.commonHeaders()
-	return &HtmlResponse{writer: r.writer, request: r.request, template: r.template}
+	return &HTMLResponse{writer: r.writer, request: r.request, template: r.template}
 }
 
-func (r *Response) Xml() *XmlResponse {
+// XML returns a XMLResponse.
+func (r *Response) XML() *XMLResponse {
 	r.commonHeaders()
-	return &XmlResponse{writer: r.writer, request: r.request}
+	return &XMLResponse{writer: r.writer, request: r.request}
 }
 
+// Redirect redirects the user to another location.
 func (r *Response) Redirect(path string) {
 	http.Redirect(r.writer, r.request, path, http.StatusFound)
 }
 
-func (r *Response) Cache(mime_type, etag string, content []byte, duration time.Duration) {
-	r.writer.Header().Set("Content-Type", mime_type)
+// Cache returns a response with caching headers.
+func (r *Response) Cache(mimeType, etag string, content []byte, duration time.Duration) {
+	r.writer.Header().Set("Content-Type", mimeType)
 	r.writer.Header().Set("Etag", etag)
 	r.writer.Header().Set("Cache-Control", "public")
 	r.writer.Header().Set("Expires", time.Now().Add(duration).Format(time.RFC1123))
@@ -58,6 +66,7 @@ func (r *Response) commonHeaders() {
 	r.writer.Header().Set("X-Frame-Options", "DENY")
 }
 
+// NewResponse returns a new Response.
 func NewResponse(w http.ResponseWriter, r *http.Request, template *template.TemplateEngine) *Response {
 	return &Response{writer: w, request: r, template: template}
 }

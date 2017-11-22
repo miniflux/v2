@@ -20,7 +20,7 @@ func (c *Controller) ShowLoginPage(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	response.Html().Render("login", tplParams{
+	response.HTML().Render("login", tplParams{
 		"csrf": ctx.GetCsrfToken(),
 	})
 }
@@ -34,13 +34,13 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 
 	if err := authForm.Validate(); err != nil {
 		log.Println(err)
-		response.Html().Render("login", tplParams)
+		response.HTML().Render("login", tplParams)
 		return
 	}
 
 	if err := c.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
 		log.Println(err)
-		response.Html().Render("login", tplParams)
+		response.HTML().Render("login", tplParams)
 		return
 	}
 
@@ -50,7 +50,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 		realip.RealIP(request.Request()),
 	)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 

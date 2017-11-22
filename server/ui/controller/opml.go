@@ -14,21 +14,21 @@ func (c *Controller) Export(ctx *core.Context, request *core.Request, response *
 	user := ctx.GetLoggedUser()
 	opml, err := c.opmlHandler.Export(user.ID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Xml().Download("feeds.opml", opml)
+	response.XML().Download("feeds.opml", opml)
 }
 
 func (c *Controller) Import(ctx *core.Context, request *core.Request, response *core.Response) {
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("import", args.Merge(tplParams{
+	response.HTML().Render("import", args.Merge(tplParams{
 		"menu": "feeds",
 	}))
 }
@@ -48,11 +48,11 @@ func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, respon
 	if impErr := c.opmlHandler.Import(user.ID, file); impErr != nil {
 		args, err := c.getCommonTemplateArgs(ctx)
 		if err != nil {
-			response.Html().ServerError(err)
+			response.HTML().ServerError(err)
 			return
 		}
 
-		response.Html().Render("import", args.Merge(tplParams{
+		response.HTML().Render("import", args.Merge(tplParams{
 			"errorMessage": impErr,
 			"menu":         "feeds",
 		}))

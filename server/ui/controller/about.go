@@ -12,11 +12,11 @@ import (
 func (c *Controller) AboutPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("about", args.Merge(tplParams{
+	response.HTML().Render("about", args.Merge(tplParams{
 		"version":    version.Version,
 		"build_date": version.BuildDate,
 		"menu":       "settings",

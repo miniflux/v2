@@ -13,151 +13,151 @@ import (
 // CreateUser is the API handler to create a new user.
 func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
-		response.Json().Forbidden()
+		response.JSON().Forbidden()
 		return
 	}
 
 	user, err := payload.DecodeUserPayload(request.Body())
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	if err := user.ValidateUserCreation(); err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	if c.store.UserExists(user.Username) {
-		response.Json().BadRequest(errors.New("This user already exists"))
+		response.JSON().BadRequest(errors.New("This user already exists"))
 		return
 	}
 
 	err = c.store.CreateUser(user)
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to create this user"))
+		response.JSON().ServerError(errors.New("Unable to create this user"))
 		return
 	}
 
 	user.Password = ""
-	response.Json().Created(user)
+	response.JSON().Created(user)
 }
 
 // UpdateUser is the API handler to update the given user.
 func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
-		response.Json().Forbidden()
+		response.JSON().Forbidden()
 		return
 	}
 
 	userID, err := request.IntegerParam("userID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	user, err := payload.DecodeUserPayload(request.Body())
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	if err := user.ValidateUserModification(); err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	originalUser, err := c.store.GetUserById(userID)
 	if err != nil {
-		response.Json().BadRequest(errors.New("Unable to fetch this user from the database"))
+		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if originalUser == nil {
-		response.Json().NotFound(errors.New("User not found"))
+		response.JSON().NotFound(errors.New("User not found"))
 		return
 	}
 
 	originalUser.Merge(user)
 	if err = c.store.UpdateUser(originalUser); err != nil {
-		response.Json().ServerError(errors.New("Unable to update this user"))
+		response.JSON().ServerError(errors.New("Unable to update this user"))
 		return
 	}
 
-	response.Json().Created(originalUser)
+	response.JSON().Created(originalUser)
 }
 
 // GetUsers is the API handler to get the list of users.
 func (c *Controller) GetUsers(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
-		response.Json().Forbidden()
+		response.JSON().Forbidden()
 		return
 	}
 
 	users, err := c.store.GetUsers()
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch the list of users"))
+		response.JSON().ServerError(errors.New("Unable to fetch the list of users"))
 		return
 	}
 
-	response.Json().Standard(users)
+	response.JSON().Standard(users)
 }
 
 // GetUser is the API handler to fetch the given user.
 func (c *Controller) GetUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
-		response.Json().Forbidden()
+		response.JSON().Forbidden()
 		return
 	}
 
 	userID, err := request.IntegerParam("userID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	user, err := c.store.GetUserById(userID)
 	if err != nil {
-		response.Json().BadRequest(errors.New("Unable to fetch this user from the database"))
+		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if user == nil {
-		response.Json().NotFound(errors.New("User not found"))
+		response.JSON().NotFound(errors.New("User not found"))
 		return
 	}
 
-	response.Json().Standard(user)
+	response.JSON().Standard(user)
 }
 
 // RemoveUser is the API handler to remove an existing user.
 func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
-		response.Json().Forbidden()
+		response.JSON().Forbidden()
 		return
 	}
 
 	userID, err := request.IntegerParam("userID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	user, err := c.store.GetUserById(userID)
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch this user from the database"))
+		response.JSON().ServerError(errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if user == nil {
-		response.Json().NotFound(errors.New("User not found"))
+		response.JSON().NotFound(errors.New("User not found"))
 		return
 	}
 
 	if err := c.store.RemoveUser(user.ID); err != nil {
-		response.Json().BadRequest(errors.New("Unable to remove this user from the database"))
+		response.JSON().BadRequest(errors.New("Unable to remove this user from the database"))
 		return
 	}
 
-	response.Json().NoContent()
+	response.JSON().NoContent()
 }

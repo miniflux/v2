@@ -14,64 +14,64 @@ import (
 func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	category, err := payload.DecodeCategoryPayload(request.Body())
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	category.UserID = ctx.GetUserID()
 	if err := category.ValidateCategoryCreation(); err != nil {
-		response.Json().ServerError(err)
+		response.JSON().ServerError(err)
 		return
 	}
 
 	err = c.store.CreateCategory(category)
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to create this category"))
+		response.JSON().ServerError(errors.New("Unable to create this category"))
 		return
 	}
 
-	response.Json().Created(category)
+	response.JSON().Created(category)
 }
 
 // UpdateCategory is the API handler to update a category.
 func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
 	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	category, err := payload.DecodeCategoryPayload(request.Body())
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	category.UserID = ctx.GetUserID()
 	category.ID = categoryID
 	if err := category.ValidateCategoryModification(); err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	err = c.store.UpdateCategory(category)
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to update this category"))
+		response.JSON().ServerError(errors.New("Unable to update this category"))
 		return
 	}
 
-	response.Json().Created(category)
+	response.JSON().Created(category)
 }
 
 // GetCategories is the API handler to get a list of categories for a given user.
 func (c *Controller) GetCategories(ctx *core.Context, request *core.Request, response *core.Response) {
 	categories, err := c.store.GetCategories(ctx.GetUserID())
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch categories"))
+		response.JSON().ServerError(errors.New("Unable to fetch categories"))
 		return
 	}
 
-	response.Json().Standard(categories)
+	response.JSON().Standard(categories)
 }
 
 // RemoveCategory is the API handler to remove a category.
@@ -79,19 +79,19 @@ func (c *Controller) RemoveCategory(ctx *core.Context, request *core.Request, re
 	userID := ctx.GetUserID()
 	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	if !c.store.CategoryExists(userID, categoryID) {
-		response.Json().NotFound(errors.New("Category not found"))
+		response.JSON().NotFound(errors.New("Category not found"))
 		return
 	}
 
 	if err := c.store.RemoveCategory(userID, categoryID); err != nil {
-		response.Json().ServerError(errors.New("Unable to remove this category"))
+		response.JSON().ServerError(errors.New("Unable to remove this category"))
 		return
 	}
 
-	response.Json().NoContent()
+	response.JSON().NoContent()
 }

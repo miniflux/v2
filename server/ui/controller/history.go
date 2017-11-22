@@ -16,7 +16,7 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -29,17 +29,17 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("history", args.Merge(tplParams{
+	response.HTML().Render("history", args.Merge(tplParams{
 		"entries":    entries,
 		"total":      count,
 		"pagination": c.getPagination(ctx.GetRoute("history"), count, offset),
@@ -53,7 +53,7 @@ func (c *Controller) FlushHistory(ctx *core.Context, request *core.Request, resp
 
 	err := c.store.FlushHistory(user.ID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 

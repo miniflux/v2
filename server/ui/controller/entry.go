@@ -20,13 +20,13 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
@@ -37,18 +37,18 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if entry == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	builder.WithDirection(model.DefaultSortingDirection)
 	nextEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -74,7 +74,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
 	prevEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -91,12 +91,12 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	if entry.Status == model.EntryStatusUnread {
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			response.Html().ServerError(err)
+			response.HTML().ServerError(err)
 			return
 		}
 	}
 
-	response.Html().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -113,13 +113,13 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 
 	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
@@ -130,18 +130,18 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if entry == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -154,7 +154,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	builder.WithDirection(sortingDirection)
 	nextEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -167,7 +167,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
 	prevEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -185,12 +185,12 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
 			log.Println(err)
-			response.Html().ServerError(nil)
+			response.HTML().ServerError(nil)
 			return
 		}
 	}
 
-	response.Html().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -207,7 +207,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
@@ -217,18 +217,18 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if entry == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -241,7 +241,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	builder.WithDirection(sortingDirection)
 	nextEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -254,7 +254,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
 	prevEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -272,12 +272,12 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
 			log.Println(err)
-			response.Html().ServerError(nil)
+			response.HTML().ServerError(nil)
 			return
 		}
 	}
 
-	response.Html().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -294,7 +294,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
@@ -304,18 +304,18 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if entry == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -328,7 +328,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	builder.WithDirection(sortingDirection)
 	nextEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -341,7 +341,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
 	prevEntry, err := builder.GetEntry()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -355,7 +355,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 		prevEntryRoute = ctx.GetRoute("readEntry", "entryID", prevEntry.ID)
 	}
 
-	response.Html().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -372,21 +372,21 @@ func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Reques
 	entryIDs, status, err := payload.DecodeEntryStatusPayload(request.Body())
 	if err != nil {
 		log.Println(err)
-		response.Json().BadRequest(nil)
+		response.JSON().BadRequest(nil)
 		return
 	}
 
 	if len(entryIDs) == 0 {
-		response.Json().BadRequest(errors.New("The list of entryID is empty"))
+		response.JSON().BadRequest(errors.New("The list of entryID is empty"))
 		return
 	}
 
 	err = c.store.SetEntriesStatus(user.ID, entryIDs, status)
 	if err != nil {
 		log.Println(err)
-		response.Json().ServerError(nil)
+		response.JSON().ServerError(nil)
 		return
 	}
 
-	response.Json().Standard("OK")
+	response.JSON().Standard("OK")
 }

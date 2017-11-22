@@ -5,14 +5,15 @@
 package core
 
 import (
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/locale"
 	"github.com/miniflux/miniflux2/server/middleware"
 	"github.com/miniflux/miniflux2/server/template"
 	"github.com/miniflux/miniflux2/storage"
-	"log"
-	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 )

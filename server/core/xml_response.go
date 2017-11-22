@@ -9,12 +9,14 @@ import (
 	"net/http"
 )
 
-type XmlResponse struct {
+// XMLResponse handles XML responses.
+type XMLResponse struct {
 	writer  http.ResponseWriter
 	request *http.Request
 }
 
-func (x *XmlResponse) Download(filename, data string) {
+// Download force the download of a XML document.
+func (x *XMLResponse) Download(filename, data string) {
 	x.writer.Header().Set("Content-Type", "text/xml")
 	x.writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 	x.writer.Write([]byte(data))

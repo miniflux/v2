@@ -11,29 +11,34 @@ import (
 	"net/http"
 )
 
-type JsonResponse struct {
+// JSONResponse handles JSON responses.
+type JSONResponse struct {
 	writer  http.ResponseWriter
 	request *http.Request
 }
 
-func (j *JsonResponse) Standard(v interface{}) {
+// Standard sends a JSON response with the status code 200.
+func (j *JSONResponse) Standard(v interface{}) {
 	j.writer.WriteHeader(http.StatusOK)
 	j.commonHeaders()
 	j.writer.Write(j.toJSON(v))
 }
 
-func (j *JsonResponse) Created(v interface{}) {
+// Created sends a JSON response with the status code 201.
+func (j *JSONResponse) Created(v interface{}) {
 	j.writer.WriteHeader(http.StatusCreated)
 	j.commonHeaders()
 	j.writer.Write(j.toJSON(v))
 }
 
-func (j *JsonResponse) NoContent() {
+// NoContent sends a JSON response with the status code 204.
+func (j *JSONResponse) NoContent() {
 	j.writer.WriteHeader(http.StatusNoContent)
 	j.commonHeaders()
 }
 
-func (j *JsonResponse) BadRequest(err error) {
+// BadRequest sends a JSON response with the status code 400.
+func (j *JSONResponse) BadRequest(err error) {
 	log.Println("[API:BadRequest]", err)
 	j.writer.WriteHeader(http.StatusBadRequest)
 	j.commonHeaders()
@@ -43,14 +48,16 @@ func (j *JsonResponse) BadRequest(err error) {
 	}
 }
 
-func (j *JsonResponse) NotFound(err error) {
+// NotFound sends a JSON response with the status code 404.
+func (j *JSONResponse) NotFound(err error) {
 	log.Println("[API:NotFound]", err)
 	j.writer.WriteHeader(http.StatusNotFound)
 	j.commonHeaders()
 	j.writer.Write(j.encodeError(err))
 }
 
-func (j *JsonResponse) ServerError(err error) {
+// ServerError sends a JSON response with the status code 500.
+func (j *JSONResponse) ServerError(err error) {
 	log.Println("[API:ServerError]", err)
 	j.writer.WriteHeader(http.StatusInternalServerError)
 	j.commonHeaders()
@@ -60,19 +67,20 @@ func (j *JsonResponse) ServerError(err error) {
 	}
 }
 
-func (j *JsonResponse) Forbidden() {
+// Forbidden sends a JSON response with the status code 403.
+func (j *JSONResponse) Forbidden() {
 	log.Println("[API:Forbidden]")
 	j.writer.WriteHeader(http.StatusForbidden)
 	j.commonHeaders()
 	j.writer.Write(j.encodeError(errors.New("Access Forbidden")))
 }
 
-func (j *JsonResponse) commonHeaders() {
+func (j *JSONResponse) commonHeaders() {
 	j.writer.Header().Set("Accept", "application/json")
 	j.writer.Header().Set("Content-Type", "application/json")
 }
 
-func (j *JsonResponse) encodeError(err error) []byte {
+func (j *JSONResponse) encodeError(err error) []byte {
 	type errorMsg struct {
 		ErrorMessage string `json:"error_message"`
 	}
@@ -86,7 +94,7 @@ func (j *JsonResponse) encodeError(err error) []byte {
 	return data
 }
 
-func (j *JsonResponse) toJSON(v interface{}) []byte {
+func (j *JSONResponse) toJSON(v interface{}) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {
 		log.Println("Unable to convert interface to JSON:", err)

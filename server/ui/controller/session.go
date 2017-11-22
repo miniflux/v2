@@ -13,18 +13,18 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 	user := ctx.GetLoggedUser()
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	sessions, err := c.store.GetSessions(user.ID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	sessionCookie := request.Cookie("sessionID")
-	response.Html().Render("sessions", args.Merge(tplParams{
+	response.HTML().Render("sessions", args.Merge(tplParams{
 		"sessions":            sessions,
 		"currentSessionToken": sessionCookie,
 		"menu":                "settings",
@@ -36,7 +36,7 @@ func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, res
 
 	sessionID, err := request.IntegerParam("sessionID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 

@@ -5,23 +5,27 @@
 package core
 
 import (
-	"github.com/miniflux/miniflux2/server/template"
 	"log"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/server/template"
 )
 
-type HtmlResponse struct {
+// HTMLResponse handles HTML responses.
+type HTMLResponse struct {
 	writer   http.ResponseWriter
 	request  *http.Request
 	template *template.TemplateEngine
 }
 
-func (h *HtmlResponse) Render(template string, args map[string]interface{}) {
+// Render execute a template and send to the client the generated HTML.
+func (h *HTMLResponse) Render(template string, args map[string]interface{}) {
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	h.template.Execute(h.writer, template, args)
 }
 
-func (h *HtmlResponse) ServerError(err error) {
+// ServerError sends a 500 error to the browser.
+func (h *HTMLResponse) ServerError(err error) {
 	h.writer.WriteHeader(http.StatusInternalServerError)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -33,7 +37,8 @@ func (h *HtmlResponse) ServerError(err error) {
 	}
 }
 
-func (h *HtmlResponse) BadRequest(err error) {
+// BadRequest sends a 400 error to the browser.
+func (h *HTMLResponse) BadRequest(err error) {
 	h.writer.WriteHeader(http.StatusBadRequest)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -45,13 +50,15 @@ func (h *HtmlResponse) BadRequest(err error) {
 	}
 }
 
-func (h *HtmlResponse) NotFound() {
+// NotFound sends a 404 error to the browser.
+func (h *HTMLResponse) NotFound() {
 	h.writer.WriteHeader(http.StatusNotFound)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	h.writer.Write([]byte("Page Not Found"))
 }
 
-func (h *HtmlResponse) Forbidden() {
+// Forbidden sends a 403 error to the browser.
+func (h *HTMLResponse) Forbidden() {
 	h.writer.WriteHeader(http.StatusForbidden)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	h.writer.Write([]byte("Access Forbidden"))

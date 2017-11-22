@@ -16,13 +16,13 @@ func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response
 	userID := ctx.GetUserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
@@ -32,16 +32,16 @@ func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch this entry from the database"))
+		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
 		return
 	}
 
 	if entry == nil {
-		response.Json().NotFound(errors.New("Entry not found"))
+		response.JSON().NotFound(errors.New("Entry not found"))
 		return
 	}
 
-	response.Json().Standard(entry)
+	response.JSON().Standard(entry)
 }
 
 // GetFeedEntries is the API handler to get all feed entries.
@@ -49,27 +49,27 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 	userID := ctx.GetUserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	status := request.QueryStringParam("status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
-			response.Json().BadRequest(err)
+			response.JSON().BadRequest(err)
 			return
 		}
 	}
 
 	order := request.QueryStringParam("order", "id")
 	if err := model.ValidateEntryOrder(order); err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	direction := request.QueryStringParam("direction", "desc")
 	if err := model.ValidateDirection(direction); err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
@@ -86,17 +86,17 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch the list of entries"))
+		response.JSON().ServerError(errors.New("Unable to fetch the list of entries"))
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to count the number of entries"))
+		response.JSON().ServerError(errors.New("Unable to count the number of entries"))
 		return
 	}
 
-	response.Json().Standard(&payload.EntriesResponse{Total: count, Entries: entries})
+	response.JSON().Standard(&payload.EntriesResponse{Total: count, Entries: entries})
 }
 
 // SetEntryStatus is the API handler to change the status of an entry.
@@ -105,24 +105,24 @@ func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, re
 
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
 	status, err := payload.DecodeEntryStatusPayload(request.Body())
 	if err != nil {
-		response.Json().BadRequest(errors.New("Invalid JSON payload"))
+		response.JSON().BadRequest(errors.New("Invalid JSON payload"))
 		return
 	}
 
 	if err := model.ValidateEntryStatus(status); err != nil {
-		response.Json().BadRequest(err)
+		response.JSON().BadRequest(err)
 		return
 	}
 
@@ -132,25 +132,25 @@ func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, re
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch this entry from the database"))
+		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
 		return
 	}
 
 	if entry == nil {
-		response.Json().NotFound(errors.New("Entry not found"))
+		response.JSON().NotFound(errors.New("Entry not found"))
 		return
 	}
 
 	if err := c.store.SetEntriesStatus(userID, []int64{entry.ID}, status); err != nil {
-		response.Json().ServerError(errors.New("Unable to change entry status"))
+		response.JSON().ServerError(errors.New("Unable to change entry status"))
 		return
 	}
 
 	entry, err = builder.GetEntry()
 	if err != nil {
-		response.Json().ServerError(errors.New("Unable to fetch this entry from the database"))
+		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
 		return
 	}
 
-	response.Json().Standard(entry)
+	response.JSON().Standard(entry)
 }

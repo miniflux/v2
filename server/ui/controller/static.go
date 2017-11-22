@@ -33,7 +33,7 @@ func (c *Controller) Favicon(ctx *core.Context, request *core.Request, response 
 	blob, err := base64.StdEncoding.DecodeString(static.Binaries["favicon.ico"])
 	if err != nil {
 		log.Println(err)
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return
 	}
 

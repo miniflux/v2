@@ -19,17 +19,17 @@ func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, res
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	feeds, err := c.store.GetFeeds(user.ID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("feeds", args.Merge(tplParams{
+	response.HTML().Render("feeds", args.Merge(tplParams{
 		"feeds": feeds,
 		"total": len(feeds),
 		"menu":  "feeds",
@@ -43,7 +43,7 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -62,17 +62,17 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("feed_entries", args.Merge(tplParams{
+	response.HTML().Render("feed_entries", args.Merge(tplParams{
 		"feed":       feed,
 		"entries":    entries,
 		"total":      count,
@@ -92,11 +92,11 @@ func (c *Controller) EditFeed(ctx *core.Context, request *core.Request, response
 
 	args, err := c.getFeedFormTemplateArgs(ctx, user, feed, nil)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("edit_feed", args)
+	response.HTML().Render("edit_feed", args)
 }
 
 // UpdateFeed update a subscription and redirect to the feed entries page.
@@ -111,12 +111,12 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 	feedForm := form.NewFeedForm(request.Request())
 	args, err := c.getFeedFormTemplateArgs(ctx, user, feed, feedForm)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	if err := feedForm.ValidateModification(); err != nil {
-		response.Html().Render("edit_feed", args.Merge(tplParams{
+		response.HTML().Render("edit_feed", args.Merge(tplParams{
 			"errorMessage": err.Error(),
 		}))
 		return
@@ -125,7 +125,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 	err = c.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
 		log.Println(err)
-		response.Html().Render("edit_feed", args.Merge(tplParams{
+		response.HTML().Render("edit_feed", args.Merge(tplParams{
 			"errorMessage": "Unable to update this feed.",
 		}))
 		return
@@ -138,13 +138,13 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, response *core.Response) {
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	user := ctx.GetLoggedUser()
 	if err := c.store.RemoveFeed(user.ID, feedID); err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -155,7 +155,7 @@ func (c *Controller) RemoveFeed(ctx *core.Context, request *core.Request, respon
 func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, response *core.Response) {
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return
 	}
 
@@ -170,18 +170,18 @@ func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, respo
 func (c *Controller) getFeedFromURL(request *core.Request, response *core.Response, user *model.User) (*model.Feed, error) {
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return nil, err
 	}
 
 	feed, err := c.store.GetFeedById(user.ID, feedID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return nil, err
 	}
 
 	if feed == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return nil, errors.New("Feed not found")
 	}
 

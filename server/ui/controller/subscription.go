@@ -17,11 +17,11 @@ func (c *Controller) AddSubscription(ctx *core.Context, request *core.Request, r
 
 	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("add_subscription", args)
+	response.HTML().Render("add_subscription", args)
 }
 
 func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
@@ -29,13 +29,13 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 
 	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	subscriptionForm := form.NewSubscriptionForm(request.Request())
 	if err := subscriptionForm.Validate(); err != nil {
-		response.Html().Render("add_subscription", args.Merge(tplParams{
+		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
 			"errorMessage": err.Error(),
 		}))
@@ -45,7 +45,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 	subscriptions, err := subscription.FindSubscriptions(subscriptionForm.URL)
 	if err != nil {
 		log.Println(err)
-		response.Html().Render("add_subscription", args.Merge(tplParams{
+		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
 			"errorMessage": err,
 		}))
@@ -57,14 +57,14 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 	n := len(subscriptions)
 	switch {
 	case n == 0:
-		response.Html().Render("add_subscription", args.Merge(tplParams{
+		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
 			"errorMessage": "Unable to find any subscription.",
 		}))
 	case n == 1:
 		feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptions[0].URL)
 		if err != nil {
-			response.Html().Render("add_subscription", args.Merge(tplParams{
+			response.HTML().Render("add_subscription", args.Merge(tplParams{
 				"form":         subscriptionForm,
 				"errorMessage": err,
 			}))
@@ -73,7 +73,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 
 		response.Redirect(ctx.GetRoute("feedEntries", "feedID", feed.ID))
 	case n > 1:
-		response.Html().Render("choose_subscription", args.Merge(tplParams{
+		response.HTML().Render("choose_subscription", args.Merge(tplParams{
 			"categoryID":    subscriptionForm.CategoryID,
 			"subscriptions": subscriptions,
 		}))
@@ -85,13 +85,13 @@ func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request
 
 	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	subscriptionForm := form.NewSubscriptionForm(request.Request())
 	if err := subscriptionForm.Validate(); err != nil {
-		response.Html().Render("add_subscription", args.Merge(tplParams{
+		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
 			"errorMessage": err.Error(),
 		}))
@@ -100,7 +100,7 @@ func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request
 
 	feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptionForm.URL)
 	if err != nil {
-		response.Html().Render("add_subscription", args.Merge(tplParams{
+		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
 			"errorMessage": err,
 		}))

@@ -16,23 +16,23 @@ func (c *Controller) ShowUsers(ctx *core.Context, request *core.Request, respons
 	user := ctx.GetLoggedUser()
 
 	if !user.IsAdmin {
-		response.Html().Forbidden()
+		response.HTML().Forbidden()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	users, err := c.store.GetUsers()
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("users", args.Merge(tplParams{
+	response.HTML().Render("users", args.Merge(tplParams{
 		"users": users,
 		"menu":  "settings",
 	}))
@@ -42,17 +42,17 @@ func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, respon
 	user := ctx.GetLoggedUser()
 
 	if !user.IsAdmin {
-		response.Html().Forbidden()
+		response.HTML().Forbidden()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
-	response.Html().Render("create_user", args.Merge(tplParams{
+	response.HTML().Render("create_user", args.Merge(tplParams{
 		"menu": "settings",
 		"form": &form.UserForm{},
 	}))
@@ -62,19 +62,19 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 	user := ctx.GetLoggedUser()
 
 	if !user.IsAdmin {
-		response.Html().Forbidden()
+		response.HTML().Forbidden()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
 	userForm := form.NewUserForm(request.Request())
 	if err := userForm.ValidateCreation(); err != nil {
-		response.Html().Render("create_user", args.Merge(tplParams{
+		response.HTML().Render("create_user", args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
 			"errorMessage": err.Error(),
@@ -83,7 +83,7 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 	}
 
 	if c.store.UserExists(userForm.Username) {
-		response.Html().Render("create_user", args.Merge(tplParams{
+		response.HTML().Render("create_user", args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
 			"errorMessage": "This user already exists.",
@@ -94,7 +94,7 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 	newUser := userForm.ToUser()
 	if err := c.store.CreateUser(newUser); err != nil {
 		log.Println(err)
-		response.Html().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
 			"errorMessage": "Unable to create this user.",
@@ -109,13 +109,13 @@ func (c *Controller) EditUser(ctx *core.Context, request *core.Request, response
 	user := ctx.GetLoggedUser()
 
 	if !user.IsAdmin {
-		response.Html().Forbidden()
+		response.HTML().Forbidden()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -124,7 +124,7 @@ func (c *Controller) EditUser(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	response.Html().Render("edit_user", args.Merge(tplParams{
+	response.HTML().Render("edit_user", args.Merge(tplParams{
 		"menu":          "settings",
 		"selected_user": selectedUser,
 		"form": &form.UserForm{
@@ -138,13 +138,13 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 	user := ctx.GetLoggedUser()
 
 	if !user.IsAdmin {
-		response.Html().Forbidden()
+		response.HTML().Forbidden()
 		return
 	}
 
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -155,7 +155,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 
 	userForm := form.NewUserForm(request.Request())
 	if err := userForm.ValidateModification(); err != nil {
-		response.Html().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,
 			"form":          userForm,
@@ -165,7 +165,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 	}
 
 	if c.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
-		response.Html().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,
 			"form":          userForm,
@@ -177,7 +177,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 	userForm.Merge(selectedUser)
 	if err := c.store.UpdateUser(selectedUser); err != nil {
 		log.Println(err)
-		response.Html().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,
 			"form":          userForm,
@@ -192,7 +192,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.GetLoggedUser()
 	if !user.IsAdmin {
-		response.Html().Forbidden()
+		response.HTML().Forbidden()
 		return
 	}
 
@@ -202,7 +202,7 @@ func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, respon
 	}
 
 	if err := c.store.RemoveUser(selectedUser.ID); err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return
 	}
 
@@ -212,18 +212,18 @@ func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, respon
 func (c *Controller) getUserFromURL(ctx *core.Context, request *core.Request, response *core.Response) (*model.User, error) {
 	userID, err := request.IntegerParam("userID")
 	if err != nil {
-		response.Html().BadRequest(err)
+		response.HTML().BadRequest(err)
 		return nil, err
 	}
 
 	user, err := c.store.GetUserById(userID)
 	if err != nil {
-		response.Html().ServerError(err)
+		response.HTML().ServerError(err)
 		return nil, err
 	}
 
 	if user == nil {
-		response.Html().NotFound()
+		response.HTML().NotFound()
 		return nil, errors.New("User not found")
 	}
 
