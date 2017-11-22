@@ -5,13 +5,30 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/subscription"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
-	"log"
 )
 
+// Bookmarklet prefill the form to add a subscription from the URL provided by the bookmarklet.
+func (c *Controller) Bookmarklet(ctx *core.Context, request *core.Request, response *core.Response) {
+	user := ctx.LoggedUser()
+	args, err := c.getSubscriptionFormTemplateArgs(ctx, user)
+	if err != nil {
+		response.HTML().ServerError(err)
+		return
+	}
+
+	bookmarkletURL := request.QueryStringParam("uri", "")
+	response.HTML().Render("add_subscription", args.Merge(tplParams{
+		"form": &form.SubscriptionForm{URL: bookmarkletURL},
+	}))
+}
+
+// AddSubscription shows the form to add a new feed.
 func (c *Controller) AddSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -24,6 +41,7 @@ func (c *Controller) AddSubscription(ctx *core.Context, request *core.Request, r
 	response.HTML().Render("add_subscription", args)
 }
 
+// SubmitSubscription try to find a feed from the URL provided by the user.
 func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -80,6 +98,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 	}
 }
 
+// ChooseSubscription shows a page to choose a subscription.
 func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 

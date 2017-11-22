@@ -15,7 +15,7 @@ import (
 type Response struct {
 	writer   http.ResponseWriter
 	request  *http.Request
-	template *template.TemplateEngine
+	template *template.Engine
 }
 
 // SetCookie send a cookie to the client.
@@ -67,6 +67,6 @@ func (r *Response) commonHeaders() {
 }
 
 // NewResponse returns a new Response.
-func NewResponse(w http.ResponseWriter, r *http.Request, template *template.TemplateEngine) *Response {
+func NewResponse(w http.ResponseWriter, r *http.Request, template *template.Engine) *Response {
 	return &Response{writer: w, request: r, template: template}
 }

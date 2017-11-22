@@ -18,16 +18,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// HandlerFunc is an application HTTP handler.
 type HandlerFunc func(ctx *Context, request *Request, response *Response)
 
+// Handler manages HTTP handlers and middlewares.
 type Handler struct {
 	store      *storage.Storage
 	translator *locale.Translator
-	template   *template.TemplateEngine
+	template   *template.Engine
 	router     *mux.Router
 	middleware *middleware.MiddlewareChain
 }
 
+// Use is a wrapper around an HTTP handler.
 func (h *Handler) Use(f HandlerFunc) http.Handler {
 	return h.middleware.WrapFunc(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer helper.ExecutionTime(time.Now(), r.URL.Path)
@@ -47,7 +50,8 @@ func (h *Handler) Use(f HandlerFunc) http.Handler {
 	}))
 }
 
-func NewHandler(store *storage.Storage, router *mux.Router, template *template.TemplateEngine, translator *locale.Translator, middleware *middleware.MiddlewareChain) *Handler {
+// NewHandler returns a new Handler.
+func NewHandler(store *storage.Storage, router *mux.Router, template *template.Engine, translator *locale.Translator, middleware *middleware.MiddlewareChain) *Handler {
 	return &Handler{
 		store:      store,
 		translator: translator,

@@ -659,3 +659,18 @@ a.button {
 .loading {
     font-style: italic;
 }
+
+/* Bookmarlet */
+.bookmarklet {
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px;
+    text-align: center;
+}
+
+.bookmarklet a {
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.2em;
+}

@@ -26,7 +26,7 @@ TODO
 
 - [ ] Custom entries sorting
 - [ ] Webpage scraper (Readability)
-- [ ] Bookmarklet
+- [X] Bookmarklet
 - [ ] External integrations (Pinboard, Wallabag...)
 - [ ] Gzip compression
 - [ ] Integration tests

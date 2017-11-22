@@ -9,6 +9,10 @@ import (
 	"strconv"
 )
 
+const (
+	DefaultBaseURL = "http://localhost"
+)
+
 type Config struct {
 }
 

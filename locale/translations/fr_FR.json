@@ -123,5 +123,10 @@
     "Work in progress...": "Travail en cours...",
     "This user already exists.": "Cet utilisateur existe déjà.",
     "This category already exists.": "Cette catégorie existe déjà.",
-    "Unable to update this category.": "Impossible de mettre à jour cette catégorie."
+    "Unable to update this category.": "Impossible de mettre à jour cette catégorie.",
+    "Integrations": "Intégrations",
+    "Bookmarklet": "Bookmarklet",
+    "Drag and drop this link to your bookmarks.": "Glisser-déposer ce lien dans vos favoris.",
+    "This special link allows you to subscribe to a website directly by using a bookmark in your web browser.": "Ce lien spécial vous permet de vous abonner à un site web directement en utilisant un marque page dans votre navigateur web.",
+    "Add to Miniflux": "Ajouter à Miniflux"
 }

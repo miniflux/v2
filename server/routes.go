@@ -7,6 +7,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/locale"
 	"github.com/miniflux/miniflux2/reader/feed"
 	"github.com/miniflux/miniflux2/reader/opml"
@@ -20,10 +21,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
+func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 	router := mux.NewRouter()
 	translator := locale.Load()
-	templateEngine := template.NewTemplateEngine(router, translator)
+	templateEngine := template.NewEngine(cfg, router, translator)
 
 	apiController := api_controller.NewController(store, feedHandler)
 	uiController := ui_controller.NewController(store, feedHandler, opml.NewHandler(store))
@@ -109,6 +110,9 @@ func getRoutes(store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
 
 	router.Handle("/settings", uiHandler.Use(uiController.ShowSettings)).Name("settings").Methods("GET")
 	router.Handle("/settings", uiHandler.Use(uiController.UpdateSettings)).Name("updateSettings").Methods("POST")
+
+	router.Handle("/bookmarklet", uiHandler.Use(uiController.Bookmarklet)).Name("bookmarklet").Methods("GET")
+	router.Handle("/integrations", uiHandler.Use(uiController.ShowIntegrations)).Name("integrations").Methods("GET")
 
 	router.Handle("/sessions", uiHandler.Use(uiController.ShowSessions)).Name("sessions").Methods("GET")
 	router.Handle("/sessions/{sessionID}/remove", uiHandler.Use(uiController.RemoveSession)).Name("removeSession").Methods("POST")

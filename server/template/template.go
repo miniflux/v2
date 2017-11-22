@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2017 Frédéric Guilloe. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/locale"
 	"github.com/miniflux/miniflux2/server/route"
@@ -22,23 +23,28 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type TemplateEngine struct {
+// Engine handles the templating system.
+type Engine struct {
 	templates     map[string]*template.Template
 	router        *mux.Router
 	translator    *locale.Translator
 	currentLocale *locale.Language
+	cfg           *config.Config
 }
 
-func (t *TemplateEngine) ParseAll() {
+func (e *Engine) parseAll() {
 	funcMap := template.FuncMap{
+		"baseURL": func() string {
+			return e.cfg.Get("BASE_URL", config.DefaultBaseURL)
+		},
 		"route": func(name string, args ...interface{}) string {
-			return route.GetRoute(t.router, name, args...)
+			return route.GetRoute(e.router, name, args...)
 		},
 		"noescape": func(str string) template.HTML {
 			return template.HTML(str)
 		},
 		"proxyFilter": func(data string) string {
-			return filter.ImageProxyFilter(t.router, data)
+			return filter.ImageProxyFilter(e.router, data)
 		},
 		"domain": func(websiteURL string) string {
 			parsedURL, err := url.Parse(websiteURL)
@@ -58,15 +64,15 @@ func (t *TemplateEngine) ParseAll() {
 			return ts.Format("2006-01-02 15:04:05")
 		},
 		"elapsed": func(ts time.Time) string {
-			return helper.GetElapsedTime(t.currentLocale, ts)
+			return helper.GetElapsedTime(e.currentLocale, ts)
 		},
 		"t": func(key interface{}, args ...interface{}) string {
 			switch key.(type) {
 			case string:
-				return t.currentLocale.Get(key.(string), args...)
+				return e.currentLocale.Get(key.(string), args...)
 			case errors.LocalizedError:
 				err := key.(errors.LocalizedError)
-				return err.Localize(t.currentLocale)
+				return err.Localize(e.currentLocale)
 			case error:
 				return key.(error).Error()
 			default:
@@ -74,7 +80,7 @@ func (t *TemplateEngine) ParseAll() {
 			}
 		},
 		"plural": func(key string, n int, args ...interface{}) string {
-			return t.currentLocale.Plural(key, n, args...)
+			return e.currentLocale.Plural(key, n, args...)
 		},
 	}
 
@@ -85,16 +91,18 @@ func (t *TemplateEngine) ParseAll() {
 
 	for name, content := range templateViewsMap {
 		log.Println("Parsing template:", name)
-		t.templates[name] = template.Must(template.New("main").Funcs(funcMap).Parse(commonTemplates + content))
+		e.templates[name] = template.Must(template.New("main").Funcs(funcMap).Parse(commonTemplates + content))
 	}
 }
 
-func (t *TemplateEngine) SetLanguage(language string) {
-	t.currentLocale = t.translator.GetLanguage(language)
+// SetLanguage change the language for template processing.
+func (e *Engine) SetLanguage(language string) {
+	e.currentLocale = e.translator.GetLanguage(language)
 }
 
-func (t *TemplateEngine) Execute(w io.Writer, name string, data interface{}) {
-	tpl, ok := t.templates[name]
+// Execute process a template.
+func (e *Engine) Execute(w io.Writer, name string, data interface{}) {
+	tpl, ok := e.templates[name]
 	if !ok {
 		log.Fatalf("The template %s does not exists.\n", name)
 	}
@@ -108,13 +116,15 @@ func (t *TemplateEngine) Execute(w io.Writer, name string, data interface{}) {
 	b.WriteTo(w)
 }
 
-func NewTemplateEngine(router *mux.Router, translator *locale.Translator) *TemplateEngine {
-	tpl := &TemplateEngine{
+// NewEngine returns a new template Engine.
+func NewEngine(cfg *config.Config, router *mux.Router, translator *locale.Translator) *Engine {
+	tpl := &Engine{
 		templates:  make(map[string]*template.Template),
 		router:     router,
 		translator: translator,
+		cfg:        cfg,
 	}
 
-	tpl.ParseAll()
+	tpl.parseAll()
 	return tpl
 }

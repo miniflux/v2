@@ -15,7 +15,7 @@ import (
 type HTMLResponse struct {
 	writer   http.ResponseWriter
 	request  *http.Request
-	template *template.TemplateEngine
+	template *template.Engine
 }
 
 // Render execute a template and send to the client the generated HTML.

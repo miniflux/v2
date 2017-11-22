@@ -1,0 +1,35 @@
+{{ define "title"}}{{ t "Integrations" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Integrations" }}</h1>
+    <ul>
+        <li>
+            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+        </li>
+        {{ if .user.IsAdmin }}
+        <li>
+            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+        </li>
+        {{ end }}
+        <li>
+            <a href="{{ route "about" }}">{{ t "About" }}</a>
+        </li>
+    </ul>
+</section>
+
+<div class="panel">
+    <h3>{{ t "Bookmarklet" }}</h3>
+    <p>{{ t "This special link allows you to subscribe to a website directly by using a bookmark in your web browser." }}</p>
+
+    <div class="bookmarklet">
+        <a href="javascript:location.href='{{ baseURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "Add to Miniflux" }}</a>
+    </div>
+
+    <p>{{ t "Drag and drop this link to your bookmarks." }}</p>
+</div>
+
+{{ end }}

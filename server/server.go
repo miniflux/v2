@@ -5,21 +5,23 @@
 package server
 
 import (
-	"github.com/miniflux/miniflux2/config"
-	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/storage"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/miniflux/miniflux2/config"
+	"github.com/miniflux/miniflux2/reader/feed"
+	"github.com/miniflux/miniflux2/storage"
 )
 
+// NewServer returns a new HTTP server.
 func NewServer(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler) *http.Server {
 	server := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
 		Addr:         cfg.Get("LISTEN_ADDR", "127.0.0.1:8080"),
-		Handler:      getRoutes(store, feedHandler),
+		Handler:      getRoutes(cfg, store, feedHandler),
 	}
 
 	go func() {
