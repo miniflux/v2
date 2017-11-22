@@ -8,9 +8,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
-	"time"
 )
 
 func (s *Storage) FeedExists(userID, feedID int64) bool {
@@ -29,6 +30,17 @@ func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	query := `SELECT count(*) as c FROM feeds WHERE user_id=$1 AND feed_url=$2`
 	s.db.QueryRow(query, userID, feedURL).Scan(&result)
 	return result >= 1
+}
+
+// CountFeeds returns the number of feeds that belongs to the given user.
+func (s *Storage) CountFeeds(userID int64) int {
+	var result int
+	err := s.db.QueryRow(`SELECT count(*) FROM feeds WHERE user_id=$1`, userID).Scan(&result)
+	if err != nil {
+		return 0
+	}
+
+	return result
 }
 
 func (s *Storage) GetFeeds(userID int64) (model.Feeds, error) {

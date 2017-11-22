@@ -6,19 +6,19 @@ package storage
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
-	"log"
-	"time"
 )
 
 const maxParsingError = 3
 
-func (s *Storage) GetJobs(batchSize int) []model.Job {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("storage.GetJobs[%d]", batchSize))
-
-	var jobs []model.Job
-	query := `SELECT
+// NewBatch returns a serie of jobs.
+func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetJobs] batchSize=%d", batchSize))
+	query := `
+		SELECT
 		id, user_id
 		FROM feeds
 		WHERE parsing_error_count < $1
@@ -26,19 +26,18 @@ func (s *Storage) GetJobs(batchSize int) []model.Job {
 
 	rows, err := s.db.Query(fmt.Sprintf(query, batchSize), maxParsingError)
 	if err != nil {
-		log.Println("Unable to fetch feed jobs:", err)
+		return nil, fmt.Errorf("unable to fetch batch of jobs: %v", err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var job model.Job
 		if err := rows.Scan(&job.FeedID, &job.UserID); err != nil {
-			log.Println("Unable to fetch feed job:", err)
-			break
+			return nil, fmt.Errorf("unable to fetch job: %v", err)
 		}
 
 		jobs = append(jobs, job)
 	}
 
-	return jobs
+	return jobs, nil
 }

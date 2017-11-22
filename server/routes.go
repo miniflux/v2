@@ -7,6 +7,8 @@ package server
 import (
 	"net/http"
 
+	"github.com/miniflux/miniflux2/scheduler"
+
 	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/locale"
 	"github.com/miniflux/miniflux2/reader/feed"
@@ -21,13 +23,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler) *mux.Router {
+func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *scheduler.WorkerPool) *mux.Router {
 	router := mux.NewRouter()
 	translator := locale.Load()
 	templateEngine := template.NewEngine(cfg, router, translator)
 
 	apiController := api_controller.NewController(store, feedHandler)
-	uiController := ui_controller.NewController(store, feedHandler, opml.NewHandler(store))
+	uiController := ui_controller.NewController(store, pool, feedHandler, opml.NewHandler(store))
 
 	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewMiddlewareChain(
 		middleware.NewBasicAuthMiddleware(store).Handler,
@@ -79,6 +81,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/feed/{feedID}/update", uiHandler.Use(uiController.UpdateFeed)).Name("updateFeed").Methods("POST")
 	router.Handle("/feed/{feedID}/entries", uiHandler.Use(uiController.ShowFeedEntries)).Name("feedEntries").Methods("GET")
 	router.Handle("/feeds", uiHandler.Use(uiController.ShowFeedsPage)).Name("feeds").Methods("GET")
+	router.Handle("/feeds/refresh", uiHandler.Use(uiController.RefreshAllFeeds)).Name("refreshAllFeeds").Methods("GET")
 
 	router.Handle("/unread/entry/{entryID}", uiHandler.Use(uiController.ShowUnreadEntry)).Name("unreadEntry").Methods("GET")
 	router.Handle("/history/entry/{entryID}", uiHandler.Use(uiController.ShowReadEntry)).Name("readEntry").Methods("GET")

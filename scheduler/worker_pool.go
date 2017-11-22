@@ -14,9 +14,11 @@ type WorkerPool struct {
 	queue chan model.Job
 }
 
-// Push send a job on the queue.
-func (w *WorkerPool) Push(job model.Job) {
-	w.queue <- job
+// Push send a list of jobs to the queue.
+func (w *WorkerPool) Push(jobs model.JobList) {
+	for _, job := range jobs {
+		w.queue <- job
+	}
 }
 
 // NewWorkerPool creates a pool of background workers.

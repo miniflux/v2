@@ -13,6 +13,22 @@ import (
 	"github.com/miniflux/miniflux2/server/ui/form"
 )
 
+// RefreshAllFeeds refresh all feeds in the background.
+func (c *Controller) RefreshAllFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
+	user := ctx.LoggedUser()
+	jobs, err := c.store.NewBatch(c.store.CountFeeds(user.ID))
+	if err != nil {
+		response.HTML().ServerError(err)
+		return
+	}
+
+	go func() {
+		c.pool.Push(jobs)
+	}()
+
+	response.Redirect(ctx.Route("feeds"))
+}
+
 // ShowFeedsPage shows the page with all subscriptions.
 func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()

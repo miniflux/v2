@@ -44,21 +44,15 @@ func run(cfg *config.Config, store *storage.Storage) {
 	signal.Notify(stop, os.Interrupt)
 
 	feedHandler := feed.NewFeedHandler(store)
-	server := server.NewServer(cfg, store, feedHandler)
+	pool := scheduler.NewWorkerPool(feedHandler, cfg.GetInt("WORKER_POOL_SIZE", config.DefaultWorkerPoolSize))
+	server := server.NewServer(cfg, store, pool, feedHandler)
 
-	go func() {
-		pool := scheduler.NewWorkerPool(
-			feedHandler,
-			cfg.GetInt("WORKER_POOL_SIZE", config.DefaultWorkerPoolSize),
-		)
-
-		scheduler.NewScheduler(
-			store,
-			pool,
-			cfg.GetInt("POLLING_FREQUENCY", config.DefaultPollingFrequency),
-			cfg.GetInt("BATCH_SIZE", config.DefaultBatchSize),
-		)
-	}()
+	scheduler.NewScheduler(
+		store,
+		pool,
+		cfg.GetInt("POLLING_FREQUENCY", config.DefaultPollingFrequency),
+		cfg.GetInt("BATCH_SIZE", config.DefaultBatchSize),
+	)
 
 	<-stop
 	log.Println("Shutting down the server...")
