@@ -42,7 +42,7 @@ func (s *Storage) CreateEntry(entry *model.Entry) error {
 	).Scan(&entry.ID)
 
 	if err != nil {
-		return fmt.Errorf("Unable to create entry: %v", err)
+		return fmt.Errorf("unable to create entry: %v", err)
 	}
 
 	entry.Status = "unread"
@@ -64,8 +64,9 @@ func (s *Storage) UpdateEntry(entry *model.Entry) error {
 		UPDATE entries SET
 		title=$1, url=$2, published_at=$3, content=$4, author=$5
 		WHERE user_id=$6 AND feed_id=$7 AND hash=$8
+		RETURNING id
 	`
-	_, err := s.db.Exec(
+	err := s.db.QueryRow(
 		query,
 		entry.Title,
 		entry.URL,
@@ -75,9 +76,18 @@ func (s *Storage) UpdateEntry(entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.Hash,
-	)
+	).Scan(&entry.ID)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	for _, enclosure := range entry.Enclosures {
+		enclosure.UserID = entry.UserID
+		enclosure.EntryID = entry.ID
+	}
+
+	return s.UpdateEnclosures(entry.Enclosures)
 }
 
 // EntryExists checks if an entry already exists based on its hash when refreshing a feed.

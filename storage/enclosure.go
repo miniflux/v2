@@ -6,9 +6,11 @@ package storage
 
 import (
 	"fmt"
+
 	"github.com/miniflux/miniflux2/model"
 )
 
+// GetEnclosures returns all attachments for the given entry.
 func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 	query := `SELECT
 		id, user_id, entry_id, url, size, mime_type
@@ -17,7 +19,7 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 
 	rows, err := s.db.Query(query, entryID)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to get enclosures: %v", err)
+		return nil, fmt.Errorf("unable to get enclosures: %v", err)
 	}
 	defer rows.Close()
 
@@ -34,7 +36,7 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 		)
 
 		if err != nil {
-			return nil, fmt.Errorf("Unable to fetch enclosure row: %v", err)
+			return nil, fmt.Errorf("unable to fetch enclosure row: %v", err)
 		}
 
 		enclosures = append(enclosures, &enclosure)
@@ -43,6 +45,7 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 	return enclosures, nil
 }
 
+// CreateEnclosure creates a new attachment.
 func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
 	query := `
 		INSERT INTO enclosures
@@ -61,7 +64,29 @@ func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
 	).Scan(&enclosure.ID)
 
 	if err != nil {
-		return fmt.Errorf("Unable to create enclosure: %v", err)
+		return fmt.Errorf("unable to create enclosure: %v", err)
+	}
+
+	return nil
+}
+
+// IsEnclosureExists checks if an attachment exists.
+func (s *Storage) IsEnclosureExists(enclosure *model.Enclosure) bool {
+	var result int
+	query := `SELECT count(*) as c FROM enclosures WHERE user_id=$1 AND entry_id=$2 AND url=$3`
+	s.db.QueryRow(query, enclosure.UserID, enclosure.EntryID, enclosure.URL).Scan(&result)
+	return result >= 1
+}
+
+// UpdateEnclosures add missing attachments while updating a feed.
+func (s *Storage) UpdateEnclosures(enclosures model.EnclosureList) error {
+	for _, enclosure := range enclosures {
+		if !s.IsEnclosureExists(enclosure) {
+			err := s.CreateEnclosure(enclosure)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
