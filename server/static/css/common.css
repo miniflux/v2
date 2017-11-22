@@ -528,9 +528,10 @@ a.button {
 
 .entry-content {
     padding-top: 15px;
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: 300;
-    color: #444;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #555;
 }
 
 .entry-content h1, h2, h3, h4, h5, h6 {
@@ -557,6 +558,7 @@ a.button {
     margin-top: 15px;
     margin-bottom: 15px;
     text-align: justify;
+    line-height: 1.4em;
 }
 
 .entry-content a:visited {
