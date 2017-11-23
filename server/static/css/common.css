@@ -11,8 +11,8 @@ body {
 }
 
 .main {
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 a {
@@ -79,12 +79,11 @@ a:hover {
 
 .page-header ul {
     margin-left: 25px;
-    font-size: 0.9em;
 }
 
 .page-header li {
     list-style-type: circle;
-    line-height: 1.4em;
+    line-height: 1.8em;
 }
 
 .logo {
@@ -130,7 +129,6 @@ a:hover {
         padding: 0;
         padding-right: 15px;
         line-height: normal;
-        font-size: 1.0em;
         border: none;
     }
 
@@ -347,9 +345,8 @@ a.button {
 
 /* Login form */
 .login-form {
-    margin: auto;
-    margin-top: 50px;
-    width: 350px;
+    margin: 50px auto 0;
+    max-width: 280px;
 }
 
 /* Counter */
@@ -532,10 +529,13 @@ a.button {
     font-weight: 300;
     font-family: Georgia, 'Times New Roman', Times, serif;
     color: #555;
+    line-height: 1.4em;
+    overflow-wrap: break-word;
 }
 
 .entry-content h1, h2, h3, h4, h5, h6 {
     margin-top: 15px;
+    margin-bottom: 10px;
 }
 
 .entry-content iframe,
@@ -555,10 +555,12 @@ a.button {
 }
 
 .entry-content p {
-    margin-top: 15px;
+    margin-top: 10px;
     margin-bottom: 15px;
-    text-align: justify;
-    line-height: 1.4em;
+}
+
+.entry-content a {
+    overflow-wrap: break-word;
 }
 
 .entry-content a:visited {
@@ -617,6 +619,12 @@ a.button {
     background: #f0f0f0;
     border: 1px solid #ddd;
     overflow: scroll;
+    overflow-wrap: initial;
+}
+
+.entry-content table {
+    table-layout: fixed;
+    max-width: 100%;
 }
 
 .entry-content ul,
