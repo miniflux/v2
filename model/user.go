@@ -11,14 +11,20 @@ import (
 
 // User represents a user in the system.
 type User struct {
-	ID          int64      `json:"id"`
-	Username    string     `json:"username"`
-	Password    string     `json:"password,omitempty"`
-	IsAdmin     bool       `json:"is_admin"`
-	Theme       string     `json:"theme"`
-	Language    string     `json:"language"`
-	Timezone    string     `json:"timezone"`
-	LastLoginAt *time.Time `json:"last_login_at"`
+	ID          int64             `json:"id"`
+	Username    string            `json:"username"`
+	Password    string            `json:"password,omitempty"`
+	IsAdmin     bool              `json:"is_admin"`
+	Theme       string            `json:"theme"`
+	Language    string            `json:"language"`
+	Timezone    string            `json:"timezone"`
+	LastLoginAt *time.Time        `json:"last_login_at"`
+	Extra       map[string]string `json:"-"`
+}
+
+// NewUser returns a new User.
+func NewUser() *User {
+	return &User{Extra: make(map[string]string)}
 }
 
 func (u User) ValidateUserCreation() error {

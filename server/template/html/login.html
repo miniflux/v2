@@ -19,5 +19,10 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Sign in" }}</button>
         </div>
     </form>
+    {{ if hasOAuth2Provider "google" }}
+    <div class="oauth2">
+        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "Sign in with Google" }}</a>
+    </div>
+    {{ end }}
 </section>
 {{ end }}

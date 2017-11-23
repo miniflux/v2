@@ -130,6 +130,7 @@ a:hover {
         padding-right: 15px;
         line-height: normal;
         border: none;
+        font-size: 1.0em;
     }
 
     .page-header ul {

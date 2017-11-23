@@ -34,10 +34,6 @@
   name = "github.com/lib/pq"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/rvflash/elapsed"
-
-[[constraint]]
   name = "github.com/tdewolff/minify"
   version = "2.3.3"
 
@@ -52,3 +48,7 @@
 [[constraint]]
   branch = "master"
   name = "golang.org/x/net"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/oauth2"

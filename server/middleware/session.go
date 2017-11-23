@@ -6,11 +6,12 @@ package middleware
 
 import (
 	"context"
+	"log"
+	"net/http"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/route"
 	"github.com/miniflux/miniflux2/storage"
-	"log"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -45,7 +46,7 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 func (s *SessionMiddleware) isPublicRoute(r *http.Request) bool {
 	route := mux.CurrentRoute(r)
 	switch route.GetName() {
-	case "login", "checkLogin", "stylesheet", "javascript":
+	case "login", "checkLogin", "stylesheet", "javascript", "oauth2Redirect", "oauth2Callback":
 		return true
 	default:
 		return false

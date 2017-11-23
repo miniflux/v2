@@ -37,6 +37,9 @@ func (e *Engine) parseAll() {
 		"baseURL": func() string {
 			return e.cfg.Get("BASE_URL", config.DefaultBaseURL)
 		},
+		"hasOAuth2Provider": func(provider string) bool {
+			return e.cfg.Get("OAUTH2_PROVIDER", "") == provider
+		},
 		"route": func(name string, args ...interface{}) string {
 			return route.GetRoute(e.router, name, args...)
 		},

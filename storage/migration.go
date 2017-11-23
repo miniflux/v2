@@ -6,13 +6,15 @@ package storage
 
 import (
 	"fmt"
-	"github.com/miniflux/miniflux2/sql"
 	"log"
 	"strconv"
+
+	"github.com/miniflux/miniflux2/sql"
 )
 
-const schemaVersion = 1
+const schemaVersion = 2
 
+// Migrate run database migrations.
 func (s *Storage) Migrate() {
 	var currentVersion int
 	s.db.QueryRow(`select version from schema_version`).Scan(&currentVersion)

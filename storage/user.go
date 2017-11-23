@@ -8,10 +8,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
 	"strings"
 	"time"
+
+	"github.com/lib/pq/hstore"
+
+	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/model"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -43,16 +46,26 @@ func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 	return result >= 1
 }
 
-func (s *Storage) CreateUser(user *model.User) error {
+func (s *Storage) CreateUser(user *model.User) (err error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateUser] username=%s", user.Username))
+	password := ""
+	extra := hstore.Hstore{Map: make(map[string]sql.NullString)}
 
-	password, err := hashPassword(user.Password)
-	if err != nil {
-		return err
+	if user.Password != "" {
+		password, err = hashPassword(user.Password)
+		if err != nil {
+			return err
+		}
 	}
 
-	query := "INSERT INTO users (username, password, is_admin) VALUES ($1, $2, $3) RETURNING id"
-	err = s.db.QueryRow(query, strings.ToLower(user.Username), password, user.IsAdmin).Scan(&user.ID)
+	if len(user.Extra) > 0 {
+		for key, value := range user.Extra {
+			extra.Map[key] = sql.NullString{String: value, Valid: true}
+		}
+	}
+
+	query := "INSERT INTO users (username, password, is_admin, extra) VALUES ($1, $2, $3, $4) RETURNING id"
+	err = s.db.QueryRow(query, strings.ToLower(user.Username), password, user.IsAdmin, extra).Scan(&user.ID)
 	if err != nil {
 		return fmt.Errorf("unable to create user: %v", err)
 	}
@@ -107,6 +120,21 @@ func (s *Storage) GetUserByUsername(username string) (*model.User, error) {
 
 	var user model.User
 	row := s.db.QueryRow("SELECT id, username, is_admin, theme, language, timezone FROM users WHERE username=$1", username)
+	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, fmt.Errorf("unable to fetch user: %v", err)
+	}
+
+	return &user, nil
+}
+
+func (s *Storage) GetUserByExtraField(field, value string) (*model.User, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserByExtraField] field=%s", field))
+	var user model.User
+	query := `SELECT id, username, is_admin, theme, language, timezone FROM users WHERE extra->$1=$2`
+	row := s.db.QueryRow(query, field, value)
 	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone)
 	if err == sql.ErrNoRows {
 		return nil, nil

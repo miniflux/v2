@@ -29,7 +29,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	templateEngine := template.NewEngine(cfg, router, translator)
 
 	apiController := api_controller.NewController(store, feedHandler)
-	uiController := ui_controller.NewController(store, pool, feedHandler, opml.NewHandler(store))
+	uiController := ui_controller.NewController(cfg, store, pool, feedHandler, opml.NewHandler(store))
 
 	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewMiddlewareChain(
 		middleware.NewBasicAuthMiddleware(store).Handler,
@@ -123,6 +123,9 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/export", uiHandler.Use(uiController.Export)).Name("export").Methods("GET")
 	router.Handle("/import", uiHandler.Use(uiController.Import)).Name("import").Methods("GET")
 	router.Handle("/upload", uiHandler.Use(uiController.UploadOPML)).Name("uploadOPML").Methods("POST")
+
+	router.Handle("/oauth2/{provider}/redirect", uiHandler.Use(uiController.OAuth2Redirect)).Name("oauth2Redirect").Methods("GET")
+	router.Handle("/oauth2/{provider}/callback", uiHandler.Use(uiController.OAuth2Callback)).Name("oauth2Callback").Methods("GET")
 
 	router.Handle("/login", uiHandler.Use(uiController.CheckLogin)).Name("checkLogin").Methods("POST")
 	router.Handle("/logout", uiHandler.Use(uiController.Logout)).Name("logout").Methods("GET")

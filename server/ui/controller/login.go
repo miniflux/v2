@@ -5,15 +5,17 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/ui/form"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux2/server/ui/form"
+
 	"github.com/tomasen/realip"
 )
 
+// ShowLoginPage shows the login form.
 func (c *Controller) ShowLoginPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	if ctx.IsAuthenticated() {
 		response.Redirect(ctx.Route("unread"))
@@ -25,6 +27,7 @@ func (c *Controller) ShowLoginPage(ctx *core.Context, request *core.Request, res
 	})
 }
 
+// CheckLogin validates the username/password and redirects the user to the unread page.
 func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, response *core.Response) {
 	authForm := form.NewAuthForm(request.Request())
 	tplParams := tplParams{
@@ -49,6 +52,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 		request.Request().UserAgent(),
 		realip.RealIP(request.Request()),
 	)
+
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -68,6 +72,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 	response.Redirect(ctx.Route("unread"))
 }
 
+// Logout destroy the session and redirects the user to the login page.
 func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 

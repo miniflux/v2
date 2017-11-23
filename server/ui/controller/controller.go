@@ -5,6 +5,7 @@
 package controller
 
 import (
+	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/feed"
 	"github.com/miniflux/miniflux2/reader/opml"
@@ -25,6 +26,7 @@ func (t tplParams) Merge(d tplParams) tplParams {
 
 // Controller contains all HTTP handlers for the user interface.
 type Controller struct {
+	cfg         *config.Config
 	store       *storage.Storage
 	pool        *scheduler.WorkerPool
 	feedHandler *feed.Handler
@@ -51,8 +53,9 @@ func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error)
 }
 
 // NewController returns a new Controller.
-func NewController(store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, opmlHandler *opml.Handler) *Controller {
+func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, opmlHandler *opml.Handler) *Controller {
 	return &Controller{
+		cfg:         cfg,
 		store:       store,
 		pool:        pool,
 		feedHandler: feedHandler,
