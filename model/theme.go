@@ -4,10 +4,23 @@
 
 package model
 
+import "github.com/miniflux/miniflux2/errors"
+
 // GetThemes returns the list of available themes.
 func GetThemes() map[string]string {
 	return map[string]string{
 		"default": "Default",
 		"black":   "Black",
 	}
+}
+
+// ValidateTheme validates theme value.
+func ValidateTheme(theme string) error {
+	for key := range GetThemes() {
+		if key == theme {
+			return nil
+		}
+	}
+
+	return errors.NewLocalizedError("Invalid theme.")
 }

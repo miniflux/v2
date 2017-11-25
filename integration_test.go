@@ -7,23 +7,43 @@
 package main
 
 import (
+	"math/rand"
+	"strconv"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/miniflux/miniflux-go"
 )
 
 const (
-	testBaseURL  = "http://127.0.0.1:8080"
-	testUsername = "admin"
-	testPassword = "test123"
+	testBaseURL          = "http://127.0.0.1:8080"
+	testAdminUsername    = "admin"
+	testAdminPassword    = "test123"
+	testStandardPassword = "secret"
 )
 
+func TestWithBadEndpoint(t *testing.T) {
+	client := miniflux.NewClient("bad url", testAdminUsername, testAdminPassword)
+	_, err := client.Users()
+	if err == nil {
+		t.Fatal(`Using a bad url should raise an error`)
+	}
+}
+
+func TestWithWrongCredentials(t *testing.T) {
+	client := miniflux.NewClient(testBaseURL, "invalid", "invalid")
+	_, err := client.Users()
+	if err == nil {
+		t.Fatal(`Using bad credentials should raise an error`)
+	}
+}
+
 func TestGetUsers(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, testUsername, testPassword)
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
 	users, err := client.Users()
 	if err != nil {
 		t.Fatal(err)
-		return
 	}
 
 	if len(users) == 0 {
@@ -31,71 +51,263 @@ func TestGetUsers(t *testing.T) {
 	}
 
 	if users[0].ID == 0 {
-		t.Fatalf(`Invalid userID, got %v`, users[0].ID)
+		t.Fatalf(`Invalid userID, got "%v"`, users[0].ID)
 	}
 
-	if users[0].Username != testUsername {
-		t.Fatalf(`Invalid username, got %v`, users[0].Username)
+	if users[0].Username != testAdminUsername {
+		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, users[0].Username, testAdminUsername)
 	}
 
 	if users[0].Password != "" {
-		t.Fatalf(`Invalid password, got %v`, users[0].Password)
+		t.Fatalf(`Invalid password, got "%v"`, users[0].Password)
 	}
 
 	if users[0].Language != "en_US" {
-		t.Fatalf(`Invalid language, got %v`, users[0].Language)
+		t.Fatalf(`Invalid language, got "%v"`, users[0].Language)
 	}
 
 	if users[0].Theme != "default" {
-		t.Fatalf(`Invalid theme, got %v`, users[0].Theme)
+		t.Fatalf(`Invalid theme, got "%v"`, users[0].Theme)
 	}
 
 	if users[0].Timezone != "UTC" {
-		t.Fatalf(`Invalid timezone, got %v`, users[0].Timezone)
+		t.Fatalf(`Invalid timezone, got "%v"`, users[0].Timezone)
 	}
 
 	if !users[0].IsAdmin {
-		t.Fatalf(`Invalid role, got %v`, users[0].IsAdmin)
+		t.Fatalf(`Invalid role, got "%v"`, users[0].IsAdmin)
 	}
 }
 
 func TestCreateStandardUser(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, testUsername, testPassword)
-	user, err := client.CreateUser("test", "test123", false)
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
-		return
 	}
 
 	if user.ID == 0 {
-		t.Fatalf(`Invalid userID, got %v`, user.ID)
+		t.Fatalf(`Invalid userID, got "%v"`, user.ID)
 	}
 
-	if user.Username != "test" {
-		t.Fatalf(`Invalid username, got %v`, user.Username)
+	if user.Username != username {
+		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, user.Username, username)
 	}
 
 	if user.Password != "" {
-		t.Fatalf(`Invalid password, got %v`, user.Password)
+		t.Fatalf(`Invalid password, got "%v"`, user.Password)
 	}
 
 	if user.Language != "en_US" {
-		t.Fatalf(`Invalid language, got %v`, user.Language)
+		t.Fatalf(`Invalid language, got "%v"`, user.Language)
 	}
 
 	if user.Theme != "default" {
-		t.Fatalf(`Invalid theme, got %v`, user.Theme)
+		t.Fatalf(`Invalid theme, got "%v"`, user.Theme)
 	}
 
 	if user.Timezone != "UTC" {
-		t.Fatalf(`Invalid timezone, got %v`, user.Timezone)
+		t.Fatalf(`Invalid timezone, got "%v"`, user.Timezone)
 	}
 
 	if user.IsAdmin {
-		t.Fatalf(`Invalid role, got %v`, user.IsAdmin)
+		t.Fatalf(`Invalid role, got "%v"`, user.IsAdmin)
 	}
 
 	if user.LastLoginAt != nil {
-		t.Fatalf(`Invalid last login date, got %v`, user.LastLoginAt)
+		t.Fatalf(`Invalid last login date, got "%v"`, user.LastLoginAt)
 	}
+}
+
+func TestRemoveUser(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := client.DeleteUser(user.ID); err != nil {
+		t.Fatalf(`Unable to remove user: "%v"`, err)
+	}
+}
+
+func TestGetUser(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user, err = client.User(user.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if user.ID == 0 {
+		t.Fatalf(`Invalid userID, got "%v"`, user.ID)
+	}
+
+	if user.Username != username {
+		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, user.Username, username)
+	}
+
+	if user.Password != "" {
+		t.Fatalf(`Invalid password, got "%v"`, user.Password)
+	}
+
+	if user.Language != "en_US" {
+		t.Fatalf(`Invalid language, got "%v"`, user.Language)
+	}
+
+	if user.Theme != "default" {
+		t.Fatalf(`Invalid theme, got "%v"`, user.Theme)
+	}
+
+	if user.Timezone != "UTC" {
+		t.Fatalf(`Invalid timezone, got "%v"`, user.Timezone)
+	}
+
+	if user.IsAdmin {
+		t.Fatalf(`Invalid role, got "%v"`, user.IsAdmin)
+	}
+
+	if user.LastLoginAt != nil {
+		t.Fatalf(`Invalid last login date, got "%v"`, user.LastLoginAt)
+	}
+}
+
+func TestUpdateUser(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	theme := "black"
+	user.Theme = theme
+	user, err = client.UpdateUser(user)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if user.Theme != theme {
+		t.Fatalf(`Unable to update user: got "%v" instead of "%v"`, user.Theme, theme)
+	}
+}
+
+func TestUpdateUserWithInvalidValue(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	theme := "something that doesn't exists"
+	user.Theme = theme
+	_, err = client.UpdateUser(user)
+	if err == nil {
+		t.Fatal(`Updating a user with an invalid value should raise an error`)
+	}
+}
+
+func TestCannotCreateDuplicateUser(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateUser(username, testStandardPassword, false)
+	if err == nil {
+		t.Fatal(`Duplicate users should not be allowed`)
+	}
+}
+
+func TestCannotListUsersAsNonAdmin(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.Users()
+	if err == nil {
+		t.Fatal(`Standard users should not be able to list any users`)
+	}
+}
+
+func TestCannotGetUserAsNonAdmin(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.User(user.ID)
+	if err == nil {
+		t.Fatal(`Standard users should not be able to get any users`)
+	}
+}
+
+func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.UpdateUser(user)
+	if err == nil {
+		t.Fatal(`Standard users should not be able to update any users`)
+	}
+}
+
+func TestCannotCreateUserAsNonAdmin(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.CreateUser(username, testStandardPassword, false)
+	if err == nil {
+		t.Fatal(`Standard users should not be able to create users`)
+	}
+}
+
+func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	if err := client.DeleteUser(user.ID); err == nil {
+		t.Fatal(`Standard users should not be able to remove any users`)
+	}
+}
+
+func getRandomUsername() string {
+	rand.Seed(time.Now().UnixNano())
+	var suffix []string
+	for i := 0; i < 10; i++ {
+		suffix = append(suffix, strconv.Itoa(rand.Intn(1000)))
+	}
+	return "user" + strings.Join(suffix, "")
 }

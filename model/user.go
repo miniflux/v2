@@ -27,6 +27,7 @@ func NewUser() *User {
 	return &User{Extra: make(map[string]string)}
 }
 
+// ValidateUserCreation validates new user.
 func (u User) ValidateUserCreation() error {
 	if err := u.ValidateUserLogin(); err != nil {
 		return err
@@ -39,6 +40,7 @@ func (u User) ValidateUserCreation() error {
 	return nil
 }
 
+// ValidateUserModification validates user for modification.
 func (u User) ValidateUserModification() error {
 	if u.Username == "" {
 		return errors.New("The username is mandatory")
@@ -48,9 +50,14 @@ func (u User) ValidateUserModification() error {
 		return err
 	}
 
+	if err := ValidateTheme(u.Theme); err != nil {
+		return err
+	}
+
 	return nil
 }
 
+// ValidateUserLogin validates user credential requirements.
 func (u User) ValidateUserLogin() error {
 	if u.Username == "" {
 		return errors.New("The username is mandatory")
@@ -63,6 +70,7 @@ func (u User) ValidateUserLogin() error {
 	return nil
 }
 
+// ValidatePassword validates user password requirements.
 func (u User) ValidatePassword() error {
 	if u.Password != "" && len(u.Password) < 6 {
 		return errors.New("The password must have at least 6 characters")

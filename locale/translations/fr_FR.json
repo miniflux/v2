@@ -133,5 +133,6 @@
     "Sign in with Google": "Se connecter avec Google",
     "Unlink my Google account": "Dissocier mon compte Google",
     "Link my Google account": "Associer mon compte Google",
-    "Category not found for this user.": "Cette catégorie n'existe pas pour cet utilisateur."
+    "Category not found for this user.": "Cette catégorie n'existe pas pour cet utilisateur.",
+    "Invalid theme.": "Le thème est invalide."
 }
