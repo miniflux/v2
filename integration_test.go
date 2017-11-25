@@ -466,7 +466,6 @@ func TestDeleteCategory(t *testing.T) {
 func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-
 	categories, err := client.Categories()
 	if err != nil {
 		t.Fatal(err)
@@ -481,6 +480,30 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 	err = client.DeleteCategory(categories[0].ID)
 	if err == nil {
 		t.Fatal(`Removing a category that belongs to another user should be forbidden`)
+	}
+}
+
+func TestDiscoverSubscriptions(t *testing.T) {
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	subscriptions, err := client.Discover("https://miniflux.net")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(subscriptions) != 1 {
+		t.Fatalf(`Invalid number of subscriptions, got "%v" instead of "%v"`, len(subscriptions), 2)
+	}
+
+	if subscriptions[0].Title != "Feed" {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, subscriptions[0].Title, "Feed")
+	}
+
+	if subscriptions[0].Type != "atom" {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, subscriptions[0].Type, "atom")
+	}
+
+	if subscriptions[0].URL != "https://miniflux.net/feed" {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, subscriptions[0].URL, "https://miniflux.net/feed")
 	}
 }
 
