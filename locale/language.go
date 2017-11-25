@@ -6,11 +6,13 @@ package locale
 
 import "fmt"
 
+// Language represents a language in the system.
 type Language struct {
 	language     string
 	translations Translation
 }
 
+// Get fetch the translation for the given key.
 func (l *Language) Get(key string, args ...interface{}) string {
 	var translation string
 
@@ -24,11 +26,12 @@ func (l *Language) Get(key string, args ...interface{}) string {
 	return fmt.Sprintf(translation, args...)
 }
 
+// Plural returns the translation of the given key by using the language plural form.
 func (l *Language) Plural(key string, n int, args ...interface{}) string {
 	translation := key
 	slices, found := l.translations[key]
-	if found {
 
+	if found {
 		pluralForm, found := pluralForms[l.language]
 		if !found {
 			pluralForm = pluralForms["default"]

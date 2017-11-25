@@ -116,5 +116,5 @@ func main() {
 	generateFile("js", "static", "Javascript", "server/static/js/*.js", "server/static/js.go")
 	generateFile("none", "template", "templateViewsMap", "server/template/html/*.html", "server/template/views.go")
 	generateFile("none", "template", "templateCommonMap", "server/template/html/common/*.html", "server/template/common.go")
-	generateFile("none", "locale", "Translations", "locale/translations/*.json", "locale/translations.go")
+	generateFile("none", "locale", "translations", "locale/translations/*.json", "locale/translations.go")
 }

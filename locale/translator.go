@@ -10,10 +10,12 @@ import (
 	"strings"
 )
 
+// Translator manage supported locales.
 type Translator struct {
-	Locales Locales
+	locales Locales
 }
 
+// AddLanguage loads a new language into the system.
 func (t *Translator) AddLanguage(language, translations string) error {
 	var decodedTranslations Translation
 
@@ -22,12 +24,13 @@ func (t *Translator) AddLanguage(language, translations string) error {
 		return fmt.Errorf("Invalid JSON file: %v", err)
 	}
 
-	t.Locales[language] = decodedTranslations
+	t.locales[language] = decodedTranslations
 	return nil
 }
 
+// GetLanguage returns the given language handler.
 func (t *Translator) GetLanguage(language string) *Language {
-	translations, found := t.Locales[language]
+	translations, found := t.locales[language]
 	if !found {
 		return &Language{language: language}
 	}
@@ -35,6 +38,7 @@ func (t *Translator) GetLanguage(language string) *Language {
 	return &Language{language: language, translations: translations}
 }
 
+// NewTranslator creates a new Translator.
 func NewTranslator() *Translator {
-	return &Translator{Locales: make(Locales)}
+	return &Translator{locales: make(Locales)}
 }
