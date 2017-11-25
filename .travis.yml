@@ -1,5 +1,9 @@
 notifications:
   email: false
+services:
+  - postgresql
+addons:
+  postgresql: "9.4"
 language: go
 go:
   - 1.9
@@ -7,4 +11,5 @@ before_install:
   - npm install -g jshint
 script:
   - jshint server/static/js/app.js
-  - go test -cover -race ./...
+  - make test
+  - make integration-test

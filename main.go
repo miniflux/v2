@@ -116,8 +116,16 @@ func main() {
 	}
 
 	if *flagCreateAdmin {
-		user := &model.User{IsAdmin: true}
-		user.Username, user.Password = askCredentials()
+		user := &model.User{
+			Username: os.Getenv("ADMIN_USERNAME"),
+			Password: os.Getenv("ADMIN_PASSWORD"),
+			IsAdmin:  true,
+		}
+
+		if user.Username == "" || user.Password == "" {
+			user.Username, user.Password = askCredentials()
+		}
+
 		if err := user.ValidateUserCreation(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)

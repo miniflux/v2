@@ -64,8 +64,18 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		}
 	}
 
-	query := "INSERT INTO users (username, password, is_admin, extra) VALUES ($1, $2, $3, $4) RETURNING id"
-	err = s.db.QueryRow(query, strings.ToLower(user.Username), password, user.IsAdmin, extra).Scan(&user.ID)
+	query := `INSERT INTO users
+		(username, password, is_admin, extra)
+		VALUES
+		($1, $2, $3, $4)
+		RETURNING id, language, theme, timezone`
+
+	err = s.db.QueryRow(query, strings.ToLower(user.Username), password, user.IsAdmin, extra).Scan(
+		&user.ID,
+		&user.Language,
+		&user.Theme,
+		&user.Timezone,
+	)
 	if err != nil {
 		return fmt.Errorf("unable to create user: %v", err)
 	}
