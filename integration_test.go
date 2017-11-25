@@ -303,6 +303,187 @@ func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
 	}
 }
 
+func TestCreateCategory(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	categoryName := "My category"
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	category, err := client.CreateCategory(categoryName)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if category.ID == 0 {
+		t.Fatalf(`Invalid categoryID, got "%v"`, category.ID)
+	}
+
+	if category.UserID != user.ID {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, category.UserID, user.ID)
+	}
+
+	if category.Title != categoryName {
+		t.Fatalf(`Invalid title, got "%v" instead of "%v"`, category.Title, categoryName)
+	}
+}
+
+func TestCreateCategoryWithEmptyTitle(t *testing.T) {
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateCategory("")
+	if err == nil {
+		t.Fatal(`The category title should be mandatory`)
+	}
+}
+
+func TestCannotCreateDuplicatedCategory(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	categoryName := "My category"
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.CreateCategory(categoryName)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateCategory(categoryName)
+	if err == nil {
+		t.Fatal(`Duplicated categories should not be allowed`)
+	}
+}
+
+func TestUpdateCategory(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	categoryName := "My category"
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	category, err := client.CreateCategory(categoryName)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	categoryName = "Updated category"
+	category, err = client.UpdateCategory(category.ID, categoryName)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if category.ID == 0 {
+		t.Fatalf(`Invalid categoryID, got "%v"`, category.ID)
+	}
+
+	if category.UserID != user.ID {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, category.UserID, user.ID)
+	}
+
+	if category.Title != categoryName {
+		t.Fatalf(`Invalid title, got "%v" instead of "%v"`, category.Title, categoryName)
+	}
+}
+
+func TestListCategories(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	categoryName := "My category"
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.CreateCategory(categoryName)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(categories) != 2 {
+		t.Fatalf(`Invalid number of categories, got "%v" instead of "%v"`, len(categories), 2)
+	}
+
+	if categories[0].ID == 0 {
+		t.Fatalf(`Invalid categoryID, got "%v"`, categories[0].ID)
+	}
+
+	if categories[0].UserID != user.ID {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, categories[0].UserID, user.ID)
+	}
+
+	if categories[0].Title != "All" {
+		t.Fatalf(`Invalid title, got "%v" instead of "%v"`, categories[0].Title, "All")
+	}
+
+	if categories[1].ID == 0 {
+		t.Fatalf(`Invalid categoryID, got "%v"`, categories[0].ID)
+	}
+
+	if categories[1].UserID != user.ID {
+		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, categories[1].UserID, user.ID)
+	}
+
+	if categories[1].Title != categoryName {
+		t.Fatalf(`Invalid title, got "%v" instead of "%v"`, categories[1].Title, categoryName)
+	}
+}
+
+func TestDeleteCategory(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	category, err := client.CreateCategory("My category")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = client.DeleteCategory(category.ID)
+	if err != nil {
+		t.Fatal(`Removing a category should not raise any error`)
+	}
+}
+
+func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	err = client.DeleteCategory(categories[0].ID)
+	if err == nil {
+		t.Fatal(`Removing a category that belongs to another user should be forbidden`)
+	}
+}
+
 func getRandomUsername() string {
 	rand.Seed(time.Now().UnixNano())
 	var suffix []string
