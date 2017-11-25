@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// Feed represents a feed in the database
+// Feed represents a feed in the database.
 type Feed struct {
 	ID                 int64     `json:"id"`
 	UserID             int64     `json:"user_id"`

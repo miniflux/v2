@@ -18,11 +18,12 @@ import (
 )
 
 var (
-	errRequestFailed = "Unable to execute request: %v"
-	errServerFailure = "Unable to fetch feed (statusCode=%d)."
-	errDuplicate     = "This feed already exists (%s)."
-	errNotFound      = "Feed %d not found"
-	errEncoding      = "Unable to normalize encoding: %v."
+	errRequestFailed    = "Unable to execute request: %v"
+	errServerFailure    = "Unable to fetch feed (statusCode=%d)."
+	errDuplicate        = "This feed already exists (%s)."
+	errNotFound         = "Feed %d not found"
+	errEncoding         = "Unable to normalize encoding: %v."
+	errCategoryNotFound = "Category not found for this user."
 )
 
 // Handler contains all the logic to create and refresh feeds.
@@ -33,6 +34,10 @@ type Handler struct {
 // CreateFeed fetch, parse and store a new feed.
 func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
+
+	if !h.store.CategoryExists(userID, categoryID) {
+		return nil, errors.NewLocalizedError(errCategoryNotFound)
+	}
 
 	client := http.NewClient(url)
 	response, err := client.Get()

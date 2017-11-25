@@ -33,7 +33,7 @@ func (h *Client) Get() (*Response, error) {
 
 	req := &http.Request{
 		URL:    u,
-		Method: "GET",
+		Method: http.MethodGet,
 		Header: h.buildHeaders(),
 	}
 

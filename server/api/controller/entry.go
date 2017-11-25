@@ -6,6 +6,7 @@ package api
 
 import (
 	"errors"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/api/payload"
 	"github.com/miniflux/miniflux2/server/core"
@@ -99,23 +100,11 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 	response.JSON().Standard(&payload.EntriesResponse{Total: count, Entries: entries})
 }
 
-// SetEntryStatus is the API handler to change the status of an entry.
+// SetEntryStatus is the API handler to change the status of entries.
 func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
 
-	feedID, err := request.IntegerParam("feedID")
-	if err != nil {
-		response.JSON().BadRequest(err)
-		return
-	}
-
-	entryID, err := request.IntegerParam("entryID")
-	if err != nil {
-		response.JSON().BadRequest(err)
-		return
-	}
-
-	status, err := payload.DecodeEntryStatusPayload(request.Body())
+	entryIDs, status, err := payload.DecodeEntryStatusPayload(request.Body())
 	if err != nil {
 		response.JSON().BadRequest(errors.New("Invalid JSON payload"))
 		return
@@ -126,31 +115,10 @@ func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
-	builder.WithFeedID(feedID)
-	builder.WithEntryID(entryID)
-
-	entry, err := builder.GetEntry()
-	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
+	if err := c.store.SetEntriesStatus(userID, entryIDs, status); err != nil {
+		response.JSON().ServerError(errors.New("Unable to change entries status"))
 		return
 	}
 
-	if entry == nil {
-		response.JSON().NotFound(errors.New("Entry not found"))
-		return
-	}
-
-	if err := c.store.SetEntriesStatus(userID, []int64{entry.ID}, status); err != nil {
-		response.JSON().ServerError(errors.New("Unable to change entry status"))
-		return
-	}
-
-	entry, err = builder.GetEntry()
-	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
-		return
-	}
-
-	response.JSON().Standard(entry)
+	response.JSON().NoContent()
 }

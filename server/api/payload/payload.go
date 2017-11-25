@@ -7,8 +7,9 @@ package payload
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/miniflux/miniflux2/model"
 	"io"
+
+	"github.com/miniflux/miniflux2/model"
 )
 
 type EntriesResponse struct {
@@ -41,18 +42,19 @@ func DecodeURLPayload(data io.Reader) (string, error) {
 	return p.URL, nil
 }
 
-func DecodeEntryStatusPayload(data io.Reader) (string, error) {
+func DecodeEntryStatusPayload(data io.Reader) ([]int64, string, error) {
 	type payload struct {
-		Status string `json:"status"`
+		EntryIDs []int64 `json:"entry_ids"`
+		Status   string  `json:"status"`
 	}
 
 	var p payload
 	decoder := json.NewDecoder(data)
 	if err := decoder.Decode(&p); err != nil {
-		return "", fmt.Errorf("invalid JSON payload: %v", err)
+		return nil, "", fmt.Errorf("invalid JSON payload: %v", err)
 	}
 
-	return p.Status, nil
+	return p.EntryIDs, p.Status, nil
 }
 
 func DecodeFeedCreationPayload(data io.Reader) (string, int64, error) {

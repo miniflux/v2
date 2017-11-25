@@ -143,7 +143,7 @@ func (s *Storage) GetFeedById(userID, feedID int64) (*model.Feed, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Unable to fetch feed: %v", err)
+		return nil, fmt.Errorf("unable to fetch feed: %v", err)
 	}
 
 	return &feed, nil
@@ -170,7 +170,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	).Scan(&feed.ID)
 
 	if err != nil {
-		return fmt.Errorf("Unable to create feed: %v", err)
+		return fmt.Errorf("unable to create feed: %v", err)
 	}
 
 	for i := 0; i < len(feed.Entries); i++ {
