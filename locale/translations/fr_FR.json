@@ -130,5 +130,7 @@
     "This special link allows you to subscribe to a website directly by using a bookmark in your web browser.": "Ce lien spécial vous permet de vous abonner à un site web directement en utilisant un marque page dans votre navigateur web.",
     "Add to Miniflux": "Ajouter à Miniflux",
     "Refresh all feeds in the background": "Actualiser tous les abonnements en arrière-plan",
-    "Sign in with Google": "Se connecter avec Google"
+    "Sign in with Google": "Se connecter avec Google",
+    "Unlink my Google account": "Dissocier mon compte Google",
+    "Link my Google account": "Associer mon compte Google"
 }

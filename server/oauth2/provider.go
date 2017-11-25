@@ -6,6 +6,7 @@ package oauth2
 
 // Provider is an interface for OAuth2 providers.
 type Provider interface {
+	GetUserExtraKey() string
 	GetRedirectURL(state string) string
 	GetProfile(code string) (*Profile, error)
 }

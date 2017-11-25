@@ -23,6 +23,10 @@ type googleProvider struct {
 	redirectURL  string
 }
 
+func (g googleProvider) GetUserExtraKey() string {
+	return "google_id"
+}
+
 func (g googleProvider) GetRedirectURL(state string) string {
 	return g.config().AuthCodeURL(state)
 }
@@ -48,7 +52,7 @@ func (g googleProvider) GetProfile(code string) (*Profile, error) {
 		return nil, fmt.Errorf("unable to unserialize google profile: %v", err)
 	}
 
-	profile := &Profile{Key: "google_id", ID: user.Sub, Username: user.Email}
+	profile := &Profile{Key: g.GetUserExtraKey(), ID: user.Sub, Username: user.Email}
 	return profile, nil
 }
 

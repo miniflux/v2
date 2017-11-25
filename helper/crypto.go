@@ -26,7 +26,7 @@ func Hash(value string) string {
 func GenerateRandomBytes(size int) []byte {
 	b := make([]byte, size)
 	if _, err := rand.Read(b); err != nil {
-		panic(fmt.Errorf("Unable to generate random string: %v", err))
+		panic(err)
 	}
 
 	return b

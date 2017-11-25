@@ -71,6 +71,17 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 		return
 	}
 
+	if ctx.IsAuthenticated() {
+		user := ctx.LoggedUser()
+		if err := c.store.UpdateExtraField(user.ID, profile.Key, profile.ID); err != nil {
+			response.HTML().ServerError(err)
+			return
+		}
+
+		response.Redirect(ctx.Route("settings"))
+		return
+	}
+
 	user, err := c.store.GetUserByExtraField(profile.Key, profile.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -78,6 +89,11 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 	}
 
 	if user == nil {
+		if c.cfg.GetInt("OAUTH2_USER_CREATION", 0) == 0 {
+			response.HTML().Forbidden()
+			return
+		}
+
 		user = model.NewUser()
 		user.Username = profile.Username
 		user.IsAdmin = false
@@ -112,6 +128,32 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 
 	response.SetCookie(cookie)
 	response.Redirect(ctx.Route("unread"))
+}
+
+// OAuth2Unlink unlink an account from the external provider.
+func (c *Controller) OAuth2Unlink(ctx *core.Context, request *core.Request, response *core.Response) {
+	provider := request.StringParam("provider", "")
+	if provider == "" {
+		log.Println("[OAuth2] Invalid or missing provider")
+		response.Redirect(ctx.Route("login"))
+		return
+	}
+
+	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
+	if err != nil {
+		log.Println("[OAuth2]", err)
+		response.Redirect(ctx.Route("settings"))
+		return
+	}
+
+	user := ctx.LoggedUser()
+	if err := c.store.RemoveExtraField(user.ID, authProvider.GetUserExtraKey()); err != nil {
+		response.HTML().ServerError(err)
+		return
+	}
+
+	response.Redirect(ctx.Route("settings"))
+	return
 }
 
 func getOAuth2Manager(cfg *config.Config) *oauth2.Manager {

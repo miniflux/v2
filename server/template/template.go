@@ -40,6 +40,13 @@ func (e *Engine) parseAll() {
 		"hasOAuth2Provider": func(provider string) bool {
 			return e.cfg.Get("OAUTH2_PROVIDER", "") == provider
 		},
+		"hasKey": func(dict map[string]string, key string) bool {
+			log.Println(dict)
+			if value, found := dict[key]; found {
+				return value != ""
+			}
+			return false
+		},
 		"route": func(name string, args ...interface{}) string {
 			return route.GetRoute(e.router, name, args...)
 		},

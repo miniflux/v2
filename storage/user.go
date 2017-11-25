@@ -74,6 +74,24 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 	return nil
 }
 
+func (s *Storage) UpdateExtraField(userID int64, field, value string) error {
+	query := fmt.Sprintf(`UPDATE users SET extra = hstore('%s', $1) WHERE id=$2`, field)
+	_, err := s.db.Exec(query, value, userID)
+	if err != nil {
+		return fmt.Errorf("unable to update user extra field: %v", err)
+	}
+	return nil
+}
+
+func (s *Storage) RemoveExtraField(userID int64, field string) error {
+	query := `UPDATE users SET extra = delete(extra, $1) WHERE id=$2`
+	_, err := s.db.Exec(query, field, userID)
+	if err != nil {
+		return fmt.Errorf("unable to remove user extra field: %v", err)
+	}
+	return nil
+}
+
 func (s *Storage) UpdateUser(user *model.User) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateUser] username=%s", user.Username))
 	user.Username = strings.ToLower(user.Username)
@@ -104,12 +122,20 @@ func (s *Storage) GetUserById(userID int64) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserById] userID=%d", userID))
 
 	var user model.User
-	row := s.db.QueryRow("SELECT id, username, is_admin, theme, language, timezone FROM users WHERE id = $1", userID)
-	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone)
+	var extra hstore.Hstore
+	row := s.db.QueryRow("SELECT id, username, is_admin, theme, language, timezone, extra FROM users WHERE id = $1", userID)
+	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone, &extra)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf("unable to fetch user: %v", err)
+	}
+
+	user.Extra = make(map[string]string)
+	for key, value := range extra.Map {
+		if value.Valid {
+			user.Extra[key] = value.String
+		}
 	}
 
 	return &user, nil

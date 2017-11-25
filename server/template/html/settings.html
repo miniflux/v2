@@ -63,4 +63,14 @@
     </div>
 </form>
 
+{{ if hasOAuth2Provider "google" }}
+<div class="panel">
+    {{ if hasKey .user.Extra "google_id" }}
+        <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "Unlink my Google account" }}</a>
+    {{ else }}
+        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "Link my Google account" }}</a>
+    {{ end }}
+</div>
+{{ end }}
+
 {{ end }}

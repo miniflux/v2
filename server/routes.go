@@ -124,6 +124,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/import", uiHandler.Use(uiController.Import)).Name("import").Methods("GET")
 	router.Handle("/upload", uiHandler.Use(uiController.UploadOPML)).Name("uploadOPML").Methods("POST")
 
+	router.Handle("/oauth2/{provider}/unlink", uiHandler.Use(uiController.OAuth2Unlink)).Name("oauth2Unlink").Methods("GET")
 	router.Handle("/oauth2/{provider}/redirect", uiHandler.Use(uiController.OAuth2Redirect)).Name("oauth2Redirect").Methods("GET")
 	router.Handle("/oauth2/{provider}/callback", uiHandler.Use(uiController.OAuth2Callback)).Name("oauth2Callback").Methods("GET")
 
