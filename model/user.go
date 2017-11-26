@@ -42,6 +42,10 @@ func (u User) ValidateUserCreation() error {
 
 // ValidateUserModification validates user for modification.
 func (u User) ValidateUserModification() error {
+	if u.ID <= 0 {
+		return errors.New("The ID is mandatory")
+	}
+
 	if u.Username == "" {
 		return errors.New("The username is mandatory")
 	}

@@ -7,6 +7,7 @@ package model
 import "time"
 import "fmt"
 
+// Session represents a user session in the system.
 type Session struct {
 	ID        int64
 	UserID    int64
@@ -20,4 +21,5 @@ func (s *Session) String() string {
 	return fmt.Sprintf("ID=%d, UserID=%d, IP=%s", s.ID, s.UserID, s.IP)
 }
 
+// Sessions represents a list of sessions.
 type Sessions []*Session

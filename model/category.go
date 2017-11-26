@@ -9,6 +9,7 @@ import (
 	"fmt"
 )
 
+// Category represents a category in the system.
 type Category struct {
 	ID        int64  `json:"id,omitempty"`
 	Title     string `json:"title,omitempty"`
@@ -20,6 +21,7 @@ func (c *Category) String() string {
 	return fmt.Sprintf("ID=%d, UserID=%d, Title=%s", c.ID, c.UserID, c.Title)
 }
 
+// ValidateCategoryCreation validates a category during the creation.
 func (c Category) ValidateCategoryCreation() error {
 	if c.Title == "" {
 		return errors.New("The title is mandatory")
@@ -32,6 +34,7 @@ func (c Category) ValidateCategoryCreation() error {
 	return nil
 }
 
+// ValidateCategoryModification validates a category during the modification.
 func (c Category) ValidateCategoryModification() error {
 	if c.Title == "" {
 		return errors.New("The title is mandatory")
@@ -41,11 +44,12 @@ func (c Category) ValidateCategoryModification() error {
 		return errors.New("The userID is mandatory")
 	}
 
-	if c.ID == 0 {
+	if c.ID <= 0 {
 		return errors.New("The ID is mandatory")
 	}
 
 	return nil
 }
 
+// Categories represents a list of categories.
 type Categories []*Category
