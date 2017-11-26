@@ -7,9 +7,10 @@ package sanitizer
 import (
 	"bytes"
 	"fmt"
-	"github.com/miniflux/miniflux2/reader/url"
 	"io"
 	"strings"
+
+	"github.com/miniflux/miniflux2/reader/url"
 
 	"golang.org/x/net/html"
 )
@@ -33,7 +34,7 @@ func Sanitize(baseURL, input string) string {
 		token := tokenizer.Token()
 		switch token.Type {
 		case html.TextToken:
-			buffer.WriteString(token.Data)
+			buffer.WriteString(html.EscapeString(token.Data))
 		case html.StartTagToken:
 			tagName := token.DataAtom.String()
 
@@ -72,8 +73,8 @@ func Sanitize(baseURL, input string) string {
 	}
 }
 
-func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) (attrNames []string, html string) {
-	var htmlAttrs []string
+func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([]string, string) {
+	var htmlAttrs, attrNames []string
 	var err error
 
 	for _, attribute := range attributes {
@@ -99,7 +100,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) (a
 		}
 
 		attrNames = append(attrNames, attribute.Key)
-		htmlAttrs = append(htmlAttrs, fmt.Sprintf(`%s="%s"`, attribute.Key, value))
+		htmlAttrs = append(htmlAttrs, fmt.Sprintf(`%s="%s"`, attribute.Key, html.EscapeString(value)))
 	}
 
 	extraAttrNames, extraHTMLAttributes := getExtraAttributes(tagName)

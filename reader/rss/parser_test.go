@@ -94,7 +94,7 @@ func TestParseRss2Sample(t *testing.T) {
 		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
 	}
 
-	if feed.Entries[0].Content != `How do Americans get ready to work with Russians aboard the International Space Station? They take a crash course in culture, language and protocol at Russia's <a href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm" rel="noopener noreferrer" target="_blank" referrerpolicy="no-referrer">Star City</a>.` {
+	if feed.Entries[0].Content != `How do Americans get ready to work with Russians aboard the International Space Station? They take a crash course in culture, language and protocol at Russia&#39;s <a href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm" rel="noopener noreferrer" target="_blank" referrerpolicy="no-referrer">Star City</a>.` {
 		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
 	}
 }

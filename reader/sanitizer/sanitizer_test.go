@@ -142,3 +142,23 @@ func TestPixelTracker(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestXmlEntities(t *testing.T) {
+	input := `<pre>echo "test" &gt; /etc/hosts</pre>`
+	expected := `<pre>echo &#34;test&#34; &gt; /etc/hosts</pre>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
+func TestEspaceAttributes(t *testing.T) {
+	input := `<td rowspan="<b>test</b>">test</td>`
+	expected := `<td rowspan="&lt;b&gt;test&lt;/b&gt;">test</td>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
