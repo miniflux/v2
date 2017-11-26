@@ -15,7 +15,7 @@
             </span>
             {{ if .entry.Author }}
                 <span class="entry-author">
-                    {{ if contains .entry.Author "@" }}
+                    {{ if isEmail .entry.Author }}
                         - <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
                     {{ else }}
                         – <em>{{ .entry.Author }}</em>

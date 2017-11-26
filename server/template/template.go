@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"net/mail"
 	"net/url"
 	"strings"
 	"time"
@@ -63,6 +64,13 @@ func (e *Engine) parseAll() {
 			}
 
 			return parsedURL.Host
+		},
+		"isEmail": func(str string) bool {
+			_, err := mail.ParseAddress(str)
+			if err != nil {
+				return false
+			}
+			return true
 		},
 		"hasPrefix": func(str, prefix string) bool {
 			return strings.HasPrefix(str, prefix)
