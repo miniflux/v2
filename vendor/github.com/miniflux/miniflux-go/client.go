@@ -214,23 +214,27 @@ func (c *Client) Feed(feedID int64) (*Feed, error) {
 }
 
 // CreateFeed creates a new feed.
-func (c *Client) CreateFeed(url string, categoryID int64) (*Feed, error) {
+func (c *Client) CreateFeed(url string, categoryID int64) (int64, error) {
 	body, err := c.request.Post("/v1/feeds", map[string]interface{}{
 		"feed_url":    url,
 		"category_id": categoryID,
 	})
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 	defer body.Close()
 
-	var feed *Feed
-	decoder := json.NewDecoder(body)
-	if err := decoder.Decode(&feed); err != nil {
-		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	type result struct {
+		FeedID int64 `json:"feed_id"`
 	}
 
-	return feed, nil
+	var r result
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&r); err != nil {
+		return 0, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return r.FeedID, nil
 }
 
 // UpdateFeed updates a feed.

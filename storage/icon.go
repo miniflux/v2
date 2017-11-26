@@ -7,10 +7,11 @@ package storage
 import (
 	"database/sql"
 	"fmt"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
 	"strings"
 	"time"
+
+	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/model"
 )
 
 func (s *Storage) HasIcon(feedID int64) bool {
@@ -89,7 +90,7 @@ func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
 
 	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feed.ID, icon.ID)
 	if err != nil {
-		return fmt.Errorf("Unable to create feed icon: %v", err)
+		return fmt.Errorf("unable to create feed icon: %v", err)
 	}
 
 	return nil

@@ -34,7 +34,7 @@ func main() {
     client := miniflux.NewClient("https://api.example.org", "admin", "secret")
 
     // Fetch all feeds.
-    feeds, err := userClient.Feeds()
+    feeds, err := client.Feeds()
     if err != nil {
         fmt.Println(err)
         return

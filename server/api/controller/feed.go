@@ -6,6 +6,7 @@ package api
 
 import (
 	"errors"
+
 	"github.com/miniflux/miniflux2/server/api/payload"
 	"github.com/miniflux/miniflux2/server/core"
 )
@@ -25,7 +26,11 @@ func (c *Controller) CreateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	response.JSON().Created(feed)
+	type result struct {
+		FeedID int64 `json:"feed_id"`
+	}
+
+	response.JSON().Created(&result{FeedID: feed.ID})
 }
 
 // RefreshFeed is the API handler to refresh a feed.

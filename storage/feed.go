@@ -168,7 +168,6 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.EtagHeader,
 		feed.LastModifiedHeader,
 	).Scan(&feed.ID)
-
 	if err != nil {
 		return fmt.Errorf("unable to create feed: %v", err)
 	}

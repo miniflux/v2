@@ -495,15 +495,83 @@ func TestDiscoverSubscriptions(t *testing.T) {
 	}
 
 	if subscriptions[0].Title != "Feed" {
-		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, subscriptions[0].Title, "Feed")
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, subscriptions[0].Title, "Feed")
 	}
 
 	if subscriptions[0].Type != "atom" {
-		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, subscriptions[0].Type, "atom")
+		t.Fatalf(`Invalid feed type, got "%v" instead of "%v"`, subscriptions[0].Type, "atom")
 	}
 
 	if subscriptions[0].URL != "https://miniflux.net/feed" {
-		t.Fatalf(`Invalid userID, got "%v" instead of "%v"`, subscriptions[0].URL, "https://miniflux.net/feed")
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, subscriptions[0].URL, "https://miniflux.net/feed")
+	}
+}
+
+func TestCreateFeed(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
+	}
+}
+
+func TestCannotCreateDuplicatedFeed(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
+	}
+
+	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err == nil {
+		t.Fatal(`Duplicated feeds should not be allowed`)
+	}
+}
+
+func TestCreateFeedWithInexistingCategory(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	_, err = client.CreateFeed("https://miniflux.net/feed", -1)
+	if err == nil {
+		t.Fatal(`Feeds should not be created with inexisting category`)
 	}
 }
 

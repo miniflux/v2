@@ -41,7 +41,7 @@
   branch = "master"
   name = "github.com/miniflux/miniflux-go"
   packages = ["."]
-  revision = "a2caa9187ebe4378f36c8e680825586a890154c9"
+  revision = "2efd82e81054cf01433e81c419a7c84e62e6a52c"
 
 [[projects]]
   name = "github.com/tdewolff/minify"
@@ -65,13 +65,13 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["acme","acme/autocert","bcrypt","blowfish","ssh/terminal"]
-  revision = "9f005a07e0d31d45e6656d241bb5c0f2efd4bc94"
+  revision = "b080dc9a8c480b08e698fb1219160d598526310f"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","context/ctxhttp","html","html/atom","html/charset"]
-  revision = "fb018015d54fd2e3bfd5362a041991d350fde9d7"
+  revision = "c7086645de248775cbf2373cf5ca4d2fa664b8c1"
 
 [[projects]]
   branch = "master"
@@ -83,7 +83,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "82aafbf43bf885069dc71b7e7c2f9d7a614d47da"
+  revision = "4ff8c001ce4cc464e644b922325097228fce14d8"
 
 [[projects]]
   branch = "master"
@@ -100,6 +100,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ade513f4a86a1f49ce3508aa55f40cf2b1f172d6f3679649e48de67a82715431"
+  inputs-digest = "338222e5111416c46b2b8bde149443abc542b386dd02aff2a0dd6e13334bcf28"
   solver-name = "gps-cdcl"
   solver-version = 1

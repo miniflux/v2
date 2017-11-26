@@ -31,7 +31,9 @@ TODO
 - [ ] Gzip compression
 - [ ] Integration tests
 - [X] Flush history
-- [ ] OAuth2
+- [X] OAuth2
+- [ ] Bookmarks
+- [ ] Touch events
 
 Credits
 -------
