@@ -771,6 +771,212 @@ func TestGetFeeds(t *testing.T) {
 	}
 }
 
+func TestGetAllFeedEntries(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	allResults, err := client.FeedEntries(feedID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if allResults.Total == 0 {
+		t.Fatal(`Invalid number of entries`)
+	}
+
+	if allResults.Entries[0].Title == "" {
+		t.Fatal(`Invalid entry title`)
+	}
+
+	filteredResults, err := client.FeedEntries(feedID, &miniflux.Filter{Limit: 1, Offset: 5})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if allResults.Total != filteredResults.Total {
+		t.Fatal(`Total should always contains the total number of items regardless of filters`)
+	}
+
+	if allResults.Entries[0].ID == filteredResults.Entries[0].ID {
+		t.Fatal(`Filtered entries should be different than previous result`)
+	}
+}
+
+func TestGetAllEntries(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resultWithoutSorting, err := client.Entries(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resultWithoutSorting.Total == 0 {
+		t.Fatal(`Invalid number of entries`)
+	}
+
+	resultWithStatusFilter, err := client.Entries(&miniflux.Filter{Status: miniflux.EntryStatusRead})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resultWithStatusFilter.Total != 0 {
+		t.Fatal(`We should have 0 read entries`)
+	}
+
+	resultWithDifferentSorting, err := client.Entries(&miniflux.Filter{Order: "published_at", Direction: "asc"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resultWithDifferentSorting.Entries[0].Title == resultWithoutSorting.Entries[0].Title {
+		t.Fatalf(`The items should be sorted differently "%v" vs "%v"`, resultWithDifferentSorting.Entries[0].Title, resultWithoutSorting.Entries[0].Title)
+	}
+}
+
+func TestInvalidFilters(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.Entries(&miniflux.Filter{Status: "invalid"})
+	if err == nil {
+		t.Fatal(`Using invalid status should raise an error`)
+	}
+
+	_, err = client.Entries(&miniflux.Filter{Direction: "invalid"})
+	if err == nil {
+		t.Fatal(`Using invalid direction should raise an error`)
+	}
+
+	_, err = client.Entries(&miniflux.Filter{Order: "invalid"})
+	if err == nil {
+		t.Fatal(`Using invalid order should raise an error`)
+	}
+}
+
+func TestGetEntry(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := client.Entries(&miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := client.Entry(result.Entries[0].FeedID, result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.ID != result.Entries[0].ID {
+		t.Fatal("Wrong entry returned")
+	}
+}
+
+func TestUpdateStatus(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := client.Entries(&miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = client.UpdateEntries([]int64{result.Entries[0].ID}, miniflux.EntryStatusRead)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := client.Entry(result.Entries[0].FeedID, result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Status != miniflux.EntryStatusRead {
+		t.Fatal("The entry status should be updated")
+	}
+
+	err = client.UpdateEntries([]int64{result.Entries[0].ID}, "invalid")
+	if err == nil {
+		t.Fatal(`Invalid entry status should ne be accepted`)
+	}
+}
+
 func getRandomUsername() string {
 	rand.Seed(time.Now().UnixNano())
 	var suffix []string

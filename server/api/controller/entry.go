@@ -62,13 +62,13 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 		}
 	}
 
-	order := request.QueryStringParam("order", "id")
+	order := request.QueryStringParam("order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
 		response.JSON().BadRequest(err)
 		return
 	}
 
-	direction := request.QueryStringParam("direction", "desc")
+	direction := request.QueryStringParam("direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
 		response.JSON().BadRequest(err)
 		return
@@ -76,12 +76,69 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 
 	limit := request.QueryIntegerParam("limit", 100)
 	offset := request.QueryIntegerParam("offset", 0)
+	if err := model.ValidateRange(offset, limit); err != nil {
+		response.JSON().BadRequest(err)
+		return
+	}
 
 	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithOrder(order)
+	builder.WithDirection(direction)
+	builder.WithOffset(offset)
+	builder.WithLimit(limit)
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		response.JSON().ServerError(errors.New("Unable to fetch the list of entries"))
+		return
+	}
+
+	count, err := builder.CountEntries()
+	if err != nil {
+		response.JSON().ServerError(errors.New("Unable to count the number of entries"))
+		return
+	}
+
+	response.JSON().Standard(&payload.EntriesResponse{Total: count, Entries: entries})
+}
+
+// GetEntries is the API handler to fetch entries.
+func (c *Controller) GetEntries(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+
+	status := request.QueryStringParam("status", "")
+	if status != "" {
+		if err := model.ValidateEntryStatus(status); err != nil {
+			response.JSON().BadRequest(err)
+			return
+		}
+	}
+
+	order := request.QueryStringParam("order", model.DefaultSortingOrder)
+	if err := model.ValidateEntryOrder(order); err != nil {
+		response.JSON().BadRequest(err)
+		return
+	}
+
+	direction := request.QueryStringParam("direction", model.DefaultSortingDirection)
+	if err := model.ValidateDirection(direction); err != nil {
+		response.JSON().BadRequest(err)
+		return
+	}
+
+	limit := request.QueryIntegerParam("limit", 100)
+	offset := request.QueryIntegerParam("offset", 0)
+	if err := model.ValidateRange(offset, limit); err != nil {
+		response.JSON().BadRequest(err)
+		return
+	}
+
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder.WithStatus(status)
+	builder.WithOrder(order)
+	builder.WithDirection(direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
 

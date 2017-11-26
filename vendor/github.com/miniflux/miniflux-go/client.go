@@ -196,7 +196,7 @@ func (c *Client) Feeds() (Feeds, error) {
 	return feeds, nil
 }
 
-// Feed gets a new feed.
+// Feed gets a feed.
 func (c *Client) Feed(feedID int64) (*Feed, error) {
 	body, err := c.request.Get(fmt.Sprintf("/v1/feeds/%d", feedID))
 	if err != nil {
@@ -291,35 +291,28 @@ func (c *Client) Entry(feedID, entryID int64) (*Entry, error) {
 	return entry, nil
 }
 
-// Entries gets feed entries.
-func (c *Client) Entries(feedID int64, filter *Filter) (*EntryResultSet, error) {
-	path := fmt.Sprintf("/v1/feeds/%d/entries", feedID)
+// Entries fetch entries.
+func (c *Client) Entries(filter *Filter) (*EntryResultSet, error) {
+	path := buildFilterQueryString("/v1/entries", filter)
 
-	if filter != nil {
-		values := url.Values{}
-
-		if filter.Status != "" {
-			values.Set("status", filter.Status)
-		}
-
-		if filter.Direction != "" {
-			values.Set("direction", filter.Direction)
-		}
-
-		if filter.Order != "" {
-			values.Set("order", filter.Order)
-		}
-
-		if filter.Limit != 0 {
-			values.Set("limit", strconv.Itoa(filter.Limit))
-		}
-
-		if filter.Offset != 0 {
-			values.Set("offset", strconv.Itoa(filter.Offset))
-		}
-
-		path = fmt.Sprintf("%s?%s", path, values.Encode())
+	body, err := c.request.Get(path)
+	if err != nil {
+		return nil, err
 	}
+	defer body.Close()
+
+	var result EntryResultSet
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&result); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return &result, nil
+}
+
+// FeedEntries fetch feed entries.
+func (c *Client) FeedEntries(feedID int64, filter *Filter) (*EntryResultSet, error) {
+	path := buildFilterQueryString(fmt.Sprintf("/v1/feeds/%d/entries", feedID), filter)
 
 	body, err := c.request.Get(path)
 	if err != nil {
@@ -355,4 +348,34 @@ func (c *Client) UpdateEntries(entryIDs []int64, status string) error {
 // NewClient returns a new Client.
 func NewClient(endpoint, username, password string) *Client {
 	return &Client{request: &request{endpoint: endpoint, username: username, password: password}}
+}
+
+func buildFilterQueryString(path string, filter *Filter) string {
+	if filter != nil {
+		values := url.Values{}
+
+		if filter.Status != "" {
+			values.Set("status", filter.Status)
+		}
+
+		if filter.Direction != "" {
+			values.Set("direction", filter.Direction)
+		}
+
+		if filter.Order != "" {
+			values.Set("order", filter.Order)
+		}
+
+		if filter.Limit >= 0 {
+			values.Set("limit", strconv.Itoa(filter.Limit))
+		}
+
+		if filter.Offset >= 0 {
+			values.Set("offset", strconv.Itoa(filter.Offset))
+		}
+
+		path = fmt.Sprintf("%s?%s", path, values.Encode())
+	}
+
+	return path
 }

@@ -42,6 +42,20 @@ func TestValidateEntryDirection(t *testing.T) {
 	}
 }
 
+func TestValidateRange(t *testing.T) {
+	if err := ValidateRange(-1, 0); err == nil {
+		t.Error(`An invalid offset should generate a error`)
+	}
+
+	if err := ValidateRange(0, -1); err == nil {
+		t.Error(`An invalid limit should generate a error`)
+	}
+
+	if err := ValidateRange(42, 42); err != nil {
+		t.Error(`A valid offset and limit should not generate any error`)
+	}
+}
+
 func TestGetOppositeDirection(t *testing.T) {
 	if GetOppositeDirection("asc") != "desc" {
 		t.Errorf(`The opposite direction of "asc" should be "desc"`)

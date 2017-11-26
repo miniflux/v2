@@ -68,6 +68,19 @@ func ValidateDirection(direction string) error {
 	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
 }
 
+// ValidateRange makes sure the offset/limit values are valid.
+func ValidateRange(offset, limit int) error {
+	if offset < 0 {
+		return fmt.Errorf(`Offset value should be >= 0`)
+	}
+
+	if limit < 0 {
+		return fmt.Errorf(`Limit value should be >= 0`)
+	}
+
+	return nil
+}
+
 // GetOppositeDirection returns the opposite sorting direction.
 func GetOppositeDirection(direction string) string {
 	if direction == "asc" {

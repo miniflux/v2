@@ -35,13 +35,13 @@
   branch = "master"
   name = "github.com/lib/pq"
   packages = [".","hstore","oid"]
-  revision = "8c6ee72f3e6bcb1542298dd5f76cb74af9742cec"
+  revision = "83612a56d3dd153a94a629cd64925371c9adad78"
 
 [[projects]]
   branch = "master"
   name = "github.com/miniflux/miniflux-go"
   packages = ["."]
-  revision = "2efd82e81054cf01433e81c419a7c84e62e6a52c"
+  revision = "c5788cd2d2248ee9fc148f3852dda7e24fe54cfa"
 
 [[projects]]
   name = "github.com/tdewolff/minify"

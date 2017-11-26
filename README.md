@@ -29,11 +29,12 @@ TODO
 - [X] Bookmarklet
 - [ ] External integrations (Pinboard, Wallabag...)
 - [ ] Gzip compression
-- [ ] Integration tests
+- [X] Integration tests
 - [X] Flush history
 - [X] OAuth2
 - [ ] Bookmarks
 - [ ] Touch events
+- [ ] Fever API?
 
 Credits
 -------
