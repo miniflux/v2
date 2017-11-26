@@ -575,6 +575,202 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	}
 }
 
+func TestUpdateFeed(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
+	}
+
+	feed, err := client.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	newTitle := "My new feed"
+	feed.Title = newTitle
+	feed, err = client.UpdateFeed(feed)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != newTitle {
+		t.Errorf(`Wrong title, got "%v" instead of "%v"`, feed.Title, newTitle)
+	}
+}
+
+func TestDeleteFeed(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = client.DeleteFeed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRefreshFeed(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = client.RefreshFeed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetFeed(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feed, err := client.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Miniflux" {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feed.Title, "Miniflux")
+	}
+
+	if feed.SiteURL != "https://miniflux.net/" {
+		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feed.SiteURL, "https://miniflux.net/")
+	}
+
+	if feed.FeedURL != "https://miniflux.net/feed" {
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feed.FeedURL, "https://miniflux.net/feed")
+	}
+
+	if feed.Category.ID != categories[0].ID {
+		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feed.Category.ID, categories[0].ID)
+	}
+
+	if feed.Category.UserID != categories[0].UserID {
+		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feed.Category.UserID, categories[0].UserID)
+	}
+
+	if feed.Category.Title != categories[0].Title {
+		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feed.Category.Title, categories[0].Title)
+	}
+}
+
+func TestGetFeeds(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feeds, err := client.Feeds()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feeds) != 1 {
+		t.Fatalf(`Invalid number of feeds`)
+	}
+
+	if feeds[0].ID != feedID {
+		t.Fatalf(`Invalid feed ID, got "%v" instead of "%v"`, feeds[0].ID, feedID)
+	}
+
+	if feeds[0].Title != "Miniflux" {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feeds[0].Title, "Miniflux")
+	}
+
+	if feeds[0].SiteURL != "https://miniflux.net/" {
+		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feeds[0].SiteURL, "https://miniflux.net/")
+	}
+
+	if feeds[0].FeedURL != "https://miniflux.net/feed" {
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feeds[0].FeedURL, "https://miniflux.net/feed")
+	}
+
+	if feeds[0].Category.ID != categories[0].ID {
+		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feeds[0].Category.ID, categories[0].ID)
+	}
+
+	if feeds[0].Category.UserID != categories[0].UserID {
+		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feeds[0].Category.UserID, categories[0].UserID)
+	}
+
+	if feeds[0].Category.Title != categories[0].Title {
+		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feeds[0].Category.Title, categories[0].Title)
+	}
+}
+
 func getRandomUsername() string {
 	rand.Seed(time.Now().UnixNano())
 	var suffix []string
