@@ -82,7 +82,7 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	user, err := c.store.GetUserByExtraField(profile.Key, profile.ID)
+	user, err := c.store.UserByExtraField(profile.Key, profile.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return

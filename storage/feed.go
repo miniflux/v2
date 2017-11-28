@@ -14,6 +14,7 @@ import (
 	"github.com/miniflux/miniflux2/model"
 )
 
+// FeedExists checks if the given feed exists.
 func (s *Storage) FeedExists(userID, feedID int64) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FeedExists] userID=%d, feedID=%d", userID, feedID))
 
@@ -23,6 +24,7 @@ func (s *Storage) FeedExists(userID, feedID int64) bool {
 	return result >= 1
 }
 
+// FeedURLExists checks if feed URL already exists.
 func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FeedURLExists] userID=%d, feedURL=%s", userID, feedURL))
 
@@ -43,8 +45,9 @@ func (s *Storage) CountFeeds(userID int64) int {
 	return result
 }
 
-func (s *Storage) GetFeeds(userID int64) (model.Feeds, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetFeeds] userID=%d", userID))
+// Feeds returns all feeds of the given user.
+func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Feeds] userID=%d", userID))
 
 	feeds := make(model.Feeds, 0)
 	query := `SELECT
@@ -109,8 +112,9 @@ func (s *Storage) GetFeeds(userID int64) (model.Feeds, error) {
 	return feeds, nil
 }
 
-func (s *Storage) GetFeedById(userID, feedID int64) (*model.Feed, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetFeedById] feedID=%d", feedID))
+// FeedByID returns a feed by the ID.
+func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FeedByID] feedID=%d", feedID))
 
 	var feed model.Feed
 	feed.Category = &model.Category{UserID: userID}
@@ -149,6 +153,7 @@ func (s *Storage) GetFeedById(userID, feedID int64) (*model.Feed, error) {
 	return &feed, nil
 }
 
+// CreateFeed creates a new feed.
 func (s *Storage) CreateFeed(feed *model.Feed) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeed] feedURL=%s", feed.FeedURL))
 	sql := `
@@ -184,6 +189,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	return nil
 }
 
+// UpdateFeed updates an existing feed.
 func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateFeed] feedURL=%s", feed.FeedURL))
 
@@ -213,6 +219,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	return nil
 }
 
+// RemoveFeed removes a feed.
 func (s *Storage) RemoveFeed(userID, feedID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveFeed] userID=%d, feedID=%d", userID, feedID))
 

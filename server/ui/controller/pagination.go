@@ -5,10 +5,10 @@
 package controller
 
 const (
-	NbItemsPerPage = 100
+	nbItemsPerPage = 100
 )
 
-type Pagination struct {
+type pagination struct {
 	Route        string
 	Total        int
 	Offset       int
@@ -19,25 +19,25 @@ type Pagination struct {
 	PrevOffset   int
 }
 
-func (c *Controller) getPagination(route string, total, offset int) Pagination {
+func (c *Controller) getPagination(route string, total, offset int) pagination {
 	nextOffset := 0
 	prevOffset := 0
-	showNext := (total - offset) > NbItemsPerPage
+	showNext := (total - offset) > nbItemsPerPage
 	showPrev := offset > 0
 
 	if showNext {
-		nextOffset = offset + NbItemsPerPage
+		nextOffset = offset + nbItemsPerPage
 	}
 
 	if showPrev {
-		prevOffset = offset - NbItemsPerPage
+		prevOffset = offset - nbItemsPerPage
 	}
 
-	return Pagination{
+	return pagination{
 		Route:        route,
 		Total:        total,
 		Offset:       offset,
-		ItemsPerPage: NbItemsPerPage,
+		ItemsPerPage: nbItemsPerPage,
 		ShowNext:     showNext,
 		NextOffset:   nextOffset,
 		ShowPrev:     showPrev,

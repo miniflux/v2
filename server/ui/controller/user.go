@@ -6,12 +6,14 @@ package controller
 
 import (
 	"errors"
+	"log"
+
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
-	"log"
 )
 
+// ShowUsers shows the list of users.
 func (c *Controller) ShowUsers(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -26,7 +28,7 @@ func (c *Controller) ShowUsers(ctx *core.Context, request *core.Request, respons
 		return
 	}
 
-	users, err := c.store.GetUsers()
+	users, err := c.store.Users()
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -38,6 +40,7 @@ func (c *Controller) ShowUsers(ctx *core.Context, request *core.Request, respons
 	}))
 }
 
+// CreateUser shows the user creation form.
 func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -58,6 +61,7 @@ func (c *Controller) CreateUser(ctx *core.Context, request *core.Request, respon
 	}))
 }
 
+// SaveUser validate and save the new user into the database.
 func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -105,6 +109,7 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 	response.Redirect(ctx.Route("users"))
 }
 
+// EditUser shows the form to edit a user.
 func (c *Controller) EditUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -134,6 +139,7 @@ func (c *Controller) EditUser(ctx *core.Context, request *core.Request, response
 	}))
 }
 
+// UpdateUser validate and update a user.
 func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -189,6 +195,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 	response.Redirect(ctx.Route("users"))
 }
 
+// RemoveUser deletes a user from the database.
 func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 	if !user.IsAdmin {
@@ -216,7 +223,7 @@ func (c *Controller) getUserFromURL(ctx *core.Context, request *core.Request, re
 		return nil, err
 	}
 
-	user, err := c.store.GetUserById(userID)
+	user, err := c.store.UserByID(userID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return nil, err

@@ -6,6 +6,7 @@ package api
 
 import (
 	"errors"
+
 	"github.com/miniflux/miniflux2/server/api/payload"
 	"github.com/miniflux/miniflux2/server/core"
 )
@@ -65,7 +66,7 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 
 // GetCategories is the API handler to get a list of categories for a given user.
 func (c *Controller) GetCategories(ctx *core.Context, request *core.Request, response *core.Response) {
-	categories, err := c.store.GetCategories(ctx.UserID())
+	categories, err := c.store.Categories(ctx.UserID())
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to fetch categories"))
 		return

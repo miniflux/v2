@@ -31,11 +31,11 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	apiController := api_controller.NewController(store, feedHandler)
 	uiController := ui_controller.NewController(cfg, store, pool, feedHandler, opml.NewHandler(store))
 
-	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewMiddlewareChain(
+	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewBasicAuthMiddleware(store).Handler,
 	))
 
-	uiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewMiddlewareChain(
+	uiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewSessionMiddleware(store, router).Handler,
 		middleware.Csrf,
 	))

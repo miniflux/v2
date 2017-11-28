@@ -5,24 +5,28 @@
 package form
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
+
+	"github.com/miniflux/miniflux2/errors"
 )
 
+// SubscriptionForm represents the subscription form.
 type SubscriptionForm struct {
 	URL        string
 	CategoryID int64
 }
 
+// Validate makes sure the form values are valid.
 func (s *SubscriptionForm) Validate() error {
 	if s.URL == "" || s.CategoryID == 0 {
-		return errors.New("The URL and the category are mandatory.")
+		return errors.NewLocalizedError("The URL and the category are mandatory.")
 	}
 
 	return nil
 }
 
+// NewSubscriptionForm returns a new SubscriptionForm.
 func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 	categoryID, err := strconv.Atoi(r.FormValue("category_id"))
 	if err != nil {

@@ -19,7 +19,7 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(model.DefaultSortingDirection)
 	builder.WithOffset(offset)
-	builder.WithLimit(NbItemsPerPage)
+	builder.WithLimit(nbItemsPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {

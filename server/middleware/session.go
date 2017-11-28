@@ -16,11 +16,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// SessionMiddleware represents a session middleware.
 type SessionMiddleware struct {
 	store  *storage.Storage
 	router *mux.Router
 }
 
+// Handler execute the middleware.
 func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session := s.getSessionFromCookie(r)
@@ -30,13 +32,13 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 			if s.isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				http.Redirect(w, r, route.GetRoute(s.router, "login"), http.StatusFound)
+				http.Redirect(w, r, route.Path(s.router, "login"), http.StatusFound)
 			}
 		} else {
 			log.Println("[Middleware:Session]", session)
 			ctx := r.Context()
-			ctx = context.WithValue(ctx, "UserId", session.UserID)
-			ctx = context.WithValue(ctx, "IsAuthenticated", true)
+			ctx = context.WithValue(ctx, UserIDContextKey, session.UserID)
+			ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
@@ -59,7 +61,7 @@ func (s *SessionMiddleware) getSessionFromCookie(r *http.Request) *model.Session
 		return nil
 	}
 
-	session, err := s.store.GetSessionByToken(sessionCookie.Value)
+	session, err := s.store.SessionByToken(sessionCookie.Value)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -68,6 +70,7 @@ func (s *SessionMiddleware) getSessionFromCookie(r *http.Request) *model.Session
 	return session
 }
 
+// NewSessionMiddleware returns a new SessionMiddleware.
 func NewSessionMiddleware(s *storage.Storage, r *mux.Router) *SessionMiddleware {
 	return &SessionMiddleware{store: s, router: r}
 }

@@ -12,11 +12,13 @@ import (
 	"github.com/miniflux/miniflux2/model"
 )
 
+// EntriesResponse represents the response sent when fetching entries.
 type EntriesResponse struct {
 	Total   int           `json:"total"`
 	Entries model.Entries `json:"entries"`
 }
 
+// DecodeUserPayload unserialize JSON user object.
 func DecodeUserPayload(data io.Reader) (*model.User, error) {
 	var user model.User
 
@@ -28,6 +30,7 @@ func DecodeUserPayload(data io.Reader) (*model.User, error) {
 	return &user, nil
 }
 
+// DecodeURLPayload unserialize JSON subscription object.
 func DecodeURLPayload(data io.Reader) (string, error) {
 	type payload struct {
 		URL string `json:"url"`
@@ -42,6 +45,7 @@ func DecodeURLPayload(data io.Reader) (string, error) {
 	return p.URL, nil
 }
 
+// DecodeEntryStatusPayload unserialize JSON entry statuses object.
 func DecodeEntryStatusPayload(data io.Reader) ([]int64, string, error) {
 	type payload struct {
 		EntryIDs []int64 `json:"entry_ids"`
@@ -57,6 +61,7 @@ func DecodeEntryStatusPayload(data io.Reader) ([]int64, string, error) {
 	return p.EntryIDs, p.Status, nil
 }
 
+// DecodeFeedCreationPayload unserialize JSON feed creation object.
 func DecodeFeedCreationPayload(data io.Reader) (string, int64, error) {
 	type payload struct {
 		FeedURL    string `json:"feed_url"`
@@ -72,6 +77,7 @@ func DecodeFeedCreationPayload(data io.Reader) (string, int64, error) {
 	return p.FeedURL, p.CategoryID, nil
 }
 
+// DecodeFeedModificationPayload unserialize JSON feed object.
 func DecodeFeedModificationPayload(data io.Reader) (*model.Feed, error) {
 	var feed model.Feed
 
@@ -83,6 +89,7 @@ func DecodeFeedModificationPayload(data io.Reader) (*model.Feed, error) {
 	return &feed, nil
 }
 
+// DecodeCategoryPayload unserialize JSON category object.
 func DecodeCategoryPayload(data io.Reader) (*model.Category, error) {
 	var category model.Category
 

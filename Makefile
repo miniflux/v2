@@ -1,9 +1,10 @@
-APP = miniflux
-VERSION = $(shell git rev-parse --short HEAD)
-BUILD_DATE = `date +%FT%T%z`
-DB_URL = postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
+APP := miniflux
+VERSION := $(shell git rev-parse --short HEAD)
+BUILD_DATE := `date +%FT%T%z`
+PKG_LIST := $(shell go list ./... | grep -v /vendor/)
+DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
-.PHONY: build-linux build-darwin build run clean test integration-test clean-integration-test
+.PHONY: build-linux build-darwin build run clean test lint integration-test clean-integration-test
 
 build-linux:
 	@ go generate
@@ -24,6 +25,9 @@ clean:
 
 test:
 	go test -cover -race ./...
+
+lint:
+	@ golint -set_exit_status ${PKG_LIST}
 
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'

@@ -66,7 +66,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	originalFeed, err := c.store.GetFeedById(userID, feedID)
+	originalFeed, err := c.store.FeedByID(userID, feedID)
 	if err != nil {
 		response.JSON().NotFound(errors.New("Unable to find this feed"))
 		return
@@ -88,7 +88,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 
 // GetFeeds is the API handler that get all feeds that belongs to the given user.
 func (c *Controller) GetFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
-	feeds, err := c.store.GetFeeds(ctx.UserID())
+	feeds, err := c.store.Feeds(ctx.UserID())
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to fetch feeds from the database"))
 		return
@@ -106,7 +106,7 @@ func (c *Controller) GetFeed(ctx *core.Context, request *core.Request, response 
 		return
 	}
 
-	feed, err := c.store.GetFeedById(userID, feedID)
+	feed, err := c.store.FeedByID(userID, feedID)
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to fetch this feed"))
 		return

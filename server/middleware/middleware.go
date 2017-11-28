@@ -8,13 +8,16 @@ import (
 	"net/http"
 )
 
+// Middleware represents a HTTP middleware.
 type Middleware func(http.Handler) http.Handler
 
-type MiddlewareChain struct {
+// Chain handles a list of middlewares.
+type Chain struct {
 	middlewares []Middleware
 }
 
-func (m *MiddlewareChain) Wrap(h http.Handler) http.Handler {
+// Wrap adds a HTTP handler into the chain.
+func (m *Chain) Wrap(h http.Handler) http.Handler {
 	for i := range m.middlewares {
 		h = m.middlewares[len(m.middlewares)-1-i](h)
 	}
@@ -22,10 +25,12 @@ func (m *MiddlewareChain) Wrap(h http.Handler) http.Handler {
 	return h
 }
 
-func (m *MiddlewareChain) WrapFunc(fn http.HandlerFunc) http.Handler {
+// WrapFunc adds a HTTP handler function into the chain.
+func (m *Chain) WrapFunc(fn http.HandlerFunc) http.Handler {
 	return m.Wrap(fn)
 }
 
-func NewMiddlewareChain(middlewares ...Middleware) *MiddlewareChain {
-	return &MiddlewareChain{append(([]Middleware)(nil), middlewares...)}
+// NewChain returns a new Chain.
+func NewChain(middlewares ...Middleware) *Chain {
+	return &Chain{append(([]Middleware)(nil), middlewares...)}
 }

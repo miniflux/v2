@@ -7,10 +7,12 @@ package payload
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/miniflux/miniflux2/model"
 	"io"
+
+	"github.com/miniflux/miniflux2/model"
 )
 
+// DecodeEntryStatusPayload unserialize JSON request to update entry statuses.
 func DecodeEntryStatusPayload(data io.Reader) (entryIDs []int64, status string, err error) {
 	type payload struct {
 		EntryIDs []int64 `json:"entry_ids"`

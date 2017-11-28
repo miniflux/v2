@@ -9,7 +9,9 @@ go:
   - 1.9
 before_install:
   - npm install -g jshint
+  - go get -u github.com/golang/lint/golint
 script:
   - jshint server/static/js/app.js
+  - make lint
   - make test
   - make integration-test

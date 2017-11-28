@@ -5,11 +5,13 @@
 package form
 
 import (
-	"errors"
-	"github.com/miniflux/miniflux2/model"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/model"
 )
 
+// UserForm represents the user form.
 type UserForm struct {
 	Username     string
 	Password     string
@@ -17,40 +19,43 @@ type UserForm struct {
 	IsAdmin      bool
 }
 
+// ValidateCreation validates user creation.
 func (u UserForm) ValidateCreation() error {
 	if u.Username == "" || u.Password == "" || u.Confirmation == "" {
-		return errors.New("All fields are mandatory.")
+		return errors.NewLocalizedError("All fields are mandatory.")
 	}
 
 	if u.Password != u.Confirmation {
-		return errors.New("Passwords are not the same.")
+		return errors.NewLocalizedError("Passwords are not the same.")
 	}
 
 	if len(u.Password) < 6 {
-		return errors.New("You must use at least 6 characters.")
+		return errors.NewLocalizedError("You must use at least 6 characters.")
 	}
 
 	return nil
 }
 
+// ValidateModification validates user modification.
 func (u UserForm) ValidateModification() error {
 	if u.Username == "" {
-		return errors.New("The username is mandatory.")
+		return errors.NewLocalizedError("The username is mandatory.")
 	}
 
 	if u.Password != "" {
 		if u.Password != u.Confirmation {
-			return errors.New("Passwords are not the same.")
+			return errors.NewLocalizedError("Passwords are not the same.")
 		}
 
 		if len(u.Password) < 6 {
-			return errors.New("You must use at least 6 characters.")
+			return errors.NewLocalizedError("You must use at least 6 characters.")
 		}
 	}
 
 	return nil
 }
 
+// ToUser returns a User from the form values.
 func (u UserForm) ToUser() *model.User {
 	return &model.User{
 		Username: u.Username,
@@ -59,6 +64,7 @@ func (u UserForm) ToUser() *model.User {
 	}
 }
 
+// Merge updates the fields of the given user.
 func (u UserForm) Merge(user *model.User) *model.User {
 	user.Username = u.Username
 	user.IsAdmin = u.IsAdmin
@@ -70,6 +76,7 @@ func (u UserForm) Merge(user *model.User) *model.User {
 	return user
 }
 
+// NewUserForm returns a new UserForm.
 func NewUserForm(r *http.Request) *UserForm {
 	return &UserForm{
 		Username:     r.FormValue("username"),

@@ -5,11 +5,13 @@
 package form
 
 import (
-	"errors"
-	"github.com/miniflux/miniflux2/model"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/model"
 )
 
+// SettingsForm represents the settings form.
 type SettingsForm struct {
 	Username     string
 	Password     string
@@ -19,6 +21,7 @@ type SettingsForm struct {
 	Timezone     string
 }
 
+// Merge updates the fields of the given user.
 func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Username = s.Username
 	user.Theme = s.Theme
@@ -32,24 +35,26 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	return user
 }
 
+// Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
 	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" {
-		return errors.New("The username, theme, language and timezone fields are mandatory.")
+		return errors.NewLocalizedError("The username, theme, language and timezone fields are mandatory.")
 	}
 
 	if s.Password != "" {
 		if s.Password != s.Confirmation {
-			return errors.New("Passwords are not the same.")
+			return errors.NewLocalizedError("Passwords are not the same.")
 		}
 
 		if len(s.Password) < 6 {
-			return errors.New("You must use at least 6 characters")
+			return errors.NewLocalizedError("You must use at least 6 characters")
 		}
 	}
 
 	return nil
 }
 
+// NewSettingsForm returns a new SettingsForm.
 func NewSettingsForm(r *http.Request) *SettingsForm {
 	return &SettingsForm{
 		Username:     r.FormValue("username"),

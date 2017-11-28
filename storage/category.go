@@ -14,6 +14,7 @@ import (
 	"github.com/miniflux/miniflux2/model"
 )
 
+// AnotherCategoryExists checks if another category exists with the same title.
 func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:AnotherCategoryExists] userID=%d, categoryID=%d, title=%s", userID, categoryID, title))
 
@@ -23,6 +24,7 @@ func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) 
 	return result >= 1
 }
 
+// CategoryExists checks if the given category exists into the database.
 func (s *Storage) CategoryExists(userID, categoryID int64) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoryExists] userID=%d, categoryID=%d", userID, categoryID))
 
@@ -32,8 +34,9 @@ func (s *Storage) CategoryExists(userID, categoryID int64) bool {
 	return result >= 1
 }
 
-func (s *Storage) GetCategory(userID, categoryID int64) (*model.Category, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetCategory] userID=%d, getCategory=%d", userID, categoryID))
+// Category returns a category from the database.
+func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Category] userID=%d, getCategory=%d", userID, categoryID))
 	var category model.Category
 
 	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 AND id=$2`
@@ -41,29 +44,31 @@ func (s *Storage) GetCategory(userID, categoryID int64) (*model.Category, error)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("Unable to fetch category: %v", err)
+		return nil, fmt.Errorf("unable to fetch category: %v", err)
 	}
 
 	return &category, nil
 }
 
-func (s *Storage) GetFirstCategory(userID int64) (*model.Category, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetFirstCategory] userID=%d", userID))
+// FirstCategory returns the first category for the given user.
+func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FirstCategory] userID=%d", userID))
 	var category model.Category
 
-	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC`
+	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC LIMIT 1`
 	err := s.db.QueryRow(query, userID).Scan(&category.ID, &category.UserID, &category.Title)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("Unable to fetch category: %v", err)
+		return nil, fmt.Errorf("unable to fetch category: %v", err)
 	}
 
 	return &category, nil
 }
 
-func (s *Storage) GetCategoryByTitle(userID int64, title string) (*model.Category, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetCategoryByTitle] userID=%d, title=%s", userID, title))
+// CategoryByTitle finds a category by the title.
+func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoryByTitle] userID=%d, title=%s", userID, title))
 	var category model.Category
 
 	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 AND title=$2`
@@ -77,10 +82,11 @@ func (s *Storage) GetCategoryByTitle(userID int64, title string) (*model.Categor
 	return &category, nil
 }
 
-func (s *Storage) GetCategories(userID int64) (model.Categories, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetCategories] userID=%d", userID))
+// Categories returns all categories that belongs to the given user.
+func (s *Storage) Categories(userID int64) (model.Categories, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Categories] userID=%d", userID))
 
-	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1`
+	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to fetch categories: %v", err)
@@ -100,8 +106,9 @@ func (s *Storage) GetCategories(userID int64) (model.Categories, error) {
 	return categories, nil
 }
 
-func (s *Storage) GetCategoriesWithFeedCount(userID int64) (model.Categories, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetCategoriesWithFeedCount] userID=%d", userID))
+// CategoriesWithFeedCount returns all categories with the number of feeds.
+func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoriesWithFeedCount] userID=%d", userID))
 	query := `SELECT
 		c.id, c.user_id, c.title,
 		(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count
@@ -126,6 +133,7 @@ func (s *Storage) GetCategoriesWithFeedCount(userID int64) (model.Categories, er
 	return categories, nil
 }
 
+// CreateCategory creates a new category.
 func (s *Storage) CreateCategory(category *model.Category) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateCategory] title=%s", category.Title))
 
@@ -149,6 +157,7 @@ func (s *Storage) CreateCategory(category *model.Category) error {
 	return nil
 }
 
+// UpdateCategory updates an existing category.
 func (s *Storage) UpdateCategory(category *model.Category) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateCategory] categoryID=%d", category.ID))
 
@@ -167,6 +176,7 @@ func (s *Storage) UpdateCategory(category *model.Category) error {
 	return nil
 }
 
+// RemoveCategory deletes a category.
 func (s *Storage) RemoveCategory(userID, categoryID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveCategory] userID=%d, categoryID=%d", userID, categoryID))
 

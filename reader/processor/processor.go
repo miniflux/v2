@@ -9,6 +9,7 @@ import (
 	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
+// ItemContentProcessor executes a set of functions to sanitize and alter item contents.
 func ItemContentProcessor(url, content string) string {
 	content = sanitizer.Sanitize(url, content)
 	return rewrite.Rewriter(url, content)

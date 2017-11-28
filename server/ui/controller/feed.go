@@ -39,7 +39,7 @@ func (c *Controller) ShowFeedsPage(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	feeds, err := c.store.GetFeeds(user.ID)
+	feeds, err := c.store.Feeds(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -74,7 +74,7 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(model.DefaultSortingDirection)
 	builder.WithOffset(offset)
-	builder.WithLimit(NbItemsPerPage)
+	builder.WithLimit(nbItemsPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -190,7 +190,7 @@ func (c *Controller) getFeedFromURL(request *core.Request, response *core.Respon
 		return nil, err
 	}
 
-	feed, err := c.store.GetFeedById(user.ID, feedID)
+	feed, err := c.store.FeedByID(user.ID, feedID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return nil, err
@@ -210,7 +210,7 @@ func (c *Controller) getFeedFormTemplateArgs(ctx *core.Context, user *model.User
 		return nil, err
 	}
 
-	categories, err := c.store.GetCategories(user.ID)
+	categories, err := c.store.Categories(user.ID)
 	if err != nil {
 		return nil, err
 	}

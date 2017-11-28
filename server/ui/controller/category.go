@@ -22,7 +22,7 @@ func (c *Controller) ShowCategories(ctx *core.Context, request *core.Request, re
 	}
 
 	user := ctx.LoggedUser()
-	categories, err := c.store.GetCategoriesWithFeedCount(user.ID)
+	categories, err := c.store.CategoriesWithFeedCount(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -57,7 +57,7 @@ func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Reques
 	builder.WithDirection(model.DefaultSortingDirection)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOffset(offset)
-	builder.WithLimit(NbItemsPerPage)
+	builder.WithLimit(nbItemsPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -110,7 +110,7 @@ func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	duplicateCategory, err := c.store.GetCategoryByTitle(user.ID, categoryForm.Title)
+	duplicateCategory, err := c.store.CategoryByTitle(user.ID, categoryForm.Title)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -223,7 +223,7 @@ func (c *Controller) getCategoryFromURL(ctx *core.Context, request *core.Request
 	}
 
 	user := ctx.LoggedUser()
-	category, err := c.store.GetCategory(user.ID, categoryID)
+	category, err := c.store.Category(user.ID, categoryID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return nil, err

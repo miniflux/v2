@@ -9,6 +9,7 @@ import (
 	"github.com/miniflux/miniflux2/version"
 )
 
+// AboutPage shows the about page.
 func (c *Controller) AboutPage(ctx *core.Context, request *core.Request, response *core.Response) {
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {

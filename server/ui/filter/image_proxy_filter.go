@@ -6,9 +6,10 @@ package filter
 
 import (
 	"encoding/base64"
+	"strings"
+
 	"github.com/miniflux/miniflux2/reader/url"
 	"github.com/miniflux/miniflux2/server/route"
-	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
@@ -24,7 +25,7 @@ func ImageProxyFilter(r *mux.Router, data string) string {
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
 		if srcAttr, ok := img.Attr("src"); ok {
 			if !url.IsHTTPS(srcAttr) {
-				path := route.GetRoute(r, "proxy", "encodedURL", base64.StdEncoding.EncodeToString([]byte(srcAttr)))
+				path := route.Path(r, "proxy", "encodedURL", base64.StdEncoding.EncodeToString([]byte(srcAttr)))
 				img.SetAttr("src", path)
 			}
 		}

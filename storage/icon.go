@@ -14,6 +14,7 @@ import (
 	"github.com/miniflux/miniflux2/model"
 )
 
+// HasIcon checks if the given feed has an icon.
 func (s *Storage) HasIcon(feedID int64) bool {
 	var result int
 	query := `SELECT count(*) as c FROM feed_icons WHERE feed_id=$1`
@@ -21,8 +22,9 @@ func (s *Storage) HasIcon(feedID int64) bool {
 	return result == 1
 }
 
-func (s *Storage) GetIconByID(iconID int64) (*model.Icon, error) {
-	defer helper.ExecutionTime(time.Now(), "[Storage:GetIconByID]")
+// IconByID returns an icon by the ID.
+func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
+	defer helper.ExecutionTime(time.Now(), "[Storage:IconByID]")
 
 	var icon model.Icon
 	query := `SELECT id, hash, mime_type, content FROM icons WHERE id=$1`
@@ -36,8 +38,9 @@ func (s *Storage) GetIconByID(iconID int64) (*model.Icon, error) {
 	return &icon, nil
 }
 
-func (s *Storage) GetIconByHash(icon *model.Icon) error {
-	defer helper.ExecutionTime(time.Now(), "[Storage:GetIconByHash]")
+// IconByHash returns an icon by the hash (checksum).
+func (s *Storage) IconByHash(icon *model.Icon) error {
+	defer helper.ExecutionTime(time.Now(), "[Storage:IconByHash]")
 
 	err := s.db.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID)
 	if err == sql.ErrNoRows {
@@ -49,6 +52,7 @@ func (s *Storage) GetIconByHash(icon *model.Icon) error {
 	return nil
 }
 
+// CreateIcon creates a new icon.
 func (s *Storage) CreateIcon(icon *model.Icon) error {
 	defer helper.ExecutionTime(time.Now(), "[Storage:CreateIcon]")
 
@@ -73,10 +77,11 @@ func (s *Storage) CreateIcon(icon *model.Icon) error {
 	return nil
 }
 
+// CreateFeedIcon creates an icon and associate the icon to the given feed.
 func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeedIcon] feedID=%d", feed.ID))
 
-	err := s.GetIconByHash(icon)
+	err := s.IconByHash(icon)
 	if err != nil {
 		return err
 	}

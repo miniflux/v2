@@ -6,15 +6,18 @@ package middleware
 
 import (
 	"context"
-	"github.com/miniflux/miniflux2/storage"
 	"log"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/storage"
 )
 
+// BasicAuthMiddleware is the middleware for HTTP Basic authentication.
 type BasicAuthMiddleware struct {
 	store *storage.Storage
 }
 
+// Handler executes the middleware.
 func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
@@ -35,7 +38,7 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		}
 
-		user, err := b.store.GetUserByUsername(username)
+		user, err := b.store.UserByUsername(username)
 		if err != nil || user == nil {
 			log.Println("[Middleware:BasicAuth] User not found:", username)
 			w.WriteHeader(http.StatusUnauthorized)
@@ -47,15 +50,16 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 		b.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "UserId", user.ID)
-		ctx = context.WithValue(ctx, "UserTimezone", user.Timezone)
-		ctx = context.WithValue(ctx, "IsAdminUser", user.IsAdmin)
-		ctx = context.WithValue(ctx, "IsAuthenticated", true)
+		ctx = context.WithValue(ctx, UserIDContextKey, user.ID)
+		ctx = context.WithValue(ctx, UserTimezoneContextKey, user.Timezone)
+		ctx = context.WithValue(ctx, IsAdminUserContextKey, user.IsAdmin)
+		ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
+// NewBasicAuthMiddleware returns a new BasicAuthMiddleware.
 func NewBasicAuthMiddleware(s *storage.Storage) *BasicAuthMiddleware {
 	return &BasicAuthMiddleware{store: s}
 }

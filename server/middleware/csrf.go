@@ -6,11 +6,13 @@ package middleware
 
 import (
 	"context"
-	"github.com/miniflux/miniflux2/helper"
 	"log"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/helper"
 )
 
+// Csrf is a middleware that handle CSRF tokens.
 func Csrf(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var csrfToken string
@@ -32,7 +34,7 @@ func Csrf(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "CsrfToken", csrfToken)
+		ctx = context.WithValue(ctx, CsrfContextKey, csrfToken)
 
 		w.Header().Add("Vary", "Cookie")
 		isTokenValid := csrfToken == r.FormValue("csrf") || csrfToken == r.Header.Get("X-Csrf-Token")

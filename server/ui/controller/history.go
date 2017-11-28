@@ -25,7 +25,7 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(model.DefaultSortingDirection)
 	builder.WithOffset(offset)
-	builder.WithLimit(NbItemsPerPage)
+	builder.WithLimit(nbItemsPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {

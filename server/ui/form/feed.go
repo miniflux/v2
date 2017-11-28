@@ -5,10 +5,11 @@
 package form
 
 import (
-	"errors"
-	"github.com/miniflux/miniflux2/model"
 	"net/http"
 	"strconv"
+
+	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/model"
 )
 
 // FeedForm represents a feed form in the UI
@@ -22,11 +23,12 @@ type FeedForm struct {
 // ValidateModification validates FeedForm fields
 func (f FeedForm) ValidateModification() error {
 	if f.FeedURL == "" || f.SiteURL == "" || f.Title == "" || f.CategoryID == 0 {
-		return errors.New("All fields are mandatory.")
+		return errors.NewLocalizedError("All fields are mandatory.")
 	}
 	return nil
 }
 
+// Merge updates the fields of the given feed.
 func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.Category.ID = f.CategoryID
 	feed.Title = f.Title

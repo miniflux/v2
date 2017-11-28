@@ -5,9 +5,10 @@
 package form
 
 import (
-	"errors"
-	"github.com/miniflux/miniflux2/model"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux2/model"
 )
 
 // CategoryForm represents a feed form in the UI
@@ -15,18 +16,21 @@ type CategoryForm struct {
 	Title string
 }
 
+// Validate makes sure the form values are valid.
 func (c CategoryForm) Validate() error {
 	if c.Title == "" {
-		return errors.New("The title is mandatory.")
+		return errors.NewLocalizedError("The title is mandatory.")
 	}
 	return nil
 }
 
+// Merge update the given category fields.
 func (c CategoryForm) Merge(category *model.Category) *model.Category {
 	category.Title = c.Title
 	return category
 }
 
+// NewCategoryForm returns a new CategoryForm.
 func NewCategoryForm(r *http.Request) *CategoryForm {
 	return &CategoryForm{
 		Title: r.FormValue("title"),

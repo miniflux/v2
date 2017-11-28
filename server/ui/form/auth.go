@@ -5,23 +5,27 @@
 package form
 
 import (
-	"errors"
 	"net/http"
+
+	"github.com/miniflux/miniflux2/errors"
 )
 
+// AuthForm represents the authentication form.
 type AuthForm struct {
 	Username string
 	Password string
 }
 
+// Validate makes sure the form values are valid.
 func (a AuthForm) Validate() error {
 	if a.Username == "" || a.Password == "" {
-		return errors.New("All fields are mandatory.")
+		return errors.NewLocalizedError("All fields are mandatory.")
 	}
 
 	return nil
 }
 
+// NewAuthForm returns a new AuthForm.
 func NewAuthForm(r *http.Request) *AuthForm {
 	return &AuthForm{
 		Username: r.FormValue("username"),

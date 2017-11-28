@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux2/server/middleware"
 	"github.com/miniflux/miniflux2/server/route"
 	"github.com/miniflux/miniflux2/storage"
 
@@ -26,7 +27,7 @@ type Context struct {
 
 // IsAdminUser checks if the logged user is administrator.
 func (c *Context) IsAdminUser() bool {
-	if v := c.request.Context().Value("IsAdminUser"); v != nil {
+	if v := c.request.Context().Value(middleware.IsAdminUserContextKey); v != nil {
 		return v.(bool)
 	}
 	return false
@@ -34,7 +35,7 @@ func (c *Context) IsAdminUser() bool {
 
 // UserTimezone returns the timezone used by the logged user.
 func (c *Context) UserTimezone() string {
-	if v := c.request.Context().Value("UserTimezone"); v != nil {
+	if v := c.request.Context().Value(middleware.UserTimezoneContextKey); v != nil {
 		return v.(string)
 	}
 	return "UTC"
@@ -42,7 +43,7 @@ func (c *Context) UserTimezone() string {
 
 // IsAuthenticated returns a boolean if the user is authenticated.
 func (c *Context) IsAuthenticated() bool {
-	if v := c.request.Context().Value("IsAuthenticated"); v != nil {
+	if v := c.request.Context().Value(middleware.IsAuthenticatedContextKey); v != nil {
 		return v.(bool)
 	}
 	return false
@@ -50,7 +51,7 @@ func (c *Context) IsAuthenticated() bool {
 
 // UserID returns the UserID of the logged user.
 func (c *Context) UserID() int64 {
-	if v := c.request.Context().Value("UserId"); v != nil {
+	if v := c.request.Context().Value(middleware.UserIDContextKey); v != nil {
 		return v.(int64)
 	}
 	return 0
@@ -60,7 +61,7 @@ func (c *Context) UserID() int64 {
 func (c *Context) LoggedUser() *model.User {
 	if c.user == nil {
 		var err error
-		c.user, err = c.store.GetUserById(c.UserID())
+		c.user, err = c.store.UserByID(c.UserID())
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -81,7 +82,7 @@ func (c *Context) UserLanguage() string {
 
 // CsrfToken returns the current CSRF token.
 func (c *Context) CsrfToken() string {
-	if v := c.request.Context().Value("CsrfToken"); v != nil {
+	if v := c.request.Context().Value(middleware.CsrfContextKey); v != nil {
 		return v.(string)
 	}
 
@@ -91,7 +92,7 @@ func (c *Context) CsrfToken() string {
 
 // Route returns the path for the given arguments.
 func (c *Context) Route(name string, args ...interface{}) string {
-	return route.GetRoute(c.router, name, args...)
+	return route.Path(c.router, name, args...)
 }
 
 // NewContext creates a new Context.

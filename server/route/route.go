@@ -11,7 +11,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetRoute(router *mux.Router, name string, args ...interface{}) string {
+// Path returns the defined route based on given arguments.
+func Path(router *mux.Router, name string, args ...interface{}) string {
 	route := router.Get(name)
 	if route == nil {
 		log.Fatalln("Route not found:", name)

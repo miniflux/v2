@@ -19,6 +19,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// SetLastLogin updates the last login date of a user.
 func (s *Storage) SetLastLogin(userID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:SetLastLogin] userID=%d", userID))
 	query := "UPDATE users SET last_login_at=now() WHERE id=$1"
@@ -30,6 +31,7 @@ func (s *Storage) SetLastLogin(userID int64) error {
 	return nil
 }
 
+// UserExists checks if a user exists by using the given username.
 func (s *Storage) UserExists(username string) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserExists] username=%s", username))
 
@@ -38,6 +40,7 @@ func (s *Storage) UserExists(username string) bool {
 	return result >= 1
 }
 
+// AnotherUserExists checks if another user exists with the given username.
 func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:AnotherUserExists] userID=%d, username=%s", userID, username))
 
@@ -46,6 +49,7 @@ func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 	return result >= 1
 }
 
+// CreateUser creates a new user.
 func (s *Storage) CreateUser(user *model.User) (err error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateUser] username=%s", user.Username))
 	password := ""
@@ -84,6 +88,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 	return nil
 }
 
+// UpdateExtraField updates an extra field of the given user.
 func (s *Storage) UpdateExtraField(userID int64, field, value string) error {
 	query := fmt.Sprintf(`UPDATE users SET extra = hstore('%s', $1) WHERE id=$2`, field)
 	_, err := s.db.Exec(query, value, userID)
@@ -93,6 +98,7 @@ func (s *Storage) UpdateExtraField(userID int64, field, value string) error {
 	return nil
 }
 
+// RemoveExtraField deletes an extra field for the given user.
 func (s *Storage) RemoveExtraField(userID int64, field string) error {
 	query := `UPDATE users SET extra = delete(extra, $1) WHERE id=$2`
 	_, err := s.db.Exec(query, field, userID)
@@ -102,6 +108,7 @@ func (s *Storage) RemoveExtraField(userID int64, field string) error {
 	return nil
 }
 
+// UpdateUser updates a user.
 func (s *Storage) UpdateUser(user *model.User) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateUser] username=%s", user.Username))
 	user.Username = strings.ToLower(user.Username)
@@ -128,8 +135,9 @@ func (s *Storage) UpdateUser(user *model.User) error {
 	return nil
 }
 
-func (s *Storage) GetUserById(userID int64) (*model.User, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserById] userID=%d", userID))
+// UserByID finds a user by the ID.
+func (s *Storage) UserByID(userID int64) (*model.User, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByID] userID=%d", userID))
 
 	var user model.User
 	var extra hstore.Hstore
@@ -151,8 +159,9 @@ func (s *Storage) GetUserById(userID int64) (*model.User, error) {
 	return &user, nil
 }
 
-func (s *Storage) GetUserByUsername(username string) (*model.User, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserByUsername] username=%s", username))
+// UserByUsername finds a user by the username.
+func (s *Storage) UserByUsername(username string) (*model.User, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByUsername] username=%s", username))
 
 	var user model.User
 	row := s.db.QueryRow("SELECT id, username, is_admin, theme, language, timezone FROM users WHERE username=$1", username)
@@ -166,8 +175,9 @@ func (s *Storage) GetUserByUsername(username string) (*model.User, error) {
 	return &user, nil
 }
 
-func (s *Storage) GetUserByExtraField(field, value string) (*model.User, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserByExtraField] field=%s", field))
+// UserByExtraField finds a user by an extra field value.
+func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByExtraField] field=%s", field))
 	var user model.User
 	query := `SELECT id, username, is_admin, theme, language, timezone FROM users WHERE extra->$1=$2`
 	row := s.db.QueryRow(query, field, value)
@@ -181,6 +191,7 @@ func (s *Storage) GetUserByExtraField(field, value string) (*model.User, error) 
 	return &user, nil
 }
 
+// RemoveUser deletes a user.
 func (s *Storage) RemoveUser(userID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveUser] userID=%d", userID))
 
@@ -195,14 +206,15 @@ func (s *Storage) RemoveUser(userID int64) error {
 	}
 
 	if count == 0 {
-		return errors.New("nothing has been removed.")
+		return errors.New("nothing has been removed")
 	}
 
 	return nil
 }
 
-func (s *Storage) GetUsers() (model.Users, error) {
-	defer helper.ExecutionTime(time.Now(), "[Storage:GetUsers]")
+// Users returns all users.
+func (s *Storage) Users() (model.Users, error) {
+	defer helper.ExecutionTime(time.Now(), "[Storage:Users]")
 
 	var users model.Users
 	rows, err := s.db.Query("SELECT id, username, is_admin, theme, language, timezone, last_login_at FROM users ORDER BY username ASC")
@@ -233,6 +245,7 @@ func (s *Storage) GetUsers() (model.Users, error) {
 	return users, nil
 }
 
+// CheckPassword validate the hashed password.
 func (s *Storage) CheckPassword(username, password string) error {
 	defer helper.ExecutionTime(time.Now(), "[Storage:CheckPassword]")
 
@@ -241,13 +254,13 @@ func (s *Storage) CheckPassword(username, password string) error {
 
 	err := s.db.QueryRow("SELECT password FROM users WHERE username=$1", username).Scan(&hash)
 	if err == sql.ErrNoRows {
-		return fmt.Errorf("Unable to find this user: %s\n", username)
+		return fmt.Errorf("unable to find this user: %s", username)
 	} else if err != nil {
-		return fmt.Errorf("Unable to fetch user: %v\n", err)
+		return fmt.Errorf("unable to fetch user: %v", err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
-		return fmt.Errorf("Invalid password for %s\n", username)
+		return fmt.Errorf("invalid password for %s", username)
 	}
 
 	return nil

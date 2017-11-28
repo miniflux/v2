@@ -5,13 +5,15 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/miniflux/miniflux2/locale"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
-	"log"
 )
 
+// ShowSettings shows the settings page.
 func (c *Controller) ShowSettings(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -24,6 +26,7 @@ func (c *Controller) ShowSettings(ctx *core.Context, request *core.Request, resp
 	response.HTML().Render("settings", args)
 }
 
+// UpdateSettings update the settings.
 func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
@@ -81,9 +84,9 @@ func (c *Controller) getSettingsFormTemplateArgs(ctx *core.Context, user *model.
 	}
 
 	args["menu"] = "settings"
-	args["themes"] = model.GetThemes()
-	args["languages"] = locale.GetAvailableLanguages()
-	args["timezones"], err = c.store.GetTimezones()
+	args["themes"] = model.Themes()
+	args["languages"] = locale.AvailableLanguages()
+	args["timezones"], err = c.store.Timezones()
 	if err != nil {
 		return args, err
 	}

@@ -21,7 +21,7 @@ type Handler struct {
 
 // Export exports user feeds to OPML.
 func (h *Handler) Export(userID int64) (string, error) {
-	feeds, err := h.store.GetFeeds(userID)
+	feeds, err := h.store.Feeds(userID)
 	if err != nil {
 		log.Println(err)
 		return "", errors.New("unable to fetch feeds")
@@ -52,13 +52,13 @@ func (h *Handler) Import(userID int64, data io.Reader) (err error) {
 			var category *model.Category
 
 			if subscription.CategoryName == "" {
-				category, err = h.store.GetFirstCategory(userID)
+				category, err = h.store.FirstCategory(userID)
 				if err != nil {
 					log.Println(err)
 					return errors.New("unable to find first category")
 				}
 			} else {
-				category, err = h.store.GetCategoryByTitle(userID, subscription.CategoryName)
+				category, err = h.store.CategoryByTitle(userID, subscription.CategoryName)
 				if err != nil {
 					log.Println(err)
 					return errors.New("unable to search category by title")

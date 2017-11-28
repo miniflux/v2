@@ -92,7 +92,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed,
 func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
 
-	originalFeed, err := h.store.GetFeedById(userID, feedID)
+	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
 		return err
 	}

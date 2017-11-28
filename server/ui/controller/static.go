@@ -6,12 +6,14 @@ package controller
 
 import (
 	"encoding/base64"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/static"
 	"log"
 	"time"
+
+	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux2/server/static"
 )
 
+// Stylesheet renders the CSS.
 func (c *Controller) Stylesheet(ctx *core.Context, request *core.Request, response *core.Response) {
 	stylesheet := request.StringParam("name", "white")
 	body := static.Stylesheets["common"]
@@ -25,10 +27,12 @@ func (c *Controller) Stylesheet(ctx *core.Context, request *core.Request, respon
 	response.Cache("text/css", etag, []byte(body), 48*time.Hour)
 }
 
+// Javascript renders application client side code.
 func (c *Controller) Javascript(ctx *core.Context, request *core.Request, response *core.Response) {
 	response.Cache("text/javascript", static.JavascriptChecksums["app"], []byte(static.Javascript["app"]), 48*time.Hour)
 }
 
+// Favicon renders the application favicon.
 func (c *Controller) Favicon(ctx *core.Context, request *core.Request, response *core.Response) {
 	blob, err := base64.StdEncoding.DecodeString(static.Binaries["favicon.ico"])
 	if err != nil {

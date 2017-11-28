@@ -5,10 +5,12 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/server/core"
 	"log"
+
+	"github.com/miniflux/miniflux2/server/core"
 )
 
+// ShowSessions shows the list of active sessions.
 func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 	args, err := c.getCommonTemplateArgs(ctx)
@@ -17,7 +19,7 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	sessions, err := c.store.GetSessions(user.ID)
+	sessions, err := c.store.Sessions(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -31,6 +33,7 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 	}))
 }
 
+// RemoveSession remove a session.
 func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 

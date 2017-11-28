@@ -27,7 +27,7 @@ type Handler struct {
 	translator *locale.Translator
 	template   *template.Engine
 	router     *mux.Router
-	middleware *middleware.MiddlewareChain
+	middleware *middleware.Chain
 }
 
 // Use is a wrapper around an HTTP handler.
@@ -51,7 +51,7 @@ func (h *Handler) Use(f HandlerFunc) http.Handler {
 }
 
 // NewHandler returns a new Handler.
-func NewHandler(store *storage.Storage, router *mux.Router, template *template.Engine, translator *locale.Translator, middleware *middleware.MiddlewareChain) *Handler {
+func NewHandler(store *storage.Storage, router *mux.Router, template *template.Engine, translator *locale.Translator, middleware *middleware.Chain) *Handler {
 	return &Handler{
 		store:      store,
 		translator: translator,

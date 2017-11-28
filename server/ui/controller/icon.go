@@ -5,10 +5,12 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/server/core"
 	"time"
+
+	"github.com/miniflux/miniflux2/server/core"
 )
 
+// ShowIcon shows the feed icon.
 func (c *Controller) ShowIcon(ctx *core.Context, request *core.Request, response *core.Response) {
 	iconID, err := request.IntegerParam("iconID")
 	if err != nil {
@@ -16,7 +18,7 @@ func (c *Controller) ShowIcon(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	icon, err := c.store.GetIconByID(iconID)
+	icon, err := c.store.IconByID(iconID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return

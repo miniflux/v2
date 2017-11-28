@@ -6,6 +6,7 @@ package api
 
 import (
 	"errors"
+
 	"github.com/miniflux/miniflux2/server/api/payload"
 	"github.com/miniflux/miniflux2/server/core"
 )
@@ -67,7 +68,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	originalUser, err := c.store.GetUserById(userID)
+	originalUser, err := c.store.UserByID(userID)
 	if err != nil {
 		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
 		return
@@ -94,7 +95,7 @@ func (c *Controller) GetUsers(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	users, err := c.store.GetUsers()
+	users, err := c.store.Users()
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to fetch the list of users"))
 		return
@@ -116,7 +117,7 @@ func (c *Controller) GetUser(ctx *core.Context, request *core.Request, response 
 		return
 	}
 
-	user, err := c.store.GetUserById(userID)
+	user, err := c.store.UserByID(userID)
 	if err != nil {
 		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
 		return
@@ -143,7 +144,7 @@ func (c *Controller) RemoveUser(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	user, err := c.store.GetUserById(userID)
+	user, err := c.store.UserByID(userID)
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to fetch this user from the database"))
 		return

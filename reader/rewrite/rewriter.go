@@ -38,6 +38,7 @@ var rewriteRules = []func(string, string) string{
 	},
 }
 
+// Rewriter modify item contents with a set of rewriting rules.
 func Rewriter(url, content string) string {
 	for _, rewriteRule := range rewriteRules {
 		content = rewriteRule(url, content)

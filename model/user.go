@@ -33,11 +33,7 @@ func (u User) ValidateUserCreation() error {
 		return err
 	}
 
-	if err := u.ValidatePassword(); err != nil {
-		return err
-	}
-
-	return nil
+	return u.ValidatePassword()
 }
 
 // ValidateUserModification validates user for modification.
@@ -54,11 +50,7 @@ func (u User) ValidateUserModification() error {
 		return err
 	}
 
-	if err := ValidateTheme(u.Theme); err != nil {
-		return err
-	}
-
-	return nil
+	return ValidateTheme(u.Theme)
 }
 
 // ValidateUserLogin validates user credential requirements.

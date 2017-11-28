@@ -135,7 +135,7 @@ func (c *Controller) getSubscriptionFormTemplateArgs(ctx *core.Context, user *mo
 		return nil, err
 	}
 
-	categories, err := c.store.GetCategories(user.ID)
+	categories, err := c.store.Categories(user.ID)
 	if err != nil {
 		return nil, err
 	}

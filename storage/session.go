@@ -7,11 +7,13 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 )
 
-func (s *Storage) GetSessions(userID int64) (model.Sessions, error) {
+// Sessions returns the list of sessions for the given user.
+func (s *Storage) Sessions(userID int64) (model.Sessions, error) {
 	query := `SELECT id, user_id, token, created_at, user_agent, ip FROM sessions WHERE user_id=$1 ORDER BY id DESC`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
@@ -41,6 +43,7 @@ func (s *Storage) GetSessions(userID int64) (model.Sessions, error) {
 	return sessions, nil
 }
 
+// CreateSession creates a new sessions.
 func (s *Storage) CreateSession(username, userAgent, ip string) (sessionID string, err error) {
 	var userID int64
 
@@ -61,7 +64,8 @@ func (s *Storage) CreateSession(username, userAgent, ip string) (sessionID strin
 	return token, nil
 }
 
-func (s *Storage) GetSessionByToken(token string) (*model.Session, error) {
+// SessionByToken finds a session by the token.
+func (s *Storage) SessionByToken(token string) (*model.Session, error) {
 	var session model.Session
 
 	query := "SELECT id, user_id, token, created_at, user_agent, ip FROM sessions WHERE token = $1"
@@ -83,6 +87,7 @@ func (s *Storage) GetSessionByToken(token string) (*model.Session, error) {
 	return &session, nil
 }
 
+// RemoveSessionByToken remove a session by using the token.
 func (s *Storage) RemoveSessionByToken(userID int64, token string) error {
 	result, err := s.db.Exec(`DELETE FROM sessions WHERE user_id=$1 AND token=$2`, userID, token)
 	if err != nil {
@@ -101,6 +106,7 @@ func (s *Storage) RemoveSessionByToken(userID int64, token string) error {
 	return nil
 }
 
+// RemoveSessionByID remove a session by using the ID.
 func (s *Storage) RemoveSessionByID(userID, sessionID int64) error {
 	result, err := s.db.Exec(`DELETE FROM sessions WHERE user_id=$1 AND id=$2`, userID, sessionID)
 	if err != nil {
@@ -119,7 +125,8 @@ func (s *Storage) RemoveSessionByID(userID, sessionID int64) error {
 	return nil
 }
 
+// FlushAllSessions removes all sessions from the database.
 func (s *Storage) FlushAllSessions() (err error) {
-	_, err = s.db.Exec(`delete from sessions`)
+	_, err = s.db.Exec(`DELETE FROM sessions`)
 	return
 }

@@ -24,8 +24,8 @@ func Load() *Translator {
 	return translator
 }
 
-// GetAvailableLanguages returns the list of available languages.
-func GetAvailableLanguages() map[string]string {
+// AvailableLanguages returns the list of available languages.
+func AvailableLanguages() map[string]string {
 	return map[string]string{
 		"en_US": "English",
 		"fr_FR": "Français",

@@ -10,6 +10,7 @@ import (
 	"github.com/miniflux/miniflux2/server/core"
 )
 
+// Export generates the OPML file.
 func (c *Controller) Export(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 	opml, err := c.opmlHandler.Export(user.ID)
@@ -21,6 +22,7 @@ func (c *Controller) Export(ctx *core.Context, request *core.Request, response *
 	response.XML().Download("feeds.opml", opml)
 }
 
+// Import shows the import form.
 func (c *Controller) Import(ctx *core.Context, request *core.Request, response *core.Response) {
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
@@ -33,6 +35,7 @@ func (c *Controller) Import(ctx *core.Context, request *core.Request, response *
 	}))
 }
 
+// UploadOPML handles OPML file importation.
 func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, response *core.Response) {
 	file, fileHeader, err := request.File("file")
 	if err != nil {

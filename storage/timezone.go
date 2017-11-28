@@ -6,12 +6,14 @@ package storage
 
 import (
 	"fmt"
-	"github.com/miniflux/miniflux2/helper"
 	"time"
+
+	"github.com/miniflux/miniflux2/helper"
 )
 
-func (s *Storage) GetTimezones() (map[string]string, error) {
-	defer helper.ExecutionTime(time.Now(), "[Storage:GetTimezones]")
+// Timezones returns all timezones supported by the database.
+func (s *Storage) Timezones() (map[string]string, error) {
+	defer helper.ExecutionTime(time.Now(), "[Storage:Timezones]")
 
 	timezones := make(map[string]string)
 	query := `select name from pg_timezone_names() order by name asc`

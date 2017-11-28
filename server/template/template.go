@@ -49,7 +49,7 @@ func (e *Engine) parseAll() {
 			return false
 		},
 		"route": func(name string, args ...interface{}) string {
-			return route.GetRoute(e.router, name, args...)
+			return route.Path(e.router, name, args...)
 		},
 		"noescape": func(str string) template.HTML {
 			return template.HTML(str)

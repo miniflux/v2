@@ -8,19 +8,23 @@ import (
 	"database/sql"
 	"log"
 
+	// Postgresql driver import
 	_ "github.com/lib/pq"
 )
 
+// Storage handles all operations related to the database.
 type Storage struct {
 	db *sql.DB
 }
 
+// Close closes all database connections.
 func (s *Storage) Close() {
 	s.db.Close()
 }
 
-func NewStorage(databaseUrl string, maxOpenConns int) *Storage {
-	db, err := sql.Open("postgres", databaseUrl)
+// NewStorage returns a new Storage.
+func NewStorage(databaseURL string, maxOpenConns int) *Storage {
+	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		log.Fatalf("Unable to connect to the database: %v", err)
 	}
