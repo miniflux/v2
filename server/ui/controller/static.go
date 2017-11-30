@@ -24,12 +24,12 @@ func (c *Controller) Stylesheet(ctx *core.Context, request *core.Request, respon
 		etag += static.StylesheetsChecksums[stylesheet]
 	}
 
-	response.Cache("text/css", etag, []byte(body), 48*time.Hour)
+	response.Cache("text/css; charset=utf-8", etag, []byte(body), 48*time.Hour)
 }
 
 // Javascript renders application client side code.
 func (c *Controller) Javascript(ctx *core.Context, request *core.Request, response *core.Response) {
-	response.Cache("text/javascript", static.JavascriptChecksums["app"], []byte(static.Javascript["app"]), 48*time.Hour)
+	response.Cache("text/javascript; charset=utf-8", static.JavascriptChecksums["app"], []byte(static.Javascript["app"]), 48*time.Hour)
 }
 
 // Favicon renders the application favicon.
