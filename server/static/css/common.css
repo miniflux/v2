@@ -501,6 +501,7 @@ a.button {
     font-size: 0.95em;
     margin: 0 0 20px;
     color: #666;
+    overflow-wrap: break-word;
 }
 
 .entry-website img {
