@@ -21,6 +21,6 @@ var (
 	// IsAuthenticatedContextKey is the context key used to store the authentication flag.
 	IsAuthenticatedContextKey = &contextKey{"IsAuthenticated"}
 
-	// CsrfContextKey is the context key used to store CSRF token.
-	CsrfContextKey = &contextKey{"CSRF"}
+	// TokenContextKey is the context key used to store CSRF token.
+	TokenContextKey = &contextKey{"CSRF"}
 )

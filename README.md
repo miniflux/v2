@@ -27,12 +27,11 @@ TODO
 - [ ] Custom entries sorting
 - [ ] Webpage scraper (Readability)
 - [X] Bookmarklet
-- [ ] External integrations (Pinboard, Wallabag...)
+- [ ] External integrations (Pinboard, Instapaper, Pocket?)
 - [ ] Gzip compression
 - [X] Integration tests
 - [X] Flush history
 - [X] OAuth2
-- [ ] Bookmarks
 - [ ] Touch events
 - [ ] Fever API?
 

@@ -82,7 +82,7 @@ func (c *Context) UserLanguage() string {
 
 // CsrfToken returns the current CSRF token.
 func (c *Context) CsrfToken() string {
-	if v := c.request.Context().Value(middleware.CsrfContextKey); v != nil {
+	if v := c.request.Context().Value(middleware.TokenContextKey); v != nil {
 		return v.(string)
 	}
 

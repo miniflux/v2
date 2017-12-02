@@ -37,7 +37,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 
 	uiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewSessionMiddleware(store, router).Handler,
-		middleware.Csrf,
+		middleware.NewTokenMiddleware(store).Handler,
 	))
 
 	router.Handle("/v1/users", apiHandler.Use(apiController.CreateUser)).Methods("POST")
