@@ -3,11 +3,13 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "History" }} ({{ .total }})</h1>
+    {{ if .entries }}
     <ul>
         <li>
             <a href="{{ route "flushHistory" }}">{{ t "Flush history" }}</a>
         </li>
     </ul>
+    {{ end }}
 </section>
 
 {{ if not .entries }}
