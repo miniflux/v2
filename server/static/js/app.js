@@ -2,6 +2,142 @@
 (function() {
 'use strict';
 
+class DomHelper {
+    static isVisible(element) {
+        return element.offsetParent !== null;
+    }
+
+    static openNewTab(url) {
+        let win = window.open(url, "_blank");
+        win.focus();
+    }
+
+    static scrollPageTo(element) {
+        let windowScrollPosition = window.pageYOffset;
+        let windowHeight = document.documentElement.clientHeight;
+        let viewportPosition = windowScrollPosition + windowHeight;
+        let itemBottomPosition = element.offsetTop + element.offsetHeight;
+
+        if (viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
+            window.scrollTo(0, element.offsetTop - 10);
+        }
+    }
+
+    static getVisibleElements(selector) {
+        let elements = document.querySelectorAll(selector);
+        let result = [];
+
+        for (let i = 0; i < elements.length; i++) {
+            if (this.isVisible(elements[i])) {
+                result.push(elements[i]);
+            }
+        }
+
+        return result;
+    }
+}
+
+class TouchHandler {
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
+        this.touch = {
+            start: {x: -1, y: -1},
+            move: {x: -1, y: -1},
+            element: null
+        };
+    }
+
+    calculateDistance() {
+        if (this.touch.start.x >= -1 && this.touch.move.x >= -1) {
+            let horizontalDistance = Math.abs(this.touch.move.x - this.touch.start.x);
+            let verticalDistance = Math.abs(this.touch.move.y - this.touch.start.y);
+
+            if (horizontalDistance > 30 && verticalDistance < 70) {
+                return this.touch.move.x - this.touch.start.x;
+            }
+        }
+
+        return 0;
+    }
+
+    findElement(element) {
+        if (element.classList.contains("touch-item")) {
+            return element;
+        }
+
+        for (; element && element !== document; element = element.parentNode) {
+            if (element.classList.contains("touch-item")) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    onTouchStart(event) {
+        if (event.touches === undefined || event.touches.length !== 1) {
+            return;
+        }
+
+        this.reset();
+        this.touch.start.x = event.touches[0].clientX;
+        this.touch.start.y = event.touches[0].clientY;
+        this.touch.element = this.findElement(event.touches[0].target);
+    }
+
+    onTouchMove(event) {
+        if (event.touches === undefined || event.touches.length !== 1 || this.element === null) {
+            return;
+        }
+
+        this.touch.move.x = event.touches[0].clientX;
+        this.touch.move.y = event.touches[0].clientY;
+
+        let distance = this.calculateDistance();
+        let absDistance = Math.abs(distance);
+
+        if (absDistance > 0) {
+            let opacity = 1 - (absDistance > 75 ? 0.9 : absDistance / 75 * 0.9);
+            let tx = distance > 75 ? 75 : (distance < -75 ? -75 : distance);
+
+            this.touch.element.style.opacity = opacity;
+            this.touch.element.style.transform = "translateX(" + tx + "px)";
+        }
+    }
+
+    onTouchEnd(event) {
+        if (event.touches === undefined) {
+            return;
+        }
+
+        if (this.touch.element !== null) {
+            let distance = Math.abs(this.calculateDistance());
+
+            if (distance > 75) {
+                EntryHandler.toggleEntryStatus(this.touch.element);
+                this.touch.element.style.opacity = 1;
+                this.touch.element.style.transform = "none";
+            }
+        }
+
+        this.reset();
+    }
+
+    listen() {
+        let elements = document.querySelectorAll(".touch-item");
+
+        elements.forEach((element) => {
+            element.addEventListener("touchstart", (e) => this.onTouchStart(e), false);
+            element.addEventListener("touchmove", (e) => this.onTouchMove(e), false);
+            element.addEventListener("touchend", (e) => this.onTouchEnd(e), false);
+            element.addEventListener("touchcancel", () => this.reset(), false);
+        });
+    }
+}
+
 class KeyboardHandler {
     constructor() {
         this.queue = [];
@@ -94,56 +230,84 @@ class MouseHandler {
     }
 }
 
-class App {
-    run() {
-        FormHandler.handleSubmitButtons();
-
-        let keyboardHandler = new KeyboardHandler();
-        keyboardHandler.on("g u", () => this.goToPage("unread"));
-        keyboardHandler.on("g h", () => this.goToPage("history"));
-        keyboardHandler.on("g f", () => this.goToPage("feeds"));
-        keyboardHandler.on("g c", () => this.goToPage("categories"));
-        keyboardHandler.on("g s", () => this.goToPage("settings"));
-        keyboardHandler.on("ArrowLeft", () => this.goToPrevious());
-        keyboardHandler.on("ArrowRight", () => this.goToNext());
-        keyboardHandler.on("j", () => this.goToPrevious());
-        keyboardHandler.on("p", () => this.goToPrevious());
-        keyboardHandler.on("k", () => this.goToNext());
-        keyboardHandler.on("n", () => this.goToNext());
-        keyboardHandler.on("h", () => this.goToPage("previous"));
-        keyboardHandler.on("l", () => this.goToPage("next"));
-        keyboardHandler.on("o", () => this.openSelectedItem());
-        keyboardHandler.on("v", () => this.openOriginalLink());
-        keyboardHandler.on("m", () => this.toggleEntryStatus());
-        keyboardHandler.on("A", () => this.markPageAsRead());
-        keyboardHandler.listen();
-
-        let mouseHandler = new MouseHandler();
-        mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => this.markPageAsRead());
-        mouseHandler.onClick("a[data-confirm]", (event) => this.confirm(event));
-
-        if (document.documentElement.clientWidth < 600) {
-            mouseHandler.onClick(".logo", () => this.toggleMainMenu());
-            mouseHandler.onClick(".header nav li", (event) => this.clickMenuListItem(event));
-        }
-    }
-
-    remove(url) {
-        let request = new Request(url, {
+class RequestBuilder {
+    constructor(url) {
+        this.callback = null;
+        this.url = url;
+        this.options = {
             method: "POST",
             cache: "no-cache",
             credentials: "include",
+            body: null,
             headers: new Headers({
+                "Content-Type": "application/json",
                 "X-Csrf-Token": this.getCsrfToken()
             })
-        });
-
-        fetch(request).then(() => {
-            window.location.reload();
-        });
+        };
     }
 
-    confirm(event) {
+    withBody(body) {
+        this.options.body = JSON.stringify(body);
+        return this;
+    }
+
+    withCallback(callback) {
+        this.callback = callback;
+        return this;
+    }
+
+    getCsrfToken() {
+        let element = document.querySelector("meta[name=X-CSRF-Token]");
+        if (element !== null) {
+            return element.getAttribute("value");
+        }
+
+        return "";
+    }
+
+    execute() {
+        fetch(new Request(this.url, this.options)).then((response) => {
+            if (this.callback) {
+                this.callback(response);
+            }
+        });
+    }
+}
+
+class EntryHandler {
+    static updateEntriesStatus(entryIDs, status) {
+        let url = document.body.dataset.entriesStatusUrl;
+        let request = new RequestBuilder(url);
+        request.withBody({entry_ids: entryIDs, status: status});
+        request.execute();
+    }
+
+    static toggleEntryStatus(element) {
+        let entryID = parseInt(element.dataset.id, 10);
+        let statuses = {read: "unread", unread: "read"};
+
+        for (let currentStatus in statuses) {
+            let newStatus = statuses[currentStatus];
+
+            if (element.classList.contains("item-status-" + currentStatus)) {
+                element.classList.remove("item-status-" + currentStatus);
+                element.classList.add("item-status-" + newStatus);
+
+                this.updateEntriesStatus([entryID], newStatus);
+                break;
+            }
+        }
+    }
+}
+
+class ConfirmHandler {
+    remove(url) {
+        let request = new RequestBuilder(url);
+        request.withCallback(() => window.location.reload());
+        request.execute();
+    }
+
+    handle(event) {
         let questionElement = document.createElement("span");
         let linkElement = event.target;
         let containerElement = linkElement.parentNode;
@@ -182,9 +346,11 @@ class App {
 
         containerElement.appendChild(questionElement);
     }
+}
 
+class MenuHandler {
     clickMenuListItem(event) {
-        let element = event.target;console.log(element);
+        let element = event.target;
 
         if (element.tagName === "A") {
             window.location.href = element.getAttribute("href");
@@ -195,31 +361,17 @@ class App {
 
     toggleMainMenu() {
         let menu = document.querySelector(".header nav ul");
-        if (this.isVisible(menu)) {
+        if (DomHelper.isVisible(menu)) {
             menu.style.display = "none";
         } else {
             menu.style.display = "block";
         }
     }
+}
 
-    updateEntriesStatus(entryIDs, status) {
-        let url = document.body.dataset.entriesStatusUrl;
-        let request = new Request(url, {
-            method: "POST",
-            cache: "no-cache",
-            credentials: "include",
-            body: JSON.stringify({entry_ids: entryIDs, status: status}),
-            headers: new Headers({
-                "Content-Type": "application/json",
-                "X-Csrf-Token": this.getCsrfToken()
-            })
-        });
-
-        fetch(request);
-    }
-
+class NavHandler {
     markPageAsRead() {
-        let items = this.getVisibleElements(".items .item");
+        let items = DomHelper.getVisibleElements(".items .item");
         let entryIDs = [];
 
         items.forEach((element) => {
@@ -228,7 +380,7 @@ class App {
         });
 
         if (entryIDs.length > 0) {
-            this.updateEntriesStatus(entryIDs, "read");
+            EntryHandler.updateEntriesStatus(entryIDs, "read");
         }
 
         this.goToPage("next");
@@ -237,35 +389,21 @@ class App {
     toggleEntryStatus() {
         let currentItem = document.querySelector(".current-item");
         if (currentItem !== null) {
-            let entryID = parseInt(currentItem.dataset.id, 10);
-            let statuses = {read: "unread", unread: "read"};
-
-            for (let currentStatus in statuses) {
-                let newStatus = statuses[currentStatus];
-
-                if (currentItem.classList.contains("item-status-" + currentStatus)) {
-                    this.goToNextListItem();
-
-                    currentItem.classList.remove("item-status-" + currentStatus);
-                    currentItem.classList.add("item-status-" + newStatus);
-
-                    this.updateEntriesStatus([entryID], newStatus);
-                    break;
-                }
-            }
+            EntryHandler.toggleEntryStatus(currentItem);
+            this.goToNextListItem();
         }
     }
 
     openOriginalLink() {
         let entryLink = document.querySelector(".entry h1 a");
         if (entryLink !== null) {
-            this.openNewTab(entryLink.getAttribute("href"));
+            DomHelper.openNewTab(entryLink.getAttribute("href"));
             return;
         }
 
         let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
         if (currentItemOriginalLink !== null) {
-            this.openNewTab(currentItemOriginalLink.getAttribute("href"));
+            DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
         }
     }
 
@@ -301,7 +439,7 @@ class App {
     }
 
     goToPreviousListItem() {
-        let items = this.getVisibleElements(".items .item");
+        let items = DomHelper.getVisibleElements(".items .item");
 
         if (items.length === 0) {
             return;
@@ -318,7 +456,7 @@ class App {
 
                 if (i - 1 >= 0) {
                     items[i - 1].classList.add("current-item");
-                    this.scrollPageTo(items[i - 1]);
+                    DomHelper.scrollPageTo(items[i - 1]);
                 }
 
                 break;
@@ -327,7 +465,7 @@ class App {
     }
 
     goToNextListItem() {
-        let items = this.getVisibleElements(".items .item");
+        let items = DomHelper.getVisibleElements(".items .item");
 
         if (items.length === 0) {
             return;
@@ -344,7 +482,7 @@ class App {
 
                 if (i + 1 < items.length) {
                     items[i + 1].classList.add("current-item");
-                    this.scrollPageTo(items[i + 1]);
+                    DomHelper.scrollPageTo(items[i + 1]);
                 }
 
                 break;
@@ -352,56 +490,49 @@ class App {
         }
     }
 
-    getVisibleElements(selector) {
-        let elements = document.querySelectorAll(selector);
-        let result = [];
-
-        for (let i = 0; i < elements.length; i++) {
-            if (this.isVisible(elements[i])) {
-                result.push(elements[i]);
-            }
-        }
-
-        return result;
-    }
-
     isListView() {
         return document.querySelector(".items") !== null;
-    }
-
-    scrollPageTo(item) {
-        let windowScrollPosition = window.pageYOffset;
-        let windowHeight = document.documentElement.clientHeight;
-        let viewportPosition = windowScrollPosition + windowHeight;
-        let itemBottomPosition = item.offsetTop + item.offsetHeight;
-
-        if (viewportPosition - itemBottomPosition < 0 || viewportPosition - item.offsetTop > windowHeight) {
-            window.scrollTo(0, item.offsetTop - 10);
-        }
-    }
-
-    openNewTab(url) {
-        let win = window.open(url, "_blank");
-        win.focus();
-    }
-
-    isVisible(element) {
-        return element.offsetParent !== null;
-    }
-
-    getCsrfToken() {
-        let element = document.querySelector("meta[name=X-CSRF-Token]");
-
-        if (element !== null) {
-            return element.getAttribute("value");
-        }
-
-        return "";
     }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    (new App()).run();
+    FormHandler.handleSubmitButtons();
+
+    let touchHandler = new TouchHandler();
+    touchHandler.listen();
+
+    let navHandler = new NavHandler();
+    let keyboardHandler = new KeyboardHandler();
+    keyboardHandler.on("g u", () => navHandler.goToPage("unread"));
+    keyboardHandler.on("g h", () => navHandler.goToPage("history"));
+    keyboardHandler.on("g f", () => navHandler.goToPage("feeds"));
+    keyboardHandler.on("g c", () => navHandler.goToPage("categories"));
+    keyboardHandler.on("g s", () => navHandler.goToPage("settings"));
+    keyboardHandler.on("ArrowLeft", () => navHandler.goToPrevious());
+    keyboardHandler.on("ArrowRight", () => navHandler.goToNext());
+    keyboardHandler.on("j", () => navHandler.goToPrevious());
+    keyboardHandler.on("p", () => navHandler.goToPrevious());
+    keyboardHandler.on("k", () => navHandler.goToNext());
+    keyboardHandler.on("n", () => navHandler.goToNext());
+    keyboardHandler.on("h", () => navHandler.goToPage("previous"));
+    keyboardHandler.on("l", () => navHandler.goToPage("next"));
+    keyboardHandler.on("o", () => navHandler.openSelectedItem());
+    keyboardHandler.on("v", () => navHandler.openOriginalLink());
+    keyboardHandler.on("m", () => navHandler.toggleEntryStatus());
+    keyboardHandler.on("A", () => navHandler.markPageAsRead());
+    keyboardHandler.listen();
+
+    let mouseHandler = new MouseHandler();
+    mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
+    mouseHandler.onClick("a[data-confirm]", (event) => {
+        (new ConfirmHandler()).handle(event);
+    });
+
+    if (document.documentElement.clientWidth < 600) {
+        let menuHandler = new MenuHandler();
+        mouseHandler.onClick(".logo", () => menuHandler.toggleMainMenu());
+        mouseHandler.onClick(".header nav li", (event) => menuHandler.clickMenuListItem(event));
+    }
 });
 
 })();
