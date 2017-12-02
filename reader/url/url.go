@@ -8,8 +8,8 @@ import "net/url"
 import "fmt"
 import "strings"
 
-// GetAbsoluteURL converts the input URL as absolute URL if necessary.
-func GetAbsoluteURL(baseURL, input string) (string, error) {
+// AbsoluteURL converts the input URL as absolute URL if necessary.
+func AbsoluteURL(baseURL, input string) (string, error) {
 	if strings.HasPrefix(input, "//") {
 		input = "https://" + input[2:]
 	}
@@ -31,13 +31,13 @@ func GetAbsoluteURL(baseURL, input string) (string, error) {
 	return base.ResolveReference(u).String(), nil
 }
 
-// GetRootURL returns absolute URL without the path.
-func GetRootURL(websiteURL string) string {
+// RootURL returns absolute URL without the path.
+func RootURL(websiteURL string) string {
 	if strings.HasPrefix(websiteURL, "//") {
 		websiteURL = "https://" + websiteURL[2:]
 	}
 
-	absoluteURL, err := GetAbsoluteURL(websiteURL, "")
+	absoluteURL, err := AbsoluteURL(websiteURL, "")
 	if err != nil {
 		return websiteURL
 	}
@@ -58,4 +58,14 @@ func IsHTTPS(websiteURL string) bool {
 	}
 
 	return strings.ToLower(parsedURL.Scheme) == "https"
+}
+
+// Domain returns only the domain part of the given URL.
+func Domain(websiteURL string) string {
+	parsedURL, err := url.Parse(websiteURL)
+	if err != nil {
+		return websiteURL
+	}
+
+	return parsedURL.Host
 }

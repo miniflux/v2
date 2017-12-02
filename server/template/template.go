@@ -10,13 +10,13 @@ import (
 	"io"
 	"log"
 	"net/mail"
-	"net/url"
 	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/locale"
+	"github.com/miniflux/miniflux2/reader/url"
 	"github.com/miniflux/miniflux2/server/route"
 	"github.com/miniflux/miniflux2/server/template/helper"
 	"github.com/miniflux/miniflux2/server/ui/filter"
@@ -57,13 +57,15 @@ func (e *Engine) parseAll() {
 		"proxyFilter": func(data string) string {
 			return filter.ImageProxyFilter(e.router, data)
 		},
-		"domain": func(websiteURL string) string {
-			parsedURL, err := url.Parse(websiteURL)
-			if err != nil {
-				return websiteURL
+		"proxyURL": func(link string) string {
+			if url.IsHTTPS(link) {
+				return link
 			}
 
-			return parsedURL.Host
+			return filter.Proxify(e.router, link)
+		},
+		"domain": func(websiteURL string) string {
+			return url.Domain(websiteURL)
 		},
 		"isEmail": func(str string) bool {
 			_, err := mail.ParseAddress(str)

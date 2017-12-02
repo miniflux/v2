@@ -16,7 +16,7 @@ import (
 )
 
 // ImageProxyFilter rewrites image tag URLs without HTTPS to local proxy URL
-func ImageProxyFilter(r *mux.Router, data string) string {
+func ImageProxyFilter(router *mux.Router, data string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(data))
 	if err != nil {
 		return data
@@ -25,12 +25,16 @@ func ImageProxyFilter(r *mux.Router, data string) string {
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
 		if srcAttr, ok := img.Attr("src"); ok {
 			if !url.IsHTTPS(srcAttr) {
-				path := route.Path(r, "proxy", "encodedURL", base64.StdEncoding.EncodeToString([]byte(srcAttr)))
-				img.SetAttr("src", path)
+				img.SetAttr("src", Proxify(router, srcAttr))
 			}
 		}
 	})
 
 	output, _ := doc.Find("body").First().Html()
 	return output
+}
+
+// Proxify returns a proxified link.
+func Proxify(router *mux.Router, link string) string {
+	return route.Path(router, "proxy", "encodedURL", base64.StdEncoding.EncodeToString([]byte(link)))
 }

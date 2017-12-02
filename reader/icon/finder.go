@@ -20,7 +20,7 @@ import (
 
 // FindIcon try to find the website's icon.
 func FindIcon(websiteURL string) (*model.Icon, error) {
-	rootURL := url.GetRootURL(websiteURL)
+	rootURL := url.RootURL(websiteURL)
 	client := http.NewClient(rootURL)
 	response, err := client.Get()
 	if err != nil {
@@ -72,9 +72,9 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 	}
 
 	if iconURL == "" {
-		iconURL = url.GetRootURL(websiteURL) + "favicon.ico"
+		iconURL = url.RootURL(websiteURL) + "favicon.ico"
 	} else {
-		iconURL, _ = url.GetAbsoluteURL(websiteURL, iconURL)
+		iconURL, _ = url.AbsoluteURL(websiteURL, iconURL)
 	}
 
 	return iconURL, nil

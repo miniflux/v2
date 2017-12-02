@@ -88,7 +88,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 			if tagName == "iframe" && !isValidIframeSource(attribute.Val) {
 				continue
 			} else {
-				value, err = url.GetAbsoluteURL(baseURL, value)
+				value, err = url.AbsoluteURL(baseURL, value)
 				if err != nil {
 					continue
 				}

@@ -79,7 +79,7 @@ func parseDocument(websiteURL string, data io.Reader) (Subscriptions, error) {
 			}
 
 			if feedURL, exists := s.Attr("href"); exists {
-				subscription.URL, _ = url.GetAbsoluteURL(websiteURL, feedURL)
+				subscription.URL, _ = url.AbsoluteURL(websiteURL, feedURL)
 			}
 
 			if subscription.Title == "" {
