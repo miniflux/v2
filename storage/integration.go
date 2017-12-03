@@ -18,7 +18,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			pinboard_enabled,
 			pinboard_token,
 			pinboard_tags,
-			pinboard_mark_as_unread
+			pinboard_mark_as_unread,
+			instapaper_enabled,
+			instapaper_username,
+			instapaper_password
 		FROM integrations
 		WHERE user_id=$1
 	`
@@ -29,6 +32,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.PinboardToken,
 		&integration.PinboardTags,
 		&integration.PinboardMarkAsUnread,
+		&integration.InstapaperEnabled,
+		&integration.InstapaperUsername,
+		&integration.InstapaperPassword,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -47,8 +53,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pinboard_enabled=$1,
 			pinboard_token=$2,
 			pinboard_tags=$3,
-			pinboard_mark_as_unread=$4
-		WHERE user_id=$5
+			pinboard_mark_as_unread=$4,
+			instapaper_enabled=$5,
+			instapaper_username=$6,
+			instapaper_password=$7
+		WHERE user_id=$8
 	`
 	_, err := s.db.Exec(
 		query,
@@ -56,6 +65,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PinboardToken,
 		integration.PinboardTags,
 		integration.PinboardMarkAsUnread,
+		integration.InstapaperEnabled,
+		integration.InstapaperUsername,
+		integration.InstapaperPassword,
 		integration.UserID,
 	)
 

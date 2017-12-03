@@ -11,4 +11,7 @@ type Integration struct {
 	PinboardToken        string
 	PinboardTags         string
 	PinboardMarkAsUnread bool
+	InstapaperEnabled    bool
+	InstapaperUsername   string
+	InstapaperPassword   string
 }

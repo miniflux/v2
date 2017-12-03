@@ -29,19 +29,34 @@
     {{ end }}
 
     <h3>Pinboard</h3>
-    <label>
-        <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "Enable Pinboard" }}
-    </label>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "Enable Pinboard" }}
+        </label>
 
-    <label for="form-pinboard-token">{{ t "Pinboard API Token" }}</label>
-    <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}">
+        <label for="form-pinboard-token">{{ t "Pinboard API Token" }}</label>
+        <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}">
 
-    <label for="form-pinboard-tags">{{ t "Pinboard Tags" }}</label>
-    <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}">
+        <label for="form-pinboard-tags">{{ t "Pinboard Tags" }}</label>
+        <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}">
 
-    <label>
-        <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "Mark bookmark as unread" }}
-    </label>
+        <label>
+            <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "Mark bookmark as unread" }}
+        </label>
+    </div>
+
+    <h3>Instapaper</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "Enable Instapaper" }}
+        </label>
+
+        <label for="form-instapaper-username">{{ t "Instapaper Username" }}</label>
+        <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}">
+
+        <label for="form-instapaper-password">{{ t "Instapaper Password" }}</label>
+        <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}">
+    </div>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>

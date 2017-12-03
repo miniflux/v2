@@ -105,6 +105,7 @@ input[type="text"]:focus {
 .panel {
     background: #333;
     border-color: #555;
+    color: #9b9b9b;
 }
 
 /* Counter */

@@ -16,6 +16,9 @@ type IntegrationForm struct {
 	PinboardToken        string
 	PinboardTags         string
 	PinboardMarkAsUnread bool
+	InstapaperEnabled    bool
+	InstapaperUsername   string
+	InstapaperPassword   string
 }
 
 // Merge copy form values to the model.
@@ -24,6 +27,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.PinboardToken = i.PinboardToken
 	integration.PinboardTags = i.PinboardTags
 	integration.PinboardMarkAsUnread = i.PinboardMarkAsUnread
+	integration.InstapaperEnabled = i.InstapaperEnabled
+	integration.InstapaperUsername = i.InstapaperUsername
+	integration.InstapaperPassword = i.InstapaperPassword
 }
 
 // NewIntegrationForm returns a new AuthForm.
@@ -33,5 +39,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		PinboardToken:        r.FormValue("pinboard_token"),
 		PinboardTags:         r.FormValue("pinboard_tags"),
 		PinboardMarkAsUnread: r.FormValue("pinboard_mark_as_unread") == "1",
+		InstapaperEnabled:    r.FormValue("instapaper_enabled") == "1",
+		InstapaperUsername:   r.FormValue("instapaper_username"),
+		InstapaperPassword:   r.FormValue("instapaper_password"),
 	}
 }

@@ -6,9 +6,8 @@ package controller
 
 import (
 	"errors"
-	"log"
 
-	"github.com/miniflux/miniflux2/integration/pinboard"
+	"github.com/miniflux/miniflux2/integration"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
@@ -36,6 +35,9 @@ func (c *Controller) ShowIntegrations(ctx *core.Context, request *core.Request, 
 			PinboardToken:        integration.PinboardToken,
 			PinboardTags:         integration.PinboardTags,
 			PinboardMarkAsUnread: integration.PinboardMarkAsUnread,
+			InstapaperEnabled:    integration.InstapaperEnabled,
+			InstapaperUsername:   integration.InstapaperUsername,
+			InstapaperPassword:   integration.InstapaperPassword,
 		},
 	}))
 }
@@ -85,20 +87,14 @@ func (c *Controller) SaveEntry(ctx *core.Context, request *core.Request, respons
 		return
 	}
 
-	integration, err := c.store.Integration(user.ID)
+	settings, err := c.store.Integration(user.ID)
 	if err != nil {
 		response.JSON().ServerError(err)
 		return
 	}
 
 	go func() {
-		if integration.PinboardEnabled {
-			client := pinboard.NewClient(integration.PinboardToken)
-			err := client.AddBookmark(entry.URL, entry.Title, integration.PinboardTags, integration.PinboardMarkAsUnread)
-			if err != nil {
-				log.Println("[Pinboard]", err)
-			}
-		}
+		integration.SendEntry(entry, settings)
 	}()
 
 	response.JSON().Created(map[string]string{"message": "saved"})

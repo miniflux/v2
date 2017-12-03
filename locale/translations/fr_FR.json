@@ -144,5 +144,8 @@
     "Mark bookmark as unread": "Marquer le lien comme non lu",
     "Pinboard Tags": "Libellés de Pinboard",
     "Pinboard API Token": "Jeton de sécurité de l'API de Pinboard",
-    "Enable Pinboard": "Activer Pinboard"
+    "Enable Pinboard": "Activer Pinboard",
+    "Enable Instapaper": "Activer Instapaper",
+    "Instapaper Username": "Nom d'utilisateur Instapaper",
+    "Instapaper Password": "Mot de passe Instapaper"
 }

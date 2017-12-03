@@ -11,7 +11,7 @@ import (
 	"github.com/miniflux/miniflux2/http"
 )
 
-// Client represents a Pinboard token.
+// Client represents a Pinboard client.
 type Client struct {
 	authToken string
 }
