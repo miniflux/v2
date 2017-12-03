@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -110,23 +111,59 @@ func (s *Storage) RemoveExtraField(userID int64, field string) error {
 
 // UpdateUser updates a user.
 func (s *Storage) UpdateUser(user *model.User) error {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateUser] username=%s", user.Username))
-	user.Username = strings.ToLower(user.Username)
-
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateUser] userID=%d", user.ID))
+	log.Println(user.EntryDirection)
 	if user.Password != "" {
 		hashedPassword, err := hashPassword(user.Password)
 		if err != nil {
 			return err
 		}
 
-		query := "UPDATE users SET username=$1, password=$2, is_admin=$3, theme=$4, language=$5, timezone=$6 WHERE id=$7"
-		_, err = s.db.Exec(query, user.Username, hashedPassword, user.IsAdmin, user.Theme, user.Language, user.Timezone, user.ID)
+		query := `UPDATE users SET
+			username=LOWER($1),
+			password=$2,
+			is_admin=$3,
+			theme=$4,
+			language=$5,
+			timezone=$6,
+			entry_direction=$7
+			WHERE id=$8`
+
+		_, err = s.db.Exec(
+			query,
+			user.Username,
+			hashedPassword,
+			user.IsAdmin,
+			user.Theme,
+			user.Language,
+			user.Timezone,
+			user.EntryDirection,
+			user.ID,
+		)
 		if err != nil {
 			return fmt.Errorf("unable to update user: %v", err)
 		}
 	} else {
-		query := "UPDATE users SET username=$1, is_admin=$2, theme=$3, language=$4, timezone=$5 WHERE id=$6"
-		_, err := s.db.Exec(query, user.Username, user.IsAdmin, user.Theme, user.Language, user.Timezone, user.ID)
+		query := `UPDATE users SET
+			username=$1,
+			is_admin=$2,
+			theme=$3,
+			language=$4,
+			timezone=$5,
+			entry_direction=$6
+			WHERE id=$7`
+
+		_, err := s.db.Exec(
+			query,
+			user.Username,
+			user.IsAdmin,
+			user.Theme,
+			user.Language,
+			user.Timezone,
+			user.EntryDirection,
+			user.ID,
+		)
+
 		if err != nil {
 			return fmt.Errorf("unable to update user: %v", err)
 		}
@@ -138,11 +175,24 @@ func (s *Storage) UpdateUser(user *model.User) error {
 // UserByID finds a user by the ID.
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByID] userID=%d", userID))
+	query := `SELECT
+		id, username, is_admin, theme, language, timezone, entry_direction, extra
+		FROM users
+		WHERE id = $1`
 
 	var user model.User
 	var extra hstore.Hstore
-	row := s.db.QueryRow("SELECT id, username, is_admin, theme, language, timezone, extra FROM users WHERE id = $1", userID)
-	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone, &extra)
+	row := s.db.QueryRow(query, userID)
+	err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.IsAdmin,
+		&user.Theme,
+		&user.Language,
+		&user.Timezone,
+		&user.EntryDirection,
+		&extra,
+	)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -162,10 +212,22 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 // UserByUsername finds a user by the username.
 func (s *Storage) UserByUsername(username string) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByUsername] username=%s", username))
+	query := `SELECT
+		id, username, is_admin, theme, language, timezone, entry_direction
+		FROM users
+		WHERE username=LOWER($1)`
 
 	var user model.User
-	row := s.db.QueryRow("SELECT id, username, is_admin, theme, language, timezone FROM users WHERE username=$1", username)
-	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone)
+	row := s.db.QueryRow(query, username)
+	err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.IsAdmin,
+		&user.Theme,
+		&user.Language,
+		&user.Timezone,
+		&user.EntryDirection,
+	)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -178,10 +240,22 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 // UserByExtraField finds a user by an extra field value.
 func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByExtraField] field=%s", field))
+	query := `SELECT
+		id, username, is_admin, theme, language, timezone, entry_direction
+		FROM users
+		WHERE extra->$1=$2`
+
 	var user model.User
-	query := `SELECT id, username, is_admin, theme, language, timezone FROM users WHERE extra->$1=$2`
 	row := s.db.QueryRow(query, field, value)
-	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Theme, &user.Language, &user.Timezone)
+	err := row.Scan(
+		&user.ID,
+		&user.Username,
+		&user.IsAdmin,
+		&user.Theme,
+		&user.Language,
+		&user.Timezone,
+		&user.EntryDirection,
+	)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -215,14 +289,18 @@ func (s *Storage) RemoveUser(userID int64) error {
 // Users returns all users.
 func (s *Storage) Users() (model.Users, error) {
 	defer helper.ExecutionTime(time.Now(), "[Storage:Users]")
+	query := `SELECT
+		id, username, is_admin, theme, language, timezone, last_login_at
+		FROM users
+		ORDER BY username ASC`
 
-	var users model.Users
-	rows, err := s.db.Query("SELECT id, username, is_admin, theme, language, timezone, last_login_at FROM users ORDER BY username ASC")
+	rows, err := s.db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch users: %v", err)
 	}
 	defer rows.Close()
 
+	var users model.Users
 	for rows.Next() {
 		var user model.User
 		err := rows.Scan(

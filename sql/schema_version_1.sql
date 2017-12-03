@@ -53,7 +53,7 @@ create table feeds (
     foreign key (category_id) references categories(id) on delete cascade
 );
 
-create type entry_status as enum ('unread', 'read', 'removed');
+create type entry_status as enum('unread', 'read', 'removed');
 
 create table entries (
     id bigserial not null,

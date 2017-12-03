@@ -17,7 +17,7 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 

@@ -72,7 +72,7 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 	builder.WithFeedID(feed.ID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 

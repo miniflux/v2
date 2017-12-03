@@ -58,6 +58,12 @@
     {{ end }}
     </select>
 
+    <label for="form-entry-direction">{{ t "Entry Sorting" }}</label>
+    <select id="form-entry-direction" name="entry_direction">
+        <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "Older entries first" }}</option>
+        <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "Recent entries first" }}</option>
+    </select>
+
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>
     </div>

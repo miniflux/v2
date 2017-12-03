@@ -11,12 +11,12 @@ import (
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/payload"
+	"github.com/miniflux/miniflux2/storage"
 )
 
 // ShowFeedEntry shows a single feed entry in "feed" mode.
 func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
-	sortingDirection := model.DefaultSortingDirection
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
@@ -46,6 +46,15 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 		return
 	}
 
+	if entry.Status == model.EntryStatusUnread {
+		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			log.Println(err)
+			response.HTML().ServerError(nil)
+			return
+		}
+	}
+
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -53,26 +62,9 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithFeedID(feedID)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", "<=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.DefaultSortingDirection)
-	nextEntry, err := builder.GetEntry()
-	if err != nil {
-		response.HTML().ServerError(err)
-		return
-	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
-	builder.WithFeedID(feedID)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", ">=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
-	prevEntry, err := builder.GetEntry()
+	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -88,14 +80,6 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 		prevEntryRoute = ctx.Route("feedEntry", "feedID", feedID, "entryID", prevEntry.ID)
 	}
 
-	if entry.Status == model.EntryStatusUnread {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
-		if err != nil {
-			response.HTML().ServerError(err)
-			return
-		}
-	}
-
 	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
@@ -109,7 +93,6 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 // ShowCategoryEntry shows a single feed entry in "category" mode.
 func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
-	sortingDirection := model.DefaultSortingDirection
 
 	categoryID, err := request.IntegerParam("categoryID")
 	if err != nil {
@@ -139,6 +122,15 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 		return
 	}
 
+	if entry.Status == model.EntryStatusUnread {
+		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			log.Println(err)
+			response.HTML().ServerError(nil)
+			return
+		}
+	}
+
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -146,26 +138,9 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithCategoryID(categoryID)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", "<=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(sortingDirection)
-	nextEntry, err := builder.GetEntry()
-	if err != nil {
-		response.HTML().ServerError(err)
-		return
-	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
-	builder.WithCategoryID(categoryID)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", ">=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
-	prevEntry, err := builder.GetEntry()
+	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -181,15 +156,6 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 		prevEntryRoute = ctx.Route("categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
 	}
 
-	if entry.Status == model.EntryStatusUnread {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
-		if err != nil {
-			log.Println(err)
-			response.HTML().ServerError(nil)
-			return
-		}
-	}
-
 	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
@@ -203,7 +169,6 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 // ShowUnreadEntry shows a single feed entry in "unread" mode.
 func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
-	sortingDirection := model.DefaultSortingDirection
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
@@ -226,6 +191,15 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 		return
 	}
 
+	if entry.Status == model.EntryStatusUnread {
+		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			log.Println(err)
+			response.HTML().ServerError(nil)
+			return
+		}
+	}
+
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -233,26 +207,9 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", "<=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(sortingDirection)
-	nextEntry, err := builder.GetEntry()
-	if err != nil {
-		response.HTML().ServerError(err)
-		return
-	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", ">=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
-	prevEntry, err := builder.GetEntry()
+	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -268,15 +225,6 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 		prevEntryRoute = ctx.Route("unreadEntry", "entryID", prevEntry.ID)
 	}
 
-	if entry.Status == model.EntryStatusUnread {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
-		if err != nil {
-			log.Println(err)
-			response.HTML().ServerError(nil)
-			return
-		}
-	}
-
 	response.HTML().Render("entry", args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
@@ -290,7 +238,6 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 // ShowReadEntry shows a single feed entry in "history" mode.
 func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
-	sortingDirection := model.DefaultSortingDirection
 
 	entryID, err := request.IntegerParam("entryID")
 	if err != nil {
@@ -320,26 +267,9 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	}
 
 	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusRead)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", "<=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(sortingDirection)
-	nextEntry, err := builder.GetEntry()
-	if err != nil {
-		response.HTML().ServerError(err)
-		return
-	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithoutStatus(model.EntryStatusRemoved)
-	builder.WithStatus(model.EntryStatusRead)
-	builder.WithCondition("e.id", "!=", entryID)
-	builder.WithCondition("e.published_at", ">=", entry.Date)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.GetOppositeDirection(sortingDirection))
-	prevEntry, err := builder.GetEntry()
+	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -389,4 +319,30 @@ func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Reques
 	}
 
 	response.JSON().Standard("OK")
+}
+
+func (c *Controller) getEntryPrevNext(user *model.User, builder *storage.EntryQueryBuilder, entryID int64) (prev *model.Entry, next *model.Entry, err error) {
+	builder.WithoutStatus(model.EntryStatusRemoved)
+	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithDirection(user.EntryDirection)
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	n := len(entries)
+	for i := 0; i < n; i++ {
+		if entries[i].ID == entryID {
+			if i-1 > 0 {
+				prev = entries[i-1]
+			}
+
+			if i+1 < n {
+				next = entries[i+1]
+			}
+		}
+	}
+
+	return prev, next, nil
 }

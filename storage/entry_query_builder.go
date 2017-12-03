@@ -27,15 +27,6 @@ type EntryQueryBuilder struct {
 	limit      int
 	offset     int
 	entryID    int64
-	conditions []string
-	args       []interface{}
-}
-
-// WithCondition defines a new condition.
-func (e *EntryQueryBuilder) WithCondition(column, operator string, value interface{}) *EntryQueryBuilder {
-	e.args = append(e.args, value)
-	e.conditions = append(e.conditions, fmt.Sprintf("%s %s $%d", column, operator, len(e.args)+1))
-	return e
 }
 
 // WithEntryID set the entryID.
@@ -187,7 +178,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		)
 
 		if err != nil {
-			return nil, fmt.Errorf("Unable to fetch entry row: %v", err)
+			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
 		}
 
 		if iconID == nil {
@@ -207,11 +198,6 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 func (e *EntryQueryBuilder) buildCondition() ([]interface{}, string) {
 	args := []interface{}{e.userID}
 	conditions := []string{"e.user_id = $1"}
-
-	if len(e.conditions) > 0 {
-		conditions = append(conditions, e.conditions...)
-		args = append(args, e.args...)
-	}
 
 	if e.categoryID != 0 {
 		conditions = append(conditions, fmt.Sprintf("f.category_id=$%d", len(args)+1))

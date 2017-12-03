@@ -74,10 +74,11 @@ func (c *Controller) getSettingsFormTemplateArgs(ctx *core.Context, user *model.
 
 	if settingsForm == nil {
 		args["form"] = form.SettingsForm{
-			Username: user.Username,
-			Theme:    user.Theme,
-			Language: user.Language,
-			Timezone: user.Timezone,
+			Username:       user.Username,
+			Theme:          user.Theme,
+			Language:       user.Language,
+			Timezone:       user.Timezone,
+			EntryDirection: user.EntryDirection,
 		}
 	} else {
 		args["form"] = settingsForm

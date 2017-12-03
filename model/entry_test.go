@@ -57,15 +57,15 @@ func TestValidateRange(t *testing.T) {
 }
 
 func TestGetOppositeDirection(t *testing.T) {
-	if GetOppositeDirection("asc") != "desc" {
+	if OppositeDirection("asc") != "desc" {
 		t.Errorf(`The opposite direction of "asc" should be "desc"`)
 	}
 
-	if GetOppositeDirection("desc") != "asc" {
+	if OppositeDirection("desc") != "asc" {
 		t.Errorf(`The opposite direction of "desc" should be "asc"`)
 	}
 
-	if GetOppositeDirection("invalid") != "asc" {
+	if OppositeDirection("invalid") != "asc" {
 		t.Errorf(`An invalid direction should return "asc"`)
 	}
 }

@@ -134,5 +134,8 @@
     "Unlink my Google account": "Dissocier mon compte Google",
     "Link my Google account": "Associer mon compte Google",
     "Category not found for this user.": "Cette catégorie n'existe pas pour cet utilisateur.",
-    "Invalid theme.": "Le thème est invalide."
+    "Invalid theme.": "Le thème est invalide.",
+    "Entry Sorting": "Ordre des éléments",
+    "Older entries first": "Ancien éléments en premier",
+    "Recent entries first": "Éléments récents en premier"
 }

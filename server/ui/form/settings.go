@@ -13,12 +13,13 @@ import (
 
 // SettingsForm represents the settings form.
 type SettingsForm struct {
-	Username     string
-	Password     string
-	Confirmation string
-	Theme        string
-	Language     string
-	Timezone     string
+	Username       string
+	Password       string
+	Confirmation   string
+	Theme          string
+	Language       string
+	Timezone       string
+	EntryDirection string
 }
 
 // Merge updates the fields of the given user.
@@ -27,6 +28,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Theme = s.Theme
 	user.Language = s.Language
 	user.Timezone = s.Timezone
+	user.EntryDirection = s.EntryDirection
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -37,7 +39,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" {
+	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" {
 		return errors.NewLocalizedError("The username, theme, language and timezone fields are mandatory.")
 	}
 
@@ -57,11 +59,12 @@ func (s *SettingsForm) Validate() error {
 // NewSettingsForm returns a new SettingsForm.
 func NewSettingsForm(r *http.Request) *SettingsForm {
 	return &SettingsForm{
-		Username:     r.FormValue("username"),
-		Password:     r.FormValue("password"),
-		Confirmation: r.FormValue("confirmation"),
-		Theme:        r.FormValue("theme"),
-		Language:     r.FormValue("language"),
-		Timezone:     r.FormValue("timezone"),
+		Username:       r.FormValue("username"),
+		Password:       r.FormValue("password"),
+		Confirmation:   r.FormValue("confirmation"),
+		Theme:          r.FormValue("theme"),
+		Language:       r.FormValue("language"),
+		Timezone:       r.FormValue("timezone"),
+		EntryDirection: r.FormValue("entry_direction"),
 	}
 }

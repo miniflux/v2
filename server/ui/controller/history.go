@@ -23,7 +23,7 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 

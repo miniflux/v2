@@ -11,15 +11,16 @@ import (
 
 // User represents a user in the system.
 type User struct {
-	ID          int64             `json:"id"`
-	Username    string            `json:"username"`
-	Password    string            `json:"password,omitempty"`
-	IsAdmin     bool              `json:"is_admin,omitempty"`
-	Theme       string            `json:"theme,omitempty"`
-	Language    string            `json:"language,omitempty"`
-	Timezone    string            `json:"timezone,omitempty"`
-	LastLoginAt *time.Time        `json:"last_login_at,omitempty"`
-	Extra       map[string]string `json:"-"`
+	ID             int64             `json:"id"`
+	Username       string            `json:"username"`
+	Password       string            `json:"password,omitempty"`
+	IsAdmin        bool              `json:"is_admin,omitempty"`
+	Theme          string            `json:"theme,omitempty"`
+	Language       string            `json:"language,omitempty"`
+	Timezone       string            `json:"timezone,omitempty"`
+	EntryDirection string            `json:"entry_sorting_direction,omitempty"`
+	LastLoginAt    *time.Time        `json:"last_login_at,omitempty"`
+	Extra          map[string]string `json:"-"`
 }
 
 // NewUser returns a new User.

@@ -54,7 +54,7 @@ func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Reques
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithCategoryID(category.ID)
 	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithDirection(user.EntryDirection)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)

@@ -21,10 +21,15 @@ Notes
 
 Miniflux 2 still in development and **it's not ready to use**.
 
+- [Features](https://docs.miniflux.net/en/latest/features.html)
+- [Requirements](https://docs.miniflux.net/en/latest/requirements.html)
+- [Installation](https://docs.miniflux.net/en/latest/installation.html)
+- [Documentation](https://docs.miniflux.net/)
+
 TODO
 ----
 
-- [ ] Custom entries sorting
+- [X] Custom entries sorting
 - [ ] Webpage scraper (Readability)
 - [X] Bookmarklet
 - [ ] External integrations (Pinboard, Instapaper, Pocket?)
@@ -32,7 +37,7 @@ TODO
 - [X] Integration tests
 - [X] Flush history
 - [X] OAuth2
-- [ ] Touch events
+- [X] Touch events
 - [ ] Fever API?
 
 Credits

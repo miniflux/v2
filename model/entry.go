@@ -15,7 +15,7 @@ const (
 	EntryStatusRead         = "read"
 	EntryStatusRemoved      = "removed"
 	DefaultSortingOrder     = "published_at"
-	DefaultSortingDirection = "desc"
+	DefaultSortingDirection = "asc"
 )
 
 // Entry represents a feed item in the system.
@@ -81,8 +81,8 @@ func ValidateRange(offset, limit int) error {
 	return nil
 }
 
-// GetOppositeDirection returns the opposite sorting direction.
-func GetOppositeDirection(direction string) string {
+// OppositeDirection returns the opposite sorting direction.
+func OppositeDirection(direction string) string {
 	if direction == "asc" {
 		return "desc"
 	}

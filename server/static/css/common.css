@@ -10,7 +10,7 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-.main {
+main {
     padding-left: 5px;
     padding-right: 5px;
 }

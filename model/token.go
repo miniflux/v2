@@ -4,8 +4,14 @@
 
 package model
 
+import "fmt"
+
 // Token represents a CSRF token in the system.
 type Token struct {
 	ID    string
 	Value string
+}
+
+func (t Token) String() string {
+	return fmt.Sprintf(`ID="%s"`, t.ID)
 }
