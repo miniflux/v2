@@ -16,10 +16,10 @@ import (
 	"github.com/miniflux/miniflux2/config"
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/locale"
-	"github.com/miniflux/miniflux2/reader/url"
 	"github.com/miniflux/miniflux2/server/route"
 	"github.com/miniflux/miniflux2/server/template/helper"
 	"github.com/miniflux/miniflux2/server/ui/filter"
+	"github.com/miniflux/miniflux2/url"
 
 	"github.com/gorilla/mux"
 )

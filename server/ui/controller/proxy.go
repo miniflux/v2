@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/reader/http"
+	"github.com/miniflux/miniflux2/http"
 	"github.com/miniflux/miniflux2/server/core"
 )
 

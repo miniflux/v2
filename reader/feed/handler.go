@@ -11,8 +11,8 @@ import (
 
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/http"
 	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/http"
 	"github.com/miniflux/miniflux2/reader/icon"
 	"github.com/miniflux/miniflux2/storage"
 )

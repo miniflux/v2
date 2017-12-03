@@ -854,7 +854,7 @@ func TestGetAllEntries(t *testing.T) {
 		t.Fatal(`We should have 0 read entries`)
 	}
 
-	resultWithDifferentSorting, err := client.Entries(&miniflux.Filter{Order: "published_at", Direction: "asc"})
+	resultWithDifferentSorting, err := client.Entries(&miniflux.Filter{Order: "published_at", Direction: "desc"})
 	if err != nil {
 		t.Fatal(err)
 	}

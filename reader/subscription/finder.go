@@ -13,9 +13,9 @@ import (
 
 	"github.com/miniflux/miniflux2/errors"
 	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux2/http"
 	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/reader/http"
-	"github.com/miniflux/miniflux2/reader/url"
+	"github.com/miniflux/miniflux2/url"
 
 	"github.com/PuerkitoBio/goquery"
 )
