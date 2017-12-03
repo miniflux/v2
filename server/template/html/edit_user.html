@@ -38,7 +38,7 @@
     <label for="form-confirmation">{{ t "Confirmation" }}</label>
     <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}">
 
-    <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked="checked"{{ end }}> {{ t "Administrator" }}</label>
+    <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "Administrator" }}</label>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button> {{ t "or" }} <a href="{{ route "users" }}">{{ t "cancel" }}</a>

@@ -137,5 +137,12 @@
     "Invalid theme.": "Le thème est invalide.",
     "Entry Sorting": "Ordre des éléments",
     "Older entries first": "Ancien éléments en premier",
-    "Recent entries first": "Éléments récents en premier"
+    "Recent entries first": "Éléments récents en premier",
+    "Saving...": "Enregistrement...",
+    "Done!": "Terminé !",
+    "Save this article": "Sauvegarder cet article",
+    "Mark bookmark as unread": "Marquer le lien comme non lu",
+    "Pinboard Tags": "Libellés de Pinboard",
+    "Pinboard API Token": "Jeton de sécurité de l'API de Pinboard",
+    "Enable Pinboard": "Activer Pinboard"
 }

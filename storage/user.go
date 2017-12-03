@@ -86,6 +86,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 	}
 
 	s.CreateCategory(&model.Category{Title: "All", UserID: user.ID})
+	s.CreateIntegration(user.ID)
 	return nil
 }
 

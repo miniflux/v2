@@ -6,6 +6,15 @@
         <h1>
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
+        <div class="entry-actions">
+            <a href="#"
+                title="{{ t "Save this article" }}"
+                data-save-entry="true"
+                data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
+                data-label-loading="{{ t "Saving..." }}"
+                data-label-done="{{ t "Done!" }}"
+                >{{ t "Save" }}</a>
+        </div>
         <div class="entry-meta">
             <span class="entry-website">
                 {{ if ne .entry.Feed.Icon.IconID 0 }}

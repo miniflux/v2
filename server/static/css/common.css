@@ -222,6 +222,10 @@ input[type="text"]:focus {
     box-shadow: 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
+input[type="checkbox"] {
+    margin-bottom: 10px;
+}
+
 ::-moz-placeholder,
 ::-ms-input-placeholder,
 ::-webkit-input-placeholder {
@@ -327,7 +331,7 @@ a.button {
 /* Panel */
 .panel {
     color: #333;
-    background-color: #f0f0f0;
+    background-color: #fcfcfc;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 10px;
@@ -495,6 +499,10 @@ a.button {
 .entry header h1 a:hover,
 .entry header h1 a:focus {
     color: #666;
+}
+
+.entry-actions {
+    margin-bottom: 20px;
 }
 
 .entry-meta {

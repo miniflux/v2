@@ -91,6 +91,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/category/{categoryID}/entry/{entryID}", uiHandler.Use(uiController.ShowCategoryEntry)).Name("categoryEntry").Methods("GET")
 
 	router.Handle("/entry/status", uiHandler.Use(uiController.UpdateEntriesStatus)).Name("updateEntriesStatus").Methods("POST")
+	router.Handle("/entry/save/{entryID}", uiHandler.Use(uiController.SaveEntry)).Name("saveEntry").Methods("POST")
 
 	router.Handle("/categories", uiHandler.Use(uiController.ShowCategories)).Name("categories").Methods("GET")
 	router.Handle("/category/create", uiHandler.Use(uiController.CreateCategory)).Name("createCategory").Methods("GET")
@@ -117,6 +118,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 
 	router.Handle("/bookmarklet", uiHandler.Use(uiController.Bookmarklet)).Name("bookmarklet").Methods("GET")
 	router.Handle("/integrations", uiHandler.Use(uiController.ShowIntegrations)).Name("integrations").Methods("GET")
+	router.Handle("/integration", uiHandler.Use(uiController.UpdateIntegration)).Name("updateIntegration").Methods("POST")
 
 	router.Handle("/sessions", uiHandler.Use(uiController.ShowSessions)).Name("sessions").Methods("GET")
 	router.Handle("/sessions/{sessionID}/remove", uiHandler.Use(uiController.RemoveSession)).Name("removeSession").Methods("POST")

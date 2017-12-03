@@ -12,7 +12,7 @@ import (
 	"github.com/miniflux/miniflux2/sql"
 )
 
-const schemaVersion = 4
+const schemaVersion = 5
 
 // Migrate run database migrations.
 func (s *Storage) Migrate() {

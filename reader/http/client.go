@@ -23,22 +23,17 @@ type Client struct {
 	url                string
 	etagHeader         string
 	lastModifiedHeader string
+	username           string
+	password           string
 	Insecure           bool
 }
 
 // Get execute a GET HTTP request.
-func (h *Client) Get() (*Response, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient:Get] url=%s", h.url))
-	u, _ := url.Parse(h.url)
+func (c *Client) Get() (*Response, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient:Get] url=%s", c.url))
 
-	req := &http.Request{
-		URL:    u,
-		Method: http.MethodGet,
-		Header: h.buildHeaders(),
-	}
-
-	client := h.buildClient()
-	resp, err := client.Do(req)
+	client := c.buildClient()
+	resp, err := client.Do(c.buildRequest())
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +48,7 @@ func (h *Client) Get() (*Response, error) {
 	}
 
 	log.Println("[HttpClient:Get]",
-		"OriginalURL:", h.url,
+		"OriginalURL:", c.url,
 		"StatusCode:", response.StatusCode,
 		"ETag:", response.ETag,
 		"LastModified:", response.LastModified,
@@ -63,9 +58,24 @@ func (h *Client) Get() (*Response, error) {
 	return response, err
 }
 
-func (h *Client) buildClient() http.Client {
+func (c *Client) buildRequest() *http.Request {
+	link, _ := url.Parse(c.url)
+	request := &http.Request{
+		URL:    link,
+		Method: http.MethodGet,
+		Header: c.buildHeaders(),
+	}
+
+	if c.username != "" && c.password != "" {
+		request.SetBasicAuth(c.username, c.password)
+	}
+
+	return request
+}
+
+func (c *Client) buildClient() http.Client {
 	client := http.Client{Timeout: time.Duration(requestTimeout * time.Second)}
-	if h.Insecure {
+	if c.Insecure {
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
@@ -74,16 +84,16 @@ func (h *Client) buildClient() http.Client {
 	return client
 }
 
-func (h *Client) buildHeaders() http.Header {
+func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
 	headers.Add("User-Agent", userAgent)
 
-	if h.etagHeader != "" {
-		headers.Add("If-None-Match", h.etagHeader)
+	if c.etagHeader != "" {
+		headers.Add("If-None-Match", c.etagHeader)
 	}
 
-	if h.lastModifiedHeader != "" {
-		headers.Add("If-Modified-Since", h.lastModifiedHeader)
+	if c.lastModifiedHeader != "" {
+		headers.Add("If-Modified-Since", c.lastModifiedHeader)
 	}
 
 	return headers
@@ -92,6 +102,11 @@ func (h *Client) buildHeaders() http.Header {
 // NewClient returns a new HTTP client.
 func NewClient(url string) *Client {
 	return &Client{url: url, Insecure: false}
+}
+
+// NewClientWithCredentials returns a new HTTP client that require authentication.
+func NewClientWithCredentials(url, username, password string) *Client {
+	return &Client{url: url, Insecure: false, username: username, password: password}
 }
 
 // NewClientWithCacheHeaders returns a new HTTP client that send cache headers.

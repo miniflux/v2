@@ -298,6 +298,21 @@ class EntryHandler {
             }
         }
     }
+
+    static saveEntry(element) {
+        if (element.dataset.completed) {
+            return;
+        }
+
+        element.innerHTML = element.dataset.labelLoading;
+
+        let request = new RequestBuilder(element.dataset.saveUrl);
+        request.withCallback(() => {
+            element.innerHTML = element.dataset.labelDone;
+            element.dataset.completed = true;
+        });
+        request.execute();
+    }
 }
 
 class ConfirmHandler {
@@ -384,6 +399,23 @@ class NavHandler {
         }
 
         this.goToPage("next");
+    }
+
+    saveEntry() {
+        if (this.isListView()) {
+            let currentItem = document.querySelector(".current-item");
+            if (currentItem !== null) {
+                let saveLink = currentItem.querySelector("a[data-save-entry]");
+                if (saveLink) {
+                    EntryHandler.saveEntry(saveLink);
+                }
+            }
+        } else {
+            let saveLink = document.querySelector("a[data-save-entry]");
+            if (saveLink) {
+                EntryHandler.saveEntry(saveLink);
+            }
+        }
     }
 
     toggleEntryStatus() {
@@ -520,9 +552,14 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("v", () => navHandler.openOriginalLink());
     keyboardHandler.on("m", () => navHandler.toggleEntryStatus());
     keyboardHandler.on("A", () => navHandler.markPageAsRead());
+    keyboardHandler.on("s", () => navHandler.saveEntry());
     keyboardHandler.listen();
 
     let mouseHandler = new MouseHandler();
+    mouseHandler.onClick("a[data-save-entry]", (event) => {
+        event.preventDefault();
+        EntryHandler.saveEntry(event.target);
+    });
     mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);
