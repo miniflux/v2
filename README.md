@@ -38,7 +38,7 @@ TODO
 - [X] Flush history
 - [X] OAuth2
 - [X] Touch events
-- [ ] Fever API?
+- [X] Fever API
 
 Credits
 -------

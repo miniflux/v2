@@ -101,6 +101,37 @@ func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
 	return nil
 }
 
+// Icons returns all icons tht belongs to a user.
+func (s *Storage) Icons(userID int64) (model.Icons, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Icons] userID=%d", userID))
+	query := `
+		SELECT
+		icons.id, icons.hash, icons.mime_type, icons.content
+		FROM icons
+		LEFT JOIN feed_icons ON feed_icons.icon_id=icons.id
+		LEFT JOIN feeds ON feeds.id=feed_icons.feed_id
+		WHERE feeds.user_id=$1
+	`
+
+	rows, err := s.db.Query(query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch icons: %v", err)
+	}
+	defer rows.Close()
+
+	var icons model.Icons
+	for rows.Next() {
+		var icon model.Icon
+		err := rows.Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch icons row: %v", err)
+		}
+		icons = append(icons, &icon)
+	}
+
+	return icons, nil
+}
+
 func normalizeMimeType(mimeType string) string {
 	mimeType = strings.ToLower(mimeType)
 	switch mimeType {

@@ -11,6 +11,28 @@ import (
 	"github.com/miniflux/miniflux2/model"
 )
 
+// UserByFeverToken returns a user by using the Fever API token.
+func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
+	query := `
+		SELECT
+		users.id, users.is_admin, users.timezone
+		FROM users
+		LEFT JOIN integrations ON integrations.user_id=users.id
+		WHERE integrations.fever_enabled='t' AND integrations.fever_token=$1
+	`
+
+	var user model.User
+	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.IsAdmin, &user.Timezone)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, fmt.Errorf("unable to fetch user: %v", err)
+	}
+
+	return &user, nil
+}
+
 // Integration returns user integration settings.
 func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 	query := `SELECT
@@ -21,7 +43,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			pinboard_mark_as_unread,
 			instapaper_enabled,
 			instapaper_username,
-			instapaper_password
+			instapaper_password,
+			fever_enabled,
+			fever_username,
+			fever_password,
+			fever_token
 		FROM integrations
 		WHERE user_id=$1
 	`
@@ -35,6 +61,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.InstapaperEnabled,
 		&integration.InstapaperUsername,
 		&integration.InstapaperPassword,
+		&integration.FeverEnabled,
+		&integration.FeverUsername,
+		&integration.FeverPassword,
+		&integration.FeverToken,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -56,8 +86,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pinboard_mark_as_unread=$4,
 			instapaper_enabled=$5,
 			instapaper_username=$6,
-			instapaper_password=$7
-		WHERE user_id=$8
+			instapaper_password=$7,
+			fever_enabled=$8,
+			fever_username=$9,
+			fever_password=$10,
+			fever_token=$11
+		WHERE user_id=$12
 	`
 	_, err := s.db.Exec(
 		query,
@@ -68,6 +102,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.InstapaperEnabled,
 		integration.InstapaperUsername,
 		integration.InstapaperPassword,
+		integration.FeverEnabled,
+		integration.FeverUsername,
+		integration.FeverPassword,
+		integration.FeverToken,
 		integration.UserID,
 	)
 

@@ -1,0 +1,636 @@
+// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package fever
+
+import (
+	"log"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/miniflux/miniflux2/integration"
+	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux2/storage"
+)
+
+type baseResponse struct {
+	Version       int   `json:"api_version"`
+	Authenticated int   `json:"auth"`
+	LastRefresh   int64 `json:"last_refreshed_on_time"`
+}
+
+func (b *baseResponse) SetCommonValues() {
+	b.Version = 3
+	b.Authenticated = 1
+	b.LastRefresh = time.Now().Unix()
+}
+
+/*
+The default response is a JSON object containing two members:
+
+    api_version contains the version of the API responding (positive integer)
+    auth whether the request was successfully authenticated (boolean integer)
+
+The API can also return XML by passing xml as the optional value of the api argument like so:
+
+http://yourdomain.com/fever/?api=xml
+
+The top level XML element is named response.
+
+The response to each successfully authenticated request will have auth set to 1 and include
+at least one additional member:
+
+	last_refreshed_on_time contains the time of the most recently refreshed (not updated)
+	feed (Unix timestamp/integer)
+
+*/
+func newBaseResponse() baseResponse {
+	r := baseResponse{}
+	r.SetCommonValues()
+	return r
+}
+
+type groupsResponse struct {
+	baseResponse
+	Groups      []group       `json:"groups"`
+	FeedsGroups []feedsGroups `json:"feeds_groups"`
+}
+
+type feedsResponse struct {
+	baseResponse
+	Feeds       []feed        `json:"feeds"`
+	FeedsGroups []feedsGroups `json:"feeds_groups"`
+}
+
+type faviconsResponse struct {
+	baseResponse
+	Favicons []favicon `json:"favicons"`
+}
+
+type itemsResponse struct {
+	baseResponse
+	Items []item `json:"items"`
+	Total int    `json:"total_items"`
+}
+
+type unreadResponse struct {
+	baseResponse
+	ItemIDs string `json:"unread_item_ids"`
+}
+
+type savedResponse struct {
+	baseResponse
+	ItemIDs string `json:"saved_item_ids"`
+}
+
+type linksResponse struct {
+	baseResponse
+	Links []string `json:"links"`
+}
+
+type group struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
+type feedsGroups struct {
+	GroupID int64  `json:"group_id"`
+	FeedIDs string `json:"feed_ids"`
+}
+
+type feed struct {
+	ID          int64  `json:"id"`
+	FaviconID   int64  `json:"favicon_id"`
+	Title       string `json:"title"`
+	URL         string `json:"url"`
+	SiteURL     string `json:"site_url"`
+	IsSpark     int    `json:"is_spark"`
+	LastUpdated int64  `json:"last_updated_on_time"`
+}
+
+type item struct {
+	ID        int64  `json:"id"`
+	FeedID    int64  `json:"feed_id"`
+	Title     string `json:"title"`
+	Author    string `json:"author"`
+	HTML      string `json:"html"`
+	URL       string `json:"url"`
+	IsSaved   int    `json:"is_saved"`
+	IsRead    int    `json:"is_read"`
+	CreatedAt int64  `json:"created_on_time"`
+}
+
+type favicon struct {
+	ID   int64  `json:"id"`
+	Data string `json:"data"`
+}
+
+// Controller implements the Fever API.
+type Controller struct {
+	store *storage.Storage
+}
+
+// Handler handles Fever API calls
+func (c *Controller) Handler(ctx *core.Context, request *core.Request, response *core.Response) {
+	switch {
+	case request.HasQueryParam("groups"):
+		c.handleGroups(ctx, request, response)
+	case request.HasQueryParam("feeds"):
+		c.handleFeeds(ctx, request, response)
+	case request.HasQueryParam("favicons"):
+		c.handleFavicons(ctx, request, response)
+	case request.HasQueryParam("unread_item_ids"):
+		c.handleUnreadItems(ctx, request, response)
+	case request.HasQueryParam("saved_item_ids"):
+		c.handleSavedItems(ctx, request, response)
+	case request.HasQueryParam("items"):
+		c.handleItems(ctx, request, response)
+	case request.HasQueryParam("links"):
+		c.handleLinks(ctx, request, response)
+	case request.FormValue("mark") == "item":
+		c.handleWriteItems(ctx, request, response)
+	case request.FormValue("mark") == "feed":
+		c.handleWriteFeeds(ctx, request, response)
+	case request.FormValue("mark") == "group":
+		c.handleWriteGroups(ctx, request, response)
+	default:
+		response.JSON().Standard(newBaseResponse())
+	}
+}
+
+/*
+A request with the groups argument will return two additional members:
+
+    groups contains an array of group objects
+    feeds_groups contains an array of feeds_group objects
+
+A group object has the following members:
+
+    id (positive integer)
+    title (utf-8 string)
+
+The feeds_group object is documented under “Feeds/Groups Relationships.”
+
+The “Kindling” super group is not included in this response and is composed of all feeds with
+an is_spark equal to 0.
+
+The “Sparks” super group is not included in this response and is composed of all feeds with an
+is_spark equal to 1.
+
+*/
+func (c *Controller) handleGroups(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Fetching groups for userID=%d\n", userID)
+
+	categories, err := c.store.Categories(userID)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	feeds, err := c.store.Feeds(userID)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	var result groupsResponse
+	for _, category := range categories {
+		result.Groups = append(result.Groups, group{ID: category.ID, Title: category.Title})
+	}
+
+	result.FeedsGroups = c.buildFeedGroups(feeds)
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+A request with the feeds argument will return two additional members:
+
+    feeds contains an array of group objects
+    feeds_groups contains an array of feeds_group objects
+
+A feed object has the following members:
+
+    id (positive integer)
+    favicon_id (positive integer)
+    title (utf-8 string)
+    url (utf-8 string)
+    site_url (utf-8 string)
+    is_spark (boolean integer)
+    last_updated_on_time (Unix timestamp/integer)
+
+The feeds_group object is documented under “Feeds/Groups Relationships.”
+
+The “All Items” super feed is not included in this response and is composed of all items from all feeds
+that belong to a given group. For the “Kindling” super group and all user created groups the items
+should be limited to feeds with an is_spark equal to 0.
+
+For the “Sparks” super group the items should be limited to feeds with an is_spark equal to 1.
+*/
+func (c *Controller) handleFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Fetching feeds for userID=%d\n", userID)
+
+	feeds, err := c.store.Feeds(userID)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	var result feedsResponse
+	for _, f := range feeds {
+		result.Feeds = append(result.Feeds, feed{
+			ID:          f.ID,
+			FaviconID:   f.Icon.IconID,
+			Title:       f.Title,
+			URL:         f.FeedURL,
+			SiteURL:     f.SiteURL,
+			IsSpark:     0,
+			LastUpdated: f.CheckedAt.Unix(),
+		})
+	}
+
+	result.FeedsGroups = c.buildFeedGroups(feeds)
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+A request with the favicons argument will return one additional member:
+
+    favicons contains an array of favicon objects
+
+A favicon object has the following members:
+
+    id (positive integer)
+    data (base64 encoded image data; prefixed by image type)
+
+An example data value:
+
+	image/gif;base64,R0lGODlhAQABAIAAAObm5gAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==
+
+The data member of a favicon object can be used with the data: protocol to embed an image in CSS or HTML.
+A PHP/HTML example:
+
+	echo '<img src="data:'.$favicon['data'].'">';
+*/
+func (c *Controller) handleFavicons(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Fetching favicons for userID=%d\n", userID)
+
+	icons, err := c.store.Icons(userID)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	var result faviconsResponse
+	for _, i := range icons {
+		result.Favicons = append(result.Favicons, favicon{
+			ID:   i.ID,
+			Data: i.DataURL(),
+		})
+	}
+
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+A request with the items argument will return two additional members:
+
+    items contains an array of item objects
+    total_items contains the total number of items stored in the database (added in API version 2)
+
+An item object has the following members:
+
+    id (positive integer)
+    feed_id (positive integer)
+    title (utf-8 string)
+    author (utf-8 string)
+    html (utf-8 string)
+    url (utf-8 string)
+    is_saved (boolean integer)
+    is_read (boolean integer)
+    created_on_time (Unix timestamp/integer)
+
+Most servers won’t have enough memory allocated to PHP to dump all items at once.
+Three optional arguments control determine the items included in the response.
+
+	Use the since_id argument with the highest id of locally cached items to request 50 additional items.
+	Repeat until the items array in the response is empty.
+
+	Use the max_id argument with the lowest id of locally cached items (or 0 initially) to request 50 previous items.
+	Repeat until the items array in the response is empty. (added in API version 2)
+
+	Use the with_ids argument with a comma-separated list of item ids to request (a maximum of 50) specific items.
+	(added in API version 2)
+
+*/
+func (c *Controller) handleItems(ctx *core.Context, request *core.Request, response *core.Response) {
+	var result itemsResponse
+
+	userID := ctx.UserID()
+	timezone := ctx.UserTimezone()
+	log.Printf("[Fever] Fetching items for userID=%d\n", userID)
+
+	builder := c.store.GetEntryQueryBuilder(userID, timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+	builder.WithLimit(50)
+	builder.WithOrder("id")
+	builder.WithDirection(model.DefaultSortingDirection)
+
+	sinceID := request.QueryIntegerParam("since_id", 0)
+	if sinceID > 0 {
+		builder.WithGreaterThanEntryID(int64(sinceID))
+	}
+
+	maxID := request.QueryIntegerParam("max_id", 0)
+	if maxID > 0 {
+		builder.WithOffset(maxID)
+	}
+
+	csvItemIDs := request.QueryStringParam("with_ids", "")
+	if csvItemIDs != "" {
+		var itemIDs []int64
+
+		for _, strItemID := range strings.Split(csvItemIDs, ",") {
+			strItemID = strings.TrimSpace(strItemID)
+			itemID, _ := strconv.Atoi(strItemID)
+			itemIDs = append(itemIDs, int64(itemID))
+		}
+
+		builder.WithEntryIDs(itemIDs)
+	}
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	builder = c.store.GetEntryQueryBuilder(userID, timezone)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+	result.Total, err = builder.CountEntries()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	for _, entry := range entries {
+		isRead := 0
+		if entry.Status == model.EntryStatusRead {
+			isRead = 1
+		}
+
+		result.Items = append(result.Items, item{
+			ID:        entry.ID,
+			FeedID:    entry.FeedID,
+			Title:     entry.Title,
+			Author:    entry.Author,
+			HTML:      entry.Content,
+			URL:       entry.URL,
+			IsSaved:   0,
+			IsRead:    isRead,
+			CreatedAt: entry.Date.Unix(),
+		})
+	}
+
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+The unread_item_ids and saved_item_ids arguments can be used to keep your local cache synced
+with the remote Fever installation.
+
+A request with the unread_item_ids argument will return one additional member:
+    unread_item_ids (string/comma-separated list of positive integers)
+*/
+func (c *Controller) handleUnreadItems(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Fetching unread items for userID=%d\n", userID)
+
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder.WithStatus(model.EntryStatusUnread)
+	entries, err := builder.GetEntries()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	var itemIDs []string
+	for _, entry := range entries {
+		itemIDs = append(itemIDs, strconv.FormatInt(entry.ID, 10))
+	}
+
+	var result unreadResponse
+	result.ItemIDs = strings.Join(itemIDs, ",")
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+The unread_item_ids and saved_item_ids arguments can be used to keep your local cache synced
+with the remote Fever installation.
+
+	A request with the saved_item_ids argument will return one additional member:
+
+	saved_item_ids (string/comma-separated list of positive integers)
+*/
+func (c *Controller) handleSavedItems(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Fetching saved items for userID=%d\n", userID)
+
+	var result savedResponse
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+A request with the links argument will return one additional member:
+
+    links contains an array of link objects
+
+A link object has the following members:
+
+    id (positive integer)
+    feed_id (positive integer) only use when is_item equals 1
+    item_id (positive integer) only use when is_item equals 1
+    temperature (positive float)
+    is_item (boolean integer)
+    is_local (boolean integer) used to determine if the source feed and favicon should be displayed
+    is_saved (boolean integer) only use when is_item equals 1
+    title (utf-8 string)
+    url (utf-8 string)
+    item_ids (string/comma-separated list of positive integers)
+*/
+func (c *Controller) handleLinks(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Fetching links for userID=%d\n", userID)
+
+	var result linksResponse
+	result.SetCommonValues()
+	response.JSON().Standard(result)
+}
+
+/*
+	mark=item
+	as=? where ? is replaced with read, saved or unsaved
+	id=? where ? is replaced with the id of the item to modify
+*/
+func (c *Controller) handleWriteItems(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Receiving mark=item call for userID=%d\n", userID)
+
+	entryID := request.FormIntegerValue("id")
+	if entryID <= 0 {
+		return
+	}
+
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := builder.GetEntry()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	if entry == nil {
+		return
+	}
+
+	switch request.FormValue("as") {
+	case "read":
+		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
+	case "unread":
+		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
+	case "saved":
+		settings, err := c.store.Integration(userID)
+		if err != nil {
+			response.JSON().ServerError(err)
+			return
+		}
+
+		go func() {
+			integration.SendEntry(entry, settings)
+		}()
+	}
+
+	response.JSON().Standard(newBaseResponse())
+}
+
+/*
+	mark=? where ? is replaced with feed or group
+	as=read
+	id=? where ? is replaced with the id of the feed or group to modify
+	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
+*/
+func (c *Controller) handleWriteFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Receiving mark=feed call for userID=%d\n", userID)
+
+	feedID := request.FormIntegerValue("id")
+	if feedID <= 0 {
+		return
+	}
+
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithFeedID(feedID)
+
+	before := request.FormIntegerValue("before")
+	if before > 0 {
+		t := time.Unix(before, 0)
+		builder.Before(&t)
+	}
+
+	entryIDs, err := builder.GetEntryIDs()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	err = c.store.SetEntriesStatus(userID, entryIDs, model.EntryStatusRead)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	response.JSON().Standard(newBaseResponse())
+}
+
+/*
+	mark=? where ? is replaced with feed or group
+	as=read
+	id=? where ? is replaced with the id of the feed or group to modify
+	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
+*/
+func (c *Controller) handleWriteGroups(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	log.Printf("[Fever] Receiving mark=group call for userID=%d\n", userID)
+
+	groupID := request.FormIntegerValue("id")
+	if groupID < 0 {
+		return
+	}
+
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithCategoryID(groupID)
+
+	before := request.FormIntegerValue("before")
+	if before > 0 {
+		t := time.Unix(before, 0)
+		builder.Before(&t)
+	}
+
+	entryIDs, err := builder.GetEntryIDs()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	err = c.store.SetEntriesStatus(userID, entryIDs, model.EntryStatusRead)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	response.JSON().Standard(newBaseResponse())
+}
+
+/*
+A feeds_group object has the following members:
+
+    group_id (positive integer)
+    feed_ids (string/comma-separated list of positive integers)
+
+*/
+func (c *Controller) buildFeedGroups(feeds model.Feeds) []feedsGroups {
+	feedsGroupedByCategory := make(map[int64][]string)
+	for _, feed := range feeds {
+		feedsGroupedByCategory[feed.Category.ID] = append(feedsGroupedByCategory[feed.Category.ID], strconv.FormatInt(feed.ID, 10))
+	}
+
+	var result []feedsGroups
+	for categoryID, feedIDs := range feedsGroupedByCategory {
+		result = append(result, feedsGroups{
+			GroupID: categoryID,
+			FeedIDs: strings.Join(feedIDs, ","),
+		})
+	}
+
+	return result
+}
+
+// NewController returns a new Fever API.
+func NewController(store *storage.Storage) *Controller {
+	return &Controller{store: store}
+}

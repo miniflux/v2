@@ -15,6 +15,7 @@ import (
 	"github.com/miniflux/miniflux2/reader/opml"
 	api_controller "github.com/miniflux/miniflux2/server/api/controller"
 	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux2/server/fever"
 	"github.com/miniflux/miniflux2/server/middleware"
 	"github.com/miniflux/miniflux2/server/template"
 	ui_controller "github.com/miniflux/miniflux2/server/ui/controller"
@@ -29,16 +30,23 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	templateEngine := template.NewEngine(cfg, router, translator)
 
 	apiController := api_controller.NewController(store, feedHandler)
+	feverController := fever.NewController(store)
 	uiController := ui_controller.NewController(cfg, store, pool, feedHandler, opml.NewHandler(store))
 
 	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewBasicAuthMiddleware(store).Handler,
 	))
 
+	feverHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
+		middleware.NewFeverMiddleware(store).Handler,
+	))
+
 	uiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewSessionMiddleware(store, router).Handler,
 		middleware.NewTokenMiddleware(store).Handler,
 	))
+
+	router.Handle("/fever/", feverHandler.Use(feverController.Handler))
 
 	router.Handle("/v1/users", apiHandler.Use(apiController.CreateUser)).Methods("POST")
 	router.Handle("/v1/users", apiHandler.Use(apiController.GetUsers)).Methods("GET")

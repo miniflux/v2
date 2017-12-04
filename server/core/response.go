@@ -26,7 +26,7 @@ func (r *Response) SetCookie(cookie *http.Cookie) {
 // JSON returns a JSONResponse.
 func (r *Response) JSON() *JSONResponse {
 	r.commonHeaders()
-	return &JSONResponse{writer: r.writer, request: r.request}
+	return NewJSONResponse(r.writer, r.request)
 }
 
 // HTML returns a HTMLResponse.

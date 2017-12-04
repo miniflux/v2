@@ -51,6 +51,18 @@ func (r *Request) Cookie(name string) string {
 	return cookie.Value
 }
 
+// FormValue returns a form value as integer.
+func (r *Request) FormValue(param string) string {
+	return r.request.FormValue(param)
+}
+
+// FormIntegerValue returns a form value as integer.
+func (r *Request) FormIntegerValue(param string) int64 {
+	value := r.request.FormValue(param)
+	integer, _ := strconv.Atoi(value)
+	return int64(integer)
+}
+
 // IntegerParam returns an URL parameter as integer.
 func (r *Request) IntegerParam(param string) (int64, error) {
 	vars := mux.Vars(r.request)
@@ -103,6 +115,13 @@ func (r *Request) QueryIntegerParam(param string, defaultValue int) int {
 	}
 
 	return val
+}
+
+// HasQueryParam checks if the query string contains the given parameter.
+func (r *Request) HasQueryParam(param string) bool {
+	values := r.request.URL.Query()
+	_, ok := values[param]
+	return ok
 }
 
 // NewRequest returns a new Request struct.

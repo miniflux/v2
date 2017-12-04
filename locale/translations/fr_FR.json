@@ -144,8 +144,11 @@
     "Mark bookmark as unread": "Marquer le lien comme non lu",
     "Pinboard Tags": "Libellés de Pinboard",
     "Pinboard API Token": "Jeton de sécurité de l'API de Pinboard",
-    "Enable Pinboard": "Activer Pinboard",
-    "Enable Instapaper": "Activer Instapaper",
+    "Save articles to Pinboard": "Sauvegarder les articles vers Pinboard",
+    "Save articles to Instapaper": "Sauvegarder les articles vers Instapaper",
     "Instapaper Username": "Nom d'utilisateur Instapaper",
-    "Instapaper Password": "Mot de passe Instapaper"
+    "Instapaper Password": "Mot de passe Instapaper",
+    "Activate Fever API": "Activer l'API de Fever",
+    "Fever Username": "Nom d'utilisateur pour l'API de Fever",
+    "Fever Password": "Mot de passe pour l'API de Fever"
 }

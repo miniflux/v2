@@ -14,4 +14,8 @@ type Integration struct {
 	InstapaperEnabled    bool
 	InstapaperUsername   string
 	InstapaperPassword   string
+	FeverEnabled         bool
+	FeverUsername        string
+	FeverPassword        string
+	FeverToken           string
 }

@@ -28,10 +28,23 @@
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
+    <h3>Fever</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "Activate Fever API" }}
+        </label>
+
+        <label for="form-fever-username">{{ t "Fever Username" }}</label>
+        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}">
+
+        <label for="form-fever-password">{{ t "Fever Password" }}</label>
+        <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}">
+    </div>
+
     <h3>Pinboard</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "Enable Pinboard" }}
+            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "Save articles to Pinboard" }}
         </label>
 
         <label for="form-pinboard-token">{{ t "Pinboard API Token" }}</label>
@@ -48,7 +61,7 @@
     <h3>Instapaper</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "Enable Instapaper" }}
+            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "Save articles to Instapaper" }}
         </label>
 
         <label for="form-instapaper-username">{{ t "Instapaper Username" }}</label>

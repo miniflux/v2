@@ -103,3 +103,8 @@ func (j *JSONResponse) toJSON(v interface{}) []byte {
 
 	return b
 }
+
+// NewJSONResponse returns a new JSONResponse.
+func NewJSONResponse(w http.ResponseWriter, r *http.Request) *JSONResponse {
+	return &JSONResponse{request: r, writer: w}
+}

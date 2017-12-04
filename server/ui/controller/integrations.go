@@ -5,7 +5,9 @@
 package controller
 
 import (
+	"crypto/md5"
 	"errors"
+	"fmt"
 
 	"github.com/miniflux/miniflux2/integration"
 	"github.com/miniflux/miniflux2/model"
@@ -38,6 +40,9 @@ func (c *Controller) ShowIntegrations(ctx *core.Context, request *core.Request, 
 			InstapaperEnabled:    integration.InstapaperEnabled,
 			InstapaperUsername:   integration.InstapaperUsername,
 			InstapaperPassword:   integration.InstapaperPassword,
+			FeverEnabled:         integration.FeverEnabled,
+			FeverUsername:        integration.FeverUsername,
+			FeverPassword:        integration.FeverPassword,
 		},
 	}))
 }
@@ -53,6 +58,12 @@ func (c *Controller) UpdateIntegration(ctx *core.Context, request *core.Request,
 
 	integrationForm := form.NewIntegrationForm(request.Request())
 	integrationForm.Merge(integration)
+
+	if integration.FeverEnabled {
+		integration.FeverToken = fmt.Sprintf("%x", md5.Sum([]byte(integration.FeverUsername+":"+integration.FeverPassword)))
+	} else {
+		integration.FeverToken = ""
+	}
 
 	err = c.store.UpdateIntegration(integration)
 	if err != nil {

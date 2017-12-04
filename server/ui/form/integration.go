@@ -19,6 +19,9 @@ type IntegrationForm struct {
 	InstapaperEnabled    bool
 	InstapaperUsername   string
 	InstapaperPassword   string
+	FeverEnabled         bool
+	FeverUsername        string
+	FeverPassword        string
 }
 
 // Merge copy form values to the model.
@@ -30,6 +33,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.InstapaperEnabled = i.InstapaperEnabled
 	integration.InstapaperUsername = i.InstapaperUsername
 	integration.InstapaperPassword = i.InstapaperPassword
+	integration.FeverEnabled = i.FeverEnabled
+	integration.FeverUsername = i.FeverUsername
+	integration.FeverPassword = i.FeverPassword
 }
 
 // NewIntegrationForm returns a new AuthForm.
@@ -42,5 +48,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		InstapaperEnabled:    r.FormValue("instapaper_enabled") == "1",
 		InstapaperUsername:   r.FormValue("instapaper_username"),
 		InstapaperPassword:   r.FormValue("instapaper_password"),
+		FeverEnabled:         r.FormValue("fever_enabled") == "1",
+		FeverUsername:        r.FormValue("fever_username"),
+		FeverPassword:        r.FormValue("fever_password"),
 	}
 }
