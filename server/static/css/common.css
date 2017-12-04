@@ -665,6 +665,7 @@ a.button {
 
 .entry-enclosure-download {
     font-size: 0.85em;
+    overflow-wrap: break-word;
 }
 
 .enclosure-video video,
