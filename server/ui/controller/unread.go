@@ -16,18 +16,23 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 
 	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
 	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(user.EntryDirection)
-	builder.WithOffset(offset)
-	builder.WithLimit(nbItemsPerPage)
-
-	entries, err := builder.GetEntries()
+	countUnread, err := builder.CountEntries()
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
 	}
 
-	countUnread, err := builder.CountEntries()
+	if offset >= countUnread {
+		offset = 0
+	}
+
+	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithDirection(user.EntryDirection)
+	builder.WithOffset(offset)
+	builder.WithLimit(nbItemsPerPage)
+	entries, err := builder.GetEntries()
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
