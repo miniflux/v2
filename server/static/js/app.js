@@ -275,10 +275,11 @@ class RequestBuilder {
 }
 
 class EntryHandler {
-    static updateEntriesStatus(entryIDs, status) {
+    static updateEntriesStatus(entryIDs, status, callback) {
         let url = document.body.dataset.entriesStatusUrl;
         let request = new RequestBuilder(url);
         request.withBody({entry_ids: entryIDs, status: status});
+        request.withCallback(callback);
         request.execute();
     }
 
@@ -296,6 +297,16 @@ class EntryHandler {
                 this.updateEntriesStatus([entryID], newStatus);
                 break;
             }
+        }
+    }
+
+    static markEntryAsRead(element) {
+        if (element.classList.contains("item-status-unread")) {
+            element.classList.remove("item-status-unread");
+            element.classList.add("item-status-read");
+
+            let entryID = parseInt(element.dataset.id, 10);
+            this.updateEntriesStatus([entryID], "read");
         }
     }
 
@@ -395,10 +406,11 @@ class NavHandler {
         });
 
         if (entryIDs.length > 0) {
-            EntryHandler.updateEntriesStatus(entryIDs, "read");
+            EntryHandler.updateEntriesStatus(entryIDs, "read", () => {
+                // This callback make sure the Ajax request reach the server before we reload the page.
+                this.goToPage("next", true);
+            });
         }
-
-        this.goToPage("next");
     }
 
     saveEntry() {
@@ -421,8 +433,10 @@ class NavHandler {
     toggleEntryStatus() {
         let currentItem = document.querySelector(".current-item");
         if (currentItem !== null) {
-            EntryHandler.toggleEntryStatus(currentItem);
+            // The order is important here,
+            // On the unread page, the read item will be hidden.
             this.goToNextListItem();
+            EntryHandler.toggleEntryStatus(currentItem);
         }
     }
 
@@ -436,6 +450,11 @@ class NavHandler {
         let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
         if (currentItemOriginalLink !== null) {
             DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
+
+            // Move to the next item and if we are on the unread page mark this item as read.
+            let currentItem = document.querySelector(".current-item");
+            this.goToNextListItem();
+            EntryHandler.markEntryAsRead(currentItem);
         }
     }
 
@@ -446,11 +465,17 @@ class NavHandler {
         }
     }
 
-    goToPage(page) {
+    /**
+     * @param {string} page Page to redirect to.
+     * @param {boolean} fallbackSelf Refresh actual page if the page is not found.
+     */
+    goToPage(page, fallbackSelf) {
         let element = document.querySelector("a[data-page=" + page + "]");
 
         if (element) {
             document.location.href = element.href;
+        } else if (fallbackSelf) {
+            window.location.reload();
         }
     }
 
@@ -472,7 +497,6 @@ class NavHandler {
 
     goToPreviousListItem() {
         let items = DomHelper.getVisibleElements(".items .item");
-
         if (items.length === 0) {
             return;
         }
@@ -497,13 +521,13 @@ class NavHandler {
     }
 
     goToNextListItem() {
+        let currentItem = document.querySelector(".current-item");
         let items = DomHelper.getVisibleElements(".items .item");
-
         if (items.length === 0) {
             return;
         }
 
-        if (document.querySelector(".current-item") === null) {
+        if (currentItem === null) {
             items[0].classList.add("current-item");
             return;
         }

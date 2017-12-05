@@ -191,15 +191,6 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 		return
 	}
 
-	if entry.Status == model.EntryStatusUnread {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
-		if err != nil {
-			log.Println(err)
-			response.HTML().ServerError(nil)
-			return
-		}
-	}
-
 	args, err := c.getCommonTemplateArgs(ctx)
 	if err != nil {
 		response.HTML().ServerError(err)
@@ -223,6 +214,16 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	prevEntryRoute := ""
 	if prevEntry != nil {
 		prevEntryRoute = ctx.Route("unreadEntry", "entryID", prevEntry.ID)
+	}
+
+	// We change the status here, otherwise we cannot get the pagination for unread items.
+	if entry.Status == model.EntryStatusUnread {
+		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			log.Println(err)
+			response.HTML().ServerError(nil)
+			return
+		}
 	}
 
 	response.HTML().Render("entry", args.Merge(tplParams{
