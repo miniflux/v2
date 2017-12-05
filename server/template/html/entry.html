@@ -39,9 +39,11 @@
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .entry.Date }}</time>
         </div>
     </header>
+    {{ if gt (len .entry.Content) 120 }}
     <div class="pagination-top">
         {{ template "entry_pagination" . }}
     </div>
+    {{ end }}
     <article class="entry-content">
         {{ noescape (proxyFilter .entry.Content) }}
     </article>
