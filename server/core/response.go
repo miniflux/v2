@@ -69,7 +69,10 @@ func (r *Response) commonHeaders() {
 	r.writer.Header().Set("X-XSS-Protection", "1; mode=block")
 	r.writer.Header().Set("X-Content-Type-Options", "nosniff")
 	r.writer.Header().Set("X-Frame-Options", "DENY")
-	r.writer.Header().Set("Content-Security-Policy", "default-src 'self'; img-src *; media-src *; frame-src *")
+
+	// Even if the directive "frame-src" has been deprecated in Firefox,
+	// we keep it to stay compatible with other browsers.
+	r.writer.Header().Set("Content-Security-Policy", "default-src 'self'; img-src *; media-src *; frame-src *; child-src *")
 }
 
 // NewResponse returns a new Response.
