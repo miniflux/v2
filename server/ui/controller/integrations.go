@@ -6,11 +6,8 @@ package controller
 
 import (
 	"crypto/md5"
-	"errors"
 	"fmt"
 
-	"github.com/miniflux/miniflux2/integration"
-	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/form"
 )
@@ -72,41 +69,4 @@ func (c *Controller) UpdateIntegration(ctx *core.Context, request *core.Request,
 	}
 
 	response.Redirect(ctx.Route("integrations"))
-}
-
-// SaveEntry send the link to external services.
-func (c *Controller) SaveEntry(ctx *core.Context, request *core.Request, response *core.Response) {
-	entryID, err := request.IntegerParam("entryID")
-	if err != nil {
-		response.HTML().BadRequest(err)
-		return
-	}
-
-	user := ctx.LoggedUser()
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
-	builder.WithEntryID(entryID)
-	builder.WithoutStatus(model.EntryStatusRemoved)
-
-	entry, err := builder.GetEntry()
-	if err != nil {
-		response.JSON().ServerError(err)
-		return
-	}
-
-	if entry == nil {
-		response.JSON().NotFound(errors.New("Entry not found"))
-		return
-	}
-
-	settings, err := c.store.Integration(user.ID)
-	if err != nil {
-		response.JSON().ServerError(err)
-		return
-	}
-
-	go func() {
-		integration.SendEntry(entry, settings)
-	}()
-
-	response.JSON().Created(map[string]string{"message": "saved"})
 }

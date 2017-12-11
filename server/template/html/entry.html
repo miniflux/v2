@@ -7,13 +7,26 @@
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
         <div class="entry-actions">
-            <a href="#"
-                title="{{ t "Save this article" }}"
-                data-save-entry="true"
-                data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
-                data-label-loading="{{ t "Saving..." }}"
-                data-label-done="{{ t "Done!" }}"
-                >{{ t "Save" }}</a>
+            <ul>
+                <li>
+                    <a href="#"
+                        title="{{ t "Save this article" }}"
+                        data-save-entry="true"
+                        data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
+                        data-label-loading="{{ t "Saving..." }}"
+                        data-label-done="{{ t "Done!" }}"
+                        >{{ t "Save" }}</a>
+                </li>
+                <li>
+                    <a href="#"
+                        title="{{ t "Fetch original content" }}"
+                        data-fetch-content-entry="true"
+                        data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
+                        data-label-loading="{{ t "Loading..." }}"
+                        data-label-done="{{ t "Done!" }}"
+                        >{{ t "Fetch original content" }}</a>
+                </li>
+            </ul>
         </div>
         <div class="entry-meta">
             <span class="entry-website">

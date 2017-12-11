@@ -324,6 +324,25 @@ class EntryHandler {
         });
         request.execute();
     }
+
+    static fetchOriginalContent(element) {
+        if (element.dataset.completed) {
+            return;
+        }
+
+        element.innerHTML = element.dataset.labelLoading;
+
+        let request = new RequestBuilder(element.dataset.fetchContentUrl);
+        request.withCallback((response) => {
+            element.innerHTML = element.dataset.labelDone;
+            element.dataset.completed = true;
+
+            response.json().then((data) => {
+                document.querySelector(".entry-content").innerHTML = data.content;
+            });
+        });
+        request.execute();
+    }
 }
 
 class ConfirmHandler {
@@ -426,6 +445,15 @@ class NavHandler {
             let saveLink = document.querySelector("a[data-save-entry]");
             if (saveLink) {
                 EntryHandler.saveEntry(saveLink);
+            }
+        }
+    }
+
+    fetchOriginalContent() {
+        if (! this.isListView()){
+            let link = document.querySelector("a[data-fetch-content-entry]");
+            if (link) {
+                EntryHandler.fetchOriginalContent(link);
             }
         }
     }
@@ -577,6 +605,7 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("m", () => navHandler.toggleEntryStatus());
     keyboardHandler.on("A", () => navHandler.markPageAsRead());
     keyboardHandler.on("s", () => navHandler.saveEntry());
+    keyboardHandler.on("d", () => navHandler.fetchOriginalContent());
     keyboardHandler.listen();
 
     let mouseHandler = new MouseHandler();
@@ -584,6 +613,12 @@ document.addEventListener("DOMContentLoaded", function() {
         event.preventDefault();
         EntryHandler.saveEntry(event.target);
     });
+
+    mouseHandler.onClick("a[data-fetch-content-entry]", (event) => {
+        event.preventDefault();
+        EntryHandler.fetchOriginalContent(event.target);
+    });
+
     mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);

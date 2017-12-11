@@ -8,11 +8,90 @@ import (
 	"errors"
 	"log"
 
+	"github.com/miniflux/miniflux2/integration"
 	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux2/reader/scraper"
 	"github.com/miniflux/miniflux2/server/core"
 	"github.com/miniflux/miniflux2/server/ui/payload"
 	"github.com/miniflux/miniflux2/storage"
 )
+
+// FetchContent downloads the original HTML page and returns relevant contents.
+func (c *Controller) FetchContent(ctx *core.Context, request *core.Request, response *core.Response) {
+	entryID, err := request.IntegerParam("entryID")
+	if err != nil {
+		response.HTML().BadRequest(err)
+		return
+	}
+
+	user := ctx.LoggedUser()
+	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := builder.GetEntry()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	if entry == nil {
+		response.JSON().NotFound(errors.New("Entry not found"))
+		return
+	}
+
+	content, err := scraper.Fetch(entry.URL)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	if len(content) > len(entry.Content) {
+		entry.Content = content
+		c.store.UpdateEntryContent(entry)
+	} else {
+		content = entry.Content
+	}
+
+	response.JSON().Created(map[string]string{"content": content})
+}
+
+// SaveEntry send the link to external services.
+func (c *Controller) SaveEntry(ctx *core.Context, request *core.Request, response *core.Response) {
+	entryID, err := request.IntegerParam("entryID")
+	if err != nil {
+		response.HTML().BadRequest(err)
+		return
+	}
+
+	user := ctx.LoggedUser()
+	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := builder.GetEntry()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	if entry == nil {
+		response.JSON().NotFound(errors.New("Entry not found"))
+		return
+	}
+
+	settings, err := c.store.Integration(user.ID)
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	go func() {
+		integration.SendEntry(entry, settings)
+	}()
+
+	response.JSON().Created(map[string]string{"message": "saved"})
+}
 
 // ShowFeedEntry shows a single feed entry in "feed" mode.
 func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, response *core.Response) {

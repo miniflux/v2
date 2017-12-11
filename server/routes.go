@@ -100,6 +100,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 
 	router.Handle("/entry/status", uiHandler.Use(uiController.UpdateEntriesStatus)).Name("updateEntriesStatus").Methods("POST")
 	router.Handle("/entry/save/{entryID}", uiHandler.Use(uiController.SaveEntry)).Name("saveEntry").Methods("POST")
+	router.Handle("/entry/download/{entryID}", uiHandler.Use(uiController.FetchContent)).Name("fetchContent").Methods("POST")
 
 	router.Handle("/categories", uiHandler.Use(uiController.ShowCategories)).Name("categories").Methods("GET")
 	router.Handle("/category/create", uiHandler.Use(uiController.CreateCategory)).Name("createCategory").Methods("GET")

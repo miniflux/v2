@@ -59,6 +59,23 @@ func (s *Storage) CreateEntry(entry *model.Entry) error {
 	return nil
 }
 
+// UpdateEntryContent updates entry content.
+func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
+	query := `
+		UPDATE entries SET
+		content=$1
+		WHERE user_id=$2 AND id=$3
+	`
+
+	_, err := s.db.Exec(
+		query,
+		entry.Content,
+		entry.UserID,
+		entry.ID,
+	)
+	return err
+}
+
 // UpdateEntry update an entry when a feed is refreshed.
 func (s *Storage) UpdateEntry(entry *model.Entry) error {
 	query := `

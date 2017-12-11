@@ -511,6 +511,14 @@ a.button {
     margin-bottom: 20px;
 }
 
+.entry-actions li {
+    display: inline;
+}
+
+.entry-actions li:not(:last-child):after {
+    content: "|";
+}
+
 .entry-meta {
     font-size: 0.95em;
     margin: 0 0 20px;
