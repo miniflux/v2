@@ -22,6 +22,7 @@ type Feed struct {
 	LastModifiedHeader string    `json:"last_modified_header,omitempty"`
 	ParsingErrorMsg    string    `json:"parsing_error_message,omitempty"`
 	ParsingErrorCount  int       `json:"parsing_error_count,omitempty"`
+	ScraperRules       string    `json:"scraper_rules"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon,omitempty"`

@@ -217,10 +217,11 @@ func (c *Controller) getFeedFormTemplateArgs(ctx *core.Context, user *model.User
 
 	if feedForm == nil {
 		args["form"] = form.FeedForm{
-			SiteURL:    feed.SiteURL,
-			FeedURL:    feed.FeedURL,
-			Title:      feed.Title,
-			CategoryID: feed.Category.ID,
+			SiteURL:      feed.SiteURL,
+			FeedURL:      feed.FeedURL,
+			Title:        feed.Title,
+			ScraperRules: feed.ScraperRules,
+			CategoryID:   feed.Category.ID,
 		}
 	} else {
 		args["form"] = feedForm

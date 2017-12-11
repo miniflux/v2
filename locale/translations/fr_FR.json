@@ -151,5 +151,6 @@
     "Activate Fever API": "Activer l'API de Fever",
     "Fever Username": "Nom d'utilisateur pour l'API de Fever",
     "Fever Password": "Mot de passe pour l'API de Fever",
-    "Fetch original content": "Récupérer le contenu original"
+    "Fetch original content": "Récupérer le contenu original",
+    "Scraper Rules": "Règles pour récupérer le contenu original"
 }

@@ -45,6 +45,9 @@
         <label for="form-feed-url">{{ t "Feed URL" }}</label>
         <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" required>
 
+        <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
+        <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
+
         <label for="form-category">{{ t "Category" }}</label>
         <select id="form-category" name="category_id">
         {{ range .categories }}

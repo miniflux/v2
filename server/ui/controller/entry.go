@@ -40,18 +40,14 @@ func (c *Controller) FetchContent(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	content, err := scraper.Fetch(entry.URL)
+	content, err := scraper.Fetch(entry.URL, entry.Feed.ScraperRules)
 	if err != nil {
 		response.JSON().ServerError(err)
 		return
 	}
 
-	if len(content) > len(entry.Content) {
-		entry.Content = content
-		c.store.UpdateEntryContent(entry)
-	} else {
-		content = entry.Content
-	}
+	entry.Content = content
+	c.store.UpdateEntryContent(entry)
 
 	response.JSON().Created(map[string]string{"content": content})
 }

@@ -14,10 +14,11 @@ import (
 
 // FeedForm represents a feed form in the UI
 type FeedForm struct {
-	FeedURL    string
-	SiteURL    string
-	Title      string
-	CategoryID int64
+	FeedURL      string
+	SiteURL      string
+	Title        string
+	ScraperRules string
+	CategoryID   int64
 }
 
 // ValidateModification validates FeedForm fields
@@ -34,6 +35,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.Title = f.Title
 	feed.SiteURL = f.SiteURL
 	feed.FeedURL = f.FeedURL
+	feed.ScraperRules = f.ScraperRules
 	feed.ParsingErrorCount = 0
 	feed.ParsingErrorMsg = ""
 	return feed
@@ -47,9 +49,10 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	}
 
 	return &FeedForm{
-		FeedURL:    r.FormValue("feed_url"),
-		SiteURL:    r.FormValue("site_url"),
-		Title:      r.FormValue("title"),
-		CategoryID: int64(categoryID),
+		FeedURL:      r.FormValue("feed_url"),
+		SiteURL:      r.FormValue("site_url"),
+		Title:        r.FormValue("title"),
+		ScraperRules: r.FormValue("scraper_rules"),
+		CategoryID:   int64(categoryID),
 	}
 }
