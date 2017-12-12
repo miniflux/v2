@@ -52,7 +52,8 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	feeds := make(model.Feeds, 0)
 	query := `SELECT
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
-		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg, f.scraper_rules,
+		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
+		f.scraper_rules, f.rewrite_rules,
 		f.category_id, c.title as category_title,
 		fi.icon_id
 		FROM feeds f
@@ -85,6 +86,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 			&feed.ParsingErrorCount,
 			&errorMsg,
 			&feed.ScraperRules,
+			&feed.RewriteRules,
 			&feed.Category.ID,
 			&feed.Category.Title,
 			&iconID,
@@ -123,7 +125,8 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	query := `
 		SELECT
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
-		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg, f.scraper_rules,
+		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
+		f.scraper_rules, f.rewrite_rules,
 		f.category_id, c.title as category_title
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
@@ -141,6 +144,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.ParsingErrorCount,
 		&feed.ParsingErrorMsg,
 		&feed.ScraperRules,
+		&feed.RewriteRules,
 		&feed.Category.ID,
 		&feed.Category.Title,
 	)
@@ -197,8 +201,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 
 	query := `UPDATE feeds SET
 		feed_url=$1, site_url=$2, title=$3, category_id=$4, etag_header=$5, last_modified_header=$6, checked_at=$7,
-		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10
-		WHERE id=$11 AND user_id=$12`
+		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11
+		WHERE id=$12 AND user_id=$13`
 
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -211,6 +215,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ParsingErrorMsg,
 		feed.ParsingErrorCount,
 		feed.ScraperRules,
+		feed.RewriteRules,
 		feed.ID,
 		feed.UserID,
 	)

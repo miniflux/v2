@@ -14,6 +14,7 @@ import (
 	"github.com/miniflux/miniflux2/http"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/icon"
+	"github.com/miniflux/miniflux2/reader/processor"
 	"github.com/miniflux/miniflux2/storage"
 )
 
@@ -62,6 +63,9 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed,
 	if err != nil {
 		return nil, err
 	}
+
+	feedProcessor := processor.NewFeedProcessor(subscription)
+	feedProcessor.Process()
 
 	subscription.Category = &model.Category{ID: categoryID}
 	subscription.EtagHeader = response.ETag
@@ -135,6 +139,11 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 			h.store.UpdateFeed(originalFeed)
 			return err
 		}
+
+		feedProcessor := processor.NewFeedProcessor(subscription)
+		feedProcessor.WithScraperRules(originalFeed.ScraperRules)
+		feedProcessor.WithRewriteRules(originalFeed.RewriteRules)
+		feedProcessor.Process()
 
 		originalFeed.EtagHeader = response.ETag
 		originalFeed.LastModifiedHeader = response.LastModified

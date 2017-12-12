@@ -48,6 +48,9 @@
         <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
 
+        <label for="form-rewrite-rules">{{ t "Rewrite Rules" }}</label>
+        <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
+
         <label for="form-category">{{ t "Category" }}</label>
         <select id="form-category" name="category_id">
         {{ range .categories }}

@@ -9,12 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux2/reader/sanitizer"
-
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/date"
-	"github.com/miniflux/miniflux2/reader/processor"
+	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
 type jsonFeed struct {
@@ -148,7 +146,7 @@ func (j *jsonItem) Transform() *model.Entry {
 	entry.Date = j.GetDate()
 	entry.Author = j.GetAuthor()
 	entry.Hash = j.GetHash()
-	entry.Content = processor.ItemContentProcessor(entry.URL, j.GetContent())
+	entry.Content = j.GetContent()
 	entry.Title = strings.TrimSpace(j.GetTitle())
 	entry.Enclosures = j.GetEnclosures()
 	return entry

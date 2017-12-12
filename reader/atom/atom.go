@@ -14,7 +14,6 @@ import (
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/date"
-	"github.com/miniflux/miniflux2/reader/processor"
 )
 
 type atomFeed struct {
@@ -87,7 +86,7 @@ func (a *atomEntry) Transform() *model.Entry {
 	entry.Date = getDate(a)
 	entry.Author = getAuthor(a.Author)
 	entry.Hash = getHash(a)
-	entry.Content = processor.ItemContentProcessor(entry.URL, getContent(a))
+	entry.Content = getContent(a)
 	entry.Title = strings.TrimSpace(a.Title)
 	entry.Enclosures = getEnclosures(a)
 

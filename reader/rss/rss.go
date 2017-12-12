@@ -15,7 +15,6 @@ import (
 	"github.com/miniflux/miniflux2/helper"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/date"
-	"github.com/miniflux/miniflux2/reader/processor"
 )
 
 type rssFeed struct {
@@ -211,7 +210,7 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Date = r.GetDate()
 	entry.Author = r.GetAuthor()
 	entry.Hash = r.GetHash()
-	entry.Content = processor.ItemContentProcessor(entry.URL, r.GetContent())
+	entry.Content = r.GetContent()
 	entry.Title = strings.TrimSpace(r.Title)
 	entry.Enclosures = r.GetEnclosures()
 

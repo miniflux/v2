@@ -5,12 +5,37 @@
 package processor
 
 import (
+	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/rewrite"
 	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
-// ItemContentProcessor executes a set of functions to sanitize and alter item contents.
-func ItemContentProcessor(url, content string) string {
-	content = sanitizer.Sanitize(url, content)
-	return rewrite.Rewriter(url, content)
+// FeedProcessor handles the processing of feed contents.
+type FeedProcessor struct {
+	feed         *model.Feed
+	scraperRules string
+	rewriteRules string
+}
+
+// WithScraperRules adds scraper rules to the processing.
+func (f *FeedProcessor) WithScraperRules(rules string) {
+	f.scraperRules = rules
+}
+
+// WithRewriteRules adds rewrite rules to the processing.
+func (f *FeedProcessor) WithRewriteRules(rules string) {
+	f.rewriteRules = rules
+}
+
+// Process applies rewrite and scraper rules.
+func (f *FeedProcessor) Process() {
+	for _, entry := range f.feed.Entries {
+		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
+		entry.Content = rewrite.Rewriter(entry.URL, entry.Content, f.rewriteRules)
+	}
+}
+
+// NewFeedProcessor returns a new FeedProcessor.
+func NewFeedProcessor(feed *model.Feed) *FeedProcessor {
+	return &FeedProcessor{feed: feed}
 }

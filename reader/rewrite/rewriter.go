@@ -5,44 +5,39 @@
 package rewrite
 
 import (
-	"regexp"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
+	"github.com/miniflux/miniflux2/url"
 )
 
-var rewriteRules = []func(string, string) string{
-	func(url, content string) string {
-		re := regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-		matches := re.FindStringSubmatch(url)
-
-		if len(matches) == 2 {
-			video := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/` + matches[1] + `" allowfullscreen></iframe>`
-			return video + "<p>" + content + "</p>"
-		}
-		return content
-	},
-	func(url, content string) string {
-		if strings.HasPrefix(url, "https://xkcd.com") {
-			doc, err := goquery.NewDocumentFromReader(strings.NewReader(content))
-			if err != nil {
-				return content
-			}
-
-			imgTag := doc.Find("img").First()
-			if titleAttr, found := imgTag.Attr("title"); found {
-				return content + `<blockquote cite="` + url + `">` + titleAttr + "</blockquote>"
-			}
-		}
-		return content
-	},
-}
-
 // Rewriter modify item contents with a set of rewriting rules.
-func Rewriter(url, content string) string {
-	for _, rewriteRule := range rewriteRules {
-		content = rewriteRule(url, content)
+func Rewriter(entryURL, entryContent, customRewriteRules string) string {
+	rulesList := getPredefinedRewriteRules(entryURL)
+	if customRewriteRules != "" {
+		rulesList = customRewriteRules
 	}
 
-	return content
+	rules := strings.Split(rulesList, ",")
+	for _, rule := range rules {
+		switch strings.TrimSpace(rule) {
+		case "add_image_title":
+			entryContent = addImageTitle(entryURL, entryContent)
+		case "add_youtube_video":
+			entryContent = addYoutubeVideo(entryURL, entryContent)
+		}
+	}
+
+	return entryContent
+}
+
+func getPredefinedRewriteRules(entryURL string) string {
+	urlDomain := url.Domain(entryURL)
+
+	for domain, rules := range predefinedRules {
+		if strings.Contains(urlDomain, domain) {
+			return rules
+		}
+	}
+
+	return ""
 }

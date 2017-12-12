@@ -10,10 +10,8 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/reader/processor"
-	"github.com/miniflux/miniflux2/reader/sanitizer"
-
 	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux2/reader/sanitizer"
 )
 
 type rdfFeed struct {
@@ -58,7 +56,7 @@ func (r *rdfItem) Transform() *model.Entry {
 	entry.Title = strings.TrimSpace(r.Title)
 	entry.Author = strings.TrimSpace(r.Creator)
 	entry.URL = r.Link
-	entry.Content = processor.ItemContentProcessor(entry.URL, r.Description)
+	entry.Content = r.Description
 	entry.Hash = getHash(r)
 	entry.Date = time.Now()
 	return entry

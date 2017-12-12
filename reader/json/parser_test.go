@@ -148,7 +148,7 @@ func TestParsePodcast(t *testing.T) {
 		t.Errorf(`Incorrect entry title, got: "%s"`, feed.Entries[0].Title)
 	}
 
-	if feed.Entries[0].Content != `Chris has worked at <a href="http://adobe.com/" rel="noopener noreferrer" target="_blank" referrerpolicy="no-referrer">Adobe</a> and as a founder of Rogue Sheep, which won an Apple Design Award for Postage. Chris’s new company is Aged &amp; Distilled with Guy English — which shipped <a href="http://aged-and-distilled.com/napkin/" rel="noopener noreferrer" target="_blank" referrerpolicy="no-referrer">Napkin</a>, a Mac app for visual collaboration. Chris is also the co-host of The Record. He lives on <a href="http://www.ci.bainbridge-isl.wa.us/" rel="noopener noreferrer" target="_blank" referrerpolicy="no-referrer">Bainbridge Island</a>, a quick ferry ride from Seattle.` {
+	if feed.Entries[0].Content != `Chris has worked at <a href="http://adobe.com/">Adobe</a> and as a founder of Rogue Sheep, which won an Apple Design Award for Postage. Chris’s new company is Aged & Distilled with Guy English — which shipped <a href="http://aged-and-distilled.com/napkin/">Napkin</a>, a Mac app for visual collaboration. Chris is also the co-host of The Record. He lives on <a href="http://www.ci.bainbridge-isl.wa.us/">Bainbridge Island</a>, a quick ferry ride from Seattle.` {
 		t.Errorf(`Incorrect entry content, got: "%s"`, feed.Entries[0].Content)
 	}
 
