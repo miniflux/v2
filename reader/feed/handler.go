@@ -33,7 +33,7 @@ type Handler struct {
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool) (*model.Feed, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -65,6 +65,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed,
 	}
 
 	feedProcessor := processor.NewFeedProcessor(subscription)
+	feedProcessor.WithCrawler(crawler)
 	feedProcessor.Process()
 
 	subscription.Category = &model.Category{ID: categoryID}
@@ -72,6 +73,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string) (*model.Feed,
 	subscription.LastModifiedHeader = response.LastModified
 	subscription.FeedURL = response.EffectiveURL
 	subscription.UserID = userID
+	subscription.Crawler = crawler
 
 	err = h.store.CreateFeed(subscription)
 	if err != nil {
@@ -143,6 +145,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		feedProcessor := processor.NewFeedProcessor(subscription)
 		feedProcessor.WithScraperRules(originalFeed.ScraperRules)
 		feedProcessor.WithRewriteRules(originalFeed.RewriteRules)
+		feedProcessor.WithCrawler(originalFeed.Crawler)
 		feedProcessor.Process()
 
 		originalFeed.EtagHeader = response.ETag

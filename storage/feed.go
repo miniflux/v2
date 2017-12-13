@@ -53,7 +53,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	query := `SELECT
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules,
+		f.scraper_rules, f.rewrite_rules, f.crawler,
 		f.category_id, c.title as category_title,
 		fi.icon_id
 		FROM feeds f
@@ -87,6 +87,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 			&errorMsg,
 			&feed.ScraperRules,
 			&feed.RewriteRules,
+			&feed.Crawler,
 			&feed.Category.ID,
 			&feed.Category.Title,
 			&iconID,
@@ -126,7 +127,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		SELECT
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules,
+		f.scraper_rules, f.rewrite_rules, f.crawler,
 		f.category_id, c.title as category_title
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
@@ -145,6 +146,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.ParsingErrorMsg,
 		&feed.ScraperRules,
 		&feed.RewriteRules,
+		&feed.Crawler,
 		&feed.Category.ID,
 		&feed.Category.Title,
 	)
@@ -164,8 +166,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeed] feedURL=%s", feed.FeedURL))
 	sql := `
 		INSERT INTO feeds
-		(feed_url, site_url, title, category_id, user_id, etag_header, last_modified_header)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		(feed_url, site_url, title, category_id, user_id, etag_header, last_modified_header, crawler)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id
 	`
 
@@ -178,6 +180,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.UserID,
 		feed.EtagHeader,
 		feed.LastModifiedHeader,
+		feed.Crawler,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf("unable to create feed: %v", err)
@@ -201,8 +204,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 
 	query := `UPDATE feeds SET
 		feed_url=$1, site_url=$2, title=$3, category_id=$4, etag_header=$5, last_modified_header=$6, checked_at=$7,
-		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11
-		WHERE id=$12 AND user_id=$13`
+		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, crawler=$12
+		WHERE id=$13 AND user_id=$14`
 
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -216,6 +219,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ParsingErrorCount,
 		feed.ScraperRules,
 		feed.RewriteRules,
+		feed.Crawler,
 		feed.ID,
 		feed.UserID,
 	)

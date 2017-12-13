@@ -36,6 +36,8 @@
             {{ end }}
         </select>
 
+        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Find a subscription" }}</button>
         </div>

@@ -222,6 +222,7 @@ func (c *Controller) getFeedFormTemplateArgs(ctx *core.Context, user *model.User
 			Title:        feed.Title,
 			ScraperRules: feed.ScraperRules,
 			RewriteRules: feed.RewriteRules,
+			Crawler:      feed.Crawler,
 			CategoryID:   feed.Category.ID,
 		}
 	} else {

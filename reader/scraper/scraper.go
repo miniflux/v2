@@ -13,7 +13,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/miniflux/miniflux2/http"
 	"github.com/miniflux/miniflux2/reader/readability"
-	"github.com/miniflux/miniflux2/reader/sanitizer"
 	"github.com/miniflux/miniflux2/url"
 )
 
@@ -34,11 +33,11 @@ func Fetch(websiteURL, rules string) (string, error) {
 		return "", err
 	}
 
-	var content string
 	if rules == "" {
 		rules = getPredefinedScraperRules(websiteURL)
 	}
 
+	var content string
 	if rules != "" {
 		log.Printf(`[Scraper] Using rules "%s" for "%s"`, rules, websiteURL)
 		content, err = scrapContent(page, rules)
@@ -51,7 +50,7 @@ func Fetch(websiteURL, rules string) (string, error) {
 		return "", err
 	}
 
-	return sanitizer.Sanitize(websiteURL, content), nil
+	return content, nil
 }
 
 func scrapContent(page io.Reader, rules string) (string, error) {

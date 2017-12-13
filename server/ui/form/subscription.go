@@ -15,6 +15,7 @@ import (
 type SubscriptionForm struct {
 	URL        string
 	CategoryID int64
+	Crawler    bool
 }
 
 // Validate makes sure the form values are valid.
@@ -35,6 +36,7 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 
 	return &SubscriptionForm{
 		URL:        r.FormValue("url"),
+		Crawler:    r.FormValue("crawler") == "1",
 		CategoryID: int64(categoryID),
 	}
 }

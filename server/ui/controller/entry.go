@@ -8,6 +8,8 @@ import (
 	"errors"
 	"log"
 
+	"github.com/miniflux/miniflux2/reader/sanitizer"
+
 	"github.com/miniflux/miniflux2/integration"
 	"github.com/miniflux/miniflux2/model"
 	"github.com/miniflux/miniflux2/reader/scraper"
@@ -46,10 +48,10 @@ func (c *Controller) FetchContent(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	entry.Content = content
+	entry.Content = sanitizer.Sanitize(entry.URL, content)
 	c.store.UpdateEntryContent(entry)
 
-	response.JSON().Created(map[string]string{"content": content})
+	response.JSON().Created(map[string]string{"content": entry.Content})
 }
 
 // SaveEntry send the link to external services.

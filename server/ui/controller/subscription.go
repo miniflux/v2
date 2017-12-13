@@ -80,7 +80,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 			"errorMessage": "Unable to find any subscription.",
 		}))
 	case n == 1:
-		feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptions[0].URL)
+		feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptions[0].URL, subscriptionForm.Crawler)
 		if err != nil {
 			response.HTML().Render("add_subscription", args.Merge(tplParams{
 				"form":         subscriptionForm,
@@ -117,7 +117,7 @@ func (c *Controller) ChooseSubscription(ctx *core.Context, request *core.Request
 		return
 	}
 
-	feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptionForm.URL)
+	feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptionForm.URL, subscriptionForm.Crawler)
 	if err != nil {
 		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,

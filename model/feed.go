@@ -24,6 +24,7 @@ type Feed struct {
 	ParsingErrorCount  int       `json:"parsing_error_count,omitempty"`
 	ScraperRules       string    `json:"scraper_rules"`
 	RewriteRules       string    `json:"rewrite_rules"`
+	Crawler            bool      `json:"crawler"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon,omitempty"`

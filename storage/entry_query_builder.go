@@ -152,7 +152,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		SELECT
 		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone '%s', e.title, e.url, e.author, e.content, e.status,
 		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
-		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules,
+		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
 		fi.icon_id
 		FROM entries e
 		LEFT JOIN feeds f ON f.id=e.feed_id
@@ -199,6 +199,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.Category.Title,
 			&entry.Feed.ScraperRules,
 			&entry.Feed.RewriteRules,
+			&entry.Feed.Crawler,
 			&iconID,
 		)
 

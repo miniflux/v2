@@ -20,7 +20,7 @@ func (c *Controller) CreateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	feed, err := c.feedHandler.CreateFeed(userID, categoryID, feedURL)
+	feed, err := c.feedHandler.CreateFeed(userID, categoryID, feedURL, false)
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to create this feed"))
 		return
