@@ -9,7 +9,7 @@ Miniflux is a minimalist and opinionated feed reader:
 - Works only with Postgresql
 - Doesn't use any ORM
 - Doesn't use any complicated framework
-- Use only modern vanilla Javascript (ES6 and fetch)
+- Use only modern vanilla Javascript (ES6 and Fetch API)
 - The number of features is volountary limited
 
 It's simple, fast, lightweight and super easy to install.
@@ -21,24 +21,17 @@ Notes
 
 Miniflux 2 still in development and **it's not ready to use**.
 
+Documentation
+-------------
+
+The Miniflux documentation is available here: <https://docs.miniflux.net/>
+
+- [Opinionated?](https://docs.miniflux.net/en/latest/opinionated.html)
 - [Features](https://docs.miniflux.net/en/latest/features.html)
 - [Requirements](https://docs.miniflux.net/en/latest/requirements.html)
 - [Installation](https://docs.miniflux.net/en/latest/installation.html)
-- [Documentation](https://docs.miniflux.net/)
-
-TODO
-----
-
-- [X] Custom entries sorting
-- [ ] Webpage scraper (Readability)
-- [X] Bookmarklet
-- [ ] External integrations (Pinboard, Instapaper, Pocket?)
-- [ ] Gzip compression
-- [X] Integration tests
-- [X] Flush history
-- [X] OAuth2
-- [X] Touch events
-- [X] Fever API
+- [Upgrading to a new version](https://docs.miniflux.net/en/latest/upgrade.html)
+- [Configuration](https://docs.miniflux.net/en/latest/configuration.html)
 
 Credits
 -------
