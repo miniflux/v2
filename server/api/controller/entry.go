@@ -7,9 +7,9 @@ package api
 import (
 	"errors"
 
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/api/payload"
-	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/api/payload"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // GetEntry is the API handler to get a single feed entry.

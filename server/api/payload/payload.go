@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/model"
 )
 
 // EntriesResponse represents the response sent when fetching entries.

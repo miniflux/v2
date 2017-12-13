@@ -5,8 +5,8 @@
 package scheduler
 
 import (
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/feed"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/feed"
 )
 
 // WorkerPool handle a pool of workers.

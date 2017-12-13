@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/url"
 
 	"golang.org/x/net/html"
 )

@@ -11,8 +11,8 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
 )
 
 // EntryQueryBuilder builds a SQL query to fetch entries.

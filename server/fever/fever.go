@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux2/integration"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/integration"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/storage"
 )
 
 type baseResponse struct {

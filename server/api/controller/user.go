@@ -7,8 +7,8 @@ package api
 import (
 	"errors"
 
-	"github.com/miniflux/miniflux2/server/api/payload"
-	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux/server/api/payload"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // CreateUser is the API handler to create a new user.

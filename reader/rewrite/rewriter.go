@@ -7,7 +7,7 @@ package rewrite
 import (
 	"strings"
 
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/url"
 )
 
 // Rewriter modify item contents with a set of rewriting rules.

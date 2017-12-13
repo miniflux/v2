@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux/errors"
 )
 
 func TestParseOpmlWithoutCategories(t *testing.T) {

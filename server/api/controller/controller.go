@@ -5,8 +5,8 @@
 package api
 
 import (
-	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/reader/feed"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // Controller holds all handlers for the API.

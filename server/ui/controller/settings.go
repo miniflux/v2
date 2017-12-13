@@ -7,10 +7,10 @@ package controller
 import (
 	"log"
 
-	"github.com/miniflux/miniflux2/locale"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/ui/form"
+	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/server/ui/form"
 )
 
 // ShowSettings shows the settings page.

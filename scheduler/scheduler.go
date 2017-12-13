@@ -8,7 +8,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // NewScheduler starts a new scheduler that push jobs to a pool of workers.

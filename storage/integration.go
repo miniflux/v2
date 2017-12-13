@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/model"
 )
 
 // UserByFeverToken returns a user by using the Fever API token.

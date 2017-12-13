@@ -5,13 +5,13 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/config"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/reader/opml"
-	"github.com/miniflux/miniflux2/scheduler"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/feed"
+	"github.com/miniflux/miniflux/reader/opml"
+	"github.com/miniflux/miniflux/scheduler"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/storage"
 )
 
 type tplParams map[string]interface{}

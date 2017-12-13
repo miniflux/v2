@@ -7,8 +7,8 @@ package form
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/model"
 )
 
 // CategoryForm represents a feed form in the UI

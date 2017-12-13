@@ -9,7 +9,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // BasicAuthMiddleware is the middleware for HTTP Basic authentication.

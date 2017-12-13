@@ -5,8 +5,8 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/version"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/version"
 )
 
 // AboutPage shows the about page.

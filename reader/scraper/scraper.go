@@ -11,9 +11,9 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/miniflux/miniflux2/http"
-	"github.com/miniflux/miniflux2/reader/readability"
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/reader/readability"
+	"github.com/miniflux/miniflux/url"
 )
 
 // Fetch download a web page a returns relevant contents.

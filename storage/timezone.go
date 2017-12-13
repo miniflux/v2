@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux/helper"
 )
 
 // Timezones returns all timezones supported by the database.

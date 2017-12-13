@@ -7,9 +7,10 @@ package api
 import (
 	"errors"
 	"fmt"
-	"github.com/miniflux/miniflux2/reader/subscription"
-	"github.com/miniflux/miniflux2/server/api/payload"
-	"github.com/miniflux/miniflux2/server/core"
+
+	"github.com/miniflux/miniflux/reader/subscription"
+	"github.com/miniflux/miniflux/server/api/payload"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // GetSubscriptions is the API handler to find subscriptions.

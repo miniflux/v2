@@ -12,7 +12,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
+	"github.com/miniflux/miniflux/helper"
 )
 
 const userAgent = "Miniflux <https://miniflux.net/>"

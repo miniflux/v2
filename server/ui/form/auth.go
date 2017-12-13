@@ -7,7 +7,7 @@ package form
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux/errors"
 )
 
 // AuthForm represents the authentication form.

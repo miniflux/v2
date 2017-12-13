@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/date"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/date"
 )
 
 type rssFeed struct {

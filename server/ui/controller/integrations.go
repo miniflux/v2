@@ -8,8 +8,8 @@ import (
 	"crypto/md5"
 	"fmt"
 
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/ui/form"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/server/ui/form"
 )
 
 // ShowIntegrations renders the page with all external integrations.

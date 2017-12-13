@@ -10,10 +10,10 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/http"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/url"
 
 	"github.com/PuerkitoBio/goquery"
 )

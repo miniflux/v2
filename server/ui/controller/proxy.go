@@ -11,9 +11,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/http"
-	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // ImageProxy fetch an image from a remote server and sent it back to the browser.

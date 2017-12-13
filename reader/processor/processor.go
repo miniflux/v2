@@ -7,10 +7,10 @@ package processor
 import (
 	"log"
 
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/rewrite"
-	"github.com/miniflux/miniflux2/reader/sanitizer"
-	"github.com/miniflux/miniflux2/reader/scraper"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/rewrite"
+	"github.com/miniflux/miniflux/reader/sanitizer"
+	"github.com/miniflux/miniflux/reader/scraper"
 )
 
 // FeedProcessor handles the processing of feed contents.

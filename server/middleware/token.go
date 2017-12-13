@@ -9,8 +9,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // TokenMiddleware represents a token middleware.

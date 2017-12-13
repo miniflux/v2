@@ -9,7 +9,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/miniflux/miniflux2/sql"
+	"github.com/miniflux/miniflux/sql"
 )
 
 const schemaVersion = 8

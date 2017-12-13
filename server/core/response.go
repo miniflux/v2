@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/miniflux/miniflux2/server/template"
+	"github.com/miniflux/miniflux/server/template"
 )
 
 // Response handles HTTP responses.

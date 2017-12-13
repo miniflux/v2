@@ -7,19 +7,19 @@ package server
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux2/scheduler"
+	"github.com/miniflux/miniflux/scheduler"
 
-	"github.com/miniflux/miniflux2/config"
-	"github.com/miniflux/miniflux2/locale"
-	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/reader/opml"
-	api_controller "github.com/miniflux/miniflux2/server/api/controller"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/fever"
-	"github.com/miniflux/miniflux2/server/middleware"
-	"github.com/miniflux/miniflux2/server/template"
-	ui_controller "github.com/miniflux/miniflux2/server/ui/controller"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/reader/feed"
+	"github.com/miniflux/miniflux/reader/opml"
+	api_controller "github.com/miniflux/miniflux/server/api/controller"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/server/fever"
+	"github.com/miniflux/miniflux/server/middleware"
+	"github.com/miniflux/miniflux/server/template"
+	ui_controller "github.com/miniflux/miniflux/server/ui/controller"
+	"github.com/miniflux/miniflux/storage"
 
 	"github.com/gorilla/mux"
 )

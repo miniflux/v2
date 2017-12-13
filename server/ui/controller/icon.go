@@ -7,7 +7,7 @@ package controller
 import (
 	"time"
 
-	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // ShowIcon shows the feed icon.

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/miniflux/miniflux2/http"
+	"github.com/miniflux/miniflux/http"
 )
 
 // Client represents an Instapaper client.

@@ -14,8 +14,8 @@ import (
 
 	"github.com/lib/pq/hstore"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
 
 	"golang.org/x/crypto/bcrypt"
 )

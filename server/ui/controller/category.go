@@ -8,9 +8,9 @@ import (
 	"errors"
 	"log"
 
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/ui/form"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/server/ui/form"
 )
 
 // ShowCategories shows the page with all categories.

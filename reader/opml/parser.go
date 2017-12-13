@@ -8,7 +8,7 @@ import (
 	"encoding/xml"
 	"io"
 
-	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux/errors"
 	"golang.org/x/net/html/charset"
 )
 

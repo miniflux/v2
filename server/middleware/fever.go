@@ -9,7 +9,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // FeverMiddleware is the middleware that handles Fever API.

@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux/errors"
 )
 
 func TestParseRss2Sample(t *testing.T) {

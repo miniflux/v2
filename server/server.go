@@ -11,12 +11,12 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/miniflux/miniflux2/scheduler"
+	"github.com/miniflux/miniflux/scheduler"
 	"golang.org/x/crypto/acme/autocert"
 
-	"github.com/miniflux/miniflux2/config"
-	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/reader/feed"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // NewServer returns a new HTTP server.

@@ -5,9 +5,10 @@
 package helper
 
 import (
-	"github.com/miniflux/miniflux2/locale"
 	"math"
 	"time"
+
+	"github.com/miniflux/miniflux/locale"
 )
 
 // Texts to be translated if necessary.

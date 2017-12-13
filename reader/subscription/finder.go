@@ -11,11 +11,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/http"
-	"github.com/miniflux/miniflux2/reader/feed"
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/reader/feed"
+	"github.com/miniflux/miniflux/url"
 
 	"github.com/PuerkitoBio/goquery"
 )

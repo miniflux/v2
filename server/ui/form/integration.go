@@ -7,7 +7,7 @@ package form
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/model"
 )
 
 // IntegrationForm represents user integration settings form.

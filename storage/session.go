@@ -8,8 +8,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
 )
 
 // Sessions returns the list of sessions for the given user.

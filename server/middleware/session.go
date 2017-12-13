@@ -9,9 +9,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/route"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/route"
+	"github.com/miniflux/miniflux/storage"
 
 	"github.com/gorilla/mux"
 )

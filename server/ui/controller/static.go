@@ -9,8 +9,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/static"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/server/static"
 )
 
 // Stylesheet renders the CSS.

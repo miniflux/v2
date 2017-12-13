@@ -6,9 +6,10 @@ package helper
 
 import (
 	"fmt"
-	"github.com/miniflux/miniflux2/locale"
 	"testing"
 	"time"
+
+	"github.com/miniflux/miniflux/locale"
 )
 
 func TestElapsedTime(t *testing.T) {

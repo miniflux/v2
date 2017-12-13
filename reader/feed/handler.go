@@ -9,13 +9,13 @@ import (
 	"log"
 	"time"
 
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/http"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/icon"
-	"github.com/miniflux/miniflux2/reader/processor"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/icon"
+	"github.com/miniflux/miniflux/reader/processor"
+	"github.com/miniflux/miniflux/storage"
 )
 
 var (

@@ -8,10 +8,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/miniflux/miniflux2/config"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/core"
-	"github.com/miniflux/miniflux2/server/oauth2"
+	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/core"
+	"github.com/miniflux/miniflux/server/oauth2"
 	"github.com/tomasen/realip"
 )
 

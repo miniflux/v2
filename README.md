@@ -1,6 +1,6 @@
 Miniflux 2
 ==========
-[![Build Status](https://travis-ci.org/miniflux/miniflux2.svg?branch=master)](https://travis-ci.org/miniflux/miniflux2)
+[![Build Status](https://travis-ci.org/miniflux/miniflux.svg?branch=master)](https://travis-ci.org/miniflux/miniflux)
 [![Documentation Status](https://readthedocs.org/projects/miniflux/badge/?version=latest)](https://docs.miniflux.net/)
 
 Miniflux is a minimalist and opinionated feed reader:
@@ -14,7 +14,7 @@ Miniflux is a minimalist and opinionated feed reader:
 
 It's simple, fast, lightweight and super easy to install.
 
-Miniflux 2 is a rewrite of Miniflux 1.x in Golang.
+Miniflux 2 is a rewrite of [Miniflux 1.x](https://github.com/miniflux/miniflux-legacy) in Golang.
 
 Notes
 -----

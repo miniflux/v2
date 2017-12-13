@@ -7,7 +7,7 @@ package errors
 import (
 	"fmt"
 
-	"github.com/miniflux/miniflux2/locale"
+	"github.com/miniflux/miniflux/locale"
 )
 
 // LocalizedError represents an error than could be translated to another language.

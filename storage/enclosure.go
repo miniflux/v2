@@ -7,7 +7,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/model"
 )
 
 // GetEnclosures returns all attachments for the given entry.

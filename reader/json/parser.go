@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/model"
 )
 
 // Parse returns a normalized feed struct from a JON feed.

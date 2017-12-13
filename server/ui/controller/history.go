@@ -5,8 +5,8 @@
 package controller
 
 import (
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // ShowHistoryPage renders the page with all read entries.

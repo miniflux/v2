@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/locale"
-	"github.com/miniflux/miniflux2/server/middleware"
-	"github.com/miniflux/miniflux2/server/template"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/server/middleware"
+	"github.com/miniflux/miniflux/server/template"
+	"github.com/miniflux/miniflux/storage"
 
 	"github.com/gorilla/mux"
 )

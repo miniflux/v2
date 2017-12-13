@@ -10,8 +10,8 @@ import (
 	"io"
 	"log"
 
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/storage"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // Handler handles the logic for OPML import/export.

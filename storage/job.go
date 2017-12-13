@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
 )
 
 const maxParsingError = 3

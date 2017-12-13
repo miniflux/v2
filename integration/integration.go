@@ -7,9 +7,9 @@ package integration
 import (
 	"log"
 
-	"github.com/miniflux/miniflux2/integration/instapaper"
-	"github.com/miniflux/miniflux2/integration/pinboard"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/integration/instapaper"
+	"github.com/miniflux/miniflux/integration/pinboard"
+	"github.com/miniflux/miniflux/model"
 )
 
 // SendEntry send the entry to the activated providers.

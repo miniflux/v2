@@ -8,8 +8,8 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/miniflux/miniflux2/server/route"
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/server/route"
+	"github.com/miniflux/miniflux/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"

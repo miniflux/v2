@@ -7,7 +7,7 @@ package controller
 import (
 	"log"
 
-	"github.com/miniflux/miniflux2/server/core"
+	"github.com/miniflux/miniflux/server/core"
 )
 
 // Export generates the OPML file.

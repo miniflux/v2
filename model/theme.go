@@ -4,7 +4,7 @@
 
 package model
 
-import "github.com/miniflux/miniflux2/errors"
+import "github.com/miniflux/miniflux/errors"
 
 // Themes returns the list of available themes.
 func Themes() map[string]string {

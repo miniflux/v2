@@ -12,12 +12,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/atom"
-	"github.com/miniflux/miniflux2/reader/json"
-	"github.com/miniflux/miniflux2/reader/rdf"
-	"github.com/miniflux/miniflux2/reader/rss"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/atom"
+	"github.com/miniflux/miniflux/reader/json"
+	"github.com/miniflux/miniflux/reader/rdf"
+	"github.com/miniflux/miniflux/reader/rss"
 
 	"golang.org/x/net/html/charset"
 )

@@ -5,13 +5,14 @@
 package scheduler
 
 import (
-	"github.com/miniflux/miniflux2/model"
-	"github.com/miniflux/miniflux2/reader/feed"
 	"log"
 	"time"
+
+	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/feed"
 )
 
-// A Worker refresh a feed in the background.
+// Worker refreshes a feed in the background.
 type Worker struct {
 	id          int
 	feedHandler *feed.Handler

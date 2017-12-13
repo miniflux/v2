@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/model"
 )
 
 // FeedForm represents a feed form in the UI

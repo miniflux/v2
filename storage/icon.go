@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux2/helper"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/model"
 )
 
 // HasIcon checks if the given feed has an icon.

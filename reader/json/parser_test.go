@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/miniflux/miniflux2/errors"
+	"github.com/miniflux/miniflux/errors"
 )
 
 func TestParseJsonFeed(t *testing.T) {

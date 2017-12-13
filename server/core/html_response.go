@@ -8,7 +8,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/miniflux/miniflux2/server/template"
+	"github.com/miniflux/miniflux/server/template"
 )
 
 // HTMLResponse handles HTML responses.

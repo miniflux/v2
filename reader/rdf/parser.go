@@ -8,8 +8,8 @@ import (
 	"encoding/xml"
 	"io"
 
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/model"
 	"golang.org/x/net/html/charset"
 )
 

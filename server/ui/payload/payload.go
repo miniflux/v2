@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/miniflux/miniflux2/model"
+	"github.com/miniflux/miniflux/model"
 )
 
 // DecodeEntryStatusPayload unserialize JSON request to update entry statuses.

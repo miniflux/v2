@@ -13,13 +13,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux2/config"
-	"github.com/miniflux/miniflux2/errors"
-	"github.com/miniflux/miniflux2/locale"
-	"github.com/miniflux/miniflux2/server/route"
-	"github.com/miniflux/miniflux2/server/template/helper"
-	"github.com/miniflux/miniflux2/server/ui/filter"
-	"github.com/miniflux/miniflux2/url"
+	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/errors"
+	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/server/route"
+	"github.com/miniflux/miniflux/server/template/helper"
+	"github.com/miniflux/miniflux/server/ui/filter"
+	"github.com/miniflux/miniflux/url"
 
 	"github.com/gorilla/mux"
 )
