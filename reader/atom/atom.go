@@ -14,6 +14,7 @@ import (
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
+	"github.com/miniflux/miniflux/url"
 )
 
 type atomFeed struct {
@@ -70,8 +71,17 @@ func (a *atomFeed) Transform() *model.Feed {
 
 	for _, entry := range a.Entries {
 		item := entry.Transform()
+		entryURL, err := url.AbsoluteURL(feed.SiteURL, item.URL)
+		if err == nil {
+			item.URL = entryURL
+		}
+
 		if item.Author == "" {
 			item.Author = getAuthor(a.Author)
+		}
+
+		if item.Title == "" {
+			item.Title = item.URL
 		}
 
 		feed.Entries = append(feed.Entries, item)
@@ -89,11 +99,6 @@ func (a *atomEntry) Transform() *model.Entry {
 	entry.Content = getContent(a)
 	entry.Title = strings.TrimSpace(a.Title)
 	entry.Enclosures = getEnclosures(a)
-
-	if entry.Title == "" {
-		entry.Title = entry.URL
-	}
-
 	return entry
 }
 

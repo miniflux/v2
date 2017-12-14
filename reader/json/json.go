@@ -13,6 +13,7 @@ import (
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
 	"github.com/miniflux/miniflux/reader/sanitizer"
+	"github.com/miniflux/miniflux/url"
 )
 
 type jsonFeed struct {
@@ -66,6 +67,11 @@ func (j *jsonFeed) Transform() *model.Feed {
 
 	for _, item := range j.Items {
 		entry := item.Transform()
+		entryURL, err := url.AbsoluteURL(feed.SiteURL, entry.URL)
+		if err == nil {
+			entry.URL = entryURL
+		}
+
 		if entry.Author == "" {
 			entry.Author = j.GetAuthor()
 		}

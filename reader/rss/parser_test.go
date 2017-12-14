@@ -537,6 +537,27 @@ func TestParseEntryWithFeedBurnerEnclosures(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithRelativeURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<link>item.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].Title != "https://example.org/item.html" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))

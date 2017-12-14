@@ -15,6 +15,7 @@ import (
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
+	"github.com/miniflux/miniflux/url"
 )
 
 type rssFeed struct {
@@ -103,6 +104,15 @@ func (r *rssFeed) Transform() *model.Feed {
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
+		} else {
+			entryURL, err := url.AbsoluteURL(feed.SiteURL, entry.URL)
+			if err == nil {
+				entry.URL = entryURL
+			}
+		}
+
+		if entry.Title == "" {
+			entry.Title = entry.URL
 		}
 
 		feed.Entries = append(feed.Entries, entry)
@@ -213,11 +223,6 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Content = r.GetContent()
 	entry.Title = strings.TrimSpace(r.Title)
 	entry.Enclosures = r.GetEnclosures()
-
-	if entry.Title == "" {
-		entry.Title = entry.URL
-	}
-
 	return entry
 }
 

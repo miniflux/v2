@@ -174,6 +174,31 @@ func TestParsePodcast(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithRelativeURL(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "Example",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"id": "2347259",
+				"url": "something.html",
+				"date_published": "2016-02-09T14:22:00-07:00"
+			}
+		]
+	}`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/something.html" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+}
+
 func TestParseAuthor(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",

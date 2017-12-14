@@ -152,6 +152,32 @@ func TestParseFeedURL(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithRelativeURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title>Test</title>
+		<link href="something.html"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].URL != "http://example.org/something.html" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+}
+
 func TestParseEntryTitleWithWhitespaces(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">

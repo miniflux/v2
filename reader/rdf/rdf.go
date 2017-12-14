@@ -12,6 +12,7 @@ import (
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/sanitizer"
+	"github.com/miniflux/miniflux/url"
 )
 
 type rdfFeed struct {
@@ -29,13 +30,17 @@ func (r *rdfFeed) Transform() *model.Feed {
 
 	for _, item := range r.Items {
 		entry := item.Transform()
-
 		if entry.Author == "" && r.Creator != "" {
 			entry.Author = sanitizer.StripTags(r.Creator)
 		}
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
+		} else {
+			entryURL, err := url.AbsoluteURL(feed.SiteURL, entry.URL)
+			if err == nil {
+				entry.URL = entryURL
+			}
 		}
 
 		feed.Entries = append(feed.Entries, entry)

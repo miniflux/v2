@@ -266,6 +266,31 @@ func TestParseItemWithOnlyFeedAuthor(t *testing.T) {
 	}
 }
 
+func TestParseItemRelativeURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
+			<description>Test</description>
+			<link>something.html</link>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].URL != "http://example.org/something.html" {
+		t.Errorf("Incorrect entry url, got: %s", feed.Entries[0].URL)
+	}
+}
+
 func TestParseItemWithoutLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 
