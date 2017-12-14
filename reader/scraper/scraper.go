@@ -33,6 +33,9 @@ func Fetch(websiteURL, rules string) (string, error) {
 		return "", err
 	}
 
+	// The entry URL could be a redirect somewhere else.
+	websiteURL = response.EffectiveURL
+
 	if rules == "" {
 		rules = getPredefinedScraperRules(websiteURL)
 	}

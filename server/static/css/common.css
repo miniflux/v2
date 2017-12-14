@@ -568,6 +568,11 @@ a.button {
     max-width: 100%;
 }
 
+.entry-content figure {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
 .entry-content figure img {
     border: 1px solid #000;
 }

@@ -5,6 +5,7 @@
 package rewrite
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -35,6 +36,13 @@ func addYoutubeVideo(entryURL, entryContent string) string {
 	if len(matches) == 2 {
 		video := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/` + matches[1] + `" allowfullscreen></iframe>`
 		return video + "<p>" + entryContent + "</p>"
+	}
+	return entryContent
+}
+
+func addPDFLink(entryURL, entryContent string) string {
+	if strings.HasSuffix(entryURL, ".pdf") {
+		return fmt.Sprintf(`<a href="%s">PDF</a><br>%s`, entryURL, entryContent)
 	}
 	return entryContent
 }

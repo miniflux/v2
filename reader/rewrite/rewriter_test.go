@@ -58,3 +58,13 @@ func TestRewriteWithXkcdAndNoImage(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
+func TestRewriteWithPDFLink(t *testing.T) {
+	description := "test"
+	output := Rewriter("https://example.org/document.pdf", description, ``)
+	expected := `<a href="https://example.org/document.pdf">PDF</a><br>test`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}

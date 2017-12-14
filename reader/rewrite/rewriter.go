@@ -18,12 +18,16 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 	}
 
 	rules := strings.Split(rulesList, ",")
+	rules = append(rules, "add_pdf_download_link")
+
 	for _, rule := range rules {
 		switch strings.TrimSpace(rule) {
 		case "add_image_title":
 			entryContent = addImageTitle(entryURL, entryContent)
 		case "add_youtube_video":
 			entryContent = addYoutubeVideo(entryURL, entryContent)
+		case "add_pdf_download_link":
+			entryContent = addPDFLink(entryURL, entryContent)
 		}
 	}
 
