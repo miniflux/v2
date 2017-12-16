@@ -105,7 +105,7 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 		}
 	}
 
-	sessionToken, err := c.store.CreateSession(
+	sessionToken, err := c.store.CreateUserSession(
 		user.Username,
 		request.Request().UserAgent(),
 		realip.RealIP(request.Request()),

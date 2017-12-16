@@ -7,8 +7,8 @@ package model
 import "time"
 import "fmt"
 
-// Session represents a user session in the system.
-type Session struct {
+// UserSession represents a user session in the system.
+type UserSession struct {
 	ID        int64
 	UserID    int64
 	Token     string
@@ -17,9 +17,9 @@ type Session struct {
 	IP        string
 }
 
-func (s *Session) String() string {
-	return fmt.Sprintf("ID=%d, UserID=%d, IP=%s", s.ID, s.UserID, s.IP)
+func (s *UserSession) String() string {
+	return fmt.Sprintf(`ID="%d", UserID="%d", IP="%s", Token="%s"`, s.ID, s.UserID, s.IP, s.Token)
 }
 
-// Sessions represents a list of sessions.
-type Sessions []*Session
+// UserSessions represents a list of sessions.
+type UserSessions []*UserSession

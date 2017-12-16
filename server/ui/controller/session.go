@@ -18,7 +18,7 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	sessions, err := c.store.Sessions(user.ID)
+	sessions, err := c.store.UserSessions(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -42,7 +42,7 @@ func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	err = c.store.RemoveSessionByID(user.ID, sessionID)
+	err = c.store.RemoveUserSessionByID(user.ID, sessionID)
 	if err != nil {
 		logger.Error("[Controller:RemoveSession] %v", err)
 	}

@@ -55,13 +55,13 @@ func (s *SessionMiddleware) isPublicRoute(r *http.Request) bool {
 	}
 }
 
-func (s *SessionMiddleware) getSessionFromCookie(r *http.Request) *model.Session {
+func (s *SessionMiddleware) getSessionFromCookie(r *http.Request) *model.UserSession {
 	sessionCookie, err := r.Cookie("sessionID")
 	if err == http.ErrNoCookie {
 		return nil
 	}
 
-	session, err := s.store.SessionByToken(sessionCookie.Value)
+	session, err := s.store.UserSessionByToken(sessionCookie.Value)
 	if err != nil {
 		logger.Error("[SessionMiddleware] %v", err)
 		return nil

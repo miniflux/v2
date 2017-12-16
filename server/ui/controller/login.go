@@ -47,7 +47,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	sessionToken, err := c.store.CreateSession(
+	sessionToken, err := c.store.CreateUserSession(
 		authForm.Username,
 		request.Request().UserAgent(),
 		realip.RealIP(request.Request()),
@@ -77,7 +77,7 @@ func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *
 	user := ctx.LoggedUser()
 
 	sessionCookie := request.Cookie("sessionID")
-	if err := c.store.RemoveSessionByToken(user.ID, sessionCookie); err != nil {
+	if err := c.store.RemoveUserSessionByToken(user.ID, sessionCookie); err != nil {
 		logger.Error("[Controller:Logout] %v", err)
 	}
 
