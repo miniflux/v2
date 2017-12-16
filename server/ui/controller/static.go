@@ -43,3 +43,23 @@ func (c *Controller) Favicon(ctx *core.Context, request *core.Request, response 
 
 	response.Cache("image/x-icon", static.BinariesChecksums["favicon.ico"], blob, 48*time.Hour)
 }
+
+// AppIcon returns application icons.
+func (c *Controller) AppIcon(ctx *core.Context, request *core.Request, response *core.Response) {
+	filename := request.StringParam("filename", "favicon.png")
+	encodedBlob, found := static.Binaries[filename]
+	if !found {
+		logger.Info("[Controller:AppIcon] This icon doesn't exists: %s", filename)
+		response.HTML().NotFound()
+		return
+	}
+
+	blob, err := base64.StdEncoding.DecodeString(encodedBlob)
+	if err != nil {
+		logger.Error("[Controller:AppIcon] %v", err)
+		response.HTML().NotFound()
+		return
+	}
+
+	response.Cache("image/png", static.BinariesChecksums[filename], blob, 48*time.Hour)
+}

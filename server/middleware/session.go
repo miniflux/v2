@@ -48,7 +48,7 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 func (s *SessionMiddleware) isPublicRoute(r *http.Request) bool {
 	route := mux.CurrentRoute(r)
 	switch route.GetName() {
-	case "login", "checkLogin", "stylesheet", "javascript", "oauth2Redirect", "oauth2Callback":
+	case "login", "checkLogin", "stylesheet", "javascript", "oauth2Redirect", "oauth2Callback", "appIcon", "favicon":
 		return true
 	default:
 		return false

@@ -76,6 +76,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/stylesheets/{name}.css", uiHandler.Use(uiController.Stylesheet)).Name("stylesheet").Methods("GET")
 	router.Handle("/js", uiHandler.Use(uiController.Javascript)).Name("javascript").Methods("GET")
 	router.Handle("/favicon.ico", uiHandler.Use(uiController.Favicon)).Name("favicon").Methods("GET")
+	router.Handle("/icon/{filename}", uiHandler.Use(uiController.AppIcon)).Name("appIcon").Methods("GET")
 
 	router.Handle("/subscribe", uiHandler.Use(uiController.AddSubscription)).Name("addSubscription").Methods("GET")
 	router.Handle("/subscribe", uiHandler.Use(uiController.SubmitSubscription)).Name("submitSubscription").Methods("POST")
@@ -110,7 +111,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/category/{categoryID}/update", uiHandler.Use(uiController.UpdateCategory)).Name("updateCategory").Methods("POST")
 	router.Handle("/category/{categoryID}/remove", uiHandler.Use(uiController.RemoveCategory)).Name("removeCategory").Methods("POST")
 
-	router.Handle("/icon/{iconID}", uiHandler.Use(uiController.ShowIcon)).Name("icon").Methods("GET")
+	router.Handle("/feed/icon/{iconID}", uiHandler.Use(uiController.ShowIcon)).Name("icon").Methods("GET")
 	router.Handle("/proxy/{encodedURL}", uiHandler.Use(uiController.ImageProxy)).Name("proxy").Methods("GET")
 
 	router.Handle("/users", uiHandler.Use(uiController.ShowUsers)).Name("users").Methods("GET")

@@ -54,7 +54,7 @@ func (r *Response) NotModified() {
 // Cache returns a response with caching headers.
 func (r *Response) Cache(mimeType, etag string, content []byte, duration time.Duration) {
 	r.writer.Header().Set("Content-Type", mimeType)
-	r.writer.Header().Set("Etag", etag)
+	r.writer.Header().Set("ETag", etag)
 	r.writer.Header().Set("Cache-Control", "public")
 	r.writer.Header().Set("Expires", time.Now().Add(duration).Format(time.RFC1123))
 

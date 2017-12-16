@@ -4,9 +4,21 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Miniflux">
+
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
+
+    <link rel="icon" type="image/png" href="{{ route "appIcon" "filename" "favicon.png" }}">
+    <link rel="apple-touch-icon" href="{{ route "appIcon" "filename" "touch-icon-iphone.png" }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ route "appIcon" "filename" "touch-icon-ipad.png" }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ route "appIcon" "filename" "touch-icon-iphone-retina.png" }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ route "appIcon" "filename" "touch-icon-ipad-retina.png" }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ route "favicon" }}">
+
     {{ if .csrf }}
         <meta name="X-CSRF-Token" value="{{ .csrf }}">
     {{ end }}
