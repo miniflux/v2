@@ -8,12 +8,12 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"math"
 	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/miniflux/miniflux/logger"
 	"golang.org/x/net/html"
 )
 
@@ -83,10 +83,10 @@ func ExtractContent(page io.Reader) (string, error) {
 	removeUnlikelyCandidates(document)
 
 	candidates := getCandidates(document)
-	log.Println("Candidates:", candidates)
+	logger.Debug("[Readability] Candidates: %v", candidates)
 
 	topCandidate := getTopCandidate(document, candidates)
-	log.Println("TopCandidate:", topCandidate)
+	logger.Debug("[Readability] TopCandidate: %v", topCandidate)
 
 	output := getArticle(topCandidate, candidates)
 	return output, nil
@@ -142,7 +142,6 @@ func removeUnlikelyCandidates(document *goquery.Document) {
 		str := class + id
 
 		if blacklistCandidatesRegexp.MatchString(str) || (unlikelyCandidatesRegexp.MatchString(str) && !okMaybeItsACandidateRegexp.MatchString(str)) {
-			// log.Printf("Removing unlikely candidate - %s\n", str)
 			removeNodes(s)
 		}
 	})

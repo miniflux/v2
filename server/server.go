@@ -6,11 +6,11 @@ package server
 
 import (
 	"crypto/tls"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/scheduler"
 	"golang.org/x/crypto/acme/autocert"
 
@@ -46,20 +46,20 @@ func startServer(cfg *config.Config, handler *mux.Router) *http.Server {
 		}
 
 		go func() {
-			log.Printf(`Listening on "%s" by using auto-configured certificate for "%s"`, server.Addr, certDomain)
-			log.Fatalln(server.Serve(certManager.Listener()))
+			logger.Info(`Listening on "%s" by using auto-configured certificate for "%s"`, server.Addr, certDomain)
+			logger.Fatal(server.Serve(certManager.Listener()).Error())
 		}()
 	} else if certFile != "" && keyFile != "" {
 		server.TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
 
 		go func() {
-			log.Printf(`Listening on "%s" by using certificate "%s" and key "%s"`, server.Addr, certFile, keyFile)
-			log.Fatalln(server.ListenAndServeTLS(certFile, keyFile))
+			logger.Info(`Listening on "%s" by using certificate "%s" and key "%s"`, server.Addr, certFile, keyFile)
+			logger.Fatal(server.ListenAndServeTLS(certFile, keyFile).Error())
 		}()
 	} else {
 		go func() {
-			log.Printf(`Listening on "%s" without TLS`, server.Addr)
-			log.Fatalln(server.ListenAndServe())
+			logger.Info(`Listening on "%s" without TLS`, server.Addr)
+			logger.Fatal(server.ListenAndServe().Error())
 		}()
 	}
 

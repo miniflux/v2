@@ -5,12 +5,13 @@
 package helper
 
 import (
-	"log"
 	"time"
+
+	"github.com/miniflux/miniflux/logger"
 )
 
 // ExecutionTime returns the elapsed time of a block of code.
 func ExecutionTime(start time.Time, name string) {
 	elapsed := time.Since(start)
-	log.Printf("%s took %s", name, elapsed)
+	logger.Debug("%s took %s", name, elapsed)
 }

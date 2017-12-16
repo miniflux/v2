@@ -6,8 +6,8 @@ package controller
 
 import (
 	"errors"
-	"log"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/reader/sanitizer"
 
 	"github.com/miniflux/miniflux/integration"
@@ -126,7 +126,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 	if entry.Status == model.EntryStatusUnread {
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			log.Println(err)
+			logger.Error("[Controller:ShowFeedEntry] %v", err)
 			response.HTML().ServerError(nil)
 			return
 		}
@@ -202,7 +202,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 	if entry.Status == model.EntryStatusUnread {
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			log.Println(err)
+			logger.Error("[Controller:ShowCategoryEntry] %v", err)
 			response.HTML().ServerError(nil)
 			return
 		}
@@ -297,7 +297,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 	if entry.Status == model.EntryStatusUnread {
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			log.Println(err)
+			logger.Error("[Controller:ShowUnreadEntry] %v", err)
 			response.HTML().ServerError(nil)
 			return
 		}
@@ -379,7 +379,7 @@ func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Reques
 
 	entryIDs, status, err := payload.DecodeEntryStatusPayload(request.Body())
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UpdateEntryStatus] %v", err)
 		response.JSON().BadRequest(nil)
 		return
 	}
@@ -391,7 +391,7 @@ func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Reques
 
 	err = c.store.SetEntriesStatus(user.ID, entryIDs, status)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UpdateEntryStatus] %v", err)
 		response.JSON().ServerError(nil)
 		return
 	}

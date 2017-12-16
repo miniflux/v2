@@ -6,9 +6,9 @@ package middleware
 
 import (
 	"context"
-	"log"
 	"net/http"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/route"
 	"github.com/miniflux/miniflux/storage"
@@ -28,14 +28,14 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 		session := s.getSessionFromCookie(r)
 
 		if session == nil {
-			log.Println("[Middleware:Session] Session not found")
+			logger.Debug("[Middleware:Session] Session not found")
 			if s.isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
 				http.Redirect(w, r, route.Path(s.router, "login"), http.StatusFound)
 			}
 		} else {
-			log.Println("[Middleware:Session]", session)
+			logger.Debug("[Middleware:Session] %s", session)
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, UserIDContextKey, session.UserID)
 			ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
@@ -63,7 +63,7 @@ func (s *SessionMiddleware) getSessionFromCookie(r *http.Request) *model.Session
 
 	session, err := s.store.SessionByToken(sessionCookie.Value)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[SessionMiddleware] %v", err)
 		return nil
 	}
 

@@ -5,9 +5,8 @@
 package controller
 
 import (
-	"log"
-
 	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/ui/form"
@@ -55,7 +54,7 @@ func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, re
 
 	err = c.store.UpdateUser(settingsForm.Merge(user))
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UpdateSettings] %v", err)
 		response.HTML().Render("settings", args.Merge(tplParams{
 			"form":         settingsForm,
 			"errorMessage": "Unable to update this user.",

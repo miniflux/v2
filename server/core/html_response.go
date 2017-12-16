@@ -5,9 +5,9 @@
 package core
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/template"
 )
 
@@ -30,7 +30,7 @@ func (h *HTMLResponse) ServerError(err error) {
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Internal Server Error] %v", err)
 		h.writer.Write([]byte("Internal Server Error: " + err.Error()))
 	} else {
 		h.writer.Write([]byte("Internal Server Error"))
@@ -43,7 +43,7 @@ func (h *HTMLResponse) BadRequest(err error) {
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Bad Request] %v", err)
 		h.writer.Write([]byte("Bad Request: " + err.Error()))
 	} else {
 		h.writer.Write([]byte("Bad Request"))

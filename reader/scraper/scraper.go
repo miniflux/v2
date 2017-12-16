@@ -7,11 +7,11 @@ package scraper
 import (
 	"errors"
 	"io"
-	"log"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/reader/readability"
 	"github.com/miniflux/miniflux/url"
 )
@@ -42,10 +42,10 @@ func Fetch(websiteURL, rules string) (string, error) {
 
 	var content string
 	if rules != "" {
-		log.Printf(`[Scraper] Using rules "%s" for "%s"`, rules, websiteURL)
+		logger.Debug(`[Scraper] Using rules "%s" for "%s"`, rules, websiteURL)
 		content, err = scrapContent(page, rules)
 	} else {
-		log.Printf(`[Scraper] Using readability for "%s"`, websiteURL)
+		logger.Debug(`[Scraper] Using readability for "%s"`, websiteURL)
 		content, err = readability.ExtractContent(page)
 	}
 

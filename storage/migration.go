@@ -6,9 +6,9 @@ package storage
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/sql"
 )
 
@@ -27,7 +27,7 @@ func (s *Storage) Migrate() {
 
 		tx, err := s.db.Begin()
 		if err != nil {
-			log.Fatalln(err)
+			logger.Fatal("[Storage:Migrate] %v", err)
 		}
 
 		rawSQL := sql.SqlMap["schema_version_"+strconv.Itoa(version)]
@@ -35,21 +35,21 @@ func (s *Storage) Migrate() {
 		_, err = tx.Exec(rawSQL)
 		if err != nil {
 			tx.Rollback()
-			log.Fatalln(err)
+			logger.Fatal("[Storage:Migrate] %v", err)
 		}
 
 		if _, err := tx.Exec(`delete from schema_version`); err != nil {
 			tx.Rollback()
-			log.Fatalln(err)
+			logger.Fatal("[Storage:Migrate] %v", err)
 		}
 
 		if _, err := tx.Exec(`insert into schema_version (version) values($1)`, version); err != nil {
 			tx.Rollback()
-			log.Fatalln(err)
+			logger.Fatal("[Storage:Migrate] %v", err)
 		}
 
 		if err := tx.Commit(); err != nil {
-			log.Fatalln(err)
+			logger.Fatal("[Storage:Migrate] %v", err)
 		}
 	}
 }

@@ -18,7 +18,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -26,6 +25,7 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/feed"
 	"github.com/miniflux/miniflux/scheduler"
@@ -38,7 +38,7 @@ import (
 )
 
 func run(cfg *config.Config, store *storage.Storage) {
-	log.Println("Starting Miniflux...")
+	logger.Info("Starting Miniflux...")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -55,11 +55,11 @@ func run(cfg *config.Config, store *storage.Storage) {
 	)
 
 	<-stop
-	log.Println("Shutting down the server...")
+	logger.Info("Shutting down the server...")
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	server.Shutdown(ctx)
 	store.Close()
-	log.Println("Server gracefully stopped")
+	logger.Info("Server gracefully stopped")
 }
 
 func askCredentials() (string, string) {

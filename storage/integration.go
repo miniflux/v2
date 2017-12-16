@@ -68,9 +68,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 	)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, nil
+		return &integration, nil
 	case err != nil:
-		return nil, fmt.Errorf("unable to fetch integration row: %v", err)
+		return &integration, fmt.Errorf("unable to fetch integration row: %v", err)
 	}
 
 	return &integration, nil

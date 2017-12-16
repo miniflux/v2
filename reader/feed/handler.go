@@ -6,12 +6,12 @@ package feed
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/icon"
 	"github.com/miniflux/miniflux/reader/processor"
@@ -80,13 +80,13 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 		return nil, err
 	}
 
-	log.Println("[Handler:CreateFeed] Feed saved with ID:", subscription.ID)
+	logger.Debug("[Handler:CreateFeed] Feed saved with ID: %d", subscription.ID)
 
 	icon, err := icon.FindIcon(subscription.SiteURL)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Handler:CreateFeed] %v", err)
 	} else if icon == nil {
-		log.Printf("No icon found for feedID=%d\n", subscription.ID)
+		logger.Info("No icon found for feedID=%d", subscription.ID)
 	} else {
 		h.store.CreateFeedIcon(subscription, icon)
 	}
@@ -128,7 +128,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	}
 
 	if response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
-		log.Printf("[Handler:RefreshFeed] Feed #%d has been modified\n", feedID)
+		logger.Debug("[Handler:RefreshFeed] Feed #%d has been modified", feedID)
 		body, err := response.NormalizeBodyEncoding()
 		if err != nil {
 			return errors.NewLocalizedError(errEncoding, err)
@@ -156,16 +156,16 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		}
 
 		if !h.store.HasIcon(originalFeed.ID) {
-			log.Println("[Handler:RefreshFeed] Looking for feed icon")
+			logger.Debug("[Handler:RefreshFeed] Looking for feed icon")
 			icon, err := icon.FindIcon(originalFeed.SiteURL)
 			if err != nil {
-				log.Println("[Handler:RefreshFeed]", err)
+				logger.Error("[Handler:RefreshFeed] %v", err)
 			} else {
 				h.store.CreateFeedIcon(originalFeed, icon)
 			}
 		}
 	} else {
-		log.Printf("[Handler:RefreshFeed] Feed #%d not modified\n", feedID)
+		logger.Debug("[Handler:RefreshFeed] Feed #%d not modified", feedID)
 	}
 
 	originalFeed.ParsingErrorCount = 0

@@ -7,12 +7,12 @@ package http
 import (
 	"crypto/tls"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/logger"
 )
 
 const userAgent = "Miniflux <https://miniflux.net/>"
@@ -47,7 +47,7 @@ func (c *Client) Get() (*Response, error) {
 		ContentType:  resp.Header.Get("Content-Type"),
 	}
 
-	log.Println("[HttpClient:Get]",
+	logger.Debug("[HttpClient:Get]",
 		"OriginalURL:", c.url,
 		"StatusCode:", response.StatusCode,
 		"ETag:", response.ETag,

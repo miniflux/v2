@@ -7,8 +7,9 @@ package core
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
+
+	"github.com/miniflux/miniflux/logger"
 )
 
 // JSONResponse handles JSON responses.
@@ -39,7 +40,7 @@ func (j *JSONResponse) NoContent() {
 
 // BadRequest sends a JSON response with the status code 400.
 func (j *JSONResponse) BadRequest(err error) {
-	log.Println("[API:BadRequest]", err)
+	logger.Error("[Bad Request] %v", err)
 	j.writer.WriteHeader(http.StatusBadRequest)
 	j.commonHeaders()
 
@@ -50,7 +51,7 @@ func (j *JSONResponse) BadRequest(err error) {
 
 // NotFound sends a JSON response with the status code 404.
 func (j *JSONResponse) NotFound(err error) {
-	log.Println("[API:NotFound]", err)
+	logger.Error("[Not Found] %v", err)
 	j.writer.WriteHeader(http.StatusNotFound)
 	j.commonHeaders()
 	j.writer.Write(j.encodeError(err))
@@ -58,7 +59,7 @@ func (j *JSONResponse) NotFound(err error) {
 
 // ServerError sends a JSON response with the status code 500.
 func (j *JSONResponse) ServerError(err error) {
-	log.Println("[API:ServerError]", err)
+	logger.Error("[Internal Server Error] %v", err)
 	j.writer.WriteHeader(http.StatusInternalServerError)
 	j.commonHeaders()
 
@@ -69,7 +70,7 @@ func (j *JSONResponse) ServerError(err error) {
 
 // Forbidden sends a JSON response with the status code 403.
 func (j *JSONResponse) Forbidden() {
-	log.Println("[API:Forbidden]")
+	logger.Info("[API:Forbidden]")
 	j.writer.WriteHeader(http.StatusForbidden)
 	j.commonHeaders()
 	j.writer.Write(j.encodeError(errors.New("Access Forbidden")))
@@ -88,7 +89,7 @@ func (j *JSONResponse) encodeError(err error) []byte {
 	tmp := errorMsg{ErrorMessage: err.Error()}
 	data, err := json.Marshal(tmp)
 	if err != nil {
-		log.Println("encodeError:", err)
+		logger.Error("encoding error: %v", err)
 	}
 
 	return data
@@ -97,7 +98,7 @@ func (j *JSONResponse) encodeError(err error) []byte {
 func (j *JSONResponse) toJSON(v interface{}) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {
-		log.Println("Unable to convert interface to JSON:", err)
+		logger.Error("encoding error: %v", err)
 		return []byte("")
 	}
 

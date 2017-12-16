@@ -6,8 +6,8 @@ package controller
 
 import (
 	"errors"
-	"log"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/ui/form"
@@ -140,7 +140,7 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 
 	err = c.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:EditFeed] %v", err)
 		response.HTML().Render("edit_feed", args.Merge(tplParams{
 			"errorMessage": "Unable to update this feed.",
 		}))
@@ -177,7 +177,7 @@ func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, respo
 
 	user := ctx.LoggedUser()
 	if err := c.feedHandler.RefreshFeed(user.ID, feedID); err != nil {
-		log.Println("[UI:RefreshFeed]", err)
+		logger.Error("[Controller:RefreshFeed] %v", err)
 	}
 
 	response.Redirect(ctx.Route("feedEntries", "feedID", feedID))

@@ -6,9 +6,9 @@ package middleware
 
 import (
 	"context"
-	"log"
 	"net/http"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/storage"
 )
 
@@ -20,25 +20,25 @@ type FeverMiddleware struct {
 // Handler executes the middleware.
 func (f *FeverMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("[Middleware:Fever]")
+		logger.Debug("[Middleware:Fever]")
 
 		apiKey := r.FormValue("api_key")
 		user, err := f.store.UserByFeverToken(apiKey)
 		if err != nil {
-			log.Println(err)
+			logger.Error("[Fever] %v", err)
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{"api_version": 3, "auth": 0}`))
 			return
 		}
 
 		if user == nil {
-			log.Println("[Middleware:Fever] Fever authentication failure")
+			logger.Info("[Middleware:Fever] Fever authentication failure")
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{"api_version": 3, "auth": 0}`))
 			return
 		}
 
-		log.Printf("[Middleware:Fever] User #%d is authenticated\n", user.ID)
+		logger.Info("[Middleware:Fever] User #%d is authenticated", user.ID)
 		f.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()

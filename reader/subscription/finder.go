@@ -8,12 +8,12 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"time"
 
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/reader/feed"
 	"github.com/miniflux/miniflux/url"
 
@@ -87,7 +87,7 @@ func parseDocument(websiteURL string, data io.Reader) (Subscriptions, error) {
 			}
 
 			if subscription.URL != "" {
-				log.Println("[FindSubscriptions]", subscription)
+				logger.Debug("[FindSubscriptions] %s", subscription)
 				subscriptions = append(subscriptions, subscription)
 			}
 		})

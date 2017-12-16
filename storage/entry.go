@@ -7,10 +7,10 @@ package storage
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 
 	"github.com/lib/pq"
@@ -137,7 +137,7 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (er
 	}
 
 	if err := s.CleanupEntries(feedID, entryHashes); err != nil {
-		log.Println(err)
+		logger.Error("[Storage:CleanupEntries] %v", err)
 	}
 
 	return nil

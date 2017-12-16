@@ -8,11 +8,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
-	"log"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/core"
 )
 
@@ -39,7 +39,7 @@ func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, respon
 	client := http.NewClient(string(decodedURL))
 	resp, err := client.Get()
 	if err != nil {
-		log.Println("[ImageProxy]", err)
+		logger.Error("[Controller:ImageProxy] %v", err)
 		response.HTML().NotFound()
 		return
 	}

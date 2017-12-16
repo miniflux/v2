@@ -5,10 +5,10 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/oauth2"
@@ -19,14 +19,14 @@ import (
 func (c *Controller) OAuth2Redirect(ctx *core.Context, request *core.Request, response *core.Response) {
 	provider := request.StringParam("provider", "")
 	if provider == "" {
-		log.Println("[OAuth2] Invalid or missing provider")
+		logger.Error("[OAuth2] Invalid or missing provider")
 		response.Redirect(ctx.Route("login"))
 		return
 	}
 
 	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
 	if err != nil {
-		log.Println("[OAuth2]", err)
+		logger.Error("[OAuth2] %v", err)
 		response.Redirect(ctx.Route("login"))
 		return
 	}
@@ -38,35 +38,35 @@ func (c *Controller) OAuth2Redirect(ctx *core.Context, request *core.Request, re
 func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, response *core.Response) {
 	provider := request.StringParam("provider", "")
 	if provider == "" {
-		log.Println("[OAuth2] Invalid or missing provider")
+		logger.Error("[OAuth2] Invalid or missing provider")
 		response.Redirect(ctx.Route("login"))
 		return
 	}
 
 	code := request.QueryStringParam("code", "")
 	if code == "" {
-		log.Println("[OAuth2] No code received on callback")
+		logger.Error("[OAuth2] No code received on callback")
 		response.Redirect(ctx.Route("login"))
 		return
 	}
 
 	state := request.QueryStringParam("state", "")
 	if state != ctx.CsrfToken() {
-		log.Println("[OAuth2] Invalid state value")
+		logger.Error("[OAuth2] Invalid state value")
 		response.Redirect(ctx.Route("login"))
 		return
 	}
 
 	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
 	if err != nil {
-		log.Println("[OAuth2]", err)
+		logger.Error("[OAuth2] %v", err)
 		response.Redirect(ctx.Route("login"))
 		return
 	}
 
 	profile, err := authProvider.GetProfile(code)
 	if err != nil {
-		log.Println("[OAuth2]", err)
+		logger.Error("[OAuth2] %v", err)
 		response.Redirect(ctx.Route("login"))
 		return
 	}
@@ -116,7 +116,7 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	log.Printf("[UI:OAuth2Callback] username=%s just logged in\n", user.Username)
+	logger.Info("[Controller:OAuth2Callback] username=%s just logged in", user.Username)
 
 	cookie := &http.Cookie{
 		Name:     "sessionID",
@@ -134,14 +134,14 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 func (c *Controller) OAuth2Unlink(ctx *core.Context, request *core.Request, response *core.Response) {
 	provider := request.StringParam("provider", "")
 	if provider == "" {
-		log.Println("[OAuth2] Invalid or missing provider")
+		logger.Info("[OAuth2] Invalid or missing provider")
 		response.Redirect(ctx.Route("login"))
 		return
 	}
 
 	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
 	if err != nil {
-		log.Println("[OAuth2]", err)
+		logger.Error("[OAuth2] %v", err)
 		response.Redirect(ctx.Route("settings"))
 		return
 	}

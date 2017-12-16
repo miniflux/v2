@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/storage"
 )
@@ -23,7 +23,7 @@ type Handler struct {
 func (h *Handler) Export(userID int64) (string, error) {
 	feeds, err := h.store.Feeds(userID)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[OPML:Export] %v", err)
 		return "", errors.New("unable to fetch feeds")
 	}
 
@@ -54,13 +54,13 @@ func (h *Handler) Import(userID int64, data io.Reader) (err error) {
 			if subscription.CategoryName == "" {
 				category, err = h.store.FirstCategory(userID)
 				if err != nil {
-					log.Println(err)
+					logger.Error("[OPML:Import] %v", err)
 					return errors.New("unable to find first category")
 				}
 			} else {
 				category, err = h.store.CategoryByTitle(userID, subscription.CategoryName)
 				if err != nil {
-					log.Println(err)
+					logger.Error("[OPML:Import] %v", err)
 					return errors.New("unable to search category by title")
 				}
 
@@ -72,7 +72,7 @@ func (h *Handler) Import(userID int64, data io.Reader) (err error) {
 
 					err := h.store.CreateCategory(category)
 					if err != nil {
-						log.Println(err)
+						logger.Error("[OPML:Import] %v", err)
 						return fmt.Errorf(`unable to create this category: "%s"`, subscription.CategoryName)
 					}
 				}

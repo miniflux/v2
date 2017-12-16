@@ -5,9 +5,9 @@
 package core
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/middleware"
 	"github.com/miniflux/miniflux/server/route"
@@ -63,11 +63,11 @@ func (c *Context) LoggedUser() *model.User {
 		var err error
 		c.user, err = c.store.UserByID(c.UserID())
 		if err != nil {
-			log.Fatalln(err)
+			logger.Fatal("[Context] %v", err)
 		}
 
 		if c.user == nil {
-			log.Fatalln("Unable to find user from context")
+			logger.Fatal("Unable to find user from context")
 		}
 	}
 
@@ -86,7 +86,7 @@ func (c *Context) CsrfToken() string {
 		return v.(string)
 	}
 
-	log.Println("No CSRF token in context!")
+	logger.Error("No CSRF token in context!")
 	return ""
 }
 

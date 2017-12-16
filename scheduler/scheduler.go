@@ -5,9 +5,9 @@
 package scheduler
 
 import (
-	"log"
 	"time"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/storage"
 )
 
@@ -18,9 +18,9 @@ func NewScheduler(store *storage.Storage, workerPool *WorkerPool, frequency, bat
 		for now := range c {
 			jobs, err := store.NewBatch(batchSize)
 			if err != nil {
-				log.Println("[Scheduler]", err)
+				logger.Error("[Scheduler] %v", err)
 			} else {
-				log.Printf("[Scheduler:%v] => Pushing %d jobs\n", now, len(jobs))
+				logger.Debug("[Scheduler:%v] => Pushing %d jobs", now, len(jobs))
 				workerPool.Push(jobs)
 			}
 		}

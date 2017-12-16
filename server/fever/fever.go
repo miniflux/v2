@@ -5,12 +5,12 @@
 package fever
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux/integration"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/storage"
@@ -183,7 +183,7 @@ is_spark equal to 1.
 */
 func (c *Controller) handleGroups(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Fetching groups for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching groups for userID=%d", userID)
 
 	categories, err := c.store.Categories(userID)
 	if err != nil {
@@ -233,7 +233,7 @@ For the “Sparks” super group the items should be limited to feeds with an is
 */
 func (c *Controller) handleFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Fetching feeds for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching feeds for userID=%d", userID)
 
 	feeds, err := c.store.Feeds(userID)
 	if err != nil {
@@ -280,7 +280,7 @@ A PHP/HTML example:
 */
 func (c *Controller) handleFavicons(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Fetching favicons for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching favicons for userID=%d", userID)
 
 	icons, err := c.store.Icons(userID)
 	if err != nil {
@@ -336,7 +336,7 @@ func (c *Controller) handleItems(ctx *core.Context, request *core.Request, respo
 
 	userID := ctx.UserID()
 	timezone := ctx.UserTimezone()
-	log.Printf("[Fever] Fetching items for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching items for userID=%d", userID)
 
 	builder := c.store.GetEntryQueryBuilder(userID, timezone)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -413,7 +413,7 @@ A request with the unread_item_ids argument will return one additional member:
 */
 func (c *Controller) handleUnreadItems(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Fetching unread items for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching unread items for userID=%d", userID)
 
 	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithStatus(model.EntryStatusUnread)
@@ -444,7 +444,7 @@ with the remote Fever installation.
 */
 func (c *Controller) handleSavedItems(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Fetching saved items for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
 
 	var result savedResponse
 	result.SetCommonValues()
@@ -471,7 +471,7 @@ A link object has the following members:
 */
 func (c *Controller) handleLinks(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Fetching links for userID=%d\n", userID)
+	logger.Debug("[Fever] Fetching links for userID=%d", userID)
 
 	var result linksResponse
 	result.SetCommonValues()
@@ -485,7 +485,7 @@ func (c *Controller) handleLinks(ctx *core.Context, request *core.Request, respo
 */
 func (c *Controller) handleWriteItems(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Receiving mark=item call for userID=%d\n", userID)
+	logger.Debug("[Fever] Receiving mark=item call for userID=%d", userID)
 
 	entryID := request.FormIntegerValue("id")
 	if entryID <= 0 {
@@ -534,7 +534,7 @@ func (c *Controller) handleWriteItems(ctx *core.Context, request *core.Request, 
 */
 func (c *Controller) handleWriteFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Receiving mark=feed call for userID=%d\n", userID)
+	logger.Debug("[Fever] Receiving mark=feed call for userID=%d", userID)
 
 	feedID := request.FormIntegerValue("id")
 	if feedID <= 0 {
@@ -574,7 +574,7 @@ func (c *Controller) handleWriteFeeds(ctx *core.Context, request *core.Request, 
 */
 func (c *Controller) handleWriteGroups(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
-	log.Printf("[Fever] Receiving mark=group call for userID=%d\n", userID)
+	logger.Debug("[Fever] Receiving mark=group call for userID=%d", userID)
 
 	groupID := request.FormIntegerValue("id")
 	if groupID < 0 {

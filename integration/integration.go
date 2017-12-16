@@ -5,10 +5,9 @@
 package integration
 
 import (
-	"log"
-
 	"github.com/miniflux/miniflux/integration/instapaper"
 	"github.com/miniflux/miniflux/integration/pinboard"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 )
 
@@ -18,7 +17,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		client := pinboard.NewClient(integration.PinboardToken)
 		err := client.AddBookmark(entry.URL, entry.Title, integration.PinboardTags, integration.PinboardMarkAsUnread)
 		if err != nil {
-			log.Println("[Pinboard]", err)
+			logger.Error("[Pinboard] %v", err)
 		}
 	}
 
@@ -26,7 +25,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		client := instapaper.NewClient(integration.InstapaperUsername, integration.InstapaperPassword)
 		err := client.AddURL(entry.URL, entry.Title)
 		if err != nil {
-			log.Println("[Instapaper]", err)
+			logger.Error("[Instapaper] %v", err)
 		}
 	}
 }

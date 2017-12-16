@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/url"
 
@@ -36,7 +36,7 @@ func FindIcon(websiteURL string) (*model.Icon, error) {
 		return nil, err
 	}
 
-	log.Println("[FindIcon] Fetching icon =>", iconURL)
+	logger.Debug("[FindIcon] Fetching icon => %s", iconURL)
 	icon, err := downloadIcon(iconURL)
 	if err != nil {
 		return nil, err

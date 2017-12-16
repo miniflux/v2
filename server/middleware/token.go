@@ -6,9 +6,9 @@ package middleware
 
 import (
 	"context"
-	"log"
 	"net/http"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/storage"
 )
@@ -25,10 +25,10 @@ func (t *TokenMiddleware) Handler(next http.Handler) http.Handler {
 		token := t.getTokenValueFromCookie(r)
 
 		if token == nil {
-			log.Println("[Middleware:Token] Token not found")
+			logger.Debug("[Middleware:Token] Token not found")
 			token, err = t.store.CreateToken()
 			if err != nil {
-				log.Println(err)
+				logger.Error("[Middleware:Token] %v", err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
@@ -43,13 +43,13 @@ func (t *TokenMiddleware) Handler(next http.Handler) http.Handler {
 
 			http.SetCookie(w, cookie)
 		} else {
-			log.Println("[Middleware:Token]", token)
+			logger.Info("[Middleware:Token] %s", token)
 		}
 
 		isTokenValid := token.Value == r.FormValue("csrf") || token.Value == r.Header.Get("X-Csrf-Token")
 
 		if r.Method == "POST" && !isTokenValid {
-			log.Println("[Middleware:CSRF] Invalid or missing CSRF token!")
+			logger.Error("[Middleware:CSRF] Invalid or missing CSRF token!")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Invalid or missing CSRF token!"))
 		} else {
@@ -68,7 +68,7 @@ func (t *TokenMiddleware) getTokenValueFromCookie(r *http.Request) *model.Token 
 
 	token, err := t.store.Token(tokenCookie.Value)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Middleware:Token] %v", err)
 		return nil
 	}
 

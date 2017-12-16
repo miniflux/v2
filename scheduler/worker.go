@@ -5,9 +5,9 @@
 package scheduler
 
 import (
-	"log"
 	"time"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/feed"
 )
@@ -20,15 +20,15 @@ type Worker struct {
 
 // Run wait for a job and refresh the given feed.
 func (w *Worker) Run(c chan model.Job) {
-	log.Printf("[Worker] #%d started\n", w.id)
+	logger.Debug("[Worker] #%d started", w.id)
 
 	for {
 		job := <-c
-		log.Printf("[Worker #%d] got userID=%d, feedID=%d\n", w.id, job.UserID, job.FeedID)
+		logger.Debug("[Worker #%d] got userID=%d, feedID=%d", w.id, job.UserID, job.FeedID)
 
 		err := w.feedHandler.RefreshFeed(job.UserID, job.FeedID)
 		if err != nil {
-			log.Println("Worker:", err)
+			logger.Error("[Worker] %v", err)
 		}
 
 		time.Sleep(time.Millisecond * 1000)

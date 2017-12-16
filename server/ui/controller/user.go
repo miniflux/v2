@@ -6,8 +6,8 @@ package controller
 
 import (
 	"errors"
-	"log"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/ui/form"
@@ -97,7 +97,7 @@ func (c *Controller) SaveUser(ctx *core.Context, request *core.Request, response
 
 	newUser := userForm.ToUser()
 	if err := c.store.CreateUser(newUser); err != nil {
-		log.Println(err)
+		logger.Error("[Controller:SaveUser] %v", err)
 		response.HTML().Render("edit_user", args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
@@ -182,7 +182,7 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 
 	userForm.Merge(selectedUser)
 	if err := c.store.UpdateUser(selectedUser); err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UpdateUser] %v", err)
 		response.HTML().Render("edit_user", args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,

@@ -6,9 +6,9 @@ package controller
 
 import (
 	"encoding/base64"
-	"log"
 	"time"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/static"
 )
@@ -36,7 +36,7 @@ func (c *Controller) Javascript(ctx *core.Context, request *core.Request, respon
 func (c *Controller) Favicon(ctx *core.Context, request *core.Request, response *core.Response) {
 	blob, err := base64.StdEncoding.DecodeString(static.Binaries["favicon.ico"])
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:Favicon] %v", err)
 		response.HTML().NotFound()
 		return
 	}

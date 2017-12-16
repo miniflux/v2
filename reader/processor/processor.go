@@ -5,8 +5,7 @@
 package processor
 
 import (
-	"log"
-
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/rewrite"
 	"github.com/miniflux/miniflux/reader/sanitizer"
@@ -42,7 +41,7 @@ func (f *FeedProcessor) Process() {
 		if f.crawler {
 			content, err := scraper.Fetch(entry.URL, f.scraperRules)
 			if err != nil {
-				log.Println("[FeedProcessor]", err)
+				logger.Error("[FeedProcessor] %v", err)
 			} else {
 				entry.Content = content
 			}

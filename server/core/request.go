@@ -7,12 +7,12 @@ package core
 import (
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/miniflux/miniflux/logger"
 )
 
 // Request is a thin wrapper around "http.Request".
@@ -68,7 +68,7 @@ func (r *Request) IntegerParam(param string) (int64, error) {
 	vars := mux.Vars(r.request)
 	value, err := strconv.Atoi(vars[param])
 	if err != nil {
-		log.Println(err)
+		logger.Error("[IntegerParam] %v", err)
 		return 0, fmt.Errorf("%s parameter is not an integer", param)
 	}
 

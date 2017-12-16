@@ -8,7 +8,8 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/xml"
-	"log"
+
+	"github.com/miniflux/miniflux/logger"
 )
 
 // Serialize returns a SubcriptionList in OPML format.
@@ -37,7 +38,7 @@ func Serialize(subscriptions SubcriptionList) string {
 	encoder := xml.NewEncoder(writer)
 	encoder.Indent("    ", "    ")
 	if err := encoder.Encode(feeds); err != nil {
-		log.Println(err)
+		logger.Error("[OPML:Serialize] %v", err)
 		return ""
 	}
 

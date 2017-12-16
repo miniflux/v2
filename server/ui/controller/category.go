@@ -6,8 +6,8 @@ package controller
 
 import (
 	"errors"
-	"log"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/ui/form"
@@ -126,7 +126,7 @@ func (c *Controller) SaveCategory(ctx *core.Context, request *core.Request, resp
 	category := model.Category{Title: categoryForm.Title, UserID: user.ID}
 	err = c.store.CreateCategory(&category)
 	if err != nil {
-		log.Println(err)
+		logger.Info("[Controller:CreateCategory] %v", err)
 		response.HTML().Render("create_category", args.Merge(tplParams{
 			"errorMessage": "Unable to create this category.",
 		}))
@@ -142,7 +142,7 @@ func (c *Controller) EditCategory(ctx *core.Context, request *core.Request, resp
 
 	category, err := c.getCategoryFromURL(ctx, request, response)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:EditCategory] %v", err)
 		return
 	}
 
@@ -161,7 +161,7 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 
 	category, err := c.getCategoryFromURL(ctx, request, response)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UpdateCategory] %v", err)
 		return
 	}
 
@@ -188,7 +188,7 @@ func (c *Controller) UpdateCategory(ctx *core.Context, request *core.Request, re
 
 	err = c.store.UpdateCategory(categoryForm.Merge(category))
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UpdateCategory] %v", err)
 		response.HTML().Render("edit_category", args.Merge(tplParams{
 			"errorMessage": "Unable to update this category.",
 		}))

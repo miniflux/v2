@@ -6,9 +6,9 @@ package middleware
 
 import (
 	"context"
-	"log"
 	"net/http"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/storage"
 )
 
@@ -25,14 +25,14 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
-			log.Println("[Middleware:BasicAuth] No authentication headers sent")
+			logger.Debug("[Middleware:BasicAuth] No authentication headers sent")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(errorResponse))
 			return
 		}
 
 		if err := b.store.CheckPassword(username, password); err != nil {
-			log.Println("[Middleware:BasicAuth] Invalid username or password:", username)
+			logger.Info("[Middleware:BasicAuth] Invalid username or password: %s", username)
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(errorResponse))
 			return
@@ -40,13 +40,13 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 
 		user, err := b.store.UserByUsername(username)
 		if err != nil || user == nil {
-			log.Println("[Middleware:BasicAuth] User not found:", username)
+			logger.Info("[Middleware:BasicAuth] User not found: %s", username)
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(errorResponse))
 			return
 		}
 
-		log.Println("[Middleware:BasicAuth] User authenticated:", username)
+		logger.Info("[Middleware:BasicAuth] User authenticated: %s", username)
 		b.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()

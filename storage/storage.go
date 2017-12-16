@@ -6,10 +6,10 @@ package storage
 
 import (
 	"database/sql"
-	"log"
 
 	// Postgresql driver import
 	_ "github.com/lib/pq"
+	"github.com/miniflux/miniflux/logger"
 )
 
 // Storage handles all operations related to the database.
@@ -26,7 +26,7 @@ func (s *Storage) Close() {
 func NewStorage(databaseURL string, maxOpenConns int) *Storage {
 	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
-		log.Fatalf("Unable to connect to the database: %v", err)
+		logger.Fatal("[Storage] Unable to connect to the database: %v", err)
 	}
 
 	db.SetMaxOpenConns(maxOpenConns)

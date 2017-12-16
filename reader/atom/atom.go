@@ -6,12 +6,12 @@ package atom
 
 import (
 	"encoding/xml"
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
 	"github.com/miniflux/miniflux/url"
@@ -130,7 +130,7 @@ func getDate(a *atomEntry) time.Time {
 	if a.Updated != "" {
 		result, err := date.Parse(a.Updated)
 		if err != nil {
-			log.Println(err)
+			logger.Error("atom: %v", err)
 			return time.Now()
 		}
 

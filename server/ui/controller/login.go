@@ -5,10 +5,10 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 	"time"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/ui/form"
 
@@ -36,13 +36,13 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 	}
 
 	if err := authForm.Validate(); err != nil {
-		log.Println(err)
+		logger.Error("[Controller:CheckLogin] %v", err)
 		response.HTML().Render("login", tplParams)
 		return
 	}
 
 	if err := c.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
-		log.Println(err)
+		logger.Error("[Controller:CheckLogin] %v", err)
 		response.HTML().Render("login", tplParams)
 		return
 	}
@@ -58,7 +58,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	log.Printf("[UI:CheckLogin] username=%s just logged in\n", authForm.Username)
+	logger.Info("[Controller:CheckLogin] username=%s just logged in", authForm.Username)
 
 	cookie := &http.Cookie{
 		Name:     "sessionID",
@@ -78,7 +78,7 @@ func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *
 
 	sessionCookie := request.Cookie("sessionID")
 	if err := c.store.RemoveSessionByToken(user.ID, sessionCookie); err != nil {
-		log.Printf("[UI:Logout] %v", err)
+		logger.Error("[Controller:Logout] %v", err)
 	}
 
 	cookie := &http.Cookie{

@@ -5,8 +5,7 @@
 package controller
 
 import (
-	"log"
-
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/subscription"
 	"github.com/miniflux/miniflux/server/core"
@@ -62,7 +61,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 
 	subscriptions, err := subscription.FindSubscriptions(subscriptionForm.URL)
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:SubmitSubscription] %v", err)
 		response.HTML().Render("add_subscription", args.Merge(tplParams{
 			"form":         subscriptionForm,
 			"errorMessage": err,
@@ -70,7 +69,7 @@ func (c *Controller) SubmitSubscription(ctx *core.Context, request *core.Request
 		return
 	}
 
-	log.Println("[UI:SubmitSubscription]", subscriptions)
+	logger.Info("[UI:SubmitSubscription] %s", subscriptions)
 
 	n := len(subscriptions)
 	switch {

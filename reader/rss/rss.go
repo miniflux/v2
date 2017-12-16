@@ -6,13 +6,13 @@ package rss
 
 import (
 	"encoding/xml"
-	"log"
 	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
 	"github.com/miniflux/miniflux/url"
@@ -130,7 +130,7 @@ func (r *rssItem) GetDate() time.Time {
 	if value != "" {
 		result, err := date.Parse(value)
 		if err != nil {
-			log.Println(err)
+			logger.Error("rss: %v", err)
 			return time.Now()
 		}
 

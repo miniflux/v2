@@ -5,17 +5,17 @@
 package route
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/miniflux/miniflux/logger"
 )
 
 // Path returns the defined route based on given arguments.
 func Path(router *mux.Router, name string, args ...interface{}) string {
 	route := router.Get(name)
 	if route == nil {
-		log.Fatalln("Route not found:", name)
+		logger.Fatal("[Route] Route not found: %s", name)
 	}
 
 	var pairs []string
@@ -31,7 +31,7 @@ func Path(router *mux.Router, name string, args ...interface{}) string {
 
 	result, err := route.URLPath(pairs...)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatal("[Route] %v", err)
 	}
 
 	return result.String()

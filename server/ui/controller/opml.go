@@ -5,8 +5,7 @@
 package controller
 
 import (
-	"log"
-
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/core"
 )
 
@@ -39,14 +38,19 @@ func (c *Controller) Import(ctx *core.Context, request *core.Request, response *
 func (c *Controller) UploadOPML(ctx *core.Context, request *core.Request, response *core.Response) {
 	file, fileHeader, err := request.File("file")
 	if err != nil {
-		log.Println(err)
+		logger.Error("[Controller:UploadOPML] %v", err)
 		response.Redirect(ctx.Route("import"))
 		return
 	}
 	defer file.Close()
 
 	user := ctx.LoggedUser()
-	log.Printf("[UI:UploadOPML] User #%d uploaded this file: %s (%d bytes)\n", user.ID, fileHeader.Filename, fileHeader.Size)
+	logger.Info(
+		"[Controller:UploadOPML] User #%d uploaded this file: %s (%d bytes)",
+		user.ID,
+		fileHeader.Filename,
+		fileHeader.Size,
+	)
 
 	if impErr := c.opmlHandler.Import(user.ID, file); impErr != nil {
 		args, err := c.getCommonTemplateArgs(ctx)

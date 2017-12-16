@@ -5,12 +5,12 @@
 package core
 
 import (
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/middleware"
 	"github.com/miniflux/miniflux/server/template"
 	"github.com/miniflux/miniflux/storage"
@@ -34,7 +34,7 @@ type Handler struct {
 func (h *Handler) Use(f HandlerFunc) http.Handler {
 	return h.middleware.WrapFunc(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer helper.ExecutionTime(time.Now(), r.URL.Path)
-		log.Println(r.Method, r.URL.Path)
+		logger.Debug("[HTTP] %s %s", r.Method, r.URL.Path)
 
 		ctx := NewContext(w, r, h.store, h.router)
 		request := NewRequest(w, r)

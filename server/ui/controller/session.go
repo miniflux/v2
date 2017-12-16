@@ -5,8 +5,7 @@
 package controller
 
 import (
-	"log"
-
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/core"
 )
 
@@ -45,7 +44,7 @@ func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, res
 
 	err = c.store.RemoveSessionByID(user.ID, sessionID)
 	if err != nil {
-		log.Println("[UI:RemoveSession]", err)
+		logger.Error("[Controller:RemoveSession] %v", err)
 	}
 
 	response.Redirect(ctx.Route("sessions"))

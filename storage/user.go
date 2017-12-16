@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -113,7 +112,7 @@ func (s *Storage) RemoveExtraField(userID int64, field string) error {
 // UpdateUser updates a user.
 func (s *Storage) UpdateUser(user *model.User) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateUser] userID=%d", user.ID))
-	log.Println(user.EntryDirection)
+
 	if user.Password != "" {
 		hashedPassword, err := hashPassword(user.Password)
 		if err != nil {

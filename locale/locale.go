@@ -4,7 +4,7 @@
 
 package locale
 
-import "log"
+import "github.com/miniflux/miniflux/logger"
 
 // Translation is the translation mapping table.
 type Translation map[string]interface{}
@@ -17,7 +17,7 @@ func Load() *Translator {
 	translator := NewTranslator()
 
 	for language, tr := range translations {
-		log.Println("Loading translation:", language)
+		logger.Debug("Loading translation: %s", language)
 		translator.AddLanguage(language, tr)
 	}
 

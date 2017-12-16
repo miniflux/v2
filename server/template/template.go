@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"html/template"
 	"io"
-	"log"
 	"net/mail"
 	"strings"
 	"time"
@@ -16,6 +15,7 @@ import (
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/route"
 	"github.com/miniflux/miniflux/server/template/helper"
 	"github.com/miniflux/miniflux/server/ui/filter"
@@ -42,7 +42,6 @@ func (e *Engine) parseAll() {
 			return e.cfg.Get("OAUTH2_PROVIDER", "") == provider
 		},
 		"hasKey": func(dict map[string]string, key string) bool {
-			log.Println(dict)
 			if value, found := dict[key]; found {
 				return value != ""
 			}
@@ -110,7 +109,7 @@ func (e *Engine) parseAll() {
 	}
 
 	for name, content := range templateViewsMap {
-		log.Println("Parsing template:", name)
+		logger.Debug("[Template] Parsing: %s", name)
 		e.templates[name] = template.Must(template.New("main").Funcs(funcMap).Parse(commonTemplates + content))
 	}
 }
@@ -124,13 +123,13 @@ func (e *Engine) SetLanguage(language string) {
 func (e *Engine) Execute(w io.Writer, name string, data interface{}) {
 	tpl, ok := e.templates[name]
 	if !ok {
-		log.Fatalf("The template %s does not exists.\n", name)
+		logger.Fatal("[Template] The template %s does not exists", name)
 	}
 
 	var b bytes.Buffer
 	err := tpl.ExecuteTemplate(&b, "base", data)
 	if err != nil {
-		log.Fatalf("Unable to render template: %v\n", err)
+		logger.Fatal("[Template] Unable to render template: %v", err)
 	}
 
 	b.WriteTo(w)
