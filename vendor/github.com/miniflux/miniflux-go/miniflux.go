@@ -79,6 +79,13 @@ type Feed struct {
 	Entries            Entries   `json:"entries,omitempty"`
 }
 
+// FeedIcon represents the feed icon.
+type FeedIcon struct {
+	ID       int64  `json:"id"`
+	MimeType string `json:"mime_type"`
+	Data     string `json:"data"`
+}
+
 // Feeds represents a list of feeds.
 type Feeds []*Feed
 

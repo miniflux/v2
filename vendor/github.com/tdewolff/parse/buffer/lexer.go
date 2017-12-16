@@ -81,9 +81,14 @@ func (z *Lexer) Restore() {
 
 // Err returns the error returned from io.Reader or io.EOF when the end has been reached.
 func (z *Lexer) Err() error {
+	return z.PeekErr(0)
+}
+
+// PeekErr returns the error at position pos. When pos is zero, this is the same as calling Err().
+func (z *Lexer) PeekErr(pos int) error {
 	if z.err != nil {
 		return z.err
-	} else if z.pos >= len(z.buf)-1 {
+	} else if z.pos+pos >= len(z.buf)-1 {
 		return io.EOF
 	}
 	return nil

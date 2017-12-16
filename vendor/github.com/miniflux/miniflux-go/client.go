@@ -274,6 +274,23 @@ func (c *Client) DeleteFeed(feedID int64) error {
 	return nil
 }
 
+// FeedIcon gets a feed icon.
+func (c *Client) FeedIcon(feedID int64) (*FeedIcon, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/feeds/%d/icon", feedID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var feedIcon *FeedIcon
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&feedIcon); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return feedIcon, nil
+}
+
 // Entry gets a single feed entry.
 func (c *Client) Entry(feedID, entryID int64) (*Entry, error) {
 	body, err := c.request.Get(fmt.Sprintf("/v1/feeds/%d/entries/%d", feedID, entryID))

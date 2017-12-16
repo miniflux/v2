@@ -99,10 +99,10 @@ func NewParser(r io.Reader) *Parser {
 
 // Err returns the error encountered during tokenization, this is often io.EOF but also other errors can be returned.
 func (p *Parser) Err() error {
-	if err := p.r.Err(); err != nil {
-		return err
+	if p.err != nil {
+		return p.err
 	}
-	return p.err
+	return p.r.Err()
 }
 
 // Restore restores the NULL byte at the end of the buffer.

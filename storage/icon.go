@@ -38,6 +38,28 @@ func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 	return &icon, nil
 }
 
+// IconByFeedID returns a feed icon.
+func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:IconByFeedID] userID=%d, feedID=%d", userID, feedID))
+	query := `
+		SELECT
+		icons.id, icons.hash, icons.mime_type, icons.content
+		FROM icons
+		LEFT JOIN feed_icons ON feed_icons.icon_id=icons.id
+		LEFT JOIN feeds ON feeds.id=feed_icons.feed_id
+		WHERE feeds.user_id=$1 AND feeds.id=$2
+		LIMIT 1
+	`
+
+	var icon model.Icon
+	err := s.db.QueryRow(query, userID, feedID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content)
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch icon: %v", err)
+	}
+
+	return &icon, nil
+}
+
 // IconByHash returns an icon by the hash (checksum).
 func (s *Storage) IconByHash(icon *model.Icon) error {
 	defer helper.ExecutionTime(time.Now(), "[Storage:IconByHash]")

@@ -81,11 +81,10 @@ func NewLexer(r io.Reader) *Lexer {
 
 // Err returns the error encountered during lexing, this is often io.EOF but also other errors can be returned.
 func (l *Lexer) Err() error {
-	err := l.r.Err()
-	if err != nil {
-		return err
+	if l.err != nil {
+		return l.err
 	}
-	return l.err
+	return l.r.Err()
 }
 
 // Restore restores the NULL byte at the end of the buffer.
@@ -107,7 +106,9 @@ func (l *Lexer) Next() (TokenType, []byte) {
 			break
 		}
 		if c == 0 {
-			l.err = parse.NewErrorLexer("unexpected null character", l.r)
+			if l.r.Err() == nil {
+				l.err = parse.NewErrorLexer("unexpected null character", l.r)
+			}
 			return ErrorToken, nil
 		} else if c != '>' && (c != '/' && c != '?' || l.r.Peek(1) != '>') {
 			return AttributeToken, l.shiftAttribute()
@@ -148,7 +149,7 @@ func (l *Lexer) Next() (TokenType, []byte) {
 					l.r.Move(7)
 					return CDATAToken, l.shiftCDATAText()
 				} else if l.at('D', 'O', 'C', 'T', 'Y', 'P', 'E') {
-					l.r.Move(8)
+					l.r.Move(7)
 					return DOCTYPEToken, l.shiftDOCTYPEText()
 				}
 				l.r.Move(-2)
@@ -164,7 +165,9 @@ func (l *Lexer) Next() (TokenType, []byte) {
 			if l.r.Pos() > 0 {
 				return TextToken, l.r.Shift()
 			}
-			l.err = parse.NewErrorLexer("unexpected null character", l.r)
+			if l.r.Err() == nil {
+				l.err = parse.NewErrorLexer("unexpected null character", l.r)
+			}
 			return ErrorToken, nil
 		}
 		l.r.Move(1)

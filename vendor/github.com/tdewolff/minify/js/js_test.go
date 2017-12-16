@@ -40,6 +40,9 @@ func TestJS(t *testing.T) {
 		{"false\n\"string\"", "false\n\"string\""},                     // #109
 		{"`\n", "`"},                                                   // go fuzz
 		{"a\n~b", "a\n~b"},                                             // #132
+
+		// go-fuzz
+		{`/\`, `/\`},
 	}
 
 	m := minify.New()

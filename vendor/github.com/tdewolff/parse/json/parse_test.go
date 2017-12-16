@@ -93,7 +93,8 @@ func TestGrammarsError(t *testing.T) {
 					if tt.col == 0 {
 						test.T(t, p.Err(), io.EOF)
 					} else if perr, ok := p.Err().(*parse.Error); ok {
-						test.T(t, perr.Col, tt.col)
+						_, col, _ := perr.Position()
+						test.T(t, col, tt.col)
 					} else {
 						test.Fail(t, "bad error:", p.Err())
 					}

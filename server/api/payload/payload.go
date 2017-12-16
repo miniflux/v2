@@ -12,6 +12,13 @@ import (
 	"github.com/miniflux/miniflux/model"
 )
 
+// FeedIcon represents the feed icon response.
+type FeedIcon struct {
+	ID       int64  `json:"id"`
+	MimeType string `json:"mime_type"`
+	Data     string `json:"data"`
+}
+
 // EntriesResponse represents the response sent when fetching entries.
 type EntriesResponse struct {
 	Total   int           `json:"total"`

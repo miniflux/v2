@@ -21,6 +21,7 @@ const (
 	testAdminUsername    = "admin"
 	testAdminPassword    = "test123"
 	testStandardPassword = "secret"
+	testFeedURL          = "https://github.com/miniflux/miniflux/commits/master.atom"
 )
 
 func TestWithBadEndpoint(t *testing.T) {
@@ -711,6 +712,57 @@ func TestGetFeed(t *testing.T) {
 
 	if feed.Category.Title != categories[0].Title {
 		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feed.Category.Title, categories[0].Title)
+	}
+}
+
+func TestGetFeedIcon(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedIcon, err := client.FeedIcon(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedIcon.ID == 0 {
+		t.Fatalf(`Invalid feed icon ID, got "%v"`, feedIcon.ID)
+	}
+
+	if feedIcon.MimeType != "image/x-icon" {
+		t.Fatalf(`Invalid feed icon mime type, got "%v" instead of "%v"`, feedIcon.MimeType, "image/x-icon")
+	}
+
+	if !strings.Contains(feedIcon.Data, "image/x-icon") {
+		t.Fatalf(`Invalid feed icon data, got "%v"`, feedIcon.Data)
+	}
+}
+
+func TestGetFeedIconNotFound(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	if _, err := client.FeedIcon(42); err == nil {
+		t.Fatalf(`The feed icon should be null`)
 	}
 }
 

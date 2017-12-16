@@ -41,55 +41,55 @@
   branch = "master"
   name = "github.com/miniflux/miniflux-go"
   packages = ["."]
-  revision = "c5788cd2d2248ee9fc148f3852dda7e24fe54cfa"
+  revision = "ecd111d16e0ce1468cb3b786135c18b3fdc96213"
 
 [[projects]]
   name = "github.com/tdewolff/minify"
   packages = [".","css","js"]
-  revision = "90df1aae5028a7cbb441bde86e86a55df6b5aa34"
-  version = "v2.3.3"
+  revision = "222672169d634c440a73abc47685074e1a9daa60"
+  version = "v2.3.4"
 
 [[projects]]
   name = "github.com/tdewolff/parse"
   packages = [".","buffer","css","js","strconv"]
-  revision = "bace4cf682c41e03b154044b561575ff541b83e8"
-  version = "v2.3.1"
+  revision = "639f6272aec6b52094db77b9ec488214b0b4b1a1"
+  version = "v2.3.2"
 
 [[projects]]
   branch = "master"
   name = "github.com/tomasen/realip"
   packages = ["."]
-  revision = "15489afd3be348430f5f67467d2bb6b2f9b757ed"
+  revision = "b5850897b7b539a1c9f22cdaa3b547d1bd453db8"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["acme","acme/autocert","bcrypt","blowfish","ssh/terminal"]
-  revision = "b080dc9a8c480b08e698fb1219160d598526310f"
+  revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","context/ctxhttp","html","html/atom","html/charset"]
-  revision = "c7086645de248775cbf2373cf5ca4d2fa664b8c1"
+  revision = "d866cfc389cec985d6fda2859936a575a55a3ab6"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/oauth2"
   packages = [".","internal"]
-  revision = "f95fa95eaa936d9d87489b15d1d18b97c1ba9c28"
+  revision = "462316686f20eb6df426961c1c131bdaa5dfa68e"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "4ff8c001ce4cc464e644b922325097228fce14d8"
+  revision = "571f7bbbe08da2a8955aed9d4db316e78630e9a3"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["encoding","encoding/charmap","encoding/htmlindex","encoding/internal","encoding/internal/identifier","encoding/japanese","encoding/korean","encoding/simplifiedchinese","encoding/traditionalchinese","encoding/unicode","internal/gen","internal/tag","internal/utf8internal","language","runes","transform","unicode/cldr"]
-  revision = "88f656faf3f37f690df1a32515b479415e1a6769"
+  revision = "d5a9226ed7dd70cade6ccae9d37517fe14dd9fee"
 
 [[projects]]
   name = "google.golang.org/appengine"

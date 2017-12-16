@@ -8,7 +8,7 @@
 
 ---
 
-Minify is a minifier package written in [Go][1]. It provides HTML5, CSS3, JS, JSON, SVG and XML minifiers and an interface to implement any other minifier. Minification is the process of removing bytes from a file (such as whitespace) without changing its output and therefore shrinking its size and speeding up transmission over the internet and possibly parsing. The implemented minifiers are high performance and streaming, which implies O(n).
+Minify is a minifier package written in [Go][1]. It provides HTML5, CSS3, JS, JSON, SVG and XML minifiers and an interface to implement any other minifier. Minification is the process of removing bytes from a file (such as whitespace) without changing its output and therefore shrinking its size and speeding up transmission over the internet and possibly parsing. The implemented minifiers are designed for high performance.
 
 The core functionality associates mimetypes with minification functions, allowing embedded resources (like CSS or JS within HTML files) to be minified as well. Users can add new implementations that are triggered based on a mimetype (or pattern), or redirect to an external command (like ClosureCompiler, UglifyCSS, ...).
 
@@ -100,51 +100,52 @@ The benchmarks directory contains a number of standardized samples used to compa
 
 ```
 name                              time/op
-CSS/sample_bootstrap.css-4          3.05ms ± 1%
-CSS/sample_gumby.css-4              4.25ms ± 1%
-HTML/sample_amazon.html-4           3.33ms ± 0%
-HTML/sample_bbc.html-4              1.39ms ± 7%
-HTML/sample_blogpost.html-4          222µs ± 1%
-HTML/sample_es6.html-4              18.0ms ± 1%
-HTML/sample_stackoverflow.html-4    3.08ms ± 1%
-HTML/sample_wikipedia.html-4        6.06ms ± 1%
-JS/sample_ace.js-4                  9.92ms ± 1%
-JS/sample_dot.js-4                  91.4µs ± 4%
-JS/sample_jquery.js-4               4.00ms ± 1%
-JS/sample_jqueryui.js-4             7.93ms ± 0%
-JS/sample_moment.js-4               1.46ms ± 1%
-JSON/sample_large.json-4            5.07ms ± 4%
-JSON/sample_testsuite.json-4        2.96ms ± 0%
-JSON/sample_twitter.json-4          11.3µs ± 0%
-SVG/sample_arctic.svg-4             64.7ms ± 0%
-SVG/sample_gopher.svg-4              227µs ± 0%
-SVG/sample_usa.svg-4                35.9ms ± 6%
-XML/sample_books.xml-4              48.1µs ± 4%
-XML/sample_catalog.xml-4            20.2µs ± 0%
-XML/sample_omg.xml-4                9.02ms ± 0%
+CSS/sample_bootstrap.css-4          2.26ms ± 0%
+CSS/sample_gumby.css-4              2.92ms ± 1%
+HTML/sample_amazon.html-4           2.33ms ± 2%
+HTML/sample_bbc.html-4              1.02ms ± 1%
+HTML/sample_blogpost.html-4          171µs ± 2%
+HTML/sample_es6.html-4              14.5ms ± 0%
+HTML/sample_stackoverflow.html-4    2.41ms ± 1%
+HTML/sample_wikipedia.html-4        4.76ms ± 0%
+JS/sample_ace.js-4                  7.41ms ± 0%
+JS/sample_dot.js-4                  63.7µs ± 0%
+JS/sample_jquery.js-4               2.99ms ± 0%
+JS/sample_jqueryui.js-4             5.92ms ± 2%
+JS/sample_moment.js-4               1.09ms ± 1%
+JSON/sample_large.json-4            2.95ms ± 0%
+JSON/sample_testsuite.json-4        1.51ms ± 1%
+JSON/sample_twitter.json-4          6.75µs ± 1%
+SVG/sample_arctic.svg-4             62.3ms ± 1%
+SVG/sample_gopher.svg-4              218µs ± 0%
+SVG/sample_usa.svg-4                33.1ms ± 3%
+XML/sample_books.xml-4              36.2µs ± 0%
+XML/sample_catalog.xml-4            14.9µs ± 0%
+XML/sample_omg.xml-4                6.31ms ± 1%
 
 name                              speed
-CSS/sample_bootstrap.css-4        45.0MB/s ± 1%
-CSS/sample_gumby.css-4            43.8MB/s ± 1%
-HTML/sample_amazon.html-4          142MB/s ± 0%
-HTML/sample_bbc.html-4            83.0MB/s ± 7%
-HTML/sample_blogpost.html-4       94.5MB/s ± 1%
-HTML/sample_es6.html-4            56.8MB/s ± 1%
-HTML/sample_stackoverflow.html-4  66.7MB/s ± 1%
-HTML/sample_wikipedia.html-4      73.5MB/s ± 1%
-JS/sample_ace.js-4                64.9MB/s ± 1%
-JS/sample_dot.js-4                56.4MB/s ± 4%
-JS/sample_jquery.js-4             61.8MB/s ± 1%
-JS/sample_jqueryui.js-4           59.2MB/s ± 0%
-JS/sample_moment.js-4             67.8MB/s ± 1%
-JSON/sample_large.json-4           150MB/s ± 4%
-JSON/sample_testsuite.json-4       233MB/s ± 0%
-JSON/sample_twitter.json-4         134MB/s ± 0%
-SVG/sample_arctic.svg-4           22.7MB/s ± 0%
-SVG/sample_gopher.svg-4           25.6MB/s ± 0%
-SVG/sample_usa.svg-4              28.6MB/s ± 6%
-XML/sample_books.xml-4            92.1MB/s ± 4%
-XML/sample_catalog.xml-4          95.6MB/s ± 0%
+CSS/sample_bootstrap.css-4        60.8MB/s ± 0%
+CSS/sample_gumby.css-4            63.9MB/s ± 1%
+HTML/sample_amazon.html-4          203MB/s ± 2%
+HTML/sample_bbc.html-4             113MB/s ± 1%
+HTML/sample_blogpost.html-4        123MB/s ± 2%
+HTML/sample_es6.html-4            70.7MB/s ± 0%
+HTML/sample_stackoverflow.html-4  85.2MB/s ± 1%
+HTML/sample_wikipedia.html-4      93.6MB/s ± 0%
+JS/sample_ace.js-4                86.9MB/s ± 0%
+JS/sample_dot.js-4                81.0MB/s ± 0%
+JS/sample_jquery.js-4             82.8MB/s ± 0%
+JS/sample_jqueryui.js-4           79.3MB/s ± 2%
+JS/sample_moment.js-4             91.2MB/s ± 1%
+JSON/sample_large.json-4           258MB/s ± 0%
+JSON/sample_testsuite.json-4       457MB/s ± 1%
+JSON/sample_twitter.json-4         226MB/s ± 1%
+SVG/sample_arctic.svg-4           23.6MB/s ± 1%
+SVG/sample_gopher.svg-4           26.7MB/s ± 0%
+SVG/sample_usa.svg-4              30.9MB/s ± 3%
+XML/sample_books.xml-4             122MB/s ± 0%
+XML/sample_catalog.xml-4           130MB/s ± 0%
+XML/sample_omg.xml-4               180MB/s ± 1%
 ```
 
 ## HTML

@@ -184,17 +184,6 @@ func TestSelect(t *testing.T) {
 	}
 }
 
-func TestUname(t *testing.T) {
-	var utsname unix.Utsname
-	err := unix.Uname(&utsname)
-	if err != nil {
-		t.Fatalf("Uname: %v", err)
-	}
-
-	// conversion from []byte to string, golang.org/issue/20753
-	t.Logf("OS: %s/%s %s", string(utsname.Sysname[:]), string(utsname.Machine[:]), string(utsname.Release[:]))
-}
-
 func TestFstatat(t *testing.T) {
 	defer chtmpdir(t)()
 

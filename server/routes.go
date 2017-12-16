@@ -67,6 +67,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/v1/feeds/{feedID}", apiHandler.Use(apiController.GetFeed)).Methods("GET")
 	router.Handle("/v1/feeds/{feedID}", apiHandler.Use(apiController.UpdateFeed)).Methods("PUT")
 	router.Handle("/v1/feeds/{feedID}", apiHandler.Use(apiController.RemoveFeed)).Methods("DELETE")
+	router.Handle("/v1/feeds/{feedID}/icon", apiHandler.Use(apiController.FeedIcon)).Methods("GET")
 
 	router.Handle("/v1/feeds/{feedID}/entries", apiHandler.Use(apiController.GetFeedEntries)).Methods("GET")
 	router.Handle("/v1/feeds/{feedID}/entries/{entryID}", apiHandler.Use(apiController.GetEntry)).Methods("GET")

@@ -155,6 +155,7 @@ func TestErrors(t *testing.T) {
 		col int
 	}{
 		{"a\x00b", 2},
+		{"<a\x00>", 3},
 	}
 	for _, tt := range errorTests {
 		t.Run(tt.xml, func(t *testing.T) {
@@ -165,7 +166,8 @@ func TestErrors(t *testing.T) {
 					if tt.col == 0 {
 						test.T(t, l.Err(), io.EOF)
 					} else if perr, ok := l.Err().(*parse.Error); ok {
-						test.T(t, perr.Col, tt.col)
+						_, col, _ := perr.Position()
+						test.T(t, col, tt.col)
 					} else {
 						test.Fail(t, "bad error:", l.Err())
 					}

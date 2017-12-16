@@ -39,7 +39,10 @@ func TestXML(t *testing.T) {
 		{"<style>lala{color:red}</style>", "<style>lala{color:red}</style>"},
 		{`cats  and 	dogs `, `cats and dogs`},
 
-		{`</0`, `</0`}, // go fuzz
+		// go fuzz
+		{`</0`, `</0`},
+		{`<!DOCTYPE`, `<!DOCTYPE`},
+		{`<![CDATA[`, ``},
 	}
 
 	m := minify.New()

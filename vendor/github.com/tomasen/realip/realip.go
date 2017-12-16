@@ -1,7 +1,7 @@
 package realip
 
 import (
-	"log"
+	"errors"
 	"net"
 	"net/http"
 	"strings"
@@ -10,62 +10,80 @@ import (
 var cidrs []*net.IPNet
 
 func init() {
-	lancidrs := []string{
-		"127.0.0.1/8", "10.0.0.0/8", "169.254.0.0/16", "172.16.0.0/12", "192.168.0.0/16", "::1/128", "fc00::/7",
+	maxCidrBlocks := []string{
+		"127.0.0.1/8",    // localhost
+		"10.0.0.0/8",     // 24-bit block
+		"172.16.0.0/12",  // 20-bit block
+		"192.168.0.0/16", // 16-bit block
+		"169.254.0.0/16", // link local address
+		"::1/128",        // localhost IPv6
+		"fc00::/7",       // unique local address IPv6
+		"fe80::/10",      // link local address IPv6
 	}
 
-	cidrs = make([]*net.IPNet, len(lancidrs))
-
-	for i, it := range lancidrs {
-		_, cidrnet, err := net.ParseCIDR(it)
-		if err != nil {
-			log.Fatalf("ParseCIDR error: %v", err) // assuming I did it right above
-		}
-
-		cidrs[i] = cidrnet
+	cidrs = make([]*net.IPNet, len(maxCidrBlocks))
+	for i, maxCidrBlock := range maxCidrBlocks {
+		_, cidr, _ := net.ParseCIDR(maxCidrBlock)
+		cidrs[i] = cidr
 	}
 }
 
-func isLocalAddress(addr string) bool {
+// isLocalAddress works by checking if the address is under private CIDR blocks.
+// List of private CIDR blocks can be seen on :
+//
+// https://en.wikipedia.org/wiki/Private_network
+//
+// https://en.wikipedia.org/wiki/Link-local_address
+func isPrivateAddress(address string) (bool, error) {
+	ipAddress := net.ParseIP(address)
+	if ipAddress == nil {
+		return false, errors.New("address is not valid")
+	}
+
 	for i := range cidrs {
-		myaddr := net.ParseIP(addr)
-		if cidrs[i].Contains(myaddr) {
-			return true
+		if cidrs[i].Contains(ipAddress) {
+			return true, nil
 		}
 	}
 
-	return false
+	return false, nil
 }
 
-// Request.RemoteAddress contains port, which we want to remove i.e.:
-// "[::1]:58292" => "[::1]"
-func ipAddrFromRemoteAddr(s string) string {
-	idx := strings.LastIndex(s, ":")
-	if idx == -1 {
-		return s
+// FromRequest return client's real public IP address from http request headers.
+func FromRequest(r *http.Request) string {
+	// Fetch header value
+	xRealIP := r.Header.Get("X-Real-Ip")
+	xForwardedFor := r.Header.Get("X-Forwarded-For")
+
+	// If both empty, return IP from remote address
+	if xRealIP == "" && xForwardedFor == "" {
+		var remoteIP string
+
+		// If there are colon in remote address, remove the port number
+		// otherwise, return remote address as is
+		if strings.ContainsRune(r.RemoteAddr, ':') {
+			remoteIP, _, _ = net.SplitHostPort(r.RemoteAddr)
+		} else {
+			remoteIP = r.RemoteAddr
+		}
+
+		return remoteIP
 	}
-	return s[:idx]
+
+	// Check list of IP in X-Forwarded-For and return the first global address
+	for _, address := range strings.Split(xForwardedFor, ",") {
+		address = strings.TrimSpace(address)
+		isPrivate, err := isPrivateAddress(address)
+		if !isPrivate && err == nil {
+			return address
+		}
+	}
+
+	// If nothing succeed, return X-Real-IP
+	return xRealIP
 }
 
-// RealIP return client's real public IP address
-// from http request headers.
+// RealIP is depreciated, use FromRequest instead
 func RealIP(r *http.Request) string {
-	hdr := r.Header
-	hdrRealIP := hdr.Get("X-Real-Ip")
-	hdrForwardedFor := hdr.Get("X-Forwarded-For")
-
-	if len(hdrForwardedFor) == 0 && len(hdrRealIP) == 0 {
-		return ipAddrFromRemoteAddr(r.RemoteAddr)
-	}
-
-	// X-Forwarded-For is potentially a list of addresses separated with ","
-	for _, addr := range strings.Split(hdrForwardedFor, ",") {
-		// return first non-local address
-		addr = strings.TrimSpace(addr)
-		if len(addr) > 0 && !isLocalAddress(addr) {
-			return addr
-		}
-	}
-
-	return hdrRealIP
+	return FromRequest(r)
 }

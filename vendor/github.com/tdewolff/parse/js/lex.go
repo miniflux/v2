@@ -599,6 +599,8 @@ func (l *Lexer) consumeRegexpToken() bool {
 			if l.consumeLineTerminator() {
 				l.r.Rewind(mark)
 				return false
+			} else if l.r.Peek(0) == 0 {
+				return true
 			}
 		} else if l.consumeLineTerminator() {
 			l.r.Rewind(mark)

@@ -2,11 +2,10 @@ package realip
 
 import (
 	"net/http"
-	"strings"
 	"testing"
 )
 
-func TestIsLocalAddr(t *testing.T) {
+func TestIsPrivateAddr(t *testing.T) {
 	testData := map[string]bool{
 		"127.0.0.0":   true,
 		"10.0.0.0":    true,
@@ -24,7 +23,12 @@ func TestIsLocalAddr(t *testing.T) {
 	}
 
 	for addr, isLocal := range testData {
-		if isLocalAddress(addr) != isLocal {
+		isPrivate, err := isPrivateAddress(addr)
+		if err != nil {
+			t.Errorf("fail processing %s: %v", addr, err)
+		}
+
+		if isPrivate != isLocal {
 			format := "%s should "
 			if !isLocal {
 				format += "not "
@@ -36,51 +40,56 @@ func TestIsLocalAddr(t *testing.T) {
 	}
 }
 
-func TestIpAddrFromRemoteAddr(t *testing.T) {
-	testData := map[string]string{
-		"127.0.0.1:8888": "127.0.0.1",
-		"ip:port":        "ip",
-		"ip":             "ip",
-		"12:34::0":       "12:34:",
-	}
-
-	for remoteAddr, expectedAddr := range testData {
-		if actualAddr := ipAddrFromRemoteAddr(remoteAddr); actualAddr != expectedAddr {
-			t.Errorf("ipAddrFromRemoteAddr of %s should be %s but get %s", remoteAddr, expectedAddr, actualAddr)
-		}
-	}
-}
-
 func TestRealIP(t *testing.T) {
-	newRequest := func(remoteAddr, hdrRealIP, hdrForwardedFor string) *http.Request {
+	// Create type and function for testing
+	type testIP struct {
+		name     string
+		request  *http.Request
+		expected string
+	}
+
+	newRequest := func(remoteAddr, xRealIP string, xForwardedFor ...string) *http.Request {
 		h := http.Header{}
-		h["X-Real-Ip"] = []string{hdrRealIP}
-		h["X-Forwarded-For"] = []string{hdrForwardedFor}
+		h.Set("X-Real-IP", xRealIP)
+		for _, address := range xForwardedFor {
+			h.Set("X-Forwarded-For", address)
+		}
+
 		return &http.Request{
 			RemoteAddr: remoteAddr,
 			Header:     h,
 		}
 	}
 
-	remoteAddr := "144.12.54.87"
-	anotherRemoteAddr := "119.14.55.11"
+	// Create test data
+	publicAddr1 := "144.12.54.87"
+	publicAddr2 := "119.14.55.11"
 	localAddr := "127.0.0.0"
 
-	testData := []struct {
-		expected string
-		request  *http.Request
-	}{
-		{remoteAddr, newRequest(remoteAddr, "", "")}, // no header
-		{remoteAddr, newRequest("", "", remoteAddr)}, // X-Forwarded-For: remoteAddr
-		{remoteAddr, newRequest("", remoteAddr, "")}, // X-RealIP: remoteAddr
-
-		// X-Forwarded-For: localAddr, remoteAddr, anotherRemoteAddr
-		{remoteAddr, newRequest("", "", strings.Join([]string{localAddr, remoteAddr, anotherRemoteAddr}, ", "))},
+	testData := []testIP{
+		{
+			name:     "No header",
+			request:  newRequest(publicAddr1, ""),
+			expected: publicAddr1,
+		}, {
+			name:     "Has X-Forwarded-For",
+			request:  newRequest("", "", publicAddr1),
+			expected: publicAddr1,
+		}, {
+			name:     "Has multiple X-Forwarded-For",
+			request:  newRequest("", "", localAddr, publicAddr1, publicAddr2),
+			expected: publicAddr2,
+		}, {
+			name:     "Has X-Real-IP",
+			request:  newRequest("", publicAddr1),
+			expected: publicAddr1,
+		},
 	}
 
+	// Run test
 	for _, v := range testData {
-		if actual := RealIP(v.request); v.expected != actual {
-			t.Errorf("expected %s but get %s", v.expected, actual)
+		if actual := FromRequest(v.request); v.expected != actual {
+			t.Errorf("%s: expected %s but get %s", v.name, v.expected, actual)
 		}
 	}
 }

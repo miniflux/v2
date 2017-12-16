@@ -116,6 +116,11 @@ func TestHTML(t *testing.T) {
 		{`<meta e t n content=ful><a b`, `<meta e t n content=ful><a b>`},
 		{`<img alt=a'b="">`, `<img alt='a&#39;b=""'>`},
 		{`</b`, `</b`},
+		{`<title></`, `<title></`},
+		{`<svg <`, `<svg <`},
+		{`<svg "`, `<svg "`},
+		{`<svg></`, `<svg></`},
+		{`<script><!--<`, `<script><!--<`},
 
 		// bugs
 		{`<p>text</p><br>text`, `<p>text</p><br>text`},                         // #122

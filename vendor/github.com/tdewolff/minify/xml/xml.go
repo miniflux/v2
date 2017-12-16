@@ -43,6 +43,9 @@ func (o *Minifier) Minify(m *minify.M, w io.Writer, r io.Reader, _ map[string]st
 	for {
 		t := *tb.Shift()
 		if t.TokenType == xml.CDATAToken {
+			if len(t.Text) == 0 {
+				continue
+			}
 			if text, useText := xml.EscapeCDATAVal(&attrByteBuffer, t.Text); useText {
 				t.TokenType = xml.TextToken
 				t.Data = text
