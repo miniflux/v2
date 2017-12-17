@@ -47,12 +47,14 @@ func run(cfg *config.Config, store *storage.Storage) {
 	pool := scheduler.NewWorkerPool(feedHandler, cfg.GetInt("WORKER_POOL_SIZE", config.DefaultWorkerPoolSize))
 	server := server.NewServer(cfg, store, pool, feedHandler)
 
-	scheduler.NewScheduler(
+	scheduler.NewFeedScheduler(
 		store,
 		pool,
 		cfg.GetInt("POLLING_FREQUENCY", config.DefaultPollingFrequency),
 		cfg.GetInt("BATCH_SIZE", config.DefaultBatchSize),
 	)
+
+	scheduler.NewSessionScheduler(store, config.DefaultSessionCleanupFrequency)
 
 	<-stop
 	logger.Info("Shutting down the server...")

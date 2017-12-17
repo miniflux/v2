@@ -11,18 +11,30 @@ import (
 	"github.com/miniflux/miniflux/storage"
 )
 
-// NewScheduler starts a new scheduler that push jobs to a pool of workers.
-func NewScheduler(store *storage.Storage, workerPool *WorkerPool, frequency, batchSize int) {
+// NewFeedScheduler starts a new scheduler that push jobs to a pool of workers.
+func NewFeedScheduler(store *storage.Storage, workerPool *WorkerPool, frequency, batchSize int) {
 	go func() {
 		c := time.Tick(time.Duration(frequency) * time.Minute)
-		for now := range c {
+		for _ = range c {
 			jobs, err := store.NewBatch(batchSize)
 			if err != nil {
-				logger.Error("[Scheduler] %v", err)
+				logger.Error("[FeedScheduler] %v", err)
 			} else {
-				logger.Debug("[Scheduler:%v] => Pushing %d jobs", now, len(jobs))
+				logger.Debug("[FeedScheduler] Pushing %d jobs", len(jobs))
 				workerPool.Push(jobs)
 			}
+		}
+	}()
+}
+
+// NewSessionScheduler starts a new scheduler that clean old sessions.
+func NewSessionScheduler(store *storage.Storage, frequency int) {
+	go func() {
+		c := time.Tick(time.Duration(frequency) * time.Hour)
+		for _ = range c {
+			nbSessions := store.CleanOldSessions()
+			nbUserSessions := store.CleanOldUserSessions()
+			logger.Debug("[SessionScheduler] cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 		}
 	}()
 }

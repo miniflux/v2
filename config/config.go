@@ -11,17 +11,18 @@ import (
 
 // Default config parameters values
 const (
-	DefaultBaseURL          = "http://localhost"
-	DefaultDatabaseURL      = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
-	DefaultWorkerPoolSize   = 5
-	DefaultPollingFrequency = 60
-	DefaultBatchSize        = 10
-	DefaultDatabaseMaxConns = 20
-	DefaultListenAddr       = "127.0.0.1:8080"
-	DefaultCertFile         = ""
-	DefaultKeyFile          = ""
-	DefaultCertDomain       = ""
-	DefaultCertCache        = "/tmp/cert_cache"
+	DefaultBaseURL                 = "http://localhost"
+	DefaultDatabaseURL             = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
+	DefaultWorkerPoolSize          = 5
+	DefaultPollingFrequency        = 60
+	DefaultBatchSize               = 10
+	DefaultDatabaseMaxConns        = 20
+	DefaultListenAddr              = "127.0.0.1:8080"
+	DefaultCertFile                = ""
+	DefaultKeyFile                 = ""
+	DefaultCertDomain              = ""
+	DefaultCertCache               = "/tmp/cert_cache"
+	DefaultSessionCleanupFrequency = 24
 )
 
 // Config manages configuration parameters.

@@ -127,3 +127,17 @@ func (s *Storage) RemoveUserSessionByID(userID, sessionID int64) error {
 
 	return nil
 }
+
+// CleanOldUserSessions removes user sessions older than 30 days.
+func (s *Storage) CleanOldUserSessions() int64 {
+	query := `DELETE FROM user_sessions
+		WHERE id IN (SELECT id FROM user_sessions WHERE created_at < now() - interval '30 days')`
+
+	result, err := s.db.Exec(query)
+	if err != nil {
+		return 0
+	}
+
+	n, _ := result.RowsAffected()
+	return n
+}

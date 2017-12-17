@@ -75,3 +75,17 @@ func (s *Storage) FlushAllSessions() (err error) {
 
 	return nil
 }
+
+// CleanOldSessions removes sessions older than 30 days.
+func (s *Storage) CleanOldSessions() int64 {
+	query := `DELETE FROM sessions
+		WHERE id IN (SELECT id FROM sessions WHERE created_at < now() - interval '30 days')`
+
+	result, err := s.db.Exec(query)
+	if err != nil {
+		return 0
+	}
+
+	n, _ := result.RowsAffected()
+	return n
+}
