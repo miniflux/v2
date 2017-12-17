@@ -63,6 +63,12 @@
         </nav>
     </header>
     {{ end }}
+    {{ if .flashMessage }}
+        <div class="flash-message alert alert-success">{{ .flashMessage }}</div>
+    {{ end }}
+    {{ if .flashErrorMessage }}
+        <div class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
+    {{ end }}
     <main>
         {{template "content" .}}
     </main>

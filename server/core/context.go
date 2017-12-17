@@ -7,6 +7,8 @@ package core
 import (
 	"net/http"
 
+	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/middleware"
@@ -18,11 +20,12 @@ import (
 
 // Context contains helper functions related to the current request.
 type Context struct {
-	writer  http.ResponseWriter
-	request *http.Request
-	store   *storage.Storage
-	router  *mux.Router
-	user    *model.User
+	writer     http.ResponseWriter
+	request    *http.Request
+	store      *storage.Storage
+	router     *mux.Router
+	user       *model.User
+	translator *locale.Translator
 }
 
 // IsAdminUser checks if the logged user is administrator.
@@ -35,10 +38,11 @@ func (c *Context) IsAdminUser() bool {
 
 // UserTimezone returns the timezone used by the logged user.
 func (c *Context) UserTimezone() string {
-	if v := c.request.Context().Value(middleware.UserTimezoneContextKey); v != nil {
-		return v.(string)
+	value := c.getContextStringValue(middleware.UserTimezoneContextKey)
+	if value == "" {
+		value = "UTC"
 	}
-	return "UTC"
+	return value
 }
 
 // IsAuthenticated returns a boolean if the user is authenticated.
@@ -80,13 +84,68 @@ func (c *Context) UserLanguage() string {
 	return user.Language
 }
 
-// CsrfToken returns the current CSRF token.
-func (c *Context) CsrfToken() string {
-	if v := c.request.Context().Value(middleware.TokenContextKey); v != nil {
+// Translate translates a message in the current language.
+func (c *Context) Translate(message string, args ...interface{}) string {
+	return c.translator.GetLanguage(c.UserLanguage()).Get(message, args...)
+}
+
+// CSRF returns the current CSRF token.
+func (c *Context) CSRF() string {
+	return c.getContextStringValue(middleware.CSRFContextKey)
+}
+
+// SessionID returns the current session ID.
+func (c *Context) SessionID() string {
+	return c.getContextStringValue(middleware.SessionIDContextKey)
+}
+
+// UserSessionToken returns the current user session token.
+func (c *Context) UserSessionToken() string {
+	return c.getContextStringValue(middleware.UserSessionTokenContextKey)
+}
+
+// OAuth2State returns the current OAuth2 state.
+func (c *Context) OAuth2State() string {
+	return c.getContextStringValue(middleware.OAuth2StateContextKey)
+}
+
+// GenerateOAuth2State generate a new OAuth2 state.
+func (c *Context) GenerateOAuth2State() string {
+	state := helper.GenerateRandomString(32)
+	c.store.UpdateSessionField(c.SessionID(), "oauth2_state", state)
+	return state
+}
+
+// SetFlashMessage defines a new flash message.
+func (c *Context) SetFlashMessage(message string) {
+	c.store.UpdateSessionField(c.SessionID(), "flash_message", message)
+}
+
+// FlashMessage returns the flash message and remove it.
+func (c *Context) FlashMessage() string {
+	message := c.getContextStringValue(middleware.FlashMessageContextKey)
+	c.store.UpdateSessionField(c.SessionID(), "flash_message", "")
+	return message
+}
+
+// SetFlashErrorMessage defines a new flash error message.
+func (c *Context) SetFlashErrorMessage(message string) {
+	c.store.UpdateSessionField(c.SessionID(), "flash_error_message", message)
+}
+
+// FlashErrorMessage returns the error flash message and remove it.
+func (c *Context) FlashErrorMessage() string {
+	message := c.getContextStringValue(middleware.FlashMessageContextKey)
+	c.store.UpdateSessionField(c.SessionID(), "flash_error_message", "")
+	return message
+}
+
+func (c *Context) getContextStringValue(key *middleware.ContextKey) string {
+	if v := c.request.Context().Value(key); v != nil {
 		return v.(string)
 	}
 
-	logger.Error("No CSRF token in context!")
+	logger.Error("[Core:Context] Missing key: %s", key)
 	return ""
 }
 
@@ -96,6 +155,6 @@ func (c *Context) Route(name string, args ...interface{}) string {
 }
 
 // NewContext creates a new Context.
-func NewContext(w http.ResponseWriter, r *http.Request, store *storage.Storage, router *mux.Router) *Context {
-	return &Context{writer: w, request: r, store: store, router: router}
+func NewContext(w http.ResponseWriter, r *http.Request, store *storage.Storage, router *mux.Router, translator *locale.Translator) *Context {
+	return &Context{writer: w, request: r, store: store, router: router, translator: translator}
 }

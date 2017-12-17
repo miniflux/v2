@@ -36,7 +36,7 @@ func (h *Handler) Use(f HandlerFunc) http.Handler {
 		defer helper.ExecutionTime(time.Now(), r.URL.Path)
 		logger.Debug("[HTTP] %s %s", r.Method, r.URL.Path)
 
-		ctx := NewContext(w, r, h.store, h.router)
+		ctx := NewContext(w, r, h.store, h.router, h.translator)
 		request := NewRequest(w, r)
 		response := NewResponse(w, r, h.template)
 

@@ -5,11 +5,10 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/server/cookie"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/oauth2"
 	"github.com/tomasen/realip"
@@ -19,7 +18,7 @@ import (
 func (c *Controller) OAuth2Redirect(ctx *core.Context, request *core.Request, response *core.Response) {
 	provider := request.StringParam("provider", "")
 	if provider == "" {
-		logger.Error("[OAuth2] Invalid or missing provider")
+		logger.Error("[OAuth2] Invalid or missing provider: %s", provider)
 		response.Redirect(ctx.Route("login"))
 		return
 	}
@@ -31,7 +30,7 @@ func (c *Controller) OAuth2Redirect(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	response.Redirect(authProvider.GetRedirectURL(ctx.CsrfToken()))
+	response.Redirect(authProvider.GetRedirectURL(ctx.GenerateOAuth2State()))
 }
 
 // OAuth2Callback receives the authorization code and create a new session.
@@ -51,8 +50,8 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 	}
 
 	state := request.QueryStringParam("state", "")
-	if state != ctx.CsrfToken() {
-		logger.Error("[OAuth2] Invalid state value")
+	if state == "" || state != ctx.OAuth2State() {
+		logger.Error(`[OAuth2] Invalid state value: got "%s" instead of "%s"`, state, ctx.OAuth2State())
 		response.Redirect(ctx.Route("login"))
 		return
 	}
@@ -78,6 +77,7 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 			return
 		}
 
+		ctx.SetFlashMessage(ctx.Translate("Your external account is now linked !"))
 		response.Redirect(ctx.Route("settings"))
 		return
 	}
@@ -118,15 +118,7 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 
 	logger.Info("[Controller:OAuth2Callback] username=%s just logged in", user.Username)
 
-	cookie := &http.Cookie{
-		Name:     "sessionID",
-		Value:    sessionToken,
-		Path:     "/",
-		Secure:   request.IsHTTPS(),
-		HttpOnly: true,
-	}
-
-	response.SetCookie(cookie)
+	response.SetCookie(cookie.New(cookie.CookieUserSessionID, sessionToken, request.IsHTTPS()))
 	response.Redirect(ctx.Route("unread"))
 }
 

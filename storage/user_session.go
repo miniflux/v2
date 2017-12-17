@@ -127,9 +127,3 @@ func (s *Storage) RemoveUserSessionByID(userID, sessionID int64) error {
 
 	return nil
 }
-
-// FlushAllSessions removes all user sessions from the database.
-func (s *Storage) FlushAllSessions() (err error) {
-	_, err = s.db.Exec(`DELETE FROM user_sessions`)
-	return
-}

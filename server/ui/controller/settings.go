@@ -62,6 +62,7 @@ func (c *Controller) UpdateSettings(ctx *core.Context, request *core.Request, re
 		return
 	}
 
+	ctx.SetFlashMessage(ctx.Translate("Preferences saved!"))
 	response.Redirect(ctx.Route("settings"))
 }
 

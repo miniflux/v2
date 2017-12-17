@@ -44,10 +44,11 @@ func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error)
 	}
 
 	params := tplParams{
-		"menu":        "",
-		"user":        user,
-		"countUnread": countUnread,
-		"csrf":        ctx.CsrfToken(),
+		"menu":         "",
+		"user":         user,
+		"countUnread":  countUnread,
+		"csrf":         ctx.CSRF(),
+		"flashMessage": ctx.FlashMessage(),
 	}
 	return params, nil
 }

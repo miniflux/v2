@@ -4,23 +4,43 @@
 
 package middleware
 
-type contextKey struct {
+// ContextKey represents a context key.
+type ContextKey struct {
 	name string
+}
+
+func (c ContextKey) String() string {
+	return c.name
 }
 
 var (
 	// UserIDContextKey is the context key used to store the user ID.
-	UserIDContextKey = &contextKey{"UserID"}
+	UserIDContextKey = &ContextKey{"UserID"}
 
 	// UserTimezoneContextKey is the context key used to store the user timezone.
-	UserTimezoneContextKey = &contextKey{"UserTimezone"}
+	UserTimezoneContextKey = &ContextKey{"UserTimezone"}
 
 	// IsAdminUserContextKey is the context key used to store the user role.
-	IsAdminUserContextKey = &contextKey{"IsAdminUser"}
+	IsAdminUserContextKey = &ContextKey{"IsAdminUser"}
 
 	// IsAuthenticatedContextKey is the context key used to store the authentication flag.
-	IsAuthenticatedContextKey = &contextKey{"IsAuthenticated"}
+	IsAuthenticatedContextKey = &ContextKey{"IsAuthenticated"}
 
-	// TokenContextKey is the context key used to store CSRF token.
-	TokenContextKey = &contextKey{"CSRF"}
+	// UserSessionTokenContextKey is the context key used to store the user session ID.
+	UserSessionTokenContextKey = &ContextKey{"UserSessionToken"}
+
+	// SessionIDContextKey is the context key used to store the session ID.
+	SessionIDContextKey = &ContextKey{"SessionID"}
+
+	// CSRFContextKey is the context key used to store CSRF token.
+	CSRFContextKey = &ContextKey{"CSRF"}
+
+	// OAuth2StateContextKey is the context key used to store OAuth2 state.
+	OAuth2StateContextKey = &ContextKey{"OAuth2State"}
+
+	// FlashMessageContextKey is the context key used to store a flash message.
+	FlashMessageContextKey = &ContextKey{"FlashMessage"}
+
+	// FlashErrorMessageContextKey is the context key used to store a flash error message.
+	FlashErrorMessageContextKey = &ContextKey{"FlashErrorMessage"}
 )

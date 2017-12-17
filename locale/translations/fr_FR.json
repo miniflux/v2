@@ -153,5 +153,7 @@
     "Fever Password": "Mot de passe pour l'API de Fever",
     "Fetch original content": "Récupérer le contenu original",
     "Scraper Rules": "Règles pour récupérer le contenu original",
-    "Rewrite Rules": "Règles de réécriture"
+    "Rewrite Rules": "Règles de réécriture",
+    "Preferences saved!": "Préférences sauvegardées !",
+    "Your external account is now linked !": "Votre compte externe est maintenant associé !"
 }

@@ -44,6 +44,6 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 		"entries":     entries,
 		"pagination":  c.getPagination(ctx.Route("unread"), countUnread, offset),
 		"menu":        "unread",
-		"csrf":        ctx.CsrfToken(),
+		"csrf":        ctx.CSRF(),
 	})
 }

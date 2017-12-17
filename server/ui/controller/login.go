@@ -5,10 +5,8 @@
 package controller
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/miniflux/miniflux/logger"
+	"github.com/miniflux/miniflux/server/cookie"
 	"github.com/miniflux/miniflux/server/core"
 	"github.com/miniflux/miniflux/server/ui/form"
 
@@ -23,7 +21,7 @@ func (c *Controller) ShowLoginPage(ctx *core.Context, request *core.Request, res
 	}
 
 	response.HTML().Render("login", tplParams{
-		"csrf": ctx.CsrfToken(),
+		"csrf": ctx.CSRF(),
 	})
 }
 
@@ -32,7 +30,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 	authForm := form.NewAuthForm(request.Request())
 	tplParams := tplParams{
 		"errorMessage": "Invalid username or password.",
-		"csrf":         ctx.CsrfToken(),
+		"csrf":         ctx.CSRF(),
 	}
 
 	if err := authForm.Validate(); err != nil {
@@ -60,15 +58,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 
 	logger.Info("[Controller:CheckLogin] username=%s just logged in", authForm.Username)
 
-	cookie := &http.Cookie{
-		Name:     "sessionID",
-		Value:    sessionToken,
-		Path:     "/",
-		Secure:   request.IsHTTPS(),
-		HttpOnly: true,
-	}
-
-	response.SetCookie(cookie)
+	response.SetCookie(cookie.New(cookie.CookieUserSessionID, sessionToken, request.IsHTTPS()))
 	response.Redirect(ctx.Route("unread"))
 }
 
@@ -76,21 +66,10 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 
-	sessionCookie := request.Cookie("sessionID")
-	if err := c.store.RemoveUserSessionByToken(user.ID, sessionCookie); err != nil {
+	if err := c.store.RemoveUserSessionByToken(user.ID, ctx.UserSessionToken()); err != nil {
 		logger.Error("[Controller:Logout] %v", err)
 	}
 
-	cookie := &http.Cookie{
-		Name:     "sessionID",
-		Value:    "",
-		Path:     "/",
-		Secure:   request.IsHTTPS(),
-		HttpOnly: true,
-		MaxAge:   -1,
-		Expires:  time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-	}
-
-	response.SetCookie(cookie)
+	response.SetCookie(cookie.Expired(cookie.CookieUserSessionID, request.IsHTTPS()))
 	response.Redirect(ctx.Route("login"))
 }

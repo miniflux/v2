@@ -9,7 +9,7 @@ import (
 	"github.com/miniflux/miniflux/server/core"
 )
 
-// ShowSessions shows the list of active sessions.
+// ShowSessions shows the list of active user sessions.
 func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 	args, err := c.getCommonTemplateArgs(ctx)
@@ -24,15 +24,14 @@ func (c *Controller) ShowSessions(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	sessionCookie := request.Cookie("sessionID")
 	response.HTML().Render("sessions", args.Merge(tplParams{
 		"sessions":            sessions,
-		"currentSessionToken": sessionCookie,
+		"currentSessionToken": ctx.UserSessionToken(),
 		"menu":                "settings",
 	}))
 }
 
-// RemoveSession remove a session.
+// RemoveSession remove a user session.
 func (c *Controller) RemoveSession(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
 

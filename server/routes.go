@@ -42,8 +42,8 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	))
 
 	uiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
-		middleware.NewSessionMiddleware(store, router).Handler,
-		middleware.NewTokenMiddleware(store).Handler,
+		middleware.NewUserSessionMiddleware(store, router).Handler,
+		middleware.NewSessionMiddleware(store).Handler,
 	))
 
 	router.Handle("/fever/", feverHandler.Use(feverController.Handler))
