@@ -30,7 +30,7 @@ func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	decodedURL, err := base64.StdEncoding.DecodeString(encodedURL)
+	decodedURL, err := base64.URLEncoding.DecodeString(encodedURL)
 	if err != nil {
 		response.HTML().BadRequest(errors.New("Unable to decode this URL"))
 		return

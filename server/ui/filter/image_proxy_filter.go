@@ -36,5 +36,6 @@ func ImageProxyFilter(router *mux.Router, data string) string {
 
 // Proxify returns a proxified link.
 func Proxify(router *mux.Router, link string) string {
-	return route.Path(router, "proxy", "encodedURL", base64.StdEncoding.EncodeToString([]byte(link)))
+	// We use base64 url encoding to avoid slash in the URL.
+	return route.Path(router, "proxy", "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
 }
