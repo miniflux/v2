@@ -15,7 +15,8 @@ import (
 	"github.com/miniflux/miniflux/logger"
 )
 
-const userAgent = "Miniflux <https://miniflux.net/>"
+// Note: Some websites have a user agent filter.
+const userAgent = "Mozilla/5.0 (like Gecko, like Safari, like Chrome) - Miniflux <https://miniflux.net/>"
 const requestTimeout = 300
 
 // Client is a HTTP Client :)
@@ -47,12 +48,12 @@ func (c *Client) Get() (*Response, error) {
 		ContentType:  resp.Header.Get("Content-Type"),
 	}
 
-	logger.Debug("[HttpClient:Get]",
-		"OriginalURL:", c.url,
-		"StatusCode:", response.StatusCode,
-		"ETag:", response.ETag,
-		"LastModified:", response.LastModified,
-		"EffectiveURL:", response.EffectiveURL,
+	logger.Debug("[HttpClient:Get] OriginalURL=%s, StatusCode=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
+		c.url,
+		response.StatusCode,
+		response.ETag,
+		response.LastModified,
+		response.EffectiveURL,
 	)
 
 	return response, err
@@ -87,6 +88,7 @@ func (c *Client) buildClient() http.Client {
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
 	headers.Add("User-Agent", userAgent)
+	headers.Add("Accept", "text/html,application/xhtml+xml,application/xml,application/json")
 
 	if c.etagHeader != "" {
 		headers.Add("If-None-Match", c.etagHeader)
