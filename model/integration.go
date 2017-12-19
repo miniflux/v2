@@ -18,4 +18,10 @@ type Integration struct {
 	FeverUsername        string
 	FeverPassword        string
 	FeverToken           string
+	WallabagEnabled      bool
+	WallabagURL          string
+	WallabagClientID     string
+	WallabagClientSecret string
+	WallabagUsername     string
+	WallabagPassword     string
 }

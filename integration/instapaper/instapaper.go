@@ -27,7 +27,7 @@ func (c *Client) AddURL(link, title string) error {
 	client := http.NewClientWithCredentials(apiURL, c.username, c.password)
 	response, err := client.Get()
 	if response.HasServerFailure() {
-		return fmt.Errorf("unable to send bookmark to instapaper, status=%d", response.StatusCode)
+		return fmt.Errorf("instapaper: unable to send url, status=%d", response.StatusCode)
 	}
 
 	return err

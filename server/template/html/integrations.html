@@ -71,6 +71,28 @@
         <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}">
     </div>
 
+    <h3>Wallabag</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "Save articles to Wallabag" }}
+        </label>
+
+        <label for="form-wallabag-url">{{ t "Wallabag API Endpoint" }}</label>
+        <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/">
+
+        <label for="form-wallabag-client-id">{{ t "Wallabag Client ID" }}</label>
+        <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}">
+
+        <label for="form-wallabag-client-secret">{{ t "Wallabag Client Secret" }}</label>
+        <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}">
+
+        <label for="form-wallabag-username">{{ t "Wallabag Username" }}</label>
+        <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}">
+
+        <label for="form-wallabag-password">{{ t "Wallabag Password" }}</label>
+        <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}">
+    </div>
+
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>
     </div>

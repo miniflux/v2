@@ -22,6 +22,12 @@ type IntegrationForm struct {
 	FeverEnabled         bool
 	FeverUsername        string
 	FeverPassword        string
+	WallabagEnabled      bool
+	WallabagURL          string
+	WallabagClientID     string
+	WallabagClientSecret string
+	WallabagUsername     string
+	WallabagPassword     string
 }
 
 // Merge copy form values to the model.
@@ -36,6 +42,12 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.FeverEnabled = i.FeverEnabled
 	integration.FeverUsername = i.FeverUsername
 	integration.FeverPassword = i.FeverPassword
+	integration.WallabagEnabled = i.WallabagEnabled
+	integration.WallabagURL = i.WallabagURL
+	integration.WallabagClientID = i.WallabagClientID
+	integration.WallabagClientSecret = i.WallabagClientSecret
+	integration.WallabagUsername = i.WallabagUsername
+	integration.WallabagPassword = i.WallabagPassword
 }
 
 // NewIntegrationForm returns a new AuthForm.
@@ -51,5 +63,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		FeverEnabled:         r.FormValue("fever_enabled") == "1",
 		FeverUsername:        r.FormValue("fever_username"),
 		FeverPassword:        r.FormValue("fever_password"),
+		WallabagEnabled:      r.FormValue("wallabag_enabled") == "1",
+		WallabagURL:          r.FormValue("wallabag_url"),
+		WallabagClientID:     r.FormValue("wallabag_client_id"),
+		WallabagClientSecret: r.FormValue("wallabag_client_secret"),
+		WallabagUsername:     r.FormValue("wallabag_username"),
+		WallabagPassword:     r.FormValue("wallabag_password"),
 	}
 }

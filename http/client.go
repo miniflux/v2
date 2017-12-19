@@ -5,10 +5,14 @@
 package http
 
 import (
+	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux/helper"
@@ -21,20 +25,59 @@ const requestTimeout = 300
 
 // Client is a HTTP Client :)
 type Client struct {
-	url                string
-	etagHeader         string
-	lastModifiedHeader string
-	username           string
-	password           string
-	Insecure           bool
+	url                 string
+	etagHeader          string
+	lastModifiedHeader  string
+	authorizationHeader string
+	username            string
+	password            string
+	Insecure            bool
 }
 
 // Get execute a GET HTTP request.
 func (c *Client) Get() (*Response, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient:Get] url=%s", c.url))
 
+	request, err := c.buildRequest(http.MethodGet, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.executeRequest(request)
+}
+
+// PostForm execute a POST HTTP request with form values.
+func (c *Client) PostForm(values url.Values) (*Response, error) {
+	request, err := c.buildRequest(http.MethodPost, strings.NewReader(values.Encode()))
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	return c.executeRequest(request)
+}
+
+// PostJSON execute a POST HTTP request with JSON payload.
+func (c *Client) PostJSON(data interface{}) (*Response, error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := c.buildRequest(http.MethodPost, bytes.NewReader(b))
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+	return c.executeRequest(request)
+}
+
+func (c *Client) executeRequest(request *http.Request) (*Response, error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] url=%s", c.url))
+
 	client := c.buildClient()
-	resp, err := client.Do(c.buildRequest())
+	resp, err := client.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +91,8 @@ func (c *Client) Get() (*Response, error) {
 		ContentType:  resp.Header.Get("Content-Type"),
 	}
 
-	logger.Debug("[HttpClient:Get] OriginalURL=%s, StatusCode=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
+	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
+		request.Method,
 		c.url,
 		response.StatusCode,
 		response.ETag,
@@ -59,19 +103,18 @@ func (c *Client) Get() (*Response, error) {
 	return response, err
 }
 
-func (c *Client) buildRequest() *http.Request {
-	link, _ := url.Parse(c.url)
-	request := &http.Request{
-		URL:    link,
-		Method: http.MethodGet,
-		Header: c.buildHeaders(),
+func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, error) {
+	request, err := http.NewRequest(method, c.url, body)
+	if err != nil {
+		return nil, err
 	}
 
 	if c.username != "" && c.password != "" {
 		request.SetBasicAuth(c.username, c.password)
 	}
 
-	return request
+	request.Header = c.buildHeaders()
+	return request, nil
 }
 
 func (c *Client) buildClient() http.Client {
@@ -88,7 +131,7 @@ func (c *Client) buildClient() http.Client {
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
 	headers.Add("User-Agent", userAgent)
-	headers.Add("Accept", "text/html,application/xhtml+xml,application/xml,application/json")
+	headers.Add("Accept", "text/html,application/xhtml+xml,application/xml,application/json,image/*")
 
 	if c.etagHeader != "" {
 		headers.Add("If-None-Match", c.etagHeader)
@@ -96,6 +139,10 @@ func (c *Client) buildHeaders() http.Header {
 
 	if c.lastModifiedHeader != "" {
 		headers.Add("If-Modified-Since", c.lastModifiedHeader)
+	}
+
+	if c.authorizationHeader != "" {
+		headers.Add("Authorization", c.authorizationHeader)
 	}
 
 	return headers
@@ -106,9 +153,14 @@ func NewClient(url string) *Client {
 	return &Client{url: url, Insecure: false}
 }
 
-// NewClientWithCredentials returns a new HTTP client that require authentication.
+// NewClientWithCredentials returns a new HTTP client that requires authentication.
 func NewClientWithCredentials(url, username, password string) *Client {
 	return &Client{url: url, Insecure: false, username: username, password: password}
+}
+
+// NewClientWithAuthorization returns a new client with a custom authorization header.
+func NewClientWithAuthorization(url, authorization string) *Client {
+	return &Client{url: url, Insecure: false, authorizationHeader: authorization}
 }
 
 // NewClientWithCacheHeaders returns a new HTTP client that send cache headers.

@@ -33,7 +33,7 @@ func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error 
 	client := http.NewClient("https://api.pinboard.in/v1/posts/add?" + values.Encode())
 	response, err := client.Get()
 	if response.HasServerFailure() {
-		return fmt.Errorf("unable to send bookmark to pinboard, status=%d", response.StatusCode)
+		return fmt.Errorf("pinboard: unable to send bookmark, status=%d", response.StatusCode)
 	}
 
 	return err

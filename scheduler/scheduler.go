@@ -34,7 +34,7 @@ func NewSessionScheduler(store *storage.Storage, frequency int) {
 		for _ = range c {
 			nbSessions := store.CleanOldSessions()
 			nbUserSessions := store.CleanOldUserSessions()
-			logger.Debug("[SessionScheduler] cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
+			logger.Info("[SessionScheduler] cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 		}
 	}()
 }

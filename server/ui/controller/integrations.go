@@ -40,6 +40,12 @@ func (c *Controller) ShowIntegrations(ctx *core.Context, request *core.Request, 
 			FeverEnabled:         integration.FeverEnabled,
 			FeverUsername:        integration.FeverUsername,
 			FeverPassword:        integration.FeverPassword,
+			WallabagEnabled:      integration.WallabagEnabled,
+			WallabagURL:          integration.WallabagURL,
+			WallabagClientID:     integration.WallabagClientID,
+			WallabagClientSecret: integration.WallabagClientSecret,
+			WallabagUsername:     integration.WallabagUsername,
+			WallabagPassword:     integration.WallabagPassword,
 		},
 	}))
 }

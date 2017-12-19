@@ -155,5 +155,11 @@
     "Scraper Rules": "Règles pour récupérer le contenu original",
     "Rewrite Rules": "Règles de réécriture",
     "Preferences saved!": "Préférences sauvegardées !",
-    "Your external account is now linked !": "Votre compte externe est maintenant associé !"
+    "Your external account is now linked !": "Votre compte externe est maintenant associé !",
+    "Save articles to Wallabag": "Sauvegarder les articles vers Wallabag",
+    "Wallabag API Endpoint": "URL de l'API de Wallabag",
+    "Wallabag Client ID": "Identifiant du client Wallabag",
+    "Wallabag Client Secret": "Clé secrète du client Wallabag",
+    "Wallabag Username": "Nom d'utilisateur de Wallabag",
+    "Wallabag Password": "Mot de passe de Wallabag"
 }

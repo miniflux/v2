@@ -7,6 +7,7 @@ package integration
 import (
 	"github.com/miniflux/miniflux/integration/instapaper"
 	"github.com/miniflux/miniflux/integration/pinboard"
+	"github.com/miniflux/miniflux/integration/wallabag"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 )
@@ -15,17 +16,36 @@ import (
 func SendEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.PinboardEnabled {
 		client := pinboard.NewClient(integration.PinboardToken)
-		err := client.AddBookmark(entry.URL, entry.Title, integration.PinboardTags, integration.PinboardMarkAsUnread)
+		err := client.AddBookmark(
+			entry.URL,
+			entry.Title,
+			integration.PinboardTags,
+			integration.PinboardMarkAsUnread,
+		)
+
 		if err != nil {
-			logger.Error("[Pinboard] %v", err)
+			logger.Error("[Integration] %v", err)
 		}
 	}
 
 	if integration.InstapaperEnabled {
 		client := instapaper.NewClient(integration.InstapaperUsername, integration.InstapaperPassword)
-		err := client.AddURL(entry.URL, entry.Title)
-		if err != nil {
-			logger.Error("[Instapaper] %v", err)
+		if err := client.AddURL(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] %v", err)
+		}
+	}
+
+	if integration.WallabagEnabled {
+		client := wallabag.NewClient(
+			integration.WallabagURL,
+			integration.WallabagClientID,
+			integration.WallabagClientSecret,
+			integration.WallabagUsername,
+			integration.WallabagPassword,
+		)
+
+		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] %v", err)
 		}
 	}
 }
