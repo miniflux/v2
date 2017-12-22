@@ -373,6 +373,75 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 	}))
 }
 
+// ShowStarredEntry shows a single feed entry in "starred" mode.
+func (c *Controller) ShowStarredEntry(ctx *core.Context, request *core.Request, response *core.Response) {
+	user := ctx.LoggedUser()
+
+	entryID, err := request.IntegerParam("entryID")
+	if err != nil {
+		response.HTML().BadRequest(err)
+		return
+	}
+
+	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := builder.GetEntry()
+	if err != nil {
+		response.HTML().ServerError(err)
+		return
+	}
+
+	if entry == nil {
+		response.HTML().NotFound()
+		return
+	}
+
+	if entry.Status == model.EntryStatusUnread {
+		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			logger.Error("[Controller:ShowReadEntry] %v", err)
+			response.HTML().ServerError(nil)
+			return
+		}
+	}
+
+	args, err := c.getCommonTemplateArgs(ctx)
+	if err != nil {
+		response.HTML().ServerError(err)
+		return
+	}
+
+	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder.WithStarred()
+
+	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
+	if err != nil {
+		response.HTML().ServerError(err)
+		return
+	}
+
+	nextEntryRoute := ""
+	if nextEntry != nil {
+		nextEntryRoute = ctx.Route("starredEntry", "entryID", nextEntry.ID)
+	}
+
+	prevEntryRoute := ""
+	if prevEntry != nil {
+		prevEntryRoute = ctx.Route("starredEntry", "entryID", prevEntry.ID)
+	}
+
+	response.HTML().Render("entry", args.Merge(tplParams{
+		"entry":          entry,
+		"prevEntry":      prevEntry,
+		"nextEntry":      nextEntry,
+		"nextEntryRoute": nextEntryRoute,
+		"prevEntryRoute": prevEntryRoute,
+		"menu":           "starred",
+	}))
+}
+
 // UpdateEntriesStatus handles Ajax request to update the status for a list of entries.
 func (c *Controller) UpdateEntriesStatus(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
@@ -412,7 +481,7 @@ func (c *Controller) getEntryPrevNext(user *model.User, builder *storage.EntryQu
 	n := len(entries)
 	for i := 0; i < n; i++ {
 		if entries[i].ID == entryID {
-			if i-1 > 0 {
+			if i-1 >= 0 {
 				prev = entries[i-1]
 			}
 

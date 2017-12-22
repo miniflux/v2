@@ -32,6 +32,13 @@ type EntryQueryBuilder struct {
 	greaterThanEntryID int64
 	entryIDs           []int64
 	before             *time.Time
+	starred            bool
+}
+
+// WithStarred adds starred filter.
+func (e *EntryQueryBuilder) WithStarred() *EntryQueryBuilder {
+	e.starred = true
+	return e
 }
 
 // Before add condition base on the entry date.
@@ -150,7 +157,8 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 	query := `
 		SELECT
-		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone '%s', e.title, e.url, e.author, e.content, e.status,
+		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone '%s', e.title,
+		e.url, e.author, e.content, e.status, e.starred,
 		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
 		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
 		fi.icon_id
@@ -191,6 +199,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Author,
 			&entry.Content,
 			&entry.Status,
+			&entry.Starred,
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,
@@ -303,6 +312,10 @@ func (e *EntryQueryBuilder) buildCondition() ([]interface{}, string) {
 		args = append(args, e.before)
 	}
 
+	if e.starred {
+		conditions = append(conditions, "e.starred is true")
+	}
+
 	return args, strings.Join(conditions, " AND ")
 }
 
@@ -334,5 +347,6 @@ func NewEntryQueryBuilder(store *Storage, userID int64, timezone string) *EntryQ
 		store:    store,
 		userID:   userID,
 		timezone: timezone,
+		starred:  false,
 	}
 }

@@ -300,6 +300,22 @@ class EntryHandler {
         }
     }
 
+    static toggleBookmark(element) {
+        element.innerHTML = element.dataset.labelLoading;
+
+        let request = new RequestBuilder(element.dataset.bookmarkUrl);
+        request.withCallback(() => {
+            if (element.dataset.value === "star") {
+                element.innerHTML = element.dataset.labelStar;
+                element.dataset.value = "unstar";
+            } else {
+                element.innerHTML = element.dataset.labelUnstar;
+                element.dataset.value = "star";
+            }
+        });
+        request.execute();
+    }
+
     static markEntryAsRead(element) {
         if (element.classList.contains("item-status-unread")) {
             element.classList.remove("item-status-unread");
@@ -468,6 +484,25 @@ class NavHandler {
         }
     }
 
+    toggleBookmark() {
+        if (! this.isListView()) {
+            this.toggleBookmarkLink(document.querySelector(".entry"));
+            return;
+        }
+
+        let currentItem = document.querySelector(".current-item");
+        if (currentItem !== null) {
+            this.toggleBookmarkLink(currentItem);
+        }
+    }
+
+    toggleBookmarkLink(parent) {
+        let bookmarkLink = parent.querySelector("a[data-toggle-bookmark]");
+        if (bookmarkLink) {
+            EntryHandler.toggleBookmark(bookmarkLink);
+        }
+    }
+
     openOriginalLink() {
         let entryLink = document.querySelector(".entry h1 a");
         if (entryLink !== null) {
@@ -588,6 +623,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let navHandler = new NavHandler();
     let keyboardHandler = new KeyboardHandler();
     keyboardHandler.on("g u", () => navHandler.goToPage("unread"));
+    keyboardHandler.on("g b", () => navHandler.goToPage("starred"));
     keyboardHandler.on("g h", () => navHandler.goToPage("history"));
     keyboardHandler.on("g f", () => navHandler.goToPage("feeds"));
     keyboardHandler.on("g c", () => navHandler.goToPage("categories"));
@@ -606,12 +642,18 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("A", () => navHandler.markPageAsRead());
     keyboardHandler.on("s", () => navHandler.saveEntry());
     keyboardHandler.on("d", () => navHandler.fetchOriginalContent());
+    keyboardHandler.on("f", () => navHandler.toggleBookmark());
     keyboardHandler.listen();
 
     let mouseHandler = new MouseHandler();
     mouseHandler.onClick("a[data-save-entry]", (event) => {
         event.preventDefault();
         EntryHandler.saveEntry(event.target);
+    });
+
+    mouseHandler.onClick("a[data-toggle-bookmark]", (event) => {
+        event.preventDefault();
+        EntryHandler.toggleBookmark(event.target);
     });
 
     mouseHandler.onClick("a[data-fetch-content-entry]", (event) => {

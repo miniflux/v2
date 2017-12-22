@@ -22,6 +22,8 @@ const (
 	testAdminPassword    = "test123"
 	testStandardPassword = "secret"
 	testFeedURL          = "https://github.com/miniflux/miniflux/commits/master.atom"
+	testFeedTitle        = "Recent Commits to miniflux:master"
+	testWebsiteURL       = "https://github.com/miniflux/miniflux/commits/master"
 )
 
 func TestWithBadEndpoint(t *testing.T) {
@@ -486,7 +488,7 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 
 func TestDiscoverSubscriptions(t *testing.T) {
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	subscriptions, err := client.Discover("https://miniflux.net")
+	subscriptions, err := client.Discover(testWebsiteURL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -495,16 +497,16 @@ func TestDiscoverSubscriptions(t *testing.T) {
 		t.Fatalf(`Invalid number of subscriptions, got "%v" instead of "%v"`, len(subscriptions), 2)
 	}
 
-	if subscriptions[0].Title != "Feed" {
-		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, subscriptions[0].Title, "Feed")
+	if subscriptions[0].Title != testFeedTitle {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, subscriptions[0].Title, testFeedTitle)
 	}
 
 	if subscriptions[0].Type != "atom" {
 		t.Fatalf(`Invalid feed type, got "%v" instead of "%v"`, subscriptions[0].Type, "atom")
 	}
 
-	if subscriptions[0].URL != "https://miniflux.net/feed" {
-		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, subscriptions[0].URL, "https://miniflux.net/feed")
+	if subscriptions[0].URL != testFeedURL {
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, subscriptions[0].URL, testFeedURL)
 	}
 }
 
@@ -522,7 +524,7 @@ func TestCreateFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -546,7 +548,7 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -555,7 +557,7 @@ func TestCannotCreateDuplicatedFeed(t *testing.T) {
 		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
 	}
 
-	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
 	if err == nil {
 		t.Fatal(`Duplicated feeds should not be allowed`)
 	}
@@ -570,7 +572,7 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	}
 
 	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	_, err = client.CreateFeed("https://miniflux.net/feed", -1)
+	_, err = client.CreateFeed(testFeedURL, -1)
 	if err == nil {
 		t.Fatal(`Feeds should not be created with inexisting category`)
 	}
@@ -590,7 +592,7 @@ func TestUpdateFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -630,7 +632,7 @@ func TestDeleteFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -655,7 +657,7 @@ func TestRefreshFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -680,7 +682,7 @@ func TestGetFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -690,16 +692,16 @@ func TestGetFeed(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Title != "Miniflux" {
-		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feed.Title, "Miniflux")
+	if feed.Title != testFeedTitle {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feed.Title, testFeedTitle)
 	}
 
-	if feed.SiteURL != "https://miniflux.net/" {
-		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feed.SiteURL, "https://miniflux.net/")
+	if feed.SiteURL != testWebsiteURL {
+		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feed.SiteURL, testWebsiteURL)
 	}
 
-	if feed.FeedURL != "https://miniflux.net/feed" {
-		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feed.FeedURL, "https://miniflux.net/feed")
+	if feed.FeedURL != testFeedURL {
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feed.FeedURL, testFeedURL)
 	}
 
 	if feed.Category.ID != categories[0].ID {
@@ -780,7 +782,7 @@ func TestGetFeeds(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -798,16 +800,16 @@ func TestGetFeeds(t *testing.T) {
 		t.Fatalf(`Invalid feed ID, got "%v" instead of "%v"`, feeds[0].ID, feedID)
 	}
 
-	if feeds[0].Title != "Miniflux" {
-		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feeds[0].Title, "Miniflux")
+	if feeds[0].Title != testFeedTitle {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feeds[0].Title, testFeedTitle)
 	}
 
-	if feeds[0].SiteURL != "https://miniflux.net/" {
-		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feeds[0].SiteURL, "https://miniflux.net/")
+	if feeds[0].SiteURL != testWebsiteURL {
+		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feeds[0].SiteURL, testWebsiteURL)
 	}
 
-	if feeds[0].FeedURL != "https://miniflux.net/feed" {
-		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feeds[0].FeedURL, "https://miniflux.net/feed")
+	if feeds[0].FeedURL != testFeedURL {
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feeds[0].FeedURL, testFeedURL)
 	}
 
 	if feeds[0].Category.ID != categories[0].ID {
@@ -837,7 +839,7 @@ func TestGetAllFeedEntries(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -883,7 +885,7 @@ func TestGetAllEntries(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -930,7 +932,7 @@ func TestInvalidFilters(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -965,7 +967,7 @@ func TestGetEntry(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -975,7 +977,16 @@ func TestGetEntry(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	entry, err := client.Entry(result.Entries[0].FeedID, result.Entries[0].ID)
+	entry, err := client.FeedEntry(result.Entries[0].FeedID, result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.ID != result.Entries[0].ID {
+		t.Fatal("Wrong entry returned")
+	}
+
+	entry, err = client.Entry(result.Entries[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -999,7 +1010,7 @@ func TestUpdateStatus(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = client.CreateFeed("https://miniflux.net/feed", categories[0].ID)
+	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1014,7 +1025,7 @@ func TestUpdateStatus(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	entry, err := client.Entry(result.Entries[0].FeedID, result.Entries[0].ID)
+	entry, err := client.Entry(result.Entries[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1026,6 +1037,49 @@ func TestUpdateStatus(t *testing.T) {
 	err = client.UpdateEntries([]int64{result.Entries[0].ID}, "invalid")
 	if err == nil {
 		t.Fatal(`Invalid entry status should ne be accepted`)
+	}
+}
+
+func TestToggleBookmark(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := client.Entries(&miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result.Entries[0].Starred {
+		t.Fatal("The entry should not be starred")
+	}
+
+	err = client.ToggleBookmark(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := client.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !entry.Starred {
+		t.Fatal("The entry should be starred")
 	}
 }
 

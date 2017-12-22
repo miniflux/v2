@@ -88,7 +88,7 @@ type savedResponse struct {
 
 type linksResponse struct {
 	baseResponse
-	Links []string `json:"links"`
+	Links string `json:"links"`
 }
 
 type group struct {
@@ -242,6 +242,7 @@ func (c *Controller) handleFeeds(ctx *core.Context, request *core.Request, respo
 	}
 
 	var result feedsResponse
+	result.Feeds = make([]feed, 0)
 	for _, f := range feeds {
 		result.Feeds = append(result.Feeds, feed{
 			ID:          f.ID,
@@ -387,6 +388,11 @@ func (c *Controller) handleItems(ctx *core.Context, request *core.Request, respo
 			isRead = 1
 		}
 
+		isSaved := 0
+		if entry.Starred {
+			isSaved = 1
+		}
+
 		result.Items = append(result.Items, item{
 			ID:        entry.ID,
 			FeedID:    entry.FeedID,
@@ -394,7 +400,7 @@ func (c *Controller) handleItems(ctx *core.Context, request *core.Request, respo
 			Author:    entry.Author,
 			HTML:      entry.Content,
 			URL:       entry.URL,
-			IsSaved:   0,
+			IsSaved:   isSaved,
 			IsRead:    isRead,
 			CreatedAt: entry.Date.Unix(),
 		})
@@ -446,7 +452,21 @@ func (c *Controller) handleSavedItems(ctx *core.Context, request *core.Request, 
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
 
-	var result savedResponse
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder.WithStarred()
+
+	entryIDs, err := builder.GetEntryIDs()
+	if err != nil {
+		response.JSON().ServerError(err)
+		return
+	}
+
+	var itemsIDs []string
+	for _, entryID := range entryIDs {
+		itemsIDs = append(itemsIDs, strconv.FormatInt(entryID, 10))
+	}
+
+	result := &savedResponse{ItemIDs: strings.Join(itemsIDs, ",")}
 	result.SetCommonValues()
 	response.JSON().Standard(result)
 }
@@ -473,7 +493,7 @@ func (c *Controller) handleLinks(ctx *core.Context, request *core.Request, respo
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Fetching links for userID=%d", userID)
 
-	var result linksResponse
+	result := &linksResponse{Links: ""}
 	result.SetCommonValues()
 	response.JSON().Standard(result)
 }
@@ -512,6 +532,11 @@ func (c *Controller) handleWriteItems(ctx *core.Context, request *core.Request, 
 	case "unread":
 		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
 	case "saved":
+		if err := c.store.ToggleBookmark(userID, entryID); err != nil {
+			response.JSON().ServerError(err)
+			return
+		}
+
 		settings, err := c.store.Integration(userID)
 		if err != nil {
 			response.JSON().ServerError(err)
@@ -619,7 +644,7 @@ func (c *Controller) buildFeedGroups(feeds model.Feeds) []feedsGroups {
 		feedsGroupedByCategory[feed.Category.ID] = append(feedsGroupedByCategory[feed.Category.ID], strconv.FormatInt(feed.ID, 10))
 	}
 
-	var result []feedsGroups
+	result := make([]feedsGroups, 0)
 	for categoryID, feedIDs := range feedsGroupedByCategory {
 		result = append(result, feedsGroups{
 			GroupID: categoryID,

@@ -179,11 +179,24 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 	return nil
 }
 
+// ToggleBookmark toggles entry bookmark value.
+func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleBookmark] userID=%d, entryID=%d", userID, entryID))
+
+	query := `UPDATE entries SET starred = NOT starred WHERE user_id=$1 AND id=$2`
+	_, err := s.db.Exec(query, userID, entryID)
+	if err != nil {
+		return fmt.Errorf("unable to update toggle bookmark: %v", err)
+	}
+
+	return nil
+}
+
 // FlushHistory set all entries with the status "read" to "removed".
 func (s *Storage) FlushHistory(userID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FlushHistory] userID=%d", userID))
 
-	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3`
+	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3 AND starred='f'`
 	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
 	if err != nil {
 		return fmt.Errorf("unable to flush history: %v", err)

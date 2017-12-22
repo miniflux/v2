@@ -12,8 +12,8 @@ import (
 	"github.com/miniflux/miniflux/server/core"
 )
 
-// GetEntry is the API handler to get a single feed entry.
-func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response *core.Response) {
+// GetFeedEntry is the API handler to get a single feed entry.
+func (c *Controller) GetFeedEntry(ctx *core.Context, request *core.Request, response *core.Response) {
 	userID := ctx.UserID()
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
@@ -29,6 +29,32 @@ func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response
 
 	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithFeedID(feedID)
+	builder.WithEntryID(entryID)
+
+	entry, err := builder.GetEntry()
+	if err != nil {
+		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
+		return
+	}
+
+	if entry == nil {
+		response.JSON().NotFound(errors.New("Entry not found"))
+		return
+	}
+
+	response.JSON().Standard(entry)
+}
+
+// GetEntry is the API handler to get a single entry.
+func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	entryID, err := request.IntegerParam("entryID")
+	if err != nil {
+		response.JSON().BadRequest(err)
+		return
+	}
+
+	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
@@ -174,6 +200,23 @@ func (c *Controller) SetEntryStatus(ctx *core.Context, request *core.Request, re
 
 	if err := c.store.SetEntriesStatus(userID, entryIDs, status); err != nil {
 		response.JSON().ServerError(errors.New("Unable to change entries status"))
+		return
+	}
+
+	response.JSON().NoContent()
+}
+
+// ToggleBookmark is the API handler to toggle bookmark status.
+func (c *Controller) ToggleBookmark(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
+	entryID, err := request.IntegerParam("entryID")
+	if err != nil {
+		response.JSON().BadRequest(err)
+		return
+	}
+
+	if err := c.store.ToggleBookmark(userID, entryID); err != nil {
+		response.JSON().ServerError(errors.New("Unable to toggle bookmark value"))
 		return
 	}
 

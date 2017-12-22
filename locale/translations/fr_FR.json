@@ -161,5 +161,11 @@
     "Wallabag Client ID": "Identifiant du client Wallabag",
     "Wallabag Client Secret": "Clé secrète du client Wallabag",
     "Wallabag Username": "Nom d'utilisateur de Wallabag",
-    "Wallabag Password": "Mot de passe de Wallabag"
+    "Wallabag Password": "Mot de passe de Wallabag",
+    "Keyboard Shortcut: %s": "Raccourci clavier : %s",
+    "Favorites": "Favoris",
+    "Star": "Favoris",
+    "Unstar": "Enlever favoris",
+    "Starred": "Favoris",
+    "There is no bookmark at the moment.": "Il n'y a aucun favoris pour le moment."
 }

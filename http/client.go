@@ -36,8 +36,6 @@ type Client struct {
 
 // Get execute a GET HTTP request.
 func (c *Client) Get() (*Response, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient:Get] url=%s", c.url))
-
 	request, err := c.buildRequest(http.MethodGet, nil)
 	if err != nil {
 		return nil, err

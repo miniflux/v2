@@ -10,6 +10,16 @@
             <ul>
                 <li>
                     <a href="#"
+                        data-toggle-bookmark="true"
+                        data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
+                        data-label-loading="{{ t "Saving..." }}"
+                        data-label-star="☆ {{ t "Star" }}"
+                        data-label-unstar="★ {{ t "Unstar" }}"
+                        data-value="{{ if .Starred }}star{{ else }}unstar{{ end }}"
+                        >{{ if .entry.Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
+                </li>
+                <li>
+                    <a href="#"
                         title="{{ t "Save this article" }}"
                         data-save-entry="true"
                         data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"

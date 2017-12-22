@@ -291,9 +291,26 @@ func (c *Client) FeedIcon(feedID int64) (*FeedIcon, error) {
 	return feedIcon, nil
 }
 
-// Entry gets a single feed entry.
-func (c *Client) Entry(feedID, entryID int64) (*Entry, error) {
+// FeedEntry gets a single feed entry.
+func (c *Client) FeedEntry(feedID, entryID int64) (*Entry, error) {
 	body, err := c.request.Get(fmt.Sprintf("/v1/feeds/%d/entries/%d", feedID, entryID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var entry *Entry
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&entry); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return entry, nil
+}
+
+// Entry gets a single entry.
+func (c *Client) Entry(entryID int64) (*Entry, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/entries/%d", entryID))
 	if err != nil {
 		return nil, err
 	}
@@ -354,6 +371,17 @@ func (c *Client) UpdateEntries(entryIDs []int64, status string) error {
 	}
 
 	body, err := c.request.Put("/v1/entries", &payload{EntryIDs: entryIDs, Status: status})
+	if err != nil {
+		return err
+	}
+	body.Close()
+
+	return nil
+}
+
+// ToggleBookmark toggles entry bookmark value.
+func (c *Client) ToggleBookmark(entryID int64) error {
+	body, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/bookmark", entryID), nil)
 	if err != nil {
 		return err
 	}

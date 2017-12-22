@@ -38,22 +38,25 @@
                 <a href="{{ route "unread" }}">Mini<span>flux</span></a>
             </div>
             <ul>
-                <li {{ if eq .menu "unread" }}class="active"{{ end }}>
+                <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g u" }}">
                     <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}</a>
                     {{ if gt .countUnread 0 }}
                         <span class="unread-counter" title="Unread articles">({{ .countUnread }})</span>
                     {{ end }}
                 </li>
-                <li {{ if eq .menu "history" }}class="active"{{ end }}>
+                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g b" }}">
+                    <a href="{{ route "starred" }}" data-page="starred">{{ t "Starred" }}</a>
+                </li>
+                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g h" }}">
                     <a href="{{ route "history" }}" data-page="history">{{ t "History" }}</a>
                 </li>
-                <li {{ if eq .menu "feeds" }}class="active"{{ end }}>
+                <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g f" }}">
                     <a href="{{ route "feeds" }}" data-page="feeds">{{ t "Feeds" }}</a>
                 </li>
-                <li {{ if eq .menu "categories" }}class="active"{{ end }}>
+                <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g c" }}">
                     <a href="{{ route "categories" }}" data-page="categories">{{ t "Categories" }}</a>
                 </li>
-                <li {{ if eq .menu "settings" }}class="active"{{ end }}>
+                <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g s" }}">
                     <a href="{{ route "settings" }}" data-page="settings">{{ t "Settings" }}</a>
                 </li>
                 <li>

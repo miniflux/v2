@@ -70,9 +70,11 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/v1/feeds/{feedID}/icon", apiHandler.Use(apiController.FeedIcon)).Methods("GET")
 
 	router.Handle("/v1/feeds/{feedID}/entries", apiHandler.Use(apiController.GetFeedEntries)).Methods("GET")
-	router.Handle("/v1/feeds/{feedID}/entries/{entryID}", apiHandler.Use(apiController.GetEntry)).Methods("GET")
+	router.Handle("/v1/feeds/{feedID}/entries/{entryID}", apiHandler.Use(apiController.GetFeedEntry)).Methods("GET")
 	router.Handle("/v1/entries", apiHandler.Use(apiController.GetEntries)).Methods("GET")
 	router.Handle("/v1/entries", apiHandler.Use(apiController.SetEntryStatus)).Methods("PUT")
+	router.Handle("/v1/entries/{entryID}", apiHandler.Use(apiController.GetEntry)).Methods("GET")
+	router.Handle("/v1/entries/{entryID}/bookmark", apiHandler.Use(apiController.ToggleBookmark)).Methods("PUT")
 
 	router.Handle("/stylesheets/{name}.css", uiHandler.Use(uiController.Stylesheet)).Name("stylesheet").Methods("GET")
 	router.Handle("/js", uiHandler.Use(uiController.Javascript)).Name("javascript").Methods("GET")
@@ -85,6 +87,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 
 	router.Handle("/unread", uiHandler.Use(uiController.ShowUnreadPage)).Name("unread").Methods("GET")
 	router.Handle("/history", uiHandler.Use(uiController.ShowHistoryPage)).Name("history").Methods("GET")
+	router.Handle("/starred", uiHandler.Use(uiController.ShowStarredPage)).Name("starred").Methods("GET")
 
 	router.Handle("/feed/{feedID}/refresh", uiHandler.Use(uiController.RefreshFeed)).Name("refreshFeed").Methods("GET")
 	router.Handle("/feed/{feedID}/edit", uiHandler.Use(uiController.EditFeed)).Name("editFeed").Methods("GET")
@@ -99,10 +102,12 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/history/flush", uiHandler.Use(uiController.FlushHistory)).Name("flushHistory").Methods("GET")
 	router.Handle("/feed/{feedID}/entry/{entryID}", uiHandler.Use(uiController.ShowFeedEntry)).Name("feedEntry").Methods("GET")
 	router.Handle("/category/{categoryID}/entry/{entryID}", uiHandler.Use(uiController.ShowCategoryEntry)).Name("categoryEntry").Methods("GET")
+	router.Handle("/starred/entry/{entryID}", uiHandler.Use(uiController.ShowStarredEntry)).Name("starredEntry").Methods("GET")
 
 	router.Handle("/entry/status", uiHandler.Use(uiController.UpdateEntriesStatus)).Name("updateEntriesStatus").Methods("POST")
 	router.Handle("/entry/save/{entryID}", uiHandler.Use(uiController.SaveEntry)).Name("saveEntry").Methods("POST")
 	router.Handle("/entry/download/{entryID}", uiHandler.Use(uiController.FetchContent)).Name("fetchContent").Methods("POST")
+	router.Handle("/entry/bookmark/{entryID}", uiHandler.Use(uiController.ToggleBookmark)).Name("toggleBookmark").Methods("POST")
 
 	router.Handle("/categories", uiHandler.Use(uiController.ShowCategories)).Name("categories").Methods("GET")
 	router.Handle("/category/create", uiHandler.Use(uiController.CreateCategory)).Name("createCategory").Methods("GET")

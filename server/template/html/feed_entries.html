@@ -58,6 +58,16 @@
                     <li>
                         <a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
                     </li>
+                    <li>
+                        <a href="#"
+                            data-toggle-bookmark="true"
+                            data-bookmark-url="{{ route "toggleBookmark" "entryID" .ID }}"
+                            data-label-loading="{{ t "Saving..." }}"
+                            data-label-star="☆ {{ t "Star" }}"
+                            data-label-unstar="★ {{ t "Unstar" }}"
+                            data-value="{{ if .Starred }}star{{ else }}unstar{{ end }}"
+                            >{{ if .Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
+                    </li>
                 </ul>
             </div>
         </article>
