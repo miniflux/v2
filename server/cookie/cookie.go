@@ -13,9 +13,12 @@ import (
 const (
 	CookieSessionID     = "sessionID"
 	CookieUserSessionID = "userSessionID"
+
+	// Cookie duration in days.
+	cookieDuration = 30
 )
 
-// New create a new cookie.
+// New creates a new cookie.
 func New(name, value string, isHTTPS bool) *http.Cookie {
 	return &http.Cookie{
 		Name:     name,
@@ -23,6 +26,7 @@ func New(name, value string, isHTTPS bool) *http.Cookie {
 		Path:     "/",
 		Secure:   isHTTPS,
 		HttpOnly: true,
+		Expires:  time.Now().Add(cookieDuration * 24 * time.Hour),
 	}
 }
 
