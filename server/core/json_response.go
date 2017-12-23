@@ -20,29 +20,29 @@ type JSONResponse struct {
 
 // Standard sends a JSON response with the status code 200.
 func (j *JSONResponse) Standard(v interface{}) {
-	j.writer.WriteHeader(http.StatusOK)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusOK)
 	j.writer.Write(j.toJSON(v))
 }
 
 // Created sends a JSON response with the status code 201.
 func (j *JSONResponse) Created(v interface{}) {
-	j.writer.WriteHeader(http.StatusCreated)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusCreated)
 	j.writer.Write(j.toJSON(v))
 }
 
 // NoContent sends a JSON response with the status code 204.
 func (j *JSONResponse) NoContent() {
-	j.writer.WriteHeader(http.StatusNoContent)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusNoContent)
 }
 
 // BadRequest sends a JSON response with the status code 400.
 func (j *JSONResponse) BadRequest(err error) {
 	logger.Error("[Bad Request] %v", err)
-	j.writer.WriteHeader(http.StatusBadRequest)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusBadRequest)
 
 	if err != nil {
 		j.writer.Write(j.encodeError(err))
@@ -52,16 +52,16 @@ func (j *JSONResponse) BadRequest(err error) {
 // NotFound sends a JSON response with the status code 404.
 func (j *JSONResponse) NotFound(err error) {
 	logger.Error("[Not Found] %v", err)
-	j.writer.WriteHeader(http.StatusNotFound)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusNotFound)
 	j.writer.Write(j.encodeError(err))
 }
 
 // ServerError sends a JSON response with the status code 500.
 func (j *JSONResponse) ServerError(err error) {
 	logger.Error("[Internal Server Error] %v", err)
-	j.writer.WriteHeader(http.StatusInternalServerError)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusInternalServerError)
 
 	if err != nil {
 		j.writer.Write(j.encodeError(err))
@@ -71,14 +71,14 @@ func (j *JSONResponse) ServerError(err error) {
 // Forbidden sends a JSON response with the status code 403.
 func (j *JSONResponse) Forbidden() {
 	logger.Info("[API:Forbidden]")
-	j.writer.WriteHeader(http.StatusForbidden)
 	j.commonHeaders()
+	j.writer.WriteHeader(http.StatusForbidden)
 	j.writer.Write(j.encodeError(errors.New("Access Forbidden")))
 }
 
 func (j *JSONResponse) commonHeaders() {
 	j.writer.Header().Set("Accept", "application/json")
-	j.writer.Header().Set("Content-Type", "application/json")
+	j.writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 }
 
 func (j *JSONResponse) encodeError(err error) []byte {

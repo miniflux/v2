@@ -48,6 +48,7 @@ func (r *Response) Redirect(path string) {
 
 // NotModified sends a response with a 304 status code.
 func (r *Response) NotModified() {
+	r.commonHeaders()
 	r.writer.WriteHeader(http.StatusNotModified)
 }
 

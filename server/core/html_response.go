@@ -26,8 +26,8 @@ func (h *HTMLResponse) Render(template string, args map[string]interface{}) {
 
 // ServerError sends a 500 error to the browser.
 func (h *HTMLResponse) ServerError(err error) {
-	h.writer.WriteHeader(http.StatusInternalServerError)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+	h.writer.WriteHeader(http.StatusInternalServerError)
 
 	if err != nil {
 		logger.Error("[Internal Server Error] %v", err)
@@ -39,8 +39,8 @@ func (h *HTMLResponse) ServerError(err error) {
 
 // BadRequest sends a 400 error to the browser.
 func (h *HTMLResponse) BadRequest(err error) {
-	h.writer.WriteHeader(http.StatusBadRequest)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+	h.writer.WriteHeader(http.StatusBadRequest)
 
 	if err != nil {
 		logger.Error("[Bad Request] %v", err)
@@ -52,14 +52,14 @@ func (h *HTMLResponse) BadRequest(err error) {
 
 // NotFound sends a 404 error to the browser.
 func (h *HTMLResponse) NotFound() {
-	h.writer.WriteHeader(http.StatusNotFound)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+	h.writer.WriteHeader(http.StatusNotFound)
 	h.writer.Write([]byte("Page Not Found"))
 }
 
 // Forbidden sends a 403 error to the browser.
 func (h *HTMLResponse) Forbidden() {
-	h.writer.WriteHeader(http.StatusForbidden)
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+	h.writer.WriteHeader(http.StatusForbidden)
 	h.writer.Write([]byte("Access Forbidden"))
 }
