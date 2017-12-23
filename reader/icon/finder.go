@@ -5,9 +5,11 @@
 package icon
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strings"
 
 	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
@@ -34,6 +36,10 @@ func FindIcon(websiteURL string) (*model.Icon, error) {
 	iconURL, err := parseDocument(rootURL, response.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if strings.HasPrefix(iconURL, "data:") {
+		return parseImageDataURL(iconURL)
 	}
 
 	logger.Debug("[FindIcon] Fetching icon => %s", iconURL)
@@ -104,6 +110,45 @@ func downloadIcon(iconURL string) (*model.Icon, error) {
 		Hash:     helper.HashFromBytes(body),
 		MimeType: response.ContentType,
 		Content:  body,
+	}
+
+	return icon, nil
+}
+
+func parseImageDataURL(value string) (*model.Icon, error) {
+	colon := strings.Index(value, ":")
+	semicolon := strings.Index(value, ";")
+	comma := strings.Index(value, ",")
+
+	if colon <= 0 || semicolon <= 0 || comma <= 0 {
+		return nil, fmt.Errorf(`icon: invalid data url "%s"`, value)
+	}
+
+	mimeType := value[colon+1 : semicolon]
+	encoding := value[semicolon+1 : comma]
+	data := value[comma+1:]
+
+	if encoding != "base64" {
+		return nil, fmt.Errorf(`icon: unsupported data url encoding "%s"`, value)
+	}
+
+	if !strings.HasPrefix(mimeType, "image/") {
+		return nil, fmt.Errorf(`icon: invalid mime type "%s"`, mimeType)
+	}
+
+	blob, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return nil, fmt.Errorf(`icon: invalid data "%s" (%v)`, value, err)
+	}
+
+	if len(blob) == 0 {
+		return nil, fmt.Errorf(`icon: empty data "%s"`, value)
+	}
+
+	icon := &model.Icon{
+		Hash:     helper.HashFromBytes(blob),
+		Content:  blob,
+		MimeType: mimeType,
 	}
 
 	return icon, nil
