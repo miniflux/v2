@@ -338,7 +338,7 @@ func (s *Storage) CheckPassword(username, password string) error {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
-		return fmt.Errorf("invalid password for %s", username)
+		return fmt.Errorf(`invalid password for "%s" (%v)`, username, err)
 	}
 
 	return nil

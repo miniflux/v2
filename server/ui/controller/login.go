@@ -31,6 +31,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 	tplParams := tplParams{
 		"errorMessage": "Invalid username or password.",
 		"csrf":         ctx.CSRF(),
+		"form":         authForm,
 	}
 
 	if err := authForm.Validate(); err != nil {

@@ -10,10 +10,10 @@
         {{ end }}
 
         <label for="form-username">{{ t "Username" }}</label>
-        <input type="text" name="username" id="form-username" required autofocus>
+        <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required autofocus>
 
         <label for="form-password">{{ t "Password" }}</label>
-        <input type="password" name="password" id="form-password" required>
+        <input type="password" name="password" id="form-password" value="{{ .form.Password }}" required>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Sign in" }}</button>
