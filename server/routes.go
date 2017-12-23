@@ -80,6 +80,7 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/js", uiHandler.Use(uiController.Javascript)).Name("javascript").Methods("GET")
 	router.Handle("/favicon.ico", uiHandler.Use(uiController.Favicon)).Name("favicon").Methods("GET")
 	router.Handle("/icon/{filename}", uiHandler.Use(uiController.AppIcon)).Name("appIcon").Methods("GET")
+	router.Handle("/manifest.json", uiHandler.Use(uiController.WebManifest)).Name("webManifest").Methods("GET")
 
 	router.Handle("/subscribe", uiHandler.Use(uiController.AddSubscription)).Name("addSubscription").Methods("GET")
 	router.Handle("/subscribe", uiHandler.Use(uiController.SubmitSubscription)).Name("submitSubscription").Methods("POST")

@@ -63,3 +63,35 @@ func (c *Controller) AppIcon(ctx *core.Context, request *core.Request, response 
 
 	response.Cache("image/png", static.BinariesChecksums[filename], blob, 48*time.Hour)
 }
+
+// WebManifest renders web manifest file.
+func (c *Controller) WebManifest(ctx *core.Context, request *core.Request, response *core.Response) {
+	type webManifestIcon struct {
+		Source string `json:"src"`
+		Sizes  string `json:"sizes"`
+		Type   string `json:"type"`
+	}
+
+	type webManifest struct {
+		Name        string            `json:"name"`
+		Description string            `json:"description"`
+		ShortName   string            `json:"short_name"`
+		StartURL    string            `json:"start_url"`
+		Icons       []webManifestIcon `json:"icons"`
+		Display     string            `json:"display"`
+	}
+
+	manifest := &webManifest{
+		Name:        "Miniflux",
+		ShortName:   "Miniflux",
+		Description: "Minimalist Feed Reader",
+		Display:     "minimal-ui",
+		StartURL:    ctx.Route("unread"),
+		Icons: []webManifestIcon{
+			webManifestIcon{Source: ctx.Route("appIcon", "filename", "touch-icon-ipad-retina.png"), Sizes: "144x144", Type: "image/png"},
+			webManifestIcon{Source: ctx.Route("appIcon", "filename", "touch-icon-iphone-retina.png"), Sizes: "114x114", Type: "image/png"},
+		},
+	}
+
+	response.JSON().Standard(manifest)
+}
