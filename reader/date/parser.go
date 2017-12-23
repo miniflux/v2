@@ -5,6 +5,7 @@
 package date
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -45,6 +46,8 @@ var dateFormats = []string{
 	"Monday, 02 January 2006 15:04:05 MST",
 	"Monday, 02 January 2006 15:04:05 -0700",
 	"Monday, 02 January 2006 15:04:05",
+	"Monday, January 02, 2006 - 3:04pm",
+	"Monday, January 2, 2006 - 3:04pm",
 	"Mon, 2 January 2006 15:04 MST",
 	"Mon, 2 January 2006, 15:04 -0700",
 	"Mon, 2 January 2006, 15:04:05 MST",
@@ -100,6 +103,7 @@ var dateFormats = []string{
 	"Mon, 02 Jan 2006 15:04:05",
 	"Mon, 02 Jan 2006",
 	"Mon, 02 Jan 06 15:04:05 MST",
+	"Mon, 02 Jan 2006 3:04 PM MST",
 	"January 2, 2006 3:04 PM",
 	"January 2, 2006, 3:04 p.m.",
 	"January 2, 2006 15:04:05 MST",
@@ -125,6 +129,7 @@ var dateFormats = []string{
 	"2 Jan 2006 15:04:05 MST",
 	"2 Jan 2006 15:04:05 -0700",
 	"2 Jan 2006",
+	"2 Jan 2006 15:04 MST",
 	"2.1.2006 15:04:05",
 	"2/1/2006",
 	"2-1-2006",
@@ -189,7 +194,7 @@ var dateFormats = []string{
 func Parse(ds string) (t time.Time, err error) {
 	d := strings.TrimSpace(ds)
 	if d == "" {
-		return t, fmt.Errorf("Date string is empty")
+		return t, errors.New("date parser: empty value")
 	}
 
 	for _, f := range dateFormats {
@@ -198,6 +203,6 @@ func Parse(ds string) (t time.Time, err error) {
 		}
 	}
 
-	err = fmt.Errorf("Failed to parse date: %s", ds)
+	err = fmt.Errorf(`date parser: failed to parse date "%s"`, ds)
 	return
 }
