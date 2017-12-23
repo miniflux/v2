@@ -13,10 +13,10 @@ import (
 	"github.com/miniflux/miniflux/server/ui/form"
 )
 
-// RefreshAllFeeds refresh all feeds in the background.
+// RefreshAllFeeds refresh all feeds in the background for the current user.
 func (c *Controller) RefreshAllFeeds(ctx *core.Context, request *core.Request, response *core.Response) {
 	user := ctx.LoggedUser()
-	jobs, err := c.store.NewBatch(c.store.CountFeeds(user.ID))
+	jobs, err := c.store.NewUserBatch(user.ID, c.store.CountFeeds(user.ID))
 	if err != nil {
 		response.HTML().ServerError(err)
 		return

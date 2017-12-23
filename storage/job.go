@@ -24,7 +24,24 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 		WHERE parsing_error_count < $1
 		ORDER BY checked_at ASC LIMIT %d`
 
-	rows, err := s.db.Query(fmt.Sprintf(query, batchSize), maxParsingError)
+	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), maxParsingError)
+}
+
+// NewUserBatch returns a serie of jobs but only for a given user.
+func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList, err error) {
+	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserJobs] batchSize=%d, userID=%d", batchSize, userID))
+	query := `
+		SELECT
+		id, user_id
+		FROM feeds
+		WHERE user_id=$1 AND parsing_error_count < $2
+		ORDER BY checked_at ASC LIMIT %d`
+
+	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID, maxParsingError)
+}
+
+func (s *Storage) fetchBatchRows(query string, args ...interface{}) (jobs model.JobList, err error) {
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch batch of jobs: %v", err)
 	}
