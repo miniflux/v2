@@ -22,5 +22,5 @@ func ValidateTheme(theme string) error {
 		}
 	}
 
-	return errors.NewLocalizedError("Invalid theme.")
+	return errors.NewLocalizedError("Invalid theme")
 }

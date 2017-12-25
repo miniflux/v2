@@ -37,21 +37,17 @@ func (u User) ValidateUserCreation() error {
 	return u.ValidatePassword()
 }
 
-// ValidateUserModification validates user for modification.
+// ValidateUserModification validates user modification payload.
 func (u User) ValidateUserModification() error {
-	if u.ID <= 0 {
-		return errors.New("The ID is mandatory")
+	if u.Theme != "" {
+		return ValidateTheme(u.Theme)
 	}
 
-	if u.Username == "" {
-		return errors.New("The username is mandatory")
+	if u.Password != "" {
+		return u.ValidatePassword()
 	}
 
-	if err := u.ValidatePassword(); err != nil {
-		return err
-	}
-
-	return ValidateTheme(u.Theme)
+	return nil
 }
 
 // ValidateUserLogin validates user credential requirements.
@@ -78,11 +74,11 @@ func (u User) ValidatePassword() error {
 
 // Merge update the current user with another user.
 func (u *User) Merge(override *User) {
-	if u.Username != override.Username {
+	if override.Username != "" && u.Username != override.Username {
 		u.Username = override.Username
 	}
 
-	if u.Password != override.Password {
+	if override.Password != "" && u.Password != override.Password {
 		u.Password = override.Password
 	}
 
@@ -90,15 +86,15 @@ func (u *User) Merge(override *User) {
 		u.IsAdmin = override.IsAdmin
 	}
 
-	if u.Theme != override.Theme {
+	if override.Theme != "" && u.Theme != override.Theme {
 		u.Theme = override.Theme
 	}
 
-	if u.Language != override.Language {
+	if override.Language != "" && u.Language != override.Language {
 		u.Language = override.Language
 	}
 
-	if u.Timezone != override.Timezone {
+	if override.Timezone != "" && u.Timezone != override.Timezone {
 		u.Timezone = override.Timezone
 	}
 }

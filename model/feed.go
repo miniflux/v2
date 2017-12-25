@@ -6,7 +6,6 @@ package model
 
 import (
 	"fmt"
-	"reflect"
 	"time"
 )
 
@@ -17,17 +16,17 @@ type Feed struct {
 	FeedURL            string    `json:"feed_url"`
 	SiteURL            string    `json:"site_url"`
 	Title              string    `json:"title"`
-	CheckedAt          time.Time `json:"checked_at,omitempty"`
-	EtagHeader         string    `json:"etag_header,omitempty"`
-	LastModifiedHeader string    `json:"last_modified_header,omitempty"`
-	ParsingErrorMsg    string    `json:"parsing_error_message,omitempty"`
-	ParsingErrorCount  int       `json:"parsing_error_count,omitempty"`
+	CheckedAt          time.Time `json:"checked_at"`
+	EtagHeader         string    `json:"etag_header"`
+	LastModifiedHeader string    `json:"last_modified_header"`
+	ParsingErrorMsg    string    `json:"parsing_error_message"`
+	ParsingErrorCount  int       `json:"parsing_error_count"`
 	ScraperRules       string    `json:"scraper_rules"`
 	RewriteRules       string    `json:"rewrite_rules"`
 	Crawler            bool      `json:"crawler"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
-	Icon               *FeedIcon `json:"icon,omitempty"`
+	Icon               *FeedIcon `json:"icon"`
 }
 
 func (f *Feed) String() string {
@@ -41,27 +40,34 @@ func (f *Feed) String() string {
 	)
 }
 
-// Merge combine src to the current struct
-func (f *Feed) Merge(src *Feed) {
-	src.ID = f.ID
-	src.UserID = f.UserID
+// Merge combine override to the current struct
+func (f *Feed) Merge(override *Feed) {
+	if override.Title != "" && override.Title != f.Title {
+		f.Title = override.Title
+	}
 
-	new := reflect.ValueOf(src).Elem()
-	for i := 0; i < new.NumField(); i++ {
-		field := new.Field(i)
+	if override.SiteURL != "" && override.SiteURL != f.SiteURL {
+		f.SiteURL = override.SiteURL
+	}
 
-		switch field.Interface().(type) {
-		case int64:
-			value := field.Int()
-			if value != 0 {
-				reflect.ValueOf(f).Elem().Field(i).SetInt(value)
-			}
-		case string:
-			value := field.String()
-			if value != "" {
-				reflect.ValueOf(f).Elem().Field(i).SetString(value)
-			}
-		}
+	if override.FeedURL != "" && override.FeedURL != f.FeedURL {
+		f.FeedURL = override.FeedURL
+	}
+
+	if override.ScraperRules != "" && override.ScraperRules != f.ScraperRules {
+		f.ScraperRules = override.ScraperRules
+	}
+
+	if override.RewriteRules != "" && override.RewriteRules != f.RewriteRules {
+		f.RewriteRules = override.RewriteRules
+	}
+
+	if override.Crawler != f.Crawler {
+		f.Crawler = override.Crawler
+	}
+
+	if override.Category != nil && override.Category.ID != 0 && override.Category.ID != f.Category.ID {
+		f.Category.ID = override.Category.ID
 	}
 }
 

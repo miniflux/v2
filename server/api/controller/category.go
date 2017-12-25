@@ -13,15 +13,21 @@ import (
 
 // CreateCategory is the API handler to create a new category.
 func (c *Controller) CreateCategory(ctx *core.Context, request *core.Request, response *core.Response) {
+	userID := ctx.UserID()
 	category, err := payload.DecodeCategoryPayload(request.Body())
 	if err != nil {
 		response.JSON().BadRequest(err)
 		return
 	}
 
-	category.UserID = ctx.UserID()
+	category.UserID = userID
 	if err := category.ValidateCategoryCreation(); err != nil {
-		response.JSON().ServerError(err)
+		response.JSON().BadRequest(err)
+		return
+	}
+
+	if c, err := c.store.CategoryByTitle(userID, category.Title); err != nil || c != nil {
+		response.JSON().BadRequest(errors.New("This category already exists"))
 		return
 	}
 

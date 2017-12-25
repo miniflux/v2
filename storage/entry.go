@@ -21,8 +21,8 @@ func (s *Storage) GetEntryQueryBuilder(userID int64, timezone string) *EntryQuer
 	return NewEntryQueryBuilder(s, userID, timezone)
 }
 
-// CreateEntry add a new entry.
-func (s *Storage) CreateEntry(entry *model.Entry) error {
+// createEntry add a new entry.
+func (s *Storage) createEntry(entry *model.Entry) error {
 	query := `
 		INSERT INTO entries
 		(title, hash, url, published_at, content, author, user_id, feed_id)
@@ -76,8 +76,8 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 	return err
 }
 
-// UpdateEntry update an entry when a feed is refreshed.
-func (s *Storage) UpdateEntry(entry *model.Entry) error {
+// updateEntry update an entry when a feed is refreshed.
+func (s *Storage) updateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE entries SET
 		title=$1, url=$2, published_at=$3, content=$4, author=$5
@@ -108,8 +108,8 @@ func (s *Storage) UpdateEntry(entry *model.Entry) error {
 	return s.UpdateEnclosures(entry.Enclosures)
 }
 
-// EntryExists checks if an entry already exists based on its hash when refreshing a feed.
-func (s *Storage) EntryExists(entry *model.Entry) bool {
+// entryExists checks if an entry already exists based on its hash when refreshing a feed.
+func (s *Storage) entryExists(entry *model.Entry) bool {
 	var result int
 	query := `SELECT count(*) as c FROM entries WHERE user_id=$1 AND feed_id=$2 AND hash=$3`
 	s.db.QueryRow(query, entry.UserID, entry.FeedID, entry.Hash).Scan(&result)
@@ -123,10 +123,10 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (er
 		entry.UserID = userID
 		entry.FeedID = feedID
 
-		if s.EntryExists(entry) {
-			err = s.UpdateEntry(entry)
+		if s.entryExists(entry) {
+			err = s.updateEntry(entry)
 		} else {
-			err = s.CreateEntry(entry)
+			err = s.createEntry(entry)
 		}
 
 		if err != nil {
@@ -136,15 +136,15 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (er
 		entryHashes = append(entryHashes, entry.Hash)
 	}
 
-	if err := s.CleanupEntries(feedID, entryHashes); err != nil {
+	if err := s.cleanupEntries(feedID, entryHashes); err != nil {
 		logger.Error("[Storage:CleanupEntries] %v", err)
 	}
 
 	return nil
 }
 
-// CleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
-func (s *Storage) CleanupEntries(feedID int64, entryHashes []string) error {
+// cleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
+func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 	query := `
 		DELETE FROM entries
 		WHERE feed_id=$1 AND
@@ -184,9 +184,18 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleBookmark] userID=%d, entryID=%d", userID, entryID))
 
 	query := `UPDATE entries SET starred = NOT starred WHERE user_id=$1 AND id=$2`
-	_, err := s.db.Exec(query, userID, entryID)
+	result, err := s.db.Exec(query, userID, entryID)
 	if err != nil {
-		return fmt.Errorf("unable to update toggle bookmark: %v", err)
+		return fmt.Errorf("unable to toggle bookmark flag: %v", err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("unable to toogle bookmark flag: %v", err)
+	}
+
+	if count == 0 {
+		return errors.New("nothing has been updated")
 	}
 
 	return nil

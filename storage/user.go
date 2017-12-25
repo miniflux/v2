@@ -72,13 +72,14 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		(username, password, is_admin, extra)
 		VALUES
 		($1, $2, $3, $4)
-		RETURNING id, language, theme, timezone`
+		RETURNING id, language, theme, timezone, entry_direction`
 
 	err = s.db.QueryRow(query, strings.ToLower(user.Username), password, user.IsAdmin, extra).Scan(
 		&user.ID,
 		&user.Language,
 		&user.Theme,
 		&user.Timezone,
+		&user.EntryDirection,
 	)
 	if err != nil {
 		return fmt.Errorf("unable to create user: %v", err)

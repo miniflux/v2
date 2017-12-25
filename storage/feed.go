@@ -70,9 +70,8 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 
 	for rows.Next() {
 		var feed model.Feed
-		var iconID, errorMsg interface{}
+		var iconID interface{}
 		feed.Category = &model.Category{UserID: userID}
-		feed.Icon = &model.FeedIcon{}
 
 		err := rows.Scan(
 			&feed.ID,
@@ -84,7 +83,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 			&feed.UserID,
 			&feed.CheckedAt,
 			&feed.ParsingErrorCount,
-			&errorMsg,
+			&feed.ParsingErrorMsg,
 			&feed.ScraperRules,
 			&feed.RewriteRules,
 			&feed.Crawler,
@@ -94,22 +93,13 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 		)
 
 		if err != nil {
-			return nil, fmt.Errorf("Unable to fetch feeds row: %v", err)
+			return nil, fmt.Errorf("unable to fetch feeds row: %v", err)
 		}
 
-		if iconID == nil {
-			feed.Icon.IconID = 0
-		} else {
-			feed.Icon.IconID = iconID.(int64)
+		if iconID != nil {
+			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
 		}
 
-		if errorMsg == nil {
-			feed.ParsingErrorMsg = ""
-		} else {
-			feed.ParsingErrorMsg = errorMsg.(string)
-		}
-
-		feed.Icon.FeedID = feed.ID
 		feeds = append(feeds, &feed)
 	}
 
@@ -121,6 +111,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FeedByID] feedID=%d", feedID))
 
 	var feed model.Feed
+	var iconID interface{}
 	feed.Category = &model.Category{UserID: userID}
 
 	query := `
@@ -128,9 +119,11 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
 		f.scraper_rules, f.rewrite_rules, f.crawler,
-		f.category_id, c.title as category_title
+		f.category_id, c.title as category_title,
+		fi.icon_id
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
+		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
 		WHERE f.user_id=$1 AND f.id=$2`
 
 	err := s.db.QueryRow(query, userID, feedID).Scan(
@@ -149,6 +142,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.Crawler,
 		&feed.Category.ID,
 		&feed.Category.Title,
+		&iconID,
 	)
 
 	switch {
@@ -156,6 +150,10 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("unable to fetch feed: %v", err)
+	}
+
+	if iconID != nil {
+		feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
 	}
 
 	return &feed, nil
@@ -189,7 +187,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	for i := 0; i < len(feed.Entries); i++ {
 		feed.Entries[i].FeedID = feed.ID
 		feed.Entries[i].UserID = feed.UserID
-		err := s.CreateEntry(feed.Entries[i])
+		err := s.createEntry(feed.Entries[i])
 		if err != nil {
 			return err
 		}

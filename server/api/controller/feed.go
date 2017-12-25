@@ -20,6 +20,26 @@ func (c *Controller) CreateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
+	if feedURL == "" {
+		response.JSON().BadRequest(errors.New("The feed_url is required"))
+		return
+	}
+
+	if categoryID <= 0 {
+		response.JSON().BadRequest(errors.New("The category_id is required"))
+		return
+	}
+
+	if c.store.FeedURLExists(userID, feedURL) {
+		response.JSON().BadRequest(errors.New("This feed_url already exists"))
+		return
+	}
+
+	if !c.store.CategoryExists(userID, categoryID) {
+		response.JSON().BadRequest(errors.New("This category_id doesn't exists or doesn't belongs to this user"))
+		return
+	}
+
 	feed, err := c.feedHandler.CreateFeed(userID, categoryID, feedURL, false)
 	if err != nil {
 		response.JSON().ServerError(errors.New("Unable to create this feed"))
@@ -39,6 +59,11 @@ func (c *Controller) RefreshFeed(ctx *core.Context, request *core.Request, respo
 	feedID, err := request.IntegerParam("feedID")
 	if err != nil {
 		response.JSON().BadRequest(err)
+		return
+	}
+
+	if !c.store.FeedExists(userID, feedID) {
+		response.JSON().NotFound(errors.New("Unable to find this feed"))
 		return
 	}
 
@@ -66,6 +91,11 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
+	if newFeed.Category != nil && newFeed.Category.ID != 0 && !c.store.CategoryExists(userID, newFeed.Category.ID) {
+		response.JSON().BadRequest(errors.New("This category_id doesn't exists or doesn't belongs to this user"))
+		return
+	}
+
 	originalFeed, err := c.store.FeedByID(userID, feedID)
 	if err != nil {
 		response.JSON().NotFound(errors.New("Unable to find this feed"))
@@ -80,6 +110,12 @@ func (c *Controller) UpdateFeed(ctx *core.Context, request *core.Request, respon
 	originalFeed.Merge(newFeed)
 	if err := c.store.UpdateFeed(originalFeed); err != nil {
 		response.JSON().ServerError(errors.New("Unable to update this feed"))
+		return
+	}
+
+	originalFeed, err = c.store.FeedByID(userID, feedID)
+	if err != nil {
+		response.JSON().ServerError(errors.New("Unable to fetch this feed"))
 		return
 	}
 

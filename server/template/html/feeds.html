@@ -27,7 +27,7 @@
         <article class="item">
             <div class="item-header">
                 <span class="item-title">
-                    {{ if ne .Icon.IconID 0 }}
+                    {{ if .Icon }}
                         <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16">
                     {{ end }}
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
