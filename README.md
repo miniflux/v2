@@ -10,7 +10,7 @@ Miniflux is a minimalist and opinionated feed reader:
 - Doesn't use any ORM
 - Doesn't use any complicated framework
 - Use only modern vanilla Javascript (ES6 and Fetch API)
-- The number of features is volountary limited
+- The number of features is voluntarily limited
 
 It's simple, fast, lightweight and super easy to install.
 
