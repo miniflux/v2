@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	testBaseURL          = "http://127.0.0.1:8080"
+	testBaseURL          = "http://127.0.0.1:8080/"
 	testAdminUsername    = "admin"
 	testAdminPassword    = "test123"
 	testStandardPassword = "secret"
@@ -136,7 +136,7 @@ func TestRemoveUser(t *testing.T) {
 	}
 }
 
-func TestGetUser(t *testing.T) {
+func TestGetUserByID(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
@@ -144,7 +144,63 @@ func TestGetUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	user, err = client.User(user.ID)
+	_, err = client.UserByID(99999)
+	if err == nil {
+		t.Fatal(`Should returns a 404`)
+	}
+
+	user, err = client.UserByID(user.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if user.ID == 0 {
+		t.Fatalf(`Invalid userID, got "%v"`, user.ID)
+	}
+
+	if user.Username != username {
+		t.Fatalf(`Invalid username, got "%v" instead of "%v"`, user.Username, username)
+	}
+
+	if user.Password != "" {
+		t.Fatalf(`Invalid password, got "%v"`, user.Password)
+	}
+
+	if user.Language != "en_US" {
+		t.Fatalf(`Invalid language, got "%v"`, user.Language)
+	}
+
+	if user.Theme != "default" {
+		t.Fatalf(`Invalid theme, got "%v"`, user.Theme)
+	}
+
+	if user.Timezone != "UTC" {
+		t.Fatalf(`Invalid timezone, got "%v"`, user.Timezone)
+	}
+
+	if user.IsAdmin {
+		t.Fatalf(`Invalid role, got "%v"`, user.IsAdmin)
+	}
+
+	if user.LastLoginAt != nil {
+		t.Fatalf(`Invalid last login date, got "%v"`, user.LastLoginAt)
+	}
+}
+
+func TestGetUserByUsername(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.UserByUsername("missinguser")
+	if err == nil {
+		t.Fatal(`Should returns a 404`)
+	}
+
+	user, err = client.UserByUsername(username)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -256,7 +312,7 @@ func TestCannotGetUserAsNonAdmin(t *testing.T) {
 	}
 
 	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	_, err = client.User(user.ID)
+	_, err = client.UserByID(user.ID)
 	if err == nil {
 		t.Fatal(`Standard users should not be able to get any users`)
 	}

@@ -33,9 +33,26 @@ func (c *Client) Users() (Users, error) {
 	return users, nil
 }
 
-// User returns a single user.
-func (c *Client) User(userID int64) (*User, error) {
+// UserByID returns a single user.
+func (c *Client) UserByID(userID int64) (*User, error) {
 	body, err := c.request.Get(fmt.Sprintf("/v1/users/%d", userID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var user User
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&user); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return &user, nil
+}
+
+// UserByUsername returns a single user.
+func (c *Client) UserByUsername(username string) (*User, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/users/%s", username))
 	if err != nil {
 		return nil, err
 	}

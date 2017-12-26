@@ -49,10 +49,11 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	router.Handle("/fever/", feverHandler.Use(feverController.Handler))
 
 	router.Handle("/v1/users", apiHandler.Use(apiController.CreateUser)).Methods("POST")
-	router.Handle("/v1/users", apiHandler.Use(apiController.GetUsers)).Methods("GET")
-	router.Handle("/v1/users/{userID}", apiHandler.Use(apiController.GetUser)).Methods("GET")
-	router.Handle("/v1/users/{userID}", apiHandler.Use(apiController.UpdateUser)).Methods("PUT")
-	router.Handle("/v1/users/{userID}", apiHandler.Use(apiController.RemoveUser)).Methods("DELETE")
+	router.Handle("/v1/users", apiHandler.Use(apiController.Users)).Methods("GET")
+	router.Handle("/v1/users/{userID:[0-9]+}", apiHandler.Use(apiController.UserByID)).Methods("GET")
+	router.Handle("/v1/users/{userID:[0-9]+}", apiHandler.Use(apiController.UpdateUser)).Methods("PUT")
+	router.Handle("/v1/users/{userID:[0-9]+}", apiHandler.Use(apiController.RemoveUser)).Methods("DELETE")
+	router.Handle("/v1/users/{username}", apiHandler.Use(apiController.UserByUsername)).Methods("GET")
 
 	router.Handle("/v1/categories", apiHandler.Use(apiController.CreateCategory)).Methods("POST")
 	router.Handle("/v1/categories", apiHandler.Use(apiController.GetCategories)).Methods("GET")

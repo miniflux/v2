@@ -55,6 +55,10 @@ func (r *request) Delete(path string) (io.ReadCloser, error) {
 }
 
 func (r *request) execute(method, path string, data interface{}) (io.ReadCloser, error) {
+	if r.endpoint[len(r.endpoint)-1:] == "/" {
+		r.endpoint = r.endpoint[:len(r.endpoint)-1]
+	}
+
 	u, err := url.Parse(r.endpoint + path)
 	if err != nil {
 		return nil, err
@@ -125,12 +129,4 @@ func (r *request) toJSON(v interface{}) []byte {
 	}
 
 	return b
-}
-
-func newRequest(endpoint, username, password string) *request {
-	return &request{
-		endpoint: endpoint,
-		username: username,
-		password: password,
-	}
 }

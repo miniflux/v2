@@ -88,8 +88,8 @@ func (c *Controller) UpdateUser(ctx *core.Context, request *core.Request, respon
 	response.JSON().Created(originalUser)
 }
 
-// GetUsers is the API handler to get the list of users.
-func (c *Controller) GetUsers(ctx *core.Context, request *core.Request, response *core.Response) {
+// Users is the API handler to get the list of users.
+func (c *Controller) Users(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
 		response.JSON().Forbidden()
 		return
@@ -104,8 +104,8 @@ func (c *Controller) GetUsers(ctx *core.Context, request *core.Request, response
 	response.JSON().Standard(users)
 }
 
-// GetUser is the API handler to fetch the given user.
-func (c *Controller) GetUser(ctx *core.Context, request *core.Request, response *core.Response) {
+// UserByID is the API handler to fetch the given user by the ID.
+func (c *Controller) UserByID(ctx *core.Context, request *core.Request, response *core.Response) {
 	if !ctx.IsAdminUser() {
 		response.JSON().Forbidden()
 		return
@@ -118,6 +118,28 @@ func (c *Controller) GetUser(ctx *core.Context, request *core.Request, response 
 	}
 
 	user, err := c.store.UserByID(userID)
+	if err != nil {
+		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
+		return
+	}
+
+	if user == nil {
+		response.JSON().NotFound(errors.New("User not found"))
+		return
+	}
+
+	response.JSON().Standard(user)
+}
+
+// UserByUsername is the API handler to fetch the given user by the username.
+func (c *Controller) UserByUsername(ctx *core.Context, request *core.Request, response *core.Response) {
+	if !ctx.IsAdminUser() {
+		response.JSON().Forbidden()
+		return
+	}
+
+	username := request.StringParam("username", "")
+	user, err := c.store.UserByUsername(username)
 	if err != nil {
 		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
 		return
