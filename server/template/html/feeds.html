@@ -24,7 +24,7 @@
 {{ else }}
     <div class="items">
         {{ range .feeds }}
-        <article class="item">
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
             <div class="item-header">
                 <span class="item-title">
                     {{ if .Icon }}
@@ -44,9 +44,6 @@
                     <li>
                         {{ t "Last check:" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed .CheckedAt }}</time>
                     </li>
-                    {{ if ne .ParsingErrorCount 0 }}
-                        <li><strong title="{{ .ParsingErrorMsg }}">{{ plural "plural.feed.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong></li>
-                    {{ end }}
                 </ul>
                 <ul>
                     <li>
@@ -66,6 +63,12 @@
                     </li>
                 </ul>
             </div>
+            {{ if ne .ParsingErrorCount 0 }}
+                <div class="parsing-error">
+                    <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "plural.feed.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
+                    <small class="parsing-error-message">({{ .ParsingErrorMsg }})</small>
+                </div>
+            {{ end }}
         </article>
         {{ end }}
     </div>

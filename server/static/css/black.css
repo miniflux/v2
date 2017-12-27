@@ -172,6 +172,15 @@ input[type="text"]:focus {
     color: #ddd;
 }
 
+/* Feeds list */
+article.feed-parsing-error {
+    background-color: #343434;
+}
+
+.parsing-error {
+    color: #eee;
+}
+
 /* Entry view */
 .entry header {
     border-color: #333;

@@ -60,7 +60,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
 		WHERE f.user_id=$1
-		ORDER BY f.id ASC`
+		ORDER BY f.parsing_error_count DESC, f.title ASC`
 
 	rows, err := s.db.Query(query, userID)
 	if err != nil {

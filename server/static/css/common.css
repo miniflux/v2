@@ -485,6 +485,22 @@ a.button {
     display: none;
 }
 
+/* Feeds list */
+article.feed-parsing-error {
+    background-color: #fcf8e3;
+    border-color: #aaa;
+}
+
+.parsing-error {
+    font-size: 0.85em;
+    margin-top: 2px;
+    color: #333;
+}
+
+.parsing-error-count {
+    cursor: pointer;
+}
+
 /* Entry view */
 .entry header {
     padding-bottom: 5px;
