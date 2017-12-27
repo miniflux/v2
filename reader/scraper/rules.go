@@ -7,8 +7,10 @@ package scraper
 // List of predefined scraper rules (alphabetically sorted)
 // domain => CSS selectors
 var predefinedRules = map[string]string{
+	"cbc.ca":            ".story-content",
 	"github.com":        "article.entry-content",
 	"igen.fr":           "section.corps",
+	"lapresse.ca":       ".amorce, .entry",
 	"lemonde.fr":        "div#articleBody",
 	"lesjoiesducode.fr": ".blog-post-content img",
 	"linux.com":         "div.content, div[property]",
