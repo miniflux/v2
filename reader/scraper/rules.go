@@ -10,6 +10,7 @@ var predefinedRules = map[string]string{
 	"cbc.ca":            ".story-content",
 	"github.com":        "article.entry-content",
 	"igen.fr":           "section.corps",
+	"ing.dk":            "section.body",
 	"lapresse.ca":       ".amorce, .entry",
 	"lemonde.fr":        "div#articleBody",
 	"lesjoiesducode.fr": ".blog-post-content img",
@@ -20,5 +21,6 @@ var predefinedRules = map[string]string{
 	"phoronix.com":      "div.content",
 	"techcrunch.com":    "div.article-entry",
 	"theregister.co.uk": "#body",
+	"version2.dk":       "section.body",
 	"wired.com":         "main figure, article",
 }

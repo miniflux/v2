@@ -129,7 +129,7 @@ func (c *Client) buildClient() http.Client {
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
 	headers.Add("User-Agent", userAgent)
-	headers.Add("Accept", "text/html,application/xhtml+xml,application/xml,application/json,image/*")
+	headers.Add("Accept", "*/*")
 
 	if c.etagHeader != "" {
 		headers.Add("If-None-Match", c.etagHeader)
