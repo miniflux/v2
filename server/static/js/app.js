@@ -354,7 +354,9 @@ class EntryHandler {
             element.dataset.completed = true;
 
             response.json().then((data) => {
-                document.querySelector(".entry-content").innerHTML = data.content;
+                if (data.hasOwnProperty("content")) {
+                    document.querySelector(".entry-content").innerHTML = data.content;
+                }
             });
         });
         request.execute();
