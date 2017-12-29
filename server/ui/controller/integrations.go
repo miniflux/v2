@@ -62,6 +62,12 @@ func (c *Controller) UpdateIntegration(ctx *core.Context, request *core.Request,
 	integrationForm := form.NewIntegrationForm(request.Request())
 	integrationForm.Merge(integration)
 
+	if integration.FeverUsername != "" && c.store.HasDuplicateFeverUsername(user.ID, integration.FeverUsername) {
+		ctx.SetFlashErrorMessage(ctx.Translate("There is already someone else with the same Fever username!"))
+		response.Redirect(ctx.Route("integrations"))
+		return
+	}
+
 	if integration.FeverEnabled {
 		integration.FeverToken = fmt.Sprintf("%x", md5.Sum([]byte(integration.FeverUsername+":"+integration.FeverPassword)))
 	} else {

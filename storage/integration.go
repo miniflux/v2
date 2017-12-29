@@ -11,11 +11,25 @@ import (
 	"github.com/miniflux/miniflux/model"
 )
 
+// HasDuplicateFeverUsername checks if another user have the same fever username.
+func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) bool {
+	query := `
+		SELECT
+			count(*) as c
+		FROM integrations
+		WHERE user_id != $1 AND fever_username=$2
+	`
+
+	var result int
+	s.db.QueryRow(query, userID, feverUsername).Scan(&result)
+	return result >= 1
+}
+
 // UserByFeverToken returns a user by using the Fever API token.
 func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
 		SELECT
-		users.id, users.is_admin, users.timezone
+			users.id, users.is_admin, users.timezone
 		FROM users
 		LEFT JOIN integrations ON integrations.user_id=users.id
 		WHERE integrations.fever_enabled='t' AND integrations.fever_token=$1
