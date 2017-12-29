@@ -336,10 +336,9 @@ func (c *Controller) handleItems(ctx *core.Context, request *core.Request, respo
 	var result itemsResponse
 
 	userID := ctx.UserID()
-	timezone := ctx.UserTimezone()
 	logger.Debug("[Fever] Fetching items for userID=%d", userID)
 
-	builder := c.store.GetEntryQueryBuilder(userID, timezone)
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(50)
 	builder.WithOrder("id")
@@ -374,7 +373,7 @@ func (c *Controller) handleItems(ctx *core.Context, request *core.Request, respo
 		return
 	}
 
-	builder = c.store.GetEntryQueryBuilder(userID, timezone)
+	builder = c.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	result.Total, err = builder.CountEntries()
 	if err != nil {
@@ -421,7 +420,7 @@ func (c *Controller) handleUnreadItems(ctx *core.Context, request *core.Request,
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Fetching unread items for userID=%d", userID)
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -452,7 +451,7 @@ func (c *Controller) handleSavedItems(ctx *core.Context, request *core.Request, 
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithStarred()
 
 	entryIDs, err := builder.GetEntryIDs()
@@ -512,7 +511,7 @@ func (c *Controller) handleWriteItems(ctx *core.Context, request *core.Request, 
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -566,7 +565,7 @@ func (c *Controller) handleWriteFeeds(ctx *core.Context, request *core.Request, 
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithFeedID(feedID)
 
@@ -606,7 +605,7 @@ func (c *Controller) handleWriteGroups(ctx *core.Context, request *core.Request,
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithCategoryID(groupID)
 

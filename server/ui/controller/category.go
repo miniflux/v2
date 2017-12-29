@@ -51,7 +51,7 @@ func (c *Controller) ShowCategoryEntries(ctx *core.Context, request *core.Reques
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(category.ID)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)

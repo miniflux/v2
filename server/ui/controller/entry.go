@@ -27,7 +27,7 @@ func (c *Controller) FetchContent(ctx *core.Context, request *core.Request, resp
 	}
 
 	user := ctx.LoggedUser()
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -63,7 +63,7 @@ func (c *Controller) SaveEntry(ctx *core.Context, request *core.Request, respons
 	}
 
 	user := ctx.LoggedUser()
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -107,7 +107,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -138,7 +138,7 @@ func (c *Controller) ShowFeedEntry(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feedID)
 
 	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
@@ -183,7 +183,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(categoryID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -214,7 +214,7 @@ func (c *Controller) ShowCategoryEntry(ctx *core.Context, request *core.Request,
 		return
 	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(categoryID)
 
 	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
@@ -253,7 +253,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -274,7 +274,7 @@ func (c *Controller) ShowUnreadEntry(ctx *core.Context, request *core.Request, r
 		return
 	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 
 	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
@@ -323,7 +323,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -344,7 +344,7 @@ func (c *Controller) ShowReadEntry(ctx *core.Context, request *core.Request, res
 		return
 	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusRead)
 
 	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
@@ -383,7 +383,7 @@ func (c *Controller) ShowStarredEntry(ctx *core.Context, request *core.Request, 
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -413,7 +413,7 @@ func (c *Controller) ShowStarredEntry(ctx *core.Context, request *core.Request, 
 		return
 	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStarred()
 
 	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)

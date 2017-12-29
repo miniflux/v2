@@ -68,7 +68,7 @@ func (c *Controller) ShowFeedEntries(ctx *core.Context, request *core.Request, r
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feed.ID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOrder(model.DefaultSortingOrder)

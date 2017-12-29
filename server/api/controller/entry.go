@@ -27,7 +27,7 @@ func (c *Controller) GetFeedEntry(ctx *core.Context, request *core.Request, resp
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 
@@ -54,7 +54,7 @@ func (c *Controller) GetEntry(ctx *core.Context, request *core.Request, response
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
@@ -107,7 +107,7 @@ func (c *Controller) GetFeedEntries(ctx *core.Context, request *core.Request, re
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
 	builder.WithOrder(order)
@@ -161,7 +161,7 @@ func (c *Controller) GetEntries(ctx *core.Context, request *core.Request, respon
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(userID, ctx.UserTimezone())
+	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(status)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)

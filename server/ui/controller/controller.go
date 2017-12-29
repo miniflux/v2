@@ -35,7 +35,7 @@ type Controller struct {
 
 func (c *Controller) getCommonTemplateArgs(ctx *core.Context) (tplParams, error) {
 	user := ctx.LoggedUser()
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 
 	countUnread, err := builder.CountEntries()

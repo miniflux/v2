@@ -52,13 +52,15 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	feeds := make(model.Feeds, 0)
 	query := `SELECT
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
-		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
+		f.user_id, f.checked_at at time zone u.timezone,
+		f.parsing_error_count, f.parsing_error_msg,
 		f.scraper_rules, f.rewrite_rules, f.crawler,
 		f.category_id, c.title as category_title,
 		fi.icon_id
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN users u ON u.id=f.user_id
 		WHERE f.user_id=$1
 		ORDER BY f.parsing_error_count DESC, f.title ASC`
 
@@ -117,13 +119,15 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	query := `
 		SELECT
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
-		f.user_id, f.checked_at, f.parsing_error_count, f.parsing_error_msg,
+		f.user_id, f.checked_at at time zone u.timezone,
+		f.parsing_error_count, f.parsing_error_msg,
 		f.scraper_rules, f.rewrite_rules, f.crawler,
 		f.category_id, c.title as category_title,
 		fi.icon_id
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN users u ON u.id=f.user_id
 		WHERE f.user_id=$1 AND f.id=$2`
 
 	err := s.db.QueryRow(query, userID, feedID).Scan(

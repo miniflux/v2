@@ -21,7 +21,7 @@ func (c *Controller) ShowStarredPage(ctx *core.Context, request *core.Request, r
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred()
 	builder.WithOrder(model.DefaultSortingOrder)

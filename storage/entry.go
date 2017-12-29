@@ -16,9 +16,9 @@ import (
 	"github.com/lib/pq"
 )
 
-// GetEntryQueryBuilder returns a new EntryQueryBuilder
-func (s *Storage) GetEntryQueryBuilder(userID int64, timezone string) *EntryQueryBuilder {
-	return NewEntryQueryBuilder(s, userID, timezone)
+// NewEntryQueryBuilder returns a new EntryQueryBuilder
+func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
+	return NewEntryQueryBuilder(s, userID)
 }
 
 // createEntry add a new entry.

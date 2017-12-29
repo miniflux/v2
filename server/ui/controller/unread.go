@@ -14,7 +14,7 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 	user := ctx.LoggedUser()
 	offset := request.QueryIntegerParam("offset", 0)
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 	countUnread, err := builder.CountEntries()
 	if err != nil {
@@ -26,7 +26,7 @@ func (c *Controller) ShowUnreadPage(ctx *core.Context, request *core.Request, re
 		offset = 0
 	}
 
-	builder = c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)

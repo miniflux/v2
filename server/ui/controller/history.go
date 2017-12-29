@@ -20,7 +20,7 @@ func (c *Controller) ShowHistoryPage(ctx *core.Context, request *core.Request, r
 		return
 	}
 
-	builder := c.store.GetEntryQueryBuilder(user.ID, user.Timezone)
+	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)

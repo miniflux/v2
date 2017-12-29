@@ -67,7 +67,7 @@
 
     <div class="panel">
         <ul>
-            <li><strong>{{ t "Last checked:" }} </strong>{{ isodate .feed.CheckedAt }}</li>
+            <li><strong>{{ t "Last checked:" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed .feed.CheckedAt }}</time></li>
             <li><strong>{{ t "ETag header:" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
             <li><strong>{{ t "LastModified header:" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
         </ul>

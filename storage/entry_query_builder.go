@@ -20,7 +20,6 @@ type EntryQueryBuilder struct {
 	store              *Storage
 	feedID             int64
 	userID             int64
-	timezone           string
 	categoryID         int64
 	status             string
 	notStatus          string
@@ -157,7 +156,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 	query := `
 		SELECT
-		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone '%s', e.title,
+		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone u.timezone, e.title,
 		e.url, e.author, e.content, e.status, e.starred,
 		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
 		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
@@ -166,11 +165,12 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		LEFT JOIN feeds f ON f.id=e.feed_id
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN users u ON u.id=e.user_id
 		WHERE %s %s
 	`
 
 	args, conditions := e.buildCondition()
-	query = fmt.Sprintf(query, e.timezone, conditions, e.buildSorting())
+	query = fmt.Sprintf(query, conditions, e.buildSorting())
 	// log.Println(query)
 
 	rows, err := e.store.db.Query(query, args...)
@@ -342,11 +342,10 @@ func (e *EntryQueryBuilder) buildSorting() string {
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
-func NewEntryQueryBuilder(store *Storage, userID int64, timezone string) *EntryQueryBuilder {
+func NewEntryQueryBuilder(store *Storage, userID int64) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
-		store:    store,
-		userID:   userID,
-		timezone: timezone,
-		starred:  false,
+		store:   store,
+		userID:  userID,
+		starred: false,
 	}
 }
