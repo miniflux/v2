@@ -33,17 +33,17 @@ func getRoutes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Han
 	feverController := fever.NewController(store)
 	uiController := ui_controller.NewController(cfg, store, pool, feedHandler, opml.NewHandler(store))
 
-	apiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
+	apiHandler := core.NewHandler(cfg, store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewBasicAuthMiddleware(store).Handler,
 	))
 
-	feverHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
+	feverHandler := core.NewHandler(cfg, store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewFeverMiddleware(store).Handler,
 	))
 
-	uiHandler := core.NewHandler(store, router, templateEngine, translator, middleware.NewChain(
+	uiHandler := core.NewHandler(cfg, store, router, templateEngine, translator, middleware.NewChain(
 		middleware.NewUserSessionMiddleware(store, router).Handler,
-		middleware.NewSessionMiddleware(store).Handler,
+		middleware.NewSessionMiddleware(cfg, store).Handler,
 	))
 
 	router.Handle("/fever/", feverHandler.Use(feverController.Handler))

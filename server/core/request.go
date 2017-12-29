@@ -36,11 +36,6 @@ func (r *Request) File(name string) (multipart.File, *multipart.FileHeader, erro
 	return r.request.FormFile(name)
 }
 
-// IsHTTPS returns if the request is made over HTTPS.
-func (r *Request) IsHTTPS() bool {
-	return r.request.URL.Scheme == "https"
-}
-
 // Cookie returns the cookie value.
 func (r *Request) Cookie(name string) string {
 	cookie, err := r.request.Cookie(name)

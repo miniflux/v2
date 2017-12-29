@@ -118,7 +118,7 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 
 	logger.Info("[Controller:OAuth2Callback] username=%s just logged in", user.Username)
 
-	response.SetCookie(cookie.New(cookie.CookieUserSessionID, sessionToken, request.IsHTTPS()))
+	response.SetCookie(cookie.New(cookie.CookieUserSessionID, sessionToken, c.cfg.IsHTTPS))
 	response.Redirect(ctx.Route("unread"))
 }
 

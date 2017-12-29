@@ -59,7 +59,7 @@ func (c *Controller) CheckLogin(ctx *core.Context, request *core.Request, respon
 
 	logger.Info("[Controller:CheckLogin] username=%s just logged in", authForm.Username)
 
-	response.SetCookie(cookie.New(cookie.CookieUserSessionID, sessionToken, request.IsHTTPS()))
+	response.SetCookie(cookie.New(cookie.CookieUserSessionID, sessionToken, c.cfg.IsHTTPS))
 	response.Redirect(ctx.Route("unread"))
 }
 
@@ -71,6 +71,6 @@ func (c *Controller) Logout(ctx *core.Context, request *core.Request, response *
 		logger.Error("[Controller:Logout] %v", err)
 	}
 
-	response.SetCookie(cookie.Expired(cookie.CookieUserSessionID, request.IsHTTPS()))
+	response.SetCookie(cookie.Expired(cookie.CookieUserSessionID, c.cfg.IsHTTPS))
 	response.Redirect(ctx.Route("login"))
 }

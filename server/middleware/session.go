@@ -8,6 +8,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/server/cookie"
@@ -16,25 +17,26 @@ import (
 
 // SessionMiddleware represents a session middleware.
 type SessionMiddleware struct {
+	cfg   *config.Config
 	store *storage.Storage
 }
 
 // Handler execute the middleware.
-func (t *SessionMiddleware) Handler(next http.Handler) http.Handler {
+func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		session := t.getSessionValueFromCookie(r)
+		session := s.getSessionValueFromCookie(r)
 
 		if session == nil {
 			logger.Debug("[Middleware:Session] Session not found")
-			session, err = t.store.CreateSession()
+			session, err = s.store.CreateSession()
 			if err != nil {
 				logger.Error("[Middleware:Session] %v", err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
 
-			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, r.URL.Scheme == "https"))
+			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, s.cfg.IsHTTPS))
 		} else {
 			logger.Debug("[Middleware:Session] %s", session)
 		}
@@ -61,13 +63,13 @@ func (t *SessionMiddleware) Handler(next http.Handler) http.Handler {
 	})
 }
 
-func (t *SessionMiddleware) getSessionValueFromCookie(r *http.Request) *model.Session {
+func (s *SessionMiddleware) getSessionValueFromCookie(r *http.Request) *model.Session {
 	sessionCookie, err := r.Cookie(cookie.CookieSessionID)
 	if err == http.ErrNoCookie {
 		return nil
 	}
 
-	session, err := t.store.Session(sessionCookie.Value)
+	session, err := s.store.Session(sessionCookie.Value)
 	if err != nil {
 		logger.Error("[Middleware:Session] %v", err)
 		return nil
@@ -77,6 +79,6 @@ func (t *SessionMiddleware) getSessionValueFromCookie(r *http.Request) *model.Se
 }
 
 // NewSessionMiddleware returns a new SessionMiddleware.
-func NewSessionMiddleware(s *storage.Storage) *SessionMiddleware {
-	return &SessionMiddleware{store: s}
+func NewSessionMiddleware(cfg *config.Config, store *storage.Storage) *SessionMiddleware {
+	return &SessionMiddleware{cfg, store}
 }

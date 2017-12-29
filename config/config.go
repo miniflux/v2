@@ -26,7 +26,9 @@ const (
 )
 
 // Config manages configuration parameters.
-type Config struct{}
+type Config struct {
+	IsHTTPS bool
+}
 
 // Get returns a config parameter value.
 func (c *Config) Get(key, fallback string) string {
@@ -51,5 +53,5 @@ func (c *Config) GetInt(key string, fallback int) int {
 
 // NewConfig returns a new Config.
 func NewConfig() *Config {
-	return &Config{}
+	return &Config{IsHTTPS: os.Getenv("HTTPS") != ""}
 }

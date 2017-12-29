@@ -38,6 +38,7 @@ func startServer(cfg *config.Config, handler *mux.Router) *http.Server {
 	}
 
 	if certDomain != "" && certCache != "" {
+		cfg.IsHTTPS = true
 		server.Addr = ":https"
 		certManager := autocert.Manager{
 			Cache:      autocert.DirCache(certCache),
@@ -51,6 +52,7 @@ func startServer(cfg *config.Config, handler *mux.Router) *http.Server {
 		}()
 	} else if certFile != "" && keyFile != "" {
 		server.TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
+		cfg.IsHTTPS = true
 
 		go func() {
 			logger.Info(`Listening on "%s" by using certificate "%s" and key "%s"`, server.Addr, certFile, keyFile)
