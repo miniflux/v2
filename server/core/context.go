@@ -135,7 +135,7 @@ func (c *Context) SetFlashErrorMessage(message string) {
 
 // FlashErrorMessage returns the error flash message and remove it.
 func (c *Context) FlashErrorMessage() string {
-	message := c.getContextStringValue(middleware.FlashMessageContextKey)
+	message := c.getContextStringValue(middleware.FlashErrorMessageContextKey)
 	c.store.UpdateSessionField(c.SessionID(), "flash_error_message", "")
 	return message
 }

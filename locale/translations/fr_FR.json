@@ -193,5 +193,6 @@
     "Download original content": "Télécharger le contenu original",
     "Toggle bookmark": "Ajouter/Enlever favoris",
     "Close modal dialog": "Fermer la boite de dialogue",
-    "Save article": "Sauvegarder l'article"
+    "Save article": "Sauvegarder l'article",
+    "There is already someone associated with this provider!": "Il y a déjà quelqu'un d'associé avec ce provider !"
 }

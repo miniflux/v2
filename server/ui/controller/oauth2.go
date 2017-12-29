@@ -71,7 +71,20 @@ func (c *Controller) OAuth2Callback(ctx *core.Context, request *core.Request, re
 	}
 
 	if ctx.IsAuthenticated() {
-		user := ctx.LoggedUser()
+		user, err := c.store.UserByExtraField(profile.Key, profile.ID)
+		if err != nil {
+			response.HTML().ServerError(err)
+			return
+		}
+
+		if user != nil {
+			logger.Error("[OAuth2] User #%d cannot be associated because %s is already associated", ctx.UserID(), user.Username)
+			ctx.SetFlashErrorMessage(ctx.Translate("There is already someone associated with this provider!"))
+			response.Redirect(ctx.Route("settings"))
+			return
+		}
+
+		user = ctx.LoggedUser()
 		if err := c.store.UpdateExtraField(user.ID, profile.Key, profile.ID); err != nil {
 			response.HTML().ServerError(err)
 			return
