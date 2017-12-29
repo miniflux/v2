@@ -50,7 +50,7 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 func (s *Storage) CreateUserSession(username, userAgent, ip string) (sessionID string, err error) {
 	var userID int64
 
-	err = s.db.QueryRow("SELECT id FROM users WHERE username = $1", username).Scan(&userID)
+	err = s.db.QueryRow("SELECT id FROM users WHERE username = LOWER($1)", username).Scan(&userID)
 	if err != nil {
 		return "", fmt.Errorf("unable to fetch UserID: %v", err)
 	}

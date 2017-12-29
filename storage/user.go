@@ -36,7 +36,7 @@ func (s *Storage) UserExists(username string) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserExists] username=%s", username))
 
 	var result int
-	s.db.QueryRow(`SELECT count(*) as c FROM users WHERE username=$1`, username).Scan(&result)
+	s.db.QueryRow(`SELECT count(*) as c FROM users WHERE username=LOWER($1)`, username).Scan(&result)
 	return result >= 1
 }
 
@@ -45,7 +45,7 @@ func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:AnotherUserExists] userID=%d, username=%s", userID, username))
 
 	var result int
-	s.db.QueryRow(`SELECT count(*) as c FROM users WHERE id != $1 AND username=$2`, userID, username).Scan(&result)
+	s.db.QueryRow(`SELECT count(*) as c FROM users WHERE id != $1 AND username=LOWER($2)`, userID, username).Scan(&result)
 	return result >= 1
 }
 
@@ -71,11 +71,13 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 	query := `INSERT INTO users
 		(username, password, is_admin, extra)
 		VALUES
-		($1, $2, $3, $4)
-		RETURNING id, language, theme, timezone, entry_direction`
+		(LOWER($1), $2, $3, $4)
+		RETURNING id, username, is_admin, language, theme, timezone, entry_direction`
 
-	err = s.db.QueryRow(query, strings.ToLower(user.Username), password, user.IsAdmin, extra).Scan(
+	err = s.db.QueryRow(query, user.Username, password, user.IsAdmin, extra).Scan(
 		&user.ID,
+		&user.Username,
+		&user.IsAdmin,
 		&user.Language,
 		&user.Theme,
 		&user.Timezone,
@@ -146,7 +148,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 		}
 	} else {
 		query := `UPDATE users SET
-			username=$1,
+			username=LOWER($1),
 			is_admin=$2,
 			theme=$3,
 			language=$4,
