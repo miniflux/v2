@@ -108,6 +108,18 @@ input[type="text"]:focus {
     color: #9b9b9b;
 }
 
+/* Modals */
+#modal-left {
+    background: #333;
+    color: #efefef;
+    box-shadow: 0 0 10px rgba(82, 168, 236, 0.6);
+}
+
+/* Keyboard Shortcuts */
+.keyboard-shortcuts li {
+    color: #9b9b9b;
+}
+
 /* Counter */
 .unread-counter {
     color: #bbb;

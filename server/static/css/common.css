@@ -354,6 +354,52 @@ a.button {
     margin-left: 30px;
 }
 
+/* Modals */
+#modal-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 350px;
+    overflow: auto;
+    background: #f0f0f0;
+    box-shadow: 2px 0 5px 0 #ccc;
+    padding: 5px;
+    padding-top: 30px;
+}
+
+#modal-left h3 {
+    font-weight: 400;
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.7em;
+    color: #ccc;
+    padding:0 .2em;
+    margin: 10px;
+    text-decoration: none;
+}
+
+.btn-close-modal:hover {
+    color: #999;
+}
+
+/* Keyboard Shortcuts */
+.keyboard-shortcuts li {
+    margin-left: 25px;
+    list-style-type: square;
+    color: #333;
+    font-size: 0.95em;
+    line-height: 1.45em;
+}
+
+.keyboard-shortcuts p {
+    line-height: 1.9em;
+}
+
 /* Login form */
 .login-form {
     margin: 50px auto 0;

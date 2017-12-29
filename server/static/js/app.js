@@ -432,7 +432,46 @@ class MenuHandler {
     }
 }
 
+class ModalHandler {
+    static exists() {
+        return document.getElementById("modal-container") !== null;
+    }
+
+    static open(fragment) {
+        if (ModalHandler.exists()) {
+            return;
+        }
+
+        let container = document.createElement("div");
+        container.id = "modal-container";
+        container.appendChild(document.importNode(fragment, true));
+        document.body.appendChild(container);
+
+        let closeButton = document.querySelector("a.btn-close-modal");
+        if (closeButton !== null) {
+            closeButton.onclick = (event) => {
+                event.preventDefault();
+                ModalHandler.close();
+            };
+        }
+    }
+
+    static close() {
+        let container = document.getElementById("modal-container");
+        if (container !== null) {
+            container.parentNode.removeChild(container);
+        }
+    }
+}
+
 class NavHandler {
+    showKeyboardShortcuts() {
+        let template = document.getElementById("keyboard-shortcuts");
+        if (template !== null) {
+            ModalHandler.open(template.content);
+        }
+    }
+
     markPageAsRead() {
         let items = DomHelper.getVisibleElements(".items .item");
         let entryIDs = [];
@@ -645,6 +684,8 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("s", () => navHandler.saveEntry());
     keyboardHandler.on("d", () => navHandler.fetchOriginalContent());
     keyboardHandler.on("f", () => navHandler.toggleBookmark());
+    keyboardHandler.on("?", () => navHandler.showKeyboardShortcuts());
+    keyboardHandler.on("Escape", () => ModalHandler.close());
     keyboardHandler.listen();
 
     let mouseHandler = new MouseHandler();

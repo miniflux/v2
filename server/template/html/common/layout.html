@@ -76,6 +76,48 @@
     <main>
         {{template "content" .}}
     </main>
+    <template id="keyboard-shortcuts">
+        <div id="modal-left">
+            <a href="#" class="btn-close-modal">x</a>
+            <h3>{{ t "Keyboard Shortcuts" }}</h3>
+
+            <div class="keyboard-shortcuts">
+                <p>{{ t "Sections Navigation" }}</p>
+                <ul>
+                    <li>{{ t "Go to unread" }} = <strong>g + u</strong></li>
+                    <li>{{ t "Go to bookmarks" }} = <strong>g + b</strong></li>
+                    <li>{{ t "Go to history" }} = <strong>g + h</strong></li>
+                    <li>{{ t "Go to feeds" }} = <strong>g + f</strong></li>
+                    <li>{{ t "Go to categories" }} = <strong>g + c</strong></li>
+                    <li>{{ t "Go to settings" }} = <strong>g + s</strong></li>
+                    <li>{{ t "Show keyboard shortcuts" }} = <strong>?</strong></li>
+                </ul>
+
+                <p>{{ t "Items Navigation" }}</p>
+                <ul>
+                    <li>{{ t "Go to previous item" }} = <strong>p or j or ◄</strong></li>
+                    <li>{{ t "Go to next item" }} = <strong>n or k or ►</strong></li>
+                </ul>
+
+                <p>{{ t "Pages Navigation" }}</p>
+                <ul>
+                    <li>{{ t "Go to previous page" }} = <strong>h</strong></li>
+                    <li>{{ t "Go to next page" }} = <strong>l</strong></li>
+                </ul>
+
+                <p>{{ t "Actions" }}</p>
+                <ul>
+                    <li>{{ t "Open selected item" }} = <strong>o</strong></li>
+                    <li>{{ t "Open original link" }} = <strong>v</strong></li>
+                    <li>{{ t "Toggle read/unread" }} = <strong>m</strong></li>
+                    <li>{{ t "Mark current page as read" }} = <strong>A</strong></li>
+                    <li>{{ t "Download original content" }} = <strong>d</strong></li>
+                    <li>{{ t "Toggle bookmark" }} = <strong>f</strong></li>
+                    <li>{{ t "Close modal dialog" }} = <strong>Esc</strong></li>
+                </ul>
+            </div>
+        </div>
+    </template>
 </body>
 </html>
 {{ end }}
