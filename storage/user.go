@@ -177,78 +177,40 @@ func (s *Storage) UpdateUser(user *model.User) error {
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByID] userID=%d", userID))
 	query := `SELECT
-		id, username, is_admin, theme, language, timezone, entry_direction, extra
+		id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		WHERE id = $1`
 
-	var user model.User
-	var extra hstore.Hstore
-	row := s.db.QueryRow(query, userID)
-	err := row.Scan(
-		&user.ID,
-		&user.Username,
-		&user.IsAdmin,
-		&user.Theme,
-		&user.Language,
-		&user.Timezone,
-		&user.EntryDirection,
-		&extra,
-	)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	} else if err != nil {
-		return nil, fmt.Errorf("unable to fetch user: %v", err)
-	}
-
-	user.Extra = make(map[string]string)
-	for key, value := range extra.Map {
-		if value.Valid {
-			user.Extra[key] = value.String
-		}
-	}
-
-	return &user, nil
+	return s.fetchUser(query, userID)
 }
 
 // UserByUsername finds a user by the username.
 func (s *Storage) UserByUsername(username string) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByUsername] username=%s", username))
 	query := `SELECT
-		id, username, is_admin, theme, language, timezone, entry_direction
+		id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		WHERE username=LOWER($1)`
 
-	var user model.User
-	row := s.db.QueryRow(query, username)
-	err := row.Scan(
-		&user.ID,
-		&user.Username,
-		&user.IsAdmin,
-		&user.Theme,
-		&user.Language,
-		&user.Timezone,
-		&user.EntryDirection,
-	)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	} else if err != nil {
-		return nil, fmt.Errorf("unable to fetch user: %v", err)
-	}
-
-	return &user, nil
+	return s.fetchUser(query, username)
 }
 
 // UserByExtraField finds a user by an extra field value.
 func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByExtraField] field=%s", field))
 	query := `SELECT
-		id, username, is_admin, theme, language, timezone, entry_direction
+		id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		WHERE extra->$1=$2`
 
-	var user model.User
-	row := s.db.QueryRow(query, field, value)
-	err := row.Scan(
+	return s.fetchUser(query, field, value)
+}
+
+func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, error) {
+	var extra hstore.Hstore
+
+	user := model.NewUser()
+	err := s.db.QueryRow(query, args...).Scan(
 		&user.ID,
 		&user.Username,
 		&user.IsAdmin,
@@ -256,14 +218,23 @@ func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 		&user.Language,
 		&user.Timezone,
 		&user.EntryDirection,
+		&user.LastLoginAt,
+		&extra,
 	)
+
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf("unable to fetch user: %v", err)
 	}
 
-	return &user, nil
+	for key, value := range extra.Map {
+		if value.Valid {
+			user.Extra[key] = value.String
+		}
+	}
+
+	return user, nil
 }
 
 // RemoveUser deletes a user.
@@ -290,8 +261,9 @@ func (s *Storage) RemoveUser(userID int64) error {
 // Users returns all users.
 func (s *Storage) Users() (model.Users, error) {
 	defer helper.ExecutionTime(time.Now(), "[Storage:Users]")
-	query := `SELECT
-		id, username, is_admin, theme, language, timezone, last_login_at
+	query := `
+		SELECT
+			id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		ORDER BY username ASC`
 
@@ -303,7 +275,8 @@ func (s *Storage) Users() (model.Users, error) {
 
 	var users model.Users
 	for rows.Next() {
-		var user model.User
+		var extra hstore.Hstore
+		user := model.NewUser()
 		err := rows.Scan(
 			&user.ID,
 			&user.Username,
@@ -311,14 +284,22 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.Theme,
 			&user.Language,
 			&user.Timezone,
+			&user.EntryDirection,
 			&user.LastLoginAt,
+			&extra,
 		)
 
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch users row: %v", err)
 		}
 
-		users = append(users, &user)
+		for key, value := range extra.Map {
+			if value.Valid {
+				user.Extra[key] = value.String
+			}
+		}
+
+		users = append(users, user)
 	}
 
 	return users, nil

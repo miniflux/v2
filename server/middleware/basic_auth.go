@@ -39,7 +39,14 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 		}
 
 		user, err := b.store.UserByUsername(username)
-		if err != nil || user == nil {
+		if err != nil {
+			logger.Error("[Middleware:BasicAuth] %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorResponse))
+			return
+		}
+
+		if user == nil {
 			logger.Info("[Middleware:BasicAuth] User not found: %s", username)
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(errorResponse))
