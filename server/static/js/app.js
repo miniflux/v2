@@ -205,8 +205,8 @@ class KeyboardHandler {
 class FormHandler {
     static handleSubmitButtons() {
         let elements = document.querySelectorAll("form");
-        elements.forEach(function (element) {
-            element.onsubmit = function () {
+        elements.forEach((element) => {
+            element.onsubmit = () => {
                 let button = document.querySelector("button");
 
                 if (button) {
@@ -274,6 +274,28 @@ class RequestBuilder {
     }
 }
 
+class UnreadCounterHandler {
+    static decrement(n) {
+        this.updateValue((current) => {
+            return current - n;
+        });
+    }
+
+    static increment(n) {
+        this.updateValue((current) => {
+            return current + n;
+        });
+    }
+
+    static updateValue(callback) {
+        let counterElements = document.querySelectorAll("span.unread-counter");
+        counterElements.forEach((element) => {
+            let oldValue = parseInt(element.textContent, 10);
+            element.innerHTML = callback(oldValue);
+        });
+    }
+}
+
 class EntryHandler {
     static updateEntriesStatus(entryIDs, status, callback) {
         let url = document.body.dataset.entriesStatusUrl;
@@ -295,6 +317,13 @@ class EntryHandler {
                 element.classList.add("item-status-" + newStatus);
 
                 this.updateEntriesStatus([entryID], newStatus);
+
+                if (newStatus === "read") {
+                    UnreadCounterHandler.decrement(1);
+                } else {
+                    UnreadCounterHandler.increment(1);
+                }
+
                 break;
             }
         }

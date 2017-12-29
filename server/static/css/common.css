@@ -407,7 +407,7 @@ a.button {
 }
 
 /* Counter */
-.unread-counter {
+.unread-counter-wrapper {
     font-size: 0.8em;
     font-weight: 300;
     color: #666;

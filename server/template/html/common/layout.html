@@ -42,7 +42,7 @@
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g u" }}">
                     <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}</a>
                     {{ if gt .countUnread 0 }}
-                        <span class="unread-counter" title="Unread articles">({{ .countUnread }})</span>
+                        <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
                     {{ end }}
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g b" }}">
@@ -113,6 +113,7 @@
                     <li>{{ t "Mark current page as read" }} = <strong>A</strong></li>
                     <li>{{ t "Download original content" }} = <strong>d</strong></li>
                     <li>{{ t "Toggle bookmark" }} = <strong>f</strong></li>
+                    <li>{{ t "Save article" }} = <strong>s</strong></li>
                     <li>{{ t "Close modal dialog" }} = <strong>Esc</strong></li>
                 </ul>
             </div>

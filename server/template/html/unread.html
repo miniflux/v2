@@ -2,7 +2,7 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Unread" }} ({{ .countUnread }})</h1>
+    <h1>{{ t "Unread" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
     {{ if .entries }}
     <ul>
         <li>

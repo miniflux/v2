@@ -121,7 +121,7 @@ input[type="text"]:focus {
 }
 
 /* Counter */
-.unread-counter {
+.unread-counter-wrapper {
     color: #bbb;
 }
 
