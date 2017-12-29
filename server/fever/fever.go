@@ -86,11 +86,6 @@ type savedResponse struct {
 	ItemIDs string `json:"saved_item_ids"`
 }
 
-type linksResponse struct {
-	baseResponse
-	Links string `json:"links"`
-}
-
 type group struct {
 	ID    int64  `json:"id"`
 	Title string `json:"title"`
@@ -148,8 +143,6 @@ func (c *Controller) Handler(ctx *core.Context, request *core.Request, response 
 		c.handleSavedItems(ctx, request, response)
 	case request.HasQueryParam("items"):
 		c.handleItems(ctx, request, response)
-	case request.HasQueryParam("links"):
-		c.handleLinks(ctx, request, response)
 	case request.FormValue("mark") == "item":
 		c.handleWriteItems(ctx, request, response)
 	case request.FormValue("mark") == "feed":
@@ -244,15 +237,20 @@ func (c *Controller) handleFeeds(ctx *core.Context, request *core.Request, respo
 	var result feedsResponse
 	result.Feeds = make([]feed, 0)
 	for _, f := range feeds {
-		result.Feeds = append(result.Feeds, feed{
+		subscripion := feed{
 			ID:          f.ID,
-			FaviconID:   f.Icon.IconID,
 			Title:       f.Title,
 			URL:         f.FeedURL,
 			SiteURL:     f.SiteURL,
 			IsSpark:     0,
 			LastUpdated: f.CheckedAt.Unix(),
-		})
+		}
+
+		if f.Icon != nil {
+			subscripion.FaviconID = f.Icon.IconID
+		}
+
+		result.Feeds = append(result.Feeds, subscripion)
 	}
 
 	result.FeedsGroups = c.buildFeedGroups(feeds)
@@ -466,33 +464,6 @@ func (c *Controller) handleSavedItems(ctx *core.Context, request *core.Request, 
 	}
 
 	result := &savedResponse{ItemIDs: strings.Join(itemsIDs, ",")}
-	result.SetCommonValues()
-	response.JSON().Standard(result)
-}
-
-/*
-A request with the links argument will return one additional member:
-
-    links contains an array of link objects
-
-A link object has the following members:
-
-    id (positive integer)
-    feed_id (positive integer) only use when is_item equals 1
-    item_id (positive integer) only use when is_item equals 1
-    temperature (positive float)
-    is_item (boolean integer)
-    is_local (boolean integer) used to determine if the source feed and favicon should be displayed
-    is_saved (boolean integer) only use when is_item equals 1
-    title (utf-8 string)
-    url (utf-8 string)
-    item_ids (string/comma-separated list of positive integers)
-*/
-func (c *Controller) handleLinks(ctx *core.Context, request *core.Request, response *core.Response) {
-	userID := ctx.UserID()
-	logger.Debug("[Fever] Fetching links for userID=%d", userID)
-
-	result := &linksResponse{Links: ""}
 	result.SetCommonValues()
 	response.JSON().Standard(result)
 }
