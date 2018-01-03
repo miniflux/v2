@@ -111,10 +111,10 @@ func generateFile(serializer, pkg, mapName, pattern, output string) {
 
 func main() {
 	generateFile("none", "sql", "SqlMap", "sql/*.sql", "sql/sql.go")
-	generateFile("base64", "static", "Binaries", "server/static/bin/*", "server/static/bin.go")
-	generateFile("css", "static", "Stylesheets", "server/static/css/*.css", "server/static/css.go")
-	generateFile("js", "static", "Javascript", "server/static/js/*.js", "server/static/js.go")
-	generateFile("none", "template", "templateViewsMap", "server/template/html/*.html", "server/template/views.go")
-	generateFile("none", "template", "templateCommonMap", "server/template/html/common/*.html", "server/template/common.go")
+	generateFile("base64", "static", "Binaries", "ui/static/bin/*", "ui/static/bin.go")
+	generateFile("css", "static", "Stylesheets", "ui/static/css/*.css", "ui/static/css.go")
+	generateFile("js", "static", "Javascript", "ui/static/js/*.js", "ui/static/js.go")
+	generateFile("none", "template", "templateViewsMap", "template/html/*.html", "template/views.go")
+	generateFile("none", "template", "templateCommonMap", "template/html/common/*.html", "template/common.go")
 	generateFile("none", "locale", "translations", "locale/translations/*.json", "locale/translations.go")
 }
