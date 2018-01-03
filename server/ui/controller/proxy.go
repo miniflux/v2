@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/http"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/core"
@@ -50,7 +50,7 @@ func (c *Controller) ImageProxy(ctx *core.Context, request *core.Request, respon
 	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	etag := helper.HashFromBytes(body)
+	etag := crypto.HashFromBytes(body)
 
 	response.Cache(resp.ContentType, etag, body, 72*time.Hour)
 }

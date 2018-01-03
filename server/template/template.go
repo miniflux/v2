@@ -13,11 +13,11 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/duration"
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/route"
-	"github.com/miniflux/miniflux/server/template/helper"
 	"github.com/miniflux/miniflux/server/ui/filter"
 	"github.com/miniflux/miniflux/url"
 
@@ -83,7 +83,7 @@ func (e *Engine) parseAll() {
 			return ts.Format("2006-01-02 15:04:05")
 		},
 		"elapsed": func(ts time.Time) string {
-			return helper.GetElapsedTime(e.currentLocale, ts)
+			return duration.ElapsedTime(e.currentLocale, ts)
 		},
 		"t": func(key interface{}, args ...interface{}) string {
 			switch key.(type) {

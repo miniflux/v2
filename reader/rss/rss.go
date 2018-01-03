@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
@@ -157,7 +157,7 @@ func (r *rssItem) GetAuthor() string {
 func (r *rssItem) GetHash() string {
 	for _, value := range []string{r.GUID, r.GetURL()} {
 		if value != "" {
-			return helper.Hash(value)
+			return crypto.Hash(value)
 		}
 	}
 

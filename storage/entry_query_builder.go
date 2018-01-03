@@ -11,8 +11,8 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/timer"
 )
 
 // EntryQueryBuilder builds a SQL query to fetch entries.
@@ -114,7 +114,7 @@ func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 
 // CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
-	defer helper.ExecutionTime(
+	defer timer.ExecutionTime(
 		time.Now(),
 		fmt.Sprintf("[EntryQueryBuilder:CountEntries] userID=%d, feedID=%d, status=%s", e.userID, e.feedID, e.status),
 	)
@@ -152,7 +152,7 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 // GetEntries returns a list of entries that match the condition.
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	debugStr := "[EntryQueryBuilder:GetEntries] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d"
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
 
 	query := `
 		SELECT
@@ -233,7 +233,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 // GetEntryIDs returns a list of entry IDs that match the condition.
 func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 	debugStr := "[EntryQueryBuilder:GetEntryIDs] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d"
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
 
 	query := `
 		SELECT

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package helper
+package duration
 
 import (
 	"math"
@@ -26,9 +26,9 @@ var (
 	Years      = `%d years ago`
 )
 
-// GetElapsedTime returns in a human readable format the elapsed time
+// ElapsedTime returns in a human readable format the elapsed time
 // since the given datetime.
-func GetElapsedTime(translator *locale.Language, t time.Time) string {
+func ElapsedTime(translator *locale.Language, t time.Time) string {
 	if t.IsZero() || time.Now().Before(t) {
 		return translator.Get(NotYet)
 	}

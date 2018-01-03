@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
@@ -163,7 +163,7 @@ func getContent(a *atomEntry) string {
 func getHash(a *atomEntry) string {
 	for _, value := range []string{a.ID, getURL(a.Links)} {
 		if value != "" {
-			return helper.Hash(value)
+			return crypto.Hash(value)
 		}
 	}
 

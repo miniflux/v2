@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/model"
 )
 
@@ -55,7 +55,7 @@ func (s *Storage) CreateUserSession(username, userAgent, ip string) (sessionID s
 		return "", fmt.Errorf("unable to fetch UserID: %v", err)
 	}
 
-	token := helper.GenerateRandomString(64)
+	token := crypto.GenerateRandomString(64)
 	query := "INSERT INTO user_sessions (token, user_id, user_agent, ip) VALUES ($1, $2, $3, $4)"
 	_, err = s.db.Exec(query, token, userID, userAgent, ip)
 	if err != nil {

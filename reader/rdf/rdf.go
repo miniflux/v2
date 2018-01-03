@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/sanitizer"
 	"github.com/miniflux/miniflux/url"
@@ -73,5 +73,5 @@ func getHash(r *rdfItem) string {
 		value = r.Title + r.Description
 	}
 
-	return helper.Hash(value)
+	return crypto.Hash(value)
 }

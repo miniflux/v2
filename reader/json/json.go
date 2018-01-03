@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
@@ -105,7 +105,7 @@ func (j *jsonItem) GetAuthor() string {
 func (j *jsonItem) GetHash() string {
 	for _, value := range []string{j.ID, j.URL, j.Text + j.HTML + j.Summary} {
 		if value != "" {
-			return helper.Hash(value)
+			return crypto.Hash(value)
 		}
 	}
 

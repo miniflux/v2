@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/logger"
+	"github.com/miniflux/miniflux/timer"
 )
 
 // Note: Some websites have a user agent filter.
@@ -73,7 +73,7 @@ func (c *Client) PostJSON(data interface{}) (*Response, error) {
 }
 
 func (c *Client) executeRequest(request *http.Request) (*Response, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] url=%s", c.url))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] url=%s", c.url))
 
 	client := c.buildClient()
 	resp, err := client.Do(request)

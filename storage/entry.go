@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/timer"
 
 	"github.com/lib/pq"
 )
@@ -159,7 +159,7 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:SetEntriesStatus] userID=%d, entryIDs=%v, status=%s", userID, entryIDs, status))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:SetEntriesStatus] userID=%d, entryIDs=%v, status=%s", userID, entryIDs, status))
 
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, status, userID, pq.Array(entryIDs))
@@ -181,7 +181,7 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 
 // ToggleBookmark toggles entry bookmark value.
 func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleBookmark] userID=%d, entryID=%d", userID, entryID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleBookmark] userID=%d, entryID=%d", userID, entryID))
 
 	query := `UPDATE entries SET starred = NOT starred WHERE user_id=$1 AND id=$2`
 	result, err := s.db.Exec(query, userID, entryID)
@@ -203,7 +203,7 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 
 // FlushHistory set all entries with the status "read" to "removed".
 func (s *Storage) FlushHistory(userID int64) error {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FlushHistory] userID=%d", userID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FlushHistory] userID=%d", userID))
 
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3 AND starred='f'`
 	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)

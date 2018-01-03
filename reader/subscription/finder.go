@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/reader/feed"
+	"github.com/miniflux/miniflux/timer"
 	"github.com/miniflux/miniflux/url"
 
 	"github.com/PuerkitoBio/goquery"
@@ -27,7 +27,7 @@ var (
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
 func FindSubscriptions(websiteURL string) (Subscriptions, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[FindSubscriptions] url=%s", websiteURL))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[FindSubscriptions] url=%s", websiteURL))
 
 	client := http.NewClient(websiteURL)
 	response, err := client.Get()

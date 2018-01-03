@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/http"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/icon"
 	"github.com/miniflux/miniflux/reader/processor"
 	"github.com/miniflux/miniflux/storage"
+	"github.com/miniflux/miniflux/timer"
 )
 
 var (
@@ -34,7 +34,7 @@ type Handler struct {
 
 // CreateFeed fetch, parse and store a new feed.
 func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool) (*model.Feed, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
@@ -96,7 +96,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 
 // RefreshFeed fetch and update a feed if necessary.
 func (h *Handler) RefreshFeed(userID, feedID int64) error {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
 
 	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {

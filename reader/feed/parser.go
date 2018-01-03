@@ -12,12 +12,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/atom"
 	"github.com/miniflux/miniflux/reader/json"
 	"github.com/miniflux/miniflux/reader/rdf"
 	"github.com/miniflux/miniflux/reader/rss"
+	"github.com/miniflux/miniflux/timer"
 
 	"golang.org/x/net/html/charset"
 )
@@ -33,7 +33,7 @@ const (
 
 // DetectFeedFormat detect feed format from input data.
 func DetectFeedFormat(data io.Reader) string {
-	defer helper.ExecutionTime(time.Now(), "[Feed:DetectFeedFormat]")
+	defer timer.ExecutionTime(time.Now(), "[Feed:DetectFeedFormat]")
 
 	var buffer bytes.Buffer
 	tee := io.TeeReader(data, &buffer)
@@ -67,7 +67,7 @@ func DetectFeedFormat(data io.Reader) string {
 }
 
 func parseFeed(data io.Reader) (*model.Feed, error) {
-	defer helper.ExecutionTime(time.Now(), "[Feed:ParseFeed]")
+	defer timer.ExecutionTime(time.Now(), "[Feed:ParseFeed]")
 
 	var buffer bytes.Buffer
 	io.Copy(&buffer, data)

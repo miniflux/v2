@@ -8,15 +8,15 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/model"
 )
 
 // CreateSession creates a new session.
 func (s *Storage) CreateSession() (*model.Session, error) {
 	session := model.Session{
-		ID:   helper.GenerateRandomString(32),
-		Data: &model.SessionData{CSRF: helper.GenerateRandomString(64)},
+		ID:   crypto.GenerateRandomString(32),
+		Data: &model.SessionData{CSRF: crypto.GenerateRandomString(64)},
 	}
 
 	query := "INSERT INTO sessions (id, data) VALUES ($1, $2)"

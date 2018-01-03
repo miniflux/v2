@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package helper
+package duration
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ func TestElapsedTime(t *testing.T) {
 		{time.Now().Add(-time.Hour * 24 * 365 * 3), fmt.Sprintf(Years, 3)},
 	}
 	for i, tt := range dt {
-		if out := GetElapsedTime(&locale.Language{}, tt.in); out != tt.out {
+		if out := ElapsedTime(&locale.Language{}, tt.in); out != tt.out {
 			t.Errorf("%d. content mismatch for %v:exp=%q got=%q", i, tt.in, tt.out, out)
 		}
 	}

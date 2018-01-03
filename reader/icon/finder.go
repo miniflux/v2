@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/http"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
@@ -107,7 +107,7 @@ func downloadIcon(iconURL string) (*model.Icon, error) {
 	}
 
 	icon := &model.Icon{
-		Hash:     helper.HashFromBytes(body),
+		Hash:     crypto.HashFromBytes(body),
 		MimeType: response.ContentType,
 		Content:  body,
 	}
@@ -146,7 +146,7 @@ func parseImageDataURL(value string) (*model.Icon, error) {
 	}
 
 	icon := &model.Icon{
-		Hash:     helper.HashFromBytes(blob),
+		Hash:     crypto.HashFromBytes(blob),
 		Content:  blob,
 		MimeType: mimeType,
 	}

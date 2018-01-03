@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/timer"
 )
 
 // HasIcon checks if the given feed has an icon.
@@ -24,7 +24,7 @@ func (s *Storage) HasIcon(feedID int64) bool {
 
 // IconByID returns an icon by the ID.
 func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
-	defer helper.ExecutionTime(time.Now(), "[Storage:IconByID]")
+	defer timer.ExecutionTime(time.Now(), "[Storage:IconByID]")
 
 	var icon model.Icon
 	query := `SELECT id, hash, mime_type, content FROM icons WHERE id=$1`
@@ -40,7 +40,7 @@ func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 
 // IconByFeedID returns a feed icon.
 func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:IconByFeedID] userID=%d, feedID=%d", userID, feedID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:IconByFeedID] userID=%d, feedID=%d", userID, feedID))
 	query := `
 		SELECT
 		icons.id, icons.hash, icons.mime_type, icons.content
@@ -62,7 +62,7 @@ func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
 
 // IconByHash returns an icon by the hash (checksum).
 func (s *Storage) IconByHash(icon *model.Icon) error {
-	defer helper.ExecutionTime(time.Now(), "[Storage:IconByHash]")
+	defer timer.ExecutionTime(time.Now(), "[Storage:IconByHash]")
 
 	err := s.db.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID)
 	if err == sql.ErrNoRows {
@@ -76,7 +76,7 @@ func (s *Storage) IconByHash(icon *model.Icon) error {
 
 // CreateIcon creates a new icon.
 func (s *Storage) CreateIcon(icon *model.Icon) error {
-	defer helper.ExecutionTime(time.Now(), "[Storage:CreateIcon]")
+	defer timer.ExecutionTime(time.Now(), "[Storage:CreateIcon]")
 
 	query := `
 		INSERT INTO icons
@@ -101,7 +101,7 @@ func (s *Storage) CreateIcon(icon *model.Icon) error {
 
 // CreateFeedIcon creates an icon and associate the icon to the given feed.
 func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeedIcon] feedID=%d", feed.ID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeedIcon] feedID=%d", feed.ID))
 
 	err := s.IconByHash(icon)
 	if err != nil {
@@ -125,7 +125,7 @@ func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
 
 // Icons returns all icons tht belongs to a user.
 func (s *Storage) Icons(userID int64) (model.Icons, error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Icons] userID=%d", userID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Icons] userID=%d", userID))
 	query := `
 		SELECT
 		icons.id, icons.hash, icons.mime_type, icons.content

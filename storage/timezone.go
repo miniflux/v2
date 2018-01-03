@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/timer"
 )
 
 // Timezones returns all timezones supported by the database.
 func (s *Storage) Timezones() (map[string]string, error) {
-	defer helper.ExecutionTime(time.Now(), "[Storage:Timezones]")
+	defer timer.ExecutionTime(time.Now(), "[Storage:Timezones]")
 
 	timezones := make(map[string]string)
 	query := `select name from pg_timezone_names() order by name asc`

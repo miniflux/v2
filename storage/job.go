@@ -8,15 +8,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/timer"
 )
 
 const maxParsingError = 3
 
 // NewBatch returns a serie of jobs.
 func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetJobs] batchSize=%d", batchSize))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetJobs] batchSize=%d", batchSize))
 	query := `
 		SELECT
 		id, user_id
@@ -29,7 +29,7 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 
 // NewUserBatch returns a serie of jobs but only for a given user.
 func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList, err error) {
-	defer helper.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserJobs] batchSize=%d, userID=%d", batchSize, userID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserJobs] batchSize=%d, userID=%d", batchSize, userID))
 	query := `
 		SELECT
 		id, user_id

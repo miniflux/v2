@@ -7,7 +7,7 @@ package core
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/helper"
+	"github.com/miniflux/miniflux/crypto"
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
@@ -111,7 +111,7 @@ func (c *Context) OAuth2State() string {
 
 // GenerateOAuth2State generate a new OAuth2 state.
 func (c *Context) GenerateOAuth2State() string {
-	state := helper.GenerateRandomString(32)
+	state := crypto.GenerateRandomString(32)
 	c.store.UpdateSessionField(c.SessionID(), "oauth2_state", state)
 	return state
 }

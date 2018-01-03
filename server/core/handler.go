@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/helper"
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/server/middleware"
 	"github.com/miniflux/miniflux/server/template"
 	"github.com/miniflux/miniflux/storage"
+	"github.com/miniflux/miniflux/timer"
 
 	"github.com/gorilla/mux"
 	"github.com/tomasen/realip"
@@ -36,7 +36,7 @@ type Handler struct {
 // Use is a wrapper around an HTTP handler.
 func (h *Handler) Use(f HandlerFunc) http.Handler {
 	return h.middleware.WrapFunc(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer helper.ExecutionTime(time.Now(), r.URL.Path)
+		defer timer.ExecutionTime(time.Now(), r.URL.Path)
 		logger.Debug("[HTTP] %s %s %s", realip.RealIP(r), r.Method, r.URL.Path)
 
 		if r.Header.Get("X-Forwarded-Proto") == "https" {
