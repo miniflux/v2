@@ -6,6 +6,7 @@ package scraper
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 
@@ -16,7 +17,7 @@ import (
 	"github.com/miniflux/miniflux/url"
 )
 
-// Fetch download a web page a returns relevant contents.
+// Fetch downloads a web page a returns relevant contents.
 func Fetch(websiteURL, rules string) (string, error) {
 	client := http.NewClient(websiteURL)
 	response, err := client.Get()
@@ -25,7 +26,11 @@ func Fetch(websiteURL, rules string) (string, error) {
 	}
 
 	if response.HasServerFailure() {
-		return "", errors.New("unable to download web page")
+		return "", errors.New("scraper: unable to download web page")
+	}
+
+	if !strings.Contains(response.ContentType, "text/html") {
+		return "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", response.ContentType)
 	}
 
 	page, err := response.NormalizeBodyEncoding()
@@ -33,7 +38,7 @@ func Fetch(websiteURL, rules string) (string, error) {
 		return "", err
 	}
 
-	// The entry URL could be a redirect somewhere else.
+	// The entry URL could redirect somewhere else.
 	websiteURL = response.EffectiveURL
 
 	if rules == "" {
