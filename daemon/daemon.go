@@ -8,6 +8,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/miniflux/miniflux/config"
@@ -23,6 +24,7 @@ func Run(cfg *config.Config, store *storage.Storage) {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
+	signal.Notify(stop, syscall.SIGTERM)
 
 	feedHandler := feed.NewFeedHandler(store)
 	pool := scheduler.NewWorkerPool(feedHandler, cfg.GetInt("WORKER_POOL_SIZE", config.DefaultWorkerPoolSize))
