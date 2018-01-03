@@ -21,6 +21,7 @@ func Parse() {
 	flagMigrate := flag.Bool("migrate", false, "Migrate database schema")
 	flagFlushSessions := flag.Bool("flush-sessions", false, "Flush all sessions (disconnect users)")
 	flagCreateAdmin := flag.Bool("create-admin", false, "Create admin user")
+	flagResetPassword := flag.Bool("reset-password", false, "Reset user password")
 	flag.Parse()
 
 	cfg := config.NewConfig()
@@ -51,6 +52,11 @@ func Parse() {
 
 	if *flagCreateAdmin {
 		createAdmin(store)
+		return
+	}
+
+	if *flagResetPassword {
+		resetPassword(store)
 		return
 	}
 

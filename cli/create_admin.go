@@ -5,36 +5,18 @@
 package cli
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/storage"
-
-	"golang.org/x/crypto/ssh/terminal"
 )
 
-func askCredentials() (string, string) {
-	reader := bufio.NewReader(os.Stdin)
-
-	fmt.Print("Enter Username: ")
-	username, _ := reader.ReadString('\n')
-
-	fmt.Print("Enter Password: ")
-	bytePassword, _ := terminal.ReadPassword(0)
-
-	fmt.Printf("\n")
-	return strings.TrimSpace(username), strings.TrimSpace(string(bytePassword))
-}
-
 func createAdmin(store *storage.Storage) {
-	user := &model.User{
-		Username: os.Getenv("ADMIN_USERNAME"),
-		Password: os.Getenv("ADMIN_PASSWORD"),
-		IsAdmin:  true,
-	}
+	user := model.NewUser()
+	user.Username = os.Getenv("ADMIN_USERNAME")
+	user.Password = os.Getenv("ADMIN_PASSWORD")
+	user.IsAdmin = true
 
 	if user.Username == "" || user.Password == "" {
 		user.Username, user.Password = askCredentials()
