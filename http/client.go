@@ -22,6 +22,7 @@ import (
 // Note: Some websites have a user agent filter.
 const userAgent = "Mozilla/5.0 (like Gecko, like Safari, like Chrome) - Miniflux <https://miniflux.net/>"
 const requestTimeout = 300
+const maxBodySize = 1024 * 1024 * 15
 
 // Client is a HTTP Client :)
 type Client struct {
@@ -80,6 +81,10 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		return nil, err
 	}
 
+	if resp.ContentLength > maxBodySize {
+		return nil, fmt.Errorf("client: response too large (%d bytes)", resp.ContentLength)
+	}
+
 	response := &Response{
 		Body:         resp.Body,
 		StatusCode:   resp.StatusCode,
@@ -89,10 +94,11 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		ContentType:  resp.Header.Get("Content-Type"),
 	}
 
-	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
+	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ContentLength=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
 		request.Method,
 		c.url,
 		response.StatusCode,
+		resp.ContentLength,
 		response.ETag,
 		response.LastModified,
 		response.EffectiveURL,
