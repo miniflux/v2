@@ -75,6 +75,10 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 	subscription.UserID = userID
 	subscription.Crawler = crawler
 
+	if subscription.SiteURL == "" {
+		subscription.SiteURL = subscription.FeedURL
+	}
+
 	err = h.store.CreateFeed(subscription)
 	if err != nil {
 		return nil, err
@@ -170,6 +174,10 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 
 	originalFeed.ParsingErrorCount = 0
 	originalFeed.ParsingErrorMsg = ""
+
+	if originalFeed.SiteURL == "" {
+		originalFeed.SiteURL = originalFeed.FeedURL
+	}
 
 	return h.store.UpdateFeed(originalFeed)
 }
