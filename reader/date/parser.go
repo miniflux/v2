@@ -203,6 +203,11 @@ func Parse(ds string) (t time.Time, err error) {
 		}
 	}
 
+	lastSpace := strings.LastIndex(ds, " ")
+	if lastSpace > 0 {
+		return Parse(ds[0:lastSpace])
+	}
+
 	err = fmt.Errorf(`date parser: failed to parse date "%s"`, ds)
 	return
 }

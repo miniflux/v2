@@ -46,6 +46,7 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"9 Dec 2016 12:00 GMT",
 		"Friday, December 22, 2017 - 3:09pm",
 		"Friday, December 8, 2017 - 3:07pm",
+		"Thu, 25 Feb 2016 00:00:00 Europe/Brussels",
 	}
 
 	for _, date := range dates {
