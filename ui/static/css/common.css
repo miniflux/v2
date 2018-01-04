@@ -573,6 +573,10 @@ article.feed-parsing-error {
     margin-bottom: 20px;
 }
 
+.entry-actions a {
+    text-decoration: none;
+}
+
 .entry-actions li {
     display: inline;
 }
