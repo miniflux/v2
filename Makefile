@@ -1,6 +1,6 @@
 APP := miniflux
-VERSION := $(shell git rev-parse --short HEAD)
-BUILD_DATE := `date +%FT%T%z`
+VERSION=$(shell git rev-parse --short HEAD)
+BUILD_DATE=`date +%FT%T%z`
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
@@ -8,16 +8,16 @@ DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
 linux:
 	@ go generate
-	@ GOOS=linux GOARCH=amd64 go build -ldflags="-X 'miniflux/version.Version=$(VERSION)' -X 'miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-amd64 main.go
+	@ GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-amd64 main.go
 
 linux-arm:
 	@ go generate
-	@ GOOS=linux GOARCH=arm64 go build -ldflags="-X 'miniflux/version.Version=$(VERSION)' -X 'miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-arm64 main.go
-	@ GOOS=linux GOARCH=arm go build -ldflags="-X 'miniflux/version.Version=$(VERSION)' -X 'miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-arm main.go
+	@ GOOS=linux GOARCH=arm64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-arm64 main.go
+	@ GOOS=linux GOARCH=arm go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-arm main.go
 
 darwin:
 	@ go generate
-	@ GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'miniflux/version.Version=$(VERSION)' -X 'miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-darwin-amd64 main.go
+	@ GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-darwin-amd64 main.go
 
 build: linux linux-arm darwin
 
