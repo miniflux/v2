@@ -21,7 +21,7 @@
 {{ if ne .feed.ParsingErrorCount 0 }}
 <div class="alert alert-error">
     <h3>{{ t "There is a problem with this feed" }}</h3>
-    {{ .feed.ParsingErrorMsg }}
+    <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
 {{ else if not .entries }}
     <p class="alert">{{ t "There is no article for this feed." }}</p>

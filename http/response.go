@@ -13,12 +13,13 @@ import (
 
 // Response wraps a server response.
 type Response struct {
-	Body         io.Reader
-	StatusCode   int
-	EffectiveURL string
-	LastModified string
-	ETag         string
-	ContentType  string
+	Body          io.Reader
+	StatusCode    int
+	EffectiveURL  string
+	LastModified  string
+	ETag          string
+	ContentType   string
+	ContentLength int64
 }
 
 // HasServerFailure returns true if the status code represents a failure.

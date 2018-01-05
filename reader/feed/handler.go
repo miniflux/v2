@@ -25,6 +25,7 @@ var (
 	errNotFound         = "Feed %d not found"
 	errEncoding         = "Unable to normalize encoding: %v."
 	errCategoryNotFound = "Category not found for this user."
+	errEmptyFeed        = "This feed is empty"
 )
 
 // Handler contains all the logic to create and refresh feeds.
@@ -48,6 +49,11 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 
 	if response.HasServerFailure() {
 		return nil, errors.NewLocalizedError(errServerFailure, response.StatusCode)
+	}
+
+	// Content-Length = -1 when no Content-Length header is sent
+	if response.ContentLength == 0 {
+		return nil, errors.NewLocalizedError(errEmptyFeed)
 	}
 
 	if h.store.FeedURLExists(userID, response.EffectiveURL) {
@@ -133,6 +139,16 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 
 	if response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		logger.Debug("[Handler:RefreshFeed] Feed #%d has been modified", feedID)
+
+		// Content-Length = -1 when no Content-Length header is sent
+		if response.ContentLength == 0 {
+			err := errors.NewLocalizedError(errEmptyFeed)
+			originalFeed.ParsingErrorCount++
+			originalFeed.ParsingErrorMsg = err.Error()
+			h.store.UpdateFeed(originalFeed)
+			return err
+		}
+
 		body, err := response.NormalizeBodyEncoding()
 		if err != nil {
 			return errors.NewLocalizedError(errEncoding, err)

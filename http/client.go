@@ -86,12 +86,13 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 	}
 
 	response := &Response{
-		Body:         resp.Body,
-		StatusCode:   resp.StatusCode,
-		EffectiveURL: resp.Request.URL.String(),
-		LastModified: resp.Header.Get("Last-Modified"),
-		ETag:         resp.Header.Get("ETag"),
-		ContentType:  resp.Header.Get("Content-Type"),
+		Body:          resp.Body,
+		StatusCode:    resp.StatusCode,
+		EffectiveURL:  resp.Request.URL.String(),
+		LastModified:  resp.Header.Get("Last-Modified"),
+		ETag:          resp.Header.Get("ETag"),
+		ContentType:   resp.Header.Get("Content-Type"),
+		ContentLength: resp.ContentLength,
 	}
 
 	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ContentLength=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
