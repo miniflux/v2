@@ -213,3 +213,16 @@ func (s *Storage) FlushHistory(userID int64) error {
 
 	return nil
 }
+
+// MarkAllAsRead set all entries with the status "unread" to "read".
+func (s *Storage) MarkAllAsRead(userID int64) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkAllAsRead] userID=%d", userID))
+
+	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3`
+	_, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread)
+	if err != nil {
+		return fmt.Errorf("unable to mark all entries as read: %v", err)
+	}
+
+	return nil
+}

@@ -195,5 +195,6 @@
     "Close modal dialog": "Fermer la boite de dialogue",
     "Save article": "Sauvegarder l'article",
     "There is already someone associated with this provider!": "Il y a déjà quelqu'un d'associé avec ce provider !",
-    "There is already someone else with the same Fever username!": "Il y a déjà quelqu'un d'autre avec le même nom d'utilisateur Fever !"
+    "There is already someone else with the same Fever username!": "Il y a déjà quelqu'un d'autre avec le même nom d'utilisateur Fever !",
+    "Mark all as read": "Tout marquer comme lu"
 }

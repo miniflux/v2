@@ -6,6 +6,7 @@ package ui
 
 import (
 	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 )
 
@@ -46,4 +47,13 @@ func (c *Controller) ShowUnreadPage(ctx *handler.Context, request *handler.Reque
 		"menu":        "unread",
 		"csrf":        ctx.CSRF(),
 	})
+}
+
+// MarkAllAsRead marks all unread entries as read.
+func (c *Controller) MarkAllAsRead(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+	if err := c.store.MarkAllAsRead(ctx.UserID()); err != nil {
+		logger.Error("[MarkAllAsRead] %v", err)
+	}
+
+	response.Redirect(ctx.Route("unread"))
 }

@@ -86,6 +86,8 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	router.Handle("/subscribe", uiHandler.Use(uiController.SubmitSubscription)).Name("submitSubscription").Methods("POST")
 	router.Handle("/subscriptions", uiHandler.Use(uiController.ChooseSubscription)).Name("chooseSubscription").Methods("POST")
 
+	router.Handle("/mark-all-as-read", uiHandler.Use(uiController.MarkAllAsRead)).Name("markAllAsRead").Methods("GET")
+
 	router.Handle("/unread", uiHandler.Use(uiController.ShowUnreadPage)).Name("unread").Methods("GET")
 	router.Handle("/history", uiHandler.Use(uiController.ShowHistoryPage)).Name("history").Methods("GET")
 	router.Handle("/starred", uiHandler.Use(uiController.ShowStarredPage)).Name("starred").Methods("GET")
