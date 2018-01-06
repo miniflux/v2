@@ -10,12 +10,14 @@
         <li>
             <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
         </li>
+        {{ if .user.IsAdmin }}
         <li>
             <a href="{{ route "users" }}">{{ t "Users" }}</a>
         </li>
         <li>
             <a href="{{ route "createUser" }}">{{ t "Add user" }}</a>
         </li>
+        {{ end }}
     </ul>
 </section>
 
