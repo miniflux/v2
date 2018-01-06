@@ -8,6 +8,7 @@ package scraper
 // domain => CSS selectors
 var predefinedRules = map[string]string{
 	"cbc.ca":              ".story-content",
+	"darkreading.com":     "#article-main:not(header)",
 	"developpez.com":      "div[itemprop=articleBody]",
 	"francetvinfo.fr":     ".text",
 	"github.com":          "article.entry-content",
