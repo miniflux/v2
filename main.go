@@ -14,7 +14,6 @@ package main
 //go:generate gofmt -s -w locale/translations.go
 
 import (
-	_ "github.com/lib/pq"
 	"github.com/miniflux/miniflux/cli"
 )
 
