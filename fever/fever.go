@@ -501,7 +501,7 @@ func (c *Controller) handleWriteItems(ctx *handler.Context, request *handler.Req
 		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
 	case "unread":
 		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
-	case "saved":
+	case "saved", "unsaved":
 		if err := c.store.ToggleBookmark(userID, entryID); err != nil {
 			response.JSON().ServerError(err)
 			return
