@@ -4,7 +4,7 @@
 
 package version
 
-// Version of the application (generate with "make build")
+// Version of the application (generated with "make build")
 var Version = "undefined"
 
 // BuildDate is generated with "make build"
