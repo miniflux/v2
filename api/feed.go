@@ -7,6 +7,8 @@ package api
 import (
 	"errors"
 
+	"github.com/miniflux/miniflux/reader/opml"
+
 	"github.com/miniflux/miniflux/http/handler"
 )
 
@@ -130,6 +132,18 @@ func (c *Controller) GetFeeds(ctx *handler.Context, request *handler.Request, re
 	}
 
 	response.JSON().Standard(feeds)
+}
+
+// Export is the API handler that incoves an OPML export.
+func (c *Controller) Export(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+	opmlHandler := opml.NewHandler(c.store)
+
+	opml, err := opmlHandler.Export(ctx.LoggedUser().ID)
+	if err != nil {
+		response.JSON().ServerError(errors.New("unable to export feeds to OPML"))
+	}
+
+	response.XML().Serve(opml)
 }
 
 // GetFeed is the API handler to get a feed.

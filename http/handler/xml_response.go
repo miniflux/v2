@@ -21,3 +21,9 @@ func (x *XMLResponse) Download(filename, data string) {
 	x.writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 	x.writer.Write([]byte(data))
 }
+
+// Serve forces the XML to be sent to browser.
+func (x *XMLResponse) Serve(data string) {
+	x.writer.Header().Set("Content-Type", "text/xml")
+	x.writer.Write([]byte(data))
+}
