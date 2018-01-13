@@ -18,14 +18,16 @@ const (
 
 // User represents a user in the system.
 type User struct {
-	ID          int64      `json:"id"`
-	Username    string     `json:"username"`
-	Password    string     `json:"password,omitempty"`
-	IsAdmin     bool       `json:"is_admin"`
-	Theme       string     `json:"theme"`
-	Language    string     `json:"language"`
-	Timezone    string     `json:"timezone"`
-	LastLoginAt *time.Time `json:"last_login_at"`
+	ID             int64             `json:"id"`
+	Username       string            `json:"username"`
+	Password       string            `json:"password,omitempty"`
+	IsAdmin        bool              `json:"is_admin"`
+	Theme          string            `json:"theme"`
+	Language       string            `json:"language"`
+	Timezone       string            `json:"timezone"`
+	EntryDirection string            `json:"entry_sorting_direction"`
+	LastLoginAt    *time.Time        `json:"last_login_at"`
+	Extra          map[string]string `json:"extra"`
 }
 
 func (u User) String() string {

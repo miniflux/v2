@@ -7,6 +7,7 @@ package miniflux
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"strconv"
 )
@@ -211,6 +212,22 @@ func (c *Client) Feeds() (Feeds, error) {
 	}
 
 	return feeds, nil
+}
+
+// Export creates OPML file.
+func (c *Client) Export() ([]byte, error) {
+	body, err := c.request.Get("/v1/export")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	opml, err := ioutil.ReadAll(body)
+	if err != nil {
+		return nil, err
+	}
+
+	return opml, nil
 }
 
 // Feed gets a feed.

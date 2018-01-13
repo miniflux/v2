@@ -40,6 +40,21 @@ func main() {
         return
     }
     fmt.Println(feeds)
+
+    // Backup to opml file.
+    opml, err := client.Export()
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    err = ioutil.WriteFile("opml.xml", opml, 0644)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    fmt.Println("backup done!")
+
 }
 ```
 

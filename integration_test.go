@@ -634,6 +634,25 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	}
 }
 
+func TestExport(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	output, err := client.Export()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !strings.HasPrefix(string(output), "<?xml") {
+		t.Fatalf(`Invalid OPML export, got "%s"`, string(output))
+	}
+}
+
 func TestUpdateFeed(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
