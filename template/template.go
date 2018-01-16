@@ -36,7 +36,7 @@ type Engine struct {
 func (e *Engine) parseAll() {
 	funcMap := template.FuncMap{
 		"baseURL": func() string {
-			return e.cfg.Get("BASE_URL", config.DefaultBaseURL)
+			return e.cfg.BaseURL()
 		},
 		"hasOAuth2Provider": func(provider string) bool {
 			return e.cfg.Get("OAUTH2_PROVIDER", "") == provider

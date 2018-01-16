@@ -51,6 +51,66 @@ func (c *Config) GetInt(key string, fallback int) int {
 	return v
 }
 
+// BaseURL returns the application base URL.
+func (c *Config) BaseURL() string {
+	return c.Get("BASE_URL", DefaultBaseURL)
+}
+
+// DatabaseURL returns the database URL.
+func (c *Config) DatabaseURL() string {
+	return c.Get("DATABASE_URL", DefaultDatabaseURL)
+}
+
+// DatabaseMaxConnections returns the number of maximum database connections.
+func (c *Config) DatabaseMaxConnections() int {
+	return c.GetInt("DATABASE_MAX_CONNS", DefaultDatabaseMaxConns)
+}
+
+// ListenAddr returns the listen address for the HTTP server.
+func (c *Config) ListenAddr() string {
+	return c.Get("LISTEN_ADDR", DefaultListenAddr)
+}
+
+// CertFile returns the SSL certificate filename if any.
+func (c *Config) CertFile() string {
+	return c.Get("CERT_FILE", DefaultCertFile)
+}
+
+// KeyFile returns the private key filename for custom SSL certificate.
+func (c *Config) KeyFile() string {
+	return c.Get("KEY_FILE", DefaultKeyFile)
+}
+
+// CertDomain returns the domain to use for Let's Encrypt certificate.
+func (c *Config) CertDomain() string {
+	return c.Get("CERT_DOMAIN", DefaultCertDomain)
+}
+
+// CertCache returns the directory to use for Let's Encrypt session cache.
+func (c *Config) CertCache() string {
+	return c.Get("CERT_CACHE", DefaultCertCache)
+}
+
+// SessionCleanupFrequency returns the interval for session cleanup.
+func (c *Config) SessionCleanupFrequency() int {
+	return c.GetInt("SESSION_CLEANUP_FREQUENCY", DefaultSessionCleanupFrequency)
+}
+
+// WorkerPoolSize returns the number of background worker.
+func (c *Config) WorkerPoolSize() int {
+	return c.GetInt("WORKER_POOL_SIZE", DefaultWorkerPoolSize)
+}
+
+// PollingFrequency returns the interval to refresh feeds in the background.
+func (c *Config) PollingFrequency() int {
+	return c.GetInt("POLLING_FREQUENCY", DefaultPollingFrequency)
+}
+
+// BatchSize returns the number of feeds to send for background processing.
+func (c *Config) BatchSize() int {
+	return c.GetInt("BATCH_SIZE", DefaultBatchSize)
+}
+
 // NewConfig returns a new Config.
 func NewConfig() *Config {
 	return &Config{IsHTTPS: os.Getenv("HTTPS") != ""}

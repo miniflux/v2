@@ -27,17 +27,17 @@ func Run(cfg *config.Config, store *storage.Storage) {
 	signal.Notify(stop, syscall.SIGTERM)
 
 	feedHandler := feed.NewFeedHandler(store)
-	pool := scheduler.NewWorkerPool(feedHandler, cfg.GetInt("WORKER_POOL_SIZE", config.DefaultWorkerPoolSize))
+	pool := scheduler.NewWorkerPool(feedHandler, cfg.WorkerPoolSize())
 	server := newServer(cfg, store, pool, feedHandler)
 
 	scheduler.NewFeedScheduler(
 		store,
 		pool,
-		cfg.GetInt("POLLING_FREQUENCY", config.DefaultPollingFrequency),
-		cfg.GetInt("BATCH_SIZE", config.DefaultBatchSize),
+		cfg.PollingFrequency(),
+		cfg.BatchSize(),
 	)
 
-	scheduler.NewSessionScheduler(store, config.DefaultSessionCleanupFrequency)
+	scheduler.NewSessionScheduler(store, cfg.SessionCleanupFrequency())
 
 	<-stop
 	logger.Info("Shutting down the server...")
