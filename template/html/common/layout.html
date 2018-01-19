@@ -61,7 +61,7 @@
                     <a href="{{ route "settings" }}" data-page="settings">{{ t "Settings" }}</a>
                 </li>
                 <li>
-                    <a href="{{ route "logout" }}" title="{{ t "Logged as" }} {{ .user.Username }}">{{ t "Logout" }}</a>
+                    <a href="{{ route "logout" }}" title="{{ t "Logged as %s" .user.Username }}">{{ t "Logout" }}</a>
                 </li>
             </ul>
         </nav>
