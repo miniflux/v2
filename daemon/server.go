@@ -19,15 +19,15 @@ import (
 )
 
 func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler) *http.Server {
-	certFile := cfg.Get("CERT_FILE", config.DefaultCertFile)
-	keyFile := cfg.Get("KEY_FILE", config.DefaultKeyFile)
-	certDomain := cfg.Get("CERT_DOMAIN", config.DefaultCertDomain)
-	certCache := cfg.Get("CERT_CACHE", config.DefaultCertCache)
+	certFile := cfg.CertFile()
+	keyFile := cfg.KeyFile()
+	certDomain := cfg.CertDomain()
+	certCache := cfg.CertCache()
 	server := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
-		Addr:         cfg.Get("LISTEN_ADDR", config.DefaultListenAddr),
+		Addr:         cfg.ListenAddr(),
 		Handler:      routes(cfg, store, feedHandler, pool),
 	}
 

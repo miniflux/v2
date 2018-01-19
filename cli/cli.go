@@ -26,8 +26,8 @@ func Parse() {
 
 	cfg := config.NewConfig()
 	store := storage.NewStorage(
-		cfg.Get("DATABASE_URL", config.DefaultDatabaseURL),
-		cfg.GetInt("DATABASE_MAX_CONNS", config.DefaultDatabaseMaxConns),
+		cfg.DatabaseURL(),
+		cfg.DatabaseMaxConnections(),
 	)
 
 	if *flagInfo {
