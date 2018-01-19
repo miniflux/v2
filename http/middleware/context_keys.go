@@ -29,6 +29,9 @@ var (
 	// UserSessionTokenContextKey is the context key used to store the user session ID.
 	UserSessionTokenContextKey = &ContextKey{"UserSessionToken"}
 
+	// UserLanguageContextKey is the context key to store user language.
+	UserLanguageContextKey = &ContextKey{"UserLanguageContextKey"}
+
 	// SessionIDContextKey is the context key used to store the session ID.
 	SessionIDContextKey = &ContextKey{"SessionID"}
 

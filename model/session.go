@@ -17,11 +17,12 @@ type SessionData struct {
 	OAuth2State       string `json:"oauth2_state"`
 	FlashMessage      string `json:"flash_message"`
 	FlashErrorMessage string `json:"flash_error_message"`
+	Language          string `json:"language"`
 }
 
 func (s SessionData) String() string {
-	return fmt.Sprintf(`CSRF="%s", "OAuth2State="%s", FlashMessage="%s", "FlashErrorMessage="%s"`,
-		s.CSRF, s.OAuth2State, s.FlashMessage, s.FlashErrorMessage)
+	return fmt.Sprintf(`CSRF="%s", "OAuth2State="%s", FlashMessage="%s", FlashErrorMessage="%s", Lang="%s"`,
+		s.CSRF, s.OAuth2State, s.FlashMessage, s.FlashErrorMessage, s.Language)
 }
 
 // Value converts the session data to JSON.
@@ -52,5 +53,5 @@ type Session struct {
 }
 
 func (s *Session) String() string {
-	return fmt.Sprintf(`ID="%s", Data="%v"`, s.ID, s.Data)
+	return fmt.Sprintf(`ID="%s", Data={%v}`, s.ID, s.Data)
 }

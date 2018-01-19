@@ -59,6 +59,7 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, OAuth2StateContextKey, session.Data.OAuth2State)
 		ctx = context.WithValue(ctx, FlashMessageContextKey, session.Data.FlashMessage)
 		ctx = context.WithValue(ctx, FlashErrorMessageContextKey, session.Data.FlashErrorMessage)
+		ctx = context.WithValue(ctx, UserLanguageContextKey, session.Data.Language)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -67,6 +67,10 @@ func (c *Controller) CheckLogin(ctx *handler.Context, request *handler.Request, 
 func (c *Controller) Logout(ctx *handler.Context, request *handler.Request, response *handler.Response) {
 	user := ctx.LoggedUser()
 
+	if err := c.store.UpdateSessionField(ctx.SessionID(), "language", user.Language); err != nil {
+		logger.Error("[Controller:Logout] %v", err)
+	}
+
 	if err := c.store.RemoveUserSessionByToken(user.ID, ctx.UserSessionToken()); err != nil {
 		logger.Error("[Controller:Logout] %v", err)
 	}
