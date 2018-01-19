@@ -197,5 +197,12 @@
     "There is already someone associated with this provider!": "Il y a déjà quelqu'un d'associé avec ce provider !",
     "There is already someone else with the same Fever username!": "Il y a déjà quelqu'un d'autre avec le même nom d'utilisateur Fever !",
     "Mark all as read": "Tout marquer comme lu",
-    "This feed is empty": "Cet abonnement est vide"
+    "This feed is empty": "Cet abonnement est vide",
+    "Flush history": "Supprimer l'historique",
+    "Site URL": "URL du site web",
+    "Feed URL": "URL du flux",
+    "Logged as %s": "Connecté en tant que %s",
+    "Unread Items": "Éléments non lus",
+    "Change entry status": "Changer le statut de l'élément",
+    "Read": "Lu"
 }

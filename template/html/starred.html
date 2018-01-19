@@ -20,38 +20,7 @@
                 </span>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
-            <div class="item-meta">
-                <ul>
-                    <li>
-                        <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.Title }}">{{ domain .Feed.SiteURL }}</a>
-                    </li>
-                    <li>
-                        <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed .Date }}</time>
-                    </li>
-                    <li>
-                        <a href="#"
-                            title="{{ t "Save this article" }}"
-                            data-save-entry="true"
-                            data-save-url="{{ route "saveEntry" "entryID" .ID }}"
-                            data-label-loading="{{ t "Saving..." }}"
-                            data-label-done="{{ t "Done!" }}"
-                            >{{ t "Save" }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
-                    </li>
-                    <li>
-                        <a href="#"
-                            data-toggle-bookmark="true"
-                            data-bookmark-url="{{ route "toggleBookmark" "entryID" .ID }}"
-                            data-label-loading="{{ t "Saving..." }}"
-                            data-label-star="☆ {{ t "Star" }}"
-                            data-label-unstar="★ {{ t "Unstar" }}"
-                            data-value="{{ if .Starred }}star{{ else }}unstar{{ end }}"
-                            >{{ if .Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
-                    </li>
-                </ul>
-            </div>
+            {{ template "item_meta" . }}
         </article>
         {{ end }}
     </div>
