@@ -80,8 +80,12 @@ func (c *Context) LoggedUser() *model.User {
 
 // UserLanguage get the locale used by the current logged user.
 func (c *Context) UserLanguage() string {
-	user := c.LoggedUser()
-	return user.Language
+	if c.IsAuthenticated() {
+		user := c.LoggedUser()
+		return user.Language
+	}
+
+	return c.getContextStringValue(middleware.UserLanguageContextKey)
 }
 
 // Translate translates a message in the current language.
@@ -145,7 +149,6 @@ func (c *Context) getContextStringValue(key *middleware.ContextKey) string {
 		return v.(string)
 	}
 
-	logger.Error("[Core:Context] Missing key: %s", key)
 	return ""
 }
 
