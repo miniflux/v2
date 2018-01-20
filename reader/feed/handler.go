@@ -70,7 +70,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 		return nil, err
 	}
 
-	feedProcessor := processor.NewFeedProcessor(subscription)
+	feedProcessor := processor.NewFeedProcessor(userID, h.store, subscription)
 	feedProcessor.WithCrawler(crawler)
 	feedProcessor.Process()
 
@@ -162,7 +162,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 			return err
 		}
 
-		feedProcessor := processor.NewFeedProcessor(subscription)
+		feedProcessor := processor.NewFeedProcessor(userID, h.store, subscription)
 		feedProcessor.WithScraperRules(originalFeed.ScraperRules)
 		feedProcessor.WithRewriteRules(originalFeed.RewriteRules)
 		feedProcessor.WithCrawler(originalFeed.Crawler)

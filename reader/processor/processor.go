@@ -10,10 +10,13 @@ import (
 	"github.com/miniflux/miniflux/reader/rewrite"
 	"github.com/miniflux/miniflux/reader/sanitizer"
 	"github.com/miniflux/miniflux/reader/scraper"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // FeedProcessor handles the processing of feed contents.
 type FeedProcessor struct {
+	userID       int64
+	store        *storage.Storage
 	feed         *model.Feed
 	scraperRules string
 	rewriteRules string
@@ -39,11 +42,15 @@ func (f *FeedProcessor) WithRewriteRules(rules string) {
 func (f *FeedProcessor) Process() {
 	for _, entry := range f.feed.Entries {
 		if f.crawler {
-			content, err := scraper.Fetch(entry.URL, f.scraperRules)
-			if err != nil {
-				logger.Error("[FeedProcessor] %v", err)
+			if f.store.EntryURLExists(f.userID, entry.URL) {
+				logger.Debug(`[FeedProcessor] Do not crawl existing entry URL: "%s"`, entry.URL)
 			} else {
-				entry.Content = content
+				content, err := scraper.Fetch(entry.URL, f.scraperRules)
+				if err != nil {
+					logger.Error("[FeedProcessor] %v", err)
+				} else {
+					entry.Content = content
+				}
 			}
 		}
 
@@ -53,6 +60,6 @@ func (f *FeedProcessor) Process() {
 }
 
 // NewFeedProcessor returns a new FeedProcessor.
-func NewFeedProcessor(feed *model.Feed) *FeedProcessor {
-	return &FeedProcessor{feed: feed, crawler: false}
+func NewFeedProcessor(userID int64, store *storage.Storage, feed *model.Feed) *FeedProcessor {
+	return &FeedProcessor{userID: userID, store: store, feed: feed, crawler: false}
 }
