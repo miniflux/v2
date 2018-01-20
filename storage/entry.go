@@ -226,3 +226,11 @@ func (s *Storage) MarkAllAsRead(userID int64) error {
 
 	return nil
 }
+
+// EntryURLExists returns true if an entry with this URL already exists.
+func (s *Storage) EntryURLExists(userID int64, entryURL string) bool {
+	var result int
+	query := `SELECT count(*) as c FROM entries WHERE user_id=$1 AND url=$2`
+	s.db.QueryRow(query, userID, entryURL).Scan(&result)
+	return result >= 1
+}
