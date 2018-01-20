@@ -10,14 +10,14 @@ import (
 
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/model"
-	"golang.org/x/net/html/charset"
+	"github.com/miniflux/miniflux/reader/encoding"
 )
 
 // Parse returns a normalized feed struct from a RDF feed.
 func Parse(data io.Reader) (*model.Feed, error) {
 	feed := new(rdfFeed)
 	decoder := xml.NewDecoder(data)
-	decoder.CharsetReader = charset.NewReaderLabel
+	decoder.CharsetReader = encoding.CharsetReader
 
 	err := decoder.Decode(feed)
 	if err != nil {

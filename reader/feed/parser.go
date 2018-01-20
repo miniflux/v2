@@ -14,12 +14,11 @@ import (
 
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/atom"
+	"github.com/miniflux/miniflux/reader/encoding"
 	"github.com/miniflux/miniflux/reader/json"
 	"github.com/miniflux/miniflux/reader/rdf"
 	"github.com/miniflux/miniflux/reader/rss"
 	"github.com/miniflux/miniflux/timer"
-
-	"golang.org/x/net/html/charset"
 )
 
 // List of feed formats.
@@ -32,14 +31,14 @@ const (
 )
 
 // DetectFeedFormat detect feed format from input data.
-func DetectFeedFormat(data io.Reader) string {
+func DetectFeedFormat(r io.Reader) string {
 	defer timer.ExecutionTime(time.Now(), "[Feed:DetectFeedFormat]")
 
 	var buffer bytes.Buffer
-	tee := io.TeeReader(data, &buffer)
+	tee := io.TeeReader(r, &buffer)
 
 	decoder := xml.NewDecoder(tee)
-	decoder.CharsetReader = charset.NewReaderLabel
+	decoder.CharsetReader = encoding.CharsetReader
 
 	for {
 		token, _ := decoder.Token()
@@ -66,11 +65,11 @@ func DetectFeedFormat(data io.Reader) string {
 	return FormatUnknown
 }
 
-func parseFeed(data io.Reader) (*model.Feed, error) {
+func parseFeed(r io.Reader) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), "[Feed:ParseFeed]")
 
 	var buffer bytes.Buffer
-	io.Copy(&buffer, data)
+	io.Copy(&buffer, r)
 
 	reader := bytes.NewReader(buffer.Bytes())
 	format := DetectFeedFormat(reader)

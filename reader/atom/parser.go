@@ -10,15 +10,14 @@ import (
 
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/model"
-
-	"golang.org/x/net/html/charset"
+	"github.com/miniflux/miniflux/reader/encoding"
 )
 
 // Parse returns a normalized feed struct from a Atom feed.
 func Parse(data io.Reader) (*model.Feed, error) {
 	atomFeed := new(atomFeed)
 	decoder := xml.NewDecoder(data)
-	decoder.CharsetReader = charset.NewReaderLabel
+	decoder.CharsetReader = encoding.CharsetReader
 
 	err := decoder.Decode(atomFeed)
 	if err != nil {
