@@ -171,7 +171,8 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		originalFeed.EtagHeader = response.ETag
 		originalFeed.LastModifiedHeader = response.LastModified
 
-		if err := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, subscription.Entries); err != nil {
+		// Note: We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
+		if err := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, subscription.Entries, !originalFeed.Crawler); err != nil {
 			return err
 		}
 
