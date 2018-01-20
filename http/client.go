@@ -95,11 +95,12 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		ContentLength: resp.ContentLength,
 	}
 
-	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ContentLength=%d, ETag=%s, LastModified=%s, EffectiveURL=%s",
+	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ContentLength=%d, ContentType=%s, ETag=%s, LastModified=%s, EffectiveURL=%s",
 		request.Method,
 		c.url,
 		response.StatusCode,
 		resp.ContentLength,
+		response.ContentType,
 		response.ETag,
 		response.LastModified,
 		response.EffectiveURL,

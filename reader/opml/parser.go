@@ -9,14 +9,14 @@ import (
 	"io"
 
 	"github.com/miniflux/miniflux/errors"
-	"golang.org/x/net/html/charset"
+	"github.com/miniflux/miniflux/reader/encoding"
 )
 
 // Parse reads an OPML file and returns a SubcriptionList.
 func Parse(data io.Reader) (SubcriptionList, error) {
 	feeds := new(opml)
 	decoder := xml.NewDecoder(data)
-	decoder.CharsetReader = charset.NewReaderLabel
+	decoder.CharsetReader = encoding.CharsetReader
 
 	err := decoder.Decode(feeds)
 	if err != nil {
