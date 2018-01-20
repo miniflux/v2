@@ -6,8 +6,10 @@ package http
 
 import (
 	"io"
+	"mime"
 	"strings"
 
+	"github.com/miniflux/miniflux/logger"
 	"golang.org/x/net/html/charset"
 )
 
@@ -45,9 +47,22 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 }
 
 // NormalizeBodyEncoding make sure the body is encoded in UTF-8.
+//
+// If a charset other than UTF-8 is detected, we convert the document to UTF-8.
+// This is used by the scraper and feed readers.
+//
+// Do not forget edge cases:
+// - Some non-utf8 feeds specify encoding only in Content-Type, not in XML document.
 func (r *Response) NormalizeBodyEncoding() (io.Reader, error) {
-	if strings.Contains(r.ContentType, "charset=") {
-		return charset.NewReader(r.Body, r.ContentType)
+	_, params, err := mime.ParseMediaType(r.ContentType)
+	if err == nil {
+		if enc, found := params["charset"]; found {
+			enc = strings.ToLower(enc)
+			if enc != "utf-8" && enc != "utf8" && enc != "" {
+				logger.Debug("[NormalizeBodyEncoding] Convert body to UTF-8 from %s", enc)
+				return charset.NewReader(r.Body, r.ContentType)
+			}
+		}
 	}
 	return r.Body, nil
 }

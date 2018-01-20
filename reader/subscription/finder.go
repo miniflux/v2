@@ -35,8 +35,13 @@ func FindSubscriptions(websiteURL string) (Subscriptions, error) {
 		return nil, errors.NewLocalizedError(errConnectionFailure, err)
 	}
 
+	body, err := response.NormalizeBodyEncoding()
+	if err != nil {
+		return nil, err
+	}
+
 	var buffer bytes.Buffer
-	io.Copy(&buffer, response.Body)
+	io.Copy(&buffer, body)
 	reader := bytes.NewReader(buffer.Bytes())
 
 	if format := feed.DetectFeedFormat(reader); format != feed.FormatUnknown {
