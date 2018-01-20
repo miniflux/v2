@@ -35,6 +35,16 @@ class DomHelper {
 
         return result;
     }
+
+    static findParent(element, selector) {
+        for (; element && element !== document; element = element.parentNode) {
+            if (element.classList.contains(selector)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
 }
 
 class TouchHandler {
@@ -68,13 +78,7 @@ class TouchHandler {
             return element;
         }
 
-        for (; element && element !== document; element = element.parentNode) {
-            if (element.classList.contains("touch-item")) {
-                return element;
-            }
-        }
-
-        return null;
+        return DomHelper.findParent(element, "touch-item");
     }
 
     onTouchStart(event) {
@@ -324,8 +328,23 @@ class EntryHandler {
                     UnreadCounterHandler.increment(1);
                 }
 
+                let link = element.querySelector("a[data-toggle-status]");
+                if (link) {
+                    this.toggleLinkStatus(link);
+                }
+
                 break;
             }
+        }
+    }
+
+    static toggleLinkStatus(link) {
+        if (link.dataset.value === "read") {
+            link.innerHTML = link.dataset.labelRead;
+            link.dataset.value = "unread";
+        } else {
+            link.innerHTML = link.dataset.labelUnread;
+            link.dataset.value = "read";
         }
     }
 
@@ -726,6 +745,15 @@ document.addEventListener("DOMContentLoaded", function() {
     mouseHandler.onClick("a[data-toggle-bookmark]", (event) => {
         event.preventDefault();
         EntryHandler.toggleBookmark(event.target);
+    });
+
+    mouseHandler.onClick("a[data-toggle-status]", (event) => {
+        event.preventDefault();
+
+        let currentItem = DomHelper.findParent(event.target, "item");
+        if (currentItem) {
+            EntryHandler.toggleEntryStatus(currentItem);
+        }
     });
 
     mouseHandler.onClick("a[data-fetch-content-entry]", (event) => {
