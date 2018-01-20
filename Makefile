@@ -12,8 +12,10 @@ linux:
 
 linux-arm:
 	@ go generate
-	@ GOOS=linux GOARCH=arm64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-arm64 main.go
-	@ GOOS=linux GOARCH=arm go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-arm main.go
+	@ GOOS=linux GOARCH=arm64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv8 main.go
+	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv7 main.go
+	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv6 main.go
+	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv5 main.go
 
 darwin:
 	@ go generate
