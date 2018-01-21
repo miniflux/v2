@@ -297,6 +297,11 @@ class UnreadCounterHandler {
             let oldValue = parseInt(element.textContent, 10);
             element.innerHTML = callback(oldValue);
         });
+        // The following 3 lines ensure that the unread count in the titlebar
+        // is updated correctly when users presses "v".
+        let oldValue = parseInt(document.title.split('(')[1], 10);
+        let newValue = callback(oldValue);
+        document.title = 'Unread Items (' + newValue + ') - Miniflux';
     }
 }
 
@@ -307,6 +312,13 @@ class EntryHandler {
         request.withBody({entry_ids: entryIDs, status: status});
         request.withCallback(callback);
         request.execute();
+        // The following 5 lines ensure that the unread count in the menu is
+        // updated correctly when users presses "v".
+        if (status === "read") {
+            UnreadCounterHandler.decrement(1);
+        } else {
+            UnreadCounterHandler.increment(1);
+        }
     }
 
     static toggleEntryStatus(element) {
@@ -613,6 +625,13 @@ class NavHandler {
     openSelectedItem() {
         let currentItemLink = document.querySelector(".current-item .item-title a");
         if (currentItemLink !== null) {
+            // The following 4 lines ensure that the unread count in the menu is
+            // updated correctly when users presses "o".
+            let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
+            if (currentItemOriginalLink !== null) {
+                let currentItem = document.querySelector(".current-item");
+                EntryHandler.markEntryAsRead(currentItem);
+            }
             window.location.href = currentItemLink.getAttribute("href");
         }
     }
