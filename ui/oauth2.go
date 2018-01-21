@@ -11,6 +11,7 @@ import (
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/oauth2"
+
 	"github.com/tomasen/realip"
 )
 
@@ -102,7 +103,7 @@ func (c *Controller) OAuth2Callback(ctx *handler.Context, request *handler.Reque
 	}
 
 	if user == nil {
-		if c.cfg.GetInt("OAUTH2_USER_CREATION", 0) == 0 {
+		if !c.cfg.IsOAuth2UserCreationAllowed() {
 			response.HTML().Forbidden()
 			return
 		}
@@ -163,8 +164,8 @@ func (c *Controller) OAuth2Unlink(ctx *handler.Context, request *handler.Request
 
 func getOAuth2Manager(cfg *config.Config) *oauth2.Manager {
 	return oauth2.NewManager(
-		cfg.Get("OAUTH2_CLIENT_ID", ""),
-		cfg.Get("OAUTH2_CLIENT_SECRET", ""),
-		cfg.Get("OAUTH2_REDIRECT_URL", ""),
+		cfg.OAuth2ClientID(),
+		cfg.OAuth2ClientSecret(),
+		cfg.OAuth2RedirectURL(),
 	)
 }
