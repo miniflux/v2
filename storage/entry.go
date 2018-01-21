@@ -116,15 +116,17 @@ func (s *Storage) entryExists(entry *model.Entry) bool {
 	return result >= 1
 }
 
-// UpdateEntries update a list of entries while refreshing a feed.
-func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries) (err error) {
+// UpdateEntries updates a list of entries while refreshing a feed.
+func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
 	var entryHashes []string
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
 
 		if s.entryExists(entry) {
-			err = s.updateEntry(entry)
+			if updateExistingEntries {
+				err = s.updateEntry(entry)
+			}
 		} else {
 			err = s.createEntry(entry)
 		}
