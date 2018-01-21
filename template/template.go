@@ -39,7 +39,7 @@ func (e *Engine) parseAll() {
 			return e.cfg.BaseURL()
 		},
 		"hasOAuth2Provider": func(provider string) bool {
-			return e.cfg.Get("OAUTH2_PROVIDER", "") == provider
+			return e.cfg.OAuth2Provider() == provider
 		},
 		"hasKey": func(dict map[string]string, key string) bool {
 			if value, found := dict[key]; found {
