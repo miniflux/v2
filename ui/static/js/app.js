@@ -2,6 +2,16 @@
 (function() {
 'use strict';
 
+// Polyfill for Internet Explorer
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function(search, this_len) {
+        if (this_len === undefined || this_len > this.length) {
+            this_len = this.length;
+        }
+        return this.substring(this_len - search.length, this_len) === search;
+    };
+}
+
 class DomHelper {
     static isVisible(element) {
         return element.offsetParent !== null;
@@ -297,11 +307,27 @@ class UnreadCounterHandler {
             let oldValue = parseInt(element.textContent, 10);
             element.innerHTML = callback(oldValue);
         });
-        // The following 3 lines ensure that the unread count in the titlebar
-        // is updated correctly when users presses "v".
-        let oldValue = parseInt(document.title.split('(')[1], 10);
-        let newValue = callback(oldValue);
-        document.title = 'Unread Items (' + newValue + ') - Miniflux';
+        // The titlebar must be updated only on the "Unread" page.
+        if (window.location.href.endsWith('/unread')) {
+            // The following 3 lines ensure that the unread count in the titlebar
+            // is updated correctly when users presses "v".
+            let oldValue = parseInt(document.title.split('(')[1], 10);
+            let newValue = callback(oldValue);
+            // Notes:
+            // - This will only be executed in the /unread page. Therefore, it
+            //   will not affect titles on other pages.
+            // - When there are no unread items, user cannot press "v".
+            //   Therefore, we need not handle the case where title is
+            //   "Unread Items - Miniflux". This applies to other cases as well.
+            //   i.e.: if there are no unread items, user cannot decrement or
+            //   increment anything.
+            document.title = document.title.replace(
+                /(.*?)\(\d+\)(.*?)/,
+                function (match, prefix, suffix, offset, string) {
+                    return prefix + '(' + newValue + ')' + suffix;
+                }
+            );
+        }
     }
 }
 
@@ -334,11 +360,18 @@ class EntryHandler {
 
                 this.updateEntriesStatus([entryID], newStatus);
 
-                if (newStatus === "read") {
-                    UnreadCounterHandler.decrement(1);
-                } else {
-                    UnreadCounterHandler.increment(1);
-                }
+                // This is no longer required here because we are doing it
+                // inside "updateEntriesStatus". This ensures that the count is
+                // updated consistently across the following callsites.
+                // - EntryHandler.updateEntriesStatus()
+                // - EntryHandler.markEntryAsRead
+                // - NavHandler.markPageAsRead
+                //
+                // if (newStatus === "read") {
+                //     UnreadCounterHandler.decrement(1);
+                // } else {
+                //     UnreadCounterHandler.increment(1);
+                // }
 
                 let link = element.querySelector("a[data-toggle-status]");
                 if (link) {
