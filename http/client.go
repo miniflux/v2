@@ -17,10 +17,9 @@ import (
 
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/timer"
+	"github.com/miniflux/miniflux/version"
 )
 
-// Note: Some websites have a user agent filter.
-const userAgent = "Mozilla/5.0 (like Gecko, like Safari, like Chrome) - Miniflux <https://miniflux.net/>"
 const requestTimeout = 300
 const maxBodySize = 1024 * 1024 * 15
 
@@ -136,7 +135,7 @@ func (c *Client) buildClient() http.Client {
 
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
-	headers.Add("User-Agent", userAgent)
+	headers.Add("User-Agent", "Mozilla/5.0 (compatible; Miniflux/"+version.Version+"; +https://miniflux.net)")
 	headers.Add("Accept", "*/*")
 
 	if c.etagHeader != "" {
