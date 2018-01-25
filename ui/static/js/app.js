@@ -2,16 +2,6 @@
 (function() {
 'use strict';
 
-// Polyfill for Internet Explorer
-if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function(search, this_len) {
-        if (this_len === undefined || this_len > this.length) {
-            this_len = this.length;
-        }
-        return this.substring(this_len - search.length, this_len) === search;
-    };
-}
-
 class DomHelper {
     static isVisible(element) {
         return element.offsetParent !== null;
@@ -359,19 +349,6 @@ class EntryHandler {
                 element.classList.add("item-status-" + newStatus);
 
                 this.updateEntriesStatus([entryID], newStatus);
-
-                // This is no longer required here because we are doing it
-                // inside "updateEntriesStatus". This ensures that the count is
-                // updated consistently across the following callsites.
-                // - EntryHandler.updateEntriesStatus()
-                // - EntryHandler.markEntryAsRead
-                // - NavHandler.markPageAsRead
-                //
-                // if (newStatus === "read") {
-                //     UnreadCounterHandler.decrement(1);
-                // } else {
-                //     UnreadCounterHandler.increment(1);
-                // }
 
                 let link = element.querySelector("a[data-toggle-status]");
                 if (link) {
