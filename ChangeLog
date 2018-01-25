@@ -1,0 +1,20 @@
+Version 2.0.1 (Jan 22, 2018)
+----------------------------
+
+* Change user agent (People are blocking the crawler with mod_security)
+* Move environment variables to config package (refactoring)
+* Add build targets for all ARM architectures
+* Do not crawl existing entry URLs
+* Show translated login page in user language when logged out
+* Handle more encoding edge cases:
+    - Feeds with charset specified only in Content-Type header and not in XML document
+    - Feeds with charset specified in both places
+    - Feeds with charset specified only in XML document and not in HTTP header
+* Add German translation
+* Add mark as read/unread link on list items
+* Add API endpoint for OPML export
+
+Version 2.0.0 (Jan 11, 2018)
+----------------------------
+
+* Initial release of Miniflux 2.
