@@ -297,6 +297,27 @@ class UnreadCounterHandler {
             let oldValue = parseInt(element.textContent, 10);
             element.innerHTML = callback(oldValue);
         });
+        // The titlebar must be updated only on the "Unread" page.
+        if (window.location.href.endsWith('/unread')) {
+            // The following 3 lines ensure that the unread count in the titlebar
+            // is updated correctly when users presses "v".
+            let oldValue = parseInt(document.title.split('(')[1], 10);
+            let newValue = callback(oldValue);
+            // Notes:
+            // - This will only be executed in the /unread page. Therefore, it
+            //   will not affect titles on other pages.
+            // - When there are no unread items, user cannot press "v".
+            //   Therefore, we need not handle the case where title is
+            //   "Unread Items - Miniflux". This applies to other cases as well.
+            //   i.e.: if there are no unread items, user cannot decrement or
+            //   increment anything.
+            document.title = document.title.replace(
+                /(.*?)\(\d+\)(.*?)/,
+                function (match, prefix, suffix, offset, string) {
+                    return prefix + '(' + newValue + ')' + suffix;
+                }
+            );
+        }
     }
 }
 
@@ -307,6 +328,13 @@ class EntryHandler {
         request.withBody({entry_ids: entryIDs, status: status});
         request.withCallback(callback);
         request.execute();
+        // The following 5 lines ensure that the unread count in the menu is
+        // updated correctly when users presses "v".
+        if (status === "read") {
+            UnreadCounterHandler.decrement(1);
+        } else {
+            UnreadCounterHandler.increment(1);
+        }
     }
 
     static toggleEntryStatus(element) {
@@ -321,12 +349,6 @@ class EntryHandler {
                 element.classList.add("item-status-" + newStatus);
 
                 this.updateEntriesStatus([entryID], newStatus);
-
-                if (newStatus === "read") {
-                    UnreadCounterHandler.decrement(1);
-                } else {
-                    UnreadCounterHandler.increment(1);
-                }
 
                 let link = element.querySelector("a[data-toggle-status]");
                 if (link) {
@@ -613,6 +635,13 @@ class NavHandler {
     openSelectedItem() {
         let currentItemLink = document.querySelector(".current-item .item-title a");
         if (currentItemLink !== null) {
+            // The following 4 lines ensure that the unread count in the menu is
+            // updated correctly when users presses "o".
+            let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
+            if (currentItemOriginalLink !== null) {
+                let currentItem = document.querySelector(".current-item");
+                EntryHandler.markEntryAsRead(currentItem);
+            }
             window.location.href = currentItemLink.getAttribute("href");
         }
     }
