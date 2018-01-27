@@ -17,15 +17,20 @@ var requestedLevel LogLevel
 type LogLevel uint32
 
 const (
-	PanicLevel LogLevel = iota
-	FatalLevel
+	// FatalLevel should be used in fatal situations, the app will exit
+	FatalLevel LogLevel = iota
+
+	// ErrorLevel should be used when someone should really look at the error
 	ErrorLevel
-	WarnLevel
+
+	// InfoLevel should be used during normal operations
 	InfoLevel
+
+	// DebugLevel should be used only during development
 	DebugLevel
 )
 
-// A constant exposing all logging levels
+// AllLevels exposes all logging levels
 var AllLevels = []LogLevel{
 	FatalLevel,
 	ErrorLevel,
@@ -33,7 +38,7 @@ var AllLevels = []LogLevel{
 	DebugLevel,
 }
 
-// Convert the Level to a string. E.g. PanicLevel becomes "panic".
+// Convert the Level to a string.
 func (level LogLevel) String() string {
 	switch level {
 	case DebugLevel:
@@ -49,7 +54,7 @@ func (level LogLevel) String() string {
 	return "UNKNOWN"
 }
 
-// Debug sends a debug log message.
+// SetLevel can be used to set the log level
 func SetLevel(wantedLevel string) {
 	if strings.ToUpper(wantedLevel) == DebugLevel.String() {
 		requestedLevel = DebugLevel
