@@ -8,6 +8,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/miniflux/miniflux/logger"
+
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/daemon"
 	"github.com/miniflux/miniflux/storage"
@@ -22,6 +24,7 @@ func Parse() {
 	flagFlushSessions := flag.Bool("flush-sessions", false, "Flush all sessions (disconnect users)")
 	flagCreateAdmin := flag.Bool("create-admin", false, "Create admin user")
 	flagResetPassword := flag.Bool("reset-password", false, "Reset user password")
+	flagLoglevel := flag.String("loglevel", "debug", "set loglevel (debug|info|error|fatal)")
 	flag.Parse()
 
 	cfg := config.NewConfig()
@@ -60,5 +63,9 @@ func Parse() {
 		return
 	}
 
+	// setup loglevel
+	logger.SetLevel(*flagLoglevel)
+
+	// start daemon
 	daemon.Run(cfg, store)
 }

@@ -29,6 +29,25 @@ The Miniflux documentation is available here: <https://docs.miniflux.net/>
 - [Upgrading to a new version](https://docs.miniflux.net/en/latest/upgrade.html)
 - [Configuration](https://docs.miniflux.net/en/latest/configuration.html)
 
+Running local (development) instance
+------------------------------------
+
+#### First create a postgres instance:
+
+```
+docker run --name miniflux_db -p 5432:5432 -d -e POSTGRES_USER=miniflux -e POSTGRES_PASSWORD=secret postgres
+```
+
+#### Then run your local version:
+
+```
+DATABASE_URL=postgres://miniflux:secret@localhost/miniflux?sslmode=disable go run main.go -migrate
+DATABASE_URL=postgres://miniflux:secret@localhost/miniflux?sslmode=disable go run main.go -create-admin
+DATABASE_URL=postgres://miniflux:secret@localhost/miniflux?sslmode=disable go run main.go
+```
+
+If everything went well, then connect to http://localhost:8080
+
 Credits
 -------
 
