@@ -63,7 +63,7 @@ func Parse() {
 		return
 	}
 
-	if *flagDebugMode {
+	if *flagDebugMode || cfg.HasDebugMode() {
 		logger.EnableDebug()
 	}
 
