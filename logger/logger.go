@@ -10,28 +10,77 @@ import (
 	"time"
 )
 
+var requestedLevel = InfoLevel
+
+// LogLevel type
+type LogLevel uint32
+
+const (
+	// FatalLevel should be used in fatal situations, the app will exit
+	FatalLevel LogLevel = iota
+
+	// ErrorLevel should be used when someone should really look at the error
+	ErrorLevel
+
+	// InfoLevel should be used during normal operations
+	InfoLevel
+
+	// DebugLevel should be used only during development
+	DebugLevel
+)
+
+// Convert the Level to a string.
+func (level LogLevel) String() string {
+	switch level {
+	case DebugLevel:
+		return "DEBUG"
+	case InfoLevel:
+		return "INFO"
+	case ErrorLevel:
+		return "ERROR"
+	case FatalLevel:
+		return "FATAL"
+	}
+
+	return "UNKNOWN"
+}
+
+// EnableDebug increases logging, more verbose (debug)
+func EnableDebug() {
+	requestedLevel = DebugLevel
+	formatMessage(InfoLevel, "Debug mode enabled")
+}
+
 // Debug sends a debug log message.
 func Debug(format string, v ...interface{}) {
-	formatMessage("DEBUG", format, v...)
+	if requestedLevel >= DebugLevel {
+		formatMessage(DebugLevel, format, v...)
+	}
 }
 
 // Info sends an info log message.
 func Info(format string, v ...interface{}) {
-	formatMessage("INFO", format, v...)
+	if requestedLevel >= InfoLevel {
+		formatMessage(InfoLevel, format, v...)
+	}
 }
 
 // Error sends an error log message.
 func Error(format string, v ...interface{}) {
-	formatMessage("ERROR", format, v...)
+	if requestedLevel >= ErrorLevel {
+		formatMessage(ErrorLevel, format, v...)
+	}
 }
 
 // Fatal sends a fatal log message and stop the execution of the program.
 func Fatal(format string, v ...interface{}) {
-	formatMessage("FATAL", format, v...)
-	os.Exit(1)
+	if requestedLevel >= FatalLevel {
+		formatMessage(FatalLevel, format, v...)
+		os.Exit(1)
+	}
 }
 
-func formatMessage(level, format string, v ...interface{}) {
-	prefix := fmt.Sprintf("[%s] [%s] ", time.Now().Format("2006-01-02T15:04:05"), level)
+func formatMessage(level LogLevel, format string, v ...interface{}) {
+	prefix := fmt.Sprintf("[%s] [%s] ", time.Now().Format("2006-01-02T15:04:05"), level.String())
 	fmt.Fprintf(os.Stderr, prefix+format+"\n", v...)
 }
