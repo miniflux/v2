@@ -12,24 +12,23 @@ import (
 
 var requestedLevel = InfoLevel
 
-// LogLevel type
+// LogLevel type.
 type LogLevel uint32
 
 const (
-	// FatalLevel should be used in fatal situations, the app will exit
+	// FatalLevel should be used in fatal situations, the app will exit.
 	FatalLevel LogLevel = iota
 
-	// ErrorLevel should be used when someone should really look at the error
+	// ErrorLevel should be used when someone should really look at the error.
 	ErrorLevel
 
-	// InfoLevel should be used during normal operations
+	// InfoLevel should be used during normal operations.
 	InfoLevel
 
-	// DebugLevel should be used only during development
+	// DebugLevel should be used only during development.
 	DebugLevel
 )
 
-// Convert the Level to a string.
 func (level LogLevel) String() string {
 	switch level {
 	case DebugLevel:
@@ -40,9 +39,9 @@ func (level LogLevel) String() string {
 		return "ERROR"
 	case FatalLevel:
 		return "FATAL"
+	default:
+		return "UNKNOWN"
 	}
-
-	return "UNKNOWN"
 }
 
 // EnableDebug increases logging, more verbose (debug)

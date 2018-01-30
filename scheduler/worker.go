@@ -20,7 +20,7 @@ type Worker struct {
 
 // Run wait for a job and refresh the given feed.
 func (w *Worker) Run(c chan model.Job) {
-	logger.Debug("[Worker] #%d started", w.id)
+	logger.Info("[Worker] #%d started", w.id)
 
 	for {
 		job := <-c

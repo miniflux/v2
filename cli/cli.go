@@ -67,6 +67,5 @@ func Parse() {
 		logger.EnableDebug()
 	}
 
-	// start daemon
 	daemon.Run(cfg, store)
 }
