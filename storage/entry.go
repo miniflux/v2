@@ -76,19 +76,20 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 	return err
 }
 
-// updateEntry update an entry when a feed is refreshed.
+// updateEntry updates an entry when a feed is refreshed.
+// Note: we do not update the published date because some feeds do not contains any date,
+// it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE entries SET
-		title=$1, url=$2, published_at=$3, content=$4, author=$5
-		WHERE user_id=$6 AND feed_id=$7 AND hash=$8
+		title=$1, url=$2, content=$3, author=$4
+		WHERE user_id=$5 AND feed_id=$6 AND hash=$7
 		RETURNING id
 	`
 	err := s.db.QueryRow(
 		query,
 		entry.Title,
 		entry.URL,
-		entry.Date,
 		entry.Content,
 		entry.Author,
 		entry.UserID,
