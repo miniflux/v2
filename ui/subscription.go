@@ -69,7 +69,7 @@ func (c *Controller) SubmitSubscription(ctx *handler.Context, request *handler.R
 		return
 	}
 
-	logger.Info("[UI:SubmitSubscription] %s", subscriptions)
+	logger.Debug("[UI:SubmitSubscription] %s", subscriptions)
 
 	n := len(subscriptions)
 	switch {

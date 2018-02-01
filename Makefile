@@ -25,7 +25,7 @@ build: linux linux-arm darwin
 
 run:
 	@ go generate
-	@ go run main.go
+	@ go run main.go -debug
 
 clean:
 	@ rm -f $(APP)-*
@@ -42,7 +42,7 @@ integration-test:
 	DATABASE_URL=$(DB_URL) go run main.go -migrate
 	DATABASE_URL=$(DB_URL) ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go -create-admin
 	go build -o miniflux-test main.go
-	DATABASE_URL=$(DB_URL) ./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
 	go test -v -tags=integration || cat /tmp/miniflux.log
 

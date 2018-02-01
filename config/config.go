@@ -48,9 +48,18 @@ func (c *Config) getInt(key string, fallback int) int {
 	return v
 }
 
+// HasDebugMode returns true if debug mode is enabled.
+func (c *Config) HasDebugMode() bool {
+	return c.get("DEBUG", "") != ""
+}
+
 // BaseURL returns the application base URL.
 func (c *Config) BaseURL() string {
-	return c.get("BASE_URL", defaultBaseURL)
+	baseURL := c.get("BASE_URL", defaultBaseURL)
+	if baseURL[len(baseURL)-1:] == "/" {
+		baseURL = baseURL[:len(baseURL)-1]
+	}
+	return baseURL
 }
 
 // DatabaseURL returns the database URL.

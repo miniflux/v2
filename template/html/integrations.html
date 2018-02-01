@@ -39,6 +39,8 @@
 
         <label for="form-fever-password">{{ t "Fever Password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}">
+
+        <p>{{ t "Fever API endpoint:" }} <strong>{{ baseURL }}{{ route "feverEndpoint" }}</strong></p>
     </div>
 
     <h3>Pinboard</h3>
@@ -98,8 +100,23 @@
     </div>
 </form>
 
+<h3>{{ t "Miniflux API" }}</h3>
 <div class="panel">
-    <h3>{{ t "Bookmarklet" }}</h3>
+    <ul>
+        <li>
+            {{ t "API Endpoint" }} = <strong>{{ baseURL }}/v1/</strong>
+        </li>
+        <li>
+            {{ t "Username" }} = <strong>{{ .user.Username }}</strong>
+        </li>
+        <li>
+            {{ t "Password" }} = <strong>{{ t "Your account password" }}</strong>
+        </li>
+    </ul>
+</div>
+
+<h3>{{ t "Bookmarklet" }}</h3>
+<div class="panel">
     <p>{{ t "This special link allows you to subscribe to a website directly by using a bookmark in your web browser." }}</p>
 
     <div class="bookmarklet">
