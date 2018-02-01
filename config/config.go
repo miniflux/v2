@@ -55,7 +55,11 @@ func (c *Config) HasDebugMode() bool {
 
 // BaseURL returns the application base URL.
 func (c *Config) BaseURL() string {
-	return c.get("BASE_URL", defaultBaseURL)
+	baseURL := c.get("BASE_URL", defaultBaseURL)
+	if baseURL[len(baseURL)-1:] == "/" {
+		baseURL = baseURL[:len(baseURL)-1]
+	}
+	return baseURL
 }
 
 // DatabaseURL returns the database URL.

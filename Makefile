@@ -25,7 +25,7 @@ build: linux linux-arm darwin
 
 run:
 	@ go generate
-	@ go run main.go
+	@ go run main.go -debug
 
 clean:
 	@ rm -f $(APP)-*

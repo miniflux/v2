@@ -180,7 +180,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 			logger.Debug("[Handler:RefreshFeed] Looking for feed icon")
 			icon, err := icon.FindIcon(originalFeed.SiteURL)
 			if err != nil {
-				logger.Error("[Handler:RefreshFeed] %v", err)
+				logger.Debug("[Handler:RefreshFeed] %v", err)
 			} else {
 				h.store.CreateFeedIcon(originalFeed, icon)
 			}

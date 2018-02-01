@@ -45,7 +45,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 		middleware.NewSessionMiddleware(cfg, store).Handler,
 	))
 
-	router.Handle("/fever/", feverHandler.Use(feverController.Handler))
+	router.Handle("/fever/", feverHandler.Use(feverController.Handler)).Name("feverEndpoint")
 
 	router.Handle("/v1/users", apiHandler.Use(apiController.CreateUser)).Methods("POST")
 	router.Handle("/v1/users", apiHandler.Use(apiController.Users)).Methods("GET")
