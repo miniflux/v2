@@ -38,6 +38,9 @@ func (e *Engine) parseAll() {
 		"baseURL": func() string {
 			return e.cfg.BaseURL()
 		},
+		"rootURL": func() string {
+			return e.cfg.RootURL()
+		},
 		"hasOAuth2Provider": func(provider string) bool {
 			return e.cfg.OAuth2Provider() == provider
 		},

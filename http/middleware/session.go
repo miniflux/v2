@@ -36,7 +36,7 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 				return
 			}
 
-			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, s.cfg.IsHTTPS))
+			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, s.cfg.IsHTTPS, s.cfg.BasePath()))
 		} else {
 			logger.Debug("[Middleware:Session] %s", session)
 		}

@@ -40,7 +40,7 @@
         <label for="form-fever-password">{{ t "Fever Password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}">
 
-        <p>{{ t "Fever API endpoint:" }} <strong>{{ baseURL }}{{ route "feverEndpoint" }}</strong></p>
+        <p>{{ t "Fever API endpoint:" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
     </div>
 
     <h3>Pinboard</h3>
@@ -120,7 +120,7 @@
     <p>{{ t "This special link allows you to subscribe to a website directly by using a bookmark in your web browser." }}</p>
 
     <div class="bookmarklet">
-        <a href="javascript:location.href='{{ baseURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "Add to Miniflux" }}</a>
+        <a href="javascript:location.href='{{ rootURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "Add to Miniflux" }}</a>
     </div>
 
     <p>{{ t "Drag and drop this link to your bookmarks." }}</p>

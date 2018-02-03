@@ -19,11 +19,11 @@ const (
 )
 
 // New creates a new cookie.
-func New(name, value string, isHTTPS bool) *http.Cookie {
+func New(name, value string, isHTTPS bool, path string) *http.Cookie {
 	return &http.Cookie{
 		Name:     name,
 		Value:    value,
-		Path:     "/",
+		Path:     basePath(path),
 		Secure:   isHTTPS,
 		HttpOnly: true,
 		Expires:  time.Now().Add(cookieDuration * 24 * time.Hour),
@@ -31,14 +31,21 @@ func New(name, value string, isHTTPS bool) *http.Cookie {
 }
 
 // Expired returns an expired cookie.
-func Expired(name string, isHTTPS bool) *http.Cookie {
+func Expired(name string, isHTTPS bool, path string) *http.Cookie {
 	return &http.Cookie{
 		Name:     name,
 		Value:    "",
-		Path:     "/",
+		Path:     basePath(path),
 		Secure:   isHTTPS,
 		HttpOnly: true,
 		MaxAge:   -1,
 		Expires:  time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
 	}
+}
+
+func basePath(path string) string {
+	if path == "" {
+		return "/"
+	}
+	return path
 }
