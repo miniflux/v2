@@ -167,6 +167,11 @@ func (c *Config) OAuth2Provider() string {
 	return c.get("OAUTH2_PROVIDER", "")
 }
 
+// HasHSTS returns true if HTTP Strict Transport Security is enabled.
+func (c *Config) HasHSTS() bool {
+	return c.get("DISABLE_HSTS", "") == ""
+}
+
 // NewConfig returns a new Config.
 func NewConfig() *Config {
 	return &Config{IsHTTPS: os.Getenv("HTTPS") != ""}

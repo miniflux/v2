@@ -80,3 +80,22 @@ func TestDefaultBaseURL(t *testing.T) {
 		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
 	}
 }
+
+func TestHSTSOn(t *testing.T) {
+	os.Clearenv()
+	cfg := NewConfig()
+
+	if !cfg.HasHSTS() {
+		t.Fatalf(`Unexpected HSTS value, got "%v"`, cfg.HasHSTS())
+	}
+}
+
+func TestHSTSOff(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_HSTS", "1")
+	cfg := NewConfig()
+
+	if cfg.HasHSTS() {
+		t.Fatalf(`Unexpected HSTS value, got "%v"`, cfg.HasHSTS())
+	}
+}
