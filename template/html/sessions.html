@@ -33,7 +33,7 @@
     </tr>
     {{ range .sessions }}
     <tr {{ if eq .Token $.currentSessionToken }}class="row-highlighted"{{ end }}>
-        <td class="column-20" title="{{ isodate .CreatedAt }}">{{ elapsed .CreatedAt }}</td>
+        <td class="column-20" title="{{ isodate .CreatedAt }}">{{ elapsed $.user.Timezone .CreatedAt }}</td>
         <td class="column-20" title="{{ .IP }}">{{ .IP }}</td>
         <td title="{{ .UserAgent }}">{{ .UserAgent }}</td>
         <td class="column-20">

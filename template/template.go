@@ -6,6 +6,7 @@ package template
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io"
 	"net/mail"
@@ -85,8 +86,8 @@ func (e *Engine) parseAll() {
 		"isodate": func(ts time.Time) string {
 			return ts.Format("2006-01-02 15:04:05")
 		},
-		"elapsed": func(ts time.Time) string {
-			return duration.ElapsedTime(e.currentLocale, ts)
+		"elapsed": func(timezone string, t time.Time) string {
+			return duration.ElapsedTime(e.currentLocale, timezone, t)
 		},
 		"t": func(key interface{}, args ...interface{}) string {
 			switch key.(type) {
@@ -103,6 +104,20 @@ func (e *Engine) parseAll() {
 		},
 		"plural": func(key string, n int, args ...interface{}) string {
 			return e.currentLocale.Plural(key, n, args...)
+		},
+		"dict": func(values ...interface{}) (map[string]interface{}, error) {
+			if len(values)%2 != 0 {
+				return nil, fmt.Errorf("Dict expects an even number of arguments")
+			}
+			dict := make(map[string]interface{}, len(values)/2)
+			for i := 0; i < len(values); i += 2 {
+				key, ok := values[i].(string)
+				if !ok {
+					return nil, fmt.Errorf("Dict keys must be strings")
+				}
+				dict[key] = values[i+1]
+			}
+			return dict, nil
 		},
 	}
 

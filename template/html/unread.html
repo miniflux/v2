@@ -30,7 +30,7 @@
                 </span>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
-            {{ template "item_meta" . }}
+            {{ template "item_meta" dict "user" $.user "entry" . }}
         </article>
         {{ end }}
     </div>

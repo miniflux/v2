@@ -2,32 +2,32 @@
 <div class="item-meta">
     <ul>
         <li>
-            <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.Title }}">{{ domain .Feed.SiteURL }}</a>
+            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.Title }}">{{ domain .entry.Feed.SiteURL }}</a>
         </li>
         <li>
-            <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed .Date }}</time>
+            <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
         <li>
             <a href="#"
                 title="{{ t "Save this article" }}"
                 data-save-entry="true"
-                data-save-url="{{ route "saveEntry" "entryID" .ID }}"
+                data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
                 data-label-loading="{{ t "Saving..." }}"
                 data-label-done="{{ t "Done!" }}"
                 >{{ t "Save" }}</a>
         </li>
         <li>
-            <a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
+            <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
         </li>
         <li>
             <a href="#"
                 data-toggle-bookmark="true"
-                data-bookmark-url="{{ route "toggleBookmark" "entryID" .ID }}"
+                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
                 data-label-loading="{{ t "Saving..." }}"
                 data-label-star="☆ {{ t "Star" }}"
                 data-label-unstar="★ {{ t "Unstar" }}"
-                data-value="{{ if .Starred }}star{{ else }}unstar{{ end }}"
-                >{{ if .Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
+                data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
+                >{{ if .entry.Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
         </li>
         <li>
             <a href="#"
@@ -35,8 +35,8 @@
                 data-toggle-status="true"
                 data-label-read="✔ {{ t "Read" }}"
                 data-label-unread="✘ {{ t "Unread" }}"
-                data-value="{{ if eq .Status "read" }}read{{ else }}unread{{ end }}"
-                >{{ if eq .Status "read" }}✘ {{ t "Unread" }}{{ else }}✔ {{ t "Read" }}{{ end }}</a>
+                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
+                >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔ {{ t "Read" }}{{ end }}</a>
         </li>
     </ul>
 </div>

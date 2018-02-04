@@ -59,7 +59,7 @@
             </span>
         </div>
         <div class="entry-date">
-            <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .entry.Date }}</time>
+            <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
         </div>
     </header>
     {{ if gt (len .entry.Content) 120 }}

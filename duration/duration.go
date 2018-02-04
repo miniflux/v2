@@ -28,11 +28,29 @@ var (
 
 // ElapsedTime returns in a human readable format the elapsed time
 // since the given datetime.
-func ElapsedTime(translator *locale.Language, t time.Time) string {
-	if t.IsZero() || time.Now().Before(t) {
+func ElapsedTime(translator *locale.Language, timezone string, t time.Time) string {
+	if t.IsZero() {
 		return translator.Get(NotYet)
 	}
-	diff := time.Since(t)
+
+	var now time.Time
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		now = time.Now()
+	} else {
+		now = time.Now().In(loc)
+
+		// The provided date is already converted to the user timezone by Postgres,
+		// but the timezone information is not set in the time struct.
+		// We cannot use time.In() because the date will be converted a second time.
+		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), loc)
+	}
+
+	if now.Before(t) {
+		return translator.Get(NotYet)
+	}
+
+	diff := now.Sub(t)
 	// Duration in seconds
 	s := diff.Seconds()
 	// Duration in days

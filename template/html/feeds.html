@@ -42,7 +42,7 @@
                         <a href="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
-                        {{ t "Last check:" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed .CheckedAt }}</time>
+                        {{ t "Last check:" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
                 </ul>
                 <ul>
