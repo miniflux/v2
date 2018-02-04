@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package duration
+package template
 
 import (
 	"math"
@@ -28,9 +28,9 @@ var (
 
 // ElapsedTime returns in a human readable format the elapsed time
 // since the given datetime.
-func ElapsedTime(translator *locale.Language, timezone string, t time.Time) string {
+func elapsedTime(language *locale.Language, timezone string, t time.Time) string {
 	if t.IsZero() {
-		return translator.Get(NotYet)
+		return language.Get(NotYet)
 	}
 
 	var now time.Time
@@ -47,7 +47,7 @@ func ElapsedTime(translator *locale.Language, timezone string, t time.Time) stri
 	}
 
 	if now.Before(t) {
-		return translator.Get(NotYet)
+		return language.Get(NotYet)
 	}
 
 	diff := now.Sub(t)
@@ -57,24 +57,24 @@ func ElapsedTime(translator *locale.Language, timezone string, t time.Time) stri
 	d := int(s / 86400)
 	switch {
 	case s < 60:
-		return translator.Get(JustNow)
+		return language.Get(JustNow)
 	case s < 120:
-		return translator.Get(LastMinute)
+		return language.Get(LastMinute)
 	case s < 3600:
-		return translator.Get(Minutes, int(diff.Minutes()))
+		return language.Get(Minutes, int(diff.Minutes()))
 	case s < 7200:
-		return translator.Get(LastHour)
+		return language.Get(LastHour)
 	case s < 86400:
-		return translator.Get(Hours, int(diff.Hours()))
+		return language.Get(Hours, int(diff.Hours()))
 	case d == 1:
-		return translator.Get(Yesterday)
+		return language.Get(Yesterday)
 	case d < 7:
-		return translator.Get(Days, d)
+		return language.Get(Days, d)
 	case d < 31:
-		return translator.Get(Weeks, int(math.Ceil(float64(d)/7)))
+		return language.Get(Weeks, int(math.Ceil(float64(d)/7)))
 	case d < 365:
-		return translator.Get(Months, int(math.Ceil(float64(d)/30)))
+		return language.Get(Months, int(math.Ceil(float64(d)/30)))
 	default:
-		return translator.Get(Years, int(math.Ceil(float64(d)/365)))
+		return language.Get(Years, int(math.Ceil(float64(d)/365)))
 	}
 }
