@@ -40,6 +40,13 @@ func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.Worke
 			HostPolicy: autocert.HostWhitelist(certDomain),
 		}
 
+		// Handle http-01 challenge.
+		s := &http.Server{
+			Handler: certManager.HTTPHandler(nil),
+			Addr:    ":http",
+		}
+		go s.ListenAndServe()
+
 		go func() {
 			logger.Info(`Listening on "%s" by using auto-configured certificate for "%s"`, server.Addr, certDomain)
 			logger.Fatal(server.Serve(certManager.Listener()).Error())
