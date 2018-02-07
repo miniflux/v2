@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/template"
 )
 
 // Response handles HTTP responses.
 type Response struct {
+	cfg      *config.Config
 	writer   http.ResponseWriter
 	request  *http.Request
 	template *template.Engine
@@ -74,9 +76,13 @@ func (r *Response) commonHeaders() {
 	// Even if the directive "frame-src" has been deprecated in Firefox,
 	// we keep it to stay compatible with other browsers.
 	r.writer.Header().Set("Content-Security-Policy", "default-src 'self'; img-src *; media-src *; frame-src *; child-src *")
+
+	if r.cfg.IsHTTPS && r.cfg.HasHSTS() {
+		r.writer.Header().Set("Strict-Transport-Security", "max-age=31536000")
+	}
 }
 
 // NewResponse returns a new Response.
-func NewResponse(w http.ResponseWriter, r *http.Request, template *template.Engine) *Response {
-	return &Response{writer: w, request: r, template: template}
+func NewResponse(cfg *config.Config, w http.ResponseWriter, r *http.Request, template *template.Engine) *Response {
+	return &Response{cfg: cfg, writer: w, request: r, template: template}
 }

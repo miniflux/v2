@@ -9,7 +9,26 @@ import (
 	"testing"
 )
 
-func TestGetCustomBaseURL(t *testing.T) {
+func TestDebugModeOn(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DEBUG", "1")
+	cfg := NewConfig()
+
+	if !cfg.HasDebugMode() {
+		t.Fatalf(`Unexpected debug mode value, got "%v"`, cfg.HasDebugMode())
+	}
+}
+
+func TestDebugModeOff(t *testing.T) {
+	os.Clearenv()
+	cfg := NewConfig()
+
+	if cfg.HasDebugMode() {
+		t.Fatalf(`Unexpected debug mode value, got "%v"`, cfg.HasDebugMode())
+	}
+}
+
+func TestCustomBaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example.org")
 	cfg := NewConfig()
@@ -17,9 +36,17 @@ func TestGetCustomBaseURL(t *testing.T) {
 	if cfg.BaseURL() != "http://example.org" {
 		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
 	}
+
+	if cfg.RootURL() != "http://example.org" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	}
+
+	if cfg.BasePath() != "" {
+		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	}
 }
 
-func TestGetCustomBaseURLWithTrailingSlash(t *testing.T) {
+func TestCustomBaseURLWithTrailingSlash(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example.org/folder/")
 	cfg := NewConfig()
@@ -27,13 +54,48 @@ func TestGetCustomBaseURLWithTrailingSlash(t *testing.T) {
 	if cfg.BaseURL() != "http://example.org/folder" {
 		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
 	}
+
+	if cfg.RootURL() != "http://example.org" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.BaseURL())
+	}
+
+	if cfg.BasePath() != "/folder" {
+		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	}
 }
 
-func TestGetDefaultBaseURL(t *testing.T) {
+func TestDefaultBaseURL(t *testing.T) {
 	os.Clearenv()
 	cfg := NewConfig()
 
 	if cfg.BaseURL() != "http://localhost" {
 		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
+	}
+
+	if cfg.RootURL() != "http://localhost" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	}
+
+	if cfg.BasePath() != "" {
+		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	}
+}
+
+func TestHSTSOn(t *testing.T) {
+	os.Clearenv()
+	cfg := NewConfig()
+
+	if !cfg.HasHSTS() {
+		t.Fatalf(`Unexpected HSTS value, got "%v"`, cfg.HasHSTS())
+	}
+}
+
+func TestHSTSOff(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_HSTS", "1")
+	cfg := NewConfig()
+
+	if cfg.HasHSTS() {
+		t.Fatalf(`Unexpected HSTS value, got "%v"`, cfg.HasHSTS())
 	}
 }

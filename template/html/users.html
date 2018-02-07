@@ -39,7 +39,7 @@
                 <td>{{ if eq .IsAdmin true }}{{ t "Yes" }}{{ else }}{{ t "No" }}{{ end }}</td>
                 <td>
                     {{ if .LastLoginAt }}
-                        <time datetime="{{ isodate .LastLoginAt }}" title="{{ isodate .LastLoginAt }}">{{ elapsed .LastLoginAt }}</time>
+                        <time datetime="{{ isodate .LastLoginAt }}" title="{{ isodate .LastLoginAt }}">{{ elapsed $.user.Timezone .LastLoginAt }}</time>
                     {{ else }}
                         {{ t "Never" }}
                     {{ end }}

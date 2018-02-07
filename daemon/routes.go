@@ -45,6 +45,10 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 		middleware.NewSessionMiddleware(cfg, store).Handler,
 	))
 
+	if cfg.BasePath() != "" {
+		router = router.PathPrefix(cfg.BasePath()).Subrouter()
+	}
+
 	router.Handle("/fever/", feverHandler.Use(feverController.Handler)).Name("feverEndpoint")
 
 	router.Handle("/v1/users", apiHandler.Use(apiController.CreateUser)).Methods("POST")

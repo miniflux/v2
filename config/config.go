@@ -5,6 +5,7 @@
 package config
 
 import (
+	"net/url"
 	"os"
 	"strconv"
 )
@@ -26,7 +27,10 @@ const (
 
 // Config manages configuration parameters.
 type Config struct {
-	IsHTTPS bool
+	IsHTTPS  bool
+	baseURL  string
+	rootURL  string
+	basePath string
 }
 
 func (c *Config) get(key, fallback string) string {
@@ -53,13 +57,34 @@ func (c *Config) HasDebugMode() bool {
 	return c.get("DEBUG", "") != ""
 }
 
-// BaseURL returns the application base URL.
+// BaseURL returns the application base URL with path.
 func (c *Config) BaseURL() string {
-	baseURL := c.get("BASE_URL", defaultBaseURL)
-	if baseURL[len(baseURL)-1:] == "/" {
-		baseURL = baseURL[:len(baseURL)-1]
+	if c.baseURL == "" {
+		c.baseURL = c.get("BASE_URL", defaultBaseURL)
+		if c.baseURL[len(c.baseURL)-1:] == "/" {
+			c.baseURL = c.baseURL[:len(c.baseURL)-1]
+		}
 	}
-	return baseURL
+	return c.baseURL
+}
+
+// RootURL returns the base URL without path.
+func (c *Config) RootURL() string {
+	if c.rootURL == "" {
+		u, _ := url.Parse(c.BaseURL())
+		u.Path = ""
+		c.rootURL = u.String()
+	}
+	return c.rootURL
+}
+
+// BasePath returns the application base path according to the base URL.
+func (c *Config) BasePath() string {
+	if c.basePath == "" {
+		u, _ := url.Parse(c.BaseURL())
+		c.basePath = u.Path
+	}
+	return c.basePath
 }
 
 // DatabaseURL returns the database URL.
@@ -140,6 +165,11 @@ func (c *Config) OAuth2RedirectURL() string {
 // OAuth2Provider returns the name of the OAuth2 provider configured.
 func (c *Config) OAuth2Provider() string {
 	return c.get("OAUTH2_PROVIDER", "")
+}
+
+// HasHSTS returns true if HTTP Strict Transport Security is enabled.
+func (c *Config) HasHSTS() bool {
+	return c.get("DISABLE_HSTS", "") == ""
 }
 
 // NewConfig returns a new Config.
