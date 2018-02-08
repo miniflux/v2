@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/atom"
 	"github.com/miniflux/miniflux/reader/encoding"
@@ -69,9 +70,13 @@ func parseFeed(r io.Reader) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), "[Feed:ParseFeed]")
 
 	var buffer bytes.Buffer
-	io.Copy(&buffer, r)
+	size, _ := io.Copy(&buffer, r)
+	if size == 0 {
+		return nil, errors.New("This feed is empty")
+	}
 
-	reader := bytes.NewReader(buffer.Bytes())
+	str := stripInvalidXMLCharacters(buffer.String())
+	reader := strings.NewReader(str)
 	format := DetectFeedFormat(reader)
 	reader.Seek(0, io.SeekStart)
 
@@ -87,4 +92,27 @@ func parseFeed(r io.Reader) (*model.Feed, error) {
 	default:
 		return nil, errors.New("Unsupported feed format")
 	}
+}
+
+func stripInvalidXMLCharacters(input string) string {
+	return strings.Map(func(r rune) rune {
+		if isInCharacterRange(r) {
+			return r
+		}
+
+		logger.Debug("Strip invalid XML characters: %U", r)
+		return -1
+	}, input)
+}
+
+// Decide whether the given rune is in the XML Character Range, per
+// the Char production of http://www.xml.com/axml/testaxml.htm,
+// Section 2.2 Characters.
+func isInCharacterRange(r rune) (inrange bool) {
+	return r == 0x09 ||
+		r == 0x0A ||
+		r == 0x0D ||
+		r >= 0x20 && r <= 0xDF77 ||
+		r >= 0xE000 && r <= 0xFFFD ||
+		r >= 0x10000 && r <= 0x10FFFF
 }

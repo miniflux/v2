@@ -84,8 +84,8 @@
     "Last Login": "Dernière connexion",
     "Yes": "Oui",
     "No": "Non",
-    "This feed already exists (%s).": "Cet abonnement existe déjà (%s).",
-    "Unable to fetch feed (statusCode=%d).": "Impossible de récupérer cet abonnement (code=%d).",
+    "This feed already exists (%s)": "Cet abonnement existe déjà (%s)",
+    "Unable to fetch feed (statusCode=%d)": "Impossible de récupérer cet abonnement (code=%d)",
     "Unable to open this link: %v": "Impossible d'ouvrir ce lien : %v",
     "Unable to analyze this page: %v": "Impossible d'analyzer cette page : %v",
     "Unable to find any subscription.": "Impossible de trouver un abonnement.",
@@ -115,7 +115,7 @@
     "Unable to parse Atom feed: %v.": "Impossible de lire ce flux Atom: %v.",
     "Unable to parse JSON feed: %v.": "Impossible de lire ce flux JSON: %v.",
     "Unable to parse RDF feed: %v.": "Impossible de lire ce flux RDF: %v.",
-    "Unable to normalize encoding: %v.": "Impossible de normaliser l'encodage : %v.",
+    "Unable to normalize encoding: %v": "Impossible de normaliser l'encodage : %v",
     "Unable to create this category.": "Impossible de créer cette catégorie.",
     "yes": "oui",
     "no": "non",
@@ -133,7 +133,7 @@
     "Sign in with Google": "Se connecter avec Google",
     "Unlink my Google account": "Dissocier mon compte Google",
     "Link my Google account": "Associer mon compte Google",
-    "Category not found for this user.": "Cette catégorie n'existe pas pour cet utilisateur.",
+    "Category not found for this user": "Cette catégorie n'existe pas pour cet utilisateur",
     "Invalid theme.": "Le thème est invalide.",
     "Entry Sorting": "Ordre des éléments",
     "Older entries first": "Ancien éléments en premier",
@@ -209,5 +209,6 @@
     "Fever API endpoint:": "Point de terminaison de l'API Fever :",
     "Miniflux API": "API de Miniflux",
     "API Endpoint": "Point de terminaison de l'API",
-    "Your account password": "Le mot de passe de votre compte"
+    "Your account password": "Le mot de passe de votre compte",
+    "This web page is empty": "Cette page web est vide"
 }

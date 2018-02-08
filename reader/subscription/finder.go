@@ -23,6 +23,7 @@ import (
 var (
 	errConnectionFailure = "Unable to open this link: %v"
 	errUnreadableDoc     = "Unable to analyze this page: %v"
+	errEmptyBody         = "This web page is empty"
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
@@ -35,13 +36,22 @@ func FindSubscriptions(websiteURL string) (Subscriptions, error) {
 		return nil, errors.NewLocalizedError(errConnectionFailure, err)
 	}
 
+	// Content-Length = -1 when no Content-Length header is sent
+	if response.ContentLength == 0 {
+		return nil, errors.NewLocalizedError(errEmptyBody)
+	}
+
 	body, err := response.NormalizeBodyEncoding()
 	if err != nil {
 		return nil, err
 	}
 
 	var buffer bytes.Buffer
-	io.Copy(&buffer, body)
+	size, _ := io.Copy(&buffer, body)
+	if size == 0 {
+		return nil, errors.NewLocalizedError(errEmptyBody)
+	}
+
 	reader := bytes.NewReader(buffer.Bytes())
 
 	if format := feed.DetectFeedFormat(reader); format != feed.FormatUnknown {

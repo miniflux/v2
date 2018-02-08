@@ -205,3 +205,10 @@ func TestParseUnknownFeed(t *testing.T) {
 		t.Error("ParseFeed must returns an error")
 	}
 }
+
+func TestParseEmptyFeed(t *testing.T) {
+	_, err := parseFeed(bytes.NewBufferString(""))
+	if err == nil {
+		t.Error("ParseFeed must returns an error")
+	}
+}
