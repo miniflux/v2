@@ -69,7 +69,10 @@ func parseFeed(r io.Reader) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), "[Feed:ParseFeed]")
 
 	var buffer bytes.Buffer
-	io.Copy(&buffer, r)
+	size, _ := io.Copy(&buffer, r)
+	if size == 0 {
+		return nil, errors.New("This feed is empty")
+	}
 
 	reader := bytes.NewReader(buffer.Bytes())
 	format := DetectFeedFormat(reader)
