@@ -20,11 +20,11 @@ import (
 
 var (
 	errRequestFailed    = "Unable to execute request: %v"
-	errServerFailure    = "Unable to fetch feed (statusCode=%d)."
-	errDuplicate        = "This feed already exists (%s)."
+	errServerFailure    = "Unable to fetch feed (statusCode=%d)"
+	errDuplicate        = "This feed already exists (%s)"
 	errNotFound         = "Feed %d not found"
-	errEncoding         = "Unable to normalize encoding: %v."
-	errCategoryNotFound = "Category not found for this user."
+	errEncoding         = "Unable to normalize encoding: %v"
+	errCategoryNotFound = "Category not found for this user"
 	errEmptyFeed        = "This feed is empty"
 )
 
