@@ -1,7 +1,7 @@
 {
     "plural.feed.error_count": [
-        "%d Error",
-        "%d Errors"
+        "%d Fehler",
+        "%d Fehler"
     ],
     "plural.categories.feed_count": [
         "Es gibt %d Abonnement.",
@@ -108,7 +108,7 @@
     "Invalid username or password.": "Benutzername oder Passwort ungültig.",
     "Never": "Niemals",
     "Unable to execute request: %v": "Diese Anfrage konnte nicht ausgeführt werden: %v",
-    "Last Parsing Error": "Letzter Analyse Error",
+    "Last Parsing Error": "Letzter Analysefehler",
     "There is a problem with this feed": "Es gibt ein Problem mit diesem Abonnement",
     "Unable to parse OPML file: %v.": "OPML Datei konnte nicht gelesen werden: %v.",
     "Unable to parse RSS feed: %v.": "RSS Feed konnte nicht gelesen werden: %v.",
@@ -210,5 +210,10 @@
     "Miniflux API": "Miniflux API",
     "API Endpoint": "API Endpunkt",
     "Your account password": "Ihr Konto Passwort",
-    "This web page is empty": "Diese Webseite ist leer"
+    "This web page is empty": "Diese Webseite ist leer",
+    "Invalid SSL certificate (original error: %q)": "Ungültiges SSL-Zertifikat (ursprünglicher Fehler: %q)",
+    "This website is temporarily unreachable (original error: %q)": "
+Diese Webseite ist vorübergehend nicht erreichbar (ursprünglicher Fehler: %q)",
+    "This website is permanently unreachable (original error: %q)": "Diese Webseite ist dauerhaft nicht erreichbar (ursprünglicher Fehler: %q)",
+    "Website unreachable, the request timed out after %d seconds": "Webseite nicht erreichbar, die Anfrage endete nach %d Sekunden"
 }
