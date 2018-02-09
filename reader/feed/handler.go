@@ -44,6 +44,9 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 	client := http.NewClient(url)
 	response, err := client.Get()
 	if err != nil {
+		if _, ok := err.(errors.LocalizedError); ok {
+			return nil, err
+		}
 		return nil, errors.NewLocalizedError(errRequestFailed, err)
 	}
 
@@ -120,7 +123,13 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	client := http.NewClientWithCacheHeaders(originalFeed.FeedURL, originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
 	response, err := client.Get()
 	if err != nil {
-		customErr := errors.NewLocalizedError(errRequestFailed, err)
+		var customErr errors.LocalizedError
+		if lerr, ok := err.(errors.LocalizedError); ok {
+			customErr = lerr
+		} else {
+			customErr = errors.NewLocalizedError(errRequestFailed, err)
+		}
+
 		originalFeed.ParsingErrorCount++
 		originalFeed.ParsingErrorMsg = customErr.Error()
 		h.store.UpdateFeed(originalFeed)

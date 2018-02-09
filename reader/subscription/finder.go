@@ -33,6 +33,9 @@ func FindSubscriptions(websiteURL string) (Subscriptions, error) {
 	client := http.NewClient(websiteURL)
 	response, err := client.Get()
 	if err != nil {
+		if _, ok := err.(errors.LocalizedError); ok {
+			return nil, err
+		}
 		return nil, errors.NewLocalizedError(errConnectionFailure, err)
 	}
 

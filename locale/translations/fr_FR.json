@@ -210,5 +210,9 @@
     "Miniflux API": "API de Miniflux",
     "API Endpoint": "Point de terminaison de l'API",
     "Your account password": "Le mot de passe de votre compte",
-    "This web page is empty": "Cette page web est vide"
+    "This web page is empty": "Cette page web est vide",
+    "Invalid SSL certificate (original error: %q)": "Certificat SSL invalide (erreur originale : %q)",
+    "This website is temporarily unreachable (original error: %q)": "Ce site web est temporairement injoignable (erreur originale : %q)",
+    "This website is permanently unreachable (original error: %q)": "Ce site web n'est pas joignable de façon permanente (erreur originale : %q)",
+    "Website unreachable, the request timed out after %d seconds": "Site web injoignable, la requête à échouée après %d secondes"
 }
