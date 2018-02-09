@@ -212,8 +212,7 @@
     "Your account password": "Ihr Konto Passwort",
     "This web page is empty": "Diese Webseite ist leer",
     "Invalid SSL certificate (original error: %q)": "Ungültiges SSL-Zertifikat (ursprünglicher Fehler: %q)",
-    "This website is temporarily unreachable (original error: %q)": "
-Diese Webseite ist vorübergehend nicht erreichbar (ursprünglicher Fehler: %q)",
+    "This website is temporarily unreachable (original error: %q)": "Diese Webseite ist vorübergehend nicht erreichbar (ursprünglicher Fehler: %q)",
     "This website is permanently unreachable (original error: %q)": "Diese Webseite ist dauerhaft nicht erreichbar (ursprünglicher Fehler: %q)",
     "Website unreachable, the request timed out after %d seconds": "Webseite nicht erreichbar, die Anfrage endete nach %d Sekunden"
 }
