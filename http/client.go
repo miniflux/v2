@@ -7,21 +7,36 @@ package http
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/timer"
 	"github.com/miniflux/miniflux/version"
 )
 
-const requestTimeout = 300
-const maxBodySize = 1024 * 1024 * 15
+const (
+	// 20 seconds max.
+	requestTimeout = 20
+
+	// 15MB max.
+	maxBodySize = 1024 * 1024 * 15
+)
+
+var (
+	errInvalidCertificate        = "Invalid SSL certificate (original error: %q)"
+	errTemporaryNetworkOperation = "This website is temporarily unreachable (original error: %q)"
+	errPermanentNetworkOperation = "This website is permanently unreachable (original error: %q)"
+	errRequestTimeout            = "Website unreachable, the request timed out after %d seconds"
+)
 
 // Client is a HTTP Client :)
 type Client struct {
@@ -77,6 +92,26 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 	client := c.buildClient()
 	resp, err := client.Do(request)
 	if err != nil {
+		if uerr, ok := err.(*url.Error); ok {
+			switch uerr.Err.(type) {
+			case x509.CertificateInvalidError, x509.HostnameError:
+				err = errors.NewLocalizedError(errInvalidCertificate, uerr.Err)
+			case *net.OpError:
+				if uerr.Err.(*net.OpError).Temporary() {
+					err = errors.NewLocalizedError(errTemporaryNetworkOperation, uerr.Err)
+				} else {
+					err = errors.NewLocalizedError(errPermanentNetworkOperation, uerr.Err)
+				}
+			case net.Error:
+				nerr := uerr.Err.(net.Error)
+				if nerr.Timeout() {
+					err = errors.NewLocalizedError(errRequestTimeout, requestTimeout)
+				} else if nerr.Temporary() {
+					err = errors.NewLocalizedError(errTemporaryNetworkOperation, nerr)
+				}
+			}
+		}
+
 		return nil, err
 	}
 
