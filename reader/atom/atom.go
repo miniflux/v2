@@ -14,6 +14,7 @@ import (
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
+	"github.com/miniflux/miniflux/reader/sanitizer"
 	"github.com/miniflux/miniflux/url"
 )
 
@@ -28,7 +29,7 @@ type atomFeed struct {
 
 type atomEntry struct {
 	ID         string         `xml:"id"`
-	Title      string         `xml:"title"`
+	Title      atomContent    `xml:"title"`
 	Updated    string         `xml:"updated"`
 	Links      []atomLink     `xml:"link"`
 	Summary    string         `xml:"summary"`
@@ -97,7 +98,7 @@ func (a *atomEntry) Transform() *model.Entry {
 	entry.Author = getAuthor(a.Author)
 	entry.Hash = getHash(a)
 	entry.Content = getContent(a)
-	entry.Title = strings.TrimSpace(a.Title)
+	entry.Title = getTitle(a)
 	entry.Enclosures = getEnclosures(a)
 	return entry
 }
@@ -158,6 +159,17 @@ func getContent(a *atomEntry) string {
 	}
 
 	return ""
+}
+
+func getTitle(a *atomEntry) string {
+	title := ""
+	if a.Title.Type == "xhtml" {
+		title = a.Title.XML
+	} else {
+		title = a.Title.Data
+	}
+
+	return strings.TrimSpace(sanitizer.StripTags(title))
 }
 
 func getHash(a *atomEntry) string {
