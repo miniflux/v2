@@ -1,15 +1,15 @@
 {
     "plural.feed.error_count": [
-        "%d Fehler",
-        "%d Fehler"
+        "%d błąd",
+        "%d błąd"
     ],
     "plural.categories.feed_count": [
-        "Es gibt %d Abonnement.",
-        "Es gibt %d Abonnements."
+        "Jest %d subskrybcja.",
+        "Jest %d subskrypcji."
     ],
     "Username": "Nazwa użytkownika",
     "Password": "Hasło",
-    "Unread": "Nieczytane",
+    "Unread": "Nieprzeczytane",
     "History": "Historia",
     "Feeds": "Kanały",
     "Categories": "Kategorie",
@@ -27,7 +27,7 @@
     "Loading...": "Ładowanie...",
     "Create a category": "Utwórz kategorię",
     "There is no category.": "Nie masz żadnej kategorii",
-    "Edit": "BearEdytujbeiten",
+    "Edit": "Edytuj",
     "Remove": "Usuń",
     "No feed.": "Brak subskrypcji.",
     "There is no article in this category.": "W tej kategorii nie ma żadnych artykułów",
@@ -60,10 +60,10 @@
     "or": "lub",
     "cancel": "anuluj",
     "New User": "Nowy użytkownik",
-    "Confirmation": "Potwierdzenie",
+    "Confirmation": "Potwierdź",
     "Administrator": "Administrator",
     "Edit Category: %s": "Edycja Kategorii : %s",
-    "Update": "Aktualizacja",
+    "Update": "Zaktualizuj",
     "Edit Feed: %s": "Edytuj subskrypcję : %s",
     "There is no category!": "Nie ma żadnej kategorii!",
     "Edit user: %s": "Edytuj użytkownika: %s",
@@ -166,7 +166,7 @@
     "Wallabag Password": "Hasło Wallabag",
     "Keyboard Shortcut: %s": "Skróty klawiszowe: %s",
     "Favorites": "Ulubione",
-    "Star": "Dodaj gwiazdkę",
+    "Star": "Oznacz gwiazdką",
     "Unstar": "Usuń gwiazdkę",
     "Starred": "Oznaczone gwiazdką",
     "There is no bookmark at the moment.": "Obecnie nie ma żadnych zakładek.",
