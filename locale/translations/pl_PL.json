@@ -1,13 +1,11 @@
 {
     "plural.feed.error_count": [
         "%d błąd",
-        "%d błąd",
         "%d błędów"
     ],
     "plural.categories.feed_count": [
-        "Jest %d subskrybcja.",
-        "Jest %d subskrypcji.",
-        "Jest %d subskrypcji."
+	    "Jest %d kanał.",
+        "Jest %d kanałów.",
     ],
     "Username": "Nazwa użytkownika",
     "Password": "Hasło",
@@ -78,10 +76,10 @@
     "OPML file": "Plik OPML",
     "Sign In": "Zaloguj się",
     "Sign in": "Zaloguj się",
-    "Theme": "Temat",
+    "Theme": "Wygląd",
     "Timezone": "Strefa czasowa",
     "Language": "Język",
-    "There is no unread article.": "Nie ma nieprzeczytanych artykułów.",
+    "There is no unread article.": "Nie ma żadnych nieprzeczytanych artykułów.",
     "You are the only user.": "Jesteś jedynym użytkownikiem.",
     "Last Login": "Ostatnie logowanie",
     "Yes": "Tak",
