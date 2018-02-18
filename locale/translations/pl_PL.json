@@ -5,7 +5,8 @@
     ],
     "plural.categories.feed_count": [
 	    "Jest %d kanał.",
-        "Jest %d kanałów.",
+        "Są %d kanały.",		
+        "Jest %d kanałów."
     ],
     "Username": "Nazwa użytkownika",
     "Password": "Hasło",
