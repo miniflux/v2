@@ -1,10 +1,11 @@
 {
     "plural.feed.error_count": [
         "%d błąd",
+        "%d błąd",
         "%d błędów"
     ],
     "plural.categories.feed_count": [
-	    "Jest %d kanał.",
+        "Jest %d kanał.",
         "Są %d kanały.",		
         "Jest %d kanałów."
     ],
