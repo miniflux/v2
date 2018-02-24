@@ -24,4 +24,7 @@ type Integration struct {
 	WallabagClientSecret string
 	WallabagUsername     string
 	WallabagPassword     string
+	NunuxKeeperEnabled   bool
+	NunuxKeeperURL       string
+	NunuxKeeperAPIKey    string
 }

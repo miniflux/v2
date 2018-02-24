@@ -6,6 +6,7 @@ package integration
 
 import (
 	"github.com/miniflux/miniflux/integration/instapaper"
+	"github.com/miniflux/miniflux/integration/nunuxkeeper"
 	"github.com/miniflux/miniflux/integration/pinboard"
 	"github.com/miniflux/miniflux/integration/wallabag"
 	"github.com/miniflux/miniflux/logger"
@@ -45,6 +46,17 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] %v", err)
+		}
+	}
+
+	if integration.NunuxKeeperEnabled {
+		client := nunuxkeeper.NewClient(
+			integration.NunuxKeeperURL,
+			integration.NunuxKeeperAPIKey,
+		)
+
+		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
 			logger.Error("[Integration] %v", err)
 		}
 	}

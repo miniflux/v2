@@ -28,6 +28,9 @@ type IntegrationForm struct {
 	WallabagClientSecret string
 	WallabagUsername     string
 	WallabagPassword     string
+	NunuxKeeperEnabled   bool
+	NunuxKeeperURL       string
+	NunuxKeeperAPIKey    string
 }
 
 // Merge copy form values to the model.
@@ -48,6 +51,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.WallabagClientSecret = i.WallabagClientSecret
 	integration.WallabagUsername = i.WallabagUsername
 	integration.WallabagPassword = i.WallabagPassword
+	integration.NunuxKeeperEnabled = i.NunuxKeeperEnabled
+	integration.NunuxKeeperURL = i.NunuxKeeperURL
+	integration.NunuxKeeperAPIKey = i.NunuxKeeperAPIKey
 }
 
 // NewIntegrationForm returns a new AuthForm.
@@ -69,5 +75,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		WallabagClientSecret: r.FormValue("wallabag_client_secret"),
 		WallabagUsername:     r.FormValue("wallabag_username"),
 		WallabagPassword:     r.FormValue("wallabag_password"),
+		NunuxKeeperEnabled:   r.FormValue("nunux_keeper_enabled") == "1",
+		NunuxKeeperURL:       r.FormValue("nunux_keeper_url"),
+		NunuxKeeperAPIKey:    r.FormValue("nunux_keeper_api_key"),
 	}
 }

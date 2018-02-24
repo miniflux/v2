@@ -46,6 +46,9 @@ func (c *Controller) ShowIntegrations(ctx *handler.Context, request *handler.Req
 			WallabagClientSecret: integration.WallabagClientSecret,
 			WallabagUsername:     integration.WallabagUsername,
 			WallabagPassword:     integration.WallabagPassword,
+			NunuxKeeperEnabled:   integration.NunuxKeeperEnabled,
+			NunuxKeeperURL:       integration.NunuxKeeperURL,
+			NunuxKeeperAPIKey:    integration.NunuxKeeperAPIKey,
 		},
 	}))
 }
