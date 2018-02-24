@@ -28,6 +28,11 @@ func Parse() {
 	flag.Parse()
 
 	cfg := config.NewConfig()
+
+	if *flagDebugMode || cfg.HasDebugMode() {
+		logger.EnableDebug()
+	}
+
 	store := storage.NewStorage(
 		cfg.DatabaseURL(),
 		cfg.DatabaseMaxConnections(),
@@ -61,10 +66,6 @@ func Parse() {
 	if *flagResetPassword {
 		resetPassword(store)
 		return
-	}
-
-	if *flagDebugMode || cfg.HasDebugMode() {
-		logger.EnableDebug()
 	}
 
 	daemon.Run(cfg, store)
