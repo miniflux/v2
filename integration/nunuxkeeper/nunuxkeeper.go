@@ -1,0 +1,63 @@
+// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package nunuxkeeper
+
+import (
+	"fmt"
+	"net/url"
+	"path"
+
+	"github.com/miniflux/miniflux/http"
+)
+
+// Document structure of a Nununx Keeper document
+type Document struct {
+	Title       string `json:"title,omitempty"`
+	Origin      string `json:"origin,omitempty"`
+	Content     string `json:"content,omitempty"`
+	ContentType string `json:"contentType,omitempty"`
+}
+
+// Client represents an Nunux Keeper client.
+type Client struct {
+	baseURL string
+	apiKey  string
+}
+
+// AddEntry sends an entry to Nunux Keeper.
+func (c *Client) AddEntry(link, title, content string) error {
+	doc := &Document{
+		Title:       title,
+		Origin:      link,
+		Content:     content,
+		ContentType: "text/html",
+	}
+
+	apiURL, err := getAPIEndpoint(c.baseURL, "/v2/documents")
+	if err != nil {
+		return err
+	}
+	client := http.NewClientWithCredentials(apiURL, "api", c.apiKey)
+	response, err := client.PostJSON(doc)
+	if response.HasServerFailure() {
+		return fmt.Errorf("nunux-keeper: unable to send entry, status=%d", response.StatusCode)
+	}
+
+	return err
+}
+
+// NewClient returns a new Nunux Keeepr client.
+func NewClient(baseURL, apiKey string) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey}
+}
+
+func getAPIEndpoint(baseURL, pathURL string) (string, error) {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return "", fmt.Errorf("nunux-keeper: invalid API endpoint: %v", err)
+	}
+	u.Path = path.Join(u.Path, pathURL)
+	return u.String(), nil
+}

@@ -149,11 +149,12 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 		return nil, err
 	}
 
+	request.Header = c.buildHeaders()
+
 	if c.username != "" && c.password != "" {
 		request.SetBasicAuth(c.username, c.password)
 	}
 
-	request.Header = c.buildHeaders()
 	return request, nil
 }
 

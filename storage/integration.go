@@ -67,7 +67,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			wallabag_client_id,
 			wallabag_client_secret,
 			wallabag_username,
-			wallabag_password
+			wallabag_password,
+			nunux_keeper_enabled,
+			nunux_keeper_url,
+			nunux_keeper_api_key
 		FROM integrations
 		WHERE user_id=$1
 	`
@@ -91,6 +94,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WallabagClientSecret,
 		&integration.WallabagUsername,
 		&integration.WallabagPassword,
+		&integration.NunuxKeeperEnabled,
+		&integration.NunuxKeeperURL,
+		&integration.NunuxKeeperAPIKey,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -122,8 +128,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			wallabag_client_id=$14,
 			wallabag_client_secret=$15,
 			wallabag_username=$16,
-			wallabag_password=$17
-		WHERE user_id=$18
+			wallabag_password=$17,
+			nunux_keeper_enabled=$18,
+			nunux_keeper_url=$19,
+			nunux_keeper_api_key=$20
+		WHERE user_id=$21
 	`
 	_, err := s.db.Exec(
 		query,
@@ -144,6 +153,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.WallabagClientSecret,
 		integration.WallabagUsername,
 		integration.WallabagPassword,
+		integration.NunuxKeeperEnabled,
+		integration.NunuxKeeperURL,
+		integration.NunuxKeeperAPIKey,
 		integration.UserID,
 	)
 
