@@ -689,4 +689,5 @@ var translationsChecksums = map[string]string{
 	"en_US": "6fe95384260941e8a5a3c695a655a932e0a8a6a572c1e45cb2b1ae8baa01b897",
 	"fr_FR": "d5ff2467a4a6d0bfffd7824eaaf00318d08d6ad69972497750e57617e327aa84",
 	"pl_PL": "79d0d3a162c81dbb924ebdd794a52e417ce37617ea6b686a7cec1251a18581e9",
+	"zh_CN": "9d6149e7bf7d6ec797c77cb7dda9f907f4c2428c354960414fcfb23bb885d831",
 }
