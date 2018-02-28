@@ -7,11 +7,11 @@ package feed
 import (
 	"bytes"
 	"encoding/xml"
-	"errors"
 	"io"
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/atom"
@@ -66,13 +66,13 @@ func DetectFeedFormat(r io.Reader) string {
 	return FormatUnknown
 }
 
-func parseFeed(r io.Reader) (*model.Feed, error) {
+func parseFeed(r io.Reader) (*model.Feed, *errors.LocalizedError) {
 	defer timer.ExecutionTime(time.Now(), "[Feed:ParseFeed]")
 
 	var buffer bytes.Buffer
 	size, _ := io.Copy(&buffer, r)
 	if size == 0 {
-		return nil, errors.New("This feed is empty")
+		return nil, errors.NewLocalizedError("This feed is empty")
 	}
 
 	str := stripInvalidXMLCharacters(buffer.String())
@@ -90,7 +90,7 @@ func parseFeed(r io.Reader) (*model.Feed, error) {
 	case FormatRDF:
 		return rdf.Parse(reader)
 	default:
-		return nil, errors.New("Unsupported feed format")
+		return nil, errors.NewLocalizedError("Unsupported feed format")
 	}
 }
 

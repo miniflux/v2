@@ -7,8 +7,6 @@ package opml
 import (
 	"bytes"
 	"testing"
-
-	"github.com/miniflux/miniflux/errors"
 )
 
 func TestParseOpmlWithoutCategories(t *testing.T) {
@@ -129,9 +127,5 @@ func TestParseInvalidXML(t *testing.T) {
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should generate an error")
-	}
-
-	if _, ok := err.(errors.LocalizedError); !ok {
-		t.Error("The error returned must be a LocalizedError")
 	}
 }

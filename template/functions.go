@@ -85,8 +85,9 @@ func (f *funcMap) Map() template.FuncMap {
 			case string:
 				return f.Language.Get(key.(string), args...)
 			case errors.LocalizedError:
-				err := key.(errors.LocalizedError)
-				return err.Localize(f.Language)
+				return key.(errors.LocalizedError).Localize(f.Language)
+			case *errors.LocalizedError:
+				return key.(*errors.LocalizedError).Localize(f.Language)
 			case error:
 				return key.(error).Error()
 			default:

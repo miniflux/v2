@@ -13,7 +13,7 @@ import (
 )
 
 // Parse returns a normalized feed struct from a JON feed.
-func Parse(data io.Reader) (*model.Feed, error) {
+func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 	feed := new(jsonFeed)
 	decoder := json.NewDecoder(data)
 	if err := decoder.Decode(&feed); err != nil {

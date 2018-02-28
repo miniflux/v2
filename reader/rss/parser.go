@@ -14,7 +14,7 @@ import (
 )
 
 // Parse returns a normalized feed struct from a RSS feed.
-func Parse(data io.Reader) (*model.Feed, error) {
+func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 	feed := new(rssFeed)
 	decoder := xml.NewDecoder(data)
 	decoder.CharsetReader = encoding.CharsetReader

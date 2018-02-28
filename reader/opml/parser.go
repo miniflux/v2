@@ -13,7 +13,7 @@ import (
 )
 
 // Parse reads an OPML file and returns a SubcriptionList.
-func Parse(data io.Reader) (SubcriptionList, error) {
+func Parse(data io.Reader) (SubcriptionList, *errors.LocalizedError) {
 	feeds := new(opml)
 	decoder := xml.NewDecoder(data)
 	decoder.CharsetReader = encoding.CharsetReader

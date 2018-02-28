@@ -175,6 +175,18 @@ func (s *Storage) UpdateUser(user *model.User) error {
 	return nil
 }
 
+// UserLanguage returns the language of the given user.
+func (s *Storage) UserLanguage(userID int64) (language string, err error) {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserLanguage] userID=%d", userID))
+	err = s.db.QueryRow(`SELECT language FROM users WHERE id = $1`, userID).Scan(&language)
+	if err == sql.ErrNoRows {
+		return "en_US", nil
+	} else if err != nil {
+		return "", fmt.Errorf("unable to fetch user language: %v", err)
+	}
+	return language, nil
+}
+
 // UserByID finds a user by the ID.
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByID] userID=%d", userID))

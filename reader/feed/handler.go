@@ -10,6 +10,7 @@ import (
 
 	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/icon"
@@ -30,7 +31,8 @@ var (
 
 // Handler contains all the logic to create and refresh feeds.
 type Handler struct {
-	store *storage.Storage
+	store      *storage.Storage
+	translator *locale.Translator
 }
 
 // CreateFeed fetch, parse and store a new feed.
@@ -44,7 +46,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 	client := http.NewClient(url)
 	response, err := client.Get()
 	if err != nil {
-		if _, ok := err.(errors.LocalizedError); ok {
+		if _, ok := err.(*errors.LocalizedError); ok {
 			return nil, err
 		}
 		return nil, errors.NewLocalizedError(errRequestFailed, err)
@@ -68,9 +70,9 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 		return nil, errors.NewLocalizedError(errEncoding, err)
 	}
 
-	subscription, err := parseFeed(body)
-	if err != nil {
-		return nil, err
+	subscription, feedErr := parseFeed(body)
+	if feedErr != nil {
+		return nil, feedErr
 	}
 
 	feedProcessor := processor.NewFeedProcessor(userID, h.store, subscription)
@@ -110,6 +112,13 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 // RefreshFeed fetch and update a feed if necessary.
 func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
+	userLanguage, err := h.store.UserLanguage(userID)
+	if err != nil {
+		logger.Error("[Handler:RefreshFeed] %v", err)
+		userLanguage = "en_US"
+	}
+
+	currentLanguage := h.translator.GetLanguage(userLanguage)
 
 	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
@@ -124,14 +133,14 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	response, err := client.Get()
 	if err != nil {
 		var customErr errors.LocalizedError
-		if lerr, ok := err.(errors.LocalizedError); ok {
-			customErr = lerr
+		if lerr, ok := err.(*errors.LocalizedError); ok {
+			customErr = *lerr
 		} else {
-			customErr = errors.NewLocalizedError(errRequestFailed, err)
+			customErr = *errors.NewLocalizedError(errRequestFailed, err)
 		}
 
 		originalFeed.ParsingErrorCount++
-		originalFeed.ParsingErrorMsg = customErr.Error()
+		originalFeed.ParsingErrorMsg = customErr.Localize(currentLanguage)
 		h.store.UpdateFeed(originalFeed)
 		return customErr
 	}
@@ -141,7 +150,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	if response.HasServerFailure() {
 		err := errors.NewLocalizedError(errServerFailure, response.StatusCode)
 		originalFeed.ParsingErrorCount++
-		originalFeed.ParsingErrorMsg = err.Error()
+		originalFeed.ParsingErrorMsg = err.Localize(currentLanguage)
 		h.store.UpdateFeed(originalFeed)
 		return err
 	}
@@ -153,7 +162,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		if response.ContentLength == 0 {
 			err := errors.NewLocalizedError(errEmptyFeed)
 			originalFeed.ParsingErrorCount++
-			originalFeed.ParsingErrorMsg = err.Error()
+			originalFeed.ParsingErrorMsg = err.Localize(currentLanguage)
 			h.store.UpdateFeed(originalFeed)
 			return err
 		}
@@ -163,10 +172,10 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 			return errors.NewLocalizedError(errEncoding, err)
 		}
 
-		subscription, err := parseFeed(body)
-		if err != nil {
+		subscription, parseErr := parseFeed(body)
+		if parseErr != nil {
 			originalFeed.ParsingErrorCount++
-			originalFeed.ParsingErrorMsg = err.Error()
+			originalFeed.ParsingErrorMsg = parseErr.Localize(currentLanguage)
 			h.store.UpdateFeed(originalFeed)
 			return err
 		}
@@ -209,6 +218,6 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 }
 
 // NewFeedHandler returns a feed handler.
-func NewFeedHandler(store *storage.Storage) *Handler {
-	return &Handler{store: store}
+func NewFeedHandler(store *storage.Storage, translator *locale.Translator) *Handler {
+	return &Handler{store, translator}
 }
