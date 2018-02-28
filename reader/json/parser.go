@@ -17,7 +17,7 @@ func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 	feed := new(jsonFeed)
 	decoder := json.NewDecoder(data)
 	if err := decoder.Decode(&feed); err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse JSON Feed: %v", err)
+		return nil, errors.NewLocalizedError("Unable to parse JSON Feed: %q", err)
 	}
 
 	return feed.Transform(), nil

@@ -24,7 +24,7 @@ var (
 	errServerFailure    = "Unable to fetch feed (statusCode=%d)"
 	errDuplicate        = "This feed already exists (%s)"
 	errNotFound         = "Feed %d not found"
-	errEncoding         = "Unable to normalize encoding: %v"
+	errEncoding         = "Unable to normalize encoding: %q"
 	errCategoryNotFound = "Category not found for this user"
 	errEmptyFeed        = "This feed is empty"
 )

@@ -20,7 +20,7 @@ func Parse(data io.Reader) (SubcriptionList, *errors.LocalizedError) {
 
 	err := decoder.Decode(feeds)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse OPML file: %v.", err)
+		return nil, errors.NewLocalizedError("Unable to parse OPML file: %q", err)
 	}
 
 	return feeds.Transform(), nil

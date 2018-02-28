@@ -21,7 +21,7 @@ func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 
 	err := decoder.Decode(feed)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse RDF feed: %v.", err)
+		return nil, errors.NewLocalizedError("Unable to parse RDF feed: %q", err)
 	}
 
 	return feed.Transform(), nil

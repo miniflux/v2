@@ -21,7 +21,7 @@ func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 
 	err := decoder.Decode(atomFeed)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %v.", err)
+		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %q", err)
 	}
 
 	return atomFeed.Transform(), nil
