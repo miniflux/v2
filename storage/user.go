@@ -11,11 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lib/pq/hstore"
-
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/timer"
 
+	"github.com/lib/pq/hstore"
 	"golang.org/x/crypto/bcrypt"
 )
 

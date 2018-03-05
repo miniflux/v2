@@ -7,6 +7,8 @@ package model
 import (
 	"errors"
 	"time"
+
+	"github.com/miniflux/miniflux/timezone"
 )
 
 // User represents a user in the system.
@@ -99,5 +101,19 @@ func (u *User) Merge(override *User) {
 	}
 }
 
+// UseTimezone converts last login date to the given timezone.
+func (u *User) UseTimezone(tz string) {
+	if u.LastLoginAt != nil {
+		*u.LastLoginAt = timezone.Convert(tz, *u.LastLoginAt)
+	}
+}
+
 // Users represents a list of users.
 type Users []*User
+
+// UseTimezone converts last login timestamp of all users to the given timezone.
+func (u Users) UseTimezone(tz string) {
+	for _, user := range u {
+		user.UseTimezone(tz)
+	}
+}

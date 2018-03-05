@@ -34,6 +34,7 @@ func (c *Controller) ShowUsers(ctx *handler.Context, request *handler.Request, r
 		return
 	}
 
+	users.UseTimezone(user.Timezone)
 	response.HTML().Render("users", args.Merge(tplParams{
 		"users": users,
 		"menu":  "settings",
