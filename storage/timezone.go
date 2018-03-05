@@ -6,6 +6,7 @@ package storage
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/miniflux/miniflux/timer"
@@ -14,10 +15,8 @@ import (
 // Timezones returns all timezones supported by the database.
 func (s *Storage) Timezones() (map[string]string, error) {
 	defer timer.ExecutionTime(time.Now(), "[Storage:Timezones]")
-
 	timezones := make(map[string]string)
-	query := `select name from pg_timezone_names() order by name asc`
-	rows, err := s.db.Query(query)
+	rows, err := s.db.Query(`SELECT name FROM pg_timezone_names() ORDER BY name ASC`)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch timezones: %v", err)
 	}
@@ -29,7 +28,9 @@ func (s *Storage) Timezones() (map[string]string, error) {
 			return nil, fmt.Errorf("unable to fetch timezones row: %v", err)
 		}
 
-		timezones[timezone] = timezone
+		if !strings.HasPrefix(timezone, "posix") && !strings.HasPrefix(timezone, "SystemV") && timezone != "localtime" {
+			timezones[timezone] = timezone
+		}
 	}
 
 	return timezones, nil
