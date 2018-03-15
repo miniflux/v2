@@ -47,7 +47,7 @@ type jsonAttachment struct {
 	URL      string `json:"url"`
 	MimeType string `json:"mime_type"`
 	Title    string `json:"title"`
-	Size     int    `json:"size_in_bytes"`
+	Size     int64  `json:"size_in_bytes"`
 	Duration int    `json:"duration_in_seconds"`
 }
 

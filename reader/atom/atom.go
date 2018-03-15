@@ -187,7 +187,7 @@ func getEnclosures(a *atomEntry) model.EnclosureList {
 
 	for _, link := range a.Links {
 		if strings.ToLower(link.Rel) == "enclosure" {
-			length, _ := strconv.Atoi(link.Length)
+			length, _ := strconv.ParseInt(link.Length, 10, 0)
 			enclosures = append(enclosures, &model.Enclosure{URL: link.URL, MimeType: link.Type, Size: length})
 		}
 	}

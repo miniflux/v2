@@ -194,7 +194,7 @@ func (r *rssItem) GetEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 
 	for _, enclosure := range r.Enclosures {
-		length, _ := strconv.Atoi(enclosure.Length)
+		length, _ := strconv.ParseInt(enclosure.Length, 10, 0)
 		enclosureURL := enclosure.URL
 
 		if r.OrigEnclosureLink != "" {
