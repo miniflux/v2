@@ -41,7 +41,7 @@ func (h *Handler) Export(userID int64) (string, error) {
 }
 
 // Import parses and create feeds from an OPML import.
-func (h *Handler) Import(userID int64, data io.Reader) (err error) {
+func (h *Handler) Import(userID int64, data io.Reader) error {
 	subscriptions, err := Parse(data)
 	if err != nil {
 		return err
@@ -50,6 +50,7 @@ func (h *Handler) Import(userID int64, data io.Reader) (err error) {
 	for _, subscription := range subscriptions {
 		if !h.store.FeedURLExists(userID, subscription.FeedURL) {
 			var category *model.Category
+			var err error
 
 			if subscription.CategoryName == "" {
 				category, err = h.store.FirstCategory(userID)
