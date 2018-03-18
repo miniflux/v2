@@ -15,6 +15,7 @@ import (
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
+	"github.com/miniflux/miniflux/reader/sanitizer"
 	"github.com/miniflux/miniflux/url"
 )
 
@@ -56,6 +57,7 @@ type rssAuthor struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
 	Name    string `xml:"name"`
+	Inner   string `xml:",innerxml"`
 }
 
 type rssEnclosure struct {
@@ -100,7 +102,7 @@ func (r *rssFeed) Transform() *model.Feed {
 		if entry.Author == "" && r.ItunesAuthor != "" {
 			entry.Author = r.ItunesAuthor
 		}
-		entry.Author = strings.TrimSpace(entry.Author)
+		entry.Author = strings.TrimSpace(sanitizer.StripTags(entry.Author))
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
@@ -146,8 +148,8 @@ func (r *rssItem) GetAuthor() string {
 			return element.Name
 		}
 
-		if element.Data != "" {
-			return element.Data
+		if element.Inner != "" {
+			return element.Inner
 		}
 	}
 

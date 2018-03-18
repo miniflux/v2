@@ -230,6 +230,31 @@ func TestParseFeedURLWithAtomLink(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithAuthorAndInnerHTML(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<author>by <a itemprop="url" class="author" rel="author" href="/author/foobar">Foo Bar</a></author>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].Author != "by Foo Bar" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
 func TestParseEntryWithAtomAuthor(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
