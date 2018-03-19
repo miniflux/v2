@@ -22,7 +22,7 @@ darwin:
 	@ GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-darwin-amd64 main.go
 
 freebsd:
-        @ go generate
+	@ go generate
         @ GOOS=freebsd GOARCH=amd64 go build -ldflags="-X 'githug.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-freebsd-amd64 main.go
 
 build: linux linux-arm darwin freebsd
