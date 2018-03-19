@@ -1,4 +1,1 @@
-miniflux-linux-amd64
-miniflux-linux-arm*
-miniflux-darwin-amd64
-miniflux-test
+miniflux-*
