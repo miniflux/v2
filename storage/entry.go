@@ -25,9 +25,9 @@ func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 func (s *Storage) createEntry(entry *model.Entry) error {
 	query := `
 		INSERT INTO entries
-		(title, hash, url, published_at, content, author, user_id, feed_id)
+		(title, hash, url, comments_url, published_at, content, author, user_id, feed_id)
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8)
+		($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id
 	`
 	err := s.db.QueryRow(
@@ -35,6 +35,7 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		entry.Title,
 		entry.Hash,
 		entry.URL,
+		entry.CommentsURL,
 		entry.Date,
 		entry.Content,
 		entry.Author,
@@ -82,14 +83,15 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 func (s *Storage) updateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE entries SET
-		title=$1, url=$2, content=$3, author=$4
-		WHERE user_id=$5 AND feed_id=$6 AND hash=$7
+		title=$1, url=$2, comments_url=$3, content=$4, author=$5
+		WHERE user_id=$6 AND feed_id=$7 AND hash=$8
 		RETURNING id
 	`
 	err := s.db.QueryRow(
 		query,
 		entry.Title,
 		entry.URL,
+		entry.CommentsURL,
 		entry.Content,
 		entry.Author,
 		entry.UserID,

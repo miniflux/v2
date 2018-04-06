@@ -43,6 +43,7 @@ type rssItem struct {
 	Title             string         `xml:"title"`
 	Links             []rssLink      `xml:"link"`
 	OriginalLink      string         `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
+	Comments          string         `xml:"comments"`
 	Description       string         `xml:"description"`
 	Content           string         `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
 	PubDate           string         `xml:"pubDate"`
@@ -219,6 +220,7 @@ func (r *rssItem) GetEnclosures() model.EnclosureList {
 func (r *rssItem) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.URL = r.GetURL()
+	entry.CommentsURL = r.Comments
 	entry.Date = r.GetDate()
 	entry.Author = r.GetAuthor()
 	entry.Hash = r.GetHash()
