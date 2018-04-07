@@ -581,6 +581,29 @@ func TestParseEntryWithRelativeURL(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithCommentsURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>https://example.org/item1</link>
+				<comments>https://example.org/comments</comments>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].CommentsURL != "https://example.org/comments" {
+		t.Errorf("Incorrect entry comments URL, got: %q", feed.Entries[0].CommentsURL)
+	}
+}
+
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))
