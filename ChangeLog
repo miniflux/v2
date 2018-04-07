@@ -1,3 +1,16 @@
+Version 2.0.5 (Apr 7, 2018)
+---------------------------
+
+* Avoid unread counter to be off by one when reading an entry
+* Add Comments URL to entries
+* Add FreeBSD build target
+* Handle RSS author elements with inner HTML
+* Fix typo in translations
+* Add Dutch translation
+* Convert enclosure size field to bigint
+* Switch CI to Go v1.10
+* Fix broken OPML import when compiling with Go 1.10
+
 Version 2.0.4 (Mar 5, 2018)
 ---------------------------
 
