@@ -36,6 +36,11 @@
                         data-label-done="{{ t "Done!" }}"
                         >{{ t "Fetch original content" }}</a>
                 </li>
+                {{ if .entry.CommentsURL }}
+                    <li>
+                        <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
+                    </li>
+                {{ end }}
             </ul>
         </div>
         <div class="entry-meta">

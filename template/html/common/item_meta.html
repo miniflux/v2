@@ -38,6 +38,11 @@
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                 >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔ {{ t "Read" }}{{ end }}</a>
         </li>
+        {{ if .entry.CommentsURL }}
+            <li>
+                <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
+            </li>
+        {{ end }}
     </ul>
 </div>
 {{ end }}
