@@ -266,12 +266,6 @@ func (c *Controller) ShowUnreadEntry(ctx *handler.Context, request *handler.Requ
 		return
 	}
 
-	args, err := c.getCommonTemplateArgs(ctx)
-	if err != nil {
-		response.HTML().ServerError(err)
-		return
-	}
-
 	builder = c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 
@@ -299,6 +293,13 @@ func (c *Controller) ShowUnreadEntry(ctx *handler.Context, request *handler.Requ
 			response.HTML().ServerError(nil)
 			return
 		}
+	}
+
+	// The unread counter have to be fetched after changing the entry status
+	args, err := c.getCommonTemplateArgs(ctx)
+	if err != nil {
+		response.HTML().ServerError(err)
+		return
 	}
 
 	response.HTML().Render("entry", args.Merge(tplParams{
