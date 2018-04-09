@@ -218,5 +218,6 @@
     "This website is temporarily unreachable (original error: %q)": "Diese Webseite ist vorübergehend nicht erreichbar (ursprünglicher Fehler: %q)",
     "This website is permanently unreachable (original error: %q)": "Diese Webseite ist dauerhaft nicht erreichbar (ursprünglicher Fehler: %q)",
     "Website unreachable, the request timed out after %d seconds": "Webseite nicht erreichbar, die Anfrage endete nach %d Sekunden",
-    "Comments": "Kommentare"
+    "Comments": "Kommentare",
+    "View Comments": "Kommentare anzeigen"
 }
