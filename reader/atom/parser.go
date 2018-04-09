@@ -14,14 +14,14 @@ import (
 )
 
 // Parse returns a normalized feed struct from a Atom feed.
-func Parse(data io.Reader) (*model.Feed, error) {
+func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 	atomFeed := new(atomFeed)
 	decoder := xml.NewDecoder(data)
 	decoder.CharsetReader = encoding.CharsetReader
 
 	err := decoder.Decode(atomFeed)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %v.", err)
+		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %q", err)
 	}
 
 	return atomFeed.Transform(), nil

@@ -214,6 +214,10 @@ article.feed-parsing-error {
     border-color: #888;
 }
 
+.entry-content q {
+    color: #777;
+}
+
 .entry-enclosure {
     border-color: #333;
 }

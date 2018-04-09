@@ -13,6 +13,7 @@ import (
 
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/timer"
+	"github.com/miniflux/miniflux/timezone"
 )
 
 // EntryQueryBuilder builds a SQL query to fetch entries.
@@ -157,10 +158,11 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	query := `
 		SELECT
 		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone u.timezone, e.title,
-		e.url, e.author, e.content, e.status, e.starred,
+		e.url, e.comments_url, e.author, e.content, e.status, e.starred,
 		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
 		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
-		fi.icon_id
+		fi.icon_id,
+		u.timezone
 		FROM entries e
 		LEFT JOIN feeds f ON f.id=e.feed_id
 		LEFT JOIN categories c ON c.id=f.category_id
@@ -183,6 +185,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	for rows.Next() {
 		var entry model.Entry
 		var iconID interface{}
+		var tz string
 
 		entry.Feed = &model.Feed{UserID: e.userID}
 		entry.Feed.Category = &model.Category{UserID: e.userID}
@@ -196,6 +199,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Date,
 			&entry.Title,
 			&entry.URL,
+			&entry.CommentsURL,
 			&entry.Author,
 			&entry.Content,
 			&entry.Status,
@@ -210,6 +214,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.RewriteRules,
 			&entry.Feed.Crawler,
 			&iconID,
+			&tz,
 		)
 
 		if err != nil {
@@ -221,6 +226,10 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		} else {
 			entry.Feed.Icon.IconID = iconID.(int64)
 		}
+
+		// Make sure that timestamp fields contains timezone information (API)
+		entry.Date = timezone.Convert(tz, entry.Date)
+		entry.Feed.CheckedAt = timezone.Convert(tz, entry.Feed.CheckedAt)
 
 		entry.Feed.ID = entry.FeedID
 		entry.Feed.Icon.FeedID = entry.FeedID

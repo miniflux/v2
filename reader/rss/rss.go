@@ -15,6 +15,7 @@ import (
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/date"
+	"github.com/miniflux/miniflux/reader/sanitizer"
 	"github.com/miniflux/miniflux/url"
 )
 
@@ -42,6 +43,7 @@ type rssItem struct {
 	Title             string         `xml:"title"`
 	Links             []rssLink      `xml:"link"`
 	OriginalLink      string         `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
+	Comments          string         `xml:"comments"`
 	Description       string         `xml:"description"`
 	Content           string         `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
 	PubDate           string         `xml:"pubDate"`
@@ -56,6 +58,7 @@ type rssAuthor struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
 	Name    string `xml:"name"`
+	Inner   string `xml:",innerxml"`
 }
 
 type rssEnclosure struct {
@@ -100,7 +103,7 @@ func (r *rssFeed) Transform() *model.Feed {
 		if entry.Author == "" && r.ItunesAuthor != "" {
 			entry.Author = r.ItunesAuthor
 		}
-		entry.Author = strings.TrimSpace(entry.Author)
+		entry.Author = strings.TrimSpace(sanitizer.StripTags(entry.Author))
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
@@ -146,8 +149,8 @@ func (r *rssItem) GetAuthor() string {
 			return element.Name
 		}
 
-		if element.Data != "" {
-			return element.Data
+		if element.Inner != "" {
+			return element.Inner
 		}
 	}
 
@@ -194,7 +197,7 @@ func (r *rssItem) GetEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 
 	for _, enclosure := range r.Enclosures {
-		length, _ := strconv.Atoi(enclosure.Length)
+		length, _ := strconv.ParseInt(enclosure.Length, 10, 0)
 		enclosureURL := enclosure.URL
 
 		if r.OrigEnclosureLink != "" {
@@ -217,6 +220,7 @@ func (r *rssItem) GetEnclosures() model.EnclosureList {
 func (r *rssItem) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.URL = r.GetURL()
+	entry.CommentsURL = r.Comments
 	entry.Date = r.GetDate()
 	entry.Author = r.GetAuthor()
 	entry.Hash = r.GetHash()

@@ -24,6 +24,7 @@ func (c *Controller) ShowSessions(ctx *handler.Context, request *handler.Request
 		return
 	}
 
+	sessions.UseTimezone(user.Timezone)
 	response.HTML().Render("sessions", args.Merge(tplParams{
 		"sessions":            sessions,
 		"currentSessionToken": ctx.UserSessionToken(),

@@ -94,6 +94,19 @@
         <label for="form-wallabag-password">{{ t "Wallabag Password" }}</label>
         <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}">
     </div>
+    
+    <h3>Nunux Keeper</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "Save articles to Nunux Keeper" }}
+        </label>
+
+        <label for="form-nunux-keeper-url">{{ t "Nunux Keeper API Endpoint" }}</label>
+        <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper">
+
+        <label for="form-nunux-keeper-api-key">{{ t "Nunux Keeper API key" }}</label>
+        <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
+    </div>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>

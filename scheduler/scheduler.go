@@ -15,7 +15,7 @@ import (
 func NewFeedScheduler(store *storage.Storage, workerPool *WorkerPool, frequency, batchSize int) {
 	go func() {
 		c := time.Tick(time.Duration(frequency) * time.Minute)
-		for _ = range c {
+		for range c {
 			jobs, err := store.NewBatch(batchSize)
 			if err != nil {
 				logger.Error("[FeedScheduler] %v", err)
@@ -31,7 +31,7 @@ func NewFeedScheduler(store *storage.Storage, workerPool *WorkerPool, frequency,
 func NewSessionScheduler(store *storage.Storage, frequency int) {
 	go func() {
 		c := time.Tick(time.Duration(frequency) * time.Hour)
-		for _ = range c {
+		for range c {
 			nbSessions := store.CleanOldSessions()
 			nbUserSessions := store.CleanOldUserSessions()
 			logger.Info("[SessionScheduler] cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)

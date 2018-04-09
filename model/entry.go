@@ -20,20 +20,21 @@ const (
 
 // Entry represents a feed item in the system.
 type Entry struct {
-	ID         int64         `json:"id"`
-	UserID     int64         `json:"user_id"`
-	FeedID     int64         `json:"feed_id"`
-	Status     string        `json:"status"`
-	Hash       string        `json:"hash"`
-	Title      string        `json:"title"`
-	URL        string        `json:"url"`
-	Date       time.Time     `json:"published_at"`
-	Content    string        `json:"content"`
-	Author     string        `json:"author"`
-	Starred    bool          `json:"starred"`
-	Enclosures EnclosureList `json:"enclosures,omitempty"`
-	Feed       *Feed         `json:"feed,omitempty"`
-	Category   *Category     `json:"category,omitempty"`
+	ID          int64         `json:"id"`
+	UserID      int64         `json:"user_id"`
+	FeedID      int64         `json:"feed_id"`
+	Status      string        `json:"status"`
+	Hash        string        `json:"hash"`
+	Title       string        `json:"title"`
+	URL         string        `json:"url"`
+	CommentsURL string        `json:"comments_url"`
+	Date        time.Time     `json:"published_at"`
+	Content     string        `json:"content"`
+	Author      string        `json:"author"`
+	Starred     bool          `json:"starred"`
+	Enclosures  EnclosureList `json:"enclosures,omitempty"`
+	Feed        *Feed         `json:"feed,omitempty"`
+	Category    *Category     `json:"category,omitempty"`
 }
 
 // Entries represents a list of entries.

@@ -12,6 +12,7 @@ import (
 
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/timer"
+	"github.com/miniflux/miniflux/timezone"
 )
 
 // FeedExists checks if the given feed exists.
@@ -56,7 +57,8 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 		f.parsing_error_count, f.parsing_error_msg,
 		f.scraper_rules, f.rewrite_rules, f.crawler,
 		f.category_id, c.title as category_title,
-		fi.icon_id
+		fi.icon_id,
+		u.timezone
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
@@ -73,6 +75,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	for rows.Next() {
 		var feed model.Feed
 		var iconID interface{}
+		var tz string
 		feed.Category = &model.Category{UserID: userID}
 
 		err := rows.Scan(
@@ -92,6 +95,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 			&feed.Category.ID,
 			&feed.Category.Title,
 			&iconID,
+			&tz,
 		)
 
 		if err != nil {
@@ -102,6 +106,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
 		}
 
+		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
 		feeds = append(feeds, &feed)
 	}
 
@@ -114,6 +119,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 
 	var feed model.Feed
 	var iconID interface{}
+	var tz string
 	feed.Category = &model.Category{UserID: userID}
 
 	query := `
@@ -123,7 +129,8 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		f.parsing_error_count, f.parsing_error_msg,
 		f.scraper_rules, f.rewrite_rules, f.crawler,
 		f.category_id, c.title as category_title,
-		fi.icon_id
+		fi.icon_id,
+		u.timezone
 		FROM feeds f
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
@@ -147,6 +154,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.Category.ID,
 		&feed.Category.Title,
 		&iconID,
+		&tz,
 	)
 
 	switch {
@@ -160,6 +168,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
 	}
 
+	feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
 	return &feed, nil
 }
 

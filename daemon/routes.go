@@ -23,9 +23,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *scheduler.WorkerPool) *mux.Router {
+func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *scheduler.WorkerPool, translator *locale.Translator) *mux.Router {
 	router := mux.NewRouter()
-	translator := locale.Load()
 	templateEngine := template.NewEngine(cfg, router, translator)
 
 	apiController := api.NewController(store, feedHandler)

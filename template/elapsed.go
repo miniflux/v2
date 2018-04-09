@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/locale"
+	"github.com/miniflux/miniflux/timezone"
 )
 
 // Texts to be translated if necessary.
@@ -28,24 +29,13 @@ var (
 
 // ElapsedTime returns in a human readable format the elapsed time
 // since the given datetime.
-func elapsedTime(language *locale.Language, timezone string, t time.Time) string {
+func elapsedTime(language *locale.Language, tz string, t time.Time) string {
 	if t.IsZero() {
 		return language.Get(NotYet)
 	}
 
-	var now time.Time
-	loc, err := time.LoadLocation(timezone)
-	if err != nil {
-		now = time.Now()
-	} else {
-		now = time.Now().In(loc)
-
-		// The provided date is already converted to the user timezone by Postgres,
-		// but the timezone information is not set in the time struct.
-		// We cannot use time.In() because the date will be converted a second time.
-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), loc)
-	}
-
+	now := timezone.Now(tz)
+	t = timezone.Convert(tz, t)
 	if now.Before(t) {
 		return language.Get(NotYet)
 	}

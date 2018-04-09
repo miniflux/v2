@@ -27,6 +27,6 @@ func (l LocalizedError) Localize(translation *locale.Language) string {
 }
 
 // NewLocalizedError returns a new LocalizedError.
-func NewLocalizedError(message string, args ...interface{}) LocalizedError {
-	return LocalizedError{message: message, args: args}
+func NewLocalizedError(message string, args ...interface{}) *LocalizedError {
+	return &LocalizedError{message: message, args: args}
 }

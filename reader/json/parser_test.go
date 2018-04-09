@@ -9,8 +9,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"github.com/miniflux/miniflux/errors"
 )
 
 func TestParseJsonFeed(t *testing.T) {
@@ -376,9 +374,5 @@ func TestParseInvalidJSON(t *testing.T) {
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should returns an error")
-	}
-
-	if _, ok := err.(errors.LocalizedError); !ok {
-		t.Error("The error returned must be a LocalizedError")
 	}
 }

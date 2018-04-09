@@ -4,8 +4,12 @@
 
 package model
 
-import "time"
-import "fmt"
+import (
+	"fmt"
+	"time"
+
+	"github.com/miniflux/miniflux/timezone"
+)
 
 // UserSession represents a user session in the system.
 type UserSession struct {
@@ -17,9 +21,21 @@ type UserSession struct {
 	IP        string
 }
 
-func (s *UserSession) String() string {
-	return fmt.Sprintf(`ID="%d", UserID="%d", IP="%s", Token="%s"`, s.ID, s.UserID, s.IP, s.Token)
+func (u *UserSession) String() string {
+	return fmt.Sprintf(`ID="%d", UserID="%d", IP="%s", Token="%s"`, u.ID, u.UserID, u.IP, u.Token)
+}
+
+// UseTimezone converts creation date to the given timezone.
+func (u *UserSession) UseTimezone(tz string) {
+	u.CreatedAt = timezone.Convert(tz, u.CreatedAt)
 }
 
 // UserSessions represents a list of sessions.
 type UserSessions []*UserSession
+
+// UseTimezone converts creation date of all sessions to the given timezone.
+func (u UserSessions) UseTimezone(tz string) {
+	for _, session := range u {
+		session.UseTimezone(tz)
+	}
+}

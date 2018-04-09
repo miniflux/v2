@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+
+	"github.com/miniflux/miniflux/logger"
 )
 
 const (
@@ -89,7 +91,16 @@ func (c *Config) BasePath() string {
 
 // DatabaseURL returns the database URL.
 func (c *Config) DatabaseURL() string {
-	return c.get("DATABASE_URL", defaultDatabaseURL)
+	value, exists := os.LookupEnv("DATABASE_URL")
+	if !exists {
+		logger.Info("The environment variable DATABASE_URL is not configured (the default value is used instead)")
+	}
+
+	if value == "" {
+		value = defaultDatabaseURL
+	}
+
+	return value
 }
 
 // DatabaseMaxConnections returns the number of maximum database connections.

@@ -100,6 +100,7 @@ func (c *Controller) Users(ctx *handler.Context, request *handler.Request, respo
 		return
 	}
 
+	users.UseTimezone(ctx.UserTimezone())
 	response.JSON().Standard(users)
 }
 
@@ -127,6 +128,7 @@ func (c *Controller) UserByID(ctx *handler.Context, request *handler.Request, re
 		return
 	}
 
+	user.UseTimezone(ctx.UserTimezone())
 	response.JSON().Standard(user)
 }
 
