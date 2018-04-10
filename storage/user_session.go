@@ -82,7 +82,7 @@ func (s *Storage) UserSessionByToken(token string) (*model.UserSession, error) {
 	)
 
 	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("user session not found: %s", token)
+		return nil, nil
 	} else if err != nil {
 		return nil, fmt.Errorf("unable to fetch user session: %v", err)
 	}
