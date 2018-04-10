@@ -71,6 +71,8 @@ var dateFormats = []string{
 	"Mon, 2 Jan 2006 15:04:05 -0700",
 	"Mon, 2 Jan 2006 15:04:05",
 	"Mon, 2 Jan 2006 15:04",
+	"Mon, 02 Jan 2006, 15:04",
+	"Mon, 2 Jan 2006, 15:04",
 	"Mon,2 Jan 2006",
 	"Mon, 2 Jan 2006",
 	"Mon, 2 Jan 15:04:05 MST",
@@ -192,6 +194,7 @@ var dateFormats = []string{
 // Parse parses a given date string using a large
 // list of commonly found feed date formats.
 func Parse(ds string) (t time.Time, err error) {
+	ds = replaceNonEnglishWords(ds)
 	d := strings.TrimSpace(ds)
 	if d == "" {
 		return t, errors.New("date parser: empty value")
@@ -210,4 +213,33 @@ func Parse(ds string) (t time.Time, err error) {
 
 	err = fmt.Errorf(`date parser: failed to parse date "%s"`, ds)
 	return
+}
+
+// Replace German and French dates to English.
+func replaceNonEnglishWords(ds string) string {
+	r := strings.NewReplacer(
+		"Mo,", "Mon,",
+		"Di,", "Tue,",
+		"Mi,", "Wed,",
+		"Do,", "Thu,",
+		"Fr,", "Fri,",
+		"Sa,", "Sat,",
+		"So,", "Sun,",
+		"Mär ", "Mar ",
+		"Mai ", "May ",
+		"Okt ", "Oct ",
+		"Dez ", "Dec ",
+		"lun,", "Mon,",
+		"mar,", "Tue,",
+		"mer,", "Wed,",
+		"jeu,", "Thu,",
+		"ven,", "Fri,",
+		"sam,", "Sat,",
+		"dim,", "Sun,",
+		"avr ", "Apr ",
+		"mai ", "May ",
+		"jui ", "Jun ",
+	)
+
+	return r.Replace(ds)
 }
