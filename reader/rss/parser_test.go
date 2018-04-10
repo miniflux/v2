@@ -583,13 +583,16 @@ func TestParseEntryWithRelativeURL(t *testing.T) {
 
 func TestParseEntryWithCommentsURL(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss version="2.0">
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
 		<channel>
 			<link>https://example.org/</link>
 			<item>
 				<title>Item 1</title>
 				<link>https://example.org/item1</link>
-				<comments>https://example.org/comments</comments>
+				<comments>
+					https://example.org/comments
+				</comments>
+				<slash:comments>42</slash:comments>
 			</item>
 		</channel>
 		</rss>`
