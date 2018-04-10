@@ -129,16 +129,24 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		ContentLength: resp.ContentLength,
 	}
 
-	logger.Debug("[HttpClient:%s] OriginalURL=%s, StatusCode=%d, ContentLength=%d, ContentType=%s, ETag=%s, LastModified=%s, EffectiveURL=%s",
+	logger.Debug("[HttpClient:%s] URL=%s, EffectiveURL=%s, Code=%d, Length=%d, Type=%s, ETag=%s, LastMod=%s, Expires=%s",
 		request.Method,
 		c.url,
+		response.EffectiveURL,
 		response.StatusCode,
 		resp.ContentLength,
 		response.ContentType,
 		response.ETag,
 		response.LastModified,
-		response.EffectiveURL,
+		resp.Header.Get("Expires"),
 	)
+
+	// Ignore caching headers for feeds that do not want any cache.
+	if resp.Header.Get("Expires") == "0" {
+		logger.Debug("[HttpClient] Ignore caching headers for %q", response.EffectiveURL)
+		response.ETag = ""
+		response.LastModified = ""
+	}
 
 	return response, err
 }
