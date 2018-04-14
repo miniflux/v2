@@ -8,6 +8,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 
@@ -26,6 +27,16 @@ func Run(cfg *config.Config, store *storage.Storage) {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	signal.Notify(stop, syscall.SIGTERM)
+
+	go func() {
+		for {
+			var m runtime.MemStats
+			runtime.ReadMemStats(&m)
+			logger.Debug("Alloc=%vK, TotalAlloc=%vK, Sys=%vK, NumGC=%v, GoRoutines=%d, NumCPU=%d",
+				m.Alloc/1024, m.TotalAlloc/1024, m.Sys/1024, m.NumGC, runtime.NumGoroutine(), runtime.NumCPU())
+			time.Sleep(30 * time.Second)
+		}
+	}()
 
 	translator := locale.Load()
 	feedHandler := feed.NewFeedHandler(store, translator)

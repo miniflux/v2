@@ -8,10 +8,9 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/miniflux/miniflux/logger"
-
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/daemon"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/storage"
 	"github.com/miniflux/miniflux/version"
 )
