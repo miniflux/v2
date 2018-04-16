@@ -110,6 +110,10 @@ func (c *Config) DatabaseMaxConnections() int {
 
 // ListenAddr returns the listen address for the HTTP server.
 func (c *Config) ListenAddr() string {
+	if port := os.Getenv("PORT"); port != "" {
+		return ":" + port
+	}
+
 	return c.get("LISTEN_ADDR", defaultListenAddr)
 }
 
@@ -181,6 +185,16 @@ func (c *Config) OAuth2Provider() string {
 // HasHSTS returns true if HTTP Strict Transport Security is enabled.
 func (c *Config) HasHSTS() bool {
 	return c.get("DISABLE_HSTS", "") == ""
+}
+
+// RunMigrations returns true if the environment variable RUN_MIGRATIONS is not empty.
+func (c *Config) RunMigrations() bool {
+	return c.get("RUN_MIGRATIONS", "") != ""
+}
+
+// CreateAdmin returns true if the environment variable CREATE_ADMIN is not empty.
+func (c *Config) CreateAdmin() bool {
+	return c.get("CREATE_ADMIN", "") != ""
 }
 
 // NewConfig returns a new Config.

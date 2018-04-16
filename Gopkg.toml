@@ -20,6 +20,10 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+[metadata.heroku]
+  root-package = "github.com/miniflux/miniflux"
+  go-version = "go1.10"
+  ensure = "false"
 
 [[constraint]]
   name = "github.com/PuerkitoBio/goquery"

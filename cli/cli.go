@@ -67,5 +67,15 @@ func Parse() {
 		return
 	}
 
+	// Run migrations and start the deamon.
+	if cfg.RunMigrations() {
+		store.Migrate()
+	}
+
+	// Create admin user and start the deamon.
+	if cfg.CreateAdmin() {
+		createAdmin(store)
+	}
+
 	daemon.Run(cfg, store)
 }
