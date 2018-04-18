@@ -54,7 +54,9 @@ func Run(cfg *config.Config, store *storage.Storage) {
 
 	<-stop
 	logger.Info("Shutting down the server...")
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	server.Shutdown(ctx)
 	store.Close()
 	logger.Info("Server gracefully stopped")
