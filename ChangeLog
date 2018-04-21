@@ -1,3 +1,19 @@
+Version 2.0.6 (Apr 20, 2018)
+----------------------------
+
+* Improve graceful shutdown
+* Simplify Heroku deployment
+* Display memory usage and some metrics in logs
+* Increase read/write timeout for HTTP server
+* Add support for Dublin Core date in RDF feeds
+* Do not return an error if the user session is not found
+* Handle some non-english date formats
+* Add missing French translation
+* Rename RSS parser getters
+* Get the right comments URL when having multiple namespaces
+* Ignore caching headers for feeds that send "Expires: 0"
+* Update translations
+
 Version 2.0.5 (Apr 7, 2018)
 ---------------------------
 
