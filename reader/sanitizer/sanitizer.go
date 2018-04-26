@@ -280,6 +280,12 @@ func isValidIframeSource(src string) bool {
 		"https://www.dailymotion.com",
 		"http://vk.com",
 		"https://vk.com",
+		"http://soundcloud.com",
+		"https://soundcloud.com",
+		"http://w.soundcloud.com",
+		"https://w.soundcloud.com",
+		"http://bandcamp.com",
+		"https://bandcamp.com",
 	}
 
 	for _, prefix := range whitelist {
