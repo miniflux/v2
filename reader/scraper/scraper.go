@@ -72,7 +72,7 @@ func scrapContent(page io.Reader, rules string) (string, error) {
 		var content string
 
 		// For some inline elements, we get the parent.
-		if s.Is("img") {
+		if s.Is("img") || s.Is("iframe") {
 			content, _ = s.Parent().Html()
 		} else {
 			content, _ = s.Html()
