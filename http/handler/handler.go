@@ -34,10 +34,6 @@ func (h *Handler) Use(f ControllerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer timer.ExecutionTime(time.Now(), r.URL.Path)
 
-		if r.Header.Get("X-Forwarded-Proto") == "https" {
-			h.cfg.IsHTTPS = true
-		}
-
 		ctx := NewContext(r, h.store, h.router, h.translator)
 		request := NewRequest(r)
 		response := NewResponse(h.cfg, w, r, h.template)

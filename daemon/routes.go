@@ -39,6 +39,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 		router = router.PathPrefix(cfg.BasePath()).Subrouter()
 	}
 
+	router.Use(middleware.HeaderConfig)
 	router.Use(middleware.Logging)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
