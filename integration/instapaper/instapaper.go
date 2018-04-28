@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 )
 
 // Client represents an Instapaper client.
@@ -24,8 +24,9 @@ func (c *Client) AddURL(link, title string) error {
 	values.Add("title", title)
 
 	apiURL := "https://www.instapaper.com/api/add?" + values.Encode()
-	client := http.NewClientWithCredentials(apiURL, c.username, c.password)
-	response, err := client.Get()
+	clt := client.New(apiURL)
+	clt.WithCredentials(c.username, c.password)
+	response, err := clt.Get()
 	if response.HasServerFailure() {
 		return fmt.Errorf("instapaper: unable to send url, status=%d", response.StatusCode)
 	}

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 )
 
 // Client represents a Pinboard client.
@@ -30,8 +30,8 @@ func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error 
 	values.Add("tags", tags)
 	values.Add("toread", toRead)
 
-	client := http.NewClient("https://api.pinboard.in/v1/posts/add?" + values.Encode())
-	response, err := client.Get()
+	clt := client.New("https://api.pinboard.in/v1/posts/add?" + values.Encode())
+	response, err := clt.Get()
 	if response.HasServerFailure() {
 		return fmt.Errorf("pinboard: unable to send bookmark, status=%d", response.StatusCode)
 	}

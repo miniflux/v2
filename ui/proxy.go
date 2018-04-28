@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 	"github.com/miniflux/miniflux/http/handler"
 	"github.com/miniflux/miniflux/logger"
 )
@@ -36,8 +36,8 @@ func (c *Controller) ImageProxy(ctx *handler.Context, request *handler.Request, 
 		return
 	}
 
-	client := http.NewClient(string(decodedURL))
-	resp, err := client.Get()
+	clt := client.New(string(decodedURL))
+	resp, err := clt.Get()
 	if err != nil {
 		logger.Error("[Controller:ImageProxy] %v", err)
 		response.HTML().NotFound()

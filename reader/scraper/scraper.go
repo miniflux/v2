@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/reader/readability"
 	"github.com/miniflux/miniflux/url"
@@ -19,8 +19,8 @@ import (
 
 // Fetch downloads a web page a returns relevant contents.
 func Fetch(websiteURL, rules string) (string, error) {
-	client := http.NewClient(websiteURL)
-	response, err := client.Get()
+	clt := client.New(websiteURL)
+	response, err := clt.Get()
 	if err != nil {
 		return "", err
 	}

@@ -10,7 +10,7 @@ import (
 	"io"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 )
 
 // Client represents a Wallabag client.
@@ -38,8 +38,9 @@ func (c *Client) createEntry(accessToken, link, title string) error {
 		return fmt.Errorf("wallbag: unable to get entries endpoint: %v", err)
 	}
 
-	client := http.NewClientWithAuthorization(endpoint, "Bearer "+accessToken)
-	response, err := client.PostJSON(map[string]string{"url": link, "title": title})
+	clt := client.New(endpoint)
+	clt.WithAuthorization("Bearer " + accessToken)
+	response, err := clt.PostJSON(map[string]string{"url": link, "title": title})
 	if err != nil {
 		return fmt.Errorf("wallabag: unable to post entry: %v", err)
 	}
@@ -64,8 +65,8 @@ func (c *Client) getAccessToken() (string, error) {
 		return "", fmt.Errorf("wallbag: unable to get token endpoint: %v", err)
 	}
 
-	client := http.NewClient(endpoint)
-	response, err := client.PostForm(values)
+	clt := client.New(endpoint)
+	response, err := clt.PostForm(values)
 	if err != nil {
 		return "", fmt.Errorf("wallabag: unable to get access token: %v", err)
 	}

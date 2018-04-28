@@ -1,8 +1,8 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package http
+package client
 
 import (
 	"bytes"
@@ -47,6 +47,26 @@ type Client struct {
 	username            string
 	password            string
 	Insecure            bool
+}
+
+// WithCredentials defines the username/password for HTTP Basic authentication.
+func (c *Client) WithCredentials(username, password string) *Client {
+	c.username = username
+	c.password = password
+	return c
+}
+
+// WithAuthorization defines authorization header value.
+func (c *Client) WithAuthorization(authorization string) *Client {
+	c.authorizationHeader = authorization
+	return c
+}
+
+// WithCacheHeaders defines caching headers.
+func (c *Client) WithCacheHeaders(etagHeader, lastModifiedHeader string) *Client {
+	c.etagHeader = etagHeader
+	c.lastModifiedHeader = lastModifiedHeader
+	return c
 }
 
 // Get execute a GET HTTP request.
@@ -197,22 +217,7 @@ func (c *Client) buildHeaders() http.Header {
 	return headers
 }
 
-// NewClient returns a new HTTP client.
-func NewClient(url string) *Client {
+// New returns a new HTTP client.
+func New(url string) *Client {
 	return &Client{url: url, Insecure: false}
-}
-
-// NewClientWithCredentials returns a new HTTP client that requires authentication.
-func NewClientWithCredentials(url, username, password string) *Client {
-	return &Client{url: url, Insecure: false, username: username, password: password}
-}
-
-// NewClientWithAuthorization returns a new client with a custom authorization header.
-func NewClientWithAuthorization(url, authorization string) *Client {
-	return &Client{url: url, Insecure: false, authorizationHeader: authorization}
-}
-
-// NewClientWithCacheHeaders returns a new HTTP client that send cache headers.
-func NewClientWithCacheHeaders(url, etagHeader, lastModifiedHeader string) *Client {
-	return &Client{url: url, etagHeader: etagHeader, lastModifiedHeader: lastModifiedHeader, Insecure: false}
 }

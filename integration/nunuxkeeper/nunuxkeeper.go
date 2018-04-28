@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 )
 
 // Document structure of a Nununx Keeper document
@@ -39,8 +39,10 @@ func (c *Client) AddEntry(link, title, content string) error {
 	if err != nil {
 		return err
 	}
-	client := http.NewClientWithCredentials(apiURL, "api", c.apiKey)
-	response, err := client.PostJSON(doc)
+
+	clt := client.New(apiURL)
+	clt.WithCredentials("api", c.apiKey)
+	response, err := clt.PostJSON(doc)
 	if response.HasServerFailure() {
 		return fmt.Errorf("nunux-keeper: unable to send entry, status=%d", response.StatusCode)
 	}
