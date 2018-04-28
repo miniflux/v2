@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -9,16 +9,10 @@ import (
 	"net/http"
 
 	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/storage"
 )
 
-// BasicAuthMiddleware is the middleware for HTTP Basic authentication.
-type BasicAuthMiddleware struct {
-	store *storage.Storage
-}
-
-// Handler executes the middleware.
-func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
+// BasicAuth handles HTTP basic authentication.
+func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		errorResponse := `{"error_message": "Not Authorized"}`
@@ -31,14 +25,14 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		}
 
-		if err := b.store.CheckPassword(username, password); err != nil {
+		if err := m.store.CheckPassword(username, password); err != nil {
 			logger.Info("[Middleware:BasicAuth] Invalid username or password: %s", username)
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(errorResponse))
 			return
 		}
 
-		user, err := b.store.UserByUsername(username)
+		user, err := m.store.UserByUsername(username)
 		if err != nil {
 			logger.Error("[Middleware:BasicAuth] %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -54,7 +48,7 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 		}
 
 		logger.Info("[Middleware:BasicAuth] User authenticated: %s", username)
-		b.store.SetLastLogin(user.ID)
+		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, UserIDContextKey, user.ID)
@@ -64,9 +58,4 @@ func (b *BasicAuthMiddleware) Handler(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-// NewBasicAuthMiddleware returns a new BasicAuthMiddleware.
-func NewBasicAuthMiddleware(s *storage.Storage) *BasicAuthMiddleware {
-	return &BasicAuthMiddleware{store: s}
 }

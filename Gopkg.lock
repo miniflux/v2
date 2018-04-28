@@ -28,8 +28,8 @@
 [[projects]]
   name = "github.com/gorilla/mux"
   packages = ["."]
-  revision = "7f08801859139f86dfafd1c296e2cba9a80d292e"
-  version = "v1.6.0"
+  revision = "53c1911da2b537f792e7cafcb446b05ffe33b996"
+  version = "v1.6.1"
 
 [[projects]]
   branch = "master"
@@ -158,6 +158,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "338222e5111416c46b2b8bde149443abc542b386dd02aff2a0dd6e13334bcf28"
+  inputs-digest = "0cb64ea4a8054f26b80103c60380d800d74bdd2faec4ef53453874922e7de748"
   solver-name = "gps-cdcl"
   solver-version = 1

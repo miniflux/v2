@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -8,35 +8,27 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/http/cookie"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/storage"
 )
 
-// SessionMiddleware represents a session middleware.
-type SessionMiddleware struct {
-	cfg   *config.Config
-	store *storage.Storage
-}
-
-// Handler execute the middleware.
-func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
+// AppSession handles application session middleware.
+func (m *Middleware) AppSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		session := s.getSessionValueFromCookie(r)
+		session := m.getSessionValueFromCookie(r)
 
 		if session == nil {
 			logger.Debug("[Middleware:Session] Session not found")
-			session, err = s.store.CreateSession()
+			session, err = m.store.CreateSession()
 			if err != nil {
 				logger.Error("[Middleware:Session] %v", err)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
 
-			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, s.cfg.IsHTTPS, s.cfg.BasePath()))
+			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, m.cfg.IsHTTPS, m.cfg.BasePath()))
 		} else {
 			logger.Debug("[Middleware:Session] %s", session)
 		}
@@ -64,22 +56,17 @@ func (s *SessionMiddleware) Handler(next http.Handler) http.Handler {
 	})
 }
 
-func (s *SessionMiddleware) getSessionValueFromCookie(r *http.Request) *model.Session {
+func (m *Middleware) getSessionValueFromCookie(r *http.Request) *model.Session {
 	sessionCookie, err := r.Cookie(cookie.CookieSessionID)
 	if err == http.ErrNoCookie {
 		return nil
 	}
 
-	session, err := s.store.Session(sessionCookie.Value)
+	session, err := m.store.Session(sessionCookie.Value)
 	if err != nil {
 		logger.Error("[Middleware:Session] %v", err)
 		return nil
 	}
 
 	return session
-}
-
-// NewSessionMiddleware returns a new SessionMiddleware.
-func NewSessionMiddleware(cfg *config.Config, store *storage.Storage) *SessionMiddleware {
-	return &SessionMiddleware{cfg, store}
 }

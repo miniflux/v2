@@ -8,10 +8,10 @@ import (
 	"net/http"
 
 	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http/middleware"
 	"github.com/miniflux/miniflux/http/route"
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
+	"github.com/miniflux/miniflux/middleware"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/storage"
 

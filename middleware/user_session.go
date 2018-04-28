@@ -12,28 +12,21 @@ import (
 	"github.com/miniflux/miniflux/http/route"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/storage"
 
 	"github.com/gorilla/mux"
 )
 
-// UserSessionMiddleware represents a user session middleware.
-type UserSessionMiddleware struct {
-	store  *storage.Storage
-	router *mux.Router
-}
-
-// Handler execute the middleware.
-func (s *UserSessionMiddleware) Handler(next http.Handler) http.Handler {
+// UserSession handles the user session middleware.
+func (m *Middleware) UserSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session := s.getSessionFromCookie(r)
+		session := m.getSessionFromCookie(r)
 
 		if session == nil {
 			logger.Debug("[Middleware:UserSession] Session not found")
-			if s.isPublicRoute(r) {
+			if m.isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				http.Redirect(w, r, route.Path(s.router, "login"), http.StatusFound)
+				http.Redirect(w, r, route.Path(m.router, "login"), http.StatusFound)
 			}
 		} else {
 			logger.Debug("[Middleware:UserSession] %s", session)
@@ -47,7 +40,7 @@ func (s *UserSessionMiddleware) Handler(next http.Handler) http.Handler {
 	})
 }
 
-func (s *UserSessionMiddleware) isPublicRoute(r *http.Request) bool {
+func (m *Middleware) isPublicRoute(r *http.Request) bool {
 	route := mux.CurrentRoute(r)
 	switch route.GetName() {
 	case "login",
@@ -65,22 +58,17 @@ func (s *UserSessionMiddleware) isPublicRoute(r *http.Request) bool {
 	}
 }
 
-func (s *UserSessionMiddleware) getSessionFromCookie(r *http.Request) *model.UserSession {
+func (m *Middleware) getSessionFromCookie(r *http.Request) *model.UserSession {
 	sessionCookie, err := r.Cookie(cookie.CookieUserSessionID)
 	if err == http.ErrNoCookie {
 		return nil
 	}
 
-	session, err := s.store.UserSessionByToken(sessionCookie.Value)
+	session, err := m.store.UserSessionByToken(sessionCookie.Value)
 	if err != nil {
 		logger.Error("[Middleware:UserSession] %v", err)
 		return nil
 	}
 
 	return session
-}
-
-// NewUserSessionMiddleware returns a new UserSessionMiddleware.
-func NewUserSessionMiddleware(s *storage.Storage, r *mux.Router) *UserSessionMiddleware {
-	return &UserSessionMiddleware{store: s, router: r}
 }
