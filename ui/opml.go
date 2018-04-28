@@ -7,12 +7,13 @@ package ui
 import (
 	"github.com/miniflux/miniflux/http/handler"
 	"github.com/miniflux/miniflux/logger"
+	"github.com/miniflux/miniflux/reader/opml"
 )
 
 // Export generates the OPML file.
 func (c *Controller) Export(ctx *handler.Context, request *handler.Request, response *handler.Response) {
 	user := ctx.LoggedUser()
-	opml, err := c.opmlHandler.Export(user.ID)
+	opml, err := opml.NewHandler(c.store).Export(user.ID)
 	if err != nil {
 		response.HTML().ServerError(err)
 		return
@@ -29,7 +30,7 @@ func (c *Controller) Import(ctx *handler.Context, request *handler.Request, resp
 		return
 	}
 
-	response.HTML().Render("import", args.Merge(tplParams{
+	response.HTML().Render("import", ctx.UserLanguage(), args.Merge(tplParams{
 		"menu": "feeds",
 	}))
 }
@@ -52,14 +53,14 @@ func (c *Controller) UploadOPML(ctx *handler.Context, request *handler.Request, 
 		fileHeader.Size,
 	)
 
-	if impErr := c.opmlHandler.Import(user.ID, file); impErr != nil {
+	if impErr := opml.NewHandler(c.store).Import(user.ID, file); impErr != nil {
 		args, err := c.getCommonTemplateArgs(ctx)
 		if err != nil {
 			response.HTML().ServerError(err)
 			return
 		}
 
-		response.HTML().Render("import", args.Merge(tplParams{
+		response.HTML().Render("import", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": impErr,
 			"menu":         "feeds",
 		}))

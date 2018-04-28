@@ -41,13 +41,6 @@ func (h *Handler) Use(f ControllerFunc) http.Handler {
 		ctx := NewContext(r, h.store, h.router, h.translator)
 		request := NewRequest(r)
 		response := NewResponse(h.cfg, w, r, h.template)
-		language := ctx.UserLanguage()
-
-		if language != "" {
-			h.template.SetLanguage(language)
-		} else {
-			h.template.SetLanguage("en_US")
-		}
 
 		f(ctx, request, response)
 	})

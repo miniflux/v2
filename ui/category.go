@@ -28,7 +28,7 @@ func (c *Controller) ShowCategories(ctx *handler.Context, request *handler.Reque
 		return
 	}
 
-	response.HTML().Render("categories", args.Merge(tplParams{
+	response.HTML().Render("categories", ctx.UserLanguage(), args.Merge(tplParams{
 		"categories": categories,
 		"total":      len(categories),
 		"menu":       "categories",
@@ -71,7 +71,7 @@ func (c *Controller) ShowCategoryEntries(ctx *handler.Context, request *handler.
 		return
 	}
 
-	response.HTML().Render("category_entries", args.Merge(tplParams{
+	response.HTML().Render("category_entries", ctx.UserLanguage(), args.Merge(tplParams{
 		"category":   category,
 		"entries":    entries,
 		"total":      count,
@@ -88,7 +88,7 @@ func (c *Controller) CreateCategory(ctx *handler.Context, request *handler.Reque
 		return
 	}
 
-	response.HTML().Render("create_category", args.Merge(tplParams{
+	response.HTML().Render("create_category", ctx.UserLanguage(), args.Merge(tplParams{
 		"menu": "categories",
 	}))
 }
@@ -104,7 +104,7 @@ func (c *Controller) SaveCategory(ctx *handler.Context, request *handler.Request
 
 	categoryForm := form.NewCategoryForm(request.Request())
 	if err := categoryForm.Validate(); err != nil {
-		response.HTML().Render("create_category", args.Merge(tplParams{
+		response.HTML().Render("create_category", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": err.Error(),
 		}))
 		return
@@ -117,7 +117,7 @@ func (c *Controller) SaveCategory(ctx *handler.Context, request *handler.Request
 	}
 
 	if duplicateCategory != nil {
-		response.HTML().Render("create_category", args.Merge(tplParams{
+		response.HTML().Render("create_category", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": "This category already exists.",
 		}))
 		return
@@ -127,7 +127,7 @@ func (c *Controller) SaveCategory(ctx *handler.Context, request *handler.Request
 	err = c.store.CreateCategory(&category)
 	if err != nil {
 		logger.Info("[Controller:CreateCategory] %v", err)
-		response.HTML().Render("create_category", args.Merge(tplParams{
+		response.HTML().Render("create_category", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": "Unable to create this category.",
 		}))
 		return
@@ -152,7 +152,7 @@ func (c *Controller) EditCategory(ctx *handler.Context, request *handler.Request
 		return
 	}
 
-	response.HTML().Render("edit_category", args)
+	response.HTML().Render("edit_category", ctx.UserLanguage(), args)
 }
 
 // UpdateCategory validate and update a category.
@@ -173,14 +173,14 @@ func (c *Controller) UpdateCategory(ctx *handler.Context, request *handler.Reque
 	}
 
 	if err := categoryForm.Validate(); err != nil {
-		response.HTML().Render("edit_category", args.Merge(tplParams{
+		response.HTML().Render("edit_category", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": err.Error(),
 		}))
 		return
 	}
 
 	if c.store.AnotherCategoryExists(user.ID, category.ID, categoryForm.Title) {
-		response.HTML().Render("edit_category", args.Merge(tplParams{
+		response.HTML().Render("edit_category", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": "This category already exists.",
 		}))
 		return
@@ -189,7 +189,7 @@ func (c *Controller) UpdateCategory(ctx *handler.Context, request *handler.Reque
 	err = c.store.UpdateCategory(categoryForm.Merge(category))
 	if err != nil {
 		logger.Error("[Controller:UpdateCategory] %v", err)
-		response.HTML().Render("edit_category", args.Merge(tplParams{
+		response.HTML().Render("edit_category", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": "Unable to update this category.",
 		}))
 		return

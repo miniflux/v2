@@ -85,7 +85,11 @@ func (c *Context) UserLanguage() string {
 		return user.Language
 	}
 
-	return c.getContextStringValue(middleware.UserLanguageContextKey)
+	language := c.getContextStringValue(middleware.UserLanguageContextKey)
+	if language == "" {
+		language = "en_US"
+	}
+	return language
 }
 
 // Translate translates a message in the current language.

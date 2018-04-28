@@ -17,7 +17,7 @@ func (c *Controller) AboutPage(ctx *handler.Context, request *handler.Request, r
 		return
 	}
 
-	response.HTML().Render("about", args.Merge(tplParams{
+	response.HTML().Render("about", ctx.UserLanguage(), args.Merge(tplParams{
 		"version":    version.Version,
 		"build_date": version.BuildDate,
 		"menu":       "settings",

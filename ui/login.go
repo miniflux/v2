@@ -20,7 +20,7 @@ func (c *Controller) ShowLoginPage(ctx *handler.Context, request *handler.Reques
 		return
 	}
 
-	response.HTML().Render("login", tplParams{
+	response.HTML().Render("login", ctx.UserLanguage(), tplParams{
 		"csrf": ctx.CSRF(),
 	})
 }
@@ -36,13 +36,13 @@ func (c *Controller) CheckLogin(ctx *handler.Context, request *handler.Request, 
 
 	if err := authForm.Validate(); err != nil {
 		logger.Error("[Controller:CheckLogin] %v", err)
-		response.HTML().Render("login", tplParams)
+		response.HTML().Render("login", ctx.UserLanguage(), tplParams)
 		return
 	}
 
 	if err := c.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
 		logger.Error("[Controller:CheckLogin] %v", err)
-		response.HTML().Render("login", tplParams)
+		response.HTML().Render("login", ctx.UserLanguage(), tplParams)
 		return
 	}
 

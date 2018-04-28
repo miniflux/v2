@@ -45,7 +45,7 @@ func (c *Controller) ShowFeedsPage(ctx *handler.Context, request *handler.Reques
 		return
 	}
 
-	response.HTML().Render("feeds", args.Merge(tplParams{
+	response.HTML().Render("feeds", ctx.UserLanguage(), args.Merge(tplParams{
 		"feeds": feeds,
 		"total": len(feeds),
 		"menu":  "feeds",
@@ -88,7 +88,7 @@ func (c *Controller) ShowFeedEntries(ctx *handler.Context, request *handler.Requ
 		return
 	}
 
-	response.HTML().Render("feed_entries", args.Merge(tplParams{
+	response.HTML().Render("feed_entries", ctx.UserLanguage(), args.Merge(tplParams{
 		"feed":       feed,
 		"entries":    entries,
 		"total":      count,
@@ -112,7 +112,7 @@ func (c *Controller) EditFeed(ctx *handler.Context, request *handler.Request, re
 		return
 	}
 
-	response.HTML().Render("edit_feed", args)
+	response.HTML().Render("edit_feed", ctx.UserLanguage(), args)
 }
 
 // UpdateFeed update a subscription and redirect to the feed entries page.
@@ -132,7 +132,7 @@ func (c *Controller) UpdateFeed(ctx *handler.Context, request *handler.Request, 
 	}
 
 	if err := feedForm.ValidateModification(); err != nil {
-		response.HTML().Render("edit_feed", args.Merge(tplParams{
+		response.HTML().Render("edit_feed", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": err.Error(),
 		}))
 		return
@@ -141,7 +141,7 @@ func (c *Controller) UpdateFeed(ctx *handler.Context, request *handler.Request, 
 	err = c.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
 		logger.Error("[Controller:EditFeed] %v", err)
-		response.HTML().Render("edit_feed", args.Merge(tplParams{
+		response.HTML().Render("edit_feed", ctx.UserLanguage(), args.Merge(tplParams{
 			"errorMessage": "Unable to update this feed.",
 		}))
 		return

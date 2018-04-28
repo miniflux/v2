@@ -19,9 +19,9 @@ type HTMLResponse struct {
 }
 
 // Render execute a template and send to the client the generated HTML.
-func (h *HTMLResponse) Render(template string, args map[string]interface{}) {
+func (h *HTMLResponse) Render(template, language string, args map[string]interface{}) {
 	h.writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-	h.template.Execute(h.writer, template, args)
+	h.template.Render(h.writer, template, language, args)
 }
 
 // ServerError sends a 500 error to the browser.

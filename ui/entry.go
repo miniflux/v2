@@ -155,7 +155,7 @@ func (c *Controller) ShowFeedEntry(ctx *handler.Context, request *handler.Reques
 		prevEntryRoute = ctx.Route("feedEntry", "feedID", feedID, "entryID", prevEntry.ID)
 	}
 
-	response.HTML().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", ctx.UserLanguage(), args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -231,7 +231,7 @@ func (c *Controller) ShowCategoryEntry(ctx *handler.Context, request *handler.Re
 		prevEntryRoute = ctx.Route("categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
 	}
 
-	response.HTML().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", ctx.UserLanguage(), args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -302,7 +302,7 @@ func (c *Controller) ShowUnreadEntry(ctx *handler.Context, request *handler.Requ
 		return
 	}
 
-	response.HTML().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", ctx.UserLanguage(), args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -362,7 +362,7 @@ func (c *Controller) ShowReadEntry(ctx *handler.Context, request *handler.Reques
 		prevEntryRoute = ctx.Route("readEntry", "entryID", prevEntry.ID)
 	}
 
-	response.HTML().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", ctx.UserLanguage(), args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,
@@ -431,7 +431,7 @@ func (c *Controller) ShowStarredEntry(ctx *handler.Context, request *handler.Req
 		prevEntryRoute = ctx.Route("starredEntry", "entryID", prevEntry.ID)
 	}
 
-	response.HTML().Render("entry", args.Merge(tplParams{
+	response.HTML().Render("entry", ctx.UserLanguage(), args.Merge(tplParams{
 		"entry":          entry,
 		"prevEntry":      prevEntry,
 		"nextEntry":      nextEntry,

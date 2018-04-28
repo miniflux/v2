@@ -35,7 +35,7 @@ func (c *Controller) ShowUsers(ctx *handler.Context, request *handler.Request, r
 	}
 
 	users.UseTimezone(user.Timezone)
-	response.HTML().Render("users", args.Merge(tplParams{
+	response.HTML().Render("users", ctx.UserLanguage(), args.Merge(tplParams{
 		"users": users,
 		"menu":  "settings",
 	}))
@@ -56,7 +56,7 @@ func (c *Controller) CreateUser(ctx *handler.Context, request *handler.Request, 
 		return
 	}
 
-	response.HTML().Render("create_user", args.Merge(tplParams{
+	response.HTML().Render("create_user", ctx.UserLanguage(), args.Merge(tplParams{
 		"menu": "settings",
 		"form": &form.UserForm{},
 	}))
@@ -79,7 +79,7 @@ func (c *Controller) SaveUser(ctx *handler.Context, request *handler.Request, re
 
 	userForm := form.NewUserForm(request.Request())
 	if err := userForm.ValidateCreation(); err != nil {
-		response.HTML().Render("create_user", args.Merge(tplParams{
+		response.HTML().Render("create_user", ctx.UserLanguage(), args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
 			"errorMessage": err.Error(),
@@ -88,7 +88,7 @@ func (c *Controller) SaveUser(ctx *handler.Context, request *handler.Request, re
 	}
 
 	if c.store.UserExists(userForm.Username) {
-		response.HTML().Render("create_user", args.Merge(tplParams{
+		response.HTML().Render("create_user", ctx.UserLanguage(), args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
 			"errorMessage": "This user already exists.",
@@ -99,7 +99,7 @@ func (c *Controller) SaveUser(ctx *handler.Context, request *handler.Request, re
 	newUser := userForm.ToUser()
 	if err := c.store.CreateUser(newUser); err != nil {
 		logger.Error("[Controller:SaveUser] %v", err)
-		response.HTML().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", ctx.UserLanguage(), args.Merge(tplParams{
 			"menu":         "settings",
 			"form":         userForm,
 			"errorMessage": "Unable to create this user.",
@@ -130,7 +130,7 @@ func (c *Controller) EditUser(ctx *handler.Context, request *handler.Request, re
 		return
 	}
 
-	response.HTML().Render("edit_user", args.Merge(tplParams{
+	response.HTML().Render("edit_user", ctx.UserLanguage(), args.Merge(tplParams{
 		"menu":          "settings",
 		"selected_user": selectedUser,
 		"form": &form.UserForm{
@@ -162,7 +162,7 @@ func (c *Controller) UpdateUser(ctx *handler.Context, request *handler.Request, 
 
 	userForm := form.NewUserForm(request.Request())
 	if err := userForm.ValidateModification(); err != nil {
-		response.HTML().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", ctx.UserLanguage(), args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,
 			"form":          userForm,
@@ -172,7 +172,7 @@ func (c *Controller) UpdateUser(ctx *handler.Context, request *handler.Request, 
 	}
 
 	if c.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
-		response.HTML().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", ctx.UserLanguage(), args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,
 			"form":          userForm,
@@ -184,7 +184,7 @@ func (c *Controller) UpdateUser(ctx *handler.Context, request *handler.Request, 
 	userForm.Merge(selectedUser)
 	if err := c.store.UpdateUser(selectedUser); err != nil {
 		logger.Error("[Controller:UpdateUser] %v", err)
-		response.HTML().Render("edit_user", args.Merge(tplParams{
+		response.HTML().Render("edit_user", ctx.UserLanguage(), args.Merge(tplParams{
 			"menu":          "settings",
 			"selected_user": selectedUser,
 			"form":          userForm,

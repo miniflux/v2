@@ -39,7 +39,7 @@ func (c *Controller) ShowUnreadPage(ctx *handler.Context, request *handler.Reque
 		return
 	}
 
-	response.HTML().Render("unread", tplParams{
+	response.HTML().Render("unread", ctx.UserLanguage(), tplParams{
 		"user":        user,
 		"countUnread": countUnread,
 		"entries":     entries,

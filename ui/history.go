@@ -39,7 +39,7 @@ func (c *Controller) ShowHistoryPage(ctx *handler.Context, request *handler.Requ
 		return
 	}
 
-	response.HTML().Render("history", args.Merge(tplParams{
+	response.HTML().Render("history", ctx.UserLanguage(), args.Merge(tplParams{
 		"entries":    entries,
 		"total":      count,
 		"pagination": c.getPagination(ctx.Route("history"), count, offset),

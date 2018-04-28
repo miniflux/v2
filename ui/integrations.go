@@ -27,7 +27,7 @@ func (c *Controller) ShowIntegrations(ctx *handler.Context, request *handler.Req
 		return
 	}
 
-	response.HTML().Render("integrations", args.Merge(tplParams{
+	response.HTML().Render("integrations", ctx.UserLanguage(), args.Merge(tplParams{
 		"menu": "settings",
 		"form": form.IntegrationForm{
 			PinboardEnabled:      integration.PinboardEnabled,

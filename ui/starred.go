@@ -41,7 +41,7 @@ func (c *Controller) ShowStarredPage(ctx *handler.Context, request *handler.Requ
 		return
 	}
 
-	response.HTML().Render("starred", args.Merge(tplParams{
+	response.HTML().Render("starred", ctx.UserLanguage(), args.Merge(tplParams{
 		"entries":    entries,
 		"total":      count,
 		"pagination": c.getPagination(ctx.Route("starred"), count, offset),

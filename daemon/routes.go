@@ -14,7 +14,6 @@ import (
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/middleware"
 	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/reader/opml"
 	"github.com/miniflux/miniflux/scheduler"
 	"github.com/miniflux/miniflux/storage"
 	"github.com/miniflux/miniflux/template"
@@ -29,7 +28,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 
 	apiController := api.NewController(store, feedHandler)
 	feverController := fever.NewController(store)
-	uiController := ui.NewController(cfg, store, pool, feedHandler, opml.NewHandler(store))
+	uiController := ui.NewController(cfg, store, pool, feedHandler)
 
 	apiHandler := handler.NewHandler(cfg, store, router, templateEngine, translator)
 	feverHandler := handler.NewHandler(cfg, store, router, templateEngine, translator)

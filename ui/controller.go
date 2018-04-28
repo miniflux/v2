@@ -9,7 +9,6 @@ import (
 	"github.com/miniflux/miniflux/http/handler"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/reader/opml"
 	"github.com/miniflux/miniflux/scheduler"
 	"github.com/miniflux/miniflux/storage"
 )
@@ -30,7 +29,6 @@ type Controller struct {
 	store       *storage.Storage
 	pool        *scheduler.WorkerPool
 	feedHandler *feed.Handler
-	opmlHandler *opml.Handler
 }
 
 func (c *Controller) getCommonTemplateArgs(ctx *handler.Context) (tplParams, error) {
@@ -55,12 +53,11 @@ func (c *Controller) getCommonTemplateArgs(ctx *handler.Context) (tplParams, err
 }
 
 // NewController returns a new Controller.
-func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, opmlHandler *opml.Handler) *Controller {
+func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler) *Controller {
 	return &Controller{
 		cfg:         cfg,
 		store:       store,
 		pool:        pool,
 		feedHandler: feedHandler,
-		opmlHandler: opmlHandler,
 	}
 }
