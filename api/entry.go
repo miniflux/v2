@@ -6,25 +6,30 @@ package api
 
 import (
 	"errors"
+	"net/http"
 
-	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/http/context"
+	"github.com/miniflux/miniflux/http/request"
+	"github.com/miniflux/miniflux/http/response/json"
 	"github.com/miniflux/miniflux/model"
 )
 
 // GetFeedEntry is the API handler to get a single feed entry.
-func (c *Controller) GetFeedEntry(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-	feedID, err := request.IntegerParam("feedID")
+func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
+	feedID, err := request.IntParam(r, "feedID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	entryID, err := request.IntegerParam("entryID")
+	entryID, err := request.IntParam(r, "entryID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
+
+	ctx := context.New(r)
+	userID := ctx.UserID()
 
 	builder := c.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
@@ -32,81 +37,79 @@ func (c *Controller) GetFeedEntry(ctx *handler.Context, request *handler.Request
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
+		json.ServerError(w, errors.New("Unable to fetch this entry from the database"))
 		return
 	}
 
 	if entry == nil {
-		response.JSON().NotFound(errors.New("Entry not found"))
+		json.NotFound(w, errors.New("Entry not found"))
 		return
 	}
 
-	response.JSON().Standard(entry)
+	json.OK(w, entry)
 }
 
 // GetEntry is the API handler to get a single entry.
-func (c *Controller) GetEntry(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-	entryID, err := request.IntegerParam("entryID")
+func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
+	entryID, err := request.IntParam(r, "entryID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch this entry from the database"))
+		json.ServerError(w, errors.New("Unable to fetch this entry from the database"))
 		return
 	}
 
 	if entry == nil {
-		response.JSON().NotFound(errors.New("Entry not found"))
+		json.NotFound(w, errors.New("Entry not found"))
 		return
 	}
 
-	response.JSON().Standard(entry)
+	json.OK(w, entry)
 }
 
 // GetFeedEntries is the API handler to get all feed entries.
-func (c *Controller) GetFeedEntries(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-	feedID, err := request.IntegerParam("feedID")
+func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
+	feedID, err := request.IntParam(r, "feedID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	status := request.QueryStringParam("status", "")
+	status := request.QueryParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
-			response.JSON().BadRequest(err)
+			json.BadRequest(w, err)
 			return
 		}
 	}
 
-	order := request.QueryStringParam("order", model.DefaultSortingOrder)
+	order := request.QueryParam(r, "order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	direction := request.QueryStringParam("direction", model.DefaultSortingDirection)
+	direction := request.QueryParam(r, "direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	limit := request.QueryIntegerParam("limit", 100)
-	offset := request.QueryIntegerParam("offset", 0)
+	limit := request.QueryIntParam(r, "limit", 100)
+	offset := request.QueryIntParam(r, "offset", 0)
 	if err := model.ValidateRange(offset, limit); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
 	builder.WithOrder(order)
@@ -116,51 +119,49 @@ func (c *Controller) GetFeedEntries(ctx *handler.Context, request *handler.Reque
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch the list of entries"))
+		json.ServerError(w, errors.New("Unable to fetch the list of entries"))
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to count the number of entries"))
+		json.ServerError(w, errors.New("Unable to count the number of entries"))
 		return
 	}
 
-	response.JSON().Standard(&entriesResponse{Total: count, Entries: entries})
+	json.OK(w, &entriesResponse{Total: count, Entries: entries})
 }
 
 // GetEntries is the API handler to fetch entries.
-func (c *Controller) GetEntries(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-
-	status := request.QueryStringParam("status", "")
+func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
+	status := request.QueryParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
-			response.JSON().BadRequest(err)
+			json.BadRequest(w, err)
 			return
 		}
 	}
 
-	order := request.QueryStringParam("order", model.DefaultSortingOrder)
+	order := request.QueryParam(r, "order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	direction := request.QueryStringParam("direction", model.DefaultSortingDirection)
+	direction := request.QueryParam(r, "direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	limit := request.QueryIntegerParam("limit", 100)
-	offset := request.QueryIntegerParam("offset", 0)
+	limit := request.QueryIntParam(r, "limit", 100)
+	offset := request.QueryIntParam(r, "offset", 0)
 	if err := model.ValidateRange(offset, limit); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
 	builder.WithStatus(status)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
@@ -169,55 +170,52 @@ func (c *Controller) GetEntries(ctx *handler.Context, request *handler.Request, 
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch the list of entries"))
+		json.ServerError(w, errors.New("Unable to fetch the list of entries"))
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to count the number of entries"))
+		json.ServerError(w, errors.New("Unable to count the number of entries"))
 		return
 	}
 
-	response.JSON().Standard(&entriesResponse{Total: count, Entries: entries})
+	json.OK(w, &entriesResponse{Total: count, Entries: entries})
 }
 
 // SetEntryStatus is the API handler to change the status of entries.
-func (c *Controller) SetEntryStatus(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-
-	entryIDs, status, err := decodeEntryStatusPayload(request.Body())
+func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
+	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
 	if err != nil {
-		response.JSON().BadRequest(errors.New("Invalid JSON payload"))
+		json.BadRequest(w, errors.New("Invalid JSON payload"))
 		return
 	}
 
 	if err := model.ValidateEntryStatus(status); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	if err := c.store.SetEntriesStatus(userID, entryIDs, status); err != nil {
-		response.JSON().ServerError(errors.New("Unable to change entries status"))
+	if err := c.store.SetEntriesStatus(context.New(r).UserID(), entryIDs, status); err != nil {
+		json.ServerError(w, errors.New("Unable to change entries status"))
 		return
 	}
 
-	response.JSON().NoContent()
+	json.NoContent(w)
 }
 
 // ToggleBookmark is the API handler to toggle bookmark status.
-func (c *Controller) ToggleBookmark(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-	entryID, err := request.IntegerParam("entryID")
+func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
+	entryID, err := request.IntParam(r, "entryID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	if err := c.store.ToggleBookmark(userID, entryID); err != nil {
-		response.JSON().ServerError(errors.New("Unable to toggle bookmark value"))
+	if err := c.store.ToggleBookmark(context.New(r).UserID(), entryID); err != nil {
+		json.ServerError(w, errors.New("Unable to toggle bookmark value"))
 		return
 	}
 
-	response.JSON().NoContent()
+	json.NoContent(w)
 }

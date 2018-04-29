@@ -8,6 +8,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/miniflux/miniflux/http/response/json"
 	"github.com/miniflux/miniflux/logger"
 )
 
@@ -15,35 +16,30 @@ import (
 func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
-		errorResponse := `{"error_message": "Not Authorized"}`
 
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
 			logger.Debug("[Middleware:BasicAuth] No authentication headers sent")
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(errorResponse))
+			json.Unauthorized(w)
 			return
 		}
 
 		if err := m.store.CheckPassword(username, password); err != nil {
 			logger.Info("[Middleware:BasicAuth] Invalid username or password: %s", username)
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(errorResponse))
+			json.Unauthorized(w)
 			return
 		}
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
 			logger.Error("[Middleware:BasicAuth] %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(errorResponse))
+			json.ServerError(w, err)
 			return
 		}
 
 		if user == nil {
 			logger.Info("[Middleware:BasicAuth] User not found: %s", username)
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(errorResponse))
+			json.Unauthorized(w)
 			return
 		}
 

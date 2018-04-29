@@ -6,36 +6,38 @@ package api
 
 import (
 	"errors"
+	"net/http"
 
-	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/http/context"
+	"github.com/miniflux/miniflux/http/request"
+	"github.com/miniflux/miniflux/http/response/json"
 )
 
 // FeedIcon returns a feed icon.
-func (c *Controller) FeedIcon(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-	feedID, err := request.IntegerParam("feedID")
+func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
+	feedID, err := request.IntParam(r, "feedID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	if !c.store.HasIcon(feedID) {
-		response.JSON().NotFound(errors.New("This feed doesn't have any icon"))
+		json.NotFound(w, errors.New("This feed doesn't have any icon"))
 		return
 	}
 
-	icon, err := c.store.IconByFeedID(userID, feedID)
+	icon, err := c.store.IconByFeedID(context.New(r).UserID(), feedID)
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch feed icon"))
+		json.ServerError(w, errors.New("Unable to fetch feed icon"))
 		return
 	}
 
 	if icon == nil {
-		response.JSON().NotFound(errors.New("This feed doesn't have any icon"))
+		json.NotFound(w, errors.New("This feed doesn't have any icon"))
 		return
 	}
 
-	response.JSON().Standard(&feedIcon{
+	json.OK(w, &feedIcon{
 		ID:       icon.ID,
 		MimeType: icon.MimeType,
 		Data:     icon.DataURL(),

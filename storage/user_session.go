@@ -47,24 +47,20 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 }
 
 // CreateUserSession creates a new sessions.
-func (s *Storage) CreateUserSession(username, userAgent, ip string) (sessionID string, err error) {
-	var userID int64
-
+func (s *Storage) CreateUserSession(username, userAgent, ip string) (sessionID string, userID int64, err error) {
 	err = s.db.QueryRow("SELECT id FROM users WHERE username = LOWER($1)", username).Scan(&userID)
 	if err != nil {
-		return "", fmt.Errorf("unable to fetch UserID: %v", err)
+		return "", 0, fmt.Errorf("unable to fetch user ID: %v", err)
 	}
 
 	token := crypto.GenerateRandomString(64)
 	query := "INSERT INTO user_sessions (token, user_id, user_agent, ip) VALUES ($1, $2, $3, $4)"
 	_, err = s.db.Exec(query, token, userID, userAgent, ip)
 	if err != nil {
-		return "", fmt.Errorf("unable to create user session: %v", err)
+		return "", 0, fmt.Errorf("unable to create user session: %v", err)
 	}
 
-	s.SetLastLogin(userID)
-
-	return token, nil
+	return token, userID, nil
 }
 
 // UserSessionByToken finds a session by the token.

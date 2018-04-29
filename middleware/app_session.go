@@ -6,9 +6,12 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/miniflux/miniflux/http/cookie"
+	"github.com/miniflux/miniflux/http/request"
+	"github.com/miniflux/miniflux/http/response/html"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 )
@@ -17,20 +20,21 @@ import (
 func (m *Middleware) AppSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		session := m.getSessionValueFromCookie(r)
+		session := m.getAppSessionValueFromCookie(r)
 
 		if session == nil {
-			logger.Debug("[Middleware:Session] Session not found")
+			logger.Debug("[Middleware:AppSession] Session not found")
+
 			session, err = m.store.CreateSession()
 			if err != nil {
-				logger.Error("[Middleware:Session] %v", err)
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				logger.Error("[Middleware:AppSession] %v", err)
+				html.ServerError(w, err)
 				return
 			}
 
 			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, m.cfg.IsHTTPS, m.cfg.BasePath()))
 		} else {
-			logger.Debug("[Middleware:Session] %s", session)
+			logger.Debug("[Middleware:AppSession] %s", session)
 		}
 
 		if r.Method == "POST" {
@@ -38,9 +42,8 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 			headerValue := r.Header.Get("X-Csrf-Token")
 
 			if session.Data.CSRF != formValue && session.Data.CSRF != headerValue {
-				logger.Error(`[Middleware:Session] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Invalid or missing CSRF session!"))
+				logger.Error(`[Middleware:AppSession] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
+				html.BadRequest(w, errors.New("invalid or missing CSRF"))
 				return
 			}
 		}
@@ -56,15 +59,15 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) getSessionValueFromCookie(r *http.Request) *model.Session {
-	sessionCookie, err := r.Cookie(cookie.CookieSessionID)
-	if err == http.ErrNoCookie {
+func (m *Middleware) getAppSessionValueFromCookie(r *http.Request) *model.Session {
+	cookieValue := request.Cookie(r, cookie.CookieSessionID)
+	if cookieValue == "" {
 		return nil
 	}
 
-	session, err := m.store.Session(sessionCookie.Value)
+	session, err := m.store.Session(cookieValue)
 	if err != nil {
-		logger.Error("[Middleware:Session] %v", err)
+		logger.Error("[Middleware:AppSession] %v", err)
 		return nil
 	}
 

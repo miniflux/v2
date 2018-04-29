@@ -5,23 +5,14 @@
 package ui
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/http/handler"
-	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/reader/feed"
 	"github.com/miniflux/miniflux/scheduler"
 	"github.com/miniflux/miniflux/storage"
+	"github.com/miniflux/miniflux/template"
 )
-
-type tplParams map[string]interface{}
-
-func (t tplParams) Merge(d tplParams) tplParams {
-	for k, v := range d {
-		t[k] = v
-	}
-
-	return t
-}
 
 // Controller contains all HTTP handlers for the user interface.
 type Controller struct {
@@ -29,35 +20,20 @@ type Controller struct {
 	store       *storage.Storage
 	pool        *scheduler.WorkerPool
 	feedHandler *feed.Handler
-}
-
-func (c *Controller) getCommonTemplateArgs(ctx *handler.Context) (tplParams, error) {
-	user := ctx.LoggedUser()
-	builder := c.store.NewEntryQueryBuilder(user.ID)
-	builder.WithStatus(model.EntryStatusUnread)
-
-	countUnread, err := builder.CountEntries()
-	if err != nil {
-		return nil, err
-	}
-
-	params := tplParams{
-		"menu":              "",
-		"user":              user,
-		"countUnread":       countUnread,
-		"csrf":              ctx.CSRF(),
-		"flashMessage":      ctx.FlashMessage(),
-		"flashErrorMessage": ctx.FlashErrorMessage(),
-	}
-	return params, nil
+	tpl         *template.Engine
+	router      *mux.Router
+	translator  *locale.Translator
 }
 
 // NewController returns a new Controller.
-func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler) *Controller {
+func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, tpl *template.Engine, translator *locale.Translator, router *mux.Router) *Controller {
 	return &Controller{
 		cfg:         cfg,
 		store:       store,
 		pool:        pool,
 		feedHandler: feedHandler,
+		tpl:         tpl,
+		translator:  translator,
+		router:      router,
 	}
 }

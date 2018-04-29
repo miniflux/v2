@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/miniflux/miniflux/logger"
+
 	"github.com/tomasen/realip"
 )
 

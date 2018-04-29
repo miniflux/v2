@@ -6,182 +6,191 @@ package api
 
 import (
 	"errors"
+	"net/http"
 
-	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/http/context"
+	"github.com/miniflux/miniflux/http/request"
+	"github.com/miniflux/miniflux/http/response/json"
 )
 
 // CreateUser is the API handler to create a new user.
-func (c *Controller) CreateUser(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	if !ctx.IsAdminUser() {
-		response.JSON().Forbidden()
+		json.Forbidden(w)
 		return
 	}
 
-	user, err := decodeUserPayload(request.Body())
+	user, err := decodeUserPayload(r.Body)
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	if err := user.ValidateUserCreation(); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	if c.store.UserExists(user.Username) {
-		response.JSON().BadRequest(errors.New("This user already exists"))
+		json.BadRequest(w, errors.New("This user already exists"))
 		return
 	}
 
 	err = c.store.CreateUser(user)
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to create this user"))
+		json.ServerError(w, errors.New("Unable to create this user"))
 		return
 	}
 
 	user.Password = ""
-	response.JSON().Created(user)
+	json.Created(w, user)
 }
 
 // UpdateUser is the API handler to update the given user.
-func (c *Controller) UpdateUser(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	if !ctx.IsAdminUser() {
-		response.JSON().Forbidden()
+		json.Forbidden(w)
 		return
 	}
 
-	userID, err := request.IntegerParam("userID")
+	userID, err := request.IntParam(r, "userID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	user, err := decodeUserPayload(request.Body())
+	user, err := decodeUserPayload(r.Body)
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	if err := user.ValidateUserModification(); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	originalUser, err := c.store.UserByID(userID)
 	if err != nil {
-		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
+		json.BadRequest(w, errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if originalUser == nil {
-		response.JSON().NotFound(errors.New("User not found"))
+		json.NotFound(w, errors.New("User not found"))
 		return
 	}
 
 	originalUser.Merge(user)
 	if err = c.store.UpdateUser(originalUser); err != nil {
-		response.JSON().ServerError(errors.New("Unable to update this user"))
+		json.ServerError(w, errors.New("Unable to update this user"))
 		return
 	}
 
-	response.JSON().Created(originalUser)
+	json.Created(w, originalUser)
 }
 
 // Users is the API handler to get the list of users.
-func (c *Controller) Users(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) Users(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	if !ctx.IsAdminUser() {
-		response.JSON().Forbidden()
+		json.Forbidden(w)
 		return
 	}
 
 	users, err := c.store.Users()
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch the list of users"))
+		json.ServerError(w, errors.New("Unable to fetch the list of users"))
 		return
 	}
 
 	users.UseTimezone(ctx.UserTimezone())
-	response.JSON().Standard(users)
+	json.OK(w, users)
 }
 
 // UserByID is the API handler to fetch the given user by the ID.
-func (c *Controller) UserByID(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	if !ctx.IsAdminUser() {
-		response.JSON().Forbidden()
+		json.Forbidden(w)
 		return
 	}
 
-	userID, err := request.IntegerParam("userID")
+	userID, err := request.IntParam(r, "userID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	user, err := c.store.UserByID(userID)
 	if err != nil {
-		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
+		json.BadRequest(w, errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if user == nil {
-		response.JSON().NotFound(errors.New("User not found"))
+		json.NotFound(w, errors.New("User not found"))
 		return
 	}
 
 	user.UseTimezone(ctx.UserTimezone())
-	response.JSON().Standard(user)
+	json.OK(w, user)
 }
 
 // UserByUsername is the API handler to fetch the given user by the username.
-func (c *Controller) UserByUsername(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	if !ctx.IsAdminUser() {
-		response.JSON().Forbidden()
+		json.Forbidden(w)
 		return
 	}
 
-	username := request.StringParam("username", "")
+	username := request.Param(r, "username", "")
 	user, err := c.store.UserByUsername(username)
 	if err != nil {
-		response.JSON().BadRequest(errors.New("Unable to fetch this user from the database"))
+		json.BadRequest(w, errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if user == nil {
-		response.JSON().NotFound(errors.New("User not found"))
+		json.NotFound(w, errors.New("User not found"))
 		return
 	}
 
-	response.JSON().Standard(user)
+	json.OK(w, user)
 }
 
 // RemoveUser is the API handler to remove an existing user.
-func (c *Controller) RemoveUser(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	if !ctx.IsAdminUser() {
-		response.JSON().Forbidden()
+		json.Forbidden(w)
 		return
 	}
 
-	userID, err := request.IntegerParam("userID")
+	userID, err := request.IntParam(r, "userID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	user, err := c.store.UserByID(userID)
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch this user from the database"))
+		json.ServerError(w, errors.New("Unable to fetch this user from the database"))
 		return
 	}
 
 	if user == nil {
-		response.JSON().NotFound(errors.New("User not found"))
+		json.NotFound(w, errors.New("User not found"))
 		return
 	}
 
 	if err := c.store.RemoveUser(user.ID); err != nil {
-		response.JSON().BadRequest(errors.New("Unable to remove this user from the database"))
+		json.BadRequest(w, errors.New("Unable to remove this user from the database"))
 		return
 	}
 
-	response.JSON().NoContent()
+	json.NoContent(w)
 }

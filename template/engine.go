@@ -7,7 +7,6 @@ package template
 import (
 	"bytes"
 	"html/template"
-	"io"
 	"time"
 
 	"github.com/miniflux/miniflux/config"
@@ -38,7 +37,7 @@ func (e *Engine) parseAll() {
 }
 
 // Render process a template and write the ouput.
-func (e *Engine) Render(w io.Writer, name, language string, data interface{}) {
+func (e *Engine) Render(name, language string, data interface{}) []byte {
 	tpl, ok := e.templates[name]
 	if !ok {
 		logger.Fatal("[Template] The template %s does not exists", name)
@@ -74,7 +73,7 @@ func (e *Engine) Render(w io.Writer, name, language string, data interface{}) {
 		logger.Fatal("[Template] Unable to render template: %v", err)
 	}
 
-	b.WriteTo(w)
+	return b.Bytes()
 }
 
 // NewEngine returns a new template engine.

@@ -16,6 +16,20 @@ import (
 	"github.com/lib/pq"
 )
 
+// CountUnreadEntries returns the number of unread entries.
+func (s *Storage) CountUnreadEntries(userID int64) int {
+	builder := s.NewEntryQueryBuilder(userID)
+	builder.WithStatus(model.EntryStatusUnread)
+
+	n, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("unable to count unread entries: %v", err)
+		return 0
+	}
+
+	return n
+}
+
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)

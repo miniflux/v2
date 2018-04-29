@@ -8,27 +8,25 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/miniflux/miniflux/http/response/json"
 	"github.com/miniflux/miniflux/logger"
 )
 
 // FeverAuth handles Fever API authentication.
 func (m *Middleware) FeverAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger.Debug("[Middleware:Fever]")
-
 		apiKey := r.FormValue("api_key")
+
 		user, err := m.store.UserByFeverToken(apiKey)
 		if err != nil {
-			logger.Error("[Fever] %v", err)
-			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte(`{"api_version": 3, "auth": 0}`))
+			logger.Error("[Middleware:Fever] %v", err)
+			json.OK(w, map[string]int{"api_version": 3, "auth": 0})
 			return
 		}
 
 		if user == nil {
 			logger.Info("[Middleware:Fever] Fever authentication failure")
-			w.Header().Set("Content-Type", "application/json")
-			w.Write([]byte(`{"api_version": 3, "auth": 0}`))
+			json.OK(w, map[string]int{"api_version": 3, "auth": 0})
 			return
 		}
 
