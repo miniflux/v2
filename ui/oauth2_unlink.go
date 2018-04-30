@@ -33,13 +33,25 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.New(r)
+	sess := session.New(c.store, ctx)
+
+	hasPassword, err := c.store.HasPassword(ctx.UserID())
+	if err != nil {
+		html.ServerError(w, err)
+		return
+	}
+
+	if !hasPassword {
+		sess.NewFlashErrorMessage(c.translator.GetLanguage(ctx.UserLanguage()).Get("You must define a password otherwise you won't be able to login again."))
+		response.Redirect(w, r, route.Path(c.router, "settings"))
+		return
+	}
+
 	if err := c.store.RemoveExtraField(ctx.UserID(), authProvider.GetUserExtraKey()); err != nil {
 		html.ServerError(w, err)
 		return
 	}
 
-	sess := session.New(c.store, ctx)
 	sess.NewFlashMessage(c.translator.GetLanguage(ctx.UserLanguage()).Get("Your external account is now dissociated!"))
 	response.Redirect(w, r, route.Path(c.router, "settings"))
-	return
 }

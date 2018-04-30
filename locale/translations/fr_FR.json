@@ -221,5 +221,6 @@
     "Comments": "Commentaires",
     "View Comments": "Voir les commentaires",
     "This file is empty": "Ce fichier est vide",
-    "Your external account is now dissociated!": "Votre compte externe est maintenant dissocié !"
+    "Your external account is now dissociated!": "Votre compte externe est maintenant dissocié !",
+    "You must define a password otherwise you won't be able to login again.": "Vous devez définir un mot de passe sinon vous ne pourrez plus vous connecter par la suite."
 }
