@@ -11,8 +11,6 @@ import (
 	"github.com/miniflux/miniflux/http/context"
 	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/http/response/xml"
-	"github.com/miniflux/miniflux/reader/opml"
 )
 
 // CreateFeed is the API handler to create a new feed.
@@ -141,17 +139,6 @@ func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.OK(w, feeds)
-}
-
-// Export is the API handler that incoves an OPML export.
-func (c *Controller) Export(w http.ResponseWriter, r *http.Request) {
-	opmlHandler := opml.NewHandler(c.store)
-	opml, err := opmlHandler.Export(context.New(r).UserID())
-	if err != nil {
-		json.ServerError(w, errors.New("unable to export feeds to OPML"))
-	}
-
-	xml.OK(w, opml)
 }
 
 // GetFeed is the API handler to get a feed.

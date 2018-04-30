@@ -23,8 +23,7 @@ type Handler struct {
 func (h *Handler) Export(userID int64) (string, error) {
 	feeds, err := h.store.Feeds(userID)
 	if err != nil {
-		logger.Error("[OPML:Export] %v", err)
-		return "", errors.New("unable to fetch feeds")
+		return "", err
 	}
 
 	var subscriptions SubcriptionList
@@ -74,7 +73,7 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 					err := h.store.CreateCategory(category)
 					if err != nil {
 						logger.Error("[OPML:Import] %v", err)
-						return fmt.Errorf(`unable to create this category: "%s"`, subscription.CategoryName)
+						return fmt.Errorf(`unable to create this category: %q`, subscription.CategoryName)
 					}
 				}
 			}

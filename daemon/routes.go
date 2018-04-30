@@ -71,6 +71,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	apiRouter.HandleFunc("/feeds/{feedID}", apiController.RemoveFeed).Methods("DELETE")
 	apiRouter.HandleFunc("/feeds/{feedID}/icon", apiController.FeedIcon).Methods("GET")
 	apiRouter.HandleFunc("/export", apiController.Export).Methods("GET")
+	apiRouter.HandleFunc("/import", apiController.Import).Methods("POST")
 	apiRouter.HandleFunc("/feeds/{feedID}/entries", apiController.GetFeedEntries).Methods("GET")
 	apiRouter.HandleFunc("/feeds/{feedID}/entries/{entryID}", apiController.GetFeedEntry).Methods("GET")
 	apiRouter.HandleFunc("/entries", apiController.GetEntries).Methods("GET")

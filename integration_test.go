@@ -7,6 +7,8 @@
 package main
 
 import (
+	"bytes"
+	"io/ioutil"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -650,6 +652,32 @@ func TestExport(t *testing.T) {
 
 	if !strings.HasPrefix(string(output), "<?xml") {
 		t.Fatalf(`Invalid OPML export, got "%s"`, string(output))
+	}
+}
+
+func TestImport(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+    <opml version="2.0">
+        <body>
+            <outline text="Test Category">
+				<outline title="Test" text="Test" xmlUrl="` + testFeedURL + `" htmlUrl="` + testWebsiteURL + `"></outline>
+			</outline>
+		</body>
+	</opml>`
+
+	b := bytes.NewReader([]byte(data))
+	err = client.Import(ioutil.NopCloser(b))
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 

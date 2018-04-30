@@ -26,6 +26,7 @@ var (
 	errNotAuthorized = errors.New("miniflux: unauthorized (bad credentials)")
 	errForbidden     = errors.New("miniflux: access forbidden")
 	errServerError   = errors.New("miniflux: internal server error")
+	errNotFound      = errors.New("miniflux: resource not found")
 )
 
 type errorResponse struct {
@@ -44,6 +45,10 @@ func (r *request) Get(path string) (io.ReadCloser, error) {
 
 func (r *request) Post(path string, data interface{}) (io.ReadCloser, error) {
 	return r.execute(http.MethodPost, path, data)
+}
+
+func (r *request) PostFile(path string, f io.ReadCloser) (io.ReadCloser, error) {
+	return r.execute(http.MethodPost, path, f)
 }
 
 func (r *request) Put(path string, data interface{}) (io.ReadCloser, error) {
@@ -72,7 +77,12 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 	request.SetBasicAuth(r.username, r.password)
 
 	if data != nil {
-		request.Body = ioutil.NopCloser(bytes.NewBuffer(r.toJSON(data)))
+		switch data.(type) {
+		case io.ReadCloser:
+			request.Body = data.(io.ReadCloser)
+		default:
+			request.Body = ioutil.NopCloser(bytes.NewBuffer(r.toJSON(data)))
+		}
 	}
 
 	client := r.buildClient()
@@ -88,6 +98,8 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 		return nil, errForbidden
 	case http.StatusInternalServerError:
 		return nil, errServerError
+	case http.StatusNotFound:
+		return nil, errNotFound
 	case http.StatusBadRequest:
 		defer response.Body.Close()
 
@@ -100,8 +112,8 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 		return nil, fmt.Errorf("miniflux: bad request (%s)", resp.ErrorMessage)
 	}
 
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("miniflux: server error (statusCode=%d)", response.StatusCode)
+	if response.StatusCode > 400 {
+		return nil, fmt.Errorf("miniflux: status code=%d", response.StatusCode)
 	}
 
 	return response.Body, nil
