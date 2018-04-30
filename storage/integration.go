@@ -176,3 +176,18 @@ func (s *Storage) CreateIntegration(userID int64) error {
 
 	return nil
 }
+
+// HasSaveEntry returns true if the given user can save articles to third-parties.
+func (s *Storage) HasSaveEntry(userID int64) (result bool) {
+	query := `
+		SELECT true FROM integrations
+		WHERE user_id=$1 AND
+		(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t')
+	`
+
+	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
+		result = false
+	}
+
+	return result
+}

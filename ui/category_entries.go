@@ -73,6 +73,7 @@ func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "categories")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
 
 	html.OK(w, view.Render("category_entries"))
 }

@@ -73,6 +73,7 @@ func (c *Controller) ShowFeedEntries(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
 
 	html.OK(w, view.Render("feed_entries"))
 }
