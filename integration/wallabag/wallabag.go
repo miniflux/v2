@@ -24,6 +24,10 @@ type Client struct {
 
 // AddEntry sends a link to Wallabag.
 func (c *Client) AddEntry(link, title string) error {
+	if c.baseURL == "" || c.clientID == "" || c.clientSecret == "" || c.username == "" || c.password == "" {
+		return fmt.Errorf("wallabag: missing credentials")
+	}
+
 	accessToken, err := c.getAccessToken()
 	if err != nil {
 		return err

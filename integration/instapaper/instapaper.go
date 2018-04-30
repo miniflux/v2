@@ -19,6 +19,10 @@ type Client struct {
 
 // AddURL sends a link to Instapaper.
 func (c *Client) AddURL(link, title string) error {
+	if c.username == "" || c.password == "" {
+		return fmt.Errorf("instapaper: missing credentials")
+	}
+
 	values := url.Values{}
 	values.Add("url", link)
 	values.Add("title", title)

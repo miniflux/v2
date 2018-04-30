@@ -18,6 +18,10 @@ type Client struct {
 
 // AddBookmark sends a link to Pinboard.
 func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error {
+	if c.authToken == "" {
+		return fmt.Errorf("pinboard: missing credentials")
+	}
+
 	toRead := "no"
 	if markAsUnread {
 		toRead = "yes"

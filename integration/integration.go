@@ -25,14 +25,14 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 
 	if integration.InstapaperEnabled {
 		client := instapaper.NewClient(integration.InstapaperUsername, integration.InstapaperPassword)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 
@@ -46,7 +46,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 
@@ -57,7 +57,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 }

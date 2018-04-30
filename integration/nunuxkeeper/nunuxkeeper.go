@@ -28,6 +28,10 @@ type Client struct {
 
 // AddEntry sends an entry to Nunux Keeper.
 func (c *Client) AddEntry(link, title, content string) error {
+	if c.baseURL == "" || c.apiKey == "" {
+		return fmt.Errorf("nunux-keeper: missing credentials")
+	}
+
 	doc := &Document{
 		Title:       title,
 		Origin:      link,
