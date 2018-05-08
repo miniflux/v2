@@ -1,3 +1,19 @@
+Version 2.0.7 (May 7, 2018)
+---------------------------
+
+* Add API endpoint to import OPML file
+* Make sure to close request body in HTTP client
+* Do not show save link if no integration is configured
+* Make sure integrations are configured before to make any HTTP requests
+* Avoid people to unlink their OAuth2 account without having a local password
+* Do not use shared variable to translate templates (avoid concurrency issue)
+* Use vanilla HTTP handlers (refactoring)
+* Move HTTP client to its own package (refactoring)
+* Add middleware to read X-Forwarded-Proto header (refactoring)
+* Use Gorilla middleware (refactoring)
+* Scrape parent element for iframe
+* Add SoundCloud and Bandcamp iframe sources
+
 Version 2.0.6 (Apr 20, 2018)
 ----------------------------
 
