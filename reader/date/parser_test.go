@@ -51,6 +51,7 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"Di, 23 Jan 2018 00:00:00 +0100",
 		"Do, 29 Mär 2018 00:00:00 +0200",
 		"mer, 9 avr 2018 00:00:00 +0200",
+		"1520932969",
 	}
 
 	for _, date := range dates {

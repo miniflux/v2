@@ -7,6 +7,7 @@ package date
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -194,6 +195,11 @@ var dateFormats = []string{
 // Parse parses a given date string using a large
 // list of commonly found feed date formats.
 func Parse(ds string) (t time.Time, err error) {
+	timestamp, err := strconv.ParseInt(ds, 10, 64)
+	if err == nil {
+		return time.Unix(timestamp, 0), nil
+	}
+
 	ds = replaceNonEnglishWords(ds)
 	d := strings.TrimSpace(ds)
 	if d == "" {
