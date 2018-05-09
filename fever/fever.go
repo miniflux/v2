@@ -386,6 +386,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	result.Items = make([]item, 0)
 	for _, entry := range entries {
 		isRead := 0
 		if entry.Status == model.EntryStatusRead {
