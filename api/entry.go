@@ -12,6 +12,7 @@ import (
 	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response/json"
 	"github.com/miniflux/miniflux/model"
+	"time"
 )
 
 // GetFeedEntry is the API handler to get a single feed entry.
@@ -102,6 +103,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	since := request.QueryInt64Param(r, "since", 0)
 	limit := request.QueryIntParam(r, "limit", 100)
 	offset := request.QueryIntParam(r, "offset", 0)
 	if err := model.ValidateRange(offset, limit); err != nil {
@@ -115,6 +117,12 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)
+
+	if since > 0 {
+		t := time.Unix(since, 0)
+		builder.WithSince(&t)
+	}
+
 	builder.WithLimit(limit)
 
 	entries, err := builder.GetEntries()
@@ -154,6 +162,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	since := request.QueryInt64Param(r, "since", 0)
 	limit := request.QueryIntParam(r, "limit", 100)
 	offset := request.QueryIntParam(r, "offset", 0)
 	if err := model.ValidateRange(offset, limit); err != nil {
@@ -167,6 +176,11 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
+
+	if since > 0 {
+		t := time.Unix(since, 0)
+		builder.WithSince(&t)
+	}
 
 	entries, err := builder.GetEntries()
 	if err != nil {

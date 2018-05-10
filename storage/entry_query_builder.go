@@ -31,6 +31,7 @@ type EntryQueryBuilder struct {
 	entryID            int64
 	greaterThanEntryID int64
 	entryIDs           []int64
+	since              *time.Time
 	before             *time.Time
 	starred            bool
 }
@@ -107,6 +108,12 @@ func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
 	return e
 }
 
+// WithSince set the since filter.
+func (e *EntryQueryBuilder) WithSince(date *time.Time) *EntryQueryBuilder {
+	e.since = date
+	return e
+}
+
 // WithOffset set the offset.
 func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 	e.offset = offset
@@ -152,8 +159,8 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 
 // GetEntries returns a list of entries that match the condition.
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
-	debugStr := "[EntryQueryBuilder:GetEntries] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d"
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
+	debugStr := "[EntryQueryBuilder:GetEntries] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d, since=%d"
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit, e.since))
 
 	query := `
 		SELECT
@@ -319,6 +326,11 @@ func (e *EntryQueryBuilder) buildCondition() ([]interface{}, string) {
 	if e.before != nil {
 		conditions = append(conditions, fmt.Sprintf("e.published_at < $%d", len(args)+1))
 		args = append(args, e.before)
+	}
+
+	if e.since != nil {
+		conditions = append(conditions, fmt.Sprintf("e.published_at > $%d", len(args)+1))
+		args = append(args, e.since)
 	}
 
 	if e.starred {
