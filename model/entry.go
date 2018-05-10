@@ -16,6 +16,7 @@ const (
 	EntryStatusRemoved      = "removed"
 	DefaultSortingOrder     = "published_at"
 	DefaultSortingDirection = "asc"
+	DefaultJoin             = "enabled"
 )
 
 // Entry represents a feed item in the system.
@@ -68,6 +69,15 @@ func ValidateDirection(direction string) error {
 	}
 
 	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
+}
+
+// ValidateJoin makes sure the join parameter is valid.
+func ValidateJoin(join string) error {
+	switch join {
+	case "enabled", "disabled":
+		return nil
+	}
+	return fmt.Errorf(`Invalid join, valid join values are: "enabled" or "disabled"`)
 }
 
 // ValidateRange makes sure the offset/limit values are valid.
