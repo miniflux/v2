@@ -108,7 +108,7 @@ func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
 	e.limit = limit
 	return e
 }
-// WithFeedOption set the feed option.
+// WithJoin set the feed option.
 func (e *EntryQueryBuilder) WithJoin(join bool) *EntryQueryBuilder {
 	e.join = join
 	return e
@@ -182,22 +182,22 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	`
 
 	// Leading comma is important
-	join_bind := `, f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
+	joinBind := `, f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
 		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
 		fi.icon_id
 	`
-	join_command := `LEFT JOIN feeds f ON f.id=e.feed_id
+	joinCommand := `LEFT JOIN feeds f ON f.id=e.feed_id
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
 	`
 
 	if !e.join {
-		join_bind = ""
-		join_command = ""
+		joinBind = ""
+		joinCommand = ""
 	}
 
 	args, conditions := e.buildCondition()
-	query = fmt.Sprintf(query, join_bind, join_command, conditions, e.buildSorting())
+	query = fmt.Sprintf(query, joinBind, joinCommand, conditions, e.buildSorting())
 	// log.Println(query)
 
 	rows, err := e.store.db.Query(query, args...)
