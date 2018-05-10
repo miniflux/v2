@@ -13,6 +13,15 @@ import (
 	"github.com/miniflux/miniflux/http/response/json"
 )
 
+
+// Current
+func (c *Controller) Current(w http.ResponseWriter, r *http.Request) {
+	type UserMeta struct {
+		UserID int64 `json:"user_id,omitempty"`
+	}
+	json.OK(w, UserMeta { UserID: context.New(r).UserID() })
+}
+
 // CreateUser is the API handler to create a new user.
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 	ctx := context.New(r)
