@@ -14,7 +14,7 @@ import (
 )
 
 
-// Current
+// Current is the API handler to retrieve the user id
 func (c *Controller) Current(w http.ResponseWriter, r *http.Request) {
 	type UserMeta struct {
 		UserID int64 `json:"user_id,omitempty"`
