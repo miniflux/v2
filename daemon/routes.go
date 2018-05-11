@@ -58,7 +58,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	apiRouter.HandleFunc("/users/{userID:[0-9]+}", apiController.UpdateUser).Methods("PUT")
 	apiRouter.HandleFunc("/users/{userID:[0-9]+}", apiController.RemoveUser).Methods("DELETE")
 	apiRouter.HandleFunc("/users/{username}", apiController.UserByUsername).Methods("GET")
-	apiRouter.HandleFunc("/current_user", apiController.Current).Methods("GET")
+	apiRouter.HandleFunc("/me", apiController.CurrentUser).Methods("GET")
 	apiRouter.HandleFunc("/categories", apiController.CreateCategory).Methods("POST")
 	apiRouter.HandleFunc("/categories", apiController.GetCategories).Methods("GET")
 	apiRouter.HandleFunc("/categories/{categoryID}", apiController.UpdateCategory).Methods("PUT")

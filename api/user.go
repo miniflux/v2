@@ -14,12 +14,14 @@ import (
 )
 
 
-// Current is the API handler to retrieve the user id
-func (c *Controller) Current(w http.ResponseWriter, r *http.Request) {
-	type UserMeta struct {
-		UserID int64 `json:"user_id,omitempty"`
+// CurrentUser is the API handler to retrieve the user id
+func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
+	user, err := c.store.UserByID(ctx.UserID())
+	if err != nil {
+		json.Forbidden(w)
 	}
-	json.OK(w, UserMeta { UserID: context.New(r).UserID() })
+	json.OK(w, user)
 }
 
 // CreateUser is the API handler to create a new user.
