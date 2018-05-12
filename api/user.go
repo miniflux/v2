@@ -13,6 +13,17 @@ import (
 	"github.com/miniflux/miniflux/http/response/json"
 )
 
+
+// CurrentUser is the API handler to retrieve the user id
+func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
+	user, err := c.store.UserByID(ctx.UserID())
+	if err != nil {
+		return json.Forbidden(w)
+	}
+	json.OK(w, user)
+}
+
 // CreateUser is the API handler to create a new user.
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 	ctx := context.New(r)
