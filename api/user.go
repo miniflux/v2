@@ -19,7 +19,7 @@ func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	ctx := context.New(r)
 	user, err := c.store.UserByID(ctx.UserID())
 	if err != nil {
-		json.Forbidden(w)
+		return json.Forbidden(w)
 	}
 	json.OK(w, user)
 }
