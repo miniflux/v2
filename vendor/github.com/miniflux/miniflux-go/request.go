@@ -22,11 +22,12 @@ const (
 	defaultTimeout = 80
 )
 
+// List of exposed errors.
 var (
-	errNotAuthorized = errors.New("miniflux: unauthorized (bad credentials)")
-	errForbidden     = errors.New("miniflux: access forbidden")
-	errServerError   = errors.New("miniflux: internal server error")
-	errNotFound      = errors.New("miniflux: resource not found")
+	ErrNotAuthorized = errors.New("miniflux: unauthorized (bad credentials)")
+	ErrForbidden     = errors.New("miniflux: access forbidden")
+	ErrServerError   = errors.New("miniflux: internal server error")
+	ErrNotFound      = errors.New("miniflux: resource not found")
 )
 
 type errorResponse struct {
@@ -93,13 +94,13 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 
 	switch response.StatusCode {
 	case http.StatusUnauthorized:
-		return nil, errNotAuthorized
+		return nil, ErrNotAuthorized
 	case http.StatusForbidden:
-		return nil, errForbidden
+		return nil, ErrForbidden
 	case http.StatusInternalServerError:
-		return nil, errServerError
+		return nil, ErrServerError
 	case http.StatusNotFound:
-		return nil, errNotFound
+		return nil, ErrNotFound
 	case http.StatusBadRequest:
 		defer response.Body.Close()
 

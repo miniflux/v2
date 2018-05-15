@@ -44,6 +44,22 @@ func TestWithWrongCredentials(t *testing.T) {
 	}
 }
 
+func TestGetCurrentLoggedUser(t *testing.T) {
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.Me()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if user.ID == 0 {
+		t.Fatalf(`Invalid userID, got %q`, user.ID)
+	}
+
+	if user.Username != testAdminUsername {
+		t.Fatalf(`Invalid username, got %q`, user.Username)
+	}
+}
+
 func TestGetUsers(t *testing.T) {
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
 	users, err := client.Users()
