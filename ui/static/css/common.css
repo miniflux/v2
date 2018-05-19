@@ -528,6 +528,10 @@ a.button {
     content: "";
 }
 
+.hide-read-items {
+    overflow-x: hidden;
+}
+
 .hide-read-items .item-status-read {
     display: none;
 }
