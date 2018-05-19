@@ -13,18 +13,18 @@ import (
 )
 
 const (
-	defaultBaseURL                 = "http://localhost"
-	defaultDatabaseURL             = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
-	defaultWorkerPoolSize          = 5
-	defaultPollingFrequency        = 60
-	defaultBatchSize               = 10
-	defaultDatabaseMaxConns        = 20
-	defaultListenAddr              = "127.0.0.1:8080"
-	defaultCertFile                = ""
-	defaultKeyFile                 = ""
-	defaultCertDomain              = ""
-	defaultCertCache               = "/tmp/cert_cache"
-	defaultSessionCleanupFrequency = 24
+	defaultBaseURL          = "http://localhost"
+	defaultDatabaseURL      = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
+	defaultWorkerPoolSize   = 5
+	defaultPollingFrequency = 60
+	defaultBatchSize        = 10
+	defaultDatabaseMaxConns = 20
+	defaultListenAddr       = "127.0.0.1:8080"
+	defaultCertFile         = ""
+	defaultKeyFile          = ""
+	defaultCertDomain       = ""
+	defaultCertCache        = "/tmp/cert_cache"
+	defaultCleanupFrequency = 24
 )
 
 // Config manages configuration parameters.
@@ -137,9 +137,9 @@ func (c *Config) CertCache() string {
 	return c.get("CERT_CACHE", defaultCertCache)
 }
 
-// SessionCleanupFrequency returns the interval for session cleanup.
-func (c *Config) SessionCleanupFrequency() int {
-	return c.getInt("SESSION_CLEANUP_FREQUENCY", defaultSessionCleanupFrequency)
+// CleanupFrequency returns the interval for cleanup jobs.
+func (c *Config) CleanupFrequency() int {
+	return c.getInt("CLEANUP_FREQUENCY", defaultCleanupFrequency)
 }
 
 // WorkerPoolSize returns the number of background worker.

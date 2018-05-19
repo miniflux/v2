@@ -176,6 +176,19 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 	return nil
 }
 
+// ArchiveEntries changes the status of read items to "removed" after 60 days.
+func (s *Storage) ArchiveEntries() error {
+	query := `
+		UPDATE entries SET status='removed'
+		WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '60 days'::interval LIMIT 500)
+	`
+	if _, err := s.db.Exec(query); err != nil {
+		return fmt.Errorf("unable to archive read entries: %v", err)
+	}
+
+	return nil
+}
+
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:SetEntriesStatus] userID=%d, entryIDs=%v, status=%s", userID, entryIDs, status))

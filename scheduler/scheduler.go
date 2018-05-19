@@ -27,14 +27,18 @@ func NewFeedScheduler(store *storage.Storage, workerPool *WorkerPool, frequency,
 	}()
 }
 
-// NewSessionScheduler starts a new scheduler that clean old sessions.
-func NewSessionScheduler(store *storage.Storage, frequency int) {
+// NewCleanupScheduler starts a new scheduler that clean old sessions and archive read items.
+func NewCleanupScheduler(store *storage.Storage, frequency int) {
 	go func() {
 		c := time.Tick(time.Duration(frequency) * time.Hour)
 		for range c {
 			nbSessions := store.CleanOldSessions()
 			nbUserSessions := store.CleanOldUserSessions()
-			logger.Info("[SessionScheduler] cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
+			logger.Info("[CleanupScheduler] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
+
+			if err := store.ArchiveEntries(); err != nil {
+				logger.Error("[CleanupScheduler] %v", err)
+			}
 		}
 	}()
 }

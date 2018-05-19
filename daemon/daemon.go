@@ -50,7 +50,7 @@ func Run(cfg *config.Config, store *storage.Storage) {
 		cfg.BatchSize(),
 	)
 
-	scheduler.NewSessionScheduler(store, cfg.SessionCleanupFrequency())
+	scheduler.NewCleanupScheduler(store, cfg.CleanupFrequency())
 
 	<-stop
 	logger.Info("Shutting down the server...")
