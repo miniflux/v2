@@ -46,4 +46,7 @@ var (
 
 	// FlashErrorMessageContextKey is the context key used to store a flash error message.
 	FlashErrorMessageContextKey = &ContextKey{"FlashErrorMessage"}
+
+	// PocketRequestTokenContextKey is the context key for Pocket Request Token.
+	PocketRequestTokenContextKey = &ContextKey{"PocketRequestToken"}
 )

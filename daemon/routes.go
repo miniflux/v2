@@ -133,6 +133,8 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	uiRouter.HandleFunc("/bookmarklet", uiController.Bookmarklet).Name("bookmarklet").Methods("GET")
 	uiRouter.HandleFunc("/integrations", uiController.ShowIntegrations).Name("integrations").Methods("GET")
 	uiRouter.HandleFunc("/integration", uiController.UpdateIntegration).Name("updateIntegration").Methods("POST")
+	uiRouter.HandleFunc("/integration/pocket/authorize", uiController.PocketAuthorize).Name("pocketAuthorize").Methods("GET")
+	uiRouter.HandleFunc("/integration/pocket/callback", uiController.PocketCallback).Name("pocketCallback").Methods("GET")
 	uiRouter.HandleFunc("/sessions", uiController.ShowSessions).Name("sessions").Methods("GET")
 	uiRouter.HandleFunc("/sessions/{sessionID}/remove", uiController.RemoveSession).Name("removeSession").Methods("POST")
 	uiRouter.HandleFunc("/export", uiController.Export).Name("export").Methods("GET")

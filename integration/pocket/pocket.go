@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -16,21 +16,20 @@ type Client struct {
 	consumerKey string
 }
 
-// Parameters for a Pocket add call.
-type Parameters struct {
-	AccessToken string `json:"access_token"`
-	ConsumerKey string `json:"consumer_key"`
-	Title       string `json:"title,omitempty"`
-	URL         string `json:"url,omitempty"`
-}
-
 // AddURL sends a single link to Pocket.
 func (c *Client) AddURL(link, title string) error {
 	if c.consumerKey == "" || c.accessToken == "" {
 		return fmt.Errorf("pocket: missing credentials")
 	}
 
-	parameters := &Parameters{
+	type body struct {
+		AccessToken string `json:"access_token"`
+		ConsumerKey string `json:"consumer_key"`
+		Title       string `json:"title,omitempty"`
+		URL         string `json:"url"`
+	}
+
+	data := &body{
 		AccessToken: c.accessToken,
 		ConsumerKey: c.consumerKey,
 		Title:       title,
@@ -38,12 +37,16 @@ func (c *Client) AddURL(link, title string) error {
 	}
 
 	clt := client.New("https://getpocket.com/v3/add")
-	response, err := clt.PostJSON(parameters)
+	response, err := clt.PostJSON(data)
+	if err != nil {
+		return fmt.Errorf("pocket: unable to send url: %v", err)
+	}
+
 	if response.HasServerFailure() {
 		return fmt.Errorf("pocket: unable to send url, status=%d", response.StatusCode)
 	}
 
-	return err
+	return nil
 }
 
 // NewClient returns a new Pocket client.

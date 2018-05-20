@@ -222,5 +222,12 @@
     "View Comments": "Voir les commentaires",
     "This file is empty": "Ce fichier est vide",
     "Your external account is now dissociated!": "Votre compte externe est maintenant dissocié !",
-    "You must define a password otherwise you won't be able to login again.": "Vous devez définir un mot de passe sinon vous ne pourrez plus vous connecter par la suite."
+    "You must define a password otherwise you won't be able to login again.": "Vous devez définir un mot de passe sinon vous ne pourrez plus vous connecter par la suite.",
+    "Save articles to Pocket": "Sauvegarder les articles vers Pocket",
+    "Connect your Pocket account": "Connectez votre compte Pocket",
+    "Pocket Consumer Key": "« Pocket Consumer Key »",
+    "Pocket Access Token": "« Pocket Access Token »",
+    "Your Pocket account is now linked!": "Votre compte Pocket est maintenant connecté !",
+    "Unable to fetch access token from Pocket!": "Impossible de récupérer le jeton d'accès depuis Pocket !",
+    "Unable to fetch request token from Pocket!": "Impossible de récupérer le jeton d'accès depuis Pocket !"
 }

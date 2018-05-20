@@ -55,6 +55,7 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, FlashMessageContextKey, session.Data.FlashMessage)
 		ctx = context.WithValue(ctx, FlashErrorMessageContextKey, session.Data.FlashErrorMessage)
 		ctx = context.WithValue(ctx, UserLanguageContextKey, session.Data.Language)
+		ctx = context.WithValue(ctx, PocketRequestTokenContextKey, session.Data.PocketRequestToken)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

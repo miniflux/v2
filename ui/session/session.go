@@ -56,6 +56,11 @@ func (s *Session) SetLanguage(language string) {
 	s.store.UpdateSessionField(s.ctx.SessionID(), "language", language)
 }
 
+// SetPocketRequestToken updates Pocket Request Token.
+func (s *Session) SetPocketRequestToken(requestToken string) {
+	s.store.UpdateSessionField(s.ctx.SessionID(), "pocket_request_token", requestToken)
+}
+
 // New returns a new session handler.
 func New(store *storage.Storage, ctx *context.Context) *Session {
 	return &Session{store, ctx}

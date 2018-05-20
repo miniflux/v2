@@ -78,6 +78,11 @@ func (c *Context) FlashErrorMessage() string {
 	return c.getContextStringValue(middleware.FlashErrorMessageContextKey)
 }
 
+// PocketRequestToken returns the Pocket Request Token if any.
+func (c *Context) PocketRequestToken() string {
+	return c.getContextStringValue(middleware.PocketRequestTokenContextKey)
+}
+
 func (c *Context) getContextStringValue(key *middleware.ContextKey) string {
 	if v := c.request.Context().Value(key); v != nil {
 		return v.(string)
