@@ -94,7 +94,7 @@
         <label for="form-wallabag-password">{{ t "Wallabag Password" }}</label>
         <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}">
     </div>
-    
+
     <h3>Nunux Keeper</h3>
     <div class="form-section">
         <label>
@@ -106,6 +106,21 @@
 
         <label for="form-nunux-keeper-api-key">{{ t "Nunux Keeper API key" }}</label>
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
+    </div>
+
+    <h3>Pocket</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "Save articles to Pocket" }}
+        </label>
+
+        <label for="form-pocket-access-token">{{ t "Pocket Access Token" }}</label>
+        <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}">
+        (<a href="https://www.jamesfmackenzie.com/getting-started-with-the-pocket-developer-api/">{{ t "How To" }}</a>)
+
+        <label for="form-pocket-consumer-key">{{ t "Pocket Consumer Key" }}</label>
+        <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}">
+        (<a href="https://getpocket.com/developer/apps/new">{{ t "Create" }}</a>)
     </div>
 
     <div class="buttons">

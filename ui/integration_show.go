@@ -50,6 +50,9 @@ func (c *Controller) ShowIntegrations(w http.ResponseWriter, r *http.Request) {
 		NunuxKeeperEnabled:   integration.NunuxKeeperEnabled,
 		NunuxKeeperURL:       integration.NunuxKeeperURL,
 		NunuxKeeperAPIKey:    integration.NunuxKeeperAPIKey,
+		PocketEnabled:        integration.PocketEnabled,
+		PocketAccessToken:    integration.PocketAccessToken,
+		PocketConsumerKey:    integration.PocketConsumerKey,
 	}
 
 	sess := session.New(c.store, ctx)

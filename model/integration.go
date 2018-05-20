@@ -27,4 +27,7 @@ type Integration struct {
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
+	PocketEnabled        bool
+	PocketAccessToken    string
+	PocketConsumerKey    string
 }
