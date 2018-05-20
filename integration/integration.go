@@ -8,6 +8,7 @@ import (
 	"github.com/miniflux/miniflux/integration/instapaper"
 	"github.com/miniflux/miniflux/integration/nunuxkeeper"
 	"github.com/miniflux/miniflux/integration/pinboard"
+	"github.com/miniflux/miniflux/integration/pocket"
 	"github.com/miniflux/miniflux/integration/wallabag"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
@@ -60,4 +61,12 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
+
+	if integration.PocketEnabled {
+		client := pocket.NewClient(integration.PocketAccessToken, integration.PocketConsumerKey)
+		if err := client.AddURL(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
 }
