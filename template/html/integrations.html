@@ -79,8 +79,10 @@
             <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "Save articles to Pocket" }}
         </label>
 
-        <label for="form-pocket-consumer-key">{{ t "Pocket Consumer Key" }}</label>
-        <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}">
+        {{ if not .hasPocketConsumerKeyConfigured }}
+            <label for="form-pocket-consumer-key">{{ t "Pocket Consumer Key" }}</label>
+            <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}">
+        {{ end }}
 
         <label for="form-pocket-access-token">{{ t "Pocket Access Token" }}</label>
         <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}">

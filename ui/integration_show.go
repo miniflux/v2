@@ -61,6 +61,7 @@ func (c *Controller) ShowIntegrations(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("hasPocketConsumerKeyConfigured", c.cfg.PocketConsumerKey("") != "")
 
 	html.OK(w, view.Render("integrations"))
 }

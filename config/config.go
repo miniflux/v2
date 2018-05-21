@@ -197,6 +197,11 @@ func (c *Config) CreateAdmin() bool {
 	return c.get("CREATE_ADMIN", "") != ""
 }
 
+// PocketConsumerKey returns the Pocket Consumer Key if defined as environment variable.
+func (c *Config) PocketConsumerKey(defaultValue string) string {
+	return c.get("POCKET_CONSUMER_KEY", defaultValue)
+}
+
 // NewConfig returns a new Config.
 func NewConfig() *Config {
 	return &Config{IsHTTPS: os.Getenv("HTTPS") != ""}

@@ -25,7 +25,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	router := mux.NewRouter()
 	templateEngine := template.NewEngine(cfg, router, translator)
 	apiController := api.NewController(store, feedHandler)
-	feverController := fever.NewController(store)
+	feverController := fever.NewController(cfg, store)
 	uiController := ui.NewController(cfg, store, pool, feedHandler, templateEngine, translator, router)
 	middleware := middleware.New(cfg, store, router)
 

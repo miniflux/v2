@@ -5,6 +5,7 @@
 package integration
 
 import (
+	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/integration/instapaper"
 	"github.com/miniflux/miniflux/integration/nunuxkeeper"
 	"github.com/miniflux/miniflux/integration/pinboard"
@@ -15,7 +16,7 @@ import (
 )
 
 // SendEntry send the entry to the activated providers.
-func SendEntry(entry *model.Entry, integration *model.Integration) {
+func SendEntry(cfg *config.Config, entry *model.Entry, integration *model.Integration) {
 	if integration.PinboardEnabled {
 		client := pinboard.NewClient(integration.PinboardToken)
 		err := client.AddBookmark(
@@ -63,10 +64,9 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.PocketEnabled {
-		client := pocket.NewClient(integration.PocketAccessToken, integration.PocketConsumerKey)
+		client := pocket.NewClient(cfg.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
-
 }

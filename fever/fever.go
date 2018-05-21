@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/http/context"
 	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response/json"
@@ -128,6 +129,7 @@ type favicon struct {
 
 // Controller implements the Fever API.
 type Controller struct {
+	cfg   *config.Config
 	store *storage.Storage
 }
 
@@ -528,7 +530,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go func() {
-			integration.SendEntry(entry, settings)
+			integration.SendEntry(c.cfg, entry, settings)
 		}()
 	}
 
@@ -642,6 +644,6 @@ func (c *Controller) buildFeedGroups(feeds model.Feeds) []feedsGroups {
 }
 
 // NewController returns a new Fever API.
-func NewController(store *storage.Storage) *Controller {
-	return &Controller{store: store}
+func NewController(cfg *config.Config, store *storage.Storage) *Controller {
+	return &Controller{cfg, store}
 }
