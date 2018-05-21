@@ -31,11 +31,15 @@ func (c *Client) AddURL(link, title string) error {
 	clt := client.New(apiURL)
 	clt.WithCredentials(c.username, c.password)
 	response, err := clt.Get()
+	if err != nil {
+		return fmt.Errorf("instapaper: unable to send url: %v", err)
+	}
+
 	if response.HasServerFailure() {
 		return fmt.Errorf("instapaper: unable to send url, status=%d", response.StatusCode)
 	}
 
-	return err
+	return nil
 }
 
 // NewClient returns a new Instapaper client.

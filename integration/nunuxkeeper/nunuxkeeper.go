@@ -47,11 +47,15 @@ func (c *Client) AddEntry(link, title, content string) error {
 	clt := client.New(apiURL)
 	clt.WithCredentials("api", c.apiKey)
 	response, err := clt.PostJSON(doc)
+	if err != nil {
+		return fmt.Errorf("nunux-keeper: unable to send entry: %v", err)
+	}
+
 	if response.HasServerFailure() {
 		return fmt.Errorf("nunux-keeper: unable to send entry, status=%d", response.StatusCode)
 	}
 
-	return err
+	return nil
 }
 
 // NewClient returns a new Nunux Keeepr client.
