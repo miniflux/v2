@@ -40,10 +40,11 @@
             </div>
             <ul>
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g u" }}">
-                    <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}</a>
-                    {{ if gt .countUnread 0 }}
-                        <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
-                    {{ end }}
+                    <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}
+                      {{ if gt .countUnread 0 }}
+                          <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
+                      {{ end }}
+                    </a>
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g b" }}">
                     <a href="{{ route "starred" }}" data-page="starred">{{ t "Starred" }}</a>
