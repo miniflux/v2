@@ -71,12 +71,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/tomasen/realip"
-  packages = ["."]
-  revision = "b5850897b7b539a1c9f22cdaa3b547d1bd453db8"
-
-[[projects]]
-  branch = "master"
   name = "golang.org/x/crypto"
   packages = [
     "acme",
@@ -158,6 +152,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0cb64ea4a8054f26b80103c60380d800d74bdd2faec4ef53453874922e7de748"
+  inputs-digest = "f030af166f90ac96d133b7ddf9f1f80785508462cac8cae4c65abbdb7c20474b"
   solver-name = "gps-cdcl"
   solver-version = 1

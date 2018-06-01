@@ -47,10 +47,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/tomasen/realip"
-
-[[constraint]]
-  branch = "master"
   name = "golang.org/x/crypto"
 
 [[constraint]]

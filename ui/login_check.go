@@ -5,6 +5,7 @@ import (
 
 	"github.com/miniflux/miniflux/http/context"
 	"github.com/miniflux/miniflux/http/cookie"
+	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response"
 	"github.com/miniflux/miniflux/http/response/html"
 	"github.com/miniflux/miniflux/http/route"
@@ -12,7 +13,6 @@ import (
 	"github.com/miniflux/miniflux/ui/form"
 	"github.com/miniflux/miniflux/ui/session"
 	"github.com/miniflux/miniflux/ui/view"
-	"github.com/tomasen/realip"
 )
 
 // CheckLogin validates the username/password and redirects the user to the unread page.
@@ -38,7 +38,7 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken, userID, err := c.store.CreateUserSession(authForm.Username, r.UserAgent(), realip.RealIP(r))
+	sessionToken, userID, err := c.store.CreateUserSession(authForm.Username, r.UserAgent(), request.RealIP(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return

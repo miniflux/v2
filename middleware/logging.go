@@ -7,15 +7,14 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/logger"
-
-	"github.com/tomasen/realip"
 )
 
 // Logging logs the HTTP request.
 func (m *Middleware) Logging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger.Debug("[HTTP] %s %s %s", realip.RealIP(r), r.Method, r.RequestURI)
+		logger.Debug("[HTTP] %s %s %s", request.RealIP(r), r.Method, r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }

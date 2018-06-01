@@ -16,8 +16,6 @@ import (
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/ui/session"
-
-	"github.com/tomasen/realip"
 )
 
 // OAuth2Callback receives the authorization code and create a new session.
@@ -107,7 +105,7 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sessionToken, _, err := c.store.CreateUserSession(user.Username, r.UserAgent(), realip.RealIP(r))
+	sessionToken, _, err := c.store.CreateUserSession(user.Username, r.UserAgent(), request.RealIP(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
