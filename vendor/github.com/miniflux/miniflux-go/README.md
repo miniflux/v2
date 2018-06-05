@@ -26,7 +26,7 @@ package main
 
 import (
 	"fmt"
-
+	"io/ioutil"
 	"github.com/miniflux/miniflux-go"
 )
 
@@ -41,7 +41,7 @@ func main() {
     }
     fmt.Println(feeds)
 
-    // Backup to opml file.
+    // Backup your feeds to an OPML file.
     opml, err := client.Export()
     if err != nil {
         fmt.Println(err)
@@ -53,8 +53,8 @@ func main() {
         fmt.Println(err)
         return
     }
-    fmt.Println("backup done!")
 
+    fmt.Println("backup done!")
 }
 ```
 

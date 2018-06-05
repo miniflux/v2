@@ -12,14 +12,15 @@ import (
 	"github.com/miniflux/miniflux/model"
 )
 
-func decodeEntryStatusPayload(data io.Reader) (entryIDs []int64, status string, err error) {
+func decodeEntryStatusPayload(r io.ReadCloser) (entryIDs []int64, status string, err error) {
 	type payload struct {
 		EntryIDs []int64 `json:"entry_ids"`
 		Status   string  `json:"status"`
 	}
 
 	var p payload
-	decoder := json.NewDecoder(data)
+	decoder := json.NewDecoder(r)
+	defer r.Close()
 	if err = decoder.Decode(&p); err != nil {
 		return nil, "", fmt.Errorf("invalid JSON payload: %v", err)
 	}

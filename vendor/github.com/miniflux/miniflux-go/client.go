@@ -7,6 +7,7 @@ package miniflux
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"strconv"
@@ -15,6 +16,23 @@ import (
 // Client represents a Miniflux client.
 type Client struct {
 	request *request
+}
+
+// Me returns the logged user information.
+func (c *Client) Me() (*User, error) {
+	body, err := c.request.Get("/v1/me")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var user *User
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&user); err != nil {
+		return nil, fmt.Errorf("miniflux: json error (%v)", err)
+	}
+
+	return user, nil
 }
 
 // Users returns all users.
@@ -228,6 +246,12 @@ func (c *Client) Export() ([]byte, error) {
 	}
 
 	return opml, nil
+}
+
+// Import imports an OPML file.
+func (c *Client) Import(f io.ReadCloser) error {
+	_, err := c.request.PostFile("/v1/import", f)
+	return err
 }
 
 // Feed gets a feed.

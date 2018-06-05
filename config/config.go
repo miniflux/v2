@@ -13,18 +13,18 @@ import (
 )
 
 const (
-	defaultBaseURL                 = "http://localhost"
-	defaultDatabaseURL             = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
-	defaultWorkerPoolSize          = 5
-	defaultPollingFrequency        = 60
-	defaultBatchSize               = 10
-	defaultDatabaseMaxConns        = 20
-	defaultListenAddr              = "127.0.0.1:8080"
-	defaultCertFile                = ""
-	defaultKeyFile                 = ""
-	defaultCertDomain              = ""
-	defaultCertCache               = "/tmp/cert_cache"
-	defaultSessionCleanupFrequency = 24
+	defaultBaseURL          = "http://localhost"
+	defaultDatabaseURL      = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
+	defaultWorkerPoolSize   = 5
+	defaultPollingFrequency = 60
+	defaultBatchSize        = 10
+	defaultDatabaseMaxConns = 20
+	defaultListenAddr       = "127.0.0.1:8080"
+	defaultCertFile         = ""
+	defaultKeyFile          = ""
+	defaultCertDomain       = ""
+	defaultCertCache        = "/tmp/cert_cache"
+	defaultCleanupFrequency = 24
 )
 
 // Config manages configuration parameters.
@@ -110,6 +110,10 @@ func (c *Config) DatabaseMaxConnections() int {
 
 // ListenAddr returns the listen address for the HTTP server.
 func (c *Config) ListenAddr() string {
+	if port := os.Getenv("PORT"); port != "" {
+		return ":" + port
+	}
+
 	return c.get("LISTEN_ADDR", defaultListenAddr)
 }
 
@@ -133,9 +137,9 @@ func (c *Config) CertCache() string {
 	return c.get("CERT_CACHE", defaultCertCache)
 }
 
-// SessionCleanupFrequency returns the interval for session cleanup.
-func (c *Config) SessionCleanupFrequency() int {
-	return c.getInt("SESSION_CLEANUP_FREQUENCY", defaultSessionCleanupFrequency)
+// CleanupFrequency returns the interval for cleanup jobs.
+func (c *Config) CleanupFrequency() int {
+	return c.getInt("CLEANUP_FREQUENCY", defaultCleanupFrequency)
 }
 
 // WorkerPoolSize returns the number of background worker.
@@ -181,6 +185,21 @@ func (c *Config) OAuth2Provider() string {
 // HasHSTS returns true if HTTP Strict Transport Security is enabled.
 func (c *Config) HasHSTS() bool {
 	return c.get("DISABLE_HSTS", "") == ""
+}
+
+// RunMigrations returns true if the environment variable RUN_MIGRATIONS is not empty.
+func (c *Config) RunMigrations() bool {
+	return c.get("RUN_MIGRATIONS", "") != ""
+}
+
+// CreateAdmin returns true if the environment variable CREATE_ADMIN is not empty.
+func (c *Config) CreateAdmin() bool {
+	return c.get("CREATE_ADMIN", "") != ""
+}
+
+// PocketConsumerKey returns the Pocket Consumer Key if defined as environment variable.
+func (c *Config) PocketConsumerKey(defaultValue string) string {
+	return c.get("POCKET_CONSUMER_KEY", defaultValue)
 }
 
 // NewConfig returns a new Config.

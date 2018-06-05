@@ -322,6 +322,61 @@ func TestParseItemWithoutLink(t *testing.T) {
 	}
 }
 
+func TestParseItemWithDublicCoreDate(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
+			<description>Test</description>
+			<link>http://example.org/test.html</link>
+			<dc:creator>Tester</dc:creator>
+			<dc:date>2018-04-10T05:00:00+00:00</dc:date>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	expectedDate := time.Date(2018, time.April, 10, 5, 0, 0, 0, time.UTC)
+	if !feed.Entries[0].Date.Equal(expectedDate) {
+		t.Errorf("Incorrect entry date, got: %v, want: %v", feed.Entries[0].Date, expectedDate)
+	}
+}
+
+func TestParseItemWithoutDate(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
+			<description>Test</description>
+			<link>http://example.org/test.html</link>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	expectedDate := time.Now().In(time.Local)
+	diff := expectedDate.Sub(feed.Entries[0].Date)
+	if diff > time.Second {
+		t.Errorf("Incorrect entry date, got: %v", diff)
+	}
+}
+
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))

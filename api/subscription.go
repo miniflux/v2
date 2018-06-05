@@ -7,29 +7,30 @@ package api
 import (
 	"errors"
 	"fmt"
+	"net/http"
 
-	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/http/response/json"
 	"github.com/miniflux/miniflux/reader/subscription"
 )
 
 // GetSubscriptions is the API handler to find subscriptions.
-func (c *Controller) GetSubscriptions(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	websiteURL, err := decodeURLPayload(request.Body())
+func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
+	websiteURL, err := decodeURLPayload(r.Body)
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	subscriptions, err := subscription.FindSubscriptions(websiteURL)
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to discover subscriptions"))
+		json.ServerError(w, errors.New("Unable to discover subscriptions"))
 		return
 	}
 
 	if subscriptions == nil {
-		response.JSON().NotFound(fmt.Errorf("No subscription found"))
+		json.NotFound(w, fmt.Errorf("No subscription found"))
 		return
 	}
 
-	response.JSON().Standard(subscriptions)
+	json.OK(w, subscriptions)
 }

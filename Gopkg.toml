@@ -20,6 +20,10 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+[metadata.heroku]
+  root-package = "github.com/miniflux/miniflux"
+  go-version = "go1.10"
+  ensure = "false"
 
 [[constraint]]
   name = "github.com/PuerkitoBio/goquery"
@@ -27,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/gorilla/mux"
-  version = "1.6.0"
+  version = "1.6.1"
 
 [[constraint]]
   branch = "master"
@@ -40,10 +44,6 @@
 [[constraint]]
   name = "github.com/tdewolff/minify"
   version = "2.3.3"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/tomasen/realip"
 
 [[constraint]]
   branch = "master"

@@ -18,15 +18,17 @@
                         data-value="{{ if .Starred }}star{{ else }}unstar{{ end }}"
                         >{{ if .entry.Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
                 </li>
-                <li>
-                    <a href="#"
-                        title="{{ t "Save this article" }}"
-                        data-save-entry="true"
-                        data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
-                        data-label-loading="{{ t "Saving..." }}"
-                        data-label-done="{{ t "Done!" }}"
-                        >{{ t "Save" }}</a>
-                </li>
+                {{ if .hasSaveEntry }}
+                    <li>
+                        <a href="#"
+                            title="{{ t "Save this article" }}"
+                            data-save-entry="true"
+                            data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
+                            data-label-loading="{{ t "Saving..." }}"
+                            data-label-done="{{ t "Done!" }}"
+                            >{{ t "Save" }}</a>
+                    </li>
+                {{ end }}
                 <li>
                     <a href="#"
                         title="{{ t "Fetch original content" }}"

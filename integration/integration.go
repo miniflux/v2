@@ -5,16 +5,18 @@
 package integration
 
 import (
+	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/integration/instapaper"
 	"github.com/miniflux/miniflux/integration/nunuxkeeper"
 	"github.com/miniflux/miniflux/integration/pinboard"
+	"github.com/miniflux/miniflux/integration/pocket"
 	"github.com/miniflux/miniflux/integration/wallabag"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 )
 
 // SendEntry send the entry to the activated providers.
-func SendEntry(entry *model.Entry, integration *model.Integration) {
+func SendEntry(cfg *config.Config, entry *model.Entry, integration *model.Integration) {
 	if integration.PinboardEnabled {
 		client := pinboard.NewClient(integration.PinboardToken)
 		err := client.AddBookmark(
@@ -25,14 +27,14 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 
 	if integration.InstapaperEnabled {
 		client := instapaper.NewClient(integration.InstapaperUsername, integration.InstapaperPassword)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 
@@ -46,7 +48,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 
@@ -57,7 +59,14 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
-			logger.Error("[Integration] %v", err)
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.PocketEnabled {
+		client := pocket.NewClient(cfg.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
+		if err := client.AddURL(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 }

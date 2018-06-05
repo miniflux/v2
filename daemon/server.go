@@ -25,8 +25,8 @@ func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.Worke
 	certDomain := cfg.CertDomain()
 	certCache := cfg.CertCache()
 	server := &http.Server{
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  60 * time.Second,
 		Addr:         cfg.ListenAddr(),
 		Handler:      routes(cfg, store, feedHandler, pool, translator),

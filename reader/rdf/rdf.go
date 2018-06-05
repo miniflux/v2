@@ -10,7 +10,9 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/crypto"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/reader/date"
 	"github.com/miniflux/miniflux/reader/sanitizer"
 	"github.com/miniflux/miniflux/url"
 )
@@ -54,6 +56,7 @@ type rdfItem struct {
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
 	Creator     string `xml:"creator"`
+	Date        string `xml:"date"`
 }
 
 func (r *rdfItem) Transform() *model.Entry {
@@ -63,8 +66,22 @@ func (r *rdfItem) Transform() *model.Entry {
 	entry.URL = r.Link
 	entry.Content = r.Description
 	entry.Hash = getHash(r)
-	entry.Date = time.Now()
+	entry.Date = getDate(r)
 	return entry
+}
+
+func getDate(r *rdfItem) time.Time {
+	if r.Date != "" {
+		result, err := date.Parse(r.Date)
+		if err != nil {
+			logger.Error("rdf: %v", err)
+			return time.Now()
+		}
+
+		return result
+	}
+
+	return time.Now()
 }
 
 func getHash(r *rdfItem) string {

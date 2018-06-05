@@ -70,7 +70,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			wallabag_password,
 			nunux_keeper_enabled,
 			nunux_keeper_url,
-			nunux_keeper_api_key
+			nunux_keeper_api_key,
+			pocket_enabled,
+			pocket_access_token,
+			pocket_consumer_key
 		FROM integrations
 		WHERE user_id=$1
 	`
@@ -97,6 +100,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.NunuxKeeperEnabled,
 		&integration.NunuxKeeperURL,
 		&integration.NunuxKeeperAPIKey,
+		&integration.PocketEnabled,
+		&integration.PocketAccessToken,
+		&integration.PocketConsumerKey,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -131,8 +137,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			wallabag_password=$17,
 			nunux_keeper_enabled=$18,
 			nunux_keeper_url=$19,
-			nunux_keeper_api_key=$20
-		WHERE user_id=$21
+			nunux_keeper_api_key=$20,
+			pocket_enabled=$21,
+			pocket_access_token=$22,
+			pocket_consumer_key=$23
+		WHERE user_id=$24
 	`
 	_, err := s.db.Exec(
 		query,
@@ -156,6 +165,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.NunuxKeeperEnabled,
 		integration.NunuxKeeperURL,
 		integration.NunuxKeeperAPIKey,
+		integration.PocketEnabled,
+		integration.PocketAccessToken,
+		integration.PocketConsumerKey,
 		integration.UserID,
 	)
 
@@ -175,4 +187,19 @@ func (s *Storage) CreateIntegration(userID int64) error {
 	}
 
 	return nil
+}
+
+// HasSaveEntry returns true if the given user can save articles to third-parties.
+func (s *Storage) HasSaveEntry(userID int64) (result bool) {
+	query := `
+		SELECT true FROM integrations
+		WHERE user_id=$1 AND
+		(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR pocket_enabled='t')
+	`
+
+	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
+		result = false
+	}
+
+	return result
 }

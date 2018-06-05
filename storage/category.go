@@ -112,7 +112,8 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 	query := `SELECT
 		c.id, c.user_id, c.title,
 		(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count
-		FROM categories c WHERE user_id=$1`
+		FROM categories c WHERE user_id=$1
+		ORDER BY c.title ASC`
 
 	rows, err := s.db.Query(query, userID)
 	if err != nil {

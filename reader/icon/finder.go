@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/url"
@@ -23,8 +23,8 @@ import (
 // FindIcon try to find the website's icon.
 func FindIcon(websiteURL string) (*model.Icon, error) {
 	rootURL := url.RootURL(websiteURL)
-	client := http.NewClient(rootURL)
-	response, err := client.Get()
+	clt := client.New(rootURL)
+	response, err := clt.Get()
 	if err != nil {
 		return nil, fmt.Errorf("unable to download website index page: %v", err)
 	}
@@ -87,8 +87,8 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 }
 
 func downloadIcon(iconURL string) (*model.Icon, error) {
-	client := http.NewClient(iconURL)
-	response, err := client.Get()
+	clt := client.New(iconURL)
+	response, err := clt.Get()
 	if err != nil {
 		return nil, fmt.Errorf("unable to download iconURL: %v", err)
 	}

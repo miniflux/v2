@@ -8,10 +8,9 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/miniflux/miniflux/logger"
-
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/daemon"
+	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/storage"
 	"github.com/miniflux/miniflux/version"
 )
@@ -66,6 +65,16 @@ func Parse() {
 	if *flagResetPassword {
 		resetPassword(store)
 		return
+	}
+
+	// Run migrations and start the deamon.
+	if cfg.RunMigrations() {
+		store.Migrate()
+	}
+
+	// Create admin user and start the deamon.
+	if cfg.CreateAdmin() {
+		createAdmin(store)
 	}
 
 	daemon.Run(cfg, store)

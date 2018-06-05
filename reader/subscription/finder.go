@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/reader/feed"
 	"github.com/miniflux/miniflux/timer"
@@ -30,8 +30,8 @@ var (
 func FindSubscriptions(websiteURL string) (Subscriptions, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[FindSubscriptions] url=%s", websiteURL))
 
-	client := http.NewClient(websiteURL)
-	response, err := client.Get()
+	clt := client.New(websiteURL)
+	response, err := clt.Get()
 	if err != nil {
 		if _, ok := err.(errors.LocalizedError); ok {
 			return nil, err

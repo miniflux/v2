@@ -16,6 +16,20 @@ import (
 	"github.com/lib/pq"
 )
 
+// CountUnreadEntries returns the number of unread entries.
+func (s *Storage) CountUnreadEntries(userID int64) int {
+	builder := s.NewEntryQueryBuilder(userID)
+	builder.WithStatus(model.EntryStatusUnread)
+
+	n, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("unable to count unread entries: %v", err)
+		return 0
+	}
+
+	return n
+}
+
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)
@@ -157,6 +171,19 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 	`
 	if _, err := s.db.Exec(query, feedID, feedID, model.EntryStatusRemoved, pq.Array(entryHashes)); err != nil {
 		return fmt.Errorf("unable to cleanup entries: %v", err)
+	}
+
+	return nil
+}
+
+// ArchiveEntries changes the status of read items to "removed" after 60 days.
+func (s *Storage) ArchiveEntries() error {
+	query := `
+		UPDATE entries SET status='removed'
+		WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '60 days'::interval LIMIT 500)
+	`
+	if _, err := s.db.Exec(query); err != nil {
+		return fmt.Errorf("unable to archive read entries: %v", err)
 	}
 
 	return nil

@@ -13,11 +13,12 @@ import (
 
 // SessionData represents the data attached to the session.
 type SessionData struct {
-	CSRF              string `json:"csrf"`
-	OAuth2State       string `json:"oauth2_state"`
-	FlashMessage      string `json:"flash_message"`
-	FlashErrorMessage string `json:"flash_error_message"`
-	Language          string `json:"language"`
+	CSRF               string `json:"csrf"`
+	OAuth2State        string `json:"oauth2_state"`
+	FlashMessage       string `json:"flash_message"`
+	FlashErrorMessage  string `json:"flash_error_message"`
+	Language           string `json:"language"`
+	PocketRequestToken string `json:"pocket_request_token"`
 }
 
 func (s SessionData) String() string {

@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 )
 
 // Document structure of a Nununx Keeper document
@@ -28,6 +28,10 @@ type Client struct {
 
 // AddEntry sends an entry to Nunux Keeper.
 func (c *Client) AddEntry(link, title, content string) error {
+	if c.baseURL == "" || c.apiKey == "" {
+		return fmt.Errorf("nunux-keeper: missing credentials")
+	}
+
 	doc := &Document{
 		Title:       title,
 		Origin:      link,
@@ -39,13 +43,19 @@ func (c *Client) AddEntry(link, title, content string) error {
 	if err != nil {
 		return err
 	}
-	client := http.NewClientWithCredentials(apiURL, "api", c.apiKey)
-	response, err := client.PostJSON(doc)
+
+	clt := client.New(apiURL)
+	clt.WithCredentials("api", c.apiKey)
+	response, err := clt.PostJSON(doc)
+	if err != nil {
+		return fmt.Errorf("nunux-keeper: unable to send entry: %v", err)
+	}
+
 	if response.HasServerFailure() {
 		return fmt.Errorf("nunux-keeper: unable to send entry, status=%d", response.StatusCode)
 	}
 
-	return err
+	return nil
 }
 
 // NewClient returns a new Nunux Keeepr client.

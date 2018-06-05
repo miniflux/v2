@@ -339,6 +339,24 @@ func (s *Storage) CheckPassword(username, password string) error {
 	return nil
 }
 
+// HasPassword returns true if the given user has a password defined.
+func (s *Storage) HasPassword(userID int64) (bool, error) {
+	var result bool
+	query := `SELECT true FROM users WHERE id=$1 AND password <> ''`
+
+	err := s.db.QueryRow(query, userID).Scan(&result)
+	if err == sql.ErrNoRows {
+		return false, nil
+	} else if err != nil {
+		return false, fmt.Errorf("unable to execute query: %v", err)
+	}
+
+	if result {
+		return true, nil
+	}
+	return false, nil
+}
+
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err

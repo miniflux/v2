@@ -7,9 +7,10 @@ package template
 import (
 	"bytes"
 	"html/template"
-	"io"
+	"time"
 
 	"github.com/miniflux/miniflux/config"
+	"github.com/miniflux/miniflux/errors"
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 
@@ -35,17 +36,36 @@ func (e *Engine) parseAll() {
 	}
 }
 
-// SetLanguage change the language for template processing.
-func (e *Engine) SetLanguage(language string) {
-	e.funcMap.Language = e.translator.GetLanguage(language)
-}
-
-// Execute process a template.
-func (e *Engine) Execute(w io.Writer, name string, data interface{}) {
+// Render process a template and write the ouput.
+func (e *Engine) Render(name, language string, data interface{}) []byte {
 	tpl, ok := e.templates[name]
 	if !ok {
 		logger.Fatal("[Template] The template %s does not exists", name)
 	}
+
+	lang := e.translator.GetLanguage(language)
+	tpl.Funcs(template.FuncMap{
+		"elapsed": func(timezone string, t time.Time) string {
+			return elapsedTime(lang, timezone, t)
+		},
+		"t": func(key interface{}, args ...interface{}) string {
+			switch key.(type) {
+			case string:
+				return lang.Get(key.(string), args...)
+			case errors.LocalizedError:
+				return key.(errors.LocalizedError).Localize(lang)
+			case *errors.LocalizedError:
+				return key.(*errors.LocalizedError).Localize(lang)
+			case error:
+				return key.(error).Error()
+			default:
+				return ""
+			}
+		},
+		"plural": func(key string, n int, args ...interface{}) string {
+			return lang.Plural(key, n, args...)
+		},
+	})
 
 	var b bytes.Buffer
 	err := tpl.ExecuteTemplate(&b, "base", data)
@@ -53,7 +73,7 @@ func (e *Engine) Execute(w io.Writer, name string, data interface{}) {
 		logger.Fatal("[Template] Unable to render template: %v", err)
 	}
 
-	b.WriteTo(w)
+	return b.Bytes()
 }
 
 // NewEngine returns a new template engine.
@@ -61,7 +81,7 @@ func NewEngine(cfg *config.Config, router *mux.Router, translator *locale.Transl
 	tpl := &Engine{
 		templates:  make(map[string]*template.Template),
 		translator: translator,
-		funcMap:    newFuncMap(cfg, router, translator.GetLanguage("en_US")),
+		funcMap:    newFuncMap(cfg, router),
 	}
 
 	tpl.parseAll()

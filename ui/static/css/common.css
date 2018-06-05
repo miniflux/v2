@@ -409,7 +409,7 @@ a.button {
 
 /* Counter */
 .unread-counter-wrapper {
-    font-size: 0.8em;
+    font-size: 0.9em;
     font-weight: 300;
     color: #666;
 }
@@ -526,6 +526,10 @@ a.button {
 
 .item-meta li:last-child:after {
     content: "";
+}
+
+.hide-read-items {
+    overflow-x: hidden;
 }
 
 .hide-read-items .item-status-read {

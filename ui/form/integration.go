@@ -31,6 +31,9 @@ type IntegrationForm struct {
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
+	PocketEnabled        bool
+	PocketAccessToken    string
+	PocketConsumerKey    string
 }
 
 // Merge copy form values to the model.
@@ -54,6 +57,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.NunuxKeeperEnabled = i.NunuxKeeperEnabled
 	integration.NunuxKeeperURL = i.NunuxKeeperURL
 	integration.NunuxKeeperAPIKey = i.NunuxKeeperAPIKey
+	integration.PocketEnabled = i.PocketEnabled
+	integration.PocketAccessToken = i.PocketAccessToken
+	integration.PocketConsumerKey = i.PocketConsumerKey
 }
 
 // NewIntegrationForm returns a new AuthForm.
@@ -78,5 +84,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		NunuxKeeperEnabled:   r.FormValue("nunux_keeper_enabled") == "1",
 		NunuxKeeperURL:       r.FormValue("nunux_keeper_url"),
 		NunuxKeeperAPIKey:    r.FormValue("nunux_keeper_api_key"),
+		PocketEnabled:        r.FormValue("pocket_enabled") == "1",
+		PocketAccessToken:    r.FormValue("pocket_access_token"),
+		PocketConsumerKey:    r.FormValue("pocket_consumer_key"),
 	}
 }

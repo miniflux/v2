@@ -38,20 +38,9 @@ type rssLink struct {
 	Rel     string `xml:"rel,attr"`
 }
 
-type rssItem struct {
-	GUID              string         `xml:"guid"`
-	Title             string         `xml:"title"`
-	Links             []rssLink      `xml:"link"`
-	OriginalLink      string         `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
-	Comments          string         `xml:"comments"`
-	Description       string         `xml:"description"`
-	Content           string         `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
-	PubDate           string         `xml:"pubDate"`
-	Date              string         `xml:"http://purl.org/dc/elements/1.1/ date"`
-	Authors           []rssAuthor    `xml:"author"`
-	Creator           string         `xml:"http://purl.org/dc/elements/1.1/ creator"`
-	Enclosures        []rssEnclosure `xml:"enclosure"`
-	OrigEnclosureLink string         `xml:"http://rssnamespace.org/feedburner/ext/1.0 origEnclosureLink"`
+type rssCommentLink struct {
+	XMLName xml.Name
+	Data    string `xml:",chardata"`
 }
 
 type rssAuthor struct {
@@ -67,7 +56,23 @@ type rssEnclosure struct {
 	Length string `xml:"length,attr"`
 }
 
-func (r *rssFeed) GetSiteURL() string {
+type rssItem struct {
+	GUID              string           `xml:"guid"`
+	Title             string           `xml:"title"`
+	Links             []rssLink        `xml:"link"`
+	OriginalLink      string           `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
+	CommentLinks      []rssCommentLink `xml:"comments"`
+	Description       string           `xml:"description"`
+	EncodedContent    string           `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
+	PubDate           string           `xml:"pubDate"`
+	Date              string           `xml:"http://purl.org/dc/elements/1.1/ date"`
+	Authors           []rssAuthor      `xml:"author"`
+	Creator           string           `xml:"http://purl.org/dc/elements/1.1/ creator"`
+	EnclosureLinks    []rssEnclosure   `xml:"enclosure"`
+	OrigEnclosureLink string           `xml:"http://rssnamespace.org/feedburner/ext/1.0 origEnclosureLink"`
+}
+
+func (r *rssFeed) SiteURL() string {
 	for _, element := range r.Links {
 		if element.XMLName.Space == "" {
 			return strings.TrimSpace(element.Data)
@@ -77,7 +82,7 @@ func (r *rssFeed) GetSiteURL() string {
 	return ""
 }
 
-func (r *rssFeed) GetFeedURL() string {
+func (r *rssFeed) FeedURL() string {
 	for _, element := range r.Links {
 		if element.XMLName.Space == "http://www.w3.org/2005/Atom" {
 			return strings.TrimSpace(element.Href)
@@ -89,8 +94,8 @@ func (r *rssFeed) GetFeedURL() string {
 
 func (r *rssFeed) Transform() *model.Feed {
 	feed := new(model.Feed)
-	feed.SiteURL = r.GetSiteURL()
-	feed.FeedURL = r.GetFeedURL()
+	feed.SiteURL = r.SiteURL()
+	feed.FeedURL = r.FeedURL()
 	feed.Title = strings.TrimSpace(r.Title)
 
 	if feed.Title == "" {
@@ -124,7 +129,7 @@ func (r *rssFeed) Transform() *model.Feed {
 	return feed
 }
 
-func (r *rssItem) GetDate() time.Time {
+func (r *rssItem) PublishedDate() time.Time {
 	value := r.PubDate
 	if r.Date != "" {
 		value = r.Date
@@ -143,7 +148,7 @@ func (r *rssItem) GetDate() time.Time {
 	return time.Now()
 }
 
-func (r *rssItem) GetAuthor() string {
+func (r *rssItem) Author() string {
 	for _, element := range r.Authors {
 		if element.Name != "" {
 			return element.Name
@@ -157,8 +162,8 @@ func (r *rssItem) GetAuthor() string {
 	return r.Creator
 }
 
-func (r *rssItem) GetHash() string {
-	for _, value := range []string{r.GUID, r.GetURL()} {
+func (r *rssItem) Hash() string {
+	for _, value := range []string{r.GUID, r.URL()} {
 		if value != "" {
 			return crypto.Hash(value)
 		}
@@ -167,15 +172,15 @@ func (r *rssItem) GetHash() string {
 	return ""
 }
 
-func (r *rssItem) GetContent() string {
-	if r.Content != "" {
-		return r.Content
+func (r *rssItem) Content() string {
+	if r.EncodedContent != "" {
+		return r.EncodedContent
 	}
 
 	return r.Description
 }
 
-func (r *rssItem) GetURL() string {
+func (r *rssItem) URL() string {
 	if r.OriginalLink != "" {
 		return r.OriginalLink
 	}
@@ -193,10 +198,10 @@ func (r *rssItem) GetURL() string {
 	return ""
 }
 
-func (r *rssItem) GetEnclosures() model.EnclosureList {
+func (r *rssItem) Enclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 
-	for _, enclosure := range r.Enclosures {
+	for _, enclosure := range r.EnclosureLinks {
 		length, _ := strconv.ParseInt(enclosure.Length, 10, 0)
 		enclosureURL := enclosure.URL
 
@@ -217,16 +222,26 @@ func (r *rssItem) GetEnclosures() model.EnclosureList {
 	return enclosures
 }
 
+func (r *rssItem) CommentsURL() string {
+	for _, commentLink := range r.CommentLinks {
+		if commentLink.XMLName.Space == "" {
+			return strings.TrimSpace(commentLink.Data)
+		}
+	}
+
+	return ""
+}
+
 func (r *rssItem) Transform() *model.Entry {
 	entry := new(model.Entry)
-	entry.URL = r.GetURL()
-	entry.CommentsURL = r.Comments
-	entry.Date = r.GetDate()
-	entry.Author = r.GetAuthor()
-	entry.Hash = r.GetHash()
-	entry.Content = r.GetContent()
+	entry.URL = r.URL()
+	entry.CommentsURL = r.CommentsURL()
+	entry.Date = r.PublishedDate()
+	entry.Author = r.Author()
+	entry.Hash = r.Hash()
+	entry.Content = r.Content()
 	entry.Title = strings.TrimSpace(r.Title)
-	entry.Enclosures = r.GetEnclosures()
+	entry.Enclosures = r.Enclosures()
 	return entry
 }
 

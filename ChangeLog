@@ -1,3 +1,49 @@
+Version 2.0.8 (June 4, 2018)
+----------------------------
+
+* Add Pocket integration
+* Rewrite RealIP() to avoid returning an empty string
+* Convert IP field from text to inet type
+* Improve error handling in integration clients
+* Make unread counter clickable
+* Archive read entries automatically after 60 days
+* Hide horizontal overflow when swiping articles on touch devices
+* Add API endpoint to get logged user
+* Fever API: Return response with an empty list if there is no item
+* Handle feeds with dates formatted as Unix timestamp
+
+Version 2.0.7 (May 7, 2018)
+---------------------------
+
+* Add API endpoint to import OPML file
+* Make sure to close request body in HTTP client
+* Do not show save link if no integration is configured
+* Make sure integrations are configured before to make any HTTP requests
+* Avoid people to unlink their OAuth2 account without having a local password
+* Do not use shared variable to translate templates (avoid concurrency issue)
+* Use vanilla HTTP handlers (refactoring)
+* Move HTTP client to its own package (refactoring)
+* Add middleware to read X-Forwarded-Proto header (refactoring)
+* Use Gorilla middleware (refactoring)
+* Scrape parent element for iframe
+* Add SoundCloud and Bandcamp iframe sources
+
+Version 2.0.6 (Apr 20, 2018)
+----------------------------
+
+* Improve graceful shutdown
+* Simplify Heroku deployment
+* Display memory usage and some metrics in logs
+* Increase read/write timeout for HTTP server
+* Add support for Dublin Core date in RDF feeds
+* Do not return an error if the user session is not found
+* Handle some non-english date formats
+* Add missing French translation
+* Rename RSS parser getters
+* Get the right comments URL when having multiple namespaces
+* Ignore caching headers for feeds that send "Expires: 0"
+* Update translations
+
 Version 2.0.5 (Apr 7, 2018)
 ---------------------------
 

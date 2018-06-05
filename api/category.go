@@ -6,98 +6,105 @@ package api
 
 import (
 	"errors"
+	"net/http"
 
-	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/http/context"
+	"github.com/miniflux/miniflux/http/request"
+	"github.com/miniflux/miniflux/http/response/json"
 )
 
 // CreateCategory is the API handler to create a new category.
-func (c *Controller) CreateCategory(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	userID := ctx.UserID()
-	category, err := decodeCategoryPayload(request.Body())
+func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
+	category, err := decodeCategoryPayload(r.Body)
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
+	ctx := context.New(r)
+	userID := ctx.UserID()
 	category.UserID = userID
 	if err := category.ValidateCategoryCreation(); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	if c, err := c.store.CategoryByTitle(userID, category.Title); err != nil || c != nil {
-		response.JSON().BadRequest(errors.New("This category already exists"))
+		json.BadRequest(w, errors.New("This category already exists"))
 		return
 	}
 
 	err = c.store.CreateCategory(category)
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to create this category"))
+		json.ServerError(w, errors.New("Unable to create this category"))
 		return
 	}
 
-	response.JSON().Created(category)
+	json.Created(w, category)
 }
 
 // UpdateCategory is the API handler to update a category.
-func (c *Controller) UpdateCategory(ctx *handler.Context, request *handler.Request, response *handler.Response) {
-	categoryID, err := request.IntegerParam("categoryID")
+func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
+	categoryID, err := request.IntParam(r, "categoryID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
-	category, err := decodeCategoryPayload(request.Body())
+	category, err := decodeCategoryPayload(r.Body)
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
+	ctx := context.New(r)
 	category.UserID = ctx.UserID()
 	category.ID = categoryID
 	if err := category.ValidateCategoryModification(); err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	err = c.store.UpdateCategory(category)
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to update this category"))
+		json.ServerError(w, errors.New("Unable to update this category"))
 		return
 	}
 
-	response.JSON().Created(category)
+	json.Created(w, category)
 }
 
 // GetCategories is the API handler to get a list of categories for a given user.
-func (c *Controller) GetCategories(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	categories, err := c.store.Categories(ctx.UserID())
 	if err != nil {
-		response.JSON().ServerError(errors.New("Unable to fetch categories"))
+		json.ServerError(w, errors.New("Unable to fetch categories"))
 		return
 	}
 
-	response.JSON().Standard(categories)
+	json.OK(w, categories)
 }
 
 // RemoveCategory is the API handler to remove a category.
-func (c *Controller) RemoveCategory(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
+	ctx := context.New(r)
 	userID := ctx.UserID()
-	categoryID, err := request.IntegerParam("categoryID")
+	categoryID, err := request.IntParam(r, "categoryID")
 	if err != nil {
-		response.JSON().BadRequest(err)
+		json.BadRequest(w, err)
 		return
 	}
 
 	if !c.store.CategoryExists(userID, categoryID) {
-		response.JSON().NotFound(errors.New("Category not found"))
+		json.NotFound(w, errors.New("Category not found"))
 		return
 	}
 
 	if err := c.store.RemoveCategory(userID, categoryID); err != nil {
-		response.JSON().ServerError(errors.New("Unable to remove this category"))
+		json.ServerError(w, errors.New("Unable to remove this category"))
 		return
 	}
 
-	response.JSON().NoContent()
+	json.NoContent(w)
 }

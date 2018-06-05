@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 	"github.com/miniflux/miniflux/locale"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
@@ -43,8 +43,8 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
 	}
 
-	client := http.NewClient(url)
-	response, err := client.Get()
+	clt := client.New(url)
+	response, err := clt.Get()
 	if err != nil {
 		if _, ok := err.(*errors.LocalizedError); ok {
 			return nil, err
@@ -129,8 +129,9 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		return errors.NewLocalizedError(errNotFound, feedID)
 	}
 
-	client := http.NewClientWithCacheHeaders(originalFeed.FeedURL, originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
-	response, err := client.Get()
+	clt := client.New(originalFeed.FeedURL)
+	clt.WithCacheHeaders(originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
+	response, err := clt.Get()
 	if err != nil {
 		var customErr errors.LocalizedError
 		if lerr, ok := err.(*errors.LocalizedError); ok {

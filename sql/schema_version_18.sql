@@ -1,0 +1,1 @@
+alter table user_sessions alter column ip set data type inet using ip::inet;

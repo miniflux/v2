@@ -8,6 +8,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 
@@ -27,6 +28,16 @@ func Run(cfg *config.Config, store *storage.Storage) {
 	signal.Notify(stop, os.Interrupt)
 	signal.Notify(stop, syscall.SIGTERM)
 
+	go func() {
+		for {
+			var m runtime.MemStats
+			runtime.ReadMemStats(&m)
+			logger.Debug("Alloc=%vK, TotalAlloc=%vK, Sys=%vK, NumGC=%v, GoRoutines=%d, NumCPU=%d",
+				m.Alloc/1024, m.TotalAlloc/1024, m.Sys/1024, m.NumGC, runtime.NumGoroutine(), runtime.NumCPU())
+			time.Sleep(30 * time.Second)
+		}
+	}()
+
 	translator := locale.Load()
 	feedHandler := feed.NewFeedHandler(store, translator)
 	pool := scheduler.NewWorkerPool(feedHandler, cfg.WorkerPoolSize())
@@ -39,11 +50,13 @@ func Run(cfg *config.Config, store *storage.Storage) {
 		cfg.BatchSize(),
 	)
 
-	scheduler.NewSessionScheduler(store, cfg.SessionCleanupFrequency())
+	scheduler.NewCleanupScheduler(store, cfg.CleanupFrequency())
 
 	<-stop
 	logger.Info("Shutting down the server...")
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	server.Shutdown(ctx)
 	store.Close()
 	logger.Info("Server gracefully stopped")

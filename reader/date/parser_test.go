@@ -47,11 +47,16 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"Friday, December 22, 2017 - 3:09pm",
 		"Friday, December 8, 2017 - 3:07pm",
 		"Thu, 25 Feb 2016 00:00:00 Europe/Brussels",
+		"Mon, 09 Apr 2018, 16:04",
+		"Di, 23 Jan 2018 00:00:00 +0100",
+		"Do, 29 Mär 2018 00:00:00 +0200",
+		"mer, 9 avr 2018 00:00:00 +0200",
+		"1520932969",
 	}
 
 	for _, date := range dates {
 		if _, err := Parse(date); err != nil {
-			t.Fatalf(`Unable to parse date: "%s"`, date)
+			t.Fatalf(`Unable to parse date: %q`, date)
 		}
 	}
 }

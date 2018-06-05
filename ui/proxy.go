@@ -8,49 +8,52 @@ import (
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
+	"net/http"
 	"time"
 
 	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http"
-	"github.com/miniflux/miniflux/http/handler"
+	"github.com/miniflux/miniflux/http/client"
+	"github.com/miniflux/miniflux/http/request"
+	"github.com/miniflux/miniflux/http/response"
+	"github.com/miniflux/miniflux/http/response/html"
 	"github.com/miniflux/miniflux/logger"
 )
 
 // ImageProxy fetch an image from a remote server and sent it back to the browser.
-func (c *Controller) ImageProxy(ctx *handler.Context, request *handler.Request, response *handler.Response) {
+func (c *Controller) ImageProxy(w http.ResponseWriter, r *http.Request) {
 	// If we receive a "If-None-Match" header we assume the image in stored in browser cache
-	if request.Request().Header.Get("If-None-Match") != "" {
-		response.NotModified()
+	if r.Header.Get("If-None-Match") != "" {
+		response.NotModified(w)
 		return
 	}
 
-	encodedURL := request.StringParam("encodedURL", "")
+	encodedURL := request.Param(r, "encodedURL", "")
 	if encodedURL == "" {
-		response.HTML().BadRequest(errors.New("No URL provided"))
+		html.BadRequest(w, errors.New("No URL provided"))
 		return
 	}
 
 	decodedURL, err := base64.URLEncoding.DecodeString(encodedURL)
 	if err != nil {
-		response.HTML().BadRequest(errors.New("Unable to decode this URL"))
+		html.BadRequest(w, errors.New("Unable to decode this URL"))
 		return
 	}
 
-	client := http.NewClient(string(decodedURL))
-	resp, err := client.Get()
+	clt := client.New(string(decodedURL))
+	resp, err := clt.Get()
 	if err != nil {
 		logger.Error("[Controller:ImageProxy] %v", err)
-		response.HTML().NotFound()
+		html.NotFound(w)
 		return
 	}
 
 	if resp.HasServerFailure() {
-		response.HTML().NotFound()
+		html.NotFound(w)
 		return
 	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	etag := crypto.HashFromBytes(body)
 
-	response.Cache(resp.ContentType, etag, body, 72*time.Hour)
+	response.Cache(w, r, resp.ContentType, etag, body, 72*time.Hour)
 }

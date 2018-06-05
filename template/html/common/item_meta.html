@@ -7,18 +7,25 @@
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
-        <li>
-            <a href="#"
-                title="{{ t "Save this article" }}"
-                data-save-entry="true"
-                data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
-                data-label-loading="{{ t "Saving..." }}"
-                data-label-done="{{ t "Done!" }}"
-                >{{ t "Save" }}</a>
-        </li>
+        {{ if .hasSaveEntry }}
+            <li>
+                <a href="#"
+                    title="{{ t "Save this article" }}"
+                    data-save-entry="true"
+                    data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
+                    data-label-loading="{{ t "Saving..." }}"
+                    data-label-done="{{ t "Done!" }}"
+                    >{{ t "Save" }}</a>
+            </li>
+        {{ end }}
         <li>
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
         </li>
+        {{ if .entry.CommentsURL }}
+            <li>
+                <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
+            </li>
+        {{ end }}
         <li>
             <a href="#"
                 data-toggle-bookmark="true"
@@ -38,11 +45,6 @@
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                 >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔ {{ t "Read" }}{{ end }}</a>
         </li>
-        {{ if .entry.CommentsURL }}
-            <li>
-                <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
-            </li>
-        {{ end }}
     </ul>
 </div>
 {{ end }}

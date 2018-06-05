@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http"
+	"github.com/miniflux/miniflux/http/client"
 )
 
 // Client represents a Pinboard client.
@@ -18,6 +18,10 @@ type Client struct {
 
 // AddBookmark sends a link to Pinboard.
 func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error {
+	if c.authToken == "" {
+		return fmt.Errorf("pinboard: missing credentials")
+	}
+
 	toRead := "no"
 	if markAsUnread {
 		toRead = "yes"
@@ -30,13 +34,17 @@ func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error 
 	values.Add("tags", tags)
 	values.Add("toread", toRead)
 
-	client := http.NewClient("https://api.pinboard.in/v1/posts/add?" + values.Encode())
-	response, err := client.Get()
+	clt := client.New("https://api.pinboard.in/v1/posts/add?" + values.Encode())
+	response, err := clt.Get()
+	if err != nil {
+		return fmt.Errorf("pinboard: unable to send bookmark: %v", err)
+	}
+
 	if response.HasServerFailure() {
 		return fmt.Errorf("pinboard: unable to send bookmark, status=%d", response.StatusCode)
 	}
 
-	return err
+	return nil
 }
 
 // NewClient returns a new Pinboard client.

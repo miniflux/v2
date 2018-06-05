@@ -28,8 +28,8 @@
 [[projects]]
   name = "github.com/gorilla/mux"
   packages = ["."]
-  revision = "7f08801859139f86dfafd1c296e2cba9a80d292e"
-  version = "v1.6.0"
+  revision = "53c1911da2b537f792e7cafcb446b05ffe33b996"
+  version = "v1.6.1"
 
 [[projects]]
   branch = "master"
@@ -45,7 +45,7 @@
   branch = "master"
   name = "github.com/miniflux/miniflux-go"
   packages = ["."]
-  revision = "887ba3b062946784f0e64edb1734f435beb204f9"
+  revision = "8863d558cbf1f20beeb640328829205971f1a632"
 
 [[projects]]
   name = "github.com/tdewolff/minify"
@@ -68,12 +68,6 @@
   ]
   revision = "639f6272aec6b52094db77b9ec488214b0b4b1a1"
   version = "v2.3.2"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/tomasen/realip"
-  packages = ["."]
-  revision = "b5850897b7b539a1c9f22cdaa3b547d1bd453db8"
 
 [[projects]]
   branch = "master"
@@ -158,6 +152,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "338222e5111416c46b2b8bde149443abc542b386dd02aff2a0dd6e13334bcf28"
+  inputs-digest = "f030af166f90ac96d133b7ddf9f1f80785508462cac8cae4c65abbdb7c20474b"
   solver-name = "gps-cdcl"
   solver-version = 1

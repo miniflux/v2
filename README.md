@@ -25,7 +25,8 @@ The Miniflux documentation is available here: <https://docs.miniflux.net/>
 - [Opinionated?](https://docs.miniflux.net/en/latest/opinionated.html)
 - [Features](https://docs.miniflux.net/en/latest/features.html)
 - [Requirements](https://docs.miniflux.net/en/latest/requirements.html)
-- [Installation](https://docs.miniflux.net/en/latest/installation.html)
+- [Installation Instructions](https://docs.miniflux.net/en/latest/installation.html)
+- [Installation Tutorials](https://docs.miniflux.net/en/latest/tutorials.html)
 - [Upgrading to a new version](https://docs.miniflux.net/en/latest/upgrade.html)
 - [Configuration](https://docs.miniflux.net/en/latest/configuration.html)
 
