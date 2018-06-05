@@ -1,3 +1,17 @@
+Version 2.0.8 (June 4, 2018)
+----------------------------
+
+* Add Pocket integration
+* Rewrite RealIP() to avoid returning an empty string
+* Convert IP field from text to inet type
+* Improve error handling in integration clients
+* Make unread counter clickable
+* Archive read entries automatically after 60 days
+* Hide horizontal overflow when swiping articles on touch devices
+* Add API endpoint to get logged user
+* Fever API: Return response with an empty list if there is no item
+* Handle feeds with dates formatted as Unix timestamp
+
 Version 2.0.7 (May 7, 2018)
 ---------------------------
 
