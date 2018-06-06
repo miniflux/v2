@@ -155,7 +155,7 @@
     "Scraper Rules": "Extraktionsregeln",
     "Rewrite Rules": "Umschreiberegeln",
     "Preferences saved!": "Einstellungen gespeichert!",
-    "Your external account is now linked!": "Ihr externes Konto wurde verlinkt!",
+    "Your external account is now linked!": "Ihr externes Konto wurde verknüpft!",
     "Save articles to Wallabag": "Artikel in Wallabag speichern",
     "Wallabag API Endpoint": "Wallabag URL",
     "Wallabag Client ID": "Wallabag Client-ID",
@@ -219,5 +219,15 @@
     "This website is permanently unreachable (original error: %q)": "Diese Webseite ist dauerhaft nicht erreichbar (ursprünglicher Fehler: %q)",
     "Website unreachable, the request timed out after %d seconds": "Webseite nicht erreichbar, die Anfrage endete nach %d Sekunden",
     "Comments": "Kommentare",
-    "View Comments": "Kommentare anzeigen"
+    "View Comments": "Kommentare anzeigen",
+    "This file is empty": "Diese Datei ist leer",
+    "Your external account is now dissociated!": "Ihr externer Account ist jetzt getrennt!",
+    "You must define a password otherwise you won't be able to login again.": "Sie müssen ein Passwort festlegen, sonst können Sie sich nicht erneut anmelden.",
+    "Save articles to Pocket": "Artikel in Pocket speichern",
+    "Connect your Pocket account": "Verbinden Sie Ihr Pocket Konto",
+    "Pocket Consumer Key": "« Pocket Consumer Key »",
+    "Pocket Access Token": "« Pocket Access Token »",
+    "Your Pocket account is now linked!": "Ihr Pocket Konto ist jetzt verknüpft!",
+    "Unable to fetch access token from Pocket!": "Zugriffstoken konnte nicht von Pocket abgerufen werden!",
+    "Unable to fetch request token from Pocket!": "Anfrage-Token konnte nicht von Pocket abgerufen werden!"
 }
