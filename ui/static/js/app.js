@@ -122,9 +122,9 @@ class TouchHandler {
 
             if (distance > 75) {
                 EntryHandler.toggleEntryStatus(this.touch.element);
-                this.touch.element.style.opacity = 1;
-                this.touch.element.style.transform = "none";
             }
+            this.touch.element.style.opacity = 1;
+            this.touch.element.style.transform = "none";
         }
 
         this.reset();
