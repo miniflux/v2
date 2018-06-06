@@ -528,7 +528,7 @@ a.button {
     content: "";
 }
 
-.hide-read-items {
+.items {
     overflow-x: hidden;
 }
 
