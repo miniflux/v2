@@ -84,6 +84,25 @@ func QueryIntParam(r *http.Request, param string, defaultValue int) int {
 	return val
 }
 
+// QueryInt64Param returns a querystring parameter as integer.
+func QueryInt64Param(r *http.Request, param string, defaultValue int64) int64 {
+	value := r.URL.Query().Get(param)
+	if value == "" {
+		return defaultValue
+	}
+
+	val, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return defaultValue
+	}
+
+	if val < 0 {
+		return defaultValue
+	}
+
+	return val
+}
+
 // HasQueryParam checks if the query string contains the given parameter.
 func HasQueryParam(r *http.Request, param string) bool {
 	values := r.URL.Query()

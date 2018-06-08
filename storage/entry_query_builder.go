@@ -31,7 +31,9 @@ type EntryQueryBuilder struct {
 	entryID            int64
 	greaterThanEntryID int64
 	entryIDs           []int64
+	since              *time.Time
 	before             *time.Time
+	join               bool
 	starred            bool
 }
 
@@ -106,6 +108,17 @@ func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
 	e.limit = limit
 	return e
 }
+// WithJoin set the feed option.
+func (e *EntryQueryBuilder) WithJoin(join bool) *EntryQueryBuilder {
+	e.join = join
+	return e
+}
+
+// WithSince set the since filter.
+func (e *EntryQueryBuilder) WithSince(date *time.Time) *EntryQueryBuilder {
+	e.since = date
+	return e
+}
 
 // WithOffset set the offset.
 func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
@@ -152,27 +165,39 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 
 // GetEntries returns a list of entries that match the condition.
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
-	debugStr := "[EntryQueryBuilder:GetEntries] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d"
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit))
+	debugStr := "[EntryQueryBuilder:GetEntries] userID=%d, feedID=%d, categoryID=%d, status=%s, order=%s, direction=%s, offset=%d, limit=%d, since=%d"
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf(debugStr, e.userID, e.feedID, e.categoryID, e.status, e.order, e.direction, e.offset, e.limit, e.since))
 
 	query := `
 		SELECT
 		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone u.timezone, e.title,
-		e.url, e.comments_url, e.author, e.content, e.status, e.starred,
-		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
-		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
-		fi.icon_id,
-		u.timezone
+		e.url, e.comments_url, e.author, e.content, e.status, e.starred, u.timezone
+
+		%s
+
 		FROM entries e
-		LEFT JOIN feeds f ON f.id=e.feed_id
-		LEFT JOIN categories c ON c.id=f.category_id
-		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
+		%s
 		LEFT JOIN users u ON u.id=e.user_id
 		WHERE %s %s
 	`
 
+	// Leading comma is important
+	joinBind := `, f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
+		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
+		fi.icon_id
+	`
+	joinCommand := `LEFT JOIN feeds f ON f.id=e.feed_id
+		LEFT JOIN categories c ON c.id=f.category_id
+		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
+	`
+
+	if !e.join {
+		joinBind = ""
+		joinCommand = ""
+	}
+
 	args, conditions := e.buildCondition()
-	query = fmt.Sprintf(query, conditions, e.buildSorting())
+	query = fmt.Sprintf(query, joinBind, joinCommand, conditions, e.buildSorting())
 	// log.Println(query)
 
 	rows, err := e.store.db.Query(query, args...)
@@ -187,52 +212,76 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		var iconID interface{}
 		var tz string
 
-		entry.Feed = &model.Feed{UserID: e.userID}
-		entry.Feed.Category = &model.Category{UserID: e.userID}
-		entry.Feed.Icon = &model.FeedIcon{}
+		var err error
+		if e.join {
+			entry.Feed = &model.Feed{UserID: e.userID}
+			entry.Feed.Category = &model.Category{UserID: e.userID}
+			entry.Feed.Icon = &model.FeedIcon{}
 
-		err := rows.Scan(
-			&entry.ID,
-			&entry.UserID,
-			&entry.FeedID,
-			&entry.Hash,
-			&entry.Date,
-			&entry.Title,
-			&entry.URL,
-			&entry.CommentsURL,
-			&entry.Author,
-			&entry.Content,
-			&entry.Status,
-			&entry.Starred,
-			&entry.Feed.Title,
-			&entry.Feed.FeedURL,
-			&entry.Feed.SiteURL,
-			&entry.Feed.CheckedAt,
-			&entry.Feed.Category.ID,
-			&entry.Feed.Category.Title,
-			&entry.Feed.ScraperRules,
-			&entry.Feed.RewriteRules,
-			&entry.Feed.Crawler,
-			&iconID,
-			&tz,
-		)
+			err = rows.Scan(
+				&entry.ID,
+				&entry.UserID,
+				&entry.FeedID,
+				&entry.Hash,
+				&entry.Date,
+				&entry.Title,
+				&entry.URL,
+				&entry.CommentsURL,
+				&entry.Author,
+				&entry.Content,
+				&entry.Status,
+				&entry.Starred,
+				&tz,
+
+				// Join
+				&entry.Feed.Title,
+				&entry.Feed.FeedURL,
+				&entry.Feed.SiteURL,
+				&entry.Feed.CheckedAt,
+				&entry.Feed.Category.ID,
+				&entry.Feed.Category.Title,
+				&entry.Feed.ScraperRules,
+				&entry.Feed.RewriteRules,
+				&entry.Feed.Crawler,
+				&iconID,
+			)
+
+			if iconID == nil {
+				entry.Feed.Icon.IconID = 0
+			} else {
+				entry.Feed.Icon.IconID = iconID.(int64)
+			}
+
+			entry.Feed.CheckedAt = timezone.Convert(tz, entry.Feed.CheckedAt)
+			entry.Feed.ID = entry.FeedID
+			entry.Feed.Icon.FeedID = entry.FeedID
+
+		} else {
+			entry.Feed = nil
+
+			err = rows.Scan(
+				&entry.ID,
+				&entry.UserID,
+				&entry.FeedID,
+				&entry.Hash,
+				&entry.Date,
+				&entry.Title,
+				&entry.URL,
+				&entry.CommentsURL,
+				&entry.Author,
+				&entry.Content,
+				&entry.Status,
+				&entry.Starred,
+				&tz,
+			)
+		}
 
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
 		}
 
-		if iconID == nil {
-			entry.Feed.Icon.IconID = 0
-		} else {
-			entry.Feed.Icon.IconID = iconID.(int64)
-		}
-
 		// Make sure that timestamp fields contains timezone information (API)
 		entry.Date = timezone.Convert(tz, entry.Date)
-		entry.Feed.CheckedAt = timezone.Convert(tz, entry.Feed.CheckedAt)
-
-		entry.Feed.ID = entry.FeedID
-		entry.Feed.Icon.FeedID = entry.FeedID
 		entries = append(entries, &entry)
 	}
 
@@ -319,6 +368,11 @@ func (e *EntryQueryBuilder) buildCondition() ([]interface{}, string) {
 	if e.before != nil {
 		conditions = append(conditions, fmt.Sprintf("e.published_at < $%d", len(args)+1))
 		args = append(args, e.before)
+	}
+
+	if e.since != nil {
+		conditions = append(conditions, fmt.Sprintf("e.published_at > $%d", len(args)+1))
+		args = append(args, e.since)
 	}
 
 	if e.starred {
