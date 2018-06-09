@@ -33,15 +33,31 @@ func (e *EntryQueryBuilder) WithStarred() *EntryQueryBuilder {
 	return e
 }
 
-// Before add condition based on the entry date.
-func (e *EntryQueryBuilder) Before(date *time.Time) *EntryQueryBuilder {
+// BeforeDate adds a condition < published_at
+func (e *EntryQueryBuilder) BeforeDate(date time.Time) *EntryQueryBuilder {
 	e.conditions = append(e.conditions, fmt.Sprintf("e.published_at < $%d", len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
 }
 
-// WithGreaterThanEntryID adds a condition > entryID.
-func (e *EntryQueryBuilder) WithGreaterThanEntryID(entryID int64) *EntryQueryBuilder {
+// AfterDate adds a condition > published_at
+func (e *EntryQueryBuilder) AfterDate(date time.Time) *EntryQueryBuilder {
+	e.conditions = append(e.conditions, fmt.Sprintf("e.published_at > $%d", len(e.args)+1))
+	e.args = append(e.args, date)
+	return e
+}
+
+// BeforeEntryID adds a condition < entryID.
+func (e *EntryQueryBuilder) BeforeEntryID(entryID int64) *EntryQueryBuilder {
+	if entryID != 0 {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.id < $%d", len(e.args)+1))
+		e.args = append(e.args, entryID)
+	}
+	return e
+}
+
+// AfterEntryID adds a condition > entryID.
+func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
 	if entryID != 0 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.id > $%d", len(e.args)+1))
 		e.args = append(e.args, entryID)
@@ -179,10 +195,10 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	`
 
 	condition := e.buildCondition()
-	query = fmt.Sprintf(query, condition, e.buildSorting())
-	// log.Println(query)
+	sorting := e.buildSorting()
+	query = fmt.Sprintf(query, condition, sorting)
 
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:GetEntries] condition=%s, args=%v", condition, e.args))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:GetEntries] %s, args=%v, sorting=%s", condition, e.args, sorting))
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -286,25 +302,25 @@ func (e *EntryQueryBuilder) buildCondition() string {
 }
 
 func (e *EntryQueryBuilder) buildSorting() string {
-	var queries []string
+	var parts []string
 
 	if e.order != "" {
-		queries = append(queries, fmt.Sprintf(`ORDER BY "%s"`, e.order))
+		parts = append(parts, fmt.Sprintf(`ORDER BY "%s"`, e.order))
 	}
 
 	if e.direction != "" {
-		queries = append(queries, fmt.Sprintf(`%s`, e.direction))
+		parts = append(parts, fmt.Sprintf(`%s`, e.direction))
 	}
 
 	if e.limit != 0 {
-		queries = append(queries, fmt.Sprintf(`LIMIT %d`, e.limit))
+		parts = append(parts, fmt.Sprintf(`LIMIT %d`, e.limit))
 	}
 
 	if e.offset != 0 {
-		queries = append(queries, fmt.Sprintf(`OFFSET %d`, e.offset))
+		parts = append(parts, fmt.Sprintf(`OFFSET %d`, e.offset))
 	}
 
-	return strings.Join(queries, " ")
+	return strings.Join(parts, " ")
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.

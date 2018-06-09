@@ -353,7 +353,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 
 	sinceID := request.QueryIntParam(r, "since_id", 0)
 	if sinceID > 0 {
-		builder.WithGreaterThanEntryID(int64(sinceID))
+		builder.AfterEntryID(int64(sinceID))
 	}
 
 	maxID := request.QueryIntParam(r, "max_id", 0)
@@ -560,7 +560,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	before := request.FormIntValue(r, "before")
 	if before > 0 {
 		t := time.Unix(before, 0)
-		builder.Before(&t)
+		builder.BeforeDate(t)
 	}
 
 	entryIDs, err := builder.GetEntryIDs()
@@ -601,7 +601,7 @@ func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	before := request.FormIntValue(r, "before")
 	if before > 0 {
 		t := time.Unix(before, 0)
-		builder.Before(&t)
+		builder.BeforeDate(t)
 	}
 
 	entryIDs, err := builder.GetEntryIDs()

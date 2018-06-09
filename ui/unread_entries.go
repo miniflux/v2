@@ -57,7 +57,7 @@ func (c *Controller) ShowUnreadPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("pagination", c.getPagination(route.Path(c.router, "unread"), countUnread, offset))
 	view.Set("menu", "unread")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countUnread", countUnread)
 	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
 
 	html.OK(w, view.Render("unread_entries"))

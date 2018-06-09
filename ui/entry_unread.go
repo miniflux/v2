@@ -13,6 +13,7 @@ import (
 	"github.com/miniflux/miniflux/http/route"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/storage"
 	"github.com/miniflux/miniflux/ui/session"
 	"github.com/miniflux/miniflux/ui/view"
 )
@@ -48,10 +49,9 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder = c.store.NewEntryQueryBuilder(user.ID)
-	builder.WithStatus(model.EntryStatusUnread)
-
-	prevEntry, nextEntry, err := c.getEntryPrevNext(user, builder, entry.ID)
+	entryPaginationBuilder := storage.NewEntryPaginationBuilder(c.store, user.ID, entry.ID, user.EntryDirection)
+	entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
+	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
 		html.ServerError(w, err)
 		return
