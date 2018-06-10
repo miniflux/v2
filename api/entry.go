@@ -7,11 +7,13 @@ package api
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/miniflux/miniflux/http/context"
 	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response/json"
 	"github.com/miniflux/miniflux/model"
+	"github.com/miniflux/miniflux/storage"
 )
 
 // GetFeedEntry is the API handler to get a single feed entry.
@@ -116,6 +118,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
+	configureFilters(builder, r)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -167,6 +170,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
+	configureFilters(builder, r)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -218,4 +222,30 @@ func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NoContent(w)
+}
+
+func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
+	beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0)
+	if beforeEntryID != 0 {
+		builder.BeforeEntryID(beforeEntryID)
+	}
+
+	afterEntryID := request.QueryInt64Param(r, "after_entry_id", 0)
+	if afterEntryID != 0 {
+		builder.AfterEntryID(afterEntryID)
+	}
+
+	beforeTimestamp := request.QueryInt64Param(r, "before", 0)
+	if beforeTimestamp != 0 {
+		builder.BeforeDate(time.Unix(beforeTimestamp, 0))
+	}
+
+	afterTimestamp := request.QueryInt64Param(r, "after", 0)
+	if afterTimestamp != 0 {
+		builder.AfterDate(time.Unix(afterTimestamp, 0))
+	}
+
+	if request.HasQueryParam(r, "starred") {
+		builder.WithStarred()
+	}
 }

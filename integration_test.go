@@ -986,7 +986,16 @@ func TestGetAllFeedEntries(t *testing.T) {
 	}
 
 	if allResults.Entries[0].ID == filteredResults.Entries[0].ID {
-		t.Fatal(`Filtered entries should be different than previous result`)
+		t.Fatal(`Filtered entries should be different than previous results`)
+	}
+
+	filteredResultsByEntryID, err := client.FeedEntries(feedID, &miniflux.Filter{BeforeEntryID: allResults.Entries[0].ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if filteredResultsByEntryID.Entries[0].ID == allResults.Entries[0].ID {
+		t.Fatal(`The first entry should filtered out`)
 	}
 }
 
@@ -1034,6 +1043,15 @@ func TestGetAllEntries(t *testing.T) {
 
 	if resultWithDifferentSorting.Entries[0].Title == resultWithoutSorting.Entries[0].Title {
 		t.Fatalf(`The items should be sorted differently "%v" vs "%v"`, resultWithDifferentSorting.Entries[0].Title, resultWithoutSorting.Entries[0].Title)
+	}
+
+	resultWithStarredEntries, err := client.Entries(&miniflux.Filter{Starred: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resultWithStarredEntries.Total != 0 {
+		t.Fatalf(`We are not supposed to have starred entries yet`)
 	}
 }
 

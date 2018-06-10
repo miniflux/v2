@@ -127,11 +127,16 @@ type Enclosures []*Enclosure
 
 // Filter is used to filter entries.
 type Filter struct {
-	Status    string
-	Offset    int
-	Limit     int
-	Order     string
-	Direction string
+	Status        string
+	Offset        int
+	Limit         int
+	Order         string
+	Direction     string
+	Starred       bool
+	Before        int64
+	After         int64
+	BeforeEntryID int64
+	AfterEntryID  int64
 }
 
 // EntryResultSet represents the response when fetching entries.

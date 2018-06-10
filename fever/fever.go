@@ -490,7 +490,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Receiving mark=item call for userID=%d", userID)
 
-	entryID := request.FormIntValue(r, "id")
+	entryID := request.FormInt64Value(r, "id")
 	if entryID <= 0 {
 		return
 	}
@@ -548,7 +548,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Receiving mark=feed call for userID=%d", userID)
 
-	feedID := request.FormIntValue(r, "id")
+	feedID := request.FormInt64Value(r, "id")
 	if feedID <= 0 {
 		return
 	}
@@ -557,7 +557,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithFeedID(feedID)
 
-	before := request.FormIntValue(r, "before")
+	before := request.FormInt64Value(r, "before")
 	if before > 0 {
 		t := time.Unix(before, 0)
 		builder.BeforeDate(t)
@@ -589,7 +589,7 @@ func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	userID := ctx.UserID()
 	logger.Debug("[Fever] Receiving mark=group call for userID=%d", userID)
 
-	groupID := request.FormIntValue(r, "id")
+	groupID := request.FormInt64Value(r, "id")
 	if groupID < 0 {
 		return
 	}
@@ -598,7 +598,7 @@ func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithCategoryID(groupID)
 
-	before := request.FormIntValue(r, "before")
+	before := request.FormInt64Value(r, "before")
 	if before > 0 {
 		t := time.Unix(before, 0)
 		builder.BeforeDate(t)

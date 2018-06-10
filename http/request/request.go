@@ -24,11 +24,15 @@ func Cookie(r *http.Request, name string) string {
 	return cookie.Value
 }
 
-// FormIntValue returns a form value as integer.
-func FormIntValue(r *http.Request, param string) int64 {
+// FormInt64Value returns a form value as integer.
+func FormInt64Value(r *http.Request, param string) int64 {
 	value := r.FormValue(param)
-	integer, _ := strconv.Atoi(value)
-	return int64(integer)
+	integer, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return integer
 }
 
 // IntParam returns an URL route parameter as integer.
@@ -67,12 +71,17 @@ func QueryParam(r *http.Request, param, defaultValue string) string {
 
 // QueryIntParam returns a querystring parameter as integer.
 func QueryIntParam(r *http.Request, param string, defaultValue int) int {
+	return int(QueryInt64Param(r, param, int64(defaultValue)))
+}
+
+// QueryInt64Param returns a querystring parameter as int64.
+func QueryInt64Param(r *http.Request, param string, defaultValue int64) int64 {
 	value := r.URL.Query().Get(param)
 	if value == "" {
 		return defaultValue
 	}
 
-	val, err := strconv.Atoi(value)
+	val, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		return defaultValue
 	}

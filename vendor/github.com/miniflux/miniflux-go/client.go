@@ -477,6 +477,26 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("offset", strconv.Itoa(filter.Offset))
 		}
 
+		if filter.After > 0 {
+			values.Set("after", strconv.FormatInt(filter.After, 10))
+		}
+
+		if filter.AfterEntryID > 0 {
+			values.Set("after_entry_id", strconv.FormatInt(filter.AfterEntryID, 10))
+		}
+
+		if filter.Before > 0 {
+			values.Set("before", strconv.FormatInt(filter.Before, 10))
+		}
+
+		if filter.BeforeEntryID > 0 {
+			values.Set("before_entry_id", strconv.FormatInt(filter.BeforeEntryID, 10))
+		}
+
+		if filter.Starred {
+			values.Set("starred", "1")
+		}
+
 		path = fmt.Sprintf("%s?%s", path, values.Encode())
 	}
 
