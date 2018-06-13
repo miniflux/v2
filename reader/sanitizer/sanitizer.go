@@ -8,11 +8,16 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 
 	"github.com/miniflux/miniflux/url"
 
 	"golang.org/x/net/html"
+)
+
+var (
+	youtubeEmbedRegex = regexp.MustCompile(`http[s]?://www\.youtube\.com/embed/(.*)`)
 )
 
 // Sanitize returns safe HTML.
@@ -85,8 +90,12 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 		}
 
 		if isExternalResourceAttribute(attribute.Key) {
-			if tagName == "iframe" && !isValidIframeSource(attribute.Val) {
-				continue
+			if tagName == "iframe" {
+				if isValidIframeSource(attribute.Val) {
+					value = rewriteIframeURL(attribute.Val)
+				} else {
+					continue
+				}
 			} else {
 				value, err = url.AbsoluteURL(baseURL, value)
 				if err != nil {
@@ -274,6 +283,7 @@ func isValidIframeSource(src string) bool {
 	whitelist := []string{
 		"http://www.youtube.com",
 		"https://www.youtube.com",
+		"https://www.youtube-nocookie.com",
 		"http://player.vimeo.com",
 		"https://player.vimeo.com",
 		"http://www.dailymotion.com",
@@ -364,4 +374,13 @@ func inList(needle string, haystack []string) bool {
 	}
 
 	return false
+}
+
+func rewriteIframeURL(link string) string {
+	matches := youtubeEmbedRegex.FindStringSubmatch(link)
+	if len(matches) == 2 {
+		return `https://www.youtube-nocookie.com/embed/` + matches[1]
+	}
+
+	return link
 }
