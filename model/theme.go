@@ -9,8 +9,9 @@ import "github.com/miniflux/miniflux/errors"
 // Themes returns the list of available themes.
 func Themes() map[string]string {
 	return map[string]string{
-		"default": "Default",
-		"black":   "Black",
+		"default":   "Default",
+		"black":     "Black",
+		"sansserif": "Sans-Serif",
 	}
 }
 
