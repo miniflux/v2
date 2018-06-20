@@ -112,6 +112,10 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 
 	client := c.buildClient()
 	resp, err := client.Do(request)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
 	if err != nil {
 		if uerr, ok := err.(*url.Error); ok {
 			switch uerr.Err.(type) {
@@ -135,7 +139,6 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 
 		return nil, err
 	}
-	defer resp.Body.Close()
 
 	if resp.ContentLength > maxBodySize {
 		return nil, fmt.Errorf("client: response too large (%d bytes)", resp.ContentLength)
