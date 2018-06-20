@@ -36,7 +36,7 @@ type Handler struct {
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, username, password string) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -44,6 +44,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 	}
 
 	clt := client.New(url)
+	clt.WithCredentials(username, password)
 	response, err := clt.Get()
 	if err != nil {
 		if _, ok := err.(*errors.LocalizedError); ok {
@@ -85,6 +86,8 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool)
 	subscription.FeedURL = response.EffectiveURL
 	subscription.UserID = userID
 	subscription.Crawler = crawler
+	subscription.Username = username
+	subscription.Password = password
 
 	if subscription.SiteURL == "" {
 		subscription.SiteURL = subscription.FeedURL
@@ -130,6 +133,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	}
 
 	clt := client.New(originalFeed.FeedURL)
+	clt.WithCredentials(originalFeed.Username, originalFeed.Password)
 	clt.WithCacheHeaders(originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
 	response, err := clt.Get()
 	if err != nil {

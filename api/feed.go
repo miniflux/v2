@@ -15,18 +15,18 @@ import (
 
 // CreateFeed is the API handler to create a new feed.
 func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
-	feedURL, categoryID, err := decodeFeedCreationPayload(r.Body)
+	feedInfo, err := decodeFeedCreationPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, err)
 		return
 	}
 
-	if feedURL == "" {
+	if feedInfo.FeedURL == "" {
 		json.BadRequest(w, errors.New("The feed_url is required"))
 		return
 	}
 
-	if categoryID <= 0 {
+	if feedInfo.CategoryID <= 0 {
 		json.BadRequest(w, errors.New("The category_id is required"))
 		return
 	}
@@ -34,17 +34,24 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 	ctx := context.New(r)
 	userID := ctx.UserID()
 
-	if c.store.FeedURLExists(userID, feedURL) {
+	if c.store.FeedURLExists(userID, feedInfo.FeedURL) {
 		json.BadRequest(w, errors.New("This feed_url already exists"))
 		return
 	}
 
-	if !c.store.CategoryExists(userID, categoryID) {
+	if !c.store.CategoryExists(userID, feedInfo.CategoryID) {
 		json.BadRequest(w, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
 		return
 	}
 
-	feed, err := c.feedHandler.CreateFeed(userID, categoryID, feedURL, false)
+	feed, err := c.feedHandler.CreateFeed(
+		userID,
+		feedInfo.CategoryID,
+		feedInfo.FeedURL,
+		feedInfo.Crawler,
+		feedInfo.Username,
+		feedInfo.Password,
+	)
 	if err != nil {
 		json.ServerError(w, errors.New("Unable to create this feed"))
 		return

@@ -52,8 +52,10 @@ type Client struct {
 
 // WithCredentials defines the username/password for HTTP Basic authentication.
 func (c *Client) WithCredentials(username, password string) *Client {
-	c.username = username
-	c.password = password
+	if username != "" && password != "" {
+		c.username = username
+		c.password = password
+	}
 	return c
 }
 
@@ -159,7 +161,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		ContentLength: resp.ContentLength,
 	}
 
-	logger.Debug("[HttpClient:%s] URL=%s, EffectiveURL=%s, Code=%d, Length=%d, Type=%s, ETag=%s, LastMod=%s, Expires=%s",
+	logger.Debug("[HttpClient:%s] URL=%s, EffectiveURL=%s, Code=%d, Length=%d, Type=%s, ETag=%s, LastMod=%s, Expires=%s, Auth=%v",
 		request.Method,
 		c.url,
 		response.EffectiveURL,
@@ -169,6 +171,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		response.ETag,
 		response.LastModified,
 		resp.Header.Get("Expires"),
+		c.username != "",
 	)
 
 	// Ignore caching headers for feeds that do not want any cache.

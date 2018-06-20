@@ -27,10 +27,11 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL string) (Subscriptions, error) {
+func FindSubscriptions(websiteURL, username, password string) (Subscriptions, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[FindSubscriptions] url=%s", websiteURL))
 
 	clt := client.New(websiteURL)
+	clt.WithCredentials(username, password)
 	response, err := clt.Get()
 	if err != nil {
 		if _, ok := err.(errors.LocalizedError); ok {

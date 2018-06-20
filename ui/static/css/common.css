@@ -184,6 +184,17 @@ tr:hover {
 }
 
 /* Forms */
+fieldset {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+legend {
+    font-weight: 500;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
 label {
     cursor: pointer;
     display: block;

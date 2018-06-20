@@ -16,6 +16,8 @@ type SubscriptionForm struct {
 	URL        string
 	CategoryID int64
 	Crawler    bool
+	Username   string
+	Password   string
 }
 
 // Validate makes sure the form values are valid.
@@ -38,5 +40,7 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		URL:        r.FormValue("url"),
 		Crawler:    r.FormValue("crawler") == "1",
 		CategoryID: int64(categoryID),
+		Username:   r.FormValue("username"),
+		Password:   r.FormValue("password"),
 	}
 }

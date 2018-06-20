@@ -229,5 +229,8 @@
     "Pocket Access Token": "« Pocket Access Token »",
     "Your Pocket account is now linked!": "Votre compte Pocket est maintenant connecté !",
     "Unable to fetch access token from Pocket!": "Impossible de récupérer le jeton d'accès depuis Pocket !",
-    "Unable to fetch request token from Pocket!": "Impossible de récupérer le jeton d'accès depuis Pocket !"
+    "Unable to fetch request token from Pocket!": "Impossible de récupérer le jeton d'accès depuis Pocket !",
+    "Advanced Options": "Options avancées",
+    "Feed Username": "Nom d'utilisateur du flux",
+    "Feed Password": "Mot de passe du flux"
 }

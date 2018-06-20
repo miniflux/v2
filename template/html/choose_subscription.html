@@ -18,7 +18,12 @@
 
 <form action="{{ route "chooseSubscription" }}" method="POST">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
-    <input type="hidden" name="category_id" value="{{ .categoryID }}">
+    <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">
+    <input type="hidden" name="username" value="{{ .form.Username }}">
+    <input type="hidden" name="password" value="{{ .form.Password }}">
+    {{ if .form.Crawler }}
+        <input type="hidden" name="crawler" value="1">
+    {{ end }}
 
     <h3>{{ t "Choose a Subscription" }}</h3>
 
@@ -28,9 +33,6 @@
             <small title="Type = {{ .Type }}"><a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL }}</a></small>
         </div>
     {{ end }}
-
-    <br>
-    <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Subscribe" }}</button>

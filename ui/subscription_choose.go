@@ -47,7 +47,14 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptionForm.URL, subscriptionForm.Crawler)
+	feed, err := c.feedHandler.CreateFeed(
+		user.ID,
+		subscriptionForm.CategoryID,
+		subscriptionForm.URL,
+		subscriptionForm.Crawler,
+		subscriptionForm.Username,
+		subscriptionForm.Password,
+	)
 	if err != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", err)

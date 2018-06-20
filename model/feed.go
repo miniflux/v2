@@ -24,6 +24,8 @@ type Feed struct {
 	ScraperRules       string    `json:"scraper_rules"`
 	RewriteRules       string    `json:"rewrite_rules"`
 	Crawler            bool      `json:"crawler"`
+	Username           string    `json:"username"`
+	Password           string    `json:"password"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon"`
@@ -68,6 +70,14 @@ func (f *Feed) Merge(override *Feed) {
 
 	if override.Category != nil && override.Category.ID != 0 && override.Category.ID != f.Category.ID {
 		f.Category.ID = override.Category.ID
+	}
+
+	if override.Username != f.Username {
+		f.Username = override.Username
+	}
+
+	if override.Password != f.Password {
+		f.Password = override.Password
 	}
 }
 

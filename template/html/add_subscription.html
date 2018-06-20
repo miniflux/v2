@@ -36,7 +36,17 @@
             {{ end }}
         </select>
 
-        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+        <fieldset>
+            <legend>{{ t "Advanced Options" }}</legend>
+
+            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+
+            <label for="form-username">{{ t "Feed Username" }}</label>
+            <input type="text" name="username" id="form-username" value="{{ .form.Username }}">
+
+            <label for="form-password">{{ t "Feed Password" }}</label>
+            <input type="password" name="password" id="form-password" value="{{ .form.Password }}">
+        </fieldset>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Find a subscription" }}</button>

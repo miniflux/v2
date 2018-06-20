@@ -21,6 +21,8 @@ type FeedForm struct {
 	RewriteRules string
 	Crawler      bool
 	CategoryID   int64
+	Username     string
+	Password     string
 }
 
 // ValidateModification validates FeedForm fields
@@ -42,6 +44,8 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.Crawler = f.Crawler
 	feed.ParsingErrorCount = 0
 	feed.ParsingErrorMsg = ""
+	feed.Username = f.Username
+	feed.Password = f.Password
 	return feed
 }
 
@@ -60,5 +64,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		RewriteRules: r.FormValue("rewrite_rules"),
 		Crawler:      r.FormValue("crawler") == "1",
 		CategoryID:   int64(categoryID),
+		Username:     r.FormValue("username"),
+		Password:     r.FormValue("password"),
 	}
 }

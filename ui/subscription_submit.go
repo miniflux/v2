@@ -49,7 +49,11 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	subscriptions, err := subscription.FindSubscriptions(subscriptionForm.URL)
+	subscriptions, err := subscription.FindSubscriptions(
+		subscriptionForm.URL,
+		subscriptionForm.Username,
+		subscriptionForm.Password,
+	)
 	if err != nil {
 		logger.Error("[Controller:SubmitSubscription] %v", err)
 		v.Set("form", subscriptionForm)
@@ -67,7 +71,14 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		v.Set("errorMessage", "Unable to find any subscription.")
 		html.OK(w, v.Render("add_subscription"))
 	case n == 1:
-		feed, err := c.feedHandler.CreateFeed(user.ID, subscriptionForm.CategoryID, subscriptions[0].URL, subscriptionForm.Crawler)
+		feed, err := c.feedHandler.CreateFeed(
+			user.ID,
+			subscriptionForm.CategoryID,
+			subscriptions[0].URL,
+			subscriptionForm.Crawler,
+			subscriptionForm.Username,
+			subscriptionForm.Password,
+		)
 		if err != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", err)
@@ -79,7 +90,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	case n > 1:
 		v := view.New(c.tpl, ctx, sess)
 		v.Set("subscriptions", subscriptions)
-		v.Set("categoryID", subscriptionForm.CategoryID)
+		v.Set("form", subscriptionForm)
 		v.Set("menu", "feeds")
 		v.Set("user", user)
 		v.Set("countUnread", c.store.CountUnreadEntries(user.ID))

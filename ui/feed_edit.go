@@ -56,6 +56,8 @@ func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
 		RewriteRules: feed.RewriteRules,
 		Crawler:      feed.Crawler,
 		CategoryID:   feed.Category.ID,
+		Username:     feed.Username,
+		Password:     feed.Password,
 	}
 
 	sess := session.New(c.store, ctx)

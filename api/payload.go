@@ -23,6 +23,20 @@ type entriesResponse struct {
 	Entries model.Entries `json:"entries"`
 }
 
+type feedCreation struct {
+	FeedURL    string `json:"feed_url"`
+	CategoryID int64  `json:"category_id"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	Crawler    bool   `json:"crawler"`
+}
+
+type subscriptionDiscovery struct {
+	URL      string `json:"url"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func decodeUserPayload(r io.ReadCloser) (*model.User, error) {
 	var user model.User
 
@@ -35,19 +49,16 @@ func decodeUserPayload(r io.ReadCloser) (*model.User, error) {
 	return &user, nil
 }
 
-func decodeURLPayload(r io.ReadCloser) (string, error) {
-	type payload struct {
-		URL string `json:"url"`
-	}
-
-	var p payload
-	decoder := json.NewDecoder(r)
+func decodeURLPayload(r io.ReadCloser) (*subscriptionDiscovery, error) {
 	defer r.Close()
-	if err := decoder.Decode(&p); err != nil {
-		return "", fmt.Errorf("invalid JSON payload: %v", err)
+
+	var s subscriptionDiscovery
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&s); err != nil {
+		return nil, fmt.Errorf("invalid JSON payload: %v", err)
 	}
 
-	return p.URL, nil
+	return &s, nil
 }
 
 func decodeEntryStatusPayload(r io.ReadCloser) ([]int64, string, error) {
@@ -66,20 +77,16 @@ func decodeEntryStatusPayload(r io.ReadCloser) ([]int64, string, error) {
 	return p.EntryIDs, p.Status, nil
 }
 
-func decodeFeedCreationPayload(r io.ReadCloser) (string, int64, error) {
-	type payload struct {
-		FeedURL    string `json:"feed_url"`
-		CategoryID int64  `json:"category_id"`
-	}
-
-	var p payload
-	decoder := json.NewDecoder(r)
+func decodeFeedCreationPayload(r io.ReadCloser) (*feedCreation, error) {
 	defer r.Close()
-	if err := decoder.Decode(&p); err != nil {
-		return "", 0, fmt.Errorf("invalid JSON payload: %v", err)
+
+	var fc feedCreation
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&fc); err != nil {
+		return nil, fmt.Errorf("invalid JSON payload: %v", err)
 	}
 
-	return p.FeedURL, p.CategoryID, nil
+	return &fc, nil
 }
 
 func decodeFeedModificationPayload(r io.ReadCloser) (*model.Feed, error) {
