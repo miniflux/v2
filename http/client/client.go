@@ -224,6 +224,7 @@ func (c *Client) buildHeaders() http.Header {
 		headers.Add("Authorization", c.authorizationHeader)
 	}
 
+	headers.Add("Connection", "close")
 	return headers
 }
 
