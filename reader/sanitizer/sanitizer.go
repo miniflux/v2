@@ -25,6 +25,7 @@ func Sanitize(baseURL, input string) string {
 	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
 	var buffer bytes.Buffer
 	var tagStack []string
+	noscriptDepth := 0
 
 	for {
 		if tokenizer.Next() == html.ErrorToken {
@@ -39,6 +40,10 @@ func Sanitize(baseURL, input string) string {
 		token := tokenizer.Token()
 		switch token.Type {
 		case html.TextToken:
+			if noscriptDepth > 0 {
+				continue
+			}
+
 			buffer.WriteString(html.EscapeString(token.Data))
 		case html.StartTagToken:
 			tagName := token.DataAtom.String()
@@ -55,11 +60,15 @@ func Sanitize(baseURL, input string) string {
 
 					tagStack = append(tagStack, tagName)
 				}
+			} else if tagName == "noscript" {
+				noscriptDepth++
 			}
 		case html.EndTagToken:
 			tagName := token.DataAtom.String()
 			if isValidTag(tagName) && inList(tagName, tagStack) {
 				buffer.WriteString(fmt.Sprintf("</%s>", tagName))
+			} else if tagName == "noscript" {
+				noscriptDepth--
 			}
 		case html.SelfClosingTagToken:
 			tagName := token.DataAtom.String()
@@ -73,6 +82,8 @@ func Sanitize(baseURL, input string) string {
 						buffer.WriteString("<" + tagName + "/>")
 					}
 				}
+			} else if tagName == "noscript" {
+				noscriptDepth--
 			}
 		}
 	}
