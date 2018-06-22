@@ -82,8 +82,6 @@ func Sanitize(baseURL, input string) string {
 						buffer.WriteString("<" + tagName + "/>")
 					}
 				}
-			} else if tagName == "noscript" {
-				noscriptDepth--
 			}
 		}
 	}
