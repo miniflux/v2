@@ -212,3 +212,13 @@ func TestReplaceIframeURL(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestReplaceNoScript(t *testing.T) {
+	input := `<p>Before paragraph.</p><noscript>Inside <code>noscript</code> tag with an image: <img src="http://example.org/" alt="Test"></noscript><p>After paragraph.</p>`
+	expected := `<p>Before paragraph.</p><p>After paragraph.</p>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
