@@ -34,6 +34,17 @@ func (u User) String() string {
 	return fmt.Sprintf("#%d - %s (admin=%v)", u.ID, u.Username, u.IsAdmin)
 }
 
+// UserModification is used to update a user.
+type UserModification struct {
+	Username       *string `json:"username"`
+	Password       *string `json:"password"`
+	IsAdmin        *bool   `json:"is_admin"`
+	Theme          *string `json:"theme"`
+	Language       *string `json:"language"`
+	Timezone       *string `json:"timezone"`
+	EntryDirection *string `json:"entry_sorting_direction"`
+}
+
 // Users represents a list of users.
 type Users []User
 
@@ -77,8 +88,26 @@ type Feed struct {
 	LastModifiedHeader string    `json:"last_modified_header,omitempty"`
 	ParsingErrorMsg    string    `json:"parsing_error_message,omitempty"`
 	ParsingErrorCount  int       `json:"parsing_error_count,omitempty"`
+	ScraperRules       string    `json:"scraper_rules"`
+	RewriteRules       string    `json:"rewrite_rules"`
+	Crawler            bool      `json:"crawler"`
+	Username           string    `json:"username"`
+	Password           string    `json:"password"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
+}
+
+// FeedModification represents changes for a feed.
+type FeedModification struct {
+	FeedURL      *string `json:"feed_url"`
+	SiteURL      *string `json:"site_url"`
+	Title        *string `json:"title"`
+	ScraperRules *string `json:"scraper_rules"`
+	RewriteRules *string `json:"rewrite_rules"`
+	Crawler      *bool   `json:"crawler"`
+	Username     *string `json:"username"`
+	Password     *string `json:"password"`
+	CategoryID   *int64  `json:"category_id"`
 }
 
 // FeedIcon represents the feed icon.

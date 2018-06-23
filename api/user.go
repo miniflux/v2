@@ -33,7 +33,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := decodeUserPayload(r.Body)
+	user, err := decodeUserCreationPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, err)
 		return
@@ -73,13 +73,8 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := decodeUserPayload(r.Body)
+	userChanges, err := decodeUserModificationPayload(r.Body)
 	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
-	if err := user.ValidateUserModification(); err != nil {
 		json.BadRequest(w, err)
 		return
 	}
@@ -95,7 +90,12 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	originalUser.Merge(user)
+	userChanges.Update(originalUser)
+	if err := originalUser.ValidateUserModification(); err != nil {
+		json.BadRequest(w, err)
+		return
+	}
+
 	if err = c.store.UpdateUser(originalUser); err != nil {
 		json.ServerError(w, errors.New("Unable to update this user"))
 		return

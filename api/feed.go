@@ -97,7 +97,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newFeed, err := decodeFeedModificationPayload(r.Body)
+	feedChanges, err := decodeFeedModificationPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, err)
 		return
@@ -105,11 +105,6 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.New(r)
 	userID := ctx.UserID()
-
-	if newFeed.Category != nil && newFeed.Category.ID != 0 && !c.store.CategoryExists(userID, newFeed.Category.ID) {
-		json.BadRequest(w, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
-		return
-	}
 
 	originalFeed, err := c.store.FeedByID(userID, feedID)
 	if err != nil {
@@ -122,7 +117,13 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	originalFeed.Merge(newFeed)
+	feedChanges.Update(originalFeed)
+
+	if !c.store.CategoryExists(userID, originalFeed.Category.ID) {
+		json.BadRequest(w, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
+		return
+	}
+
 	if err := c.store.UpdateFeed(originalFeed); err != nil {
 		json.ServerError(w, errors.New("Unable to update this feed"))
 		return

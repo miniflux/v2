@@ -104,8 +104,8 @@ func (c *Client) CreateUser(username, password string, isAdmin bool) (*User, err
 }
 
 // UpdateUser updates a user in the system.
-func (c *Client) UpdateUser(user *User) (*User, error) {
-	body, err := c.request.Put(fmt.Sprintf("/v1/users/%d", user.ID), user)
+func (c *Client) UpdateUser(userID int64, userChanges *UserModification) (*User, error) {
+	body, err := c.request.Put(fmt.Sprintf("/v1/users/%d", userID), userChanges)
 	if err != nil {
 		return nil, err
 	}
@@ -296,8 +296,8 @@ func (c *Client) CreateFeed(url string, categoryID int64) (int64, error) {
 }
 
 // UpdateFeed updates a feed.
-func (c *Client) UpdateFeed(feed *Feed) (*Feed, error) {
-	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d", feed.ID), feed)
+func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModification) (*Feed, error) {
+	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d", feedID), feedChanges)
 	if err != nil {
 		return nil, err
 	}

@@ -42,44 +42,5 @@ func (f *Feed) String() string {
 	)
 }
 
-// Merge combine override to the current struct
-func (f *Feed) Merge(override *Feed) {
-	if override.Title != "" && override.Title != f.Title {
-		f.Title = override.Title
-	}
-
-	if override.SiteURL != "" && override.SiteURL != f.SiteURL {
-		f.SiteURL = override.SiteURL
-	}
-
-	if override.FeedURL != "" && override.FeedURL != f.FeedURL {
-		f.FeedURL = override.FeedURL
-	}
-
-	if override.ScraperRules != "" && override.ScraperRules != f.ScraperRules {
-		f.ScraperRules = override.ScraperRules
-	}
-
-	if override.RewriteRules != "" && override.RewriteRules != f.RewriteRules {
-		f.RewriteRules = override.RewriteRules
-	}
-
-	if override.Crawler != f.Crawler {
-		f.Crawler = override.Crawler
-	}
-
-	if override.Category != nil && override.Category.ID != 0 && override.Category.ID != f.Category.ID {
-		f.Category.ID = override.Category.ID
-	}
-
-	if override.Username != f.Username {
-		f.Username = override.Username
-	}
-
-	if override.Password != f.Password {
-		f.Password = override.Password
-	}
-}
-
 // Feeds is a list of feed
 type Feeds []*Feed

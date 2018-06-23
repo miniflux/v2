@@ -37,13 +37,115 @@ type subscriptionDiscovery struct {
 	Password string `json:"password"`
 }
 
-func decodeUserPayload(r io.ReadCloser) (*model.User, error) {
-	var user model.User
+type feedModification struct {
+	FeedURL      *string `json:"feed_url"`
+	SiteURL      *string `json:"site_url"`
+	Title        *string `json:"title"`
+	ScraperRules *string `json:"scraper_rules"`
+	RewriteRules *string `json:"rewrite_rules"`
+	Crawler      *bool   `json:"crawler"`
+	Username     *string `json:"username"`
+	Password     *string `json:"password"`
+	CategoryID   *int64  `json:"category_id"`
+}
 
-	decoder := json.NewDecoder(r)
+func (f *feedModification) Update(feed *model.Feed) {
+	if f.FeedURL != nil && *f.FeedURL != "" {
+		feed.FeedURL = *f.FeedURL
+	}
+
+	if f.SiteURL != nil && *f.SiteURL != "" {
+		feed.SiteURL = *f.SiteURL
+	}
+
+	if f.Title != nil && *f.Title != "" {
+		feed.Title = *f.Title
+	}
+
+	if f.ScraperRules != nil {
+		feed.ScraperRules = *f.ScraperRules
+	}
+
+	if f.RewriteRules != nil {
+		feed.RewriteRules = *f.RewriteRules
+	}
+
+	if f.Crawler != nil {
+		feed.Crawler = *f.Crawler
+	}
+
+	if f.Username != nil {
+		feed.Username = *f.Username
+	}
+
+	if f.Password != nil {
+		feed.Password = *f.Password
+	}
+
+	if f.CategoryID != nil && *f.CategoryID > 0 {
+		feed.Category.ID = *f.CategoryID
+	}
+}
+
+type userModification struct {
+	Username       *string `json:"username"`
+	Password       *string `json:"password"`
+	IsAdmin        *bool   `json:"is_admin"`
+	Theme          *string `json:"theme"`
+	Language       *string `json:"language"`
+	Timezone       *string `json:"timezone"`
+	EntryDirection *string `json:"entry_sorting_direction"`
+}
+
+func (u *userModification) Update(user *model.User) {
+	if u.Username != nil {
+		user.Username = *u.Username
+	}
+
+	if u.Password != nil {
+		user.Password = *u.Password
+	}
+
+	if u.IsAdmin != nil {
+		user.IsAdmin = *u.IsAdmin
+	}
+
+	if u.Theme != nil {
+		user.Theme = *u.Theme
+	}
+
+	if u.Language != nil {
+		user.Language = *u.Language
+	}
+
+	if u.Timezone != nil {
+		user.Timezone = *u.Timezone
+	}
+
+	if u.EntryDirection != nil {
+		user.EntryDirection = *u.EntryDirection
+	}
+}
+
+func decodeUserModificationPayload(r io.ReadCloser) (*userModification, error) {
 	defer r.Close()
+
+	var user userModification
+	decoder := json.NewDecoder(r)
 	if err := decoder.Decode(&user); err != nil {
-		return nil, fmt.Errorf("Unable to decode user JSON object: %v", err)
+		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
+	}
+
+	return &user, nil
+}
+
+func decodeUserCreationPayload(r io.ReadCloser) (*model.User, error) {
+	defer r.Close()
+
+	var user model.User
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&user); err != nil {
+		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
 	}
 
 	return &user, nil
@@ -89,13 +191,13 @@ func decodeFeedCreationPayload(r io.ReadCloser) (*feedCreation, error) {
 	return &fc, nil
 }
 
-func decodeFeedModificationPayload(r io.ReadCloser) (*model.Feed, error) {
-	var feed model.Feed
-
-	decoder := json.NewDecoder(r)
+func decodeFeedModificationPayload(r io.ReadCloser) (*feedModification, error) {
 	defer r.Close()
+
+	var feed feedModification
+	decoder := json.NewDecoder(r)
 	if err := decoder.Decode(&feed); err != nil {
-		return nil, fmt.Errorf("Unable to decode feed JSON object: %v", err)
+		return nil, fmt.Errorf("Unable to decode feed modification JSON object: %v", err)
 	}
 
 	return &feed, nil

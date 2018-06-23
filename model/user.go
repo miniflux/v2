@@ -74,33 +74,6 @@ func (u User) ValidatePassword() error {
 	return nil
 }
 
-// Merge update the current user with another user.
-func (u *User) Merge(override *User) {
-	if override.Username != "" && u.Username != override.Username {
-		u.Username = override.Username
-	}
-
-	if override.Password != "" && u.Password != override.Password {
-		u.Password = override.Password
-	}
-
-	if u.IsAdmin != override.IsAdmin {
-		u.IsAdmin = override.IsAdmin
-	}
-
-	if override.Theme != "" && u.Theme != override.Theme {
-		u.Theme = override.Theme
-	}
-
-	if override.Language != "" && u.Language != override.Language {
-		u.Language = override.Language
-	}
-
-	if override.Timezone != "" && u.Timezone != override.Timezone {
-		u.Timezone = override.Timezone
-	}
-}
-
 // UseTimezone converts last login date to the given timezone.
 func (u *User) UseTimezone(tz string) {
 	if u.LastLoginAt != nil {

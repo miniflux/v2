@@ -42,6 +42,10 @@ func TestWithWrongCredentials(t *testing.T) {
 	if err == nil {
 		t.Fatal(`Using bad credentials should raise an error`)
 	}
+
+	if err != miniflux.ErrNotAuthorized {
+		t.Fatal(`A "Not Authorized" error should be raised`)
+	}
 }
 
 func TestGetCurrentLoggedUser(t *testing.T) {
@@ -256,7 +260,7 @@ func TestGetUserByUsername(t *testing.T) {
 	}
 }
 
-func TestUpdateUser(t *testing.T) {
+func TestUpdateUserTheme(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
@@ -265,18 +269,17 @@ func TestUpdateUser(t *testing.T) {
 	}
 
 	theme := "black"
-	user.Theme = theme
-	user, err = client.UpdateUser(user)
+	user, err = client.UpdateUser(user.ID, &miniflux.UserModification{Theme: &theme})
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if user.Theme != theme {
-		t.Fatalf(`Unable to update user: got "%v" instead of "%v"`, user.Theme, theme)
+		t.Fatalf(`Unable to update user Theme: got "%v" instead of "%v"`, user.Theme, theme)
 	}
 }
 
-func TestUpdateUserWithInvalidValue(t *testing.T) {
+func TestUpdateUserThemeWithInvalidValue(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
@@ -285,10 +288,9 @@ func TestUpdateUserWithInvalidValue(t *testing.T) {
 	}
 
 	theme := "something that doesn't exists"
-	user.Theme = theme
-	_, err = client.UpdateUser(user)
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModification{Theme: &theme})
 	if err == nil {
-		t.Fatal(`Updating a user with an invalid value should raise an error`)
+		t.Fatal(`Updating a user Theme with an invalid value should raise an error`)
 	}
 }
 
@@ -319,6 +321,10 @@ func TestCannotListUsersAsNonAdmin(t *testing.T) {
 	if err == nil {
 		t.Fatal(`Standard users should not be able to list any users`)
 	}
+
+	if err != miniflux.ErrForbidden {
+		t.Fatal(`A "Forbidden" error should be raised`)
+	}
 }
 
 func TestCannotGetUserAsNonAdmin(t *testing.T) {
@@ -334,6 +340,10 @@ func TestCannotGetUserAsNonAdmin(t *testing.T) {
 	if err == nil {
 		t.Fatal(`Standard users should not be able to get any users`)
 	}
+
+	if err != miniflux.ErrForbidden {
+		t.Fatal(`A "Forbidden" error should be raised`)
+	}
 }
 
 func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
@@ -345,9 +355,13 @@ func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
 	}
 
 	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	_, err = client.UpdateUser(user)
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModification{})
 	if err == nil {
 		t.Fatal(`Standard users should not be able to update any users`)
+	}
+
+	if err != miniflux.ErrForbidden {
+		t.Fatal(`A "Forbidden" error should be raised`)
 	}
 }
 
@@ -364,6 +378,10 @@ func TestCannotCreateUserAsNonAdmin(t *testing.T) {
 	if err == nil {
 		t.Fatal(`Standard users should not be able to create users`)
 	}
+
+	if err != miniflux.ErrForbidden {
+		t.Fatal(`A "Forbidden" error should be raised`)
+	}
 }
 
 func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
@@ -375,8 +393,13 @@ func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
 	}
 
 	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	if err := client.DeleteUser(user.ID); err == nil {
+	err = client.DeleteUser(user.ID)
+	if err == nil {
 		t.Fatal(`Standard users should not be able to remove any users`)
+	}
+
+	if err != miniflux.ErrForbidden {
+		t.Fatal(`A "Forbidden" error should be raised`)
 	}
 }
 
@@ -417,16 +440,10 @@ func TestCreateCategoryWithEmptyTitle(t *testing.T) {
 }
 
 func TestCannotCreateDuplicatedCategory(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
 
 	categoryName := "My category"
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	_, err = client.CreateCategory(categoryName)
+	_, err := client.CreateCategory(categoryName)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -521,14 +538,8 @@ func TestListCategories(t *testing.T) {
 }
 
 func TestDeleteCategory(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
 	category, err := client.CreateCategory("My category")
 	if err != nil {
 		t.Fatal(err)
@@ -585,82 +596,36 @@ func TestDiscoverSubscriptions(t *testing.T) {
 }
 
 func TestCreateFeed(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feedID == 0 {
-		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
+	if feed.ID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feed.ID)
 	}
 }
 
 func TestCannotCreateDuplicatedFeed(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	feed, category := createFeed(t, client)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feedID == 0 {
-		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
-	}
-
-	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
+	_, err := client.CreateFeed(feed.FeedURL, category.ID)
 	if err == nil {
 		t.Fatal(`Duplicated feeds should not be allowed`)
 	}
 }
 
 func TestCreateFeedWithInexistingCategory(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	_, err = client.CreateFeed(testFeedURL, -1)
+	_, err := client.CreateFeed(testFeedURL, -1)
 	if err == nil {
 		t.Fatal(`Feeds should not be created with inexisting category`)
 	}
 }
 
 func TestExport(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
 	output, err := client.Export()
 	if err != nil {
 		t.Fatal(err)
@@ -672,14 +637,7 @@ func TestExport(t *testing.T) {
 }
 
 func TestImport(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client := createClient(t)
 
 	data := `<?xml version="1.0" encoding="UTF-8"?>
     <opml version="2.0">
@@ -691,125 +649,264 @@ func TestImport(t *testing.T) {
 	</opml>`
 
 	b := bytes.NewReader([]byte(data))
-	err = client.Import(ioutil.NopCloser(b))
+	err := client.Import(ioutil.NopCloser(b))
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestUpdateFeed(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
+func TestUpdateFeedURL(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	url := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{FeedURL: &url})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
+	if updatedFeed.FeedURL != url {
+		t.Fatalf(`Wrong FeedURL, got %q instead of %q`, updatedFeed.FeedURL, url)
+	}
+
+	url = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{FeedURL: &url})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
+	if updatedFeed.FeedURL == "" {
+		t.Fatalf(`The FeedURL should not be empty`)
+	}
+}
+
+func TestUpdateFeedSiteURL(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	url := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{SiteURL: &url})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if feedID == 0 {
-		t.Fatalf(`Invalid feed ID, got "%v"`, feedID)
+	if updatedFeed.SiteURL != url {
+		t.Fatalf(`Wrong SiteURL, got %q instead of %q`, updatedFeed.SiteURL, url)
 	}
 
-	feed, err := client.Feed(feedID)
+	url = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{SiteURL: &url})
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	if updatedFeed.SiteURL == "" {
+		t.Fatalf(`The SiteURL should not be empty`)
+	}
+}
+
+func TestUpdateFeedTitle(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
 
 	newTitle := "My new feed"
-	feed.Title = newTitle
-	feed, err = client.UpdateFeed(feed)
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{Title: &newTitle})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if feed.Title != newTitle {
-		t.Errorf(`Wrong title, got "%v" instead of "%v"`, feed.Title, newTitle)
+	if updatedFeed.Title != newTitle {
+		t.Fatalf(`Wrong title, got %q instead of %q`, updatedFeed.Title, newTitle)
+	}
+
+	newTitle = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{Title: &newTitle})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Title == "" {
+		t.Fatalf(`The Title should not be empty`)
+	}
+}
+
+func TestUpdateFeedCrawler(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	crawler := true
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{Crawler: &crawler})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Crawler != crawler {
+		t.Fatalf(`Wrong crawler value, got "%v" instead of "%v"`, updatedFeed.Crawler, crawler)
+	}
+
+	if updatedFeed.Title != feed.Title {
+		t.Fatalf(`The titles should be the same after update`)
+	}
+
+	crawler = false
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{Crawler: &crawler})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Crawler != crawler {
+		t.Fatalf(`Wrong crawler value, got "%v" instead of "%v"`, updatedFeed.Crawler, crawler)
+	}
+}
+
+func TestUpdateFeedScraperRules(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	scraperRules := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{ScraperRules: &scraperRules})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.ScraperRules != scraperRules {
+		t.Fatalf(`Wrong ScraperRules value, got "%v" instead of "%v"`, updatedFeed.ScraperRules, scraperRules)
+	}
+
+	scraperRules = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{ScraperRules: &scraperRules})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.ScraperRules != scraperRules {
+		t.Fatalf(`Wrong ScraperRules value, got "%v" instead of "%v"`, updatedFeed.ScraperRules, scraperRules)
+	}
+}
+
+func TestUpdateFeedRewriteRules(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	rewriteRules := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{RewriteRules: &rewriteRules})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.RewriteRules != rewriteRules {
+		t.Fatalf(`Wrong RewriteRules value, got "%v" instead of "%v"`, updatedFeed.RewriteRules, rewriteRules)
+	}
+
+	rewriteRules = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{RewriteRules: &rewriteRules})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.RewriteRules != rewriteRules {
+		t.Fatalf(`Wrong RewriteRules value, got "%v" instead of "%v"`, updatedFeed.RewriteRules, rewriteRules)
+	}
+}
+
+func TestUpdateFeedUsername(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	username := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{Username: &username})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Username != username {
+		t.Fatalf(`Wrong Username value, got "%v" instead of "%v"`, updatedFeed.Username, username)
+	}
+
+	username = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{Username: &username})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Username != username {
+		t.Fatalf(`Wrong Username value, got "%v" instead of "%v"`, updatedFeed.Username, username)
+	}
+}
+
+func TestUpdateFeedPassword(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	password := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{Password: &password})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Password != password {
+		t.Fatalf(`Wrong Password value, got "%v" instead of "%v"`, updatedFeed.Password, password)
+	}
+
+	password = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{Password: &password})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Password != password {
+		t.Fatalf(`Wrong Password value, got "%v" instead of "%v"`, updatedFeed.Password, password)
+	}
+}
+
+func TestUpdateFeedCategory(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	newCategory, err := client.CreateCategory("my new category")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{CategoryID: &newCategory.ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Category.ID != newCategory.ID {
+		t.Fatalf(`Wrong CategoryID value, got "%v" instead of "%v"`, updatedFeed.Category.ID, newCategory.ID)
+	}
+
+	categoryID := int64(0)
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{CategoryID: &categoryID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Category.ID == 0 {
+		t.Fatalf(`The CategoryID must defined`)
 	}
 }
 
 func TestDeleteFeed(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = client.DeleteFeed(feedID)
-	if err != nil {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+	if err := client.DeleteFeed(feed.ID); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestRefreshFeed(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = client.RefreshFeed(feedID)
-	if err != nil {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+	if err := client.RefreshFeed(feed.ID); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestGetFeed(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feed, err := client.Feed(feedID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	feed, category := createFeed(t, client)
 
 	if feed.Title != testFeedTitle {
 		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feed.Title, testFeedTitle)
@@ -823,39 +920,23 @@ func TestGetFeed(t *testing.T) {
 		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feed.FeedURL, testFeedURL)
 	}
 
-	if feed.Category.ID != categories[0].ID {
-		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feed.Category.ID, categories[0].ID)
+	if feed.Category.ID != category.ID {
+		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feed.Category.ID, category.ID)
 	}
 
-	if feed.Category.UserID != categories[0].UserID {
-		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feed.Category.UserID, categories[0].UserID)
+	if feed.Category.UserID != category.UserID {
+		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feed.Category.UserID, category.UserID)
 	}
 
-	if feed.Category.Title != categories[0].Title {
-		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feed.Category.Title, categories[0].Title)
+	if feed.Category.Title != category.Title {
+		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feed.Category.Title, category.Title)
 	}
 }
 
 func TestGetFeedIcon(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedIcon, err := client.FeedIcon(feedID)
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+	feedIcon, err := client.FeedIcon(feed.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -888,23 +969,8 @@ func TestGetFeedIconNotFound(t *testing.T) {
 }
 
 func TestGetFeeds(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	feed, category := createFeed(t, client)
 
 	feeds, err := client.Feeds()
 	if err != nil {
@@ -915,8 +981,8 @@ func TestGetFeeds(t *testing.T) {
 		t.Fatalf(`Invalid number of feeds`)
 	}
 
-	if feeds[0].ID != feedID {
-		t.Fatalf(`Invalid feed ID, got "%v" instead of "%v"`, feeds[0].ID, feedID)
+	if feeds[0].ID != feed.ID {
+		t.Fatalf(`Invalid feed ID, got "%v" instead of "%v"`, feeds[0].ID, feed.ID)
 	}
 
 	if feeds[0].Title != testFeedTitle {
@@ -931,39 +997,24 @@ func TestGetFeeds(t *testing.T) {
 		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feeds[0].FeedURL, testFeedURL)
 	}
 
-	if feeds[0].Category.ID != categories[0].ID {
-		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feeds[0].Category.ID, categories[0].ID)
+	if feeds[0].Category.ID != category.ID {
+		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feeds[0].Category.ID, category.ID)
 	}
 
-	if feeds[0].Category.UserID != categories[0].UserID {
-		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feeds[0].Category.UserID, categories[0].UserID)
+	if feeds[0].Category.UserID != category.UserID {
+		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feeds[0].Category.UserID, category.UserID)
 	}
 
-	if feeds[0].Category.Title != categories[0].Title {
-		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feeds[0].Category.Title, categories[0].Title)
+	if feeds[0].Category.Title != category.Title {
+		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feeds[0].Category.Title, category.Title)
 	}
 }
 
 func TestGetAllFeedEntries(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	allResults, err := client.FeedEntries(feedID, nil)
+	allResults, err := client.FeedEntries(feed.ID, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -976,7 +1027,7 @@ func TestGetAllFeedEntries(t *testing.T) {
 		t.Fatal(`Invalid entry title`)
 	}
 
-	filteredResults, err := client.FeedEntries(feedID, &miniflux.Filter{Limit: 1, Offset: 5})
+	filteredResults, err := client.FeedEntries(feed.ID, &miniflux.Filter{Limit: 1, Offset: 5})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -989,7 +1040,7 @@ func TestGetAllFeedEntries(t *testing.T) {
 		t.Fatal(`Filtered entries should be different than previous results`)
 	}
 
-	filteredResultsByEntryID, err := client.FeedEntries(feedID, &miniflux.Filter{BeforeEntryID: allResults.Entries[0].ID})
+	filteredResultsByEntryID, err := client.FeedEntries(feed.ID, &miniflux.Filter{BeforeEntryID: allResults.Entries[0].ID})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1000,23 +1051,8 @@ func TestGetAllFeedEntries(t *testing.T) {
 }
 
 func TestGetAllEntries(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	createFeed(t, client)
 
 	resultWithoutSorting, err := client.Entries(nil)
 	if err != nil {
@@ -1056,25 +1092,10 @@ func TestGetAllEntries(t *testing.T) {
 }
 
 func TestInvalidFilters(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	createFeed(t, client)
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = client.Entries(&miniflux.Filter{Status: "invalid"})
+	_, err := client.Entries(&miniflux.Filter{Status: "invalid"})
 	if err == nil {
 		t.Fatal(`Using invalid status should raise an error`)
 	}
@@ -1091,23 +1112,8 @@ func TestInvalidFilters(t *testing.T) {
 }
 
 func TestGetEntry(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	createFeed(t, client)
 
 	result, err := client.Entries(&miniflux.Filter{Limit: 1})
 	if err != nil {
@@ -1134,23 +1140,8 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestUpdateStatus(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	createFeed(t, client)
 
 	result, err := client.Entries(&miniflux.Filter{Limit: 1})
 	if err != nil {
@@ -1178,23 +1169,8 @@ func TestUpdateStatus(t *testing.T) {
 }
 
 func TestToggleBookmark(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
-	_, err := client.CreateUser(username, testStandardPassword, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
-	categories, err := client.Categories()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = client.CreateFeed(testFeedURL, categories[0].ID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client := createClient(t)
+	createFeed(t, client)
 
 	result, err := client.Entries(&miniflux.Filter{Limit: 1})
 	if err != nil {
@@ -1227,4 +1203,38 @@ func getRandomUsername() string {
 		suffix = append(suffix, strconv.Itoa(rand.Intn(1000)))
 	}
 	return "user" + strings.Join(suffix, "")
+}
+
+func createClient(t *testing.T) *miniflux.Client {
+	username := getRandomUsername()
+	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	_, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return miniflux.NewClient(testBaseURL, username, testStandardPassword)
+}
+
+func createFeed(t *testing.T, client *miniflux.Client) (*miniflux.Feed, *miniflux.Category) {
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	feed, err := client.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return feed, categories[0]
 }

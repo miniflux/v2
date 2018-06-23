@@ -45,7 +45,7 @@
   branch = "master"
   name = "github.com/miniflux/miniflux-go"
   packages = ["."]
-  revision = "ec30672607d4dd72470f4c156bd36ba07d9a9a2a"
+  revision = "cfb76c59831603c2b57e03356e9241facfa9834e"
 
 [[projects]]
   name = "github.com/tdewolff/minify"
