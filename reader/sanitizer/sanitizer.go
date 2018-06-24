@@ -25,7 +25,7 @@ func Sanitize(baseURL, input string) string {
 	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
 	var buffer bytes.Buffer
 	var tagStack []string
-	scriptTagDepth := 0
+	blacklistedTagDepth := 0
 
 	for {
 		if tokenizer.Next() == html.ErrorToken {
@@ -40,7 +40,7 @@ func Sanitize(baseURL, input string) string {
 		token := tokenizer.Token()
 		switch token.Type {
 		case html.TextToken:
-			if scriptTagDepth > 0 {
+			if blacklistedTagDepth > 0 {
 				continue
 			}
 
@@ -60,15 +60,15 @@ func Sanitize(baseURL, input string) string {
 
 					tagStack = append(tagStack, tagName)
 				}
-			} else if isScriptTag(tagName) {
-				scriptTagDepth++
+			} else if isBlacklistedTag(tagName) {
+				blacklistedTagDepth++
 			}
 		case html.EndTagToken:
 			tagName := token.DataAtom.String()
 			if isValidTag(tagName) && inList(tagName, tagStack) {
 				buffer.WriteString(fmt.Sprintf("</%s>", tagName))
-			} else if isScriptTag(tagName) {
-				scriptTagDepth--
+			} else if isBlacklistedTag(tagName) {
+				blacklistedTagDepth--
 			}
 		case html.SelfClosingTagToken:
 			tagName := token.DataAtom.String()
@@ -394,6 +394,19 @@ func rewriteIframeURL(link string) string {
 	return link
 }
 
-func isScriptTag(tagName string) bool {
-	return tagName == "script" || tagName == "noscript"
+// Blacklisted tags remove the tag and all descendants.
+func isBlacklistedTag(tagName string) bool {
+	blacklist := []string{
+		"noscript",
+		"script",
+		"style",
+	}
+
+	for _, element := range blacklist {
+		if element == tagName {
+			return true
+		}
+	}
+
+	return false
 }
