@@ -232,3 +232,13 @@ func TestReplaceScript(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestReplaceStyle(t *testing.T) {
+	input := `<p>Before paragraph.</p><style>body { background-color: #ff0000; }</style><p>After paragraph.</p>`
+	expected := `<p>Before paragraph.</p><p>After paragraph.</p>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
