@@ -25,6 +25,7 @@ func Sanitize(baseURL, input string) string {
 	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
 	var buffer bytes.Buffer
 	var tagStack []string
+	scriptTagDepth := 0
 
 	for {
 		if tokenizer.Next() == html.ErrorToken {
@@ -39,6 +40,10 @@ func Sanitize(baseURL, input string) string {
 		token := tokenizer.Token()
 		switch token.Type {
 		case html.TextToken:
+			if scriptTagDepth > 0 {
+				continue
+			}
+
 			buffer.WriteString(html.EscapeString(token.Data))
 		case html.StartTagToken:
 			tagName := token.DataAtom.String()
@@ -55,11 +60,15 @@ func Sanitize(baseURL, input string) string {
 
 					tagStack = append(tagStack, tagName)
 				}
+			} else if isScriptTag(tagName) {
+				scriptTagDepth++
 			}
 		case html.EndTagToken:
 			tagName := token.DataAtom.String()
 			if isValidTag(tagName) && inList(tagName, tagStack) {
 				buffer.WriteString(fmt.Sprintf("</%s>", tagName))
+			} else if isScriptTag(tagName) {
+				scriptTagDepth--
 			}
 		case html.SelfClosingTagToken:
 			tagName := token.DataAtom.String()
@@ -383,4 +392,8 @@ func rewriteIframeURL(link string) string {
 	}
 
 	return link
+}
+
+func isScriptTag(tagName string) bool {
+	return tagName == "script" || tagName == "noscript"
 }
