@@ -22,9 +22,19 @@ func addImageTitle(entryURL, entryContent string) string {
 		return entryContent
 	}
 
-	imgTag := doc.Find("img").First()
-	if titleAttr, found := imgTag.Attr("title"); found {
-		return entryContent + `<blockquote cite="` + entryURL + `">` + titleAttr + "</blockquote>"
+	matches := doc.Find("img[src][title]")
+
+	if matches.Length() > 0 {
+		matches.Each(func(i int, img *goquery.Selection) {
+			altAttr := img.AttrOr("alt", "")
+			srcAttr, _ := img.Attr("src")
+			titleAttr, _ := img.Attr("title")
+
+			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + titleAttr + `</p></figcaption></figure>`)
+		})
+
+		output, _ := doc.Find("body").First().Html()
+		return output
 	}
 
 	return entryContent

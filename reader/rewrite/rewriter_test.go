@@ -35,7 +35,15 @@ func TestRewriteWithInexistingCustomRule(t *testing.T) {
 func TestRewriteWithXkcdLink(t *testing.T) {
 	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`
 	output := Rewriter("https://xkcd.com/1912/", description, ``)
-	expected := description + `<blockquote cite="https://xkcd.com/1912/">Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you.</blockquote>`
+	expected := `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you."/><figcaption><p>Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you.</p></figcaption></figure>`
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
+	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`
+	output := Rewriter("https://xkcd.com/1912/", description, ``)
+	expected := description
 	if expected != output {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
