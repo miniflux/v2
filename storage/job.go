@@ -30,14 +30,17 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 // NewUserBatch returns a serie of jobs but only for a given user.
 func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList, err error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserJobs] batchSize=%d, userID=%d", batchSize, userID))
+
+	// We do not take the error counter into consideration when the given
+	// user refresh manually all his feeds to force a refresh.
 	query := `
 		SELECT
 		id, user_id
 		FROM feeds
-		WHERE user_id=$1 AND parsing_error_count < $2
+		WHERE user_id=$1
 		ORDER BY checked_at ASC LIMIT %d`
 
-	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID, maxParsingError)
+	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID)
 }
 
 func (s *Storage) fetchBatchRows(query string, args ...interface{}) (jobs model.JobList, err error) {
