@@ -705,12 +705,6 @@ article.feed-parsing-error {
     font-family: Georgia, serif;
 }
 
-.entry-content blockquote + p {
-    color: #555;
-    font-style: italic;
-    font-weight: 200;
-}
-
 .entry-content q {
     color: purple;
     font-family: Georgia, serif;
