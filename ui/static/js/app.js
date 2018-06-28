@@ -8,7 +8,9 @@ class DomHelper {
     }
 
     static openNewTab(url) {
-        let win = window.open(url, "_blank");
+        let win = window.open("");
+        win.opener = null;
+        win.location = url;
         win.focus();
     }
 
