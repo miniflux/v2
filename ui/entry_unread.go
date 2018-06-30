@@ -49,6 +49,16 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Make sure we always get the pagination in unread mode even if the page is refreshed.
+	if entry.Status == model.EntryStatusRead {
+		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
+		if err != nil {
+			logger.Error("[Controller:ShowUnreadEntry] %v", err)
+			html.ServerError(w, nil)
+			return
+		}
+	}
+
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(c.store, user.ID, entry.ID, user.EntryDirection)
 	entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
@@ -86,8 +96,10 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 	view.Set("prevEntryRoute", prevEntryRoute)
 	view.Set("menu", "unread")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+
+	// Fetching the counter here avoid to be off by one.
+	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
 	html.OK(w, view.Render("entry"))
 }

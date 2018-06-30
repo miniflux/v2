@@ -637,13 +637,6 @@ class NavHandler {
     openSelectedItem() {
         let currentItemLink = document.querySelector(".current-item .item-title a");
         if (currentItemLink !== null) {
-            // The following 4 lines ensure that the unread count in the menu is
-            // updated correctly when users presses "o".
-            let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
-            if (currentItemOriginalLink !== null) {
-                let currentItem = document.querySelector(".current-item");
-                EntryHandler.markEntryAsRead(currentItem);
-            }
             window.location.href = currentItemLink.getAttribute("href");
         }
     }
