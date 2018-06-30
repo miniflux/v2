@@ -23,6 +23,7 @@ func Parse() {
 	flagFlushSessions := flag.Bool("flush-sessions", false, "Flush all sessions (disconnect users)")
 	flagCreateAdmin := flag.Bool("create-admin", false, "Create admin user")
 	flagResetPassword := flag.Bool("reset-password", false, "Reset user password")
+	flagResetFeedErrors := flag.Bool("reset-feed-errors", false, "Clear all feed errors for all users")
 	flagDebugMode := flag.Bool("debug", false, "Enable debug mode (more verbose output)")
 	flag.Parse()
 
@@ -49,6 +50,11 @@ func Parse() {
 
 	if *flagMigrate {
 		store.Migrate()
+		return
+	}
+
+	if *flagResetFeedErrors {
+		store.ResetFeedErrors()
 		return
 	}
 

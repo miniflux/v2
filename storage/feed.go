@@ -273,3 +273,9 @@ func (s *Storage) RemoveFeed(userID, feedID int64) error {
 
 	return nil
 }
+
+// ResetFeedErrors removes all feed errors.
+func (s *Storage) ResetFeedErrors() error {
+	_, err := s.db.Exec(`UPDATE feeds SET parsing_error_count=0, parsing_error_msg=''`)
+	return err
+}
