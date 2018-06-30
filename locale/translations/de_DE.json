@@ -111,10 +111,10 @@
     "Last Parsing Error": "Letzter Analysefehler",
     "There is a problem with this feed": "Es gibt ein Problem mit diesem Abonnement",
     "Unable to parse OPML file: %q": "OPML Datei konnte nicht gelesen werden: %q",
-    "Unable to parse RSS feed: %q": "RSS Feed konnte nicht gelesen werden: %q",
-    "Unable to parse Atom feed: %q": "Atom Feed konnte nicht gelesen werden: %q",
-    "Unable to parse JSON feed: %q": "JSON Feed konnte nicht gelesen werden: %q",
-    "Unable to parse RDF feed: %q": "RDF Feed konnte nicht gelesen werden: %q",
+    "Unable to parse RSS feed: %q": "RSS Abonnement konnte nicht gelesen werden: %q",
+    "Unable to parse Atom feed: %q": "Atom Abonnement konnte nicht gelesen werden: %q",
+    "Unable to parse JSON feed: %q": "JSON Abonnement konnte nicht gelesen werden: %q",
+    "Unable to parse RDF feed: %q": "RDF Abonnement konnte nicht gelesen werden: %q",
     "Unable to normalize encoding: %q": "Zeichenkodierung konnte nicht normalisiert werden: %q",
     "Unable to create this category.": "Diese Kategorie konnte nicht angelegt werden.",
     "yes": "ja",
@@ -204,7 +204,7 @@
     "This feed is empty": "Dieses Abonnement ist leer",
     "Flush history": "Verlauf leeren",
     "Site URL": "Webseite-URL",
-    "Feed URL": "Feed-URL",
+    "Feed URL": "Abonnement-URL",
     "Logged as %s": "Angemeldet als %s",
     "Unread Items": "Ungelesen",
     "Change entry status": "Status des Artikels ändern",
@@ -232,5 +232,8 @@
     "Unable to fetch request token from Pocket!": "Anfrage-Token konnte nicht von Pocket abgerufen werden!",
     "Advanced Options": "Erweiterte Optionen",
     "Feed Username": "Benutzername des Abonnements",
-    "Feed Password": "Passwort des Abonnements"
+    "Feed Password": "Passwort des Abonnements",
+    "You are not authorized to access this resource (invalid username/password)": "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen (Benutzername/Passwort ungültig)",
+    "Unable to fetch this resource (Status Code = %d)": "Ressource konnte nicht abgerufen werden (code=%d)",
+    "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Ressource nicht gefunden (404), dieses Abonnement existiert nicht mehr, überprüfen Sie die Abonnement-URL"
 }
