@@ -8,22 +8,22 @@ DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
 linux:
 	@ go generate
-	@ GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-amd64 main.go
+	@ GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-amd64 main.go
 
 linux-arm:
 	@ go generate
-	@ GOOS=linux GOARCH=arm64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv8 main.go
-	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv7 main.go
-	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv6 main.go
-	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv5 main.go
+	@ GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv8 main.go
+	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w -X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv7 main.go
+	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w -X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv6 main.go
+	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags="-s -w -X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv5 main.go
 
 darwin:
 	@ go generate
-	@ GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-darwin-amd64 main.go
+	@ GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X 'github.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-darwin-amd64 main.go
 
 freebsd:
 	@ go generate
-	@ GOOS=freebsd GOARCH=amd64 go build -ldflags="-X 'githug.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-freebsd-amd64 main.go
+	@ GOOS=freebsd GOARCH=amd64 go build -ldflags="-s -w -X 'githug.com/miniflux/miniflux/version.Version=$(VERSION)' -X 'github.com/miniflux/miniflux/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-freebsd-amd64 main.go
 
 build: linux linux-arm darwin freebsd
 
