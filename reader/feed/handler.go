@@ -21,12 +21,13 @@ import (
 
 var (
 	errRequestFailed    = "Unable to execute request: %v"
-	errServerFailure    = "Unable to fetch feed (statusCode=%d)"
+	errServerFailure    = "Unable to fetch feed (Status Code = %d)"
 	errDuplicate        = "This feed already exists (%s)"
 	errNotFound         = "Feed %d not found"
 	errEncoding         = "Unable to normalize encoding: %q"
 	errCategoryNotFound = "Category not found for this user"
 	errEmptyFeed        = "This feed is empty"
+	errResourceNotFound = "Resource not found (404), this feed doesn't exists anymore, check the feed URL"
 )
 
 // Handler contains all the logic to create and refresh feeds.
@@ -151,6 +152,14 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	}
 
 	originalFeed.CheckedAt = time.Now()
+
+	if response.IsNotFound() {
+		err := errors.NewLocalizedError(errResourceNotFound)
+		originalFeed.ParsingErrorCount++
+		originalFeed.ParsingErrorMsg = err.Localize(currentLanguage)
+		h.store.UpdateFeed(originalFeed)
+		return err
+	}
 
 	if response.HasServerFailure() {
 		err := errors.NewLocalizedError(errServerFailure, response.StatusCode)

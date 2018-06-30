@@ -87,7 +87,7 @@
     "Yes": "Tak",
     "No": "Nie",
     "This feed already exists (%s)": "Ten kanał już istnieje (%s)",
-    "Unable to fetch feed (statusCode=%d)": "Kanał nie mógł zostać pobrany (kod=%d)",
+    "Unable to fetch feed (Status Code = %d)": "Kanał nie mógł zostać pobrany (kod=%d)",
     "Unable to open this link: %v": "Nie można było otworzyć tego linku: %v",
     "Unable to analyze this page: %v": "Nie można przeanalizować tej strony: %v",
     "Unable to find any subscription.": "Nie znaleziono żadnych subskrypcji.",

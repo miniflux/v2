@@ -24,6 +24,16 @@ type Response struct {
 	ContentLength int64
 }
 
+// IsNotFound returns true if the resource doesn't exists anymore.
+func (r *Response) IsNotFound() bool {
+	return r.StatusCode == 404 || r.StatusCode == 410
+}
+
+// IsNotAuthorized returns true if the resource require authentication.
+func (r *Response) IsNotAuthorized() bool {
+	return r.StatusCode == 401
+}
+
 // HasServerFailure returns true if the status code represents a failure.
 func (r *Response) HasServerFailure() bool {
 	return r.StatusCode >= 400

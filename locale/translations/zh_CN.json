@@ -85,7 +85,7 @@
     "Yes": "是",
     "No": "否",
     "This feed already exists (%s)": "源已存在 (%s)",
-    "Unable to fetch feed (statusCode=%d)": "无法获取源 (错误代码=%d)",
+    "Unable to fetch feed (Status Code = %d)": "无法获取源 (错误代码=%d)",
     "Unable to open this link: %v": "无法打开这一链接: %v",
     "Unable to analyze this page: %v": "无法分析这一页面: %v",
     "Unable to find any subscription.": "找不到任何订阅.",

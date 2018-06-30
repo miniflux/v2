@@ -84,7 +84,7 @@
     "Yes": "Ja",
     "No": "Nee",
     "This feed already exists (%s)": "Deze feed bestaat al (%s)",
-    "Unable to fetch feed (statusCode=%d)": "Kon feed niet update (code=%d)",
+    "Unable to fetch feed (Status Code = %d)": "Kon feed niet update (code=%d)",
     "Unable to open this link: %v": "Kon link niet volgen: %v",
     "Unable to analyze this page: %v": "Kon pagina niet analyseren: %v",
     "Unable to find any subscription.": "Kon geen feeds vinden.",

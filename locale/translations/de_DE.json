@@ -85,7 +85,7 @@
     "Yes": "Ja",
     "No": "Nein",
     "This feed already exists (%s)": "Diese Abonnement existiert bereits (%s)",
-    "Unable to fetch feed (statusCode=%d)": "Abonnement konnte nicht abgerufen werden (code=%d)",
+    "Unable to fetch feed (Status Code = %d)": "Abonnement konnte nicht abgerufen werden (code=%d)",
     "Unable to open this link: %v": "Dieser Link konnte nicht geöffnet werden: %v",
     "Unable to analyze this page: %v": "Diese Seite konnte nicht analysiert werden: %v",
     "Unable to find any subscription.": "Es wurden keine Abonnements gefunden.",

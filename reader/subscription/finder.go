@@ -24,6 +24,8 @@ var (
 	errConnectionFailure = "Unable to open this link: %v"
 	errUnreadableDoc     = "Unable to analyze this page: %v"
 	errEmptyBody         = "This web page is empty"
+	errNotAuthorized     = "You are not authorized to access this resource (invalid username/password)"
+	errServerFailure     = "Unable to fetch this resource (Status Code = %d)"
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
@@ -38,6 +40,14 @@ func FindSubscriptions(websiteURL, username, password string) (Subscriptions, er
 			return nil, err
 		}
 		return nil, errors.NewLocalizedError(errConnectionFailure, err)
+	}
+
+	if response.IsNotAuthorized() {
+		return nil, errors.NewLocalizedError(errNotAuthorized)
+	}
+
+	if response.HasServerFailure() {
+		return nil, errors.NewLocalizedError(errServerFailure, response.StatusCode)
 	}
 
 	// Content-Length = -1 when no Content-Length header is sent
