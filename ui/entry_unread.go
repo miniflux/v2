@@ -77,14 +77,12 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 		prevEntryRoute = route.Path(c.router, "unreadEntry", "entryID", prevEntry.ID)
 	}
 
-	// We change the status here, otherwise we cannot get the pagination for unread items.
-	if entry.Status == model.EntryStatusUnread {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
-		if err != nil {
-			logger.Error("[Controller:ShowUnreadEntry] %v", err)
-			html.ServerError(w, nil)
-			return
-		}
+	// Always mark the entry as read after fetching the pagination.
+	err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+	if err != nil {
+		logger.Error("[Controller:ShowUnreadEntry] %v", err)
+		html.ServerError(w, nil)
+		return
 	}
 
 	sess := session.New(c.store, ctx)
