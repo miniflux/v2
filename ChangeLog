@@ -1,3 +1,40 @@
+Version 2.0.9 (July 1, 2018)
+----------------------------
+
+* Avoid Chrome to autocomplete no-login password fields
+* Add cli flag to reset all feed errors
+* Do not ignore errored feeds when a user refresh feeds manually
+* Add specific 404 and 401 error messages
+* Strip binaries to reduce size
+* Make sure we always get the pagination in unread mode
+* Fix incorrect data value when toggling bookmark flag on entry page
+* Set opener to null when opening original URL with JavaScript
+* Remove unnecessary style
+* Refactor AddImageTitle rewriter
+    * Only processes images with `src` **and** `title` attributes (others are ignored)
+    * Processes **all** images in the document (not just the first one)
+    * Wraps the image and its title attribute in a `figure` tag with the title attribute's contents in a `figcaption` tag
+* Improve sanitizer to remove `style`, `noscript` and `script` tag contents
+* Improve feed and user API updates with optional values
+* Add new fields for feed username/password
+* Improve memory usage debug log
+* Disable keep-alive for HTTP client
+* Close HTTP response body even for failed requests
+* Add Sans-Serif theme
+* Rewrite iframe Youtube URLs to https://www.youtube-nocookie.com
+* Add more filters for API call `/entries`:
+    * before (unix timestamp)
+    * before_entry_id (int64)
+    * after (unix timestamp)
+    * after_entry_id (int64)
+    * starred (boolean)
+* Rewrite individual entry pagination SQL queries
+* Simplify entry query builder
+* Prevent items from sticking on touchend
+* Extended horizontal overflow to feed and category views
+* Translate missing strings
+* Update German translation
+
 Version 2.0.8 (June 4, 2018)
 ----------------------------
 
