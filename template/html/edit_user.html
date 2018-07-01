@@ -33,13 +33,13 @@
     {{ end }}
 
     <label for="form-username">{{ t "Username" }}</label>
-    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required autofocus>
+    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password" required autofocus>
 
     <label for="form-password">{{ t "Password" }}</label>
-    <input type="password" name="password" id="form-password" value="{{ .form.Password }}">
+    <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
 
     <label for="form-confirmation">{{ t "Confirmation" }}</label>
-    <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}">
+    <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
     <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "Administrator" }}</label>
 

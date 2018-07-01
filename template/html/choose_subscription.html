@@ -19,8 +19,8 @@
 <form action="{{ route "chooseSubscription" }}" method="POST">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
     <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">
-    <input type="hidden" name="username" value="{{ .form.Username }}">
-    <input type="hidden" name="password" value="{{ .form.Password }}">
+    <input type="hidden" name="feed_username" value="{{ .form.Username }}">
+    <input type="hidden" name="feed_password" value="{{ .form.Password }}">
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">
     {{ end }}

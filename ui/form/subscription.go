@@ -40,7 +40,7 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		URL:        r.FormValue("url"),
 		Crawler:    r.FormValue("crawler") == "1",
 		CategoryID: int64(categoryID),
-		Username:   r.FormValue("username"),
-		Password:   r.FormValue("password"),
+		Username:   r.FormValue("feed_username"),
+		Password:   r.FormValue("feed_password"),
 	}
 }

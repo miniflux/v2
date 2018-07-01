@@ -42,10 +42,10 @@
             <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
 
             <label for="form-username">{{ t "Feed Username" }}</label>
-            <input type="text" name="username" id="form-username" value="{{ .form.Username }}">
+            <input type="text" name="feed_username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password">
 
             <label for="form-password">{{ t "Feed Password" }}</label>
-            <input type="password" name="password" id="form-password" value="{{ .form.Password }}">
+            <input type="password" name="feed_password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
         </fieldset>
 
         <div class="buttons">

@@ -64,7 +64,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		RewriteRules: r.FormValue("rewrite_rules"),
 		Crawler:      r.FormValue("crawler") == "1",
 		CategoryID:   int64(categoryID),
-		Username:     r.FormValue("username"),
-		Password:     r.FormValue("password"),
+		Username:     r.FormValue("feed_username"),
+		Password:     r.FormValue("feed_password"),
 	}
 }

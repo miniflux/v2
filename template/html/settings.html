@@ -32,10 +32,10 @@
     <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required>
 
     <label for="form-password">{{ t "Password" }}</label>
-    <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="off">
+    <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
 
     <label for="form-confirmation">{{ t "Confirmation" }}</label>
-    <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="off">
+    <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
     <label for="form-language">{{ t "Language" }}</label>
     <select id="form-language" name="language">

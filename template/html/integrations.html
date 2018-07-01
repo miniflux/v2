@@ -38,7 +38,7 @@
         <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}">
 
         <label for="form-fever-password">{{ t "Fever Password" }}</label>
-        <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}">
+        <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
 
         <p>{{ t "Fever API endpoint:" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
     </div>
@@ -50,7 +50,7 @@
         </label>
 
         <label for="form-pinboard-token">{{ t "Pinboard API Token" }}</label>
-        <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}">
+        <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}" autocomplete="new-password">
 
         <label for="form-pinboard-tags">{{ t "Pinboard Tags" }}</label>
         <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}">
@@ -70,7 +70,7 @@
         <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}">
 
         <label for="form-instapaper-password">{{ t "Instapaper Password" }}</label>
-        <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}">
+        <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
     </div>
 
     <h3>Pocket</h3>
@@ -85,7 +85,7 @@
         {{ end }}
 
         <label for="form-pocket-access-token">{{ t "Pocket Access Token" }}</label>
-        <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}">
+        <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}" autocomplete="new-password">
 
         {{ if not .form.PocketAccessToken }}
             <p><a href="{{ route "pocketAuthorize" }}">{{ t "Connect your Pocket account" }}</a></p>
@@ -105,13 +105,13 @@
         <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}">
 
         <label for="form-wallabag-client-secret">{{ t "Wallabag Client Secret" }}</label>
-        <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}">
+        <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}" autocomplete="new-password">
 
         <label for="form-wallabag-username">{{ t "Wallabag Username" }}</label>
         <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}">
 
         <label for="form-wallabag-password">{{ t "Wallabag Password" }}</label>
-        <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}">
+        <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
     </div>
 
     <h3>Nunux Keeper</h3>
