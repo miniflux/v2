@@ -131,15 +131,16 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 }
 
 func getExtraAttributes(tagName string) ([]string, []string) {
-	if tagName == "a" {
+	switch tagName {
+	case "a":
 		return []string{"rel", "target", "referrerpolicy"}, []string{`rel="noopener noreferrer"`, `target="_blank"`, `referrerpolicy="no-referrer"`}
-	}
-
-	if tagName == "video" || tagName == "audio" {
+	case "video", "audio":
 		return []string{"controls"}, []string{"controls"}
+	case "iframe":
+		return []string{"sandbox"}, []string{`sandbox="allow-scripts allow-same-origin"`}
+	default:
+		return nil, nil
 	}
-
-	return nil, nil
 }
 
 func isValidTag(tagName string) bool {

@@ -165,7 +165,7 @@ func TestEspaceAttributes(t *testing.T) {
 
 func TestReplaceYoutubeURL(t *testing.T) {
 	input := `<iframe src="http://www.youtube.com/embed/test123?version=3&#038;rel=1&#038;fs=1&#038;autohide=2&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;wmode=transparent"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" sandbox="allow-scripts allow-same-origin"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {
@@ -175,7 +175,7 @@ func TestReplaceYoutubeURL(t *testing.T) {
 
 func TestReplaceSecureYoutubeURL(t *testing.T) {
 	input := `<iframe src="https://www.youtube.com/embed/test123"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123" sandbox="allow-scripts allow-same-origin"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {
@@ -185,7 +185,7 @@ func TestReplaceSecureYoutubeURL(t *testing.T) {
 
 func TestReplaceSecureYoutubeURLWithParameters(t *testing.T) {
 	input := `<iframe src="https://www.youtube.com/embed/test123?rel=0&amp;controls=0"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" sandbox="allow-scripts allow-same-origin"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {
@@ -194,8 +194,8 @@ func TestReplaceSecureYoutubeURLWithParameters(t *testing.T) {
 }
 
 func TestReplaceYoutubeURLAlreadyReplaced(t *testing.T) {
-	input := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0"></iframe>`
-	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0"></iframe>`
+	input := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" sandbox="allow-scripts allow-same-origin"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/test123?rel=0&amp;controls=0" sandbox="allow-scripts allow-same-origin"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {
@@ -205,7 +205,7 @@ func TestReplaceYoutubeURLAlreadyReplaced(t *testing.T) {
 
 func TestReplaceIframeURL(t *testing.T) {
 	input := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0"></iframe>`
-	expected := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0"></iframe>`
+	expected := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0" sandbox="allow-scripts allow-same-origin"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {
