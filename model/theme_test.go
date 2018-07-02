@@ -7,7 +7,7 @@ package model
 import "testing"
 
 func TestValidateTheme(t *testing.T) {
-	for _, status := range []string{"default", "black"} {
+	for _, status := range []string{"default", "black", "sansserif"} {
 		if err := ValidateTheme(status); err != nil {
 			t.Error(`A valid theme should not generate any error`)
 		}
