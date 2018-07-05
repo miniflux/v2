@@ -23,6 +23,14 @@ type EntryPaginationBuilder struct {
 	direction  string
 }
 
+// WithSearchQuery adds full-text search query to the condition.
+func (e *EntryPaginationBuilder) WithSearchQuery(query string) {
+	if query != "" {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
+		e.args = append(e.args, query)
+	}
+}
+
 // WithStarred adds starred to the condition.
 func (e *EntryPaginationBuilder) WithStarred() {
 	e.conditions = append(e.conditions, "e.starred is true")

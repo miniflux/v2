@@ -17,6 +17,7 @@ a:hover {
     color: #ddd;
 }
 
+/* Header and main menu */
 .header li {
     border-color: #333;
 }
@@ -36,10 +37,12 @@ a:hover {
     color: rgba(82, 168, 236, 0.85);
 }
 
+/* Page header */
 .page-header h1 {
     border-color: #333;
 }
 
+/* Logo */
 .logo a:hover span {
     color: #555;
 }
@@ -61,6 +64,7 @@ tr:hover {
 }
 
 /* Forms */
+input[type="search"],
 input[type="url"],
 input[type="password"],
 input[type="text"] {
@@ -69,6 +73,7 @@ input[type="text"] {
     color: #ccc;
 }
 
+input[type="search"]:focus,
 input[type="url"]:focus,
 input[type="password"]:focus,
 input[type="text"]:focus {

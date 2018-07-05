@@ -168,13 +168,13 @@ class KeyboardHandler {
 
                 if (keys.every((value, index) => value === this.queue[index])) {
                     this.queue = [];
-                    this.shortcuts[combination]();
+                    this.shortcuts[combination](event);
                     return;
                 }
 
                 if (keys.length === 1 && key === keys[0]) {
                     this.queue = [];
-                    this.shortcuts[combination]();
+                    this.shortcuts[combination](event);
                     return;
                 }
             }
@@ -299,20 +299,11 @@ class UnreadCounterHandler {
             let oldValue = parseInt(element.textContent, 10);
             element.innerHTML = callback(oldValue);
         });
-        // The titlebar must be updated only on the "Unread" page.
+
         if (window.location.href.endsWith('/unread')) {
-            // The following 3 lines ensure that the unread count in the titlebar
-            // is updated correctly when users presses "v".
             let oldValue = parseInt(document.title.split('(')[1], 10);
             let newValue = callback(oldValue);
-            // Notes:
-            // - This will only be executed in the /unread page. Therefore, it
-            //   will not affect titles on other pages.
-            // - When there are no unread items, user cannot press "v".
-            //   Therefore, we need not handle the case where title is
-            //   "Unread Items - Miniflux". This applies to other cases as well.
-            //   i.e.: if there are no unread items, user cannot decrement or
-            //   increment anything.
+
             document.title = document.title.replace(
                 /(.*?)\(\d+\)(.*?)/,
                 function (match, prefix, suffix, offset, string) {
@@ -330,8 +321,7 @@ class EntryHandler {
         request.withBody({entry_ids: entryIDs, status: status});
         request.withCallback(callback);
         request.execute();
-        // The following 5 lines ensure that the unread count in the menu is
-        // updated correctly when users presses "v".
+
         if (status === "read") {
             UnreadCounterHandler.decrement(1);
         } else {
@@ -501,6 +491,13 @@ class MenuHandler {
         } else {
             menu.style.display = "block";
         }
+
+        let searchElement = document.querySelector(".header .search");
+        if (DomHelper.isVisible(searchElement)) {
+            searchElement.style.display = "none";
+        } else {
+            searchElement.style.display = "block";
+        }
     }
 }
 
@@ -537,6 +534,27 @@ class ModalHandler {
 }
 
 class NavHandler {
+    setFocusToSearchInput(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let toggleSwitchElement = document.querySelector(".search-toggle-switch");
+        if (toggleSwitchElement) {
+            toggleSwitchElement.style.display = "none";
+        }
+
+        let searchFormElement = document.querySelector(".search-form");
+        if (searchFormElement) {
+            searchFormElement.style.display = "block";
+        }
+
+        let searchInputElement = document.getElementById("search-input");
+        if (searchInputElement) {
+            searchInputElement.focus();
+            searchInputElement.value = "";
+        }
+    }
+
     showKeyboardShortcuts() {
         let template = document.getElementById("keyboard-shortcuts");
         if (template !== null) {
@@ -757,6 +775,7 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("d", () => navHandler.fetchOriginalContent());
     keyboardHandler.on("f", () => navHandler.toggleBookmark());
     keyboardHandler.on("?", () => navHandler.showKeyboardShortcuts());
+    keyboardHandler.on("/", (e) => navHandler.setFocusToSearchInput(e));
     keyboardHandler.on("Escape", () => ModalHandler.close());
     keyboardHandler.listen();
 
@@ -788,6 +807,10 @@ document.addEventListener("DOMContentLoaded", function() {
     mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);
+    });
+
+    mouseHandler.onClick("a[data-action=search]", (event) => {
+        navHandler.setFocusToSearchInput(event);
     });
 
     if (document.documentElement.clientWidth < 600) {

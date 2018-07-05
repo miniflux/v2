@@ -17,6 +17,7 @@ type pagination struct {
 	ShowPrev     bool
 	NextOffset   int
 	PrevOffset   int
+	SearchQuery  string
 }
 
 func (c *Controller) getPagination(route string, total, offset int) pagination {

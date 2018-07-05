@@ -1,0 +1,30 @@
+{{ define "title"}}{{ t "Search Results" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "Search Results" }} ({{ .total }})</h1>
+</section>
+
+{{ if not .entries }}
+    <p class="alert alert-info">{{ t "There is no result for this search." }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16">
+                    {{ end }}
+                    <a href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">{{ .Title }}</a>
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+        </article>
+        {{ end }}
+    </div>
+    {{ template "pagination" .pagination }}
+{{ end }}
+
+{{ end }}

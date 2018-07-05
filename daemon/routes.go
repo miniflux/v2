@@ -95,6 +95,8 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	uiRouter.HandleFunc("/unread", uiController.ShowUnreadPage).Name("unread").Methods("GET")
 	uiRouter.HandleFunc("/history", uiController.ShowHistoryPage).Name("history").Methods("GET")
 	uiRouter.HandleFunc("/starred", uiController.ShowStarredPage).Name("starred").Methods("GET")
+	uiRouter.HandleFunc("/search", uiController.ShowSearchEntries).Name("searchEntries").Methods("GET")
+	uiRouter.HandleFunc("/search/entry/{entryID}", uiController.ShowSearchEntry).Name("searchEntry").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/refresh", uiController.RefreshFeed).Name("refreshFeed").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/edit", uiController.EditFeed).Name("editFeed").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/remove", uiController.RemoveFeed).Name("removeFeed").Methods("POST")

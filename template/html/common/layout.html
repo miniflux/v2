@@ -65,6 +65,14 @@
                     <a href="{{ route "logout" }}" title="{{ t "Logged as %s" .user.Username }}">{{ t "Logout" }}</a>
                 </li>
             </ul>
+            <div class="search">
+                <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
+                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "Search" }}</a>
+                </div>
+                <form action="{{ route "searchEntries" }}" class="search-form {{ if $.searchQuery }}has-search-query{{ end }}">
+                    <input type="search" name="q" id="search-input" placeholder="{{ t "Search..." }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                </form>
+            </div>
         </nav>
     </header>
     {{ end }}
@@ -115,6 +123,7 @@
                     <li>{{ t "Download original content" }} = <strong>d</strong></li>
                     <li>{{ t "Toggle bookmark" }} = <strong>f</strong></li>
                     <li>{{ t "Save article" }} = <strong>s</strong></li>
+                    <li>{{ t "Set focus on search form" }} = <strong>/</strong></li>
                     <li>{{ t "Close modal dialog" }} = <strong>Esc</strong></li>
                 </ul>
             </div>

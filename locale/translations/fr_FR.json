@@ -235,5 +235,10 @@
     "Feed Password": "Mot de passe du flux",
     "You are not authorized to access this resource (invalid username/password)": "Vous n'êtes pas autorisé à accéder à cette ressource (nom d'utilisateur / mot de passe incorrect)",
     "Unable to fetch this resource (Status Code = %d)": "Impossible de récupérer cette ressource (code=%d)",
-    "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Page introuvable (404), cet abonnement n'existe plus, vérifiez l'adresse du flux"
+    "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Page introuvable (404), cet abonnement n'existe plus, vérifiez l'adresse du flux",
+    "Search Results": "Résultats de la recherche",
+    "There is no result for this search.": "Il n'y a aucun résultat pour cette recherche.",
+    "Search...": "Recherche...",
+    "Set focus on search form": "Mettre le focus sur le champ de recherche",
+    "Search": "Recherche"
 }

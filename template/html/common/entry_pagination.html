@@ -2,7 +2,7 @@
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .prevEntry }}
-            <a href="{{ .prevEntryRoute }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "Previous" }}</a>
+            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "Previous" }}</a>
         {{ else }}
             {{ t "Previous" }}
         {{ end }}
@@ -10,7 +10,7 @@
 
     <div class="pagination-next">
         {{ if .nextEntry }}
-            <a href="{{ .nextEntryRoute }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "Next" }}</a>
+            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "Next" }}</a>
         {{ else }}
             {{ t "Next" }}
         {{ end }}
