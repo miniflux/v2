@@ -235,5 +235,10 @@
     "Feed Password": "Passwort des Abonnements",
     "You are not authorized to access this resource (invalid username/password)": "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen (Benutzername/Passwort ungültig)",
     "Unable to fetch this resource (Status Code = %d)": "Ressource konnte nicht abgerufen werden (code=%d)",
-    "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Ressource nicht gefunden (404), dieses Abonnement existiert nicht mehr, überprüfen Sie die Abonnement-URL"
+    "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Ressource nicht gefunden (404), dieses Abonnement existiert nicht mehr, überprüfen Sie die Abonnement-URL",
+    "Search Results": "Suchergebnisse",
+    "There is no result for this search.": "Es gibt kein Ergebnis für diese Suche.",
+    "Search...": "Suche...",
+    "Set focus on search form": "Fokus auf das Suchformular setzen",
+    "Search": "Suche"
 }
