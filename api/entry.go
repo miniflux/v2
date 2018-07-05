@@ -248,4 +248,9 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	if request.HasQueryParam(r, "starred") {
 		builder.WithStarred()
 	}
+
+	searchQuery := request.QueryParam(r, "search", "")
+	if searchQuery != "" {
+		builder.WithSearchQuery(searchQuery)
+	}
 }

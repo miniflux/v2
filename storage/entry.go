@@ -35,14 +35,41 @@ func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)
 }
 
+// UpdateEntryContent updates entry content.
+func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`UPDATE entries SET content=$1 WHERE id=$2 AND user_id=$3`, entry.Content, entry.ID, entry.UserID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	query := `
+		UPDATE entries
+		SET document_vectors = to_tsvector(title || ' ' || coalesce(content, ''))
+		WHERE id=$1 AND user_id=$2
+	`
+	_, err = tx.Exec(query, entry.ID, entry.UserID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
 // createEntry add a new entry.
 func (s *Storage) createEntry(entry *model.Entry) error {
 	query := `
 		INSERT INTO entries
-		(title, hash, url, comments_url, published_at, content, author, user_id, feed_id)
+		(title, hash, url, comments_url, published_at, content, author, user_id, feed_id, document_vectors)
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8, $9)
-		RETURNING id
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, to_tsvector($1 || ' ' || coalesce($6, '')))
+		RETURNING id, status
 	`
 	err := s.db.QueryRow(
 		query,
@@ -55,13 +82,12 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		entry.Author,
 		entry.UserID,
 		entry.FeedID,
-	).Scan(&entry.ID)
+	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {
 		return fmt.Errorf("unable to create entry: %v", err)
 	}
 
-	entry.Status = "unread"
 	for i := 0; i < len(entry.Enclosures); i++ {
 		entry.Enclosures[i].EntryID = entry.ID
 		entry.Enclosures[i].UserID = entry.UserID
@@ -74,30 +100,14 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 	return nil
 }
 
-// UpdateEntryContent updates entry content.
-func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
-	query := `
-		UPDATE entries SET
-		content=$1
-		WHERE user_id=$2 AND id=$3
-	`
-
-	_, err := s.db.Exec(
-		query,
-		entry.Content,
-		entry.UserID,
-		entry.ID,
-	)
-	return err
-}
-
 // updateEntry updates an entry when a feed is refreshed.
 // Note: we do not update the published date because some feeds do not contains any date,
 // it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE entries SET
-		title=$1, url=$2, comments_url=$3, content=$4, author=$5
+		title=$1, url=$2, comments_url=$3, content=$4, author=$5,
+		document_vectors=to_tsvector($1 || ' ' || coalesce($4, ''))
 		WHERE user_id=$6 AND feed_id=$7 AND hash=$8
 		RETURNING id
 	`
@@ -133,6 +143,20 @@ func (s *Storage) entryExists(entry *model.Entry) bool {
 	return result >= 1
 }
 
+// cleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
+func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
+	query := `
+		DELETE FROM entries
+		WHERE feed_id=$1 AND
+		id IN (SELECT id FROM entries WHERE feed_id=$2 AND status=$3 AND NOT (hash=ANY($4)))
+	`
+	if _, err := s.db.Exec(query, feedID, feedID, model.EntryStatusRemoved, pq.Array(entryHashes)); err != nil {
+		return fmt.Errorf("unable to cleanup entries: %v", err)
+	}
+
+	return nil
+}
+
 // UpdateEntries updates a list of entries while refreshing a feed.
 func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
 	var entryHashes []string
@@ -157,20 +181,6 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 
 	if err := s.cleanupEntries(feedID, entryHashes); err != nil {
 		logger.Error("[Storage:CleanupEntries] %v", err)
-	}
-
-	return nil
-}
-
-// cleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
-func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
-	query := `
-		DELETE FROM entries
-		WHERE feed_id=$1 AND
-		id IN (SELECT id FROM entries WHERE feed_id=$2 AND status=$3 AND NOT (hash=ANY($4)))
-	`
-	if _, err := s.db.Exec(query, feedID, feedID, model.EntryStatusRemoved, pq.Array(entryHashes)); err != nil {
-		return fmt.Errorf("unable to cleanup entries: %v", err)
 	}
 
 	return nil

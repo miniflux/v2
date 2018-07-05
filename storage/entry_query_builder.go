@@ -27,6 +27,15 @@ type EntryQueryBuilder struct {
 	offset     int
 }
 
+// WithSearchQuery adds full-text search query to the condition.
+func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
+	if query != "" {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
+		e.args = append(e.args, query)
+	}
+	return e
+}
+
 // WithStarred adds starred filter.
 func (e *EntryQueryBuilder) WithStarred() *EntryQueryBuilder {
 	e.conditions = append(e.conditions, "e.starred is true")
@@ -146,7 +155,7 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	query := `SELECT count(*) FROM entries e LEFT JOIN feeds f ON f.id=e.feed_id WHERE %s`
 	condition := e.buildCondition()
 
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:CountEntries] condition=%s, args=%v", condition, e.args))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:CountEntries] %s, args=%v", condition, e.args))
 
 	err = e.store.db.QueryRow(fmt.Sprintf(query, condition), e.args...).Scan(&count)
 	if err != nil {
