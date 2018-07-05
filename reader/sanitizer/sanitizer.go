@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	youtubeEmbedRegex = regexp.MustCompile(`http[s]?://www\.youtube\.com/embed/(.*)`)
+	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)`)
 )
 
 // Sanitize returns safe HTML.
@@ -291,6 +291,7 @@ func isBlacklistedResource(src string) bool {
 
 func isValidIframeSource(src string) bool {
 	whitelist := []string{
+		"//www.youtube.com",
 		"http://www.youtube.com",
 		"https://www.youtube.com",
 		"https://www.youtube-nocookie.com",

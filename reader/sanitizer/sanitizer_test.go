@@ -203,6 +203,16 @@ func TestReplaceYoutubeURLAlreadyReplaced(t *testing.T) {
 	}
 }
 
+func TestReplaceProtocolRelativeYoutubeURL(t *testing.T) {
+	input := `<iframe src="//www.youtube.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen"></iframe>`
+	expected := `<iframe src="https://www.youtube-nocookie.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen" sandbox="allow-scripts allow-same-origin"></iframe>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
 func TestReplaceIframeURL(t *testing.T) {
 	input := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0"></iframe>`
 	expected := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0" sandbox="allow-scripts allow-same-origin"></iframe>`
