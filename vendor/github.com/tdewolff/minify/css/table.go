@@ -2,14 +2,26 @@ package css
 
 import "github.com/tdewolff/parse/css"
 
-var requiredDimension = map[string]bool{
-	"s":    true,
-	"ms":   true,
-	"dpi":  true,
-	"dpcm": true,
-	"dppx": true,
-	"hz":   true,
-	"khz":  true,
+var optionalZeroDimension = map[string]bool{
+	"px":   true,
+	"mm":   true,
+	"q":    true,
+	"cm":   true,
+	"in":   true,
+	"pt":   true,
+	"pc":   true,
+	"ch":   true,
+	"em":   true,
+	"ex":   true,
+	"rem":  true,
+	"vh":   true,
+	"vw":   true,
+	"vmin": true,
+	"vmax": true,
+	"deg":  true,
+	"grad": true,
+	"rad":  true,
+	"turn": true,
 }
 
 // Uses http://www.w3.org/TR/2010/PR-css3-color-20101028/ for colors

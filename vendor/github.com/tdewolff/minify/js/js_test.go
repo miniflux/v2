@@ -40,6 +40,17 @@ func TestJS(t *testing.T) {
 		{"false\n\"string\"", "false\n\"string\""},                     // #109
 		{"`\n", "`"},                                                   // go fuzz
 		{"a\n~b", "a\n~b"},                                             // #132
+		{"x / /\\d+/.exec(s)[0]", "x/ /\\d+/.exec(s)[0]"},              // #183
+
+		{"function(){}\n`string`", "function(){}\n`string`"}, // #181
+		{"false\n`string`", "false\n`string`"},               // #181
+		{"`string`\nwhatever()", "`string`\nwhatever()"},     // #181
+
+		{"x+/**/++y", "x+ ++y"},                          // #185
+		{"x+\n++y", "x+\n++y"},                           // #185
+		{"f()/*!com\nment*/g()", "f()/*!com\nment*/g()"}, // #185
+		{"f()/*com\nment*/g()", "f()\ng()"},              // #185
+		{"f()/*!\n*/g()", "f()/*!\n*/g()"},               // #185
 
 		// go-fuzz
 		{`/\`, `/\`},

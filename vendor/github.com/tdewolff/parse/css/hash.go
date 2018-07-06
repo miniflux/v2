@@ -10,291 +10,297 @@ type Hash uint32
 
 // Unique hash definitions to be used instead of strings
 const (
-	Accelerator                 Hash = 0x47f0b // accelerator
-	Aliceblue                   Hash = 0x52509 // aliceblue
-	Alpha                       Hash = 0x5af05 // alpha
-	Antiquewhite                Hash = 0x45c0c // antiquewhite
-	Aquamarine                  Hash = 0x7020a // aquamarine
-	Azimuth                     Hash = 0x5b307 // azimuth
+	Accelerator                 Hash = 0x4b30b // accelerator
+	Aliceblue                   Hash = 0x56109 // aliceblue
+	Alpha                       Hash = 0x5eb05 // alpha
+	Antiquewhite                Hash = 0x4900c // antiquewhite
+	Aquamarine                  Hash = 0x73a0a // aquamarine
+	Azimuth                     Hash = 0x5ef07 // azimuth
 	Background                  Hash = 0xa     // background
-	Background_Attachment       Hash = 0x3a15  // background-attachment
-	Background_Color            Hash = 0x11c10 // background-color
-	Background_Image            Hash = 0x99210 // background-image
+	Background_Attachment       Hash = 0x9115  // background-attachment
+	Background_Color            Hash = 0x11210 // background-color
+	Background_Image            Hash = 0x9ca10 // background-image
 	Background_Position         Hash = 0x13    // background-position
-	Background_Position_X       Hash = 0x80815 // background-position-x
+	Background_Position_X       Hash = 0x84015 // background-position-x
 	Background_Position_Y       Hash = 0x15    // background-position-y
 	Background_Repeat           Hash = 0x1511  // background-repeat
 	Behavior                    Hash = 0x3108  // behavior
-	Black                       Hash = 0x6005  // black
-	Blanchedalmond              Hash = 0x650e  // blanchedalmond
-	Blueviolet                  Hash = 0x52a0a // blueviolet
-	Bold                        Hash = 0x7a04  // bold
-	Border                      Hash = 0x8506  // border
-	Border_Bottom               Hash = 0x850d  // border-bottom
-	Border_Bottom_Color         Hash = 0x8513  // border-bottom-color
-	Border_Bottom_Style         Hash = 0xbe13  // border-bottom-style
-	Border_Bottom_Width         Hash = 0xe113  // border-bottom-width
-	Border_Collapse             Hash = 0x1020f // border-collapse
-	Border_Color                Hash = 0x1350c // border-color
-	Border_Left                 Hash = 0x15c0b // border-left
-	Border_Left_Color           Hash = 0x15c11 // border-left-color
-	Border_Left_Style           Hash = 0x17911 // border-left-style
-	Border_Left_Width           Hash = 0x18a11 // border-left-width
-	Border_Right                Hash = 0x19b0c // border-right
-	Border_Right_Color          Hash = 0x19b12 // border-right-color
-	Border_Right_Style          Hash = 0x1ad12 // border-right-style
-	Border_Right_Width          Hash = 0x1bf12 // border-right-width
-	Border_Spacing              Hash = 0x1d10e // border-spacing
-	Border_Style                Hash = 0x1f40c // border-style
-	Border_Top                  Hash = 0x2000a // border-top
-	Border_Top_Color            Hash = 0x20010 // border-top-color
-	Border_Top_Style            Hash = 0x21010 // border-top-style
-	Border_Top_Width            Hash = 0x22010 // border-top-width
-	Border_Width                Hash = 0x2300c // border-width
-	Bottom                      Hash = 0x8c06  // bottom
-	Burlywood                   Hash = 0x23c09 // burlywood
-	Cadetblue                   Hash = 0x25809 // cadetblue
-	Caption_Side                Hash = 0x2610c // caption-side
-	Charset                     Hash = 0x44207 // charset
-	Chartreuse                  Hash = 0x2730a // chartreuse
-	Chocolate                   Hash = 0x27d09 // chocolate
-	Clear                       Hash = 0x2ab05 // clear
-	Clip                        Hash = 0x2b004 // clip
-	Color                       Hash = 0x9305  // color
-	Content                     Hash = 0x2e507 // content
-	Cornflowerblue              Hash = 0x2ff0e // cornflowerblue
-	Cornsilk                    Hash = 0x30d08 // cornsilk
-	Counter_Increment           Hash = 0x31511 // counter-increment
-	Counter_Reset               Hash = 0x3540d // counter-reset
-	Cue                         Hash = 0x36103 // cue
-	Cue_After                   Hash = 0x36109 // cue-after
-	Cue_Before                  Hash = 0x36a0a // cue-before
-	Cursive                     Hash = 0x37b07 // cursive
-	Cursor                      Hash = 0x38e06 // cursor
-	Darkblue                    Hash = 0x7208  // darkblue
-	Darkcyan                    Hash = 0x7d08  // darkcyan
-	Darkgoldenrod               Hash = 0x2440d // darkgoldenrod
-	Darkgray                    Hash = 0x25008 // darkgray
-	Darkgreen                   Hash = 0x79209 // darkgreen
-	Darkkhaki                   Hash = 0x88509 // darkkhaki
-	Darkmagenta                 Hash = 0x4f40b // darkmagenta
-	Darkolivegreen              Hash = 0x7210e // darkolivegreen
-	Darkorange                  Hash = 0x7860a // darkorange
-	Darkorchid                  Hash = 0x87c0a // darkorchid
-	Darksalmon                  Hash = 0x8c00a // darksalmon
-	Darkseagreen                Hash = 0x9240c // darkseagreen
-	Darkslateblue               Hash = 0x3940d // darkslateblue
-	Darkslategray               Hash = 0x3a10d // darkslategray
-	Darkturquoise               Hash = 0x3ae0d // darkturquoise
-	Darkviolet                  Hash = 0x3bb0a // darkviolet
-	Deeppink                    Hash = 0x26b08 // deeppink
-	Deepskyblue                 Hash = 0x8930b // deepskyblue
-	Default                     Hash = 0x57b07 // default
-	Direction                   Hash = 0x9f109 // direction
-	Display                     Hash = 0x3c507 // display
-	Document                    Hash = 0x3d308 // document
-	Dodgerblue                  Hash = 0x3db0a // dodgerblue
-	Elevation                   Hash = 0x4a009 // elevation
-	Empty_Cells                 Hash = 0x4c20b // empty-cells
-	Fantasy                     Hash = 0x5ce07 // fantasy
-	Filter                      Hash = 0x59806 // filter
-	Firebrick                   Hash = 0x3e509 // firebrick
-	Float                       Hash = 0x3ee05 // float
-	Floralwhite                 Hash = 0x3f30b // floralwhite
-	Font                        Hash = 0xd804  // font
-	Font_Face                   Hash = 0xd809  // font-face
-	Font_Family                 Hash = 0x41d0b // font-family
-	Font_Size                   Hash = 0x42809 // font-size
-	Font_Size_Adjust            Hash = 0x42810 // font-size-adjust
-	Font_Stretch                Hash = 0x4380c // font-stretch
-	Font_Style                  Hash = 0x4490a // font-style
-	Font_Variant                Hash = 0x4530c // font-variant
-	Font_Weight                 Hash = 0x46e0b // font-weight
-	Forestgreen                 Hash = 0x3700b // forestgreen
-	Fuchsia                     Hash = 0x47907 // fuchsia
-	Gainsboro                   Hash = 0x14c09 // gainsboro
-	Ghostwhite                  Hash = 0x1de0a // ghostwhite
-	Goldenrod                   Hash = 0x24809 // goldenrod
-	Greenyellow                 Hash = 0x7960b // greenyellow
-	Height                      Hash = 0x68506 // height
-	Honeydew                    Hash = 0x5b908 // honeydew
-	Hsl                         Hash = 0xf303  // hsl
-	Hsla                        Hash = 0xf304  // hsla
-	Ime_Mode                    Hash = 0x88d08 // ime-mode
-	Import                      Hash = 0x4e306 // import
-	Important                   Hash = 0x4e309 // important
-	Include_Source              Hash = 0x7f20e // include-source
-	Indianred                   Hash = 0x4ec09 // indianred
-	Inherit                     Hash = 0x51907 // inherit
-	Initial                     Hash = 0x52007 // initial
-	Keyframes                   Hash = 0x40109 // keyframes
-	Lavender                    Hash = 0xf508  // lavender
-	Lavenderblush               Hash = 0xf50d  // lavenderblush
-	Lawngreen                   Hash = 0x4da09 // lawngreen
-	Layer_Background_Color      Hash = 0x11616 // layer-background-color
-	Layer_Background_Image      Hash = 0x98c16 // layer-background-image
-	Layout_Flow                 Hash = 0x5030b // layout-flow
-	Layout_Grid                 Hash = 0x53f0b // layout-grid
-	Layout_Grid_Char            Hash = 0x53f10 // layout-grid-char
-	Layout_Grid_Char_Spacing    Hash = 0x53f18 // layout-grid-char-spacing
-	Layout_Grid_Line            Hash = 0x55710 // layout-grid-line
-	Layout_Grid_Mode            Hash = 0x56d10 // layout-grid-mode
-	Layout_Grid_Type            Hash = 0x58210 // layout-grid-type
-	Left                        Hash = 0x16304 // left
-	Lemonchiffon                Hash = 0xcf0c  // lemonchiffon
-	Letter_Spacing              Hash = 0x5310e // letter-spacing
-	Lightblue                   Hash = 0x59e09 // lightblue
-	Lightcoral                  Hash = 0x5a70a // lightcoral
-	Lightcyan                   Hash = 0x5d509 // lightcyan
-	Lightgoldenrodyellow        Hash = 0x5de14 // lightgoldenrodyellow
-	Lightgray                   Hash = 0x60509 // lightgray
-	Lightgreen                  Hash = 0x60e0a // lightgreen
-	Lightpink                   Hash = 0x61809 // lightpink
-	Lightsalmon                 Hash = 0x6210b // lightsalmon
-	Lightseagreen               Hash = 0x62c0d // lightseagreen
-	Lightskyblue                Hash = 0x6390c // lightskyblue
-	Lightslateblue              Hash = 0x6450e // lightslateblue
-	Lightsteelblue              Hash = 0x6530e // lightsteelblue
-	Lightyellow                 Hash = 0x6610b // lightyellow
-	Limegreen                   Hash = 0x67709 // limegreen
-	Line_Break                  Hash = 0x5630a // line-break
-	Line_Height                 Hash = 0x6800b // line-height
-	List_Style                  Hash = 0x68b0a // list-style
-	List_Style_Image            Hash = 0x68b10 // list-style-image
-	List_Style_Position         Hash = 0x69b13 // list-style-position
-	List_Style_Type             Hash = 0x6ae0f // list-style-type
-	Magenta                     Hash = 0x4f807 // magenta
-	Margin                      Hash = 0x2c006 // margin
-	Margin_Bottom               Hash = 0x2c00d // margin-bottom
-	Margin_Left                 Hash = 0x2cc0b // margin-left
-	Margin_Right                Hash = 0x3320c // margin-right
-	Margin_Top                  Hash = 0x7cd0a // margin-top
-	Marker_Offset               Hash = 0x6bd0d // marker-offset
-	Marks                       Hash = 0x6ca05 // marks
-	Max_Height                  Hash = 0x6e90a // max-height
-	Max_Width                   Hash = 0x6f309 // max-width
-	Media                       Hash = 0xa1405 // media
-	Mediumaquamarine            Hash = 0x6fc10 // mediumaquamarine
-	Mediumblue                  Hash = 0x70c0a // mediumblue
-	Mediumorchid                Hash = 0x7160c // mediumorchid
-	Mediumpurple                Hash = 0x72f0c // mediumpurple
-	Mediumseagreen              Hash = 0x73b0e // mediumseagreen
-	Mediumslateblue             Hash = 0x7490f // mediumslateblue
-	Mediumspringgreen           Hash = 0x75811 // mediumspringgreen
-	Mediumturquoise             Hash = 0x7690f // mediumturquoise
-	Mediumvioletred             Hash = 0x7780f // mediumvioletred
-	Midnightblue                Hash = 0x7a60c // midnightblue
-	Min_Height                  Hash = 0x7b20a // min-height
-	Min_Width                   Hash = 0x7bc09 // min-width
-	Mintcream                   Hash = 0x7c509 // mintcream
-	Mistyrose                   Hash = 0x7e309 // mistyrose
-	Moccasin                    Hash = 0x7ec08 // moccasin
-	Monospace                   Hash = 0x8c709 // monospace
-	Namespace                   Hash = 0x49809 // namespace
-	Navajowhite                 Hash = 0x4a80b // navajowhite
-	None                        Hash = 0x4bf04 // none
-	Normal                      Hash = 0x4d506 // normal
-	Olivedrab                   Hash = 0x80009 // olivedrab
-	Orangered                   Hash = 0x78a09 // orangered
-	Orphans                     Hash = 0x48807 // orphans
-	Outline                     Hash = 0x81d07 // outline
-	Outline_Color               Hash = 0x81d0d // outline-color
-	Outline_Style               Hash = 0x82a0d // outline-style
-	Outline_Width               Hash = 0x8370d // outline-width
-	Overflow                    Hash = 0x2db08 // overflow
-	Overflow_X                  Hash = 0x2db0a // overflow-x
-	Overflow_Y                  Hash = 0x8440a // overflow-y
-	Padding                     Hash = 0x2b307 // padding
-	Padding_Bottom              Hash = 0x2b30e // padding-bottom
-	Padding_Left                Hash = 0x5f90c // padding-left
-	Padding_Right               Hash = 0x7d60d // padding-right
-	Padding_Top                 Hash = 0x8d90b // padding-top
-	Page                        Hash = 0x84e04 // page
-	Page_Break_After            Hash = 0x8e310 // page-break-after
-	Page_Break_Before           Hash = 0x84e11 // page-break-before
-	Page_Break_Inside           Hash = 0x85f11 // page-break-inside
-	Palegoldenrod               Hash = 0x8700d // palegoldenrod
-	Palegreen                   Hash = 0x89e09 // palegreen
-	Paleturquoise               Hash = 0x8a70d // paleturquoise
-	Palevioletred               Hash = 0x8b40d // palevioletred
-	Papayawhip                  Hash = 0x8d00a // papayawhip
-	Pause                       Hash = 0x8f305 // pause
-	Pause_After                 Hash = 0x8f30b // pause-after
-	Pause_Before                Hash = 0x8fe0c // pause-before
-	Peachpuff                   Hash = 0x59009 // peachpuff
-	Pitch                       Hash = 0x90a05 // pitch
-	Pitch_Range                 Hash = 0x90a0b // pitch-range
-	Play_During                 Hash = 0x3c80b // play-during
+	Black                       Hash = 0x5805  // black
+	Blanchedalmond              Hash = 0x5d0e  // blanchedalmond
+	Blueviolet                  Hash = 0x5660a // blueviolet
+	Bold                        Hash = 0x7204  // bold
+	Border                      Hash = 0x7d06  // border
+	Border_Bottom               Hash = 0x7d0d  // border-bottom
+	Border_Bottom_Color         Hash = 0x7d13  // border-bottom-color
+	Border_Bottom_Style         Hash = 0xb413  // border-bottom-style
+	Border_Bottom_Width         Hash = 0xd713  // border-bottom-width
+	Border_Collapse             Hash = 0xf80f  // border-collapse
+	Border_Color                Hash = 0x1480c // border-color
+	Border_Left                 Hash = 0x15d0b // border-left
+	Border_Left_Color           Hash = 0x15d11 // border-left-color
+	Border_Left_Style           Hash = 0x18911 // border-left-style
+	Border_Left_Width           Hash = 0x19a11 // border-left-width
+	Border_Right                Hash = 0x1ab0c // border-right
+	Border_Right_Color          Hash = 0x1ab12 // border-right-color
+	Border_Right_Style          Hash = 0x1c912 // border-right-style
+	Border_Right_Width          Hash = 0x1db12 // border-right-width
+	Border_Spacing              Hash = 0x1ed0e // border-spacing
+	Border_Style                Hash = 0x2100c // border-style
+	Border_Top                  Hash = 0x21c0a // border-top
+	Border_Top_Color            Hash = 0x21c10 // border-top-color
+	Border_Top_Style            Hash = 0x22c10 // border-top-style
+	Border_Top_Width            Hash = 0x23c10 // border-top-width
+	Border_Width                Hash = 0x24c0c // border-width
+	Bottom                      Hash = 0x8406  // bottom
+	Box_Shadow                  Hash = 0x2580a // box-shadow
+	Burlywood                   Hash = 0x26b09 // burlywood
+	Cadetblue                   Hash = 0x28a09 // cadetblue
+	Calc                        Hash = 0x28704 // calc
+	Caption_Side                Hash = 0x2930c // caption-side
+	Charset                     Hash = 0x47607 // charset
+	Chartreuse                  Hash = 0x2a50a // chartreuse
+	Chocolate                   Hash = 0x2af09 // chocolate
+	Clear                       Hash = 0x2dd05 // clear
+	Clip                        Hash = 0x2e204 // clip
+	Color                       Hash = 0x8b05  // color
+	Content                     Hash = 0x31e07 // content
+	Cornflowerblue              Hash = 0x3530e // cornflowerblue
+	Cornsilk                    Hash = 0x36108 // cornsilk
+	Counter_Increment           Hash = 0x36911 // counter-increment
+	Counter_Reset               Hash = 0x3840d // counter-reset
+	Cue                         Hash = 0x39103 // cue
+	Cue_After                   Hash = 0x39109 // cue-after
+	Cue_Before                  Hash = 0x39a0a // cue-before
+	Cursive                     Hash = 0x3ab07 // cursive
+	Cursor                      Hash = 0x3be06 // cursor
+	Darkblue                    Hash = 0x6a08  // darkblue
+	Darkcyan                    Hash = 0x7508  // darkcyan
+	Darkgoldenrod               Hash = 0x2730d // darkgoldenrod
+	Darkgray                    Hash = 0x27f08 // darkgray
+	Darkgreen                   Hash = 0x7ca09 // darkgreen
+	Darkkhaki                   Hash = 0x8bd09 // darkkhaki
+	Darkmagenta                 Hash = 0x5280b // darkmagenta
+	Darkolivegreen              Hash = 0x7590e // darkolivegreen
+	Darkorange                  Hash = 0x7be0a // darkorange
+	Darkorchid                  Hash = 0x8b40a // darkorchid
+	Darksalmon                  Hash = 0x8f80a // darksalmon
+	Darkseagreen                Hash = 0x95c0c // darkseagreen
+	Darkslateblue               Hash = 0x3c40d // darkslateblue
+	Darkslategray               Hash = 0x3d10d // darkslategray
+	Darkturquoise               Hash = 0x3de0d // darkturquoise
+	Darkviolet                  Hash = 0x3eb0a // darkviolet
+	Deeppink                    Hash = 0x29d08 // deeppink
+	Deepskyblue                 Hash = 0x8cb0b // deepskyblue
+	Default                     Hash = 0x5b707 // default
+	Direction                   Hash = 0xa2909 // direction
+	Display                     Hash = 0x3f507 // display
+	Document                    Hash = 0x40308 // document
+	Dodgerblue                  Hash = 0x40b0a // dodgerblue
+	Elevation                   Hash = 0x4d409 // elevation
+	Empty_Cells                 Hash = 0x4f60b // empty-cells
+	Fantasy                     Hash = 0x60a07 // fantasy
+	Filter                      Hash = 0x5d406 // filter
+	Firebrick                   Hash = 0x41509 // firebrick
+	Flex                        Hash = 0x41e04 // flex
+	Float                       Hash = 0x42205 // float
+	Floralwhite                 Hash = 0x4270b // floralwhite
+	Font                        Hash = 0xce04  // font
+	Font_Face                   Hash = 0xce09  // font-face
+	Font_Family                 Hash = 0x4510b // font-family
+	Font_Size                   Hash = 0x45c09 // font-size
+	Font_Size_Adjust            Hash = 0x45c10 // font-size-adjust
+	Font_Stretch                Hash = 0x46c0c // font-stretch
+	Font_Style                  Hash = 0x47d0a // font-style
+	Font_Variant                Hash = 0x4870c // font-variant
+	Font_Weight                 Hash = 0x4a20b // font-weight
+	Forestgreen                 Hash = 0x3a00b // forestgreen
+	Fuchsia                     Hash = 0x4ad07 // fuchsia
+	Gainsboro                   Hash = 0x17909 // gainsboro
+	Ghostwhite                  Hash = 0x1fa0a // ghostwhite
+	Goldenrod                   Hash = 0x27709 // goldenrod
+	Greenyellow                 Hash = 0x7ce0b // greenyellow
+	Height                      Hash = 0x6ae06 // height
+	Honeydew                    Hash = 0x5f508 // honeydew
+	Hsl                         Hash = 0xe903  // hsl
+	Hsla                        Hash = 0xe904  // hsla
+	Ime_Mode                    Hash = 0x8c508 // ime-mode
+	Import                      Hash = 0x51706 // import
+	Important                   Hash = 0x51709 // important
+	Include_Source              Hash = 0x82a0e // include-source
+	Indianred                   Hash = 0x52009 // indianred
+	Inherit                     Hash = 0x55507 // inherit
+	Initial                     Hash = 0x55c07 // initial
+	Keyframes                   Hash = 0x43509 // keyframes
+	Lavender                    Hash = 0xeb08  // lavender
+	Lavenderblush               Hash = 0xeb0d  // lavenderblush
+	Lawngreen                   Hash = 0x50e09 // lawngreen
+	Layer_Background_Color      Hash = 0x10c16 // layer-background-color
+	Layer_Background_Image      Hash = 0x9c416 // layer-background-image
+	Layout_Flow                 Hash = 0x5370b // layout-flow
+	Layout_Grid                 Hash = 0x57b0b // layout-grid
+	Layout_Grid_Char            Hash = 0x57b10 // layout-grid-char
+	Layout_Grid_Char_Spacing    Hash = 0x57b18 // layout-grid-char-spacing
+	Layout_Grid_Line            Hash = 0x59310 // layout-grid-line
+	Layout_Grid_Mode            Hash = 0x5a910 // layout-grid-mode
+	Layout_Grid_Type            Hash = 0x5be10 // layout-grid-type
+	Left                        Hash = 0x16404 // left
+	Lemonchiffon                Hash = 0xc50c  // lemonchiffon
+	Letter_Spacing              Hash = 0x56d0e // letter-spacing
+	Lightblue                   Hash = 0x5da09 // lightblue
+	Lightcoral                  Hash = 0x5e30a // lightcoral
+	Lightcyan                   Hash = 0x61109 // lightcyan
+	Lightgoldenrodyellow        Hash = 0x61a14 // lightgoldenrodyellow
+	Lightgray                   Hash = 0x63909 // lightgray
+	Lightgreen                  Hash = 0x6420a // lightgreen
+	Lightpink                   Hash = 0x64c09 // lightpink
+	Lightsalmon                 Hash = 0x6550b // lightsalmon
+	Lightseagreen               Hash = 0x6600d // lightseagreen
+	Lightskyblue                Hash = 0x66d0c // lightskyblue
+	Lightslateblue              Hash = 0x6790e // lightslateblue
+	Lightsteelblue              Hash = 0x6870e // lightsteelblue
+	Lightyellow                 Hash = 0x6950b // lightyellow
+	Limegreen                   Hash = 0x6a009 // limegreen
+	Line_Break                  Hash = 0x59f0a // line-break
+	Line_Height                 Hash = 0x6a90b // line-height
+	Linear_Gradient             Hash = 0x6b40f // linear-gradient
+	List_Style                  Hash = 0x6c30a // list-style
+	List_Style_Image            Hash = 0x6c310 // list-style-image
+	List_Style_Position         Hash = 0x6d313 // list-style-position
+	List_Style_Type             Hash = 0x6e60f // list-style-type
+	Magenta                     Hash = 0x52c07 // magenta
+	Margin                      Hash = 0x2f206 // margin
+	Margin_Bottom               Hash = 0x2f20d // margin-bottom
+	Margin_Left                 Hash = 0x2fe0b // margin-left
+	Margin_Right                Hash = 0x3310c // margin-right
+	Margin_Top                  Hash = 0x8050a // margin-top
+	Marker_Offset               Hash = 0x6f50d // marker-offset
+	Marks                       Hash = 0x70205 // marks
+	Max_Height                  Hash = 0x7210a // max-height
+	Max_Width                   Hash = 0x72b09 // max-width
+	Media                       Hash = 0xa4c05 // media
+	Mediumaquamarine            Hash = 0x73410 // mediumaquamarine
+	Mediumblue                  Hash = 0x7440a // mediumblue
+	Mediumorchid                Hash = 0x74e0c // mediumorchid
+	Mediumpurple                Hash = 0x7670c // mediumpurple
+	Mediumseagreen              Hash = 0x7730e // mediumseagreen
+	Mediumslateblue             Hash = 0x7810f // mediumslateblue
+	Mediumspringgreen           Hash = 0x79011 // mediumspringgreen
+	Mediumturquoise             Hash = 0x7a10f // mediumturquoise
+	Mediumvioletred             Hash = 0x7b00f // mediumvioletred
+	Midnightblue                Hash = 0x7de0c // midnightblue
+	Min_Height                  Hash = 0x7ea0a // min-height
+	Min_Width                   Hash = 0x7f409 // min-width
+	Mintcream                   Hash = 0x7fd09 // mintcream
+	Mistyrose                   Hash = 0x81b09 // mistyrose
+	Moccasin                    Hash = 0x82408 // moccasin
+	Monospace                   Hash = 0x8ff09 // monospace
+	Namespace                   Hash = 0x4cc09 // namespace
+	Navajowhite                 Hash = 0x4dc0b // navajowhite
+	None                        Hash = 0x4f304 // none
+	Normal                      Hash = 0x50906 // normal
+	Olivedrab                   Hash = 0x83809 // olivedrab
+	Orangered                   Hash = 0x7c209 // orangered
+	Orphans                     Hash = 0x4bc07 // orphans
+	Outline                     Hash = 0x85507 // outline
+	Outline_Color               Hash = 0x8550d // outline-color
+	Outline_Style               Hash = 0x8620d // outline-style
+	Outline_Width               Hash = 0x86f0d // outline-width
+	Overflow                    Hash = 0xaa08  // overflow
+	Overflow_X                  Hash = 0xaa0a  // overflow-x
+	Overflow_Y                  Hash = 0x87c0a // overflow-y
+	Padding                     Hash = 0x2e507 // padding
+	Padding_Bottom              Hash = 0x2e50e // padding-bottom
+	Padding_Left                Hash = 0x5490c // padding-left
+	Padding_Right               Hash = 0x80e0d // padding-right
+	Padding_Top                 Hash = 0x9110b // padding-top
+	Page                        Hash = 0x88604 // page
+	Page_Break_After            Hash = 0x91b10 // page-break-after
+	Page_Break_Before           Hash = 0x88611 // page-break-before
+	Page_Break_Inside           Hash = 0x89711 // page-break-inside
+	Palegoldenrod               Hash = 0x8a80d // palegoldenrod
+	Palegreen                   Hash = 0x8d609 // palegreen
+	Paleturquoise               Hash = 0x8df0d // paleturquoise
+	Palevioletred               Hash = 0x8ec0d // palevioletred
+	Papayawhip                  Hash = 0x9080a // papayawhip
+	Pause                       Hash = 0x92b05 // pause
+	Pause_After                 Hash = 0x92b0b // pause-after
+	Pause_Before                Hash = 0x9360c // pause-before
+	Peachpuff                   Hash = 0x5cc09 // peachpuff
+	Pitch                       Hash = 0x94205 // pitch
+	Pitch_Range                 Hash = 0x9420b // pitch-range
+	Play_During                 Hash = 0x3f80b // play-during
 	Position                    Hash = 0xb08   // position
-	Powderblue                  Hash = 0x9150a // powderblue
-	Progid                      Hash = 0x91f06 // progid
-	Quotes                      Hash = 0x93006 // quotes
-	Rgb                         Hash = 0x3803  // rgb
-	Rgba                        Hash = 0x3804  // rgba
-	Richness                    Hash = 0x9708  // richness
-	Right                       Hash = 0x1a205 // right
-	Rosybrown                   Hash = 0x15309 // rosybrown
-	Royalblue                   Hash = 0xb509  // royalblue
-	Ruby_Align                  Hash = 0x12b0a // ruby-align
-	Ruby_Overhang               Hash = 0x1400d // ruby-overhang
-	Ruby_Position               Hash = 0x16c0d // ruby-position
-	Saddlebrown                 Hash = 0x48e0b // saddlebrown
-	Sandybrown                  Hash = 0x4cc0a // sandybrown
-	Sans_Serif                  Hash = 0x5c50a // sans-serif
-	Scrollbar_3d_Light_Color    Hash = 0x9e18  // scrollbar-3d-light-color
-	Scrollbar_Arrow_Color       Hash = 0x29615 // scrollbar-arrow-color
-	Scrollbar_Base_Color        Hash = 0x40914 // scrollbar-base-color
-	Scrollbar_Dark_Shadow_Color Hash = 0x6ce1b // scrollbar-dark-shadow-color
-	Scrollbar_Face_Color        Hash = 0x93514 // scrollbar-face-color
-	Scrollbar_Highlight_Color   Hash = 0x9ce19 // scrollbar-highlight-color
-	Scrollbar_Shadow_Color      Hash = 0x94916 // scrollbar-shadow-color
-	Scrollbar_Track_Color       Hash = 0x95f15 // scrollbar-track-color
-	Seagreen                    Hash = 0x63108 // seagreen
-	Seashell                    Hash = 0x10f08 // seashell
-	Serif                       Hash = 0x5ca05 // serif
-	Size                        Hash = 0x42d04 // size
-	Slateblue                   Hash = 0x39809 // slateblue
-	Slategray                   Hash = 0x3a509 // slategray
-	Speak                       Hash = 0x97405 // speak
-	Speak_Header                Hash = 0x9740c // speak-header
-	Speak_Numeral               Hash = 0x9800d // speak-numeral
-	Speak_Punctuation           Hash = 0x9a211 // speak-punctuation
-	Speech_Rate                 Hash = 0x9b30b // speech-rate
-	Springgreen                 Hash = 0x75e0b // springgreen
-	Steelblue                   Hash = 0x65809 // steelblue
-	Stress                      Hash = 0x29106 // stress
-	Supports                    Hash = 0x9c708 // supports
-	Table_Layout                Hash = 0x4fd0c // table-layout
-	Text_Align                  Hash = 0x2840a // text-align
-	Text_Align_Last             Hash = 0x2840f // text-align-last
-	Text_Autospace              Hash = 0x1e60e // text-autospace
-	Text_Decoration             Hash = 0x4b10f // text-decoration
-	Text_Indent                 Hash = 0x9bc0b // text-indent
+	Powderblue                  Hash = 0x94d0a // powderblue
+	Progid                      Hash = 0x95706 // progid
+	Quotes                      Hash = 0x96806 // quotes
+	Radial_Gradient             Hash = 0x380f  // radial-gradient
+	Rgb                         Hash = 0x8f03  // rgb
+	Rgba                        Hash = 0x8f04  // rgba
+	Richness                    Hash = 0x12108 // richness
+	Right                       Hash = 0x1b205 // right
+	Rosybrown                   Hash = 0x18009 // rosybrown
+	Royalblue                   Hash = 0x13f09 // royalblue
+	Ruby_Align                  Hash = 0x1530a // ruby-align
+	Ruby_Overhang               Hash = 0x16d0d // ruby-overhang
+	Ruby_Position               Hash = 0x1bc0d // ruby-position
+	Saddlebrown                 Hash = 0x4c20b // saddlebrown
+	Sandybrown                  Hash = 0x5000a // sandybrown
+	Sans_Serif                  Hash = 0x6010a // sans-serif
+	Scrollbar_3d_Light_Color    Hash = 0x12818 // scrollbar-3d-light-color
+	Scrollbar_Arrow_Color       Hash = 0x2c815 // scrollbar-arrow-color
+	Scrollbar_Base_Color        Hash = 0x43d14 // scrollbar-base-color
+	Scrollbar_Dark_Shadow_Color Hash = 0x7061b // scrollbar-dark-shadow-color
+	Scrollbar_Face_Color        Hash = 0x96d14 // scrollbar-face-color
+	Scrollbar_Highlight_Color   Hash = 0xa0619 // scrollbar-highlight-color
+	Scrollbar_Shadow_Color      Hash = 0x98116 // scrollbar-shadow-color
+	Scrollbar_Track_Color       Hash = 0x99715 // scrollbar-track-color
+	Seagreen                    Hash = 0x66508 // seagreen
+	Seashell                    Hash = 0x10508 // seashell
+	Serif                       Hash = 0x60605 // serif
+	Size                        Hash = 0x46104 // size
+	Slateblue                   Hash = 0x3c809 // slateblue
+	Slategray                   Hash = 0x3d509 // slategray
+	Speak                       Hash = 0x9ac05 // speak
+	Speak_Header                Hash = 0x9ac0c // speak-header
+	Speak_Numeral               Hash = 0x9b80d // speak-numeral
+	Speak_Punctuation           Hash = 0x9da11 // speak-punctuation
+	Speech_Rate                 Hash = 0x9eb0b // speech-rate
+	Springgreen                 Hash = 0x7960b // springgreen
+	Steelblue                   Hash = 0x68c09 // steelblue
+	Stress                      Hash = 0x2c306 // stress
+	Supports                    Hash = 0x9ff08 // supports
+	Table_Layout                Hash = 0x5310c // table-layout
+	Text_Align                  Hash = 0x2b60a // text-align
+	Text_Align_Last             Hash = 0x2b60f // text-align-last
+	Text_Autospace              Hash = 0x2020e // text-autospace
+	Text_Decoration             Hash = 0x4e50f // text-decoration
+	Text_Indent                 Hash = 0x9f40b // text-indent
 	Text_Justify                Hash = 0x250c  // text-justify
-	Text_Kashida_Space          Hash = 0x4e12  // text-kashida-space
-	Text_Overflow               Hash = 0x2d60d // text-overflow
-	Text_Shadow                 Hash = 0x2eb0b // text-shadow
-	Text_Transform              Hash = 0x3250e // text-transform
-	Text_Underline_Position     Hash = 0x33d17 // text-underline-position
-	Top                         Hash = 0x20703 // top
-	Turquoise                   Hash = 0x3b209 // turquoise
-	Unicode_Bidi                Hash = 0x9e70c // unicode-bidi
-	Vertical_Align              Hash = 0x3800e // vertical-align
-	Visibility                  Hash = 0x9fa0a // visibility
-	Voice_Family                Hash = 0xa040c // voice-family
-	Volume                      Hash = 0xa1006 // volume
-	White                       Hash = 0x1e305 // white
-	White_Space                 Hash = 0x4630b // white-space
-	Whitesmoke                  Hash = 0x3f90a // whitesmoke
-	Widows                      Hash = 0x5c006 // widows
-	Width                       Hash = 0xef05  // width
-	Word_Break                  Hash = 0x2f50a // word-break
-	Word_Spacing                Hash = 0x50d0c // word-spacing
-	Word_Wrap                   Hash = 0x5f109 // word-wrap
-	Writing_Mode                Hash = 0x66b0c // writing-mode
-	Yellow                      Hash = 0x5ec06 // yellow
-	Yellowgreen                 Hash = 0x79b0b // yellowgreen
-	Z_Index                     Hash = 0xa1907 // z-index
+	Text_Kashida_Space          Hash = 0x4612  // text-kashida-space
+	Text_Overflow               Hash = 0xa50d  // text-overflow
+	Text_Shadow                 Hash = 0x3080b // text-shadow
+	Text_Transform              Hash = 0x3240e // text-transform
+	Text_Underline_Position     Hash = 0x33c17 // text-underline-position
+	Top                         Hash = 0x22303 // top
+	Transparent                 Hash = 0x3790b // transparent
+	Turquoise                   Hash = 0x3e209 // turquoise
+	Unicode_Bidi                Hash = 0xa1f0c // unicode-bidi
+	Vertical_Align              Hash = 0x3b00e // vertical-align
+	Visibility                  Hash = 0xa320a // visibility
+	Voice_Family                Hash = 0xa3c0c // voice-family
+	Volume                      Hash = 0xa4806 // volume
+	White                       Hash = 0x1ff05 // white
+	White_Space                 Hash = 0x4970b // white-space
+	Whitesmoke                  Hash = 0x42d0a // whitesmoke
+	Widows                      Hash = 0x5fc06 // widows
+	Width                       Hash = 0xe505  // width
+	Word_Break                  Hash = 0x2610a // word-break
+	Word_Spacing                Hash = 0x3120c // word-spacing
+	Word_Wrap                   Hash = 0x54109 // word-wrap
+	Writing_Mode                Hash = 0x62d0c // writing-mode
+	Yellow                      Hash = 0x62806 // yellow
+	Yellowgreen                 Hash = 0x7d30b // yellowgreen
+	Z_Index                     Hash = 0xa5107 // z-index
 )
 
 // String returns the hash' name.
@@ -342,335 +348,342 @@ NEXT:
 
 const _Hash_hash0 = 0x700e0976
 const _Hash_maxLen = 27
-const _Hash_text = "background-position-ybackground-repeatext-justifybehaviorgba" +
-	"ckground-attachmentext-kashida-spaceblackblanchedalmondarkbl" +
-	"ueboldarkcyanborder-bottom-colorichnesscrollbar-3d-light-col" +
-	"oroyalblueborder-bottom-stylemonchiffont-faceborder-bottom-w" +
-	"idthslavenderblushborder-collapseashellayer-background-color" +
-	"uby-alignborder-coloruby-overhangainsborosybrownborder-left-" +
-	"coloruby-positionborder-left-styleborder-left-widthborder-ri" +
-	"ght-colorborder-right-styleborder-right-widthborder-spacingh" +
-	"ostwhitext-autospaceborder-styleborder-top-colorborder-top-s" +
-	"tyleborder-top-widthborder-widthburlywoodarkgoldenrodarkgray" +
-	"cadetbluecaption-sideeppinkchartreusechocolatext-align-lastr" +
-	"esscrollbar-arrow-colorclearclipadding-bottomargin-bottomarg" +
-	"in-leftext-overflow-xcontentext-shadoword-breakcornflowerblu" +
-	"ecornsilkcounter-incrementext-transformargin-rightext-underl" +
-	"ine-positioncounter-resetcue-aftercue-beforestgreencursivert" +
-	"ical-aligncursordarkslatebluedarkslategraydarkturquoisedarkv" +
-	"ioletdisplay-duringdocumentdodgerbluefirebrickfloatfloralwhi" +
-	"tesmokeyframescrollbar-base-colorfont-familyfont-size-adjust" +
-	"font-stretcharsetfont-stylefont-variantiquewhite-spacefont-w" +
-	"eightfuchsiacceleratorphansaddlebrownamespacelevationavajowh" +
-	"itext-decorationonempty-cellsandybrownormalawngreenimportant" +
-	"indianredarkmagentable-layout-floword-spacinginheritinitiali" +
+const _Hash_text = "background-position-ybackground-repeatext-justifybehavioradi" +
+	"al-gradientext-kashida-spaceblackblanchedalmondarkblueboldar" +
+	"kcyanborder-bottom-colorgbackground-attachmentext-overflow-x" +
+	"border-bottom-stylemonchiffont-faceborder-bottom-widthslaven" +
+	"derblushborder-collapseashellayer-background-colorichnesscro" +
+	"llbar-3d-light-coloroyalblueborder-coloruby-alignborder-left" +
+	"-coloruby-overhangainsborosybrownborder-left-styleborder-lef" +
+	"t-widthborder-right-coloruby-positionborder-right-styleborde" +
+	"r-right-widthborder-spacinghostwhitext-autospaceborder-style" +
+	"border-top-colorborder-top-styleborder-top-widthborder-width" +
+	"box-shadoword-breakburlywoodarkgoldenrodarkgraycalcadetbluec" +
+	"aption-sideeppinkchartreusechocolatext-align-lastresscrollba" +
+	"r-arrow-colorclearclipadding-bottomargin-bottomargin-leftext" +
+	"-shadoword-spacingcontentext-transformargin-rightext-underli" +
+	"ne-positioncornflowerbluecornsilkcounter-incrementransparent" +
+	"counter-resetcue-aftercue-beforestgreencursivertical-aligncu" +
+	"rsordarkslatebluedarkslategraydarkturquoisedarkvioletdisplay" +
+	"-duringdocumentdodgerbluefirebrickflexfloatfloralwhitesmokey" +
+	"framescrollbar-base-colorfont-familyfont-size-adjustfont-str" +
+	"etcharsetfont-stylefont-variantiquewhite-spacefont-weightfuc" +
+	"hsiacceleratorphansaddlebrownamespacelevationavajowhitext-de" +
+	"corationonempty-cellsandybrownormalawngreenimportantindianre" +
+	"darkmagentable-layout-floword-wrapadding-leftinheritinitiali" +
 	"cebluevioletter-spacinglayout-grid-char-spacinglayout-grid-l" +
 	"ine-breaklayout-grid-modefaultlayout-grid-typeachpuffilterli" +
 	"ghtbluelightcoralphazimuthoneydewidowsans-serifantasylightcy" +
-	"anlightgoldenrodyelloword-wrapadding-leftlightgraylightgreen" +
-	"lightpinklightsalmonlightseagreenlightskybluelightslatebluel" +
-	"ightsteelbluelightyellowriting-modelimegreenline-heightlist-" +
-	"style-imagelist-style-positionlist-style-typemarker-offsetma" +
-	"rkscrollbar-dark-shadow-colormax-heightmax-widthmediumaquama" +
-	"rinemediumbluemediumorchidarkolivegreenmediumpurplemediumsea" +
-	"greenmediumslatebluemediumspringgreenmediumturquoisemediumvi" +
-	"oletredarkorangeredarkgreenyellowgreenmidnightbluemin-height" +
-	"min-widthmintcreamargin-topadding-rightmistyrosemoccasinclud" +
-	"e-sourceolivedrabackground-position-xoutline-coloroutline-st" +
-	"yleoutline-widthoverflow-ypage-break-beforepage-break-inside" +
-	"palegoldenrodarkorchidarkkhakime-modeepskybluepalegreenpalet" +
-	"urquoisepalevioletredarksalmonospacepapayawhipadding-topage-" +
-	"break-afterpause-afterpause-beforepitch-rangepowderblueprogi" +
-	"darkseagreenquotescrollbar-face-colorscrollbar-shadow-colors" +
-	"crollbar-track-colorspeak-headerspeak-numeralayer-background" +
-	"-imagespeak-punctuationspeech-ratext-indentsupportscrollbar-" +
-	"highlight-colorunicode-bidirectionvisibilityvoice-familyvolu" +
-	"mediaz-index"
+	"anlightgoldenrodyellowriting-modelightgraylightgreenlightpin" +
+	"klightsalmonlightseagreenlightskybluelightslatebluelightstee" +
+	"lbluelightyellowlimegreenline-heightlinear-gradientlist-styl" +
+	"e-imagelist-style-positionlist-style-typemarker-offsetmarksc" +
+	"rollbar-dark-shadow-colormax-heightmax-widthmediumaquamarine" +
+	"mediumbluemediumorchidarkolivegreenmediumpurplemediumseagree" +
+	"nmediumslatebluemediumspringgreenmediumturquoisemediumviolet" +
+	"redarkorangeredarkgreenyellowgreenmidnightbluemin-heightmin-" +
+	"widthmintcreamargin-topadding-rightmistyrosemoccasinclude-so" +
+	"urceolivedrabackground-position-xoutline-coloroutline-styleo" +
+	"utline-widthoverflow-ypage-break-beforepage-break-insidepale" +
+	"goldenrodarkorchidarkkhakime-modeepskybluepalegreenpaleturqu" +
+	"oisepalevioletredarksalmonospacepapayawhipadding-topage-brea" +
+	"k-afterpause-afterpause-beforepitch-rangepowderblueprogidark" +
+	"seagreenquotescrollbar-face-colorscrollbar-shadow-colorscrol" +
+	"lbar-track-colorspeak-headerspeak-numeralayer-background-ima" +
+	"gespeak-punctuationspeech-ratext-indentsupportscrollbar-high" +
+	"light-colorunicode-bidirectionvisibilityvoice-familyvolumedi" +
+	"az-index"
 
 var _Hash_table = [1 << 9]Hash{
-	0x0:   0x4cc0a, // sandybrown
-	0x1:   0x20703, // top
-	0x4:   0xb509,  // royalblue
-	0x6:   0x4b10f, // text-decoration
-	0xb:   0x5030b, // layout-flow
-	0xc:   0x11c10, // background-color
-	0xd:   0x8c06,  // bottom
-	0x10:  0x62c0d, // lightseagreen
-	0x11:  0x8930b, // deepskyblue
-	0x12:  0x39809, // slateblue
-	0x13:  0x4c20b, // empty-cells
-	0x14:  0x2b004, // clip
-	0x15:  0x70c0a, // mediumblue
-	0x16:  0x49809, // namespace
-	0x18:  0x2c00d, // margin-bottom
-	0x1a:  0x1350c, // border-color
-	0x1b:  0x5b908, // honeydew
-	0x1d:  0x2300c, // border-width
-	0x1e:  0x9740c, // speak-header
-	0x1f:  0x8b40d, // palevioletred
-	0x20:  0x1d10e, // border-spacing
-	0x22:  0x2b307, // padding
-	0x23:  0x3320c, // margin-right
-	0x27:  0x7bc09, // min-width
-	0x29:  0x60509, // lightgray
-	0x2a:  0x6610b, // lightyellow
-	0x2c:  0x8e310, // page-break-after
-	0x2d:  0x2e507, // content
+	0x0:   0x5000a, // sandybrown
+	0x1:   0x22303, // top
+	0x4:   0x13f09, // royalblue
+	0x6:   0x4e50f, // text-decoration
+	0xb:   0x5370b, // layout-flow
+	0xc:   0x11210, // background-color
+	0xd:   0x8406,  // bottom
+	0x10:  0x6600d, // lightseagreen
+	0x11:  0x8cb0b, // deepskyblue
+	0x12:  0x3c809, // slateblue
+	0x13:  0x4f60b, // empty-cells
+	0x14:  0x2e204, // clip
+	0x15:  0x7440a, // mediumblue
+	0x16:  0x4cc09, // namespace
+	0x18:  0x2f20d, // margin-bottom
+	0x1a:  0x1480c, // border-color
+	0x1b:  0x5f508, // honeydew
+	0x1d:  0x24c0c, // border-width
+	0x1e:  0x9ac0c, // speak-header
+	0x1f:  0x8ec0d, // palevioletred
+	0x20:  0x1ed0e, // border-spacing
+	0x22:  0x2e507, // padding
+	0x23:  0x3310c, // margin-right
+	0x27:  0x7f409, // min-width
+	0x29:  0x8f03,  // rgb
+	0x2a:  0x6950b, // lightyellow
+	0x2c:  0x91b10, // page-break-after
+	0x2d:  0x31e07, // content
 	0x30:  0x250c,  // text-justify
-	0x32:  0x2840f, // text-align-last
-	0x34:  0x93514, // scrollbar-face-color
-	0x35:  0x40109, // keyframes
-	0x37:  0x4f807, // magenta
-	0x38:  0x3a509, // slategray
-	0x3a:  0x99210, // background-image
-	0x3c:  0x7f20e, // include-source
-	0x3d:  0x65809, // steelblue
-	0x3e:  0x81d0d, // outline-color
-	0x40:  0x1020f, // border-collapse
-	0x41:  0xf508,  // lavender
-	0x42:  0x9c708, // supports
-	0x44:  0x6800b, // line-height
-	0x45:  0x9a211, // speak-punctuation
-	0x46:  0x9fa0a, // visibility
-	0x47:  0x2ab05, // clear
-	0x4b:  0x52a0a, // blueviolet
-	0x4e:  0x57b07, // default
-	0x50:  0x6bd0d, // marker-offset
-	0x52:  0x31511, // counter-increment
-	0x53:  0x6450e, // lightslateblue
-	0x54:  0x10f08, // seashell
-	0x56:  0x16c0d, // ruby-position
-	0x57:  0x82a0d, // outline-style
-	0x58:  0x63108, // seagreen
-	0x59:  0x9305,  // color
-	0x5c:  0x2610c, // caption-side
-	0x5d:  0x68506, // height
-	0x5e:  0x7490f, // mediumslateblue
-	0x5f:  0x8fe0c, // pause-before
-	0x60:  0xcf0c,  // lemonchiffon
-	0x63:  0x37b07, // cursive
-	0x66:  0x4a80b, // navajowhite
-	0x67:  0xa040c, // voice-family
-	0x68:  0x2440d, // darkgoldenrod
-	0x69:  0x3e509, // firebrick
-	0x6a:  0x4490a, // font-style
-	0x6b:  0x9f109, // direction
-	0x6d:  0x7860a, // darkorange
-	0x6f:  0x4530c, // font-variant
-	0x70:  0x2c006, // margin
-	0x71:  0x84e11, // page-break-before
-	0x73:  0x2d60d, // text-overflow
-	0x74:  0x4e12,  // text-kashida-space
-	0x75:  0x30d08, // cornsilk
-	0x76:  0x46e0b, // font-weight
-	0x77:  0x42d04, // size
-	0x78:  0x53f0b, // layout-grid
-	0x79:  0x8d90b, // padding-top
-	0x7a:  0x44207, // charset
-	0x7d:  0x7e309, // mistyrose
-	0x7e:  0x5b307, // azimuth
-	0x7f:  0x8f30b, // pause-after
-	0x84:  0x38e06, // cursor
-	0x85:  0xf303,  // hsl
-	0x86:  0x5310e, // letter-spacing
-	0x8b:  0x3d308, // document
-	0x8d:  0x36109, // cue-after
-	0x8f:  0x36a0a, // cue-before
-	0x91:  0x5ce07, // fantasy
-	0x94:  0x1400d, // ruby-overhang
-	0x95:  0x2b30e, // padding-bottom
-	0x9a:  0x59e09, // lightblue
-	0x9c:  0x8c00a, // darksalmon
-	0x9d:  0x42810, // font-size-adjust
-	0x9e:  0x61809, // lightpink
-	0xa0:  0x9240c, // darkseagreen
-	0xa2:  0x85f11, // page-break-inside
-	0xa4:  0x24809, // goldenrod
-	0xa6:  0xa1405, // media
-	0xa7:  0x53f18, // layout-grid-char-spacing
-	0xa9:  0x4e309, // important
-	0xaa:  0x7b20a, // min-height
-	0xb0:  0x15c11, // border-left-color
-	0xb1:  0x84e04, // page
-	0xb2:  0x98c16, // layer-background-image
-	0xb5:  0x55710, // layout-grid-line
+	0x32:  0x2b60f, // text-align-last
+	0x34:  0x96d14, // scrollbar-face-color
+	0x35:  0x43509, // keyframes
+	0x36:  0x27f08, // darkgray
+	0x37:  0x52c07, // magenta
+	0x38:  0x3d509, // slategray
+	0x3a:  0x9ca10, // background-image
+	0x3c:  0x82a0e, // include-source
+	0x3d:  0x68c09, // steelblue
+	0x3e:  0x8550d, // outline-color
+	0x40:  0xf80f,  // border-collapse
+	0x41:  0xeb08,  // lavender
+	0x42:  0x9ff08, // supports
+	0x44:  0x6a90b, // line-height
+	0x45:  0x9da11, // speak-punctuation
+	0x46:  0xa320a, // visibility
+	0x47:  0x2dd05, // clear
+	0x4b:  0x5660a, // blueviolet
+	0x4e:  0x5b707, // default
+	0x50:  0x6f50d, // marker-offset
+	0x52:  0x36911, // counter-increment
+	0x53:  0x6790e, // lightslateblue
+	0x54:  0x10508, // seashell
+	0x56:  0x1bc0d, // ruby-position
+	0x57:  0x8620d, // outline-style
+	0x58:  0x66508, // seagreen
+	0x59:  0x8b05,  // color
+	0x5c:  0x2930c, // caption-side
+	0x5d:  0x6ae06, // height
+	0x5e:  0x7810f, // mediumslateblue
+	0x5f:  0x9360c, // pause-before
+	0x60:  0xc50c,  // lemonchiffon
+	0x63:  0x3ab07, // cursive
+	0x66:  0x4dc0b, // navajowhite
+	0x67:  0xa3c0c, // voice-family
+	0x68:  0x2730d, // darkgoldenrod
+	0x69:  0x41509, // firebrick
+	0x6a:  0x47d0a, // font-style
+	0x6b:  0xa2909, // direction
+	0x6d:  0x7be0a, // darkorange
+	0x6f:  0x4870c, // font-variant
+	0x70:  0x2f206, // margin
+	0x71:  0x88611, // page-break-before
+	0x73:  0xa50d,  // text-overflow
+	0x74:  0x4612,  // text-kashida-space
+	0x75:  0x36108, // cornsilk
+	0x76:  0x4a20b, // font-weight
+	0x77:  0x46104, // size
+	0x78:  0x57b0b, // layout-grid
+	0x79:  0x9110b, // padding-top
+	0x7a:  0x47607, // charset
+	0x7d:  0x81b09, // mistyrose
+	0x7e:  0x5ef07, // azimuth
+	0x7f:  0x92b0b, // pause-after
+	0x83:  0x28704, // calc
+	0x84:  0x3be06, // cursor
+	0x85:  0xe903,  // hsl
+	0x86:  0x56d0e, // letter-spacing
+	0x88:  0x7ca09, // darkgreen
+	0x8b:  0x40308, // document
+	0x8d:  0x39109, // cue-after
+	0x8f:  0x39a0a, // cue-before
+	0x91:  0x60a07, // fantasy
+	0x94:  0x16d0d, // ruby-overhang
+	0x95:  0x2e50e, // padding-bottom
+	0x9a:  0x5da09, // lightblue
+	0x9c:  0x8f80a, // darksalmon
+	0x9d:  0x45c10, // font-size-adjust
+	0x9e:  0x64c09, // lightpink
+	0xa0:  0x95c0c, // darkseagreen
+	0xa2:  0x89711, // page-break-inside
+	0xa4:  0x27709, // goldenrod
+	0xa5:  0x63909, // lightgray
+	0xa6:  0xa4c05, // media
+	0xa7:  0x57b18, // layout-grid-char-spacing
+	0xa9:  0x51709, // important
+	0xaa:  0x7ea0a, // min-height
+	0xb0:  0x15d11, // border-left-color
+	0xb1:  0x88604, // page
+	0xb2:  0x9c416, // layer-background-image
+	0xb5:  0x59310, // layout-grid-line
 	0xb6:  0x1511,  // background-repeat
-	0xb7:  0x8513,  // border-bottom-color
-	0xb9:  0x25008, // darkgray
-	0xbb:  0x5f90c, // padding-left
-	0xbc:  0x1a205, // right
-	0xc0:  0x40914, // scrollbar-base-color
-	0xc1:  0x6530e, // lightsteelblue
-	0xc2:  0xef05,  // width
-	0xc5:  0x3b209, // turquoise
-	0xc8:  0x3ee05, // float
-	0xca:  0x12b0a, // ruby-align
+	0xb7:  0x7d13,  // border-bottom-color
+	0xb9:  0x2580a, // box-shadow
+	0xbb:  0x5490c, // padding-left
+	0xbc:  0x1b205, // right
+	0xc0:  0x43d14, // scrollbar-base-color
+	0xc1:  0x41e04, // flex
+	0xc2:  0xe505,  // width
+	0xc5:  0x3e209, // turquoise
+	0xc8:  0x42205, // float
+	0xca:  0x1530a, // ruby-align
 	0xcb:  0xb08,   // position
-	0xcc:  0x7cd0a, // margin-top
-	0xce:  0x2cc0b, // margin-left
-	0xcf:  0x2eb0b, // text-shadow
-	0xd0:  0x2f50a, // word-break
-	0xd4:  0x3f90a, // whitesmoke
-	0xd6:  0x33d17, // text-underline-position
-	0xd7:  0x1bf12, // border-right-width
-	0xd8:  0x80009, // olivedrab
-	0xd9:  0x89e09, // palegreen
-	0xdb:  0x4e306, // import
-	0xdc:  0x6ca05, // marks
-	0xdd:  0x3bb0a, // darkviolet
+	0xcc:  0x8050a, // margin-top
+	0xce:  0x2fe0b, // margin-left
+	0xcf:  0x3080b, // text-shadow
+	0xd0:  0x2610a, // word-break
+	0xd4:  0x42d0a, // whitesmoke
+	0xd6:  0x33c17, // text-underline-position
+	0xd7:  0x1db12, // border-right-width
+	0xd8:  0x83809, // olivedrab
+	0xd9:  0x8d609, // palegreen
+	0xdb:  0x51706, // import
+	0xdc:  0x70205, // marks
+	0xdd:  0x3eb0a, // darkviolet
 	0xde:  0x13,    // background-position
-	0xe0:  0x6fc10, // mediumaquamarine
-	0xe1:  0x7a04,  // bold
-	0xe2:  0x7690f, // mediumturquoise
-	0xe4:  0x8700d, // palegoldenrod
-	0xe5:  0x4f40b, // darkmagenta
-	0xe6:  0x15309, // rosybrown
-	0xe7:  0x18a11, // border-left-width
-	0xe8:  0x88509, // darkkhaki
-	0xea:  0x650e,  // blanchedalmond
-	0xeb:  0x52007, // initial
-	0xec:  0x6ce1b, // scrollbar-dark-shadow-color
-	0xee:  0x48e0b, // saddlebrown
-	0xef:  0x8a70d, // paleturquoise
-	0xf1:  0x19b12, // border-right-color
-	0xf3:  0x1e305, // white
-	0xf7:  0x9ce19, // scrollbar-highlight-color
-	0xf9:  0x56d10, // layout-grid-mode
-	0xfc:  0x1f40c, // border-style
-	0xfe:  0x69b13, // list-style-position
-	0x100: 0x11616, // layer-background-color
-	0x102: 0x58210, // layout-grid-type
-	0x103: 0x15c0b, // border-left
-	0x104: 0x2db08, // overflow
-	0x105: 0x7a60c, // midnightblue
-	0x10b: 0x2840a, // text-align
-	0x10e: 0x21010, // border-top-style
-	0x110: 0x5de14, // lightgoldenrodyellow
-	0x114: 0x8506,  // border
-	0x119: 0xd804,  // font
-	0x11c: 0x7020a, // aquamarine
-	0x11d: 0x60e0a, // lightgreen
-	0x11e: 0x5ec06, // yellow
-	0x120: 0x97405, // speak
-	0x121: 0x4630b, // white-space
-	0x123: 0x3940d, // darkslateblue
-	0x125: 0x1e60e, // text-autospace
-	0x128: 0xf50d,  // lavenderblush
-	0x12c: 0x6210b, // lightsalmon
-	0x12d: 0x51907, // inherit
-	0x131: 0x87c0a, // darkorchid
-	0x132: 0x2000a, // border-top
-	0x133: 0x3c80b, // play-during
-	0x137: 0x22010, // border-top-width
-	0x139: 0x48807, // orphans
-	0x13a: 0x41d0b, // font-family
-	0x13d: 0x3db0a, // dodgerblue
-	0x13f: 0x8d00a, // papayawhip
-	0x140: 0x8f305, // pause
-	0x143: 0x2ff0e, // cornflowerblue
-	0x144: 0x3c507, // display
-	0x146: 0x52509, // aliceblue
-	0x14a: 0x7208,  // darkblue
+	0xe0:  0x73410, // mediumaquamarine
+	0xe1:  0x7204,  // bold
+	0xe2:  0x7a10f, // mediumturquoise
+	0xe4:  0x8a80d, // palegoldenrod
+	0xe5:  0x5280b, // darkmagenta
+	0xe6:  0x18009, // rosybrown
+	0xe7:  0x19a11, // border-left-width
+	0xe8:  0x8bd09, // darkkhaki
+	0xea:  0x5d0e,  // blanchedalmond
+	0xeb:  0x55c07, // initial
+	0xec:  0x7061b, // scrollbar-dark-shadow-color
+	0xee:  0x4c20b, // saddlebrown
+	0xef:  0x8df0d, // paleturquoise
+	0xf1:  0x1ab12, // border-right-color
+	0xf3:  0x1ff05, // white
+	0xf7:  0xa0619, // scrollbar-highlight-color
+	0xf9:  0x5a910, // layout-grid-mode
+	0xfc:  0x2100c, // border-style
+	0xfe:  0x6d313, // list-style-position
+	0x100: 0x10c16, // layer-background-color
+	0x102: 0x5be10, // layout-grid-type
+	0x103: 0x15d0b, // border-left
+	0x104: 0xaa08,  // overflow
+	0x105: 0x7de0c, // midnightblue
+	0x10b: 0x2b60a, // text-align
+	0x10e: 0x22c10, // border-top-style
+	0x110: 0x61a14, // lightgoldenrodyellow
+	0x114: 0x7d06,  // border
+	0x119: 0xce04,  // font
+	0x11c: 0x73a0a, // aquamarine
+	0x11d: 0x6420a, // lightgreen
+	0x11e: 0x62806, // yellow
+	0x120: 0x9ac05, // speak
+	0x121: 0x4970b, // white-space
+	0x123: 0x3c40d, // darkslateblue
+	0x125: 0x2020e, // text-autospace
+	0x128: 0xeb0d,  // lavenderblush
+	0x12c: 0x6550b, // lightsalmon
+	0x12d: 0x55507, // inherit
+	0x131: 0x8b40a, // darkorchid
+	0x132: 0x21c0a, // border-top
+	0x133: 0x3f80b, // play-during
+	0x137: 0x23c10, // border-top-width
+	0x139: 0x4bc07, // orphans
+	0x13a: 0x4510b, // font-family
+	0x13d: 0x40b0a, // dodgerblue
+	0x13f: 0x9080a, // papayawhip
+	0x140: 0x92b05, // pause
+	0x142: 0x6b40f, // linear-gradient
+	0x143: 0x3530e, // cornflowerblue
+	0x144: 0x3f507, // display
+	0x146: 0x56109, // aliceblue
+	0x14a: 0x6a08,  // darkblue
 	0x14b: 0x3108,  // behavior
-	0x14c: 0x3540d, // counter-reset
-	0x14d: 0x7960b, // greenyellow
-	0x14e: 0x75811, // mediumspringgreen
-	0x14f: 0x9150a, // powderblue
-	0x150: 0x53f10, // layout-grid-char
-	0x158: 0x81d07, // outline
-	0x159: 0x23c09, // burlywood
-	0x15b: 0xe113,  // border-bottom-width
-	0x15c: 0x4bf04, // none
-	0x15e: 0x36103, // cue
-	0x15f: 0x4fd0c, // table-layout
-	0x160: 0x90a0b, // pitch-range
-	0x161: 0xa1907, // z-index
-	0x162: 0x29106, // stress
-	0x163: 0x80815, // background-position-x
-	0x165: 0x4d506, // normal
-	0x167: 0x72f0c, // mediumpurple
-	0x169: 0x5a70a, // lightcoral
-	0x16c: 0x6e90a, // max-height
-	0x16d: 0x3804,  // rgba
-	0x16e: 0x68b10, // list-style-image
-	0x170: 0x26b08, // deeppink
-	0x173: 0x91f06, // progid
-	0x175: 0x75e0b, // springgreen
-	0x176: 0x3700b, // forestgreen
-	0x179: 0x7ec08, // moccasin
-	0x17a: 0x7780f, // mediumvioletred
-	0x17e: 0x9bc0b, // text-indent
-	0x181: 0x6ae0f, // list-style-type
-	0x182: 0x14c09, // gainsboro
-	0x183: 0x3ae0d, // darkturquoise
-	0x184: 0x3a10d, // darkslategray
-	0x189: 0x2db0a, // overflow-x
-	0x18b: 0x93006, // quotes
-	0x18c: 0x3a15,  // background-attachment
-	0x18f: 0x19b0c, // border-right
-	0x191: 0x6005,  // black
-	0x192: 0x79b0b, // yellowgreen
-	0x194: 0x59009, // peachpuff
-	0x197: 0x3f30b, // floralwhite
-	0x19c: 0x7210e, // darkolivegreen
-	0x19d: 0x5f109, // word-wrap
-	0x19e: 0x17911, // border-left-style
-	0x1a0: 0x9b30b, // speech-rate
-	0x1a1: 0x8370d, // outline-width
-	0x1a2: 0x9e70c, // unicode-bidi
-	0x1a3: 0x68b0a, // list-style
-	0x1a4: 0x90a05, // pitch
-	0x1a5: 0x95f15, // scrollbar-track-color
-	0x1a6: 0x47907, // fuchsia
-	0x1a8: 0x3800e, // vertical-align
-	0x1ad: 0x5af05, // alpha
-	0x1ae: 0x6f309, // max-width
-	0x1af: 0x9708,  // richness
-	0x1b0: 0x3803,  // rgb
-	0x1b1: 0x7d60d, // padding-right
-	0x1b2: 0x29615, // scrollbar-arrow-color
-	0x1b3: 0x16304, // left
-	0x1b5: 0x4a009, // elevation
-	0x1b6: 0x5630a, // line-break
-	0x1ba: 0x27d09, // chocolate
-	0x1bb: 0x9800d, // speak-numeral
-	0x1bd: 0x47f0b, // accelerator
-	0x1be: 0x67709, // limegreen
-	0x1c1: 0x7d08,  // darkcyan
-	0x1c3: 0x6390c, // lightskyblue
-	0x1c5: 0x5c50a, // sans-serif
-	0x1c6: 0x850d,  // border-bottom
+	0x14c: 0x3840d, // counter-reset
+	0x14d: 0x7ce0b, // greenyellow
+	0x14e: 0x79011, // mediumspringgreen
+	0x14f: 0x94d0a, // powderblue
+	0x150: 0x57b10, // layout-grid-char
+	0x158: 0x85507, // outline
+	0x159: 0x26b09, // burlywood
+	0x15b: 0xd713,  // border-bottom-width
+	0x15c: 0x4f304, // none
+	0x15e: 0x39103, // cue
+	0x15f: 0x5310c, // table-layout
+	0x160: 0x9420b, // pitch-range
+	0x161: 0xa5107, // z-index
+	0x162: 0x2c306, // stress
+	0x163: 0x84015, // background-position-x
+	0x165: 0x50906, // normal
+	0x167: 0x7670c, // mediumpurple
+	0x169: 0x5e30a, // lightcoral
+	0x16c: 0x7210a, // max-height
+	0x16d: 0x8f04,  // rgba
+	0x16e: 0x6c310, // list-style-image
+	0x170: 0x29d08, // deeppink
+	0x173: 0x95706, // progid
+	0x175: 0x7960b, // springgreen
+	0x176: 0x3a00b, // forestgreen
+	0x178: 0x3790b, // transparent
+	0x179: 0x82408, // moccasin
+	0x17a: 0x7b00f, // mediumvioletred
+	0x17e: 0x9f40b, // text-indent
+	0x181: 0x6e60f, // list-style-type
+	0x182: 0x17909, // gainsboro
+	0x183: 0x3de0d, // darkturquoise
+	0x184: 0x3d10d, // darkslategray
+	0x189: 0xaa0a,  // overflow-x
+	0x18b: 0x96806, // quotes
+	0x18c: 0x9115,  // background-attachment
+	0x18f: 0x1ab0c, // border-right
+	0x191: 0x5805,  // black
+	0x192: 0x7d30b, // yellowgreen
+	0x194: 0x5cc09, // peachpuff
+	0x197: 0x4270b, // floralwhite
+	0x19c: 0x7590e, // darkolivegreen
+	0x19d: 0x54109, // word-wrap
+	0x19e: 0x18911, // border-left-style
+	0x1a0: 0x9eb0b, // speech-rate
+	0x1a1: 0x86f0d, // outline-width
+	0x1a2: 0xa1f0c, // unicode-bidi
+	0x1a3: 0x6c30a, // list-style
+	0x1a4: 0x94205, // pitch
+	0x1a5: 0x99715, // scrollbar-track-color
+	0x1a6: 0x4ad07, // fuchsia
+	0x1a8: 0x3b00e, // vertical-align
+	0x1ad: 0x5eb05, // alpha
+	0x1ae: 0x72b09, // max-width
+	0x1af: 0x12108, // richness
+	0x1b0: 0x380f,  // radial-gradient
+	0x1b1: 0x80e0d, // padding-right
+	0x1b2: 0x2c815, // scrollbar-arrow-color
+	0x1b3: 0x16404, // left
+	0x1b5: 0x4d409, // elevation
+	0x1b6: 0x59f0a, // line-break
+	0x1ba: 0x2af09, // chocolate
+	0x1bb: 0x9b80d, // speak-numeral
+	0x1bd: 0x4b30b, // accelerator
+	0x1be: 0x6a009, // limegreen
+	0x1c1: 0x7508,  // darkcyan
+	0x1c3: 0x66d0c, // lightskyblue
+	0x1c5: 0x6010a, // sans-serif
+	0x1c6: 0x7d0d,  // border-bottom
 	0x1c7: 0xa,     // background
-	0x1c8: 0xa1006, // volume
-	0x1ca: 0x66b0c, // writing-mode
-	0x1cb: 0x9e18,  // scrollbar-3d-light-color
-	0x1cc: 0x5c006, // widows
-	0x1cf: 0x42809, // font-size
+	0x1c8: 0xa4806, // volume
+	0x1ca: 0x62d0c, // writing-mode
+	0x1cb: 0x12818, // scrollbar-3d-light-color
+	0x1cc: 0x5fc06, // widows
+	0x1cf: 0x45c09, // font-size
 	0x1d0: 0x15,    // background-position-y
-	0x1d1: 0x5d509, // lightcyan
-	0x1d4: 0x4ec09, // indianred
-	0x1d7: 0x1de0a, // ghostwhite
-	0x1db: 0x78a09, // orangered
-	0x1dc: 0x45c0c, // antiquewhite
-	0x1dd: 0x4da09, // lawngreen
-	0x1df: 0x73b0e, // mediumseagreen
-	0x1e0: 0x20010, // border-top-color
-	0x1e2: 0xf304,  // hsla
-	0x1e4: 0x3250e, // text-transform
-	0x1e6: 0x7160c, // mediumorchid
-	0x1e9: 0x8c709, // monospace
-	0x1ec: 0x94916, // scrollbar-shadow-color
-	0x1ed: 0x79209, // darkgreen
-	0x1ef: 0x25809, // cadetblue
-	0x1f0: 0x59806, // filter
-	0x1f1: 0x1ad12, // border-right-style
-	0x1f6: 0x8440a, // overflow-y
-	0x1f7: 0xd809,  // font-face
-	0x1f8: 0x50d0c, // word-spacing
-	0x1fa: 0xbe13,  // border-bottom-style
-	0x1fb: 0x4380c, // font-stretch
-	0x1fc: 0x7c509, // mintcream
-	0x1fd: 0x88d08, // ime-mode
-	0x1fe: 0x2730a, // chartreuse
-	0x1ff: 0x5ca05, // serif
+	0x1d1: 0x61109, // lightcyan
+	0x1d4: 0x52009, // indianred
+	0x1d7: 0x1fa0a, // ghostwhite
+	0x1db: 0x7c209, // orangered
+	0x1dc: 0x4900c, // antiquewhite
+	0x1dd: 0x50e09, // lawngreen
+	0x1df: 0x7730e, // mediumseagreen
+	0x1e0: 0x21c10, // border-top-color
+	0x1e2: 0xe904,  // hsla
+	0x1e4: 0x3240e, // text-transform
+	0x1e6: 0x74e0c, // mediumorchid
+	0x1e9: 0x8ff09, // monospace
+	0x1ec: 0x98116, // scrollbar-shadow-color
+	0x1ed: 0x6870e, // lightsteelblue
+	0x1ef: 0x28a09, // cadetblue
+	0x1f0: 0x5d406, // filter
+	0x1f1: 0x1c912, // border-right-style
+	0x1f6: 0x87c0a, // overflow-y
+	0x1f7: 0xce09,  // font-face
+	0x1f8: 0x3120c, // word-spacing
+	0x1fa: 0xb413,  // border-bottom-style
+	0x1fb: 0x46c0c, // font-stretch
+	0x1fc: 0x7fd09, // mintcream
+	0x1fd: 0x8c508, // ime-mode
+	0x1fe: 0x2a50a, // chartreuse
+	0x1ff: 0x60605, // serif
 }

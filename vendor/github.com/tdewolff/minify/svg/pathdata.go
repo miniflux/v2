@@ -33,6 +33,8 @@ func NewPathData(o *Minifier) *PathData {
 	}
 }
 
+// ShortenPathData takes a full pathdata string and returns a shortened version. The original string is overwritten.
+// It parses all commands (M, A, Z, ...) and coordinates (numbers) and calls copyInstruction for each command.
 func (p *PathData) ShortenPathData(b []byte) []byte {
 	var x0, y0 float64
 	var cmd byte
@@ -74,6 +76,8 @@ func (p *PathData) ShortenPathData(b []byte) []byte {
 	return b[:j]
 }
 
+// copyInstruction copies pathdata of a single command, but may be comprised of multiple sets for that command. For example, L takes two coordinates, but this function may process 2*N coordinates. Lowercase commands are relative commands, where the coordinates are relative to the previous point. Uppercase commands have absolute coordinates.
+// We update p.x and p.y (the current coordinates) according to the commands given. For each set of coordinates we call shortenCurPosInstruction and shortenAltPosInstruction. The former just minifies the coordinates, the latter will inverse the lowercase/uppercase of the command, and see if the coordinates get smaller due to that. The shortest is chosen and copied to `b`.
 func (p *PathData) copyInstruction(b []byte, cmd byte) int {
 	n := len(p.coords)
 	if n == 0 {
@@ -191,6 +195,7 @@ func (p *PathData) copyInstruction(b []byte, cmd byte) int {
 	return j
 }
 
+// shortenCurPosInstruction only minifies the coordinates.
 func (p *PathData) shortenCurPosInstruction(cmd byte, coords [][]byte) PathDataState {
 	state := p.state
 	p.curBuffer = p.curBuffer[:0]
@@ -202,7 +207,8 @@ func (p *PathData) shortenCurPosInstruction(cmd byte, coords [][]byte) PathDataS
 	}
 	for i, coord := range coords {
 		isFlag := false
-		if (cmd == 'A' || cmd == 'a') && (i%7 == 3 || i%7 == 4) {
+		// Arc has boolean flags that can only be 0 or 1. Setting isFlag prevents from adding a dot before a zero (instead of a space). However, when the dot already was there, the command is malformed and could make the path longer than before, introducing bugs.
+		if (cmd == 'A' || cmd == 'a') && (i%7 == 3 || i%7 == 4) && coord[0] != '.' {
 			isFlag = true
 		}
 
@@ -212,6 +218,7 @@ func (p *PathData) shortenCurPosInstruction(cmd byte, coords [][]byte) PathDataS
 	return state
 }
 
+// shortenAltPosInstruction toggles the command between absolute / relative coordinates and minifies the coordinates.
 func (p *PathData) shortenAltPosInstruction(cmd byte, coordFloats []float64, x, y float64) PathDataState {
 	state := p.state
 	p.altBuffer = p.altBuffer[:0]
@@ -250,6 +257,7 @@ func (p *PathData) shortenAltPosInstruction(cmd byte, coordFloats []float64, x, 
 	return state
 }
 
+// copyNumber will copy a number to the destination buffer, taking into account space or dot insertion to guarantee the shortest pathdata.
 func (state *PathDataState) copyNumber(buffer *[]byte, coord []byte, isFlag bool) {
 	if state.prevDigit && (coord[0] >= '0' && coord[0] <= '9' || coord[0] == '.' && state.prevDigitIsInt) {
 		if coord[0] == '0' && !state.prevDigitIsInt {

@@ -15,7 +15,6 @@ import (
 	"runtime"
 	"sort"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
@@ -45,6 +44,7 @@ var filetypeMime = map[string]string{
 }
 
 var (
+	help      bool
 	hidden    bool
 	list      bool
 	m         *min.M
@@ -55,7 +55,7 @@ var (
 	watch     bool
 )
 
-type task struct {
+type Task struct {
 	srcs   []string
 	srcDir string
 	dst    string
@@ -80,15 +80,18 @@ func main() {
 	svgMinifier := &svg.Minifier{}
 	xmlMinifier := &xml.Minifier{}
 
+	flag := flag.NewFlagSet("minify", flag.ContinueOnError)
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] [input]\n\nOptions:\n", os.Args[0])
 		flag.PrintDefaults()
 		fmt.Fprintf(os.Stderr, "\nInput:\n  Files or directories, leave blank to use stdin\n")
 	}
+
+	flag.BoolVarP(&help, "help", "h", false, "Show usage")
 	flag.StringVarP(&output, "output", "o", "", "Output file or directory (must have trailing slash), leave blank to use stdout")
-	flag.StringVar(&mimetype, "mime", "", "Mimetype (text/css, application/javascript, ...), optional for input filenames, has precedence over -type")
-	flag.StringVar(&filetype, "type", "", "Filetype (css, html, js, ...), optional for input filenames")
-	flag.StringVar(&match, "match", "", "Filename pattern matching using regular expressions, see https://github.com/google/re2/wiki/Syntax")
+	flag.StringVar(&mimetype, "mime", "", "Mimetype (eg. text/css), optional for input filenames, has precedence over -type")
+	flag.StringVar(&filetype, "type", "", "Filetype (eg. css), optional for input filenames")
+	flag.StringVar(&match, "match", "", "Filename pattern matching using regular expressions")
 	flag.BoolVarP(&recursive, "recursive", "r", false, "Recursively minify directories")
 	flag.BoolVarP(&hidden, "all", "a", false, "Minify all files, including hidden files and files in hidden directories")
 	flag.BoolVarP(&list, "list", "l", false, "List all accepted filetypes")
@@ -105,7 +108,11 @@ func main() {
 	flag.BoolVar(&htmlMinifier.KeepWhitespace, "html-keep-whitespace", false, "Preserve whitespace characters but still collapse multiple into one")
 	flag.IntVar(&svgMinifier.Decimals, "svg-decimals", -1, "Number of decimals to preserve in numbers, -1 is all")
 	flag.BoolVar(&xmlMinifier.KeepWhitespace, "xml-keep-whitespace", false, "Preserve whitespace characters but still collapse multiple into one")
-	flag.Parse()
+	if err := flag.Parse(os.Args[1:]); err != nil {
+		fmt.Printf("Error: %v\n\n", err)
+		flag.Usage()
+		os.Exit(2)
+	}
 	rawInputs := flag.Args()
 
 	Error = log.New(os.Stderr, "ERROR: ", 0)
@@ -115,13 +122,18 @@ func main() {
 		Info = log.New(ioutil.Discard, "INFO: ", 0)
 	}
 
+	if help {
+		flag.Usage()
+		os.Exit(0)
+	}
+
 	if version {
 		if Version == "devel" {
 			fmt.Printf("minify version devel+%.7s %s\n", Commit, Date)
 		} else {
 			fmt.Printf("minify version %s\n", Version)
 		}
-		return
+		os.Exit(0)
 	}
 
 	if list {
@@ -133,7 +145,7 @@ func main() {
 		for _, k := range keys {
 			fmt.Println(k + "\t" + filetypeMime[k])
 		}
-		return
+		os.Exit(0)
 	}
 
 	useStdin := len(rawInputs) == 0
@@ -148,7 +160,11 @@ func main() {
 	}
 
 	if watch && (useStdin || output == "") {
-		Error.Fatalln("watch doesn't work with stdin or stdout")
+		Error.Fatalln("watch doesn't work on stdin and stdout, specify input and output")
+	}
+
+	if recursive && (useStdin || output == "") {
+		Error.Fatalln("recursive minification doesn't work on stdin and stdout, specify input and output")
 	}
 
 	////////////////
@@ -174,7 +190,7 @@ func main() {
 	}
 
 	if len(tasks) == 0 {
-		tasks = append(tasks, task{[]string{""}, "", output}) // stdin
+		tasks = append(tasks, Task{[]string{""}, "", output}) // stdin
 	}
 
 	m = min.New()
@@ -191,47 +207,33 @@ func main() {
 
 	start := time.Now()
 
-	var fails int32
-	if verbose || len(tasks) == 1 {
-		for _, t := range tasks {
-			if ok := minify(mimetype, t); !ok {
-				fails++
-			}
-		}
-	} else {
-		numWorkers := 4
+	chanTasks := make(chan Task, 100)
+	chanFails := make(chan int, 100)
+
+	numWorkers := 1
+	if !verbose && len(tasks) > 1 {
+		numWorkers = 4
 		if n := runtime.NumCPU(); n > numWorkers {
 			numWorkers = n
 		}
+	}
 
-		sem := make(chan struct{}, numWorkers)
-		for _, t := range tasks {
-			sem <- struct{}{}
-			go func(t task) {
-				defer func() {
-					<-sem
-				}()
-				if ok := minify(mimetype, t); !ok {
-					atomic.AddInt32(&fails, 1)
-				}
-			}(t)
-		}
+	for n := 0; n < numWorkers; n++ {
+		go minifyWorker(mimetype, chanTasks, chanFails)
+	}
 
-		// wait for all jobs to be done
-		for i := 0; i < cap(sem); i++ {
-			sem <- struct{}{}
-		}
+	for _, task := range tasks {
+		chanTasks <- task
 	}
 
 	if watch {
-		var watcher *RecursiveWatcher
-		watcher, err = NewRecursiveWatcher(recursive)
+		watcher, err := NewRecursiveWatcher(recursive)
 		if err != nil {
 			Error.Fatalln(err)
 		}
 		defer watcher.Close()
 
-		var watcherTasks = make(map[string]task, len(rawInputs))
+		watcherTasks := make(map[string]Task, len(rawInputs))
 		for _, task := range tasks {
 			for _, src := range task.srcs {
 				watcherTasks[src] = task
@@ -248,6 +250,7 @@ func main() {
 			select {
 			case <-c:
 				watcher.Close()
+				fmt.Printf("\n")
 			case file, ok := <-changes:
 				if !ok {
 					changes = nil
@@ -260,10 +263,10 @@ func main() {
 					continue
 				}
 
-				var t task
+				var t Task
 				if t, ok = watcherTasks[file]; ok {
 					if !verbose {
-						fmt.Fprintln(os.Stderr, file, "changed")
+						Info.Println(file, "changed")
 					}
 					for _, src := range t.srcs {
 						if src == t.dst {
@@ -271,21 +274,35 @@ func main() {
 							break
 						}
 					}
-					if ok := minify(mimetype, t); !ok {
-						fails++
-					}
+					chanTasks <- t
 				}
 			}
 		}
 	}
 
+	fails := 0
+	close(chanTasks)
+	for n := 0; n < numWorkers; n++ {
+		fails += <-chanFails
+	}
+
 	if verbose {
 		Info.Println(time.Since(start), "total")
 	}
-
 	if fails > 0 {
 		os.Exit(1)
 	}
+	os.Exit(0)
+}
+
+func minifyWorker(mimetype string, chanTasks <-chan Task, chanFails chan<- int) {
+	fails := 0
+	for task := range chanTasks {
+		if ok := minify(mimetype, task); !ok {
+			fails++
+		}
+	}
+	chanFails <- fails
 }
 
 func getMimetype(mimetype, filetype string, useStdin bool) string {
@@ -344,9 +361,9 @@ func validDir(info os.FileInfo) bool {
 	return info.Mode().IsDir() && len(info.Name()) > 0 && (hidden || info.Name()[0] != '.')
 }
 
-func expandInputs(inputs []string, dirDst bool) ([]task, bool) {
+func expandInputs(inputs []string, dirDst bool) ([]Task, bool) {
 	ok := true
-	tasks := []task{}
+	tasks := []Task{}
 	for _, input := range inputs {
 		input = sanitizePath(input)
 		info, err := os.Stat(input)
@@ -357,7 +374,7 @@ func expandInputs(inputs []string, dirDst bool) ([]task, bool) {
 		}
 
 		if info.Mode().IsRegular() {
-			tasks = append(tasks, task{[]string{filepath.ToSlash(input)}, "", ""})
+			tasks = append(tasks, Task{[]string{filepath.ToSlash(input)}, "", ""})
 		} else if info.Mode().IsDir() {
 			expandDir(input, &tasks, &ok)
 		} else {
@@ -391,7 +408,7 @@ func expandInputs(inputs []string, dirDst bool) ([]task, bool) {
 	return tasks, ok
 }
 
-func expandDir(input string, tasks *[]task, ok *bool) {
+func expandDir(input string, tasks *[]Task, ok *bool) {
 	if !recursive {
 		if verbose {
 			Info.Println("expanding directory", input)
@@ -404,7 +421,7 @@ func expandDir(input string, tasks *[]task, ok *bool) {
 		}
 		for _, info := range infos {
 			if validFile(info) {
-				*tasks = append(*tasks, task{[]string{path.Join(input, info.Name())}, input, ""})
+				*tasks = append(*tasks, Task{[]string{path.Join(input, info.Name())}, input, ""})
 			}
 		}
 	} else {
@@ -417,7 +434,7 @@ func expandDir(input string, tasks *[]task, ok *bool) {
 				return err
 			}
 			if validFile(info) {
-				*tasks = append(*tasks, task{[]string{filepath.ToSlash(path)}, input, ""})
+				*tasks = append(*tasks, Task{[]string{filepath.ToSlash(path)}, input, ""})
 			} else if info.Mode().IsDir() && !validDir(info) && info.Name() != "." && info.Name() != ".." { // check for IsDir, so we don't skip the rest of the directory when we have an invalid file
 				return filepath.SkipDir
 			}
@@ -430,7 +447,7 @@ func expandDir(input string, tasks *[]task, ok *bool) {
 	}
 }
 
-func expandOutputs(output string, tasks *[]task) bool {
+func expandOutputs(output string, tasks *[]Task) bool {
 	if verbose {
 		if output == "" {
 			Info.Println("minify to stdout")
@@ -459,7 +476,7 @@ func expandOutputs(output string, tasks *[]task) bool {
 	return ok
 }
 
-func getOutputFilename(output string, t task) (string, error) {
+func getOutputFilename(output string, t Task) (string, error) {
 	if len(output) > 0 && output[len(output)-1] == '/' {
 		rel, err := filepath.Rel(t.srcDir, t.srcs[0])
 		if err != nil {
@@ -470,47 +487,44 @@ func getOutputFilename(output string, t task) (string, error) {
 	return output, nil
 }
 
-func openInputFile(input string) (*os.File, bool) {
+func openInputFile(input string) (io.ReadCloser, error) {
 	var r *os.File
 	if input == "" {
 		r = os.Stdin
 	} else {
 		err := try.Do(func(attempt int) (bool, error) {
-			var err error
-			r, err = os.Open(input)
-			return attempt < 5, err
+			var ferr error
+			r, ferr = os.Open(input)
+			return attempt < 5, ferr
 		})
 		if err != nil {
-			Error.Println(err)
-			return nil, false
+			return nil, err
 		}
 	}
-	return r, true
+	return r, nil
 }
 
-func openOutputFile(output string) (*os.File, bool) {
+func openOutputFile(output string) (*os.File, error) {
 	var w *os.File
 	if output == "" {
 		w = os.Stdout
 	} else {
 		if err := os.MkdirAll(path.Dir(output), 0777); err != nil {
-			Error.Println(err)
-			return nil, false
+			return nil, err
 		}
 		err := try.Do(func(attempt int) (bool, error) {
-			var err error
-			w, err = os.OpenFile(output, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
-			return attempt < 5, err
+			var ferr error
+			w, ferr = os.OpenFile(output, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+			return attempt < 5, ferr
 		})
 		if err != nil {
-			Error.Println(err)
-			return nil, false
+			return nil, err
 		}
 	}
-	return w, true
+	return w, nil
 }
 
-func minify(mimetype string, t task) bool {
+func minify(mimetype string, t Task) bool {
 	if mimetype == "" {
 		for _, src := range t.srcs {
 			if len(path.Ext(src)) > 0 {
@@ -545,8 +559,8 @@ func minify(mimetype string, t task) bool {
 			if t.srcs[i] == t.dst {
 				t.srcs[i] += ".bak"
 				err := try.Do(func(attempt int) (bool, error) {
-					err := os.Rename(t.dst, t.srcs[i])
-					return attempt < 5, err
+					ferr := os.Rename(t.dst, t.srcs[i])
+					return attempt < 5, ferr
 				})
 				if err != nil {
 					Error.Println(err)
@@ -557,42 +571,32 @@ func minify(mimetype string, t task) bool {
 		}
 	}
 
-	frs := make([]io.Reader, len(t.srcs))
-	for i, src := range t.srcs {
-		fr, ok := openInputFile(src)
-		if !ok {
-			for _, fr := range frs {
-				fr.(io.ReadCloser).Close()
-			}
-			return false
-		}
-		if i > 0 && mimetype == filetypeMime["js"] {
-			// prepend newline when concatenating JS files
-			frs[i] = NewPrependReader(fr, []byte("\n"))
-		} else {
-			frs[i] = fr
-		}
+	fr, err := NewConcatFileReader(t.srcs, openInputFile)
+	if err != nil {
+		Error.Println(err)
+		return false
 	}
-	r := &countingReader{io.MultiReader(frs...), 0}
+	if mimetype == filetypeMime["js"] {
+		fr.SetSeparator([]byte("\n"))
+	}
+	r := NewCountingReader(fr)
 
-	fw, ok := openOutputFile(t.dst)
-	if !ok {
-		for _, fr := range frs {
-			fr.(io.ReadCloser).Close()
-		}
+	fw, err := openOutputFile(t.dst)
+	if err != nil {
+		Error.Println(err)
+		fr.Close()
 		return false
 	}
 	var w *countingWriter
 	if fw == os.Stdout {
-		w = &countingWriter{fw, 0}
+		w = NewCountingWriter(fw)
 	} else {
-		w = &countingWriter{bufio.NewWriter(fw), 0}
+		w = NewCountingWriter(bufio.NewWriter(fw))
 	}
 
 	success := true
 	startTime := time.Now()
-	err := m.Minify(mimetype, w, r)
-	if err != nil {
+	if err = m.Minify(mimetype, w, r); err != nil {
 		Error.Println("cannot minify "+srcName+":", err)
 		success = false
 	}
@@ -615,9 +619,7 @@ func minify(mimetype string, t task) bool {
 		}
 	}
 
-	for _, fr := range frs {
-		fr.(io.ReadCloser).Close()
-	}
+	fr.Close()
 	if bw, ok := w.Writer.(*bufio.Writer); ok {
 		bw.Flush()
 	}

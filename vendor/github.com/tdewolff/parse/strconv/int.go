@@ -1,6 +1,8 @@
 package strconv // import "github.com/tdewolff/parse/strconv"
 
-import "math"
+import (
+	"math"
+)
 
 // Int parses a byte-slice and returns the integer it represents.
 // If an invalid character is encountered, it will stop there.
@@ -34,6 +36,9 @@ func ParseInt(b []byte) (int64, int) {
 
 func LenInt(i int64) int {
 	if i < 0 {
+		if i == -9223372036854775808 {
+			return 19
+		}
 		i = -i
 	}
 	switch {

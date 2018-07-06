@@ -51,7 +51,6 @@ func (o *Minifier) Minify(m *minify.M, w io.Writer, r io.Reader, _ map[string]st
 	p := NewPathData(o)
 	minifyBuffer := buffer.NewWriter(make([]byte, 0, 64))
 	attrByteBuffer := make([]byte, 0, 64)
-	gStack := make([]bool, 0)
 
 	l := xml.NewLexer(r)
 	defer l.Restore()
@@ -59,7 +58,6 @@ func (o *Minifier) Minify(m *minify.M, w io.Writer, r io.Reader, _ map[string]st
 	tb := NewTokenBuffer(l)
 	for {
 		t := *tb.Shift()
-	SWITCH:
 		switch t.TokenType {
 		case xml.ErrorToken:
 			if l.Err() == io.EOF {
@@ -113,29 +111,7 @@ func (o *Minifier) Minify(m *minify.M, w io.Writer, r io.Reader, _ map[string]st
 			}
 		case xml.StartTagToken:
 			tag = t.Hash
-			if containerTagMap[tag] { // skip empty containers
-				i := 0
-				for {
-					next := tb.Peek(i)
-					i++
-					if next.TokenType == xml.EndTagToken && next.Hash == tag || next.TokenType == xml.StartTagCloseVoidToken || next.TokenType == xml.ErrorToken {
-						for j := 0; j < i; j++ {
-							tb.Shift()
-						}
-						break SWITCH
-					} else if next.TokenType != xml.AttributeToken && next.TokenType != xml.StartTagCloseToken {
-						break
-					}
-				}
-				if tag == svg.G {
-					if tb.Peek(0).TokenType == xml.StartTagCloseToken {
-						gStack = append(gStack, false)
-						tb.Shift()
-						break
-					}
-					gStack = append(gStack, true)
-				}
-			} else if tag == svg.Metadata {
+			if tag == svg.Metadata {
 				skipTag(tb, tag)
 				break
 			} else if tag == svg.Line {
@@ -184,7 +160,7 @@ func (o *Minifier) Minify(m *minify.M, w io.Writer, r io.Reader, _ map[string]st
 			}
 
 			if tag == svg.Svg && attr == svg.ContentStyleType {
-				val = minify.ContentType(val)
+				val = minify.Mediatype(val)
 				defaultStyleType = val
 			} else if attr == svg.Style {
 				minifyBuffer.Reset()
@@ -266,13 +242,6 @@ func (o *Minifier) Minify(m *minify.M, w io.Writer, r io.Reader, _ map[string]st
 			}
 		case xml.EndTagToken:
 			tag = 0
-			if t.Hash == svg.G && len(gStack) > 0 {
-				if !gStack[len(gStack)-1] {
-					gStack = gStack[:len(gStack)-1]
-					break
-				}
-				gStack = gStack[:len(gStack)-1]
-			}
 			if len(t.Data) > 3+len(t.Text) {
 				t.Data[2+len(t.Text)] = '>'
 				t.Data = t.Data[:3+len(t.Text)]

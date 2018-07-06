@@ -23,6 +23,8 @@ func TestCSS(t *testing.T) {
 		{".cla[id ^= L] { x:y; }", ".cla[id^=L]{x:y}"},
 		{"area:focus { outline : 0;}", "area:focus{outline:0}"},
 		{"@import 'file';", "@import 'file'"},
+		{"@import url('file');", "@import 'file'"},
+		{"@import url(//url);", `@import "//url"`},
 		{"@font-face { x:y; }", "@font-face{x:y}"},
 
 		{"input[type=\"radio\"]{x:y}", "input[type=radio]{x:y}"},
@@ -51,6 +53,7 @@ func TestCSS(t *testing.T) {
 		// go-fuzz
 		{"input[type=\"\x00\"] {  a: b\n}.a{}", "input[type=\"\x00\"]{a:b}.a{}"},
 		{"a{a:)'''", "a{a:)'''}"},
+		{"{T:l(", "{t:l(}"},
 	}
 
 	m := minify.New()
@@ -91,11 +94,17 @@ func TestCSSInline(t *testing.T) {
 		{"color: hsla(1,2%,3%,1);", "color:#080807"},
 		{"color: hsla(1,2%,3%,0);", "color:transparent"},
 		{"color: hsl(48,100%,50%);", "color:#fc0"},
+		{"background: hsla(0,0%,100%,.7);", "background:hsla(0,0%,100%,.7)"},
 		{"font-weight: bold; font-weight: normal;", "font-weight:700;font-weight:400"},
 		{"font: bold \"Times new Roman\",\"Sans-Serif\";", "font:700 times new roman,\"sans-serif\""},
+		{"font: normal normal normal normal 20px normal", "font:20px normal"},
 		{"outline: none;", "outline:0"},
+		{"outline: solid black 0;", "outline:solid #000 0"},
+		{"outline: none black 5px;", "outline:0 #000 5px"},
 		{"outline: none !important;", "outline:0!important"},
 		{"border-left: none;", "border-left:0"},
+		{"border-left: none 0;", "border-left:0"},
+		{"border-left: 0 dashed red;", "border-left:0 dashed red"},
 		{"margin: 1 1 1 1;", "margin:1"},
 		{"margin: 1 2 1 2;", "margin:1 2"},
 		{"margin: 1 2 3 2;", "margin:1 2 3"},
@@ -106,11 +115,13 @@ func TestCSSInline(t *testing.T) {
 		{"margin: 0em;", "margin:0"},
 		{"font-family:'Arial', 'Times New Roman';", "font-family:arial,times new roman"},
 		{"background:url('http://domain.com/image.png');", "background:url(http://domain.com/image.png)"},
+		{"background:url( 'http://domain.com/image.png' );", "background:url(http://domain.com/image.png)"},
 		{"filter: progid : DXImageTransform.Microsoft.BasicImage(rotation=1);", "filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1)"},
 		{"filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);", "filter:alpha(opacity=0)"},
 		{"content: \"a\\\nb\";", "content:\"ab\""},
 		{"content: \"a\\\r\nb\\\r\nc\";", "content:\"abc\""},
 		{"content: \"\";", "content:\"\""},
+		{"x: white , white", "x:#fff,#fff"},
 
 		{"font:27px/13px arial,sans-serif", "font:27px/13px arial,sans-serif"},
 		{"text-decoration: none !important", "text-decoration:none!important"},
@@ -139,9 +150,15 @@ func TestCSSInline(t *testing.T) {
 		{"margin:0 0 18px 0;", "margin:0 0 18px"},
 		{"background:none", "background:0 0"},
 		{"background:none 1 1", "background:none 1 1"},
+		{"background:transparent", "background:0 0"},
+		{"background:transparent no-repeat", "background:transparent no-repeat"},
 		{"z-index:1000", "z-index:1000"},
+		{"box-shadow:0 0 0 0", "box-shadow:0 0"},
+		{"flex:0px", "flex:0px"},
 
 		{"any:0deg 0s 0ms 0dpi 0dpcm 0dppx 0hz 0khz", "any:0 0s 0ms 0dpi 0dpcm 0dppx 0hz 0khz"},
+		{"width:calc(0%-0px)", "width:calc(0%-0px)"},
+		{"border-left:0 none", "border-left:0"},
 		{"--custom-variable:0px;", "--custom-variable:0px"},
 		{"--foo: if(x > 5) this.width = 10", "--foo: if(x > 5) this.width = 10"},
 		{"--foo: ;", "--foo: "},
@@ -156,7 +173,7 @@ func TestCSSInline(t *testing.T) {
 		{"margin: 1 1 1;", "margin:1"},
 		{"margin: 1 2 1;", "margin:1 2"},
 		{"margin: 1 2 3;", "margin:1 2 3"},
-		{"margin: 0%;", "margin:0"},
+		// {"margin: 0%;", "margin:0"},
 		{"color: rgb(255,64,64);", "color:#ff4040"},
 		{"color: rgb(256,-34,2342435);", "color:#f0f"},
 		{"color: rgb(120%,-45%,234234234%);", "color:#f0f"},
@@ -176,6 +193,27 @@ func TestCSSInline(t *testing.T) {
 			r := bytes.NewBufferString(tt.css)
 			w := &bytes.Buffer{}
 			err := Minify(m, w, r, params)
+			test.Minify(t, tt.css, err, w.String(), tt.expected)
+		})
+	}
+}
+
+func TestCSSKeepCSS2(t *testing.T) {
+	tests := []struct {
+		css      string
+		expected string
+	}{
+		{`margin:5000em`, `margin:5000em`},
+	}
+
+	m := minify.New()
+	params := map[string]string{"inline": "1"}
+	cssMinifier := &Minifier{Decimals: -1, KeepCSS2: true}
+	for _, tt := range tests {
+		t.Run(tt.css, func(t *testing.T) {
+			r := bytes.NewBufferString(tt.css)
+			w := &bytes.Buffer{}
+			err := cssMinifier.Minify(m, w, r, params)
 			test.Minify(t, tt.css, err, w.String(), tt.expected)
 		})
 	}

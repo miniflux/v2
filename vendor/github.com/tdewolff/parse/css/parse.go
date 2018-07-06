@@ -70,6 +70,10 @@ type Token struct {
 	Data []byte
 }
 
+func (t Token) String() string {
+	return t.TokenType.String() + "('" + string(t.Data) + "')"
+}
+
 // Parser is the state for the parser.
 type Parser struct {
 	l     *Lexer

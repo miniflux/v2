@@ -87,7 +87,7 @@ func (rw *RecursiveWatcher) Run() chan string {
 							}
 						}
 					} else if validFile(info) {
-						if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
+						if event.Op&fsnotify.Write == fsnotify.Write {
 							files <- event.Name
 						}
 					}

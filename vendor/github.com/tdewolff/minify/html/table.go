@@ -124,7 +124,6 @@ var attrMap = map[html.Hash]traits{
 	html.Defer:           booleanAttr,
 	html.Dir:             caselessAttr,
 	html.Disabled:        booleanAttr,
-	html.Draggable:       booleanAttr,
 	html.Enabled:         booleanAttr,
 	html.Enctype:         caselessAttr,
 	html.Face:            caselessAttr,

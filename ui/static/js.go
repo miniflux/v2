@@ -34,8 +34,7 @@ if(this.queue.length>=2){this.queue=[];}};}
 isEventIgnored(event){return event.target.tagName==="INPUT"||event.target.tagName==="TEXTAREA";}
 getKey(event){const mapping={'Esc':'Escape','Up':'ArrowUp','Down':'ArrowDown','Left':'ArrowLeft','Right':'ArrowRight'};for(let key in mapping){if(mapping.hasOwnProperty(key)&&key===event.key){return mapping[key];}}
 return event.key;}}
-class FormHandler{static handleSubmitButtons(){let elements=document.querySelectorAll("form");elements.forEach((element)=>{element.onsubmit=()=>{let button=document.querySelector("button");if(button){button.innerHTML=button.dataset.labelLoading;button.disabled=true;}};});}}
-class MouseHandler{onClick(selector,callback){let elements=document.querySelectorAll(selector);elements.forEach((element)=>{element.onclick=(event)=>{event.preventDefault();callback(event);};});}}
+class MouseHandler{onClick(selector,callback){let elements=document.querySelectorAll(selector);elements.forEach((element)=>{element.onclick=(event)=>{event.preventDefault();callback(event);};});}}class FormHandler{static handleSubmitButtons(){let elements=document.querySelectorAll("form");elements.forEach((element)=>{element.onsubmit=()=>{let button=document.querySelector("button");if(button){button.innerHTML=button.dataset.labelLoading;button.disabled=true;}};});}}
 class RequestBuilder{constructor(url){this.callback=null;this.url=url;this.options={method:"POST",cache:"no-cache",credentials:"include",body:null,headers:new Headers({"Content-Type":"application/json","X-Csrf-Token":this.getCsrfToken()})};}
 withBody(body){this.options.body=JSON.stringify(body);return this;}
 withCallback(callback){this.callback=callback;return this;}
@@ -94,5 +93,5 @@ document.addEventListener("DOMContentLoaded",function(){FormHandler.handleSubmit
 }
 
 var JavascriptChecksums = map[string]string{
-	"app": "717f6c6431128b6263dc1f54edf6fd0c6efc3bcbc8c9baf23768c8f23ce53675",
+	"app": "c090bbc7f503aa032b4cfe68b58bc4754133aaed4f77ff768ac63f41528f55c3",
 }

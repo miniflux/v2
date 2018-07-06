@@ -1,0 +1,29 @@
+#!/bin/bash
+
+_minify_complete()
+{
+    local cur_word prev_word flags mimes types
+
+    cur_word="${COMP_WORDS[COMP_CWORD]}"
+    prev_word="${COMP_WORDS[COMP_CWORD-1]}"
+    flags="-a --all -l --list --match --mime -o --output -r --recursive --type --url -v --verbose --version -w --watch --css-decimals --html-keep-conditional-comments --html-keep-default-attrvals --html-keep-document-tags --html-keep-end-tags --html-keep-whitespace --svg-decimals --xml-keep-whitespace"
+    mimes="text/css text/html text/javascript application/json image/svg+xml text/xml"
+    types="css html js json svg xml"
+
+    if [[ ${cur_word} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${flags}" -- ${cur_word}) )
+    elif [[ ${prev_word} =~ ^--mime$ ]] ; then
+        COMPREPLY=( $(compgen -W "${mimes}" -- ${cur_word}) )
+    elif [[ ${prev_word} =~ ^--type$ ]] ; then
+        COMPREPLY=( $(compgen -W "${types}" -- ${cur_word}) )
+    elif [[ ${prev_word} =~ ^--(match|url|css-decimals|svg-decimals)$ ]] ; then
+        compopt +o default
+        COMPREPLY=()
+    else
+        compopt -o default
+        COMPREPLY=()
+    fi
+    return 0
+}
+
+complete -F _minify_complete minify

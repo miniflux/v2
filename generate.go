@@ -35,82 +35,160 @@ var {{ .Map }}Checksums = map[string]string{
 {{ end }}}
 `
 
-var generatedTpl = template.Must(template.New("").Parse(tpl))
+var bundleTpl = template.Must(template.New("").Parse(tpl))
 
-type GeneratedFile struct {
+type Bundle struct {
 	Package, Map string
 	Files        map[string]string
 	Checksums    map[string]string
 }
 
-func normalizeBasename(filename string) string {
-	filename = strings.TrimSuffix(filename, filepath.Ext(filename))
-	return strings.Replace(filename, " ", "_", -1)
-}
-
-func generateFile(serializer, pkg, mapName, pattern, output string) {
-	generatedFile := &GeneratedFile{
-		Package:   pkg,
-		Map:       mapName,
-		Files:     make(map[string]string),
-		Checksums: make(map[string]string),
-	}
-
-	files, _ := filepath.Glob(pattern)
-	for _, file := range files {
-		basename := path.Base(file)
-		content, err := ioutil.ReadFile(file)
-		if err != nil {
-			panic(err)
-		}
-
-		switch serializer {
-		case "css":
-			m := minify.New()
-			m.AddFunc("text/css", css.Minify)
-			content, err = m.Bytes("text/css", content)
-			if err != nil {
-				panic(err)
-			}
-
-			basename = normalizeBasename(basename)
-			generatedFile.Files[basename] = string(content)
-		case "js":
-			m := minify.New()
-			m.AddFunc("text/javascript", js.Minify)
-			content, err = m.Bytes("text/javascript", content)
-			if err != nil {
-				panic(err)
-			}
-
-			basename = normalizeBasename(basename)
-			generatedFile.Files[basename] = string(content)
-		case "base64":
-			encodedContent := base64.StdEncoding.EncodeToString(content)
-			generatedFile.Files[basename] = encodedContent
-		default:
-			basename = normalizeBasename(basename)
-			generatedFile.Files[basename] = string(content)
-		}
-
-		generatedFile.Checksums[basename] = fmt.Sprintf("%x", sha256.Sum256(content))
-	}
-
-	f, err := os.Create(output)
+func (b *Bundle) Write(filename string) {
+	f, err := os.Create(filename)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 
-	generatedTpl.Execute(f, generatedFile)
+	bundleTpl.Execute(f, b)
+}
+
+func NewBundle(pkg, mapName string) *Bundle {
+	return &Bundle{
+		Package:   pkg,
+		Map:       mapName,
+		Files:     make(map[string]string),
+		Checksums: make(map[string]string),
+	}
+}
+
+func readFile(filename string) []byte {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	return data
+}
+
+func checksum(data []byte) string {
+	return fmt.Sprintf("%x", sha256.Sum256(data))
+}
+
+func basename(filename string) string {
+	return path.Base(filename)
+}
+
+func stripExtension(filename string) string {
+	filename = strings.TrimSuffix(filename, filepath.Ext(filename))
+	return strings.Replace(filename, " ", "_", -1)
+}
+
+func glob(pattern string) []string {
+	files, _ := filepath.Glob(pattern)
+	return files
+}
+
+func concat(files []string) string {
+	var b strings.Builder
+	for _, file := range files {
+		b.Write(readFile(file))
+	}
+	return b.String()
+}
+
+func generateJSBundle(bundleFile string, srcFiles []string) {
+	var b strings.Builder
+	b.WriteString("(function() {'use strict';")
+	b.WriteString(concat(srcFiles))
+	b.WriteString("})();")
+
+	m := minify.New()
+	m.AddFunc("text/javascript", js.Minify)
+
+	output, err := m.String("text/javascript", b.String())
+	if err != nil {
+		panic(err)
+	}
+
+	bundle := NewBundle("static", "Javascript")
+	bundle.Files["app"] = output
+	bundle.Checksums["app"] = checksum([]byte(output))
+	bundle.Write(bundleFile)
+}
+
+func generateCSSBundle(bundleFile string, srcFiles []string) {
+	bundle := NewBundle("static", "Stylesheets")
+
+	for _, srcFile := range srcFiles {
+		data := readFile(srcFile)
+		filename := stripExtension(basename(srcFile))
+
+		m := minify.New()
+		m.AddFunc("text/css", css.Minify)
+
+		minifiedData, err := m.Bytes("text/css", data)
+		if err != nil {
+			panic(err)
+		}
+
+		bundle.Files[filename] = string(minifiedData)
+		bundle.Checksums[filename] = checksum(minifiedData)
+	}
+
+	bundle.Write(bundleFile)
+}
+
+func generateBinaryBundle(bundleFile string, srcFiles []string) {
+	bundle := NewBundle("static", "Binaries")
+
+	for _, srcFile := range srcFiles {
+		data := readFile(srcFile)
+		filename := basename(srcFile)
+		encodedData := base64.StdEncoding.EncodeToString(data)
+
+		bundle.Files[filename] = string(encodedData)
+		bundle.Checksums[filename] = checksum(data)
+	}
+
+	bundle.Write(bundleFile)
+}
+
+func generateBundle(bundleFile, pkg, mapName string, srcFiles []string) {
+	bundle := NewBundle(pkg, mapName)
+
+	for _, srcFile := range srcFiles {
+		data := readFile(srcFile)
+		filename := stripExtension(basename(srcFile))
+
+		bundle.Files[filename] = string(data)
+		bundle.Checksums[filename] = checksum(data)
+	}
+
+	bundle.Write(bundleFile)
 }
 
 func main() {
-	generateFile("none", "sql", "SqlMap", "sql/*.sql", "sql/sql.go")
-	generateFile("base64", "static", "Binaries", "ui/static/bin/*", "ui/static/bin.go")
-	generateFile("css", "static", "Stylesheets", "ui/static/css/*.css", "ui/static/css.go")
-	generateFile("js", "static", "Javascript", "ui/static/js/*.js", "ui/static/js.go")
-	generateFile("none", "template", "templateViewsMap", "template/html/*.html", "template/views.go")
-	generateFile("none", "template", "templateCommonMap", "template/html/common/*.html", "template/common.go")
-	generateFile("none", "locale", "translations", "locale/translations/*.json", "locale/translations.go")
+	generateJSBundle("ui/static/js.go", []string{
+		"ui/static/js/dom_helper.js",
+		"ui/static/js/touch_handler.js",
+		"ui/static/js/keyboard_handler.js",
+		"ui/static/js/mouse_handler.js",
+		"ui/static/js/form_handler.js",
+		"ui/static/js/request_builder.js",
+		"ui/static/js/unread_counter_handler.js",
+		"ui/static/js/entry_handler.js",
+		"ui/static/js/confirm_handler.js",
+		"ui/static/js/menu_handler.js",
+		"ui/static/js/modal_handler.js",
+		"ui/static/js/nav_handler.js",
+		"ui/static/js/bootstrap.js",
+	})
+
+	generateCSSBundle("ui/static/css.go", glob("ui/static/css/*.css"))
+	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))
+
+	generateBundle("sql/sql.go", "sql", "SqlMap", glob("sql/*.sql"))
+	generateBundle("template/views.go", "template", "templateViewsMap", glob("template/html/*.html"))
+	generateBundle("template/common.go", "template", "templateCommonMap", glob("template/html/common/*.html"))
+	generateBundle("locale/translations.go", "locale", "translations", glob("locale/translations/*.json"))
 }

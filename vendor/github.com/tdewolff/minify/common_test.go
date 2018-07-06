@@ -12,20 +12,20 @@ import (
 	"github.com/tdewolff/test"
 )
 
-func TestContentType(t *testing.T) {
-	contentTypeTests := []struct {
-		contentType string
-		expected    string
+func TestMediatype(t *testing.T) {
+	mediatypeTests := []struct {
+		mediatype string
+		expected  string
 	}{
 		{"text/html", "text/html"},
 		{"text/html; charset=UTF-8", "text/html;charset=utf-8"},
 		{"text/html; charset=UTF-8 ; param = \" ; \"", "text/html;charset=utf-8;param=\" ; \""},
 		{"text/html, text/css", "text/html,text/css"},
 	}
-	for _, tt := range contentTypeTests {
-		t.Run(tt.contentType, func(t *testing.T) {
-			contentType := ContentType([]byte(tt.contentType))
-			test.Minify(t, tt.contentType, nil, string(contentType), tt.expected)
+	for _, tt := range mediatypeTests {
+		t.Run(tt.mediatype, func(t *testing.T) {
+			mediatype := Mediatype([]byte(tt.mediatype))
+			test.Minify(t, tt.mediatype, nil, string(mediatype), tt.expected)
 		})
 	}
 }
@@ -62,6 +62,72 @@ func TestDataURI(t *testing.T) {
 	}
 }
 
+func TestDecimal(t *testing.T) {
+	numberTests := []struct {
+		number   string
+		expected string
+	}{
+		{"0", "0"},
+		{".0", "0"},
+		{"1.0", "1"},
+		{"0.1", ".1"},
+		{"+1", "1"},
+		{"-1", "-1"},
+		{"-0.1", "-.1"},
+		{"10", "10"},
+		{"100", "100"},
+		{"1000", "1000"},
+		{"0.001", ".001"},
+		{"0.0001", ".0001"},
+		{"0.252", ".252"},
+		{"1.252", "1.252"},
+		{"-1.252", "-1.252"},
+		{"0.075", ".075"},
+		{"789012345678901234567890123456789e9234567890123456789", "789012345678901234567890123456789e9234567890123456789"},
+		{".000100009", ".000100009"},
+		{".0001000009", ".0001000009"},
+		{".0001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009", ".0001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009"},
+		{"E\x1f", "E\x1f"}, // fuzz
+	}
+	for _, tt := range numberTests {
+		t.Run(tt.number, func(t *testing.T) {
+			number := Decimal([]byte(tt.number), -1)
+			test.Minify(t, tt.number, nil, string(number), tt.expected)
+		})
+	}
+}
+
+func TestDecimalTruncate(t *testing.T) {
+	numberTests := []struct {
+		number   string
+		truncate int
+		expected string
+	}{
+		{"0.1", 1, ".1"},
+		{"0.0001", 1, "0"},
+		{"0.111", 1, ".1"},
+		{"0.111", 0, "0"},
+		{"0.075", 1, ".1"},
+		{"0.025", 1, "0"},
+		{"9.99", 1, "10"},
+		{"8.88", 1, "8.9"},
+		{"8.88", 0, "9"},
+		{"8.00", 0, "8"},
+		{".88", 0, "1"},
+		{"1.234", 1, "1.2"},
+		{"33.33", 0, "33"},
+		{"29.666", 0, "30"},
+		{"1.51", 1, "1.5"},
+		{"1.01", 1, "1"},
+	}
+	for _, tt := range numberTests {
+		t.Run(tt.number, func(t *testing.T) {
+			number := Decimal([]byte(tt.number), tt.truncate)
+			test.Minify(t, tt.number, nil, string(number), tt.expected, "truncate to", tt.truncate)
+		})
+	}
+}
+
 func TestNumber(t *testing.T) {
 	numberTests := []struct {
 		number   string
@@ -82,6 +148,8 @@ func TestNumber(t *testing.T) {
 		{"100e1", "1e3"},
 		{"1.1e+1", "11"},
 		{"1.1e6", "11e5"},
+		{"1.1e", "1.1e"},   // broken number, don't parse
+		{"1.1e+", "1.1e+"}, // broken number, don't parse
 		{"0.252", ".252"},
 		{"1.252", "1.252"},
 		{"-1.252", "-1.252"},
@@ -90,6 +158,7 @@ func TestNumber(t *testing.T) {
 		{".000100009", "100009e-9"},
 		{".0001000009", ".0001000009"},
 		{".0001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009", ".0001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009"},
+		{".6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e-9", ".6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e-9"},
 		{"E\x1f", "E\x1f"}, // fuzz
 		{"1e9223372036854775807", "1e9223372036854775807"},
 		{"11e9223372036854775807", "11e9223372036854775807"},
@@ -108,11 +177,11 @@ func TestNumber(t *testing.T) {
 		{".12345e-2", ".0012345"},
 		{".12345e-3", "12345e-8"},
 		{".12345e-4", "12345e-9"},
-		{".12345e-5", "12345e-10"},
+		{".12345e-5", ".12345e-5"},
 
 		{".123456e-3", "123456e-9"},
 		{".123456e-2", ".00123456"},
-		{".1234567e-4", "1234567e-11"},
+		{".1234567e-4", ".1234567e-4"},
 		{".1234567e-3", ".0001234567"},
 
 		{"12345678e-1", "1234567.8"},
@@ -155,6 +224,7 @@ func TestNumberTruncate(t *testing.T) {
 		{"33.33", 0, "33"},
 		{"29.666", 0, "30"},
 		{"1.51", 1, "1.5"},
+		{"1.01", 1, "1"},
 	}
 	for _, tt := range numberTests {
 		t.Run(tt.number, func(t *testing.T) {
@@ -164,13 +234,32 @@ func TestNumberTruncate(t *testing.T) {
 	}
 }
 
+func TestDecimalRandom(t *testing.T) {
+	N := int(1e4)
+	if testing.Short() {
+		N = 0
+	}
+	for i := 0; i < N; i++ {
+		b := RandNumBytes(false)
+		f, _ := strconv.ParseFloat(string(b), 64)
+
+		b2 := make([]byte, len(b))
+		copy(b2, b)
+		b2 = Decimal(b2, -1)
+		f2, _ := strconv.ParseFloat(string(b2), 64)
+		if math.Abs(f-f2) > 1e-6 {
+			fmt.Println("Bad:", f, "!=", f2, "in", string(b), "to", string(b2))
+		}
+	}
+}
+
 func TestNumberRandom(t *testing.T) {
 	N := int(1e4)
 	if testing.Short() {
 		N = 0
 	}
 	for i := 0; i < N; i++ {
-		b := RandNumBytes()
+		b := RandNumBytes(true)
 		f, _ := strconv.ParseFloat(string(b), 64)
 
 		b2 := make([]byte, len(b))
@@ -191,11 +280,11 @@ var numbers [][]byte
 func TestMain(t *testing.T) {
 	numbers = make([][]byte, 0, n)
 	for j := 0; j < n; j++ {
-		numbers = append(numbers, RandNumBytes())
+		numbers = append(numbers, RandNumBytes(true))
 	}
 }
 
-func RandNumBytes() []byte {
+func RandNumBytes(withExp bool) []byte {
 	var b []byte
 	n := rand.Int() % 10
 	for i := 0; i < n; i++ {
@@ -208,7 +297,7 @@ func RandNumBytes() []byte {
 			b = append(b, byte(rand.Int()%10)+'0')
 		}
 	}
-	if rand.Int()%2 == 0 {
+	if withExp && rand.Int()%2 == 0 {
 		b = append(b, 'e')
 		if rand.Int()%2 == 0 {
 			b = append(b, '-')

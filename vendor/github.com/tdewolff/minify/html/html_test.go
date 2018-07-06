@@ -32,6 +32,7 @@ func TestHTML(t *testing.T) {
 		{`<html><head></head><body>x</body></html>`, `x`},
 		{`<meta http-equiv="content-type" content="text/html; charset=utf-8">`, `<meta charset=utf-8>`},
 		{`<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />`, `<meta charset=utf-8>`},
+		{`<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none';">`, `<meta http-equiv=content-security-policy content="default-src 'self'; img-src https://*; child-src 'none';">`},
 		{`<meta name="keywords" content="a, b">`, `<meta name=keywords content=a,b>`},
 		{`<meta name="viewport" content="width = 996" />`, `<meta name=viewport content="width=996">`},
 		{`<span attr="test"></span>`, `<span attr=test></span>`},
@@ -178,6 +179,7 @@ func TestHTMLKeepConditionalComments(t *testing.T) {
 	}{
 		{`<!--[if IE 6]> <b> </b> <![endif]-->`, `<!--[if IE 6]><b></b><![endif]-->`},
 		{`<![if IE 6]> <b> </b> <![endif]>`, `<![if IE 6]><b></b><![endif]>`},
+		{`<!--[if !mso]><!--> <b> </b> <!--<![endif]-->`, `<!--[if !mso]><!--><b></b><!--<![endif]-->`},
 	}
 
 	m := minify.New()
