@@ -54,8 +54,8 @@ func (f *FeedProcessor) Process() {
 			}
 		}
 
-		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 		entry.Content = rewrite.Rewriter(entry.URL, entry.Content, f.rewriteRules)
+		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 	}
 }
 
