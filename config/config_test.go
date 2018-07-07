@@ -56,10 +56,46 @@ func TestCustomBaseURLWithTrailingSlash(t *testing.T) {
 	}
 
 	if cfg.RootURL() != "http://example.org" {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.BaseURL())
+		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
 	}
 
 	if cfg.BasePath() != "/folder" {
+		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	}
+}
+
+func TestBaseURLWithoutScheme(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("BASE_URL", "example.org/folder/")
+	cfg := NewConfig()
+
+	if cfg.BaseURL() != "http://localhost" {
+		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
+	}
+
+	if cfg.RootURL() != "http://localhost" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	}
+
+	if cfg.BasePath() != "" {
+		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	}
+}
+
+func TestBaseURLWithInvalidScheme(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("BASE_URL", "ftp://example.org/folder/")
+	cfg := NewConfig()
+
+	if cfg.BaseURL() != "http://localhost" {
+		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
+	}
+
+	if cfg.RootURL() != "http://localhost" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	}
+
+	if cfg.BasePath() != "" {
 		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
 	}
 }

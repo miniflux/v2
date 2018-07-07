@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/miniflux/miniflux/logger"
 )
@@ -54,6 +55,35 @@ func (c *Config) getInt(key string, fallback int) int {
 	return v
 }
 
+func (c *Config) parseBaseURL() {
+	baseURL := os.Getenv("BASE_URL")
+	if baseURL == "" {
+		return
+	}
+
+	if baseURL[len(baseURL)-1:] == "/" {
+		baseURL = baseURL[:len(baseURL)-1]
+	}
+
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		logger.Error("Invalid BASE_URL: %v", err)
+		return
+	}
+
+	scheme := strings.ToLower(u.Scheme)
+	if scheme != "https" && scheme != "http" {
+		logger.Error("Invalid BASE_URL: scheme must be http or https")
+		return
+	}
+
+	c.baseURL = baseURL
+	c.basePath = u.Path
+
+	u.Path = ""
+	c.rootURL = u.String()
+}
+
 // HasDebugMode returns true if debug mode is enabled.
 func (c *Config) HasDebugMode() bool {
 	return c.get("DEBUG", "") != ""
@@ -61,31 +91,16 @@ func (c *Config) HasDebugMode() bool {
 
 // BaseURL returns the application base URL with path.
 func (c *Config) BaseURL() string {
-	if c.baseURL == "" {
-		c.baseURL = c.get("BASE_URL", defaultBaseURL)
-		if c.baseURL[len(c.baseURL)-1:] == "/" {
-			c.baseURL = c.baseURL[:len(c.baseURL)-1]
-		}
-	}
 	return c.baseURL
 }
 
 // RootURL returns the base URL without path.
 func (c *Config) RootURL() string {
-	if c.rootURL == "" {
-		u, _ := url.Parse(c.BaseURL())
-		u.Path = ""
-		c.rootURL = u.String()
-	}
 	return c.rootURL
 }
 
 // BasePath returns the application base path according to the base URL.
 func (c *Config) BasePath() string {
-	if c.basePath == "" {
-		u, _ := url.Parse(c.BaseURL())
-		c.basePath = u.Path
-	}
 	return c.basePath
 }
 
@@ -204,5 +219,12 @@ func (c *Config) PocketConsumerKey(defaultValue string) string {
 
 // NewConfig returns a new Config.
 func NewConfig() *Config {
-	return &Config{IsHTTPS: os.Getenv("HTTPS") != ""}
+	cfg := &Config{
+		baseURL: defaultBaseURL,
+		rootURL: defaultBaseURL,
+		IsHTTPS: os.Getenv("HTTPS") != "",
+	}
+
+	cfg.parseBaseURL()
+	return cfg
 }
