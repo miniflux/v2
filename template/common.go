@@ -101,7 +101,7 @@ var templateCommonMap = map[string]string{
     {{ if .user }}
         <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .user.Theme }}">
     {{ else }}
-        <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" "white" }}">
+        <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" "default" }}">
     {{ end }}
     <script type="text/javascript" src="{{ route "javascript" }}" defer></script>
 </head>
@@ -232,6 +232,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
 	"item_meta":        "6cff8ae243f19dac936e523867d2975f70aa749b2a461ae63f6ebbca94cf7419",
-	"layout":           "4738561d29c428157e83aa13601c463b5e73bd0e2a5fdee75089f3643d6d4055",
+	"layout":           "27b21c2d8ce341edcc11bf557f73fcd08dad1dfc8d0788c94addbc87f94f2f19",
 	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
 }
