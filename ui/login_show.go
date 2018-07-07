@@ -25,5 +25,5 @@ func (c *Controller) ShowLoginPage(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(c.store, ctx)
 	view := view.New(c.tpl, ctx, sess)
-	html.OK(w, view.Render("login"))
+	html.OK(w, r, view.Render("login"))
 }

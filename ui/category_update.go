@@ -57,13 +57,13 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	if err := categoryForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("edit_category"))
+		html.OK(w, r, view.Render("edit_category"))
 		return
 	}
 
 	if c.store.AnotherCategoryExists(user.ID, category.ID, categoryForm.Title) {
 		view.Set("errorMessage", "This category already exists.")
-		html.OK(w, view.Render("edit_category"))
+		html.OK(w, r, view.Render("edit_category"))
 		return
 	}
 
@@ -71,7 +71,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error("[Controller:UpdateCategory] %v", err)
 		view.Set("errorMessage", "Unable to update this category.")
-		html.OK(w, view.Render("edit_category"))
+		html.OK(w, r, view.Render("edit_category"))
 		return
 	}
 

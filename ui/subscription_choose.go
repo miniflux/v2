@@ -43,7 +43,7 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 	if err := subscriptionForm.Validate(); err != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("add_subscription"))
+		html.OK(w, r, view.Render("add_subscription"))
 		return
 	}
 
@@ -58,7 +58,7 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", err)
-		html.OK(w, view.Render("add_subscription"))
+		html.OK(w, r, view.Render("add_subscription"))
 		return
 	}
 

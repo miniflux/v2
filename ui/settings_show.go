@@ -50,5 +50,5 @@ func (c *Controller) ShowSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("settings"))
+	html.OK(w, r, view.Render("settings"))
 }

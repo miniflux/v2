@@ -43,5 +43,5 @@ func (c *Controller) ShowUsers(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("users"))
+	html.OK(w, r, view.Render("users"))
 }

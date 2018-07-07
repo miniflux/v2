@@ -99,5 +99,5 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 	// Fetching the counter here avoid to be off by one.
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("entry"))
+	html.OK(w, r, view.Render("entry"))
 }

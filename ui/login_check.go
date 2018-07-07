@@ -28,13 +28,13 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 
 	if err := authForm.Validate(); err != nil {
 		logger.Error("[Controller:CheckLogin] %v", err)
-		html.OK(w, view.Render("login"))
+		html.OK(w, r, view.Render("login"))
 		return
 	}
 
 	if err := c.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
 		logger.Error("[Controller:CheckLogin] %v", err)
-		html.OK(w, view.Render("login"))
+		html.OK(w, r, view.Render("login"))
 		return
 	}
 

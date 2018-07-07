@@ -39,7 +39,7 @@ func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
 
 	if err := categoryForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("create_category"))
+		html.OK(w, r, view.Render("create_category"))
 		return
 	}
 
@@ -51,7 +51,7 @@ func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
 
 	if duplicateCategory != nil {
 		view.Set("errorMessage", "This category already exists.")
-		html.OK(w, view.Render("create_category"))
+		html.OK(w, r, view.Render("create_category"))
 		return
 	}
 
@@ -63,7 +63,7 @@ func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
 	if err = c.store.CreateCategory(&category); err != nil {
 		logger.Error("[Controller:CreateCategory] %v", err)
 		view.Set("errorMessage", "Unable to create this category.")
-		html.OK(w, view.Render("create_category"))
+		html.OK(w, r, view.Render("create_category"))
 		return
 	}
 

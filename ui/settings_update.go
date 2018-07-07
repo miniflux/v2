@@ -49,13 +49,13 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 
 	if err := settingsForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("settings"))
+		html.OK(w, r, view.Render("settings"))
 		return
 	}
 
 	if c.store.AnotherUserExists(user.ID, settingsForm.Username) {
 		view.Set("errorMessage", "This user already exists.")
-		html.OK(w, view.Render("settings"))
+		html.OK(w, r, view.Render("settings"))
 		return
 	}
 
@@ -63,7 +63,7 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error("[Controller:UpdateSettings] %v", err)
 		view.Set("errorMessage", "Unable to update this user.")
-		html.OK(w, view.Render("settings"))
+		html.OK(w, r, view.Render("settings"))
 		return
 	}
 

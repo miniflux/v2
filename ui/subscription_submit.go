@@ -45,7 +45,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	if err := subscriptionForm.Validate(); err != nil {
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", err.Error())
-		html.OK(w, v.Render("add_subscription"))
+		html.OK(w, r, v.Render("add_subscription"))
 		return
 	}
 
@@ -58,7 +58,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		logger.Error("[Controller:SubmitSubscription] %v", err)
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", err)
-		html.OK(w, v.Render("add_subscription"))
+		html.OK(w, r, v.Render("add_subscription"))
 		return
 	}
 
@@ -69,7 +69,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	case n == 0:
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", "Unable to find any subscription.")
-		html.OK(w, v.Render("add_subscription"))
+		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
 		feed, err := c.feedHandler.CreateFeed(
 			user.ID,
@@ -82,7 +82,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", err)
-			html.OK(w, v.Render("add_subscription"))
+			html.OK(w, r, v.Render("add_subscription"))
 			return
 		}
 
@@ -95,6 +95,6 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		v.Set("user", user)
 		v.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-		html.OK(w, v.Render("choose_subscription"))
+		html.OK(w, r, v.Render("choose_subscription"))
 	}
 }

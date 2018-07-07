@@ -69,5 +69,5 @@ func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("edit_feed"))
+	html.OK(w, r, view.Render("edit_feed"))
 }

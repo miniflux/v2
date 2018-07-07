@@ -64,7 +64,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 	if err := feedForm.ValidateModification(); err != nil {
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("edit_feed"))
+		html.OK(w, r, view.Render("edit_feed"))
 		return
 	}
 
@@ -72,7 +72,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error("[Controller:EditFeed] %v", err)
 		view.Set("errorMessage", "Unable to update this feed.")
-		html.OK(w, view.Render("edit_feed"))
+		html.OK(w, r, view.Render("edit_feed"))
 		return
 	}
 

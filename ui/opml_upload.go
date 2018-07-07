@@ -50,13 +50,13 @@ func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
 
 	if fileHeader.Size == 0 {
 		view.Set("errorMessage", "This file is empty")
-		html.OK(w, view.Render("import"))
+		html.OK(w, r, view.Render("import"))
 		return
 	}
 
 	if impErr := opml.NewHandler(c.store).Import(user.ID, file); impErr != nil {
 		view.Set("errorMessage", impErr)
-		html.OK(w, view.Render("import"))
+		html.OK(w, r, view.Render("import"))
 		return
 	}
 

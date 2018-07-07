@@ -7,13 +7,14 @@ package html
 import (
 	"net/http"
 
+	"github.com/miniflux/miniflux/http/response"
 	"github.com/miniflux/miniflux/logger"
 )
 
 // OK writes a standard HTML response.
-func OK(w http.ResponseWriter, b []byte) {
+func OK(w http.ResponseWriter, r *http.Request, b []byte) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(b)
+	response.Compress(w, r, b)
 }
 
 // ServerError sends a 500 error to the browser.

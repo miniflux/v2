@@ -37,5 +37,5 @@ func (c *Controller) CategoryList(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("categories"))
+	html.OK(w, r, view.Render("categories"))
 }

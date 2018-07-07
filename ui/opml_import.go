@@ -29,5 +29,5 @@ func (c *Controller) Import(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("import"))
+	html.OK(w, r, view.Render("import"))
 }

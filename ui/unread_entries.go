@@ -60,5 +60,5 @@ func (c *Controller) ShowUnreadPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", countUnread)
 	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
 
-	html.OK(w, view.Render("unread_entries"))
+	html.OK(w, r, view.Render("unread_entries"))
 }

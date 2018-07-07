@@ -43,13 +43,13 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := userForm.ValidateCreation(); err != nil {
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("create_user"))
+		html.OK(w, r, view.Render("create_user"))
 		return
 	}
 
 	if c.store.UserExists(userForm.Username) {
 		view.Set("errorMessage", "This user already exists.")
-		html.OK(w, view.Render("create_user"))
+		html.OK(w, r, view.Render("create_user"))
 		return
 	}
 
@@ -57,7 +57,7 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 	if err := c.store.CreateUser(newUser); err != nil {
 		logger.Error("[Controller:SaveUser] %v", err)
 		view.Set("errorMessage", "Unable to create this user.")
-		html.OK(w, view.Render("create_user"))
+		html.OK(w, r, view.Render("create_user"))
 		return
 	}
 

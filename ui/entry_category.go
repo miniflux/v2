@@ -95,5 +95,5 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
 
-	html.OK(w, view.Render("entry"))
+	html.OK(w, r, view.Render("entry"))
 }

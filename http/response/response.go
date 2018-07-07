@@ -5,7 +5,10 @@
 package response
 
 import (
+	"compress/flate"
+	"compress/gzip"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -30,5 +33,25 @@ func Cache(w http.ResponseWriter, r *http.Request, mimeType, etag string, conten
 		w.WriteHeader(http.StatusNotModified)
 	} else {
 		w.Write(content)
+	}
+}
+
+// Compress the response sent to the browser.
+func Compress(w http.ResponseWriter, r *http.Request, data []byte) {
+	acceptEncoding := r.Header.Get("Accept-Encoding")
+
+	switch {
+	case strings.Contains(acceptEncoding, "gzip"):
+		w.Header().Set("Content-Encoding", "gzip")
+		gzipWriter := gzip.NewWriter(w)
+		defer gzipWriter.Close()
+		gzipWriter.Write(data)
+	case strings.Contains(acceptEncoding, "deflate"):
+		w.Header().Set("Content-Encoding", "deflate")
+		flateWriter, _ := flate.NewWriter(w, -1)
+		defer flateWriter.Close()
+		flateWriter.Write(data)
+	default:
+		w.Write(data)
 	}
 }

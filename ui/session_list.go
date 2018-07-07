@@ -40,5 +40,5 @@ func (c *Controller) ShowSessions(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 
-	html.OK(w, view.Render("sessions"))
+	html.OK(w, r, view.Render("sessions"))
 }

@@ -62,13 +62,13 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := userForm.ValidateModification(); err != nil {
 		view.Set("errorMessage", err.Error())
-		html.OK(w, view.Render("edit_user"))
+		html.OK(w, r, view.Render("edit_user"))
 		return
 	}
 
 	if c.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
 		view.Set("errorMessage", "This user already exists.")
-		html.OK(w, view.Render("edit_user"))
+		html.OK(w, r, view.Render("edit_user"))
 		return
 	}
 
@@ -76,7 +76,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err := c.store.UpdateUser(selectedUser); err != nil {
 		logger.Error("[Controller:UpdateUser] %v", err)
 		view.Set("errorMessage", "Unable to update this user.")
-		html.OK(w, view.Render("edit_user"))
+		html.OK(w, r, view.Render("edit_user"))
 		return
 	}
 
