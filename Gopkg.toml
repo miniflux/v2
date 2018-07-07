@@ -27,11 +27,11 @@
 
 [[constraint]]
   name = "github.com/PuerkitoBio/goquery"
-  version = "1.1.0"
+  version = "1.4.1"
 
 [[constraint]]
   name = "github.com/gorilla/mux"
-  version = "1.6.1"
+  version = "1.6.2"
 
 [[constraint]]
   branch = "master"
@@ -43,7 +43,7 @@
 
 [[constraint]]
   name = "github.com/tdewolff/minify"
-  version = "2.3.3"
+  version = "2.3.5"
 
 [[constraint]]
   branch = "master"

@@ -27,9 +27,9 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/net/http/httpguts"
 	"golang.org/x/net/http2/hpack"
 	"golang.org/x/net/idna"
-	"golang.org/x/net/lex/httplex"
 )
 
 const (
@@ -306,7 +306,26 @@ func (sew stickyErrWriter) Write(p []byte) (n int, err error) {
 	return
 }
 
-var ErrNoCachedConn = errors.New("http2: no cached connection was available")
+// noCachedConnError is the concrete type of ErrNoCachedConn, which
+// needs to be detected by net/http regardless of whether it's its
+// bundled version (in h2_bundle.go with a rewritten type name) or
+// from a user's x/net/http2. As such, as it has a unique method name
+// (IsHTTP2NoCachedConnError) that net/http sniffs for via func
+// isNoCachedConnError.
+type noCachedConnError struct{}
+
+func (noCachedConnError) IsHTTP2NoCachedConnError() {}
+func (noCachedConnError) Error() string             { return "http2: no cached connection was available" }
+
+// isNoCachedConnError reports whether err is of type noCachedConnError
+// or its equivalent renamed type in net/http2's h2_bundle.go. Both types
+// may coexist in the same running program.
+func isNoCachedConnError(err error) bool {
+	_, ok := err.(interface{ IsHTTP2NoCachedConnError() })
+	return ok
+}
+
+var ErrNoCachedConn error = noCachedConnError{}
 
 // RoundTripOpt are options for the Transport.RoundTripOpt method.
 type RoundTripOpt struct {
@@ -547,6 +566,10 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 	// TODO: SetMaxDynamicTableSize, SetMaxDynamicTableSizeLimit on
 	// henc in response to SETTINGS frames?
 	cc.henc = hpack.NewEncoder(&cc.hbuf)
+
+	if t.AllowHTTP {
+		cc.nextStreamID = 3
+	}
 
 	if cs, ok := c.(connectionStater); ok {
 		state := cs.ConnectionState()
@@ -932,6 +955,9 @@ func (cc *ClientConn) awaitOpenSlotForRequest(req *http.Request) error {
 	for {
 		cc.lastActive = time.Now()
 		if cc.closed || !cc.canTakeNewRequestLocked() {
+			if waitingForConn != nil {
+				close(waitingForConn)
+			}
 			return errClientConnUnusable
 		}
 		if int64(len(cc.streams))+1 <= int64(cc.maxConcurrentStreams) {
@@ -1155,7 +1181,7 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 	if host == "" {
 		host = req.URL.Host
 	}
-	host, err := httplex.PunycodeHostPort(host)
+	host, err := httpguts.PunycodeHostPort(host)
 	if err != nil {
 		return nil, err
 	}
@@ -1180,11 +1206,11 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 	// potentially pollute our hpack state. (We want to be able to
 	// continue to reuse the hpack encoder for future requests)
 	for k, vv := range req.Header {
-		if !httplex.ValidHeaderFieldName(k) {
+		if !httpguts.ValidHeaderFieldName(k) {
 			return nil, fmt.Errorf("invalid HTTP header name %q", k)
 		}
 		for _, v := range vv {
-			if !httplex.ValidHeaderFieldValue(v) {
+			if !httpguts.ValidHeaderFieldValue(v) {
 				return nil, fmt.Errorf("invalid HTTP header value %q for header %q", v, k)
 			}
 		}
@@ -2225,7 +2251,7 @@ func (t *Transport) getBodyWriterState(cs *clientStream, body io.Reader) (s body
 	}
 	s.delay = t.expectContinueTimeout()
 	if s.delay == 0 ||
-		!httplex.HeaderValuesContainsToken(
+		!httpguts.HeaderValuesContainsToken(
 			cs.req.Header["Expect"],
 			"100-continue") {
 		return
@@ -2280,5 +2306,5 @@ func (s bodyWriterState) scheduleBodyWrite() {
 // isConnectionCloseRequest reports whether req should use its own
 // connection for a single request and then close the connection.
 func isConnectionCloseRequest(req *http.Request) bool {
-	return req.Close || httplex.HeaderValuesContainsToken(req.Header["Connection"], "close")
+	return req.Close || httpguts.HeaderValuesContainsToken(req.Header["Connection"], "close")
 }

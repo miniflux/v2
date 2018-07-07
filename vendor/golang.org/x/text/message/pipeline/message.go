@@ -23,8 +23,28 @@ import (
 // the format string "%d file(s) remaining".
 // See the examples directory for examples of extracted messages.
 
-// Messages is used to store translations for a single language.
-type Messages struct {
+// Config contains configuration for the translation pipeline.
+type Config struct {
+	SourceLanguage language.Tag
+
+	// Supported indicates the languages for which data should be generated.
+	// If unspecified, it will attempt to derive the set of supported languages
+	// from the context.
+	Supported []language.Tag
+
+	Packages []string
+
+	// TODO:
+	// - Printf-style configuration
+	// - Template-style configuration
+	// - Extraction options
+	// - Rewrite options
+	// - Generation options
+}
+
+// A Locale is used to store all information for a single locale. This type is
+// used both for extraction and injection.
+type Locale struct {
 	Language language.Tag    `json:"language"`
 	Messages []Message       `json:"messages"`
 	Macros   map[string]Text `json:"macros,omitempty"`

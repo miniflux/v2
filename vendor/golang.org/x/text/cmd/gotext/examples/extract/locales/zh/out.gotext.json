@@ -2,16 +2,16 @@
     "language": "zh",
     "messages": [
         {
-            "id": "Hello world!",
+            "id": "Hello world!\n",
             "key": "Hello world!\n",
-            "message": "Hello world!",
+            "message": "Hello world!\n",
             "translation": "",
             "position": "golang.org/x/text/cmd/gotext/examples/extract/main.go:28:10"
         },
         {
-            "id": "Hello {City}!",
+            "id": "Hello {City}!\n",
             "key": "Hello %s!\n",
-            "message": "Hello {City}!",
+            "message": "Hello {City}!\n",
             "translation": "",
             "placeholders": [
                 {
@@ -26,9 +26,9 @@
             "position": "golang.org/x/text/cmd/gotext/examples/extract/main.go:32:10"
         },
         {
-            "id": "Hello {Town}!",
+            "id": "Hello {Town}!\n",
             "key": "Hello %s!\n",
-            "message": "Hello {Town}!",
+            "message": "Hello {Town}!\n",
             "translation": "",
             "placeholders": [
                 {
@@ -44,9 +44,9 @@
             "position": "golang.org/x/text/cmd/gotext/examples/extract/main.go:36:10"
         },
         {
-            "id": "{Person} is visiting {Place}!",
+            "id": "{Person} is visiting {Place}!\n",
             "key": "%s is visiting %s!\n",
-            "message": "{Person} is visiting {Place}!",
+            "message": "{Person} is visiting {Place}!\n",
             "translation": "",
             "placeholders": [
                 {
@@ -71,9 +71,9 @@
             "position": "golang.org/x/text/cmd/gotext/examples/extract/main.go:41:10"
         },
         {
-            "id": "{Person} is visiting {Place}!",
+            "id": "{Person} is visiting {Place}!\n",
             "key": "%[1]s is visiting %[3]s!\n",
-            "message": "{Person} is visiting {Place}!",
+            "message": "{Person} is visiting {Place}!\n",
             "translation": "",
             "comment": "Person visiting a place.",
             "placeholders": [
@@ -106,13 +106,13 @@
             "position": "golang.org/x/text/cmd/gotext/examples/extract/main.go:56:10"
         },
         {
-            "id": "{2} files remaining!",
+            "id": "{} files remaining!",
             "key": "%d files remaining!",
-            "message": "{2} files remaining!",
+            "message": "{} files remaining!",
             "translation": "",
             "placeholders": [
                 {
-                    "id": "2",
+                    "id": "",
                     "string": "%[1]d",
                     "type": "int",
                     "underlyingType": "int",
@@ -140,9 +140,9 @@
             "position": "golang.org/x/text/cmd/gotext/examples/extract/main.go:68:10"
         },
         {
-            "id": "Use the following code for your discount: {ReferralCode}",
+            "id": "Use the following code for your discount: {ReferralCode}\n",
             "key": "Use the following code for your discount: %d\n",
-            "message": "Use the following code for your discount: {ReferralCode}",
+            "message": "Use the following code for your discount: {ReferralCode}\n",
             "translation": "",
             "placeholders": [
                 {
