@@ -10,19 +10,20 @@ import (
 
 	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response"
+	"github.com/miniflux/miniflux/http/response/html"
 	"github.com/miniflux/miniflux/ui/static"
 )
 
 // Stylesheet renders the CSS.
 func (c *Controller) Stylesheet(w http.ResponseWriter, r *http.Request) {
-	stylesheet := request.Param(r, "name", "white")
-	body := static.Stylesheets["common"]
-	etag := static.StylesheetsChecksums["common"]
-
-	if theme, found := static.Stylesheets[stylesheet]; found {
-		body += theme
-		etag += static.StylesheetsChecksums[stylesheet]
+	stylesheet := request.Param(r, "name", "default")
+	if _, found := static.Stylesheets[stylesheet]; !found {
+		html.NotFound(w)
+		return
 	}
+
+	body := static.Stylesheets[stylesheet]
+	etag := static.StylesheetsChecksums[stylesheet]
 
 	response.Cache(w, r, "text/css; charset=utf-8", etag, []byte(body), 48*time.Hour)
 }

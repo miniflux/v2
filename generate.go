@@ -116,23 +116,20 @@ func generateJSBundle(bundleFile string, srcFiles []string) {
 	bundle.Write(bundleFile)
 }
 
-func generateCSSBundle(bundleFile string, srcFiles []string) {
+func generateCSSBundle(bundleFile string, themes map[string][]string) {
 	bundle := NewBundle("static", "Stylesheets")
+	m := minify.New()
+	m.AddFunc("text/css", css.Minify)
 
-	for _, srcFile := range srcFiles {
-		data := readFile(srcFile)
-		filename := stripExtension(basename(srcFile))
-
-		m := minify.New()
-		m.AddFunc("text/css", css.Minify)
-
-		minifiedData, err := m.Bytes("text/css", data)
+	for theme, srcFiles := range themes {
+		data := concat(srcFiles)
+		minifiedData, err := m.String("text/css", data)
 		if err != nil {
 			panic(err)
 		}
 
-		bundle.Files[filename] = string(minifiedData)
-		bundle.Checksums[filename] = checksum(minifiedData)
+		bundle.Files[theme] = minifiedData
+		bundle.Checksums[theme] = checksum([]byte(minifiedData))
 	}
 
 	bundle.Write(bundleFile)
@@ -184,7 +181,12 @@ func main() {
 		"ui/static/js/bootstrap.js",
 	})
 
-	generateCSSBundle("ui/static/css.go", glob("ui/static/css/*.css"))
+	generateCSSBundle("ui/static/css.go", map[string][]string{
+		"default":   []string{"ui/static/css/common.css"},
+		"black":     []string{"ui/static/css/common.css", "ui/static/css/black.css"},
+		"sansserif": []string{"ui/static/css/common.css", "ui/static/css/sansserif.css"},
+	})
+
 	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))
 
 	generateBundle("sql/sql.go", "sql", "SqlMap", glob("sql/*.sql"))
