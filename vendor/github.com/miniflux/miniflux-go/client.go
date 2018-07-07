@@ -497,6 +497,10 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("starred", "1")
 		}
 
+		if filter.Search != "" {
+			values.Set("search", filter.Search)
+		}
+
 		path = fmt.Sprintf("%s?%s", path, values.Encode())
 	}
 

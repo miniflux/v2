@@ -166,6 +166,7 @@ type Filter struct {
 	After         int64
 	BeforeEntryID int64
 	AfterEntryID  int64
+	Search        string
 }
 
 // EntryResultSet represents the response when fetching entries.

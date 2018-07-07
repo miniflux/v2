@@ -1091,6 +1091,32 @@ func TestGetAllEntries(t *testing.T) {
 	}
 }
 
+func TestSearchEntries(t *testing.T) {
+	client := createClient(t)
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed("https://github.com/miniflux/miniflux/releases.atom", categories[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	results, err := client.Entries(&miniflux.Filter{Search: "2.0.8"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if results.Total != 1 {
+		t.Fatalf(`We should have only one entry instead of %d`, results.Total)
+	}
+}
+
 func TestInvalidFilters(t *testing.T) {
 	client := createClient(t)
 	createFeed(t, client)
