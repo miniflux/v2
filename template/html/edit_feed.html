@@ -45,11 +45,18 @@
         <label for="form-feed-url">{{ t "Feed URL" }}</label>
         <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" required>
 
-        <label for="form-username">{{ t "Feed Username" }}</label>
-        <input type="text" name="feed_username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password">
+        <label for="form-feed-username">{{ t "Feed Username" }}</label>
+        <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-        <label for="form-password">{{ t "Feed Password" }}</label>
-        <input type="password" name="feed_password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
+        <label for="form-feed-password">{{ t "Feed Password" }}</label>
+        <!--
+            We are using the type "text" otherwise Firefox always autocomplete this password:
+
+            - autocomplete="off" or autocomplete="new-password" doesn't change anything
+            - Changing the input ID doesn't change anything
+            - Using a different input name doesn't change anything
+        -->
+        <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
 
         <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">

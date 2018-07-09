@@ -87,11 +87,18 @@ var templateViewsMap = map[string]string{
 
             <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
 
-            <label for="form-username">{{ t "Feed Username" }}</label>
-            <input type="text" name="feed_username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password">
+            <label for="form-feed-username">{{ t "Feed Username" }}</label>
+            <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-            <label for="form-password">{{ t "Feed Password" }}</label>
-            <input type="password" name="feed_password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
+            <label for="form-feed-password">{{ t "Feed Password" }}</label>
+            <!--
+                We are using the type "text" otherwise Firefox always autocomplete this password:
+
+                - autocomplete="off" or autocomplete="new-password" doesn't change anything
+                - Changing the input ID doesn't change anything
+                - Using a different input name doesn't change anything
+             -->
+            <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
         </fieldset>
 
         <div class="buttons">
@@ -424,11 +431,18 @@ var templateViewsMap = map[string]string{
         <label for="form-feed-url">{{ t "Feed URL" }}</label>
         <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" required>
 
-        <label for="form-username">{{ t "Feed Username" }}</label>
-        <input type="text" name="feed_username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password">
+        <label for="form-feed-username">{{ t "Feed Username" }}</label>
+        <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-        <label for="form-password">{{ t "Feed Password" }}</label>
-        <input type="password" name="feed_password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
+        <label for="form-feed-password">{{ t "Feed Password" }}</label>
+        <!--
+            We are using the type "text" otherwise Firefox always autocomplete this password:
+
+            - autocomplete="off" or autocomplete="new-password" doesn't change anything
+            - Changing the input ID doesn't change anything
+            - Using a different input name doesn't change anything
+        -->
+        <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
 
         <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
@@ -1298,7 +1312,7 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "ad2fb778fc73c39b733b3f81b13e5c7d689b041fadd24ee2d4577f545aa788ad",
-	"add_subscription":    "39e5efb11cd7e85092e2c9637931ca43130beaf7cc09b1f8cc25908e45553fd5",
+	"add_subscription":    "3fbcffefc94fb0fccfcf870d602f5ba78ce3ab7ebaeacd04198a6e529143cb29",
 	"bookmark_entries":    "8e5fea7559218a34289c2f0e54955fc0ef3b9e629205927841cbcc2276aefb2a",
 	"categories":          "ca1280cd157bb527d4fc907da67b05a8347378f6dce965b9389d4bcdf3600a11",
 	"category_entries":    "6ad52c8d0c28e21ea48be76228ea8432adde1dc190010753a48928477d52e065",
@@ -1306,7 +1320,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "2b82af5d2dcd67898dc5daa57a6461e6ff8121a6089b2a2a1be909f35e4a2275",
 	"create_user":         "1ef0a1f9bf119d44929c81f13073a257d69650cf5064960cf06a63fe51923e86",
 	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
-	"edit_feed":           "785784bc0ed903eb7f6f476562507ddf454874f854482caaa950cc38f5e652cc",
+	"edit_feed":           "992e315c244da588d5e9e6912d12d933534c2a86e8e771e7dbd5908564abf616",
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
 	"entry":               "aa7a7e6349a0243bee8629dbcfdd94e21da193df7ef5af0b5aab39ab8c793279",
 	"feed_entries":        "4dffdb55cfad29df20612efe7ed2dbed03d919c4556898543ab6450f610d3c99",
