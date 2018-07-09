@@ -40,6 +40,7 @@ func TestRewriteWithXkcdLink(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
 func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
 	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`
 	output := Rewriter("https://xkcd.com/1912/", description, ``)
@@ -48,6 +49,7 @@ func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
 func TestRewriteWithXkcdLinkAndNoImage(t *testing.T) {
 	description := "test"
 	output := Rewriter("https://xkcd.com/1912/", description, ``)
@@ -71,6 +73,46 @@ func TestRewriteWithPDFLink(t *testing.T) {
 	description := "test"
 	output := Rewriter("https://example.org/document.pdf", description, ``)
 	expected := `<a href="https://example.org/document.pdf">PDF</a><br>test`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteWithNoLazyImage(t *testing.T) {
+	description := `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`
+	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
+	expected := description
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteWithLazyImage(t *testing.T) {
+	description := `<img src="" data-url="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
+	expected := `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteWithLazyDivImage(t *testing.T) {
+	description := `<div data-url="https://example.org/image.jpg" alt="Image"></div><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
+	expected := `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteWithUnknownLazyNoScriptImage(t *testing.T) {
+	description := `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
+	expected := `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"/><img src="https://example.org/fallback.jpg" alt="Fallback"/>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)

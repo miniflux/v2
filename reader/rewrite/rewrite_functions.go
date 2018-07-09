@@ -14,6 +14,7 @@ import (
 
 var (
 	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	imgRegex = regexp.MustCompile(`<img [^>]+>`)
 )
 
 func addImageTitle(entryURL, entryContent string) string {
@@ -33,6 +34,68 @@ func addImageTitle(entryURL, entryContent string) string {
 			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + titleAttr + `</p></figcaption></figure>`)
 		})
 
+		output, _ := doc.Find("body").First().Html()
+		return output
+	}
+
+	return entryContent
+}
+
+func addDynamicImage(entryURL, entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	// Ordered most preferred to least preferred.
+	candidateAttrs := []string{
+		"data-src",
+		"data-original",
+		"data-orig",
+		"data-url",
+		"data-orig-file",
+		"data-large-file",
+		"data-medium-file",
+		"data-2000src",
+		"data-1000src",
+		"data-800src",
+		"data-655src",
+		"data-500src",
+		"data-380src",
+	}
+
+	changed := false
+
+	doc.Find("img,div").Each(func(i int, img *goquery.Selection) {
+		for _, candidateAttr := range candidateAttrs {
+			if srcAttr, found := img.Attr(candidateAttr); found {
+				changed = true
+
+				if img.Is("img") {
+					img.SetAttr("src",srcAttr)
+				} else {
+					altAttr := img.AttrOr("alt", "")
+					img.ReplaceWithHtml(`<img src="` + srcAttr + `" alt="` + altAttr + `"/>`)
+				}
+
+				break;
+			}
+		}
+	})
+
+	if !changed {
+		doc.Find("noscript").Each(func(i int, noscript *goquery.Selection) {
+			matches := imgRegex.FindAllString(noscript.Text(), 2)
+
+			if len(matches) == 1 {
+				changed = true
+
+				noscript.ReplaceWithHtml(matches[0])
+			}
+		})
+	}
+
+	if changed {
 		output, _ := doc.Find("body").First().Html()
 		return output
 	}
