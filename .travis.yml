@@ -11,7 +11,7 @@ before_install:
   - npm install -g jshint
   - go get -u github.com/golang/lint/golint
 script:
-  - jshint ui/static/js/app.js
+  - jshint ui/static/js/*.js
   - make lint
   - make test
   - make integration-test
