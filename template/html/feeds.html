@@ -28,7 +28,7 @@
             <div class="item-header">
                 <span class="item-title">
                     {{ if .Icon }}
-                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16">
+                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" alt="{{ .Title }}">
                     {{ end }}
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
                 </span>
