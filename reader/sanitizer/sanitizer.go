@@ -307,6 +307,7 @@ func isValidIframeSource(src string) bool {
 		"https://w.soundcloud.com",
 		"http://bandcamp.com",
 		"https://bandcamp.com",
+		"https://cdn.embedly.com",
 	}
 
 	for _, prefix := range whitelist {
