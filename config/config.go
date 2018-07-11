@@ -26,6 +26,7 @@ const (
 	defaultCertDomain       = ""
 	defaultCertCache        = "/tmp/cert_cache"
 	defaultCleanupFrequency = 24
+	defaultProxyImages      = 1
 )
 
 // Config manages configuration parameters.
@@ -215,6 +216,17 @@ func (c *Config) CreateAdmin() bool {
 // PocketConsumerKey returns the Pocket Consumer Key if defined as environment variable.
 func (c *Config) PocketConsumerKey(defaultValue string) string {
 	return c.get("POCKET_CONSUMER_KEY", defaultValue)
+}
+
+// ProxyImages returns 0 to never proxy, 1 to proxy non-HTTPS, 2 to always proxy.
+func (c *Config) ProxyImages() int {
+	value := c.getInt("PROXY_IMAGES", defaultProxyImages)
+
+	if value >= 0 && value <= 2 {
+		return value
+	}
+
+	return defaultProxyImages
 }
 
 // NewConfig returns a new Config.

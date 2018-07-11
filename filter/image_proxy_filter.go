@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"strings"
 
+	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/http/route"
 	"github.com/miniflux/miniflux/url"
 
@@ -15,8 +16,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// ImageProxyFilter rewrites image tag URLs without HTTPS to local proxy URL
-func ImageProxyFilter(router *mux.Router, data string) string {
+// ImageProxyFilter rewrites image tag URLs to local proxy URL (by default only non-HTTPS URLs)
+func ImageProxyFilter(router *mux.Router, cfg *config.Config, data string) string {
+	proxyImages := cfg.ProxyImages()
+	if proxyImages == 0 {
+		return data
+	}
+
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(data))
 	if err != nil {
 		return data
@@ -24,7 +30,7 @@ func ImageProxyFilter(router *mux.Router, data string) string {
 
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
 		if srcAttr, ok := img.Attr("src"); ok {
-			if !url.IsHTTPS(srcAttr) {
+			if proxyImages == 2 || !url.IsHTTPS(srcAttr) {
 				img.SetAttr("src", Proxify(router, srcAttr))
 			}
 		}
