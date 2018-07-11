@@ -220,13 +220,7 @@ func (c *Config) PocketConsumerKey(defaultValue string) string {
 
 // ProxyImages returns 0 to never proxy, 1 to proxy non-HTTPS, 2 to always proxy.
 func (c *Config) ProxyImages() int {
-	value := c.getInt("PROXY_IMAGES", defaultProxyImages)
-
-	if value >= 0 && value <= 2 {
-		return value
-	}
-
-	return defaultProxyImages
+	return c.getInt("PROXY_IMAGES", defaultProxyImages)
 }
 
 // NewConfig returns a new Config.

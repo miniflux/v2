@@ -51,11 +51,11 @@ func (f *funcMap) Map() template.FuncMap {
 		"proxyURL": func(link string) string {
 			proxyImages := f.cfg.ProxyImages()
 
-			if proxyImages == 0 || (proxyImages == 1 && url.IsHTTPS(link)) {
-				return link
+			if proxyImages == 2 || (proxyImages != 0 && !url.IsHTTPS(link)) {
+				return filter.Proxify(f.router, link)
 			}
 
-			return filter.Proxify(f.router, link)
+			return link
 		},
 		"domain": func(websiteURL string) string {
 			return url.Domain(websiteURL)

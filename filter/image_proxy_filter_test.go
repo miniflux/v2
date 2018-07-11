@@ -115,3 +115,37 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
+func TestProxyFilterWithHttpInvalid(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "9")
+	c := config.NewConfig()
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
+	output := ImageProxyFilter(r, c, input)
+	expected := `<p><img src="/proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestProxyFilterWithHttpsInvalid(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "9")
+	c := config.NewConfig()
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := ImageProxyFilter(r, c, input)
+	expected := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
