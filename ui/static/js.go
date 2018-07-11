@@ -9,7 +9,9 @@ static scrollPageTo(element){let windowScrollPosition=window.pageYOffset;let win
 static getVisibleElements(selector){let elements=document.querySelectorAll(selector);let result=[];for(let i=0;i<elements.length;i++){if(this.isVisible(elements[i])){result.push(elements[i]);}}
 return result;}
 static findParent(element,selector){for(;element&&element!==document;element=element.parentNode){if(element.classList.contains(selector)){return element;}}
-return null;}}
+return null;}
+static hasPassiveEventListenerOption(){var passiveSupported=false;try{var options=Object.defineProperty({},"passive",{get:function(){passiveSupported=true;}});window.addEventListener("test",options,options);window.removeEventListener("test",options,options);}catch(err){passiveSupported=false;}
+return passiveSupported;}}
 class TouchHandler{constructor(){this.reset();}
 reset(){this.touch={start:{x:-1,y:-1},move:{x:-1,y:-1},element:null};}
 calculateDistance(){if(this.touch.start.x>=-1&&this.touch.move.x>=-1){let horizontalDistance=Math.abs(this.touch.move.x-this.touch.start.x);let verticalDistance=Math.abs(this.touch.move.y-this.touch.start.y);if(horizontalDistance>30&&verticalDistance<70){return this.touch.move.x-this.touch.start.x;}}
@@ -24,7 +26,7 @@ onTouchEnd(event){if(event.touches===undefined){return;}
 if(this.touch.element!==null){let distance=Math.abs(this.calculateDistance());if(distance>75){EntryHandler.toggleEntryStatus(this.touch.element);}
 this.touch.element.style.opacity=1;this.touch.element.style.transform="none";}
 this.reset();}
-listen(){let elements=document.querySelectorAll(".touch-item");elements.forEach((element)=>{element.addEventListener("touchstart",(e)=>this.onTouchStart(e),false);element.addEventListener("touchmove",(e)=>this.onTouchMove(e),false);element.addEventListener("touchend",(e)=>this.onTouchEnd(e),false);element.addEventListener("touchcancel",()=>this.reset(),false);});}}
+listen(){let elements=document.querySelectorAll(".touch-item");let hasPassiveOption=DomHelper.hasPassiveEventListenerOption();elements.forEach((element)=>{element.addEventListener("touchstart",(e)=>this.onTouchStart(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchmove",(e)=>this.onTouchMove(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchend",(e)=>this.onTouchEnd(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchcancel",()=>this.reset(),hasPassiveOption?{passive:true}:false);});}}
 class KeyboardHandler{constructor(){this.queue=[];this.shortcuts={};}
 on(combination,callback){this.shortcuts[combination]=callback;}
 listen(){document.onkeydown=(event)=>{if(this.isEventIgnored(event)){return;}
@@ -93,5 +95,5 @@ document.addEventListener("DOMContentLoaded",function(){FormHandler.handleSubmit
 }
 
 var JavascriptChecksums = map[string]string{
-	"app": "c090bbc7f503aa032b4cfe68b58bc4754133aaed4f77ff768ac63f41528f55c3",
+	"app": "ef0457f301b924c25a20fa00e65bfda5437f41bc9ad0a0762b62b9c64b6d0ac5",
 }
