@@ -26,7 +26,7 @@ const (
 	defaultCertDomain       = ""
 	defaultCertCache        = "/tmp/cert_cache"
 	defaultCleanupFrequency = 24
-	defaultProxyImages      = 1
+	defaultProxyImages      = "http-only"
 )
 
 // Config manages configuration parameters.
@@ -218,9 +218,9 @@ func (c *Config) PocketConsumerKey(defaultValue string) string {
 	return c.get("POCKET_CONSUMER_KEY", defaultValue)
 }
 
-// ProxyImages returns 0 to never proxy, 1 to proxy non-HTTPS, 2 to always proxy.
-func (c *Config) ProxyImages() int {
-	return c.getInt("PROXY_IMAGES", defaultProxyImages)
+// ProxyImages returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
+func (c *Config) ProxyImages() string {
+	return c.get("PROXY_IMAGES", defaultProxyImages)
 }
 
 // NewConfig returns a new Config.

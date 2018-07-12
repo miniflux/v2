@@ -51,7 +51,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"proxyURL": func(link string) string {
 			proxyImages := f.cfg.ProxyImages()
 
-			if proxyImages == 2 || (proxyImages != 0 && !url.IsHTTPS(link)) {
+			if proxyImages == "all" || (proxyImages != "none" && !url.IsHTTPS(link)) {
 				return filter.Proxify(f.router, link)
 			}
 

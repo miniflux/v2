@@ -16,7 +16,7 @@ import (
 
 func TestProxyFilterWithHttpDefault(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "1")
+	os.Setenv("PROXY_IMAGES", "http-only")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -33,7 +33,7 @@ func TestProxyFilterWithHttpDefault(t *testing.T) {
 
 func TestProxyFilterWithHttpsDefault(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "1")
+	os.Setenv("PROXY_IMAGES", "http-only")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -50,7 +50,7 @@ func TestProxyFilterWithHttpsDefault(t *testing.T) {
 
 func TestProxyFilterWithHttpNever(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "0")
+	os.Setenv("PROXY_IMAGES", "none")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -67,7 +67,7 @@ func TestProxyFilterWithHttpNever(t *testing.T) {
 
 func TestProxyFilterWithHttpsNever(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "0")
+	os.Setenv("PROXY_IMAGES", "none")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -84,7 +84,7 @@ func TestProxyFilterWithHttpsNever(t *testing.T) {
 
 func TestProxyFilterWithHttpAlways(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "2")
+	os.Setenv("PROXY_IMAGES", "all")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -101,7 +101,7 @@ func TestProxyFilterWithHttpAlways(t *testing.T) {
 
 func TestProxyFilterWithHttpsAlways(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "2")
+	os.Setenv("PROXY_IMAGES", "all")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -118,7 +118,7 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 
 func TestProxyFilterWithHttpInvalid(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "9")
+	os.Setenv("PROXY_IMAGES", "invalid")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()
@@ -135,7 +135,7 @@ func TestProxyFilterWithHttpInvalid(t *testing.T) {
 
 func TestProxyFilterWithHttpsInvalid(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "9")
+	os.Setenv("PROXY_IMAGES", "invalid")
 	c := config.NewConfig()
 
 	r := mux.NewRouter()

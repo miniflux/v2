@@ -19,7 +19,7 @@ import (
 // ImageProxyFilter rewrites image tag URLs to local proxy URL (by default only non-HTTPS URLs)
 func ImageProxyFilter(router *mux.Router, cfg *config.Config, data string) string {
 	proxyImages := cfg.ProxyImages()
-	if proxyImages == 0 {
+	if proxyImages == "none" {
 		return data
 	}
 
@@ -30,7 +30,7 @@ func ImageProxyFilter(router *mux.Router, cfg *config.Config, data string) strin
 
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
 		if srcAttr, ok := img.Attr("src"); ok {
-			if proxyImages == 2 || !url.IsHTTPS(srcAttr) {
+			if proxyImages == "all" || !url.IsHTTPS(srcAttr) {
 				img.SetAttr("src", Proxify(router, srcAttr))
 			}
 		}
