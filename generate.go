@@ -96,23 +96,33 @@ func concat(files []string) string {
 	return b.String()
 }
 
-func generateJSBundle(bundleFile string, srcFiles []string) {
-	var b strings.Builder
-	b.WriteString("(function() {'use strict';")
-	b.WriteString(concat(srcFiles))
-	b.WriteString("})();")
-
+func generateJSBundle(bundleFile string, bundleFiles map[string][]string, prefixes, suffixes map[string]string) {
+	bundle := NewBundle("static", "Javascripts")
 	m := minify.New()
 	m.AddFunc("text/javascript", js.Minify)
 
-	output, err := m.String("text/javascript", b.String())
-	if err != nil {
-		panic(err)
+	for name, srcFiles := range bundleFiles {
+		var b strings.Builder
+
+		if prefix, found := prefixes[name]; found {
+			b.WriteString(prefix)
+		}
+
+		b.WriteString(concat(srcFiles))
+
+		if suffix, found := suffixes[name]; found {
+			b.WriteString(suffix)
+		}
+
+		minifiedData, err := m.String("text/javascript", b.String())
+		if err != nil {
+			panic(err)
+		}
+
+		bundle.Files[name] = minifiedData
+		bundle.Checksums[name] = checksum([]byte(minifiedData))
 	}
 
-	bundle := NewBundle("static", "Javascript")
-	bundle.Files["app"] = output
-	bundle.Checksums["app"] = checksum([]byte(output))
 	bundle.Write(bundleFile)
 }
 
@@ -165,20 +175,30 @@ func generateBundle(bundleFile, pkg, mapName string, srcFiles []string) {
 }
 
 func main() {
-	generateJSBundle("ui/static/js.go", []string{
-		"ui/static/js/dom_helper.js",
-		"ui/static/js/touch_handler.js",
-		"ui/static/js/keyboard_handler.js",
-		"ui/static/js/mouse_handler.js",
-		"ui/static/js/form_handler.js",
-		"ui/static/js/request_builder.js",
-		"ui/static/js/unread_counter_handler.js",
-		"ui/static/js/entry_handler.js",
-		"ui/static/js/confirm_handler.js",
-		"ui/static/js/menu_handler.js",
-		"ui/static/js/modal_handler.js",
-		"ui/static/js/nav_handler.js",
-		"ui/static/js/bootstrap.js",
+	generateJSBundle("ui/static/js.go", map[string][]string{
+		"app": []string{
+			"ui/static/js/dom_helper.js",
+			"ui/static/js/touch_handler.js",
+			"ui/static/js/keyboard_handler.js",
+			"ui/static/js/mouse_handler.js",
+			"ui/static/js/form_handler.js",
+			"ui/static/js/request_builder.js",
+			"ui/static/js/unread_counter_handler.js",
+			"ui/static/js/entry_handler.js",
+			"ui/static/js/confirm_handler.js",
+			"ui/static/js/menu_handler.js",
+			"ui/static/js/modal_handler.js",
+			"ui/static/js/nav_handler.js",
+			"ui/static/js/bootstrap.js",
+		},
+		"sw": []string{
+			"ui/static/js/sw.js",
+		},
+	}, map[string]string{
+		"app": "(function(){'use strict';",
+		"sw":  "'use strict';",
+	}, map[string]string{
+		"app": "})();",
 	})
 
 	generateCSSBundle("ui/static/css.go", map[string][]string{

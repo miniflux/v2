@@ -103,7 +103,9 @@ var templateCommonMap = map[string]string{
     {{ else }}
         <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" "default" }}">
     {{ end }}
-    <script type="text/javascript" src="{{ route "javascript" }}" defer></script>
+
+    <script type="text/javascript" src="{{ route "javascript" "name" "app" }}" defer></script>
+    <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}" defer id="service-worker-script"></script>
 </head>
 <body data-entries-status-url="{{ route "updateEntriesStatus" }}">
     {{ if .user }}

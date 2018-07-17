@@ -71,4 +71,11 @@ document.addEventListener("DOMContentLoaded", function() {
         mouseHandler.onClick(".logo", () => menuHandler.toggleMainMenu());
         mouseHandler.onClick(".header nav li", (event) => menuHandler.clickMenuListItem(event));
     }
+
+    if ("serviceWorker" in navigator) {
+        let scriptElement = document.getElementById("service-worker-script");
+        if (scriptElement) {
+            navigator.serviceWorker.register(scriptElement.src);
+        }
+    }
 });

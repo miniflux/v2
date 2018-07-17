@@ -84,7 +84,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	uiRouter.Use(middleware.AppSession)
 	uiRouter.Use(middleware.UserSession)
 	uiRouter.HandleFunc("/stylesheets/{name}.css", uiController.Stylesheet).Name("stylesheet").Methods("GET")
-	uiRouter.HandleFunc("/js", uiController.Javascript).Name("javascript").Methods("GET")
+	uiRouter.HandleFunc("/{name}.js", uiController.Javascript).Name("javascript").Methods("GET")
 	uiRouter.HandleFunc("/favicon.ico", uiController.Favicon).Name("favicon").Methods("GET")
 	uiRouter.HandleFunc("/icon/{filename}", uiController.AppIcon).Name("appIcon").Methods("GET")
 	uiRouter.HandleFunc("/manifest.json", uiController.WebManifest).Name("webManifest").Methods("GET")

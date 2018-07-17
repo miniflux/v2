@@ -8,11 +8,22 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/miniflux/miniflux/http/request"
 	"github.com/miniflux/miniflux/http/response"
+	"github.com/miniflux/miniflux/http/response/html"
 	"github.com/miniflux/miniflux/ui/static"
 )
 
 // Javascript renders application client side code.
 func (c *Controller) Javascript(w http.ResponseWriter, r *http.Request) {
-	response.Cache(w, r, "text/javascript; charset=utf-8", static.JavascriptChecksums["app"], []byte(static.Javascript["app"]), 48*time.Hour)
+	filename := request.Param(r, "name", "app")
+	if _, found := static.Javascripts[filename]; !found {
+		html.NotFound(w)
+		return
+	}
+
+	body := static.Javascripts[filename]
+	etag := static.JavascriptsChecksums[filename]
+
+	response.Cache(w, r, "text/javascript; charset=utf-8", etag, []byte(body), 48*time.Hour)
 }
