@@ -234,6 +234,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
 	"item_meta":        "1c6b60a74f586c778dae8d9c1ba19ec071550e0758603b2cc8380e1d186c61f7",
-	"layout":           "27b21c2d8ce341edcc11bf557f73fcd08dad1dfc8d0788c94addbc87f94f2f19",
+	"layout":           "7a4a1ec5fdfe96b20626aa7b9028fd1f166a753e46b497f6d2232f5cd050895d",
 	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
 }
