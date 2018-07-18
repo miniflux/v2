@@ -5,6 +5,7 @@
 package template
 
 import (
+	"bytes"
 	"html/template"
 	"net/mail"
 	"strings"
@@ -77,6 +78,18 @@ func (f *funcMap) Map() template.FuncMap {
 			return ts.Format("2006-01-02 15:04:05")
 		},
 		"dict": dict,
+		"truncate": func(str string, max int) string {
+			if len(str) > max {
+				var buffer bytes.Buffer
+
+				buffer.WriteString(str[:max-1])
+				buffer.WriteString("…")
+
+				return buffer.String()
+			}
+
+			return str
+		},
 
 		// These functions are overrided at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {
