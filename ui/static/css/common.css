@@ -40,6 +40,7 @@ a:hover {
 /* Header and main menu */
 .header {
     margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .header nav ul {
@@ -132,6 +133,10 @@ a:hover {
         max-width: 750px;
     }
 
+    .header {
+        margin-bottom: 0;
+    }
+
     .logo {
         text-align: left;
         float: left;
@@ -166,7 +171,6 @@ a:hover {
         text-align: right;
         display: block;
         margin-top: 10px;
-        margin-bottom: 10px;
     }
 
     .search-toggle-switch {

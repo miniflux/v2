@@ -732,7 +732,7 @@ var templateViewsMap = map[string]string{
             <div class="item-meta">
                 <ul>
                     <li>
-                        <a href="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
+                        <a href="{{ .SiteURL }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
                         {{ t "Last check:" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
@@ -1324,7 +1324,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
 	"entry":               "c838ae7f19d775d473ee92c4999eb28a5063869411c834d26a3f4b686ce88dbf",
 	"feed_entries":        "76e7e32cdd6552304e38931459fe12cefdb5354f65a7ac3bbed52a2979896d3e",
-	"feeds":               "7db2a628068be0da6a281c5205c031aaea395cf97dd7bea8d91081aec41ade7a",
+	"feeds":               "1006698abfe0962b656f27794bc44568515392da72b6fac0c03316de06024237",
 	"history_entries":     "f94e15d37d7604500cede7b583e03bf79c06be81c6597a4a43693f5712af2e13",
 	"import":              "73b5112e20bfd232bf73334544186ea419505936bc237d481517a8622901878f",
 	"integrations":        "20c1c82070b93235d189b10acccd0cda5694cc5684d0b3be23de2ba5ae83e73f",

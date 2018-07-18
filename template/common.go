@@ -26,7 +26,7 @@ var templateCommonMap = map[string]string{
 <div class="item-meta">
     <ul>
         <li>
-            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 20 }}</a>
+            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
@@ -233,7 +233,7 @@ var templateCommonMap = map[string]string{
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
-	"item_meta":        "1c6b60a74f586c778dae8d9c1ba19ec071550e0758603b2cc8380e1d186c61f7",
+	"item_meta":        "2da78476f6c7fb8742c969ad1bfc20b7b61fddf97d79a77baf3cabda52f6fb49",
 	"layout":           "7a4a1ec5fdfe96b20626aa7b9028fd1f166a753e46b497f6d2232f5cd050895d",
 	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
 }
