@@ -21,12 +21,12 @@ return DomHelper.findParent(element,"touch-item");}
 onTouchStart(event){if(event.touches===undefined||event.touches.length!==1){return;}
 this.reset();this.touch.start.x=event.touches[0].clientX;this.touch.start.y=event.touches[0].clientY;this.touch.element=this.findElement(event.touches[0].target);}
 onTouchMove(event){if(event.touches===undefined||event.touches.length!==1||this.element===null){return;}
-this.touch.move.x=event.touches[0].clientX;this.touch.move.y=event.touches[0].clientY;let distance=this.calculateDistance();let absDistance=Math.abs(distance);if(absDistance>0){let opacity=1-(absDistance>75?0.9:absDistance/75*0.9);let tx=distance>75?75:(distance<-75?-75:distance);this.touch.element.style.opacity=opacity;this.touch.element.style.transform="translateX("+tx+"px)";}}
+this.touch.move.x=event.touches[0].clientX;this.touch.move.y=event.touches[0].clientY;let distance=this.calculateDistance();let absDistance=Math.abs(distance);if(absDistance>0){let opacity=1-(absDistance>75?0.9:absDistance/75*0.9);let tx=distance>75?75:(distance<-75?-75:distance);this.touch.element.style.opacity=opacity;this.touch.element.style.transform="translateX("+tx+"px)";event.preventDefault();}}
 onTouchEnd(event){if(event.touches===undefined){return;}
 if(this.touch.element!==null){let distance=Math.abs(this.calculateDistance());if(distance>75){EntryHandler.toggleEntryStatus(this.touch.element);}
 this.touch.element.style.opacity=1;this.touch.element.style.transform="none";}
 this.reset();}
-listen(){let elements=document.querySelectorAll(".touch-item");let hasPassiveOption=DomHelper.hasPassiveEventListenerOption();elements.forEach((element)=>{element.addEventListener("touchstart",(e)=>this.onTouchStart(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchmove",(e)=>this.onTouchMove(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchend",(e)=>this.onTouchEnd(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchcancel",()=>this.reset(),hasPassiveOption?{passive:true}:false);});}}
+listen(){let elements=document.querySelectorAll(".touch-item");let hasPassiveOption=DomHelper.hasPassiveEventListenerOption();elements.forEach((element)=>{element.addEventListener("touchstart",(e)=>this.onTouchStart(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchmove",(e)=>this.onTouchMove(e),hasPassiveOption?{passive:false}:false);element.addEventListener("touchend",(e)=>this.onTouchEnd(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchcancel",()=>this.reset(),hasPassiveOption?{passive:true}:false);});}}
 class KeyboardHandler{constructor(){this.queue=[];this.shortcuts={};}
 on(combination,callback){this.shortcuts[combination]=callback;}
 listen(){document.onkeydown=(event)=>{if(this.isEventIgnored(event)){return;}
@@ -97,6 +97,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "cf86a525349b18a448c8599978c9f54cb41092128c5c573b40cbb22a588ac24e",
+	"app": "438cad66af283a59cee674615c851ca105d22be5c92224351574b82716cf5cee",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }

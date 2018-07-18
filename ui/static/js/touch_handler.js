@@ -60,6 +60,8 @@ class TouchHandler {
 
             this.touch.element.style.opacity = opacity;
             this.touch.element.style.transform = "translateX(" + tx + "px)";
+
+            event.preventDefault();
         }
     }
 
@@ -87,7 +89,7 @@ class TouchHandler {
 
         elements.forEach((element) => {
             element.addEventListener("touchstart", (e) => this.onTouchStart(e), hasPassiveOption ? { passive: true } : false);
-            element.addEventListener("touchmove", (e) => this.onTouchMove(e), hasPassiveOption ? { passive: true } : false);
+            element.addEventListener("touchmove", (e) => this.onTouchMove(e), hasPassiveOption ? { passive: false } : false);
             element.addEventListener("touchend", (e) => this.onTouchEnd(e), hasPassiveOption ? { passive: true } : false);
             element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
         });
