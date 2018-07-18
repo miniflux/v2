@@ -30,6 +30,7 @@ type atomFeed struct {
 type atomEntry struct {
 	ID         string         `xml:"id"`
 	Title      atomContent    `xml:"title"`
+	Published  string         `xml:"published"`
 	Updated    string         `xml:"updated"`
 	Links      []atomLink     `xml:"link"`
 	Summary    string         `xml:"summary"`
@@ -128,8 +129,13 @@ func getRelationURL(links []atomLink, relation string) string {
 }
 
 func getDate(a *atomEntry) time.Time {
-	if a.Updated != "" {
-		result, err := date.Parse(a.Updated)
+	dateText := a.Updated
+	if dateText == "" {
+		dateText = a.Published
+	}
+
+	if dateText != "" {
+		result, err := date.Parse(dateText)
 		if err != nil {
 			logger.Error("atom: %v", err)
 			return time.Now()

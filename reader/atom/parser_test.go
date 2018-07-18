@@ -422,6 +422,57 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithPublished(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<published>2003-12-13T18:30:02Z</published>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !feed.Entries[0].Date.Equal(time.Date(2003, time.December, 13, 18, 30, 2, 0, time.UTC)) {
+		t.Errorf("Incorrect entry date, got: %v", feed.Entries[0].Date)
+	}
+}
+
+func TestParseEntryWithPublishedAndUpdated(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<published>2002-11-12T18:30:02Z</published>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !feed.Entries[0].Date.Equal(time.Date(2003, time.December, 13, 18, 30, 2, 0, time.UTC)) {
+		t.Errorf("Incorrect entry date, got: %v", feed.Entries[0].Date)
+	}
+}
+
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))
