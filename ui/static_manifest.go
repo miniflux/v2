@@ -35,8 +35,9 @@ func (c *Controller) WebManifest(w http.ResponseWriter, r *http.Request) {
 		Display:     "minimal-ui",
 		StartURL:    route.Path(c.router, "unread"),
 		Icons: []webManifestIcon{
-			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "touch-icon-ipad-retina.png"), Sizes: "144x144", Type: "image/png"},
-			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "touch-icon-iphone-retina.png"), Sizes: "114x114", Type: "image/png"},
+			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png"},
+			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png"},
+			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png"},
 		},
 	}
 

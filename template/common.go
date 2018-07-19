@@ -87,12 +87,19 @@ var templateCommonMap = map[string]string{
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
 
-    <link rel="icon" type="image/png" href="{{ route "appIcon" "filename" "favicon.png" }}">
-    <link rel="apple-touch-icon" href="{{ route "appIcon" "filename" "touch-icon-iphone.png" }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ route "appIcon" "filename" "touch-icon-ipad.png" }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ route "appIcon" "filename" "touch-icon-iphone-retina.png" }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ route "appIcon" "filename" "touch-icon-ipad-retina.png" }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ route "favicon" }}">
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ route "appIcon" "filename" "favicon-16.png" }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ route "appIcon" "filename" "favicon-32.png" }}">
+
+    <!-- Android icons -->
+    <link rel="icon" type="image/png" sizes="128x128" href="{{ route "appIcon" "filename" "icon-128.png" }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ route "appIcon" "filename" "icon-192.png" }}">
+
+    <!-- iOS icons -->
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ route "appIcon" "filename" "icon-120.png" }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ route "appIcon" "filename" "icon-152.png" }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ route "appIcon" "filename" "icon-167.png" }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ route "appIcon" "filename" "icon-180.png" }}">
 
     {{ if .csrf }}
         <meta name="X-CSRF-Token" value="{{ .csrf }}">
@@ -234,6 +241,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
 	"item_meta":        "2da78476f6c7fb8742c969ad1bfc20b7b61fddf97d79a77baf3cabda52f6fb49",
-	"layout":           "7a4a1ec5fdfe96b20626aa7b9028fd1f166a753e46b497f6d2232f5cd050895d",
+	"layout":           "0d226847454115497b3ef7d67381ae231459c8dcde974eb1a7f4a115957c0e86",
 	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
 }
