@@ -32,6 +32,9 @@ var (
 	// UserLanguageContextKey is the context key to store user language.
 	UserLanguageContextKey = &ContextKey{"UserLanguageContextKey"}
 
+	// UserThemeContextKey is the context key to store user theme.
+	UserThemeContextKey = &ContextKey{"UserThemeContextKey"}
+
 	// SessionIDContextKey is the context key used to store the session ID.
 	SessionIDContextKey = &ContextKey{"SessionID"}
 

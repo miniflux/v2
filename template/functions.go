@@ -15,6 +15,7 @@ import (
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/filter"
 	"github.com/miniflux/miniflux/http/route"
+	"github.com/miniflux/miniflux/model"
 	"github.com/miniflux/miniflux/url"
 )
 
@@ -89,6 +90,9 @@ func (f *funcMap) Map() template.FuncMap {
 			}
 
 			return str
+		},
+		"theme_color": func(theme string) string {
+			return model.ThemeColor(theme)
 		},
 
 		// These functions are overrided at runtime after the parsing.

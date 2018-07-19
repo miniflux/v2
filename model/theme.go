@@ -15,6 +15,18 @@ func Themes() map[string]string {
 	}
 }
 
+// ThemeColor returns the color for the address bar or/and the browser color.
+// https://developer.mozilla.org/en-US/docs/Web/Manifest#theme_color
+// https://developers.google.com/web/tools/lighthouse/audits/address-bar
+func ThemeColor(theme string) string {
+	switch theme {
+	case "black":
+		return "#222"
+	default:
+		return "#fff"
+	}
+}
+
 // ValidateTheme validates theme value.
 func ValidateTheme(theme string) error {
 	for key := range Themes() {

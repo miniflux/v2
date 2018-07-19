@@ -77,8 +77,9 @@ var templateCommonMap = map[string]string{
 <html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{template "title" .}} - Miniflux</title>
 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
@@ -104,12 +105,9 @@ var templateCommonMap = map[string]string{
     {{ if .csrf }}
         <meta name="X-CSRF-Token" value="{{ .csrf }}">
     {{ end }}
-    <title>{{template "title" .}} - Miniflux</title>
-    {{ if .user }}
-        <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .user.Theme }}">
-    {{ else }}
-        <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" "default" }}">
-    {{ end }}
+
+    <meta name="theme-color" content="{{ theme_color .theme }}">
+    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}">
 
     <script type="text/javascript" src="{{ route "javascript" "name" "app" }}" defer></script>
     <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}" defer id="service-worker-script"></script>
@@ -241,6 +239,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
 	"item_meta":        "2da78476f6c7fb8742c969ad1bfc20b7b61fddf97d79a77baf3cabda52f6fb49",
-	"layout":           "0d226847454115497b3ef7d67381ae231459c8dcde974eb1a7f4a115957c0e86",
+	"layout":           "16658c13e91cab88ba4c49f14654a95b1db12054cc96def3e40360a52acc6c54",
 	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
 }

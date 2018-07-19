@@ -51,9 +51,14 @@ func (s *Session) FlashErrorMessage() string {
 	return message
 }
 
-// SetLanguage updates language field in session.
+// SetLanguage updates the language field in session.
 func (s *Session) SetLanguage(language string) {
 	s.store.UpdateSessionField(s.ctx.SessionID(), "language", language)
+}
+
+// SetTheme updates the theme field in session.
+func (s *Session) SetTheme(theme string) {
+	s.store.UpdateSessionField(s.ctx.SessionID(), "theme", theme)
 }
 
 // SetPocketRequestToken updates Pocket Request Token.

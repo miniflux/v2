@@ -114,6 +114,7 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Controller:OAuth2Callback] username=%s just logged in", user.Username)
 	c.store.SetLastLogin(user.ID)
 	sess.SetLanguage(user.Language)
+	sess.SetTheme(user.Theme)
 
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,

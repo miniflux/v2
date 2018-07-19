@@ -48,6 +48,15 @@ func (c *Context) UserLanguage() string {
 	return language
 }
 
+// UserTheme get the theme used by the current logged user.
+func (c *Context) UserTheme() string {
+	theme := c.getContextStringValue(middleware.UserThemeContextKey)
+	if theme == "" {
+		theme = "default"
+	}
+	return theme
+}
+
 // CSRF returns the current CSRF token.
 func (c *Context) CSRF() string {
 	return c.getContextStringValue(middleware.CSRFContextKey)

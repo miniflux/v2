@@ -47,13 +47,14 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Controller:CheckLogin] username=%s just logged in", authForm.Username)
 	c.store.SetLastLogin(userID)
 
-	userLanguage, err := c.store.UserLanguage(userID)
+	user, err := c.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, err)
 		return
 	}
 
-	sess.SetLanguage(userLanguage)
+	sess.SetLanguage(user.Language)
+	sess.SetTheme(user.Theme)
 
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,

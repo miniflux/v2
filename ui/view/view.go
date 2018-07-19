@@ -35,5 +35,6 @@ func New(tpl *template.Engine, ctx *context.Context, sess *session.Session) *Vie
 	b.params["csrf"] = ctx.CSRF()
 	b.params["flashMessage"] = sess.FlashMessage()
 	b.params["flashErrorMessage"] = sess.FlashErrorMessage()
+	b.params["theme"] = ctx.UserTheme()
 	return b
 }
