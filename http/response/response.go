@@ -23,7 +23,7 @@ func NotModified(w http.ResponseWriter) {
 }
 
 // Cache returns a response with caching headers.
-func Cache(w http.ResponseWriter, r *http.Request, mimeType, etag string, content []byte, duration time.Duration) {
+func Cache(w http.ResponseWriter, r *http.Request, mimeType, etag string, data []byte, duration time.Duration) {
 	w.Header().Set("Content-Type", mimeType)
 	w.Header().Set("ETag", etag)
 	w.Header().Set("Cache-Control", "public")
@@ -31,8 +31,14 @@ func Cache(w http.ResponseWriter, r *http.Request, mimeType, etag string, conten
 
 	if etag == r.Header.Get("If-None-Match") {
 		w.WriteHeader(http.StatusNotModified)
-	} else {
-		w.Write(content)
+		return
+	}
+
+	switch mimeType {
+	case "text/javascript; charset=utf-8", "text/css; charset=utf-8":
+		Compress(w, r, data)
+	default:
+		w.Write(data)
 	}
 }
 

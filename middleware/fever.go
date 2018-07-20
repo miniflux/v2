@@ -20,13 +20,13 @@ func (m *Middleware) FeverAuth(next http.Handler) http.Handler {
 		user, err := m.store.UserByFeverToken(apiKey)
 		if err != nil {
 			logger.Error("[Middleware:Fever] %v", err)
-			json.OK(w, map[string]int{"api_version": 3, "auth": 0})
+			json.OK(w, r, map[string]int{"api_version": 3, "auth": 0})
 			return
 		}
 
 		if user == nil {
 			logger.Info("[Middleware:Fever] Fever authentication failure")
-			json.OK(w, map[string]int{"api_version": 3, "auth": 0})
+			json.OK(w, r, map[string]int{"api_version": 3, "auth": 0})
 			return
 		}
 

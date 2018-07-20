@@ -22,7 +22,7 @@ func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, user)
+	json.OK(w, r, user)
 }
 
 // CreateUser is the API handler to create a new user.
@@ -119,7 +119,7 @@ func (c *Controller) Users(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users.UseTimezone(ctx.UserTimezone())
-	json.OK(w, users)
+	json.OK(w, r, users)
 }
 
 // UserByID is the API handler to fetch the given user by the ID.
@@ -148,7 +148,7 @@ func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.UseTimezone(ctx.UserTimezone())
-	json.OK(w, user)
+	json.OK(w, r, user)
 }
 
 // UserByUsername is the API handler to fetch the given user by the username.
@@ -171,7 +171,7 @@ func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, user)
+	json.OK(w, r, user)
 }
 
 // RemoveUser is the API handler to remove an existing user.

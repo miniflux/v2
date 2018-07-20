@@ -48,7 +48,7 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, entry)
+	json.OK(w, r, entry)
 }
 
 // GetEntry is the API handler to get a single entry.
@@ -73,7 +73,7 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, entry)
+	json.OK(w, r, entry)
 }
 
 // GetFeedEntries is the API handler to get all feed entries.
@@ -132,7 +132,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, &entriesResponse{Total: count, Entries: entries})
+	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})
 }
 
 // GetEntries is the API handler to fetch entries.
@@ -184,7 +184,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, &entriesResponse{Total: count, Entries: entries})
+	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})
 }
 
 // SetEntryStatus is the API handler to change the status of entries.

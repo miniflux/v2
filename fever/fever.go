@@ -155,7 +155,7 @@ func (c *Controller) Handler(w http.ResponseWriter, r *http.Request) {
 	case r.FormValue("mark") == "group":
 		c.handleWriteGroups(w, r)
 	default:
-		json.OK(w, newBaseResponse())
+		json.OK(w, r, newBaseResponse())
 	}
 }
 
@@ -203,7 +203,7 @@ func (c *Controller) handleGroups(w http.ResponseWriter, r *http.Request) {
 
 	result.FeedsGroups = c.buildFeedGroups(feeds)
 	result.SetCommonValues()
-	json.OK(w, result)
+	json.OK(w, r, result)
 }
 
 /*
@@ -262,7 +262,7 @@ func (c *Controller) handleFeeds(w http.ResponseWriter, r *http.Request) {
 
 	result.FeedsGroups = c.buildFeedGroups(feeds)
 	result.SetCommonValues()
-	json.OK(w, result)
+	json.OK(w, r, result)
 }
 
 /*
@@ -304,7 +304,7 @@ func (c *Controller) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.SetCommonValues()
-	json.OK(w, result)
+	json.OK(w, r, result)
 }
 
 /*
@@ -414,7 +414,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.SetCommonValues()
-	json.OK(w, result)
+	json.OK(w, r, result)
 }
 
 /*
@@ -445,7 +445,7 @@ func (c *Controller) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	var result unreadResponse
 	result.ItemIDs = strings.Join(itemIDs, ",")
 	result.SetCommonValues()
-	json.OK(w, result)
+	json.OK(w, r, result)
 }
 
 /*
@@ -477,7 +477,7 @@ func (c *Controller) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 
 	result := &savedResponse{ItemIDs: strings.Join(itemsIDs, ",")}
 	result.SetCommonValues()
-	json.OK(w, result)
+	json.OK(w, r, result)
 }
 
 /*
@@ -534,7 +534,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		}()
 	}
 
-	json.OK(w, newBaseResponse())
+	json.OK(w, r, newBaseResponse())
 }
 
 /*
@@ -575,7 +575,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, newBaseResponse())
+	json.OK(w, r, newBaseResponse())
 }
 
 /*
@@ -616,7 +616,7 @@ func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, newBaseResponse())
+	json.OK(w, r, newBaseResponse())
 }
 
 /*

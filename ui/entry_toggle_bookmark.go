@@ -28,5 +28,5 @@ func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, "OK")
+	json.OK(w, r, "OK")
 }

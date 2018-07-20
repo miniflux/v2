@@ -9,14 +9,14 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/miniflux/miniflux/http/response"
 	"github.com/miniflux/miniflux/logger"
 )
 
 // OK sends a JSON response with the status code 200.
-func OK(w http.ResponseWriter, v interface{}) {
+func OK(w http.ResponseWriter, r *http.Request, v interface{}) {
 	commonHeaders(w)
-	w.WriteHeader(http.StatusOK)
-	w.Write(toJSON(v))
+	response.Compress(w, r, toJSON(v))
 }
 
 // Created sends a JSON response with the status code 201.

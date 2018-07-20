@@ -49,5 +49,5 @@ func (c *Controller) FetchContent(w http.ResponseWriter, r *http.Request) {
 	entry.Content = sanitizer.Sanitize(entry.URL, content)
 	c.store.UpdateEntryContent(entry)
 
-	json.Created(w, map[string]string{"content": entry.Content})
+	json.OK(w, r, map[string]string{"content": entry.Content})
 }

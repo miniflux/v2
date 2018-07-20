@@ -37,7 +37,7 @@ func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, &feedIcon{
+	json.OK(w, r, &feedIcon{
 		ID:       icon.ID,
 		MimeType: icon.MimeType,
 		Data:     icon.DataURL(),

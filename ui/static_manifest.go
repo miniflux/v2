@@ -50,5 +50,5 @@ func (c *Controller) WebManifest(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	json.OK(w, manifest)
+	json.OK(w, r, manifest)
 }

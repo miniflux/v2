@@ -146,7 +146,7 @@ func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, feeds)
+	json.OK(w, r, feeds)
 }
 
 // GetFeed is the API handler to get a feed.
@@ -168,7 +168,7 @@ func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, feed)
+	json.OK(w, r, feed)
 }
 
 // RemoveFeed is the API handler to remove a feed.

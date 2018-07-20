@@ -36,5 +36,5 @@ func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, subscriptions)
+	json.OK(w, r, subscriptions)
 }

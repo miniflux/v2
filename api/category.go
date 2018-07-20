@@ -83,7 +83,7 @@ func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, categories)
+	json.OK(w, r, categories)
 }
 
 // RemoveCategory is the API handler to remove a category.
