@@ -33,10 +33,10 @@
     {{ end }}
 
     <meta name="theme-color" content="{{ theme_color .theme }}">
-    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}">
+    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}?{{ .theme_checksum }}">
 
-    <script type="text/javascript" src="{{ route "javascript" "name" "app" }}" defer></script>
-    <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}" defer id="service-worker-script"></script>
+    <script type="text/javascript" src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
+    <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>
 <body data-entries-status-url="{{ route "updateEntriesStatus" }}">
     {{ if .user }}

@@ -8,6 +8,7 @@ import (
 	"github.com/miniflux/miniflux/http/context"
 	"github.com/miniflux/miniflux/template"
 	"github.com/miniflux/miniflux/ui/session"
+	"github.com/miniflux/miniflux/ui/static"
 )
 
 // View wraps template argument building.
@@ -31,10 +32,14 @@ func (v *View) Render(template string) []byte {
 // New returns a new view with default parameters.
 func New(tpl *template.Engine, ctx *context.Context, sess *session.Session) *View {
 	b := &View{tpl, ctx, make(map[string]interface{})}
+	theme := ctx.UserTheme()
 	b.params["menu"] = ""
 	b.params["csrf"] = ctx.CSRF()
 	b.params["flashMessage"] = sess.FlashMessage()
 	b.params["flashErrorMessage"] = sess.FlashErrorMessage()
-	b.params["theme"] = ctx.UserTheme()
+	b.params["theme"] = theme
+	b.params["theme_checksum"] = static.StylesheetsChecksums[theme]
+	b.params["app_js_checksum"] = static.JavascriptsChecksums["app"]
+	b.params["sw_js_checksum"] = static.JavascriptsChecksums["sw"]
 	return b
 }
