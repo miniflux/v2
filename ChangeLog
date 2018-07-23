@@ -1,3 +1,50 @@
+Version 2.0.10 (July 22, 2018)
+------------------------------
+
+* Avoid browser caching issues when assets changes
+* Add Gzip/Deflate compression for HTML, JSON, CSS and Javascript responses
+* Improve themes handling
+    * Store user theme in session
+    * Logged out users will keep their theme
+    * Add theme background color to web manifest and meta tag
+* Update application icon with different sizes
+* Add support for published tag in Atom feeds
+* Add tooltip to feed domain in feeds list (title attribute)
+* Prevent vertical scrolling on swipe
+* Show feed title instead of domain in items list
+* Add service worker to cache feed icons
+* Make image proxy configurable via IMAGE_PROXY environment variable:
+    * none = No proxy
+    * http-only = Proxy only non-HTTPS images (default)
+    * all = Proxy everything
+* Add alt attribute for feed icons
+* Update CI jshint check
+* Add embedly.com to iframe whitelist
+* Use passive event listeners for touch events
+* Add `add_dynamic_image` rewriter for JavaScript-loaded images
+* Change feed password field type to text to avoid auto-completion with Firefox
+    * Using autocomplete="off" or autocomplete="new-password" doesn't change anything
+    * Changing the input ID doesn't change anything
+    * Using a different input name doesn't change anything
+    * Only Chrome supports autocomplete="new-password"
+* Add base URL validation
+* Update default stylesheet name in HTML layout
+* Pre-generate themes stylesheets at build time
+* Update vendor dependencies
+* Refactor assets bundler and split Javascript files
+* Run sanitizer after all processing and entry content rewrite
+* Remove timestamp from generated files
+* Add support for protocol relative YouTube URLs
+* Add Postgres full-text search for entries
+* Add search form in user interface
+* Add search parameter to the API
+* Improve Dutch locales
+* Sandbox iframes when sanitizing
+* Keep consistent text size on mobile orientation change
+* Change permission of /etc/miniflux.conf to 600 instead of 644 in RPM package
+* Add tzdata package to Docker image
+* Update Docker image to Alpine Linux 3.8
+
 Version 2.0.9 (July 1, 2018)
 ----------------------------
 
