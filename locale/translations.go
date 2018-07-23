@@ -67,9 +67,9 @@ var translations = map[string]string{
     "New User": "Neuer Benutzer",
     "Confirmation": "Bestätigung",
     "Administrator": "Administrator",
-    "Edit Category: %s": "Kategorie bearbeiten : %s",
+    "Edit Category: %s": "Kategorie bearbeiten: %s",
     "Update": "Aktualisieren",
-    "Edit Feed: %s": "Abonnement bearbeiten : %s",
+    "Edit Feed: %s": "Abonnement bearbeiten: %s",
     "There is no category!": "Es ist keine Kategorie vorhanden!",
     "Edit user: %s": "Benutzer bearbeiten: %s",
     "There is no article for this feed.": "Es existiert kein Artikel für dieses Abonnement.",
@@ -103,7 +103,7 @@ var translations = map[string]string{
     "The title is mandatory.": "Der Titel ist obligatorisch.",
     "About": "Über",
     "Version": "Version",
-    "Version:": "Version :",
+    "Version:": "Version:",
     "Build Date:": "Datum der Kompilierung:",
     "Author:": "Autor:",
     "Authors": "Autoren",
@@ -1173,7 +1173,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "64195423123d1d209514a0431dfe55c6e0cf92b08c1200ce879af1b8b6b16696",
+	"de_DE": "c87a08365c81ec478d705d8e1110cd1b864476d35b5b281f1e76e7a21afc1ae7",
 	"en_US": "6fe95384260941e8a5a3c695a655a932e0a8a6a572c1e45cb2b1ae8baa01b897",
 	"fr_FR": "343a148eed375a593023c30597ef7280d18222756c5062e6a85e1006c7b12d14",
 	"nl_NL": "05cca4936bd3b0fa44057c4dab64acdef3aed32fbb682393f254cfe2f686ef1f",
