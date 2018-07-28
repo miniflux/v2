@@ -212,7 +212,7 @@ func (c *Client) buildClient() http.Client {
 
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
-	headers.Add("User-Agent", "Mozilla/5.0 (compatible; Miniflux/"+version.Version+"; +https://miniflux.net)")
+	headers.Add("User-Agent", "Mozilla/5.0 (compatible; Miniflux/"+version.Version+"; +https://miniflux.app)")
 	headers.Add("Accept", "*/*")
 
 	if c.etagHeader != "" {
