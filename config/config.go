@@ -20,6 +20,7 @@ const (
 	defaultPollingFrequency = 60
 	defaultBatchSize        = 10
 	defaultDatabaseMaxConns = 20
+	defaultDatabaseMinConns = 1
 	defaultListenAddr       = "127.0.0.1:8080"
 	defaultCertFile         = ""
 	defaultKeyFile          = ""
@@ -119,9 +120,14 @@ func (c *Config) DatabaseURL() string {
 	return value
 }
 
-// DatabaseMaxConnections returns the number of maximum database connections.
-func (c *Config) DatabaseMaxConnections() int {
+// DatabaseMaxConns returns the maximum number of database connections.
+func (c *Config) DatabaseMaxConns() int {
 	return c.getInt("DATABASE_MAX_CONNS", defaultDatabaseMaxConns)
+}
+
+// DatabaseMinConns returns the minimum number of database connections.
+func (c *Config) DatabaseMinConns() int {
+	return c.getInt("DATABASE_MIN_CONNS", defaultDatabaseMinConns)
 }
 
 // ListenAddr returns the listen address for the HTTP server.

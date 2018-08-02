@@ -209,7 +209,7 @@ func main() {
 
 	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))
 
-	generateBundle("sql/sql.go", "sql", "SqlMap", glob("sql/*.sql"))
+	generateBundle("database/sql.go", "database", "SqlMap", glob("database/sql/*.sql"))
 	generateBundle("template/views.go", "template", "templateViewsMap", glob("template/html/*.html"))
 	generateBundle("template/common.go", "template", "templateCommonMap", glob("template/html/common/*.html"))
 	generateBundle("locale/translations.go", "locale", "translations", glob("locale/translations/*.json"))

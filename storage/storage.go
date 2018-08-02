@@ -6,10 +6,6 @@ package storage
 
 import (
 	"database/sql"
-
-	// Postgresql driver import
-	_ "github.com/lib/pq"
-	"github.com/miniflux/miniflux/logger"
 )
 
 // Storage handles all operations related to the database.
@@ -17,20 +13,7 @@ type Storage struct {
 	db *sql.DB
 }
 
-// Close closes all database connections.
-func (s *Storage) Close() {
-	s.db.Close()
-}
-
 // NewStorage returns a new Storage.
-func NewStorage(databaseURL string, maxOpenConns int) *Storage {
-	db, err := sql.Open("postgres", databaseURL)
-	if err != nil {
-		logger.Fatal("[Storage] Unable to connect to the database: %v", err)
-	}
-
-	db.SetMaxOpenConns(maxOpenConns)
-	db.SetMaxIdleConns(2)
-
-	return &Storage{db: db}
+func NewStorage(db *sql.DB) *Storage {
+	return &Storage{db}
 }

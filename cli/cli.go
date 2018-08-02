@@ -10,6 +10,7 @@ import (
 
 	"github.com/miniflux/miniflux/config"
 	"github.com/miniflux/miniflux/daemon"
+	"github.com/miniflux/miniflux/database"
 	"github.com/miniflux/miniflux/logger"
 	"github.com/miniflux/miniflux/storage"
 	"github.com/miniflux/miniflux/version"
@@ -33,10 +34,13 @@ func Parse() {
 		logger.EnableDebug()
 	}
 
-	store := storage.NewStorage(
-		cfg.DatabaseURL(),
-		cfg.DatabaseMaxConnections(),
-	)
+	db, err := database.NewConnectionPool(cfg.DatabaseURL(), cfg.DatabaseMinConns(), cfg.DatabaseMaxConns())
+	if err != nil {
+		logger.Fatal("Unable to connect to the database: %v", err)
+	}
+	defer db.Close()
+
+	store := storage.NewStorage(db)
 
 	if *flagInfo {
 		info()
@@ -49,7 +53,7 @@ func Parse() {
 	}
 
 	if *flagMigrate {
-		store.Migrate()
+		database.Migrate(db)
 		return
 	}
 
@@ -75,7 +79,7 @@ func Parse() {
 
 	// Run migrations and start the deamon.
 	if cfg.RunMigrations() {
-		store.Migrate()
+		database.Migrate(db)
 	}
 
 	// Create admin user and start the deamon.

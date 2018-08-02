@@ -59,6 +59,5 @@ func Run(cfg *config.Config, store *storage.Storage) {
 	defer cancel()
 
 	server.Shutdown(ctx)
-	store.Close()
 	logger.Info("Server gracefully stopped")
 }

@@ -5,7 +5,7 @@
 package main
 
 //go:generate go run generate.go
-//go:generate gofmt -s -w sql/sql.go
+//go:generate gofmt -s -w database/sql.go
 //go:generate gofmt -s -w ui/static/css.go
 //go:generate gofmt -s -w ui/static/bin.go
 //go:generate gofmt -s -w ui/static/js.go
