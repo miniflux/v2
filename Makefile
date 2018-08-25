@@ -48,7 +48,7 @@ integration-test:
 	go build -o miniflux-test main.go
 	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
-	go test -v -tags=integration || cat /tmp/miniflux.log
+	go test -v -tags=integration miniflux.app/tests || cat /tmp/miniflux.log
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
