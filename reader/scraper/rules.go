@@ -12,7 +12,7 @@ var predefinedRules = map[string]string{
 	"developpez.com":      "div[itemprop=articleBody]",
 	"francetvinfo.fr":     ".text",
 	"github.com":          "article.entry-content",
-	"heise.de":            "div.article-content",
+	"heise.de":            "header .article-content__lead, header .article-image, div.akwa-article__content",
 	"igen.fr":             "section.corps",
 	"ing.dk":              "section.body",
 	"lapresse.ca":         ".amorce, .entry",
