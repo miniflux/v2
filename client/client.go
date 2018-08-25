@@ -1,8 +1,8 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the MIT license
 // that can be found in the LICENSE file.
 
-package miniflux
+package client // import "miniflux.app/client"
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-// Client represents a Miniflux client.
+// Client holds API procedure calls.
 type Client struct {
 	request *request
 }
@@ -448,8 +448,8 @@ func (c *Client) ToggleBookmark(entryID int64) error {
 	return nil
 }
 
-// NewClient returns a new Client.
-func NewClient(endpoint, username, password string) *Client {
+// New returns a new Miniflux client.
+func New(endpoint, username, password string) *Client {
 	return &Client{request: &request{endpoint: endpoint, username: username, password: password}}
 }
 

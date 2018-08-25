@@ -21,7 +21,7 @@
 #  version = "2.4.0"
 
 [metadata.heroku]
-  root-package = "github.com/miniflux/miniflux"
+  root-package = "miniflux.app"
   go-version = "go1.10"
   ensure = "false"
 
@@ -36,10 +36,6 @@
 [[constraint]]
   branch = "master"
   name = "github.com/lib/pq"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/miniflux/miniflux-go"
 
 [[constraint]]
   name = "github.com/tdewolff/minify"

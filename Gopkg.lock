@@ -42,12 +42,6 @@
   revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/miniflux/miniflux-go"
-  packages = ["."]
-  revision = "7b8d54a221db7b3e049f63e302ebbcc7d6a8d6be"
-
-[[projects]]
   name = "github.com/tdewolff/minify"
   packages = [
     ".",
@@ -152,6 +146,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "62141ee1c8cb97033a8a89a45761f074ff9632cb57fe9e4440493ddfce0b083c"
+  inputs-digest = "bcdb45e8fd281e2a0b71ac72bfeba98a126cdbc8809da17e7e63394237105e32"
   solver-name = "gps-cdcl"
   solver-version = 1

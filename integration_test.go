@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/miniflux/miniflux-go"
+	miniflux "miniflux.app/client"
 )
 
 const (
@@ -29,7 +29,7 @@ const (
 )
 
 func TestWithBadEndpoint(t *testing.T) {
-	client := miniflux.NewClient("bad url", testAdminUsername, testAdminPassword)
+	client := miniflux.New("bad url", testAdminUsername, testAdminPassword)
 	_, err := client.Users()
 	if err == nil {
 		t.Fatal(`Using a bad url should raise an error`)
@@ -37,7 +37,7 @@ func TestWithBadEndpoint(t *testing.T) {
 }
 
 func TestWithWrongCredentials(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, "invalid", "invalid")
+	client := miniflux.New(testBaseURL, "invalid", "invalid")
 	_, err := client.Users()
 	if err == nil {
 		t.Fatal(`Using bad credentials should raise an error`)
@@ -49,7 +49,7 @@ func TestWithWrongCredentials(t *testing.T) {
 }
 
 func TestGetCurrentLoggedUser(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.Me()
 	if err != nil {
 		t.Fatal(err)
@@ -65,7 +65,7 @@ func TestGetCurrentLoggedUser(t *testing.T) {
 }
 
 func TestGetUsers(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	users, err := client.Users()
 	if err != nil {
 		t.Fatal(err)
@@ -106,7 +106,7 @@ func TestGetUsers(t *testing.T) {
 
 func TestCreateStandardUser(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -147,7 +147,7 @@ func TestCreateStandardUser(t *testing.T) {
 
 func TestRemoveUser(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -160,7 +160,7 @@ func TestRemoveUser(t *testing.T) {
 
 func TestGetUserByID(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -211,7 +211,7 @@ func TestGetUserByID(t *testing.T) {
 
 func TestGetUserByUsername(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -262,7 +262,7 @@ func TestGetUserByUsername(t *testing.T) {
 
 func TestUpdateUserTheme(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -281,7 +281,7 @@ func TestUpdateUserTheme(t *testing.T) {
 
 func TestUpdateUserThemeWithInvalidValue(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -296,7 +296,7 @@ func TestUpdateUserThemeWithInvalidValue(t *testing.T) {
 
 func TestCannotCreateDuplicateUser(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	_, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
@@ -310,13 +310,13 @@ func TestCannotCreateDuplicateUser(t *testing.T) {
 
 func TestCannotListUsersAsNonAdmin(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	_, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	_, err = client.Users()
 	if err == nil {
 		t.Fatal(`Standard users should not be able to list any users`)
@@ -329,13 +329,13 @@ func TestCannotListUsersAsNonAdmin(t *testing.T) {
 
 func TestCannotGetUserAsNonAdmin(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	_, err = client.UserByID(user.ID)
 	if err == nil {
 		t.Fatal(`Standard users should not be able to get any users`)
@@ -348,13 +348,13 @@ func TestCannotGetUserAsNonAdmin(t *testing.T) {
 
 func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	_, err = client.UpdateUser(user.ID, &miniflux.UserModification{})
 	if err == nil {
 		t.Fatal(`Standard users should not be able to update any users`)
@@ -367,13 +367,13 @@ func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
 
 func TestCannotCreateUserAsNonAdmin(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	_, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	_, err = client.CreateUser(username, testStandardPassword, false)
 	if err == nil {
 		t.Fatal(`Standard users should not be able to create users`)
@@ -386,13 +386,13 @@ func TestCannotCreateUserAsNonAdmin(t *testing.T) {
 
 func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	err = client.DeleteUser(user.ID)
 	if err == nil {
 		t.Fatal(`Standard users should not be able to remove any users`)
@@ -405,14 +405,14 @@ func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
 
 func TestCreateCategory(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	categoryName := "My category"
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	category, err := client.CreateCategory(categoryName)
 	if err != nil {
 		t.Fatal(err)
@@ -432,7 +432,7 @@ func TestCreateCategory(t *testing.T) {
 }
 
 func TestCreateCategoryWithEmptyTitle(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	_, err := client.CreateCategory("")
 	if err == nil {
 		t.Fatal(`The category title should be mandatory`)
@@ -456,14 +456,14 @@ func TestCannotCreateDuplicatedCategory(t *testing.T) {
 
 func TestUpdateCategory(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	categoryName := "My category"
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	category, err := client.CreateCategory(categoryName)
 	if err != nil {
 		t.Fatal(err)
@@ -490,14 +490,14 @@ func TestUpdateCategory(t *testing.T) {
 
 func TestListCategories(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	user, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	categoryName := "My category"
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	_, err = client.CreateCategory(categoryName)
 	if err != nil {
 		t.Fatal(err)
@@ -553,7 +553,7 @@ func TestDeleteCategory(t *testing.T) {
 
 func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	categories, err := client.Categories()
 	if err != nil {
 		t.Fatal(err)
@@ -564,7 +564,7 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	err = client.DeleteCategory(categories[0].ID)
 	if err == nil {
 		t.Fatal(`Removing a category that belongs to another user should be forbidden`)
@@ -572,7 +572,7 @@ func TestCannotDeleteCategoryOfAnotherUser(t *testing.T) {
 }
 
 func TestDiscoverSubscriptions(t *testing.T) {
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	subscriptions, err := client.Discover(testWebsiteURL)
 	if err != nil {
 		t.Fatal(err)
@@ -956,13 +956,13 @@ func TestGetFeedIcon(t *testing.T) {
 
 func TestGetFeedIconNotFound(t *testing.T) {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	_, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	client = miniflux.New(testBaseURL, username, testStandardPassword)
 	if _, err := client.FeedIcon(42); err == nil {
 		t.Fatalf(`The feed icon should be null`)
 	}
@@ -1233,13 +1233,13 @@ func getRandomUsername() string {
 
 func createClient(t *testing.T) *miniflux.Client {
 	username := getRandomUsername()
-	client := miniflux.NewClient(testBaseURL, testAdminUsername, testAdminPassword)
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
 	_, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	return miniflux.NewClient(testBaseURL, username, testStandardPassword)
+	return miniflux.New(testBaseURL, username, testStandardPassword)
 }
 
 func createFeed(t *testing.T, client *miniflux.Client) (*miniflux.Feed, *miniflux.Category) {
