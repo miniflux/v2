@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package rewrite
+package rewrite // import "miniflux.app/reader/rewrite"
 
 // List of predefined rewrite rules (alphabetically sorted)
 // Available rules: "add_image_title", "add_youtube_video"

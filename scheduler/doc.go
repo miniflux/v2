@@ -7,4 +7,4 @@
 Package scheduler implements the application internal scheduler.
 
 */
-package scheduler
+package scheduler // import "miniflux.app/scheduler"

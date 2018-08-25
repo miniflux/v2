@@ -2,9 +2,9 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package locale
+package locale // import "miniflux.app/locale"
 
-import "github.com/miniflux/miniflux/logger"
+import "miniflux.app/logger"
 
 // Translation is the translation mapping table.
 type Translation map[string]interface{}

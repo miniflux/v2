@@ -7,4 +7,4 @@
 Package locale handles the internationalization of the application.
 
 */
-package locale
+package locale // import "miniflux.app/locale"

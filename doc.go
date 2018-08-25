@@ -4,7 +4,7 @@
 
 /*
 
-Package main implements a feed reader application.
+Miniflux is a feed reader application.
 
 */
-package main
+package main // import "miniflux.app"

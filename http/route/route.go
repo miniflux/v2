@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package route
+package route // import "miniflux.app/http/route"
 
 import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/logger"
 )
 
 // Path returns the defined route based on given arguments.

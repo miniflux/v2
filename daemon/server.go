@@ -2,19 +2,19 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package daemon
+package daemon // import "miniflux.app/daemon"
 
 import (
 	"crypto/tls"
 	"net/http"
 	"time"
 
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/locale"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/scheduler"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/config"
+	"miniflux.app/locale"
+	"miniflux.app/logger"
+	"miniflux.app/reader/feed"
+	"miniflux.app/scheduler"
+	"miniflux.app/storage"
 
 	"golang.org/x/crypto/acme/autocert"
 )

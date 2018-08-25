@@ -2,9 +2,9 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package model
+package model // import "miniflux.app/model"
 
-import "github.com/miniflux/miniflux/errors"
+import "miniflux.app/errors"
 
 // Themes returns the list of available themes.
 func Themes() map[string]string {

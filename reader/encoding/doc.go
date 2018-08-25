@@ -7,4 +7,4 @@
 Package encoding handles workarounds to deal with encoding edge cases found into the wild.
 
 */
-package encoding
+package encoding // import "miniflux.app/reader/encoding"

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package readability
+package readability // import "miniflux.app/reader/readability"
 
 import (
 	"bytes"
@@ -12,8 +12,9 @@ import (
 	"regexp"
 	"strings"
 
+	"miniflux.app/logger"
+
 	"github.com/PuerkitoBio/goquery"
-	"github.com/miniflux/miniflux/logger"
 	"golang.org/x/net/html"
 )
 

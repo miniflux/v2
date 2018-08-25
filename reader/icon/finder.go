@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package icon
+package icon // import "miniflux.app/reader/icon"
 
 import (
 	"encoding/base64"
@@ -11,11 +11,11 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http/client"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/url"
+	"miniflux.app/crypto"
+	"miniflux.app/http/client"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 )

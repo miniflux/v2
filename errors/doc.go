@@ -7,4 +7,4 @@
 Package errors handles localized errors.
 
 */
-package errors
+package errors // import "miniflux.app/errors"

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package pocket
+package pocket // import "miniflux.app/integration/pocket"
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http/client"
+	"miniflux.app/http/client"
 )
 
 // Connector manages the authorization flow with Pocket to get a personal access token.

@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package view
+package view // import "miniflux.app/ui/view"
 
 import (
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/template"
-	"github.com/miniflux/miniflux/ui/session"
-	"github.com/miniflux/miniflux/ui/static"
+	"miniflux.app/http/context"
+	"miniflux.app/template"
+	"miniflux.app/ui/session"
+	"miniflux.app/ui/static"
 )
 
 // View wraps template argument building.

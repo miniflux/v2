@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package pinboard
+package pinboard // import "miniflux.app/integration/pinboard"
 
 import (
 	"fmt"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http/client"
+	"miniflux.app/http/client"
 )
 
 // Client represents a Pinboard client.

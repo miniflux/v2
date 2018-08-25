@@ -2,18 +2,18 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware
+package middleware // import "miniflux.app/middleware"
 
 import (
 	"context"
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/cookie"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/http/cookie"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
+	"miniflux.app/logger"
+	"miniflux.app/model"
 )
 
 // AppSession handles application session middleware.

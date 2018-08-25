@@ -7,4 +7,4 @@
 Package template handles template parsing and execution.
 
 */
-package template
+package template // import "miniflux.app/template"

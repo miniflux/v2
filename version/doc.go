@@ -7,4 +7,4 @@
 Package version contains application and build information.
 
 */
-package version
+package version // import "miniflux.app/version"

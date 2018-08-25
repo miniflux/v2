@@ -2,14 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package storage
+package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/crypto"
+	"miniflux.app/model"
 )
 
 // CreateSession creates a new session.

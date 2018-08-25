@@ -2,14 +2,14 @@
 // Use of this source code is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package template
+package template // import "miniflux.app/template"
 
 import (
 	"fmt"
 	"testing"
 	"time"
 
-	"github.com/miniflux/miniflux/locale"
+	"miniflux.app/locale"
 )
 
 func TestElapsedTime(t *testing.T) {

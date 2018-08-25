@@ -7,4 +7,4 @@
 Package reader implements everything related to feed parsing.
 
 */
-package reader
+package reader // import "miniflux.app/reader"

@@ -2,19 +2,19 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package rdf
+package rdf // import "miniflux.app/reader/rdf"
 
 import (
 	"encoding/xml"
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/reader/date"
-	"github.com/miniflux/miniflux/reader/sanitizer"
-	"github.com/miniflux/miniflux/url"
+	"miniflux.app/crypto"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/reader/date"
+	"miniflux.app/reader/sanitizer"
+	"miniflux.app/url"
 )
 
 type rdfFeed struct {

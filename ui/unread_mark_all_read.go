@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/http/context"
+	"miniflux.app/http/response"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
 )
 
 // MarkAllAsRead marks all unread entries as read.

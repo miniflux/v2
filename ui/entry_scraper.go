@@ -2,18 +2,18 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/reader/sanitizer"
-	"github.com/miniflux/miniflux/reader/scraper"
+	"miniflux.app/http/context"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/model"
+	"miniflux.app/reader/sanitizer"
+	"miniflux.app/reader/scraper"
 )
 
 // FetchContent downloads the original HTML page and returns relevant contents.

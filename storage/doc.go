@@ -7,4 +7,4 @@
 Package storage implements a set of functions to interact with the database.
 
 */
-package storage
+package storage // import "miniflux.app/storage"

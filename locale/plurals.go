@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package locale
+package locale // import "miniflux.app/locale"
 
 // See https://localization-guide.readthedocs.io/en/latest/l10n/pluralforms.html
 // And http://www.unicode.org/cldr/charts/29/supplemental/language_plural_rules.html

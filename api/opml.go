@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/http/response/xml"
-	"github.com/miniflux/miniflux/reader/opml"
+	"miniflux.app/http/context"
+	"miniflux.app/http/response/json"
+	"miniflux.app/http/response/xml"
+	"miniflux.app/reader/opml"
 )
 
 // Export is the API handler that export feeds to OPML.

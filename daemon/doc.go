@@ -7,4 +7,4 @@
 Package daemon handles the main application process.
 
 */
-package daemon
+package daemon // import "miniflux.app/daemon"

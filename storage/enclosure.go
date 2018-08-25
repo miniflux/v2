@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package storage
+package storage // import "miniflux.app/storage"
 
 import (
 	"fmt"
 
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/model"
 )
 
 // GetEnclosures returns all attachments for the given entry.

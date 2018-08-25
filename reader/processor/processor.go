@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package processor
+package processor // import "miniflux.app/reader/processor"
 
 import (
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/reader/rewrite"
-	"github.com/miniflux/miniflux/reader/sanitizer"
-	"github.com/miniflux/miniflux/reader/scraper"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/reader/rewrite"
+	"miniflux.app/reader/sanitizer"
+	"miniflux.app/reader/scraper"
+	"miniflux.app/storage"
 )
 
 // FeedProcessor handles the processing of feed contents.

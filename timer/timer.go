@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package timer
+package timer // import "miniflux.app/timer"
 
 import (
 	"time"
 
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/logger"
 )
 
 // ExecutionTime returns the elapsed time of a block of code.

@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package session
+package session // import "miniflux.app/ui/session"
 
 import (
-	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/crypto"
+	"miniflux.app/http/context"
+	"miniflux.app/storage"
 )
 
 // Session handles session data.

@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package scheduler
+package scheduler // import "miniflux.app/scheduler"
 
 import (
 	"time"
 
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/logger"
+	"miniflux.app/storage"
 )
 
 // NewFeedScheduler starts a new scheduler that push jobs to a pool of workers.

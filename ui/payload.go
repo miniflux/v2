@@ -2,14 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
 
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/model"
 )
 
 func decodeEntryStatusPayload(r io.ReadCloser) (entryIDs []int64, status string, err error) {

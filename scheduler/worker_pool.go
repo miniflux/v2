@@ -2,11 +2,11 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package scheduler
+package scheduler // import "miniflux.app/scheduler"
 
 import (
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/reader/feed"
+	"miniflux.app/model"
+	"miniflux.app/reader/feed"
 )
 
 // WorkerPool handle a pool of workers.

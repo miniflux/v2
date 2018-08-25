@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
+	"miniflux.app/http/context"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
 )
 
 // CurrentUser is the API handler to retrieve the authenticated user.

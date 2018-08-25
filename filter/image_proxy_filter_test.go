@@ -2,14 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package filter
+package filter // import "miniflux.app/filter"
 
 import (
 	"net/http"
 	"os"
 	"testing"
 
-	"github.com/miniflux/miniflux/config"
+	"miniflux.app/config"
 
 	"github.com/gorilla/mux"
 )

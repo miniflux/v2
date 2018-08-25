@@ -2,18 +2,18 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package cli
+package cli // import "miniflux.app/cli"
 
 import (
 	"flag"
 	"fmt"
 
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/daemon"
-	"github.com/miniflux/miniflux/database"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/storage"
-	"github.com/miniflux/miniflux/version"
+	"miniflux.app/config"
+	"miniflux.app/daemon"
+	"miniflux.app/database"
+	"miniflux.app/logger"
+	"miniflux.app/storage"
+	"miniflux.app/version"
 )
 
 // Parse parses command line arguments.

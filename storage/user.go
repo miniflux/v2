@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package storage
+package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/timer"
+	"miniflux.app/model"
+	"miniflux.app/timer"
 
 	"github.com/lib/pq/hstore"
 	"golang.org/x/crypto/bcrypt"

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package scraper
+package scraper // import "miniflux.app/reader/scraper"
 
 import (
 	"errors"
@@ -10,11 +10,12 @@ import (
 	"io"
 	"strings"
 
+	"miniflux.app/http/client"
+	"miniflux.app/logger"
+	"miniflux.app/reader/readability"
+	"miniflux.app/url"
+
 	"github.com/PuerkitoBio/goquery"
-	"github.com/miniflux/miniflux/http/client"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/reader/readability"
-	"github.com/miniflux/miniflux/url"
 )
 
 // Fetch downloads a web page a returns relevant contents.

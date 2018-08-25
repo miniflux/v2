@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package fever
+package fever // import "miniflux.app/fever"
 
 import (
 	"net/http"
@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/integration"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/config"
+	"miniflux.app/http/context"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/integration"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/storage"
 )
 
 type baseResponse struct {

@@ -7,4 +7,4 @@
 Package integration implements API clients for third-party services.
 
 */
-package integration
+package integration // import "miniflux.app/integration"

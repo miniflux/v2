@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package scraper
+package scraper // import "miniflux.app/reader/scraper"
 
 // List of predefined scraper rules (alphabetically sorted)
 // domain => CSS selectors

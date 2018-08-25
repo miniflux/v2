@@ -2,18 +2,18 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/cookie"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/ui/session"
+	"miniflux.app/http/context"
+	"miniflux.app/http/cookie"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
+	"miniflux.app/ui/session"
 )
 
 // Logout destroy the session and redirects the user to the login page.

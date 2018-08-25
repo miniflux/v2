@@ -7,4 +7,4 @@
 Package logger handles application log messages with different levels.
 
 */
-package logger
+package logger // import "miniflux.app/logger"

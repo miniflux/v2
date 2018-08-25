@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package cli
+package cli // import "miniflux.app/cli"
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/storage"
 )
 
 func resetPassword(store *storage.Storage) {

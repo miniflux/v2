@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package model
+package model // import "miniflux.app/model"
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux/timezone"
+	"miniflux.app/timezone"
 )
 
 // UserSession represents a user session in the system.

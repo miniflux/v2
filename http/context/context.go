@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package context
+package context // import "miniflux.app/http/context"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/middleware"
+	"miniflux.app/middleware"
 )
 
 // Context contains helper functions related to the current request.

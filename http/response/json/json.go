@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package json
+package json // import "miniflux.app/http/response/json"
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/http/response"
+	"miniflux.app/logger"
 )
 
 // OK sends a JSON response with the status code 200.

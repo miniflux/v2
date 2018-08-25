@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package rewrite
+package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
 	"strings"
 
-	"github.com/miniflux/miniflux/url"
+	"miniflux.app/url"
 )
 
 // Rewriter modify item contents with a set of rewriting rules.
