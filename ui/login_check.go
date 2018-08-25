@@ -17,6 +17,8 @@ import (
 
 // CheckLogin validates the username/password and redirects the user to the unread page.
 func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
+	remoteAddr := request.RealIP(r)
+
 	ctx := context.New(r)
 	sess := session.New(c.store, ctx)
 
@@ -33,12 +35,12 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
-		logger.Error("[Controller:CheckLogin] %v", err)
+		logger.Error("[Controller:CheckLogin] [Remote=%v] %v", remoteAddr, err)
 		html.OK(w, r, view.Render("login"))
 		return
 	}
 
-	sessionToken, userID, err := c.store.CreateUserSession(authForm.Username, r.UserAgent(), request.RealIP(r))
+	sessionToken, userID, err := c.store.CreateUserSession(authForm.Username, r.UserAgent(), remoteAddr)
 	if err != nil {
 		html.ServerError(w, err)
 		return
