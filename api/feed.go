@@ -53,7 +53,7 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 		feedInfo.Password,
 	)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to create this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 
 	err = c.feedHandler.RefreshFeed(userID, feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to refresh this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -125,13 +125,13 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.UpdateFeed(originalFeed); err != nil {
-		json.ServerError(w, errors.New("Unable to update this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
 	originalFeed, err = c.store.FeedByID(userID, feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -142,7 +142,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := c.store.Feeds(context.New(r).UserID())
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch feeds from the database"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -159,7 +159,7 @@ func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
 
 	feed, err := c.store.FeedByID(context.New(r).UserID(), feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -188,7 +188,7 @@ func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.RemoveFeed(userID, feedID); err != nil {
-		json.ServerError(w, errors.New("Unable to remove this feed"))
+		json.ServerError(w, err)
 		return
 	}
 

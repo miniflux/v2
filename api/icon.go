@@ -28,7 +28,7 @@ func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
 
 	icon, err := c.store.IconByFeedID(context.New(r).UserID(), feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch feed icon"))
+		json.ServerError(w, err)
 		return
 	}
 

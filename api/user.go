@@ -51,7 +51,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	err = c.store.CreateUser(user)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to create this user"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = c.store.UpdateUser(originalUser); err != nil {
-		json.ServerError(w, errors.New("Unable to update this user"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -114,7 +114,7 @@ func (c *Controller) Users(w http.ResponseWriter, r *http.Request) {
 
 	users, err := c.store.Users()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch the list of users"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -190,7 +190,7 @@ func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(userID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this user from the database"))
+		json.ServerError(w, err)
 		return
 	}
 

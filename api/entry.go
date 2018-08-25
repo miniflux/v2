@@ -39,7 +39,7 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this entry from the database"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this entry from the database"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -122,13 +122,13 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch the list of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to count the number of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -174,13 +174,13 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch the list of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to count the number of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -201,7 +201,7 @@ func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.SetEntriesStatus(context.New(r).UserID(), entryIDs, status); err != nil {
-		json.ServerError(w, errors.New("Unable to change entries status"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -217,7 +217,7 @@ func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.ToggleBookmark(context.New(r).UserID(), entryID); err != nil {
-		json.ServerError(w, errors.New("Unable to toggle bookmark value"))
+		json.ServerError(w, err)
 		return
 	}
 

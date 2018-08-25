@@ -5,7 +5,6 @@
 package api // import "miniflux.app/api"
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -27,7 +26,7 @@ func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
 		subscriptionInfo.Password,
 	)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to discover subscriptions"))
+		json.ServerError(w, err)
 		return
 	}
 

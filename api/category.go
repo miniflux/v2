@@ -36,7 +36,7 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 
 	err = c.store.CreateCategory(category)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to create this category"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -67,7 +67,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	err = c.store.UpdateCategory(category)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to update this category"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -79,7 +79,7 @@ func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 	ctx := context.New(r)
 	categories, err := c.store.Categories(ctx.UserID())
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch categories"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -102,7 +102,7 @@ func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.RemoveCategory(userID, categoryID); err != nil {
-		json.ServerError(w, errors.New("Unable to remove this category"))
+		json.ServerError(w, err)
 		return
 	}
 
