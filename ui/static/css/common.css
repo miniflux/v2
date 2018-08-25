@@ -467,8 +467,8 @@ a.button {
     max-width: 280px;
 }
 
-/* Counter */
-.unread-counter-wrapper {
+/* Counters */
+.counter-wrapper {
     font-size: 0.9em;
     font-weight: 300;
     color: #666;

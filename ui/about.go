@@ -31,6 +31,7 @@ func (c *Controller) About(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	html.OK(w, r, view.Render("about"))
 }

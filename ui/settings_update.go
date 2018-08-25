@@ -46,6 +46,7 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	if err := settingsForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())

@@ -95,6 +95,7 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "unread")
 	view.Set("user", user)
 	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	// Fetching the counter here avoid to be off by one.
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))

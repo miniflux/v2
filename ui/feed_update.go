@@ -61,6 +61,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	if err := feedForm.ValidateModification(); err != nil {
 		view.Set("errorMessage", err.Error())

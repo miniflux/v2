@@ -125,8 +125,8 @@ input[type="text"]:focus {
     color: #9b9b9b;
 }
 
-/* Counter */
-.unread-counter-wrapper {
+/* Counters */
+.counter-wrapper {
     color: #bbb;
 }
 
