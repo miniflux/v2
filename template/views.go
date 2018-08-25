@@ -471,6 +471,17 @@ var templateViewsMap = map[string]string{
             <li><strong>{{ t "LastModified header:" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
         </ul>
     </div>
+
+    <div class="alert alert-error">
+        <a href="#"
+            data-confirm="true"
+            data-label-question="{{ t "Are you sure?" }}"
+            data-label-yes="{{ t "yes" }}"
+            data-label-no="{{ t "no" }}"
+            data-label-loading="{{ t "Work in progress..." }}"
+            data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
+            data-redirect-url="{{ route "feeds" }}">{{ t "Remove this feed" }}</a>
+    </div>
 {{ end }}
 
 {{ end }}`,
@@ -1320,7 +1331,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "2b82af5d2dcd67898dc5daa57a6461e6ff8121a6089b2a2a1be909f35e4a2275",
 	"create_user":         "1ef0a1f9bf119d44929c81f13073a257d69650cf5064960cf06a63fe51923e86",
 	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
-	"edit_feed":           "992e315c244da588d5e9e6912d12d933534c2a86e8e771e7dbd5908564abf616",
+	"edit_feed":           "1a8e342e4fac80e8b9c73537c7fe8aaf7f9e3e7af22f411927010897dd37e9c3",
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
 	"entry":               "c838ae7f19d775d473ee92c4999eb28a5063869411c834d26a3f4b686ce88dbf",
 	"feed_entries":        "76e7e32cdd6552304e38931459fe12cefdb5354f65a7ac3bbed52a2979896d3e",

@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
+
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);
     });

@@ -500,7 +500,8 @@ var translations = map[string]string{
     "There is no result for this search.": "Il n'y a aucun résultat pour cette recherche.",
     "Search...": "Recherche...",
     "Set focus on search form": "Mettre le focus sur le champ de recherche",
-    "Search": "Recherche"
+    "Search": "Recherche",
+    "Remove this feed": "Supprimer cet abonnement"
 }
 `,
 	"nl_NL": `{
@@ -1175,7 +1176,7 @@ var translations = map[string]string{
 var translationsChecksums = map[string]string{
 	"de_DE": "c87a08365c81ec478d705d8e1110cd1b864476d35b5b281f1e76e7a21afc1ae7",
 	"en_US": "6fe95384260941e8a5a3c695a655a932e0a8a6a572c1e45cb2b1ae8baa01b897",
-	"fr_FR": "343a148eed375a593023c30597ef7280d18222756c5062e6a85e1006c7b12d14",
+	"fr_FR": "c61316e5862fc9d7118bb555679714200b3a5c560241e755ade8f85fcdcb3fdb",
 	"nl_NL": "05cca4936bd3b0fa44057c4dab64acdef3aed32fbb682393f254cfe2f686ef1f",
 	"pl_PL": "2295f35a98c8f60cfc6bab241d26b224c06979cc9ca3740bb89c63c7596a0431",
 	"zh_CN": "f5fb0a9b7336c51e74d727a2fb294bab3514e3002376da7fd904e0d7caed1a1c",

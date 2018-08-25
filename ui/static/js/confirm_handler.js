@@ -1,7 +1,15 @@
 class ConfirmHandler {
-    remove(url) {
+    executeRequest(url, redirectURL) {
         let request = new RequestBuilder(url);
-        request.withCallback(() => window.location.reload());
+
+        request.withCallback(() => {
+            if (redirectURL) {
+                window.location.href = redirectURL;
+            } else {
+                window.location.reload();
+            }
+        });
+
         request.execute();
     }
 
@@ -24,7 +32,7 @@ class ConfirmHandler {
             questionElement.remove();
             containerElement.appendChild(loadingElement);
 
-            this.remove(linkElement.dataset.url);
+            this.executeRequest(linkElement.dataset.url, linkElement.dataset.redirectUrl);
         };
 
         let noElement = document.createElement("a");
