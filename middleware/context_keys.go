@@ -5,51 +5,21 @@
 package middleware // import "miniflux.app/middleware"
 
 // ContextKey represents a context key.
-type ContextKey struct {
-	name string
-}
+type ContextKey int
 
-func (c ContextKey) String() string {
-	return c.name
-}
-
-var (
-	// UserIDContextKey is the context key used to store the user ID.
-	UserIDContextKey = &ContextKey{"UserID"}
-
-	// UserTimezoneContextKey is the context key used to store the user timezone.
-	UserTimezoneContextKey = &ContextKey{"UserTimezone"}
-
-	// IsAdminUserContextKey is the context key used to store the user role.
-	IsAdminUserContextKey = &ContextKey{"IsAdminUser"}
-
-	// IsAuthenticatedContextKey is the context key used to store the authentication flag.
-	IsAuthenticatedContextKey = &ContextKey{"IsAuthenticated"}
-
-	// UserSessionTokenContextKey is the context key used to store the user session ID.
-	UserSessionTokenContextKey = &ContextKey{"UserSessionToken"}
-
-	// UserLanguageContextKey is the context key to store user language.
-	UserLanguageContextKey = &ContextKey{"UserLanguageContextKey"}
-
-	// UserThemeContextKey is the context key to store user theme.
-	UserThemeContextKey = &ContextKey{"UserThemeContextKey"}
-
-	// SessionIDContextKey is the context key used to store the session ID.
-	SessionIDContextKey = &ContextKey{"SessionID"}
-
-	// CSRFContextKey is the context key used to store CSRF token.
-	CSRFContextKey = &ContextKey{"CSRF"}
-
-	// OAuth2StateContextKey is the context key used to store OAuth2 state.
-	OAuth2StateContextKey = &ContextKey{"OAuth2State"}
-
-	// FlashMessageContextKey is the context key used to store a flash message.
-	FlashMessageContextKey = &ContextKey{"FlashMessage"}
-
-	// FlashErrorMessageContextKey is the context key used to store a flash error message.
-	FlashErrorMessageContextKey = &ContextKey{"FlashErrorMessage"}
-
-	// PocketRequestTokenContextKey is the context key for Pocket Request Token.
-	PocketRequestTokenContextKey = &ContextKey{"PocketRequestToken"}
+// List of context keys.
+const (
+	UserIDContextKey ContextKey = iota
+	UserTimezoneContextKey
+	IsAdminUserContextKey
+	IsAuthenticatedContextKey
+	UserSessionTokenContextKey
+	UserLanguageContextKey
+	UserThemeContextKey
+	SessionIDContextKey
+	CSRFContextKey
+	OAuth2StateContextKey
+	FlashMessageContextKey
+	FlashErrorMessageContextKey
+	PocketRequestTokenContextKey
 )

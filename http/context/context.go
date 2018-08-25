@@ -92,7 +92,7 @@ func (c *Context) PocketRequestToken() string {
 	return c.getContextStringValue(middleware.PocketRequestTokenContextKey)
 }
 
-func (c *Context) getContextStringValue(key *middleware.ContextKey) string {
+func (c *Context) getContextStringValue(key middleware.ContextKey) string {
 	if v := c.request.Context().Value(key); v != nil {
 		return v.(string)
 	}
@@ -100,7 +100,7 @@ func (c *Context) getContextStringValue(key *middleware.ContextKey) string {
 	return ""
 }
 
-func (c *Context) getContextBoolValue(key *middleware.ContextKey) bool {
+func (c *Context) getContextBoolValue(key middleware.ContextKey) bool {
 	if v := c.request.Context().Value(key); v != nil {
 		return v.(bool)
 	}
@@ -108,7 +108,7 @@ func (c *Context) getContextBoolValue(key *middleware.ContextKey) bool {
 	return false
 }
 
-func (c *Context) getContextIntValue(key *middleware.ContextKey) int64 {
+func (c *Context) getContextIntValue(key middleware.ContextKey) int64 {
 	if v := c.request.Context().Value(key); v != nil {
 		return v.(int64)
 	}
