@@ -49,7 +49,7 @@
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g u" }}">
                     <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}
                       {{ if gt .countUnread 0 }}
-                          <span class="counter-wrapper">(<span class="counter">{{ .countUnread }}</span>)</span>
+                          <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
                       {{ end }}
                     </a>
                 </li>
@@ -62,7 +62,7 @@
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g f" }}">
                     <a href="{{ route "feeds" }}" data-page="feeds">{{ t "Feeds" }}
                       {{ if gt .countErrorFeeds 0 }}
-                          <span class="counter-wrapper">(<span class="counter">{{ .countErrorFeeds }}</span>)</span>
+                          <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
                     </a>
                 </li>

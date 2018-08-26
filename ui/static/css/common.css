@@ -468,7 +468,8 @@ a.button {
 }
 
 /* Counters */
-.counter-wrapper {
+.unread-counter-wrapper,
+.error-feeds-counter-wrapper {
     font-size: 0.9em;
     font-weight: 300;
     color: #666;

@@ -126,7 +126,8 @@ input[type="text"]:focus {
 }
 
 /* Counters */
-.counter-wrapper {
+.unread-counter-wrapper,
+.error-feeds-counter-wrapper {
     color: #bbb;
 }
 
