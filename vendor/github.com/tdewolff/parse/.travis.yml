@@ -1,5 +1,0 @@
-language: go
-before_install:
-  - go get github.com/mattn/goveralls
-script:
-  - goveralls -v -service travis-ci -repotoken $COVERALLS_TOKEN || go test -v ./...
