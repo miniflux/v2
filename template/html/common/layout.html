@@ -60,7 +60,11 @@
                     <a href="{{ route "history" }}" data-page="history">{{ t "History" }}</a>
                 </li>
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g f" }}">
-                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "Feeds" }}</a>
+                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "Feeds" }}
+                      {{ if gt .countErrorFeeds 0 }}
+                          <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
+                      {{ end }}
+                    </a>
                 </li>
                 <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g c" }}">
                     <a href="{{ route "categories" }}" data-page="categories">{{ t "Categories" }}</a>

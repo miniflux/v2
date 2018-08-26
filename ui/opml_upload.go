@@ -47,6 +47,7 @@ func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	if fileHeader.Size == 0 {
 		view.Set("errorMessage", "This file is empty")

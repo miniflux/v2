@@ -38,6 +38,7 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	subscriptionForm := form.NewSubscriptionForm(r)
 	if err := subscriptionForm.Validate(); err != nil {

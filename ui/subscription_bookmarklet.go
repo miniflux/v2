@@ -40,6 +40,7 @@ func (c *Controller) Bookmarklet(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	html.OK(w, r, view.Render("add_subscription"))
 }

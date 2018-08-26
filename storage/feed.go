@@ -46,6 +46,17 @@ func (s *Storage) CountFeeds(userID int64) int {
 	return result
 }
 
+// CountErrorFeeds returns the number of feeds with parse errors that belong to the given user.
+func (s *Storage) CountErrorFeeds(userID int64) int {
+	var result int
+	err := s.db.QueryRow(`SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count>=$2`, userID, maxParsingError).Scan(&result)
+	if err != nil {
+		return 0
+	}
+
+	return result
+}
+
 // Feeds returns all feeds of the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Feeds] userID=%d", userID))
