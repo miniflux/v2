@@ -18,11 +18,6 @@ It's simple, fast, lightweight and super easy to install.
 
 Official website: <https://miniflux.app>
 
-Screenshot
-----------
-
-![Overview](https://miniflux.app/image/overview.png)
-
 Documentation
 -------------
 
@@ -45,6 +40,17 @@ The Miniflux documentation is available here: <https://docs.miniflux.app/>
 - [Development](https://docs.miniflux.app/en/latest/development.html)
 - [Internationalization](https://docs.miniflux.app/en/latest/i18n.html)
 - [Frequently Asked Questions](https://docs.miniflux.app/en/latest/faq.html)
+
+Screenshots
+-----------
+
+Default theme:
+
+![Default theme](https://miniflux.app/image/overview.png)
+
+Dark theme when using keyboard naviguation:
+
+![Dark theme](https://miniflux.app/image/item-selection-black-theme.png)
 
 Credits
 -------
