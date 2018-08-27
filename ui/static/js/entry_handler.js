@@ -15,34 +15,24 @@ class EntryHandler {
 
     static toggleEntryStatus(element) {
         let entryID = parseInt(element.dataset.id, 10);
-        let statuses = {read: "unread", unread: "read"};
+        let link = element.querySelector("a[data-toggle-status]");
 
-        for (let currentStatus in statuses) {
-            let newStatus = statuses[currentStatus];
+        let currentStatus = link.dataset.value;
+        let newStatus = currentStatus === "read" ? "unread" : "read";
 
-            if (element.classList.contains("item-status-" + currentStatus)) {
-                element.classList.remove("item-status-" + currentStatus);
-                element.classList.add("item-status-" + newStatus);
+        this.updateEntriesStatus([entryID], newStatus);
 
-                this.updateEntriesStatus([entryID], newStatus);
-
-                let link = element.querySelector("a[data-toggle-status]");
-                if (link) {
-                    this.toggleLinkStatus(link);
-                }
-
-                break;
-            }
-        }
-    }
-
-    static toggleLinkStatus(link) {
-        if (link.dataset.value === "read") {
+        if (currentStatus === "read") {
             link.innerHTML = link.dataset.labelRead;
             link.dataset.value = "unread";
         } else {
             link.innerHTML = link.dataset.labelUnread;
             link.dataset.value = "read";
+        }
+
+        if (element.classList.contains("item-status-" + currentStatus)) {
+            element.classList.remove("item-status-" + currentStatus);
+            element.classList.add("item-status-" + newStatus);
         }
     }
 
