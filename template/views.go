@@ -550,10 +550,10 @@ var templateViewsMap = map[string]string{
                     <a href="#"
                         title="{{ t "Change entry status" }}"
                         data-toggle-status="true"
-                        data-label-read="✔ {{ t "Read" }}"
+                        data-label-read="✔&#xfe0e; {{ t "Read" }}"
                         data-label-unread="✘ {{ t "Unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔ {{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔&#xfe0e; {{ t "Read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
@@ -1342,7 +1342,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
 	"edit_feed":           "1a8e342e4fac80e8b9c73537c7fe8aaf7f9e3e7af22f411927010897dd37e9c3",
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
-	"entry":               "26d377a72b9c4f001b769d8a5971a6a9dfff66c87dcfa32c7ab64a5ae138ffd7",
+	"entry":               "1aa2767a879591f0a3681787fc9e2c53e06949695b21106286d190712a9f428a",
 	"feed_entries":        "76e7e32cdd6552304e38931459fe12cefdb5354f65a7ac3bbed52a2979896d3e",
 	"feeds":               "1006698abfe0962b656f27794bc44568515392da72b6fac0c03316de06024237",
 	"history_entries":     "f94e15d37d7604500cede7b583e03bf79c06be81c6597a4a43693f5712af2e13",

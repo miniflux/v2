@@ -12,10 +12,10 @@
                     <a href="#"
                         title="{{ t "Change entry status" }}"
                         data-toggle-status="true"
-                        data-label-read="✔ {{ t "Read" }}"
+                        data-label-read="✔&#xfe0e; {{ t "Read" }}"
                         data-label-unread="✘ {{ t "Unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔ {{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔&#xfe0e; {{ t "Read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
