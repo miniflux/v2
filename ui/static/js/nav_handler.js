@@ -71,6 +71,11 @@ class NavHandler {
     }
 
     toggleEntryStatus() {
+        if (! this.isListView()) {
+            EntryHandler.toggleEntryStatus(document.querySelector(".entry"));
+            return;
+        }
+
         let currentItem = document.querySelector(".current-item");
         if (currentItem !== null) {
             // The order is important here,

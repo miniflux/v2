@@ -56,6 +56,8 @@ func (c *Controller) ShowStarredEntry(w http.ResponseWriter, r *http.Request) {
 			html.ServerError(w, nil)
 			return
 		}
+
+		entry.Status = model.EntryStatusRead
 	}
 
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(c.store, user.ID, entry.ID, user.EntryDirection)

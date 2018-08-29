@@ -84,6 +84,7 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 		html.ServerError(w, nil)
 		return
 	}
+	entry.Status = model.EntryStatusRead
 
 	sess := session.New(c.store, ctx)
 	view := view.New(c.tpl, ctx, sess)
