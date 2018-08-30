@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 
+	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
 )
@@ -25,6 +26,11 @@ func createAdmin(store *storage.Storage) {
 	if err := user.ValidateUserCreation(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
+	}
+
+	if store.UserExists(user.Username) {
+		logger.Info(`User %q already exists, skipping creation`, user.Username)
+		return
 	}
 
 	if err := store.CreateUser(user); err != nil {
