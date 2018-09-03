@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -20,9 +19,7 @@ import (
 
 // UpdateFeed update a subscription and redirect to the feed entries page.
 func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -53,8 +50,8 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 	feedForm := form.NewFeedForm(r)
 
-	sess := session.New(c.store, ctx)
-	view := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	view := view.New(c.tpl, r, sess)
 	view.Set("form", feedForm)
 	view.Set("categories", categories)
 	view.Set("feed", feed)

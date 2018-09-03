@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
@@ -30,10 +29,7 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
-
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 
@@ -59,7 +55,7 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
@@ -111,7 +107,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
 	builder.WithOrder(order)
@@ -164,7 +160,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithStatus(status)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
@@ -200,7 +196,7 @@ func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.SetEntriesStatus(context.New(r).UserID(), entryIDs, status); err != nil {
+	if err := c.store.SetEntriesStatus(request.UserID(r), entryIDs, status); err != nil {
 		json.ServerError(w, err)
 		return
 	}
@@ -216,7 +212,7 @@ func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.ToggleBookmark(context.New(r).UserID(), entryID); err != nil {
+	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
 		json.ServerError(w, err)
 		return
 	}

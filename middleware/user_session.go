@@ -34,9 +34,9 @@ func (m *Middleware) UserSession(next http.Handler) http.Handler {
 			logger.Debug("[Middleware:UserSession] %s", session)
 
 			ctx := r.Context()
-			ctx = context.WithValue(ctx, UserIDContextKey, session.UserID)
-			ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
-			ctx = context.WithValue(ctx, UserSessionTokenContextKey, session.Token)
+			ctx = context.WithValue(ctx, request.UserIDContextKey, session.UserID)
+			ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
+			ctx = context.WithValue(ctx, request.UserSessionTokenContextKey, session.Token)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}

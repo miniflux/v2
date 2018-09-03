@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -22,8 +21,7 @@ func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	if err := c.store.RemoveFeed(ctx.UserID(), feedID); err != nil {
+	if err := c.store.RemoveFeed(request.UserID(r), feedID); err != nil {
 		html.ServerError(w, err)
 		return
 	}

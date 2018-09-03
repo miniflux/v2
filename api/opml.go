@@ -7,7 +7,7 @@ package api // import "miniflux.app/api"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
+	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/http/response/xml"
 	"miniflux.app/reader/opml"
@@ -16,7 +16,7 @@ import (
 // Export is the API handler that export feeds to OPML.
 func (c *Controller) Export(w http.ResponseWriter, r *http.Request) {
 	opmlHandler := opml.NewHandler(c.store)
-	opml, err := opmlHandler.Export(context.New(r).UserID())
+	opml, err := opmlHandler.Export(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, err)
 		return
@@ -28,7 +28,7 @@ func (c *Controller) Export(w http.ResponseWriter, r *http.Request) {
 // Import is the API handler that import an OPML file.
 func (c *Controller) Import(w http.ResponseWriter, r *http.Request) {
 	opmlHandler := opml.NewHandler(c.store)
-	err := opmlHandler.Import(context.New(r).UserID(), r.Body)
+	err := opmlHandler.Import(request.UserID(r), r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		json.ServerError(w, err)

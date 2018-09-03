@@ -7,8 +7,8 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/response"
+	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/ui/session"
@@ -17,13 +17,12 @@ import (
 
 // ShowLoginPage shows the login form.
 func (c *Controller) ShowLoginPage(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if ctx.IsAuthenticated() {
+	if request.IsAuthenticated(r) {
 		response.Redirect(w, r, route.Path(c.router, "unread"))
 		return
 	}
 
-	sess := session.New(c.store, ctx)
-	view := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	view := view.New(c.tpl, r, sess)
 	html.OK(w, r, view.Render("login"))
 }

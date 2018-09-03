@@ -2,12 +2,11 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/logger"
@@ -21,8 +20,7 @@ func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	if err := c.store.ToggleBookmark(ctx.UserID(), entryID); err != nil {
+	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
 		logger.Error("[Controller:ToggleBookmark] %v", err)
 		json.ServerError(w, nil)
 		return

@@ -7,9 +7,9 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
+	"miniflux.app/http/request"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
 	"miniflux.app/reader/subscription"
@@ -20,11 +20,10 @@ import (
 
 // SubmitSubscription try to find a feed from the URL provided by the user.
 func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
-	v := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	v := view.New(c.tpl, r, sess)
 
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -89,7 +88,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 
 		response.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
 	case n > 1:
-		v := view.New(c.tpl, ctx, sess)
+		v := view.New(c.tpl, r, sess)
 		v.Set("subscriptions", subscriptions)
 		v.Set("form", subscriptionForm)
 		v.Set("menu", "feeds")

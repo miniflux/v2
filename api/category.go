@@ -8,7 +8,6 @@ import (
 	"errors"
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 )
@@ -21,8 +20,7 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	category.UserID = userID
 	if err := category.ValidateCategoryCreation(); err != nil {
 		json.BadRequest(w, err)
@@ -57,8 +55,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	category.UserID = ctx.UserID()
+	category.UserID = request.UserID(r)
 	category.ID = categoryID
 	if err := category.ValidateCategoryModification(); err != nil {
 		json.BadRequest(w, err)
@@ -76,8 +73,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 // GetCategories is the API handler to get a list of categories for a given user.
 func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	categories, err := c.store.Categories(ctx.UserID())
+	categories, err := c.store.Categories(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, err)
 		return
@@ -88,8 +84,7 @@ func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 
 // RemoveCategory is the API handler to remove a category.
 func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	categoryID, err := request.IntParam(r, "categoryID")
 	if err != nil {
 		json.BadRequest(w, err)

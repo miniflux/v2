@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -20,9 +19,7 @@ import (
 
 // UpdateUser validate and update a user.
 func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -52,8 +49,8 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	userForm := form.NewUserForm(r)
 
-	sess := session.New(c.store, ctx)
-	view := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	view := view.New(c.tpl, r, sess)
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))

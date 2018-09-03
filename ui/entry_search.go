@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
@@ -20,9 +19,7 @@ import (
 
 // ShowSearchEntry shows a single entry in "search" mode.
 func (c *Controller) ShowSearchEntry(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -80,8 +77,8 @@ func (c *Controller) ShowSearchEntry(w http.ResponseWriter, r *http.Request) {
 		prevEntryRoute = route.Path(c.router, "searchEntry", "entryID", prevEntry.ID)
 	}
 
-	sess := session.New(c.store, ctx)
-	view := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	view := view.New(c.tpl, r, sess)
 	view.Set("searchQuery", searchQuery)
 	view.Set("entry", entry)
 	view.Set("prevEntry", prevEntry)

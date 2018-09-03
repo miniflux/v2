@@ -7,8 +7,8 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/cookie"
+	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
@@ -18,10 +18,8 @@ import (
 
 // Logout destroy the session and redirects the user to the login page.
 func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	sess := session.New(c.store, request.SessionID(r))
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -30,7 +28,7 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 
-	if err := c.store.RemoveUserSessionByToken(user.ID, ctx.UserSessionToken()); err != nil {
+	if err := c.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
 		logger.Error("[Controller:Logout] %v", err)
 	}
 

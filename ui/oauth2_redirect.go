@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/route"
@@ -17,8 +16,7 @@ import (
 
 // OAuth2Redirect redirects the user to the consent page to ask for permission.
 func (c *Controller) OAuth2Redirect(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
+	sess := session.New(c.store, request.SessionID(r))
 
 	provider := request.Param(r, "provider", "")
 	if provider == "" {

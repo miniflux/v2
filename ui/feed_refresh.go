@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -23,8 +22,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	if err := c.feedHandler.RefreshFeed(ctx.UserID(), feedID); err != nil {
+	if err := c.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
 		logger.Error("[Controller:RefreshFeed] %v", err)
 	}
 
@@ -33,7 +31,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 
 // RefreshAllFeeds refresh all feeds in the background for the current user.
 func (c *Controller) RefreshAllFeeds(w http.ResponseWriter, r *http.Request) {
-	userID := context.New(r).UserID()
+	userID := request.UserID(r)
 	jobs, err := c.store.NewUserBatch(userID, c.store.CountFeeds(userID))
 	if err != nil {
 		html.ServerError(w, err)

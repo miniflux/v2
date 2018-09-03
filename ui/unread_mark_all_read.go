@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
+	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
@@ -15,7 +15,7 @@ import (
 
 // MarkAllAsRead marks all unread entries as read.
 func (c *Controller) MarkAllAsRead(w http.ResponseWriter, r *http.Request) {
-	if err := c.store.MarkAllAsRead(context.New(r).UserID()); err != nil {
+	if err := c.store.MarkAllAsRead(request.UserID(r)); err != nil {
 		logger.Error("[MarkAllAsRead] %v", err)
 	}
 

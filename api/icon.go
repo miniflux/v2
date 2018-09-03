@@ -8,7 +8,6 @@ import (
 	"errors"
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 )
@@ -26,7 +25,7 @@ func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	icon, err := c.store.IconByFeedID(context.New(r).UserID(), feedID)
+	icon, err := c.store.IconByFeedID(request.UserID(r), feedID)
 	if err != nil {
 		json.ServerError(w, err)
 		return

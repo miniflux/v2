@@ -2,13 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"errors"
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/integration"
@@ -23,9 +22,7 @@ func (c *Controller) SaveEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-
-	builder := c.store.NewEntryQueryBuilder(ctx.UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -40,7 +37,7 @@ func (c *Controller) SaveEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	settings, err := c.store.Integration(ctx.UserID())
+	settings, err := c.store.Integration(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, err)
 		return

@@ -3,7 +3,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/cookie"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
@@ -18,13 +17,10 @@ import (
 // CheckLogin validates the username/password and redirects the user to the unread page.
 func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 	remoteAddr := request.RealIP(r)
-
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
-
+	sess := session.New(c.store, request.SessionID(r))
 	authForm := form.NewAuthForm(r)
 
-	view := view.New(c.tpl, ctx, sess)
+	view := view.New(c.tpl, r, sess)
 	view.Set("errorMessage", "Invalid username or password.")
 	view.Set("form", authForm)
 

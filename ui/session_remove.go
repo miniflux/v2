@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -17,15 +16,13 @@ import (
 
 // RemoveSession remove a user session.
 func (c *Controller) RemoveSession(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-
 	sessionID, err := request.IntParam(r, "sessionID")
 	if err != nil {
 		html.BadRequest(w, err)
 		return
 	}
 
-	err = c.store.RemoveUserSessionByID(ctx.UserID(), sessionID)
+	err = c.store.RemoveUserSessionByID(request.UserID(r), sessionID)
 	if err != nil {
 		logger.Error("[Controller:RemoveSession] %v", err)
 	}

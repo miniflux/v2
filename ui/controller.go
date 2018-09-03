@@ -5,13 +5,14 @@
 package ui  // import "miniflux.app/ui"
 
 import (
-	"github.com/gorilla/mux"
 	"miniflux.app/config"
 	"miniflux.app/locale"
 	"miniflux.app/reader/feed"
 	"miniflux.app/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/template"
+
+	"github.com/gorilla/mux"
 )
 
 // Controller contains all HTTP handlers for the user interface.

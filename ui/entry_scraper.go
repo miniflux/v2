@@ -8,7 +8,6 @@ import (
 	"errors"
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
@@ -24,8 +23,7 @@ func (c *Controller) FetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	builder := c.store.NewEntryQueryBuilder(ctx.UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 

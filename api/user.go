@@ -8,15 +8,13 @@ import (
 	"errors"
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 )
 
 // CurrentUser is the API handler to retrieve the authenticated user.
 func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, err)
 		return
@@ -27,8 +25,7 @@ func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
 
 // CreateUser is the API handler to create a new user.
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -61,8 +58,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUser is the API handler to update the given user.
 func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -106,8 +102,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 // Users is the API handler to get the list of users.
 func (c *Controller) Users(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -118,14 +113,13 @@ func (c *Controller) Users(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users.UseTimezone(ctx.UserTimezone())
+	users.UseTimezone(request.UserTimezone(r))
 	json.OK(w, r, users)
 }
 
 // UserByID is the API handler to fetch the given user by the ID.
 func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -147,14 +141,13 @@ func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.UseTimezone(ctx.UserTimezone())
+	user.UseTimezone(request.UserTimezone(r))
 	json.OK(w, r, user)
 }
 
 // UserByUsername is the API handler to fetch the given user by the username.
 func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -176,8 +169,7 @@ func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
 
 // RemoveUser is the API handler to remove an existing user.
 func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}

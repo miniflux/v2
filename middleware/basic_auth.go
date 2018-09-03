@@ -50,10 +50,10 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, UserIDContextKey, user.ID)
-		ctx = context.WithValue(ctx, UserTimezoneContextKey, user.Timezone)
-		ctx = context.WithValue(ctx, IsAdminUserContextKey, user.IsAdmin)
-		ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
+		ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
+		ctx = context.WithValue(ctx, request.UserTimezoneContextKey, user.Timezone)
+		ctx = context.WithValue(ctx, request.IsAdminUserContextKey, user.IsAdmin)
+		ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

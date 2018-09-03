@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -32,26 +31,25 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
+	sess := session.New(c.store, request.SessionID(r))
 
-	hasPassword, err := c.store.HasPassword(ctx.UserID())
+	hasPassword, err := c.store.HasPassword(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
 	}
 
 	if !hasPassword {
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(ctx.UserLanguage()).Get("You must define a password otherwise you won't be able to login again."))
+		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("You must define a password otherwise you won't be able to login again."))
 		response.Redirect(w, r, route.Path(c.router, "settings"))
 		return
 	}
 
-	if err := c.store.RemoveExtraField(ctx.UserID(), authProvider.GetUserExtraKey()); err != nil {
+	if err := c.store.RemoveExtraField(request.UserID(r), authProvider.GetUserExtraKey()); err != nil {
 		html.ServerError(w, err)
 		return
 	}
 
-	sess.NewFlashMessage(c.translator.GetLanguage(ctx.UserLanguage()).Get("Your external account is now dissociated!"))
+	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Your external account is now dissociated!"))
 	response.Redirect(w, r, route.Path(c.router, "settings"))
 }

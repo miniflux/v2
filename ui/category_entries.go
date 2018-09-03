@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/context"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
@@ -18,9 +17,7 @@ import (
 
 // CategoryEntries shows all entries for the given category.
 func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -32,7 +29,7 @@ func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category, err := c.store.Category(ctx.UserID(), categoryID)
+	category, err := c.store.Category(request.UserID(r), categoryID)
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -64,8 +61,8 @@ func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(c.store, ctx)
-	view := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	view := view.New(c.tpl, r, sess)
 	view.Set("category", category)
 	view.Set("total", count)
 	view.Set("entries", entries)
