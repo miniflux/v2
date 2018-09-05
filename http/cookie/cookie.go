@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package cookie
+package cookie // import "miniflux.app/http/cookie"
 
 import (
 	"net/http"
@@ -27,6 +27,7 @@ func New(name, value string, isHTTPS bool, path string) *http.Cookie {
 		Secure:   isHTTPS,
 		HttpOnly: true,
 		Expires:  time.Now().Add(cookieDuration * 24 * time.Hour),
+		SameSite: http.SameSiteStrictMode,
 	}
 }
 
@@ -40,6 +41,7 @@ func Expired(name string, isHTTPS bool, path string) *http.Cookie {
 		HttpOnly: true,
 		MaxAge:   -1,
 		Expires:  time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+		SameSite: http.SameSiteStrictMode,
 	}
 }
 

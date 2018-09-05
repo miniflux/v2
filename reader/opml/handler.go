@@ -2,16 +2,16 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package opml
+package opml // import "miniflux.app/reader/opml"
 
 import (
 	"errors"
 	"fmt"
 	"io"
 
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/storage"
 )
 
 // Handler handles the logic for OPML import/export.

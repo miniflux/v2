@@ -7,4 +7,4 @@
 Package timer implements utility functions to measure the execution time of a block of code.
 
 */
-package timer
+package timer // import "miniflux.app/timer"

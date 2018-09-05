@@ -2,17 +2,16 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
 )
 
 // RefreshFeed refresh a subscription and redirect to the feed entries page.
@@ -23,8 +22,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	if err := c.feedHandler.RefreshFeed(ctx.UserID(), feedID); err != nil {
+	if err := c.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
 		logger.Error("[Controller:RefreshFeed] %v", err)
 	}
 
@@ -33,7 +31,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 
 // RefreshAllFeeds refresh all feeds in the background for the current user.
 func (c *Controller) RefreshAllFeeds(w http.ResponseWriter, r *http.Request) {
-	userID := context.New(r).UserID()
+	userID := request.UserID(r)
 	jobs, err := c.store.NewUserBatch(userID, c.store.CountFeeds(userID))
 	if err != nil {
 		html.ServerError(w, err)

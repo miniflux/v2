@@ -2,18 +2,17 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
 	"errors"
 	"net/http"
 	"time"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/model"
+	"miniflux.app/storage"
 )
 
 // GetFeedEntry is the API handler to get a single feed entry.
@@ -30,16 +29,13 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
-
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this entry from the database"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -59,12 +55,12 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this entry from the database"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -111,7 +107,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
 	builder.WithOrder(order)
@@ -122,13 +118,13 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch the list of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to count the number of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -164,7 +160,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(context.New(r).UserID())
+	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithStatus(status)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
@@ -174,13 +170,13 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch the list of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to count the number of entries"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -200,8 +196,8 @@ func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.SetEntriesStatus(context.New(r).UserID(), entryIDs, status); err != nil {
-		json.ServerError(w, errors.New("Unable to change entries status"))
+	if err := c.store.SetEntriesStatus(request.UserID(r), entryIDs, status); err != nil {
+		json.ServerError(w, err)
 		return
 	}
 
@@ -216,8 +212,8 @@ func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.ToggleBookmark(context.New(r).UserID(), entryID); err != nil {
-		json.ServerError(w, errors.New("Unable to toggle bookmark value"))
+	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
+		json.ServerError(w, err)
 		return
 	}
 

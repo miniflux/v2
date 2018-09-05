@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package client
+package client // import "miniflux.app/http/client"
 
 import "testing"
 

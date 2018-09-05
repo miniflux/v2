@@ -2,14 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package database
+package database // import "miniflux.app/database"
 
 import (
 	"database/sql"
 	"fmt"
 	"strconv"
 
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/logger"
 )
 
 const schemaVersion = 20

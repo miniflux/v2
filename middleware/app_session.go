@@ -2,18 +2,18 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware
+package middleware // import "miniflux.app/middleware"
 
 import (
 	"context"
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/cookie"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/http/cookie"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
+	"miniflux.app/logger"
+	"miniflux.app/model"
 )
 
 // AppSession handles application session middleware.
@@ -49,14 +49,14 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, SessionIDContextKey, session.ID)
-		ctx = context.WithValue(ctx, CSRFContextKey, session.Data.CSRF)
-		ctx = context.WithValue(ctx, OAuth2StateContextKey, session.Data.OAuth2State)
-		ctx = context.WithValue(ctx, FlashMessageContextKey, session.Data.FlashMessage)
-		ctx = context.WithValue(ctx, FlashErrorMessageContextKey, session.Data.FlashErrorMessage)
-		ctx = context.WithValue(ctx, UserLanguageContextKey, session.Data.Language)
-		ctx = context.WithValue(ctx, UserThemeContextKey, session.Data.Theme)
-		ctx = context.WithValue(ctx, PocketRequestTokenContextKey, session.Data.PocketRequestToken)
+		ctx = context.WithValue(ctx, request.SessionIDContextKey, session.ID)
+		ctx = context.WithValue(ctx, request.CSRFContextKey, session.Data.CSRF)
+		ctx = context.WithValue(ctx, request.OAuth2StateContextKey, session.Data.OAuth2State)
+		ctx = context.WithValue(ctx, request.FlashMessageContextKey, session.Data.FlashMessage)
+		ctx = context.WithValue(ctx, request.FlashErrorMessageContextKey, session.Data.FlashErrorMessage)
+		ctx = context.WithValue(ctx, request.UserLanguageContextKey, session.Data.Language)
+		ctx = context.WithValue(ctx, request.UserThemeContextKey, session.Data.Theme)
+		ctx = context.WithValue(ctx, request.PocketRequestTokenContextKey, session.Data.PocketRequestToken)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

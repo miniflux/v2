@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package client
+package client // import "miniflux.app/http/client"
 
 import (
 	"bytes"
@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/timer"
-	"github.com/miniflux/miniflux/version"
+	"miniflux.app/errors"
+	"miniflux.app/logger"
+	"miniflux.app/timer"
+	"miniflux.app/version"
 )
 
 const (

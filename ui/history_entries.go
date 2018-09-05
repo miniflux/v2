@@ -2,25 +2,22 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/ui/session"
-	"github.com/miniflux/miniflux/ui/view"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
+	"miniflux.app/http/route"
+	"miniflux.app/model"
+	"miniflux.app/ui/session"
+	"miniflux.app/ui/view"
 )
 
 // ShowHistoryPage renders the page with all read entries.
 func (c *Controller) ShowHistoryPage(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -46,14 +43,15 @@ func (c *Controller) ShowHistoryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(c.store, ctx)
-	view := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	view := view.New(c.tpl, r, sess)
 	view.Set("entries", entries)
 	view.Set("total", count)
 	view.Set("pagination", c.getPagination(route.Path(c.router, "history"), count, offset))
 	view.Set("menu", "history")
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("history_entries"))

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package storage
+package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/timer"
+	"miniflux.app/model"
+	"miniflux.app/timer"
 )
 
 // AnotherCategoryExists checks if another category exists with the same title.

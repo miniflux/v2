@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"encoding/base64"
@@ -11,12 +11,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/miniflux/miniflux/crypto"
-	"github.com/miniflux/miniflux/http/client"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/crypto"
+	"miniflux.app/http/client"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/logger"
 )
 
 // ImageProxy fetch an image from a remote server and sent it back to the browser.

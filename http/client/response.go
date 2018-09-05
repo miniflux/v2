@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package client
+package client // import "miniflux.app/http/client"
 
 import (
 	"io"
 	"mime"
 	"strings"
 
-	"github.com/miniflux/miniflux/logger"
 	"golang.org/x/net/html/charset"
+	"miniflux.app/logger"
 )
 
 // Response wraps a server response.

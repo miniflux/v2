@@ -2,21 +2,21 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package feed
+package feed // import "miniflux.app/reader/feed"
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/http/client"
-	"github.com/miniflux/miniflux/locale"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/reader/icon"
-	"github.com/miniflux/miniflux/reader/processor"
-	"github.com/miniflux/miniflux/storage"
-	"github.com/miniflux/miniflux/timer"
+	"miniflux.app/errors"
+	"miniflux.app/http/client"
+	"miniflux.app/locale"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/reader/icon"
+	"miniflux.app/reader/processor"
+	"miniflux.app/storage"
+	"miniflux.app/timer"
 )
 
 var (

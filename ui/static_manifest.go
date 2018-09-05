@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/http/route"
+	"miniflux.app/model"
 )
 
 // WebManifest renders web manifest file.
@@ -32,9 +32,7 @@ func (c *Controller) WebManifest(w http.ResponseWriter, r *http.Request) {
 		BackgroundColor string            `json:"background_color"`
 	}
 
-	ctx := context.New(r)
-	themeColor := model.ThemeColor(ctx.UserTheme())
-
+	themeColor := model.ThemeColor(request.UserTheme(r))
 	manifest := &webManifest{
 		Name:            "Miniflux",
 		ShortName:       "Miniflux",

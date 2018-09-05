@@ -1,9 +1,0 @@
-notifications:
-  email: false
-language: go
-go:
-  - 1.9
-before_install:
-  - go get -u github.com/golang/lint/golint
-script:
-  - golint *.go

@@ -46,7 +46,11 @@ document.addEventListener("DOMContentLoaded", function() {
     mouseHandler.onClick("a[data-toggle-status]", (event) => {
         event.preventDefault();
 
-        let currentItem = DomHelper.findParent(event.target, "item");
+        let currentItem = DomHelper.findParent(event.target, "entry");
+        if (! currentItem) {
+            currentItem = DomHelper.findParent(event.target, "item");
+        }
+
         if (currentItem) {
             EntryHandler.toggleEntryStatus(currentItem);
         }
@@ -58,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
+
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);
     });

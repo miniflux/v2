@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package template
+package template // import "miniflux.app/template"
 
 import (
 	"bytes"
@@ -12,11 +12,11 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/filter"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/url"
+	"miniflux.app/config"
+	"miniflux.app/filter"
+	"miniflux.app/http/route"
+	"miniflux.app/model"
+	"miniflux.app/url"
 )
 
 type funcMap struct {

@@ -2,17 +2,17 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package integration
+package integration // import "miniflux.app/integration"
 
 import (
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/integration/instapaper"
-	"github.com/miniflux/miniflux/integration/nunuxkeeper"
-	"github.com/miniflux/miniflux/integration/pinboard"
-	"github.com/miniflux/miniflux/integration/pocket"
-	"github.com/miniflux/miniflux/integration/wallabag"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/config"
+	"miniflux.app/integration/instapaper"
+	"miniflux.app/integration/nunuxkeeper"
+	"miniflux.app/integration/pinboard"
+	"miniflux.app/integration/pocket"
+	"miniflux.app/integration/wallabag"
+	"miniflux.app/logger"
+	"miniflux.app/model"
 )
 
 // SendEntry send the entry to the activated providers.

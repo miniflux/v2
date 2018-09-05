@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package fever
+package fever // import "miniflux.app/fever"
 
 import (
 	"net/http"
@@ -10,14 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/integration"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/config"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/integration"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/storage"
 )
 
 type baseResponse struct {
@@ -180,8 +179,7 @@ is_spark equal to 1.
 
 */
 func (c *Controller) handleGroups(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching groups for userID=%d", userID)
 
 	categories, err := c.store.Categories(userID)
@@ -231,8 +229,7 @@ should be limited to feeds with an is_spark equal to 0.
 For the “Sparks” super group the items should be limited to feeds with an is_spark equal to 1.
 */
 func (c *Controller) handleFeeds(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching feeds for userID=%d", userID)
 
 	feeds, err := c.store.Feeds(userID)
@@ -285,8 +282,7 @@ A PHP/HTML example:
 	echo '<img src="data:'.$favicon['data'].'">';
 */
 func (c *Controller) handleFavicons(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching favicons for userID=%d", userID)
 
 	icons, err := c.store.Icons(userID)
@@ -341,8 +337,7 @@ Three optional arguments control determine the items included in the response.
 func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 	var result itemsResponse
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching items for userID=%d", userID)
 
 	builder := c.store.NewEntryQueryBuilder(userID)
@@ -425,8 +420,7 @@ A request with the unread_item_ids argument will return one additional member:
     unread_item_ids (string/comma-separated list of positive integers)
 */
 func (c *Controller) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching unread items for userID=%d", userID)
 
 	builder := c.store.NewEntryQueryBuilder(userID)
@@ -457,8 +451,7 @@ with the remote Fever installation.
 	saved_item_ids (string/comma-separated list of positive integers)
 */
 func (c *Controller) handleSavedItems(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
 
 	builder := c.store.NewEntryQueryBuilder(userID)
@@ -486,8 +479,7 @@ func (c *Controller) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	id=? where ? is replaced with the id of the item to modify
 */
 func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Receiving mark=item call for userID=%d", userID)
 
 	entryID := request.FormInt64Value(r, "id")
@@ -544,8 +536,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
 func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Receiving mark=feed call for userID=%d", userID)
 
 	feedID := request.FormInt64Value(r, "id")
@@ -585,8 +576,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
 func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	logger.Debug("[Fever] Receiving mark=group call for userID=%d", userID)
 
 	groupID := request.FormInt64Value(r, "id")

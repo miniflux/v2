@@ -2,15 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
 )
 
 // CreateCategory is the API handler to create a new category.
@@ -21,8 +20,7 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	category.UserID = userID
 	if err := category.ValidateCategoryCreation(); err != nil {
 		json.BadRequest(w, err)
@@ -36,7 +34,7 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 
 	err = c.store.CreateCategory(category)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to create this category"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -57,8 +55,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	category.UserID = ctx.UserID()
+	category.UserID = request.UserID(r)
 	category.ID = categoryID
 	if err := category.ValidateCategoryModification(); err != nil {
 		json.BadRequest(w, err)
@@ -67,7 +64,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	err = c.store.UpdateCategory(category)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to update this category"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -76,10 +73,9 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 // GetCategories is the API handler to get a list of categories for a given user.
 func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	categories, err := c.store.Categories(ctx.UserID())
+	categories, err := c.store.Categories(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch categories"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -88,8 +84,7 @@ func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 
 // RemoveCategory is the API handler to remove a category.
 func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 	categoryID, err := request.IntParam(r, "categoryID")
 	if err != nil {
 		json.BadRequest(w, err)
@@ -102,7 +97,7 @@ func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.RemoveCategory(userID, categoryID); err != nil {
-		json.ServerError(w, errors.New("Unable to remove this category"))
+		json.ServerError(w, err)
 		return
 	}
 

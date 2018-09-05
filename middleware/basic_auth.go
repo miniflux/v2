@@ -2,20 +2,23 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware
+package middleware // import "miniflux.app/middleware"
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/logger"
 )
 
 // BasicAuth handles HTTP basic authentication.
 func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+
+		remoteAddr := request.RealIP(r)
 
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
@@ -25,7 +28,7 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		}
 
 		if err := m.store.CheckPassword(username, password); err != nil {
-			logger.Info("[Middleware:BasicAuth] Invalid username or password: %s", username)
+			logger.Error("[Middleware:BasicAuth] [Remote=%v] Invalid username or password: %s", remoteAddr, username)
 			json.Unauthorized(w)
 			return
 		}
@@ -38,7 +41,7 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
-			logger.Info("[Middleware:BasicAuth] User not found: %s", username)
+			logger.Error("[Middleware:BasicAuth] [Remote=%v] User not found: %s", remoteAddr, username)
 			json.Unauthorized(w)
 			return
 		}
@@ -47,10 +50,10 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, UserIDContextKey, user.ID)
-		ctx = context.WithValue(ctx, UserTimezoneContextKey, user.Timezone)
-		ctx = context.WithValue(ctx, IsAdminUserContextKey, user.IsAdmin)
-		ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
+		ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
+		ctx = context.WithValue(ctx, request.UserTimezoneContextKey, user.Timezone)
+		ctx = context.WithValue(ctx, request.IsAdminUserContextKey, user.IsAdmin)
+		ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

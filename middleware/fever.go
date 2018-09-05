@@ -2,14 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware
+package middleware // import "miniflux.app/middleware"
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/response/json"
-	"github.com/miniflux/miniflux/logger"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
+	"miniflux.app/logger"
 )
 
 // FeverAuth handles Fever API authentication.
@@ -34,10 +35,10 @@ func (m *Middleware) FeverAuth(next http.Handler) http.Handler {
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, UserIDContextKey, user.ID)
-		ctx = context.WithValue(ctx, UserTimezoneContextKey, user.Timezone)
-		ctx = context.WithValue(ctx, IsAdminUserContextKey, user.IsAdmin)
-		ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
+		ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
+		ctx = context.WithValue(ctx, request.UserTimezoneContextKey, user.Timezone)
+		ctx = context.WithValue(ctx, request.IsAdminUserContextKey, user.IsAdmin)
+		ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

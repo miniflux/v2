@@ -7,4 +7,4 @@
 Package ui implements handlers to render to user interface.
 
 */
-package ui
+package ui  // import "miniflux.app/ui"

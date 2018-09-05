@@ -7,4 +7,4 @@
 Package api implements API endpoints for Miniflux application.
 
 */
-package api
+package api // import "miniflux.app/api"

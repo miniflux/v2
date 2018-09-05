@@ -2,18 +2,18 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware
+package middleware // import "miniflux.app/middleware"
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/cookie"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
+	"miniflux.app/http/cookie"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
+	"miniflux.app/model"
 
 	"github.com/gorilla/mux"
 )
@@ -34,9 +34,9 @@ func (m *Middleware) UserSession(next http.Handler) http.Handler {
 			logger.Debug("[Middleware:UserSession] %s", session)
 
 			ctx := r.Context()
-			ctx = context.WithValue(ctx, UserIDContextKey, session.UserID)
-			ctx = context.WithValue(ctx, IsAuthenticatedContextKey, true)
-			ctx = context.WithValue(ctx, UserSessionTokenContextKey, session.Token)
+			ctx = context.WithValue(ctx, request.UserIDContextKey, session.UserID)
+			ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
+			ctx = context.WithValue(ctx, request.UserSessionTokenContextKey, session.Token)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package rewrite
+package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 
 var (
 	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-	imgRegex = regexp.MustCompile(`<img [^>]+>`)
+	imgRegex     = regexp.MustCompile(`<img [^>]+>`)
 )
 
 func addImageTitle(entryURL, entryContent string) string {
@@ -72,13 +72,13 @@ func addDynamicImage(entryURL, entryContent string) string {
 				changed = true
 
 				if img.Is("img") {
-					img.SetAttr("src",srcAttr)
+					img.SetAttr("src", srcAttr)
 				} else {
 					altAttr := img.AttrOr("alt", "")
 					img.ReplaceWithHtml(`<img src="` + srcAttr + `" alt="` + altAttr + `"/>`)
 				}
 
-				break;
+				break
 			}
 		}
 	})

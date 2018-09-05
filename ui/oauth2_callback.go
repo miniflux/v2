@@ -2,26 +2,24 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/cookie"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/ui/session"
+	"miniflux.app/http/cookie"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/ui/session"
 )
 
 // OAuth2Callback receives the authorization code and create a new session.
 func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
+	sess := session.New(c.store, request.SessionID(r))
 
 	provider := request.Param(r, "provider", "")
 	if provider == "" {
@@ -38,8 +36,8 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	state := request.QueryParam(r, "state", "")
-	if state == "" || state != ctx.OAuth2State() {
-		logger.Error(`[OAuth2] Invalid state value: got "%s" instead of "%s"`, state, ctx.OAuth2State())
+	if state == "" || state != request.OAuth2State(r) {
+		logger.Error(`[OAuth2] Invalid state value: got "%s" instead of "%s"`, state, request.OAuth2State(r))
 		response.Redirect(w, r, route.Path(c.router, "login"))
 		return
 	}
@@ -58,7 +56,7 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ctx.IsAuthenticated() {
+	if request.IsAuthenticated(r) {
 		user, err := c.store.UserByExtraField(profile.Key, profile.ID)
 		if err != nil {
 			html.ServerError(w, err)
@@ -66,18 +64,18 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if user != nil {
-			logger.Error("[OAuth2] User #%d cannot be associated because %s is already associated", ctx.UserID(), user.Username)
-			sess.NewFlashErrorMessage(c.translator.GetLanguage(ctx.UserLanguage()).Get("There is already someone associated with this provider!"))
+			logger.Error("[OAuth2] User #%d cannot be associated because %s is already associated", request.UserID(r), user.Username)
+			sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("There is already someone associated with this provider!"))
 			response.Redirect(w, r, route.Path(c.router, "settings"))
 			return
 		}
 
-		if err := c.store.UpdateExtraField(ctx.UserID(), profile.Key, profile.ID); err != nil {
+		if err := c.store.UpdateExtraField(request.UserID(r), profile.Key, profile.ID); err != nil {
 			html.ServerError(w, err)
 			return
 		}
 
-		sess.NewFlashMessage(c.translator.GetLanguage(ctx.UserLanguage()).Get("Your external account is now linked!"))
+		sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Your external account is now linked!"))
 		response.Redirect(w, r, route.Path(c.router, "settings"))
 		return
 	}

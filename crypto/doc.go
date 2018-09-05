@@ -7,4 +7,4 @@
 Package crypto implements helpers related to cryptography.
 
 */
-package crypto
+package crypto // import "miniflux.app/crypto"

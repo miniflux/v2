@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package feed
+package feed // import "miniflux.app/reader/feed"
 
 import (
 	"bytes"
@@ -11,15 +11,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/model"
-	"github.com/miniflux/miniflux/reader/atom"
-	"github.com/miniflux/miniflux/reader/encoding"
-	"github.com/miniflux/miniflux/reader/json"
-	"github.com/miniflux/miniflux/reader/rdf"
-	"github.com/miniflux/miniflux/reader/rss"
-	"github.com/miniflux/miniflux/timer"
+	"miniflux.app/errors"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/reader/atom"
+	"miniflux.app/reader/encoding"
+	"miniflux.app/reader/json"
+	"miniflux.app/reader/rdf"
+	"miniflux.app/reader/rss"
+	"miniflux.app/timer"
 )
 
 // List of feed formats.

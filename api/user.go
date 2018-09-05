@@ -2,21 +2,19 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
 )
 
 // CurrentUser is the API handler to retrieve the authenticated user.
 func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, err)
 		return
@@ -27,8 +25,7 @@ func (c *Controller) CurrentUser(w http.ResponseWriter, r *http.Request) {
 
 // CreateUser is the API handler to create a new user.
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -51,7 +48,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	err = c.store.CreateUser(user)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to create this user"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -61,8 +58,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUser is the API handler to update the given user.
 func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -97,7 +93,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = c.store.UpdateUser(originalUser); err != nil {
-		json.ServerError(w, errors.New("Unable to update this user"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -106,26 +102,24 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 // Users is the API handler to get the list of users.
 func (c *Controller) Users(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
 
 	users, err := c.store.Users()
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch the list of users"))
+		json.ServerError(w, err)
 		return
 	}
 
-	users.UseTimezone(ctx.UserTimezone())
+	users.UseTimezone(request.UserTimezone(r))
 	json.OK(w, r, users)
 }
 
 // UserByID is the API handler to fetch the given user by the ID.
 func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -147,14 +141,13 @@ func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.UseTimezone(ctx.UserTimezone())
+	user.UseTimezone(request.UserTimezone(r))
 	json.OK(w, r, user)
 }
 
 // UserByUsername is the API handler to fetch the given user by the username.
 func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -176,8 +169,7 @@ func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
 
 // RemoveUser is the API handler to remove an existing user.
 func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	if !ctx.IsAdminUser() {
+	if !request.IsAdminUser(r) {
 		json.Forbidden(w)
 		return
 	}
@@ -190,7 +182,7 @@ func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(userID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this user from the database"))
+		json.ServerError(w, err)
 		return
 	}
 

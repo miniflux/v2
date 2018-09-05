@@ -2,29 +2,28 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/reader/subscription"
-	"github.com/miniflux/miniflux/ui/form"
-	"github.com/miniflux/miniflux/ui/session"
-	"github.com/miniflux/miniflux/ui/view"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/http/request"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
+	"miniflux.app/reader/subscription"
+	"miniflux.app/ui/form"
+	"miniflux.app/ui/session"
+	"miniflux.app/ui/view"
 )
 
 // SubmitSubscription try to find a feed from the URL provided by the user.
 func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
-	v := view.New(c.tpl, ctx, sess)
+	sess := session.New(c.store, request.SessionID(r))
+	v := view.New(c.tpl, r, sess)
 
-	user, err := c.store.UserByID(ctx.UserID())
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -40,6 +39,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	v.Set("menu", "feeds")
 	v.Set("user", user)
 	v.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	v.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	subscriptionForm := form.NewSubscriptionForm(r)
 	if err := subscriptionForm.Validate(); err != nil {
@@ -88,12 +88,13 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 
 		response.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
 	case n > 1:
-		v := view.New(c.tpl, ctx, sess)
+		v := view.New(c.tpl, r, sess)
 		v.Set("subscriptions", subscriptions)
 		v.Set("form", subscriptionForm)
 		v.Set("menu", "feeds")
 		v.Set("user", user)
 		v.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+		v.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 		html.OK(w, r, v.Render("choose_subscription"))
 	}

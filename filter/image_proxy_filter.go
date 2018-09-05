@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package filter
+package filter // import "miniflux.app/filter"
 
 import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/url"
+	"miniflux.app/config"
+	"miniflux.app/http/route"
+	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"

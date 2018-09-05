@@ -7,4 +7,4 @@
 Package cli implements command line arguments for Miniflux application.
 
 */
-package cli
+package cli // import "miniflux.app/cli"

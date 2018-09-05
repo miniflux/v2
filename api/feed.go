@@ -2,15 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response/json"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response/json"
 )
 
 // CreateFeed is the API handler to create a new feed.
@@ -31,8 +30,7 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 
 	if c.store.FeedURLExists(userID, feedInfo.FeedURL) {
 		json.BadRequest(w, errors.New("This feed_url already exists"))
@@ -53,7 +51,7 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 		feedInfo.Password,
 	)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to create this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -72,8 +70,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 
 	if !c.store.FeedExists(userID, feedID) {
 		json.NotFound(w, errors.New("Unable to find this feed"))
@@ -82,7 +79,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 
 	err = c.feedHandler.RefreshFeed(userID, feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to refresh this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -103,8 +100,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 
 	originalFeed, err := c.store.FeedByID(userID, feedID)
 	if err != nil {
@@ -125,13 +121,13 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.UpdateFeed(originalFeed); err != nil {
-		json.ServerError(w, errors.New("Unable to update this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
 	originalFeed, err = c.store.FeedByID(userID, feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -140,9 +136,9 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 // GetFeeds is the API handler that get all feeds that belongs to the given user.
 func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
-	feeds, err := c.store.Feeds(context.New(r).UserID())
+	feeds, err := c.store.Feeds(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch feeds from the database"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -157,9 +153,9 @@ func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feed, err := c.store.FeedByID(context.New(r).UserID(), feedID)
+	feed, err := c.store.FeedByID(request.UserID(r), feedID)
 	if err != nil {
-		json.ServerError(w, errors.New("Unable to fetch this feed"))
+		json.ServerError(w, err)
 		return
 	}
 
@@ -179,8 +175,7 @@ func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.New(r)
-	userID := ctx.UserID()
+	userID := request.UserID(r)
 
 	if !c.store.FeedExists(userID, feedID) {
 		json.NotFound(w, errors.New("Feed not found"))
@@ -188,7 +183,7 @@ func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := c.store.RemoveFeed(userID, feedID); err != nil {
-		json.ServerError(w, errors.New("Unable to remove this feed"))
+		json.ServerError(w, err)
 		return
 	}
 

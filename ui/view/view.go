@@ -2,19 +2,21 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package view
+package view // import "miniflux.app/ui/view"
 
 import (
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/template"
-	"github.com/miniflux/miniflux/ui/session"
-	"github.com/miniflux/miniflux/ui/static"
+	"net/http"
+
+	"miniflux.app/http/request"
+	"miniflux.app/template"
+	"miniflux.app/ui/session"
+	"miniflux.app/ui/static"
 )
 
 // View wraps template argument building.
 type View struct {
 	tpl    *template.Engine
-	ctx    *context.Context
+	r      *http.Request
 	params map[string]interface{}
 }
 
@@ -26,17 +28,17 @@ func (v *View) Set(param string, value interface{}) *View {
 
 // Render executes the template with arguments.
 func (v *View) Render(template string) []byte {
-	return v.tpl.Render(template, v.ctx.UserLanguage(), v.params)
+	return v.tpl.Render(template, request.UserLanguage(v.r), v.params)
 }
 
 // New returns a new view with default parameters.
-func New(tpl *template.Engine, ctx *context.Context, sess *session.Session) *View {
-	b := &View{tpl, ctx, make(map[string]interface{})}
-	theme := ctx.UserTheme()
+func New(tpl *template.Engine, r *http.Request, sess *session.Session) *View {
+	b := &View{tpl, r, make(map[string]interface{})}
+	theme := request.UserTheme(r)
 	b.params["menu"] = ""
-	b.params["csrf"] = ctx.CSRF()
-	b.params["flashMessage"] = sess.FlashMessage()
-	b.params["flashErrorMessage"] = sess.FlashErrorMessage()
+	b.params["csrf"] = request.CSRF(r)
+	b.params["flashMessage"] = sess.FlashMessage(request.FlashMessage(r))
+	b.params["flashErrorMessage"] = sess.FlashErrorMessage(request.FlashErrorMessage(r))
 	b.params["theme"] = theme
 	b.params["theme_checksum"] = static.StylesheetsChecksums[theme]
 	b.params["app_js_checksum"] = static.JavascriptsChecksums["app"]

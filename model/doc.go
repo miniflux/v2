@@ -7,4 +7,4 @@
 Package model contains all data structures used by the application.
 
 */
-package model
+package model // import "miniflux.app/model"

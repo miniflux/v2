@@ -7,4 +7,4 @@
 Package fever implements Fever API endpoints.
 
 */
-package fever
+package fever // import "miniflux.app/fever"

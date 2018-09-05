@@ -7,4 +7,4 @@
 Package filter implements a content filter to rewrite image links.
 
 */
-package filter
+package filter // import "miniflux.app/filter"

@@ -7,4 +7,4 @@
 Package url implements a set of utility functions to parse URL.
 
 */
-package url
+package url // import "miniflux.app/url"

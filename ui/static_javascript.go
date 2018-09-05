@@ -2,16 +2,16 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 	"time"
 
-	"github.com/miniflux/miniflux/http/request"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/ui/static"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/ui/static"
 )
 
 // Javascript renders application client side code.

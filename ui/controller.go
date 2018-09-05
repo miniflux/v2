@@ -2,16 +2,17 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
+	"miniflux.app/config"
+	"miniflux.app/locale"
+	"miniflux.app/reader/feed"
+	"miniflux.app/scheduler"
+	"miniflux.app/storage"
+	"miniflux.app/template"
+
 	"github.com/gorilla/mux"
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/locale"
-	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/scheduler"
-	"github.com/miniflux/miniflux/storage"
-	"github.com/miniflux/miniflux/template"
 )
 
 // Controller contains all HTTP handlers for the user interface.

@@ -2,11 +2,11 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package api
+package api // import "miniflux.app/api"
 
 import (
-	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/reader/feed"
+	"miniflux.app/storage"
 )
 
 // Controller holds all handlers for the API.

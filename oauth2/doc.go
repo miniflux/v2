@@ -7,4 +7,4 @@
 Package oauth2 abstracts different OAuth2 providers.
 
 */
-package oauth2
+package oauth2 // import "miniflux.app/oauth2"

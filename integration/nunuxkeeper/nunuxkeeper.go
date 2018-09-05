@@ -2,14 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package nunuxkeeper
+package nunuxkeeper // import "miniflux.app/integration/nunuxkeeper"
 
 import (
 	"fmt"
 	"net/url"
 	"path"
 
-	"github.com/miniflux/miniflux/http/client"
+	"miniflux.app/http/client"
 )
 
 // Document structure of a Nununx Keeper document

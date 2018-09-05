@@ -2,26 +2,24 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/http/context"
-	"github.com/miniflux/miniflux/http/cookie"
-	"github.com/miniflux/miniflux/http/response"
-	"github.com/miniflux/miniflux/http/response/html"
-	"github.com/miniflux/miniflux/http/route"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/ui/session"
+	"miniflux.app/http/cookie"
+	"miniflux.app/http/request"
+	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
+	"miniflux.app/http/route"
+	"miniflux.app/logger"
+	"miniflux.app/ui/session"
 )
 
 // Logout destroy the session and redirects the user to the login page.
 func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(r)
-	sess := session.New(c.store, ctx)
-
-	user, err := c.store.UserByID(ctx.UserID())
+	sess := session.New(c.store, request.SessionID(r))
+	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return
@@ -30,7 +28,7 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 
-	if err := c.store.RemoveUserSessionByToken(user.ID, ctx.UserSessionToken()); err != nil {
+	if err := c.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
 		logger.Error("[Controller:Logout] %v", err)
 	}
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package wallabag
+package wallabag // import "miniflux.app/integration/wallabag"
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"io"
 	"net/url"
 
-	"github.com/miniflux/miniflux/http/client"
+	"miniflux.app/http/client"
 )
 
 // Client represents a Wallabag client.

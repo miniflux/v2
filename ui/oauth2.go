@@ -2,11 +2,11 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui
+package ui  // import "miniflux.app/ui"
 
 import (
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/oauth2"
+	"miniflux.app/config"
+	"miniflux.app/oauth2"
 )
 
 func getOAuth2Manager(cfg *config.Config) *oauth2.Manager {

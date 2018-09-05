@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package subscription
+package subscription // import "miniflux.app/reader/subscription"
 
 import (
 	"bytes"
@@ -10,12 +10,12 @@ import (
 	"io"
 	"time"
 
-	"github.com/miniflux/miniflux/errors"
-	"github.com/miniflux/miniflux/http/client"
-	"github.com/miniflux/miniflux/logger"
-	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/timer"
-	"github.com/miniflux/miniflux/url"
+	"miniflux.app/errors"
+	"miniflux.app/http/client"
+	"miniflux.app/logger"
+	"miniflux.app/reader/feed"
+	"miniflux.app/timer"
+	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 )

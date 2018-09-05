@@ -2,12 +2,12 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware
+package middleware // import "miniflux.app/middleware"
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/storage"
+	"miniflux.app/config"
+	"miniflux.app/storage"
 )
 
 // Middleware handles different middleware handlers.

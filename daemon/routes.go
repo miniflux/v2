@@ -2,21 +2,21 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package daemon
+package daemon // import "miniflux.app/daemon"
 
 import (
 	"net/http"
 
-	"github.com/miniflux/miniflux/api"
-	"github.com/miniflux/miniflux/config"
-	"github.com/miniflux/miniflux/fever"
-	"github.com/miniflux/miniflux/locale"
-	"github.com/miniflux/miniflux/middleware"
-	"github.com/miniflux/miniflux/reader/feed"
-	"github.com/miniflux/miniflux/scheduler"
-	"github.com/miniflux/miniflux/storage"
-	"github.com/miniflux/miniflux/template"
-	"github.com/miniflux/miniflux/ui"
+	"miniflux.app/api"
+	"miniflux.app/config"
+	"miniflux.app/fever"
+	"miniflux.app/locale"
+	"miniflux.app/middleware"
+	"miniflux.app/reader/feed"
+	"miniflux.app/scheduler"
+	"miniflux.app/storage"
+	"miniflux.app/template"
+	"miniflux.app/ui"
 
 	"github.com/gorilla/mux"
 )
