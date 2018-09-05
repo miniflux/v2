@@ -10,11 +10,6 @@
         <li>
             <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "Edit" }}</a>
         </li>
-        {{ if .entries }}
-        <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
-        </li>
-        {{ end }}
     </ul>
 </section>
 
@@ -42,6 +37,15 @@
         </article>
         {{ end }}
     </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
     {{ template "pagination" .pagination }}
 {{ end }}
 

@@ -3,13 +3,6 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ .category.Title }} ({{ .total }})</h1>
-    {{ if .entries }}
-    <ul>
-        <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
-        </li>
-    </ul>
-    {{ end }}
 </section>
 
 {{ if not .entries }}
@@ -31,6 +24,15 @@
         </article>
         {{ end }}
     </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
     {{ template "pagination" .pagination }}
 {{ end }}
 

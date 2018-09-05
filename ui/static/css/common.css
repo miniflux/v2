@@ -75,9 +75,13 @@ a:hover {
     color: #888;
 }
 
-/* Page header */
+/* Page header and footer*/
 .page-header {
     margin-bottom: 25px;
+}
+
+.page-footer {
+    margin-bottom: 10px;
 }
 
 .page-header h1 {
@@ -85,11 +89,13 @@ a:hover {
     border-bottom: 1px dotted #ddd;
 }
 
-.page-header ul {
+.page-header ul,
+.page-footer ul, {
     margin-left: 25px;
 }
 
-.page-header li {
+.page-header li,
+.page-footer li {
     list-style-type: circle;
     line-height: 1.8em;
 }
@@ -157,11 +163,13 @@ a:hover {
         font-size: 1.0em;
     }
 
-    .page-header ul {
+    .page-header ul,
+    .page-footer ul {
         margin-left: 0;
     }
 
-    .page-header li {
+    .page-header li,
+    .page-footer li {
         display: inline;
         padding-right: 15px;
     }
