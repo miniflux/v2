@@ -33,6 +33,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 		router = router.PathPrefix(cfg.BasePath()).Subrouter()
 	}
 
+	router.Use(middleware.ClientIP)
 	router.Use(middleware.HeaderConfig)
 	router.Use(middleware.Logging)
 	router.Use(middleware.CommonHeaders)

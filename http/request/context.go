@@ -24,6 +24,7 @@ const (
 	FlashMessageContextKey
 	FlashErrorMessageContextKey
 	PocketRequestTokenContextKey
+	ClientIPContextKey
 )
 
 // IsAdminUser checks if the logged user is administrator.
@@ -101,6 +102,11 @@ func FlashErrorMessage(r *http.Request) string {
 // PocketRequestToken returns the Pocket Request Token if any.
 func PocketRequestToken(r *http.Request) string {
 	return getContextStringValue(r, PocketRequestTokenContextKey)
+}
+
+// ClientIP returns the client IP address stored in the context.
+func ClientIP(r *http.Request) string {
+	return getContextStringValue(r, ClientIPContextKey)
 }
 
 func getContextStringValue(r *http.Request, key ContextKey) string {

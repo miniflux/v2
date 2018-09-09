@@ -103,7 +103,7 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sessionToken, _, err := c.store.CreateUserSession(user.Username, r.UserAgent(), request.RealIP(r))
+	sessionToken, _, err := c.store.CreateUserSession(user.Username, r.UserAgent(), request.ClientIP(r))
 	if err != nil {
 		html.ServerError(w, err)
 		return

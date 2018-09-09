@@ -100,8 +100,8 @@ func HasQueryParam(r *http.Request, param string) bool {
 	return ok
 }
 
-// RealIP returns client's real IP address.
-func RealIP(r *http.Request) string {
+// FindClientIP returns client's real IP address.
+func FindClientIP(r *http.Request) string {
 	headers := []string{"X-Forwarded-For", "X-Real-Ip"}
 	for _, header := range headers {
 		value := r.Header.Get(header)

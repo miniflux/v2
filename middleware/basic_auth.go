@@ -18,8 +18,7 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 
-		remoteAddr := request.RealIP(r)
-
+		clientIP := request.ClientIP(r)
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
 			logger.Debug("[Middleware:BasicAuth] No authentication headers sent")
@@ -28,7 +27,7 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		}
 
 		if err := m.store.CheckPassword(username, password); err != nil {
-			logger.Error("[Middleware:BasicAuth] [Remote=%v] Invalid username or password: %s", remoteAddr, username)
+			logger.Error("[Middleware:BasicAuth] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
 			json.Unauthorized(w)
 			return
 		}
@@ -41,7 +40,7 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
-			logger.Error("[Middleware:BasicAuth] [Remote=%v] User not found: %s", remoteAddr, username)
+			logger.Error("[Middleware:BasicAuth] [ClientIP=%s] User not found: %s", clientIP, username)
 			json.Unauthorized(w)
 			return
 		}
