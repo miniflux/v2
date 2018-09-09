@@ -23,8 +23,8 @@ type SessionData struct {
 }
 
 func (s SessionData) String() string {
-	return fmt.Sprintf(`CSRF=%q, "OAuth2State=%q, FlashMsg=%q, FlashErrorMsg=%q, Lang=%q, Theme=%q`,
-		s.CSRF, s.OAuth2State, s.FlashMessage, s.FlashErrorMessage, s.Language, s.Theme)
+	return fmt.Sprintf(`CSRF=%q, OAuth2State=%q, FlashMsg=%q, FlashErrMsg=%q, Lang=%q, Theme=%q, PocketTkn=%q`,
+		s.CSRF, s.OAuth2State, s.FlashMessage, s.FlashErrorMessage, s.Language, s.Theme, s.PocketRequestToken)
 }
 
 // Value converts the session data to JSON.

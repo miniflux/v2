@@ -36,7 +36,7 @@ func (e *Engine) parseAll() {
 	}
 }
 
-// Render process a template and write the ouput.
+// Render process a template.
 func (e *Engine) Render(name, language string, data interface{}) []byte {
 	tpl, ok := e.templates[name]
 	if !ok {
