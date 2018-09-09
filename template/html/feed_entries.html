@@ -4,17 +4,17 @@
 <section class="page-header">
     <h1>{{ .feed.Title }} ({{ .total }})</h1>
     <ul>
+        {{ if .entries }}
+        <li>
+            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+        </li>
+        {{ end }}
         <li>
             <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "Refresh" }}</a>
         </li>
         <li>
             <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "Edit" }}</a>
         </li>
-        {{ if .entries }}
-        <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
-        </li>
-        {{ end }}
     </ul>
 </section>
 
@@ -42,6 +42,15 @@
         </article>
         {{ end }}
     </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
     {{ template "pagination" .pagination }}
 {{ end }}
 

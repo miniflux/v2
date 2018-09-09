@@ -34,6 +34,15 @@
         </article>
         {{ end }}
     </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
     {{ template "pagination" .pagination }}
 {{ end }}
 
