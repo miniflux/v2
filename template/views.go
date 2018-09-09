@@ -202,6 +202,13 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ .category.Title }} ({{ .total }})</h1>
+    {{ if .entries }}
+    <ul>
+        <li>
+            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+        </li>
+    </ul>
+    {{ end }}
 </section>
 
 {{ if not .entries }}
@@ -670,6 +677,11 @@ var templateViewsMap = map[string]string{
 <section class="page-header">
     <h1>{{ .feed.Title }} ({{ .total }})</h1>
     <ul>
+        {{ if .entries }}
+        <li>
+            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+        </li>
+        {{ end }}
         <li>
             <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "Refresh" }}</a>
         </li>
@@ -1238,6 +1250,9 @@ var templateViewsMap = map[string]string{
     {{ if .entries }}
     <ul>
         <li>
+            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+        </li>
+        <li>
             <a href="{{ route "markAllAsRead" }}">{{ t "Mark all as read" }}</a>
         </li>
     </ul>
@@ -1347,7 +1362,7 @@ var templateViewsMapChecksums = map[string]string{
 	"add_subscription":    "3fbcffefc94fb0fccfcf870d602f5ba78ce3ab7ebaeacd04198a6e529143cb29",
 	"bookmark_entries":    "49423f84c05d77368e20c8e14c53ad237308cdaf4143413487d1b0e11c18d148",
 	"categories":          "ca1280cd157bb527d4fc907da67b05a8347378f6dce965b9389d4bcdf3600a11",
-	"category_entries":    "9855ee779c1fb684bc53a961487069654aca70794fa0a3b252fd27ee73a0092c",
+	"category_entries":    "d219d4bd5376c526c00a3da49b511fb73e812be5d1e12acadeceee8dfa4bbfe2",
 	"choose_subscription": "7266b269ddbe145e757a24a57f3fbc7611e34a20383fbd887988204cebce2681",
 	"create_category":     "2b82af5d2dcd67898dc5daa57a6461e6ff8121a6089b2a2a1be909f35e4a2275",
 	"create_user":         "1ef0a1f9bf119d44929c81f13073a257d69650cf5064960cf06a63fe51923e86",
@@ -1355,7 +1370,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "1a8e342e4fac80e8b9c73537c7fe8aaf7f9e3e7af22f411927010897dd37e9c3",
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
 	"entry":               "1aa2767a879591f0a3681787fc9e2c53e06949695b21106286d190712a9f428a",
-	"feed_entries":        "d58ed33dcc803d7ec60f43a4e0a7034c4b4ac4495f296a2155a36ab127e03a8b",
+	"feed_entries":        "bebc42317ca9e908fcdb98cc1c4a2dc3f4bb7ef6d4c288d3d3fba8f8339403b6",
 	"feeds":               "1006698abfe0962b656f27794bc44568515392da72b6fac0c03316de06024237",
 	"history_entries":     "f94e15d37d7604500cede7b583e03bf79c06be81c6597a4a43693f5712af2e13",
 	"import":              "73b5112e20bfd232bf73334544186ea419505936bc237d481517a8622901878f",
@@ -1364,6 +1379,6 @@ var templateViewsMapChecksums = map[string]string{
 	"search_entries":      "a6e69c3edf414558541e8a23bf197d7580b043f8ddaf53a5b609bcd678fd6f3d",
 	"sessions":            "3fa79031dd883847eba92fbafe5f535fa3a4e1614bb610f20588b6f8fc8b3624",
 	"settings":            "d435dc37e82896ce9a7a573b3c2aeda1db71eec62349e2472ebbf1d5c3e0bc21",
-	"unread_entries":      "c69b79c7ad59c76bcbed574c8304fa58d99023052c93201a19f1f9e1df994708",
+	"unread_entries":      "13c03de837d39daa0457288ecca723d1140395999123b54abbe649537146620e",
 	"users":               "c6d91b0b29984b4cb3073bec6a2933cfb72981ec60f54b6c7aa05194f0e860bd",
 }
