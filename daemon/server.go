@@ -55,8 +55,26 @@ func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.Worke
 			}
 		}()
 	} else if certFile != "" && keyFile != "" {
-		server.TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
 		cfg.IsHTTPS = true
+
+		// See https://blog.cloudflare.com/exposing-go-on-the-internet/
+		// And https://wiki.mozilla.org/Security/Server_Side_TLS
+		server.TLSConfig = &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			PreferServerCipherSuites: true,
+			CurvePreferences: []tls.CurveID{
+				tls.CurveP256,
+				tls.X25519,
+			},
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+				tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			},
+		}
 
 		go func() {
 			logger.Info(`Listening on "%s" by using certificate "%s" and key "%s"`, server.Addr, certFile, keyFile)
