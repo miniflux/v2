@@ -50,7 +50,9 @@ func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.Worke
 
 		go func() {
 			logger.Info(`Listening on "%s" by using auto-configured certificate for "%s"`, server.Addr, certDomain)
-			logger.Fatal(server.Serve(certManager.Listener()).Error())
+			if err := server.Serve(certManager.Listener()); err != http.ErrServerClosed {
+				logger.Fatal(`Server failed to start: %v`, err)
+			}
 		}()
 	} else if certFile != "" && keyFile != "" {
 		server.TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
@@ -58,12 +60,16 @@ func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.Worke
 
 		go func() {
 			logger.Info(`Listening on "%s" by using certificate "%s" and key "%s"`, server.Addr, certFile, keyFile)
-			logger.Fatal(server.ListenAndServeTLS(certFile, keyFile).Error())
+			if err := server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
+				logger.Fatal(`Server failed to start: %v`, err)
+			}
 		}()
 	} else {
 		go func() {
 			logger.Info(`Listening on "%s" without TLS`, server.Addr)
-			logger.Fatal(server.ListenAndServe().Error())
+			if err := server.ListenAndServe(); err != http.ErrServerClosed {
+				logger.Fatal(`Server failed to start: %v`, err)
+			}
 		}()
 	}
 
