@@ -1,4 +1,5 @@
 {{ define "pagination" }}
+{{ if .Show }}
 <div class="pagination">
     {{ if .ShowPrev }}
     <div class="pagination-prev">
@@ -12,4 +13,5 @@
     </div>
     {{ end }}
 </div>
+{{ end }}
 {{ end }}

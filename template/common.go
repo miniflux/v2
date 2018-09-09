@@ -219,6 +219,7 @@ var templateCommonMap = map[string]string{
 {{ end }}
 `,
 	"pagination": `{{ define "pagination" }}
+{{ if .Show }}
 <div class="pagination">
     {{ if .ShowPrev }}
     <div class="pagination-prev">
@@ -233,6 +234,7 @@ var templateCommonMap = map[string]string{
     {{ end }}
 </div>
 {{ end }}
+{{ end }}
 `,
 }
 
@@ -240,5 +242,5 @@ var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
 	"item_meta":        "d85d1ae181120b7a3d38173b3990a0c2a5cf706cabdfb00c4d002a09271de51e",
 	"layout":           "2491695e33a496c9bd902a2cb5bc3a6a540f98ac7c24591d503a77ba0f5f0ebe",
-	"pagination":       "23c0b481d9ea6c534d45133fa7a6c84a14cdfeb04b67735f7ba46c26d6735a30",
+	"pagination":       "3c7581392268f73adb099dac5257fbbfca3aa26981400f001cdfd8a6f72f0137",
 }
