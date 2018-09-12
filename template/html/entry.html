@@ -12,20 +12,20 @@
                     <a href="#"
                         title="{{ t "Change entry status" }}"
                         data-toggle-status="true"
-                        data-label-read="✔&#xfe0e; {{ t "Read" }}"
-                        data-label-unread="✘ {{ t "Unread" }}"
+                        data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
+                        data-label-unread="✘&nbsp;{{ t "Unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔&#xfe0e; {{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
                         data-toggle-bookmark="true"
                         data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
                         data-label-loading="{{ t "Saving..." }}"
-                        data-label-star="☆ {{ t "Star" }}"
-                        data-label-unstar="★ {{ t "Unstar" }}"
+                        data-label-star="☆&nbsp;{{ t "Star" }}"
+                        data-label-unstar="★&nbsp;{{ t "Unstar" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >{{ if .entry.Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
+                        >{{ if .entry.Starred }}★&nbsp;{{ t "Unstar" }}{{ else }}☆&nbsp;{{ t "Star" }}{{ end }}</a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>

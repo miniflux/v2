@@ -559,20 +559,20 @@ var templateViewsMap = map[string]string{
                     <a href="#"
                         title="{{ t "Change entry status" }}"
                         data-toggle-status="true"
-                        data-label-read="✔&#xfe0e; {{ t "Read" }}"
-                        data-label-unread="✘ {{ t "Unread" }}"
+                        data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
+                        data-label-unread="✘&nbsp;{{ t "Unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘ {{ t "Unread" }}{{ else }}✔&#xfe0e; {{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
                         data-toggle-bookmark="true"
                         data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
                         data-label-loading="{{ t "Saving..." }}"
-                        data-label-star="☆ {{ t "Star" }}"
-                        data-label-unstar="★ {{ t "Unstar" }}"
+                        data-label-star="☆&nbsp;{{ t "Star" }}"
+                        data-label-unstar="★&nbsp;{{ t "Unstar" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >{{ if .entry.Starred }}★ {{ t "Unstar" }}{{ else }}☆ {{ t "Star" }}{{ end }}</a>
+                        >{{ if .entry.Starred }}★&nbsp;{{ t "Unstar" }}{{ else }}☆&nbsp;{{ t "Star" }}{{ end }}</a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>
@@ -1369,7 +1369,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
 	"edit_feed":           "1a8e342e4fac80e8b9c73537c7fe8aaf7f9e3e7af22f411927010897dd37e9c3",
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
-	"entry":               "1aa2767a879591f0a3681787fc9e2c53e06949695b21106286d190712a9f428a",
+	"entry":               "82a0a4e715da94b12370b380072f1175c9f0e07b37e7f54a9adca4ed1fe015c0",
 	"feed_entries":        "bebc42317ca9e908fcdb98cc1c4a2dc3f4bb7ef6d4c288d3d3fba8f8339403b6",
 	"feeds":               "1006698abfe0962b656f27794bc44568515392da72b6fac0c03316de06024237",
 	"history_entries":     "f94e15d37d7604500cede7b583e03bf79c06be81c6597a4a43693f5712af2e13",
