@@ -1,3 +1,29 @@
+Version 2.0.11 (Sep 11, 2018)
+-----------------------------
+
+* Set cookie flag `SameSite` to Lax mode
+* Use predefined ciphers when TLS is configured
+* Avoid displaying an error when shutting down the daemon
+* Add "Mark this page as read" to the bottom
+* Store client IP address in request context
+* Refactor HTTP context handling
+* Make user creation via environment variables idempotent
+* Use regular text version of ✔︎ instead of emoji version on iOS
+* Add toggle status button to entry page
+* Migrate to Go Modules and Go 1.11
+* Show count of feeds with permanent errors in header menu
+* Display remote client IP in logs when having a login failure (Fail2Ban)
+* Add remove button in feed edit page
+* Split integration tests into multiple files
+* Update scraper rule for heise.de
+* Expose real error messages for internal server API errors
+* Move Golang API client in project source tree (the separate project is deprecated)
+* Use canonical imports
+* Add Procfile
+* Create database package (refactoring)
+* Update user agent with new website URL
+* Update German translation
+
 Version 2.0.10 (July 22, 2018)
 ------------------------------
 
