@@ -58,6 +58,9 @@
         -->
         <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
 
+	    <label for="form-user-agent">{{ t "User-Agent" }}</label>
+	    <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
+
         <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
 

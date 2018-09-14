@@ -7,6 +7,7 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
@@ -59,6 +60,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	if err := feedForm.ValidateModification(); err != nil {
 		view.Set("errorMessage", err.Error())

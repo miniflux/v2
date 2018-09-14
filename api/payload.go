@@ -26,15 +26,17 @@ type entriesResponse struct {
 type feedCreation struct {
 	FeedURL    string `json:"feed_url"`
 	CategoryID int64  `json:"category_id"`
+	UserAgent  string `json:"user_agent"`
 	Username   string `json:"username"`
 	Password   string `json:"password"`
 	Crawler    bool   `json:"crawler"`
 }
 
 type subscriptionDiscovery struct {
-	URL      string `json:"url"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	URL       string `json:"url"`
+	UserAgent string `json:"user_agent"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
 }
 
 type feedModification struct {
@@ -44,6 +46,7 @@ type feedModification struct {
 	ScraperRules *string `json:"scraper_rules"`
 	RewriteRules *string `json:"rewrite_rules"`
 	Crawler      *bool   `json:"crawler"`
+	UserAgent    *string `json:"user_agent"`
 	Username     *string `json:"username"`
 	Password     *string `json:"password"`
 	CategoryID   *int64  `json:"category_id"`
@@ -72,6 +75,10 @@ func (f *feedModification) Update(feed *model.Feed) {
 
 	if f.Crawler != nil {
 		feed.Crawler = *f.Crawler
+	}
+
+	if f.UserAgent != nil {
+		feed.UserAgent = *f.UserAgent
 	}
 
 	if f.Username != nil {
