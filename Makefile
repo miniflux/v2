@@ -4,17 +4,26 @@ BUILD_DATE=`date +%FT%T%z`
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
-.PHONY: linux linux-arm darwin freebsd build run clean test lint integration-test clean-integration-test
+.PHONY: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd build run clean test lint integration-test clean-integration-test
 
-linux:
+linux-amd64:
 	@ go generate
 	@ GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-amd64 main.go
 
-linux-arm:
+linux-armv8:
 	@ go generate
 	@ GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv8 main.go
+
+linux-armv7:
+	@ go generate
 	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv7 main.go
+
+linux-armv6:
+	@ go generate
 	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv6 main.go
+
+linux-armv5:
+	@ go generate
 	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags="-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-linux-armv5 main.go
 
 darwin:
@@ -25,7 +34,7 @@ freebsd:
 	@ go generate
 	@ GOOS=freebsd GOARCH=amd64 go build -ldflags="-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'" -o $(APP)-freebsd-amd64 main.go
 
-build: linux linux-arm darwin freebsd
+build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd
 
 run:
 	@ go generate
