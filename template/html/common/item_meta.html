@@ -41,7 +41,7 @@
                 title="{{ t "Change entry status" }}"
                 data-toggle-status="true"
                 data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
-                data-label-unread="✘&nbsp;{{ t "Unread" }}"
+                data-label-unread="✘&nbsp;{{ t "Mark as Unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                 >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Mark as Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
         </li>
