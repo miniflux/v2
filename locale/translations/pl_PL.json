@@ -211,6 +211,7 @@
     "Unread Items": "Nieprzeczytane",
     "Change entry status": "Zmień status artykułu",
     "Read": "Przeczytane",
+    "Mark as Unread": "Unread",
     "Fever API endpoint:": "Fever API endpoint:",
     "Miniflux API": "Miniflux API",
     "API Endpoint": "API endpoint",

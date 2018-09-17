@@ -6,5 +6,6 @@
     "plural.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."
-    ]
+    ],
+    "Mark as Unread": "Unread"
 }

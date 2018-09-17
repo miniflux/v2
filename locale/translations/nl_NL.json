@@ -208,6 +208,7 @@
     "Unread Items": "Ongelezen items",
     "Change entry status": "Verander status van item",
     "Read": "Gelezen",
+    "Mark as Unread": "Unread",
     "Fever API endpoint:": "Fever URL:",
     "Miniflux API": "Miniflux API",
     "API Endpoint": "API-URL",

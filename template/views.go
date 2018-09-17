@@ -498,7 +498,7 @@ var templateViewsMap = map[string]string{
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Edit user %s" .selected_user.Username }}</h1>
+    <h1>{{ t "Edit user: %s" .selected_user.Username }}</h1>
     <ul>
         <li>
             <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
@@ -560,9 +560,9 @@ var templateViewsMap = map[string]string{
                         title="{{ t "Change entry status" }}"
                         data-toggle-status="true"
                         data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
-                        data-label-unread="✘&nbsp;{{ t "Unread" }}"
+                        data-label-unread="✘&nbsp;{{ t "Mark as Unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Mark as Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
@@ -1368,8 +1368,8 @@ var templateViewsMapChecksums = map[string]string{
 	"create_user":         "1ef0a1f9bf119d44929c81f13073a257d69650cf5064960cf06a63fe51923e86",
 	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
 	"edit_feed":           "1a8e342e4fac80e8b9c73537c7fe8aaf7f9e3e7af22f411927010897dd37e9c3",
-	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
-	"entry":               "82a0a4e715da94b12370b380072f1175c9f0e07b37e7f54a9adca4ed1fe015c0",
+	"edit_user":           "9fe16d508bd648f791898ed5905335524fdf5a7633553f64c5bc2218652821b9",
+	"entry":               "efc7f889811415e6693cc5aa8193ce983871f88b6dbd4d85298407000a2a9b79",
 	"feed_entries":        "bebc42317ca9e908fcdb98cc1c4a2dc3f4bb7ef6d4c288d3d3fba8f8339403b6",
 	"feeds":               "1006698abfe0962b656f27794bc44568515392da72b6fac0c03316de06024237",
 	"history_entries":     "f94e15d37d7604500cede7b583e03bf79c06be81c6597a4a43693f5712af2e13",

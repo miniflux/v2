@@ -65,9 +65,9 @@ var templateCommonMap = map[string]string{
                 title="{{ t "Change entry status" }}"
                 data-toggle-status="true"
                 data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
-                data-label-unread="✘&nbsp;{{ t "Unread" }}"
+                data-label-unread="✘&nbsp;{{ t "Mark as Unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
+                >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Mark as Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
         </li>
     </ul>
 </div>
@@ -242,7 +242,7 @@ var templateCommonMap = map[string]string{
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
-	"item_meta":        "d7459aa616b15095eadf382299a62e46c33b63ac214cbe15bab20156b7f9ed43",
+	"item_meta":        "72a85584d546518f25978cc248567c2b955d5d18dfe3fc317db875141fdfc529",
 	"layout":           "2491695e33a496c9bd902a2cb5bc3a6a540f98ac7c24591d503a77ba0f5f0ebe",
 	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
 }
