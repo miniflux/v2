@@ -209,6 +209,7 @@
     "Unread Items": "Éléments non lus",
     "Change entry status": "Changer le statut de l'élément",
     "Read": "Lu",
+    "Mark as Unread": "Unread",
     "Fever API endpoint:": "Point de terminaison de l'API Fever :",
     "Miniflux API": "API de Miniflux",
     "API Endpoint": "Point de terminaison de l'API",

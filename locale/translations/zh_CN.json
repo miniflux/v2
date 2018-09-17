@@ -209,6 +209,7 @@
     "Unread Items": "未读条目",
     "Change entry status": "更改状态",
     "Read": "标为已读",
+    "Mark as Unread": "Unread",
     "Fever API endpoint:": "Fever API Endpoint:",
     "Miniflux API": "Miniflux API",
     "API Endpoint": "API Endpoint",
