@@ -45,6 +45,16 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 
 	lang := e.translator.GetLanguage(language)
 	tpl.Funcs(template.FuncMap{
+		"truncate": func(s string, maxRunes int) string {
+			numRunes := 0
+			for i := range s {
+				numRunes++
+				if numRunes > maxRunes {
+					return s[:i] + "…"
+				}
+			}
+			return s
+		},
 		"elapsed": func(timezone string, t time.Time) string {
 			return elapsedTime(lang, timezone, t)
 		},
