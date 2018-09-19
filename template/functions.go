@@ -5,7 +5,6 @@
 package template // import "miniflux.app/template"
 
 import (
-	"bytes"
 	"html/template"
 	"net/mail"
 	"strings"
