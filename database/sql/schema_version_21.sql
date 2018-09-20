@@ -1,0 +1,1 @@
+alter table feeds add column user_agent text default '';

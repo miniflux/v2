@@ -192,7 +192,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone u.timezone, e.title,
 		e.url, e.comments_url, e.author, e.content, e.status, e.starred,
 		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
-		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler,
+		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
 		fi.icon_id,
 		u.timezone
 		FROM entries e
@@ -247,6 +247,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.ScraperRules,
 			&entry.Feed.RewriteRules,
 			&entry.Feed.Crawler,
+			&entry.Feed.UserAgent,
 			&iconID,
 			&tz,
 		)

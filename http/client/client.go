@@ -33,6 +33,9 @@ const (
 )
 
 var (
+	// DefaultUserAgent sets the User-Agent header used for any requests by miniflux.
+	DefaultUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
+
 	errInvalidCertificate        = "Invalid SSL certificate (original error: %q)"
 	errTemporaryNetworkOperation = "This website is temporarily unreachable (original error: %q)"
 	errPermanentNetworkOperation = "This website is permanently unreachable (original error: %q)"
@@ -47,6 +50,7 @@ type Client struct {
 	authorizationHeader string
 	username            string
 	password            string
+	userAgent           string
 	Insecure            bool
 }
 
@@ -69,6 +73,14 @@ func (c *Client) WithAuthorization(authorization string) *Client {
 func (c *Client) WithCacheHeaders(etagHeader, lastModifiedHeader string) *Client {
 	c.etagHeader = etagHeader
 	c.lastModifiedHeader = lastModifiedHeader
+	return c
+}
+
+// WithUserAgent defines the User-Agent header to use for outgoing requests.
+func (c *Client) WithUserAgent(userAgent string) *Client {
+	if userAgent != "" {
+		c.userAgent = userAgent
+	}
 	return c
 }
 
@@ -212,7 +224,7 @@ func (c *Client) buildClient() http.Client {
 
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
-	headers.Add("User-Agent", "Mozilla/5.0 (compatible; Miniflux/"+version.Version+"; +https://miniflux.app)")
+	headers.Add("User-Agent", c.userAgent)
 	headers.Add("Accept", "*/*")
 
 	if c.etagHeader != "" {
@@ -233,5 +245,5 @@ func (c *Client) buildHeaders() http.Header {
 
 // New returns a new HTTP client.
 func New(url string) *Client {
-	return &Client{url: url, Insecure: false}
+	return &Client{url: url, userAgent: DefaultUserAgent, Insecure: false}
 }

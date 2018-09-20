@@ -47,6 +47,7 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 		feedInfo.CategoryID,
 		feedInfo.FeedURL,
 		feedInfo.Crawler,
+		feedInfo.UserAgent,
 		feedInfo.Username,
 		feedInfo.Password,
 	)

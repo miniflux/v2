@@ -21,6 +21,7 @@ type FeedProcessor struct {
 	scraperRules string
 	rewriteRules string
 	crawler      bool
+	userAgent    string
 }
 
 // WithCrawler enables the crawler.
@@ -31,6 +32,11 @@ func (f *FeedProcessor) WithCrawler(value bool) {
 // WithScraperRules adds scraper rules to the processing.
 func (f *FeedProcessor) WithScraperRules(rules string) {
 	f.scraperRules = rules
+}
+
+// WithUserAgent sets the User-Agent header for fetching article content.
+func (f *FeedProcessor) WithUserAgent(userAgent string) {
+	f.userAgent = userAgent
 }
 
 // WithRewriteRules adds rewrite rules to the processing.
@@ -45,7 +51,7 @@ func (f *FeedProcessor) Process() {
 			if f.store.EntryURLExists(f.userID, entry.URL) {
 				logger.Debug(`[FeedProcessor] Do not crawl existing entry URL: "%s"`, entry.URL)
 			} else {
-				content, err := scraper.Fetch(entry.URL, f.scraperRules)
+				content, err := scraper.Fetch(entry.URL, f.scraperRules, f.userAgent)
 				if err != nil {
 					logger.Error("[FeedProcessor] %v", err)
 				} else {

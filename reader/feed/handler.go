@@ -37,7 +37,7 @@ type Handler struct {
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, username, password string) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password string) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -46,6 +46,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 
 	clt := client.New(url)
 	clt.WithCredentials(username, password)
+	clt.WithUserAgent(userAgent)
 	response, err := clt.Get()
 	if err != nil {
 		if _, ok := err.(*errors.LocalizedError); ok {
@@ -87,6 +88,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 	subscription.FeedURL = response.EffectiveURL
 	subscription.UserID = userID
 	subscription.Crawler = crawler
+	subscription.UserAgent = userAgent
 	subscription.Username = username
 	subscription.Password = password
 
@@ -136,6 +138,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	clt := client.New(originalFeed.FeedURL)
 	clt.WithCredentials(originalFeed.Username, originalFeed.Password)
 	clt.WithCacheHeaders(originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
+	clt.WithUserAgent(originalFeed.UserAgent)
 	response, err := clt.Get()
 	if err != nil {
 		var customErr errors.LocalizedError
@@ -196,6 +199,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 
 		feedProcessor := processor.NewFeedProcessor(userID, h.store, subscription)
 		feedProcessor.WithScraperRules(originalFeed.ScraperRules)
+		feedProcessor.WithUserAgent(originalFeed.UserAgent)
 		feedProcessor.WithRewriteRules(originalFeed.RewriteRules)
 		feedProcessor.WithCrawler(originalFeed.Crawler)
 		feedProcessor.Process()
