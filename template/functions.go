@@ -5,7 +5,6 @@
 package template // import "miniflux.app/template"
 
 import (
-	"bytes"
 	"html/template"
 	"net/mail"
 	"strings"
@@ -79,17 +78,15 @@ func (f *funcMap) Map() template.FuncMap {
 			return ts.Format("2006-01-02 15:04:05")
 		},
 		"dict": dict,
-		"truncate": func(str string, max int) string {
-			if len(str) > max {
-				var buffer bytes.Buffer
-
-				buffer.WriteString(str[:max-1])
-				buffer.WriteString("…")
-
-				return buffer.String()
+		"truncate": func(s string, maxRunes int) string {
+			var numRunes = 0
+			for i := range s {
+				numRunes++
+				if numRunes > maxRunes {
+					return s[:i] + "…"
+				}
 			}
-
-			return str
+			return s
 		},
 		"theme_color": func(theme string) string {
 			return model.ThemeColor(theme)
