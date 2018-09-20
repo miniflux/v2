@@ -1,19 +1,17 @@
 {{ define "pagination" }}
+{{ if .Show }}
 <div class="pagination">
+    {{ if .ShowPrev }}
     <div class="pagination-prev">
-        {{ if .ShowPrev }}
             <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous">{{ t "Previous" }}</a>
-        {{ else }}
-            {{ t "Previous" }}
-        {{ end }}
     </div>
+    {{ end }}
 
+    {{ if .ShowNext }}
     <div class="pagination-next">
-        {{ if .ShowNext }}
             <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next">{{ t "Next" }}</a>
-        {{ else }}
-            {{ t "Next" }}
-        {{ end }}
     </div>
+    {{ end }}
 </div>
+{{ end }}
 {{ end }}

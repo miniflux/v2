@@ -219,23 +219,21 @@ var templateCommonMap = map[string]string{
 {{ end }}
 `,
 	"pagination": `{{ define "pagination" }}
+{{ if .Show }}
 <div class="pagination">
+    {{ if .ShowPrev }}
     <div class="pagination-prev">
-        {{ if .ShowPrev }}
             <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous">{{ t "Previous" }}</a>
-        {{ else }}
-            {{ t "Previous" }}
-        {{ end }}
     </div>
+    {{ end }}
 
+    {{ if .ShowNext }}
     <div class="pagination-next">
-        {{ if .ShowNext }}
             <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next">{{ t "Next" }}</a>
-        {{ else }}
-            {{ t "Next" }}
-        {{ end }}
     </div>
+    {{ end }}
 </div>
+{{ end }}
 {{ end }}
 `,
 }
@@ -244,5 +242,5 @@ var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
 	"item_meta":        "d7459aa616b15095eadf382299a62e46c33b63ac214cbe15bab20156b7f9ed43",
 	"layout":           "2491695e33a496c9bd902a2cb5bc3a6a540f98ac7c24591d503a77ba0f5f0ebe",
-	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
+	"pagination":       "3c7581392268f73adb099dac5257fbbfca3aa26981400f001cdfd8a6f72f0137",
 }

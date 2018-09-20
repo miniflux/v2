@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 const (
 	nbItemsPerPage = 100
@@ -13,6 +13,7 @@ type pagination struct {
 	Total        int
 	Offset       int
 	ItemsPerPage int
+	Show         bool
 	ShowNext     bool
 	ShowPrev     bool
 	NextOffset   int
@@ -25,6 +26,7 @@ func (c *Controller) getPagination(route string, total, offset int) pagination {
 	prevOffset := 0
 	showNext := (total - offset) > nbItemsPerPage
 	showPrev := offset > 0
+	show := showNext || showPrev
 
 	if showNext {
 		nextOffset = offset + nbItemsPerPage
@@ -39,6 +41,7 @@ func (c *Controller) getPagination(route string, total, offset int) pagination {
 		Total:        total,
 		Offset:       offset,
 		ItemsPerPage: nbItemsPerPage,
+		Show:         show,
 		ShowNext:     showNext,
 		NextOffset:   nextOffset,
 		ShowPrev:     showPrev,
