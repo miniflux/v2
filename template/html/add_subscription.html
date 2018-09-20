@@ -41,6 +41,9 @@
 
             <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
 
+	        <label for="form-user-agent">{{ t "User-Agent" }}</label>
+	        <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
+
             <label for="form-feed-username">{{ t "Feed Username" }}</label>
             <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 

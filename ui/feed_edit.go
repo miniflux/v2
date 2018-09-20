@@ -7,6 +7,7 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/ui/form"
@@ -52,6 +53,7 @@ func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
 		ScraperRules: feed.ScraperRules,
 		RewriteRules: feed.RewriteRules,
 		Crawler:      feed.Crawler,
+		UserAgent:    feed.UserAgent,
 		CategoryID:   feed.Category.ID,
 		Username:     feed.Username,
 		Password:     feed.Password,
@@ -66,6 +68,7 @@ func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	html.OK(w, r, view.Render("edit_feed"))
 }

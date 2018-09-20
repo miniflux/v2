@@ -87,6 +87,9 @@ var templateViewsMap = map[string]string{
 
             <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
 
+	        <label for="form-user-agent">{{ t "User-Agent" }}</label>
+	        <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
+
             <label for="form-feed-username">{{ t "Feed Username" }}</label>
             <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
@@ -265,6 +268,7 @@ var templateViewsMap = map[string]string{
 <form action="{{ route "chooseSubscription" }}" method="POST">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
     <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">
+    <input type="hidden" name="user_agent" value="{{ .form.UserAgent }}">
     <input type="hidden" name="feed_username" value="{{ .form.Username }}">
     <input type="hidden" name="feed_password" value="{{ .form.Password }}">
     {{ if .form.Crawler }}
@@ -452,6 +456,9 @@ var templateViewsMap = map[string]string{
             - Using a different input name doesn't change anything
         -->
         <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+
+	    <label for="form-user-agent">{{ t "User-Agent" }}</label>
+	    <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
 
         <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
@@ -1359,15 +1366,15 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "ad2fb778fc73c39b733b3f81b13e5c7d689b041fadd24ee2d4577f545aa788ad",
-	"add_subscription":    "3fbcffefc94fb0fccfcf870d602f5ba78ce3ab7ebaeacd04198a6e529143cb29",
+	"add_subscription":    "dc6593913e6ff14a6f957349c2ce43f0e3e095e1985f9d739929a88f5f6550bd",
 	"bookmark_entries":    "49423f84c05d77368e20c8e14c53ad237308cdaf4143413487d1b0e11c18d148",
 	"categories":          "ca1280cd157bb527d4fc907da67b05a8347378f6dce965b9389d4bcdf3600a11",
 	"category_entries":    "d219d4bd5376c526c00a3da49b511fb73e812be5d1e12acadeceee8dfa4bbfe2",
-	"choose_subscription": "7266b269ddbe145e757a24a57f3fbc7611e34a20383fbd887988204cebce2681",
+	"choose_subscription": "57280e5b6ba3118c14ef1238e8003f5e92401a671dd6e6e198c864ebbd0b8030",
 	"create_category":     "2b82af5d2dcd67898dc5daa57a6461e6ff8121a6089b2a2a1be909f35e4a2275",
 	"create_user":         "1ef0a1f9bf119d44929c81f13073a257d69650cf5064960cf06a63fe51923e86",
 	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
-	"edit_feed":           "1a8e342e4fac80e8b9c73537c7fe8aaf7f9e3e7af22f411927010897dd37e9c3",
+	"edit_feed":           "6ff765208828e7533f865009de26edd87d8109b547bdff08132d862aea0e223b",
 	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
 	"entry":               "82a0a4e715da94b12370b380072f1175c9f0e07b37e7f54a9adca4ed1fe015c0",
 	"feed_entries":        "bebc42317ca9e908fcdb98cc1c4a2dc3f4bb7ef6d4c288d3d3fba8f8339403b6",

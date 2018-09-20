@@ -195,6 +195,31 @@ func TestUpdateFeedRewriteRules(t *testing.T) {
 	}
 }
 
+func TestUpdateFeedUserAgent(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	userAgent := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{UserAgent: &userAgent})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.UserAgent != userAgent {
+		t.Fatalf(`Wrong UserAgent value, got "%v" instead of "%v"`, updatedFeed.UserAgent, userAgent)
+	}
+
+	userAgent = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{UserAgent: &userAgent})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.UserAgent != userAgent {
+		t.Fatalf(`Wrong UserAgent value, got "%v" instead of "%v"`, updatedFeed.UserAgent, userAgent)
+	}
+}
+
 func TestUpdateFeedUsername(t *testing.T) {
 	client := createClient(t)
 	feed, _ := createFeed(t, client)

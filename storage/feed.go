@@ -66,7 +66,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at at time zone u.timezone,
 		f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules, f.crawler,
+		f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
 		f.username, f.password,
 		f.category_id, c.title as category_title,
 		fi.icon_id,
@@ -104,6 +104,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 			&feed.ScraperRules,
 			&feed.RewriteRules,
 			&feed.Crawler,
+			&feed.UserAgent,
 			&feed.Username,
 			&feed.Password,
 			&feed.Category.ID,
@@ -141,7 +142,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at at time zone u.timezone,
 		f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules, f.crawler,
+		f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
 		f.username, f.password,
 		f.category_id, c.title as category_title,
 		fi.icon_id,
@@ -166,6 +167,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.ScraperRules,
 		&feed.RewriteRules,
 		&feed.Crawler,
+		&feed.UserAgent,
 		&feed.Username,
 		&feed.Password,
 		&feed.Category.ID,
@@ -194,8 +196,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeed] feedURL=%s", feed.FeedURL))
 	sql := `
 		INSERT INTO feeds
-		(feed_url, site_url, title, category_id, user_id, etag_header, last_modified_header, crawler, username, password)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		(feed_url, site_url, title, category_id, user_id, etag_header, last_modified_header, crawler, user_agent, username, password)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id
 	`
 
@@ -209,6 +211,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.EtagHeader,
 		feed.LastModifiedHeader,
 		feed.Crawler,
+		feed.UserAgent,
 		feed.Username,
 		feed.Password,
 	).Scan(&feed.ID)
@@ -234,9 +237,9 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 
 	query := `UPDATE feeds SET
 		feed_url=$1, site_url=$2, title=$3, category_id=$4, etag_header=$5, last_modified_header=$6, checked_at=$7,
-		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, crawler=$12,
-		username=$13, password=$14
-		WHERE id=$15 AND user_id=$16`
+		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, crawler=$12, user_agent=$13,
+		username=$14, password=$15
+		WHERE id=$16 AND user_id=$17`
 
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -251,6 +254,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ScraperRules,
 		feed.RewriteRules,
 		feed.Crawler,
+		feed.UserAgent,
 		feed.Username,
 		feed.Password,
 		feed.ID,
