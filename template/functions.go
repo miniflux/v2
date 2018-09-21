@@ -5,7 +5,6 @@
 package template // import "miniflux.app/template"
 
 import (
-	"bytes"
 	"html/template"
 	"net/mail"
 	"strings"
@@ -80,15 +79,13 @@ func (f *funcMap) Map() template.FuncMap {
 		},
 		"dict": dict,
 		"truncate": func(str string, max int) string {
-			if len(str) > max {
-				var buffer bytes.Buffer
-
-				buffer.WriteString(str[:max-1])
-				buffer.WriteString("…")
-
-				return buffer.String()
+			runes := 0
+			for i := range str {
+				runes++
+				if runes > max {
+					return str[:i] + "…"
+				}
 			}
-
 			return str
 		},
 		"theme_color": func(theme string) string {
