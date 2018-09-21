@@ -44,6 +44,8 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 	}
 
 	lang := e.translator.GetLanguage(language)
+
+	// Functions that need to be declared at runtime.
 	tpl.Funcs(template.FuncMap{
 		"elapsed": func(timezone string, t time.Time) string {
 			return elapsedTime(lang, timezone, t)

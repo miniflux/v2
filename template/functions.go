@@ -5,6 +5,7 @@
 package template // import "miniflux.app/template"
 
 import (
+	"fmt"
 	"html/template"
 	"net/mail"
 	"strings"
@@ -23,8 +24,13 @@ type funcMap struct {
 	router *mux.Router
 }
 
+// Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
+		"dict":     dict,
+		"hasKey":   hasKey,
+		"truncate": truncate,
+		"isEmail":  isEmail,
 		"baseURL": func() string {
 			return f.cfg.BaseURL()
 		},
@@ -33,12 +39,6 @@ func (f *funcMap) Map() template.FuncMap {
 		},
 		"hasOAuth2Provider": func(provider string) bool {
 			return f.cfg.OAuth2Provider() == provider
-		},
-		"hasKey": func(dict map[string]string, key string) bool {
-			if value, found := dict[key]; found {
-				return value != ""
-			}
-			return false
 		},
 		"route": func(name string, args ...interface{}) string {
 			return route.Path(f.router, name, args...)
@@ -61,13 +61,6 @@ func (f *funcMap) Map() template.FuncMap {
 		"domain": func(websiteURL string) string {
 			return url.Domain(websiteURL)
 		},
-		"isEmail": func(str string) bool {
-			_, err := mail.ParseAddress(str)
-			if err != nil {
-				return false
-			}
-			return true
-		},
 		"hasPrefix": func(str, prefix string) bool {
 			return strings.HasPrefix(str, prefix)
 		},
@@ -76,17 +69,6 @@ func (f *funcMap) Map() template.FuncMap {
 		},
 		"isodate": func(ts time.Time) string {
 			return ts.Format("2006-01-02 15:04:05")
-		},
-		"dict": dict,
-		"truncate": func(str string, max int) string {
-			runes := 0
-			for i := range str {
-				runes++
-				if runes > max {
-					return str[:i] + "…"
-				}
-			}
-			return str
 		},
 		"theme_color": func(theme string) string {
 			return model.ThemeColor(theme)
@@ -107,4 +89,45 @@ func (f *funcMap) Map() template.FuncMap {
 
 func newFuncMap(cfg *config.Config, router *mux.Router) *funcMap {
 	return &funcMap{cfg, router}
+}
+
+func dict(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, fmt.Errorf("dict expects an even number of arguments")
+	}
+	dict := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, fmt.Errorf("dict keys must be strings")
+		}
+		dict[key] = values[i+1]
+	}
+	return dict, nil
+}
+
+func hasKey(dict map[string]string, key string) bool {
+	if value, found := dict[key]; found {
+		return value != ""
+	}
+	return false
+}
+
+func truncate(str string, max int) string {
+	runes := 0
+	for i := range str {
+		runes++
+		if runes > max {
+			return str[:i] + "…"
+		}
+	}
+	return str
+}
+
+func isEmail(str string) bool {
+	_, err := mail.ParseAddress(str)
+	if err != nil {
+		return false
+	}
+	return true
 }
