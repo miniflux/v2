@@ -142,7 +142,7 @@ var translations = map[string]string{
     "page.integrations.title": "Dienste",
     "page.integration.miniflux_api": "Miniflux API",
     "page.integration.miniflux_api_endpoint": "API Endpunkt",
-    "page.integration.miniflux_api_username": "Nutzername",
+    "page.integration.miniflux_api_username": "Benutzername",
     "page.integration.miniflux_api_password": "Passwort",
     "page.integration.miniflux_api_password_value": "Ihr Konto Passwort",
     "page.integration.bookmarklet": "Bookmarklet",
@@ -1689,7 +1689,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "d32e1a8145899b1073b5754998f6e49508fce076b41d2a290eca4c3d8d68a04f",
+	"de_DE": "2d455c1e46490a21da4f8b069b9f16073d641b789a93b3999ffb1b537aca5ea5",
 	"en_US": "a7089702e17a9ade6593fc9f154e41768e980d6dc01053c8874bf2d81530f2f4",
 	"fr_FR": "85f0e33eb28a0853b5eba163f12a50c41938fc02354fa1cced93b371d47befaa",
 	"nl_NL": "a7b387332b30efdad4da5b6ed4ad9ea3522621818682d7635bdb6a426818d5a4",
