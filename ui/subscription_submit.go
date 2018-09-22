@@ -7,6 +7,7 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/http/client"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
@@ -40,6 +41,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	v.Set("user", user)
 	v.Set("countUnread", c.store.CountUnreadEntries(user.ID))
 	v.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	v.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	subscriptionForm := form.NewSubscriptionForm(r)
 	if err := subscriptionForm.Validate(); err != nil {
@@ -51,6 +53,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 
 	subscriptions, err := subscription.FindSubscriptions(
 		subscriptionForm.URL,
+		subscriptionForm.UserAgent,
 		subscriptionForm.Username,
 		subscriptionForm.Password,
 	)
@@ -68,7 +71,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	switch {
 	case n == 0:
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", "Unable to find any subscription.")
+		v.Set("errorMessage", "error.subscription_not_found")
 		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
 		feed, err := c.feedHandler.CreateFeed(
@@ -76,6 +79,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 			subscriptionForm.CategoryID,
 			subscriptions[0].URL,
 			subscriptionForm.Crawler,
+			subscriptionForm.UserAgent,
 			subscriptionForm.Username,
 			subscriptionForm.Password,
 		)

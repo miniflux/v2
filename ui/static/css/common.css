@@ -313,6 +313,15 @@ input[type="checkbox"] {
     margin-left: 10px;
 }
 
+details > summary {
+    outline: none;
+    cursor: pointer;
+}
+
+.details-content {
+    margin-top: 15px;
+}
+
 /* Buttons */
 a.button {
     text-decoration: none;

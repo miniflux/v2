@@ -4,28 +4,15 @@
 
 package locale // import "miniflux.app/locale"
 
-import (
-	"encoding/json"
-	"fmt"
-	"strings"
-)
-
 // Translator manage supported locales.
 type Translator struct {
-	locales Locales
+	locales catalog
 }
 
 // AddLanguage loads a new language into the system.
-func (t *Translator) AddLanguage(language, translations string) error {
-	var decodedTranslations Translation
-
-	decoder := json.NewDecoder(strings.NewReader(translations))
-	if err := decoder.Decode(&decodedTranslations); err != nil {
-		return fmt.Errorf("Invalid JSON file: %v", err)
-	}
-
-	t.locales[language] = decodedTranslations
-	return nil
+func (t *Translator) AddLanguage(language, data string) (err error) {
+	t.locales[language], err = parseCatalogMessages(data)
+	return err
 }
 
 // GetLanguage returns the given language handler.
@@ -40,5 +27,5 @@ func (t *Translator) GetLanguage(language string) *Language {
 
 // NewTranslator creates a new Translator.
 func NewTranslator() *Translator {
-	return &Translator{locales: make(Locales)}
+	return &Translator{locales: make(catalog)}
 }

@@ -1,19 +1,19 @@
-{{ define "title"}}{{ t "History" }} ({{ .total }}){{ end }}
+{{ define "title"}}{{ t "page.history.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "History" }} ({{ .total }})</h1>
+    <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
     {{ if .entries }}
     <ul>
         <li>
-            <a href="{{ route "flushHistory" }}">{{ t "Flush history" }}</a>
+            <a href="{{ route "flushHistory" }}">{{ t "menu.flush_history" }}</a>
         </li>
     </ul>
     {{ end }}
 </section>
 
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "There is no history at the moment." }}</p>
+    <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}

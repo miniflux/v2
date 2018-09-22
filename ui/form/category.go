@@ -19,7 +19,7 @@ type CategoryForm struct {
 // Validate makes sure the form values are valid.
 func (c CategoryForm) Validate() error {
 	if c.Title == "" {
-		return errors.NewLocalizedError("The title is mandatory.")
+		return errors.NewLocalizedError("error.title_required")
 	}
 	return nil
 }

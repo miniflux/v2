@@ -16,6 +16,7 @@ type SubscriptionForm struct {
 	URL        string
 	CategoryID int64
 	Crawler    bool
+	UserAgent  string
 	Username   string
 	Password   string
 }
@@ -23,7 +24,7 @@ type SubscriptionForm struct {
 // Validate makes sure the form values are valid.
 func (s *SubscriptionForm) Validate() error {
 	if s.URL == "" || s.CategoryID == 0 {
-		return errors.NewLocalizedError("The URL and the category are mandatory.")
+		return errors.NewLocalizedError("error.feed_mandatory_fields")
 	}
 
 	return nil
@@ -40,6 +41,7 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		URL:        r.FormValue("url"),
 		Crawler:    r.FormValue("crawler") == "1",
 		CategoryID: int64(categoryID),
+		UserAgent:  r.FormValue("user_agent"),
 		Username:   r.FormValue("feed_username"),
 		Password:   r.FormValue("feed_password"),
 	}

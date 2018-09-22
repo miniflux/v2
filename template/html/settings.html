@@ -1,22 +1,22 @@
-{{ define "title"}}{{ t "Settings" }}{{ end }}
+{{ define "title"}}{{ t "page.settings.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Settings" }}</h1>
+    <h1>{{ t "page.settings.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
@@ -28,53 +28,53 @@
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-username">{{ t "Username" }}</label>
+    <label for="form-username">{{ t "form.user.label.username" }}</label>
     <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required>
 
-    <label for="form-password">{{ t "Password" }}</label>
+    <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
 
-    <label for="form-confirmation">{{ t "Confirmation" }}</label>
+    <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
     <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
-    <label for="form-language">{{ t "Language" }}</label>
+    <label for="form-language">{{ t "form.prefs.label.language" }}</label>
     <select id="form-language" name="language">
     {{ range $key, $value := .languages }}
         <option value="{{ $key }}" {{ if eq $key $.form.Language }}selected="selected"{{ end }}>{{ $value }}</option>
     {{ end }}
     </select>
 
-    <label for="form-timezone">{{ t "Timezone" }}</label>
+    <label for="form-timezone">{{ t "form.prefs.label.timezone" }}</label>
     <select id="form-timezone" name="timezone">
     {{ range $key, $value := .timezones }}
         <option value="{{ $key }}" {{ if eq $key $.form.Timezone }}selected="selected"{{ end }}>{{ $value }}</option>
     {{ end }}
     </select>
 
-    <label for="form-theme">{{ t "Theme" }}</label>
+    <label for="form-theme">{{ t "form.prefs.label.theme" }}</label>
     <select id="form-theme" name="theme">
     {{ range $key, $value := .themes }}
         <option value="{{ $key }}" {{ if eq $key $.form.Theme }}selected="selected"{{ end }}>{{ $value }}</option>
     {{ end }}
     </select>
 
-    <label for="form-entry-direction">{{ t "Entry Sorting" }}</label>
+    <label for="form-entry-direction">{{ t "form.prefs.label.entry_sorting" }}</label>
     <select id="form-entry-direction" name="entry_direction">
-        <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "Older entries first" }}</option>
-        <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "Recent entries first" }}</option>
+        <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.older_first" }}</option>
+        <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
     </select>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
 </form>
 
 {{ if hasOAuth2Provider "google" }}
 <div class="panel">
     {{ if hasKey .user.Extra "google_id" }}
-        <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "Unlink my Google account" }}</a>
+        <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
     {{ else }}
-        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "Link my Google account" }}</a>
+        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.settings.link_google_account" }}</a>
     {{ end }}
 </div>
 {{ end }}

@@ -22,6 +22,7 @@ func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
 
 	subscriptions, err := subscription.FindSubscriptions(
 		subscriptionInfo.URL,
+		subscriptionInfo.UserAgent,
 		subscriptionInfo.Username,
 		subscriptionInfo.Password,
 	)

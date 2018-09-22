@@ -65,7 +65,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if c.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
-		view.Set("errorMessage", "This user already exists.")
+		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("edit_user"))
 		return
 	}
@@ -73,7 +73,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userForm.Merge(selectedUser)
 	if err := c.store.UpdateUser(selectedUser); err != nil {
 		logger.Error("[Controller:UpdateUser] %v", err)
-		view.Set("errorMessage", "Unable to update this user.")
+		view.Set("errorMessage", "error.unable_to_update_user")
 		html.OK(w, r, view.Render("edit_user"))
 		return
 	}

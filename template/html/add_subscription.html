@@ -1,23 +1,23 @@
-{{ define "title"}}{{ t "New Subscription" }}{{ end }}
+{{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "New Subscription" }}</h1>
+    <h1>{{ t "page.add_feed.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
         <li>
-            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "There is no category. You must have at least one category." }}</p>
+    <p class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
 {{ else }}
     <form action="{{ route "submitSubscription" }}" method="post" autocomplete="off">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
@@ -26,37 +26,41 @@
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-url">{{ t "URL" }}</label>
+        <label for="form-url">{{ t "page.add_feed.label.url" }}</label>
         <input type="url" name="url" id="form-url" placeholder="https://domain.tld/" value="{{ .form.URL }}" required autofocus>
 
-        <label for="form-category">{{ t "Category" }}</label>
+        <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
             {{ range .categories }}
                 <option value="{{ .ID }}">{{ .Title }}</option>
             {{ end }}
         </select>
 
-        <fieldset>
-            <legend>{{ t "Advanced Options" }}</legend>
+        <details>
+            <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
+            <div class="details-content">
+                <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
 
-            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+                <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
+                <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
 
-            <label for="form-feed-username">{{ t "Feed Username" }}</label>
-            <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
+                <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
+                <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-            <label for="form-feed-password">{{ t "Feed Password" }}</label>
-            <!--
-                We are using the type "text" otherwise Firefox always autocomplete this password:
+                <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
+                <!--
+                    We are using the type "text" otherwise Firefox always autocomplete this password:
 
-                - autocomplete="off" or autocomplete="new-password" doesn't change anything
-                - Changing the input ID doesn't change anything
-                - Using a different input name doesn't change anything
-             -->
-            <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
-        </fieldset>
+                    - autocomplete="off" or autocomplete="new-password" doesn't change anything
+                    - Changing the input ID doesn't change anything
+                    - Using a different input name doesn't change anything
+                -->
+                <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+            </div>
+        </details>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Find a subscription" }}</button>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "page.add_feed.submit" }}</button>
         </div>
     </form>
 {{ end }}

@@ -40,16 +40,16 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
 	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" {
-		return errors.NewLocalizedError("The username, theme, language and timezone fields are mandatory.")
+		return errors.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
 	if s.Password != "" {
 		if s.Password != s.Confirmation {
-			return errors.NewLocalizedError("Passwords are not the same.")
+			return errors.NewLocalizedError("error.different_passwords")
 		}
 
 		if len(s.Password) < 6 {
-			return errors.NewLocalizedError("You must use at least 6 characters")
+			return errors.NewLocalizedError("error.password_min_length")
 		}
 	}
 

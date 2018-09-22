@@ -10,46 +10,46 @@
             <ul>
                 <li>
                     <a href="#"
-                        title="{{ t "Change entry status" }}"
+                        title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
-                        data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
-                        data-label-unread="✘&nbsp;{{ t "Unread" }}"
+                        data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
+                        data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
                         data-toggle-bookmark="true"
                         data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
-                        data-label-loading="{{ t "Saving..." }}"
-                        data-label-star="☆&nbsp;{{ t "Star" }}"
-                        data-label-unstar="★&nbsp;{{ t "Unstar" }}"
+                        data-label-loading="{{ t "entry.state.saving" }}"
+                        data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
+                        data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >{{ if .entry.Starred }}★&nbsp;{{ t "Unstar" }}{{ else }}☆&nbsp;{{ t "Star" }}{{ end }}</a>
+                        >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>
                         <a href="#"
-                            title="{{ t "Save this article" }}"
+                            title="{{ t "entry.save.title" }}"
                             data-save-entry="true"
                             data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
-                            data-label-loading="{{ t "Saving..." }}"
-                            data-label-done="{{ t "Done!" }}"
-                            >{{ t "Save" }}</a>
+                            data-label-loading="{{ t "entry.state.saving" }}"
+                            data-label-done="{{ t "entry.save.completed" }}"
+                            >{{ t "entry.save.title" }}</a>
                     </li>
                 {{ end }}
                 <li>
                     <a href="#"
-                        title="{{ t "Fetch original content" }}"
+                        title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
                         data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
-                        data-label-loading="{{ t "Loading..." }}"
-                        data-label-done="{{ t "Done!" }}"
-                        >{{ t "Fetch original content" }}</a>
+                        data-label-loading="{{ t "entry.state.loading" }}"
+                        data-label-done="{{ t "entry.scraper.completed" }}"
+                        >{{ t "entry.scraper.label" }}</a>
                 </li>
                 {{ if .entry.CommentsURL }}
                     <li>
-                        <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
+                        <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
                     </li>
                 {{ end }}
             </ul>
@@ -110,7 +110,7 @@
                 {{ end }}
 
                 <div class="entry-enclosure-download">
-                    <a href="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Download" }}</a>
+                    <a href="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "action.download" }}</a>
                     <small>({{ .URL }})</small>
                 </div>
             </div>

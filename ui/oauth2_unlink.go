@@ -40,7 +40,7 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasPassword {
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("You must define a password otherwise you won't be able to login again."))
+		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.unlink_account_without_password"))
 		response.Redirect(w, r, route.Path(c.router, "settings"))
 		return
 	}
@@ -50,6 +50,6 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Your external account is now dissociated!"))
+	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.account_unlinked"))
 	response.Redirect(w, r, route.Path(c.router, "settings"))
 }

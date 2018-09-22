@@ -36,7 +36,7 @@ func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
 	integrationForm.Merge(integration)
 
 	if integration.FeverUsername != "" && c.store.HasDuplicateFeverUsername(user.ID, integration.FeverUsername) {
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("There is already someone else with the same Fever username!"))
+		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.duplicate_fever_username"))
 		response.Redirect(w, r, route.Path(c.router, "integrations"))
 		return
 	}
@@ -53,6 +53,6 @@ func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Preferences saved!"))
+	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.prefs_saved"))
 	response.Redirect(w, r, route.Path(c.router, "integrations"))
 }

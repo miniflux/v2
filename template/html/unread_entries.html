@@ -1,22 +1,22 @@
-{{ define "title"}}{{ t "Unread Items" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
+{{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Unread" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
+    <h1>{{ t "page.unread.title" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
     {{ if .entries }}
     <ul>
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         <li>
-            <a href="{{ route "markAllAsRead" }}">{{ t "Mark all as read" }}</a>
+            <a href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
     </ul>
     {{ end }}
 </section>
 
 {{ if not .entries }}
-    <p class="alert">{{ t "There is no unread article." }}</p>
+    <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
     <div class="items hide-read-items">
         {{ range .entries }}
@@ -38,7 +38,7 @@
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}

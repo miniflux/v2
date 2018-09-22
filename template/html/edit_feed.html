@@ -1,30 +1,30 @@
-{{ define "title"}}{{ t "Edit Feed: %s" .feed.Title }}{{ end }}
+{{ define "title"}}{{ t "page.edit_feed.title" .feed.Title }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ .feed.Title }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
         <li>
-            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "There is no category!" }}</p>
+    <p class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
 {{ else }}
     {{ if ne .feed.ParsingErrorCount 0 }}
     <div class="alert alert-error">
-        <h3>{{ t "Last Parsing Error" }}</h3>
+        <h3>{{ t "page.edit_feed.last_parsing_error" }}</h3>
         <p>{{ t .feed.ParsingErrorMsg }}</p>
     </div>
     {{ end }}
@@ -36,19 +36,19 @@
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-title">{{ t "Title" }}</label>
+        <label for="form-title">{{ t "form.feed.label.title" }}</label>
         <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
-        <label for="form-site-url">{{ t "Site URL" }}</label>
+        <label for="form-site-url">{{ t "form.feed.label.site_url" }}</label>
         <input type="url" name="site_url" id="form-site-url" placeholder="https://domain.tld/" value="{{ .form.SiteURL }}" required>
 
-        <label for="form-feed-url">{{ t "Feed URL" }}</label>
+        <label for="form-feed-url">{{ t "form.feed.label.feed_url" }}</label>
         <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" required>
 
-        <label for="form-feed-username">{{ t "Feed Username" }}</label>
+        <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
         <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-        <label for="form-feed-password">{{ t "Feed Password" }}</label>
+        <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
         <!--
             We are using the type "text" otherwise Firefox always autocomplete this password:
 
@@ -58,43 +58,46 @@
         -->
         <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
 
-        <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
+	    <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
+	    <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
+
+        <label for="form-scraper-rules">{{ t "form.feed.label.scraper_rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
 
-        <label for="form-rewrite-rules">{{ t "Rewrite Rules" }}</label>
+        <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
         <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
 
-        <label for="form-category">{{ t "Category" }}</label>
+        <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
         {{ range .categories }}
             <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
         {{ end }}
         </select>
 
-        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button> {{ t "or" }} <a href="{{ route "feeds" }}">{{ t "cancel" }}</a>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "feeds" }}">{{ t "action.cancel" }}</a>
         </div>
     </form>
 
     <div class="panel">
         <ul>
-            <li><strong>{{ t "Last checked:" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
-            <li><strong>{{ t "ETag header:" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
-            <li><strong>{{ t "LastModified header:" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
+            <li><strong>{{ t "page.edit_feed.last_check" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
+            <li><strong>{{ t "page.edit_feed.etag_header" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
+            <li><strong>{{ t "page.edit_feed.last_modified_header" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
         </ul>
     </div>
 
     <div class="alert alert-error">
         <a href="#"
             data-confirm="true"
-            data-label-question="{{ t "Are you sure?" }}"
-            data-label-yes="{{ t "yes" }}"
-            data-label-no="{{ t "no" }}"
-            data-label-loading="{{ t "Work in progress..." }}"
+            data-label-question="{{ t "confirm.question" }}"
+            data-label-yes="{{ t "confirm.yes" }}"
+            data-label-no="{{ t "confirm.no" }}"
+            data-label-loading="{{ t "confirm.loading" }}"
             data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-            data-redirect-url="{{ route "feeds" }}">{{ t "Remove this feed" }}</a>
+            data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
     </div>
 {{ end }}
 

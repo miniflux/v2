@@ -6,13 +6,7 @@ package locale // import "miniflux.app/locale"
 
 import "miniflux.app/logger"
 
-// Translation is the translation mapping table.
-type Translation map[string]interface{}
-
-// Locales represents locales supported by the system.
-type Locales map[string]Translation
-
-// Load prepare the locale system by loading all translations.
+// Load loads all translations.
 func Load() *Translator {
 	translator := NewTranslator()
 

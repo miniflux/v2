@@ -1,12 +1,12 @@
-{{ define "title"}}{{ t "Favorites" }} ({{ .total }}){{ end }}
+{{ define "title"}}{{ t "page.starred.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Favorites" }} ({{ .total }})</h1>
+    <h1>{{ t "page.starred.title" }} ({{ .total }})</h1>
 </section>
 
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "There is no bookmark at the moment." }}</p>
+    <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}

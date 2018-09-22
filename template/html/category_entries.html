@@ -6,14 +6,14 @@
     {{ if .entries }}
     <ul>
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
     </ul>
     {{ end }}
 </section>
 
 {{ if not .entries }}
-    <p class="alert">{{ t "There is no article in this category." }}</p>
+    <p class="alert">{{ t "alert.no_category" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -35,7 +35,7 @@
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}

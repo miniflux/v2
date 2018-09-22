@@ -1,0 +1,125 @@
+// Copyright 2018 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package template // import "miniflux.app/template"
+
+import (
+	"testing"
+	"time"
+
+	"miniflux.app/locale"
+)
+
+func TestDict(t *testing.T) {
+	d, err := dict("k1", "v1", "k2", "v2")
+	if err != nil {
+		t.Fatalf(`The dict should be valid: %v`, err)
+	}
+
+	if value, found := d["k1"]; found {
+		if value != "v1" {
+			t.Fatalf(`Unexpected value for k1: got %q`, value)
+		}
+	}
+
+	if value, found := d["k2"]; found {
+		if value != "v2" {
+			t.Fatalf(`Unexpected value for k2: got %q`, value)
+		}
+	}
+}
+
+func TestDictWithInvalidNumberOfArguments(t *testing.T) {
+	_, err := dict("k1")
+	if err == nil {
+		t.Fatal(`An error should be returned if the number of arguments are not even`)
+	}
+}
+
+func TestDictWithInvalidMap(t *testing.T) {
+	_, err := dict(1, 2)
+	if err == nil {
+		t.Fatal(`An error should be returned if the dict keys are not string`)
+	}
+}
+
+func TestHasKey(t *testing.T) {
+	input := map[string]string{"k": "v"}
+
+	if !hasKey(input, "k") {
+		t.Fatal(`This key exists in the map and should returns true`)
+	}
+
+	if hasKey(input, "missing") {
+		t.Fatal(`This key doesn't exists in the given map and should returns false`)
+	}
+}
+
+func TestTruncateWithShortTexts(t *testing.T) {
+	scenarios := []string{"Short text", "Короткий текст"}
+
+	for _, input := range scenarios {
+		result := truncate(input, 25)
+		if result != input {
+			t.Fatalf(`Unexpected output, got %q instead of %q`, result, input)
+		}
+
+		result = truncate(input, len(input))
+		if result != input {
+			t.Fatalf(`Unexpected output, got %q instead of %q`, result, input)
+		}
+	}
+}
+
+func TestTruncateWithLongTexts(t *testing.T) {
+	scenarios := map[string]string{
+		"This is a really pretty long English text": "This is a really pretty l…",
+		"Это реально очень длинный русский текст":   "Это реально очень длинный…",
+	}
+
+	for input, expected := range scenarios {
+		result := truncate(input, 25)
+		if result != expected {
+			t.Fatalf(`Unexpected output, got %q instead of %q`, result, expected)
+		}
+	}
+}
+
+func TestIsEmail(t *testing.T) {
+	if !isEmail("user@domain.tld") {
+		t.Fatal(`This email is valid and should returns true`)
+	}
+
+	if isEmail("invalid") {
+		t.Fatal(`This email is not valid and should returns false`)
+	}
+}
+
+func TestElapsedTime(t *testing.T) {
+	translator := locale.Load()
+	language := translator.GetLanguage("fr_FR")
+
+	var dt = []struct {
+		in  time.Time
+		out string
+	}{
+		{time.Time{}, language.Get("time_elapsed.not_yet")},
+		{time.Now().Add(time.Hour), language.Get("time_elapsed.not_yet")},
+		{time.Now(), language.Get("time_elapsed.now")},
+		{time.Now().Add(-time.Minute), language.Plural("time_elapsed.minutes", 1, 1)},
+		{time.Now().Add(-time.Minute * 40), language.Plural("time_elapsed.minutes", 40, 40)},
+		{time.Now().Add(-time.Hour), language.Plural("time_elapsed.hours", 1, 1)},
+		{time.Now().Add(-time.Hour * 3), language.Plural("time_elapsed.hours", 3, 3)},
+		{time.Now().Add(-time.Hour * 32), language.Get("time_elapsed.yesterday")},
+		{time.Now().Add(-time.Hour * 24 * 3), language.Plural("time_elapsed.days", 3, 3)},
+		{time.Now().Add(-time.Hour * 24 * 14), language.Plural("time_elapsed.weeks", 2, 2)},
+		{time.Now().Add(-time.Hour * 24 * 60), language.Plural("time_elapsed.months", 2, 2)},
+		{time.Now().Add(-time.Hour * 24 * 365 * 3), language.Plural("time_elapsed.years", 3, 3)},
+	}
+	for i, tt := range dt {
+		if out := elapsedTime(language, "Local", tt.in); out != tt.out {
+			t.Errorf(`%d. content mismatch for "%v": expected=%q got=%q`, i, tt.in, tt.out, out)
+		}
+	}
+}

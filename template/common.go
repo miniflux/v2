@@ -7,17 +7,17 @@ var templateCommonMap = map[string]string{
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .prevEntry }}
-            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "Previous" }}</a>
+            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "pagination.previous" }}</a>
         {{ else }}
-            {{ t "Previous" }}
+            {{ t "pagination.previous" }}
         {{ end }}
     </div>
 
     <div class="pagination-next">
         {{ if .nextEntry }}
-            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "Next" }}</a>
+            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "pagination.next" }}</a>
         {{ else }}
-            {{ t "Next" }}
+            {{ t "pagination.next" }}
         {{ end }}
     </div>
 </div>
@@ -34,40 +34,40 @@ var templateCommonMap = map[string]string{
         {{ if .hasSaveEntry }}
             <li>
                 <a href="#"
-                    title="{{ t "Save this article" }}"
+                    title="{{ t "entry.save.title" }}"
                     data-save-entry="true"
                     data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
-                    data-label-loading="{{ t "Saving..." }}"
-                    data-label-done="{{ t "Done!" }}"
-                    >{{ t "Save" }}</a>
+                    data-label-loading="{{ t "entry.state.saving" }}"
+                    data-label-done="{{ t "entry.save.completed" }}"
+                    >{{ t "entry.save.label" }}</a>
             </li>
         {{ end }}
         <li>
-            <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "Original" }}</a>
+            <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "entry.original.label" }}</a>
         </li>
         {{ if .entry.CommentsURL }}
             <li>
-                <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
+                <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
             </li>
         {{ end }}
         <li>
             <a href="#"
                 data-toggle-bookmark="true"
                 data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
-                data-label-loading="{{ t "Saving..." }}"
-                data-label-star="☆&nbsp;{{ t "Star" }}"
-                data-label-unstar="★&nbsp;{{ t "Unstar" }}"
+                data-label-loading="{{ t "entry.state.saving" }}"
+                data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
+                data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
                 data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                >{{ if .entry.Starred }}★&nbsp;{{ t "Unstar" }}{{ else }}☆&nbsp;{{ t "Star" }}{{ end }}</a>
+                >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
         </li>
         <li>
             <a href="#"
-                title="{{ t "Change entry status" }}"
+                title="{{ t "entry.status.title" }}"
                 data-toggle-status="true"
-                data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
-                data-label-unread="✘&nbsp;{{ t "Unread" }}"
+                data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
+                data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
+                >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
         </li>
     </ul>
 </div>
@@ -120,42 +120,42 @@ var templateCommonMap = map[string]string{
                 <a href="{{ route "unread" }}">Mini<span>flux</span></a>
             </div>
             <ul>
-                <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g u" }}">
-                    <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}
+                <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
+                    <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
                       {{ if gt .countUnread 0 }}
                           <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
                       {{ end }}
                     </a>
                 </li>
-                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g b" }}">
-                    <a href="{{ route "starred" }}" data-page="starred">{{ t "Starred" }}</a>
+                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
+                    <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }}</a>
                 </li>
-                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g h" }}">
-                    <a href="{{ route "history" }}" data-page="history">{{ t "History" }}</a>
+                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
+                    <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
                 </li>
-                <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g f" }}">
-                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "Feeds" }}
+                <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
+                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
                     </a>
                 </li>
-                <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g c" }}">
-                    <a href="{{ route "categories" }}" data-page="categories">{{ t "Categories" }}</a>
+                <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
+                    <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
                 </li>
-                <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g s" }}">
-                    <a href="{{ route "settings" }}" data-page="settings">{{ t "Settings" }}</a>
+                <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
+                    <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
                 </li>
                 <li>
-                    <a href="{{ route "logout" }}" title="{{ t "Logged as %s" .user.Username }}">{{ t "Logout" }}</a>
+                    <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
                 </li>
             </ul>
             <div class="search">
                 <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "Search" }}</a>
+                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "search.label" }}</a>
                 </div>
                 <form action="{{ route "searchEntries" }}" class="search-form {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <input type="search" name="q" id="search-input" placeholder="{{ t "Search..." }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                    <input type="search" name="q" id="search-input" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
                 </form>
             </div>
         </nav>
@@ -173,43 +173,43 @@ var templateCommonMap = map[string]string{
     <template id="keyboard-shortcuts">
         <div id="modal-left">
             <a href="#" class="btn-close-modal">x</a>
-            <h3>{{ t "Keyboard Shortcuts" }}</h3>
+            <h3>{{ t "page.keyboard_shortcuts.title" }}</h3>
 
             <div class="keyboard-shortcuts">
-                <p>{{ t "Sections Navigation" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.sections" }}</p>
                 <ul>
-                    <li>{{ t "Go to unread" }} = <strong>g + u</strong></li>
-                    <li>{{ t "Go to bookmarks" }} = <strong>g + b</strong></li>
-                    <li>{{ t "Go to history" }} = <strong>g + h</strong></li>
-                    <li>{{ t "Go to feeds" }} = <strong>g + f</strong></li>
-                    <li>{{ t "Go to categories" }} = <strong>g + c</strong></li>
-                    <li>{{ t "Go to settings" }} = <strong>g + s</strong></li>
-                    <li>{{ t "Show keyboard shortcuts" }} = <strong>?</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_unread" }} = <strong>g + u</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_starred" }} = <strong>g + b</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_history" }} = <strong>g + h</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_feeds" }} = <strong>g + f</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_categories" }} = <strong>g + c</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_settings" }} = <strong>g + s</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.show_keyboard_shortcuts" }} = <strong>?</strong></li>
                 </ul>
 
-                <p>{{ t "Items Navigation" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
                 <ul>
-                    <li>{{ t "Go to previous item" }} = <strong>p {{ t "or" }} j {{ t "or" }} ◄</strong></li>
-                    <li>{{ t "Go to next item" }} = <strong>n {{ t "or" }} k {{ t "or" }} ►</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>j</strong>, <strong>◄</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>k</strong>, <strong>►</strong></li>
                 </ul>
 
-                <p>{{ t "Pages Navigation" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
                 <ul>
-                    <li>{{ t "Go to previous page" }} = <strong>h</strong></li>
-                    <li>{{ t "Go to next page" }} = <strong>l</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_page" }} = <strong>h</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_page" }} = <strong>l</strong></li>
                 </ul>
 
-                <p>{{ t "Actions" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.actions" }}</p>
                 <ul>
-                    <li>{{ t "Open selected item" }} = <strong>o</strong></li>
-                    <li>{{ t "Open original link" }} = <strong>v</strong></li>
-                    <li>{{ t "Toggle read/unread" }} = <strong>m</strong></li>
-                    <li>{{ t "Mark current page as read" }} = <strong>A</strong></li>
-                    <li>{{ t "Download original content" }} = <strong>d</strong></li>
-                    <li>{{ t "Toggle bookmark" }} = <strong>f</strong></li>
-                    <li>{{ t "Save article" }} = <strong>s</strong></li>
-                    <li>{{ t "Set focus on search form" }} = <strong>/</strong></li>
-                    <li>{{ t "Close modal dialog" }} = <strong>Esc</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.toggle_read_status" }} = <strong>m</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.toggle_bookmark_status" }} = <strong>f</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.save_article" }} = <strong>s</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_search" }} = <strong>/</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.close_modal" }} = <strong>Esc</strong></li>
                 </ul>
             </div>
         </div>
@@ -222,17 +222,17 @@ var templateCommonMap = map[string]string{
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .ShowPrev }}
-            <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous">{{ t "Previous" }}</a>
+            <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous">{{ t "pagination.previous" }}</a>
         {{ else }}
-            {{ t "Previous" }}
+            {{ t "pagination.previous" }}
         {{ end }}
     </div>
 
     <div class="pagination-next">
         {{ if .ShowNext }}
-            <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next">{{ t "Next" }}</a>
+            <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next">{{ t "pagination.next" }}</a>
         {{ else }}
-            {{ t "Next" }}
+            {{ t "pagination.next" }}
         {{ end }}
     </div>
 </div>
@@ -241,8 +241,8 @@ var templateCommonMap = map[string]string{
 }
 
 var templateCommonMapChecksums = map[string]string{
-	"entry_pagination": "756ef122f3ebc73754b5fc4304bf05e59da0ab4af030b2509ff4c9b4a74096ce",
-	"item_meta":        "d7459aa616b15095eadf382299a62e46c33b63ac214cbe15bab20156b7f9ed43",
-	"layout":           "2491695e33a496c9bd902a2cb5bc3a6a540f98ac7c24591d503a77ba0f5f0ebe",
-	"pagination":       "b592d58ea9d6abf2dc0b158621404cbfaeea5413b1c8b8b9818725963096b196",
+	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
+	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
+	"layout":           "d1795cedbbc0fc6ec7a5e31039e10b8361b7a74bcca74d860f127ac159036ab6",
+	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

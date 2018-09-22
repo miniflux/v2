@@ -60,7 +60,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if c.store.AnotherCategoryExists(user.ID, category.ID, categoryForm.Title) {
-		view.Set("errorMessage", "This category already exists.")
+		view.Set("errorMessage", "error.category_already_exists")
 		html.OK(w, r, view.Render("edit_category"))
 		return
 	}
@@ -68,7 +68,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	err = c.store.UpdateCategory(categoryForm.Merge(category))
 	if err != nil {
 		logger.Error("[Controller:UpdateCategory] %v", err)
-		view.Set("errorMessage", "Unable to update this category.")
+		view.Set("errorMessage", "error.unable_to_update_category")
 		html.OK(w, r, view.Render("edit_category"))
 		return
 	}

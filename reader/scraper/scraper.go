@@ -19,8 +19,12 @@ import (
 )
 
 // Fetch downloads a web page a returns relevant contents.
-func Fetch(websiteURL, rules string) (string, error) {
+func Fetch(websiteURL, rules, userAgent string) (string, error) {
 	clt := client.New(websiteURL)
+	if userAgent != "" {
+		clt.WithUserAgent(userAgent)
+	}
+
 	response, err := clt.Get()
 	if err != nil {
 		return "", err
