@@ -127,6 +127,7 @@
     "page.keyboard_shortcuts.go_to_search": "Ustaw fokus na formularzu wyszukiwania",
     "page.keyboard_shortcuts.close_modal": "Zamknij listę skrótów klawiszowych",
     "page.users.title": "Użytkownicy",
+    "page.users.username": "Nazwa użytkownika",
     "page.users.never_logged": "Nigdy",
     "page.users.admin.yes": "Tak",
     "page.users.admin.no": "Nie",

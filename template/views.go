@@ -1328,7 +1328,7 @@ var templateViewsMap = map[string]string{
 {{ else }}
     <table>
         <tr>
-            <th class="column-20">{{ t "Username" }}</th>
+            <th class="column-20">{{ t "page.users.username" }}</th>
             <th>{{ t "page.users.is_admin" }}</th>
             <th>{{ t "page.users.last_login" }}</th>
             <th>{{ t "page.users.actions" }}</th>
@@ -1388,5 +1388,5 @@ var templateViewsMapChecksums = map[string]string{
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "bc04faf83dd977306825973375954600bd014619340188e1243fd9e2f5d5e1a9",
 	"unread_entries":      "058d918592b25bd209c84660dd546b7426f19b1083da868a8672fde9bbcf1b17",
-	"users":               "ca71f7213f45c6abbaae8d1ba9e8400690f92a3edec60e01c91dff067566f1d4",
+	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }

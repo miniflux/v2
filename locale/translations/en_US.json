@@ -125,6 +125,7 @@
     "page.keyboard_shortcuts.go_to_search": "Set focus on search form",
     "page.keyboard_shortcuts.close_modal": "Close modal dialog",
     "page.users.title": "Users",
+    "page.users.username": "Login",
     "page.users.never_logged": "Never",
     "page.users.admin.yes": "Yes",
     "page.users.admin.no": "No",

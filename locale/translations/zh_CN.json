@@ -123,6 +123,7 @@
     "page.keyboard_shortcuts.go_to_search": "将重点放在搜索表单上",
     "page.keyboard_shortcuts.close_modal": "关闭模态对话窗口",
     "page.users.title": "用户",
+    "page.users.username": "用户名",
     "page.users.never_logged": "永不",
     "page.users.admin.yes": "是",
     "page.users.admin.no": "否",

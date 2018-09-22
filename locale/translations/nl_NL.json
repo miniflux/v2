@@ -126,6 +126,7 @@
     "page.keyboard_shortcuts.go_to_search": "Focus instellen op zoekformulier",
     "page.keyboard_shortcuts.close_modal": "Sluit dialoogscherm",
     "page.users.title": "Gebruikers",
+    "page.users.username": "Gebruikersnaam",
     "page.users.never_logged": "Nooit",
     "page.users.admin.yes": "Ja",
     "page.users.admin.no": "Nee",
