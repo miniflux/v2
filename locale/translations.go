@@ -1975,7 +1975,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "2aaa9096d7765156da9c99c32706c9cb77385299ef5e11340bf308965a7c9a36",
+	"de_DE": "bbe22a3f68cf71383370a3f218e51566d481c46e2c376eb8890e22e51a5b21ca",
 	"en_US": "1fa72d9c73ce5d26b49858edb733f420c0b09f6f73838006f415dc7869010d65",
 	"fr_FR": "7a3c5893e63a861d2693f628481741e353c1b09fd656c676ac6eb278e32912ed",
 	"nl_NL": "a2af148809cbbd201a5c949cc1432e52bee08b9440d7a7f2f8ebaebefdfe03d6",
