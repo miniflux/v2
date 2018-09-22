@@ -9,7 +9,7 @@ import "fmt"
 // Language represents a language in the system.
 type Language struct {
 	language     string
-	translations Translation
+	translations catalogMessages
 }
 
 // Get fetch the translation for the given key.

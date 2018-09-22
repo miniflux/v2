@@ -46,42 +46,42 @@
                 <a href="{{ route "unread" }}">Mini<span>flux</span></a>
             </div>
             <ul>
-                <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g u" }}">
-                    <a href="{{ route "unread" }}" data-page="unread">{{ t "Unread" }}
+                <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
+                    <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
                       {{ if gt .countUnread 0 }}
                           <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
                       {{ end }}
                     </a>
                 </li>
-                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g b" }}">
-                    <a href="{{ route "starred" }}" data-page="starred">{{ t "Starred" }}</a>
+                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
+                    <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }}</a>
                 </li>
-                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g h" }}">
-                    <a href="{{ route "history" }}" data-page="history">{{ t "History" }}</a>
+                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
+                    <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
                 </li>
-                <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g f" }}">
-                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "Feeds" }}
+                <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
+                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
                     </a>
                 </li>
-                <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g c" }}">
-                    <a href="{{ route "categories" }}" data-page="categories">{{ t "Categories" }}</a>
+                <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
+                    <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
                 </li>
-                <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "Keyboard Shortcut: %s" "g s" }}">
-                    <a href="{{ route "settings" }}" data-page="settings">{{ t "Settings" }}</a>
+                <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
+                    <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
                 </li>
                 <li>
-                    <a href="{{ route "logout" }}" title="{{ t "Logged as %s" .user.Username }}">{{ t "Logout" }}</a>
+                    <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
                 </li>
             </ul>
             <div class="search">
                 <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "Search" }}</a>
+                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "search.label" }}</a>
                 </div>
                 <form action="{{ route "searchEntries" }}" class="search-form {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <input type="search" name="q" id="search-input" placeholder="{{ t "Search..." }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                    <input type="search" name="q" id="search-input" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
                 </form>
             </div>
         </nav>
@@ -99,43 +99,43 @@
     <template id="keyboard-shortcuts">
         <div id="modal-left">
             <a href="#" class="btn-close-modal">x</a>
-            <h3>{{ t "Keyboard Shortcuts" }}</h3>
+            <h3>{{ t "page.keyboard_shortcuts.title" }}</h3>
 
             <div class="keyboard-shortcuts">
-                <p>{{ t "Sections Navigation" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.sections" }}</p>
                 <ul>
-                    <li>{{ t "Go to unread" }} = <strong>g + u</strong></li>
-                    <li>{{ t "Go to bookmarks" }} = <strong>g + b</strong></li>
-                    <li>{{ t "Go to history" }} = <strong>g + h</strong></li>
-                    <li>{{ t "Go to feeds" }} = <strong>g + f</strong></li>
-                    <li>{{ t "Go to categories" }} = <strong>g + c</strong></li>
-                    <li>{{ t "Go to settings" }} = <strong>g + s</strong></li>
-                    <li>{{ t "Show keyboard shortcuts" }} = <strong>?</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_unread" }} = <strong>g + u</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_starred" }} = <strong>g + b</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_history" }} = <strong>g + h</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_feeds" }} = <strong>g + f</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_categories" }} = <strong>g + c</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_settings" }} = <strong>g + s</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.show_keyboard_shortcuts" }} = <strong>?</strong></li>
                 </ul>
 
-                <p>{{ t "Items Navigation" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
                 <ul>
-                    <li>{{ t "Go to previous item" }} = <strong>p {{ t "or" }} j {{ t "or" }} ◄</strong></li>
-                    <li>{{ t "Go to next item" }} = <strong>n {{ t "or" }} k {{ t "or" }} ►</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>j</strong>, <strong>◄</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>k</strong>, <strong>►</strong></li>
                 </ul>
 
-                <p>{{ t "Pages Navigation" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
                 <ul>
-                    <li>{{ t "Go to previous page" }} = <strong>h</strong></li>
-                    <li>{{ t "Go to next page" }} = <strong>l</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_page" }} = <strong>h</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_page" }} = <strong>l</strong></li>
                 </ul>
 
-                <p>{{ t "Actions" }}</p>
+                <p>{{ t "page.keyboard_shortcuts.subtitle.actions" }}</p>
                 <ul>
-                    <li>{{ t "Open selected item" }} = <strong>o</strong></li>
-                    <li>{{ t "Open original link" }} = <strong>v</strong></li>
-                    <li>{{ t "Toggle read/unread" }} = <strong>m</strong></li>
-                    <li>{{ t "Mark current page as read" }} = <strong>A</strong></li>
-                    <li>{{ t "Download original content" }} = <strong>d</strong></li>
-                    <li>{{ t "Toggle bookmark" }} = <strong>f</strong></li>
-                    <li>{{ t "Save article" }} = <strong>s</strong></li>
-                    <li>{{ t "Set focus on search form" }} = <strong>/</strong></li>
-                    <li>{{ t "Close modal dialog" }} = <strong>Esc</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.toggle_read_status" }} = <strong>m</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.toggle_bookmark_status" }} = <strong>f</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.save_article" }} = <strong>s</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_search" }} = <strong>/</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.close_modal" }} = <strong>Esc</strong></li>
                 </ul>
             </div>
         </div>

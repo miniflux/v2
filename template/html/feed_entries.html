@@ -6,25 +6,25 @@
     <ul>
         {{ if .entries }}
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "Refresh" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "Edit" }}</a>
+            <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "menu.edit_feed" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if ne .feed.ParsingErrorCount 0 }}
 <div class="alert alert-error">
-    <h3>{{ t "There is a problem with this feed" }}</h3>
+    <h3>{{ t "alert.feed_error" }}</h3>
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
 {{ else if not .entries }}
-    <p class="alert">{{ t "There is no article for this feed." }}</p>
+    <p class="alert">{{ t "alert.no_feed_entry" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -46,7 +46,7 @@
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}

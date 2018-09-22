@@ -72,7 +72,7 @@ func parseFeed(r io.Reader) (*model.Feed, *errors.LocalizedError) {
 	var buffer bytes.Buffer
 	size, _ := io.Copy(&buffer, r)
 	if size == 0 {
-		return nil, errors.NewLocalizedError("This feed is empty")
+		return nil, errors.NewLocalizedError(errEmptyFeed)
 	}
 
 	str := stripInvalidXMLCharacters(buffer.String())

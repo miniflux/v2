@@ -48,7 +48,7 @@ func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
 
 	if fileHeader.Size == 0 {
-		view.Set("errorMessage", "This file is empty")
+		view.Set("errorMessage", "error.empty_file")
 		html.OK(w, r, view.Render("import"))
 		return
 	}

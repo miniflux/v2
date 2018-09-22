@@ -36,7 +36,7 @@ func (c *Controller) PocketAuthorize(w http.ResponseWriter, r *http.Request) {
 	requestToken, err := connector.RequestToken(redirectURL)
 	if err != nil {
 		logger.Error("[Pocket:Authorize] %v", err)
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Unable to fetch request token from Pocket!"))
+		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.pocket_request_token"))
 		response.Redirect(w, r, route.Path(c.router, "integrations"))
 		return
 	}
@@ -65,7 +65,7 @@ func (c *Controller) PocketCallback(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := connector.AccessToken(request.PocketRequestToken(r))
 	if err != nil {
 		logger.Error("[Pocket:Callback] %v", err)
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Unable to fetch access token from Pocket!"))
+		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.pocket_access_token"))
 		response.Redirect(w, r, route.Path(c.router, "integrations"))
 		return
 	}
@@ -79,6 +79,6 @@ func (c *Controller) PocketCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Your Pocket account is now linked!"))
+	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.pocket_linked"))
 	response.Redirect(w, r, route.Path(c.router, "integrations"))
 }

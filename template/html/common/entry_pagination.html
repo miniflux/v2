@@ -2,17 +2,17 @@
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .prevEntry }}
-            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "Previous" }}</a>
+            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "pagination.previous" }}</a>
         {{ else }}
-            {{ t "Previous" }}
+            {{ t "pagination.previous" }}
         {{ end }}
     </div>
 
     <div class="pagination-next">
         {{ if .nextEntry }}
-            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "Next" }}</a>
+            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "pagination.next" }}</a>
         {{ else }}
-            {{ t "Next" }}
+            {{ t "pagination.next" }}
         {{ end }}
     </div>
 </div>

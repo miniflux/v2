@@ -47,7 +47,7 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if c.store.UserExists(userForm.Username) {
-		view.Set("errorMessage", "This user already exists.")
+		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("create_user"))
 		return
 	}
@@ -55,7 +55,7 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 	newUser := userForm.ToUser()
 	if err := c.store.CreateUser(newUser); err != nil {
 		logger.Error("[Controller:SaveUser] %v", err)
-		view.Set("errorMessage", "Unable to create this user.")
+		view.Set("errorMessage", "error.unable_to_create_user")
 		html.OK(w, r, view.Render("create_user"))
 		return
 	}

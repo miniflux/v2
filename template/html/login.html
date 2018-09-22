@@ -1,4 +1,4 @@
-{{ define "title"}}{{ t "Sign In" }}{{ end }}
+{{ define "title"}}{{ t "page.login.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="login-form">
@@ -9,19 +9,19 @@
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-username">{{ t "Username" }}</label>
+        <label for="form-username">{{ t "form.user.label.username" }}</label>
         <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required autofocus>
 
-        <label for="form-password">{{ t "Password" }}</label>
+        <label for="form-password">{{ t "form.user.label.password" }}</label>
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" required>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Sign in" }}</button>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.login" }}</button>
         </div>
     </form>
     {{ if hasOAuth2Provider "google" }}
     <div class="oauth2">
-        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "Sign in with Google" }}</a>
+        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.login.google_signin" }}</a>
     </div>
     {{ end }}
 </section>

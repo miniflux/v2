@@ -71,7 +71,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	err = c.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
 		logger.Error("[Controller:EditFeed] %v", err)
-		view.Set("errorMessage", "Unable to update this feed.")
+		view.Set("errorMessage", "error.unable_to_update_feed")
 		html.OK(w, r, view.Render("edit_feed"))
 		return
 	}

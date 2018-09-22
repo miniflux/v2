@@ -54,7 +54,7 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if c.store.AnotherUserExists(user.ID, settingsForm.Username) {
-		view.Set("errorMessage", "This user already exists.")
+		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("settings"))
 		return
 	}
@@ -62,13 +62,13 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	err = c.store.UpdateUser(settingsForm.Merge(user))
 	if err != nil {
 		logger.Error("[Controller:UpdateSettings] %v", err)
-		view.Set("errorMessage", "Unable to update this user.")
+		view.Set("errorMessage", "error.unable_to_update_user")
 		html.OK(w, r, view.Render("settings"))
 		return
 	}
 
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("Preferences saved!"))
+	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.prefs_saved"))
 	response.Redirect(w, r, route.Path(c.router, "settings"))
 }

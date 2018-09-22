@@ -1,11 +1,11 @@
-{{ define "title"}}{{ t "New Category" }}{{ end }}
+{{ define "title"}}{{ t "page.new_category.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "New Category" }}</h1>
+    <h1>{{ t "page.new_category.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "categories" }}">{{ t "Categories" }}</a>
+            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
         </li>
     </ul>
 </section>
@@ -17,11 +17,11 @@
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-title">{{ t "Title" }}</label>
+    <label for="form-title">{{ t "form.category.label.title" }}</label>
     <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Save" }}</button> {{ t "or" }} <a href="{{ route "categories" }}">{{ t "cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "categories" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}

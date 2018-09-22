@@ -1,17 +1,17 @@
-{{ define "title"}}{{ t "Import" }}{{ end }}
+{{ define "title"}}{{ t "page.import.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Import" }}</h1>
+    <h1>{{ t "page.import.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
     </ul>
 </section>
@@ -23,11 +23,11 @@
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-file">{{ t "OPML file" }}</label>
+    <label for="form-file">{{ t "form.import.label.file" }}</label>
     <input type="file" name="file" id="form-file">
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Import" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.import" }}</button>
     </div>
 </form>
 

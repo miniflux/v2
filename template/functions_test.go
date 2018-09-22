@@ -6,6 +6,9 @@ package template // import "miniflux.app/template"
 
 import (
 	"testing"
+	"time"
+
+	"miniflux.app/locale"
 )
 
 func TestDict(t *testing.T) {
@@ -90,5 +93,33 @@ func TestIsEmail(t *testing.T) {
 
 	if isEmail("invalid") {
 		t.Fatal(`This email is not valid and should returns false`)
+	}
+}
+
+func TestElapsedTime(t *testing.T) {
+	translator := locale.Load()
+	language := translator.GetLanguage("fr_FR")
+
+	var dt = []struct {
+		in  time.Time
+		out string
+	}{
+		{time.Time{}, language.Get("time_elapsed.not_yet")},
+		{time.Now().Add(time.Hour), language.Get("time_elapsed.not_yet")},
+		{time.Now(), language.Get("time_elapsed.now")},
+		{time.Now().Add(-time.Minute), language.Plural("time_elapsed.minutes", 1, 1)},
+		{time.Now().Add(-time.Minute * 40), language.Plural("time_elapsed.minutes", 40, 40)},
+		{time.Now().Add(-time.Hour), language.Plural("time_elapsed.hours", 1, 1)},
+		{time.Now().Add(-time.Hour * 3), language.Plural("time_elapsed.hours", 3, 3)},
+		{time.Now().Add(-time.Hour * 32), language.Get("time_elapsed.yesterday")},
+		{time.Now().Add(-time.Hour * 24 * 3), language.Plural("time_elapsed.days", 3, 3)},
+		{time.Now().Add(-time.Hour * 24 * 14), language.Plural("time_elapsed.weeks", 2, 2)},
+		{time.Now().Add(-time.Hour * 24 * 60), language.Plural("time_elapsed.months", 2, 2)},
+		{time.Now().Add(-time.Hour * 24 * 365 * 3), language.Plural("time_elapsed.years", 3, 3)},
+	}
+	for i, tt := range dt {
+		if out := elapsedTime(language, "Local", tt.in); out != tt.out {
+			t.Errorf(`%d. content mismatch for "%v": expected=%q got=%q`, i, tt.in, tt.out, out)
+		}
 	}
 }

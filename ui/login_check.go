@@ -21,7 +21,7 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 	authForm := form.NewAuthForm(r)
 
 	view := view.New(c.tpl, r, sess)
-	view.Set("errorMessage", "Invalid username or password.")
+	view.Set("errorMessage", "error.bad_credentials")
 	view.Set("form", authForm)
 
 	if err := authForm.Validate(); err != nil {

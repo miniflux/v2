@@ -6,6 +6,7 @@ package template // import "miniflux.app/template"
 
 import (
 	"fmt"
+	"math"
 	"html/template"
 	"net/mail"
 	"strings"
@@ -15,7 +16,9 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/filter"
 	"miniflux.app/http/route"
+	"miniflux.app/locale"
 	"miniflux.app/model"
+	"miniflux.app/timezone"
 	"miniflux.app/url"
 )
 
@@ -130,4 +133,45 @@ func isEmail(str string) bool {
 		return false
 	}
 	return true
+}
+
+func elapsedTime(language *locale.Language, tz string, t time.Time) string {
+	if t.IsZero() {
+		return language.Get("time_elapsed.not_yet")
+	}
+
+	now := timezone.Now(tz)
+	t = timezone.Convert(tz, t)
+	if now.Before(t) {
+		return language.Get("time_elapsed.not_yet")
+	}
+
+	diff := now.Sub(t)
+	// Duration in seconds
+	s := diff.Seconds()
+	// Duration in days
+	d := int(s / 86400)
+	switch {
+	case s < 60:
+		return language.Get("time_elapsed.now")
+	case s < 3600:
+		minutes := int(diff.Minutes())
+		return language.Plural("time_elapsed.minutes", minutes, minutes)
+	case s < 86400:
+		hours := int(diff.Hours())
+		return language.Plural("time_elapsed.hours", hours, hours)
+	case d == 1:
+		return language.Get("time_elapsed.yesterday")
+	case d < 7:
+		return language.Plural("time_elapsed.days", d, d)
+	case d < 31:
+		weeks := int(math.Ceil(float64(d) / 7))
+		return language.Plural("time_elapsed.weeks", weeks, weeks)
+	case d < 365:
+		months := int(math.Ceil(float64(d) / 30))
+		return language.Plural("time_elapsed.months", months, months)
+	default:
+		years := int(math.Ceil(float64(d) / 365))
+		return language.Plural("time_elapsed.years", years, years)
+	}
 }

@@ -19,7 +19,7 @@ type AuthForm struct {
 // Validate makes sure the form values are valid.
 func (a AuthForm) Validate() error {
 	if a.Username == "" || a.Password == "" {
-		return errors.NewLocalizedError("All fields are mandatory.")
+		return errors.NewLocalizedError("error.fields_mandatory")
 	}
 
 	return nil

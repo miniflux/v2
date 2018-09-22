@@ -24,7 +24,7 @@ type SubscriptionForm struct {
 // Validate makes sure the form values are valid.
 func (s *SubscriptionForm) Validate() error {
 	if s.URL == "" || s.CategoryID == 0 {
-		return errors.NewLocalizedError("The URL and the category are mandatory.")
+		return errors.NewLocalizedError("error.feed_mandatory_fields")
 	}
 
 	return nil

@@ -1,12 +1,12 @@
-{{ define "title"}}{{ t "Search Results" }} ({{ .total }}){{ end }}
+{{ define "title"}}{{ t "page.search.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Search Results" }} ({{ .total }})</h1>
+    <h1>{{ t "page.search.title" }} ({{ .total }})</h1>
 </section>
 
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "There is no result for this search." }}</p>
+    <p class="alert alert-info">{{ t "alert.no_search_result" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}

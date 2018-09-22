@@ -71,7 +71,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	switch {
 	case n == 0:
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", "Unable to find any subscription.")
+		v.Set("errorMessage", "error.subscription_not_found")
 		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
 		feed, err := c.feedHandler.CreateFeed(

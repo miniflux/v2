@@ -1,22 +1,22 @@
-{{ define "title"}}{{ t "Integrations" }}{{ end }}
+{{ define "title"}}{{ t "page.integrations.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Integrations" }}</h1>
+    <h1>{{ t "page.integrations.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
@@ -31,131 +31,131 @@
     <h3>Fever</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "Activate Fever API" }}
+            <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "form.integration.fever_activate" }}
         </label>
 
-        <label for="form-fever-username">{{ t "Fever Username" }}</label>
+        <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
         <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}">
 
-        <label for="form-fever-password">{{ t "Fever Password" }}</label>
+        <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
 
-        <p>{{ t "Fever API endpoint:" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
+        <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
     </div>
 
     <h3>Pinboard</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "Save articles to Pinboard" }}
+            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "form.integration.pinboard_activate" }}
         </label>
 
-        <label for="form-pinboard-token">{{ t "Pinboard API Token" }}</label>
+        <label for="form-pinboard-token">{{ t "form.integration.pinboard_token" }}</label>
         <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}" autocomplete="new-password">
 
-        <label for="form-pinboard-tags">{{ t "Pinboard Tags" }}</label>
+        <label for="form-pinboard-tags">{{ t "form.integration.pinboard_tags" }}</label>
         <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}">
 
         <label>
-            <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "Mark bookmark as unread" }}
+            <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "form.integration.pinboard_bookmark" }}
         </label>
     </div>
 
     <h3>Instapaper</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "Save articles to Instapaper" }}
+            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "form.integration.instapaper_activate" }}
         </label>
 
-        <label for="form-instapaper-username">{{ t "Instapaper Username" }}</label>
+        <label for="form-instapaper-username">{{ t "form.integration.instapaper_username" }}</label>
         <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}">
 
-        <label for="form-instapaper-password">{{ t "Instapaper Password" }}</label>
+        <label for="form-instapaper-password">{{ t "form.integration.instapaper_password" }}</label>
         <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
     </div>
 
     <h3>Pocket</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "Save articles to Pocket" }}
+            <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "form.integration.pocket_activate" }}
         </label>
 
         {{ if not .hasPocketConsumerKeyConfigured }}
-            <label for="form-pocket-consumer-key">{{ t "Pocket Consumer Key" }}</label>
+            <label for="form-pocket-consumer-key">{{ t "form.integration.pocket_consumer_key" }}</label>
             <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}">
         {{ end }}
 
-        <label for="form-pocket-access-token">{{ t "Pocket Access Token" }}</label>
+        <label for="form-pocket-access-token">{{ t "form.integration.pocket_access_token" }}</label>
         <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}" autocomplete="new-password">
 
         {{ if not .form.PocketAccessToken }}
-            <p><a href="{{ route "pocketAuthorize" }}">{{ t "Connect your Pocket account" }}</a></p>
+            <p><a href="{{ route "pocketAuthorize" }}">{{ t "form.integration.pocket_connect_link" }}</a></p>
         {{ end }}
     </div>
 
     <h3>Wallabag</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "Save articles to Wallabag" }}
+            <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "form.integration.wallabag_activate" }}
         </label>
 
-        <label for="form-wallabag-url">{{ t "Wallabag API Endpoint" }}</label>
+        <label for="form-wallabag-url">{{ t "form.integration.wallabag_endpoint" }}</label>
         <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/">
 
-        <label for="form-wallabag-client-id">{{ t "Wallabag Client ID" }}</label>
+        <label for="form-wallabag-client-id">{{ t "form.integration.wallabag_client_id" }}</label>
         <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}">
 
-        <label for="form-wallabag-client-secret">{{ t "Wallabag Client Secret" }}</label>
+        <label for="form-wallabag-client-secret">{{ t "form.integration.wallabag_client_secret" }}</label>
         <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}" autocomplete="new-password">
 
-        <label for="form-wallabag-username">{{ t "Wallabag Username" }}</label>
+        <label for="form-wallabag-username">{{ t "form.integration.wallabag_username" }}</label>
         <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}">
 
-        <label for="form-wallabag-password">{{ t "Wallabag Password" }}</label>
+        <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
         <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
     </div>
 
     <h3>Nunux Keeper</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "Save articles to Nunux Keeper" }}
+            <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "form.integration.nunux_keeper_activate" }}
         </label>
 
-        <label for="form-nunux-keeper-url">{{ t "Nunux Keeper API Endpoint" }}</label>
+        <label for="form-nunux-keeper-url">{{ t "form.integration.nunux_keeper_endpoint" }}</label>
         <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper">
 
-        <label for="form-nunux-keeper-api-key">{{ t "Nunux Keeper API key" }}</label>
+        <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
     </div>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
 </form>
 
-<h3>{{ t "Miniflux API" }}</h3>
+<h3>{{ t "page.integration.miniflux_api" }}</h3>
 <div class="panel">
     <ul>
         <li>
-            {{ t "API Endpoint" }} = <strong>{{ baseURL }}/v1/</strong>
+            {{ t "page.integration.miniflux_api_endpoint" }} = <strong>{{ baseURL }}/v1/</strong>
         </li>
         <li>
-            {{ t "Username" }} = <strong>{{ .user.Username }}</strong>
+            {{ t "page.integration.miniflux_api_username" }} = <strong>{{ .user.Username }}</strong>
         </li>
         <li>
-            {{ t "Password" }} = <strong>{{ t "Your account password" }}</strong>
+            {{ t "page.integration.miniflux_api_password" }} = <strong>{{ t "page.integration.miniflux_api_password_value" }}</strong>
         </li>
     </ul>
 </div>
 
-<h3>{{ t "Bookmarklet" }}</h3>
+<h3>{{ t "page.integration.bookmarklet" }}</h3>
 <div class="panel">
-    <p>{{ t "This special link allows you to subscribe to a website directly by using a bookmark in your web browser." }}</p>
+    <p>{{ t "page.integration.bookmarklet.help" }}</p>
 
     <div class="bookmarklet">
-        <a href="javascript:location.href='{{ rootURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "Add to Miniflux" }}</a>
+        <a href="javascript:location.href='{{ rootURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "page.integration.bookmarklet.name" }}</a>
     </div>
 
-    <p>{{ t "Drag and drop this link to your bookmarks." }}</p>
+    <p>{{ t "page.integration.bookmarklet.instructions" }}</p>
 </div>
 
 {{ end }}

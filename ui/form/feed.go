@@ -29,7 +29,7 @@ type FeedForm struct {
 // ValidateModification validates FeedForm fields
 func (f FeedForm) ValidateModification() error {
 	if f.FeedURL == "" || f.SiteURL == "" || f.Title == "" || f.CategoryID == 0 {
-		return errors.NewLocalizedError("All fields are mandatory.")
+		return errors.NewLocalizedError("error.fields_mandatory")
 	}
 	return nil
 }

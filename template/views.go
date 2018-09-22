@@ -3,67 +3,67 @@
 package template // import "miniflux.app/template"
 
 var templateViewsMap = map[string]string{
-	"about": `{{ define "title"}}{{ t "About" }}{{ end }}
+	"about": `{{ define "title"}}{{ t "page.about.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "About" }}</h1>
+    <h1>{{ t "page.about.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.preferences" }}</a>
         </li>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         {{ end }}
     </ul>
 </section>
 
 <div class="panel">
-    <h3>{{ t "Version" }}</h3>
+    <h3>Miniflux</h3>
     <ul>
-        <li><strong>{{ t "Version:" }}</strong> {{ .version }}</li>
-        <li><strong>{{ t "Build Date:" }}</strong> {{ .build_date }}</li>
+        <li><strong>{{ t "page.about.version" }}</strong> {{ .version }}</li>
+        <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
     </ul>
 </div>
 
 <div class="panel">
-    <h3>{{ t "Authors" }}</h3>
+    <h3>{{ t "page.about.credits" }}</h3>
     <ul>
-        <li><strong>{{ t "Author:" }}</strong> Frédéric Guillot</li>
-        <li><strong>{{ t "License:" }}</strong> Apache 2.0</li>
+        <li><strong>{{ t "page.about.author" }}</strong> Frédéric Guillot</li>
+        <li><strong>{{ t "page.about.license" }}</strong> Apache 2.0</li>
     </ul>
 </div>
 
 {{ end }}
 `,
-	"add_subscription": `{{ define "title"}}{{ t "New Subscription" }}{{ end }}
+	"add_subscription": `{{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "New Subscription" }}</h1>
+    <h1>{{ t "page.add_feed.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
         <li>
-            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "There is no category. You must have at least one category." }}</p>
+    <p class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
 {{ else }}
     <form action="{{ route "submitSubscription" }}" method="post" autocomplete="off">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
@@ -72,10 +72,10 @@ var templateViewsMap = map[string]string{
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-url">{{ t "URL" }}</label>
+        <label for="form-url">{{ t "page.add_feed.label.url" }}</label>
         <input type="url" name="url" id="form-url" placeholder="https://domain.tld/" value="{{ .form.URL }}" required autofocus>
 
-        <label for="form-category">{{ t "Category" }}</label>
+        <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
             {{ range .categories }}
                 <option value="{{ .ID }}">{{ .Title }}</option>
@@ -83,17 +83,17 @@ var templateViewsMap = map[string]string{
         </select>
 
         <fieldset>
-            <legend>{{ t "Advanced Options" }}</legend>
+            <legend>{{ t "page.add_feed.legend.advanced_options" }}</legend>
 
-            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
 
-	        <label for="form-user-agent">{{ t "User-Agent" }}</label>
-	        <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
+            <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
+            <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
 
-            <label for="form-feed-username">{{ t "Feed Username" }}</label>
+            <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
             <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-            <label for="form-feed-password">{{ t "Feed Password" }}</label>
+            <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
             <!--
                 We are using the type "text" otherwise Firefox always autocomplete this password:
 
@@ -105,22 +105,22 @@ var templateViewsMap = map[string]string{
         </fieldset>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Find a subscription" }}</button>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "page.add_feed.submit" }}</button>
         </div>
     </form>
 {{ end }}
 
 {{ end }}
 `,
-	"bookmark_entries": `{{ define "title"}}{{ t "Favorites" }} ({{ .total }}){{ end }}
+	"bookmark_entries": `{{ define "title"}}{{ t "page.starred.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Favorites" }} ({{ .total }})</h1>
+    <h1>{{ t "page.starred.title" }} ({{ .total }})</h1>
 </section>
 
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "There is no bookmark at the moment." }}</p>
+    <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -143,20 +143,20 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"categories": `{{ define "title"}}{{ t "Categories" }} ({{ .total }}){{ end }}
+	"categories": `{{ define "title"}}{{ t "page.categories.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Categories" }} ({{ .total }})</h1>
+    <h1>{{ t "page.categories.title" }} ({{ .total }})</h1>
     <ul>
         <li>
-            <a href="{{ route "createCategory" }}">{{ t "Create a category" }}</a>
+            <a href="{{ route "createCategory" }}">{{ t "menu.create_category" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "There is no category." }}</p>
+    <p class="alert alert-error">{{ t "page.categories.no_category" }}</p>
 {{ else }}
     <div class="items">
         {{ range .categories }}
@@ -172,7 +172,7 @@ var templateViewsMap = map[string]string{
                         {{ if eq .FeedCount 0 }}
                             {{ t "No feed." }}
                         {{ else }}
-                            {{ plural "plural.categories.feed_count" .FeedCount .FeedCount }}
+                            {{ plural "page.categories.feed_count" .FeedCount .FeedCount }}
                         {{ end }}
                     </li>
                 </ul>
@@ -184,11 +184,11 @@ var templateViewsMap = map[string]string{
                     <li>
                         <a href="#"
                             data-confirm="true"
-                            data-label-question="{{ t "Are you sure?" }}"
-                            data-label-yes="{{ t "yes" }}"
-                            data-label-no="{{ t "no" }}"
-                            data-label-loading="{{ t "Work in progress..." }}"
-                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ t "Remove" }}</a>
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}"
+                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ t "action.remove" }}</a>
                     </li>
                     {{ end }}
                 </ul>
@@ -208,14 +208,14 @@ var templateViewsMap = map[string]string{
     {{ if .entries }}
     <ul>
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
     </ul>
     {{ end }}
 </section>
 
 {{ if not .entries }}
-    <p class="alert">{{ t "There is no article in this category." }}</p>
+    <p class="alert">{{ t "alert.no_category" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -237,7 +237,7 @@ var templateViewsMap = map[string]string{
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}
@@ -247,20 +247,20 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"choose_subscription": `{{ define "title"}}{{ t "Choose a Subscription" }}{{ end }}
+	"choose_subscription": `{{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "New Subscription" }}</h1>
+    <h1>{{ t "page.add_feed.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
         <li>
-            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
         </li>
     </ul>
 </section>
@@ -275,7 +275,7 @@ var templateViewsMap = map[string]string{
         <input type="hidden" name="crawler" value="1">
     {{ end }}
 
-    <h3>{{ t "Choose a Subscription" }}</h3>
+    <h3>{{ t "page.add_feed.choose_feed" }}</h3>
 
     {{ range .subscriptions }}
         <div class="radio-group">
@@ -285,19 +285,19 @@ var templateViewsMap = map[string]string{
     {{ end }}
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Subscribe" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "action.subscribe" }}</button>
     </div>
 </form>
 {{ end }}
 `,
-	"create_category": `{{ define "title"}}{{ t "New Category" }}{{ end }}
+	"create_category": `{{ define "title"}}{{ t "page.new_category.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "New Category" }}</h1>
+    <h1>{{ t "page.new_category.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "categories" }}">{{ t "Categories" }}</a>
+            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
         </li>
     </ul>
 </section>
@@ -309,35 +309,35 @@ var templateViewsMap = map[string]string{
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-title">{{ t "Title" }}</label>
+    <label for="form-title">{{ t "form.category.label.title" }}</label>
     <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Save" }}</button> {{ t "or" }} <a href="{{ route "categories" }}">{{ t "cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "categories" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}
 `,
-	"create_user": `{{ define "title"}}{{ t "New User" }}{{ end }}
+	"create_user": `{{ define "title"}}{{ t "page.new_user.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "New User" }}</h1>
+    <h1>{{ t "page.new_user.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
@@ -349,34 +349,34 @@ var templateViewsMap = map[string]string{
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-username">{{ t "Username" }}</label>
+    <label for="form-username">{{ t "form.user.label.username" }}</label>
     <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password" required autofocus>
 
-    <label for="form-password">{{ t "Password" }}</label>
+    <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password" required>
 
-    <label for="form-confirmation">{{ t "Confirmation" }}</label>
+    <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
     <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" required>
 
-    <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "Administrator" }}</label>
+    <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "form.user.label.admin" }}</label>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Save" }}</button> {{ t "or" }} <a href="{{ route "users" }}">{{ t "cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "users" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}
 `,
-	"edit_category": `{{ define "title"}}{{ t "Edit Category: %s" .category.Title }}{{ end }}
+	"edit_category": `{{ define "title"}}{{ t "page.edit_category.title" .category.Title }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Edit Category: %s" .category.Title }}</h1>
+    <h1>{{ t "page.edit_category.title" .category.Title }}</h1>
     <ul>
         <li>
-            <a href="{{ route "categories" }}">{{ t "Categories" }}</a>
+            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
         </li>
         <li>
-            <a href="{{ route "createCategory" }}">{{ t "Create a category" }}</a>
+            <a href="{{ route "createCategory" }}">{{ t "menu.create_category" }}</a>
         </li>
     </ul>
 </section>
@@ -388,42 +388,42 @@ var templateViewsMap = map[string]string{
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-title">{{ t "Title" }}</label>
+    <label for="form-title">{{ t "form.category.label.title" }}</label>
     <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button> {{ t "or" }} <a href="{{ route "categories" }}">{{ t "cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "categories" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}
 `,
-	"edit_feed": `{{ define "title"}}{{ t "Edit Feed: %s" .feed.Title }}{{ end }}
+	"edit_feed": `{{ define "title"}}{{ t "page.edit_feed.title" .feed.Title }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ .feed.Title }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
         <li>
-            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "There is no category!" }}</p>
+    <p class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
 {{ else }}
     {{ if ne .feed.ParsingErrorCount 0 }}
     <div class="alert alert-error">
-        <h3>{{ t "Last Parsing Error" }}</h3>
+        <h3>{{ t "page.edit_feed.last_parsing_error" }}</h3>
         <p>{{ t .feed.ParsingErrorMsg }}</p>
     </div>
     {{ end }}
@@ -435,19 +435,19 @@ var templateViewsMap = map[string]string{
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-title">{{ t "Title" }}</label>
+        <label for="form-title">{{ t "form.feed.label.title" }}</label>
         <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
-        <label for="form-site-url">{{ t "Site URL" }}</label>
+        <label for="form-site-url">{{ t "form.feed.label.site_url" }}</label>
         <input type="url" name="site_url" id="form-site-url" placeholder="https://domain.tld/" value="{{ .form.SiteURL }}" required>
 
-        <label for="form-feed-url">{{ t "Feed URL" }}</label>
+        <label for="form-feed-url">{{ t "form.feed.label.feed_url" }}</label>
         <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" required>
 
-        <label for="form-feed-username">{{ t "Feed Username" }}</label>
+        <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
         <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-        <label for="form-feed-password">{{ t "Feed Password" }}</label>
+        <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
         <!--
             We are using the type "text" otherwise Firefox always autocomplete this password:
 
@@ -457,73 +457,73 @@ var templateViewsMap = map[string]string{
         -->
         <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
 
-	    <label for="form-user-agent">{{ t "User-Agent" }}</label>
+	    <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
 	    <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}">
 
-        <label for="form-scraper-rules">{{ t "Scraper Rules" }}</label>
+        <label for="form-scraper-rules">{{ t "form.feed.label.scraper_rules" }}</label>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
 
-        <label for="form-rewrite-rules">{{ t "Rewrite Rules" }}</label>
+        <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
         <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
 
-        <label for="form-category">{{ t "Category" }}</label>
+        <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
         {{ range .categories }}
             <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
         {{ end }}
         </select>
 
-        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "Fetch original content" }}</label>
+        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button> {{ t "or" }} <a href="{{ route "feeds" }}">{{ t "cancel" }}</a>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "feeds" }}">{{ t "action.cancel" }}</a>
         </div>
     </form>
 
     <div class="panel">
         <ul>
-            <li><strong>{{ t "Last checked:" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
-            <li><strong>{{ t "ETag header:" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
-            <li><strong>{{ t "LastModified header:" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "None" }}{{ end }}</li>
+            <li><strong>{{ t "page.edit_feed.last_check" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
+            <li><strong>{{ t "page.edit_feed.etag_header" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
+            <li><strong>{{ t "page.edit_feed.last_modified_header" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
         </ul>
     </div>
 
     <div class="alert alert-error">
         <a href="#"
             data-confirm="true"
-            data-label-question="{{ t "Are you sure?" }}"
-            data-label-yes="{{ t "yes" }}"
-            data-label-no="{{ t "no" }}"
-            data-label-loading="{{ t "Work in progress..." }}"
+            data-label-question="{{ t "confirm.question" }}"
+            data-label-yes="{{ t "confirm.yes" }}"
+            data-label-no="{{ t "confirm.no" }}"
+            data-label-loading="{{ t "confirm.loading" }}"
             data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-            data-redirect-url="{{ route "feeds" }}">{{ t "Remove this feed" }}</a>
+            data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
     </div>
 {{ end }}
 
 {{ end }}`,
-	"edit_user": `{{ define "title"}}{{ t "Edit user: %s" .selected_user.Username }}{{ end }}
+	"edit_user": `{{ define "title"}}{{ t "page.edit_user.title" .selected_user.Username }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Edit user %s" .selected_user.Username }}</h1>
+    <h1>{{ t "page.edit_user.title" .selected_user.Username }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         <li>
-            <a href="{{ route "createUser" }}">{{ t "Add user" }}</a>
+            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
         </li>
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
@@ -535,19 +535,19 @@ var templateViewsMap = map[string]string{
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-username">{{ t "Username" }}</label>
+    <label for="form-username">{{ t "form.user.label.username" }}</label>
     <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password" required autofocus>
 
-    <label for="form-password">{{ t "Password" }}</label>
+    <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
 
-    <label for="form-confirmation">{{ t "Confirmation" }}</label>
+    <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
     <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
-    <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "Administrator" }}</label>
+    <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "form.user.label.admin" }}</label>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button> {{ t "or" }} <a href="{{ route "users" }}">{{ t "cancel" }}</a>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "users" }}">{{ t "action.cancel" }}</a>
     </div>
 </form>
 {{ end }}
@@ -564,46 +564,46 @@ var templateViewsMap = map[string]string{
             <ul>
                 <li>
                     <a href="#"
-                        title="{{ t "Change entry status" }}"
+                        title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
-                        data-label-read="✔&#xfe0e;&nbsp;{{ t "Read" }}"
-                        data-label-unread="✘&nbsp;{{ t "Unread" }}"
+                        data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
+                        data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "Unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "Read" }}{{ end }}</a>
+                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
                 </li>
                 <li>
                     <a href="#"
                         data-toggle-bookmark="true"
                         data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
-                        data-label-loading="{{ t "Saving..." }}"
-                        data-label-star="☆&nbsp;{{ t "Star" }}"
-                        data-label-unstar="★&nbsp;{{ t "Unstar" }}"
+                        data-label-loading="{{ t "entry.state.saving" }}"
+                        data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
+                        data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >{{ if .entry.Starred }}★&nbsp;{{ t "Unstar" }}{{ else }}☆&nbsp;{{ t "Star" }}{{ end }}</a>
+                        >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>
                         <a href="#"
-                            title="{{ t "Save this article" }}"
+                            title="{{ t "entry.save.title" }}"
                             data-save-entry="true"
                             data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
-                            data-label-loading="{{ t "Saving..." }}"
-                            data-label-done="{{ t "Done!" }}"
-                            >{{ t "Save" }}</a>
+                            data-label-loading="{{ t "entry.state.saving" }}"
+                            data-label-done="{{ t "entry.save.completed" }}"
+                            >{{ t "entry.save.title" }}</a>
                     </li>
                 {{ end }}
                 <li>
                     <a href="#"
-                        title="{{ t "Fetch original content" }}"
+                        title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
                         data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
-                        data-label-loading="{{ t "Loading..." }}"
-                        data-label-done="{{ t "Done!" }}"
-                        >{{ t "Fetch original content" }}</a>
+                        data-label-loading="{{ t "entry.state.loading" }}"
+                        data-label-done="{{ t "entry.scraper.completed" }}"
+                        >{{ t "entry.scraper.label" }}</a>
                 </li>
                 {{ if .entry.CommentsURL }}
                     <li>
-                        <a href="{{ .entry.CommentsURL }}" title="{{ t "View Comments" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Comments" }}</a>
+                        <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
                     </li>
                 {{ end }}
             </ul>
@@ -664,7 +664,7 @@ var templateViewsMap = map[string]string{
                 {{ end }}
 
                 <div class="entry-enclosure-download">
-                    <a href="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "Download" }}</a>
+                    <a href="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "action.download" }}</a>
                     <small>({{ .URL }})</small>
                 </div>
             </div>
@@ -686,25 +686,25 @@ var templateViewsMap = map[string]string{
     <ul>
         {{ if .entries }}
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "Refresh" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "Edit" }}</a>
+            <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "menu.edit_feed" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if ne .feed.ParsingErrorCount 0 }}
 <div class="alert alert-error">
-    <h3>{{ t "There is a problem with this feed" }}</h3>
+    <h3>{{ t "alert.feed_error" }}</h3>
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
 {{ else if not .entries }}
-    <p class="alert">{{ t "There is no article for this feed." }}</p>
+    <p class="alert">{{ t "alert.no_feed_entry" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -726,7 +726,7 @@ var templateViewsMap = map[string]string{
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}
@@ -736,29 +736,29 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"feeds": `{{ define "title"}}{{ t "Feeds" }} ({{ .total }}){{ end }}
+	"feeds": `{{ define "title"}}{{ t "page.feeds.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Feeds" }} ({{ .total }})</h1>
+    <h1>{{ t "page.feeds.title" }} ({{ .total }})</h1>
     <ul>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
         <li>
-            <a href="{{ route "import" }}">{{ t "Import" }}</a>
+            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
         </li>
         <li>
-            <a href="{{ route "refreshAllFeeds" }}">{{ t "Refresh all feeds in background" }}</a>
+            <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if not .feeds }}
-    <p class="alert">{{ t "You don't have any subscription." }}</p>
+    <p class="alert">{{ t "alert.no_feed" }}</p>
 {{ else }}
     <div class="items">
         {{ range .feeds }}
@@ -780,7 +780,7 @@ var templateViewsMap = map[string]string{
                         <a href="{{ .SiteURL }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
-                        {{ t "Last check:" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
+                        {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
                 </ul>
                 <ul>
@@ -793,17 +793,17 @@ var templateViewsMap = map[string]string{
                     <li>
                         <a href="#"
                             data-confirm="true"
-                            data-label-question="{{ t "Are you sure?" }}"
-                            data-label-yes="{{ t "yes" }}"
-                            data-label-no="{{ t "no" }}"
-                            data-label-loading="{{ t "Work in progress..." }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ t "Remove" }}</a>
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}"
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ t "action.remove" }}</a>
                     </li>
                 </ul>
             </div>
             {{ if ne .ParsingErrorCount 0 }}
                 <div class="parsing-error">
-                    <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "plural.feed.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
+                    <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "page.feeds.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
                     - <small class="parsing-error-message">{{ .ParsingErrorMsg }}</small>
                 </div>
             {{ end }}
@@ -814,22 +814,22 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"history_entries": `{{ define "title"}}{{ t "History" }} ({{ .total }}){{ end }}
+	"history_entries": `{{ define "title"}}{{ t "page.history.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "History" }} ({{ .total }})</h1>
+    <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
     {{ if .entries }}
     <ul>
         <li>
-            <a href="{{ route "flushHistory" }}">{{ t "Flush history" }}</a>
+            <a href="{{ route "flushHistory" }}">{{ t "menu.flush_history" }}</a>
         </li>
     </ul>
     {{ end }}
 </section>
 
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "There is no history at the moment." }}</p>
+    <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -852,20 +852,20 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"import": `{{ define "title"}}{{ t "Import" }}{{ end }}
+	"import": `{{ define "title"}}{{ t "page.import.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Import" }}</h1>
+    <h1>{{ t "page.import.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "Feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "Add subscription" }}</a>
+            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "Export" }}</a>
+            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
         </li>
     </ul>
 </section>
@@ -877,35 +877,35 @@ var templateViewsMap = map[string]string{
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-file">{{ t "OPML file" }}</label>
+    <label for="form-file">{{ t "form.import.label.file" }}</label>
     <input type="file" name="file" id="form-file">
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Import" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.import" }}</button>
     </div>
 </form>
 
 {{ end }}
 `,
-	"integrations": `{{ define "title"}}{{ t "Integrations" }}{{ end }}
+	"integrations": `{{ define "title"}}{{ t "page.integrations.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Integrations" }}</h1>
+    <h1>{{ t "page.integrations.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
@@ -920,136 +920,136 @@ var templateViewsMap = map[string]string{
     <h3>Fever</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "Activate Fever API" }}
+            <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "form.integration.fever_activate" }}
         </label>
 
-        <label for="form-fever-username">{{ t "Fever Username" }}</label>
+        <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
         <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}">
 
-        <label for="form-fever-password">{{ t "Fever Password" }}</label>
+        <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
 
-        <p>{{ t "Fever API endpoint:" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
+        <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
     </div>
 
     <h3>Pinboard</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "Save articles to Pinboard" }}
+            <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "form.integration.pinboard_activate" }}
         </label>
 
-        <label for="form-pinboard-token">{{ t "Pinboard API Token" }}</label>
+        <label for="form-pinboard-token">{{ t "form.integration.pinboard_token" }}</label>
         <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}" autocomplete="new-password">
 
-        <label for="form-pinboard-tags">{{ t "Pinboard Tags" }}</label>
+        <label for="form-pinboard-tags">{{ t "form.integration.pinboard_tags" }}</label>
         <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}">
 
         <label>
-            <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "Mark bookmark as unread" }}
+            <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "form.integration.pinboard_bookmark" }}
         </label>
     </div>
 
     <h3>Instapaper</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "Save articles to Instapaper" }}
+            <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "form.integration.instapaper_activate" }}
         </label>
 
-        <label for="form-instapaper-username">{{ t "Instapaper Username" }}</label>
+        <label for="form-instapaper-username">{{ t "form.integration.instapaper_username" }}</label>
         <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}">
 
-        <label for="form-instapaper-password">{{ t "Instapaper Password" }}</label>
+        <label for="form-instapaper-password">{{ t "form.integration.instapaper_password" }}</label>
         <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
     </div>
 
     <h3>Pocket</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "Save articles to Pocket" }}
+            <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "form.integration.pocket_activate" }}
         </label>
 
         {{ if not .hasPocketConsumerKeyConfigured }}
-            <label for="form-pocket-consumer-key">{{ t "Pocket Consumer Key" }}</label>
+            <label for="form-pocket-consumer-key">{{ t "form.integration.pocket_consumer_key" }}</label>
             <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}">
         {{ end }}
 
-        <label for="form-pocket-access-token">{{ t "Pocket Access Token" }}</label>
+        <label for="form-pocket-access-token">{{ t "form.integration.pocket_access_token" }}</label>
         <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}" autocomplete="new-password">
 
         {{ if not .form.PocketAccessToken }}
-            <p><a href="{{ route "pocketAuthorize" }}">{{ t "Connect your Pocket account" }}</a></p>
+            <p><a href="{{ route "pocketAuthorize" }}">{{ t "form.integration.pocket_connect_link" }}</a></p>
         {{ end }}
     </div>
 
     <h3>Wallabag</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "Save articles to Wallabag" }}
+            <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "form.integration.wallabag_activate" }}
         </label>
 
-        <label for="form-wallabag-url">{{ t "Wallabag API Endpoint" }}</label>
+        <label for="form-wallabag-url">{{ t "form.integration.wallabag_endpoint" }}</label>
         <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/">
 
-        <label for="form-wallabag-client-id">{{ t "Wallabag Client ID" }}</label>
+        <label for="form-wallabag-client-id">{{ t "form.integration.wallabag_client_id" }}</label>
         <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}">
 
-        <label for="form-wallabag-client-secret">{{ t "Wallabag Client Secret" }}</label>
+        <label for="form-wallabag-client-secret">{{ t "form.integration.wallabag_client_secret" }}</label>
         <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}" autocomplete="new-password">
 
-        <label for="form-wallabag-username">{{ t "Wallabag Username" }}</label>
+        <label for="form-wallabag-username">{{ t "form.integration.wallabag_username" }}</label>
         <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}">
 
-        <label for="form-wallabag-password">{{ t "Wallabag Password" }}</label>
+        <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
         <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
     </div>
 
     <h3>Nunux Keeper</h3>
     <div class="form-section">
         <label>
-            <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "Save articles to Nunux Keeper" }}
+            <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "form.integration.nunux_keeper_activate" }}
         </label>
 
-        <label for="form-nunux-keeper-url">{{ t "Nunux Keeper API Endpoint" }}</label>
+        <label for="form-nunux-keeper-url">{{ t "form.integration.nunux_keeper_endpoint" }}</label>
         <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper">
 
-        <label for="form-nunux-keeper-api-key">{{ t "Nunux Keeper API key" }}</label>
+        <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
     </div>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
 </form>
 
-<h3>{{ t "Miniflux API" }}</h3>
+<h3>{{ t "page.integration.miniflux_api" }}</h3>
 <div class="panel">
     <ul>
         <li>
-            {{ t "API Endpoint" }} = <strong>{{ baseURL }}/v1/</strong>
+            {{ t "page.integration.miniflux_api_endpoint" }} = <strong>{{ baseURL }}/v1/</strong>
         </li>
         <li>
-            {{ t "Username" }} = <strong>{{ .user.Username }}</strong>
+            {{ t "page.integration.miniflux_api_username" }} = <strong>{{ .user.Username }}</strong>
         </li>
         <li>
-            {{ t "Password" }} = <strong>{{ t "Your account password" }}</strong>
+            {{ t "page.integration.miniflux_api_password" }} = <strong>{{ t "page.integration.miniflux_api_password_value" }}</strong>
         </li>
     </ul>
 </div>
 
-<h3>{{ t "Bookmarklet" }}</h3>
+<h3>{{ t "page.integration.bookmarklet" }}</h3>
 <div class="panel">
-    <p>{{ t "This special link allows you to subscribe to a website directly by using a bookmark in your web browser." }}</p>
+    <p>{{ t "page.integration.bookmarklet.help" }}</p>
 
     <div class="bookmarklet">
-        <a href="javascript:location.href='{{ rootURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "Add to Miniflux" }}</a>
+        <a href="javascript:location.href='{{ rootURL }}{{ route "bookmarklet" }}?uri='+encodeURIComponent(window.location.href)">{{ t "page.integration.bookmarklet.name" }}</a>
     </div>
 
-    <p>{{ t "Drag and drop this link to your bookmarks." }}</p>
+    <p>{{ t "page.integration.bookmarklet.instructions" }}</p>
 </div>
 
 {{ end }}
 `,
-	"login": `{{ define "title"}}{{ t "Sign In" }}{{ end }}
+	"login": `{{ define "title"}}{{ t "page.login.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="login-form">
@@ -1060,33 +1060,33 @@ var templateViewsMap = map[string]string{
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-username">{{ t "Username" }}</label>
+        <label for="form-username">{{ t "form.user.label.username" }}</label>
         <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required autofocus>
 
-        <label for="form-password">{{ t "Password" }}</label>
+        <label for="form-password">{{ t "form.user.label.password" }}</label>
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" required>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Sign in" }}</button>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.login" }}</button>
         </div>
     </form>
     {{ if hasOAuth2Provider "google" }}
     <div class="oauth2">
-        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "Sign in with Google" }}</a>
+        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.login.google_signin" }}</a>
     </div>
     {{ end }}
 </section>
 {{ end }}
 `,
-	"search_entries": `{{ define "title"}}{{ t "Search Results" }} ({{ .total }}){{ end }}
+	"search_entries": `{{ define "title"}}{{ t "page.search.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Search Results" }} ({{ .total }})</h1>
+    <h1>{{ t "page.search.title" }} ({{ .total }})</h1>
 </section>
 
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "There is no result for this search." }}</p>
+    <p class="alert alert-info">{{ t "alert.no_search_result" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -1109,38 +1109,38 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"sessions": `{{ define "title"}}{{ t "Sessions" }}{{ end }}
+	"sessions": `{{ define "title"}}{{ t "page.sessions.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Sessions" }}</h1>
+    <h1>{{ t "page.sessions.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         <li>
-            <a href="{{ route "createUser" }}">{{ t "Add user" }}</a>
+            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
 
 <table>
     <tr>
-        <th>{{ t "Date" }}</th>
-        <th>{{ t "IP Address" }}</th>
-        <th>{{ t "User Agent" }}</th>
-        <th>{{ t "Actions" }}</th>
+        <th>{{ t "page.sessions.table.date" }}</th>
+        <th>{{ t "page.sessions.table.ip" }}</th>
+        <th>{{ t "page.sessions.table.user_agent" }}</th>
+        <th>{{ t "page.sessions.table.actions" }}</th>
     </tr>
     {{ range .sessions }}
     <tr {{ if eq .Token $.currentSessionToken }}class="row-highlighted"{{ end }}>
@@ -1149,15 +1149,15 @@ var templateViewsMap = map[string]string{
         <td title="{{ .UserAgent }}">{{ .UserAgent }}</td>
         <td class="column-20">
             {{ if eq .Token $.currentSessionToken }}
-                {{ t "Current session" }}
+                {{ t "page.sessions.table.current_session" }}
             {{ else }}
                 <a href="#"
                     data-confirm="true"
-                    data-label-question="{{ t "Are you sure?" }}"
-                    data-label-yes="{{ t "yes" }}"
-                    data-label-no="{{ t "no" }}"
-                    data-label-loading="{{ t "Work in progress..." }}"
-                    data-url="{{ route "removeSession" "sessionID" .ID }}">{{ t "Remove" }}</a>
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-url="{{ route "removeSession" "sessionID" .ID }}">{{ t "action.remove" }}</a>
             {{ end }}
         </td>
     </tr>
@@ -1166,25 +1166,25 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"settings": `{{ define "title"}}{{ t "Settings" }}{{ end }}
+	"settings": `{{ define "title"}}{{ t "page.settings.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Settings" }}</h1>
+    <h1>{{ t "page.settings.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "Users" }}</a>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
@@ -1196,78 +1196,78 @@ var templateViewsMap = map[string]string{
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <label for="form-username">{{ t "Username" }}</label>
+    <label for="form-username">{{ t "form.user.label.username" }}</label>
     <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required>
 
-    <label for="form-password">{{ t "Password" }}</label>
+    <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
 
-    <label for="form-confirmation">{{ t "Confirmation" }}</label>
+    <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
     <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
-    <label for="form-language">{{ t "Language" }}</label>
+    <label for="form-language">{{ t "form.prefs.label.language" }}</label>
     <select id="form-language" name="language">
     {{ range $key, $value := .languages }}
         <option value="{{ $key }}" {{ if eq $key $.form.Language }}selected="selected"{{ end }}>{{ $value }}</option>
     {{ end }}
     </select>
 
-    <label for="form-timezone">{{ t "Timezone" }}</label>
+    <label for="form-timezone">{{ t "form.prefs.label.timezone" }}</label>
     <select id="form-timezone" name="timezone">
     {{ range $key, $value := .timezones }}
         <option value="{{ $key }}" {{ if eq $key $.form.Timezone }}selected="selected"{{ end }}>{{ $value }}</option>
     {{ end }}
     </select>
 
-    <label for="form-theme">{{ t "Theme" }}</label>
+    <label for="form-theme">{{ t "form.prefs.label.theme" }}</label>
     <select id="form-theme" name="theme">
     {{ range $key, $value := .themes }}
         <option value="{{ $key }}" {{ if eq $key $.form.Theme }}selected="selected"{{ end }}>{{ $value }}</option>
     {{ end }}
     </select>
 
-    <label for="form-entry-direction">{{ t "Entry Sorting" }}</label>
+    <label for="form-entry-direction">{{ t "form.prefs.label.entry_sorting" }}</label>
     <select id="form-entry-direction" name="entry_direction">
-        <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "Older entries first" }}</option>
-        <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "Recent entries first" }}</option>
+        <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.older_first" }}</option>
+        <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
     </select>
 
     <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "Loading..." }}">{{ t "Update" }}</button>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
 </form>
 
 {{ if hasOAuth2Provider "google" }}
 <div class="panel">
     {{ if hasKey .user.Extra "google_id" }}
-        <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "Unlink my Google account" }}</a>
+        <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
     {{ else }}
-        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "Link my Google account" }}</a>
+        <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.settings.link_google_account" }}</a>
     {{ end }}
 </div>
 {{ end }}
 
 {{ end }}
 `,
-	"unread_entries": `{{ define "title"}}{{ t "Unread Items" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
+	"unread_entries": `{{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Unread" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
+    <h1>{{ t "page.unread.title" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
     {{ if .entries }}
     <ul>
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         <li>
-            <a href="{{ route "markAllAsRead" }}">{{ t "Mark all as read" }}</a>
+            <a href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
     </ul>
     {{ end }}
 </section>
 
 {{ if not .entries }}
-    <p class="alert">{{ t "There is no unread article." }}</p>
+    <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
     <div class="items hide-read-items">
         {{ range .entries }}
@@ -1289,7 +1289,7 @@ var templateViewsMap = map[string]string{
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "Mark this page as read" }}</a>
+                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}
@@ -1298,61 +1298,61 @@ var templateViewsMap = map[string]string{
 {{ end }}
 
 {{ end }}`,
-	"users": `{{ define "title"}}{{ t "Users" }}{{ end }}
+	"users": `{{ define "title"}}{{ t "page.users.title" }}{{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "Users" }}</h1>
+    <h1>{{ t "page.users.title" }}</h1>
     <ul>
         <li>
-            <a href="{{ route "settings" }}">{{ t "Settings" }}</a>
+            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
         </li>
         <li>
-            <a href="{{ route "integrations" }}">{{ t "Integrations" }}</a>
+            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
         </li>
         <li>
-            <a href="{{ route "sessions" }}">{{ t "Sessions" }}</a>
+            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
         </li>
         <li>
-            <a href="{{ route "createUser" }}">{{ t "Add user" }}</a>
+            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
         </li>
         <li>
-            <a href="{{ route "about" }}">{{ t "About" }}</a>
+            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
         </li>
     </ul>
 </section>
 
 {{ if eq (len .users) 1 }}
-    <p class="alert">{{ t "You are the only user." }}</p>
+    <p class="alert">{{ t "alert.no_user" }}</p>
 {{ else }}
     <table>
         <tr>
             <th class="column-20">{{ t "Username" }}</th>
-            <th>{{ t "Administrator" }}</th>
-            <th>{{ t "Last Login" }}</th>
-            <th>{{ t "Actions" }}</th>
+            <th>{{ t "page.users.is_admin" }}</th>
+            <th>{{ t "page.users.last_login" }}</th>
+            <th>{{ t "page.users.actions" }}</th>
         </tr>
         {{ range .users }}
             {{ if ne .ID $.user.ID }}
             <tr>
                 <td>{{ .Username }}</td>
-                <td>{{ if eq .IsAdmin true }}{{ t "Yes" }}{{ else }}{{ t "No" }}{{ end }}</td>
+                <td>{{ if eq .IsAdmin true }}{{ t "page.users.admin.yes" }}{{ else }}{{ t "page.users.admin.no" }}{{ end }}</td>
                 <td>
                     {{ if .LastLoginAt }}
                         <time datetime="{{ isodate .LastLoginAt }}" title="{{ isodate .LastLoginAt }}">{{ elapsed $.user.Timezone .LastLoginAt }}</time>
                     {{ else }}
-                        {{ t "Never" }}
+                        {{ t "page.users.never_logged" }}
                     {{ end }}
                 </td>
                 <td>
-                    <a href="{{ route "editUser" "userID" .ID }}">{{ t "Edit" }}</a>,
+                    <a href="{{ route "editUser" "userID" .ID }}">{{ t "action.edit" }}</a>,
                     <a href="#"
                         data-confirm="true"
-                        data-label-question="{{ t "Are you sure?" }}"
-                        data-label-yes="{{ t "yes" }}"
-                        data-label-no="{{ t "no" }}"
-                        data-label-loading="{{ t "Work in progress..." }}"
-                        data-url="{{ route "removeUser" "userID" .ID }}">{{ t "Remove" }}</a>
+                        data-label-question="{{ t "confirm.question" }}"
+                        data-label-yes="{{ t "confirm.yes" }}"
+                        data-label-no="{{ t "confirm.no" }}"
+                        data-label-loading="{{ t "confirm.loading" }}"
+                        data-url="{{ route "removeUser" "userID" .ID }}">{{ t "action.remove" }}</a>
                 </td>
             </tr>
             {{ end }}
@@ -1365,27 +1365,27 @@ var templateViewsMap = map[string]string{
 }
 
 var templateViewsMapChecksums = map[string]string{
-	"about":               "ad2fb778fc73c39b733b3f81b13e5c7d689b041fadd24ee2d4577f545aa788ad",
-	"add_subscription":    "dc6593913e6ff14a6f957349c2ce43f0e3e095e1985f9d739929a88f5f6550bd",
-	"bookmark_entries":    "49423f84c05d77368e20c8e14c53ad237308cdaf4143413487d1b0e11c18d148",
-	"categories":          "ca1280cd157bb527d4fc907da67b05a8347378f6dce965b9389d4bcdf3600a11",
-	"category_entries":    "d219d4bd5376c526c00a3da49b511fb73e812be5d1e12acadeceee8dfa4bbfe2",
-	"choose_subscription": "57280e5b6ba3118c14ef1238e8003f5e92401a671dd6e6e198c864ebbd0b8030",
-	"create_category":     "2b82af5d2dcd67898dc5daa57a6461e6ff8121a6089b2a2a1be909f35e4a2275",
-	"create_user":         "1ef0a1f9bf119d44929c81f13073a257d69650cf5064960cf06a63fe51923e86",
-	"edit_category":       "cee720faadcec58289b707ad30af623d2ee66c1ce23a732965463250d7ff41c5",
-	"edit_feed":           "6ff765208828e7533f865009de26edd87d8109b547bdff08132d862aea0e223b",
-	"edit_user":           "7373e09f805e6c017167001519b9feb04226be6c81c2875cbacd5ce94f2c24bf",
-	"entry":               "82a0a4e715da94b12370b380072f1175c9f0e07b37e7f54a9adca4ed1fe015c0",
-	"feed_entries":        "bebc42317ca9e908fcdb98cc1c4a2dc3f4bb7ef6d4c288d3d3fba8f8339403b6",
-	"feeds":               "1006698abfe0962b656f27794bc44568515392da72b6fac0c03316de06024237",
-	"history_entries":     "f94e15d37d7604500cede7b583e03bf79c06be81c6597a4a43693f5712af2e13",
-	"import":              "73b5112e20bfd232bf73334544186ea419505936bc237d481517a8622901878f",
-	"integrations":        "20c1c82070b93235d189b10acccd0cda5694cc5684d0b3be23de2ba5ae83e73f",
-	"login":               "7d83c3067c02f1f6aafdd8816c7f97a4eb5a5a4bdaaaa4cc1e2fbb9c17ea65e8",
-	"search_entries":      "a6e69c3edf414558541e8a23bf197d7580b043f8ddaf53a5b609bcd678fd6f3d",
-	"sessions":            "3fa79031dd883847eba92fbafe5f535fa3a4e1614bb610f20588b6f8fc8b3624",
-	"settings":            "d435dc37e82896ce9a7a573b3c2aeda1db71eec62349e2472ebbf1d5c3e0bc21",
-	"unread_entries":      "13c03de837d39daa0457288ecca723d1140395999123b54abbe649537146620e",
-	"users":               "c6d91b0b29984b4cb3073bec6a2933cfb72981ec60f54b6c7aa05194f0e860bd",
+	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
+	"add_subscription":    "721de91dea1719229f8455e8c4384df2b5b4cbfc55177b1fbcb86e7f4503731a",
+	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
+	"categories":          "75cec6c50967d470b643932d6978a4bbcf64f695d10b28c4045e87eb8e021b9f",
+	"category_entries":    "5efccde4212cbaa88be385c8659f73c1a4764135d181b152fa0c7c48d4c50f34",
+	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
+	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
+	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
+	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
+	"edit_feed":           "191c4c1f73e9f8d16938ec8cbd29afc7d7d1d17777394094bcf414ab198d9e51",
+	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
+	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
+	"feed_entries":        "814b58b106313d53f2929e5257c79e47a7e09d715e493f150d9dc3a8c97eaa4e",
+	"feeds":               "b43b851d4e5e670d72665dc1e6a275a1627f463c582965d978509a3d61c6c1f4",
+	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
+	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
+	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
+	"login":               "f9e6714d34fdce82266c8b23b0ff449d05ba71e474d26f711da66f8c4fdc076a",
+	"search_entries":      "d71849a4f2b0573c7c76ad0ea941812009e9f022de60895987a781d3e6f08a01",
+	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
+	"settings":            "bc04faf83dd977306825973375954600bd014619340188e1243fd9e2f5d5e1a9",
+	"unread_entries":      "058d918592b25bd209c84660dd546b7426f19b1083da868a8672fde9bbcf1b17",
+	"users":               "ca71f7213f45c6abbaae8d1ba9e8400690f92a3edec60e01c91dff067566f1d4",
 }
