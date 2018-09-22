@@ -10,7 +10,6 @@ import (
 	"miniflux.app/api"
 	"miniflux.app/config"
 	"miniflux.app/fever"
-	"miniflux.app/locale"
 	"miniflux.app/middleware"
 	"miniflux.app/reader/feed"
 	"miniflux.app/scheduler"
@@ -21,12 +20,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *scheduler.WorkerPool, translator *locale.Translator) *mux.Router {
+func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *scheduler.WorkerPool) *mux.Router {
 	router := mux.NewRouter()
-	templateEngine := template.NewEngine(cfg, router, translator)
+	templateEngine := template.NewEngine(cfg, router)
 	apiController := api.NewController(store, feedHandler)
 	feverController := fever.NewController(cfg, store)
-	uiController := ui.NewController(cfg, store, pool, feedHandler, templateEngine, translator, router)
+	uiController := ui.NewController(cfg, store, pool, feedHandler, templateEngine, router)
 	middleware := middleware.New(cfg, store, router)
 
 	if cfg.BasePath() != "" {

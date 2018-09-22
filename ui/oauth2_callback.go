@@ -12,6 +12,7 @@ import (
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
+	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/ui/session"
@@ -19,6 +20,7 @@ import (
 
 // OAuth2Callback receives the authorization code and create a new session.
 func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
+	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(c.store, request.SessionID(r))
 
 	provider := request.Param(r, "provider", "")
@@ -65,7 +67,7 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 
 		if user != nil {
 			logger.Error("[OAuth2] User #%d cannot be associated because %s is already associated", request.UserID(r), user.Username)
-			sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.duplicate_linked_account"))
+			sess.NewFlashErrorMessage(printer.Printf("error.duplicate_linked_account"))
 			response.Redirect(w, r, route.Path(c.router, "settings"))
 			return
 		}
@@ -75,7 +77,7 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.account_linked"))
+		sess.NewFlashMessage(printer.Printf("alert.account_linked"))
 		response.Redirect(w, r, route.Path(c.router, "settings"))
 		return
 	}

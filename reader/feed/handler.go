@@ -33,7 +33,6 @@ var (
 // Handler contains all the logic to create and refresh feeds.
 type Handler struct {
 	store      *storage.Storage
-	translator *locale.Translator
 }
 
 // CreateFeed fetch, parse and store a new feed.
@@ -124,7 +123,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		userLanguage = "en_US"
 	}
 
-	currentLanguage := h.translator.GetLanguage(userLanguage)
+	printer := locale.NewPrinter(userLanguage)
 
 	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
@@ -149,7 +148,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		}
 
 		originalFeed.ParsingErrorCount++
-		originalFeed.ParsingErrorMsg = customErr.Localize(currentLanguage)
+		originalFeed.ParsingErrorMsg = customErr.Localize(printer)
 		h.store.UpdateFeed(originalFeed)
 		return customErr
 	}
@@ -159,7 +158,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	if response.IsNotFound() {
 		err := errors.NewLocalizedError(errResourceNotFound)
 		originalFeed.ParsingErrorCount++
-		originalFeed.ParsingErrorMsg = err.Localize(currentLanguage)
+		originalFeed.ParsingErrorMsg = err.Localize(printer)
 		h.store.UpdateFeed(originalFeed)
 		return err
 	}
@@ -167,7 +166,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	if response.HasServerFailure() {
 		err := errors.NewLocalizedError(errServerFailure, response.StatusCode)
 		originalFeed.ParsingErrorCount++
-		originalFeed.ParsingErrorMsg = err.Localize(currentLanguage)
+		originalFeed.ParsingErrorMsg = err.Localize(printer)
 		h.store.UpdateFeed(originalFeed)
 		return err
 	}
@@ -179,7 +178,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		if response.ContentLength == 0 {
 			err := errors.NewLocalizedError(errEmptyFeed)
 			originalFeed.ParsingErrorCount++
-			originalFeed.ParsingErrorMsg = err.Localize(currentLanguage)
+			originalFeed.ParsingErrorMsg = err.Localize(printer)
 			h.store.UpdateFeed(originalFeed)
 			return err
 		}
@@ -192,7 +191,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		subscription, parseErr := parseFeed(body)
 		if parseErr != nil {
 			originalFeed.ParsingErrorCount++
-			originalFeed.ParsingErrorMsg = parseErr.Localize(currentLanguage)
+			originalFeed.ParsingErrorMsg = parseErr.Localize(printer)
 			h.store.UpdateFeed(originalFeed)
 			return err
 		}
@@ -236,6 +235,6 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 }
 
 // NewFeedHandler returns a feed handler.
-func NewFeedHandler(store *storage.Storage, translator *locale.Translator) *Handler {
-	return &Handler{store, translator}
+func NewFeedHandler(store *storage.Storage) *Handler {
+	return &Handler{store}
 }

@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"miniflux.app/config"
-	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/reader/feed"
 	"miniflux.app/scheduler"
@@ -39,10 +38,9 @@ func Run(cfg *config.Config, store *storage.Storage) {
 		}
 	}()
 
-	translator := locale.Load()
-	feedHandler := feed.NewFeedHandler(store, translator)
+	feedHandler := feed.NewFeedHandler(store)
 	pool := scheduler.NewWorkerPool(feedHandler, cfg.WorkerPoolSize())
-	server := newServer(cfg, store, pool, feedHandler, translator)
+	server := newServer(cfg, store, pool, feedHandler)
 
 	scheduler.NewFeedScheduler(
 		store,

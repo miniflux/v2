@@ -1,0 +1,67 @@
+// Copyright 2018 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package locale // import "miniflux.app/locale"
+
+import "fmt"
+
+// Printer converts translation keys to language-specific strings.
+type Printer struct {
+	language string
+}
+
+// Printf is like fmt.Printf, but using language-specific formatting.
+func (p *Printer) Printf(key string, args ...interface{}) string {
+	var translation string
+
+	str, found := defaultCatalog[p.language][key]
+	if !found {
+		translation = key
+	} else {
+		var valid bool
+		translation, valid = str.(string)
+		if !valid {
+			translation = key
+		}
+	}
+
+	return fmt.Sprintf(translation, args...)
+}
+
+// Plural returns the translation of the given key by using the language plural form.
+func (p *Printer) Plural(key string, n int, args ...interface{}) string {
+	choices, found := defaultCatalog[p.language][key]
+
+	if found {
+		var plurals []string
+
+		switch v := choices.(type) {
+		case []interface{}:
+			for _, v := range v {
+				plurals = append(plurals, fmt.Sprint(v))
+			}
+		case []string:
+			plurals = v
+		default:
+			return key
+		}
+
+		pluralForm, found := pluralForms[p.language]
+		if !found {
+			pluralForm = pluralForms["default"]
+		}
+
+		index := pluralForm(n)
+		if len(plurals) > index {
+			return fmt.Sprintf(plurals[index], args...)
+		}
+	}
+
+	return key
+}
+
+// NewPrinter creates a new Printer.
+func NewPrinter(language string) *Printer {
+	return &Printer{language}
+}

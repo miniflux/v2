@@ -9,16 +9,16 @@ import "testing"
 func TestAllLanguagesHaveCatalog(t *testing.T) {
 	for language := range AvailableLanguages() {
 		if _, found := translations[language]; !found {
-			t.Fatalf(`This language do not have a catalog: %s`, language)
+			t.Fatalf(`This language do not have a catalog: %q`, language)
 		}
 	}
 }
 
 func TestAllKeysHaveValue(t *testing.T) {
 	for language := range AvailableLanguages() {
-		messages, err := parseCatalogMessages(translations[language])
+		messages, err := parseTranslationDict(translations[language])
 		if err != nil {
-			t.Fatalf(`Parsing error language %s`, language)
+			t.Fatalf(`Parsing error for language %q`, language)
 		}
 
 		if len(messages) == 0 {
@@ -42,7 +42,7 @@ func TestAllKeysHaveValue(t *testing.T) {
 
 func TestMissingTranslations(t *testing.T) {
 	refLang := "en_US"
-	references, err := parseCatalogMessages(translations[refLang])
+	references, err := parseTranslationDict(translations[refLang])
 	if err != nil {
 		t.Fatal(`Unable to parse reference language`)
 	}
@@ -52,9 +52,9 @@ func TestMissingTranslations(t *testing.T) {
 			continue
 		}
 
-		messages, err := parseCatalogMessages(translations[language])
+		messages, err := parseTranslationDict(translations[language])
 		if err != nil {
-			t.Fatalf(`Parsing error language %s`, language)
+			t.Fatalf(`Parsing error for language %q`, language)
 		}
 
 		for key := range references {

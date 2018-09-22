@@ -19,9 +19,8 @@ import (
 
 // Engine handles the templating system.
 type Engine struct {
-	templates  map[string]*template.Template
-	translator *locale.Translator
-	funcMap    *funcMap
+	templates map[string]*template.Template
+	funcMap   *funcMap
 }
 
 func (e *Engine) parseAll() {
@@ -43,29 +42,29 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 		logger.Fatal("[Template] The template %s does not exists", name)
 	}
 
-	lang := e.translator.GetLanguage(language)
+	printer := locale.NewPrinter(language)
 
 	// Functions that need to be declared at runtime.
 	tpl.Funcs(template.FuncMap{
 		"elapsed": func(timezone string, t time.Time) string {
-			return elapsedTime(lang, timezone, t)
+			return elapsedTime(printer, timezone, t)
 		},
 		"t": func(key interface{}, args ...interface{}) string {
-			switch key.(type) {
+			switch k := key.(type) {
 			case string:
-				return lang.Get(key.(string), args...)
+				return printer.Printf(k, args...)
 			case errors.LocalizedError:
-				return key.(errors.LocalizedError).Localize(lang)
+				return k.Localize(printer)
 			case *errors.LocalizedError:
-				return key.(*errors.LocalizedError).Localize(lang)
+				return k.Localize(printer)
 			case error:
-				return key.(error).Error()
+				return k.Error()
 			default:
 				return ""
 			}
 		},
 		"plural": func(key string, n int, args ...interface{}) string {
-			return lang.Plural(key, n, args...)
+			return printer.Plural(key, n, args...)
 		},
 	})
 
@@ -79,11 +78,10 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 }
 
 // NewEngine returns a new template engine.
-func NewEngine(cfg *config.Config, router *mux.Router, translator *locale.Translator) *Engine {
+func NewEngine(cfg *config.Config, router *mux.Router) *Engine {
 	tpl := &Engine{
-		templates:  make(map[string]*template.Template),
-		translator: translator,
-		funcMap:    newFuncMap(cfg, router),
+		templates: make(map[string]*template.Template),
+		funcMap:   newFuncMap(cfg, router),
 	}
 
 	tpl.parseAll()

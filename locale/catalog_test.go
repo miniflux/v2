@@ -7,14 +7,14 @@ package locale // import "miniflux.app/locale"
 import "testing"
 
 func TestParserWithInvalidData(t *testing.T) {
-	_, err := parseCatalogMessages(`{`)
+	_, err := parseTranslationDict(`{`)
 	if err == nil {
 		t.Fatal(`An error should be returned when parsing invalid data`)
 	}
 }
 
 func TestParser(t *testing.T) {
-	translations, err := parseCatalogMessages(`{"k": "v"}`)
+	translations, err := parseTranslationDict(`{"k": "v"}`)
 	if err != nil {
 		t.Fatalf(`Unexpected parsing error: %v`, err)
 	}

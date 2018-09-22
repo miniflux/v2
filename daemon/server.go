@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"miniflux.app/config"
-	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/reader/feed"
 	"miniflux.app/scheduler"
@@ -19,7 +18,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, translator *locale.Translator) *http.Server {
+func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler) *http.Server {
 	certFile := cfg.CertFile()
 	keyFile := cfg.KeyFile()
 	certDomain := cfg.CertDomain()
@@ -29,7 +28,7 @@ func newServer(cfg *config.Config, store *storage.Storage, pool *scheduler.Worke
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  60 * time.Second,
 		Addr:         cfg.ListenAddr(),
-		Handler:      routes(cfg, store, feedHandler, pool, translator),
+		Handler:      routes(cfg, store, feedHandler, pool),
 	}
 
 	if certDomain != "" && certCache != "" {

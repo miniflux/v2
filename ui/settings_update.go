@@ -69,6 +69,6 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.prefs_saved"))
+	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
 	response.Redirect(w, r, route.Path(c.router, "settings"))
 }

@@ -11,12 +11,14 @@ import (
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
+	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/ui/session"
 )
 
 // OAuth2Unlink unlink an account from the external provider.
 func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
+	printer := locale.NewPrinter(request.UserLanguage(r))
 	provider := request.Param(r, "provider", "")
 	if provider == "" {
 		logger.Info("[OAuth2] Invalid or missing provider")
@@ -40,7 +42,7 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasPassword {
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.unlink_account_without_password"))
+		sess.NewFlashErrorMessage(printer.Printf("error.unlink_account_without_password"))
 		response.Redirect(w, r, route.Path(c.router, "settings"))
 		return
 	}
@@ -50,6 +52,6 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.account_unlinked"))
+	sess.NewFlashMessage(printer.Printf("alert.account_unlinked"))
 	response.Redirect(w, r, route.Path(c.router, "settings"))
 }

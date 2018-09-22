@@ -6,7 +6,6 @@ package ui  // import "miniflux.app/ui"
 
 import (
 	"miniflux.app/config"
-	"miniflux.app/locale"
 	"miniflux.app/reader/feed"
 	"miniflux.app/scheduler"
 	"miniflux.app/storage"
@@ -23,18 +22,16 @@ type Controller struct {
 	feedHandler *feed.Handler
 	tpl         *template.Engine
 	router      *mux.Router
-	translator  *locale.Translator
 }
 
 // NewController returns a new Controller.
-func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, tpl *template.Engine, translator *locale.Translator, router *mux.Router) *Controller {
+func NewController(cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler, tpl *template.Engine, router *mux.Router) *Controller {
 	return &Controller{
 		cfg:         cfg,
 		store:       store,
 		pool:        pool,
 		feedHandler: feedHandler,
 		tpl:         tpl,
-		translator:  translator,
 		router:      router,
 	}
 }

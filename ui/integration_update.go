@@ -13,12 +13,14 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
+	"miniflux.app/locale"
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
 )
 
 // UpdateIntegration updates integration settings.
 func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
+	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(c.store, request.SessionID(r))
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
@@ -36,7 +38,7 @@ func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
 	integrationForm.Merge(integration)
 
 	if integration.FeverUsername != "" && c.store.HasDuplicateFeverUsername(user.ID, integration.FeverUsername) {
-		sess.NewFlashErrorMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("error.duplicate_fever_username"))
+		sess.NewFlashErrorMessage(printer.Printf("error.duplicate_fever_username"))
 		response.Redirect(w, r, route.Path(c.router, "integrations"))
 		return
 	}
@@ -53,6 +55,6 @@ func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(c.translator.GetLanguage(request.UserLanguage(r)).Get("alert.prefs_saved"))
+	sess.NewFlashMessage(printer.Printf("alert.prefs_saved"))
 	response.Redirect(w, r, route.Path(c.router, "integrations"))
 }

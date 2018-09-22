@@ -1,12 +1,14 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
 package locale // import "miniflux.app/locale"
 
+type pluralFormFunc func(n int) int
+
 // See https://localization-guide.readthedocs.io/en/latest/l10n/pluralforms.html
 // And http://www.unicode.org/cldr/charts/29/supplemental/language_plural_rules.html
-var pluralForms = map[string]func(n int) int{
+var pluralForms = map[string]pluralFormFunc{
 	// nplurals=2; plural=(n != 1);
 	"default": func(n int) int {
 		if n != 1 {

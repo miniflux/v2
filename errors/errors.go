@@ -22,8 +22,8 @@ func (l LocalizedError) Error() string {
 }
 
 // Localize returns the translated error message.
-func (l LocalizedError) Localize(translation *locale.Language) string {
-	return translation.Get(l.message, l.args...)
+func (l LocalizedError) Localize(printer *locale.Printer) string {
+	return printer.Printf(l.message, l.args...)
 }
 
 // NewLocalizedError returns a new LocalizedError.
