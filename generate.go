@@ -82,12 +82,18 @@ func basename(filename string) string {
 }
 
 func stripExtension(filename string) string {
-	filename = strings.TrimSuffix(filename, filepath.Ext(filename))
+	filename = strings.TrimSuffix(filename, path.Ext(filename))
 	return strings.Replace(filename, " ", "_", -1)
 }
 
 func glob(pattern string) []string {
+	// There is no Glob function in path packages, so we have to use filepath and replace in case of Windows
 	files, _ := filepath.Glob(pattern)
+	for i := range files {
+		if strings.Contains(files[i], "\\") {
+			files[i] = strings.Replace(files[i], "\\", "/", -1)
+		}
+	}
 	return files
 }
 
