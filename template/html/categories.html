@@ -25,7 +25,7 @@
                 <ul>
                     <li>
                         {{ if eq .FeedCount 0 }}
-                            {{ t "No feed." }}
+                            {{ t "page.categories.no_feed" }}
                         {{ else }}
                             {{ plural "page.categories.feed_count" .FeedCount .FeedCount }}
                         {{ end }}
@@ -33,7 +33,7 @@
                 </ul>
                 <ul>
                     <li>
-                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ t "Edit" }}</a>
+                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ t "menu.edit_category" }}</a>
                     </li>
                     {{ if eq .FeedCount 0 }}
                     <li>

@@ -36,6 +36,7 @@
     "menu.refresh_feed": "Refresh",
     "menu.refresh_all_feeds": "Refresh all feeds in background",
     "menu.edit_feed": "Edit",
+    "menu.edit_category": "Edit",
     "menu.add_feed": "Add subscription",
     "menu.add_user": "Add user",
     "menu.flush_history": "Flush history",
@@ -62,6 +63,7 @@
     "page.unread.title": "Unread",
     "page.starred.title": "Starred",
     "page.categories.title": "Categories",
+    "page.categories.no_feed": "No feed.",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."

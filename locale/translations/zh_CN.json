@@ -36,6 +36,7 @@
     "menu.refresh_feed": "更新",
     "menu.refresh_all_feeds": "在后台更新全部源",
     "menu.edit_feed": "编辑",
+    "menu.edit_category": "编辑",
     "menu.add_feed": "新增订阅",
     "menu.add_user": "新建用户",
     "menu.flush_history": "清理历史",
@@ -62,6 +63,7 @@
     "page.unread.title": "未读",
     "page.starred.title": "星标",
     "page.categories.title": "分类",
+    "page.categories.no_feed": "没有源.",
     "page.categories.feed_count": [
         "有 %d 个源."
     ],

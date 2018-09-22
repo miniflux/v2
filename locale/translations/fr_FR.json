@@ -36,6 +36,7 @@
     "menu.refresh_feed": "Actualiser",
     "menu.refresh_all_feeds": "Actualiser les abonnements en arrière-plan",
     "menu.edit_feed": "Modifier",
+    "menu.edit_category": "Modifier",
     "menu.add_feed": "Ajouter un abonnement",
     "menu.add_user": "Ajouter un utilisateur",
     "menu.flush_history": "Supprimer l'historique",
@@ -62,6 +63,7 @@
     "page.unread.title": "Non lus",
     "page.starred.title": "Favoris",
     "page.categories.title": "Catégories",
+    "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."

@@ -36,6 +36,7 @@
     "menu.refresh_feed": "Vernieuwen",
     "menu.refresh_all_feeds": "Vernieuw alle feeds in de achtergrond",
     "menu.edit_feed": "Bewerken",
+    "menu.edit_category": "Bewerken",
     "menu.add_feed": "Feed toevoegen",
     "menu.add_user": "Gebruiker toevoegen",
     "menu.flush_history": "Verwijder geschiedenis",
@@ -62,6 +63,7 @@
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
+    "page.categories.no_feed": "Geen feeds.",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."
