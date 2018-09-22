@@ -82,27 +82,28 @@ var templateViewsMap = map[string]string{
             {{ end }}
         </select>
 
-        <fieldset>
-            <legend>{{ t "page.add_feed.legend.advanced_options" }}</legend>
+        <details>
+            <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
+            <div class="details-content">
+                <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
 
-            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+                <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
+                <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
 
-            <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
-            <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
+                <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
+                <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-            <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
-            <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
+                <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
+                <!--
+                    We are using the type "text" otherwise Firefox always autocomplete this password:
 
-            <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
-            <!--
-                We are using the type "text" otherwise Firefox always autocomplete this password:
-
-                - autocomplete="off" or autocomplete="new-password" doesn't change anything
-                - Changing the input ID doesn't change anything
-                - Using a different input name doesn't change anything
-             -->
-            <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
-        </fieldset>
+                    - autocomplete="off" or autocomplete="new-password" doesn't change anything
+                    - Changing the input ID doesn't change anything
+                    - Using a different input name doesn't change anything
+                -->
+                <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+            </div>
+        </details>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "page.add_feed.submit" }}</button>
@@ -1366,7 +1367,7 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
-	"add_subscription":    "721de91dea1719229f8455e8c4384df2b5b4cbfc55177b1fbcb86e7f4503731a",
+	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
 	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
 	"categories":          "75cec6c50967d470b643932d6978a4bbcf64f695d10b28c4045e87eb8e021b9f",
 	"category_entries":    "5efccde4212cbaa88be385c8659f73c1a4764135d181b152fa0c7c48d4c50f34",

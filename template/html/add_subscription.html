@@ -36,27 +36,28 @@
             {{ end }}
         </select>
 
-        <fieldset>
-            <legend>{{ t "page.add_feed.legend.advanced_options" }}</legend>
+        <details>
+            <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
+            <div class="details-content">
+                <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
 
-            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+                <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
+                <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
 
-            <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
-            <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
+                <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
+                <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
 
-            <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
-            <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
+                <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
+                <!--
+                    We are using the type "text" otherwise Firefox always autocomplete this password:
 
-            <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
-            <!--
-                We are using the type "text" otherwise Firefox always autocomplete this password:
-
-                - autocomplete="off" or autocomplete="new-password" doesn't change anything
-                - Changing the input ID doesn't change anything
-                - Using a different input name doesn't change anything
-             -->
-            <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
-        </fieldset>
+                    - autocomplete="off" or autocomplete="new-password" doesn't change anything
+                    - Changing the input ID doesn't change anything
+                    - Using a different input name doesn't change anything
+                -->
+                <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+            </div>
+        </details>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "page.add_feed.submit" }}</button>
