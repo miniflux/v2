@@ -36,6 +36,7 @@
     "menu.refresh_feed": "Actualiser",
     "menu.refresh_all_feeds": "Actualiser les abonnements en arrière-plan",
     "menu.edit_feed": "Modifier",
+    "menu.edit_category": "Modifier",
     "menu.add_feed": "Ajouter un abonnement",
     "menu.add_user": "Ajouter un utilisateur",
     "menu.flush_history": "Supprimer l'historique",

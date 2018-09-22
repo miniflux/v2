@@ -36,6 +36,7 @@
     "menu.refresh_feed": "Aktualisieren",
     "menu.refresh_all_feeds": "Alle Abonnements im Hintergrund aktualisieren",
     "menu.edit_feed": "Bearbeiten",
+    "menu.edit_category": "Bearbeiten",
     "menu.add_feed": "Abonnement hinzufügen",
     "menu.add_user": "Benutzer anlegen",
     "menu.flush_history": "Verlauf leeren",

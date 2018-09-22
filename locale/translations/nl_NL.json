@@ -36,6 +36,7 @@
     "menu.refresh_feed": "Vernieuwen",
     "menu.refresh_all_feeds": "Vernieuw alle feeds in de achtergrond",
     "menu.edit_feed": "Bewerken",
+    "menu.edit_category": "Bewerken",
     "menu.add_feed": "Feed toevoegen",
     "menu.add_user": "Gebruiker toevoegen",
     "menu.flush_history": "Verwijder geschiedenis",

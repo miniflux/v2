@@ -36,6 +36,7 @@
     "menu.refresh_feed": "更新",
     "menu.refresh_all_feeds": "在后台更新全部源",
     "menu.edit_feed": "编辑",
+    "menu.edit_category": "编辑",
     "menu.add_feed": "新增订阅",
     "menu.add_user": "新建用户",
     "menu.flush_history": "清理历史",
