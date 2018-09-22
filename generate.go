@@ -87,7 +87,7 @@ func stripExtension(filename string) string {
 }
 
 func glob(pattern string) []string {
-	// There is no Glob function in path packages, so we have to use filepath and replace in case of Windows
+	// There is no Glob function in path package, so we have to use filepath and replace in case of Windows
 	files, _ := filepath.Glob(pattern)
 	for i := range files {
 		if strings.Contains(files[i], "\\") {
