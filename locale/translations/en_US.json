@@ -63,6 +63,7 @@
     "page.unread.title": "Unread",
     "page.starred.title": "Starred",
     "page.categories.title": "Categories",
+    "page.categories.no_feed": "No feed.",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."

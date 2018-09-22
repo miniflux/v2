@@ -63,6 +63,7 @@
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
+    "page.categories.no_feed": "Geen feeds.",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."

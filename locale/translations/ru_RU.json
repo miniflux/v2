@@ -63,6 +63,7 @@
   "page.unread.title": "Непрочитанное",
   "page.starred.title": "Избранное",
   "page.categories.title": "Категории",
+  "page.categories.no_feed": "Нет подписок.",
   "page.categories.feed_count": [
     "Есть %d подписка.",
     "Есть %d подписки.",

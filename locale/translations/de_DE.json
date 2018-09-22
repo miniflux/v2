@@ -63,6 +63,7 @@
     "page.unread.title": "Ungelesen",
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
+    "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."

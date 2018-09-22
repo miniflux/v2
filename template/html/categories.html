@@ -25,7 +25,7 @@
                 <ul>
                     <li>
                         {{ if eq .FeedCount 0 }}
-                            {{ t "No feed." }}
+                            {{ t "page.categories.no_feed" }}
                         {{ else }}
                             {{ plural "page.categories.feed_count" .FeedCount .FeedCount }}
                         {{ end }}

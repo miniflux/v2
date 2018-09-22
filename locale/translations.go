@@ -68,6 +68,7 @@ var translations = map[string]string{
     "page.unread.title": "Ungelesen",
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
+    "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."
@@ -354,6 +355,7 @@ var translations = map[string]string{
     "page.unread.title": "Unread",
     "page.starred.title": "Starred",
     "page.categories.title": "Categories",
+    "page.categories.no_feed": "No feed.",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."
@@ -619,6 +621,7 @@ var translations = map[string]string{
     "page.unread.title": "Non lus",
     "page.starred.title": "Favoris",
     "page.categories.title": "Catégories",
+    "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
@@ -905,6 +908,7 @@ var translations = map[string]string{
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
+    "page.categories.no_feed": "Geen feeds.",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."
@@ -1189,6 +1193,7 @@ var translations = map[string]string{
     "page.unread.title": "Nieprzeczytane",
     "page.starred.title": "Oznaczone gwiazdką",
     "page.categories.title": "Kategorie",
+    "page.categories.no_feed": "Brak kanałów.",
     "page.categories.feed_count": [
         "Jest %d kanał.",
         "Są %d kanały.",
@@ -1481,6 +1486,7 @@ var translations = map[string]string{
   "page.unread.title": "Непрочитанное",
   "page.starred.title": "Избранное",
   "page.categories.title": "Категории",
+  "page.categories.no_feed": "Нет подписок.",
   "page.categories.feed_count": [
     "Есть %d подписка.",
     "Есть %d подписки.",
@@ -1754,6 +1760,7 @@ var translations = map[string]string{
     "page.unread.title": "未读",
     "page.starred.title": "星标",
     "page.categories.title": "分类",
+    "page.categories.no_feed": "没有源.",
     "page.categories.feed_count": [
         "有 %d 个源."
     ],
@@ -1968,11 +1975,11 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "3484d8340e4024cb2b0ab4ac95ea5ba62b22d000e207ea949cb971d0c75aef33",
-	"en_US": "e96f4cd43257af035263e39f961e9e39e5ee6e7d04d99029728fdbcf30ef3a6d",
-	"fr_FR": "1e28440e35631863659f51d893eebaec52342aeebcb191ad3383b3ece83545b2",
-	"nl_NL": "fb881d83c6ff9d76e98598615ee87a1b0af92fd93eb101c9bedb92f1c06e8561",
-	"pl_PL": "161d034602470d0350ed4ff0346834de42a4859c7db315ab95beb13871a0bed5",
-	"ru_RU": "a7603a6f59fe5931e8dd2565074b599769806f209975d941cebc12fa2b97401e",
-	"zh_CN": "ca9fac2ca4c77a35b7d636aebf1fa9df59acad92d2726ee78e1c8cec9e5e64bc",
+	"de_DE": "2aaa9096d7765156da9c99c32706c9cb77385299ef5e11340bf308965a7c9a36",
+	"en_US": "1fa72d9c73ce5d26b49858edb733f420c0b09f6f73838006f415dc7869010d65",
+	"fr_FR": "7a3c5893e63a861d2693f628481741e353c1b09fd656c676ac6eb278e32912ed",
+	"nl_NL": "a2af148809cbbd201a5c949cc1432e52bee08b9440d7a7f2f8ebaebefdfe03d6",
+	"pl_PL": "8d07a13779211aeb6f2217004baeb0791ced635099d6972ab255b285d2c62b51",
+	"ru_RU": "baaf206b936b76ac3148a4809267e5bfbad213172ac11c90498141e6f227a75b",
+	"zh_CN": "32d00290e4a1194686abbf0c5c6e3dd72242a7464d9ed5c3f35907ca33fb0ccf",
 }

@@ -63,6 +63,7 @@
     "page.unread.title": "Nieprzeczytane",
     "page.starred.title": "Oznaczone gwiazdką",
     "page.categories.title": "Kategorie",
+    "page.categories.no_feed": "Brak kanałów.",
     "page.categories.feed_count": [
         "Jest %d kanał.",
         "Są %d kanały.",

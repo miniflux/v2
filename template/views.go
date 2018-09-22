@@ -171,7 +171,7 @@ var templateViewsMap = map[string]string{
                 <ul>
                     <li>
                         {{ if eq .FeedCount 0 }}
-                            {{ t "No feed." }}
+                            {{ t "page.categories.no_feed" }}
                         {{ else }}
                             {{ plural "page.categories.feed_count" .FeedCount .FeedCount }}
                         {{ end }}
@@ -1369,7 +1369,7 @@ var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
 	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
 	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
-	"categories":          "53c9fa7110643b9598b6b50cc7164ad44efcb3d1d027c52304f813dd52fc0eb1",
+	"categories":          "787132252f12d84288e8c4dc9127a5a083c31ec75c3e86ae7ef87467a95678df",
 	"category_entries":    "5efccde4212cbaa88be385c8659f73c1a4764135d181b152fa0c7c48d4c50f34",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
