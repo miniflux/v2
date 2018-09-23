@@ -200,7 +200,7 @@
     "form.feed.label.scraper_rules": "Règles pour récupérer le contenu original",
     "form.feed.label.rewrite_rules": "Règles de réécriture",
     "form.category.label.title": "Titre",
-    "form.user.label.username": "Utilisateur",
+    "form.user.label.username": "Nom d'utilisateur",
     "form.user.label.password": "Mot de passe",
     "form.user.label.confirmation": "Confirmation du mot de passe",
     "form.user.label.admin": "Administrateur",
