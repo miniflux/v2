@@ -4,7 +4,7 @@
 
 /*
 
-Package config handles configuration values for Miniflux application.
+Package config handles configuration values for the application.
 
 */
 package config // import "miniflux.app/config"

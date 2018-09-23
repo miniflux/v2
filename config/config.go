@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -14,20 +14,24 @@ import (
 )
 
 const (
-	defaultBaseURL          = "http://localhost"
-	defaultDatabaseURL      = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
-	defaultWorkerPoolSize   = 5
-	defaultPollingFrequency = 60
-	defaultBatchSize        = 10
-	defaultDatabaseMaxConns = 20
-	defaultDatabaseMinConns = 1
-	defaultListenAddr       = "127.0.0.1:8080"
-	defaultCertFile         = ""
-	defaultKeyFile          = ""
-	defaultCertDomain       = ""
-	defaultCertCache        = "/tmp/cert_cache"
-	defaultCleanupFrequency = 24
-	defaultProxyImages      = "http-only"
+	defaultBaseURL            = "http://localhost"
+	defaultDatabaseURL        = "postgres://postgres:postgres@localhost/miniflux2?sslmode=disable"
+	defaultWorkerPoolSize     = 5
+	defaultPollingFrequency   = 60
+	defaultBatchSize          = 10
+	defaultDatabaseMaxConns   = 20
+	defaultDatabaseMinConns   = 1
+	defaultListenAddr         = "127.0.0.1:8080"
+	defaultCertFile           = ""
+	defaultKeyFile            = ""
+	defaultCertDomain         = ""
+	defaultCertCache          = "/tmp/cert_cache"
+	defaultCleanupFrequency   = 24
+	defaultProxyImages        = "http-only"
+	defaultOAuth2ClientID     = ""
+	defaultOAuth2ClientSecret = ""
+	defaultOAuth2RedirectURL  = ""
+	defaultOAuth2Provider     = ""
 )
 
 // Config manages configuration parameters.
@@ -36,25 +40,6 @@ type Config struct {
 	baseURL  string
 	rootURL  string
 	basePath string
-}
-
-func (c *Config) get(key, fallback string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		return fallback
-	}
-
-	return value
-}
-
-func (c *Config) getInt(key string, fallback int) int {
-	value := os.Getenv(key)
-	if value == "" {
-		return fallback
-	}
-
-	v, _ := strconv.Atoi(value)
-	return v
 }
 
 func (c *Config) parseBaseURL() {
@@ -88,7 +73,7 @@ func (c *Config) parseBaseURL() {
 
 // HasDebugMode returns true if debug mode is enabled.
 func (c *Config) HasDebugMode() bool {
-	return c.get("DEBUG", "") != ""
+	return getBooleanValue("DEBUG")
 }
 
 // BaseURL returns the application base URL with path.
@@ -122,12 +107,12 @@ func (c *Config) DatabaseURL() string {
 
 // DatabaseMaxConns returns the maximum number of database connections.
 func (c *Config) DatabaseMaxConns() int {
-	return c.getInt("DATABASE_MAX_CONNS", defaultDatabaseMaxConns)
+	return getIntValue("DATABASE_MAX_CONNS", defaultDatabaseMaxConns)
 }
 
 // DatabaseMinConns returns the minimum number of database connections.
 func (c *Config) DatabaseMinConns() int {
-	return c.getInt("DATABASE_MIN_CONNS", defaultDatabaseMinConns)
+	return getIntValue("DATABASE_MIN_CONNS", defaultDatabaseMinConns)
 }
 
 // ListenAddr returns the listen address for the HTTP server.
@@ -136,97 +121,97 @@ func (c *Config) ListenAddr() string {
 		return ":" + port
 	}
 
-	return c.get("LISTEN_ADDR", defaultListenAddr)
+	return getStringValue("LISTEN_ADDR", defaultListenAddr)
 }
 
 // CertFile returns the SSL certificate filename if any.
 func (c *Config) CertFile() string {
-	return c.get("CERT_FILE", defaultCertFile)
+	return getStringValue("CERT_FILE", defaultCertFile)
 }
 
 // KeyFile returns the private key filename for custom SSL certificate.
 func (c *Config) KeyFile() string {
-	return c.get("KEY_FILE", defaultKeyFile)
+	return getStringValue("KEY_FILE", defaultKeyFile)
 }
 
 // CertDomain returns the domain to use for Let's Encrypt certificate.
 func (c *Config) CertDomain() string {
-	return c.get("CERT_DOMAIN", defaultCertDomain)
+	return getStringValue("CERT_DOMAIN", defaultCertDomain)
 }
 
 // CertCache returns the directory to use for Let's Encrypt session cache.
 func (c *Config) CertCache() string {
-	return c.get("CERT_CACHE", defaultCertCache)
+	return getStringValue("CERT_CACHE", defaultCertCache)
 }
 
 // CleanupFrequency returns the interval for cleanup jobs.
 func (c *Config) CleanupFrequency() int {
-	return c.getInt("CLEANUP_FREQUENCY", defaultCleanupFrequency)
+	return getIntValue("CLEANUP_FREQUENCY", defaultCleanupFrequency)
 }
 
 // WorkerPoolSize returns the number of background worker.
 func (c *Config) WorkerPoolSize() int {
-	return c.getInt("WORKER_POOL_SIZE", defaultWorkerPoolSize)
+	return getIntValue("WORKER_POOL_SIZE", defaultWorkerPoolSize)
 }
 
 // PollingFrequency returns the interval to refresh feeds in the background.
 func (c *Config) PollingFrequency() int {
-	return c.getInt("POLLING_FREQUENCY", defaultPollingFrequency)
+	return getIntValue("POLLING_FREQUENCY", defaultPollingFrequency)
 }
 
 // BatchSize returns the number of feeds to send for background processing.
 func (c *Config) BatchSize() int {
-	return c.getInt("BATCH_SIZE", defaultBatchSize)
+	return getIntValue("BATCH_SIZE", defaultBatchSize)
 }
 
 // IsOAuth2UserCreationAllowed returns true if user creation is allowed for OAuth2 users.
 func (c *Config) IsOAuth2UserCreationAllowed() bool {
-	return c.getInt("OAUTH2_USER_CREATION", 0) == 1
+	return getBooleanValue("OAUTH2_USER_CREATION")
 }
 
 // OAuth2ClientID returns the OAuth2 Client ID.
 func (c *Config) OAuth2ClientID() string {
-	return c.get("OAUTH2_CLIENT_ID", "")
+	return getStringValue("OAUTH2_CLIENT_ID", defaultOAuth2ClientID)
 }
 
 // OAuth2ClientSecret returns the OAuth2 client secret.
 func (c *Config) OAuth2ClientSecret() string {
-	return c.get("OAUTH2_CLIENT_SECRET", "")
+	return getStringValue("OAUTH2_CLIENT_SECRET", defaultOAuth2ClientSecret)
 }
 
 // OAuth2RedirectURL returns the OAuth2 redirect URL.
 func (c *Config) OAuth2RedirectURL() string {
-	return c.get("OAUTH2_REDIRECT_URL", "")
+	return getStringValue("OAUTH2_REDIRECT_URL", defaultOAuth2RedirectURL)
 }
 
 // OAuth2Provider returns the name of the OAuth2 provider configured.
 func (c *Config) OAuth2Provider() string {
-	return c.get("OAUTH2_PROVIDER", "")
+	return getStringValue("OAUTH2_PROVIDER", defaultOAuth2Provider)
 }
 
 // HasHSTS returns true if HTTP Strict Transport Security is enabled.
 func (c *Config) HasHSTS() bool {
-	return c.get("DISABLE_HSTS", "") == ""
+	return !getBooleanValue("DISABLE_HSTS")
 }
 
 // RunMigrations returns true if the environment variable RUN_MIGRATIONS is not empty.
 func (c *Config) RunMigrations() bool {
-	return c.get("RUN_MIGRATIONS", "") != ""
+	return getBooleanValue("RUN_MIGRATIONS")
 }
 
 // CreateAdmin returns true if the environment variable CREATE_ADMIN is not empty.
 func (c *Config) CreateAdmin() bool {
-	return c.get("CREATE_ADMIN", "") != ""
+	return getBooleanValue("CREATE_ADMIN")
 }
 
 // PocketConsumerKey returns the Pocket Consumer Key if defined as environment variable.
 func (c *Config) PocketConsumerKey(defaultValue string) string {
-	return c.get("POCKET_CONSUMER_KEY", defaultValue)
+	return getStringValue("POCKET_CONSUMER_KEY", defaultValue)
 }
 
 // ProxyImages returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
 func (c *Config) ProxyImages() string {
-	return c.get("PROXY_IMAGES", defaultProxyImages)
+	return getStringValue("PROXY_IMAGES", defaultProxyImages)
 }
 
 // NewConfig returns a new Config.
@@ -234,9 +219,40 @@ func NewConfig() *Config {
 	cfg := &Config{
 		baseURL: defaultBaseURL,
 		rootURL: defaultBaseURL,
-		IsHTTPS: os.Getenv("HTTPS") != "",
+		IsHTTPS: getBooleanValue("HTTPS"),
 	}
 
 	cfg.parseBaseURL()
 	return cfg
+}
+
+func getBooleanValue(key string) bool {
+	value := strings.ToLower(os.Getenv(key))
+	if value == "1" || value == "yes" || value == "true" || value == "on" {
+		return true
+	}
+	return false
+}
+
+func getStringValue(key, fallback string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+
+	return value
+}
+
+func getIntValue(key string, fallback int) int {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+
+	v, err := strconv.Atoi(value)
+	if err != nil {
+		return fallback
+	}
+
+	return v
 }
