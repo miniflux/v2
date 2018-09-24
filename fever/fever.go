@@ -356,7 +356,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 		builder.WithOffset(maxID)
 	}
 
-	csvItemIDs := request.QueryParam(r, "with_ids", "")
+	csvItemIDs := request.QueryStringParam(r, "with_ids", "")
 	if csvItemIDs != "" {
 		var itemIDs []int64
 

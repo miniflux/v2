@@ -17,17 +17,8 @@ import (
 
 // GetFeedEntry is the API handler to get a single feed entry.
 func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
+	feedID := request.RouteInt64Param(r, "feedID")
+	entryID := request.RouteInt64Param(r, "entryID")
 
 	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
@@ -49,12 +40,7 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 
 // GetEntry is the API handler to get a single entry.
 func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	entryID := request.RouteInt64Param(r, "entryID")
 	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 
@@ -74,13 +60,9 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 
 // GetFeedEntries is the API handler to get all feed entries.
 func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
+	feedID := request.RouteInt64Param(r, "feedID")
 
-	status := request.QueryParam(r, "status", "")
+	status := request.QueryStringParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
 			json.BadRequest(w, err)
@@ -88,13 +70,13 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	order := request.QueryParam(r, "order", model.DefaultSortingOrder)
+	order := request.QueryStringParam(r, "order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
 		json.BadRequest(w, err)
 		return
 	}
 
-	direction := request.QueryParam(r, "direction", model.DefaultSortingDirection)
+	direction := request.QueryStringParam(r, "direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
 		json.BadRequest(w, err)
 		return
@@ -133,7 +115,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 
 // GetEntries is the API handler to fetch entries.
 func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
-	status := request.QueryParam(r, "status", "")
+	status := request.QueryStringParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
 			json.BadRequest(w, err)
@@ -141,13 +123,13 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	order := request.QueryParam(r, "order", model.DefaultSortingOrder)
+	order := request.QueryStringParam(r, "order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
 		json.BadRequest(w, err)
 		return
 	}
 
-	direction := request.QueryParam(r, "direction", model.DefaultSortingDirection)
+	direction := request.QueryStringParam(r, "direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
 		json.BadRequest(w, err)
 		return
@@ -206,12 +188,7 @@ func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 
 // ToggleBookmark is the API handler to toggle bookmark status.
 func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	entryID := request.RouteInt64Param(r, "entryID")
 	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
 		json.ServerError(w, err)
 		return
@@ -245,7 +222,7 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 		builder.WithStarred()
 	}
 
-	searchQuery := request.QueryParam(r, "search", "")
+	searchQuery := request.QueryStringParam(r, "search", "")
 	if searchQuery != "" {
 		builder.WithSearchQuery(searchQuery)
 	}

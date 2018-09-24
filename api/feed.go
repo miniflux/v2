@@ -65,12 +65,7 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 
 // RefreshFeed is the API handler to refresh a feed.
 func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
 	if !c.store.FeedExists(userID, feedID) {
@@ -78,7 +73,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.feedHandler.RefreshFeed(userID, feedID)
+	err := c.feedHandler.RefreshFeed(userID, feedID)
 	if err != nil {
 		json.ServerError(w, err)
 		return
@@ -89,12 +84,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 
 // UpdateFeed is the API handler that is used to update a feed.
 func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	feedChanges, err := decodeFeedModificationPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, err)
@@ -148,12 +138,7 @@ func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
 
 // GetFeed is the API handler to get a feed.
 func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	feed, err := c.store.FeedByID(request.UserID(r), feedID)
 	if err != nil {
 		json.ServerError(w, err)
@@ -170,12 +155,7 @@ func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
 
 // RemoveFeed is the API handler to remove a feed.
 func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
 	if !c.store.FeedExists(userID, feedID) {

@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestRealIPWithoutHeaders(t *testing.T) {
+func TestFindClientIPWithoutHeaders(t *testing.T) {
 	r := &http.Request{RemoteAddr: "192.168.0.1:4242"}
 	if ip := FindClientIP(r); ip != "192.168.0.1" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
@@ -21,7 +21,7 @@ func TestRealIPWithoutHeaders(t *testing.T) {
 	}
 }
 
-func TestRealIPWithXFFHeader(t *testing.T) {
+func TestFindClientIPWithXFFHeader(t *testing.T) {
 	// Test with multiple IPv4 addresses.
 	headers := http.Header{}
 	headers.Set("X-Forwarded-For", "203.0.113.195, 70.41.3.18, 150.172.238.178")
@@ -59,7 +59,7 @@ func TestRealIPWithXFFHeader(t *testing.T) {
 	}
 }
 
-func TestRealIPWithXRealIPHeader(t *testing.T) {
+func TestClientIPWithXRealIPHeader(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("X-Real-Ip", "192.168.122.1")
 	r := &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
@@ -69,7 +69,7 @@ func TestRealIPWithXRealIPHeader(t *testing.T) {
 	}
 }
 
-func TestRealIPWithBothHeaders(t *testing.T) {
+func TestClientIPWithBothHeaders(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("X-Forwarded-For", "203.0.113.195, 70.41.3.18, 150.172.238.178")
 	headers.Set("X-Real-Ip", "192.168.122.1")

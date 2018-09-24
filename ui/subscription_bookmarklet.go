@@ -32,7 +32,7 @@ func (c *Controller) Bookmarklet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bookmarkletURL := request.QueryParam(r, "uri", "")
+	bookmarkletURL := request.QueryStringParam(r, "uri", "")
 
 	view.Set("form", form.SubscriptionForm{URL: bookmarkletURL})
 	view.Set("categories", categories)

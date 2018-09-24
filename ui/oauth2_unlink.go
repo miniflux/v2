@@ -19,7 +19,7 @@ import (
 // OAuth2Unlink unlink an account from the external provider.
 func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 	printer := locale.NewPrinter(request.UserLanguage(r))
-	provider := request.Param(r, "provider", "")
+	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		logger.Info("[OAuth2] Invalid or missing provider")
 		response.Redirect(w, r, route.Path(c.router, "login"))

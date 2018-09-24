@@ -111,7 +111,12 @@ func ClientIP(r *http.Request) string {
 
 func getContextStringValue(r *http.Request, key ContextKey) string {
 	if v := r.Context().Value(key); v != nil {
-		return v.(string)
+		value, valid := v.(string)
+		if !valid {
+			return ""
+		}
+
+		return value
 	}
 
 	return ""
@@ -119,7 +124,12 @@ func getContextStringValue(r *http.Request, key ContextKey) string {
 
 func getContextBoolValue(r *http.Request, key ContextKey) bool {
 	if v := r.Context().Value(key); v != nil {
-		return v.(bool)
+		value, valid := v.(bool)
+		if !valid {
+			return false
+		}
+
+		return value
 	}
 
 	return false
@@ -127,7 +137,12 @@ func getContextBoolValue(r *http.Request, key ContextKey) bool {
 
 func getContextInt64Value(r *http.Request, key ContextKey) int64 {
 	if v := r.Context().Value(key); v != nil {
-		return v.(int64)
+		value, valid := v.(int64)
+		if !valid {
+			return 0
+		}
+
+		return value
 	}
 
 	return 0

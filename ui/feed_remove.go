@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -15,12 +15,7 @@ import (
 
 // RemoveFeed deletes a subscription from the database and redirect to the list of feeds page.
 func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		html.ServerError(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	if err := c.store.RemoveFeed(request.UserID(r), feedID); err != nil {
 		html.ServerError(w, err)
 		return

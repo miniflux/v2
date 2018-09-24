@@ -23,12 +23,7 @@ func (c *Controller) ShowFeedEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	feed, err := c.store.FeedByID(user.ID, feedID)
 	if err != nil {
 		html.ServerError(w, err)

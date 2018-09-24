@@ -17,12 +17,7 @@ import (
 
 // FetchContent downloads the original HTML page and returns relevant contents.
 func (c *Controller) FetchContent(w http.ResponseWriter, r *http.Request) {
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	entryID := request.RouteInt64Param(r, "entryID")
 	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)

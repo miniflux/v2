@@ -62,7 +62,7 @@ func (m *Middleware) isPublicRoute(r *http.Request) bool {
 }
 
 func (m *Middleware) getUserSessionFromCookie(r *http.Request) *model.UserSession {
-	cookieValue := request.Cookie(r, cookie.CookieUserSessionID)
+	cookieValue := request.CookieValue(r, cookie.CookieUserSessionID)
 	if cookieValue == "" {
 		return nil
 	}

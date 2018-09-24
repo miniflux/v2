@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"encoding/base64"
@@ -18,7 +18,7 @@ import (
 
 // AppIcon renders application icons.
 func (c *Controller) AppIcon(w http.ResponseWriter, r *http.Request) {
-	filename := request.Param(r, "filename", "favicon.png")
+	filename := request.RouteStringParam(r, "filename")
 	encodedBlob, found := static.Binaries[filename]
 	if !found {
 		logger.Info("[Controller:AppIcon] This icon doesn't exists: %s", filename)

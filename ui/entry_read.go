@@ -24,12 +24,7 @@ func (c *Controller) ShowReadEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	entryID := request.RouteInt64Param(r, "entryID")
 	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)

@@ -27,7 +27,7 @@ func (c *Controller) ImageProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encodedURL := request.Param(r, "encodedURL", "")
+	encodedURL := request.RouteStringParam(r, "encodedURL")
 	if encodedURL == "" {
 		html.BadRequest(w, errors.New("No URL provided"))
 		return

@@ -30,12 +30,7 @@ func (c *Controller) EditUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := request.IntParam(r, "userID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	userID := request.RouteInt64Param(r, "userID")
 	selectedUser, err := c.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, err)

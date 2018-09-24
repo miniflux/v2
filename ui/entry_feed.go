@@ -25,17 +25,8 @@ func (c *Controller) ShowFeedEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
+	entryID := request.RouteInt64Param(r, "entryID")
+	feedID := request.RouteInt64Param(r, "feedID")
 
 	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feedID)

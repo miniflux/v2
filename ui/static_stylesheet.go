@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -16,7 +16,7 @@ import (
 
 // Stylesheet renders the CSS.
 func (c *Controller) Stylesheet(w http.ResponseWriter, r *http.Request) {
-	stylesheet := request.Param(r, "name", "default")
+	stylesheet := request.RouteStringParam(r, "name")
 	if _, found := static.Stylesheets[stylesheet]; !found {
 		html.NotFound(w)
 		return

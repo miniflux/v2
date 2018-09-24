@@ -23,7 +23,7 @@ func (c *Controller) ShowSearchEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	searchQuery := request.QueryParam(r, "q", "")
+	searchQuery := request.QueryStringParam(r, "q", "")
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithSearchQuery(searchQuery)

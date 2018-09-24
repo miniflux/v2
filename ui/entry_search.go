@@ -25,13 +25,8 @@ func (c *Controller) ShowSearchEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
-	searchQuery := request.QueryParam(r, "q", "")
+	entryID := request.RouteInt64Param(r, "entryID")
+	searchQuery := request.QueryStringParam(r, "q", "")
 	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithSearchQuery(searchQuery)
 	builder.WithEntryID(entryID)

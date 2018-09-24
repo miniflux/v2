@@ -16,12 +16,7 @@ import (
 
 // RefreshFeed refresh a subscription and redirect to the feed entries page.
 func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	feedID := request.RouteInt64Param(r, "feedID")
 	if err := c.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
 		logger.Error("[Controller:RefreshFeed] %v", err)
 	}

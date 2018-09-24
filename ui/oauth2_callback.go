@@ -23,21 +23,21 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(c.store, request.SessionID(r))
 
-	provider := request.Param(r, "provider", "")
+	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		logger.Error("[OAuth2] Invalid or missing provider")
 		response.Redirect(w, r, route.Path(c.router, "login"))
 		return
 	}
 
-	code := request.QueryParam(r, "code", "")
+	code := request.QueryStringParam(r, "code", "")
 	if code == "" {
 		logger.Error("[OAuth2] No code received on callback")
 		response.Redirect(w, r, route.Path(c.router, "login"))
 		return
 	}
 
-	state := request.QueryParam(r, "state", "")
+	state := request.QueryStringParam(r, "state", "")
 	if state == "" || state != request.OAuth2State(r) {
 		logger.Error(`[OAuth2] Invalid state value: got "%s" instead of "%s"`, state, request.OAuth2State(r))
 		response.Redirect(w, r, route.Path(c.router, "login"))

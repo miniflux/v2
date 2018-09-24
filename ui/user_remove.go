@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -26,12 +26,7 @@ func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := request.IntParam(r, "userID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	userID := request.RouteInt64Param(r, "userID")
 	selectedUser, err := c.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, err)

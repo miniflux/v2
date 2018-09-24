@@ -43,11 +43,7 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 
 // UpdateCategory is the API handler to update a category.
 func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
-	categoryID, err := request.IntParam(r, "categoryID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
+	categoryID := request.RouteInt64Param(r, "categoryID")
 
 	category, err := decodeCategoryPayload(r.Body)
 	if err != nil {
@@ -85,11 +81,7 @@ func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 // RemoveCategory is the API handler to remove a category.
 func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	categoryID, err := request.IntParam(r, "categoryID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
+	categoryID := request.RouteInt64Param(r, "categoryID")
 
 	if !c.store.CategoryExists(userID, categoryID) {
 		json.NotFound(w, errors.New("Category not found"))

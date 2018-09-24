@@ -15,12 +15,7 @@ import (
 
 // ShowIcon shows the feed icon.
 func (c *Controller) ShowIcon(w http.ResponseWriter, r *http.Request) {
-	iconID, err := request.IntParam(r, "iconID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	iconID := request.RouteInt64Param(r, "iconID")
 	icon, err := c.store.IconByID(iconID)
 	if err != nil {
 		html.ServerError(w, err)

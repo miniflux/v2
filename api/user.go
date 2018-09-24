@@ -63,12 +63,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := request.IntParam(r, "userID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	userID := request.RouteInt64Param(r, "userID")
 	userChanges, err := decodeUserModificationPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, err)
@@ -124,12 +119,7 @@ func (c *Controller) UserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := request.IntParam(r, "userID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	userID := request.RouteInt64Param(r, "userID")
 	user, err := c.store.UserByID(userID)
 	if err != nil {
 		json.BadRequest(w, errors.New("Unable to fetch this user from the database"))
@@ -152,7 +142,7 @@ func (c *Controller) UserByUsername(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username := request.Param(r, "username", "")
+	username := request.RouteStringParam(r, "username")
 	user, err := c.store.UserByUsername(username)
 	if err != nil {
 		json.BadRequest(w, errors.New("Unable to fetch this user from the database"))
@@ -174,12 +164,7 @@ func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := request.IntParam(r, "userID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
-
+	userID := request.RouteInt64Param(r, "userID")
 	user, err := c.store.UserByID(userID)
 	if err != nil {
 		json.ServerError(w, err)

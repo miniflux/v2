@@ -14,11 +14,7 @@ import (
 
 // FeedIcon returns a feed icon.
 func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
-	feedID, err := request.IntParam(r, "feedID")
-	if err != nil {
-		json.BadRequest(w, err)
-		return
-	}
+	feedID := request.RouteInt64Param(r, "feedID")
 
 	if !c.store.HasIcon(feedID) {
 		json.NotFound(w, errors.New("This feed doesn't have any icon"))

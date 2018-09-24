@@ -18,7 +18,7 @@ import (
 func (c *Controller) OAuth2Redirect(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(c.store, request.SessionID(r))
 
-	provider := request.Param(r, "provider", "")
+	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		logger.Error("[OAuth2] Invalid or missing provider: %s", provider)
 		response.Redirect(w, r, route.Path(c.router, "login"))

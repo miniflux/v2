@@ -25,17 +25,8 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categoryID, err := request.IntParam(r, "categoryID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
-	entryID, err := request.IntParam(r, "entryID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
+	categoryID := request.RouteInt64Param(r, "categoryID")
+	entryID := request.RouteInt64Param(r, "entryID")
 
 	builder := c.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(categoryID)

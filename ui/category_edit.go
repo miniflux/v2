@@ -25,12 +25,7 @@ func (c *Controller) EditCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categoryID, err := request.IntParam(r, "categoryID")
-	if err != nil {
-		html.BadRequest(w, err)
-		return
-	}
-
+	categoryID := request.RouteInt64Param(r, "categoryID")
 	category, err := c.store.Category(request.UserID(r), categoryID)
 	if err != nil {
 		html.ServerError(w, err)

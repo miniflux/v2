@@ -62,7 +62,7 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 }
 
 func (m *Middleware) getAppSessionValueFromCookie(r *http.Request) *model.Session {
-	cookieValue := request.Cookie(r, cookie.CookieSessionID)
+	cookieValue := request.CookieValue(r, cookie.CookieSessionID)
 	if cookieValue == "" {
 		return nil
 	}
