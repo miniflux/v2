@@ -167,6 +167,7 @@ class NavHandler {
 
         if (document.querySelector(".current-item") === null) {
             items[0].classList.add("current-item");
+            items[0].querySelector('.item-header a').focus();
             return;
         }
 
@@ -177,6 +178,7 @@ class NavHandler {
                 if (i - 1 >= 0) {
                     items[i - 1].classList.add("current-item");
                     DomHelper.scrollPageTo(items[i - 1]);
+                    items[i - 1].querySelector('.item-header a').focus();
                 }
 
                 break;
@@ -193,6 +195,7 @@ class NavHandler {
 
         if (currentItem === null) {
             items[0].classList.add("current-item");
+            items[0].querySelector('.item-header a').focus();
             return;
         }
 
@@ -203,6 +206,7 @@ class NavHandler {
                 if (i + 1 < items.length) {
                     items[i + 1].classList.add("current-item");
                     DomHelper.scrollPageTo(items[i + 1]);
+                    items[i + 1].querySelector('.item-header a').focus();
                 }
 
                 break;
