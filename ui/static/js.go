@@ -83,12 +83,12 @@ goToPage(page,fallbackSelf){let element=document.querySelector("a[data-page="+pa
 goToPrevious(){if(this.isListView()){this.goToPreviousListItem();}else{this.goToPage("previous");}}
 goToNext(){if(this.isListView()){this.goToNextListItem();}else{this.goToPage("next");}}
 goToPreviousListItem(){let items=DomHelper.getVisibleElements(".items .item");if(items.length===0){return;}
-if(document.querySelector(".current-item")===null){items[0].classList.add("current-item");return;}
-for(let i=0;i<items.length;i++){if(items[i].classList.contains("current-item")){items[i].classList.remove("current-item");if(i-1>=0){items[i-1].classList.add("current-item");DomHelper.scrollPageTo(items[i-1]);}
+if(document.querySelector(".current-item")===null){items[0].classList.add("current-item");items[0].querySelector('.item-header a').focus();return;}
+for(let i=0;i<items.length;i++){if(items[i].classList.contains("current-item")){items[i].classList.remove("current-item");if(i-1>=0){items[i-1].classList.add("current-item");DomHelper.scrollPageTo(items[i-1]);items[i-1].querySelector('.item-header a').focus();}
 break;}}}
 goToNextListItem(){let currentItem=document.querySelector(".current-item");let items=DomHelper.getVisibleElements(".items .item");if(items.length===0){return;}
-if(currentItem===null){items[0].classList.add("current-item");return;}
-for(let i=0;i<items.length;i++){if(items[i].classList.contains("current-item")){items[i].classList.remove("current-item");if(i+1<items.length){items[i+1].classList.add("current-item");DomHelper.scrollPageTo(items[i+1]);}
+if(currentItem===null){items[0].classList.add("current-item");items[0].querySelector('.item-header a').focus();return;}
+for(let i=0;i<items.length;i++){if(items[i].classList.contains("current-item")){items[i].classList.remove("current-item");if(i+1<items.length){items[i+1].classList.add("current-item");DomHelper.scrollPageTo(items[i+1]);items[i+1].querySelector('.item-header a').focus();}
 break;}}}
 isListView(){return document.querySelector(".items")!==null;}}
 document.addEventListener("DOMContentLoaded",function(){FormHandler.handleSubmitButtons();let touchHandler=new TouchHandler();touchHandler.listen();let navHandler=new NavHandler();let keyboardHandler=new KeyboardHandler();keyboardHandler.on("g u",()=>navHandler.goToPage("unread"));keyboardHandler.on("g b",()=>navHandler.goToPage("starred"));keyboardHandler.on("g h",()=>navHandler.goToPage("history"));keyboardHandler.on("g f",()=>navHandler.goToPage("feeds"));keyboardHandler.on("g c",()=>navHandler.goToPage("categories"));keyboardHandler.on("g s",()=>navHandler.goToPage("settings"));keyboardHandler.on("ArrowLeft",()=>navHandler.goToPrevious());keyboardHandler.on("ArrowRight",()=>navHandler.goToNext());keyboardHandler.on("j",()=>navHandler.goToPrevious());keyboardHandler.on("p",()=>navHandler.goToPrevious());keyboardHandler.on("k",()=>navHandler.goToNext());keyboardHandler.on("n",()=>navHandler.goToNext());keyboardHandler.on("h",()=>navHandler.goToPage("previous"));keyboardHandler.on("l",()=>navHandler.goToPage("next"));keyboardHandler.on("o",()=>navHandler.openSelectedItem());keyboardHandler.on("v",()=>navHandler.openOriginalLink());keyboardHandler.on("m",()=>navHandler.toggleEntryStatus());keyboardHandler.on("A",()=>navHandler.markPageAsRead());keyboardHandler.on("s",()=>navHandler.saveEntry());keyboardHandler.on("d",()=>navHandler.fetchOriginalContent());keyboardHandler.on("f",()=>navHandler.toggleBookmark());keyboardHandler.on("?",()=>navHandler.showKeyboardShortcuts());keyboardHandler.on("/",(e)=>navHandler.setFocusToSearchInput(e));keyboardHandler.on("Escape",()=>ModalHandler.close());keyboardHandler.listen();let mouseHandler=new MouseHandler();mouseHandler.onClick("a[data-save-entry]",(event)=>{event.preventDefault();EntryHandler.saveEntry(event.target);});mouseHandler.onClick("a[data-toggle-bookmark]",(event)=>{event.preventDefault();EntryHandler.toggleBookmark(event.target);});mouseHandler.onClick("a[data-toggle-status]",(event)=>{event.preventDefault();let currentItem=DomHelper.findParent(event.target,"entry");if(!currentItem){currentItem=DomHelper.findParent(event.target,"item");}
@@ -98,6 +98,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "8a00c50f9b0f5dea54272d03638a18cec2a1815c0ff05492c7f9961138b1166a",
+	"app": "583320452ca24912512d41f6b31221b14a3e0d53f02511e55246a60d0b56d095",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
