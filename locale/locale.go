@@ -33,5 +33,6 @@ func AvailableLanguages() map[string]string {
 		"pl_PL": "Polski",
 		"zh_CN": "简体中文",
 		"nl_NL": "Nederlands",
+		"it_IT": "Italiano",
 	}
 }
