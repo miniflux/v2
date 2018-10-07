@@ -256,7 +256,7 @@ func (s *Storage) FlushHistory(userID int64) error {
 	return nil
 }
 
-// MarkAllAsRead set all entries with the status "unread" to "read".
+// MarkAllAsRead updates all user entries to the read status.
 func (s *Storage) MarkAllAsRead(userID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkAllAsRead] userID=%d", userID))
 
@@ -265,6 +265,49 @@ func (s *Storage) MarkAllAsRead(userID int64) error {
 	if err != nil {
 		return fmt.Errorf("unable to mark all entries as read: %v", err)
 	}
+
+	return nil
+}
+
+// MarkFeedAsRead updates all feed entries to the read status.
+func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkFeedAsRead] userID=%d, feedID=%d, before=%v", userID, feedID, before))
+
+	query := `
+		UPDATE entries
+		SET status=$1
+		WHERE user_id=$2 AND feed_id=$3 AND status=$4 AND published_at < $5
+	`
+
+	result, err := s.db.Exec(query, model.EntryStatusRead, userID, feedID, model.EntryStatusUnread, before)
+	if err != nil {
+		return fmt.Errorf("unable to mark feed entries as read: %v", err)
+	}
+
+	count, _ := result.RowsAffected()
+	logger.Debug("[Storage:MarkFeedAsRead] %d items marked as read", count)
+
+	return nil
+}
+
+// MarkCategoryAsRead updates all category entries to the read status.
+func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkCategoryAsRead] userID=%d, categoryID=%d, before=%v", userID, categoryID, before))
+
+	query := `
+		UPDATE entries
+		SET status=$1
+		WHERE
+		user_id=$2 AND status=$3 AND published_at < $4 AND feed_id IN (SELECT id FROM feeds WHERE user_id=$2 AND category_id=$5)
+	`
+
+	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread, before, categoryID)
+	if err != nil {
+		return fmt.Errorf("unable to mark category entries as read: %v", err)
+	}
+
+	count, _ := result.RowsAffected()
+	logger.Debug("[Storage:MarkCategoryAsRead] %d items marked as read", count)
 
 	return nil
 }

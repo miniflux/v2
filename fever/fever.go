@@ -530,81 +530,53 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	mark=? where ? is replaced with feed or group
+	mark=feed
 	as=read
 	id=? where ? is replaced with the id of the feed or group to modify
 	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
 func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Receiving mark=feed call for userID=%d", userID)
-
 	feedID := request.FormInt64Value(r, "id")
+	before := time.Unix(request.FormInt64Value(r, "before"), 0)
+
+	logger.Debug("[Fever] mark=feed, userID=%d, feedID=%d, before=%v", userID, feedID, before)
+
 	if feedID <= 0 {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(userID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithFeedID(feedID)
-
-	before := request.FormInt64Value(r, "before")
-	if before > 0 {
-		t := time.Unix(before, 0)
-		builder.BeforeDate(t)
-	}
-
-	entryIDs, err := builder.GetEntryIDs()
-	if err != nil {
-		json.ServerError(w, err)
-		return
-	}
-
-	err = c.store.SetEntriesStatus(userID, entryIDs, model.EntryStatusRead)
-	if err != nil {
-		json.ServerError(w, err)
-		return
-	}
+	go func() {
+		if err := c.store.MarkFeedAsRead(userID, feedID, before); err != nil {
+			logger.Error("[Fever] MarkFeedAsRead failed: %v", err)
+		}
+	}()
 
 	json.OK(w, r, newBaseResponse())
 }
 
 /*
-	mark=? where ? is replaced with feed or group
+	mark=group
 	as=read
 	id=? where ? is replaced with the id of the feed or group to modify
 	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
 func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Receiving mark=group call for userID=%d", userID)
-
 	groupID := request.FormInt64Value(r, "id")
+	before := time.Unix(request.FormInt64Value(r, "before"), 0)
+
+	logger.Debug("[Fever] mark=group, userID=%d, groupID=%d, before=%v", userID, groupID, before)
+
 	if groupID < 0 {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(userID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithCategoryID(groupID)
-
-	before := request.FormInt64Value(r, "before")
-	if before > 0 {
-		t := time.Unix(before, 0)
-		builder.BeforeDate(t)
-	}
-
-	entryIDs, err := builder.GetEntryIDs()
-	if err != nil {
-		json.ServerError(w, err)
-		return
-	}
-
-	err = c.store.SetEntriesStatus(userID, entryIDs, model.EntryStatusRead)
-	if err != nil {
-		json.ServerError(w, err)
-		return
-	}
+	go func() {
+		if err := c.store.MarkCategoryAsRead(userID, groupID, before); err != nil {
+			logger.Error("[Fever] MarkCategoryAsRead failed: %v", err)
+		}
+	}()
 
 	json.OK(w, r, newBaseResponse())
 }
