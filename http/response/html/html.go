@@ -1,6 +1,6 @@
 // Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// Use of this source code is governed by the MIT license
+// that can be found in the LICENSE file.
 
 package html // import "miniflux.app/http/response/html"
 
@@ -11,48 +11,64 @@ import (
 	"miniflux.app/logger"
 )
 
-// OK writes a standard HTML response.
-func OK(w http.ResponseWriter, r *http.Request, b []byte) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	response.Compress(w, r, b)
+// OK creates a new HTML response with a 200 status code.
+func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
+	builder := response.New(w, r)
+	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithBody(body)
+	builder.Write()
 }
 
-// ServerError sends a 500 error to the browser.
-func ServerError(w http.ResponseWriter, err error) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusInternalServerError)
+// ServerError sends an internal error to the client.
+func ServerError(w http.ResponseWriter, r *http.Request, err error) {
+	logger.Error("[HTTP:Internal Server Error] %s => %v", r.URL, err)
 
-	if err != nil {
-		logger.Error("[Internal Server Error] %v", err)
-		w.Write([]byte("Internal Server Error: " + err.Error()))
-	} else {
-		w.Write([]byte("Internal Server Error"))
-	}
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusInternalServerError)
+	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithBody(err)
+	builder.Write()
 }
 
-// BadRequest sends a 400 error to the browser.
-func BadRequest(w http.ResponseWriter, err error) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusBadRequest)
+// BadRequest sends a bad request error to the client.
+func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
+	logger.Error("[HTTP:Bad Request] %s => %v", r.URL, err)
 
-	if err != nil {
-		logger.Error("[Bad Request] %v", err)
-		w.Write([]byte("Bad Request: " + err.Error()))
-	} else {
-		w.Write([]byte("Bad Request"))
-	}
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusBadRequest)
+	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithBody(err)
+	builder.Write()
 }
 
-// NotFound sends a 404 error to the browser.
-func NotFound(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("Page Not Found"))
+// Forbidden sends a forbidden error to the client.
+func Forbidden(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Forbidden] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusForbidden)
+	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithBody("Access Forbidden")
+	builder.Write()
 }
 
-// Forbidden sends a 403 error to the browser.
-func Forbidden(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusForbidden)
-	w.Write([]byte("Access Forbidden"))
+// NotFound sends a page not found error to the client.
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Not Found] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusNotFound)
+	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithBody("Page Not Found")
+	builder.Write()
+}
+
+// Redirect redirects the user to another location.
+func Redirect(w http.ResponseWriter, r *http.Request, uri string) {
+	http.Redirect(w, r, uri, http.StatusFound)
 }

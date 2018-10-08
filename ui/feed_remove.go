@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 )
@@ -17,9 +16,9 @@ import (
 func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	if err := c.store.RemoveFeed(request.UserID(r), feedID); err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
-	response.Redirect(w, r, route.Path(c.router, "feeds"))
+	html.Redirect(w, r, route.Path(c.router, "feeds"))
 }

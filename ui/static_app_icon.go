@@ -12,26 +12,28 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
-	"miniflux.app/logger"
 	"miniflux.app/ui/static"
 )
 
-// AppIcon renders application icons.
+// AppIcon shows application icons.
 func (c *Controller) AppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
-	encodedBlob, found := static.Binaries[filename]
+	etag, found := static.BinariesChecksums[filename]
 	if !found {
-		logger.Info("[Controller:AppIcon] This icon doesn't exists: %s", filename)
-		html.NotFound(w)
+		html.NotFound(w, r)
 		return
 	}
 
-	blob, err := base64.StdEncoding.DecodeString(encodedBlob)
-	if err != nil {
-		logger.Error("[Controller:AppIcon] %v", err)
-		html.NotFound(w)
-		return
-	}
+	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+		blob, err := base64.StdEncoding.DecodeString(static.Binaries[filename])
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
 
-	response.Cache(w, r, "image/png", static.BinariesChecksums[filename], blob, 48*time.Hour)
+		b.WithHeader("Content-Type", "image/png")
+		b.WithoutCompression()
+		b.WithBody(blob)
+		b.Write()
+	})
 }

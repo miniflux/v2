@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -10,7 +10,6 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
-	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
 	"miniflux.app/ui/session"
@@ -21,7 +20,7 @@ import (
 func (c *Controller) ShowStarredEntry(w http.ResponseWriter, r *http.Request) {
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -32,20 +31,19 @@ func (c *Controller) ShowStarredEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		html.NotFound(w)
+		html.NotFound(w, r)
 		return
 	}
 
 	if entry.Status == model.EntryStatusUnread {
 		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			logger.Error("[Controller:ShowReadEntry] %v", err)
-			html.ServerError(w, nil)
+			html.ServerError(w, r, err)
 			return
 		}
 
@@ -56,7 +54,7 @@ func (c *Controller) ShowStarredEntry(w http.ResponseWriter, r *http.Request) {
 	entryPaginationBuilder.WithStarred()
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 

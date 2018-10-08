@@ -184,13 +184,13 @@ func (c *Controller) handleGroups(w http.ResponseWriter, r *http.Request) {
 
 	categories, err := c.store.Categories(userID)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	feeds, err := c.store.Feeds(userID)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -234,7 +234,7 @@ func (c *Controller) handleFeeds(w http.ResponseWriter, r *http.Request) {
 
 	feeds, err := c.store.Feeds(userID)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -287,7 +287,7 @@ func (c *Controller) handleFavicons(w http.ResponseWriter, r *http.Request) {
 
 	icons, err := c.store.Icons(userID)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -371,7 +371,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -379,7 +379,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	result.Total, err = builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -427,7 +427,7 @@ func (c *Controller) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	builder.WithStatus(model.EntryStatusUnread)
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -459,7 +459,7 @@ func (c *Controller) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 
 	entryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -493,7 +493,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -511,13 +511,13 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	case "saved", "unsaved":
 		logger.Debug("[Fever] Mark entry #%d as saved/unsaved", entryID)
 		if err := c.store.ToggleBookmark(userID, entryID); err != nil {
-			json.ServerError(w, err)
+			json.ServerError(w, r, err)
 			return
 		}
 
 		settings, err := c.store.Integration(userID)
 		if err != nil {
-			json.ServerError(w, err)
+			json.ServerError(w, r, err)
 			return
 		}
 

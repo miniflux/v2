@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"encoding/base64"
@@ -16,44 +16,47 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
-	"miniflux.app/logger"
 )
 
 // ImageProxy fetch an image from a remote server and sent it back to the browser.
 func (c *Controller) ImageProxy(w http.ResponseWriter, r *http.Request) {
-	// If we receive a "If-None-Match" header we assume the image in stored in browser cache
+	// If we receive a "If-None-Match" header, we assume the image is already stored in browser cache.
 	if r.Header.Get("If-None-Match") != "" {
-		response.NotModified(w)
+		w.WriteHeader(http.StatusNotModified)
 		return
 	}
 
 	encodedURL := request.RouteStringParam(r, "encodedURL")
 	if encodedURL == "" {
-		html.BadRequest(w, errors.New("No URL provided"))
+		html.BadRequest(w, r, errors.New("No URL provided"))
 		return
 	}
 
 	decodedURL, err := base64.URLEncoding.DecodeString(encodedURL)
 	if err != nil {
-		html.BadRequest(w, errors.New("Unable to decode this URL"))
+		html.BadRequest(w, r, errors.New("Unable to decode this URL"))
 		return
 	}
 
 	clt := client.New(string(decodedURL))
 	resp, err := clt.Get()
 	if err != nil {
-		logger.Error("[Controller:ImageProxy] %v", err)
-		html.NotFound(w)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if resp.HasServerFailure() {
-		html.NotFound(w)
+		html.NotFound(w, r)
 		return
 	}
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	etag := crypto.HashFromBytes(body)
 
-	response.Cache(w, r, resp.ContentType, etag, body, 72*time.Hour)
+	response.New(w ,r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Type", resp.ContentType)
+		b.WithBody(body)
+		b.WithoutCompression()
+		b.Write()
+	})
 }

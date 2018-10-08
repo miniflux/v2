@@ -2,10 +2,9 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
-	"errors"
 	"net/http"
 
 	"miniflux.app/http/request"
@@ -24,18 +23,18 @@ func (c *Controller) FetchContent(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		json.NotFound(w, errors.New("Entry not found"))
+		json.NotFound(w, r)
 		return
 	}
 
 	content, err := scraper.Fetch(entry.URL, entry.Feed.ScraperRules, entry.Feed.UserAgent)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 

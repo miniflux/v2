@@ -26,12 +26,12 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		json.NotFound(w, errors.New("Entry not found"))
+		json.NotFound(w, r)
 		return
 	}
 
@@ -46,12 +46,12 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		json.NotFound(w, errors.New("Entry not found"))
+		json.NotFound(w, r)
 		return
 	}
 
@@ -65,27 +65,27 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 	status := request.QueryStringParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
-			json.BadRequest(w, err)
+			json.BadRequest(w, r, err)
 			return
 		}
 	}
 
 	order := request.QueryStringParam(r, "order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	direction := request.QueryStringParam(r, "direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	limit := request.QueryIntParam(r, "limit", 100)
 	offset := request.QueryIntParam(r, "offset", 0)
 	if err := model.ValidateRange(offset, limit); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -100,13 +100,13 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -118,27 +118,27 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 	status := request.QueryStringParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
-			json.BadRequest(w, err)
+			json.BadRequest(w, r, err)
 			return
 		}
 	}
 
 	order := request.QueryStringParam(r, "order", model.DefaultSortingOrder)
 	if err := model.ValidateEntryOrder(order); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	direction := request.QueryStringParam(r, "direction", model.DefaultSortingDirection)
 	if err := model.ValidateDirection(direction); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	limit := request.QueryIntParam(r, "limit", 100)
 	offset := request.QueryIntParam(r, "offset", 0)
 	if err := model.ValidateRange(offset, limit); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -152,13 +152,13 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	count, err := builder.CountEntries()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -169,32 +169,32 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
 	if err != nil {
-		json.BadRequest(w, errors.New("Invalid JSON payload"))
+		json.BadRequest(w , r, errors.New("Invalid JSON payload"))
 		return
 	}
 
 	if err := model.ValidateEntryStatus(status); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	if err := c.store.SetEntriesStatus(request.UserID(r), entryIDs, status); err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w)
+	json.NoContent(w, r)
 }
 
 // ToggleBookmark is the API handler to toggle bookmark status.
 func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
 	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w)
+	json.NoContent(w, r)
 }
 
 func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {

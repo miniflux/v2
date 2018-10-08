@@ -2,14 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
 	"miniflux.app/http/cookie"
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
@@ -21,7 +20,7 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(c.store, request.SessionID(r))
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -38,5 +37,5 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 		c.cfg.BasePath(),
 	))
 
-	response.Redirect(w, r, route.Path(c.router, "login"))
+	html.Redirect(w, r, route.Path(c.router, "login"))
 }

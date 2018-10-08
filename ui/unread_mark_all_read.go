@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
 )
@@ -19,5 +19,5 @@ func (c *Controller) MarkAllAsRead(w http.ResponseWriter, r *http.Request) {
 		logger.Error("[MarkAllAsRead] %v", err)
 	}
 
-	response.Redirect(w, r, route.Path(c.router, "unread"))
+	html.Redirect(w, r, route.Path(c.router, "unread"))
 }

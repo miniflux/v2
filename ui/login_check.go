@@ -5,7 +5,6 @@ import (
 
 	"miniflux.app/http/cookie"
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
@@ -38,7 +37,7 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 
 	sessionToken, userID, err := c.store.CreateUserSession(authForm.Username, r.UserAgent(), clientIP)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -47,7 +46,7 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(userID)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -61,5 +60,5 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 		c.cfg.BasePath(),
 	))
 
-	response.Redirect(w, r, route.Path(c.router, "unread"))
+	html.Redirect(w, r, route.Path(c.router, "unread"))
 }

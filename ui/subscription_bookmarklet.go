@@ -22,13 +22,13 @@ func (c *Controller) Bookmarklet(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	categories, err := c.store.Categories(user.ID)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 

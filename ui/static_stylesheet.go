@@ -16,14 +16,16 @@ import (
 
 // Stylesheet renders the CSS.
 func (c *Controller) Stylesheet(w http.ResponseWriter, r *http.Request) {
-	stylesheet := request.RouteStringParam(r, "name")
-	if _, found := static.Stylesheets[stylesheet]; !found {
-		html.NotFound(w)
+	filename := request.RouteStringParam(r, "name")
+	etag, found := static.StylesheetsChecksums[filename]
+	if !found {
+		html.NotFound(w, r)
 		return
 	}
 
-	body := static.Stylesheets[stylesheet]
-	etag := static.StylesheetsChecksums[stylesheet]
-
-	response.Cache(w, r, "text/css; charset=utf-8", etag, []byte(body), 48*time.Hour)
+	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Type", "text/css; charset=utf-8")
+		b.WithBody(static.Stylesheets[filename])
+		b.Write()
+	})
 }

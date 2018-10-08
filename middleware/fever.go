@@ -26,7 +26,7 @@ func (m *Middleware) FeverAuth(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
-			logger.Info("[Middleware:Fever] Fever authentication failure")
+			logger.Info("[Middleware:Fever] No user found with this API key")
 			json.OK(w, r, map[string]int{"api_version": 3, "auth": 0})
 			return
 		}

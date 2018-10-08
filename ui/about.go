@@ -18,7 +18,7 @@ import (
 func (c *Controller) About(w http.ResponseWriter, r *http.Request) {
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 

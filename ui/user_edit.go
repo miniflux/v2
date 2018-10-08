@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -21,24 +21,24 @@ func (c *Controller) EditUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if !user.IsAdmin {
-		html.Forbidden(w)
+		html.Forbidden(w, r)
 		return
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
 	selectedUser, err := c.store.UserByID(userID)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if selectedUser == nil {
-		html.NotFound(w)
+		html.NotFound(w, r)
 		return
 	}
 

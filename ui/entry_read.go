@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -20,7 +20,7 @@ import (
 func (c *Controller) ShowReadEntry(w http.ResponseWriter, r *http.Request) {
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -31,12 +31,12 @@ func (c *Controller) ShowReadEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		html.NotFound(w)
+		html.NotFound(w, r)
 		return
 	}
 
@@ -44,7 +44,7 @@ func (c *Controller) ShowReadEntry(w http.ResponseWriter, r *http.Request) {
 	entryPaginationBuilder.WithStatus(model.EntryStatusRead)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 

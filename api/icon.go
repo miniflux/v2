@@ -5,7 +5,6 @@
 package api // import "miniflux.app/api"
 
 import (
-	"errors"
 	"net/http"
 
 	"miniflux.app/http/request"
@@ -17,18 +16,18 @@ func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 
 	if !c.store.HasIcon(feedID) {
-		json.NotFound(w, errors.New("This feed doesn't have any icon"))
+		json.NotFound(w, r)
 		return
 	}
 
 	icon, err := c.store.IconByFeedID(request.UserID(r), feedID)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	if icon == nil {
-		json.NotFound(w, errors.New("This feed doesn't have any icon"))
+		json.NotFound(w, r)
 		return
 	}
 

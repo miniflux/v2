@@ -27,8 +27,7 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 
 			session, err = m.store.CreateSession()
 			if err != nil {
-				logger.Error("[Middleware:AppSession] %v", err)
-				html.ServerError(w, err)
+				html.ServerError(w, r, err)
 				return
 			}
 
@@ -43,7 +42,7 @@ func (m *Middleware) AppSession(next http.Handler) http.Handler {
 
 			if session.Data.CSRF != formValue && session.Data.CSRF != headerValue {
 				logger.Error(`[Middleware:AppSession] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
-				html.BadRequest(w, errors.New("invalid or missing CSRF"))
+				html.BadRequest(w, r, errors.New("Invalid or missing CSRF"))
 				return
 			}
 		}

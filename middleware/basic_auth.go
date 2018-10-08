@@ -22,26 +22,26 @@ func (m *Middleware) BasicAuth(next http.Handler) http.Handler {
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
 			logger.Debug("[Middleware:BasicAuth] No authentication headers sent")
-			json.Unauthorized(w)
+			json.Unauthorized(w, r)
 			return
 		}
 
 		if err := m.store.CheckPassword(username, password); err != nil {
 			logger.Error("[Middleware:BasicAuth] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
-			json.Unauthorized(w)
+			json.Unauthorized(w, r)
 			return
 		}
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
 			logger.Error("[Middleware:BasicAuth] %v", err)
-			json.ServerError(w, err)
+			json.ServerError(w, r, err)
 			return
 		}
 
 		if user == nil {
 			logger.Error("[Middleware:BasicAuth] [ClientIP=%s] User not found: %s", clientIP, username)
-			json.Unauthorized(w)
+			json.Unauthorized(w, r)
 			return
 		}
 

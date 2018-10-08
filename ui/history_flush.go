@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 )
@@ -17,9 +16,9 @@ import (
 func (c *Controller) FlushHistory(w http.ResponseWriter, r *http.Request) {
 	err := c.store.FlushHistory(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
-	response.Redirect(w, r, route.Path(c.router, "history"))
+	html.Redirect(w, r, route.Path(c.router, "history"))
 }

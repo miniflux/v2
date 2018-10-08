@@ -478,7 +478,7 @@ var translations = map[string]string{
     "error.fields_mandatory": "All fields are mandatory.",
     "error.title_required": "The title is mandatory.",
     "error.different_passwords": "Passwords are not the same.",
-    "error.password_min_length": "You must use at least 6 characters.",
+    "error.password_min_length": "The password must have at least 6 characters.",
     "error.settings_mandatory_fields": "The username, theme, language and timezone fields are mandatory.",
     "error.feed_mandatory_fields": "The URL and the category are mandatory.",
     "error.user_mandatory_fields": "The username is mandatory.",
@@ -746,7 +746,7 @@ var translations = map[string]string{
     "error.fields_mandatory": "Tous les champs sont obligatoire.",
     "error.title_required": "Le titre est obligatoire.",
     "error.different_passwords": "Les mots de passe ne sont pas les mêmes.",
-    "error.password_min_length": "Vous devez utiliser au moins 6 caractères.",
+    "error.password_min_length": "Vous devez utiliser au moins 6 caractères pour le mot de passe.",
     "error.settings_mandatory_fields": "Le nom d'utilisateur, le thème, la langue et le fuseau horaire sont obligatoire.",
     "error.feed_mandatory_fields": "L'URL et la catégorie sont obligatoire.",
     "error.user_mandatory_fields": "Le nom d'utilisateur est obligatoire.",
@@ -1985,8 +1985,8 @@ var translations = map[string]string{
 
 var translationsChecksums = map[string]string{
 	"de_DE": "604b7a957e7633da81585553d17ef401326914e2b6605cfe50450b8f4df44310",
-	"en_US": "d979bd262b8631bfde29da6b22f786184f27589b1c7d7760f80d3db198868baf",
-	"fr_FR": "452cd05dfe9b9b797af6037798ae1d0335622e378aa8d97427503040cb5db326",
+	"en_US": "7dcc212a35180ba1800d5dcb5c8455e746a5eb0c3c5c79b3b31ca0eb8dc46356",
+	"fr_FR": "e6ebd22a6c75cebf666e18424d489db254f0b34dc15a7002a574929179efb09a",
 	"nl_NL": "3bf3fd429bdf3e46a0be7f7e89eb06b8272a1833a04aca47ed8dd959fcac13a3",
 	"pl_PL": "6fcf2c429ad68cb99e357825e76bc8f79d9ca3b5d01217beed5e502df2eaa5c9",
 	"ru_RU": "5cd9093807f75f27580a1a20f0b4e4b1a4f2dc3c60b93d4fd53b5b01ecd34d71",

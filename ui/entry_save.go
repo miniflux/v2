@@ -5,7 +5,6 @@
 package ui // import "miniflux.app/ui"
 
 import (
-	"errors"
 	"net/http"
 
 	"miniflux.app/http/request"
@@ -23,18 +22,18 @@ func (c *Controller) SaveEntry(w http.ResponseWriter, r *http.Request) {
 
 	entry, err := builder.GetEntry()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	if entry == nil {
-		json.NotFound(w, errors.New("Entry not found"))
+		json.NotFound(w, r)
 		return
 	}
 
 	settings, err := c.store.Integration(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -42,5 +41,5 @@ func (c *Controller) SaveEntry(w http.ResponseWriter, r *http.Request) {
 		integration.SendEntry(c.cfg, entry, settings)
 	}()
 
-	json.Created(w, map[string]string{"message": "saved"})
+	json.Created(w, r, map[string]string{"message": "saved"})
 }

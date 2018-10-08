@@ -5,19 +5,24 @@
 package xml // import "miniflux.app/http/response/xml"
 
 import (
-	"fmt"
 	"net/http"
+
+	"miniflux.app/http/response"
 )
 
-// OK sends a XML document.
-func OK(w http.ResponseWriter, data string) {
-	w.Header().Set("Content-Type", "text/xml")
-	w.Write([]byte(data))
+// OK writes a standard XML response with a status 200 OK.
+func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
+	builder := response.New(w, r)
+	builder.WithHeader("Content-Type", "text/xml; charset=utf-8")
+	builder.WithBody(body)
+	builder.Write()
 }
 
-// Attachment forces the download of a XML document.
-func Attachment(w http.ResponseWriter, filename, data string) {
-	w.Header().Set("Content-Type", "text/xml")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
-	w.Write([]byte(data))
+// Attachment forces the XML document to be downloaded by the web browser.
+func Attachment(w http.ResponseWriter, r *http.Request, filename string, body interface{}) {
+	builder := response.New(w, r)
+	builder.WithHeader("Content-Type", "text/xml; charset=utf-8")
+	builder.WithAttachment(filename)
+	builder.WithBody(body)
+	builder.Write()
 }

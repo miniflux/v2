@@ -7,7 +7,6 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
 	"miniflux.app/http/route"
@@ -21,12 +20,12 @@ import (
 func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if !user.IsAdmin {
-		html.Forbidden(w)
+		html.Forbidden(w, r)
 		return
 	}
 
@@ -60,5 +59,5 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Redirect(w, r, route.Path(c.router, "users"))
+	html.Redirect(w, r, route.Path(c.router, "users"))
 }

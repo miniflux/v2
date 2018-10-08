@@ -17,13 +17,15 @@ import (
 // Javascript renders application client side code.
 func (c *Controller) Javascript(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
-	if _, found := static.Javascripts[filename]; !found {
-		html.NotFound(w)
+	etag, found := static.JavascriptsChecksums[filename]
+	if !found {
+		html.NotFound(w, r)
 		return
 	}
 
-	body := static.Javascripts[filename]
-	etag := static.JavascriptsChecksums[filename]
-
-	response.Cache(w, r, "text/javascript; charset=utf-8", etag, []byte(body), 48*time.Hour)
+	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Type", "text/javascript; charset=utf-8")
+		b.WithBody(static.Javascripts[filename])
+		b.Write()
+	})
 }

@@ -35,7 +35,6 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	router.Use(middleware.ClientIP)
 	router.Use(middleware.HeaderConfig)
 	router.Use(middleware.Logging)
-	router.Use(middleware.CommonHeaders)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))

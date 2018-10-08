@@ -16,29 +16,28 @@ import (
 func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	category, err := decodeCategoryPayload(r.Body)
 	if err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	userID := request.UserID(r)
 	category.UserID = userID
 	if err := category.ValidateCategoryCreation(); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	if c, err := c.store.CategoryByTitle(userID, category.Title); err != nil || c != nil {
-		json.BadRequest(w, errors.New("This category already exists"))
+		json.BadRequest(w, r, errors.New("This category already exists"))
 		return
 	}
 
-	err = c.store.CreateCategory(category)
-	if err != nil {
-		json.ServerError(w, err)
+	if err := c.store.CreateCategory(category); err != nil {
+		json.ServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, category)
+	json.Created(w, r, category)
 }
 
 // UpdateCategory is the API handler to update a category.
@@ -47,31 +46,31 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	category, err := decodeCategoryPayload(r.Body)
 	if err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	category.UserID = request.UserID(r)
 	category.ID = categoryID
 	if err := category.ValidateCategoryModification(); err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	err = c.store.UpdateCategory(category)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, category)
+	json.Created(w, r, category)
 }
 
 // GetCategories is the API handler to get a list of categories for a given user.
 func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 	categories, err := c.store.Categories(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -84,14 +83,14 @@ func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
 	if !c.store.CategoryExists(userID, categoryID) {
-		json.NotFound(w, errors.New("Category not found"))
+		json.NotFound(w, r)
 		return
 	}
 
 	if err := c.store.RemoveCategory(userID, categoryID); err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	json.NoContent(w)
+	json.NoContent(w, r)
 }

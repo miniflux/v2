@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"miniflux.app/http/client"
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
 	"miniflux.app/http/route"
@@ -26,13 +25,13 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	categories, err := c.store.Categories(user.ID)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -90,7 +89,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		response.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
+		html.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
 	case n > 1:
 		v := view.New(c.tpl, r, sess)
 		v.Set("subscriptions", subscriptions)

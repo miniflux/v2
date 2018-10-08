@@ -1,6 +1,6 @@
 // Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// Use of this source code is governed by the MIT license
+// that can be found in the LICENSE file.
 
 package json // import "miniflux.app/http/response/json"
 
@@ -13,93 +13,98 @@ import (
 	"miniflux.app/logger"
 )
 
-// OK sends a JSON response with the status code 200.
-func OK(w http.ResponseWriter, r *http.Request, v interface{}) {
-	commonHeaders(w)
-	response.Compress(w, r, toJSON(v))
+// OK creates a new JSON response with a 200 status code.
+func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
+	builder := response.New(w, r)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSON(body))
+	builder.Write()
 }
 
-// Created sends a JSON response with the status code 201.
-func Created(w http.ResponseWriter, v interface{}) {
-	commonHeaders(w)
-	w.WriteHeader(http.StatusCreated)
-	w.Write(toJSON(v))
+// Created sends a created response to the client.
+func Created(w http.ResponseWriter, r *http.Request, body interface{}) {
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusCreated)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSON(body))
+	builder.Write()
 }
 
-// NoContent sends a JSON response with the status code 204.
-func NoContent(w http.ResponseWriter) {
-	commonHeaders(w)
-	w.WriteHeader(http.StatusNoContent)
+// NoContent sends a no content response to the client.
+func NoContent(w http.ResponseWriter, r *http.Request) {
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusNoContent)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.Write()
 }
 
-// NotFound sends a JSON response with the status code 404.
-func NotFound(w http.ResponseWriter, err error) {
-	logger.Error("[Not Found] %v", err)
-	commonHeaders(w)
-	w.WriteHeader(http.StatusNotFound)
-	w.Write(encodeError(err))
+// ServerError sends an internal error to the client.
+func ServerError(w http.ResponseWriter, r *http.Request, err error) {
+	logger.Error("[HTTP:Internal Server Error] %s => %v", r.URL, err)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusInternalServerError)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSONError(err))
+	builder.Write()
 }
 
-// ServerError sends a JSON response with the status code 500.
-func ServerError(w http.ResponseWriter, err error) {
-	logger.Error("[Internal Server Error] %v", err)
-	commonHeaders(w)
-	w.WriteHeader(http.StatusInternalServerError)
+// BadRequest sends a bad request error to the client.
+func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
+	logger.Error("[HTTP:Bad Request] %s => %v", r.URL, err)
 
-	if err != nil {
-		w.Write(encodeError(err))
-	}
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusBadRequest)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSONError(err))
+	builder.Write()
 }
 
-// Forbidden sends a JSON response with the status code 403.
-func Forbidden(w http.ResponseWriter) {
-	logger.Info("[Forbidden]")
-	commonHeaders(w)
-	w.WriteHeader(http.StatusForbidden)
-	w.Write(encodeError(errors.New("Access Forbidden")))
+// Unauthorized sends a not authorized error to the client.
+func Unauthorized(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Unauthorized] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusUnauthorized)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSONError(errors.New("Access Unauthorized")))
+	builder.Write()
 }
 
-// Unauthorized sends a JSON response with the status code 401.
-func Unauthorized(w http.ResponseWriter) {
-	commonHeaders(w)
-	w.WriteHeader(http.StatusUnauthorized)
-	w.Write(encodeError(errors.New("Access Unauthorized")))
+// Forbidden sends a forbidden error to the client.
+func Forbidden(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Forbidden] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusForbidden)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSONError(errors.New("Access Forbidden")))
+	builder.Write()
 }
 
-// BadRequest sends a JSON response with the status code 400.
-func BadRequest(w http.ResponseWriter, err error) {
-	logger.Error("[Bad Request] %v", err)
-	commonHeaders(w)
-	w.WriteHeader(http.StatusBadRequest)
+// NotFound sends a page not found error to the client.
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Not Found] %s", r.URL)
 
-	if err != nil {
-		w.Write(encodeError(err))
-	}
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusNotFound)
+	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithBody(toJSONError(errors.New("Resource Not Found")))
+	builder.Write()
 }
 
-func commonHeaders(w http.ResponseWriter) {
-	w.Header().Set("Accept", "application/json")
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-}
-
-func encodeError(err error) []byte {
+func toJSONError(err error) []byte {
 	type errorMsg struct {
 		ErrorMessage string `json:"error_message"`
 	}
 
-	tmp := errorMsg{ErrorMessage: err.Error()}
-	data, err := json.Marshal(tmp)
-	if err != nil {
-		logger.Error("json encoding error: %v", err)
-	}
-
-	return data
+	return toJSON(errorMsg{ErrorMessage: err.Error()})
 }
 
 func toJSON(v interface{}) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {
-		logger.Error("json encoding error: %v", err)
+		logger.Error("[HTTP:JSON] %v", err)
 		return []byte("")
 	}
 

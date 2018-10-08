@@ -185,7 +185,7 @@
     "error.fields_mandatory": "All fields are mandatory.",
     "error.title_required": "The title is mandatory.",
     "error.different_passwords": "Passwords are not the same.",
-    "error.password_min_length": "You must use at least 6 characters.",
+    "error.password_min_length": "The password must have at least 6 characters.",
     "error.settings_mandatory_fields": "The username, theme, language and timezone fields are mandatory.",
     "error.feed_mandatory_fields": "The URL and the category are mandatory.",
     "error.user_mandatory_fields": "The username is mandatory.",

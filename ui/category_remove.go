@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 )
@@ -17,26 +16,26 @@ import (
 func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	category, err := c.store.Category(request.UserID(r), categoryID)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	if category == nil {
-		html.NotFound(w)
+		html.NotFound(w, r)
 		return
 	}
 
 	if err := c.store.RemoveCategory(user.ID, category.ID); err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
-	response.Redirect(w, r, route.Path(c.router, "categories"))
+	html.Redirect(w, r, route.Path(c.router, "categories"))
 }

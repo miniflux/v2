@@ -10,7 +10,7 @@ import (
 
 	"miniflux.app/http/cookie"
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
 	"miniflux.app/model"
@@ -28,7 +28,7 @@ func (m *Middleware) UserSession(next http.Handler) http.Handler {
 			if m.isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				response.Redirect(w, r, route.Path(m.router, "login"))
+				html.Redirect(w, r, route.Path(m.router, "login"))
 			}
 		} else {
 			logger.Debug("[Middleware:UserSession] %s", session)

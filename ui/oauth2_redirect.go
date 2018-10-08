@@ -2,13 +2,13 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
 	"miniflux.app/ui/session"
@@ -21,16 +21,16 @@ func (c *Controller) OAuth2Redirect(w http.ResponseWriter, r *http.Request) {
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		logger.Error("[OAuth2] Invalid or missing provider: %s", provider)
-		response.Redirect(w, r, route.Path(c.router, "login"))
+		html.Redirect(w, r, route.Path(c.router, "login"))
 		return
 	}
 
 	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
-		response.Redirect(w, r, route.Path(c.router, "login"))
+		html.Redirect(w, r, route.Path(c.router, "login"))
 		return
 	}
 
-	response.Redirect(w, r, authProvider.GetRedirectURL(sess.NewOAuth2State()))
+	html.Redirect(w, r, authProvider.GetRedirectURL(sess.NewOAuth2State()))
 }

@@ -10,27 +10,24 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
-	"miniflux.app/logger"
 )
 
 // UpdateEntriesStatus updates the status for a list of entries.
 func (c *Controller) UpdateEntriesStatus(w http.ResponseWriter, r *http.Request) {
 	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
 	if err != nil {
-		logger.Error("[Controller:UpdateEntryStatus] %v", err)
-		json.BadRequest(w, nil)
+		json.BadRequest(w, r, err)
 		return
 	}
 
 	if len(entryIDs) == 0 {
-		json.BadRequest(w, errors.New("The list of entryID is empty"))
+		json.BadRequest(w, r, errors.New("The list of entry IDs is empty"))
 		return
 	}
 
 	err = c.store.SetEntriesStatus(request.UserID(r), entryIDs, status)
 	if err != nil {
-		logger.Error("[Controller:UpdateEntryStatus] %v", err)
-		json.ServerError(w, nil)
+		json.ServerError(w, r, err)
 		return
 	}
 

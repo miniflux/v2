@@ -17,9 +17,9 @@ import (
 func (c *Controller) Export(w http.ResponseWriter, r *http.Request) {
 	opml, err := opml.NewHandler(c.store).Export(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
-	xml.Attachment(w, "feeds.opml", opml)
+	xml.Attachment(w, r, "feeds.opml", opml)
 }

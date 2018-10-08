@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"encoding/base64"
@@ -11,18 +11,27 @@ import (
 
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
-	"miniflux.app/logger"
 	"miniflux.app/ui/static"
 )
 
-// Favicon renders the application favicon.
+// Favicon shows the application favicon.
 func (c *Controller) Favicon(w http.ResponseWriter, r *http.Request) {
-	blob, err := base64.StdEncoding.DecodeString(static.Binaries["favicon.ico"])
-	if err != nil {
-		logger.Error("[Controller:Favicon] %v", err)
-		html.NotFound(w)
+	etag, found := static.BinariesChecksums["favicon.ico"]
+	if !found {
+		html.NotFound(w, r)
 		return
 	}
 
-	response.Cache(w, r, "image/x-icon", static.BinariesChecksums["favicon.ico"], blob, 48*time.Hour)
+	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
+		blob, err := base64.StdEncoding.DecodeString(static.Binaries["favicon.ico"])
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		b.WithHeader("Content-Type", "image/x-icon")
+		b.WithoutCompression()
+		b.WithBody(blob)
+		b.Write()
+	})
 }

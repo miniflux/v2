@@ -185,7 +185,7 @@
     "error.fields_mandatory": "Tous les champs sont obligatoire.",
     "error.title_required": "Le titre est obligatoire.",
     "error.different_passwords": "Les mots de passe ne sont pas les mêmes.",
-    "error.password_min_length": "Vous devez utiliser au moins 6 caractères.",
+    "error.password_min_length": "Vous devez utiliser au moins 6 caractères pour le mot de passe.",
     "error.settings_mandatory_fields": "Le nom d'utilisateur, le thème, la langue et le fuseau horaire sont obligatoire.",
     "error.feed_mandatory_fields": "L'URL et la catégorie sont obligatoire.",
     "error.user_mandatory_fields": "Le nom d'utilisateur est obligatoire.",

@@ -2,12 +2,11 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/response"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
 	"miniflux.app/http/route"
@@ -26,13 +25,13 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	timezones, err := c.store.Timezones()
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -70,5 +69,5 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
-	response.Redirect(w, r, route.Path(c.router, "settings"))
+	html.Redirect(w, r, route.Path(c.router, "settings"))
 }

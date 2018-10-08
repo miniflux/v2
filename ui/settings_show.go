@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -23,7 +23,7 @@ func (c *Controller) ShowSettings(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
@@ -37,7 +37,7 @@ func (c *Controller) ShowSettings(w http.ResponseWriter, r *http.Request) {
 
 	timezones, err := c.store.Timezones()
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 

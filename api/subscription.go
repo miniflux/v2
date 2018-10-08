@@ -5,7 +5,6 @@
 package api // import "miniflux.app/api"
 
 import (
-	"fmt"
 	"net/http"
 
 	"miniflux.app/http/response/json"
@@ -16,7 +15,7 @@ import (
 func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
 	subscriptionInfo, err := decodeURLPayload(r.Body)
 	if err != nil {
-		json.BadRequest(w, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -27,12 +26,12 @@ func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
 		subscriptionInfo.Password,
 	)
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
 	if subscriptions == nil {
-		json.NotFound(w, fmt.Errorf("No subscription found"))
+		json.NotFound(w, r)
 		return
 	}
 

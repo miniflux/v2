@@ -14,6 +14,11 @@ func (m *Middleware) HeaderConfig(next http.Handler) http.Handler {
 		if r.Header.Get("X-Forwarded-Proto") == "https" {
 			m.cfg.IsHTTPS = true
 		}
+
+		if m.cfg.IsHTTPS && m.cfg.HasHSTS() {
+			w.Header().Set("Strict-Transport-Security", "max-age=31536000")
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }

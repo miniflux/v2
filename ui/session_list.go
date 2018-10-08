@@ -2,15 +2,15 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
-	"miniflux.app/http/response/html"
 )
 
 // ShowSessions shows the list of active user sessions.
@@ -20,13 +20,13 @@ func (c *Controller) ShowSessions(w http.ResponseWriter, r *http.Request) {
 
 	user, err := c.store.UserByID(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 
 	sessions, err := c.store.UserSessions(user.ID)
 	if err != nil {
-		html.ServerError(w, err)
+		html.ServerError(w, r, err)
 		return
 	}
 

@@ -18,11 +18,11 @@ func (c *Controller) Export(w http.ResponseWriter, r *http.Request) {
 	opmlHandler := opml.NewHandler(c.store)
 	opml, err := opmlHandler.Export(request.UserID(r))
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	xml.OK(w, opml)
+	xml.OK(w, r, opml)
 }
 
 // Import is the API handler that import an OPML file.
@@ -31,9 +31,9 @@ func (c *Controller) Import(w http.ResponseWriter, r *http.Request) {
 	err := opmlHandler.Import(request.UserID(r), r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		json.ServerError(w, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	json.Created(w, map[string]string{"message": "Feeds imported successfully"})
+	json.Created(w, r, map[string]string{"message": "Feeds imported successfully"})
 }
