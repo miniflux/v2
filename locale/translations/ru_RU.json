@@ -33,6 +33,7 @@
     "menu.create_category": "Создать категорию",
     "menu.mark_page_as_read": "Отметить эту страницу прочитанной",
     "menu.mark_all_as_read": "Отметить всё как прочитанное",
+    "menu.mark_all_as_read_wip": "В процессе…",
     "menu.refresh_feed": "Обновить",
     "menu.refresh_all_feeds": "Обновить все подписки в фоне",
     "menu.edit_feed": "Изменить",

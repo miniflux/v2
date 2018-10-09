@@ -198,6 +198,7 @@ func main() {
 			"ui/static/js/menu_handler.js",
 			"ui/static/js/modal_handler.js",
 			"ui/static/js/nav_handler.js",
+			"ui/static/js/link_state_handler.js",
 			"ui/static/js/bootstrap.js",
 		},
 		"sw": []string{

@@ -34,18 +34,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let mouseHandler = new MouseHandler();
     mouseHandler.onClick("a[data-save-entry]", (event) => {
-        event.preventDefault();
         EntryHandler.saveEntry(event.target);
     });
 
     mouseHandler.onClick("a[data-toggle-bookmark]", (event) => {
-        event.preventDefault();
         EntryHandler.toggleBookmark(event.target);
     });
 
     mouseHandler.onClick("a[data-toggle-status]", (event) => {
-        event.preventDefault();
-
         let currentItem = DomHelper.findParent(event.target, "entry");
         if (! currentItem) {
             currentItem = DomHelper.findParent(event.target, "item");
@@ -57,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     mouseHandler.onClick("a[data-fetch-content-entry]", (event) => {
-        event.preventDefault();
         EntryHandler.fetchOriginalContent(event.target);
     });
 
@@ -70,6 +65,10 @@ document.addEventListener("DOMContentLoaded", function() {
     mouseHandler.onClick("a[data-action=search]", (event) => {
         navHandler.setFocusToSearchInput(event);
     });
+
+    mouseHandler.onClick("a[data-link-state=flip]", (event) => {
+        LinkStateHandler.flip(event.target);
+    }, true);
 
     if (document.documentElement.clientWidth < 600) {
         let menuHandler = new MenuHandler();

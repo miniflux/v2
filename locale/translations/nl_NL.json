@@ -33,6 +33,7 @@
     "menu.create_category": "Categorie toevoegen",
     "menu.mark_page_as_read": "Markeer deze pagina als gelezen",
     "menu.mark_all_as_read": "Markeer alle items als gelezen",
+    "menu.mark_all_as_read_wip": "Bezig...",
     "menu.refresh_feed": "Vernieuwen",
     "menu.refresh_all_feeds": "Vernieuw alle feeds in de achtergrond",
     "menu.edit_feed": "Bewerken",

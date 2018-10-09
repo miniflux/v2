@@ -37,6 +37,10 @@ a:hover {
     text-decoration: none;
 }
 
+.link-flipped-state {
+    font-style: italic;
+}
+
 /* Header and main menu */
 .header {
     margin-top: 10px;

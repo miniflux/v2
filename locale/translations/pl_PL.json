@@ -33,6 +33,7 @@
     "menu.create_category": "Utwórz kategorię",
     "menu.mark_page_as_read": "Oznacz jako przeczytane",
     "menu.mark_all_as_read": "Oznacz wszystko jako przeczytane",
+    "menu.mark_all_as_read_wip": "W toku...",
     "menu.refresh_feed": "Odśwież",
     "menu.refresh_all_feeds": "Odśwież wszystkie subskrypcje w tle",
     "menu.edit_feed": "Edytuj",
