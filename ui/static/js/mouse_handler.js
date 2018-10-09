@@ -3,7 +3,10 @@ class MouseHandler {
         let elements = document.querySelectorAll(selector);
         elements.forEach((element) => {
             element.onclick = (event) => {
-                noPreventDefault || event.preventDefault();
+                if (! noPreventDefault) {
+                    event.preventDefault();
+                }
+
                 callback(event);
             };
         });
