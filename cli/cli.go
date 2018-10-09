@@ -16,21 +16,45 @@ import (
 	"miniflux.app/version"
 )
 
+const (
+	flagInfoHelp = "Show application information"
+	flagVersionHelp = "Show application version"
+	flagMigrateHelp = "Run SQL migrations"
+	flagFlsuhSessionsHelp = "Flush all sessions (disconnect users)"
+	flagCreateAdminHelp = "Create admin user"
+	flagResetPasswordHelp = "Reset user password"
+	flagResetFeedErrorsHelp = "Clear all feed errors for all users"
+	flagDebugModeHelp = "Show debug logs"
+)
+
 // Parse parses command line arguments.
 func Parse() {
-	flagInfo := flag.Bool("info", false, "Show application information")
-	flagVersion := flag.Bool("version", false, "Show application version")
-	flagMigrate := flag.Bool("migrate", false, "Migrate database schema")
-	flagFlushSessions := flag.Bool("flush-sessions", false, "Flush all sessions (disconnect users)")
-	flagCreateAdmin := flag.Bool("create-admin", false, "Create admin user")
-	flagResetPassword := flag.Bool("reset-password", false, "Reset user password")
-	flagResetFeedErrors := flag.Bool("reset-feed-errors", false, "Clear all feed errors for all users")
-	flagDebugMode := flag.Bool("debug", false, "Enable debug mode (more verbose output)")
+	var (
+		flagInfo bool
+		flagVersion bool
+		flagMigrate bool
+		flagFlushSessions bool
+		flagCreateAdmin bool
+		flagResetPassword bool
+		flagResetFeedErrors bool
+		flagDebugMode bool
+	)
+
+	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
+	flag.BoolVar(&flagInfo, "i", false, flagInfoHelp)
+	flag.BoolVar(&flagVersion, "version", false, flagVersionHelp)
+	flag.BoolVar(&flagVersion, "v", false, flagVersionHelp)
+	flag.BoolVar(&flagMigrate, "migrate", false, flagMigrateHelp)
+	flag.BoolVar(&flagFlushSessions, "flush-sessions", false, flagFlsuhSessionsHelp)
+	flag.BoolVar(&flagCreateAdmin, "create-admin", false, flagCreateAdminHelp)
+	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
+	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)
+	flag.BoolVar(&flagDebugMode,"debug", false, flagDebugModeHelp)
 	flag.Parse()
 
 	cfg := config.NewConfig()
 
-	if *flagDebugMode || cfg.HasDebugMode() {
+	if flagDebugMode || cfg.HasDebugMode() {
 		logger.EnableDebug()
 	}
 
@@ -42,37 +66,37 @@ func Parse() {
 
 	store := storage.NewStorage(db)
 
-	if *flagInfo {
+	if flagInfo {
 		info()
 		return
 	}
 
-	if *flagVersion {
+	if flagVersion {
 		fmt.Println(version.Version)
 		return
 	}
 
-	if *flagMigrate {
+	if flagMigrate {
 		database.Migrate(db)
 		return
 	}
 
-	if *flagResetFeedErrors {
+	if flagResetFeedErrors {
 		store.ResetFeedErrors()
 		return
 	}
 
-	if *flagFlushSessions {
+	if flagFlushSessions {
 		flushSessions(store)
 		return
 	}
 
-	if *flagCreateAdmin {
+	if flagCreateAdmin {
 		createAdmin(store)
 		return
 	}
 
-	if *flagResetPassword {
+	if flagResetPassword {
 		resetPassword(store)
 		return
 	}
