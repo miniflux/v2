@@ -6,6 +6,26 @@ package rewrite // import "miniflux.app/reader/rewrite"
 
 import "testing"
 
+func TestReplaceTextLinks(t *testing.T) {
+	scenarios := map[string]string{
+		`This is a link to example.org`:                                              `This is a link to example.org`,
+		`This is a link to ftp://example.org`:                                        `This is a link to ftp://example.org`,
+		`This is a link to www.example.org`:                                          `This is a link to www.example.org`,
+		`This is a link to http://example.org`:                                       `This is a link to <a href="http://example.org">http://example.org</a>`,
+		`This is a link to http://example.org, end of sentence.`:                     `This is a link to <a href="http://example.org">http://example.org</a>, end of sentence.`,
+		`This is a link to https://example.org`:                                      `This is a link to <a href="https://example.org">https://example.org</a>`,
+		`This is a link to https://www.example.org/path/to?q=s`:                      `This is a link to <a href="https://www.example.org/path/to?q=s">https://www.example.org/path/to?q=s</a>`,
+		`This is a link to https://example.org/index#hash-tag, http://example.org/.`: `This is a link to <a href="https://example.org/index#hash-tag">https://example.org/index#hash-tag</a>, <a href="http://example.org/">http://example.org/</a>.`,
+	}
+
+	for input, expected := range scenarios {
+		actual := replaceTextLinks(input)
+		if actual != expected {
+			t.Errorf(`Unexpected link replacement, got "%s" instead of "%s"`, actual, expected)
+		}
+	}
+}
+
 func TestRewriteWithNoMatchingRule(t *testing.T) {
 	output := Rewriter("https://example.org/article", `Some text.`, ``)
 	expected := `Some text.`
@@ -16,8 +36,8 @@ func TestRewriteWithNoMatchingRule(t *testing.T) {
 }
 
 func TestRewriteWithYoutubeLink(t *testing.T) {
-	output := Rewriter("https://www.youtube.com/watch?v=1234", `Video Description`, ``)
-	expected := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><p>Video Description</p>`
+	output := Rewriter("https://www.youtube.com/watch?v=1234", "Video Description\nhttp://example.org/path", ``)
+	expected := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><p>Video Description<br><a href="http://example.org/path">http://example.org/path</a></p>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)

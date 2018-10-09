@@ -13,8 +13,9 @@ import (
 )
 
 var (
-	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-	imgRegex     = regexp.MustCompile(`<img [^>]+>`)
+	youtubeRegex  = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	imgRegex      = regexp.MustCompile(`<img [^>]+>`)
+	textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
 func addImageTitle(entryURL, entryContent string) string {
@@ -108,7 +109,7 @@ func addYoutubeVideo(entryURL, entryContent string) string {
 
 	if len(matches) == 2 {
 		video := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/` + matches[1] + `" allowfullscreen></iframe>`
-		return video + "<p>" + entryContent + "</p>"
+		return video + "<p>" + replaceLineFeeds(replaceTextLinks(entryContent)) + "</p>"
 	}
 	return entryContent
 }
@@ -118,4 +119,12 @@ func addPDFLink(entryURL, entryContent string) string {
 		return fmt.Sprintf(`<a href="%s">PDF</a><br>%s`, entryURL, entryContent)
 	}
 	return entryContent
+}
+
+func replaceTextLinks(input string) string {
+	return textLinkRegex.ReplaceAllString(input, `<a href="${1}">${1}</a>`)
+}
+
+func replaceLineFeeds(input string) string {
+	return strings.Replace(input, "\n", "<br>", -1)
 }
