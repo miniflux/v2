@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package pinboard provides an integration with Pinboard.
 
 */
-package request // import "miniflux.app/http/request"
+package pinboard // import "miniflux.app/integration/pinboard"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package rewrite provides functions to manipulate feed contents.
 
 */
-package request // import "miniflux.app/http/request"
+package rewrite // import "miniflux.app/reader/rewrite"

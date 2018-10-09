@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package rss provides a RSS feed parser.
 
 */
-package request // import "miniflux.app/http/request"
+package rss // import "miniflux.app/reader/rss"

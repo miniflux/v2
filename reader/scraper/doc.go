@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package scraper implements a web page crawler.
 
 */
-package request // import "miniflux.app/http/request"
+package scraper // import "miniflux.app/reader/scraper"

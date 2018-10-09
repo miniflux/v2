@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package json provides a JSON feed parser.
 
 */
-package request // import "miniflux.app/http/request"
+package json // import "miniflux.app/reader/json"

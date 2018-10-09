@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package feed provides a generic feed parser that abstracts all different formats.
 
 */
-package request // import "miniflux.app/http/request"
+package feed // import "miniflux.app/reader/feed"

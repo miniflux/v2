@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package session provides helper functions to work with the user session.
 
 */
-package request // import "miniflux.app/http/request"
+package session // import "miniflux.app/ui/session"

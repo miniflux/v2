@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package wallabag provides an integration with the Wallabag application.
 
 */
-package request // import "miniflux.app/http/request"
+package wallabag // import "miniflux.app/integration/wallabag"

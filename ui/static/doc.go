@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package static contains assets for the user interface.
 
 */
-package request // import "miniflux.app/http/request"
+package static // import "miniflux.app/ui/static"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package nunuxkeeper provides an integration with the Nunux Keeper application.
 
 */
-package request // import "miniflux.app/http/request"
+package nunuxkeeper // import "miniflux.app/integration/nunuxkeeper"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package form handles HTML form validation and serialization.
 
 */
-package request // import "miniflux.app/http/request"
+package form // import "miniflux.app/ui/form"

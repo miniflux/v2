@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package rdf provides a RDF feed parser.
 
 */
-package request // import "miniflux.app/http/request"
+package rdf // import "miniflux.app/reader/rdf"

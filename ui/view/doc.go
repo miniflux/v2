@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package view handles template parameters.
 
 */
-package request // import "miniflux.app/http/request"
+package view // import "miniflux.app/ui/view"

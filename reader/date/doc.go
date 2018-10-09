@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package date provides a feed date parser.
 
 */
-package request // import "miniflux.app/http/request"
+package date // import "miniflux.app/reader/date"

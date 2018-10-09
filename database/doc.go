@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package database provides functions related to the database connection.
 
 */
-package request // import "miniflux.app/http/request"
+package database // import "miniflux.app/database"

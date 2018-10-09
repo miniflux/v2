@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package icon provides all the logic to download website icons.
 
 */
-package request // import "miniflux.app/http/request"
+package icon // import "miniflux.app/reader/icon"

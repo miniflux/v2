@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package client provides an HTTP client builder.
 
 */
-package request // import "miniflux.app/http/request"
+package client // import "miniflux.app/http/client"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package atom provides an Atom feed parser.
 
 */
-package request // import "miniflux.app/http/request"
+package atom // import "miniflux.app/reader/atom"

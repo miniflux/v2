@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package subscription implements the logic to find subscriptions on a website.
 
 */
-package request // import "miniflux.app/http/request"
+package subscription // import "miniflux.app/reader/subscription"

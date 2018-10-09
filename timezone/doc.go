@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package timezone contains helper functions to work with timezones.
 
 */
-package request // import "miniflux.app/http/request"
+package timezone // import "miniflux.app/timezone"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package opml provides an OPML parser and writer.
 
 */
-package request // import "miniflux.app/http/request"
+package opml // import "miniflux.app/reader/opml"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package pocket provides an integration with Pocket.
 
 */
-package request // import "miniflux.app/http/request"
+package pocket // import "miniflux.app/integration/pocket"

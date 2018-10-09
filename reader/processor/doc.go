@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package processor handles the logic to manipulate feed contents.
 
 */
-package request // import "miniflux.app/http/request"
+package processor // import "miniflux.app/reader/processor"

@@ -4,7 +4,7 @@
 
 /*
 
-Package request contains helper functions to work with the HTTP request.
+Package readability implements a web page scraper that returns only relevant content.
 
 */
-package request // import "miniflux.app/http/request"
+package readability // import "miniflux.app/reader/readability"
