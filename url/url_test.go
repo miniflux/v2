@@ -6,116 +6,68 @@ package url // import "miniflux.app/url"
 
 import "testing"
 
-func TestGetAbsoluteURLWithAbsolutePath(t *testing.T) {
-	expected := `https://example.org/path/file.ext`
-	input := `/path/file.ext`
-	output, err := AbsoluteURL("https://example.org/folder/", input)
-
-	if err != nil {
-		t.Error(err)
+func TestAbsoluteURL(t *testing.T) {
+	scenarios := [][]string{
+		[]string{"https://example.org/path/file.ext", "https://example.org/folder/", "/path/file.ext"},
+		[]string{"https://example.org/folder/path/file.ext", "https://example.org/folder/", "path/file.ext"},
+		[]string{"https://example.org/path/file.ext", "https://example.org/folder", "path/file.ext"},
+		[]string{"https://example.org/path/file.ext", "https://example.org/folder/", "https://example.org/path/file.ext"},
+		[]string{"https://static.example.org/path/file.ext", "https://www.example.org/", "//static.example.org/path/file.ext"},
 	}
 
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
-	}
-}
+	for _, scenario := range scenarios {
+		actual, err := AbsoluteURL(scenario[1], scenario[2])
 
-func TestGetAbsoluteURLWithRelativePath(t *testing.T) {
-	expected := `https://example.org/folder/path/file.ext`
-	input := `path/file.ext`
-	output, err := AbsoluteURL("https://example.org/folder/", input)
+		if err != nil {
+			t.Errorf(`Got error for (%q, %q): %v`, scenario[1], scenario[2], err)
+		}
 
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
+		if actual != scenario[0] {
+			t.Errorf(`Unexpected result, got %q instead of %q for (%q, %q)`, actual, scenario[0], scenario[1], scenario[2])
+		}
 	}
 }
 
-func TestGetAbsoluteURLWithRelativePaths(t *testing.T) {
-	expected := `https://example.org/path/file.ext`
-	input := `path/file.ext`
-	output, err := AbsoluteURL("https://example.org/folder", input)
-
-	if err != nil {
-		t.Error(err)
+func TestRootURL(t *testing.T) {
+	scenarios := map[string]string{
+		"https://example.org/path/file.ext":  "https://example.org/",
+		"//static.example.org/path/file.ext": "https://static.example.org/",
+		"https://example|org/path/file.ext":  "https://example|org/path/file.ext",
 	}
 
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
-	}
-}
-
-func TestWhenInputIsAlreadyAbsolute(t *testing.T) {
-	expected := `https://example.org/path/file.ext`
-	input := `https://example.org/path/file.ext`
-	output, err := AbsoluteURL("https://example.org/folder/", input)
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
-	}
-}
-
-func TestGetAbsoluteURLWithProtocolRelative(t *testing.T) {
-	expected := `https://static.example.org/path/file.ext`
-	input := `//static.example.org/path/file.ext`
-	output, err := AbsoluteURL("https://www.example.org/", input)
-
-	if err != nil {
-		t.Error(err)
-	}
-
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
-	}
-}
-
-func TestGetRootURL(t *testing.T) {
-	expected := `https://example.org/`
-	input := `https://example.org/path/file.ext`
-	output := RootURL(input)
-
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
-	}
-}
-
-func TestGetRootURLWithProtocolRelativePath(t *testing.T) {
-	expected := `https://static.example.org/`
-	input := `//static.example.org/path/file.ext`
-	output := RootURL(input)
-
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
+	for input, expected := range scenarios {
+		actual := RootURL(input)
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %q instead of %q`, actual, expected)
+		}
 	}
 }
 
 func TestIsHTTPS(t *testing.T) {
-	if !IsHTTPS("https://example.org/") {
-		t.Error("Unable to recognize HTTPS URL")
+	scenarios := map[string]bool{
+		"https://example.org/": true,
+		"http://example.org/":  false,
+		"https://example|org/": false,
 	}
 
-	if IsHTTPS("http://example.org/") {
-		t.Error("Unable to recognize HTTP URL")
-	}
-
-	if IsHTTPS("") {
-		t.Error("Unable to recognize malformed URL")
+	for input, expected := range scenarios {
+		actual := IsHTTPS(input)
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v`, actual, expected)
+		}
 	}
 }
 
-func TestGetDomain(t *testing.T) {
-	expected := `static.example.org`
-	input := `http://static.example.org/`
-	output := Domain(input)
+func TestDomain(t *testing.T) {
+	scenarios := map[string]string{
+		"https://static.example.org/": "static.example.org",
+		"https://example|org/":        "https://example|org/",
+	}
 
-	if expected != output {
-		t.Errorf(`Unexpected output, got "%s" instead of "%s"`, output, expected)
+	for input, expected := range scenarios {
+		actual := Domain(input)
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %q instead of %q`, actual, expected)
+		}
 	}
 }
