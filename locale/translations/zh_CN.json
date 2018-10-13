@@ -121,6 +121,7 @@
     "page.keyboard_shortcuts.download_content": "下载原始内容",
     "page.keyboard_shortcuts.toggle_bookmark_status": "切换收藏状态",
     "page.keyboard_shortcuts.save_article": "保存文章",
+    "page.keyboard_shortcuts.remove_feed": "删除此Feed",
     "page.keyboard_shortcuts.go_to_search": "将重点放在搜索表单上",
     "page.keyboard_shortcuts.close_modal": "关闭模态对话窗口",
     "page.users.title": "用户",

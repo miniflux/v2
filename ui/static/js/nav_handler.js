@@ -129,6 +129,20 @@ class NavHandler {
         }
     }
 
+    unsubscribeFromFeed() {
+        let unsubscribeLinks = document.querySelectorAll("[data-action=remove-feed]");
+        if (unsubscribeLinks.length === 1) {
+            let unsubscribeLink = unsubscribeLinks[0];
+            FeedHandler.unsubscribe(unsubscribeLink.dataset.url, () => {
+                if (unsubscribeLink.dataset.redirectUrl) {
+                    window.location.href = unsubscribeLink.dataset.redirectUrl;
+                } else {
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
     /**
      * @param {string} page Page to redirect to.
      * @param {boolean} fallbackSelf Refresh actual page if the page is not found.

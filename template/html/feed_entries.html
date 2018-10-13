@@ -15,6 +15,17 @@
         <li>
             <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "menu.edit_feed" }}</a>
         </li>
+        <li>
+            <a href="#"
+                data-confirm="true"
+                data-action="remove-feed"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
+                data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
+        </li>
     </ul>
 </section>
 

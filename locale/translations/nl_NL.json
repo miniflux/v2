@@ -124,6 +124,7 @@
     "page.keyboard_shortcuts.download_content": "Download originele content",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Ster toevoegen/weghalen",
     "page.keyboard_shortcuts.save_article": "Artikel opslaan",
+    "page.keyboard_shortcuts.remove_feed": "Verwijder deze feed",
     "page.keyboard_shortcuts.go_to_search": "Focus instellen op zoekformulier",
     "page.keyboard_shortcuts.close_modal": "Sluit dialoogscherm",
     "page.users.title": "Gebruikers",
