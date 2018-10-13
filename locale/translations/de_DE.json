@@ -123,6 +123,7 @@
     "page.keyboard_shortcuts.download_content": "Vollständigen Inhalt herunterladen",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Lesezeichen hinzufügen/entfernen",
     "page.keyboard_shortcuts.save_article": "Artikel speichern",
+    "page.keyboard_shortcuts.remove_feed": "Dieses Abonnement entfernen",
     "page.keyboard_shortcuts.go_to_search": "Fokus auf das Suchformular setzen",
     "page.keyboard_shortcuts.close_modal": "Liste der Tastenkürzel schließen",
     "page.users.title": "Benutzer",

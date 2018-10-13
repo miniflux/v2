@@ -194,6 +194,7 @@ func main() {
 			"ui/static/js/request_builder.js",
 			"ui/static/js/unread_counter_handler.js",
 			"ui/static/js/entry_handler.js",
+			"ui/static/js/feed_handler.js",
 			"ui/static/js/confirm_handler.js",
 			"ui/static/js/menu_handler.js",
 			"ui/static/js/modal_handler.js",
