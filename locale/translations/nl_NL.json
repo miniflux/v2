@@ -115,6 +115,7 @@
     "page.keyboard_shortcuts.show_keyboard_shortcuts": "Laat sneltoetsen zien",
     "page.keyboard_shortcuts.go_to_previous_item": "Vorige item",
     "page.keyboard_shortcuts.go_to_next_item": "Volgende item",
+    "page.keyboard_shortcuts.go_to_feed": "Ga naar feed",
     "page.keyboard_shortcuts.go_to_previous_page": "Vorige pagina",
     "page.keyboard_shortcuts.go_to_next_page": "Volgende pagina",
     "page.keyboard_shortcuts.open_item": "Open geselecteerde link",

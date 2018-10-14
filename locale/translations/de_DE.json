@@ -114,6 +114,7 @@
     "page.keyboard_shortcuts.show_keyboard_shortcuts": "Liste der Tastenkürzel anzeigen",
     "page.keyboard_shortcuts.go_to_previous_item": "Zum vorherigen Artikel gehen",
     "page.keyboard_shortcuts.go_to_next_item": "Zum nächsten Artikel gehen",
+    "page.keyboard_shortcuts.go_to_feed": "Gehe zum Abo",
     "page.keyboard_shortcuts.go_to_previous_page": "Zur vorherigen Seite gehen",
     "page.keyboard_shortcuts.go_to_next_page": "Zur nächsten Seite gehen",
     "page.keyboard_shortcuts.open_item": "Gewählten Artikel öffnen",
