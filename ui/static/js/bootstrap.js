@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("g u", () => navHandler.goToPage("unread"));
     keyboardHandler.on("g b", () => navHandler.goToPage("starred"));
     keyboardHandler.on("g h", () => navHandler.goToPage("history"));
-    keyboardHandler.on("g f", () => navHandler.goToPage("feeds"));
+    keyboardHandler.on("g f", () => navHandler.goToFeedOrFeeds());
     keyboardHandler.on("g c", () => navHandler.goToPage("categories"));
     keyboardHandler.on("g s", () => navHandler.goToPage("settings"));
     keyboardHandler.on("ArrowLeft", () => navHandler.goToPrevious());

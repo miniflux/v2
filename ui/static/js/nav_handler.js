@@ -173,6 +173,17 @@ class NavHandler {
         }
     }
 
+    goToFeedOrFeeds() {
+        if (this.isEntry()) {
+            let feedAnchor = document.querySelector("span.entry-website a");
+            if (feedAnchor !== null) {
+                window.location.href = feedAnchor.href;
+            }
+        } else {
+            this.goToPage('feeds');
+        }
+    }
+
     goToPreviousListItem() {
         let items = DomHelper.getVisibleElements(".items .item");
         if (items.length === 0) {
@@ -226,6 +237,10 @@ class NavHandler {
                 break;
             }
         }
+    }
+
+    isEntry() {
+        return document.querySelector("section.entry") !== null;
     }
 
     isListView() {

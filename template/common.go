@@ -191,6 +191,7 @@ var templateCommonMap = map[string]string{
                 <ul>
                     <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>j</strong>, <strong>◄</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>k</strong>, <strong>►</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>g + f</strong></li>
                 </ul>
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
@@ -244,6 +245,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "69ba8db45fde768cf71bab7dba60cece39968a185cec58850582dec11668efec",
+	"layout":           "4a5339267f67b5999a22ece7584df4c75785bc3bf95d44e1891da763aaea7991",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }
