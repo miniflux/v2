@@ -4,7 +4,7 @@
 
 /*
 
-Package feed handles feed updates and creation.
+Package parser provides a generic feed parser that abstract all different formats.
 
 */
-package feed // import "miniflux.app/reader/feed"
+package parser // import "miniflux.app/reader/parser"

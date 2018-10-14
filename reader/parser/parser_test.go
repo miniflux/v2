@@ -2,73 +2,11 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package feed // import "miniflux.app/reader/feed"
+package parser // import "miniflux.app/reader/parser"
 
 import (
-	"bytes"
 	"testing"
 )
-
-func TestDetectRDF(t *testing.T) {
-	data := `<?xml version="1.0"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://my.netscape.com/rdf/simple/0.9/"></rdf:RDF>`
-	format := DetectFeedFormat(bytes.NewBufferString(data))
-
-	if format != FormatRDF {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatRDF)
-	}
-}
-
-func TestDetectRSS(t *testing.T) {
-	data := `<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>`
-	format := DetectFeedFormat(bytes.NewBufferString(data))
-
-	if format != FormatRSS {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatRSS)
-	}
-}
-
-func TestDetectAtom(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
-	format := DetectFeedFormat(bytes.NewBufferString(data))
-
-	if format != FormatAtom {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatAtom)
-	}
-}
-
-func TestDetectAtomWithISOCharset(t *testing.T) {
-	data := `<?xml version="1.0" encoding="ISO-8859-15"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
-	format := DetectFeedFormat(bytes.NewBufferString(data))
-
-	if format != FormatAtom {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatAtom)
-	}
-}
-
-func TestDetectJSON(t *testing.T) {
-	data := `
-	{
-		"version" : "https://jsonfeed.org/version/1",
-		"title" : "Example"
-	}
-	`
-	format := DetectFeedFormat(bytes.NewBufferString(data))
-
-	if format != FormatJSON {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatJSON)
-	}
-}
-
-func TestDetectUnknown(t *testing.T) {
-	data := `
-	<!DOCTYPE html> <html> </html>
-	`
-	format := DetectFeedFormat(bytes.NewBufferString(data))
-
-	if format != FormatUnknown {
-		t.Errorf("Wrong format detected: %s instead of %s", format, FormatUnknown)
-	}
-}
 
 func TestParseAtom(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
@@ -92,7 +30,7 @@ func TestParseAtom(t *testing.T) {
 
 	</feed>`
 
-	feed, err := parseFeed(bytes.NewBufferString(data))
+	feed, err := ParseFeed(data)
 	if err != nil {
 		t.Error(err)
 	}
@@ -118,7 +56,7 @@ func TestParseRSS(t *testing.T) {
 	</channel>
 	</rss>`
 
-	feed, err := parseFeed(bytes.NewBufferString(data))
+	feed, err := ParseFeed(data)
 	if err != nil {
 		t.Error(err)
 	}
@@ -147,7 +85,7 @@ func TestParseRDF(t *testing.T) {
 		  </item>
 		</rdf:RDF>`
 
-	feed, err := parseFeed(bytes.NewBufferString(data))
+	feed, err := ParseFeed(data)
 	if err != nil {
 		t.Error(err)
 	}
@@ -177,7 +115,7 @@ func TestParseJson(t *testing.T) {
 		]
 	}`
 
-	feed, err := parseFeed(bytes.NewBufferString(data))
+	feed, err := ParseFeed(data)
 	if err != nil {
 		t.Error(err)
 	}
@@ -200,14 +138,14 @@ func TestParseUnknownFeed(t *testing.T) {
 		</html>
 	`
 
-	_, err := parseFeed(bytes.NewBufferString(data))
+	_, err := ParseFeed(data)
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
 	}
 }
 
 func TestParseEmptyFeed(t *testing.T) {
-	_, err := parseFeed(bytes.NewBufferString(""))
+	_, err := ParseFeed("")
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
 	}

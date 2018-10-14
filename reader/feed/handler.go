@@ -14,6 +14,7 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/icon"
+	"miniflux.app/reader/parser"
 	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
 	"miniflux.app/timer"
@@ -67,12 +68,11 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 		return nil, errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 	}
 
-	body, err := response.NormalizeBodyEncoding()
-	if err != nil {
+	if err := response.EnsureUnicodeBody(); err != nil {
 		return nil, errors.NewLocalizedError(errEncoding, err)
 	}
 
-	subscription, feedErr := parseFeed(body)
+	subscription, feedErr := parser.ParseFeed(response.String())
 	if feedErr != nil {
 		return nil, feedErr
 	}
@@ -183,12 +183,11 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 			return err
 		}
 
-		body, err := response.NormalizeBodyEncoding()
-		if err != nil {
+		if err := response.EnsureUnicodeBody(); err != nil {
 			return errors.NewLocalizedError(errEncoding, err)
 		}
 
-		subscription, parseErr := parseFeed(body)
+		subscription, parseErr := parser.ParseFeed(response.String())
 		if parseErr != nil {
 			originalFeed.ParsingErrorCount++
 			originalFeed.ParsingErrorMsg = parseErr.Localize(printer)

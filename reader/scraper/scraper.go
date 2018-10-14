@@ -18,7 +18,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// Fetch downloads a web page a returns relevant contents.
+// Fetch downloads a web page and returns relevant contents.
 func Fetch(websiteURL, rules, userAgent string) (string, error) {
 	clt := client.New(websiteURL)
 	if userAgent != "" {
@@ -38,8 +38,7 @@ func Fetch(websiteURL, rules, userAgent string) (string, error) {
 		return "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", response.ContentType)
 	}
 
-	page, err := response.NormalizeBodyEncoding()
-	if err != nil {
+	if err = response.EnsureUnicodeBody(); err != nil {
 		return "", err
 	}
 
@@ -52,11 +51,11 @@ func Fetch(websiteURL, rules, userAgent string) (string, error) {
 
 	var content string
 	if rules != "" {
-		logger.Debug(`[Scraper] Using rules "%s" for "%s"`, rules, websiteURL)
-		content, err = scrapContent(page, rules)
+		logger.Debug(`[Scraper] Using rules %q for %q`, rules, websiteURL)
+		content, err = scrapContent(response.Body, rules)
 	} else {
-		logger.Debug(`[Scraper] Using readability for "%s"`, websiteURL)
-		content, err = readability.ExtractContent(page)
+		logger.Debug(`[Scraper] Using readability for "%q`, websiteURL)
+		content, err = readability.ExtractContent(response.Body)
 	}
 
 	if err != nil {

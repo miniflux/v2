@@ -6,6 +6,7 @@ package client // import "miniflux.app/http/client"
 
 import (
 	"io"
+	"io/ioutil"
 	"mime"
 	"strings"
 
@@ -56,23 +57,32 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 	return true
 }
 
-// NormalizeBodyEncoding make sure the body is encoded in UTF-8.
+// EnsureUnicodeBody makes sure the body is encoded in UTF-8.
 //
 // If a charset other than UTF-8 is detected, we convert the document to UTF-8.
 // This is used by the scraper and feed readers.
 //
 // Do not forget edge cases:
 // - Some non-utf8 feeds specify encoding only in Content-Type, not in XML document.
-func (r *Response) NormalizeBodyEncoding() (io.Reader, error) {
+func (r *Response) EnsureUnicodeBody() error {
 	_, params, err := mime.ParseMediaType(r.ContentType)
 	if err == nil {
 		if enc, found := params["charset"]; found {
 			enc = strings.ToLower(enc)
 			if enc != "utf-8" && enc != "utf8" && enc != "" {
-				logger.Debug("[NormalizeBodyEncoding] Convert body to UTF-8 from %s", enc)
-				return charset.NewReader(r.Body, r.ContentType)
+				logger.Debug("[EnsureUnicodeBody] Convert body to utf-8 from %s", enc)
+				r.Body, err = charset.NewReader(r.Body, r.ContentType)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
-	return r.Body, nil
+	return nil
+}
+
+// String returns the response body as string.
+func (r *Response) String() string {
+	bytes, _ := ioutil.ReadAll(r.Body)
+	return string(bytes)
 }

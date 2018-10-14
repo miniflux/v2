@@ -1,0 +1,70 @@
+// Copyright 2018 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package parser // import "miniflux.app/reader/parser"
+
+import (
+	"testing"
+)
+
+func TestDetectRDF(t *testing.T) {
+	data := `<?xml version="1.0"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://my.netscape.com/rdf/simple/0.9/"></rdf:RDF>`
+	format := DetectFeedFormat(data)
+
+	if format != FormatRDF {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatRDF)
+	}
+}
+
+func TestDetectRSS(t *testing.T) {
+	data := `<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>`
+	format := DetectFeedFormat(data)
+
+	if format != FormatRSS {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatRSS)
+	}
+}
+
+func TestDetectAtom(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
+	format := DetectFeedFormat(data)
+
+	if format != FormatAtom {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatAtom)
+	}
+}
+
+func TestDetectAtomWithISOCharset(t *testing.T) {
+	data := `<?xml version="1.0" encoding="ISO-8859-15"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
+	format := DetectFeedFormat(data)
+
+	if format != FormatAtom {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatAtom)
+	}
+}
+
+func TestDetectJSON(t *testing.T) {
+	data := `
+	{
+		"version" : "https://jsonfeed.org/version/1",
+		"title" : "Example"
+	}
+	`
+	format := DetectFeedFormat(data)
+
+	if format != FormatJSON {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
+	}
+}
+
+func TestDetectUnknown(t *testing.T) {
+	data := `
+	<!DOCTYPE html> <html> </html>
+	`
+	format := DetectFeedFormat(data)
+
+	if format != FormatUnknown {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatUnknown)
+	}
+}

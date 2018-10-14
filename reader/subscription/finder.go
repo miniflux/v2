@@ -5,15 +5,15 @@
 package subscription // import "miniflux.app/reader/subscription"
 
 import (
-	"bytes"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
 	"miniflux.app/logger"
-	"miniflux.app/reader/feed"
+	"miniflux.app/reader/parser"
 	"miniflux.app/timer"
 	"miniflux.app/url"
 
@@ -56,20 +56,12 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 		return nil, errors.NewLocalizedError(errEmptyBody)
 	}
 
-	body, err := response.NormalizeBodyEncoding()
-	if err != nil {
+	if err := response.EnsureUnicodeBody(); err != nil {
 		return nil, err
 	}
 
-	var buffer bytes.Buffer
-	size, _ := io.Copy(&buffer, body)
-	if size == 0 {
-		return nil, errors.NewLocalizedError(errEmptyBody)
-	}
-
-	reader := bytes.NewReader(buffer.Bytes())
-
-	if format := feed.DetectFeedFormat(reader); format != feed.FormatUnknown {
+	body := response.String()
+	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
 		var subscriptions Subscriptions
 		subscriptions = append(subscriptions, &Subscription{
 			Title: response.EffectiveURL,
@@ -80,8 +72,7 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 		return subscriptions, nil
 	}
 
-	reader.Seek(0, io.SeekStart)
-	return parseDocument(response.EffectiveURL, bytes.NewReader(buffer.Bytes()))
+	return parseDocument(response.EffectiveURL, strings.NewReader(body))
 }
 
 func parseDocument(websiteURL string, data io.Reader) (Subscriptions, error) {
