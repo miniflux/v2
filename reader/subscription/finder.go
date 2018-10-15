@@ -5,58 +5,29 @@
 package subscription // import "miniflux.app/reader/subscription"
 
 import (
-	"fmt"
 	"io"
 	"strings"
-	"time"
 
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
-	"miniflux.app/logger"
+	"miniflux.app/reader/browser"
 	"miniflux.app/reader/parser"
-	"miniflux.app/timer"
 	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
 var (
-	errConnectionFailure = "Unable to open this link: %v"
 	errUnreadableDoc     = "Unable to analyze this page: %v"
-	errEmptyBody         = "This web page is empty"
-	errNotAuthorized     = "You are not authorized to access this resource (invalid username/password)"
-	errServerFailure     = "Unable to fetch this resource (Status Code = %d)"
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscriptions, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[FindSubscriptions] url=%s", websiteURL))
-
-	clt := client.New(websiteURL)
-	clt.WithCredentials(username, password)
-	clt.WithUserAgent(userAgent)
-	response, err := clt.Get()
+func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
+	request := client.New(websiteURL)
+	request.WithCredentials(username, password)
+	request.WithUserAgent(userAgent)
+	response, err := browser.Exec(request)
 	if err != nil {
-		if _, ok := err.(errors.LocalizedError); ok {
-			return nil, err
-		}
-		return nil, errors.NewLocalizedError(errConnectionFailure, err)
-	}
-
-	if response.IsNotAuthorized() {
-		return nil, errors.NewLocalizedError(errNotAuthorized)
-	}
-
-	if response.HasServerFailure() {
-		return nil, errors.NewLocalizedError(errServerFailure, response.StatusCode)
-	}
-
-	// Content-Length = -1 when no Content-Length header is sent
-	if response.ContentLength == 0 {
-		return nil, errors.NewLocalizedError(errEmptyBody)
-	}
-
-	if err := response.EnsureUnicodeBody(); err != nil {
 		return nil, err
 	}
 
@@ -75,7 +46,7 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 	return parseDocument(response.EffectiveURL, strings.NewReader(body))
 }
 
-func parseDocument(websiteURL string, data io.Reader) (Subscriptions, error) {
+func parseDocument(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
 	var subscriptions Subscriptions
 	queries := map[string]string{
 		"link[type='application/rss+xml']":  "rss",
@@ -108,7 +79,6 @@ func parseDocument(websiteURL string, data io.Reader) (Subscriptions, error) {
 			}
 
 			if subscription.URL != "" {
-				logger.Debug("[FindSubscriptions] %s", subscription)
 				subscriptions = append(subscriptions, subscription)
 			}
 		})

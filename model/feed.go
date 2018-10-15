@@ -7,9 +7,11 @@ package model // import "miniflux.app/model"
 import (
 	"fmt"
 	"time"
+
+	"miniflux.app/http/client"
 )
 
-// Feed represents a feed in the database.
+// Feed represents a feed in the application.
 type Feed struct {
 	ID                 int64     `json:"id"`
 	UserID             int64     `json:"user_id"`
@@ -41,6 +43,47 @@ func (f *Feed) String() string {
 		f.Title,
 		f.Category,
 	)
+}
+
+// WithClientResponse updates feed attributes from an HTTP request.
+func (f *Feed) WithClientResponse(response *client.Response) {
+	f.EtagHeader = response.ETag
+	f.LastModifiedHeader = response.LastModified
+	f.FeedURL = response.EffectiveURL
+}
+
+// WithCategoryID initializes the category attribute of the feed.
+func (f *Feed) WithCategoryID(categoryID int64) {
+	f.Category = &Category{ID: categoryID}
+}
+
+// WithBrowsingParameters defines browsing parameters.
+func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password string) {
+	f.Crawler = crawler
+	f.UserAgent = userAgent
+	f.Username = username
+	f.Password = password
+}
+
+// WithError adds a new error message and increment the error counter.
+func (f *Feed) WithError(message string) {
+	f.ParsingErrorCount++
+	f.ParsingErrorMsg = message
+}
+
+// ResetErrorCounter removes all previous errors.
+func (f *Feed) ResetErrorCounter() {
+	f.ParsingErrorCount = 0
+	f.ParsingErrorMsg = ""
+}
+
+// CheckedNow set attribute values when the feed is refreshed.
+func (f *Feed) CheckedNow() {
+	f.CheckedAt = time.Now()
+
+	if f.SiteURL == "" {
+		f.SiteURL = f.FeedURL
+	}
 }
 
 // Feeds is a list of feed

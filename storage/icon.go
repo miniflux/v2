@@ -100,8 +100,8 @@ func (s *Storage) CreateIcon(icon *model.Icon) error {
 }
 
 // CreateFeedIcon creates an icon and associate the icon to the given feed.
-func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeedIcon] feedID=%d", feed.ID))
+func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateFeedIcon] feedID=%d", feedID))
 
 	err := s.IconByHash(icon)
 	if err != nil {
@@ -115,7 +115,7 @@ func (s *Storage) CreateFeedIcon(feed *model.Feed, icon *model.Icon) error {
 		}
 	}
 
-	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feed.ID, icon.ID)
+	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feedID, icon.ID)
 	if err != nil {
 		return fmt.Errorf("unable to create feed icon: %v", err)
 	}

@@ -50,16 +50,16 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	subscriptions, err := subscription.FindSubscriptions(
+	subscriptions, findErr := subscription.FindSubscriptions(
 		subscriptionForm.URL,
 		subscriptionForm.UserAgent,
 		subscriptionForm.Username,
 		subscriptionForm.Password,
 	)
-	if err != nil {
-		logger.Error("[Controller:SubmitSubscription] %v", err)
+	if findErr != nil {
+		logger.Error("[UI:SubmitSubscription] %s", findErr)
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", err)
+		v.Set("errorMessage", findErr)
 		html.OK(w, r, v.Render("add_subscription"))
 		return
 	}
