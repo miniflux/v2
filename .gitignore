@@ -1,1 +1,11 @@
+# executables
 miniflux-*
+
+# generated files
+database/sql.go
+template/views.go
+template/common.go
+ui/static/bin.go
+ui/static/js.go
+ui/static/css.go
+locale/translations.go
