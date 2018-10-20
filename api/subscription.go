@@ -13,20 +13,20 @@ import (
 
 // GetSubscriptions is the API handler to find subscriptions.
 func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
-	subscriptionInfo, err := decodeURLPayload(r.Body)
-	if err != nil {
-		json.BadRequest(w, r, err)
+	subscriptionInfo, bodyErr := decodeURLPayload(r.Body)
+	if bodyErr != nil {
+		json.BadRequest(w, r, bodyErr)
 		return
 	}
 
-	subscriptions, err := subscription.FindSubscriptions(
+	subscriptions, finderErr := subscription.FindSubscriptions(
 		subscriptionInfo.URL,
 		subscriptionInfo.UserAgent,
 		subscriptionInfo.Username,
 		subscriptionInfo.Password,
 	)
-	if err != nil {
-		json.ServerError(w, r, err)
+	if finderErr != nil {
+		json.ServerError(w, r, finderErr)
 		return
 	}
 
