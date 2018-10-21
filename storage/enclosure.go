@@ -64,7 +64,7 @@ func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
 	).Scan(&enclosure.ID)
 
 	if err != nil {
-		return fmt.Errorf("unable to create enclosure: %v", err)
+		return fmt.Errorf("unable to create enclosure %q: %v", enclosure.URL, err)
 	}
 
 	return nil

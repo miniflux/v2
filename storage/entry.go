@@ -23,7 +23,7 @@ func (s *Storage) CountUnreadEntries(userID int64) int {
 
 	n, err := builder.CountEntries()
 	if err != nil {
-		logger.Error("unable to count unread entries: %v", err)
+		logger.Error("unable to count unread entries for user #%d: %v", userID, err)
 		return 0
 	}
 
@@ -45,7 +45,7 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 	_, err = tx.Exec(`UPDATE entries SET content=$1 WHERE id=$2 AND user_id=$3`, entry.Content, entry.ID, entry.UserID)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return fmt.Errorf(`unable to update content of entry #%d: %v`, entry.ID, err)
 	}
 
 	query := `
@@ -56,7 +56,7 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 	_, err = tx.Exec(query, entry.ID, entry.UserID)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return fmt.Errorf(`unable to update content of entry #%d: %v`, entry.ID, err)
 	}
 
 	return tx.Commit()
@@ -85,7 +85,7 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {
-		return fmt.Errorf("unable to create entry: %v", err)
+		return fmt.Errorf("unable to create entry %q (feed #%d): %v", entry.URL, entry.FeedID, err)
 	}
 
 	for i := 0; i < len(entry.Enclosures); i++ {
@@ -124,7 +124,7 @@ func (s *Storage) updateEntry(entry *model.Entry) error {
 	).Scan(&entry.ID)
 
 	if err != nil {
-		return err
+		return fmt.Errorf(`unable to update entry %q: %v`, entry.URL, err)
 	}
 
 	for _, enclosure := range entry.Enclosures {
@@ -180,7 +180,7 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 	}
 
 	if err := s.cleanupEntries(feedID, entryHashes); err != nil {
-		logger.Error("[Storage:CleanupEntries] %v", err)
+		logger.Error("[Storage:CleanupEntries] feed #%d: %v", feedID, err)
 	}
 
 	return nil
@@ -206,12 +206,12 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, status, userID, pq.Array(entryIDs))
 	if err != nil {
-		return fmt.Errorf("unable to update entries status: %v", err)
+		return fmt.Errorf("unable to update entries statuses %v: %v", entryIDs, err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("unable to update these entries: %v", err)
+		return fmt.Errorf("unable to update these entries %v: %v", entryIDs, err)
 	}
 
 	if count == 0 {
@@ -228,12 +228,12 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 	query := `UPDATE entries SET starred = NOT starred WHERE user_id=$1 AND id=$2`
 	result, err := s.db.Exec(query, userID, entryID)
 	if err != nil {
-		return fmt.Errorf("unable to toggle bookmark flag: %v", err)
+		return fmt.Errorf("unable to toggle bookmark flag for entry #%d: %v", entryID, err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("unable to toogle bookmark flag: %v", err)
+		return fmt.Errorf("unable to toogle bookmark flag for entry #%d: %v", entryID, err)
 	}
 
 	if count == 0 {

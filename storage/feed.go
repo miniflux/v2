@@ -80,7 +80,7 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to fetch feeds: %v", err)
+		return nil, fmt.Errorf("unable to fetch feeds: %v", err)
 	}
 	defer rows.Close()
 
@@ -180,7 +180,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("unable to fetch feed: %v", err)
+		return nil, fmt.Errorf("unable to fetch feed #%d: %v", feedID, err)
 	}
 
 	if iconID != nil {
@@ -216,7 +216,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Password,
 	).Scan(&feed.ID)
 	if err != nil {
-		return fmt.Errorf("unable to create feed: %v", err)
+		return fmt.Errorf("unable to create feed %q: %v", feed.FeedURL, err)
 	}
 
 	for i := 0; i < len(feed.Entries); i++ {
@@ -262,7 +262,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	)
 
 	if err != nil {
-		return fmt.Errorf("Unable to update feed: %v", err)
+		return fmt.Errorf("unable to update feed #%d (%s): %v", feed.ID, feed.FeedURL, err)
 	}
 
 	return nil
@@ -274,12 +274,12 @@ func (s *Storage) RemoveFeed(userID, feedID int64) error {
 
 	result, err := s.db.Exec("DELETE FROM feeds WHERE id = $1 AND user_id = $2", feedID, userID)
 	if err != nil {
-		return fmt.Errorf("Unable to remove this feed: %v", err)
+		return fmt.Errorf("unable to remove feed #%d: %v", feedID, err)
 	}
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("Unable to remove this feed: %v", err)
+		return fmt.Errorf("unable to remove feed #%d: %v", feedID, err)
 	}
 
 	if count == 0 {
