@@ -118,6 +118,8 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
 		if storeErr := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
+			originalFeed.WithError(storeErr.Error())
+			h.store.UpdateFeed(originalFeed)
 			return storeErr
 		}
 
