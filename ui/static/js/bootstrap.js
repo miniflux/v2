@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("f", () => navHandler.toggleBookmark());
     keyboardHandler.on("?", () => navHandler.showKeyboardShortcuts());
     keyboardHandler.on("#", () => navHandler.unsubscribeFromFeed());
-    keyboardHandler.on("/", (e) => navHandler.setFocusToSearchInput(e));
+    keyboardHandler.on("/", () => navHandler.setFocusToSearchInput());
     keyboardHandler.on("Escape", () => ModalHandler.close());
     keyboardHandler.listen();
 

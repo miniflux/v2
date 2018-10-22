@@ -21,14 +21,12 @@ class KeyboardHandler {
                 let keys = combination.split(" ");
 
                 if (keys.every((value, index) => value === this.queue[index])) {
-                    this.queue = [];
-                    this.shortcuts[combination](event);
+                    this.execute(combination, event);
                     return;
                 }
 
                 if (keys.length === 1 && key === keys[0]) {
-                    this.queue = [];
-                    this.shortcuts[combination](event);
+                    this.execute(combination, event);
                     return;
                 }
             }
@@ -37,6 +35,14 @@ class KeyboardHandler {
                 this.queue = [];
             }
         };
+    }
+
+    execute(combination, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.queue = [];
+        this.shortcuts[combination](event);
     }
 
     isEventIgnored(event) {
