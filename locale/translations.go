@@ -119,7 +119,7 @@ var translations = map[string]string{
     "page.keyboard_shortcuts.show_keyboard_shortcuts": "Liste der Tastenkürzel anzeigen",
     "page.keyboard_shortcuts.go_to_previous_item": "Zum vorherigen Artikel gehen",
     "page.keyboard_shortcuts.go_to_next_item": "Zum nächsten Artikel gehen",
-    "page.keyboard_shortcuts.go_to_feed": "Gehe zum Abo",
+    "page.keyboard_shortcuts.go_to_feed": "Zum Abonnement gehen",
     "page.keyboard_shortcuts.go_to_previous_page": "Zur vorherigen Seite gehen",
     "page.keyboard_shortcuts.go_to_next_page": "Zur nächsten Seite gehen",
     "page.keyboard_shortcuts.open_item": "Gewählten Artikel öffnen",
@@ -2005,7 +2005,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "b1008d7ecf29c5f0cb841341cde621fd30db7a5d3ac65f8f8df31a0501d8e8ca",
+	"de_DE": "51ddd870cc5c228f2cc92f32797f805a5ca62baa5be95c037ba78eb41e69c490",
 	"en_US": "d4342f431da69a4ce26162862d649c42cc395b4266e0125c5bc9df7577e401be",
 	"fr_FR": "687d1c0147eb3925911d48972b39c94a4accf2e03e7327fe99ae05e0b5f11a9f",
 	"nl_NL": "08513979f3194bb1df3207f14ea7adf81cc4a62abec347a9dacbc201ce6846f0",
