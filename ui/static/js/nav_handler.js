@@ -1,5 +1,8 @@
 class NavHandler {
-    setFocusToSearchInput() {
+    setFocusToSearchInput(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         let toggleSwitchElement = document.querySelector(".search-toggle-switch");
         if (toggleSwitchElement) {
             toggleSwitchElement.style.display = "none";
