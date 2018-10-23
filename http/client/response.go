@@ -76,6 +76,12 @@ func (r *Response) EnsureUnicodeBody() error {
 					return err
 				}
 			}
+		}else{
+		        logger.Debug("[EnsureUnicodeBody] Convert body to utf-8 from %s", enc)
+			r.Body, err = charset.NewReader(r.Body, r.ContentType)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
