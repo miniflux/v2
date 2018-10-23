@@ -19,6 +19,7 @@ import (
 
 // OAuth2Callback receives the authorization code and create a new session.
 func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
+	clientIP := request.ClientIP(r)
 	printer := locale.NewPrinter(request.UserLanguage(r))
 	sess := session.New(c.store, request.SessionID(r))
 
@@ -56,6 +57,8 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		html.Redirect(w, r, route.Path(c.router, "login"))
 		return
 	}
+
+	logger.Info("[OAuth2] [ClientIP=%s] Successful auth for %s", clientIP, profile)
 
 	if request.IsAuthenticated(r) {
 		user, err := c.store.UserByExtraField(profile.Key, profile.ID)
@@ -104,13 +107,14 @@ func (c *Controller) OAuth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sessionToken, _, err := c.store.CreateUserSession(user.Username, r.UserAgent(), request.ClientIP(r))
+	sessionToken, _, err := c.store.CreateUserSession(user.Username, r.UserAgent(), clientIP)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	logger.Info("[Controller:OAuth2Callback] username=%s just logged in", user.Username)
+	logger.Info("[OAuth2] [ClientIP=%s] username=%s (%s) just logged in", clientIP, user.Username, profile)
+
 	c.store.SetLastLogin(user.ID)
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
