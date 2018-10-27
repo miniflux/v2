@@ -1,3 +1,39 @@
+Version 2.0.12 (Oct 26, 2018)
+-----------------------------
+
+* Add OpenBSD build
+* Improve logging for OAuth2 callback
+* Make "g f" go to feed, or list of feeds
+* Add more details in feed storage errors to facilitate debugging
+* Add entries storage error to feed errors count
+* Set arbitrary maximum size for tsvector column
+* Unsubscribe from feed through link or "#"
+* Simplify feed entries filtering
+* Simplify feed fetcher
+* Simplify feed parser and format detection
+* Improve unit tests in url package
+* Add short cli flags -i and -v
+* Convert text links and line feeds to HTML in YouTube channels
+* Change link state when marking all entries as read
+* Add missing package descriptions for GoDoc
+* Fix typo in license header
+* Refactor HTTP response builder
+* Improve Fever API performances when marking a feed or group as read
+* Set focus on article link when pressing prev/next hotkeys
+* Improve request package and add more unit tests
+* Add more unit tests for config package
+* Simplify locale package usage (refactoring)
+* Translate application in Russian
+* Use disclosure widget <details> for advanced feed options
+* Use unique translation IDs instead of English text as key
+* Add more unit tests for template functions
+* Fix invalid output when truncating Unicode text in templates
+* Add the possibility to override default user agent for each feed
+* Split Makefile linux targets by architecture
+* Add compiler, Arch, and OS to info command
+* Avoid line break between emoji and (un)read/(un)star links
+* Build Docker image for multiple architectures (amd64, arm32v6, arm64v8)
+
 Version 2.0.11 (Sep 11, 2018)
 -----------------------------
 
