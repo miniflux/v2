@@ -13,21 +13,28 @@ import (
 	"miniflux.app/logger"
 )
 
+var feverAuthFailureResponse = map[string]int{"api_version": 3, "auth": 0}
+
 // FeverAuth handles Fever API authentication.
 func (m *Middleware) FeverAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.FormValue("api_key")
+		if apiKey == "" {
+			logger.Info("[Middleware:Fever] No API key provided")
+			json.OK(w, r, feverAuthFailureResponse)
+			return
+		}
 
 		user, err := m.store.UserByFeverToken(apiKey)
 		if err != nil {
 			logger.Error("[Middleware:Fever] %v", err)
-			json.OK(w, r, map[string]int{"api_version": 3, "auth": 0})
+			json.OK(w, r, feverAuthFailureResponse)
 			return
 		}
 
 		if user == nil {
 			logger.Info("[Middleware:Fever] No user found with this API key")
-			json.OK(w, r, map[string]int{"api_version": 3, "auth": 0})
+			json.OK(w, r, feverAuthFailureResponse)
 			return
 		}
 

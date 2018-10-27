@@ -573,7 +573,15 @@ func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-		if err := c.store.MarkCategoryAsRead(userID, groupID, before); err != nil {
+		var err error
+
+		if groupID == 0 {
+			err = c.store.MarkAllAsRead(userID)
+		} else {
+			err = c.store.MarkCategoryAsRead(userID, groupID, before)
+		}
+
+		if err != nil {
 			logger.Error("[Fever] MarkCategoryAsRead failed: %v", err)
 		}
 	}()
