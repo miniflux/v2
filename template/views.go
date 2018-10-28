@@ -157,7 +157,7 @@ var templateViewsMap = map[string]string{
 </section>
 
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "page.categories.no_category" }}</p>
+    <p class="alert alert-error">{{ t "alert.no_category" }}</p>
 {{ else }}
     <div class="items">
         {{ range .categories }}
@@ -216,7 +216,7 @@ var templateViewsMap = map[string]string{
 </section>
 
 {{ if not .entries }}
-    <p class="alert">{{ t "alert.no_category" }}</p>
+    <p class="alert">{{ t "alert.no_category_entry" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -1384,8 +1384,8 @@ var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
 	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
 	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
-	"categories":          "787132252f12d84288e8c4dc9127a5a083c31ec75c3e86ae7ef87467a95678df",
-	"category_entries":    "5efccde4212cbaa88be385c8659f73c1a4764135d181b152fa0c7c48d4c50f34",
+	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
+	"category_entries":    "a803570ba91268646b2c55cffc8a3f2f162388a73bc007dd9ab61e144faa359b",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
