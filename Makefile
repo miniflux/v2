@@ -49,7 +49,7 @@ clean:
 	@ rm -f $(APP)-*
 
 test:
-	go test -cover -race ./...
+	go test -cover -race -count=1 ./...
 
 lint:
 	@ golint -set_exit_status ${PKG_LIST}
@@ -62,7 +62,7 @@ integration-test:
 	go build -o miniflux-test main.go
 	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
-	go test -v -tags=integration miniflux.app/tests || cat /tmp/miniflux.log
+	go test -v -tags=integration -count=1 miniflux.app/tests || cat /tmp/miniflux.log
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
