@@ -4,26 +4,62 @@
 
 package client // import "miniflux.app/http/client"
 
-import "testing"
+import (
+	"bytes"
+	"io/ioutil"
+	"strings"
+	"testing"
+	"unicode/utf8"
+)
 
-func TestHasServerFailureWith200Status(t *testing.T) {
-	r := &Response{StatusCode: 200}
-	if r.HasServerFailure() {
-		t.Error("200 is not a failure")
+func TestIsNotFound(t *testing.T) {
+	scenarios := map[int]bool{
+		200: false,
+		404: true,
+		410: true,
+	}
+
+	for input, expected := range scenarios {
+		r := &Response{StatusCode: input}
+		actual := r.IsNotFound()
+
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v for status code %d`, actual, expected, input)
+		}
 	}
 }
 
-func TestHasServerFailureWith404Status(t *testing.T) {
-	r := &Response{StatusCode: 404}
-	if !r.HasServerFailure() {
-		t.Error("404 is a failure")
+func TestIsNotAuthorized(t *testing.T) {
+	scenarios := map[int]bool{
+		200: false,
+		401: true,
+		403: false,
+	}
+
+	for input, expected := range scenarios {
+		r := &Response{StatusCode: input}
+		actual := r.IsNotAuthorized()
+
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v for status code %d`, actual, expected, input)
+		}
 	}
 }
 
-func TestHasServerFailureWith500Status(t *testing.T) {
-	r := &Response{StatusCode: 500}
-	if !r.HasServerFailure() {
-		t.Error("500 is a failure")
+func TestHasServerFailure(t *testing.T) {
+	scenarios := map[int]bool{
+		200: false,
+		404: true,
+		500: true,
+	}
+
+	for input, expected := range scenarios {
+		r := &Response{StatusCode: input}
+		actual := r.HasServerFailure()
+
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v for status code %d`, actual, expected, input)
+		}
 	}
 }
 
@@ -52,5 +88,59 @@ func TestIsModifiedWithDifferentHeaders(t *testing.T) {
 	r := &Response{StatusCode: 200, ETag: "some etag", LastModified: "some date"}
 	if !r.IsModified("etag", "lastModified") {
 		t.Error("The resource should be considered modified")
+	}
+}
+
+func TestToString(t *testing.T) {
+	input := `test`
+	r := &Response{Body: strings.NewReader(input)}
+
+	if r.String() != input {
+		t.Error(`Unexpected ouput`)
+	}
+}
+
+func TestEnsureUnicodeWithHTMLDocuments(t *testing.T) {
+	var unicodeTestCases = []struct {
+		filename, contentType string
+		convertedToUnicode    bool
+	}{
+		{"HTTP-charset.html", "text/html; charset=iso-8859-15", true},
+		{"UTF-16LE-BOM.html", "", true},
+		{"UTF-16BE-BOM.html", "", true},
+		{"meta-content-attribute.html", "text/html", true},
+		{"meta-charset-attribute.html", "text/html", true},
+		{"No-encoding-declaration.html", "text/html", true},
+		{"HTTP-vs-UTF-8-BOM.html", "text/html; charset=iso-8859-15", true},
+		{"HTTP-vs-meta-content.html", "text/html; charset=iso-8859-15", true},
+		{"HTTP-vs-meta-charset.html", "text/html; charset=iso-8859-15", true},
+		{"UTF-8-BOM-vs-meta-content.html", "text/html", true},
+		{"UTF-8-BOM-vs-meta-charset.html", "text/html", true},
+		{"windows_1251.html", "text/html; charset=windows-1251", true},
+		{"gb2312.html", "text/html", true},
+		{"urdu.xml", "text/xml; charset=utf-8", true},
+		{"content-type-only-win-8859-1.xml", "application/xml; charset=ISO-8859-1", true},
+		{"rdf_utf8.xml", "application/rss+xml; charset=utf-8", true},
+		{"charset-content-type-xml-iso88591.xml", "application/rss+xml; charset=ISO-8859-1", false},
+		{"windows_1251.xml", "text/xml", false},
+	}
+
+	for _, tc := range unicodeTestCases {
+		content, err := ioutil.ReadFile("testdata/" + tc.filename)
+		if err != nil {
+			t.Fatalf(`Unable to read file %q: %v`, tc.filename, err)
+		}
+
+		r := &Response{Body: bytes.NewReader(content), ContentType: tc.contentType}
+		parseErr := r.EnsureUnicodeBody()
+		if parseErr != nil {
+			t.Fatalf(`Unicode conversion error for %q - %q: %v`, tc.filename, tc.contentType, err)
+		}
+
+		isUnicode := utf8.ValidString(r.String())
+		if isUnicode != tc.convertedToUnicode {
+			t.Errorf(`Unicode conversion %q - %q, got: %v, expected: %v`,
+				tc.filename, tc.contentType, isUnicode, tc.convertedToUnicode)
+		}
 	}
 }

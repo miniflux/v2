@@ -190,7 +190,7 @@ func TestDifferentEncodingWithResponse(t *testing.T) {
 		r.EnsureUnicodeBody()
 		feed, parseErr := ParseFeed(r.String())
 		if parseErr != nil {
-			t.Errorf(`Parsing error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
+			t.Fatalf(`Parsing error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
 		}
 
 		if feed.Entries[tc.index].Title != tc.title {

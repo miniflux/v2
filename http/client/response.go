@@ -5,14 +5,17 @@
 package client // import "miniflux.app/http/client"
 
 import (
+	"bytes"
 	"io"
 	"io/ioutil"
 	"mime"
+	"regexp"
 	"strings"
 
 	"golang.org/x/net/html/charset"
-	"miniflux.app/logger"
 )
+
+var xmlEncodingRegex = regexp.MustCompile(`<\?xml(.*)encoding="(.+)"(.*)\?>`)
 
 // Response wraps a server response.
 type Response struct {
@@ -63,22 +66,32 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 // This is used by the scraper and feed readers.
 //
 // Do not forget edge cases:
-// - Some non-utf8 feeds specify encoding only in Content-Type, not in XML document.
-func (r *Response) EnsureUnicodeBody() error {
-	_, params, err := mime.ParseMediaType(r.ContentType)
-	if err == nil {
-		if enc, found := params["charset"]; found {
-			enc = strings.ToLower(enc)
-			if enc != "utf-8" && enc != "utf8" && enc != "" {
-				logger.Debug("[EnsureUnicodeBody] Convert body to utf-8 from %s", enc)
-				r.Body, err = charset.NewReader(r.Body, r.ContentType)
-				if err != nil {
-					return err
-				}
+//
+// - Feeds with encoding specified only in Content-Type header and not in XML document
+// - Feeds with encoding specified in both places
+// - Feeds with encoding specified only in XML document and not in HTTP header
+// - Feeds with wrong encoding defined and already in UTF-8
+func (r *Response) EnsureUnicodeBody() (err error) {
+	if r.ContentType != "" {
+		mediaType, _, mediaErr := mime.ParseMediaType(r.ContentType)
+		if mediaErr != nil {
+			return mediaErr
+		}
+
+		if strings.Contains(mediaType, "xml") {
+			buffer, _ := ioutil.ReadAll(r.Body)
+			r.Body = bytes.NewReader(buffer)
+
+			// We ignore documents with encoding specified in XML prolog.
+			// This is going to be handled by the XML parser.
+			if xmlEncodingRegex.Match(buffer[0:1024]) {
+				return
 			}
 		}
 	}
-	return nil
+
+	r.Body, err = charset.NewReader(r.Body, r.ContentType)
+	return err
 }
 
 // String returns the response body as string.
