@@ -10,7 +10,7 @@ class KeyboardHandler {
 
     listen() {
         document.onkeydown = (event) => {
-            if (this.isEventIgnored(event)) {
+            if (this.isEventIgnored(event) || this.isModifierKeyDown(event)) {
                 return;
             }
 
@@ -43,6 +43,10 @@ class KeyboardHandler {
         return event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA";
     }
 
+    isModifierKeyDown(event) {
+        return event.getModifierState("Control") || event.getModifierState("Alt") || event.getModifierState("Meta");
+    }
+
     getKey(event) {
         const mapping = {
             'Esc': 'Escape',
@@ -60,4 +64,5 @@ class KeyboardHandler {
 
         return event.key;
     }
+
 }

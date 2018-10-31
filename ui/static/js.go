@@ -29,11 +29,12 @@ this.reset();}
 listen(){let elements=document.querySelectorAll(".touch-item");let hasPassiveOption=DomHelper.hasPassiveEventListenerOption();elements.forEach((element)=>{element.addEventListener("touchstart",(e)=>this.onTouchStart(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchmove",(e)=>this.onTouchMove(e),hasPassiveOption?{passive:false}:false);element.addEventListener("touchend",(e)=>this.onTouchEnd(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchcancel",()=>this.reset(),hasPassiveOption?{passive:true}:false);});}}
 class KeyboardHandler{constructor(){this.queue=[];this.shortcuts={};}
 on(combination,callback){this.shortcuts[combination]=callback;}
-listen(){document.onkeydown=(event)=>{if(this.isEventIgnored(event)){return;}
+listen(){document.onkeydown=(event)=>{if(this.isEventIgnored(event)||this.isModifierKeyDown(event)){return;}
 let key=this.getKey(event);this.queue.push(key);for(let combination in this.shortcuts){let keys=combination.split(" ");if(keys.every((value,index)=>value===this.queue[index])){this.queue=[];this.shortcuts[combination](event);return;}
 if(keys.length===1&&key===keys[0]){this.queue=[];this.shortcuts[combination](event);return;}}
 if(this.queue.length>=2){this.queue=[];}};}
 isEventIgnored(event){return event.target.tagName==="INPUT"||event.target.tagName==="TEXTAREA";}
+isModifierKeyDown(event){return event.getModifierState("Control")||event.getModifierState("Alt")||event.getModifierState("Meta");}
 getKey(event){const mapping={'Esc':'Escape','Up':'ArrowUp','Down':'ArrowDown','Left':'ArrowLeft','Right':'ArrowRight'};for(let key in mapping){if(mapping.hasOwnProperty(key)&&key===event.key){return mapping[key];}}
 return event.key;}}
 class MouseHandler{onClick(selector,callback,noPreventDefault){let elements=document.querySelectorAll(selector);elements.forEach((element)=>{element.onclick=(event)=>{if(!noPreventDefault){event.preventDefault();}
@@ -104,6 +105,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "0ad0d1aea5dc06d811998bd6cd6fede09a73ae00d682f28a850621bb750947e3",
+	"app": "966a3deb03c0cd0dfe1411958786b0eab7ec6f4fe3b008c0cfd4cd859f03ce3e",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
