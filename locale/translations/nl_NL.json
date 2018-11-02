@@ -59,6 +59,8 @@
     "entry.scraper.title": "Fetch original content",
     "entry.scraper.completed": "Klaar!",
     "entry.original.label": "Origineel",
+    "entry.mail.label": "E-Mail",
+    "entry.mail.title": "Share link via E-Mail",
     "entry.comments.label": "Comments",
     "entry.comments.title": "Bekijk de reacties",
     "page.unread.title": "Ongelezen",

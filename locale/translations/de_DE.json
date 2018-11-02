@@ -59,6 +59,8 @@
     "entry.scraper.title": "Inhalt herunterladen",
     "entry.scraper.completed": "Erledigt!",
     "entry.original.label": "Original-Artikel",
+    "entry.mail.label": "E-Mail",
+    "entry.mail.title": "Link zu Original-Artikel per E-Mail teilen",
     "entry.comments.label": "Kommentare",
     "entry.comments.title": "Kommentare anzeigen",
     "page.unread.title": "Ungelesen",

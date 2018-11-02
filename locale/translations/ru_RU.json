@@ -59,6 +59,8 @@
     "entry.scraper.title": "Извлечь оригинальное содержимое",
     "entry.scraper.completed": "Готово!",
     "entry.original.label": "Оригинал",
+    "entry.mail.label": "E-Mail",
+    "entry.mail.title": "Share link via E-Mail",
     "entry.comments.label": "Комментарии",
     "entry.comments.title": "Показать комментарии",
     "page.unread.title": "Непрочитанное",

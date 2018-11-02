@@ -45,6 +45,9 @@ var templateCommonMap = map[string]string{
         <li>
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "entry.original.label" }}</a>
         </li>
+        <li>
+            <a href="mailto:?subject={{ .entry.Title }}&amp;body={{ .entry.URL }}" title="{{ t "entry.mail.title" }}" rel="noopener noreferrer" referrerpolicy="no-referrer">✉️&nbsp;{{ t "entry.mail.label" }}</a>
+        </li>
         {{ if .entry.CommentsURL }}
             <li>
                 <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
@@ -71,7 +74,8 @@ var templateCommonMap = map[string]string{
         </li>
     </ul>
 </div>
-{{ end }}`,
+{{ end }}
+`,
 	"layout": `{{ define "base" }}
 <!DOCTYPE html>
 <html>
@@ -244,7 +248,7 @@ var templateCommonMap = map[string]string{
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
-	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
+	"item_meta":        "feffd8087a29103d296b76fa0cb4ffe096b5c10b4efb75b9feee04e65c873955",
 	"layout":           "4a5339267f67b5999a22ece7584df4c75785bc3bf95d44e1891da763aaea7991",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

@@ -52,6 +52,9 @@
                         <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
                     </li>
                 {{ end }}
+                <li>
+                    <a href="mailto:?subject={{ .entry.Title }}&amp;body={{ .entry.URL }}" title="{{ t "entry.mail.title" }}" rel="noopener noreferrer" referrerpolicy="no-referrer">✉️&nbsp;{{ t "entry.mail.label" }}</a>
+                </li>
             </ul>
         </div>
         <div class="entry-meta">

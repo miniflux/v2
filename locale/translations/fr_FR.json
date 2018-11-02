@@ -59,6 +59,8 @@
     "entry.scraper.title": "Récupérer le contenu original",
     "entry.scraper.completed": "Terminé !",
     "entry.original.label": "Original",
+    "entry.mail.label": "E-Mail",
+    "entry.mail.title": "Share link via E-Mail",
     "entry.comments.label": "Commentaires",
     "entry.comments.title": "Voir les commentaires",
     "page.unread.title": "Non lus",

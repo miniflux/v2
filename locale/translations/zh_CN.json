@@ -59,6 +59,8 @@
     "entry.scraper.title": "抓取原内容",
     "entry.scraper.completed": "完成",
     "entry.original.label": "原版的",
+    "entry.mail.label": "E-Mail",
+    "entry.mail.title": "Share link via E-Mail",
     "entry.comments.label": "注释",
     "entry.comments.title": "查看评论",
     "page.unread.title": "未读",

@@ -21,6 +21,9 @@
         <li>
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "entry.original.label" }}</a>
         </li>
+        <li>
+            <a href="mailto:?subject={{ .entry.Title }}&amp;body={{ .entry.URL }}" title="{{ t "entry.mail.title" }}" rel="noopener noreferrer" referrerpolicy="no-referrer">✉️&nbsp;{{ t "entry.mail.label" }}</a>
+        </li>
         {{ if .entry.CommentsURL }}
             <li>
                 <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>

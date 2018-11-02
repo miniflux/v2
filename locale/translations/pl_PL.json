@@ -59,6 +59,8 @@
     "entry.scraper.title": "Pobierz oryginalną treść",
     "entry.scraper.completed": "Gotowe!",
     "entry.original.label": "Oryginalny artykuł",
+    "entry.mail.label": "E-Mail",
+    "entry.mail.title": "Share link via E-Mail",
     "entry.comments.label": "Komentarze",
     "entry.comments.title": "Zobacz komentarze",
     "page.unread.title": "Nieprzeczytane",
