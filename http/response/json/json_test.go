@@ -39,7 +39,7 @@ func TestOKResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %q instead of %q`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -72,7 +72,7 @@ func TestCreatedResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -105,7 +105,7 @@ func TestNoContentResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -140,7 +140,7 @@ func TestServerErrorResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %q instead of %q`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -173,7 +173,7 @@ func TestBadRequestResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -206,7 +206,7 @@ func TestUnauthorizedResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -239,7 +239,7 @@ func TestForbiddenResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -272,7 +272,7 @@ func TestNotFoundResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -305,7 +305,7 @@ func TestBuildInvalidJSONResponse(t *testing.T) {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "application/json; charset=utf-8"
+	expectedContentType := contentTypeHeader
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)

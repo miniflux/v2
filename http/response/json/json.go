@@ -13,10 +13,12 @@ import (
 	"miniflux.app/logger"
 )
 
+const contentTypeHeader = `application/json`
+
 // OK creates a new JSON response with a 200 status code.
 func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
 	builder := response.New(w, r)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSON(body))
 	builder.Write()
 }
@@ -25,7 +27,7 @@ func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
 func Created(w http.ResponseWriter, r *http.Request, body interface{}) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusCreated)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSON(body))
 	builder.Write()
 }
@@ -34,7 +36,7 @@ func Created(w http.ResponseWriter, r *http.Request, body interface{}) {
 func NoContent(w http.ResponseWriter, r *http.Request) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusNoContent)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.Write()
 }
 
@@ -44,7 +46,7 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSONError(err))
 	builder.Write()
 }
@@ -55,7 +57,7 @@ func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusBadRequest)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSONError(err))
 	builder.Write()
 }
@@ -66,7 +68,7 @@ func Unauthorized(w http.ResponseWriter, r *http.Request) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusUnauthorized)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSONError(errors.New("Access Unauthorized")))
 	builder.Write()
 }
@@ -77,7 +79,7 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusForbidden)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSONError(errors.New("Access Forbidden")))
 	builder.Write()
 }
@@ -88,7 +90,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusNotFound)
-	builder.WithHeader("Content-Type", "application/json; charset=utf-8")
+	builder.WithHeader("Content-Type", contentTypeHeader)
 	builder.WithBody(toJSONError(errors.New("Resource Not Found")))
 	builder.Write()
 }
