@@ -34,7 +34,7 @@ func Fetch(websiteURL, rules, userAgent string) (string, error) {
 		return "", errors.New("scraper: unable to download web page")
 	}
 
-	if !strings.Contains(response.ContentType, "text/html") {
+	if !isWhitelistedContentType(response.ContentType) {
 		return "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", response.ContentType)
 	}
 
@@ -98,4 +98,10 @@ func getPredefinedScraperRules(websiteURL string) string {
 	}
 
 	return ""
+}
+
+func isWhitelistedContentType(contentType string) bool {
+	contentType = strings.ToLower(contentType)
+	return strings.HasPrefix(contentType, "text/html") ||
+		strings.HasPrefix(contentType, "application/xhtml+xml")
 }

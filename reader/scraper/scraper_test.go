@@ -19,3 +19,24 @@ func TestGetPredefinedRules(t *testing.T) {
 		t.Error("A rule not defined should not return anything")
 	}
 }
+
+func TestWhitelistedContentTypes(t *testing.T) {
+	scenarios := map[string]bool{
+		"text/html":                            true,
+		"TeXt/hTmL":                            true,
+		"application/xhtml+xml":                true,
+		"text/html; charset=utf-8":             true,
+		"application/xhtml+xml; charset=utf-8": true,
+		"text/css":                             false,
+		"application/javascript":               false,
+		"image/png":                            false,
+		"application/pdf":                      false,
+	}
+
+	for inputValue, expectedResult := range scenarios {
+		actualResult := isWhitelistedContentType(inputValue)
+		if actualResult != expectedResult {
+			t.Errorf(`Unexpected result for content type whitelist, got "%v" instead of "%v"`, actualResult, expectedResult)
+		}
+	}
+}
