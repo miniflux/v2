@@ -21,7 +21,7 @@ Official website: <https://miniflux.app>
 Documentation
 -------------
 
-The Miniflux documentation is available here: <https://docs.miniflux.app/>
+The Miniflux documentation is available here: <https://docs.miniflux.app/> ([Man page](https://miniflux.app/miniflux.1.html))
 
 - [Opinionated?](https://docs.miniflux.app/en/latest/opinionated.html)
 - [Features](https://docs.miniflux.app/en/latest/features.html)
