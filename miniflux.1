@@ -1,0 +1,166 @@
+.\" Manpage for miniflux.
+.TH "MINIFLUX" "1" "November 9, 2018" "\ \&" "\ \&"
+
+.SH NAME
+miniflux \- Minimalist and opinionated feed reader
+
+.SH SYNOPSIS
+\fBminiflux\fR [-vi] [-create-admin] [-debug] [-flush-sessions] [-info] [-migrate]
+         [-reset-feed-errors] [-reset-password] [-version]
+
+.SH DESCRIPTION
+\fBminiflux\fR is a minimalist and opinionated feed reader.
+
+.SH OPTIONS
+.PP
+.B \-create-admin
+.RS 4
+Create admin user\&.
+.RE
+.PP
+.B \-debug
+.RS 4
+Show debug logs\&.
+.RE
+.PP
+.B \-flush-sessions
+.RS 4
+Flush all sessions (disconnect users)\&.
+.RE
+.PP
+.B \-i
+.RS 4
+Show application information\&.
+.RE
+.PP
+.B \-info
+.RS 4
+Show application information\&.
+.RE
+.PP
+.B \-migrate
+.RS 4
+Run SQL migrations\&.
+.RE
+.PP
+.B \-reset-feed-errors
+.RS 4
+Clear all feed errors for all users\&.
+.RE
+.PP
+.B \-reset-password
+.RS 4
+Reset user password\&.
+.RE
+.PP
+.B \-v
+.RS 4
+Show application version\&.
+.RE
+.PP
+.B \-version
+.RS 4
+Show application version\&.
+.RE
+
+.SH ENVIRONMENT
+.TP
+.B DEBUG
+Set the value to 1 to enable debug logs\&.
+.TP
+.B WORKER_POOL_SIZE
+Number of background workers (default is 5)\&.
+.TP
+.B POLLING_FREQUENCY
+Refresh interval in minutes for feeds (default is 60 minutes)\&.
+.TP
+.B BATCH_SIZE
+Number of feeds to send to the queue for each interval (default is 10)\&.
+.TP
+.B DATABASE_URL
+Postgresql connection parameters\&.
+.br
+Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
+.TP
+.B DATABASE_MAX_CONNS
+Maximum number of database connections (default is 20)\&.
+.TP
+.B DATABASE_MIN_CONNS
+Minimum number of database connections (default is 1)\&.
+.TP
+.B LISTEN_ADDR
+HTTP server listening address\&.
+.TP
+.B PORT
+Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
+.TP
+.B BASE_URL
+Base URL to generate HTML links and base path for cookies\&.
+.br
+Default is http://localhost/\&.
+.TP
+.B CLEANUP_FREQUENCY
+Cleanup job frequency, remove old sessions and archive read entries\&.
+.br
+Default is 24 hours\&.
+.TP
+.B HTTPS
+Forces cookies to use secure flag and send HSTS header\&.
+.TP
+.B DISABLE_HSTS
+Disable HTTP Strict Transport Security header if \fBHTTPS\fR is set\&.
+.TP
+.B CERT_FILE
+Path to SSL certificate\&.
+.TP
+.B KEY_FILE
+Path to SSL private key\&.
+.TP
+.B CERT_DOMAIN
+Use Let's Encrypt to get automatically a certificate for this domain\&.
+.TP
+.B CERT_CACHE
+Let's Encrypt cache directory (default is /tmp/cert_cache)\&.
+.TP
+.B OAUTH2_PROVIDER
+OAuth2 provider to use\&. Only google is supported\&.
+.TP
+.B OAUTH2_CLIENT_ID
+OAuth2 client ID\&.
+.TP
+.B OAUTH2_CLIENT_SECRET
+OAuth2 client secret\&.
+.TP
+.B OAUTH2_REDIRECT_URL
+OAuth2 redirect URL\&.
+.TP
+.B OAUTH2_USER_CREATION
+Set to 1 to authorize OAuth2 user creation\&.
+.TP
+.B RUN_MIGRATIONS
+Set to 1 to run database migrations\&.
+.TP
+.B CREATE_ADMIN
+Set to 1 to create an admin user from environment variables\&.
+.TP
+.B ADMIN_USERNAME
+Admin user login, used only if \fBCREATE_ADMIN\fR is enabled\&.
+.TP
+.B ADMIN_PASSWORD
+Admin user password, used only if \fBCREATE_ADMIN\fR is enabled\&.
+.TP
+.B POCKET_CONSUMER_KEY
+Pocket consumer API key for all users\&.
+.TP
+.B PROXY_IMAGES
+Avoids mixed content warnings for external images: http-only, all, or none\&.
+.br
+Default is http-only\&.
+
+.SH AUTHORS
+.sp
+Miniflux is written and maintained by Fr\['e]d\['e]ric Guillot\&.
+
+.SH "COPYRIGHT"
+.sp
+Miniflux is released under the Apache 2.0 license\&.
