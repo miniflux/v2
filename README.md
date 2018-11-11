@@ -48,7 +48,7 @@ Default theme:
 
 ![Default theme](https://miniflux.app/image/overview.png)
 
-Dark theme when using keyboard naviguation:
+Dark theme when using keyboard navigation:
 
 ![Dark theme](https://miniflux.app/image/item-selection-black-theme.png)
 
