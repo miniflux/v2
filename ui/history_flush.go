@@ -12,13 +12,12 @@ import (
 	"miniflux.app/http/route"
 )
 
-// FlushHistory changes all "read" items to "removed".
-func (c *Controller) FlushHistory(w http.ResponseWriter, r *http.Request) {
-	err := c.store.FlushHistory(request.UserID(r))
+func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
+	err := h.store.FlushHistory(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "history"))
+	html.Redirect(w, r, route.Path(h.router, "history"))
 }

@@ -14,8 +14,7 @@ import (
 	"miniflux.app/ui/static"
 )
 
-// Favicon shows the application favicon.
-func (c *Controller) Favicon(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showFavicon(w http.ResponseWriter, r *http.Request) {
 	etag, found := static.BinariesChecksums["favicon.ico"]
 	if !found {
 		html.NotFound(w, r)

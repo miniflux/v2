@@ -17,17 +17,16 @@ import (
 	"miniflux.app/ui/session"
 )
 
-// UpdateIntegration updates integration settings.
-func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	printer := locale.NewPrinter(request.UserLanguage(r))
-	sess := session.New(c.store, request.SessionID(r))
-	user, err := c.store.UserByID(request.UserID(r))
+	sess := session.New(h.store, request.SessionID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	integration, err := c.store.Integration(user.ID)
+	integration, err := h.store.Integration(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -36,9 +35,9 @@ func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
 	integrationForm := form.NewIntegrationForm(r)
 	integrationForm.Merge(integration)
 
-	if integration.FeverUsername != "" && c.store.HasDuplicateFeverUsername(user.ID, integration.FeverUsername) {
+	if integration.FeverUsername != "" && h.store.HasDuplicateFeverUsername(user.ID, integration.FeverUsername) {
 		sess.NewFlashErrorMessage(printer.Printf("error.duplicate_fever_username"))
-		html.Redirect(w, r, route.Path(c.router, "integrations"))
+		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return
 	}
 
@@ -48,12 +47,12 @@ func (c *Controller) UpdateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.FeverToken = ""
 	}
 
-	err = c.store.UpdateIntegration(integration)
+	err = h.store.UpdateIntegration(integration)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	sess.NewFlashMessage(printer.Printf("alert.prefs_saved"))
-	html.Redirect(w, r, route.Path(c.router, "integrations"))
+	html.Redirect(w, r, route.Path(h.router, "integrations"))
 }

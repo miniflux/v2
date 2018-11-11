@@ -14,10 +14,9 @@ import (
 	"miniflux.app/reader/scraper"
 )
 
-// FetchContent downloads the original HTML page and returns relevant contents.
-func (c *Controller) FetchContent(w http.ResponseWriter, r *http.Request) {
+func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -39,7 +38,7 @@ func (c *Controller) FetchContent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	entry.Content = sanitizer.Sanitize(entry.URL, content)
-	c.store.UpdateEntryContent(entry)
+	h.store.UpdateEntryContent(entry)
 
 	json.OK(w, r, map[string]string{"content": entry.Content})
 }

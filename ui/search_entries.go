@@ -15,9 +15,8 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowSearchEntries shows all entries for the given feed.
-func (c *Controller) ShowSearchEntries(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showSearchEntriesPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -25,7 +24,7 @@ func (c *Controller) ShowSearchEntries(w http.ResponseWriter, r *http.Request) {
 
 	searchQuery := request.QueryStringParam(r, "q", "")
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := c.store.NewEntryQueryBuilder(user.ID)
+	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithSearchQuery(searchQuery)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOrder(model.DefaultSortingOrder)
@@ -45,9 +44,9 @@ func (c *Controller) ShowSearchEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
-	pagination := c.getPagination(route.Path(c.router, "searchEntries"), count, offset)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
+	pagination := getPagination(route.Path(h.router, "searchEntries"), count, offset)
 	pagination.SearchQuery = searchQuery
 
 	view.Set("searchQuery", searchQuery)
@@ -56,9 +55,9 @@ func (c *Controller) ShowSearchEntries(w http.ResponseWriter, r *http.Request) {
 	view.Set("pagination", pagination)
 	view.Set("menu", "search")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
-	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("search_entries"))
 }

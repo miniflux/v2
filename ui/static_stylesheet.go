@@ -14,8 +14,7 @@ import (
 	"miniflux.app/ui/static"
 )
 
-// Stylesheet renders the CSS.
-func (c *Controller) Stylesheet(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
 	etag, found := static.StylesheetsChecksums[filename]
 	if !found {

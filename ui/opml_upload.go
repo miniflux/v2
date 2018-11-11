@@ -16,9 +16,8 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// UploadOPML handles OPML file importation.
-func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -27,7 +26,7 @@ func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
 		logger.Error("[Controller:UploadOPML] %v", err)
-		html.Redirect(w, r, route.Path(c.router, "import"))
+		html.Redirect(w, r, route.Path(h.router, "import"))
 		return
 	}
 	defer file.Close()
@@ -39,12 +38,12 @@ func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
 		fileHeader.Size,
 	)
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	if fileHeader.Size == 0 {
 		view.Set("errorMessage", "error.empty_file")
@@ -52,11 +51,11 @@ func (c *Controller) UploadOPML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if impErr := opml.NewHandler(c.store).Import(user.ID, file); impErr != nil {
+	if impErr := opml.NewHandler(h.store).Import(user.ID, file); impErr != nil {
 		view.Set("errorMessage", impErr)
 		html.OK(w, r, view.Render("import"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "feeds"))
+	html.Redirect(w, r, route.Path(h.router, "feeds"))
 }

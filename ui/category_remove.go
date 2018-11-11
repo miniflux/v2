@@ -12,16 +12,15 @@ import (
 	"miniflux.app/http/route"
 )
 
-// RemoveCategory deletes a category from the database.
-func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	categoryID := request.RouteInt64Param(r, "categoryID")
-	category, err := c.store.Category(request.UserID(r), categoryID)
+	category, err := h.store.Category(request.UserID(r), categoryID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -32,10 +31,10 @@ func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.RemoveCategory(user.ID, category.ID); err != nil {
+	if err := h.store.RemoveCategory(user.ID, category.ID); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "categories"))
+	html.Redirect(w, r, route.Path(h.router, "categories"))
 }

@@ -13,8 +13,7 @@ import (
 	"miniflux.app/model"
 )
 
-// WebManifest renders web manifest file.
-func (c *Controller) WebManifest(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 	type webManifestIcon struct {
 		Source string `json:"src"`
 		Sizes  string `json:"sizes"`
@@ -38,13 +37,13 @@ func (c *Controller) WebManifest(w http.ResponseWriter, r *http.Request) {
 		ShortName:       "Miniflux",
 		Description:     "Minimalist Feed Reader",
 		Display:         "minimal-ui",
-		StartURL:        route.Path(c.router, "unread"),
+		StartURL:        route.Path(h.router, "unread"),
 		ThemeColor:      themeColor,
 		BackgroundColor: themeColor,
 		Icons: []webManifestIcon{
-			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png"},
-			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png"},
-			webManifestIcon{Source: route.Path(c.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png"},
+			webManifestIcon{Source: route.Path(h.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png"},
+			webManifestIcon{Source: route.Path(h.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png"},
+			webManifestIcon{Source: route.Path(h.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png"},
 		},
 	}
 

@@ -16,9 +16,8 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowCategoryEntry shows a single feed entry in "category" mode.
-func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -27,7 +26,7 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 	categoryID := request.RouteInt64Param(r, "categoryID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
-	builder := c.store.NewEntryQueryBuilder(user.ID)
+	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(categoryID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -44,7 +43,7 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if entry.Status == model.EntryStatusUnread {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
 			html.ServerError(w, r, err)
 			return
@@ -53,7 +52,7 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 		entry.Status = model.EntryStatusRead
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(c.store, user.ID, entry.ID, user.EntryDirection)
+	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
 	entryPaginationBuilder.WithCategoryID(categoryID)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
@@ -63,16 +62,16 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = route.Path(c.router, "categoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
+		nextEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = route.Path(c.router, "categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+		prevEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("entry", entry)
 	view.Set("prevEntry", prevEntry)
 	view.Set("nextEntry", nextEntry)
@@ -80,9 +79,9 @@ func (c *Controller) ShowCategoryEntry(w http.ResponseWriter, r *http.Request) {
 	view.Set("prevEntryRoute", prevEntryRoute)
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
-	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("entry"))
 }

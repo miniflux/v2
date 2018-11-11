@@ -12,9 +12,8 @@ import (
 	"miniflux.app/http/route"
 )
 
-// RemoveUser deletes a user from the database.
-func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -26,7 +25,7 @@ func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
-	selectedUser, err := c.store.UserByID(userID)
+	selectedUser, err := h.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -37,10 +36,10 @@ func (c *Controller) RemoveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.RemoveUser(selectedUser.ID); err != nil {
+	if err := h.store.RemoveUser(selectedUser.ID); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "users"))
+	html.Redirect(w, r, route.Path(h.router, "users"))
 }

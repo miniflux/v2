@@ -15,10 +15,9 @@ import (
 	"miniflux.app/ui/session"
 )
 
-// Logout destroy the session and redirects the user to the login page.
-func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -27,15 +26,15 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) {
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 
-	if err := c.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
+	if err := h.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
 		logger.Error("[Controller:Logout] %v", err)
 	}
 
 	http.SetCookie(w, cookie.Expired(
 		cookie.CookieUserSessionID,
-		c.cfg.IsHTTPS,
-		c.cfg.BasePath(),
+		h.cfg.IsHTTPS,
+		h.cfg.BasePath(),
 	))
 
-	html.Redirect(w, r, route.Path(c.router, "login"))
+	html.Redirect(w, r, route.Path(h.router, "login"))
 }

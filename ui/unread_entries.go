@@ -15,19 +15,18 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowUnreadPage render the page with all unread entries.
-func (c *Controller) ShowUnreadPage(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := c.store.NewEntryQueryBuilder(user.ID)
+	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 	countUnread, err := builder.CountEntries()
 	if err != nil {
@@ -39,7 +38,7 @@ func (c *Controller) ShowUnreadPage(w http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 
-	builder = c.store.NewEntryQueryBuilder(user.ID)
+	builder = h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
@@ -52,12 +51,12 @@ func (c *Controller) ShowUnreadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	view.Set("entries", entries)
-	view.Set("pagination", c.getPagination(route.Path(c.router, "unread"), countUnread, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "unread"), countUnread, offset))
 	view.Set("menu", "unread")
 	view.Set("user", user)
 	view.Set("countUnread", countUnread)
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
-	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("unread_entries"))
 }

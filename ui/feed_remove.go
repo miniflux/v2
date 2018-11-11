@@ -12,13 +12,12 @@ import (
 	"miniflux.app/http/route"
 )
 
-// RemoveFeed deletes a subscription from the database and redirect to the list of feeds page.
-func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	if err := c.store.RemoveFeed(request.UserID(r), feedID); err != nil {
+	if err := h.store.RemoveFeed(request.UserID(r), feedID); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "feeds"))
+	html.Redirect(w, r, route.Path(h.router, "feeds"))
 }

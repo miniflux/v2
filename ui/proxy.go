@@ -18,8 +18,7 @@ import (
 	"miniflux.app/http/response/html"
 )
 
-// ImageProxy fetch an image from a remote server and sent it back to the browser.
-func (c *Controller) ImageProxy(w http.ResponseWriter, r *http.Request) {
+func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 	// If we receive a "If-None-Match" header, we assume the image is already stored in browser cache.
 	if r.Header.Get("If-None-Match") != "" {
 		w.WriteHeader(http.StatusNotModified)

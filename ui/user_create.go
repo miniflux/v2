@@ -14,12 +14,11 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// CreateUser shows the user creation form.
-func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showCreateUserPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -33,8 +32,8 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 	view.Set("form", &form.UserForm{})
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	html.OK(w, r, view.Render("create_user"))
 }

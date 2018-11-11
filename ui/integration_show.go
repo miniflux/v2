@@ -14,15 +14,14 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowIntegrations renders the page with all external integrations.
-func (c *Controller) ShowIntegrations(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	integration, err := c.store.Integration(user.ID)
+	integration, err := h.store.Integration(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -53,14 +52,14 @@ func (c *Controller) ShowIntegrations(w http.ResponseWriter, r *http.Request) {
 		PocketConsumerKey:    integration.PocketConsumerKey,
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", integrationForm)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
-	view.Set("hasPocketConsumerKeyConfigured", c.cfg.PocketConsumerKey("") != "")
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("hasPocketConsumerKeyConfigured", h.cfg.PocketConsumerKey("") != "")
 
 	html.OK(w, r, view.Render("integrations"))
 }

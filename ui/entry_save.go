@@ -13,10 +13,9 @@ import (
 	"miniflux.app/model"
 )
 
-// SaveEntry send the link to external services.
-func (c *Controller) SaveEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -31,14 +30,14 @@ func (c *Controller) SaveEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	settings, err := c.store.Integration(request.UserID(r))
+	settings, err := h.store.Integration(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
 	go func() {
-		integration.SendEntry(c.cfg, entry, settings)
+		integration.SendEntry(h.cfg, entry, settings)
 	}()
 
 	json.Created(w, r, map[string]string{"message": "saved"})

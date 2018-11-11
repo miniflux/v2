@@ -13,10 +13,9 @@ import (
 	"miniflux.app/http/response/html"
 )
 
-// ShowIcon shows the feed icon.
-func (c *Controller) ShowIcon(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showIcon(w http.ResponseWriter, r *http.Request) {
 	iconID := request.RouteInt64Param(r, "iconID")
-	icon, err := c.store.IconByID(iconID)
+	icon, err := h.store.IconByID(iconID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return

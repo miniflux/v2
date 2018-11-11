@@ -17,16 +17,15 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// UpdateFeed update a subscription and redirect to the feed entries page.
-func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	feedID := request.RouteInt64Param(r, "feedID")
-	feed, err := c.store.FeedByID(user.ID, feedID)
+	feed, err := h.store.FeedByID(user.ID, feedID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -37,7 +36,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categories, err := c.store.Categories(user.ID)
+	categories, err := h.store.Categories(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -45,15 +44,15 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 	feedForm := form.NewFeedForm(r)
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", feedForm)
 	view.Set("categories", categories)
 	view.Set("feed", feed)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	if err := feedForm.ValidateModification(); err != nil {
@@ -62,7 +61,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.store.UpdateFeed(feedForm.Merge(feed))
+	err = h.store.UpdateFeed(feedForm.Merge(feed))
 	if err != nil {
 		logger.Error("[Controller:EditFeed] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_feed")
@@ -70,5 +69,5 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
+	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
 }

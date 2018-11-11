@@ -13,28 +13,26 @@ import (
 	"miniflux.app/logger"
 )
 
-// RefreshFeed refresh a subscription and redirect to the feed entries page.
-func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	if err := c.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
+	if err := h.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
 		logger.Error("[Controller:RefreshFeed] %v", err)
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feedID))
+	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feedID))
 }
 
-// RefreshAllFeeds refresh all feeds in the background for the current user.
-func (c *Controller) RefreshAllFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	jobs, err := c.store.NewUserBatch(userID, c.store.CountFeeds(userID))
+	jobs, err := h.store.NewUserBatch(userID, h.store.CountFeeds(userID))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	go func() {
-		c.pool.Push(jobs)
+		h.pool.Push(jobs)
 	}()
 
-	html.Redirect(w, r, route.Path(c.router, "feeds"))
+	html.Redirect(w, r, route.Path(h.router, "feeds"))
 }

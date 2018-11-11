@@ -16,9 +16,8 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// UpdateUser validate and update a user.
-func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -30,7 +29,7 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
-	selectedUser, err := c.store.UserByID(userID)
+	selectedUser, err := h.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -43,12 +42,12 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	userForm := form.NewUserForm(r)
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("selected_user", selectedUser)
 	view.Set("form", userForm)
 
@@ -58,19 +57,19 @@ func (c *Controller) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if c.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
+	if h.store.AnotherUserExists(selectedUser.ID, userForm.Username) {
 		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("edit_user"))
 		return
 	}
 
 	userForm.Merge(selectedUser)
-	if err := c.store.UpdateUser(selectedUser); err != nil {
+	if err := h.store.UpdateUser(selectedUser); err != nil {
 		logger.Error("[Controller:UpdateUser] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_user")
 		html.OK(w, r, view.Render("edit_user"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "users"))
+	html.Redirect(w, r, route.Path(h.router, "users"))
 }

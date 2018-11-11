@@ -16,16 +16,15 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowUnreadEntry shows a single feed entry in "unread" mode.
-func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	entryID := request.RouteInt64Param(r, "entryID")
-	builder := c.store.NewEntryQueryBuilder(user.ID)
+	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -42,14 +41,14 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 
 	// Make sure we always get the pagination in unread mode even if the page is refreshed.
 	if entry.Status == model.EntryStatusRead {
-		err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
 		if err != nil {
 			html.ServerError(w, r, err)
 			return
 		}
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(c.store, user.ID, entry.ID, user.EntryDirection)
+	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
 	entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
@@ -59,24 +58,24 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = route.Path(c.router, "unreadEntry", "entryID", nextEntry.ID)
+		nextEntryRoute = route.Path(h.router, "unreadEntry", "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = route.Path(c.router, "unreadEntry", "entryID", prevEntry.ID)
+		prevEntryRoute = route.Path(h.router, "unreadEntry", "entryID", prevEntry.ID)
 	}
 
 	// Always mark the entry as read after fetching the pagination.
-	err = c.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+	err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 	entry.Status = model.EntryStatusRead
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("entry", entry)
 	view.Set("prevEntry", prevEntry)
 	view.Set("nextEntry", nextEntry)
@@ -84,11 +83,11 @@ func (c *Controller) ShowUnreadEntry(w http.ResponseWriter, r *http.Request) {
 	view.Set("prevEntryRoute", prevEntryRoute)
 	view.Set("menu", "unread")
 	view.Set("user", user)
-	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	// Fetching the counter here avoid to be off by one.
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 
 	html.OK(w, r, view.Render("entry"))
 }

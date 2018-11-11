@@ -11,10 +11,9 @@ import (
 	"miniflux.app/http/response/json"
 )
 
-// ToggleBookmark handles Ajax request to toggle bookmark value.
-func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
+func (h *handler) toggleBookmark(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
+	if err := h.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}

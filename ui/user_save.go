@@ -16,9 +16,8 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// SaveUser validate and save the new user into the database.
-func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -31,12 +30,12 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 
 	userForm := form.NewUserForm(r)
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("form", userForm)
 
 	if err := userForm.ValidateCreation(); err != nil {
@@ -45,19 +44,19 @@ func (c *Controller) SaveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if c.store.UserExists(userForm.Username) {
+	if h.store.UserExists(userForm.Username) {
 		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("create_user"))
 		return
 	}
 
 	newUser := userForm.ToUser()
-	if err := c.store.CreateUser(newUser); err != nil {
+	if err := h.store.CreateUser(newUser); err != nil {
 		logger.Error("[Controller:SaveUser] %v", err)
 		view.Set("errorMessage", "error.unable_to_create_user")
 		html.OK(w, r, view.Render("create_user"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "users"))
+	html.Redirect(w, r, route.Path(h.router, "users"))
 }

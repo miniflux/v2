@@ -12,8 +12,7 @@ import (
 	"miniflux.app/http/response/json"
 )
 
-// UpdateEntriesStatus updates the status for a list of entries.
-func (c *Controller) UpdateEntriesStatus(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateEntriesStatus(w http.ResponseWriter, r *http.Request) {
 	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
@@ -25,7 +24,7 @@ func (c *Controller) UpdateEntriesStatus(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = c.store.SetEntriesStatus(request.UserID(r), entryIDs, status)
+	err = h.store.SetEntriesStatus(request.UserID(r), entryIDs, status)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

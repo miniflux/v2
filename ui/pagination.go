@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 const (
 	nbItemsPerPage = 100
@@ -20,7 +20,7 @@ type pagination struct {
 	SearchQuery  string
 }
 
-func (c *Controller) getPagination(route string, total, offset int) pagination {
+func getPagination(route string, total, offset int) pagination {
 	nextOffset := 0
 	prevOffset := 0
 	showNext := (total - offset) > nbItemsPerPage

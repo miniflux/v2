@@ -16,12 +16,11 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowSettings shows the settings page.
-func (c *Controller) ShowSettings(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -35,7 +34,7 @@ func (c *Controller) ShowSettings(w http.ResponseWriter, r *http.Request) {
 		EntryDirection: user.EntryDirection,
 	}
 
-	timezones, err := c.store.Timezones()
+	timezones, err := h.store.Timezones()
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -47,8 +46,8 @@ func (c *Controller) ShowSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	html.OK(w, r, view.Render("settings"))
 }

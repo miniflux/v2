@@ -14,21 +14,20 @@ import (
 	"miniflux.app/ui/session"
 )
 
-// OAuth2Redirect redirects the user to the consent page to ask for permission.
-func (c *Controller) OAuth2Redirect(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
+func (h *handler) oauth2Redirect(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
 
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		logger.Error("[OAuth2] Invalid or missing provider: %s", provider)
-		html.Redirect(w, r, route.Path(c.router, "login"))
+		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
-	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
+	authProvider, err := getOAuth2Manager(h.cfg).Provider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
-		html.Redirect(w, r, route.Path(c.router, "login"))
+		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 

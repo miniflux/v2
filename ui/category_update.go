@@ -16,16 +16,15 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// UpdateCategory validates and updates a category.
-func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	categoryID := request.RouteInt64Param(r, "categoryID")
-	category, err := c.store.Category(request.UserID(r), categoryID)
+	category, err := h.store.Category(request.UserID(r), categoryID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -38,14 +37,14 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	categoryForm := form.NewCategoryForm(r)
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", categoryForm)
 	view.Set("category", category)
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	if err := categoryForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
@@ -53,13 +52,13 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if c.store.AnotherCategoryExists(user.ID, category.ID, categoryForm.Title) {
+	if h.store.AnotherCategoryExists(user.ID, category.ID, categoryForm.Title) {
 		view.Set("errorMessage", "error.category_already_exists")
 		html.OK(w, r, view.Render("edit_category"))
 		return
 	}
 
-	err = c.store.UpdateCategory(categoryForm.Merge(category))
+	err = h.store.UpdateCategory(categoryForm.Merge(category))
 	if err != nil {
 		logger.Error("[Controller:UpdateCategory] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_category")
@@ -67,5 +66,5 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "categories"))
+	html.Redirect(w, r, route.Path(h.router, "categories"))
 }

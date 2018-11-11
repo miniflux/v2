@@ -15,16 +15,15 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowHistoryPage renders the page with all read entries.
-func (c *Controller) ShowHistoryPage(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := c.store.NewEntryQueryBuilder(user.ID)
+	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
@@ -43,16 +42,16 @@ func (c *Controller) ShowHistoryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("entries", entries)
 	view.Set("total", count)
-	view.Set("pagination", c.getPagination(route.Path(c.router, "history"), count, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "history"), count, offset))
 	view.Set("menu", "history")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
-	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("history_entries"))
 }

@@ -15,8 +15,7 @@ import (
 	"miniflux.app/ui/static"
 )
 
-// AppIcon shows application icons.
-func (c *Controller) AppIcon(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
 	etag, found := static.BinariesChecksums[filename]
 	if !found {

@@ -17,9 +17,8 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// SaveCategory validate and save the new category into the database.
-func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -27,13 +26,13 @@ func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
 
 	categoryForm := form.NewCategoryForm(r)
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", categoryForm)
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	if err := categoryForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
@@ -41,7 +40,7 @@ func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	duplicateCategory, err := c.store.CategoryByTitle(user.ID, categoryForm.Title)
+	duplicateCategory, err := h.store.CategoryByTitle(user.ID, categoryForm.Title)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -58,12 +57,12 @@ func (c *Controller) SaveCategory(w http.ResponseWriter, r *http.Request) {
 		UserID: user.ID,
 	}
 
-	if err = c.store.CreateCategory(&category); err != nil {
+	if err = h.store.CreateCategory(&category); err != nil {
 		logger.Error("[Controller:CreateCategory] %v", err)
 		view.Set("errorMessage", "error.unable_to_create_category")
 		html.OK(w, r, view.Render("create_category"))
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "categories"))
+	html.Redirect(w, r, route.Path(h.router, "categories"))
 }

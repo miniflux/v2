@@ -15,11 +15,11 @@ import (
 )
 
 // EditUser shows the form to edit a user.
-func (c *Controller) EditUser(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showEditUserPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -31,7 +31,7 @@ func (c *Controller) EditUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
-	selectedUser, err := c.store.UserByID(userID)
+	selectedUser, err := h.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -51,8 +51,8 @@ func (c *Controller) EditUser(w http.ResponseWriter, r *http.Request) {
 	view.Set("selected_user", selectedUser)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	html.OK(w, r, view.Render("edit_user"))
 }

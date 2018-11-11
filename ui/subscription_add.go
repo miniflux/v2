@@ -14,18 +14,17 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// AddSubscription shows the form to add a new feed.
-func (c *Controller) AddSubscription(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showAddSubscriptionPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	categories, err := c.store.Categories(user.ID)
+	categories, err := h.store.Categories(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -34,8 +33,8 @@ func (c *Controller) AddSubscription(w http.ResponseWriter, r *http.Request) {
 	view.Set("categories", categories)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	html.OK(w, r, view.Render("add_subscription"))

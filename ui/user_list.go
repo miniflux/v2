@@ -13,12 +13,11 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowUsers renders the list of users.
-func (c *Controller) ShowUsers(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showUsersPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -29,7 +28,7 @@ func (c *Controller) ShowUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := c.store.Users()
+	users, err := h.store.Users()
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -40,8 +39,8 @@ func (c *Controller) ShowUsers(w http.ResponseWriter, r *http.Request) {
 	view.Set("users", users)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	html.OK(w, r, view.Render("users"))
 }

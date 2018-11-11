@@ -13,13 +13,12 @@ import (
 	"miniflux.app/logger"
 )
 
-// RemoveSession remove a user session.
-func (c *Controller) RemoveSession(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeSession(w http.ResponseWriter, r *http.Request) {
 	sessionID := request.RouteInt64Param(r, "sessionID")
-	err := c.store.RemoveUserSessionByID(request.UserID(r), sessionID)
+	err := h.store.RemoveUserSessionByID(request.UserID(r), sessionID)
 	if err != nil {
 		logger.Error("[Controller:RemoveSession] %v", err)
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "sessions"))
+	html.Redirect(w, r, route.Path(h.router, "sessions"))
 }

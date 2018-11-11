@@ -14,14 +14,13 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ShowLoginPage shows the login form.
-func (c *Controller) ShowLoginPage(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showLoginPage(w http.ResponseWriter, r *http.Request) {
 	if request.IsAuthenticated(r) {
-		html.Redirect(w, r, route.Path(c.router, "unread"))
+		html.Redirect(w, r, route.Path(h.router, "unread"))
 		return
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	html.OK(w, r, view.Render("login"))
 }

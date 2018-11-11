@@ -15,16 +15,15 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// EditFeed shows the form to modify a subscription.
-func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	feedID := request.RouteInt64Param(r, "feedID")
-	feed, err := c.store.FeedByID(user.ID, feedID)
+	feed, err := h.store.FeedByID(user.ID, feedID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -35,7 +34,7 @@ func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categories, err := c.store.Categories(user.ID)
+	categories, err := h.store.Categories(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -54,15 +53,15 @@ func (c *Controller) EditFeed(w http.ResponseWriter, r *http.Request) {
 		Password:     feed.Password,
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", feedForm)
 	view.Set("categories", categories)
 	view.Set("feed", feed)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	html.OK(w, r, view.Render("edit_feed"))

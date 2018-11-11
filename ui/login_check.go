@@ -13,13 +13,12 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// CheckLogin validates the username/password and redirects the user to the unread page.
-func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
+func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
-	sess := session.New(c.store, request.SessionID(r))
+	sess := session.New(h.store, request.SessionID(r))
 	authForm := form.NewAuthForm(r)
 
-	view := view.New(c.tpl, r, sess)
+	view := view.New(h.tpl, r, sess)
 	view.Set("errorMessage", "error.bad_credentials")
 	view.Set("form", authForm)
 
@@ -29,22 +28,22 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
+	if err := h.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
 		logger.Error("[Controller:CheckLogin] [ClientIP=%s] %v", clientIP, err)
 		html.OK(w, r, view.Render("login"))
 		return
 	}
 
-	sessionToken, userID, err := c.store.CreateUserSession(authForm.Username, r.UserAgent(), clientIP)
+	sessionToken, userID, err := h.store.CreateUserSession(authForm.Username, r.UserAgent(), clientIP)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	logger.Info("[Controller:CheckLogin] username=%s just logged in", authForm.Username)
-	c.store.SetLastLogin(userID)
+	h.store.SetLastLogin(userID)
 
-	user, err := c.store.UserByID(userID)
+	user, err := h.store.UserByID(userID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -56,9 +55,9 @@ func (c *Controller) CheckLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,
 		sessionToken,
-		c.cfg.IsHTTPS,
-		c.cfg.BasePath(),
+		h.cfg.IsHTTPS,
+		h.cfg.BasePath(),
 	))
 
-	html.Redirect(w, r, route.Path(c.router, "unread"))
+	html.Redirect(w, r, route.Path(h.router, "unread"))
 }

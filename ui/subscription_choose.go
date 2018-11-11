@@ -16,18 +16,17 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// ChooseSubscription shows a page to choose a subscription.
-func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	categories, err := c.store.Categories(user.ID)
+	categories, err := h.store.Categories(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -36,8 +35,8 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 	view.Set("categories", categories)
 	view.Set("menu", "feeds")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	subscriptionForm := form.NewSubscriptionForm(r)
@@ -48,7 +47,7 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	feed, err := c.feedHandler.CreateFeed(
+	feed, err := h.feedHandler.CreateFeed(
 		user.ID,
 		subscriptionForm.CategoryID,
 		subscriptionForm.URL,
@@ -64,5 +63,5 @@ func (c *Controller) ChooseSubscription(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
+	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
 }

@@ -15,16 +15,15 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// CategoryEntries shows all entries for the given category.
-func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
-	user, err := c.store.UserByID(request.UserID(r))
+func (h *handler) showCategoryEntriesPage(w http.ResponseWriter, r *http.Request) {
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	categoryID := request.RouteInt64Param(r, "categoryID")
-	category, err := c.store.Category(request.UserID(r), categoryID)
+	category, err := h.store.Category(request.UserID(r), categoryID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -36,7 +35,7 @@ func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := c.store.NewEntryQueryBuilder(user.ID)
+	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(category.ID)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
@@ -56,17 +55,17 @@ func (c *Controller) CategoryEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("category", category)
 	view.Set("total", count)
 	view.Set("entries", entries)
-	view.Set("pagination", c.getPagination(route.Path(c.router, "categoryEntries", "categoryID", category.ID), count, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "categoryEntries", "categoryID", category.ID), count, offset))
 	view.Set("menu", "categories")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
-	view.Set("hasSaveEntry", c.store.HasSaveEntry(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("category_entries"))
 }

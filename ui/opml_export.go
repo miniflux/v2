@@ -13,9 +13,8 @@ import (
 	"miniflux.app/reader/opml"
 )
 
-// Export generates the OPML file.
-func (c *Controller) Export(w http.ResponseWriter, r *http.Request) {
-	opml, err := opml.NewHandler(c.store).Export(request.UserID(r))
+func (h *handler) exportFeeds(w http.ResponseWriter, r *http.Request) {
+	opml, err := opml.NewHandler(h.store).Export(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return

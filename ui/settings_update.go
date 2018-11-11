@@ -18,18 +18,17 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// UpdateSettings update the settings.
-func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	view := view.New(c.tpl, r, sess)
+func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	timezones, err := c.store.Timezones()
+	timezones, err := h.store.Timezones()
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -43,8 +42,8 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")
 	view.Set("user", user)
-	view.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 	if err := settingsForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
@@ -52,13 +51,13 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if c.store.AnotherUserExists(user.ID, settingsForm.Username) {
+	if h.store.AnotherUserExists(user.ID, settingsForm.Username) {
 		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("settings"))
 		return
 	}
 
-	err = c.store.UpdateUser(settingsForm.Merge(user))
+	err = h.store.UpdateUser(settingsForm.Merge(user))
 	if err != nil {
 		logger.Error("[Controller:UpdateSettings] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_user")
@@ -69,5 +68,5 @@ func (c *Controller) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
 	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
-	html.Redirect(w, r, route.Path(c.router, "settings"))
+	html.Redirect(w, r, route.Path(h.router, "settings"))
 }

@@ -14,8 +14,7 @@ import (
 	"miniflux.app/ui/static"
 )
 
-// Javascript renders application client side code.
-func (c *Controller) Javascript(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
 	etag, found := static.JavascriptsChecksums[filename]
 	if !found {

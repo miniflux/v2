@@ -15,26 +15,25 @@ import (
 	"miniflux.app/ui/session"
 )
 
-// OAuth2Unlink unlink an account from the external provider.
-func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
+func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 	printer := locale.NewPrinter(request.UserLanguage(r))
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
 		logger.Info("[OAuth2] Invalid or missing provider")
-		html.Redirect(w, r, route.Path(c.router, "login"))
+		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
-	authProvider, err := getOAuth2Manager(c.cfg).Provider(provider)
+	authProvider, err := getOAuth2Manager(h.cfg).Provider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
-		html.Redirect(w, r, route.Path(c.router, "settings"))
+		html.Redirect(w, r, route.Path(h.router, "settings"))
 		return
 	}
 
-	sess := session.New(c.store, request.SessionID(r))
+	sess := session.New(h.store, request.SessionID(r))
 
-	hasPassword, err := c.store.HasPassword(request.UserID(r))
+	hasPassword, err := h.store.HasPassword(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -42,15 +41,15 @@ func (c *Controller) OAuth2Unlink(w http.ResponseWriter, r *http.Request) {
 
 	if !hasPassword {
 		sess.NewFlashErrorMessage(printer.Printf("error.unlink_account_without_password"))
-		html.Redirect(w, r, route.Path(c.router, "settings"))
+		html.Redirect(w, r, route.Path(h.router, "settings"))
 		return
 	}
 
-	if err := c.store.RemoveExtraField(request.UserID(r), authProvider.GetUserExtraKey()); err != nil {
+	if err := h.store.RemoveExtraField(request.UserID(r), authProvider.GetUserExtraKey()); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
 	sess.NewFlashMessage(printer.Printf("alert.account_unlinked"))
-	html.Redirect(w, r, route.Path(c.router, "settings"))
+	html.Redirect(w, r, route.Path(h.router, "settings"))
 }

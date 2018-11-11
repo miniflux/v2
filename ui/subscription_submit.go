@@ -18,18 +18,17 @@ import (
 	"miniflux.app/ui/view"
 )
 
-// SubmitSubscription try to find a feed from the URL provided by the user.
-func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(c.store, request.SessionID(r))
-	v := view.New(c.tpl, r, sess)
+func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
+	sess := session.New(h.store, request.SessionID(r))
+	v := view.New(h.tpl, r, sess)
 
-	user, err := c.store.UserByID(request.UserID(r))
+	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	categories, err := c.store.Categories(user.ID)
+	categories, err := h.store.Categories(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -38,8 +37,8 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 	v.Set("categories", categories)
 	v.Set("menu", "feeds")
 	v.Set("user", user)
-	v.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-	v.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+	v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	v.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	subscriptionForm := form.NewSubscriptionForm(r)
@@ -73,7 +72,7 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 		v.Set("errorMessage", "error.subscription_not_found")
 		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
-		feed, err := c.feedHandler.CreateFeed(
+		feed, err := h.feedHandler.CreateFeed(
 			user.ID,
 			subscriptionForm.CategoryID,
 			subscriptions[0].URL,
@@ -89,15 +88,15 @@ func (c *Controller) SubmitSubscription(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		html.Redirect(w, r, route.Path(c.router, "feedEntries", "feedID", feed.ID))
+		html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
 	case n > 1:
-		v := view.New(c.tpl, r, sess)
+		v := view.New(h.tpl, r, sess)
 		v.Set("subscriptions", subscriptions)
 		v.Set("form", subscriptionForm)
 		v.Set("menu", "feeds")
 		v.Set("user", user)
-		v.Set("countUnread", c.store.CountUnreadEntries(user.ID))
-		v.Set("countErrorFeeds", c.store.CountErrorFeeds(user.ID))
+		v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+		v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
 		html.OK(w, r, v.Render("choose_subscription"))
 	}

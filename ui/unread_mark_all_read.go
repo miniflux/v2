@@ -13,11 +13,10 @@ import (
 	"miniflux.app/logger"
 )
 
-// MarkAllAsRead marks all unread entries as read.
-func (c *Controller) MarkAllAsRead(w http.ResponseWriter, r *http.Request) {
-	if err := c.store.MarkAllAsRead(request.UserID(r)); err != nil {
+func (h *handler) markAllAsRead(w http.ResponseWriter, r *http.Request) {
+	if err := h.store.MarkAllAsRead(request.UserID(r)); err != nil {
 		logger.Error("[MarkAllAsRead] %v", err)
 	}
 
-	html.Redirect(w, r, route.Path(c.router, "unread"))
+	html.Redirect(w, r, route.Path(h.router, "unread"))
 }
