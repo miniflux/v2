@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -17,142 +17,44 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
+
+	"github.com/gorilla/mux"
 )
 
-type baseResponse struct {
-	Version       int   `json:"api_version"`
-	Authenticated int   `json:"auth"`
-	LastRefresh   int64 `json:"last_refreshed_on_time"`
+// Serve handles Fever API calls.
+func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage) {
+	handler := &handler{cfg, store}
+
+	sr := router.PathPrefix("/fever").Subrouter()
+	sr.Use(newMiddleware(store).serve)
+	sr.HandleFunc("/", handler.serve).Name("feverEndpoint")
 }
 
-func (b *baseResponse) SetCommonValues() {
-	b.Version = 3
-	b.Authenticated = 1
-	b.LastRefresh = time.Now().Unix()
-}
-
-/*
-The default response is a JSON object containing two members:
-
-    api_version contains the version of the API responding (positive integer)
-    auth whether the request was successfully authenticated (boolean integer)
-
-The API can also return XML by passing xml as the optional value of the api argument like so:
-
-http://yourdomain.com/fever/?api=xml
-
-The top level XML element is named response.
-
-The response to each successfully authenticated request will have auth set to 1 and include
-at least one additional member:
-
-	last_refreshed_on_time contains the time of the most recently refreshed (not updated)
-	feed (Unix timestamp/integer)
-
-*/
-func newBaseResponse() baseResponse {
-	r := baseResponse{}
-	r.SetCommonValues()
-	return r
-}
-
-type groupsResponse struct {
-	baseResponse
-	Groups      []group       `json:"groups"`
-	FeedsGroups []feedsGroups `json:"feeds_groups"`
-}
-
-type feedsResponse struct {
-	baseResponse
-	Feeds       []feed        `json:"feeds"`
-	FeedsGroups []feedsGroups `json:"feeds_groups"`
-}
-
-type faviconsResponse struct {
-	baseResponse
-	Favicons []favicon `json:"favicons"`
-}
-
-type itemsResponse struct {
-	baseResponse
-	Items []item `json:"items"`
-	Total int    `json:"total_items"`
-}
-
-type unreadResponse struct {
-	baseResponse
-	ItemIDs string `json:"unread_item_ids"`
-}
-
-type savedResponse struct {
-	baseResponse
-	ItemIDs string `json:"saved_item_ids"`
-}
-
-type group struct {
-	ID    int64  `json:"id"`
-	Title string `json:"title"`
-}
-
-type feedsGroups struct {
-	GroupID int64  `json:"group_id"`
-	FeedIDs string `json:"feed_ids"`
-}
-
-type feed struct {
-	ID          int64  `json:"id"`
-	FaviconID   int64  `json:"favicon_id"`
-	Title       string `json:"title"`
-	URL         string `json:"url"`
-	SiteURL     string `json:"site_url"`
-	IsSpark     int    `json:"is_spark"`
-	LastUpdated int64  `json:"last_updated_on_time"`
-}
-
-type item struct {
-	ID        int64  `json:"id"`
-	FeedID    int64  `json:"feed_id"`
-	Title     string `json:"title"`
-	Author    string `json:"author"`
-	HTML      string `json:"html"`
-	URL       string `json:"url"`
-	IsSaved   int    `json:"is_saved"`
-	IsRead    int    `json:"is_read"`
-	CreatedAt int64  `json:"created_on_time"`
-}
-
-type favicon struct {
-	ID   int64  `json:"id"`
-	Data string `json:"data"`
-}
-
-// Controller implements the Fever API.
-type Controller struct {
+type handler struct {
 	cfg   *config.Config
 	store *storage.Storage
 }
 
-// Handler handles Fever API calls
-func (c *Controller) Handler(w http.ResponseWriter, r *http.Request) {
+func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case request.HasQueryParam(r, "groups"):
-		c.handleGroups(w, r)
+		h.handleGroups(w, r)
 	case request.HasQueryParam(r, "feeds"):
-		c.handleFeeds(w, r)
+		h.handleFeeds(w, r)
 	case request.HasQueryParam(r, "favicons"):
-		c.handleFavicons(w, r)
+		h.handleFavicons(w, r)
 	case request.HasQueryParam(r, "unread_item_ids"):
-		c.handleUnreadItems(w, r)
+		h.handleUnreadItems(w, r)
 	case request.HasQueryParam(r, "saved_item_ids"):
-		c.handleSavedItems(w, r)
+		h.handleSavedItems(w, r)
 	case request.HasQueryParam(r, "items"):
-		c.handleItems(w, r)
+		h.handleItems(w, r)
 	case r.FormValue("mark") == "item":
-		c.handleWriteItems(w, r)
+		h.handleWriteItems(w, r)
 	case r.FormValue("mark") == "feed":
-		c.handleWriteFeeds(w, r)
+		h.handleWriteFeeds(w, r)
 	case r.FormValue("mark") == "group":
-		c.handleWriteGroups(w, r)
+		h.handleWriteGroups(w, r)
 	default:
 		json.OK(w, r, newBaseResponse())
 	}
@@ -178,17 +80,17 @@ The “Sparks” super group is not included in this response and is composed of
 is_spark equal to 1.
 
 */
-func (c *Controller) handleGroups(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching groups for userID=%d", userID)
 
-	categories, err := c.store.Categories(userID)
+	categories, err := h.store.Categories(userID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	feeds, err := c.store.Feeds(userID)
+	feeds, err := h.store.Feeds(userID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -199,7 +101,7 @@ func (c *Controller) handleGroups(w http.ResponseWriter, r *http.Request) {
 		result.Groups = append(result.Groups, group{ID: category.ID, Title: category.Title})
 	}
 
-	result.FeedsGroups = c.buildFeedGroups(feeds)
+	result.FeedsGroups = h.buildFeedGroups(feeds)
 	result.SetCommonValues()
 	json.OK(w, r, result)
 }
@@ -228,11 +130,11 @@ should be limited to feeds with an is_spark equal to 0.
 
 For the “Sparks” super group the items should be limited to feeds with an is_spark equal to 1.
 */
-func (c *Controller) handleFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching feeds for userID=%d", userID)
 
-	feeds, err := c.store.Feeds(userID)
+	feeds, err := h.store.Feeds(userID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -257,7 +159,7 @@ func (c *Controller) handleFeeds(w http.ResponseWriter, r *http.Request) {
 		result.Feeds = append(result.Feeds, subscripion)
 	}
 
-	result.FeedsGroups = c.buildFeedGroups(feeds)
+	result.FeedsGroups = h.buildFeedGroups(feeds)
 	result.SetCommonValues()
 	json.OK(w, r, result)
 }
@@ -281,11 +183,11 @@ A PHP/HTML example:
 
 	echo '<img src="data:'.$favicon['data'].'">';
 */
-func (c *Controller) handleFavicons(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching favicons for userID=%d", userID)
 
-	icons, err := c.store.Icons(userID)
+	icons, err := h.store.Icons(userID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -334,13 +236,13 @@ Three optional arguments control determine the items included in the response.
 	(added in API version 2)
 
 */
-func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	var result itemsResponse
 
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching items for userID=%d", userID)
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(50)
 	builder.WithOrder("id")
@@ -375,7 +277,7 @@ func (c *Controller) handleItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder = c.store.NewEntryQueryBuilder(userID)
+	builder = h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	result.Total, err = builder.CountEntries()
 	if err != nil {
@@ -419,11 +321,11 @@ with the remote Fever installation.
 A request with the unread_item_ids argument will return one additional member:
     unread_item_ids (string/comma-separated list of positive integers)
 */
-func (c *Controller) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching unread items for userID=%d", userID)
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -450,11 +352,11 @@ with the remote Fever installation.
 
 	saved_item_ids (string/comma-separated list of positive integers)
 */
-func (c *Controller) handleSavedItems(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStarred()
 
 	entryIDs, err := builder.GetEntryIDs()
@@ -478,7 +380,7 @@ func (c *Controller) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	as=? where ? is replaced with read, saved or unsaved
 	id=? where ? is replaced with the id of the item to modify
 */
-func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Receiving mark=item call for userID=%d", userID)
 
@@ -487,7 +389,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(userID)
+	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
@@ -504,25 +406,25 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	switch r.FormValue("as") {
 	case "read":
 		logger.Debug("[Fever] Mark entry #%d as read", entryID)
-		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
+		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
 	case "unread":
 		logger.Debug("[Fever] Mark entry #%d as unread", entryID)
-		c.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
+		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
 	case "saved", "unsaved":
 		logger.Debug("[Fever] Mark entry #%d as saved/unsaved", entryID)
-		if err := c.store.ToggleBookmark(userID, entryID); err != nil {
+		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
 		}
 
-		settings, err := c.store.Integration(userID)
+		settings, err := h.store.Integration(userID)
 		if err != nil {
 			json.ServerError(w, r, err)
 			return
 		}
 
 		go func() {
-			integration.SendEntry(c.cfg, entry, settings)
+			integration.SendEntry(h.cfg, entry, settings)
 		}()
 	}
 
@@ -535,7 +437,7 @@ func (c *Controller) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	id=? where ? is replaced with the id of the feed or group to modify
 	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
-func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	feedID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
@@ -547,7 +449,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-		if err := c.store.MarkFeedAsRead(userID, feedID, before); err != nil {
+		if err := h.store.MarkFeedAsRead(userID, feedID, before); err != nil {
 			logger.Error("[Fever] MarkFeedAsRead failed: %v", err)
 		}
 	}()
@@ -561,7 +463,7 @@ func (c *Controller) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	id=? where ? is replaced with the id of the feed or group to modify
 	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
-func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
+func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	groupID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
@@ -576,9 +478,9 @@ func (c *Controller) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 		var err error
 
 		if groupID == 0 {
-			err = c.store.MarkAllAsRead(userID)
+			err = h.store.MarkAllAsRead(userID)
 		} else {
-			err = c.store.MarkCategoryAsRead(userID, groupID, before)
+			err = h.store.MarkCategoryAsRead(userID, groupID, before)
 		}
 
 		if err != nil {
@@ -596,7 +498,7 @@ A feeds_group object has the following members:
     feed_ids (string/comma-separated list of positive integers)
 
 */
-func (c *Controller) buildFeedGroups(feeds model.Feeds) []feedsGroups {
+func (h *handler) buildFeedGroups(feeds model.Feeds) []feedsGroups {
 	feedsGroupedByCategory := make(map[int64][]string)
 	for _, feed := range feeds {
 		feedsGroupedByCategory[feed.Category.ID] = append(feedsGroupedByCategory[feed.Category.ID], strconv.FormatInt(feed.ID, 10))
@@ -611,9 +513,4 @@ func (c *Controller) buildFeedGroups(feeds model.Feeds) []feedsGroups {
 	}
 
 	return result
-}
-
-// NewController returns a new Fever API.
-func NewController(cfg *config.Config, store *storage.Storage) *Controller {
-	return &Controller{cfg, store}
 }

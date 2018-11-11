@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package middleware // import "miniflux.app/middleware"
+package fever // import "miniflux.app/fever"
 
 import (
 	"context"
@@ -11,34 +11,40 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/logger"
+	"miniflux.app/storage"
 )
 
-var feverAuthFailureResponse = map[string]int{"api_version": 3, "auth": 0}
+type middleware struct {
+	store *storage.Storage
+}
 
-// FeverAuth handles Fever API authentication.
-func (m *Middleware) FeverAuth(next http.Handler) http.Handler {
+func newMiddleware(s *storage.Storage) *middleware {
+	return &middleware{s}
+}
+
+func (m *middleware) serve(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.FormValue("api_key")
 		if apiKey == "" {
-			logger.Info("[Middleware:Fever] No API key provided")
-			json.OK(w, r, feverAuthFailureResponse)
+			logger.Info("[Fever] No API key provided")
+			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
 		user, err := m.store.UserByFeverToken(apiKey)
 		if err != nil {
-			logger.Error("[Middleware:Fever] %v", err)
-			json.OK(w, r, feverAuthFailureResponse)
+			logger.Error("[Fever] %v", err)
+			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
 		if user == nil {
-			logger.Info("[Middleware:Fever] No user found with this API key")
-			json.OK(w, r, feverAuthFailureResponse)
+			logger.Info("[Fever] No user found with this API key")
+			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
-		logger.Info("[Middleware:Fever] User #%d is authenticated", user.ID)
+		logger.Info("[Fever] User #%d is authenticated", user.ID)
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()

@@ -24,7 +24,6 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 	router := mux.NewRouter()
 	templateEngine := template.NewEngine(cfg, router)
 	apiController := api.NewController(store, feedHandler)
-	feverController := fever.NewController(cfg, store)
 	uiController := ui.NewController(cfg, store, pool, feedHandler, templateEngine, router)
 	middleware := middleware.New(cfg, store, router)
 
@@ -45,9 +44,7 @@ func routes(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handle
 		w.Write([]byte("User-agent: *\nDisallow: /"))
 	})
 
-	feverRouter := router.PathPrefix("/fever").Subrouter()
-	feverRouter.Use(middleware.FeverAuth)
-	feverRouter.HandleFunc("/", feverController.Handler).Name("feverEndpoint")
+	fever.Serve(router, cfg, store)
 
 	apiRouter := router.PathPrefix("/v1").Subrouter()
 	apiRouter.Use(middleware.BasicAuth)
