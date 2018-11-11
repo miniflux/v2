@@ -111,7 +111,7 @@ func TestElapsedTime(t *testing.T) {
 		{time.Now().Add(-time.Hour * 3), printer.Plural("time_elapsed.hours", 3, 3)},
 		{time.Now().Add(-time.Hour * 32), printer.Printf("time_elapsed.yesterday")},
 		{time.Now().Add(-time.Hour * 24 * 3), printer.Plural("time_elapsed.days", 3, 3)},
-		{time.Now().Add(-time.Hour * 24 * 14), printer.Plural("time_elapsed.weeks", 2, 2)},
+		{time.Now().Add(-time.Hour * 24 * 14), printer.Plural("time_elapsed.days", 14, 14)},
 		{time.Now().Add(-time.Hour * 24 * 60), printer.Plural("time_elapsed.months", 2, 2)},
 		{time.Now().Add(-time.Hour * 24 * 365 * 3), printer.Plural("time_elapsed.years", 3, 3)},
 	}
