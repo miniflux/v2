@@ -162,16 +162,16 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 		return printer.Plural("time_elapsed.hours", hours, hours)
 	case d == 1:
 		return printer.Printf("time_elapsed.yesterday")
-	case d < 7:
+	case d < 21:
 		return printer.Plural("time_elapsed.days", d, d)
 	case d < 31:
-		weeks := int(math.Ceil(float64(d) / 7))
+		weeks := int(math.Round(float64(d) / 7))
 		return printer.Plural("time_elapsed.weeks", weeks, weeks)
 	case d < 365:
-		months := int(math.Ceil(float64(d) / 30))
+		months := int(math.Round(float64(d) / 30))
 		return printer.Plural("time_elapsed.months", months, months)
 	default:
-		years := int(math.Ceil(float64(d) / 365))
+		years := int(math.Round(float64(d) / 365))
 		return printer.Plural("time_elapsed.years", years, years)
 	}
 }
