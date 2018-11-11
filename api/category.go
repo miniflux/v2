@@ -12,8 +12,7 @@ import (
 	"miniflux.app/http/response/json"
 )
 
-// CreateCategory is the API handler to create a new category.
-func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 	category, err := decodeCategoryPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
@@ -27,12 +26,12 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if c, err := c.store.CategoryByTitle(userID, category.Title); err != nil || c != nil {
+	if c, err := h.store.CategoryByTitle(userID, category.Title); err != nil || c != nil {
 		json.BadRequest(w, r, errors.New("This category already exists"))
 		return
 	}
 
-	if err := c.store.CreateCategory(category); err != nil {
+	if err := h.store.CreateCategory(category); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
@@ -40,8 +39,7 @@ func (c *Controller) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	json.Created(w, r, category)
 }
 
-// UpdateCategory is the API handler to update a category.
-func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
 	category, err := decodeCategoryPayload(r.Body)
@@ -57,7 +55,7 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.store.UpdateCategory(category)
+	err = h.store.UpdateCategory(category)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -66,9 +64,8 @@ func (c *Controller) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	json.Created(w, r, category)
 }
 
-// GetCategories is the API handler to get a list of categories for a given user.
-func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := c.store.Categories(request.UserID(r))
+func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
+	categories, err := h.store.Categories(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -77,17 +74,16 @@ func (c *Controller) GetCategories(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, categories)
 }
 
-// RemoveCategory is the API handler to remove a category.
-func (c *Controller) RemoveCategory(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
-	if !c.store.CategoryExists(userID, categoryID) {
+	if !h.store.CategoryExists(userID, categoryID) {
 		json.NotFound(w, r)
 		return
 	}
 
-	if err := c.store.RemoveCategory(userID, categoryID); err != nil {
+	if err := h.store.RemoveCategory(userID, categoryID); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}

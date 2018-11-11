@@ -12,8 +12,7 @@ import (
 	"miniflux.app/http/response/json"
 )
 
-// CreateFeed is the API handler to create a new feed.
-func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 	feedInfo, err := decodeFeedCreationPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
@@ -32,17 +31,17 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 
 	userID := request.UserID(r)
 
-	if c.store.FeedURLExists(userID, feedInfo.FeedURL) {
+	if h.store.FeedURLExists(userID, feedInfo.FeedURL) {
 		json.BadRequest(w, r, errors.New("This feed_url already exists"))
 		return
 	}
 
-	if !c.store.CategoryExists(userID, feedInfo.CategoryID) {
+	if !h.store.CategoryExists(userID, feedInfo.CategoryID) {
 		json.BadRequest(w, r, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
 		return
 	}
 
-	feed, err := c.feedHandler.CreateFeed(
+	feed, err := h.feedHandler.CreateFeed(
 		userID,
 		feedInfo.CategoryID,
 		feedInfo.FeedURL,
@@ -63,17 +62,16 @@ func (c *Controller) CreateFeed(w http.ResponseWriter, r *http.Request) {
 	json.Created(w, r, &result{FeedID: feed.ID})
 }
 
-// RefreshFeed is the API handler to refresh a feed.
-func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
-	if !c.store.FeedExists(userID, feedID) {
+	if !h.store.FeedExists(userID, feedID) {
 		json.NotFound(w, r)
 		return
 	}
 
-	err := c.feedHandler.RefreshFeed(userID, feedID)
+	err := h.feedHandler.RefreshFeed(userID, feedID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -82,8 +80,7 @@ func (c *Controller) RefreshFeed(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
-// UpdateFeed is the API handler that is used to update a feed.
-func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	feedChanges, err := decodeFeedModificationPayload(r.Body)
 	if err != nil {
@@ -93,7 +90,7 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 	userID := request.UserID(r)
 
-	originalFeed, err := c.store.FeedByID(userID, feedID)
+	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
 		json.NotFound(w, r)
 		return
@@ -106,17 +103,17 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 
 	feedChanges.Update(originalFeed)
 
-	if !c.store.CategoryExists(userID, originalFeed.Category.ID) {
+	if !h.store.CategoryExists(userID, originalFeed.Category.ID) {
 		json.BadRequest(w, r, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
 		return
 	}
 
-	if err := c.store.UpdateFeed(originalFeed); err != nil {
+	if err := h.store.UpdateFeed(originalFeed); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	originalFeed, err = c.store.FeedByID(userID, feedID)
+	originalFeed, err = h.store.FeedByID(userID, feedID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -125,9 +122,8 @@ func (c *Controller) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	json.Created(w, r, originalFeed)
 }
 
-// GetFeeds is the API handler that get all feeds that belongs to the given user.
-func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
-	feeds, err := c.store.Feeds(request.UserID(r))
+func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := h.store.Feeds(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -136,10 +132,9 @@ func (c *Controller) GetFeeds(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, feeds)
 }
 
-// GetFeed is the API handler to get a feed.
-func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	feed, err := c.store.FeedByID(request.UserID(r), feedID)
+	feed, err := h.store.FeedByID(request.UserID(r), feedID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -153,17 +148,16 @@ func (c *Controller) GetFeed(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, feed)
 }
 
-// RemoveFeed is the API handler to remove a feed.
-func (c *Controller) RemoveFeed(w http.ResponseWriter, r *http.Request) {
+func (h *handler) removeFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	userID := request.UserID(r)
 
-	if !c.store.FeedExists(userID, feedID) {
+	if !h.store.FeedExists(userID, feedID) {
 		json.NotFound(w, r)
 		return
 	}
 
-	if err := c.store.RemoveFeed(userID, feedID); err != nil {
+	if err := h.store.RemoveFeed(userID, feedID); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}

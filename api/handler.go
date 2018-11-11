@@ -9,13 +9,7 @@ import (
 	"miniflux.app/storage"
 )
 
-// Controller holds all handlers for the API.
-type Controller struct {
+type handler struct {
 	store       *storage.Storage
 	feedHandler *feed.Handler
-}
-
-// NewController creates a new controller.
-func NewController(store *storage.Storage, feedHandler *feed.Handler) *Controller {
-	return &Controller{store: store, feedHandler: feedHandler}
 }

@@ -11,16 +11,15 @@ import (
 	"miniflux.app/http/response/json"
 )
 
-// FeedIcon returns a feed icon.
-func (c *Controller) FeedIcon(w http.ResponseWriter, r *http.Request) {
+func (h *handler) feedIcon(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 
-	if !c.store.HasIcon(feedID) {
+	if !h.store.HasIcon(feedID) {
 		json.NotFound(w, r)
 		return
 	}
 
-	icon, err := c.store.IconByFeedID(request.UserID(r), feedID)
+	icon, err := h.store.IconByFeedID(request.UserID(r), feedID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

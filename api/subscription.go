@@ -11,8 +11,7 @@ import (
 	"miniflux.app/reader/subscription"
 )
 
-// GetSubscriptions is the API handler to find subscriptions.
-func (c *Controller) GetSubscriptions(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getSubscriptions(w http.ResponseWriter, r *http.Request) {
 	subscriptionInfo, bodyErr := decodeURLPayload(r.Body)
 	if bodyErr != nil {
 		json.BadRequest(w, r, bodyErr)

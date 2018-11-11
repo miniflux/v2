@@ -15,12 +15,11 @@ import (
 	"miniflux.app/storage"
 )
 
-// GetFeedEntry is the API handler to get a single feed entry.
-func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeedEntry(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	entryID := request.RouteInt64Param(r, "entryID")
 
-	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 
@@ -38,10 +37,9 @@ func (c *Controller) GetFeedEntry(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, entry)
 }
 
-// GetEntry is the API handler to get a single entry.
-func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 
 	entry, err := builder.GetEntry()
@@ -58,8 +56,7 @@ func (c *Controller) GetEntry(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, entry)
 }
 
-// GetFeedEntries is the API handler to get all feed entries.
-func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getFeedEntries(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 
 	status := request.QueryStringParam(r, "status", "")
@@ -89,7 +86,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithFeedID(feedID)
 	builder.WithStatus(status)
 	builder.WithOrder(order)
@@ -113,8 +110,7 @@ func (c *Controller) GetFeedEntries(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})
 }
 
-// GetEntries is the API handler to fetch entries.
-func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
 	status := request.QueryStringParam(r, "status", "")
 	if status != "" {
 		if err := model.ValidateEntryStatus(status); err != nil {
@@ -142,7 +138,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := c.store.NewEntryQueryBuilder(request.UserID(r))
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithStatus(status)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
@@ -165,8 +161,7 @@ func (c *Controller) GetEntries(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})
 }
 
-// SetEntryStatus is the API handler to change the status of entries.
-func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
+func (h *handler) setEntryStatus(w http.ResponseWriter, r *http.Request) {
 	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
 	if err != nil {
 		json.BadRequest(w , r, errors.New("Invalid JSON payload"))
@@ -178,7 +173,7 @@ func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := c.store.SetEntriesStatus(request.UserID(r), entryIDs, status); err != nil {
+	if err := h.store.SetEntriesStatus(request.UserID(r), entryIDs, status); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
@@ -186,10 +181,9 @@ func (c *Controller) SetEntryStatus(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
-// ToggleBookmark is the API handler to toggle bookmark status.
-func (c *Controller) ToggleBookmark(w http.ResponseWriter, r *http.Request) {
+func (h *handler) toggleBookmark(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	if err := c.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
+	if err := h.store.ToggleBookmark(request.UserID(r), entryID); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
