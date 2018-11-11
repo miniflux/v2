@@ -214,6 +214,16 @@ func (c *Config) ProxyImages() string {
 	return getStringValue("PROXY_IMAGES", defaultProxyImages)
 }
 
+// HasHTTPService returns true if the HTTP service is enabled.
+func (c *Config) HasHTTPService() bool {
+	return !getBooleanValue("DISABLE_HTTP_SERVICE")
+}
+
+// HasSchedulerService returns true if the scheduler service is enabled.
+func (c *Config) HasSchedulerService() bool {
+	return !getBooleanValue("DISABLE_SCHEDULER_SERVICE")
+}
+
 // NewConfig returns a new Config.
 func NewConfig() *Config {
 	cfg := &Config{

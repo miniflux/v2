@@ -6,6 +6,7 @@ package cli // import "miniflux.app/cli"
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -31,17 +32,26 @@ func startDaemon(cfg *config.Config, store *storage.Storage) {
 	feedHandler := feed.NewFeedHandler(store)
 	pool := worker.NewPool(feedHandler, cfg.WorkerPoolSize())
 
-	go scheduler.Serve(cfg, store, pool)
 	go showProcessStatistics()
 
-	httpServer := httpd.Serve(cfg, store, pool, feedHandler)
+	if cfg.HasSchedulerService() {
+		scheduler.Serve(cfg, store, pool)
+	}
+
+	var httpServer *http.Server
+	if cfg.HasHTTPService() {
+		httpServer = httpd.Serve(cfg, store, pool, feedHandler)
+	}
 
 	<-stop
 	logger.Info("Shutting down the process...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	httpServer.Shutdown(ctx)
+	if httpServer != nil {
+		httpServer.Shutdown(ctx)
+	}
+
 	logger.Info("Process gracefully stopped")
 }
 

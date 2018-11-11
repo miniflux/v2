@@ -15,6 +15,7 @@ import (
 
 // Serve starts the internal scheduler.
 func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool) {
+	logger.Info(`Starting scheduler...`)
 	go feedScheduler(store, pool, cfg.PollingFrequency(), cfg.BatchSize())
 	go cleanupScheduler(store, cfg.CleanupFrequency())
 }

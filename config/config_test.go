@@ -658,6 +658,56 @@ func TestHSTS(t *testing.T) {
 	}
 }
 
+func TestDisableHTTPServiceWhenUnset(t *testing.T) {
+	os.Clearenv()
+
+	cfg := NewConfig()
+	expected := true
+	result := cfg.HasHTTPService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableHTTPService(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_HTTP_SERVICE", "1")
+
+	cfg := NewConfig()
+	expected := false
+	result := cfg.HasHTTPService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableSchedulerServiceWhenUnset(t *testing.T) {
+	os.Clearenv()
+
+	cfg := NewConfig()
+	expected := true
+	result := cfg.HasSchedulerService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_SCHEDULER_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableSchedulerService(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_SCHEDULER_SERVICE", "1")
+
+	cfg := NewConfig()
+	expected := false
+	result := cfg.HasSchedulerService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_SCHEDULER_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestRunMigrationsWhenUnset(t *testing.T) {
 	os.Clearenv()
 
