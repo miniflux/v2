@@ -17,7 +17,7 @@ func (h *handler) removeSession(w http.ResponseWriter, r *http.Request) {
 	sessionID := request.RouteInt64Param(r, "sessionID")
 	err := h.store.RemoveUserSessionByID(request.UserID(r), sessionID)
 	if err != nil {
-		logger.Error("[Controller:RemoveSession] %v", err)
+		logger.Error("[UI:RemoveSession] %v", err)
 	}
 
 	html.Redirect(w, r, route.Path(h.router, "sessions"))

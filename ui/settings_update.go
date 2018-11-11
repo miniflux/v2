@@ -59,7 +59,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	err = h.store.UpdateUser(settingsForm.Merge(user))
 	if err != nil {
-		logger.Error("[Controller:UpdateSettings] %v", err)
+		logger.Error("[UI:UpdateSettings] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_user")
 		html.OK(w, r, view.Render("settings"))
 		return

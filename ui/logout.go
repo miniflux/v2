@@ -27,7 +27,7 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 	sess.SetTheme(user.Theme)
 
 	if err := h.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
-		logger.Error("[Controller:Logout] %v", err)
+		logger.Error("[UI:Logout] %v", err)
 	}
 
 	http.SetCookie(w, cookie.Expired(

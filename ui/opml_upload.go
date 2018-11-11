@@ -25,14 +25,14 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		logger.Error("[Controller:UploadOPML] %v", err)
+		logger.Error("[UI:UploadOPML] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "import"))
 		return
 	}
 	defer file.Close()
 
-	logger.Info(
-		"[Controller:UploadOPML] User #%d uploaded this file: %s (%d bytes)",
+	logger.Debug(
+		"[UI:UploadOPML] User #%d uploaded this file: %s (%d bytes)",
 		user.ID,
 		fileHeader.Filename,
 		fileHeader.Size,

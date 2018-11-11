@@ -52,7 +52,7 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 
 	newUser := userForm.ToUser()
 	if err := h.store.CreateUser(newUser); err != nil {
-		logger.Error("[Controller:SaveUser] %v", err)
+		logger.Error("[UI:SaveUser] %v", err)
 		view.Set("errorMessage", "error.unable_to_create_user")
 		html.OK(w, r, view.Render("create_user"))
 		return

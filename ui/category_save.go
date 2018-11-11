@@ -58,7 +58,7 @@ func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = h.store.CreateCategory(&category); err != nil {
-		logger.Error("[Controller:CreateCategory] %v", err)
+		logger.Error("[UI:SaveCategory] %v", err)
 		view.Set("errorMessage", "error.unable_to_create_category")
 		html.OK(w, r, view.Render("create_category"))
 		return

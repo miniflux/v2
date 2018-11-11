@@ -10,7 +10,6 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
-	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
 	"miniflux.app/ui/session"
@@ -45,7 +44,6 @@ func (h *handler) showSearchEntryPage(w http.ResponseWriter, r *http.Request) {
 	if entry.Status == model.EntryStatusUnread {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
-			logger.Error("[Controller:ShowSearchEntry] %v", err)
 			html.ServerError(w, r, err)
 			return
 		}

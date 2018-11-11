@@ -23,13 +23,13 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	view.Set("form", authForm)
 
 	if err := authForm.Validate(); err != nil {
-		logger.Error("[Controller:CheckLogin] %v", err)
+		logger.Error("[UI:CheckLogin] %v", err)
 		html.OK(w, r, view.Render("login"))
 		return
 	}
 
 	if err := h.store.CheckPassword(authForm.Username, authForm.Password); err != nil {
-		logger.Error("[Controller:CheckLogin] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[UI:CheckLogin] [ClientIP=%s] %v", clientIP, err)
 		html.OK(w, r, view.Render("login"))
 		return
 	}
@@ -40,7 +40,7 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Info("[Controller:CheckLogin] username=%s just logged in", authForm.Username)
+	logger.Info("[UI:CheckLogin] username=%s just logged in", authForm.Username)
 	h.store.SetLastLogin(userID)
 
 	user, err := h.store.UserByID(userID)

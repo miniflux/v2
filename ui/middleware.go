@@ -36,14 +36,14 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 		session := m.getUserSessionFromCookie(r)
 
 		if session == nil {
-			logger.Debug("[UserSession] Session not found")
 			if m.isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
+				logger.Debug("[UI:UserSession] Session not found, redirect to login page")
 				html.Redirect(w, r, route.Path(m.router, "login"))
 			}
 		} else {
-			logger.Debug("[UserSession] %s", session)
+			logger.Debug("[UI:UserSession] %s", session)
 
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, request.UserIDContextKey, session.UserID)
@@ -61,7 +61,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 		session := m.getAppSessionValueFromCookie(r)
 
 		if session == nil {
-			logger.Debug("[AppSession] Session not found")
+			logger.Debug("[UI:AppSession] Session not found")
 
 			session, err = m.store.CreateSession()
 			if err != nil {
@@ -71,7 +71,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 
 			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, m.cfg.IsHTTPS, m.cfg.BasePath()))
 		} else {
-			logger.Debug("[AppSession] %s", session)
+			logger.Debug("[UI:AppSession] %s", session)
 		}
 
 		if r.Method == "POST" {
@@ -79,7 +79,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 			headerValue := r.Header.Get("X-Csrf-Token")
 
 			if session.Data.CSRF != formValue && session.Data.CSRF != headerValue {
-				logger.Error(`[AppSession] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
+				logger.Error(`[UI:AppSession] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
 				html.BadRequest(w, r, errors.New("Invalid or missing CSRF"))
 				return
 			}
@@ -106,7 +106,7 @@ func (m *middleware) getAppSessionValueFromCookie(r *http.Request) *model.Sessio
 
 	session, err := m.store.Session(cookieValue)
 	if err != nil {
-		logger.Error("[AppSession] %v", err)
+		logger.Error("[UI:AppSession] %v", err)
 		return nil
 	}
 
@@ -141,7 +141,7 @@ func (m *middleware) getUserSessionFromCookie(r *http.Request) *model.UserSessio
 
 	session, err := m.store.UserSessionByToken(cookieValue)
 	if err != nil {
-		logger.Error("[UserSession] %v", err)
+		logger.Error("[UI:UserSession] %v", err)
 		return nil
 	}
 

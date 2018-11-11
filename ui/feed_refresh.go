@@ -16,7 +16,7 @@ import (
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	if err := h.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
-		logger.Error("[Controller:RefreshFeed] %v", err)
+		logger.Error("[UI:RefreshFeed] %v", err)
 	}
 
 	html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feedID))

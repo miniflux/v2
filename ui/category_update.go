@@ -60,7 +60,7 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 
 	err = h.store.UpdateCategory(categoryForm.Merge(category))
 	if err != nil {
-		logger.Error("[Controller:UpdateCategory] %v", err)
+		logger.Error("[UI:UpdateCategory] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_category")
 		html.OK(w, r, view.Render("edit_category"))
 		return

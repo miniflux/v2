@@ -65,7 +65,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	userForm.Merge(selectedUser)
 	if err := h.store.UpdateUser(selectedUser); err != nil {
-		logger.Error("[Controller:UpdateUser] %v", err)
+		logger.Error("[UI:UpdateUser] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_user")
 		html.OK(w, r, view.Render("edit_user"))
 		return
