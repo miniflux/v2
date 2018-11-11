@@ -4,7 +4,7 @@
 
 /*
 
-Package scheduler implements the application internal scheduler.
+Package browser handles website crawling.
 
 */
-package scheduler // import "miniflux.app/scheduler"
+package browser // import "miniflux.app/reader/browser"

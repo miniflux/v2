@@ -7,9 +7,9 @@ package ui  // import "miniflux.app/ui"
 import (
 	"miniflux.app/config"
 	"miniflux.app/reader/feed"
-	"miniflux.app/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/template"
+	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
 )
@@ -19,6 +19,6 @@ type handler struct {
 	cfg         *config.Config
 	store       *storage.Storage
 	tpl         *template.Engine
-	pool        *scheduler.WorkerPool
+	pool        *worker.Pool
 	feedHandler *feed.Handler
 }

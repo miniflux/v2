@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"miniflux.app/config"
-	"miniflux.app/daemon"
 	"miniflux.app/database"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
@@ -17,27 +16,27 @@ import (
 )
 
 const (
-	flagInfoHelp = "Show application information"
-	flagVersionHelp = "Show application version"
-	flagMigrateHelp = "Run SQL migrations"
-	flagFlsuhSessionsHelp = "Flush all sessions (disconnect users)"
-	flagCreateAdminHelp = "Create admin user"
-	flagResetPasswordHelp = "Reset user password"
+	flagInfoHelp            = "Show application information"
+	flagVersionHelp         = "Show application version"
+	flagMigrateHelp         = "Run SQL migrations"
+	flagFlsuhSessionsHelp   = "Flush all sessions (disconnect users)"
+	flagCreateAdminHelp     = "Create admin user"
+	flagResetPasswordHelp   = "Reset user password"
 	flagResetFeedErrorsHelp = "Clear all feed errors for all users"
-	flagDebugModeHelp = "Show debug logs"
+	flagDebugModeHelp       = "Show debug logs"
 )
 
 // Parse parses command line arguments.
 func Parse() {
 	var (
-		flagInfo bool
-		flagVersion bool
-		flagMigrate bool
-		flagFlushSessions bool
-		flagCreateAdmin bool
-		flagResetPassword bool
+		flagInfo            bool
+		flagVersion         bool
+		flagMigrate         bool
+		flagFlushSessions   bool
+		flagCreateAdmin     bool
+		flagResetPassword   bool
 		flagResetFeedErrors bool
-		flagDebugMode bool
+		flagDebugMode       bool
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -49,7 +48,7 @@ func Parse() {
 	flag.BoolVar(&flagCreateAdmin, "create-admin", false, flagCreateAdminHelp)
 	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
 	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)
-	flag.BoolVar(&flagDebugMode,"debug", false, flagDebugModeHelp)
+	flag.BoolVar(&flagDebugMode, "debug", false, flagDebugModeHelp)
 	flag.Parse()
 
 	cfg := config.NewConfig()
@@ -111,5 +110,5 @@ func Parse() {
 		createAdmin(store)
 	}
 
-	daemon.Run(cfg, store)
+	startDaemon(cfg, store)
 }

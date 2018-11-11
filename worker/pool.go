@@ -1,29 +1,29 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2018 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package scheduler // import "miniflux.app/scheduler"
+package worker // import "miniflux.app/worker"
 
 import (
 	"miniflux.app/model"
 	"miniflux.app/reader/feed"
 )
 
-// WorkerPool handle a pool of workers.
-type WorkerPool struct {
+// Pool handles a pool of workers.
+type Pool struct {
 	queue chan model.Job
 }
 
 // Push send a list of jobs to the queue.
-func (w *WorkerPool) Push(jobs model.JobList) {
+func (p *Pool) Push(jobs model.JobList) {
 	for _, job := range jobs {
-		w.queue <- job
+		p.queue <- job
 	}
 }
 
-// NewWorkerPool creates a pool of background workers.
-func NewWorkerPool(feedHandler *feed.Handler, nbWorkers int) *WorkerPool {
-	workerPool := &WorkerPool{
+// NewPool creates a pool of background workers.
+func NewPool(feedHandler *feed.Handler, nbWorkers int) *Pool {
+	workerPool := &Pool{
 		queue: make(chan model.Job),
 	}
 

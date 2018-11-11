@@ -9,15 +9,15 @@ import (
 
 	"miniflux.app/config"
 	"miniflux.app/reader/feed"
-	"miniflux.app/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/template"
+	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
 )
 
 // Serve declares all routes for the user interface.
-func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool *scheduler.WorkerPool, feedHandler *feed.Handler) {
+func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
 	middleware := newMiddleware(router, cfg, store)
 	handler := &handler{router, cfg, store, template.NewEngine(cfg, router), pool, feedHandler}
 

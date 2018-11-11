@@ -4,7 +4,7 @@
 
 /*
 
-Package daemon handles the main application process.
+Package worker implements the background workers.
 
 */
-package daemon // import "miniflux.app/daemon"
+package worker // import "miniflux.app/worker"

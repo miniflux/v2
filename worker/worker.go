@@ -2,11 +2,9 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package scheduler // import "miniflux.app/scheduler"
+package worker // import "miniflux.app/worker"
 
 import (
-	"time"
-
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/feed"
@@ -30,7 +28,5 @@ func (w *Worker) Run(c chan model.Job) {
 		if err != nil {
 			logger.Error("[Worker] %v", err)
 		}
-
-		time.Sleep(time.Millisecond * 1000)
 	}
 }
