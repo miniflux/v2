@@ -16,7 +16,6 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/fever"
 	"miniflux.app/logger"
-	"miniflux.app/middleware"
 	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/ui"
@@ -137,15 +136,12 @@ func startHTTPServer(server *http.Server) {
 
 func setupHandler(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *worker.Pool) *mux.Router {
 	router := mux.NewRouter()
-	middleware := middleware.New(cfg, store, router)
 
 	if cfg.BasePath() != "" {
 		router = router.PathPrefix(cfg.BasePath()).Subrouter()
 	}
 
-	router.Use(middleware.ClientIP)
-	router.Use(middleware.HeaderConfig)
-	router.Use(middleware.Logging)
+	router.Use(newMiddleware(cfg).Serve)
 
 	fever.Serve(router, cfg, store)
 	api.Serve(router, store, feedHandler)
