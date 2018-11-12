@@ -80,3 +80,23 @@ func TestClientIPWithBothHeaders(t *testing.T) {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 }
+
+func TestClientIPWithNoRemoteAddress(t *testing.T) {
+	r := &http.Request{}
+
+	if ip := FindClientIP(r); ip != "127.0.0.1" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+}
+
+func TestClientIPWithoutRemoteAddrAndBothHeaders(t *testing.T) {
+	headers := http.Header{}
+	headers.Set("X-Forwarded-For", "203.0.113.195, 70.41.3.18, 150.172.238.178")
+	headers.Set("X-Real-Ip", "192.168.122.1")
+
+	r := &http.Request{RemoteAddr: "", Header: headers}
+
+	if ip := FindClientIP(r); ip != "203.0.113.195" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+}

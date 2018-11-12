@@ -34,5 +34,10 @@ func FindClientIP(r *http.Request) string {
 		remoteIP = r.RemoteAddr
 	}
 
+	// When listening on a Unix socket, RemoteAddr is empty.
+	if remoteIP == "" {
+		remoteIP = "127.0.0.1"
+	}
+
 	return remoteIP
 }
