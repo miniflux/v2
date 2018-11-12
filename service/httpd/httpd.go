@@ -6,7 +6,10 @@ package httpd // import "miniflux.app/service/httpd"
 
 import (
 	"crypto/tls"
+	"net"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"miniflux.app/api"
@@ -29,25 +32,47 @@ func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHa
 	keyFile := cfg.KeyFile()
 	certDomain := cfg.CertDomain()
 	certCache := cfg.CertCache()
+	listenAddr := cfg.ListenAddr()
 	server := &http.Server{
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  60 * time.Second,
-		Addr:         cfg.ListenAddr(),
 		Handler:      setupHandler(cfg, store, feedHandler, pool),
 	}
 
-	if certDomain != "" && certCache != "" {
+	switch {
+	case strings.HasPrefix(listenAddr, "/"):
+		startUnixSocketServer(server, listenAddr)
+	case certDomain != "" && certCache != "":
 		cfg.IsHTTPS = true
 		startAutoCertTLSServer(server, certDomain, certCache)
-	} else if certFile != "" && keyFile != "" {
+	case certFile != "" && keyFile != "":
 		cfg.IsHTTPS = true
+		server.Addr = listenAddr
 		startTLSServer(server, certFile, keyFile)
-	} else {
+	default:
+		server.Addr = listenAddr
 		startHTTPServer(server)
 	}
 
 	return server
+}
+
+func startUnixSocketServer(server *http.Server, socketFile string) {
+	os.Remove(socketFile)
+
+	go func(sock string) {
+		listener, err := net.Listen("unix", sock)
+		if err != nil {
+			logger.Fatal(`Server failed to start: %v`, err)
+		}
+		defer listener.Close()
+
+		logger.Info(`Listening on Unix socket %q`, sock)
+		if err := server.Serve(listener); err != http.ErrServerClosed {
+			logger.Fatal(`Server failed to start: %v`, err)
+		}
+	}(socketFile)
 }
 
 func startAutoCertTLSServer(server *http.Server, certDomain, certCache string) {

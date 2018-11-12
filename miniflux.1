@@ -89,7 +89,9 @@ Maximum number of database connections (default is 20)\&.
 Minimum number of database connections (default is 1)\&.
 .TP
 .B LISTEN_ADDR
-HTTP server listening address\&.
+Address to listen on. Default is 127.0.0.1:8080\&.
+.br
+Use absolute path to listen on Unix socket (/var/run/miniflux.sock)\&.
 .TP
 .B PORT
 Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
