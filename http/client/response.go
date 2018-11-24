@@ -84,7 +84,12 @@ func (r *Response) EnsureUnicodeBody() (err error) {
 
 			// We ignore documents with encoding specified in XML prolog.
 			// This is going to be handled by the XML parser.
-			if xmlEncodingRegex.Match(buffer[0:1024]) {
+			length := 1024
+			if len(buffer) < 1024 {
+				length = len(buffer)
+			}
+
+			if xmlEncodingRegex.Match(buffer[0:length]) {
 				return
 			}
 		}

@@ -123,6 +123,7 @@ func TestEnsureUnicodeWithHTMLDocuments(t *testing.T) {
 		{"rdf_utf8.xml", "application/rss+xml; charset=utf-8", true},
 		{"charset-content-type-xml-iso88591.xml", "application/rss+xml; charset=ISO-8859-1", false},
 		{"windows_1251.xml", "text/xml", false},
+		{"smallfile.xml", "text/xml; charset=utf-8", true},
 	}
 
 	for _, tc := range unicodeTestCases {
