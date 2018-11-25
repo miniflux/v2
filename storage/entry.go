@@ -190,7 +190,7 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 func (s *Storage) ArchiveEntries() error {
 	query := `
 		UPDATE entries SET status='removed'
-		WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '60 days'::interval LIMIT 500)
+		WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '60 days'::interval LIMIT 5000)
 	`
 	if _, err := s.db.Exec(query); err != nil {
 		return fmt.Errorf("unable to archive read entries: %v", err)
