@@ -67,6 +67,10 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 		}
 		defer listener.Close()
 
+		if err := os.Chmod(sock, 0666); err != nil {
+			logger.Fatal(`Unable to change socket permission: %v`, err)
+		}
+
 		logger.Info(`Listening on Unix socket %q`, sock)
 		if err := server.Serve(listener); err != http.ErrServerClosed {
 			logger.Fatal(`Server failed to start: %v`, err)
