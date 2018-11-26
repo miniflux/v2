@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -40,6 +41,8 @@ func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHa
 	}
 
 	switch {
+	case os.Getenv("LISTEN_PID") == strconv.Itoa(os.Getpid()):
+		startSystemdSocketServer(server)
 	case strings.HasPrefix(listenAddr, "/"):
 		startUnixSocketServer(server, listenAddr)
 	case certDomain != "" && certCache != "":
@@ -55,6 +58,21 @@ func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHa
 	}
 
 	return server
+}
+
+func startSystemdSocketServer(server *http.Server) {
+	go func() {
+		f := os.NewFile(3, "systemd socket")
+		listener, err := net.FileListener(f)
+		if err != nil {
+			logger.Fatal(`Unable to create listener from systemd socket: %v`, err)
+		}
+
+		logger.Info(`Listening on systemd socket`)
+		if err := server.Serve(listener); err != http.ErrServerClosed {
+			logger.Fatal(`Server failed to start: %v`, err)
+		}
+	}()
 }
 
 func startUnixSocketServer(server *http.Server, socketFile string) {
