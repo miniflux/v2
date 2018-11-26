@@ -1,3 +1,32 @@
+Version 2.0.13 (Nov 25, 2018)
+-----------------------------
+
+* Add man page
+* Add support for Systemd Socket Activation (experimental)
+* Add the possiblity to listen on Unix sockets
+* Add config options to disable HTTP and scheduler services
+* Archive more read entries in cleanup job
+* Change default database connection string (backward compatible)
+* Improve logging messages in ui package
+* Improve overall Simplified Chinese translations
+* Improve time since post date displays:
+    - "15 days" now is "15 days" rather than "3 weeks" ago
+    - "32 days" is now "1 month" rather than "2 months" ago
+    - "366 days" is now "1 year" rather than "2 years" ago
+* Allow the scraper to parse XHTML documents
+* Remove charset=utf-8 from JSON responses
+* Ignore hotkeys containing Control, Alt or Meta keys
+* Handle more encoding conversion edge cases
+* Disable go test caching
+* Avoid duplication of ldflags in Makefile
+* Fix wrong translation key for category pages
+* Code refactoring:
+    - Simplify application HTTP middlewares
+    - Replace daemon and scheduler package with service package
+    - Move UI middlewares and routes to ui package
+    - Move API middleware and routes to api package
+    - Move Fever middleware and routes to fever package
+
 Version 2.0.12 (Oct 26, 2018)
 -----------------------------
 
