@@ -7,7 +7,6 @@ package logger // import "miniflux.app/logger"
 import (
 	"fmt"
 	"os"
-	"time"
 )
 
 var requestedLevel = InfoLevel
@@ -80,6 +79,6 @@ func Fatal(format string, v ...interface{}) {
 }
 
 func formatMessage(level LogLevel, format string, v ...interface{}) {
-	prefix := fmt.Sprintf("[%s] [%s] ", time.Now().Format("2006-01-02T15:04:05"), level.String())
+	prefix := fmt.Sprintf("[%s] ", level.String())
 	fmt.Fprintf(os.Stderr, prefix+format+"\n", v...)
 }
