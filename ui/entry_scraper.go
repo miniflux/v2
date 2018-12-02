@@ -6,10 +6,10 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
-
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
+	"miniflux.app/reader/rewrite"
 	"miniflux.app/reader/sanitizer"
 	"miniflux.app/reader/scraper"
 )
