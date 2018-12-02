@@ -36,6 +36,8 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
+	
+	content = rewrite.Rewriter(entry.URL, content, entry.Feed.RewriteRules)
 
 	entry.Content = sanitizer.Sanitize(entry.URL, content)
 	h.store.UpdateEntryContent(entry)
