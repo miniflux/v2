@@ -6,6 +6,7 @@ PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
 .PHONY: generate
+.PHONY: miniflux
 .PHONY: linux-amd64
 .PHONY: linux-armv8
 .PHONY: linux-armv7
@@ -19,6 +20,9 @@ DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
 generate:
 	@ go generate
+
+miniflux: generate
+	@ go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 linux-amd64: generate
 	@ GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
@@ -53,7 +57,7 @@ run: generate
 	@ go run main.go -debug
 
 clean:
-	@ rm -f $(APP)-*
+	@ rm -f $(APP)-* $(APP)
 
 test:
 	go test -cover -race -count=1 ./...
