@@ -5,7 +5,8 @@ LD_FLAGS := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
-.PHONY: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd openbsd build run clean test lint integration-test clean-integration-test
+.PHONY: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd openbsd windows-amd64 build run clean test lint integration-test clean-integration-test
+
 
 linux-amd64:
 	@ go generate
@@ -39,7 +40,11 @@ openbsd:
 	@ go generate
 	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-openbsd-amd64 main.go
 
-build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd openbsd
+windows-amd64:
+	@ go generate
+	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
+
+build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd openbsd windows-amd64
 
 run:
 	@ go generate
