@@ -5,49 +5,51 @@ LD_FLAGS := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
-.PHONY: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd openbsd windows-amd64 build run clean test lint integration-test clean-integration-test
+.PHONY: generate
+.PHONY: linux-amd64
+.PHONY: linux-armv8
+.PHONY: linux-armv7
+.PHONY: linux-armv6
+.PHONY: linux-armv5
+.PHONY: darwin-amd64
+.PHONY: freebsd-amd64
+.PHONY: openbsd-amd64
+.PHONY: windows-amd64
+.PHONY: build run clean test lint integration-test clean-integration-test
 
-
-linux-amd64:
+generate:
 	@ go generate
-	@ GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
 
-linux-armv8:
-	@ go generate
-	@ GOOS=linux GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv8 main.go
+linux-amd64: generate
+	@ GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
 
-linux-armv7:
-	@ go generate
-	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv7 main.go
+linux-armv8: generate
+	@ GOOS=linux GOARCH=arm64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv8 main.go
 
-linux-armv6:
-	@ go generate
-	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv6 main.go
+linux-armv7: generate
+	@ GOOS=linux GOARCH=arm GOARM=7 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv7 main.go
 
-linux-armv5:
-	@ go generate
-	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv5 main.go
+linux-armv6: generate
+	@ GOOS=linux GOARCH=arm GOARM=6 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv6 main.go
 
-darwin:
-	@ go generate
-	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-darwin-amd64 main.go
+linux-armv5: generate
+	@ GOOS=linux GOARCH=arm GOARM=5 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv5 main.go
 
-freebsd:
-	@ go generate
-	@ GOOS=freebsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-amd64 main.go
+darwin-amd64: generate
+	@ GOOS=darwin GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-darwin-amd64 main.go
 
-openbsd:
-	@ go generate
-	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-openbsd-amd64 main.go
+freebsd-amd64: generate
+	@ GOOS=freebsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-amd64 main.go
 
-windows-amd64:
-	@ go generate
-	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
+openbsd-amd64: generate
+	@ GOOS=openbsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-openbsd-amd64 main.go
 
-build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin freebsd openbsd windows-amd64
+windows-amd64: generate
+	@ GOOS=windows GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
 
-run:
-	@ go generate
+build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 freebsd-amd64 openbsd-amd64 windows-amd64
+
+run: generate
 	@ go run main.go -debug
 
 clean:
