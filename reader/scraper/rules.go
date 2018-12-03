@@ -16,7 +16,7 @@ var predefinedRules = map[string]string{
 	"igen.fr":             "section.corps",
 	"ing.dk":              "section.body",
 	"lapresse.ca":         ".amorce, .entry",
-	"lemonde.fr":          "div#articleBody",
+	"lemonde.fr":          "section.article__content",
 	"lepoint.fr":          ".art-text",
 	"lesjoiesducode.fr":   ".blog-post-content img",
 	"lesnumeriques.com":   ".text",
