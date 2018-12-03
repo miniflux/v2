@@ -6,10 +6,10 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
-
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
+	"miniflux.app/reader/rewrite"
 	"miniflux.app/reader/sanitizer"
 	"miniflux.app/reader/scraper"
 )
@@ -36,6 +36,8 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
+	
+	content = rewrite.Rewriter(entry.URL, content, entry.Feed.RewriteRules)
 
 	entry.Content = sanitizer.Sanitize(entry.URL, content)
 	h.store.UpdateEntryContent(entry)
