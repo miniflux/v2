@@ -6,12 +6,11 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
+
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
-	"miniflux.app/reader/rewrite"
-	"miniflux.app/reader/sanitizer"
-	"miniflux.app/reader/scraper"
+	"miniflux.app/reader/processor"
 )
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
@@ -31,15 +30,11 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content, err := scraper.Fetch(entry.URL, entry.Feed.ScraperRules, entry.Feed.UserAgent)
-	if err != nil {
+	if err := processor.ProcessEntryWebPage(entry); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-	
-	content = rewrite.Rewriter(entry.URL, content, entry.Feed.RewriteRules)
 
-	entry.Content = sanitizer.Sanitize(entry.URL, content)
 	h.store.UpdateEntryContent(entry)
 
 	json.OK(w, r, map[string]string{"content": entry.Content})

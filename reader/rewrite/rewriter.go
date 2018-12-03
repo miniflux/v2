@@ -7,6 +7,7 @@ package rewrite // import "miniflux.app/reader/rewrite"
 import (
 	"strings"
 
+	"miniflux.app/logger"
 	"miniflux.app/url"
 )
 
@@ -19,6 +20,8 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 
 	rules := strings.Split(rulesList, ",")
 	rules = append(rules, "add_pdf_download_link")
+
+	logger.Debug(`[Rewrite] Applying rules %v for %q`, rules, entryURL)
 
 	for _, rule := range rules {
 		switch strings.TrimSpace(rule) {

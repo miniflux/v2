@@ -54,7 +54,7 @@ func Fetch(websiteURL, rules, userAgent string) (string, error) {
 		logger.Debug(`[Scraper] Using rules %q for %q`, rules, websiteURL)
 		content, err = scrapContent(response.Body, rules)
 	} else {
-		logger.Debug(`[Scraper] Using readability for "%q`, websiteURL)
+		logger.Debug(`[Scraper] Using readability for %q`, websiteURL)
 		content, err = readability.ExtractContent(response.Body)
 	}
 

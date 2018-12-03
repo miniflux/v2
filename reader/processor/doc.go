@@ -4,7 +4,7 @@
 
 /*
 
-Package filter applies a set of filters to feed entries.
+Package processor applies rules and sanitize content for feed entries.
 
 */
-package filter // import "miniflux.app/reader/filter"
+package processor // import "miniflux.app/reader/processor"

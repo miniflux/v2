@@ -14,9 +14,9 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/browser"
-	"miniflux.app/reader/filter"
 	"miniflux.app/reader/icon"
 	"miniflux.app/reader/parser"
+	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
 	"miniflux.app/timer"
 )
@@ -63,7 +63,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
-	filter.Apply(h.store, subscription)
+	processor.ProcessFeedEntries(h.store, subscription)
 
 	if storeErr := h.store.CreateFeed(subscription); storeErr != nil {
 		return nil, storeErr
@@ -114,7 +114,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
-		filter.Apply(h.store, originalFeed)
+		processor.ProcessFeedEntries(h.store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
 		if storeErr := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
