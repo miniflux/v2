@@ -57,14 +57,6 @@ func Parse() {
 		logger.EnableDebug()
 	}
 
-	db, err := database.NewConnectionPool(cfg.DatabaseURL(), cfg.DatabaseMinConns(), cfg.DatabaseMaxConns())
-	if err != nil {
-		logger.Fatal("Unable to connect to the database: %v", err)
-	}
-	defer db.Close()
-
-	store := storage.NewStorage(db)
-
 	if flagInfo {
 		info()
 		return
@@ -75,10 +67,18 @@ func Parse() {
 		return
 	}
 
+	db, err := database.NewConnectionPool(cfg.DatabaseURL(), cfg.DatabaseMinConns(), cfg.DatabaseMaxConns())
+	if err != nil {
+		logger.Fatal("Unable to connect to the database: %v", err)
+	}
+	defer db.Close()
+
 	if flagMigrate {
 		database.Migrate(db)
 		return
 	}
+
+	store := storage.NewStorage(db)
 
 	if flagResetFeedErrors {
 		store.ResetFeedErrors()
