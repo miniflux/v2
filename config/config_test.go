@@ -708,6 +708,19 @@ func TestDisableSchedulerService(t *testing.T) {
 	}
 }
 
+func TestArchiveReadDays(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("ARCHIVE_READ_DAYS", "7")
+
+	cfg := NewConfig()
+	expected := 7
+	result := cfg.ArchiveReadDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestRunMigrationsWhenUnset(t *testing.T) {
 	os.Clearenv()
 

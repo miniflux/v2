@@ -21,6 +21,7 @@ const (
 	defaultBatchSize          = 10
 	defaultDatabaseMaxConns   = 20
 	defaultDatabaseMinConns   = 1
+	defaultArchiveReadDays    = 60
 	defaultListenAddr         = "127.0.0.1:8080"
 	defaultCertFile           = ""
 	defaultKeyFile            = ""
@@ -222,6 +223,11 @@ func (c *Config) HasHTTPService() bool {
 // HasSchedulerService returns true if the scheduler service is enabled.
 func (c *Config) HasSchedulerService() bool {
 	return !getBooleanValue("DISABLE_SCHEDULER_SERVICE")
+}
+
+// ArchiveReadDays returns the number of days after which marking read items as removed.
+func (c *Config) ArchiveReadDays() int {
+	return getIntValue("ARCHIVE_READ_DAYS", defaultArchiveReadDays)
 }
 
 // NewConfig returns a new Config.
