@@ -17,7 +17,7 @@ import (
 func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool) {
 	logger.Info(`Starting scheduler...`)
 	go feedScheduler(store, pool, cfg.PollingFrequency(), cfg.BatchSize())
-	go cleanupScheduler(store, cfg.CleanupFrequency())
+	go cleanupScheduler(store, cfg.CleanupFrequency(), cfg.ArchiveReadDays())
 }
 
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {
@@ -33,14 +33,14 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 	}
 }
 
-func cleanupScheduler(store *storage.Storage, frequency int) {
+func cleanupScheduler(store *storage.Storage, frequency int, archiveDays int) {
 	c := time.Tick(time.Duration(frequency) * time.Hour)
 	for range c {
 		nbSessions := store.CleanOldSessions()
 		nbUserSessions := store.CleanOldUserSessions()
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
-		if err := store.ArchiveEntries(); err != nil {
+		if err := store.ArchiveEntries(archiveDays); err != nil {
 			logger.Error("[Scheduler:Cleanup] %v", err)
 		}
 	}

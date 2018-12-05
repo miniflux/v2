@@ -186,12 +186,12 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 	return nil
 }
 
-// ArchiveEntries changes the status of read items to "removed" after 60 days.
-func (s *Storage) ArchiveEntries() error {
-	query := `
-		UPDATE entries SET status='removed'
-		WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '60 days'::interval LIMIT 5000)
-	`
+// ArchiveEntries changes the status of read items to "removed" after specified days.
+func (s *Storage) ArchiveEntries(days int) error {
+	query := fmt.Sprintf(`
+			UPDATE entries SET status='removed'
+			WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '%d days'::interval LIMIT 5000)
+		`, days)
 	if _, err := s.db.Exec(query); err != nil {
 		return fmt.Errorf("unable to archive read entries: %v", err)
 	}
