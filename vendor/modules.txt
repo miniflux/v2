@@ -1,4 +1,4 @@
-# github.com/PuerkitoBio/goquery v1.4.1
+# github.com/PuerkitoBio/goquery v1.5.0
 github.com/PuerkitoBio/goquery
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
@@ -12,22 +12,22 @@ github.com/gorilla/mux
 github.com/lib/pq
 github.com/lib/pq/hstore
 github.com/lib/pq/oid
-# golang.org/x/crypto v0.0.0-20180820150726-614d502a4dac
+# golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/acme
 golang.org/x/crypto/blowfish
-# golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
+# golang.org/x/net v0.0.0-20181207154023-610586996380
 golang.org/x/net/html/charset
 golang.org/x/net/html
-golang.org/x/net/context
 golang.org/x/net/html/atom
 golang.org/x/net/context/ctxhttp
-# golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
+golang.org/x/net/context
+# golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.0.0-20180824143301-4910a1d54f87
+# golang.org/x/sys v0.0.0-20181208175041-ad97f365e150
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.0
