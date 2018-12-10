@@ -14,7 +14,7 @@ import (
 func flushSessions(store *storage.Storage) {
 	fmt.Println("Flushing all sessions (disconnect users)")
 	if err := store.FlushAllSessions(); err != nil {
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }

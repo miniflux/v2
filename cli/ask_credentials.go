@@ -17,7 +17,7 @@ func askCredentials() (string, string) {
 	fd := int(os.Stdin.Fd())
 
 	if !terminal.IsTerminal(fd) {
-		fmt.Fprintf(os.Stderr, "This is not a terminal, exiting.")
+		fmt.Fprintf(os.Stderr, "This is not a terminal, exiting.\n")
 		os.Exit(1)
 	}
 

@@ -24,7 +24,7 @@ func createAdmin(store *storage.Storage) {
 	}
 
 	if err := user.ValidateUserCreation(); err != nil {
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 
@@ -34,7 +34,7 @@ func createAdmin(store *storage.Storage) {
 	}
 
 	if err := store.CreateUser(user); err != nil {
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
