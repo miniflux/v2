@@ -11,7 +11,7 @@ require (
 	github.com/lib/pq v1.0.0
 	github.com/tdewolff/minify v2.3.5+incompatible // indirect
 	github.com/tdewolff/parse v2.3.3+incompatible // indirect
-	golang.org/x/crypto v0.0.0-20180820150726-614d502a4dac
+	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
