@@ -7,6 +7,7 @@ package scraper // import "miniflux.app/reader/scraper"
 // List of predefined scraper rules (alphabetically sorted)
 // domain => CSS selectors
 var predefinedRules = map[string]string{
+	"feeds.bbci.co.uk":    "div[class=vxp-column--single], div[class=story-body__inner]",
 	"cbc.ca":              ".story-content",
 	"darkreading.com":     "#article-main:not(header)",
 	"developpez.com":      "div[itemprop=articleBody]",
