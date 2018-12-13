@@ -21,7 +21,7 @@ var queries = []string{
 
 // URLHash returns the hash of a media url
 func URLHash(mediaURL string) string {
-	return crypto.Hash(mediaURL)
+	return crypto.Hash(strings.Trim(mediaURL, " "))
 }
 
 // FindMedia try to find the media cache of the URL.
@@ -120,18 +120,16 @@ func RedirectMedia(entry *model.Entry, medias map[string]*model.Media, baseURL s
 			if err != nil {
 				return
 			}
-			hash := crypto.Hash(strings.Trim(href, " "))
+			hash := URLHash(href)
 			if _, ok := medias[hash]; !ok {
 				return
 			}
-			altAttr := img.AttrOr("alt", "")
-			titleAttr, _ := img.Attr("title")
 
 			u, err := url.AbsoluteURL(baseURL, "/media/"+hash)
 			if err != nil {
 				log.Fatal(err)
 			}
-			img.ReplaceWithHtml(`<img src="` + u + `" alt="` + altAttr + `" title="` + titleAttr + `"/>`)
+			img.SetAttr("src", u)
 		})
 
 		entry.Content, _ = doc.Find("body").First().Html()
