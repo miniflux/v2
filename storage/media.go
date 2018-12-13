@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"miniflux.app/logger"
+
 	"miniflux.app/model"
+	"miniflux.app/reader/media"
 	"miniflux.app/timer"
 )
 
@@ -165,4 +168,84 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 	}
 
 	return medias, nil
+}
+
+// CacheEntries caches medias for starred entries.
+func (s *Storage) CacheEntries() error {
+	entries, err := s.getUncachedEntries()
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		s.CacheEntry(entry)
+	}
+	return nil
+}
+
+// CacheEntry caches medias for given entry.
+func (s *Storage) CacheEntry(entry *model.Entry) {
+	var err error
+	defer func() {
+		if err != nil {
+			logger.Error("unable to cache medias for entry id %d: %v", entry.ID, err)
+			return
+		}
+	}()
+	urls, err := media.ParseDocument(entry)
+	if err != nil {
+		return
+	}
+	for _, u := range urls {
+		m := &model.Media{UrlHash: media.URLHash(u)}
+		err = s.MediaByHash(m)
+		if err != nil {
+			return
+		}
+		if m.ID == 0 {
+			if m, err = media.FindMedia(u); err != nil {
+				return
+			}
+			if err = s.CreateMedia(m); err != nil {
+				return
+			}
+		}
+		_, err = s.db.Exec(`INSERT INTO entry_medias (entry_id, media_id) VALUES ($1, $2)`, entry.ID, m.ID)
+		if err != nil {
+			return
+		}
+
+	}
+}
+
+func (s *Storage) getUncachedEntries() (model.Entries, error) {
+	query := `
+	SELECT e.id, e.user_id, e.url, e.content
+	FROM entries e
+	LEFT JOIN entry_medias em ON e.id=em.entry_id
+	LEFT JOIN medias m ON em.media_id=m.id
+	WHERE e.starred='T' AND m.id IS NULL
+`
+	if _, err := s.db.Exec(query); err != nil {
+		return nil, fmt.Errorf("unable to archive read entries: %v", err)
+	}
+
+	entries := make(model.Entries, 0)
+
+	rows, err := s.db.Query(query)
+	defer rows.Close()
+	if err == sql.ErrNoRows {
+		return entries, nil
+	} else if err != nil {
+		return nil, fmt.Errorf("unable to fetch uncached entries: %v", err)
+	}
+
+	for rows.Next() {
+		var entry model.Entry
+		err := rows.Scan(&entry.ID, &entry.UserID, &entry.URL, &entry.Content)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch entries row: %v", err)
+		}
+		entries = append(entries, &entry)
+	}
+	return entries, nil
 }
