@@ -15,7 +15,7 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-var xmlEncodingRegex = regexp.MustCompile(`<\?xml(.*)encoding="(.+)"(.*)\?>`)
+var xmlEncodingRegex = regexp.MustCompile(`<\?xml(.*)encoding=["'](.+)["'](.*)\?>`)
 
 // Response wraps a server response.
 type Response struct {
