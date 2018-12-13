@@ -18,6 +18,7 @@ func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool) {
 	logger.Info(`Starting scheduler...`)
 	go feedScheduler(store, pool, cfg.PollingFrequency(), cfg.BatchSize())
 	go cleanupScheduler(store, cfg.CleanupFrequency(), cfg.ArchiveReadDays())
+	go cacheScheduler(store, cfg.CacheFrequency())
 }
 
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {
@@ -40,8 +41,19 @@ func cleanupScheduler(store *storage.Storage, frequency int, archiveDays int) {
 		nbUserSessions := store.CleanOldUserSessions()
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
+		// TODO: clear media caches
+
 		if err := store.ArchiveEntries(archiveDays); err != nil {
 			logger.Error("[Scheduler:Cleanup] %v", err)
+		}
+	}
+}
+
+func cacheScheduler(store *storage.Storage, frequency int) {
+	c := time.Tick(time.Duration(frequency) * time.Hour)
+	for range c {
+		if err := store.CacheEntries(); err != nil {
+			logger.Error("[Scheduler:Cache] %v", err)
 		}
 	}
 }

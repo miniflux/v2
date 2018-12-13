@@ -28,6 +28,7 @@ const (
 	defaultCertDomain         = ""
 	defaultCertCache          = "/tmp/cert_cache"
 	defaultCleanupFrequency   = 24
+	defaultCacheFrequency     = 24
 	defaultProxyImages        = "http-only"
 	defaultOAuth2ClientID     = ""
 	defaultOAuth2ClientSecret = ""
@@ -148,6 +149,11 @@ func (c *Config) CertCache() string {
 // CleanupFrequency returns the interval for cleanup jobs.
 func (c *Config) CleanupFrequency() int {
 	return getIntValue("CLEANUP_FREQUENCY", defaultCleanupFrequency)
+}
+
+// CacheFrequency returns the interval for cleanup jobs.
+func (c *Config) CacheFrequency() int {
+	return getIntValue("CACHE_FREQUENCY", defaultCacheFrequency)
 }
 
 // WorkerPoolSize returns the number of background worker.
