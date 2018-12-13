@@ -78,7 +78,7 @@ var templateViewsMap = map[string]string{
         <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
             {{ range .categories }}
-                <option value="{{ .ID }}">{{ .Title }}</option>
+                <option value="{{ .ID }}" {{ if eq $.form.CategoryID .ID }}selected="selected"{{ end }}>{{ .Title }}</option>
             {{ end }}
         </select>
 
@@ -1382,7 +1382,7 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
-	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
+	"add_subscription":    "a0f1d2bc02b6adc83dbeae593f74d9b936102cd6dd73302cdbec2137cafdcdd9",
 	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
 	"category_entries":    "a803570ba91268646b2c55cffc8a3f2f162388a73bc007dd9ab61e144faa359b",

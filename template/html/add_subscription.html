@@ -32,7 +32,7 @@
         <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
             {{ range .categories }}
-                <option value="{{ .ID }}">{{ .Title }}</option>
+                <option value="{{ .ID }}" {{ if eq $.form.CategoryID .ID }}selected="selected"{{ end }}>{{ .Title }}</option>
             {{ end }}
         </select>
 

@@ -10,6 +10,7 @@ import (
 	"miniflux.app/http/client"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
+	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
 )
@@ -36,6 +37,7 @@ func (h *handler) showAddSubscriptionPage(w http.ResponseWriter, r *http.Request
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
+	view.Set("form", &form.SubscriptionForm{CategoryID: 0})
 
 	html.OK(w, r, view.Render("add_subscription"))
 }
