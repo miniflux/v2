@@ -682,6 +682,30 @@ func TestDisableHTTPService(t *testing.T) {
 		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
 	}
 }
+func TestDisableCacheServiceWhenUnset(t *testing.T) {
+	os.Clearenv()
+
+	cfg := NewConfig()
+	expected := false
+	result := cfg.HasCacheService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected ENABLE_CACHE_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableCacheService(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("ENABLE_CACHE_SERVICE", "0")
+
+	cfg := NewConfig()
+	expected := false
+	result := cfg.HasCacheService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected ENABLE_CACHE_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
 
 func TestDisableSchedulerServiceWhenUnset(t *testing.T) {
 	os.Clearenv()

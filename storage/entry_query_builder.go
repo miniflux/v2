@@ -259,8 +259,10 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
 		}
-		if medias, err := e.store.MediasByEntryID(entry.UserID, entry.ID); err == nil {
-			media.RedirectMedia(&entry, medias, e.cfg.BaseURL())
+		if e.cfg.HasCacheService() {
+			if medias, err := e.store.MediasByEntryID(entry.UserID, entry.ID); err == nil {
+				media.RedirectMedia(&entry, medias, e.cfg.BaseURL())
+			}
 		}
 
 		if iconID == nil {

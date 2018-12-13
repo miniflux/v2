@@ -226,6 +226,11 @@ func (c *Config) HasHTTPService() bool {
 	return !getBooleanValue("DISABLE_HTTP_SERVICE")
 }
 
+// HasCacheService returns true if the cache service is enabled.
+func (c *Config) HasCacheService() bool {
+	return getBooleanValue("ENABLE_CACHE_SERVICE")
+}
+
 // HasSchedulerService returns true if the scheduler service is enabled.
 func (c *Config) HasSchedulerService() bool {
 	return !getBooleanValue("DISABLE_SCHEDULER_SERVICE")

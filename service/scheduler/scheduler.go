@@ -17,8 +17,8 @@ import (
 func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool) {
 	logger.Info(`Starting scheduler...`)
 	go feedScheduler(store, pool, cfg.PollingFrequency(), cfg.BatchSize())
-	go cleanupScheduler(store, cfg.CleanupFrequency(), cfg.ArchiveReadDays())
-	go cacheScheduler(store, cfg.CacheFrequency())
+	go cleanupScheduler(store, cfg)
+	go cacheScheduler(store, cfg)
 }
 
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {
@@ -34,28 +34,32 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 	}
 }
 
-func cleanupScheduler(store *storage.Storage, frequency int, archiveDays int) {
-	c := time.Tick(time.Duration(frequency) * time.Hour)
+func cleanupScheduler(store *storage.Storage, cfg *config.Config) {
+	c := time.Tick(time.Duration(cfg.CleanupFrequency()) * time.Hour)
 	for range c {
 		nbSessions := store.CleanOldSessions()
 		nbUserSessions := store.CleanOldUserSessions()
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
-		if err := store.ArchiveEntries(archiveDays); err != nil {
+		if err := store.ArchiveEntries(cfg.ArchiveReadDays()); err != nil {
 			logger.Error("[Scheduler:Cleanup] %v", err)
 		}
 
-		if err := store.CleanupMedias(); err != nil {
-			logger.Error("[Scheduler:Cleanup] %v", err)
+		if cfg.HasCacheService() {
+			if err := store.CleanupMedias(); err != nil {
+				logger.Error("[Scheduler:Cleanup] %v", err)
+			}
 		}
 	}
 }
 
-func cacheScheduler(store *storage.Storage, frequency int) {
-	c := time.Tick(time.Duration(frequency) * time.Hour)
+func cacheScheduler(store *storage.Storage, cfg *config.Config) {
+	c := time.Tick(time.Duration(cfg.CacheFrequency()) * time.Hour)
 	for range c {
-		if err := store.CacheEntries(); err != nil {
-			logger.Error("[Scheduler:Cache] %v", err)
+		if cfg.HasCacheService() {
+			if err := store.CacheEntries(); err != nil {
+				logger.Error("[Scheduler:Cache] %v", err)
+			}
 		}
 	}
 }
