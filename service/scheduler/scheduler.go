@@ -41,9 +41,11 @@ func cleanupScheduler(store *storage.Storage, frequency int, archiveDays int) {
 		nbUserSessions := store.CleanOldUserSessions()
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
-		// TODO: clear media caches
-
 		if err := store.ArchiveEntries(archiveDays); err != nil {
+			logger.Error("[Scheduler:Cleanup] %v", err)
+		}
+
+		if err := store.CleanupMedias(); err != nil {
 			logger.Error("[Scheduler:Cleanup] %v", err)
 		}
 	}

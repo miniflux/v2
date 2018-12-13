@@ -217,6 +217,24 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 	}
 }
 
+// CleanupMedias deletes from the database medias those don't belong to any entries.
+func (s *Storage) CleanupMedias() error {
+	query := `
+		DELETE FROM medias
+		WHERE id IN (
+			SELECT id 
+			FROM medias m
+			LEFT JOIN entry_medias em on m.id=em.media_id
+			WHERE em.entry_id IS NULL
+		)
+	`
+	if _, err := s.db.Exec(query); err != nil {
+		return fmt.Errorf("unable to cleanup medias: %v", err)
+	}
+
+	return nil
+}
+
 func (s *Storage) getUncachedEntries() (model.Entries, error) {
 	query := `
 	SELECT e.id, e.user_id, e.url, e.content
