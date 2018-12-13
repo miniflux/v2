@@ -21,13 +21,13 @@ var entry = &model.Entry{
 var medias = map[string]*model.Media{
 	"06bead8615c0dea3bbba488423b7358ef8426768e5635960ef86d55a4c2b4426": &model.Media{
 		ID:       1,
-		UrlHash:  "06bead8615c0dea3bbba488423b7358ef8426768e5635960ef86d55a4c2b4426",
+		URLHash:  "06bead8615c0dea3bbba488423b7358ef8426768e5635960ef86d55a4c2b4426",
 		MimeType: "image/png",
 		Content:  []byte{},
 	},
 	"ef1687527395c23b59b3f89e6eb8a4cf530d8631360bdf12db77bdf2c16cac57": &model.Media{
 		ID:       2,
-		UrlHash:  "ef1687527395c23b59b3f89e6eb8a4cf530d8631360bdf12db77bdf2c16cac57",
+		URLHash:  "ef1687527395c23b59b3f89e6eb8a4cf530d8631360bdf12db77bdf2c16cac57",
 		MimeType: "image/jpeg",
 		Content:  []byte{},
 	},

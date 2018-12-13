@@ -12,7 +12,7 @@ import (
 // Media represents a entry media cache
 type Media struct {
 	ID       int64  `json:"id"`
-	UrlHash  string `json:"url_hash"`
+	URLHash  string `json:"url_hash"`
 	MimeType string `json:"mime_type"`
 	Content  []byte `json:"content"`
 }

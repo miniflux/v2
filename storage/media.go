@@ -26,7 +26,7 @@ func (s *Storage) MediaByID(mediaID int64) (*model.Media, error) {
 
 	var media model.Media
 	query := `SELECT id, url_hash, mime_type, content FROM medias WHERE id=$1`
-	err := s.db.QueryRow(query, mediaID).Scan(&media.ID, &media.UrlHash, &media.MimeType, &media.Content)
+	err := s.db.QueryRow(query, mediaID).Scan(&media.ID, &media.URLHash, &media.MimeType, &media.Content)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch media: %v", err)
 	}
@@ -56,14 +56,14 @@ func (s *Storage) MediasByEntryID(userID, entryID int64) (map[string]*model.Medi
 		var media model.Media
 		err := rows.Scan(
 			&media.ID,
-			&media.UrlHash,
+			&media.URLHash,
 			&media.MimeType,
 			&media.Content,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch medias row: %v", err)
 		}
-		medias[media.UrlHash] = &media
+		medias[media.URLHash] = &media
 	}
 
 	return medias, nil
@@ -73,7 +73,7 @@ func (s *Storage) MediasByEntryID(userID, entryID int64) (map[string]*model.Medi
 func (s *Storage) MediaByHash(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaByHash]")
 
-	err := s.db.QueryRow(`SELECT id, mime_type, content FROM medias WHERE url_hash=$1`, media.UrlHash).Scan(&media.ID, &media.MimeType, &media.Content)
+	err := s.db.QueryRow(`SELECT id, mime_type, content FROM medias WHERE url_hash=$1`, media.URLHash).Scan(&media.ID, &media.MimeType, &media.Content)
 	if err == sql.ErrNoRows {
 		return nil
 	} else if err != nil {
@@ -95,7 +95,7 @@ func (s *Storage) CreateMedia(media *model.Media) error {
 `
 	err := s.db.QueryRow(
 		query,
-		media.UrlHash,
+		media.URLHash,
 		normalizeMimeType(media.MimeType),
 		media.Content,
 	).Scan(&media.ID)
@@ -160,7 +160,7 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 	var medias model.Medias
 	for rows.Next() {
 		var media model.Media
-		err := rows.Scan(&media.ID, &media.UrlHash, &media.MimeType, &media.Content)
+		err := rows.Scan(&media.ID, &media.URLHash, &media.MimeType, &media.Content)
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch medias row: %v", err)
 		}
@@ -196,7 +196,7 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 		return
 	}
 	for _, u := range urls {
-		m := &model.Media{UrlHash: media.URLHash(u)}
+		m := &model.Media{URLHash: media.URLHash(u)}
 		err = s.MediaByHash(m)
 		if err != nil {
 			return

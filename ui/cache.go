@@ -1,4 +1,4 @@
-package ui // import "miniflux.app/cache"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -13,7 +13,7 @@ import (
 
 func (h *handler) provideCache(w http.ResponseWriter, r *http.Request) {
 	urlHash := request.RouteStringParam(r, "urlHash")
-	media := model.Media{UrlHash: urlHash}
+	media := model.Media{URLHash: urlHash}
 	err := h.store.MediaByHash(&media)
 	if err != nil || media.ID == 0 {
 		html.NotFound(w, r)
