@@ -6,14 +6,17 @@ package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
+
+	"miniflux.app/config"
 )
 
 // Storage handles all operations related to the database.
 type Storage struct {
-	db *sql.DB
+	db  *sql.DB
+	cfg *config.Config
 }
 
 // NewStorage returns a new Storage.
-func NewStorage(db *sql.DB) *Storage {
-	return &Storage{db}
+func NewStorage(db *sql.DB, cfg *config.Config) *Storage {
+	return &Storage{db, cfg}
 }

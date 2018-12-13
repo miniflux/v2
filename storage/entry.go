@@ -32,7 +32,7 @@ func (s *Storage) CountUnreadEntries(userID int64) int {
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
-	return NewEntryQueryBuilder(s, userID)
+	return NewEntryQueryBuilder(s, s.cfg, userID)
 }
 
 // UpdateEntryContent updates entry content.
