@@ -7,9 +7,10 @@ package template // import "miniflux.app/template"
 import (
 	"encoding/base64"
 	"fmt"
-	"math"
 	"html/template"
+	"math"
 	"net/mail"
+	url2 "net/url"
 	"strings"
 	"time"
 
@@ -20,8 +21,8 @@ import (
 	"miniflux.app/timezone"
 	"miniflux.app/url"
 
-	"github.com/gorilla/mux"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gorilla/mux"
 )
 
 type funcMap struct {
@@ -191,7 +192,13 @@ func imageProxyFilter(router *mux.Router, cfg *config.Config, data string) strin
 
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
 		if srcAttr, ok := img.Attr("src"); ok {
-			if proxyImages == "all" || !url.IsHTTPS(srcAttr) {
+			if url.Domain(srcAttr) == url.Domain(cfg.BaseURL()) {
+				u, err := url2.Parse(srcAttr)
+				if err != nil {
+					return
+				}
+				img.SetAttr("src", u.RequestURI())
+			} else if proxyImages == "all" || !url.IsHTTPS(srcAttr) {
 				img.SetAttr("src", proxify(router, srcAttr))
 			}
 		}
