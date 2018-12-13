@@ -78,6 +78,11 @@ func (r *Response) EnsureUnicodeBody() (err error) {
 			return mediaErr
 		}
 
+		// JSON feeds are always in UTF-8.
+		if strings.Contains(mediaType, "json") {
+			return
+		}
+
 		if strings.Contains(mediaType, "xml") {
 			buffer, _ := ioutil.ReadAll(r.Body)
 			r.Body = bytes.NewReader(buffer)
