@@ -73,7 +73,7 @@ func (s *Storage) MediasByEntryID(userID, entryID int64) (map[string]*model.Medi
 func (s *Storage) MediaByHash(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaByHash]")
 
-	err := s.db.QueryRow(`SELECT id, mime_type, content FROM medias WHERE url_hash=$1`, media.URLHash).Scan(&media.ID, &media.MimeType, &media.Content)
+	err := s.db.QueryRow(`SELECT id FROM medias WHERE url_hash=$1`, media.URLHash).Scan(&media.ID)
 	if err == sql.ErrNoRows {
 		return nil
 	} else if err != nil {
@@ -187,14 +187,16 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 	var err error
 	defer func() {
 		if err != nil {
-			logger.Error("unable to cache medias for entry id %d: %v", entry.ID, err)
+			logger.Error("[Storage:CacheEntry] unable to cache medias for entry id %d: %v", entry.ID, err)
 			return
 		}
 	}()
 	urls, err := media.ParseDocument(entry)
-	if err != nil {
+	if err != nil || len(urls) == 0 {
+		// TODO: save status, don't try caching again
 		return
 	}
+	entryMedias := make(map[string]int8, 0)
 	for _, u := range urls {
 		m := &model.Media{URLHash: media.URLHash(u)}
 		err = s.MediaByHash(m)
@@ -203,18 +205,26 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 		}
 		if m.ID == 0 {
 			if m, err = media.FindMedia(u); err != nil {
+				// TODO: don't fail all, but continue for the failed medias next time
 				return
 			}
 			if err = s.CreateMedia(m); err != nil {
 				return
 			}
 		}
-		_, err = s.db.Exec(`INSERT INTO entry_medias (entry_id, media_id) VALUES ($1, $2)`, entry.ID, m.ID)
-		if err != nil {
-			return
-		}
-
+		// medias in an article could be duplicate, use map to remove them
+		entryMedias[fmt.Sprintf("(%v,%v),", entry.ID, m.ID)] = 0
 	}
+	if len(entryMedias) == 0 {
+		return
+	}
+	rows := ""
+	for em := range entryMedias {
+		rows += em
+	}
+	rows = rows[:len(rows)-1]
+	sql := fmt.Sprintf(`INSERT INTO entry_medias (entry_id, media_id) VALUES %s`, rows)
+	_, err = s.db.Exec(sql)
 }
 
 // CleanupMedias deletes from the database medias those don't belong to any entries.
