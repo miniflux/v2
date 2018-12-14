@@ -151,7 +151,7 @@ func (c *Config) CleanupFrequency() int {
 	return getIntValue("CLEANUP_FREQUENCY", defaultCleanupFrequency)
 }
 
-// CacheFrequency returns the interval for cleanup jobs.
+// CacheFrequency returns the interval for cache jobs.
 func (c *Config) CacheFrequency() int {
 	return getIntValue("CACHE_FREQUENCY", defaultCacheFrequency)
 }
