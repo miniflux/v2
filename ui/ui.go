@@ -66,6 +66,7 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/feed/{feedID}/remove", handler.removeFeed).Name("removeFeed").Methods("POST")
 	uiRouter.HandleFunc("/feed/{feedID}/update", handler.updateFeed).Name("updateFeed").Methods("POST")
 	uiRouter.HandleFunc("/feed/{feedID}/entries", handler.showFeedEntriesPage).Name("feedEntries").Methods("GET")
+	uiRouter.HandleFunc("/feed/{feedID}/entries/all", handler.showFeedEntriesAllPage).Name("feedEntriesAll").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/entry/{entryID}", handler.showFeedEntryPage).Name("feedEntry").Methods("GET")
 	uiRouter.HandleFunc("/feed/icon/{iconID}", handler.showIcon).Name("icon").Methods("GET")
 
@@ -75,6 +76,7 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/category/create", handler.showCreateCategoryPage).Name("createCategory").Methods("GET")
 	uiRouter.HandleFunc("/category/save", handler.saveCategory).Name("saveCategory").Methods("POST")
 	uiRouter.HandleFunc("/category/{categoryID}/entries", handler.showCategoryEntriesPage).Name("categoryEntries").Methods("GET")
+	uiRouter.HandleFunc("/category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage).Name("categoryEntriesAll").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/edit", handler.showEditCategoryPage).Name("editCategory").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/update", handler.updateCategory).Name("updateCategory").Methods("POST")
 	uiRouter.HandleFunc("/category/{categoryID}/remove", handler.removeCategory).Name("removeCategory").Methods("POST")

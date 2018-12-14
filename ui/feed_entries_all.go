@@ -15,7 +15,7 @@ import (
 	"miniflux.app/ui/view"
 )
 
-func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showFeedEntriesAllPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -37,7 +37,7 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feed.ID)
-	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
@@ -60,13 +60,13 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("feed", feed)
 	view.Set("entries", entries)
 	view.Set("total", count)
-	view.Set("pagination", getPagination(route.Path(h.router, "feedEntries", "feedID", feed.ID), count, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "feedEntriesAll", "feedID", feed.ID), count, offset))
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
-	view.Set("showOnlyUnreadEntries", true)
+	view.Set("showOnlyUnreadEntries", false)
 
 	html.OK(w, r, view.Render("feed_entries"))
 }

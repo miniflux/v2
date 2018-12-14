@@ -15,31 +15,31 @@ import (
 	"miniflux.app/ui/view"
 )
 
-func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	feedID := request.RouteInt64Param(r, "feedID")
-	feed, err := h.store.FeedByID(user.ID, feedID)
+	categoryID := request.RouteInt64Param(r, "categoryID")
+	category, err := h.store.Category(request.UserID(r), categoryID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	if feed == nil {
+	if category == nil {
 		html.NotFound(w, r)
 		return
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithFeedID(feed.ID)
-	builder.WithStatus(model.EntryStatusUnread)
+	builder.WithCategoryID(category.ID)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 
@@ -57,16 +57,16 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
-	view.Set("feed", feed)
-	view.Set("entries", entries)
+	view.Set("category", category)
 	view.Set("total", count)
-	view.Set("pagination", getPagination(route.Path(h.router, "feedEntries", "feedID", feed.ID), count, offset))
-	view.Set("menu", "feeds")
+	view.Set("entries", entries)
+	view.Set("pagination", getPagination(route.Path(h.router, "categoryEntries", "categoryID", category.ID), count, offset))
+	view.Set("menu", "categories")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
-	view.Set("showOnlyUnreadEntries", true)
+	view.Set("showOnlyUnreadEntries", false)
 
-	html.OK(w, r, view.Render("feed_entries"))
+	html.OK(w, r, view.Render("category_entries"))
 }

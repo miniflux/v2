@@ -39,7 +39,7 @@ func (h *handler) showCategoryEntriesPage(w http.ResponseWriter, r *http.Request
 	builder.WithCategoryID(category.ID)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
-	builder.WithoutStatus(model.EntryStatusRemoved)
+	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 
@@ -66,6 +66,7 @@ func (h *handler) showCategoryEntriesPage(w http.ResponseWriter, r *http.Request
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	view.Set("showOnlyUnreadEntries", true)
 
 	html.OK(w, r, view.Render("category_entries"))
 }
