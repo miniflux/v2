@@ -3,13 +3,22 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ .category.Title }} ({{ .total }})</h1>
-    {{ if .entries }}
     <ul>
+    {{ if .entries }}
         <li>
             <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
-    </ul>
     {{ end }}
+    {{ if .showOnlyUnreadEntries }}
+        <li>
+            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ t "menu.show_all_entries" }}</a>
+        </li>
+    {{ else }}
+        <li>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+        </li>
+    {{ end }}
+    </ul>
 </section>
 
 {{ if not .entries }}

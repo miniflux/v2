@@ -9,6 +9,15 @@
             <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         {{ end }}
+        {{ if .showOnlyUnreadEntries }}
+        <li>
+            <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ t "menu.show_all_entries" }}</a>
+        </li>
+        {{ else }}
+        <li>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+        </li>
+        {{ end }}
         <li>
             <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
         </li>

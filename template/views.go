@@ -206,13 +206,22 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ .category.Title }} ({{ .total }})</h1>
-    {{ if .entries }}
     <ul>
+    {{ if .entries }}
         <li>
             <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
         </li>
-    </ul>
     {{ end }}
+    {{ if .showOnlyUnreadEntries }}
+        <li>
+            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ t "menu.show_all_entries" }}</a>
+        </li>
+    {{ else }}
+        <li>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+        </li>
+    {{ end }}
+    </ul>
 </section>
 
 {{ if not .entries }}
@@ -690,6 +699,15 @@ var templateViewsMap = map[string]string{
         {{ if .entries }}
         <li>
             <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
+        </li>
+        {{ end }}
+        {{ if .showOnlyUnreadEntries }}
+        <li>
+            <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ t "menu.show_all_entries" }}</a>
+        </li>
+        {{ else }}
+        <li>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
         </li>
         {{ end }}
         <li>
@@ -1385,7 +1403,7 @@ var templateViewsMapChecksums = map[string]string{
 	"add_subscription":    "a0f1d2bc02b6adc83dbeae593f74d9b936102cd6dd73302cdbec2137cafdcdd9",
 	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
-	"category_entries":    "a803570ba91268646b2c55cffc8a3f2f162388a73bc007dd9ab61e144faa359b",
+	"category_entries":    "07ff798025f8527de5351a89fd5fc51973c1ea6c56710b4f703cbae183fbcbb6",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
@@ -1393,7 +1411,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "ab30c31a4385a7b16c54baa78bdcb93a57181ed1c5018ce097d7eb50673bb995",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
-	"feed_entries":        "0f3d02d820475a3b0e165e10be2bf39fa5ab6a9dc5b0945c9ad886434e64e6ca",
+	"feed_entries":        "632f0518acb19a2d2723ca4a45dfbe023d828355ebf2982b27558efe32017e81",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
 	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
