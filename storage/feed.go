@@ -268,6 +268,33 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	return nil
 }
 
+// UpdateFeedError updates feed errors.
+func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateFeedError] feedID=%d", feed.ID))
+
+	query := `
+		UPDATE feeds
+		SET
+			parsing_error_msg=$1,
+			parsing_error_count=$2,
+			checked_at=$3
+		WHERE id=$4 AND user_id=$5`
+
+	_, err = s.db.Exec(query,
+		feed.ParsingErrorMsg,
+		feed.ParsingErrorCount,
+		feed.CheckedAt,
+		feed.ID,
+		feed.UserID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("unable to update feed error #%d (%s): %v", feed.ID, feed.FeedURL, err)
+	}
+
+	return nil
+}
+
 // RemoveFeed removes a feed.
 func (s *Storage) RemoveFeed(userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveFeed] userID=%d, feedID=%d", userID, feedID))

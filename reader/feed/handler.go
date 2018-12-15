@@ -99,7 +99,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	response, requestErr := browser.Exec(request)
 	if requestErr != nil {
 		originalFeed.WithError(requestErr.Localize(printer))
-		h.store.UpdateFeed(originalFeed)
+		h.store.UpdateFeedError(originalFeed)
 		return requestErr
 	}
 
@@ -109,7 +109,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		updatedFeed, parseErr := parser.ParseFeed(response.String())
 		if parseErr != nil {
 			originalFeed.WithError(parseErr.Localize(printer))
-			h.store.UpdateFeed(originalFeed)
+			h.store.UpdateFeedError(originalFeed)
 			return parseErr
 		}
 
@@ -119,7 +119,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
 		if storeErr := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
-			h.store.UpdateFeed(originalFeed)
+			h.store.UpdateFeedError(originalFeed)
 			return storeErr
 		}
 
@@ -132,7 +132,14 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	}
 
 	originalFeed.ResetErrorCounter()
-	return h.store.UpdateFeed(originalFeed)
+
+	if storeErr := h.store.UpdateFeed(originalFeed); storeErr != nil {
+		originalFeed.WithError(storeErr.Error())
+		h.store.UpdateFeedError(originalFeed)
+		return storeErr
+	}
+
+	return nil
 }
 
 // NewFeedHandler returns a feed handler.
@@ -144,12 +151,12 @@ func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string) {
 	if !store.HasIcon(feedID) {
 		icon, err := icon.FindIcon(websiteURL)
 		if err != nil {
-			logger.Error("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
+			logger.Debug("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
 		} else if icon == nil {
 			logger.Debug("CheckFeedIcon: No icon found (feedID=%d websiteURL=%s)", feedID, websiteURL)
 		} else {
 			if err := store.CreateFeedIcon(feedID, icon); err != nil {
-				logger.Error("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
+				logger.Debug("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
 			}
 		}
 	}
