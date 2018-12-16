@@ -174,7 +174,10 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 	}()
 	urls, err := media.ParseDocument(entry)
 	if err != nil || len(urls) == 0 {
-		// TODO: save status, don't try caching again
+		err = s.cacheNoMediaEntry(entry.ID)
+		if err != nil {
+			logger.Error("[Storage:CacheEntry] unable to add placeholder cache record for entry id %d: %v", entry.ID, err)
+		}
 		return
 	}
 	entryMedias := make(map[string]int8, 0)
@@ -249,6 +252,9 @@ func (s *Storage) RetryCache(days int) error {
 		return err
 	}
 	for _, m := range ms {
+		if m.URL == "" {
+			continue
+		}
 		fm, err := media.FindMedia(m.URL)
 		if err != nil {
 			logger.Error("[Storage:RetryCache] unable to download medias for media id %d: %v", m.ID, err)
@@ -327,4 +333,27 @@ func (s *Storage) getUncachedEntries() (model.Entries, error) {
 		entries = append(entries, &entry)
 	}
 	return entries, nil
+}
+
+// cacheNoMediaEntry add a fake media (empty url) record for entry without media
+// so that getUncachedEntries don't get and parse it again
+func (s *Storage) cacheNoMediaEntry(entryID int64) error {
+	m := &model.Media{
+		URL:      "",
+		URLHash:  media.URLHash(""),
+		MimeType: "",
+		Content:  []byte{},
+		Success:  false,
+	}
+	err := s.MediaByHash(m)
+	if err != nil {
+		return err
+	}
+	if m.ID == 0 {
+		if err = s.CreateMedia(m); err != nil {
+			return err
+		}
+	}
+	_, err = s.db.Exec(`INSERT INTO entry_medias (entry_id, media_id) VALUES ($1,$2)`, entryID, m.ID)
+	return err
 }
