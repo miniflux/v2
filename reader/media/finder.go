@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
+	"time"
 
 	"miniflux.app/url"
 
@@ -60,9 +61,12 @@ func downloadMedia(mediaURL string) (*model.Media, error) {
 	}
 
 	media := &model.Media{
-		URLHash:  URLHash(mediaURL),
-		MimeType: response.ContentType,
-		Content:  body,
+		URL:       mediaURL,
+		URLHash:   URLHash(mediaURL),
+		MimeType:  response.ContentType,
+		Content:   body,
+		Success:   true,
+		CreatedAt: time.Now(),
 	}
 
 	return media, nil

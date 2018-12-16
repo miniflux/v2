@@ -7,14 +7,18 @@ package model // import "miniflux.app/model"
 import (
 	"encoding/base64"
 	"fmt"
+	"time"
 )
 
 // Media represents a entry media cache
 type Media struct {
-	ID       int64  `json:"id"`
-	URLHash  string `json:"url_hash"`
-	MimeType string `json:"mime_type"`
-	Content  []byte `json:"content"`
+	ID        int64     `json:"id"`
+	URL       string    `json:"url"`
+	URLHash   string    `json:"url_hash"`
+	MimeType  string    `json:"mime_type"`
+	Content   []byte    `json:"content"`
+	Success   bool      `json:"success"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // DataURL returns the data URL of the media cache.

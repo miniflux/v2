@@ -1,8 +1,11 @@
 create table medias (
 	id bigserial not null,
+	url text not null,
 	url_hash text not null unique,
 	mime_type text not null,
 	content bytea not null,
+	success bool default 'f',
+	created_at timestamp with time zone default current_timestamp,
 	primary key (id)
 );
 CREATE TABLE entry_medias (
