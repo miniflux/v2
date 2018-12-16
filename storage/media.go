@@ -242,6 +242,60 @@ func (s *Storage) CleanupMedias() error {
 	return nil
 }
 
+// RetryCache retry caching for recently failed meidas
+func (s *Storage) RetryCache(days int) error {
+	ms, err := s.getFailedMedias(days)
+	if err != nil {
+		return err
+	}
+	for _, m := range ms {
+		fm, err := media.FindMedia(m.URL)
+		if err != nil {
+			logger.Error("[Storage:RetryCache] unable to download medias for media id %d: %v", m.ID, err)
+			continue
+		}
+		m.MimeType = fm.MimeType
+		m.Content = fm.Content
+		m.Success = true
+		err = s.UpdateMedia(m)
+		if err != nil {
+			logger.Error("[Storage:RetryCache] unable to update medias for media id %d: %v", m.ID, err)
+		}
+	}
+	return nil
+}
+
+func (s *Storage) getFailedMedias(days int) (model.Medias, error) {
+	query := fmt.Sprintf(`
+		SELECT id, url
+		FROM medias 
+		WHERE success='f' AND created_at > now () - '%d days'::interval LIMIT 5000
+	`, days)
+	if _, err := s.db.Exec(query); err != nil {
+		return nil, fmt.Errorf("unable to archive get failed medias: %v", err)
+	}
+
+	medias := make(model.Medias, 0)
+
+	rows, err := s.db.Query(query)
+	defer rows.Close()
+	if err == sql.ErrNoRows {
+		return medias, nil
+	} else if err != nil {
+		return nil, fmt.Errorf("unable to fetch uncached medias: %v", err)
+	}
+
+	for rows.Next() {
+		var m model.Media
+		err := rows.Scan(&m.ID, &m.URL)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch medias row: %v", err)
+		}
+		medias = append(medias, &m)
+	}
+	return medias, nil
+}
+
 func (s *Storage) getUncachedEntries() (model.Entries, error) {
 	query := `
 	SELECT e.id, e.user_id, e.url, e.content

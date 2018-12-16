@@ -60,6 +60,9 @@ func cacheScheduler(store *storage.Storage, cfg *config.Config) {
 			if err := store.CacheEntries(); err != nil {
 				logger.Error("[Scheduler:Cache] %v", err)
 			}
+			if err := store.RetryCache(30); err != nil {
+				logger.Error("[Scheduler:RetryCache] %v", err)
+			}
 		}
 	}
 }
