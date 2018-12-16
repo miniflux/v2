@@ -15,7 +15,7 @@ func (h *handler) provideCache(w http.ResponseWriter, r *http.Request) {
 	urlHash := request.RouteStringParam(r, "urlHash")
 	media := model.Media{URLHash: urlHash}
 	err := h.store.MediaByHash(&media)
-	if err != nil || media.ID == 0 {
+	if err != nil || media.ID == 0 || !media.Success {
 		html.NotFound(w, r)
 		return
 	}
