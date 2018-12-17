@@ -794,7 +794,7 @@ article.feed-parsing-error {
     padding: 5px;
     background: #f0f0f0;
     border: 1px solid #ddd;
-    overflow: scroll;
+    overflow: auto;
     overflow-wrap: initial;
 }
 
