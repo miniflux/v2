@@ -313,10 +313,11 @@ func (s *Storage) getFailedMedias(days int) (model.Medias, error) {
 func (s *Storage) getUncachedEntries() (model.Entries, error) {
 	query := `
 	SELECT e.id, e.user_id, e.url, e.title, e.content
-	FROM entries e
-	LEFT JOIN entry_medias em ON e.id=em.entry_id
-	LEFT JOIN medias m ON em.media_id=m.id
-	WHERE e.starred='T' AND m.id IS NULL
+	FROM feeds f
+		INNER JOIN entries e on f.id=e.feed_id
+		LEFT JOIN entry_medias em ON e.id=em.entry_id
+		LEFT JOIN medias m ON em.media_id=m.id
+	WHERE f.cache_media='T' AND e.starred='T' AND m.id IS NULL
 `
 	if _, err := s.db.Exec(query); err != nil {
 		return nil, fmt.Errorf("unable to archive read entries: %v", err)
