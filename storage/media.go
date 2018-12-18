@@ -157,7 +157,8 @@ func (s *Storage) CacheEntries() error {
 	if err != nil {
 		return err
 	}
-	for _, entry := range entries {
+	for i, entry := range entries {
+		logger.Debug("Caching entry (%d of %d) %s", i+1, len(entries), entry.Title)
 		s.CacheEntry(entry)
 	}
 	return nil
@@ -181,7 +182,8 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 		return
 	}
 	entryMedias := make(map[string]int8, 0)
-	for _, u := range urls {
+	for i, u := range urls {
+		logger.Debug("Caching media (%d of %d) for %s : <%s>", i+1, len(urls), entry.Title, u)
 		m := &model.Media{URL: u, URLHash: media.URLHash(u)}
 		err = s.MediaByHash(m)
 		if err != nil {
@@ -310,7 +312,7 @@ func (s *Storage) getFailedMedias(days int) (model.Medias, error) {
 
 func (s *Storage) getUncachedEntries() (model.Entries, error) {
 	query := `
-	SELECT e.id, e.user_id, e.url, e.content
+	SELECT e.id, e.user_id, e.url, e.title, e.content
 	FROM entries e
 	LEFT JOIN entry_medias em ON e.id=em.entry_id
 	LEFT JOIN medias m ON em.media_id=m.id
@@ -332,7 +334,7 @@ func (s *Storage) getUncachedEntries() (model.Entries, error) {
 
 	for rows.Next() {
 		var entry model.Entry
-		err := rows.Scan(&entry.ID, &entry.UserID, &entry.URL, &entry.Content)
+		err := rows.Scan(&entry.ID, &entry.UserID, &entry.URL, &entry.Title, &entry.Content)
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch entries row: %v", err)
 		}
