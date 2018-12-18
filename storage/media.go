@@ -204,7 +204,7 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 			}
 		} else if !m.Success {
 			fm, err := media.FindMedia(u)
-			if err != nil {
+			if err == nil {
 				fm.ID = m.ID
 				if err = s.UpdateMedia(fm); err != nil {
 					return
@@ -218,6 +218,12 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 	if len(entryMedias) == 0 {
 		return
 	}
+	// 'entry_medias' records must insert together here
+	// to make sure the records are inserted all or none.
+	//
+	// Otherwise, if the task is stop in the middle,
+	// 'entry_medias' has part of all media records
+	// 'getUncachedEntries' won't find and process the entry again
 	rows := ""
 	for em := range entryMedias {
 		rows += em
