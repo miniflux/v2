@@ -199,6 +199,7 @@
     "form.feed.label.feed_url": "URL подписки",
     "form.feed.label.category": "Категория",
     "form.feed.label.crawler": "Извлечь оригинальное содержимое",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Имя пользователя подписки",
     "form.feed.label.feed_password": "Пароль подписки",
     "form.feed.label.user_agent": "Переопределить User Agent по умолчанию",

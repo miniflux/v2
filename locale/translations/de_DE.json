@@ -197,6 +197,7 @@
     "form.feed.label.feed_url": "Abonnement-URL",
     "form.feed.label.category": "Kategorie",
     "form.feed.label.crawler": "Inhalt herunterladen",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Benutzername des Abonnements",
     "form.feed.label.feed_password": "Passwort des Abonnements",
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",

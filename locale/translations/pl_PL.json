@@ -199,6 +199,7 @@
     "form.feed.label.feed_url": "URL kanału",
     "form.feed.label.category": "Kategoria",
     "form.feed.label.crawler": "Pobierz oryginalną treść",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Subskrypcję nazwa użytkownika",
     "form.feed.label.feed_password": "Subskrypcję Hasło",
     "form.feed.label.user_agent": "Zastąp domyślny agent użytkownika",

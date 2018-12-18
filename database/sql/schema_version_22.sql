@@ -15,3 +15,4 @@ CREATE TABLE entry_medias (
     foreign key (entry_id) references entries(id) on delete cascade,
     foreign key (media_id) references medias(id) on delete cascade
 );
+alter table feeds add column cache_media bool default 'f';

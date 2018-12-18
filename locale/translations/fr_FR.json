@@ -197,6 +197,7 @@
     "form.feed.label.feed_url": "URL du flux",
     "form.feed.label.category": "Catégorie",
     "form.feed.label.crawler": "Récupérer le contenu original",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Nom d'utilisateur du flux",
     "form.feed.label.feed_password": "Mot de passe du flux",
     "form.feed.label.user_agent": "Remplacer l'agent utilisateur par défaut",
