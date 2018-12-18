@@ -707,47 +707,34 @@ func TestDisableHTTPService(t *testing.T) {
 		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
 	}
 }
-func TestDisableCacheServiceWhenUnset(t *testing.T) {
-	os.Clearenv()
-
-	cfg := NewConfig()
-	expected := false
-	result := cfg.HasCacheService()
-
-	if result != expected {
-		t.Fatalf(`Unexpected ENABLE_CACHE_SERVICE value, got %v instead of %v`, result, expected)
-	}
-}
 
 func TestDisableCacheServiceWhenBaseURLUnset(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("ENABLE_CACHE_SERVICE", "1")
 
 	cfg := NewConfig()
 	expected := false
 	result := cfg.HasCacheService()
 
 	if result != expected {
-		t.Fatalf(`Unexpected ENABLE_CACHE_SERVICE value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
 	}
 }
 
-func TestDisableCacheService(t *testing.T) {
+func TestDisableCacheServiceWhenHTTPServiceDisabled(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("ENABLE_CACHE_SERVICE", "0")
+	os.Setenv("DISABLE_HTTP_SERVICE", "1")
 
 	cfg := NewConfig()
 	expected := false
 	result := cfg.HasCacheService()
 
 	if result != expected {
-		t.Fatalf(`Unexpected ENABLE_CACHE_SERVICE value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
 	}
 }
 
 func TestEnableCacheService(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("ENABLE_CACHE_SERVICE", "1")
 	os.Setenv("BASE_URL", "http://example.org")
 
 	cfg := NewConfig()
@@ -755,7 +742,7 @@ func TestEnableCacheService(t *testing.T) {
 	result := cfg.HasCacheService()
 
 	if result != expected {
-		t.Fatalf(`Unexpected ENABLE_CACHE_SERVICE value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
 	}
 }
 
