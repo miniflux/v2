@@ -9,6 +9,7 @@
     "action.cancel": "取消",
     "action.remove": "删除",
     "action.remove_feed": "删除此源",
+    "action.remove_feed_cache": "清除媒体缓存",
     "action.update": "更新",
     "action.edit": "编辑",
     "action.download": "下载",

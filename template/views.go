@@ -508,8 +508,7 @@ var templateViewsMap = map[string]string{
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
-                data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-                data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed_cache" }}</a>
+                data-url="{{ route "removeFeedCache" "feedID" .feed.ID }}">{{ t "action.remove_feed_cache" }}</a>
     </div>
 {{ end }}
 
@@ -1401,7 +1400,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
-	"edit_feed":           "1f09bbc6f84d433795691d5a284e428a7b13a5113614d0b09332fcbad134ee56",
+	"edit_feed":           "da80e7904bfce3f1ba5e0dbc7f6b23efe3b6f76af720ccdc685d078458f79a2d",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
 	"feed_entries":        "0f3d02d820475a3b0e165e10be2bf39fa5ab6a9dc5b0945c9ad886434e64e6ca",

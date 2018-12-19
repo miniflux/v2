@@ -9,6 +9,7 @@
     "action.cancel": "annuler",
     "action.remove": "Supprimer",
     "action.remove_feed": "Supprimer ce flux",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Mettre à jour",
     "action.edit": "Modifier",
     "action.download": "Télécharger",
@@ -100,7 +101,7 @@
     "page.edit_feed.etag_header": "En-tête ETag :",
     "page.edit_feed.no_header": "Aucune",
     "page.edit_feed.last_parsing_error": "Dernière erreur d'analyse",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"

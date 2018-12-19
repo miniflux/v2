@@ -2,6 +2,7 @@ package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -294,6 +295,37 @@ func (s *Storage) RetryCache(days int) error {
 			logger.Error("[Storage:RetryCache] unable to update medias for media id %d: %v", m.ID, err)
 		}
 	}
+	return nil
+}
+
+// RemoveFeedCaches removes all caches of a feed.
+func (s *Storage) RemoveFeedCaches(userID, feedID int64) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveFeedCaches] userID=%d, feedID=%d", userID, feedID))
+
+	result, err := s.db.Exec(`
+		DELETE FROM entry_medias WHERE entry_id in (
+			SELECT em.entry_id
+			FROM feeds f
+			INNER JOIN entries e on f.id=e.feed_id
+			INNER JOIN entry_medias em ON e.id=em.entry_id
+			WHERE f.id=$1 AND f.user_id=$2
+		)
+	`, feedID, userID)
+	if err != nil {
+		return fmt.Errorf("unable to remove cache for feed #%d: %v", feedID, err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("unable to remove cache for feed #%d: %v", feedID, err)
+	}
+
+	if count == 0 {
+		return errors.New("no cache has been removed")
+	}
+
+	_ = s.CleanupMedias()
+
 	return nil
 }
 

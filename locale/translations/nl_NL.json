@@ -9,6 +9,7 @@
     "action.cancel": "annuleren",
     "action.remove": "Verwijderen",
     "action.remove_feed": "Verwijder deze feed",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Updaten",
     "action.edit": "Bewerken",
     "action.download": "Download",
@@ -101,7 +102,7 @@
     "page.edit_feed.etag_header": "ETAG-header:",
     "page.edit_feed.no_header": "Geen",
     "page.edit_feed.last_parsing_error": "Laatste parse error",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"

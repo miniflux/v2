@@ -9,6 +9,7 @@
     "action.cancel": "abbrechen",
     "action.remove": "Entfernen",
     "action.remove_feed": "Dieses Abonnement entfernen",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Aktualisieren",
     "action.edit": "Bearbeiten",
     "action.download": "Herunterladen",
@@ -100,7 +101,7 @@
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
     "page.edit_feed.no_header": "Nicht verfügbar",
     "page.edit_feed.last_parsing_error": "Letzter Analysefehler",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"

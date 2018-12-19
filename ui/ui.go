@@ -71,6 +71,7 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/feed/{feedID}/entries", handler.showFeedEntriesPage).Name("feedEntries").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/entry/{entryID}", handler.showFeedEntryPage).Name("feedEntry").Methods("GET")
 	uiRouter.HandleFunc("/feed/icon/{iconID}", handler.showIcon).Name("icon").Methods("GET")
+	uiRouter.HandleFunc("/feed/{feedID}/caches/remove", handler.removeFeedCaches).Name("removeFeedCache").Methods("POST")
 
 	// Category pages.
 	uiRouter.HandleFunc("/category/{categoryID}/entry/{entryID}", handler.showCategoryEntryPage).Name("categoryEntry").Methods("GET")

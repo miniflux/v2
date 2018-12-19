@@ -14,6 +14,7 @@ var translations = map[string]string{
     "action.cancel": "abbrechen",
     "action.remove": "Entfernen",
     "action.remove_feed": "Dieses Abonnement entfernen",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Aktualisieren",
     "action.edit": "Bearbeiten",
     "action.download": "Herunterladen",
@@ -105,7 +106,7 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
     "page.edit_feed.no_header": "Nicht verfügbar",
     "page.edit_feed.last_parsing_error": "Letzter Analysefehler",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
@@ -311,6 +312,7 @@ var translations = map[string]string{
     "action.cancel": "cancel",
     "action.remove": "Remove",
     "action.remove_feed": "Remove this feed",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Update",
     "action.edit": "Edit",
     "action.download": "Download",
@@ -402,7 +404,7 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",
     "page.edit_feed.last_parsing_error": "Last Parsing Error",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
@@ -588,6 +590,7 @@ var translations = map[string]string{
     "action.cancel": "annuler",
     "action.remove": "Supprimer",
     "action.remove_feed": "Supprimer ce flux",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Mettre à jour",
     "action.edit": "Modifier",
     "action.download": "Télécharger",
@@ -679,7 +682,7 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "En-tête ETag :",
     "page.edit_feed.no_header": "Aucune",
     "page.edit_feed.last_parsing_error": "Dernière erreur d'analyse",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
@@ -885,6 +888,7 @@ var translations = map[string]string{
     "action.cancel": "annuleren",
     "action.remove": "Verwijderen",
     "action.remove_feed": "Verwijder deze feed",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Updaten",
     "action.edit": "Bewerken",
     "action.download": "Download",
@@ -977,7 +981,7 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETAG-header:",
     "page.edit_feed.no_header": "Geen",
     "page.edit_feed.last_parsing_error": "Laatste parse error",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
@@ -1180,6 +1184,7 @@ var translations = map[string]string{
     "action.cancel": "anuluj",
     "action.remove": "Usuń",
     "action.remove_feed": "Usuń ten kanał",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Zaktualizuj",
     "action.edit": "Edytuj",
     "action.download": "Pobierz",
@@ -1273,7 +1278,7 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
     "page.edit_feed.last_parsing_error": "Ostatni błąd analizy",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
@@ -1483,6 +1488,7 @@ var translations = map[string]string{
     "action.cancel": "закрыть",
     "action.remove": "Удалить",
     "action.remove_feed": "Удалить эту подписку",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Обновить",
     "action.edit": "Изменить",
     "action.download": "Загрузить",
@@ -1576,7 +1582,7 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
@@ -1768,6 +1774,7 @@ var translations = map[string]string{
     "action.cancel": "取消",
     "action.remove": "删除",
     "action.remove_feed": "删除此源",
+    "action.remove_feed_cache": "清除媒体缓存",
     "action.update": "更新",
     "action.edit": "编辑",
     "action.download": "下载",

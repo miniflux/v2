@@ -9,6 +9,7 @@
     "action.cancel": "закрыть",
     "action.remove": "Удалить",
     "action.remove_feed": "Удалить эту подписку",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Обновить",
     "action.edit": "Изменить",
     "action.download": "Загрузить",
@@ -102,7 +103,7 @@
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
-    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.no_cache": "Currently no cache",
     "page.edit_feed.cache_statistic": [
         "%d item, %s cached ",
         "%d items, %s cached"
