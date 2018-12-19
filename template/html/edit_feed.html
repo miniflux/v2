@@ -75,8 +75,9 @@
         </select>
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
-        <label><input type="checkbox" name="cache_media" value="1" {{ if .form.CacheMedia }}checked{{ end }}> {{ t "form.feed.label.cache_media" }}</label>
-
+        <label><input type="checkbox" name="cache_media" value="1" {{ if .form.CacheMedia }}checked{{ end }}> {{ t "form.feed.label.cache_media" }}
+            <span> ({{ if eq .mediaCount 0 }}{{ t "page.edit_feed.no_cache" }}{{ else }}{{ plural "page.edit_feed.cache_statistic" .mediaCount .mediaCount .mediaSize }}{{end}})</span>
+        </label>
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "feeds" }}">{{ t "action.cancel" }}</a>
         </div>
@@ -91,15 +92,15 @@
     </div>
 
     <div class="alert alert-error">
-        <a href="#"
-            data-confirm="true"
-            data-action="remove-feed"
-            data-label-question="{{ t "confirm.question" }}"
-            data-label-yes="{{ t "confirm.yes" }}"
-            data-label-no="{{ t "confirm.no" }}"
-            data-label-loading="{{ t "confirm.loading" }}"
-            data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-            data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-action="remove-feed"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
+                data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
     </div>
 {{ end }}
 

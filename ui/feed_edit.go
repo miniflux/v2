@@ -5,6 +5,7 @@
 package ui // import "miniflux.app/ui"
 
 import (
+	"fmt"
 	"net/http"
 
 	"miniflux.app/http/client"
@@ -54,6 +55,12 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		Password:     feed.Password,
 	}
 
+	count, size, err := h.store.MediaStatistics(feedID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", feedForm)
@@ -64,6 +71,52 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
+	view.Set("mediaCount", count)
+	view.Set("mediaSize", byteSizeHumanReadable(size))
 
 	html.OK(w, r, view.Render("edit_feed"))
+}
+
+func byteSizeHumanReadable(size int) string {
+	const (
+		_          = iota
+		KB float64 = 1 << (10 * iota)
+		MB
+		GB
+		TB
+		PB
+		EB
+		ZB
+		YB
+	)
+	unit := ""
+	sz := float64(size)
+	if sz < KB {
+		unit = "B"
+	} else if sz < MB {
+		unit = "KB"
+		sz = sz / KB
+	} else if sz < GB {
+		unit = "MB"
+		sz = sz / MB
+	} else if sz < TB {
+		unit = "GB"
+		sz = sz / GB
+	} else if sz < PB {
+		unit = "TB"
+		sz = sz / TB
+	} else if sz < EB {
+		unit = "PB"
+		sz = sz / PB
+	} else if sz < ZB {
+		unit = "EB"
+		sz = sz / EB
+	} else if sz < YB {
+		unit = "ZB"
+		sz = sz / ZB
+	} else {
+		unit = "YB"
+		sz = sz / YB
+	}
+	return fmt.Sprintf("%.2f%s", sz, unit)
 }

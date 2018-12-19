@@ -475,8 +475,9 @@ var templateViewsMap = map[string]string{
         </select>
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
-        <label><input type="checkbox" name="cache_media" value="1" {{ if .form.CacheMedia }}checked{{ end }}> {{ t "form.feed.label.cache_media" }}</label>
-
+        <label><input type="checkbox" name="cache_media" value="1" {{ if .form.CacheMedia }}checked{{ end }}> {{ t "form.feed.label.cache_media" }}
+            <span> ({{ if eq .mediaCount 0 }}{{ t "page.edit_feed.no_cache" }}{{ else }}{{ plural "page.edit_feed.cache_statistic" .mediaCount .mediaCount .mediaSize }}{{end}})</span>
+        </label>
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "feeds" }}">{{ t "action.cancel" }}</a>
         </div>
@@ -491,15 +492,24 @@ var templateViewsMap = map[string]string{
     </div>
 
     <div class="alert alert-error">
-        <a href="#"
-            data-confirm="true"
-            data-action="remove-feed"
-            data-label-question="{{ t "confirm.question" }}"
-            data-label-yes="{{ t "confirm.yes" }}"
-            data-label-no="{{ t "confirm.no" }}"
-            data-label-loading="{{ t "confirm.loading" }}"
-            data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-            data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-action="remove-feed"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
+                data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>,
+            <a href="#"
+                data-confirm="true"
+                data-action="remove-feed"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
+                data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed_cache" }}</a>
     </div>
 {{ end }}
 
@@ -1391,7 +1401,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
-	"edit_feed":           "44e77616ab713b02f116f651557a77a4f4b3ee536cf87b7cee58cf53079248ca",
+	"edit_feed":           "1f09bbc6f84d433795691d5a284e428a7b13a5113614d0b09332fcbad134ee56",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
 	"feed_entries":        "0f3d02d820475a3b0e165e10be2bf39fa5ab6a9dc5b0945c9ad886434e64e6ca",

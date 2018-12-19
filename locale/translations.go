@@ -105,6 +105,11 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
     "page.edit_feed.no_header": "Nicht verfügbar",
     "page.edit_feed.last_parsing_error": "Letzter Analysefehler",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Tastenkürzel",
     "page.keyboard_shortcuts.subtitle.sections": "Navigation zwischen den Menüpunkten",
     "page.keyboard_shortcuts.subtitle.items": "Navigation zwischen den Artikeln",
@@ -397,6 +402,11 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",
     "page.edit_feed.last_parsing_error": "Last Parsing Error",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Keyboard Shortcuts",
     "page.keyboard_shortcuts.subtitle.sections": "Sections Navigation",
     "page.keyboard_shortcuts.subtitle.items": "Items Navigation",
@@ -669,6 +679,11 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "En-tête ETag :",
     "page.edit_feed.no_header": "Aucune",
     "page.edit_feed.last_parsing_error": "Dernière erreur d'analyse",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Raccourcis clavier",
     "page.keyboard_shortcuts.subtitle.sections": "Naviguation entre les sections",
     "page.keyboard_shortcuts.subtitle.items": "Naviguation entre les éléments",
@@ -962,6 +977,11 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETAG-header:",
     "page.edit_feed.no_header": "Geen",
     "page.edit_feed.last_parsing_error": "Laatste parse error",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Sneltoetsen",
     "page.keyboard_shortcuts.subtitle.sections": "Naviguatie tussen menu's",
     "page.keyboard_shortcuts.subtitle.items": "Navigatie tussen items",
@@ -1253,6 +1273,11 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
     "page.edit_feed.last_parsing_error": "Ostatni błąd analizy",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Skróty klawiszowe",
     "page.keyboard_shortcuts.subtitle.sections": "Nawigacja między punktami menu",
     "page.keyboard_shortcuts.subtitle.items": "Nawigacja między artykułami",
@@ -1551,6 +1576,11 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Сочетания клавиш",
     "page.keyboard_shortcuts.subtitle.sections": "Навигация по секциям",
     "page.keyboard_shortcuts.subtitle.items": "Навигация по элементам",
@@ -1827,6 +1857,10 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag 标题：",
     "page.edit_feed.no_header": "无",
     "page.edit_feed.last_parsing_error": "最后一次解析错误",
+    "page.edit_feed.no_cache": "目前没有缓存",
+    "page.edit_feed.cache_statistic": [
+        "已缓存 %d 个文件，共 %s"
+    ],
     "page.keyboard_shortcuts.title": "快捷键",
     "page.keyboard_shortcuts.subtitle.sections": "分区导航",
     "page.keyboard_shortcuts.subtitle.items": "条目导航",
@@ -2007,8 +2041,7 @@ var translations = map[string]string{
     "This website is temporarily unreachable (original error: %q)": "该网站暂时不可达 (原始错误: %q)",
     "This website is permanently unreachable (original error: %q)": "该网站永久不可达 (原始错误: %q)",
     "Website unreachable, the request timed out after %d seconds": "网站不可达, 请求已在 %d 秒后超时"
-}
-`,
+}`,
 }
 
 var translationsChecksums = map[string]string{

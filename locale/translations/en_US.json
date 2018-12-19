@@ -100,6 +100,11 @@
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",
     "page.edit_feed.last_parsing_error": "Last Parsing Error",
+    "page.edit_feed.no_cache": "No cache",
+    "page.edit_feed.cache_statistic": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Keyboard Shortcuts",
     "page.keyboard_shortcuts.subtitle.sections": "Sections Navigation",
     "page.keyboard_shortcuts.subtitle.items": "Items Navigation",

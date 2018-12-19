@@ -151,6 +151,24 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 	return medias, nil
 }
 
+// MediaStatistics returns media count and size of specified feed.
+func (s *Storage) MediaStatistics(feedID int64) (count int, size int, err error) {
+	defer timer.ExecutionTime(time.Now(), "[Storage:MediaStatistics]")
+	query := `
+	SELECT count(m.*) count, coalesce(sum(length(m.content)),0) size
+	FROM feeds f
+	INNER JOIN entries e on f.id=e.feed_id
+	INNER JOIN entry_medias em on e.id=em.entry_id
+	INNER JOIN medias m on em.media_id=m.id
+	WHERE f.id=$1
+`
+	err = s.db.QueryRow(
+		query,
+		feedID,
+	).Scan(&count, &size)
+	return
+}
+
 // CacheEntries caches medias for starred entries.
 func (s *Storage) CacheEntries() error {
 	entries, err := s.getUncachedEntries()
