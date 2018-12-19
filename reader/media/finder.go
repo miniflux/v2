@@ -65,6 +65,7 @@ func downloadMedia(mediaURL string) (*model.Media, error) {
 		URLHash:   URLHash(mediaURL),
 		MimeType:  response.ContentType,
 		Content:   body,
+		Size:      len(body),
 		Success:   true,
 		CreatedAt: time.Now(),
 	}

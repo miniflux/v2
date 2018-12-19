@@ -77,9 +77,9 @@ func (s *Storage) CreateMedia(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:CreateMedia]")
 	query := `
 	INSERT INTO medias
-	(url, url_hash, mime_type, content, success)
+	(url, url_hash, mime_type, content, size, success)
 	VALUES
-	($1, $2, $3, $4, $5)
+	($1, $2, $3, $4, $5, $6)
 	RETURNING id
 `
 	err := s.db.QueryRow(
@@ -88,6 +88,7 @@ func (s *Storage) CreateMedia(media *model.Media) error {
 		media.URLHash,
 		normalizeMimeType(media.MimeType),
 		media.Content,
+		media.Size,
 		media.Success,
 	).Scan(&media.ID)
 
@@ -103,7 +104,7 @@ func (s *Storage) UpdateMedia(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:UpdateMedia]")
 	query := `
 	UPDATE medias
-	SET mime_type=$2, content=$3, success=$4
+	SET mime_type=$2, content=$3, size=$4, success=$5
 	WHERE id = $1
 `
 	_, err := s.db.Exec(
@@ -111,6 +112,7 @@ func (s *Storage) UpdateMedia(media *model.Media) error {
 		media.ID,
 		normalizeMimeType(media.MimeType),
 		media.Content,
+		media.Size,
 		media.Success,
 	)
 
@@ -156,7 +158,7 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 func (s *Storage) MediaStatistics(feedID int64) (count int, size int, err error) {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaStatistics]")
 	query := `
-	SELECT count(m.*) count, coalesce(sum(length(m.content)),0) size
+	SELECT count(m.id) count, coalesce(sum(m.size),0) size
 	FROM feeds f
 	INNER JOIN entries e on f.id=e.feed_id
 	INNER JOIN entry_medias em on e.id=em.entry_id
@@ -217,6 +219,7 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 					URLHash:  media.URLHash(u),
 					MimeType: "",
 					Content:  []byte{},
+					Size:     0,
 					Success:  false,
 				}
 			}

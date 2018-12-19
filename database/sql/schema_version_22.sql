@@ -4,6 +4,7 @@ create table medias (
 	url_hash text not null unique,
 	mime_type text not null,
 	content bytea not null,
+	size int8 not null,
 	success bool default 'f',
 	created_at timestamp with time zone default current_timestamp,
 	primary key (id)
