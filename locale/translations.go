@@ -106,8 +106,9 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
     "page.edit_feed.no_header": "Nicht verfügbar",
     "page.edit_feed.last_parsing_error": "Letzter Analysefehler",
-    "page.edit_feed.no_cache": "Currently no cache",
-    "page.edit_feed.cache_statistic": [
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
         "%d item, %s cached ",
         "%d items, %s cached"
     ],
@@ -404,8 +405,9 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",
     "page.edit_feed.last_parsing_error": "Last Parsing Error",
-    "page.edit_feed.no_cache": "Currently no cache",
-    "page.edit_feed.cache_statistic": [
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
         "%d item, %s cached ",
         "%d items, %s cached"
     ],
@@ -682,8 +684,9 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "En-tête ETag :",
     "page.edit_feed.no_header": "Aucune",
     "page.edit_feed.last_parsing_error": "Dernière erreur d'analyse",
-    "page.edit_feed.no_cache": "Currently no cache",
-    "page.edit_feed.cache_statistic": [
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
         "%d item, %s cached ",
         "%d items, %s cached"
     ],
@@ -981,8 +984,9 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETAG-header:",
     "page.edit_feed.no_header": "Geen",
     "page.edit_feed.last_parsing_error": "Laatste parse error",
-    "page.edit_feed.no_cache": "Currently no cache",
-    "page.edit_feed.cache_statistic": [
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
         "%d item, %s cached ",
         "%d items, %s cached"
     ],
@@ -1278,8 +1282,9 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
     "page.edit_feed.last_parsing_error": "Ostatni błąd analizy",
-    "page.edit_feed.no_cache": "Currently no cache",
-    "page.edit_feed.cache_statistic": [
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
         "%d item, %s cached ",
         "%d items, %s cached"
     ],
@@ -1582,8 +1587,9 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
-    "page.edit_feed.no_cache": "Currently no cache",
-    "page.edit_feed.cache_statistic": [
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
         "%d item, %s cached ",
         "%d items, %s cached"
     ],
@@ -1864,9 +1870,10 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag 标题：",
     "page.edit_feed.no_header": "无",
     "page.edit_feed.last_parsing_error": "最后一次解析错误",
-    "page.edit_feed.no_cache": "目前没有缓存",
-    "page.edit_feed.cache_statistic": [
-        "已缓存 %d 个文件，共 %s"
+    "page.edit_feed.caches": "缓存统计:",
+    "page.edit_feed.no_cache": "无缓存",
+    "page.edit_feed.cache_statistics": [
+        "%d 个文件, %s"
     ],
     "page.keyboard_shortcuts.title": "快捷键",
     "page.keyboard_shortcuts.subtitle.sections": "分区导航",
@@ -2052,11 +2059,11 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "846a5459523dfc43cf4a5387b0e283e00435e566f95e322d67a2859a09ba1093",
-	"en_US": "d6f491148b045411c320749d19b8d2ec8e2581bf836fed6e84f3c84ed289ac40",
-	"fr_FR": "6a99b4c0fac5318a3ccc2b9976ccc66bf3d592df0e098224f4ac2dd54860a2e0",
-	"nl_NL": "25b6a212a545db459b43910675284e241a3fd71af565c7dcb6e72b7a4343d862",
-	"pl_PL": "a6d3ff2d9687433e4a578065ce69dfa7c4e94c3286b0a9e16f67c85637a42c5d",
-	"ru_RU": "52a46bbf2ff08dac1d73242ac69d7e7d02d98ff0c00866b1e7a4dae8a9db5ef6",
-	"zh_CN": "ca77e22dfde133ed3eda58d2d8fee901f860fd86174def035711d5beaffe3eab",
+	"de_DE": "1842151d6759885ce3251437dfe200560b73706ca13ff570fca441d790762806",
+	"en_US": "e4f7a144b791364ae6be37b1c6d1c75ee9b70af940e12073bf3d7eca8d9d67e3",
+	"fr_FR": "275d3bd2d14ac33290a4a5be46f9a1a43f589ac3a2706d75cfc15cf4c76bde6c",
+	"nl_NL": "a65d313428adb299b5acd3f1e051599de1a5bfff848bd245aedd4248ba46d31e",
+	"pl_PL": "4257897c2d84b9537440fa4b178a022b36428d4e78057a14159649207caedd41",
+	"ru_RU": "76349aaece58a2d69621b2e52a0b6700c938c7c39412866d8641f366bdd256bf",
+	"zh_CN": "0b63038d94fc86583f73a1a02c19fb78198d26be14e10229ea051d642f8e0ce7",
 }
