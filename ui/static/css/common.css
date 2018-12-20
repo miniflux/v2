@@ -812,6 +812,10 @@ article.feed-parsing-error {
     list-style-type: square;
 }
 
+.entry-content strong {
+    font-weight: 600;
+}
+
 .entry-enclosures h3 {
     font-weight: 500;
 }
