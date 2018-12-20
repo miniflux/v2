@@ -28,6 +28,7 @@ const (
 	defaultCertDomain         = ""
 	defaultCertCache          = "/tmp/cert_cache"
 	defaultCleanupFrequency   = 24
+	defaultCacheFrequency     = 24
 	defaultProxyImages        = "http-only"
 	defaultOAuth2ClientID     = ""
 	defaultOAuth2ClientSecret = ""
@@ -150,6 +151,11 @@ func (c *Config) CleanupFrequency() int {
 	return getIntValue("CLEANUP_FREQUENCY", defaultCleanupFrequency)
 }
 
+// CacheFrequency returns the interval for cache jobs.
+func (c *Config) CacheFrequency() int {
+	return getIntValue("CACHE_FREQUENCY", defaultCacheFrequency)
+}
+
 // WorkerPoolSize returns the number of background worker.
 func (c *Config) WorkerPoolSize() int {
 	return getIntValue("WORKER_POOL_SIZE", defaultWorkerPoolSize)
@@ -218,6 +224,11 @@ func (c *Config) ProxyImages() string {
 // HasHTTPService returns true if the HTTP service is enabled.
 func (c *Config) HasHTTPService() bool {
 	return !getBooleanValue("DISABLE_HTTP_SERVICE")
+}
+
+// HasCacheService returns true if the cache service is enabled.
+func (c *Config) HasCacheService() bool {
+	return !getBooleanValue("DISABLE_CACHE_SERVICE") && c.HasHTTPService() && c.BaseURL() != defaultBaseURL
 }
 
 // HasSchedulerService returns true if the scheduler service is enabled.

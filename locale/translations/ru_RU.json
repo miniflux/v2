@@ -9,6 +9,7 @@
     "action.cancel": "закрыть",
     "action.remove": "Удалить",
     "action.remove_feed": "Удалить эту подписку",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Обновить",
     "action.edit": "Изменить",
     "action.download": "Загрузить",
@@ -102,6 +103,12 @@
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Сочетания клавиш",
     "page.keyboard_shortcuts.subtitle.sections": "Навигация по секциям",
     "page.keyboard_shortcuts.subtitle.items": "Навигация по элементам",
@@ -199,6 +206,7 @@
     "form.feed.label.feed_url": "URL подписки",
     "form.feed.label.category": "Категория",
     "form.feed.label.crawler": "Извлечь оригинальное содержимое",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Имя пользователя подписки",
     "form.feed.label.feed_password": "Пароль подписки",
     "form.feed.label.user_agent": "Переопределить User Agent по умолчанию",

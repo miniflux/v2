@@ -142,7 +142,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at at time zone u.timezone,
 		f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
+		f.scraper_rules, f.rewrite_rules, f.crawler, f.cache_media, f.user_agent,
 		f.username, f.password,
 		f.category_id, c.title as category_title,
 		fi.icon_id,
@@ -167,6 +167,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.ScraperRules,
 		&feed.RewriteRules,
 		&feed.Crawler,
+		&feed.CacheMedia,
 		&feed.UserAgent,
 		&feed.Username,
 		&feed.Password,
@@ -238,8 +239,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	query := `UPDATE feeds SET
 		feed_url=$1, site_url=$2, title=$3, category_id=$4, etag_header=$5, last_modified_header=$6, checked_at=$7,
 		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, crawler=$12, user_agent=$13,
-		username=$14, password=$15
-		WHERE id=$16 AND user_id=$17`
+		username=$14, password=$15, cache_media=$16
+		WHERE id=$17 AND user_id=$18`
 
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -257,6 +258,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.UserAgent,
 		feed.Username,
 		feed.Password,
+		feed.CacheMedia,
 		feed.ID,
 		feed.UserID,
 	)

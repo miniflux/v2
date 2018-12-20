@@ -9,6 +9,7 @@
     "action.cancel": "anuluj",
     "action.remove": "Usuń",
     "action.remove_feed": "Usuń ten kanał",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Zaktualizuj",
     "action.edit": "Edytuj",
     "action.download": "Pobierz",
@@ -102,6 +103,12 @@
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
     "page.edit_feed.last_parsing_error": "Ostatni błąd analizy",
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Skróty klawiszowe",
     "page.keyboard_shortcuts.subtitle.sections": "Nawigacja między punktami menu",
     "page.keyboard_shortcuts.subtitle.items": "Nawigacja między artykułami",
@@ -199,6 +206,7 @@
     "form.feed.label.feed_url": "URL kanału",
     "form.feed.label.category": "Kategoria",
     "form.feed.label.crawler": "Pobierz oryginalną treść",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Subskrypcję nazwa użytkownika",
     "form.feed.label.feed_password": "Subskrypcję Hasło",
     "form.feed.label.user_agent": "Zastąp domyślny agent użytkownika",

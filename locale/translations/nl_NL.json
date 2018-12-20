@@ -9,6 +9,7 @@
     "action.cancel": "annuleren",
     "action.remove": "Verwijderen",
     "action.remove_feed": "Verwijder deze feed",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Updaten",
     "action.edit": "Bewerken",
     "action.download": "Download",
@@ -101,6 +102,12 @@
     "page.edit_feed.etag_header": "ETAG-header:",
     "page.edit_feed.no_header": "Geen",
     "page.edit_feed.last_parsing_error": "Laatste parse error",
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Sneltoetsen",
     "page.keyboard_shortcuts.subtitle.sections": "Naviguatie tussen menu's",
     "page.keyboard_shortcuts.subtitle.items": "Navigatie tussen items",
@@ -197,6 +204,7 @@
     "form.feed.label.feed_url": "Feed URL",
     "form.feed.label.category": "Categorie",
     "form.feed.label.crawler": "Download originele content",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Feed-gebruikersnaam",
     "form.feed.label.feed_password": "Feed wachtwoord",
     "form.feed.label.user_agent": "Standaard User Agent overschrijven",

@@ -9,6 +9,7 @@
     "action.cancel": "取消",
     "action.remove": "删除",
     "action.remove_feed": "删除此源",
+    "action.remove_feed_cache": "清除媒体缓存",
     "action.update": "更新",
     "action.edit": "编辑",
     "action.download": "下载",
@@ -98,6 +99,11 @@
     "page.edit_feed.etag_header": "ETag 标题：",
     "page.edit_feed.no_header": "无",
     "page.edit_feed.last_parsing_error": "最后一次解析错误",
+    "page.edit_feed.caches": "缓存统计:",
+    "page.edit_feed.no_cache": "无缓存",
+    "page.edit_feed.cache_statistics": [
+        "%d 个文件, %s"
+    ],
     "page.keyboard_shortcuts.title": "快捷键",
     "page.keyboard_shortcuts.subtitle.sections": "分区导航",
     "page.keyboard_shortcuts.subtitle.items": "条目导航",
@@ -195,6 +201,7 @@
     "form.feed.label.feed_url": "源 URL",
     "form.feed.label.category": "类别",
     "form.feed.label.crawler": "获取原始内容",
+    "form.feed.label.cache_media": "缓存星标文章的媒体",
     "form.feed.label.feed_username": "源用户名",
     "form.feed.label.feed_password": "源密码",
     "form.feed.label.user_agent": "覆盖默认 User-Agent",

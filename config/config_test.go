@@ -437,6 +437,31 @@ func TestCleanupFrequency(t *testing.T) {
 	}
 }
 
+func TestDefaultCacheFrequencyValue(t *testing.T) {
+	os.Clearenv()
+
+	cfg := NewConfig()
+	expected := defaultCacheFrequency
+	result := cfg.CacheFrequency()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CACHE_FREQUENCY value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCacheFrequency(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CACHE_FREQUENCY", "42")
+
+	cfg := NewConfig()
+	expected := 42
+	result := cfg.CacheFrequency()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CACHE_FREQUENCY value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestDefaultWorkerPoolSizeValue(t *testing.T) {
 	os.Clearenv()
 
@@ -680,6 +705,44 @@ func TestDisableHTTPService(t *testing.T) {
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableCacheServiceWhenBaseURLUnset(t *testing.T) {
+	os.Clearenv()
+
+	cfg := NewConfig()
+	expected := false
+	result := cfg.HasCacheService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableCacheServiceWhenHTTPServiceDisabled(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_HTTP_SERVICE", "1")
+
+	cfg := NewConfig()
+	expected := false
+	result := cfg.HasCacheService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestEnableCacheService(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("BASE_URL", "http://example.org")
+
+	cfg := NewConfig()
+	expected := true
+	result := cfg.HasCacheService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
 	}
 }
 

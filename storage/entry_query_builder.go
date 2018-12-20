@@ -9,8 +9,11 @@ import (
 	"strings"
 	"time"
 
+	"miniflux.app/reader/media"
+
 	"github.com/lib/pq"
 
+	"miniflux.app/config"
 	"miniflux.app/model"
 	"miniflux.app/timer"
 	"miniflux.app/timezone"
@@ -19,6 +22,7 @@ import (
 // EntryQueryBuilder builds a SQL query to fetch entries.
 type EntryQueryBuilder struct {
 	store      *Storage
+	cfg        *config.Config
 	args       []interface{}
 	conditions []string
 	order      string
@@ -255,6 +259,11 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
 		}
+		if e.cfg.HasCacheService() {
+			if medias, err := e.store.MediasByEntryID(entry.UserID, entry.ID); err == nil {
+				media.RedirectMedia(&entry, medias, e.cfg.BaseURL())
+			}
+		}
 
 		if iconID == nil {
 			entry.Feed.Icon.IconID = 0
@@ -334,9 +343,10 @@ func (e *EntryQueryBuilder) buildSorting() string {
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
-func NewEntryQueryBuilder(store *Storage, userID int64) *EntryQueryBuilder {
+func NewEntryQueryBuilder(store *Storage, cfg *config.Config, userID int64) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
 		store:      store,
+		cfg:        cfg,
 		args:       []interface{}{userID},
 		conditions: []string{"e.user_id = $1"},
 	}

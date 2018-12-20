@@ -9,6 +9,7 @@
     "action.cancel": "cancel",
     "action.remove": "Remove",
     "action.remove_feed": "Remove this feed",
+    "action.remove_feed_cache": "Clear media cache",
     "action.update": "Update",
     "action.edit": "Edit",
     "action.download": "Download",
@@ -100,6 +101,12 @@
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",
     "page.edit_feed.last_parsing_error": "Last Parsing Error",
+    "page.edit_feed.caches": "Cache statistics:",
+    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.cache_statistics": [
+        "%d item, %s cached ",
+        "%d items, %s cached"
+    ],
     "page.keyboard_shortcuts.title": "Keyboard Shortcuts",
     "page.keyboard_shortcuts.subtitle.sections": "Sections Navigation",
     "page.keyboard_shortcuts.subtitle.items": "Items Navigation",
@@ -197,6 +204,7 @@
     "form.feed.label.feed_url": "Feed URL",
     "form.feed.label.category": "Category",
     "form.feed.label.crawler": "Fetch original content",
+    "form.feed.label.cache_media": "Cache medias for starred entries",
     "form.feed.label.feed_username": "Feed Username",
     "form.feed.label.feed_password": "Feed Password",
     "form.feed.label.user_agent": "Override Default User Agent",
