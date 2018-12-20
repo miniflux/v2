@@ -3,7 +3,6 @@ package media // import "miniflux.app/reader/media"
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strings"
 	"time"
 
@@ -96,48 +95,4 @@ func ParseDocument(entry *model.Entry) ([]string, error) {
 	}
 
 	return urls, nil
-}
-
-// RedirectMedia redirects media urls in entryContent to media cache if exists.
-func RedirectMedia(entry *model.Entry, medias map[string]*model.Media, baseURL string) {
-	if len(medias) == 0 {
-		return
-	}
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entry.Content))
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	for _, q := range queries {
-		matches := doc.Find(q)
-		if matches.Length() == 0 {
-			continue
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-		matches.Each(func(i int, img *goquery.Selection) {
-			href := img.AttrOr("src", "")
-			if href == "" || strings.HasPrefix(href, "data:") {
-				return
-			}
-			href, err = url.AbsoluteURL(entry.URL, href)
-			if err != nil {
-				return
-			}
-			hash := URLHash(href)
-			if _, ok := medias[hash]; !ok {
-				return
-			}
-
-			u, err := url.AbsoluteURL(baseURL, "/media/"+hash)
-			if err != nil {
-				log.Fatal(err)
-			}
-			img.SetAttr("src", u)
-		})
-
-		entry.Content, _ = doc.Find("body").First().Html()
-
-	}
 }
