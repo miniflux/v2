@@ -343,10 +343,9 @@ func (e *EntryQueryBuilder) buildSorting() string {
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
-func NewEntryQueryBuilder(store *Storage, cfg *config.Config, userID int64) *EntryQueryBuilder {
+func NewEntryQueryBuilder(store *Storage, userID int64) *EntryQueryBuilder {
 	return &EntryQueryBuilder{
 		store:      store,
-		cfg:        cfg,
 		args:       []interface{}{userID},
 		conditions: []string{"e.user_id = $1"},
 	}

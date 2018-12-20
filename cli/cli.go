@@ -78,7 +78,7 @@ func Parse() {
 		return
 	}
 
-	store := storage.NewStorage(db, cfg)
+	store := storage.NewStorage(db)
 
 	if flagResetFeedErrors {
 		store.ResetFeedErrors()
