@@ -708,8 +708,21 @@ func TestDisableHTTPService(t *testing.T) {
 	}
 }
 
-func TestDisableCacheServiceWhenBaseURLUnset(t *testing.T) {
+func TestEnableCacheServiceWhenBaseURLUnset(t *testing.T) {
 	os.Clearenv()
+
+	cfg := NewConfig()
+	expected := true
+	result := cfg.HasCacheService()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableCacheService(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 
 	cfg := NewConfig()
 	expected := false
@@ -726,19 +739,6 @@ func TestDisableCacheServiceWhenHTTPServiceDisabled(t *testing.T) {
 
 	cfg := NewConfig()
 	expected := false
-	result := cfg.HasCacheService()
-
-	if result != expected {
-		t.Fatalf(`Unexpected HasCacheService() value, got %v instead of %v`, result, expected)
-	}
-}
-
-func TestEnableCacheService(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("BASE_URL", "http://example.org")
-
-	cfg := NewConfig()
-	expected := true
 	result := cfg.HasCacheService()
 
 	if result != expected {
