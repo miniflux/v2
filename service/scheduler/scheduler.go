@@ -56,11 +56,8 @@ func cacheScheduler(store *storage.Storage, hasCacheService bool, cacheFrequency
 	if hasCacheService {
 		c := time.Tick(time.Duration(cacheFrequency) * time.Hour)
 		for range c {
-			if err := store.CacheEntries(); err != nil {
+			if err := store.CacheMedias(30); err != nil {
 				logger.Error("[Scheduler:Cache] %v", err)
-			}
-			if err := store.RetryCache(30); err != nil {
-				logger.Error("[Scheduler:RetryCache] %v", err)
 			}
 		}
 	}

@@ -13,39 +13,24 @@ import (
 	"miniflux.app/timer"
 )
 
-// MediasByEntryID returns medias of an entry.
-func (s *Storage) MediasByEntryID(userID, entryID int64) (map[string]*model.Media, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MediasByEntryID] userID=%d, entryID=%d", userID, entryID))
-	query := `
-		SELECT
-		m.id, m.url_hash, m.mime_type, m.content
-		FROM medias m
-		LEFT JOIN entry_medias em ON em.media_id=m.id
-		LEFT JOIN entries e ON e.id=em.entry_id
-		WHERE e.user_id=$1 AND e.id=$2 AND m.success='t'
-	`
-	rows, err := s.db.Query(query, userID, entryID)
-	if err != nil {
-		return nil, fmt.Errorf("unable to get medias: %v", err)
-	}
-	defer rows.Close()
+// HasMediaCache checks if the given URL has cache.
+func (s *Storage) HasMediaCache(URL string) bool {
+	defer timer.ExecutionTime(time.Now(), "[Storage:HasMediaCache]")
+	var result int
+	query := `SELECT count(*) as c FROM medias WHERE url_hash=$1 AND success='T'`
+	s.db.QueryRow(query, media.URLHash(URL)).Scan(&result)
+	return result != 0
+}
 
-	medias := make(map[string]*model.Media, 0)
-	for rows.Next() {
-		var media model.Media
-		err := rows.Scan(
-			&media.ID,
-			&media.URLHash,
-			&media.MimeType,
-			&media.Content,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("unable to fetch medias row: %v", err)
-		}
-		medias[media.URLHash] = &media
-	}
+// MediaByURL returns an Media by the url.
+// Notice the media fetched could be an unsucessfully cached one.
+// Remember to check Media.Success.
+func (s *Storage) MediaByURL(URL string) (*model.Media, error) {
+	defer timer.ExecutionTime(time.Now(), "[Storage:MediaByURL]")
 
-	return medias, nil
+	m := &model.Media{URLHash: media.URLHash(URL)}
+	err := s.MediaByHash(m)
+	return m, err
 }
 
 // MediaByHash returns an Media by the url hash (checksum).
@@ -55,10 +40,11 @@ func (s *Storage) MediaByHash(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaByHash]")
 
 	err := s.db.QueryRow(
-		`SELECT id, mime_type, content, success FROM medias WHERE url_hash=$1`,
+		`SELECT id, url, mime_type, content, success FROM medias WHERE url_hash=$1`,
 		media.URLHash,
 	).Scan(
 		&media.ID,
+		&media.URL,
 		&media.MimeType,
 		&media.Content,
 		&media.Success,
@@ -163,7 +149,7 @@ func (s *Storage) MediaStatistics(feedID int64) (count int, size int, err error)
 	INNER JOIN entries e on f.id=e.feed_id
 	INNER JOIN entry_medias em on e.id=em.entry_id
 	INNER JOIN medias m on em.media_id=m.id
-	WHERE f.id=$1
+	WHERE f.id=$1 and m.success='t'
 `
 	err = s.db.QueryRow(
 		query,
@@ -172,75 +158,61 @@ func (s *Storage) MediaStatistics(feedID int64) (count int, size int, err error)
 	return
 }
 
-// CacheEntries caches medias for starred entries.
-func (s *Storage) CacheEntries() error {
-	entries, err := s.getUncachedEntries()
+// CacheMedias caches recently created medias of starred entries.
+// the days limit is to avoid always trying to cache failed medias
+func (s *Storage) CacheMedias(days int) error {
+	medias, err := s.getUncachedMedias(days)
 	if err != nil {
 		return err
 	}
-	for i, entry := range entries {
-		logger.Debug("Caching entry (%d of %d) %s", i+1, len(entries), entry.Title)
-		s.CacheEntry(entry)
+	for i, m := range medias {
+		logger.Debug("[Storage:CacheMedias] caching medias (%d of %d) %s", i+1, len(medias), m.URL)
+		err = s.cacheMedia(m)
+		if err != nil {
+			logger.Error("[Storage:CacheMedias] unable to cache media %s: %v", m.URL, err)
+		}
 	}
 	return nil
 }
 
-// CacheEntry caches medias for given entry.
-func (s *Storage) CacheEntry(entry *model.Entry) {
+func (s *Storage) cacheMedia(m *model.Media) error {
+	fm, err := media.FindMedia(m.URL)
+	if err != nil {
+		return err
+	}
+	fm.ID = m.ID
+	return s.UpdateMedia(fm)
+}
+
+// CreateEntryMedias create media records for given entry, but not cache them
+func (s *Storage) CreateEntryMedias(entry *model.Entry) error {
 	var err error
 	defer func() {
 		if err != nil {
-			logger.Error("[Storage:CacheEntry] unable to cache medias for entry id %d: %v", entry.ID, err)
-			return
+			logger.Error("[Storage:CreateEntryMedias] unable to create media records for entry id %d: %v", entry.ID, err)
 		}
 	}()
 	urls, err := media.ParseDocument(entry)
 	if err != nil || len(urls) == 0 {
-		err = s.cacheNoMediaEntry(entry.ID)
-		if err != nil {
-			logger.Error("[Storage:CacheEntry] unable to add placeholder cache record for entry id %d: %v", entry.ID, err)
-		}
-		return
+		return err
 	}
 	entryMedias := make(map[string]int8, 0)
 	for i, u := range urls {
-		logger.Debug("Caching media (%d of %d) for %s : <%s>", i+1, len(urls), entry.Title, u)
+		logger.Debug("[Storage:CreateEntryMedias] Caching media (%d of %d) for %s : <%s>", i+1, len(urls), entry.Title, u)
 		m := &model.Media{URL: u, URLHash: media.URLHash(u)}
 		err = s.MediaByHash(m)
 		if err != nil {
-			return
+			return err
 		} else if m.ID == 0 {
-			m, err = media.FindMedia(u)
-			if err != nil {
-				// make a placeholder media in database
-				// retry caching next time
-				m = &model.Media{
-					URL:      u,
-					URLHash:  media.URLHash(u),
-					MimeType: "",
-					Content:  []byte{},
-					Size:     0,
-					Success:  false,
-				}
-			}
 			if err = s.CreateMedia(m); err != nil {
-				return
-			}
-		} else if !m.Success {
-			fm, err := media.FindMedia(u)
-			if err == nil {
-				fm.ID = m.ID
-				if err = s.UpdateMedia(fm); err != nil {
-					return
-				}
+				return err
 			}
 		}
-
 		// medias in an article could be duplicate, use map to remove them
 		entryMedias[fmt.Sprintf("(%v,%v),", entry.ID, m.ID)] = 0
 	}
 	if len(entryMedias) == 0 {
-		return
+		return nil
 	}
 	// 'entry_medias' records must insert together here
 	// to make sure the records are inserted all or none.
@@ -255,6 +227,7 @@ func (s *Storage) CacheEntry(entry *model.Entry) {
 	rows = rows[:len(rows)-1]
 	sql := fmt.Sprintf(`INSERT INTO entry_medias (entry_id, media_id) VALUES %s`, rows)
 	_, err = s.db.Exec(sql)
+	return nil
 }
 
 // CleanupMedias deletes from the database medias those don't belong to any entries.
@@ -275,42 +248,19 @@ func (s *Storage) CleanupMedias() error {
 	return nil
 }
 
-// RetryCache retry caching for recently failed meidas
-func (s *Storage) RetryCache(days int) error {
-	ms, err := s.getFailedMedias(days)
-	if err != nil {
-		return err
-	}
-	for _, m := range ms {
-		if m.URL == "" {
-			continue
-		}
-		fm, err := media.FindMedia(m.URL)
-		if err != nil {
-			logger.Error("[Storage:RetryCache] unable to download medias for media id %d: %v", m.ID, err)
-			continue
-		}
-		m.MimeType = fm.MimeType
-		m.Content = fm.Content
-		m.Success = true
-		err = s.UpdateMedia(m)
-		if err != nil {
-			logger.Error("[Storage:RetryCache] unable to update medias for media id %d: %v", m.ID, err)
-		}
-	}
-	return nil
-}
-
 // RemoveFeedCaches removes all caches of a feed.
 func (s *Storage) RemoveFeedCaches(userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveFeedCaches] userID=%d, feedID=%d", userID, feedID))
 
 	result, err := s.db.Exec(`
-		DELETE FROM entry_medias WHERE entry_id in (
-			SELECT em.entry_id
+		UPDATE medias 
+		SET mime_type='', content = E''::bytea, size=0, success='f'
+		WHERE id in (
+			SELECT m.id
 			FROM feeds f
 			INNER JOIN entries e on f.id=e.feed_id
 			INNER JOIN entry_medias em ON e.id=em.entry_id
+			INNER JOIN medias m ON m.id=em.media_id
 			WHERE f.id=$1 AND f.user_id=$2
 		)
 	`, feedID, userID)
@@ -332,18 +282,22 @@ func (s *Storage) RemoveFeedCaches(userID, feedID int64) error {
 	return nil
 }
 
-func (s *Storage) getFailedMedias(days int) (model.Medias, error) {
-	query := fmt.Sprintf(`
-		SELECT id, url
-		FROM medias 
-		WHERE success='f' AND created_at > now () - '%d days'::interval LIMIT 5000
-	`, days)
-	if _, err := s.db.Exec(query); err != nil {
-		return nil, fmt.Errorf("unable to archive get failed medias: %v", err)
-	}
+func (s *Storage) getUncachedMedias(days int) (model.Medias, error) {
+	query := `
+	SELECT m.id, m.url, m.url_hash
+	FROM feeds f
+		INNER JOIN entries e on f.id=e.feed_id
+		LEFT JOIN entry_medias em ON e.id=em.entry_id
+		LEFT JOIN medias m ON em.media_id=m.id
+	WHERE 
+		f.cache_media='T' 
+		AND e.starred='T' 
+		AND m.success='f' 
+		AND created_at > now () - '%d days'::interval LIMIT 5000
+`
+	query = fmt.Sprintf(query, days)
 
 	medias := make(model.Medias, 0)
-
 	rows, err := s.db.Query(query)
 	defer rows.Close()
 	if err == sql.ErrNoRows {
@@ -353,69 +307,12 @@ func (s *Storage) getFailedMedias(days int) (model.Medias, error) {
 	}
 
 	for rows.Next() {
-		var m model.Media
-		err := rows.Scan(&m.ID, &m.URL)
+		var media model.Media
+		err := rows.Scan(&media.ID, &media.URL, &media.URLHash)
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch medias row: %v", err)
 		}
-		medias = append(medias, &m)
+		medias = append(medias, &media)
 	}
 	return medias, nil
-}
-
-func (s *Storage) getUncachedEntries() (model.Entries, error) {
-	query := `
-	SELECT e.id, e.user_id, e.url, e.title, e.content
-	FROM feeds f
-		INNER JOIN entries e on f.id=e.feed_id
-		LEFT JOIN entry_medias em ON e.id=em.entry_id
-		LEFT JOIN medias m ON em.media_id=m.id
-	WHERE f.cache_media='T' AND e.starred='T' AND m.id IS NULL
-`
-	if _, err := s.db.Exec(query); err != nil {
-		return nil, fmt.Errorf("unable to archive read entries: %v", err)
-	}
-
-	entries := make(model.Entries, 0)
-
-	rows, err := s.db.Query(query)
-	defer rows.Close()
-	if err == sql.ErrNoRows {
-		return entries, nil
-	} else if err != nil {
-		return nil, fmt.Errorf("unable to fetch uncached entries: %v", err)
-	}
-
-	for rows.Next() {
-		var entry model.Entry
-		err := rows.Scan(&entry.ID, &entry.UserID, &entry.URL, &entry.Title, &entry.Content)
-		if err != nil {
-			return nil, fmt.Errorf("unable to fetch entries row: %v", err)
-		}
-		entries = append(entries, &entry)
-	}
-	return entries, nil
-}
-
-// cacheNoMediaEntry add a fake media (empty url) record for entry without media
-// so that getUncachedEntries don't get and parse it again
-func (s *Storage) cacheNoMediaEntry(entryID int64) error {
-	m := &model.Media{
-		URL:      "",
-		URLHash:  media.URLHash(""),
-		MimeType: "",
-		Content:  []byte{},
-		Success:  false,
-	}
-	err := s.MediaByHash(m)
-	if err != nil {
-		return err
-	}
-	if m.ID == 0 {
-		if err = s.CreateMedia(m); err != nil {
-			return err
-		}
-	}
-	_, err = s.db.Exec(`INSERT INTO entry_medias (entry_id, media_id) VALUES ($1,$2)`, entryID, m.ID)
-	return err
 }

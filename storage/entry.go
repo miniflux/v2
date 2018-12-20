@@ -88,6 +88,11 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		return fmt.Errorf("unable to create entry %q (feed #%d): %v", entry.URL, entry.FeedID, err)
 	}
 
+	err = s.CreateEntryMedias(entry)
+	if err != nil {
+		return fmt.Errorf("unable to create entry medias records %q (feed #%d): %v", entry.URL, entry.FeedID, err)
+	}
+
 	for i := 0; i < len(entry.Enclosures); i++ {
 		entry.Enclosures[i].EntryID = entry.ID
 		entry.Enclosures[i].UserID = entry.UserID
