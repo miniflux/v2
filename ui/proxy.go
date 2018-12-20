@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/url"
+
 	"miniflux.app/crypto"
 	"miniflux.app/http/client"
 	"miniflux.app/http/request"
@@ -36,24 +38,37 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 		html.BadRequest(w, r, errors.New("Unable to decode this URL"))
 		return
 	}
+	decodedURLStr := string(decodedURL)
+	cache, err := h.store.MediaByURL(decodedURLStr)
+	var body []byte
+	var mimeType string
+	if err == nil && cache.Success {
+		body = cache.Content
+		mimeType = cache.MimeType
+	} else {
+		proxyImages := h.cfg.ProxyImages()
+		if proxyImages == "none" || (proxyImages == "http-only" && url.IsHTTPS(decodedURLStr)) {
+			html.Redirect(w, r, decodedURLStr)
+			return
+		}
+		clt := client.New(decodedURLStr)
+		resp, err := clt.Get()
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
 
-	clt := client.New(string(decodedURL))
-	resp, err := clt.Get()
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
+		if resp.HasServerFailure() {
+			html.NotFound(w, r)
+			return
+		}
+
+		body, _ = ioutil.ReadAll(resp.Body)
+		mimeType = resp.ContentType
 	}
-
-	if resp.HasServerFailure() {
-		html.NotFound(w, r)
-		return
-	}
-
-	body, _ := ioutil.ReadAll(resp.Body)
 	etag := crypto.HashFromBytes(body)
-
-	response.New(w ,r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		b.WithHeader("Content-Type", resp.ContentType)
+	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Type", mimeType)
 		b.WithBody(body)
 		b.WithoutCompression()
 		b.Write()

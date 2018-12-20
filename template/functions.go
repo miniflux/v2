@@ -10,7 +10,6 @@ import (
 	"html/template"
 	"math"
 	"net/mail"
-	url2 "net/url"
 	"strings"
 	"time"
 
@@ -180,8 +179,9 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 }
 
 func imageProxyFilter(router *mux.Router, cfg *config.Config, data string) string {
+	hasCacheService := cfg.HasCacheService()
 	proxyImages := cfg.ProxyImages()
-	if proxyImages == "none" {
+	if proxyImages == "none" && !hasCacheService {
 		return data
 	}
 
@@ -192,13 +192,7 @@ func imageProxyFilter(router *mux.Router, cfg *config.Config, data string) strin
 
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
 		if srcAttr, ok := img.Attr("src"); ok {
-			if url.Domain(srcAttr) == url.Domain(cfg.BaseURL()) {
-				u, err := url2.Parse(srcAttr)
-				if err != nil {
-					return
-				}
-				img.SetAttr("src", u.RequestURI())
-			} else if proxyImages == "all" || !url.IsHTTPS(srcAttr) {
+			if hasCacheService || proxyImages == "all" || !url.IsHTTPS(srcAttr) {
 				img.SetAttr("src", proxify(router, srcAttr))
 			}
 		}

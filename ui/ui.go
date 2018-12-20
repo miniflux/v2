@@ -25,9 +25,6 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.Use(middleware.handleAppSession)
 	uiRouter.Use(middleware.handleUserSession)
 
-	// media cache
-	uiRouter.HandleFunc("/media/{urlHash}", handler.provideCache).Name("media").Methods("GET")
-
 	// Static assets.
 	uiRouter.HandleFunc("/stylesheets/{name}.css", handler.showStylesheet).Name("stylesheet").Methods("GET")
 	uiRouter.HandleFunc("/{name}.js", handler.showJavascript).Name("javascript").Methods("GET")
