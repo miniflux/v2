@@ -55,7 +55,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		Password:     feed.Password,
 	}
 
-	count, size, err := h.store.MediaStatistics(feedID)
+	all, count, size, err := h.store.MediaStatistics(feedID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -71,8 +71,9 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
-	view.Set("mediaCount", count)
-	view.Set("mediaSize", byteSizeHumanReadable(size))
+	view.Set("mediaCount", all)
+	view.Set("cacheCount", count)
+	view.Set("cacheSize", byteSizeHumanReadable(size))
 
 	html.OK(w, r, view.Render("edit_feed"))
 }

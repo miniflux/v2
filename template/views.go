@@ -486,7 +486,7 @@ var templateViewsMap = map[string]string{
             <li><strong>{{ t "page.edit_feed.last_check" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
             <li><strong>{{ t "page.edit_feed.etag_header" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
             <li><strong>{{ t "page.edit_feed.last_modified_header" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
-            <li><strong>{{ t "page.edit_feed.caches" }} </strong>{{ if eq .mediaCount 0 }}{{ t "page.edit_feed.no_cache" }}{{ else }}{{ plural "page.edit_feed.cache_statistics" .mediaCount .mediaCount .mediaSize }}{{end}}</li>
+            <li><strong>{{ t "page.edit_feed.medias" }} </strong>{{ if eq .mediaCount 0 }}{{ t "page.edit_feed.no_media" }}{{ else }}{{ plural "page.edit_feed.media_statistics" .mediaCount .mediaCount }}{{ if eq .cacheCount 0 }}{{ t "page.edit_feed.no_cache" }}{{ else }}{{ plural "page.edit_feed.cache_statistics" .cacheCount .cacheCount .cacheSize }}{{end}}{{end}}</li>
         </ul>
     </div>
 
@@ -1399,7 +1399,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
-	"edit_feed":           "9fd4b3d8e797fe67ee86979f1cd331d060410f5f74b62a8af2ce8917484ac5c0",
+	"edit_feed":           "3a0f93ab50b1a65dde18a55270985618682a279006c11612d2447cc419b98834",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
 	"feed_entries":        "0f3d02d820475a3b0e165e10be2bf39fa5ab6a9dc5b0945c9ad886434e64e6ca",

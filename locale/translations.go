@@ -106,10 +106,15 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
     "page.edit_feed.no_header": "Nicht verfügbar",
     "page.edit_feed.last_parsing_error": "Letzter Analysefehler",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Tastenkürzel",
@@ -405,10 +410,15 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",
     "page.edit_feed.last_parsing_error": "Last Parsing Error",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Keyboard Shortcuts",
@@ -684,10 +694,15 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "En-tête ETag :",
     "page.edit_feed.no_header": "Aucune",
     "page.edit_feed.last_parsing_error": "Dernière erreur d'analyse",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Raccourcis clavier",
@@ -984,10 +999,15 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETAG-header:",
     "page.edit_feed.no_header": "Geen",
     "page.edit_feed.last_parsing_error": "Laatste parse error",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Sneltoetsen",
@@ -1282,10 +1302,15 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
     "page.edit_feed.last_parsing_error": "Ostatni błąd analizy",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Skróty klawiszowe",
@@ -1587,10 +1612,15 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Сочетания клавиш",
@@ -1870,10 +1900,14 @@ var translations = map[string]string{
     "page.edit_feed.etag_header": "ETag 标题：",
     "page.edit_feed.no_header": "无",
     "page.edit_feed.last_parsing_error": "最后一次解析错误",
-    "page.edit_feed.caches": "缓存统计:",
+    "page.edit_feed.medias": "媒体文件统计: ",
+    "page.edit_feed.no_media": "无",
+    "page.edit_feed.media_statistics": [
+        "共 %d 个, "
+    ],
     "page.edit_feed.no_cache": "无缓存",
     "page.edit_feed.cache_statistics": [
-        "%d 个文件, %s"
+        "已缓存 %d 个, %s"
     ],
     "page.keyboard_shortcuts.title": "快捷键",
     "page.keyboard_shortcuts.subtitle.sections": "分区导航",
@@ -2059,11 +2093,11 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "1842151d6759885ce3251437dfe200560b73706ca13ff570fca441d790762806",
-	"en_US": "e4f7a144b791364ae6be37b1c6d1c75ee9b70af940e12073bf3d7eca8d9d67e3",
-	"fr_FR": "275d3bd2d14ac33290a4a5be46f9a1a43f589ac3a2706d75cfc15cf4c76bde6c",
-	"nl_NL": "a65d313428adb299b5acd3f1e051599de1a5bfff848bd245aedd4248ba46d31e",
-	"pl_PL": "4257897c2d84b9537440fa4b178a022b36428d4e78057a14159649207caedd41",
-	"ru_RU": "76349aaece58a2d69621b2e52a0b6700c938c7c39412866d8641f366bdd256bf",
-	"zh_CN": "0b63038d94fc86583f73a1a02c19fb78198d26be14e10229ea051d642f8e0ce7",
+	"de_DE": "e262fa5696d2cc82800881479a2c9fbe8bdde2f671f2829d5588002f0453146b",
+	"en_US": "57104a9e2cceb14ffb8374cb459549c12ff44238050f5c235b5f0fe6ba2add2e",
+	"fr_FR": "da312a2418ae35969fdb86ed537b8b67fa1b10c4fe640402467164f41a66adca",
+	"nl_NL": "ad0af5451d0d78ceafdfd8f415b8c366a88b2ef433bd0bd813e330191834074e",
+	"pl_PL": "c73f64bf16245d2e3b2bdf3fe976fad7cc34f7dd0970d26aa0475a1b0cb113f2",
+	"ru_RU": "91a83659ba150174c85b886ad11824306144b8bace8829e27fa9e3e75e073049",
+	"zh_CN": "07a8d0fb81cc3126d47b06a19350f0e4d4a0445752cd83e76f0912327bc2b2d9",
 }

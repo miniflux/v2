@@ -86,7 +86,7 @@
             <li><strong>{{ t "page.edit_feed.last_check" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
             <li><strong>{{ t "page.edit_feed.etag_header" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
             <li><strong>{{ t "page.edit_feed.last_modified_header" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
-            <li><strong>{{ t "page.edit_feed.caches" }} </strong>{{ if eq .mediaCount 0 }}{{ t "page.edit_feed.no_cache" }}{{ else }}{{ plural "page.edit_feed.cache_statistics" .mediaCount .mediaCount .mediaSize }}{{end}}</li>
+            <li><strong>{{ t "page.edit_feed.medias" }} </strong>{{ if eq .mediaCount 0 }}{{ t "page.edit_feed.no_media" }}{{ else }}{{ plural "page.edit_feed.media_statistics" .mediaCount .mediaCount }}{{ if eq .cacheCount 0 }}{{ t "page.edit_feed.no_cache" }}{{ else }}{{ plural "page.edit_feed.cache_statistics" .cacheCount .cacheCount .cacheSize }}{{end}}{{end}}</li>
         </ul>
     </div>
 

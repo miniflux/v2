@@ -103,10 +103,15 @@
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
-    "page.edit_feed.caches": "Cache statistics:",
-    "page.edit_feed.no_cache": "None",
+    "page.edit_feed.medias": "Media statistics: ",
+    "page.edit_feed.no_media": "None",
+    "page.edit_feed.media_statistics": [
+        "%d item in total, ",
+        "%d items in total, "
+    ],
+    "page.edit_feed.no_cache": "no cache",
     "page.edit_feed.cache_statistics": [
-        "%d item, %s cached ",
+        "%d item, %s cached",
         "%d items, %s cached"
     ],
     "page.keyboard_shortcuts.title": "Сочетания клавиш",

@@ -141,20 +141,39 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 }
 
 // MediaStatistics returns media count and size of specified feed.
-func (s *Storage) MediaStatistics(feedID int64) (count int, size int, err error) {
+func (s *Storage) MediaStatistics(feedID int64) (count int, cacheCount int, cacheSize int, err error) {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaStatistics]")
+
 	query := `
+	SELECT count(m.id) count
+	FROM feeds f
+		INNER JOIN entries e on f.id=e.feed_id
+		INNER JOIN entry_medias em on e.id=em.entry_id
+		INNER JOIN medias m on em.media_id=m.id
+	WHERE f.id=$1
+`
+	err = s.db.QueryRow(
+		query,
+		feedID,
+	).Scan(&count)
+
+	if err != nil || count == 0 {
+		return
+	}
+
+	query = `
 	SELECT count(m.id) count, coalesce(sum(m.size),0) size
 	FROM feeds f
-	INNER JOIN entries e on f.id=e.feed_id
-	INNER JOIN entry_medias em on e.id=em.entry_id
-	INNER JOIN medias m on em.media_id=m.id
+		INNER JOIN entries e on f.id=e.feed_id
+		INNER JOIN entry_medias em on e.id=em.entry_id
+		INNER JOIN medias m on em.media_id=m.id
 	WHERE f.id=$1 and m.success='t'
 `
 	err = s.db.QueryRow(
 		query,
 		feedID,
-	).Scan(&count, &size)
+	).Scan(&cacheCount, &cacheSize)
+
 	return
 }
 
