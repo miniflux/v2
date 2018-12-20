@@ -150,6 +150,7 @@ func TestProxyFilterWithHttpDefault(t *testing.T) {
 
 func TestProxyFilterWithHttpsDefault(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "http-only")
 	c := config.NewConfig()
 
@@ -167,6 +168,7 @@ func TestProxyFilterWithHttpsDefault(t *testing.T) {
 
 func TestProxyFilterWithHttpNever(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "none")
 	c := config.NewConfig()
 
@@ -184,6 +186,7 @@ func TestProxyFilterWithHttpNever(t *testing.T) {
 
 func TestProxyFilterWithHttpsNever(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "none")
 	c := config.NewConfig()
 
@@ -201,6 +204,7 @@ func TestProxyFilterWithHttpsNever(t *testing.T) {
 
 func TestProxyFilterWithHttpAlways(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "all")
 	c := config.NewConfig()
 
@@ -218,6 +222,7 @@ func TestProxyFilterWithHttpAlways(t *testing.T) {
 
 func TestProxyFilterWithHttpsAlways(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "all")
 	c := config.NewConfig()
 
@@ -235,6 +240,7 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 
 func TestProxyFilterWithHttpInvalid(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "invalid")
 	c := config.NewConfig()
 
@@ -252,6 +258,7 @@ func TestProxyFilterWithHttpInvalid(t *testing.T) {
 
 func TestProxyFilterWithHttpsInvalid(t *testing.T) {
 	os.Clearenv()
+	os.Setenv("DISABLE_CACHE_SERVICE", "1")
 	os.Setenv("PROXY_IMAGES", "invalid")
 	c := config.NewConfig()
 
