@@ -47,7 +47,9 @@ func cleanupScheduler(store *storage.Storage, cleanupFrequency int, archiveReadD
 		if err := store.CleanupMedias(); err != nil {
 			logger.Error("[Scheduler:Cleanup] %v", err)
 		}
-
+		if err := store.CleanupCaches(); err != nil {
+			logger.Error("[Scheduler:Cleanup] %v", err)
+		}
 	}
 }
 

@@ -38,6 +38,7 @@ type EntryMedias struct {
 
 // EntryMedia is a jonction table between entries and media cache
 type EntryMedia struct {
-	EntryID int64 `json:"entry_id"`
-	MediaID int64 `json:"media_id"`
+	EntryID  int64 `json:"entry_id"`
+	MediaID  int64 `json:"media_id"`
+	UseCache bool  `json:"use_cache"`
 }

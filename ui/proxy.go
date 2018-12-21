@@ -39,12 +39,14 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	decodedURLStr := string(decodedURL)
-	cache, err := h.store.MediaByURL(decodedURLStr)
+
+	userID := request.UserID(r)
+	media, err := h.store.UserMediaByURL(decodedURLStr, userID)
 	var body []byte
 	var mimeType string
-	if err == nil && cache.Success {
-		body = cache.Content
-		mimeType = cache.MimeType
+	if err == nil && media.Success {
+		body = media.Content
+		mimeType = media.MimeType
 	} else {
 		proxyImages := h.cfg.ProxyImages()
 		if proxyImages == "none" || (proxyImages == "http-only" && url.IsHTTPS(decodedURLStr)) {

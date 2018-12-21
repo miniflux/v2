@@ -13,15 +13,6 @@ import (
 	"miniflux.app/timer"
 )
 
-// HasMediaCache checks if the given URL has cache.
-func (s *Storage) HasMediaCache(URL string) bool {
-	defer timer.ExecutionTime(time.Now(), "[Storage:HasMediaCache]")
-	var result int
-	query := `SELECT count(*) as c FROM medias WHERE url_hash=$1 AND success='T'`
-	s.db.QueryRow(query, media.URLHash(URL)).Scan(&result)
-	return result != 0
-}
-
 // MediaByURL returns an Media by the url.
 // Notice the media fetched could be an unsucessfully cached one.
 // Remember to check Media.Success.
@@ -42,6 +33,49 @@ func (s *Storage) MediaByHash(media *model.Media) error {
 	err := s.db.QueryRow(
 		`SELECT id, url, mime_type, content, success FROM medias WHERE url_hash=$1`,
 		media.URLHash,
+	).Scan(
+		&media.ID,
+		&media.URL,
+		&media.MimeType,
+		&media.Content,
+		&media.Success,
+	)
+	if err == sql.ErrNoRows {
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("Unable to fetch media by hash: %v", err)
+	}
+
+	return nil
+}
+
+// UserMediaByURL returns an Media by the url.
+// Notice the media fetched could be an unsucessfully cached one.
+// Remember to check Media.Success.
+func (s *Storage) UserMediaByURL(URL string, userID int64) (*model.Media, error) {
+	defer timer.ExecutionTime(time.Now(), "[Storage:UserMediaByURL]")
+
+	m := &model.Media{URLHash: media.URLHash(URL)}
+	err := s.UserMediaByHash(m, userID)
+	return m, err
+}
+
+// UserMediaByHash returns an Media by the url hash (checksum).
+// Notice the media fetched could be an unsucessfully cached one.
+// Remember to check Media.Success.
+func (s *Storage) UserMediaByHash(media *model.Media, userID int64) error {
+	defer timer.ExecutionTime(time.Now(), "[Storage:UserMediaByHash]")
+
+	err := s.db.QueryRow(`
+	SELECT m.id, m.url, m.mime_type, m.content, m.success 
+	FROM medias m
+		INNER JOIN entry_medias em ON m.id=em.media_id
+		INNER JOIN entries e ON e.id=em.entry_id
+		INNER JOIN feeds f on f.id=e.feed_id
+	WHERE m.url_hash=$1 AND em.use_cache='t' AND f.user_id=$2
+`,
+		media.URLHash,
+		userID,
 	).Scan(
 		&media.ID,
 		&media.URL,
@@ -167,7 +201,7 @@ func (s *Storage) MediaStatistics(feedID int64) (count int, cacheCount int, cach
 		INNER JOIN entries e on f.id=e.feed_id
 		INNER JOIN entry_medias em on e.id=em.entry_id
 		INNER JOIN medias m on em.media_id=m.id
-	WHERE f.id=$1 and m.success='t'
+	WHERE f.id=$1 AND em.use_cache='t' AND m.success='t'
 `
 	err = s.db.QueryRow(
 		query,
@@ -180,13 +214,14 @@ func (s *Storage) MediaStatistics(feedID int64) (count int, cacheCount int, cach
 // CacheMedias caches recently created medias of starred entries.
 // the days limit is to avoid always trying to cache failed medias
 func (s *Storage) CacheMedias(days int) error {
-	medias, err := s.getUncachedMedias(days)
+	medias, mEntries, err := s.getUncachedMedias(days)
 	if err != nil {
 		return err
 	}
 	for i, m := range medias {
 		logger.Debug("[Storage:CacheMedias] caching medias (%d of %d) %s", i+1, len(medias), m.URL)
-		err = s.cacheMedia(m)
+		entries, _ := mEntries[m.ID]
+		err = s.cacheMedia(m, entries)
 		if err != nil {
 			logger.Error("[Storage:CacheMedias] unable to cache media %s: %v", m.URL, err)
 		}
@@ -194,13 +229,21 @@ func (s *Storage) CacheMedias(days int) error {
 	return nil
 }
 
-func (s *Storage) cacheMedia(m *model.Media) error {
-	fm, err := media.FindMedia(m.URL)
-	if err != nil {
-		return err
+func (s *Storage) cacheMedia(m *model.Media, entries string) error {
+	if !m.Success {
+		fm, err := media.FindMedia(m.URL)
+		if err != nil {
+			return err
+		}
+		fm.ID = m.ID
+		err = s.UpdateMedia(fm)
+		if err != nil {
+			return err
+		}
 	}
-	fm.ID = m.ID
-	return s.UpdateMedia(fm)
+	sql := fmt.Sprintf(`UPDATE entry_medias set use_cache='t' WHERE media_id=%d AND entry_id in (%s)`, m.ID, entries)
+	_, err := s.db.Exec(sql)
+	return err
 }
 
 // CreateEntryMedias create media records for given entry, but not cache them
@@ -217,12 +260,13 @@ func (s *Storage) CreateEntryMedias(entry *model.Entry) error {
 	}
 	entryMedias := make(map[string]int8, 0)
 	for i, u := range urls {
-		logger.Debug("[Storage:CreateEntryMedias] Caching media (%d of %d) for %s : <%s>", i+1, len(urls), entry.Title, u)
+		logger.Debug("[Storage:CreateEntryMedias] Create media (%d of %d) for %s : <%s>", i+1, len(urls), entry.Title, u)
 		m := &model.Media{URL: u, URLHash: media.URLHash(u)}
 		err = s.MediaByHash(m)
 		if err != nil {
 			return err
-		} else if m.ID == 0 {
+		}
+		if m.ID == 0 {
 			if err = s.CreateMedia(m); err != nil {
 				return err
 			}
@@ -246,7 +290,7 @@ func (s *Storage) CreateEntryMedias(entry *model.Entry) error {
 	rows = rows[:len(rows)-1]
 	sql := fmt.Sprintf(`INSERT INTO entry_medias (entry_id, media_id) VALUES %s`, rows)
 	_, err = s.db.Exec(sql)
-	return nil
+	return err
 }
 
 // CleanupMedias deletes from the database medias those don't belong to any entries.
@@ -272,14 +316,13 @@ func (s *Storage) RemoveFeedCaches(userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveFeedCaches] userID=%d, feedID=%d", userID, feedID))
 
 	result, err := s.db.Exec(`
-		UPDATE medias 
-		SET mime_type='', content = E''::bytea, size=0, success='f'
-		WHERE id in (
-			SELECT m.id
-			FROM feeds f
-			INNER JOIN entries e on f.id=e.feed_id
-			INNER JOIN entry_medias em ON e.id=em.entry_id
-			INNER JOIN medias m ON m.id=em.media_id
+		UPDATE entry_medias 
+		SET use_cache ='f'
+		WHERE entry_id in (
+			SELECT em.entry_id
+            FROM feeds f
+                INNER JOIN entries e on f.id=e.feed_id
+                INNER JOIN entry_medias em ON e.id=em.entry_id
 			WHERE f.id=$1 AND f.user_id=$2
 		)
 	`, feedID, userID)
@@ -296,23 +339,54 @@ func (s *Storage) RemoveFeedCaches(userID, feedID int64) error {
 		return errors.New("no cache has been removed")
 	}
 
-	_ = s.CleanupMedias()
-
 	return nil
 }
 
-func (s *Storage) getUncachedMedias(days int) (model.Medias, error) {
+// CleanupCaches removes caches that has no entry refer to.
+func (s *Storage) CleanupCaches() error {
+	defer timer.ExecutionTime(time.Now(), "[Storage:CleanupCaches]")
+
+	result, err := s.db.Exec(`
+		UPDATE medias 
+		SET mime_type='', content = E''::bytea, size=0, success='f'
+		WHERE id in (
+			SELECT id
+			FROM medias
+			WHERE success='t' and id NOT IN(
+				SELECT media_id from entry_medias WHERE use_cache='t'
+			)
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("unable to remove CleanupCaches: %v", err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("unable to remove CleanupCaches: %v", err)
+	}
+
+	if count == 0 {
+		return errors.New("no cache has been removed")
+	}
+	return nil
+}
+
+func (s *Storage) getUncachedMedias(days int) (model.Medias, map[int64]string, error) {
+	mediaEntries := make(map[int64]string, 0)
 	query := `
-	SELECT m.id, m.url, m.url_hash
-	FROM feeds f
-		INNER JOIN entries e on f.id=e.feed_id
-		LEFT JOIN entry_medias em ON e.id=em.entry_id
-		LEFT JOIN medias m ON em.media_id=m.id
-	WHERE 
-		f.cache_media='T' 
-		AND e.starred='T' 
-		AND m.success='f' 
-		AND created_at > now () - '%d days'::interval LIMIT 5000
+	SELECT m.id, m.url, m.url_hash, m.success, string_agg(cast(e.id as TEXT),',') as eids
+    FROM feeds f
+        INNER JOIN entries e ON f.id=e.feed_id
+        INNER JOIN entry_medias em ON e.id=em.entry_id
+        INNER JOIN medias m ON em.media_id=m.id
+    WHERE 
+        f.cache_media='T' 
+        AND e.starred='T' 
+	    AND em.use_cache='F'
+		AND created_at > now()-'%d days'::interval
+	GROUP BY m.id
+    LIMIT 5000
 `
 	query = fmt.Sprintf(query, days)
 
@@ -320,18 +394,21 @@ func (s *Storage) getUncachedMedias(days int) (model.Medias, error) {
 	rows, err := s.db.Query(query)
 	defer rows.Close()
 	if err == sql.ErrNoRows {
-		return medias, nil
+		return medias, mediaEntries, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("unable to fetch uncached medias: %v", err)
+		return nil, nil, fmt.Errorf("unable to fetch uncached medias: %v", err)
 	}
 
 	for rows.Next() {
 		var media model.Media
-		err := rows.Scan(&media.ID, &media.URL, &media.URLHash)
+		var entryIDs string
+		err := rows.Scan(&media.ID, &media.URL, &media.URLHash, &media.Success, &entryIDs)
 		if err != nil {
-			return nil, fmt.Errorf("unable to fetch medias row: %v", err)
+			return nil, nil, fmt.Errorf("unable to fetch uncached medias row: %v", err)
 		}
 		medias = append(medias, &media)
+		mediaEntries[media.ID] = entryIDs
+
 	}
-	return medias, nil
+	return medias, mediaEntries, nil
 }
