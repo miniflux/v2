@@ -48,6 +48,12 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 		return fmt.Errorf(`unable to update content of entry #%d: %v`, entry.ID, err)
 	}
 
+	err = s.UpdateEntryMedias(entry)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf(`unable to update entry medias %q: %v`, entry.URL, err)
+	}
+
 	query := `
 		UPDATE entries
 		SET document_vectors = to_tsvector(substring(title || ' ' || coalesce(content, '') for 1000000))
@@ -137,6 +143,10 @@ func (s *Storage) updateEntry(entry *model.Entry) error {
 		enclosure.EntryID = entry.ID
 	}
 
+	err = s.UpdateEntryMedias(entry)
+	if err != nil {
+		return fmt.Errorf(`unable to update entry medias %q: %v`, entry.URL, err)
+	}
 	return s.UpdateEnclosures(entry.Enclosures)
 }
 

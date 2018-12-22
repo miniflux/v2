@@ -246,6 +246,16 @@ func (s *Storage) cacheMedia(m *model.Media, entries string) error {
 	return err
 }
 
+// UpdateEntryMedias updates media records for given entry
+func (s *Storage) UpdateEntryMedias(entry *model.Entry) error {
+	defer timer.ExecutionTime(time.Now(), "[Storage:UpdateEntryMedias]")
+	_, err := s.db.Exec(`DELETE FROM entry_medias WHERE entry_id=$1`, entry.ID)
+	if err != nil {
+		return err
+	}
+	return s.CreateEntryMedias(entry)
+}
+
 // CreateEntryMedias create media records for given entry, but not cache them
 func (s *Storage) CreateEntryMedias(entry *model.Entry) error {
 	var err error
