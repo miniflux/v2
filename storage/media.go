@@ -1,9 +1,11 @@
 package storage // import "miniflux.app/storage"
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"miniflux.app/logger"
@@ -119,6 +121,74 @@ func (s *Storage) CreateMedia(media *model.Media) error {
 	return nil
 }
 
+// CreateMedias creates media from a slice of entries at a time
+func (s *Storage) CreateMedias(entries model.Entries) error {
+	var err error
+	cap := len(entries) * 15
+	medias := make(map[string]string, cap)
+	type IDSet map[int64]*int8
+	// one url could be in multiple entries, and even appears many times in one entry
+	// use IDSET to make sure one url could have multiple entries, but not duplicated
+	urlEntries := make(map[string]IDSet, cap)
+	mediaIDs := make(map[string]int64, cap)
+	for _, entry := range entries {
+		urls, err := media.ParseDocument(entry)
+		if err != nil || len(urls) == 0 {
+			continue
+		}
+		for _, u := range urls {
+			hash := media.URLHash(u)
+			medias[hash] = fmt.Sprintf("('%v','%v'),", strings.Replace(u, "'", "''", -1), hash)
+			if _, ok := urlEntries[hash]; !ok {
+				urlEntries[hash] = make(IDSet, 0)
+			}
+			urlEntries[hash][entry.ID] = nil
+		}
+	}
+
+	if len(medias) == 0 {
+		return nil
+	}
+	// insert medias records
+	var buf bytes.Buffer
+	for _, em := range medias {
+		buf.WriteString(em)
+	}
+	vals := buf.String()[:buf.Len()-1]
+	sql := fmt.Sprintf(`
+		INSERT INTO medias (url, url_hash)
+		VALUES %s
+		ON CONFLICT (url_hash) DO UPDATE
+			SET created_at=current_timestamp
+		RETURNING id, url_hash
+	`, vals)
+	rows, err := s.db.Query(sql)
+	defer rows.Close()
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		var m model.Media
+		err = rows.Scan(&m.ID, &m.URLHash)
+		if err != nil {
+			return err
+		}
+		mediaIDs[m.URLHash] = m.ID
+	}
+
+	// insert entry_medias records
+	buf.Reset()
+	for hash, idSet := range urlEntries {
+		for id := range idSet {
+			buf.WriteString(fmt.Sprintf("(%v,%v),", id, mediaIDs[hash]))
+		}
+	}
+	vals = buf.String()[:buf.Len()-1]
+	sql = fmt.Sprintf(`INSERT INTO entry_medias (entry_id, media_id) VALUES %s`, vals)
+	_, err = s.db.Exec(sql)
+	return err
+}
+
 // UpdateMedia updates a media cache.
 func (s *Storage) UpdateMedia(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:UpdateMedia]")
@@ -172,43 +242,6 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 	}
 
 	return medias, nil
-}
-
-// MediaStatistics returns media count and size of specified feed.
-func (s *Storage) MediaStatistics(feedID int64) (count int, cacheCount int, cacheSize int, err error) {
-	defer timer.ExecutionTime(time.Now(), "[Storage:MediaStatistics]")
-
-	query := `
-	SELECT count(m.id) count
-	FROM feeds f
-		INNER JOIN entries e on f.id=e.feed_id
-		INNER JOIN entry_medias em on e.id=em.entry_id
-		INNER JOIN medias m on em.media_id=m.id
-	WHERE f.id=$1
-`
-	err = s.db.QueryRow(
-		query,
-		feedID,
-	).Scan(&count)
-
-	if err != nil || count == 0 {
-		return
-	}
-
-	query = `
-	SELECT count(m.id) count, coalesce(sum(m.size),0) size
-	FROM feeds f
-		INNER JOIN entries e on f.id=e.feed_id
-		INNER JOIN entry_medias em on e.id=em.entry_id
-		INNER JOIN medias m on em.media_id=m.id
-	WHERE f.id=$1 AND em.use_cache='t' AND m.success='t'
-`
-	err = s.db.QueryRow(
-		query,
-		feedID,
-	).Scan(&cacheCount, &cacheSize)
-
-	return
 }
 
 // CacheMedias caches recently created medias of starred entries.
@@ -269,8 +302,7 @@ func (s *Storage) CreateEntryMedias(entry *model.Entry) error {
 		return err
 	}
 	entryMedias := make(map[string]int8, 0)
-	for i, u := range urls {
-		logger.Debug("[Storage:CreateEntryMedias] Create media (%d of %d) for %s : <%s>", i+1, len(urls), entry.Title, u)
+	for _, u := range urls {
 		m := &model.Media{URL: u, URLHash: media.URLHash(u)}
 		err = s.MediaByHash(m)
 		if err != nil {
@@ -316,6 +348,19 @@ func (s *Storage) CleanupMedias() error {
 	`
 	if _, err := s.db.Exec(query); err != nil {
 		return fmt.Errorf("unable to cleanup medias: %v", err)
+	}
+
+	return nil
+}
+
+// ClearAllCaches clears caches of all user and all entries.
+func (s *Storage) ClearAllCaches() error {
+	query := `
+		UPDATE medias SET mime_type='', content = E''::bytea, size=0, success='f' WHERE success='t';
+		UPDATE entry_medias set use_cache='f' WHERE use_cache='t';
+	`
+	if _, err := s.db.Exec(query); err != nil {
+		return fmt.Errorf("unable to clear all caches: %v", err)
 	}
 
 	return nil

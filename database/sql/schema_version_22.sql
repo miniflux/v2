@@ -2,9 +2,9 @@ create table medias (
 	id bigserial not null,
 	url text not null,
 	url_hash text not null unique,
-	mime_type text not null,
-	content bytea not null,
-	size int8 not null,
+	mime_type text default '',
+	content bytea default E''::bytea,
+	size int8 default 0,
 	success bool default 'f',
 	created_at timestamp with time zone default current_timestamp,
 	primary key (id)
