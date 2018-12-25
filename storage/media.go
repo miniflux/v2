@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/logger"
-
 	"miniflux.app/model"
 	"miniflux.app/reader/media"
 	"miniflux.app/timer"
@@ -243,60 +241,20 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 	return medias, nil
 }
 
-// UpdateEntryMedias updates media records for given entry
-func (s *Storage) UpdateEntryMedias(entry *model.Entry) error {
+// UpdateEntriesMedia updates media records for given entries
+func (s *Storage) UpdateEntriesMedia(entries model.Entries) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:UpdateEntryMedias]")
-	_, err := s.db.Exec(`DELETE FROM entry_medias WHERE entry_id=$1`, entry.ID)
+
+	var buf bytes.Buffer
+	for _, entry := range entries {
+		buf.WriteString(fmt.Sprintf("%d,", entry.ID))
+	}
+	vals := buf.String()[:buf.Len()-1]
+	_, err := s.db.Exec(`DELETE FROM entry_medias WHERE entry_id in ($1)`, vals)
 	if err != nil {
 		return err
 	}
-	return s.CreateEntryMedias(entry)
-}
-
-// CreateEntryMedias create media records for given entry, but not cache them
-func (s *Storage) CreateEntryMedias(entry *model.Entry) error {
-	var err error
-	defer func() {
-		if err != nil {
-			logger.Error("[Storage:CreateEntryMedias] unable to create media records for entry id %d: %v", entry.ID, err)
-		}
-	}()
-	urls, err := media.ParseDocument(entry)
-	if err != nil || len(urls) == 0 {
-		return err
-	}
-	entryMedias := make(map[string]int8, 0)
-	for _, u := range urls {
-		m := &model.Media{URL: u, URLHash: media.URLHash(u)}
-		err = s.MediaByHash(m)
-		if err != nil {
-			return err
-		}
-		if m.ID == 0 {
-			if err = s.CreateMedia(m); err != nil {
-				return err
-			}
-		}
-		// medias in an article could be duplicate, use map to remove them
-		entryMedias[fmt.Sprintf("(%v,%v),", entry.ID, m.ID)] = 0
-	}
-	if len(entryMedias) == 0 {
-		return nil
-	}
-	// 'entry_medias' records must insert together here
-	// to make sure the records are inserted all or none.
-	//
-	// Otherwise, if the task is stop in the middle,
-	// 'entry_medias' has part of all media records
-	// 'getUncachedEntries' won't find and process the entry again
-	rows := ""
-	for em := range entryMedias {
-		rows += em
-	}
-	rows = rows[:len(rows)-1]
-	sql := fmt.Sprintf(`INSERT INTO entry_medias (entry_id, media_id) VALUES %s`, rows)
-	_, err = s.db.Exec(sql)
-	return err
+	return s.CreateEntriesMedia(entries)
 }
 
 // CleanupMedias deletes from the database medias those don't belong to any entries.
