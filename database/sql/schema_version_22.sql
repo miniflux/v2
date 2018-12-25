@@ -5,7 +5,7 @@ create table medias (
 	mime_type text default '',
 	content bytea default E''::bytea,
 	size int8 default 0,
-	success bool default 'f',
+	cached bool default 'f',
 	created_at timestamp with time zone default current_timestamp,
 	primary key (id)
 );

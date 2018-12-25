@@ -18,7 +18,7 @@ type Media struct {
 	MimeType  string    `json:"mime_type"`
 	Content   []byte    `json:"content"`
 	Size      int       `json:"size"`
-	Success   bool      `json:"success"`
+	Cached    bool      `json:"cached"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

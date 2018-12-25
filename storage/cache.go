@@ -23,7 +23,7 @@ func (s *Storage) CacheMedias(days int) error {
 	for i, m := range medias {
 		logger.Debug("[Storage:CacheMedias] caching medias (%d of %d) %s", i+1, len(medias), m.URL)
 		entries, _ := mEntries[m.ID]
-		if !m.Success {
+		if !m.Cached {
 			fm, err := media.FindMedia(m.URL)
 			if err != nil {
 				return err
@@ -53,7 +53,7 @@ func (s *Storage) getUncachedMedias(days int) (model.Medias, map[int64]string, e
 	// FIXME: use created_at to ignore failed medias could have problem
 	// when caching medias which created long time ago but never requires cache
 	query := `
-	SELECT m.id, m.url, m.url_hash, m.success, string_agg(cast(e.id as TEXT),',') as eids
+	SELECT m.id, m.url, m.url_hash, m.cached, string_agg(cast(e.id as TEXT),',') as eids
     FROM feeds f
         INNER JOIN entries e ON f.id=e.feed_id
         INNER JOIN entry_medias em ON e.id=em.entry_id
@@ -61,7 +61,7 @@ func (s *Storage) getUncachedMedias(days int) (model.Medias, map[int64]string, e
     WHERE 
         f.cache_media='T' 
         AND e.starred='T' 
-		AND (em.use_cache='F' OR m.success='F')
+		AND (em.use_cache='F' OR m.cached='F')
 		AND created_at > now()-'%d days'::interval
 	GROUP BY m.id
     LIMIT 5000
@@ -80,7 +80,7 @@ func (s *Storage) getUncachedMedias(days int) (model.Medias, map[int64]string, e
 	for rows.Next() {
 		var media model.Media
 		var entryIDs string
-		err := rows.Scan(&media.ID, &media.URL, &media.URLHash, &media.Success, &entryIDs)
+		err := rows.Scan(&media.ID, &media.URL, &media.URLHash, &media.Cached, &entryIDs)
 		if err != nil {
 			return nil, nil, fmt.Errorf("unable to fetch uncached medias row: %v", err)
 		}
@@ -98,7 +98,7 @@ func (s *Storage) HasEntryCache(entryID int64) (bool, error) {
 		SELECT count(*) as c 
 		FROM entry_medias em
 			INNER JOIN medias m on em.media_id=m.id
-		WHERE em.entry_id=$1 AND em.use_cache='T' AND m.success='T'`
+		WHERE em.entry_id=$1 AND em.use_cache='T' AND m.cached='T'`
 	err := s.db.QueryRow(query, entryID).Scan(&result)
 	return result > 0, err
 }
@@ -114,7 +114,7 @@ func (s *Storage) CacheEntryMedias(userID, EntryID int64) error {
 	}
 	var buf bytes.Buffer
 	for _, m := range medias {
-		if !m.Success {
+		if !m.Cached {
 			fm, err := media.FindMedia(m.URL)
 			if err != nil {
 				return err
@@ -140,7 +140,7 @@ func (s *Storage) CacheEntryMedias(userID, EntryID int64) error {
 
 func (s *Storage) getEntryMedias(userID, EntryID int64) (model.Medias, error) {
 	query := `
-		SELECT m.id, m.url, m.url_hash, m.success
+		SELECT m.id, m.url, m.url_hash, m.cached
 		FROM feeds f
 			INNER JOIN entries e on f.id=e.feed_id
 			INNER JOIN entry_medias em on e.id=em.entry_id
@@ -158,7 +158,7 @@ func (s *Storage) getEntryMedias(userID, EntryID int64) (model.Medias, error) {
 
 	for rows.Next() {
 		var media model.Media
-		err := rows.Scan(&media.ID, &media.URL, &media.URLHash, &media.Success)
+		err := rows.Scan(&media.ID, &media.URL, &media.URLHash, &media.Cached)
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch entry medias row: %v", err)
 		}
@@ -205,11 +205,11 @@ func (s *Storage) CleanupCaches() error {
 
 	result, err := s.db.Exec(`
 		UPDATE medias 
-		SET mime_type='', content = E''::bytea, size=0, success='f'
+		SET mime_type='', content = E''::bytea, size=0, cached='f'
 		WHERE id in (
 			SELECT id
 			FROM medias
-			WHERE success='t' and id NOT IN(
+			WHERE cached='t' and id NOT IN(
 				SELECT media_id from entry_medias WHERE use_cache='t'
 			)
 		)
@@ -232,7 +232,7 @@ func (s *Storage) CleanupCaches() error {
 // ClearAllCaches clears caches of all user and all entries.
 func (s *Storage) ClearAllCaches() error {
 	query := `
-		UPDATE medias SET mime_type='', content = E''::bytea, size=0, success='f' WHERE success='t';
+		UPDATE medias SET mime_type='', content = E''::bytea, size=0, cached='f' WHERE cached='t';
 		UPDATE entry_medias set use_cache='f' WHERE use_cache='t';
 	`
 	if _, err := s.db.Exec(query); err != nil {
@@ -244,7 +244,7 @@ func (s *Storage) ClearAllCaches() error {
 
 // ToggleEntryCache toggles entry cache.
 func (s *Storage) ToggleEntryCache(userID int64, entryID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleCache] userID=%d, entryID=%d", userID, entryID))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleEntryCache] userID=%d, entryID=%d", userID, entryID))
 
 	has, err := s.HasEntryCache(entryID)
 	if err != nil {

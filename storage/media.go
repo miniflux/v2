@@ -14,7 +14,7 @@ import (
 
 // MediaByURL returns an Media by the url.
 // Notice the media fetched could be an unsucessfully cached one.
-// Remember to check Media.Success.
+// Remember to check Media.Cached.
 func (s *Storage) MediaByURL(URL string) (*model.Media, error) {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaByURL]")
 
@@ -25,19 +25,19 @@ func (s *Storage) MediaByURL(URL string) (*model.Media, error) {
 
 // MediaByHash returns an Media by the url hash (checksum).
 // Notice the media fetched could be an unsucessfully cached one.
-// Remember to check Media.Success.
+// Remember to check Media.Cached.
 func (s *Storage) MediaByHash(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:MediaByHash]")
 
 	err := s.db.QueryRow(
-		`SELECT id, url, mime_type, content, success FROM medias WHERE url_hash=$1`,
+		`SELECT id, url, mime_type, content, cached FROM medias WHERE url_hash=$1`,
 		media.URLHash,
 	).Scan(
 		&media.ID,
 		&media.URL,
 		&media.MimeType,
 		&media.Content,
-		&media.Success,
+		&media.Cached,
 	)
 	if err == sql.ErrNoRows {
 		return nil
@@ -50,7 +50,7 @@ func (s *Storage) MediaByHash(media *model.Media) error {
 
 // UserMediaByURL returns an Media by the url.
 // Notice the media fetched could be an unsucessfully cached one.
-// Remember to check Media.Success.
+// Remember to check Media.Cached.
 func (s *Storage) UserMediaByURL(URL string, userID int64) (*model.Media, error) {
 	defer timer.ExecutionTime(time.Now(), "[Storage:UserMediaByURL]")
 
@@ -61,12 +61,12 @@ func (s *Storage) UserMediaByURL(URL string, userID int64) (*model.Media, error)
 
 // UserMediaByHash returns an Media by the url hash (checksum).
 // Notice the media fetched could be an unsucessfully cached one.
-// Remember to check Media.Success.
+// Remember to check Media.Cached.
 func (s *Storage) UserMediaByHash(media *model.Media, userID int64) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:UserMediaByHash]")
 
 	err := s.db.QueryRow(`
-	SELECT m.id, m.url, m.mime_type, m.content, m.success 
+	SELECT m.id, m.url, m.mime_type, m.content, m.cached 
 	FROM medias m
 		INNER JOIN entry_medias em ON m.id=em.media_id
 		INNER JOIN entries e ON e.id=em.entry_id
@@ -80,7 +80,7 @@ func (s *Storage) UserMediaByHash(media *model.Media, userID int64) error {
 		&media.URL,
 		&media.MimeType,
 		&media.Content,
-		&media.Success,
+		&media.Cached,
 	)
 	if err == sql.ErrNoRows {
 		return nil
@@ -96,7 +96,7 @@ func (s *Storage) CreateMedia(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:CreateMedia]")
 	query := `
 	INSERT INTO medias
-	(url, url_hash, mime_type, content, size, success)
+	(url, url_hash, mime_type, content, size, cached)
 	VALUES
 	($1, $2, $3, $4, $5, $6)
 	RETURNING id
@@ -108,7 +108,7 @@ func (s *Storage) CreateMedia(media *model.Media) error {
 		normalizeMimeType(media.MimeType),
 		media.Content,
 		media.Size,
-		media.Success,
+		media.Cached,
 	).Scan(&media.ID)
 
 	if err != nil {
@@ -191,7 +191,7 @@ func (s *Storage) UpdateMedia(media *model.Media) error {
 	defer timer.ExecutionTime(time.Now(), "[Storage:UpdateMedia]")
 	query := `
 	UPDATE medias
-	SET mime_type=$2, content=$3, size=$4, success=$5
+	SET mime_type=$2, content=$3, size=$4, cached=$5
 	WHERE id = $1
 `
 	_, err := s.db.Exec(
@@ -200,7 +200,7 @@ func (s *Storage) UpdateMedia(media *model.Media) error {
 		normalizeMimeType(media.MimeType),
 		media.Content,
 		media.Size,
-		media.Success,
+		media.Cached,
 	)
 
 	if err != nil {
@@ -219,7 +219,7 @@ func (s *Storage) Medias(userID int64) (model.Medias, error) {
 		FROM medias m
 		LEFT JOIN entry_medias em ON em.media_id=medias.id
 		LEFT JOIN entries e ON e.id=em.entry_id
-		WHERE m.success='t' AND e.user_id=$1
+		WHERE m.cached='t' AND e.user_id=$1
 	`
 
 	rows, err := s.db.Query(query, userID)

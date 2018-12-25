@@ -44,7 +44,7 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 	media, err := h.store.UserMediaByURL(decodedURLStr, userID)
 	var body []byte
 	var mimeType string
-	if err == nil && media.Success {
+	if err == nil && media.Cached {
 		body = media.Content
 		mimeType = media.MimeType
 	} else {

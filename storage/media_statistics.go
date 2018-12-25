@@ -20,7 +20,7 @@ func (s *Storage) MediaStatisticsAll() (count int, cacheCount int, cacheSize int
 	err = s.db.QueryRow(`
 		SELECT count(id) count, coalesce(sum(size),0) size
 		FROM medias
-		WHERE success='t'
+		WHERE cached='t'
 	`).Scan(&cacheCount, &cacheSize)
 
 	return
@@ -72,7 +72,7 @@ func (s *Storage) mediaStatisticsByCond(cond string) (count int, cacheCount int,
 		INNER JOIN entries e on f.id=e.feed_id
 		INNER JOIN entry_medias em on e.id=em.entry_id
 		INNER JOIN medias m on em.media_id=m.id
-	WHERE %s AND em.use_cache='t' AND m.success='t'`, cond)
+	WHERE %s AND em.use_cache='t' AND m.cached='t'`, cond)
 	err = s.db.QueryRow(query).Scan(&cacheCount, &cacheSize)
 
 	return
