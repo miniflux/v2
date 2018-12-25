@@ -83,5 +83,18 @@ func (h *handler) showSearchEntryPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
+	if h.cfg.HasCacheService() {
+		countMedias, countCached, _, err := h.store.MediaStatisticsByEntry(entryID)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+		view.Set("hasCacheService", countMedias > 0)
+		view.Set("entryCached", countCached > 0)
+	} else {
+		view.Set("hasCacheService", false)
+		view.Set("entryCached", false)
+	}
+
 	html.OK(w, r, view.Render("entry"))
 }

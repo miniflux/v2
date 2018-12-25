@@ -52,6 +52,18 @@
                         <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
                     </li>
                 {{ end }}
+                {{ if .hasCacheService }}
+                    <li>
+                        <a href="#"
+                            data-toggle-cache="true"
+                            data-cache-url="{{ route "toggleCache" "entryID" .entry.ID }}"
+                            data-label-loading="{{ t "entry.state.saving" }}"
+                            data-label-cached="{{ t "entry.cache.toggle.on" }}"
+                            data-label-uncached="{{ t "entry.cache.toggle.off" }}"
+                            data-value="{{ if .entryCached }}cached{{ else }}uncached{{ end }}"
+                            >{{ if .entryCached }}{{ t "entry.cache.toggle.off" }}{{ else }}{{ t "entry.cache.toggle.on" }}{{ end }}</a>
+                    </li>
+                {{ end }}
             </ul>
         </div>
         <div class="entry-meta">

@@ -52,6 +52,22 @@ class EntryHandler {
         request.execute();
     }
 
+    static toggleCache(element) {
+        element.innerHTML = element.dataset.labelLoading;
+
+        let request = new RequestBuilder(element.dataset.cacheUrl);
+        request.withCallback(() => {
+            if (element.dataset.value === "cached") {
+                element.innerHTML = element.dataset.labelCached;
+                element.dataset.value = "uncached";
+            } else {
+                element.innerHTML = element.dataset.labelUncached;
+                element.dataset.value = "cached";
+            }
+        });
+        request.execute();
+    }
+
     static markEntryAsRead(element) {
         if (element.classList.contains("item-status-unread")) {
             element.classList.remove("item-status-unread");

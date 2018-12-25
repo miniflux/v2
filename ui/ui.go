@@ -86,6 +86,7 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/entry/download/{entryID}", handler.fetchContent).Name("fetchContent").Methods("POST")
 	uiRouter.HandleFunc("/proxy/{encodedURL}", handler.imageProxy).Name("proxy").Methods("GET")
 	uiRouter.HandleFunc("/entry/bookmark/{entryID}", handler.toggleBookmark).Name("toggleBookmark").Methods("POST")
+	uiRouter.HandleFunc("/entry/cache/{entryID}", handler.toggleCache).Name("toggleCache").Methods("POST")
 
 	// User pages.
 	uiRouter.HandleFunc("/users", handler.showUsersPage).Name("users").Methods("GET")

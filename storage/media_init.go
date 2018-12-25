@@ -57,7 +57,7 @@ func getEntriesForCreateMediasRunOnce(db *sql.DB, startID int64) (model.Entries,
 		SELECT id, content 
 		FROM entries e 
 			LEFT JOIN entry_medias em on e.id=em.entry_id
-		WHERE id>$1 AND (status='unread' OR starred='T') AND em.entry_id IS NULL
+		WHERE id>$1 AND (status<>'removed') AND em.entry_id IS NULL
 		ORDER BY e.id ASC
 		LIMIT 1000
 	`

@@ -51,6 +51,8 @@
     "entry.status.title": "Status des Artikels ändern",
     "entry.bookmark.toggle.on": "Lesezeichen hinzufügen",
     "entry.bookmark.toggle.off": "Lesezeichen entfernen",
+    "entry.cache.toggle.on": "Cache",
+    "entry.cache.toggle.off": "Uncache",
     "entry.state.saving": "Speichern...",
     "entry.state.loading": "Lade...",
     "entry.save.label": "Speichern",

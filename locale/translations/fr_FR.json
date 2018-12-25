@@ -51,6 +51,8 @@
     "entry.status.title": "Changer le statut de l'entrée",
     "entry.bookmark.toggle.on": "Favoris",
     "entry.bookmark.toggle.off": "Enlever favoris",
+    "entry.cache.toggle.on": "Cache",
+    "entry.cache.toggle.off": "Uncache",
     "entry.state.saving": "Sauvegarde en cours...",
     "entry.state.loading": "Chargement...",
     "entry.save.label": "Sauvegarder",

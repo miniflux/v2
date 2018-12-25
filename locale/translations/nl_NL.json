@@ -51,6 +51,8 @@
     "entry.status.title": "Verander status van item",
     "entry.bookmark.toggle.on": "Ster toevoegen",
     "entry.bookmark.toggle.off": "Ster weghalen",
+    "entry.cache.toggle.on": "Cache",
+    "entry.cache.toggle.off": "Uncache",
     "entry.state.saving": "Opslaag...",
     "entry.state.loading": "Laden...",
     "entry.save.label": "Opslaan",

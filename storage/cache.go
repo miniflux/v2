@@ -1,6 +1,7 @@
 package storage // import "miniflux.app/storage"
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -22,29 +23,24 @@ func (s *Storage) CacheMedias(days int) error {
 	for i, m := range medias {
 		logger.Debug("[Storage:CacheMedias] caching medias (%d of %d) %s", i+1, len(medias), m.URL)
 		entries, _ := mEntries[m.ID]
-		err = s.cacheMedia(m, entries)
+		if !m.Success {
+			fm, err := media.FindMedia(m.URL)
+			if err != nil {
+				return err
+			}
+			fm.ID = m.ID
+			err = s.UpdateMedia(fm)
+			if err != nil {
+				return err
+			}
+		}
+		sql := fmt.Sprintf(`UPDATE entry_medias set use_cache='t' WHERE media_id=%d AND entry_id in (%s)`, m.ID, entries)
+		_, err := s.db.Exec(sql)
 		if err != nil {
 			logger.Error("[Storage:CacheMedias] unable to cache media %s: %v", m.URL, err)
 		}
 	}
 	return nil
-}
-
-func (s *Storage) cacheMedia(m *model.Media, entries string) error {
-	if !m.Success {
-		fm, err := media.FindMedia(m.URL)
-		if err != nil {
-			return err
-		}
-		fm.ID = m.ID
-		err = s.UpdateMedia(fm)
-		if err != nil {
-			return err
-		}
-	}
-	sql := fmt.Sprintf(`UPDATE entry_medias set use_cache='t' WHERE media_id=%d AND entry_id in (%s)`, m.ID, entries)
-	_, err := s.db.Exec(sql)
-	return err
 }
 
 // getUncachedMedias gets medias which should be but not yet cached
@@ -95,26 +91,81 @@ func (s *Storage) getUncachedMedias(days int) (model.Medias, map[int64]string, e
 	return medias, mediaEntries, nil
 }
 
-// ToggleCache toggles entry cache value.
-func (s *Storage) ToggleCache(userID int64, entryID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleCache] userID=%d, entryID=%d", userID, entryID))
+// HasEntryCache indicates if an entry has cache.
+func (s *Storage) HasEntryCache(entryID int64) (bool, error) {
+	var result int
+	query := `
+		SELECT count(*) as c 
+		FROM entry_medias em
+			INNER JOIN medias m on em.media_id=m.id
+		WHERE em.entry_id=$1 AND em.use_cache='T' AND m.success='T'`
+	err := s.db.QueryRow(query, entryID).Scan(&result)
+	return result > 0, err
+}
 
-	query := `UPDATE entry_medias SET use_cache = 'F' WHERE user_id=$1 AND id=$2`
-	result, err := s.db.Exec(query, userID, entryID)
+// CacheEntryMedias caches media of an entry.
+func (s *Storage) CacheEntryMedias(userID, EntryID int64) error {
+	medias, err := s.getEntryMedias(userID, EntryID)
 	if err != nil {
-		return fmt.Errorf("unable to toggle cache flag for entry #%d: %v", entryID, err)
+		return err
+	}
+	if len(medias) == 0 {
+		return nil
+	}
+	var buf bytes.Buffer
+	for _, m := range medias {
+		if !m.Success {
+			fm, err := media.FindMedia(m.URL)
+			if err != nil {
+				return err
+			}
+			fm.ID = m.ID
+			err = s.UpdateMedia(fm)
+			if err != nil {
+				return err
+			}
+		}
+		buf.WriteString(fmt.Sprintf("('%v','%v','T'),", EntryID, m.ID))
+	}
+	vals := buf.String()[:buf.Len()-1]
+	sql := fmt.Sprintf(`
+		INSERT INTO entry_medias (entry_id, media_id, use_cache)
+		VALUES %s
+		ON CONFLICT (entry_id, media_id) DO UPDATE
+			SET use_cache='T'
+	`, vals)
+	_, err = s.db.Exec(sql)
+	return err
+}
+
+func (s *Storage) getEntryMedias(userID, EntryID int64) (model.Medias, error) {
+	query := `
+		SELECT m.id, m.url, m.url_hash, m.success
+		FROM feeds f
+			INNER JOIN entries e on f.id=e.feed_id
+			INNER JOIN entry_medias em on e.id=em.entry_id
+			INNER JOIN medias m on m.id=em.media_id
+		WHERE f.user_id=$1 AND e.id=$2
+`
+	medias := make(model.Medias, 0)
+	rows, err := s.db.Query(query, userID, EntryID)
+	defer rows.Close()
+	if err == sql.ErrNoRows {
+		return medias, nil
+	} else if err != nil {
+		return nil, fmt.Errorf("unable to fetch entry medias: %v", err)
 	}
 
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("unable to toogle cache flag for entry #%d: %v", entryID, err)
-	}
+	for rows.Next() {
+		var media model.Media
+		err := rows.Scan(&media.ID, &media.URL, &media.URLHash, &media.Success)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch entry medias row: %v", err)
+		}
+		medias = append(medias, &media)
 
-	if count == 0 {
-		return errors.New("nothing has been updated")
 	}
-
-	return nil
+	return medias, nil
 }
 
 // RemoveFeedCaches removes all caches of a feed.
@@ -189,4 +240,40 @@ func (s *Storage) ClearAllCaches() error {
 	}
 
 	return nil
+}
+
+// ToggleEntryCache toggles entry cache.
+func (s *Storage) ToggleEntryCache(userID int64, entryID int64) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleCache] userID=%d, entryID=%d", userID, entryID))
+
+	has, err := s.HasEntryCache(entryID)
+	if err != nil {
+		return fmt.Errorf("unable to toggle cache for entry #%d: %v", entryID, err)
+	}
+
+	if has {
+		query := `
+			UPDATE entry_medias SET use_cache='f' WHERE entry_id in (
+				SELECT e.id
+				FROM feeds f
+					INNER JOIN entries e on f.id=e.feed_id
+				WHERE f.user_id=$1 AND e.id=$2
+			);
+		`
+		result, err := s.db.Exec(query, userID, entryID)
+		if err != nil {
+			return fmt.Errorf("unable to toggle cache for user #%d, entry #%d: %v", userID, entryID, err)
+		}
+
+		count, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Errorf("unable to toogle cache for user #%d, entry #%d: %v", userID, entryID, err)
+		}
+		if count == 0 {
+			return errors.New("nothing has been updated")
+		}
+		return err
+	}
+
+	return s.CacheEntryMedias(userID, entryID)
 }

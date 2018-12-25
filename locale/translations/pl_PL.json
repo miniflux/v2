@@ -51,6 +51,8 @@
     "entry.status.title": "Zmień status artykułu",
     "entry.bookmark.toggle.on": "Oznacz gwiazdką",
     "entry.bookmark.toggle.off": "Usuń gwiazdkę",
+    "entry.cache.toggle.on": "Cache",
+    "entry.cache.toggle.off": "Uncache",
     "entry.state.saving": "Zapisywanie...",
     "entry.state.loading": "Ładowanie...",
     "entry.save.label": "Zapisz",

@@ -51,6 +51,8 @@
     "entry.status.title": "更改状态",
     "entry.bookmark.toggle.on": "标记星标",
     "entry.bookmark.toggle.off": "去掉星标",
+    "entry.cache.toggle.on": "缓存媒体文件",
+    "entry.cache.toggle.off": "清除媒体缓存",
     "entry.state.saving": "保存中…",
     "entry.state.loading": "载入中…",
     "entry.save.label": "保存",

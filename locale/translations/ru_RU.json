@@ -51,6 +51,8 @@
     "entry.status.title": "Изменить статус записи",
     "entry.bookmark.toggle.on": "Добавить в Избранное",
     "entry.bookmark.toggle.off": "Удалить из Избранного",
+    "entry.cache.toggle.on": "Cache",
+    "entry.cache.toggle.off": "Uncache",
     "entry.state.saving": "Сохранение…",
     "entry.state.loading": "Загрузка…",
     "entry.save.label": "Сохранить",

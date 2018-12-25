@@ -51,6 +51,8 @@
     "entry.status.title": "Change entry status",
     "entry.bookmark.toggle.on": "Star",
     "entry.bookmark.toggle.off": "Unstar",
+    "entry.cache.toggle.on": "Cache",
+    "entry.cache.toggle.off": "Uncache",
     "entry.state.saving": "Saving...",
     "entry.state.loading": "Loading...",
     "entry.save.label": "Save",

@@ -42,6 +42,14 @@ func (s *Storage) MediaStatisticsByUser(userID int64) (count int, cacheCount int
 	return s.mediaStatisticsByCond(cond)
 }
 
+// MediaStatisticsByEntry returns media count and size of specified feed.
+func (s *Storage) MediaStatisticsByEntry(entryID int64) (count int, cacheCount int, cacheSize int, err error) {
+	defer timer.ExecutionTime(time.Now(), "[Storage:MediaStatisticsByEntry]")
+
+	cond := fmt.Sprintf(`e.id=%d`, entryID)
+	return s.mediaStatisticsByCond(cond)
+}
+
 // MediaStatisticsByUser returns media count and size of specified feed.
 func (s *Storage) mediaStatisticsByCond(cond string) (count int, cacheCount int, cacheSize int, err error) {
 

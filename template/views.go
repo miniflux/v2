@@ -618,6 +618,18 @@ var templateViewsMap = map[string]string{
                         <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
                     </li>
                 {{ end }}
+                {{ if .hasCacheService }}
+                    <li>
+                        <a href="#"
+                            data-toggle-cache="true"
+                            data-cache-url="{{ route "toggleCache" "entryID" .entry.ID }}"
+                            data-label-loading="{{ t "entry.state.saving" }}"
+                            data-label-cached="{{ t "entry.cache.toggle.on" }}"
+                            data-label-uncached="{{ t "entry.cache.toggle.off" }}"
+                            data-value="{{ if .entryCached }}cached{{ else }}uncached{{ end }}"
+                            >{{ if .entryCached }}{{ t "entry.cache.toggle.off" }}{{ else }}{{ t "entry.cache.toggle.on" }}{{ end }}</a>
+                    </li>
+                {{ end }}
             </ul>
         </div>
         <div class="entry-meta">
@@ -1401,7 +1413,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
 	"edit_feed":           "3a0f93ab50b1a65dde18a55270985618682a279006c11612d2447cc419b98834",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
-	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
+	"entry":               "0e5066488c4b09527fb0879d4e03b98d6a0138ee650488ee6592e206c68156fd",
 	"feed_entries":        "0f3d02d820475a3b0e165e10be2bf39fa5ab6a9dc5b0945c9ad886434e64e6ca",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
 	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
