@@ -10,7 +10,7 @@ import (
 	"miniflux.app/timer"
 )
 
-// CreateMediasRunOnce create media records from starred and unread entries,
+// CreateMediasRunOnce create media records for starred and unread entries,
 // runs once only when the entry_medias table is empty, which could be two use cases:
 // First, system has just migrated to media cache feature support.
 // Second, database has just restored from backup, since user may not want to include huge medias into backup.
@@ -26,11 +26,12 @@ func (s *Storage) CreateMediasRunOnce() {
 		entries, err := getEntriesForCreateMediasRunOnce(s.db, startID)
 		if err != nil {
 			logger.Error("[Storage:CreateMediasRunOnce] Error: %v", err)
+			return
 		}
 		if len(entries) == 0 {
 			return
 		}
-		err = s.CreateMedias(entries)
+		err = s.CreateEntriesMedia(entries)
 		if err != nil {
 			logger.Error("[Storage:CreateMediasRunOnce] Error: %v", err)
 		}

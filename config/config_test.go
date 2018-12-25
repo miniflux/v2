@@ -708,7 +708,7 @@ func TestDisableHTTPService(t *testing.T) {
 	}
 }
 
-func TestEnableCacheServiceWhenBaseURLUnset(t *testing.T) {
+func TestEnableCacheServiceWhenUnset(t *testing.T) {
 	os.Clearenv()
 
 	cfg := NewConfig()
