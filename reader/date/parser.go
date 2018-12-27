@@ -206,8 +206,15 @@ func Parse(ds string) (t time.Time, err error) {
 		return t, errors.New("date parser: empty value")
 	}
 
-	for _, f := range dateFormats {
-		if t, err = time.Parse(f, d); err == nil {
+	for _, layout := range dateFormats {
+		switch layout {
+		case time.RFC822, time.RFC850, time.RFC1123:
+			if t, err = parseLocalTimeDates(layout, d); err == nil {
+				return
+			}
+		}
+
+		if t, err = time.Parse(layout, d); err == nil {
 			return
 		}
 	}
@@ -219,6 +226,22 @@ func Parse(ds string) (t time.Time, err error) {
 
 	err = fmt.Errorf(`date parser: failed to parse date "%s"`, ds)
 	return
+}
+
+// According to Golang documentation:
+//
+// RFC822, RFC850, and RFC1123 formats should be applied only to local times.
+// Applying them to UTC times will use "UTC" as the time zone abbreviation,
+// while strictly speaking those RFCs require the use of "GMT" in that case.
+func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
+	loc := time.UTC
+
+	// Workaround for dates that don't use GMT.
+	if strings.HasSuffix(ds, "PST") {
+		loc, _ = time.LoadLocation("America/Los_Angeles")
+	}
+
+	return time.ParseInLocation(layout, ds, loc)
 }
 
 // Replace German and French dates to English.
