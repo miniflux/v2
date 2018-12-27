@@ -71,7 +71,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		(username, password, is_admin, extra)
 		VALUES
 		(LOWER($1), $2, $3, $4)
-		RETURNING id, username, is_admin, language, theme, timezone, entry_direction`
+		RETURNING id, username, is_admin, language, theme, view, timezone, entry_direction`
 
 	err = s.db.QueryRow(query, user.Username, password, user.IsAdmin, extra).Scan(
 		&user.ID,
@@ -79,6 +79,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		&user.IsAdmin,
 		&user.Language,
 		&user.Theme,
+		&user.View,
 		&user.Timezone,
 		&user.EntryDirection,
 	)
@@ -126,10 +127,11 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			password=$2,
 			is_admin=$3,
 			theme=$4,
-			language=$5,
-			timezone=$6,
-			entry_direction=$7
-			WHERE id=$8`
+			view=$5,
+			language=$6,
+			timezone=$7,
+			entry_direction=$8
+			WHERE id=$9`
 
 		_, err = s.db.Exec(
 			query,
@@ -137,6 +139,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			hashedPassword,
 			user.IsAdmin,
 			user.Theme,
+			user.View,
 			user.Language,
 			user.Timezone,
 			user.EntryDirection,
@@ -150,16 +153,18 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			username=LOWER($1),
 			is_admin=$2,
 			theme=$3,
-			language=$4,
-			timezone=$5,
-			entry_direction=$6
-			WHERE id=$7`
+			view=$4,
+			language=$5,
+			timezone=$6,
+			entry_direction=$7
+			WHERE id=$8`
 
 		_, err := s.db.Exec(
 			query,
 			user.Username,
 			user.IsAdmin,
 			user.Theme,
+			user.View,
 			user.Language,
 			user.Timezone,
 			user.EntryDirection,
@@ -189,7 +194,7 @@ func (s *Storage) UserLanguage(userID int64) (language string) {
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByID] userID=%d", userID))
 	query := `SELECT
-		id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
+		id, username, is_admin, theme, view,language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		WHERE id = $1`
 
@@ -200,7 +205,7 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 func (s *Storage) UserByUsername(username string) (*model.User, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByUsername] username=%s", username))
 	query := `SELECT
-		id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
+		id, username, is_admin, theme, view, language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		WHERE username=LOWER($1)`
 
@@ -211,7 +216,7 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UserByExtraField] field=%s", field))
 	query := `SELECT
-		id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
+		id, username, is_admin, theme, view,language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		WHERE extra->$1=$2`
 
@@ -227,6 +232,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.Username,
 		&user.IsAdmin,
 		&user.Theme,
+		&user.View,
 		&user.Language,
 		&user.Timezone,
 		&user.EntryDirection,
@@ -275,7 +281,7 @@ func (s *Storage) Users() (model.Users, error) {
 	defer timer.ExecutionTime(time.Now(), "[Storage:Users]")
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, last_login_at, extra
+			id, username, is_admin, theme, view, language, timezone, entry_direction, last_login_at, extra
 		FROM users
 		ORDER BY username ASC`
 
@@ -294,6 +300,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.Username,
 			&user.IsAdmin,
 			&user.Theme,
+			&user.View,
 			&user.Language,
 			&user.Timezone,
 			&user.EntryDirection,

@@ -227,6 +227,7 @@
     "form.prefs.label.language": "Язык",
     "form.prefs.label.timezone": "Часовой пояс",
     "form.prefs.label.theme": "Тема",
+    "form.prefs.label.view": "View",
     "form.prefs.label.entry_sorting": "Сортировка записей",
     "form.prefs.select.older_first": "Сначала старые записи",
     "form.prefs.select.recent_first": "Сначала последние записи",

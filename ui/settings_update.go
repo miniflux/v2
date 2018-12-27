@@ -7,8 +7,8 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/logger"
@@ -38,6 +38,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	view.Set("form", settingsForm)
 	view.Set("themes", model.Themes())
+	view.Set("views", model.Views())
 	view.Set("languages", locale.AvailableLanguages())
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")
@@ -67,6 +68,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
+	sess.SetView(user.View)
 	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
 	html.Redirect(w, r, route.Path(h.router, "settings"))
 }

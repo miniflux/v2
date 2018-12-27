@@ -117,6 +117,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	h.store.SetLastLogin(user.ID)
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
+	sess.SetView(user.View)
 
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,

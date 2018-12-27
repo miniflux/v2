@@ -225,6 +225,7 @@
     "form.prefs.label.language": "Taal",
     "form.prefs.label.timezone": "Tijdzone",
     "form.prefs.label.theme": "Skin",
+    "form.prefs.label.view": "View",
     "form.prefs.label.entry_sorting": "Volgorde van items",
     "form.prefs.select.older_first": "Oudere items eerst",
     "form.prefs.select.recent_first": "Recente items eerst",

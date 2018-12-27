@@ -18,6 +18,7 @@ const (
 	UserSessionTokenContextKey
 	UserLanguageContextKey
 	UserThemeContextKey
+	UserViewContextKey
 	SessionIDContextKey
 	CSRFContextKey
 	OAuth2StateContextKey
@@ -67,6 +68,15 @@ func UserTheme(r *http.Request) string {
 		theme = "default"
 	}
 	return theme
+}
+
+// UserView get the view used by the current logged user.
+func UserView(r *http.Request) string {
+	view := getContextStringValue(r, UserViewContextKey)
+	if view == "" {
+		view = "list"
+	}
+	return view
 }
 
 // CSRF returns the current CSRF token.

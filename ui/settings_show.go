@@ -29,6 +29,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	settingsForm := form.SettingsForm{
 		Username:       user.Username,
 		Theme:          user.Theme,
+		View:           user.View,
 		Language:       user.Language,
 		Timezone:       user.Timezone,
 		EntryDirection: user.EntryDirection,
@@ -42,6 +43,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 
 	view.Set("form", settingsForm)
 	view.Set("themes", model.Themes())
+	view.Set("views", model.Views())
 	view.Set("languages", locale.AvailableLanguages())
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")

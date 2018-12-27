@@ -58,6 +58,13 @@
     {{ end }}
     </select>
 
+    <label for="form-view">{{ t "form.prefs.label.view" }}</label>
+    <select id="form-view" name="view">
+    {{ range $key, $value := .views }}
+        <option value="{{ $key }}" {{ if eq $key $.form.View }}selected="selected"{{ end }}>{{ $value }}</option>
+    {{ end }}
+    </select>
+
     <label for="form-entry-direction">{{ t "form.prefs.label.entry_sorting" }}</label>
     <select id="form-entry-direction" name="entry_direction">
         <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.older_first" }}</option>

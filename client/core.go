@@ -23,6 +23,7 @@ type User struct {
 	Password       string            `json:"password,omitempty"`
 	IsAdmin        bool              `json:"is_admin"`
 	Theme          string            `json:"theme"`
+	View           string            `json:"view"`
 	Language       string            `json:"language"`
 	Timezone       string            `json:"timezone"`
 	EntryDirection string            `json:"entry_sorting_direction"`
@@ -40,6 +41,7 @@ type UserModification struct {
 	Password       *string `json:"password"`
 	IsAdmin        *bool   `json:"is_admin"`
 	Theme          *string `json:"theme"`
+	View           *string `json:"view"`
 	Language       *string `json:"language"`
 	Timezone       *string `json:"timezone"`
 	EntryDirection *string `json:"entry_sorting_direction"`

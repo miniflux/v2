@@ -227,6 +227,7 @@
     "form.prefs.label.language": "Język",
     "form.prefs.label.timezone": "Strefa czasowa",
     "form.prefs.label.theme": "Wygląd",
+    "form.prefs.label.view": "View",
     "form.prefs.label.entry_sorting": "Sortowanie artykułów",
     "form.prefs.select.older_first": "Najstarsze wpisy jako pierwsze",
     "form.prefs.select.recent_first": "Najnowsze wpisy jako pierwsze",

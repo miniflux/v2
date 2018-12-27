@@ -18,6 +18,7 @@ type User struct {
 	Password       string            `json:"password,omitempty"`
 	IsAdmin        bool              `json:"is_admin"`
 	Theme          string            `json:"theme"`
+	View           string            `json:"view"`
 	Language       string            `json:"language"`
 	Timezone       string            `json:"timezone"`
 	EntryDirection string            `json:"entry_sorting_direction"`
@@ -43,6 +44,10 @@ func (u User) ValidateUserCreation() error {
 func (u User) ValidateUserModification() error {
 	if u.Theme != "" {
 		return ValidateTheme(u.Theme)
+	}
+
+	if u.View != "" {
+		return ValidateView(u.View)
 	}
 
 	if u.Password != "" {

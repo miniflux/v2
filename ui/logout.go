@@ -25,6 +25,7 @@ func (h *handler) logout(w http.ResponseWriter, r *http.Request) {
 
 	sess.SetLanguage(user.Language)
 	sess.SetTheme(user.Theme)
+	sess.SetView(user.View)
 
 	if err := h.store.RemoveUserSessionByToken(user.ID, request.UserSessionToken(r)); err != nil {
 		logger.Error("[UI:Logout] %v", err)

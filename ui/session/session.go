@@ -58,6 +58,11 @@ func (s *Session) SetTheme(theme string) {
 	s.store.UpdateSessionField(s.sessionID, "theme", theme)
 }
 
+// SetView updates the view field in session.
+func (s *Session) SetView(view string) {
+	s.store.UpdateSessionField(s.sessionID, "view", view)
+}
+
 // SetPocketRequestToken updates Pocket Request Token.
 func (s *Session) SetPocketRequestToken(requestToken string) {
 	s.store.UpdateSessionField(s.sessionID, "pocket_request_token", requestToken)

@@ -99,6 +99,7 @@ type userModification struct {
 	Password       *string `json:"password"`
 	IsAdmin        *bool   `json:"is_admin"`
 	Theme          *string `json:"theme"`
+	View           *string `json:"view"`
 	Language       *string `json:"language"`
 	Timezone       *string `json:"timezone"`
 	EntryDirection *string `json:"entry_sorting_direction"`
@@ -119,6 +120,10 @@ func (u *userModification) Update(user *model.User) {
 
 	if u.Theme != nil {
 		user.Theme = *u.Theme
+	}
+
+	if u.View != nil {
+		user.View = *u.View
 	}
 
 	if u.Language != nil {
