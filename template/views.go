@@ -123,11 +123,7 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
-    {{ if eq .view "masonry" }}
-    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
-    {{ else }}
-    <div class="items">
-    {{ end }}
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -144,7 +140,7 @@ var templateViewsMap = map[string]string{
             {{ if eq $.view "masonry" }}
             <a href="{{ route "starredEntry" "entryID" .ID }}">
                 <div class="thumbnail">
-                    <img src="{{ .Thumbnail }}">
+                    <img src="{{ proxyURL .Thumbnail }}">
                 </div>
             </a>
             {{ end }}
@@ -230,11 +226,7 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_category_entry" }}</p>
 {{ else }}
-    {{ if eq .view "masonry" }}
-    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
-    {{ else }}
-    <div class="items">
-    {{ end }}
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -251,7 +243,7 @@ var templateViewsMap = map[string]string{
             {{ if eq $.view "masonry" }}
             <a href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">
                 <div class="thumbnail">
-                    <img src="{{ .Thumbnail }}">
+                    <img src="{{ proxyURL .Thumbnail }}">
                 </div>
             </a>
             {{ end }}
@@ -765,11 +757,7 @@ var templateViewsMap = map[string]string{
 {{ else if not .entries }}
     <p class="alert">{{ t "alert.no_feed_entry" }}</p>
 {{ else }}
-    {{ if eq .view "masonry" }}
-    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
-    {{ else }}
-    <div class="items">
-    {{ end }}
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -786,7 +774,7 @@ var templateViewsMap = map[string]string{
             {{ if eq $.view "masonry" }}
             <a href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}">
                 <div class="thumbnail">
-                    <img src="{{ .Thumbnail }}">
+                    <img src="{{ proxyURL .Thumbnail }}">
                 </div>
             </a>
             {{ end }}
@@ -902,11 +890,7 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
-    {{ if eq .view "masonry" }}
-    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
-    {{ else }}
-    <div class="items">
-    {{ end }}
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -923,7 +907,7 @@ var templateViewsMap = map[string]string{
             {{ if eq $.view "masonry" }}
             <a href="{{ route "readEntry" "entryID" .ID }}">
                 <div class="thumbnail">
-                    <img src="{{ .Thumbnail }}">
+                    <img src="{{ proxyURL .Thumbnail }}">
                 </div>
             </a>
             {{ end }}
@@ -1171,11 +1155,7 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_search_result" }}</p>
 {{ else }}
-    {{ if eq .view "masonry" }}
-    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
-    {{ else }}
-    <div class="items">
-    {{ end }}
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -1192,7 +1172,7 @@ var templateViewsMap = map[string]string{
             {{ if eq $.view "masonry" }}
             <a href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">
                 <div class="thumbnail">
-                    <img src="{{ .Thumbnail }}">
+                    <img src="{{ proxyURL .Thumbnail }}">
                 </div>
             </a>
             {{ end }}
@@ -1373,11 +1353,7 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
-    {{ if eq .view "masonry" }}
-    <div class="items hide-read-items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
-    {{ else }}
-    <div class="items hide-read-items">
-    {{ end }}
+    <div class='items hide-read-items{{ if eq .view "masonry" }} masonry{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -1394,7 +1370,7 @@ var templateViewsMap = map[string]string{
             {{ if eq $.view "masonry" }}
             <a href="{{ route "unreadEntry" "entryID" .ID }}">
                 <div class="thumbnail">
-                    <img src="{{ .Thumbnail }}">
+                    <img src="{{ proxyURL .Thumbnail }}">
                 </div>
             </a>
             {{ end }}
@@ -1483,9 +1459,9 @@ var templateViewsMap = map[string]string{
 var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
 	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
-	"bookmark_entries":    "3c3f67bda860e46203dff08a411d4fd58ee9894cb8d8208a014a5ffe215c9ef7",
+	"bookmark_entries":    "63e20ae0601e9c0cb7fb868bbf487b868ba1dcc705c50a14dffa82eb4b2ea5dd",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
-	"category_entries":    "786652f30ad344aec9270f25d6d0a9e9d64df6daf10da6d83e91987865298157",
+	"category_entries":    "11c6f041b1d94862cc68b6a448094672d9936c5c682db57b150f5936f66af2c2",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
@@ -1493,15 +1469,15 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "3a0f93ab50b1a65dde18a55270985618682a279006c11612d2447cc419b98834",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "0e5066488c4b09527fb0879d4e03b98d6a0138ee650488ee6592e206c68156fd",
-	"feed_entries":        "b8dff603f88f7136d6aaa7c36bc375af24d08d47f0d5c7b3c42f5c5c0318984d",
+	"feed_entries":        "5608ccd2b695d52ce3b679d87db479f62b5a7813c1e2ebf2c27eb3546a1b45ff",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
-	"history_entries":     "aafdd0731c684a426d1adb0e89c526f2449d279e56ff24543b28bb332def374c",
+	"history_entries":     "e72ba4836ed92a68180c3af5ae4810142c8e71aed7cfc1fcf6a264b361f5654b",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
 	"login":               "f9e6714d34fdce82266c8b23b0ff449d05ba71e474d26f711da66f8c4fdc076a",
-	"search_entries":      "981af8dc660d40919667ea6a5bd3b50fd23bb9697b14c7cdbcd282c4cdaeb306",
+	"search_entries":      "7488019f749f4b4f1a47fea7f0f496a39ab1707c5e86a60a1b5e7d90d3f8eb9f",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "1209b97876ca12a8fe3cc2f3f99505725dbccf4966a94e57c2c9478c5a276bff",
-	"unread_entries":      "e8590c689b170d0d743a0d70807e3b3838b3818f560c3ba8cd87ce31a4a699fa",
+	"unread_entries":      "5a8e4bc05edd549638738b520484cf1e121c9f434146ef167a5c0fba5151e87a",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }

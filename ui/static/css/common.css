@@ -628,11 +628,8 @@ a.button {
 }
 
 @media (min-width: 600px) {
-    .masonry .item-sizer{
-        width: 33%;
-    }
-    .masonry .item {
-        width: calc(33% - 20px);
+    .masonry .item-sizer, .masonry .item {
+        width: calc((100% - 20px)/3);
     }
 }
 

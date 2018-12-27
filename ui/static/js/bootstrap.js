@@ -88,11 +88,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    var msnry = new Masonry('.masonry')
-    imagesLoaded('.masonry .item').on('progress',
-        img => {
-            console.log("img loaded..", img);
-            msnry.layout();
-        }
-    );
+    let msnryElement = document.querySelector('.masonry');
+    if (msnryElement) {
+        var msnry = new Masonry(msnryElement, {
+            itemSelector: '.item',
+            columnWidth: '.item-sizer',
+            gutter: 10
+        })
+        imagesLoaded('.masonry .item').on('progress', () => msnry.layout());
+    }
 });
