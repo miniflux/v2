@@ -57,6 +57,7 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", countUnread)
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+	view.Set("masonry", true)
 
 	html.OK(w, r, view.Render("unread_entries"))
 }

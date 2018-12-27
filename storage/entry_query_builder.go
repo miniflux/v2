@@ -193,6 +193,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		e.url, e.comments_url, e.author, e.content, e.status, e.starred,
 		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
 		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
+		coalesce(m.url, '') as thumbnail,
 		fi.icon_id,
 		u.timezone
 		FROM entries e
@@ -200,6 +201,12 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		LEFT JOIN categories c ON c.id=f.category_id
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN users u ON u.id=e.user_id
+		LEFT JOIN (
+			SELECT em.entry_id, min(m.url) as url
+			FROM entry_medias em
+			INNER JOIN medias m ON m.id=em.media_id
+			GROUP BY em.entry_id
+		) as m on e.id=m.entry_id
 		WHERE %s %s
 	`
 
@@ -248,6 +255,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.RewriteRules,
 			&entry.Feed.Crawler,
 			&entry.Feed.UserAgent,
+			&entry.Thumbnail,
 			&iconID,
 			&tz,
 		)

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     FormHandler.handleSubmitButtons();
 
     let touchHandler = new TouchHandler();
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     mouseHandler.onClick("a[data-toggle-status]", (event) => {
         let currentItem = DomHelper.findParent(event.target, "entry");
-        if (! currentItem) {
+        if (!currentItem) {
             currentItem = DomHelper.findParent(event.target, "item");
         }
 
@@ -87,4 +87,12 @@ document.addEventListener("DOMContentLoaded", function() {
             navigator.serviceWorker.register(scriptElement.src);
         }
     }
+
+    var msnry = new Masonry('.masonry')
+    imagesLoaded('.masonry .item').on('progress',
+        img => {
+            console.log("img loaded..", img);
+            msnry.layout();
+        }
+    );
 });

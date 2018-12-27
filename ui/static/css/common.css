@@ -140,7 +140,7 @@ a:hover {
 @media (min-width: 600px) {
     body {
         margin: auto;
-        max-width: 750px;
+        max-width: 950px;
     }
 
     .header {
@@ -616,6 +616,41 @@ a.button {
 
 .hide-read-items .item-status-read {
     display: none;
+}
+
+.thumbnail {
+    display: none;
+}
+
+/* masonry view */
+.masonry .item, .masonry .item-sizer {
+    width: 100%;
+}
+
+@media (min-width: 600px) {
+    .masonry .item-sizer{
+        width: 33%;
+    }
+    .masonry .item {
+        width: calc(33% - 20px);
+    }
+}
+
+.masonry .item{
+    display: inline-block;
+}
+
+.masonry .thumbnail{
+    display: inherit;
+}
+
+.masonry .thumbnail img {
+    width: 100%;
+    padding-top: 10px;
+}
+
+.masonry .item-status-read .thumbnail{
+    opacity: 0.2;
 }
 
 /* Feeds list */

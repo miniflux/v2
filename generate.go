@@ -201,6 +201,8 @@ func main() {
 			"ui/static/js/nav_handler.js",
 			"ui/static/js/link_state_handler.js",
 			"ui/static/js/bootstrap.js",
+			"ui/static/js/masonry.pkgd.min.js",
+			"ui/static/js/imagesloaded.pkgd.min.js",
 		},
 		"sw": []string{
 			"ui/static/js/sw.js",

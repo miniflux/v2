@@ -123,7 +123,12 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -136,6 +141,13 @@ var templateViewsMap = map[string]string{
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ if $.masonry }}
+            <a href="{{ route "starredEntry" "entryID" .ID }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
@@ -218,7 +230,12 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_category_entry" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -231,6 +248,13 @@ var templateViewsMap = map[string]string{
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            {{ if $.masonry }}
+            <a href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
@@ -741,7 +765,12 @@ var templateViewsMap = map[string]string{
 {{ else if not .entries }}
     <p class="alert">{{ t "alert.no_feed_entry" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -754,6 +783,13 @@ var templateViewsMap = map[string]string{
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ if $.masonry }}
+            <a href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
@@ -866,7 +902,12 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -879,6 +920,13 @@ var templateViewsMap = map[string]string{
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            {{ if $.masonry }}
+            <a href="{{ route "readEntry" "entryID" .ID }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
@@ -1123,7 +1171,12 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_search_result" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -1136,6 +1189,13 @@ var templateViewsMap = map[string]string{
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            {{ if $.masonry }}
+            <a href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
@@ -1306,7 +1366,12 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items hide-read-items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items hide-read-items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -1319,6 +1384,13 @@ var templateViewsMap = map[string]string{
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ if $.masonry }}
+            <a href="{{ route "unreadEntry" "entryID" .ID }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
@@ -1404,9 +1476,9 @@ var templateViewsMap = map[string]string{
 var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
 	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
-	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
+	"bookmark_entries":    "61f7cfe5298e14a707355811e2e41c4b2590c28b3d92be847fafd28e8aa994f8",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
-	"category_entries":    "a803570ba91268646b2c55cffc8a3f2f162388a73bc007dd9ab61e144faa359b",
+	"category_entries":    "d938bad82712f0e188ee0cfe917455aa094dc8dd67a24139b4b07e9ce530c9f9",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
@@ -1414,15 +1486,15 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "3a0f93ab50b1a65dde18a55270985618682a279006c11612d2447cc419b98834",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "0e5066488c4b09527fb0879d4e03b98d6a0138ee650488ee6592e206c68156fd",
-	"feed_entries":        "0f3d02d820475a3b0e165e10be2bf39fa5ab6a9dc5b0945c9ad886434e64e6ca",
+	"feed_entries":        "f1ec756fd342142c8f2ea709f77a3186f7738e721758025f861234c27479cd9b",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
-	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
+	"history_entries":     "03ad6476fe5ccef9d149e128fa42b752440839f70647be1a9989ff0505a22b7f",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
 	"login":               "f9e6714d34fdce82266c8b23b0ff449d05ba71e474d26f711da66f8c4fdc076a",
-	"search_entries":      "d71849a4f2b0573c7c76ad0ea941812009e9f022de60895987a781d3e6f08a01",
+	"search_entries":      "96fb19f95dca3fb318bd0c24d703605c2ab5ac99fbc3e5926d0f6c2d60139f6e",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "bc04faf83dd977306825973375954600bd014619340188e1243fd9e2f5d5e1a9",
-	"unread_entries":      "880018cbc59ec09b23dd800c4010fadad944d7023e0d36a3872c09b5d4952799",
+	"unread_entries":      "39c36b39e7585ff532f50e09a2f3673d6e81354bf2efabb42fb63b274b472bec",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }

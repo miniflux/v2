@@ -37,7 +37,12 @@
 {{ else if not .entries }}
     <p class="alert">{{ t "alert.no_feed_entry" }}</p>
 {{ else }}
+    {{ if .masonry }}
+    <div class="items masonry" data-masonry='{ "itemSelector": ".item", "columnWidth": ".item-sizer" }'>
+    {{ else }}
     <div class="items">
+    {{ end }}
+        <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header">
@@ -50,6 +55,13 @@
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ if $.masonry }}
+            <a href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}">
+                <div class="thumbnail">
+                    <img src="{{ .Thumbnail }}">
+                </div>
+            </a>
+            {{ end }}
         </article>
         {{ end }}
     </div>
