@@ -124,10 +124,6 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/logout", handler.logout).Name("logout").Methods("GET")
 	uiRouter.HandleFunc("/", handler.showLoginPage).Name("login").Methods("GET")
 
-	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("OK"))
-	}).Name("healthcheck")
-
 	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		w.Write([]byte("User-agent: *\nDisallow: /"))

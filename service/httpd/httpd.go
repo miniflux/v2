@@ -169,5 +169,9 @@ func setupHandler(cfg *config.Config, store *storage.Storage, feedHandler *feed.
 	api.Serve(router, store, feedHandler)
 	ui.Serve(router, cfg, store, pool, feedHandler)
 
+	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	}).Name("healthcheck")
+
 	return router
 }
