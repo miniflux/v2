@@ -36,6 +36,27 @@ class EntryHandler {
         }
     }
 
+    static setEntryStatusRead(element){
+        let link = element.querySelector("a[data-set-read]");
+        let sendRequest = !link.dataset.noRequest;
+        if(sendRequest){
+            let entryID = parseInt(element.dataset.id, 10);
+            this.updateEntriesStatus([entryID], "read");
+        }
+
+        link = element.querySelector("a[data-toggle-status]");
+        if (link && link.dataset.value === "unread") {
+            link.innerHTML = link.dataset.labelUnread;
+            link.dataset.value = "read";
+        }
+
+        if (element && element.classList.contains("item-status-unread")) {
+            element.classList.remove("item-status-unread");
+            element.classList.add("item-status-read");
+            UnreadCounterHandler.decrement(1);
+        }
+    }
+
     static toggleBookmark(element) {
         element.innerHTML = element.dataset.labelLoading;
 

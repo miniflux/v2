@@ -57,6 +57,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    mouseHandler.onClick("a[data-set-read]", (event) => {
+        let currentItem = DomHelper.findParent(event.target, "entry");
+        if (!currentItem) {
+            currentItem = DomHelper.findParent(event.target, "item");
+        }
+        if (currentItem) {
+            EntryHandler.setEntryStatusRead(currentItem)
+        }
+
+    }, true);
+
     mouseHandler.onClick("a[data-fetch-content-entry]", (event) => {
         EntryHandler.fetchOriginalContent(event.target);
     });
