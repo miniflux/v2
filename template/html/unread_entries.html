@@ -20,7 +20,7 @@
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
-    <div class='items hide-read-items{{ if eq .view "masonry" }} masonry{{ end }}'>
+    <div class='{{ if eq .view "masonry" }}items masonry{{ else }}items hide-read-items{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">

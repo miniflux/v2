@@ -1353,7 +1353,7 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
-    <div class='items hide-read-items{{ if eq .view "masonry" }} masonry{{ end }}'>
+    <div class='{{ if eq .view "masonry" }}items masonry{{ else }}items hide-read-items{{ end }}'>
         <div class="item-sizer"></div>
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -1478,6 +1478,6 @@ var templateViewsMapChecksums = map[string]string{
 	"search_entries":      "bf01d3b2e12391ca549720277e6ce4ca15b2469f3e00c16713a20f6e19a4376b",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "1209b97876ca12a8fe3cc2f3f99505725dbccf4966a94e57c2c9478c5a276bff",
-	"unread_entries":      "2fe4d2c74723b483876c4b4c84fc73d19105e2c90d73937131a83c85dd31ae59",
+	"unread_entries":      "91aa70376b931e7469216e4cb9e7c3b9051b53616575258182dd4201d0c448fe",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }
