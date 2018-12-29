@@ -85,7 +85,7 @@ let currentItem=document.querySelector(".current-item");if(currentItem!==null){t
 toggleBookmarkLink(parent){let bookmarkLink=parent.querySelector("a[data-toggle-bookmark]");if(bookmarkLink){EntryHandler.toggleBookmark(bookmarkLink);}}
 openOriginalLink(){let entryLink=document.querySelector(".entry h1 a");if(entryLink!==null){DomHelper.openNewTab(entryLink.getAttribute("href"));return;}
 let currentItemOriginalLink=document.querySelector(".current-item a[data-original-link]");if(currentItemOriginalLink!==null){DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));let currentItem=document.querySelector(".current-item");this.goToNextListItem();EntryHandler.markEntryAsRead(currentItem);}}
-openSelectedItem(){let currentItemLink=document.querySelector(".current-item .item-title a");if(currentItemLink!==null){window.location.href=currentItemLink.getAttribute("href");}}
+openSelectedItem(){let currentItemLink=document.querySelector(".current-item .item-title a");if(currentItemLink!==null){let e=document.createEvent("MouseEvents");e.initEvent("click",true,true);currentItemLink.dispatchEvent(e);}}
 unsubscribeFromFeed(){let unsubscribeLinks=document.querySelectorAll("[data-action=remove-feed]");if(unsubscribeLinks.length===1){let unsubscribeLink=unsubscribeLinks[0];FeedHandler.unsubscribe(unsubscribeLink.dataset.url,()=>{if(unsubscribeLink.dataset.redirectUrl){window.location.href=unsubscribeLink.dataset.redirectUrl;}else{window.location.reload();}});}}
 goToPage(page,fallbackSelf){let element=document.querySelector("a[data-page="+page+"]");if(element){document.location.href=element.href;}else if(fallbackSelf){window.location.reload();}}
 goToPrevious(){if(this.isListView()){this.goToPreviousListItem();}else{this.goToPage("previous");}}
@@ -123,6 +123,6 @@ msnry.layout();});}});/*!
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "8e98b898cd23eb8d0181fe663cb4635c88258accf55d6be3a229a45ab303a3a9",
+	"app": "896d7f85e552a21c0b0b6dac421ce5b910e0d5ebf1419b9a40c7a756c79ae612",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
