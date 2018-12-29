@@ -29,12 +29,12 @@
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
-            {{ if eq $.view "masonry" }}
-            <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "readEntry" "entryID" .ID }}">
-                <div class="thumbnail">
-                    <img src="{{ proxyURL .Thumbnail }}">
-                </div>
-            </a>
+            {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
+            <div class="thumbnail">
+                <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "readEntry" "entryID" .ID }}">
+                        <img src="{{ proxyURL .Thumbnail }}">
+                </a>
+            </div>
             {{ end }}
         </article>
         {{ end }}

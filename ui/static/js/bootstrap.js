@@ -106,6 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
             columnWidth: '.item-sizer',
             gutter: 10
         })
-        imagesLoaded('.masonry .item').on('progress', () => msnry.layout());
+        imagesLoaded('.masonry .item').on('progress', (instance, image) => {
+            if (!image.isLoaded) {
+                let thumbnail = DomHelper.findParent(image.img, "thumbnail");
+                if (thumbnail) thumbnail.parentNode.removeChild(thumbnail);
+            }
+            msnry.layout();
+        });
     }
 });

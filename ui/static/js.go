@@ -107,7 +107,8 @@ if(currentItem){EntryHandler.toggleEntryStatus(currentItem);}});mouseHandler.onC
 if(currentItem){EntryHandler.setEntryStatusRead(currentItem)}},true);mouseHandler.onClick("a[data-fetch-content-entry]",(event)=>{EntryHandler.fetchOriginalContent(event.target);});mouseHandler.onClick("a[data-on-click=markPageAsRead]",()=>navHandler.markPageAsRead());mouseHandler.onClick("a[data-confirm]",(event)=>{(new ConfirmHandler()).handle(event);});mouseHandler.onClick("a[data-action=search]",(event)=>{navHandler.setFocusToSearchInput(event);});mouseHandler.onClick("a[data-link-state=flip]",(event)=>{LinkStateHandler.flip(event.target);},true);if(document.documentElement.clientWidth<600){let menuHandler=new MenuHandler();mouseHandler.onClick(".logo",()=>menuHandler.toggleMainMenu());mouseHandler.onClick(".header nav li",(event)=>menuHandler.clickMenuListItem(event));}
 if("serviceWorker"in navigator){let scriptElement=document.getElementById("service-worker-script");if(scriptElement){navigator.serviceWorker.register(scriptElement.src);}}
 let msnryElement=document.querySelector('.masonry');if(msnryElement){var msnry=new Masonry(msnryElement,{itemSelector:'.item',columnWidth:'.item-sizer',gutter:10})
-imagesLoaded('.masonry .item').on('progress',()=>msnry.layout());}});/*!
+imagesLoaded('.masonry .item').on('progress',(instance,image)=>{if(!image.isLoaded){let thumbnail=DomHelper.findParent(image.img,"thumbnail");if(thumbnail)thumbnail.parentNode.removeChild(thumbnail);}
+msnry.layout();});}});/*!
 * Masonry PACKAGED v4.2.2
 * Cascading grid layout library
 * https://masonry.desandro.com
@@ -122,6 +123,6 @@ imagesLoaded('.masonry .item').on('progress',()=>msnry.layout());}});/*!
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "8f9f7917bf460a22ae9229aba900329cd143fd1e8df0b7648e62145252becc14",
+	"app": "8e98b898cd23eb8d0181fe663cb4635c88258accf55d6be3a229a45ab303a3a9",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
