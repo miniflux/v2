@@ -614,7 +614,7 @@ a.button {
     overflow-x: hidden;
 }
 
-.hide-read-items .item-status-read {
+.hide-read-items .item-status-read:not(.current-item) {
     display: none;
 }
 
@@ -631,10 +631,6 @@ a.button {
     .masonry .item-sizer, .masonry .item {
         width: calc((100% - 20px)/3);
     }
-}
-
-.masonry .item{
-    display: inline-block;
 }
 
 .masonry .thumbnail{
