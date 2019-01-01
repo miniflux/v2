@@ -6,6 +6,7 @@ package atom // import "miniflux.app/reader/atom"
 
 import (
 	"encoding/xml"
+	"html"
 	"strconv"
 	"strings"
 	"time"
@@ -33,7 +34,7 @@ type atomEntry struct {
 	Published  string         `xml:"published"`
 	Updated    string         `xml:"updated"`
 	Links      []atomLink     `xml:"link"`
-	Summary    string         `xml:"summary"`
+	Summary    atomContent    `xml:"summary"`
 	Content    atomContent    `xml:"content"`
 	MediaGroup atomMediaGroup `xml:"http://search.yahoo.com/mrss/ group"`
 	Author     atomAuthor     `xml:"author"`
@@ -147,17 +148,31 @@ func getDate(a *atomEntry) time.Time {
 	return time.Now()
 }
 
+func atomContentToString(c atomContent) string {
+	if c.Type == "xhtml" {
+		return c.XML
+	}
+
+	if c.Type == "html" {
+		return c.Data
+	}
+
+	if c.Type == "text" || c.Type == "" {
+		return html.EscapeString(c.Data)
+	}
+
+	return ""
+}
+
 func getContent(a *atomEntry) string {
-	if a.Content.Type == "html" || a.Content.Type == "text" {
-		return a.Content.Data
+	r := atomContentToString(a.Content)
+	if r != "" {
+		return r
 	}
 
-	if a.Content.Type == "xhtml" {
-		return a.Content.XML
-	}
-
-	if a.Summary != "" {
-		return a.Summary
+	r = atomContentToString(a.Summary)
+	if r != "" {
+		return r
 	}
 
 	if a.MediaGroup.Description != "" {
@@ -168,13 +183,7 @@ func getContent(a *atomEntry) string {
 }
 
 func getTitle(a *atomEntry) string {
-	title := ""
-	if a.Title.Type == "xhtml" {
-		title = a.Title.XML
-	} else {
-		title = a.Title.Data
-	}
-
+	title := atomContentToString(a.Title)
 	return strings.TrimSpace(sanitizer.StripTags(title))
 }
 

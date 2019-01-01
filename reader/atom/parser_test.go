@@ -282,6 +282,84 @@ func TestParseEntryTitleWithXHTML(t *testing.T) {
 	}
 }
 
+func TestParseEntrySummaryWithXHTML(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="xhtml"><code>Test</code> Test</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary type="xhtml"><p>Some text.</p></summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].Content != "<p>Some text.</p>" {
+		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
+	}
+}
+
+func TestParseEntrySummaryWithHTML(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="html">&lt;code&gt;Test&lt;/code&gt; Test</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary type="html"><![CDATA[<p>Some text.</p>]]></summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].Content != "<p>Some text.</p>" {
+		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
+	}
+}
+
+func TestParseEntrySummaryWithPlainText(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="html">&lt;code&gt;Test&lt;/code&gt; Test</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary type="text"><![CDATA[<Some text.>]]></summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Entries[0].Content != "&lt;Some text.&gt;" {
+		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
+	}
+}
+
 func TestParseEntryWithAuthorName(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
