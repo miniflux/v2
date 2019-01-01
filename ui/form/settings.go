@@ -43,7 +43,12 @@ func (s *SettingsForm) Validate() error {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
-	if s.Password != "" {
+	if s.Confirmation == "" {
+		// Firefox insists on auto-completing the password field.
+		// If the confirmation field is blank, the user probably
+		// didn't intend to change their password.
+		s.Password = ""
+	} else if s.Password != "" {
 		if s.Password != s.Confirmation {
 			return errors.NewLocalizedError("error.different_passwords")
 		}
