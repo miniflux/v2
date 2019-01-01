@@ -18,6 +18,13 @@ export GO111MODULE=on
 .PHONY: freebsd-amd64
 .PHONY: openbsd-amd64
 .PHONY: windows-amd64
+.PHONY: netbsd-amd64
+.PHONY: linux-x86
+.PHONY: darwin-x86
+.PHONY: freebsd-x86
+.PHONY: netbsd-x86
+.PHONY: openbsd-x86
+.PHONY: windows-x86
 .PHONY: build run clean test lint integration-test clean-integration-test
 
 generate:
@@ -54,6 +61,28 @@ windows-amd64: generate
 	@ GOOS=windows GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
 
 build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 freebsd-amd64 openbsd-amd64 windows-amd64
+
+# NOTE: unsupported targets
+netbsd-amd64: generate
+	@ GOOS=netbsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-amd64 main.go
+	
+linux-x86: generate
+	@ GOOS=linux GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-x86 main.go
+
+darwin-x86: generate
+	@ GOOS=darwin GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-darwin-x86 main.go
+
+freebsd-x86: generate
+	@ GOOS=freebsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
+
+netbsd-x86: generate
+	@ GOOS=netbsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-x86 main.go
+
+openbsd-x86: generate
+	@ GOOS=openbsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
+
+windows-x86: generate
+	@ GOOS=windows GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-windows-x86 main.go
 
 run: generate
 	@ go run -mod=vendor main.go -debug
