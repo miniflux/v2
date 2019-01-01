@@ -11,6 +11,7 @@ import (
 	"mime"
 	"regexp"
 	"strings"
+	"unicode/utf8"
 
 	"golang.org/x/net/html/charset"
 )
@@ -95,6 +96,12 @@ func (r *Response) EnsureUnicodeBody() (err error) {
 			}
 
 			if xmlEncodingRegex.Match(buffer[0:length]) {
+				return
+			}
+
+			// If no encoding is specified in the XML prolog and
+			// the document is valid UTF-8, nothing needs to be done.
+			if utf8.Valid(buffer) {
 				return
 			}
 		}
