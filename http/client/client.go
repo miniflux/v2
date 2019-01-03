@@ -18,18 +18,11 @@ import (
 	"strings"
 	"time"
 
+	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/logger"
 	"miniflux.app/timer"
 	"miniflux.app/version"
-)
-
-const (
-	// 20 seconds max.
-	requestTimeout = 20
-
-	// 15MB max.
-	maxBodySize = 1024 * 1024 * 15
 )
 
 var (
@@ -44,6 +37,7 @@ var (
 
 // Client is a HTTP Client :)
 type Client struct {
+	cfg                 *config.Config
 	url                 string
 	etagHeader          string
 	lastModifiedHeader  string
@@ -144,7 +138,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 			case net.Error:
 				nerr := uerr.Err.(net.Error)
 				if nerr.Timeout() {
-					err = errors.NewLocalizedError(errRequestTimeout, requestTimeout)
+					err = errors.NewLocalizedError(errRequestTimeout, c.cfg.HTTPClientTimeout())
 				} else if nerr.Temporary() {
 					err = errors.NewLocalizedError(errTemporaryNetworkOperation, nerr)
 				}
@@ -154,7 +148,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		return nil, err
 	}
 
-	if resp.ContentLength > maxBodySize {
+	if resp.ContentLength > int64(c.cfg.HTTPClientMaxSize() * 1024 * 1024) {
 		return nil, fmt.Errorf("client: response too large (%d bytes)", resp.ContentLength)
 	}
 
@@ -212,7 +206,7 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 }
 
 func (c *Client) buildClient() http.Client {
-	client := http.Client{Timeout: time.Duration(requestTimeout * time.Second)}
+	client := http.Client{Timeout: time.Duration(c.cfg.HTTPClientTimeout()) * time.Second}
 	if c.Insecure {
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},

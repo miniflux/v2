@@ -33,6 +33,8 @@ const (
 	defaultOAuth2ClientSecret = ""
 	defaultOAuth2RedirectURL  = ""
 	defaultOAuth2Provider     = ""
+	defaultHTTPClientTimeout  = 20
+	defaultHTTPClientMaxSize  = 15
 )
 
 // Config manages configuration parameters.
@@ -228,6 +230,16 @@ func (c *Config) HasSchedulerService() bool {
 // ArchiveReadDays returns the number of days after which marking read items as removed.
 func (c *Config) ArchiveReadDays() int {
 	return getIntValue("ARCHIVE_READ_DAYS", defaultArchiveReadDays)
+}
+
+// HTTPClientTimeout returns the number of seconds before the HTTP client timed out.
+func (c *Config) HTTPClientTimeout() int {
+	return getIntValue("HTTP_CLIENT_TIMEOUT", defaultHTTPClientTimeout)
+}
+
+// HTTPClientMaxSize returns the number of megabytes allowed for the HTTP client to transfer.
+func (c *Config) HTTPClientMaxSize() int {
+	return getIntValue("HTTP_CLIENT_MAX_SIZE", defaultHTTPClientMaxSize)
 }
 
 // NewConfig returns a new Config.
