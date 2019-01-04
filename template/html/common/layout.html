@@ -97,7 +97,7 @@
         {{template "content" .}}
     </main>
     <template id="keyboard-shortcuts">
-        <div id="modal-left">
+        <div class="modal modal-left">
             <a href="#" class="btn-close-modal">x</a>
             <h3>{{ t "page.keyboard_shortcuts.title" }}</h3>
 
@@ -139,6 +139,20 @@
                     <li>{{ t "page.keyboard_shortcuts.go_to_search" }} = <strong>/</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.close_modal" }} = <strong>Esc</strong></li>
                 </ul>
+            </div>
+        </div>
+    </template>
+    <template id="action-menus">
+        <div class="modal modal-right">
+            <a href="#" class="btn-close-modal">x</a>
+            <div class="action-menus">
+                <ul id="item-meta-links">
+                </ul>
+                <ul>
+                    <li id="menu-mark-above-read">{{t "action.mark_above_read"}}</li>
+                    <li id="menu-action-cancel">{{t "action.cancel"}}</li>
+                </ul>
+
             </div>
         </div>
     </template>

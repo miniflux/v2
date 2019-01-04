@@ -15,6 +15,7 @@
     "action.download": "Télécharger",
     "action.import": "Importer",
     "action.login": "Se connecter",
+    "action.mark_above_read": "Mark above as read",
     "tooltip.keyboard_shortcuts": "Raccourci clavier : %s",
     "tooltip.logged_user": "Connecté en tant que %s",
     "menu.unread": "Non lus",

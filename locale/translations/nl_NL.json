@@ -15,6 +15,7 @@
     "action.download": "Download",
     "action.import": "Importeren",
     "action.login": "Inloggen",
+    "action.mark_above_read": "Mark above as read",
     "tooltip.keyboard_shortcuts": "Sneltoets: %s",
     "tooltip.logged_user": "Ingelogd als %s",
     "menu.unread": "Ongelezen",

@@ -5,12 +5,6 @@ class EntryHandler {
         request.withBody({entry_ids: entryIDs, status: status});
         request.withCallback(callback);
         request.execute();
-
-        if (status === "read") {
-            UnreadCounterHandler.decrement(1);
-        } else {
-            UnreadCounterHandler.increment(1);
-        }
     }
 
     static toggleEntryStatus(element) {
@@ -25,9 +19,11 @@ class EntryHandler {
         if (currentStatus === "read") {
             link.innerHTML = link.dataset.labelRead;
             link.dataset.value = "unread";
+            UnreadCounterHandler.increment(1);
         } else {
             link.innerHTML = link.dataset.labelUnread;
             link.dataset.value = "read";
+            UnreadCounterHandler.decrement(1);
         }
 
         if (element.classList.contains("item-status-" + currentStatus)) {
@@ -55,6 +51,37 @@ class EntryHandler {
             element.classList.add("item-status-read");
             UnreadCounterHandler.decrement(1);
         }
+    }
+
+    static setEntriesAboveStatusRead(element){
+        let currentItem = document.querySelector(".current-item");
+        let items = DomHelper.getVisibleElements(".items .item");
+        if (currentItem === null || items.length === 0) {
+            return;
+        }
+        let targetItems=[];
+        let entryIds=[];
+        for (let i = 0; i < items.length; i++) {
+            targetItems.push(items[i]);
+            entryIds.push(parseInt(items[i].dataset.id, 10));
+            if (items[i].classList.contains("current-item")) {
+                break;
+            }
+        }
+        this.updateEntriesStatus(entryIds, "read",() => {
+            targetItems.map(item => {
+                let link = item.querySelector("a[data-toggle-status]");
+                if (link && link.dataset.value === "unread") {
+                    link.innerHTML = link.dataset.labelUnread;
+                    link.dataset.value = "read";
+                }
+                if (item && item.classList.contains("item-status-unread")) {
+                    item.classList.remove("item-status-unread");
+                    item.classList.add("item-status-read");
+                    UnreadCounterHandler.decrement(1);
+                }
+            });
+        });
     }
 
     static toggleBookmark(element) {
@@ -96,6 +123,7 @@ class EntryHandler {
 
             let entryID = parseInt(element.dataset.id, 10);
             this.updateEntriesStatus([entryID], "read");
+            UnreadCounterHandler.decrement(1);
         }
     }
 

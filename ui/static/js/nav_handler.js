@@ -186,6 +186,13 @@ class NavHandler {
         }
     }
 
+    goToListItem(item) {
+        if (!item) return;
+        document.querySelectorAll(".items .current-item")
+            .forEach(e => e.classList.remove("current-item"));
+        item.classList.add("current-item");
+    }
+
     goToPreviousListItem() {
         let items = DomHelper.getVisibleElements(".items .item");
         if (items.length === 0) {

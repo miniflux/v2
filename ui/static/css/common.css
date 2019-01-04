@@ -436,12 +436,12 @@ a.button {
 }
 
 /* Modals */
-#modal-left {
+.modal {
     position: fixed;
     top: 0;
-    left: 0;
     bottom: 0;
     width: 360px;
+    max-width: 80%;
     overflow: auto;
     background: #f0f0f0;
     box-shadow: 2px 0 5px 0 #ccc;
@@ -449,9 +449,17 @@ a.button {
     padding-top: 30px;
 }
 
-#modal-left h3 {
+.modal h3 {
     font-weight: 400;
     margin: 0;
+}
+
+.modal-left {
+    left: 0;
+}
+
+.modal-right {
+    right: 0;
 }
 
 .btn-close-modal {
@@ -469,6 +477,11 @@ a.button {
     color: #999;
 }
 
+body.modal-open {
+    position: fixed;
+    width: 100%;
+}
+
 /* Keyboard Shortcuts */
 .keyboard-shortcuts li {
     margin-left: 25px;
@@ -480,6 +493,26 @@ a.button {
 
 .keyboard-shortcuts p {
     line-height: 1.9em;
+}
+
+/* Action Menus */
+.action-menus {
+    position: absolute;
+    width: 100%;
+    bottom: 100px;
+}
+
+.action-menus ul {
+    margin: 2.5em 0;
+}
+
+.action-menus li {
+    margin: 0.5em 1em;
+    list-style-type: none;
+    font-size: 1.3em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 /* Login form */

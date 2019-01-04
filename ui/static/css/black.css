@@ -114,7 +114,7 @@ input[type="text"]:focus {
 }
 
 /* Modals */
-#modal-left {
+.modal {
     background: #333;
     color: #efefef;
     box-shadow: 0 0 10px rgba(82, 168, 236, 0.6);

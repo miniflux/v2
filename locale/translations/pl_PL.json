@@ -15,6 +15,7 @@
     "action.download": "Pobierz",
     "action.import": "Importuj",
     "action.login": "Zaloguj się",
+    "action.mark_above_read": "Mark above as read",
     "tooltip.keyboard_shortcuts": "Skróty klawiszowe: %s",
     "tooltip.logged_user": "Zalogowany jako %s",
     "menu.unread": "Nieprzeczytane",

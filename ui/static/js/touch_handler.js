@@ -71,10 +71,14 @@ class TouchHandler {
         }
 
         if (this.touch.element !== null) {
-            let distance = Math.abs(this.calculateDistance());
+            let distance = this.calculateDistance();
 
             if (distance > 75) {
                 EntryHandler.toggleEntryStatus(this.touch.element);
+
+            } else if (distance < -75) {
+                let actHandler = new ActionMenuHandler(this.touch.element);
+                actHandler.show();
             }
             this.touch.element.style.opacity = 1;
             this.touch.element.style.transform = "none";

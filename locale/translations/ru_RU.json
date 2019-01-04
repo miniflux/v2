@@ -15,6 +15,7 @@
     "action.download": "Загрузить",
     "action.import": "Импорт",
     "action.login": "Войти",
+    "action.mark_above_read": "Mark above as read",
     "tooltip.keyboard_shortcuts": "Сочетания клавиш: %s",
     "tooltip.logged_user": "Авторизован как %s",
     "menu.unread": "Непрочитанное",
