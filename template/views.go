@@ -736,7 +736,11 @@ var templateViewsMap = map[string]string{
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
 {{ else if not .entries }}
-    <p class="alert">{{ t "alert.no_feed_entry" }}</p>
+    {{ if .showOnlyUnreadEntries }}
+        <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+    {{ else }}
+        <p class="alert">{{ t "alert.no_feed_entry" }}</p>
+    {{ end }}
 {{ else }}
     <div class="items">
         {{ range .entries }}
@@ -1411,7 +1415,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "ab30c31a4385a7b16c54baa78bdcb93a57181ed1c5018ce097d7eb50673bb995",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
-	"feed_entries":        "632f0518acb19a2d2723ca4a45dfbe023d828355ebf2982b27558efe32017e81",
+	"feed_entries":        "ba6a764d2784797629103500cc099178f29856dcfc95e59f0d134c32951cd3a4",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
 	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
