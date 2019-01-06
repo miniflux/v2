@@ -44,7 +44,11 @@
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
 {{ else if not .entries }}
-    <p class="alert">{{ t "alert.no_feed_entry" }}</p>
+    {{ if .showOnlyUnreadEntries }}
+        <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+    {{ else }}
+        <p class="alert">{{ t "alert.no_feed_entry" }}</p>
+    {{ end }}
 {{ else }}
     <div class="items">
         {{ range .entries }}
