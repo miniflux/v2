@@ -220,10 +220,10 @@ var templateCommonMap = map[string]string{
         <div class="modal modal-right">
             <a href="#" class="btn-close-modal">x</a>
             <div class="action-menus">
-                <ul id="item-meta-links">
+                <ul id="element-links">
                 </ul>
                 <ul>
-                    <li id="menu-mark-above-read">{{t "action.mark_above_read"}}</li>
+                    <li data-for="entries" id="menu-mark-above-read">{{t "action.mark_above_read"}}</li>
                     <li id="menu-action-cancel">{{t "action.cancel"}}</li>
                 </ul>
 
@@ -259,6 +259,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "daa6492b06c4c3edc73a813f3d2932c941fe8bff0dab7aa083544c4ee7f91f24",
+	"layout":           "7bd2017304aafd11271e0c700606faee39e85f8eb322cefdd242ca408a746db4",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

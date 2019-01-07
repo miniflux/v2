@@ -583,7 +583,7 @@ var templateViewsMap = map[string]string{
 	"entry": `{{ define "title"}}{{ .entry.Title }}{{ end }}
 
 {{ define "content"}}
-<section class="entry" data-id="{{ .entry.ID }}">
+<section class="entry touch-item" data-id="{{ .entry.ID }}">
     <header class="entry-header">
         <h1>
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
@@ -1468,7 +1468,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
 	"edit_feed":           "3a0f93ab50b1a65dde18a55270985618682a279006c11612d2447cc419b98834",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
-	"entry":               "0e5066488c4b09527fb0879d4e03b98d6a0138ee650488ee6592e206c68156fd",
+	"entry":               "b37129c4a449db6b9bc16944fd42f2bdda4b757515087b7c40c9a12acb3a89f0",
 	"feed_entries":        "11d0b4fb1b1f3ed591a798529ff5f0f1cbf94731e302a59db41938990d57ec88",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
 	"history_entries":     "39a5e73959065b3411ab6224b40b5c1614e4b64faa1d68fdb24aa98421d6daab",
