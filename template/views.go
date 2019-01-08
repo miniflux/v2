@@ -140,7 +140,7 @@ var templateViewsMap = map[string]string{
             {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
             <div class="thumbnail">
                 <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "starredEntry" "entryID" .ID }}">
-                        <img src="{{ proxyURL .Thumbnail }}">
+                    <img class="lazy" src="" data-src="{{ proxyURL .Thumbnail }}">
                 </a>
             </div>
             {{ end }}
@@ -243,7 +243,7 @@ var templateViewsMap = map[string]string{
             {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
             <div class="thumbnail">
                 <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">
-                        <img src="{{ proxyURL .Thumbnail }}">
+                    <img class="lazy" src="" data-src="{{ proxyURL .Thumbnail }}">
                 </a>
             </div>
             {{ end }}
@@ -774,7 +774,7 @@ var templateViewsMap = map[string]string{
             {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
             <div class="thumbnail">
                 <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}">
-                    <img src="{{ proxyURL .Thumbnail }}">
+                    <img class="lazy" src="" data-src="{{ proxyURL .Thumbnail }}">
                 </a>
             </div>
             {{ end }}
@@ -907,7 +907,7 @@ var templateViewsMap = map[string]string{
             {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
             <div class="thumbnail">
                 <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "readEntry" "entryID" .ID }}">
-                        <img src="{{ proxyURL .Thumbnail }}">
+                    <img class="lazy" src="" data-src="{{ proxyURL .Thumbnail }}">
                 </a>
             </div>
             {{ end }}
@@ -1172,7 +1172,7 @@ var templateViewsMap = map[string]string{
             {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
             <div class="thumbnail">
                 <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">
-                        <img src="{{ proxyURL .Thumbnail }}">
+                    <img class="lazy" src="" data-src="{{ proxyURL .Thumbnail }}">
                 </a>
             </div>
             {{ end }}
@@ -1370,7 +1370,7 @@ var templateViewsMap = map[string]string{
             {{ if and (eq $.view "masonry") (ne .Thumbnail "") }}
             <div class="thumbnail">
                 <a target="_blank" data-set-read="true" data-no-request="true" href="{{ route "unreadEntry" "entryID" .ID }}">
-                        <img src="{{ proxyURL .Thumbnail }}">
+                    <img class="lazy" src="" data-src="{{ proxyURL .Thumbnail }}">
                 </a>
             </div>
             {{ end }}
@@ -1459,9 +1459,9 @@ var templateViewsMap = map[string]string{
 var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
 	"add_subscription":    "6eb055f887abffe9ddeb8977ae380c2cb1cc61767e85ed2026ef2fb5995e12d3",
-	"bookmark_entries":    "1e293226d569c05947de531ed19a7c521c10eba82e8069bbbd118897ccea5c32",
+	"bookmark_entries":    "62b60ec722ec1b1f851802cc6a06e1b9909cc529ace41505cddf340f2f640ca0",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
-	"category_entries":    "f3685cddaf2c23474d3753cc8a6de140cb9ea5133d33d0a8ff125614900f4e5a",
+	"category_entries":    "9260a9d6bb5c81b151c9bf3bc14fc76bb9a17e843b74d6436395995813c40e36",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
@@ -1469,15 +1469,15 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "3a0f93ab50b1a65dde18a55270985618682a279006c11612d2447cc419b98834",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "b37129c4a449db6b9bc16944fd42f2bdda4b757515087b7c40c9a12acb3a89f0",
-	"feed_entries":        "11d0b4fb1b1f3ed591a798529ff5f0f1cbf94731e302a59db41938990d57ec88",
+	"feed_entries":        "620eea447b961901d6dfded1933b1fc26c7a0bcdcf91d4741bdb4347dbccbd3a",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
-	"history_entries":     "39a5e73959065b3411ab6224b40b5c1614e4b64faa1d68fdb24aa98421d6daab",
+	"history_entries":     "c418db61decb1d20503c54cecbe756fcfb718dbdac65c8f045c7560dfa96e5ef",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
 	"login":               "f9e6714d34fdce82266c8b23b0ff449d05ba71e474d26f711da66f8c4fdc076a",
-	"search_entries":      "bf01d3b2e12391ca549720277e6ce4ca15b2469f3e00c16713a20f6e19a4376b",
+	"search_entries":      "8e674dae75e14fb0d13e1a90fb5bef3755a1599905a4c61be578adb9e8fdc370",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "1209b97876ca12a8fe3cc2f3f99505725dbccf4966a94e57c2c9478c5a276bff",
-	"unread_entries":      "91aa70376b931e7469216e4cb9e7c3b9051b53616575258182dd4201d0c448fe",
+	"unread_entries":      "9794d48d14e5facf67178b66740bf6270b535fe1e94a898c097b2027823ff188",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }
