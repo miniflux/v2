@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	userAgent      = "Miniflux Client Library <https://github.com/miniflux/miniflux-go>"
+	userAgent      = "Miniflux Client Library"
 	defaultTimeout = 80
 )
 
