@@ -114,6 +114,8 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
+		originalFeed.Title = updatedFeed.Title
+		originalFeed.SiteURL = updatedFeed.SiteURL
 		processor.ProcessFeedEntries(h.store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
