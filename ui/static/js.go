@@ -108,11 +108,11 @@ for(let i=0;i<items.length;i++){if(items[i].classList.contains("current-item")){
 break;}}}
 isEntry(){return document.querySelector("section.entry")!==null;}
 isListView(){return document.querySelector(".items")!==null;}}
-class ActionMenuHandler{constructor(element){this.element=element;this.nav=new NavHandler();document.querySelectorAll(".current-item").forEach(e=>e.classList.remove("current-item"));this.element.classList.add("current-item");}
-show(){let template=document.getElementById("action-menus");if(template===null)return;if(this.element.classList.contains("item")){hideMenuExcept("li[data-for='entries']");initMenu(this.element.querySelectorAll(".item-meta a"));document.querySelector("#menu-mark-above-read").addEventListener("click",()=>{EntryHandler.setEntriesAboveStatusRead(this.element);ModalHandler.close();});}else if(this.element.classList.contains("entry")){hideMenuExcept("li[data-for='entry']");initMenu(this.element.querySelectorAll(".entry-actions a"));}
-document.querySelector("#menu-action-cancel").addEventListener("click",()=>{ModalHandler.close();});function hideMenuExcept(selector){document.querySelectorAll(".action-menus li[data-for]").forEach(e=>e.style.display='none');if(selector)document.querySelectorAll(".action-menus "+selector).forEach(e=>e.style.display='');}
-function initMenu(links){ModalHandler.open(template.content,true);let list=document.querySelector(".action-menus #element-links");while(list.hasChildNodes()){list.removeChild(list.firstChild);}
-links.forEach(link=>{let menu=document.createElement("li");menu.innerText=link.innerText;menu.addEventListener("click",()=>{clickElement(link);ModalHandler.close();});list.appendChild(menu);});}
+class ActionMenuHandler{constructor(element){this.element=element;document.querySelectorAll(".current-item").forEach(e=>e.classList.remove("current-item"));this.element.classList.add("current-item");}
+show(){let template=document.getElementById("action-menus");if(template===null)return;if(this.element.classList.contains("item")){initMenu(this.element.querySelectorAll(".item-meta a"),"entries");document.querySelector("#menu-mark-above-read").addEventListener("click",()=>{EntryHandler.setEntriesAboveStatusRead(this.element);ModalHandler.close();});}else if(this.element.classList.contains("entry")){initMenu(this.element.querySelectorAll(".entry-actions a"),"entry");}
+document.querySelector("#menu-action-cancel").addEventListener("click",()=>{ModalHandler.close();});function initMenu(links,dataForValue){ModalHandler.open(template.content,true);let list=document.querySelector(".action-menus #element-links");while(list.hasChildNodes()){list.removeChild(list.firstChild);}
+links.forEach(link=>{let menu=document.createElement("li");menu.innerText=link.innerText;menu.addEventListener("click",()=>{clickElement(link);ModalHandler.close();});list.appendChild(menu);});document.querySelectorAll(".action-menus li[data-for]").forEach(e=>{if(e.dataset.for!==dataForValue)
+e.style.display='none';});}
 function clickElement(element){let e=document.createEvent("MouseEvents");e.initEvent("click",true,true);element.dispatchEvent(e);}}}class LinkStateHandler{static flip(element){let labelElement=document.createElement("span");labelElement.className="link-flipped-state";labelElement.appendChild(document.createTextNode(element.dataset.labelNewState));element.parentNode.appendChild(labelElement);element.parentNode.removeChild(element);}}
 class LazyloadHandler{static add(selector,onevent,callback){var loadImages=lazyload(selector);if(!loadImages)return;loadImages();window.addEventListener('scroll',throttle(loadImages,500,1000),false);function throttle(fn,delay,atleast){var timeout=null,startTime=new Date();return function(){var curTime=new Date();clearTimeout(timeout);if(curTime-startTime>=atleast){fn();startTime=curTime;}else{timeout=setTimeout(fn,delay);}}}
 function lazyload(selector){let lastVisbileIndex=0;return function(){let items=Array.from(document.querySelectorAll(selector));if(!items||!items.length)return null;let len=items.length;if(len-1<=lastVisbileIndex)return;let seeHeight=document.documentElement.clientHeight;let scrollTop=document.documentElement.scrollTop||document.body.scrollTop;let i=0;for(i=lastVisbileIndex;i<len;i++){if(items[i].offsetTop>seeHeight+scrollTop){break;}}
@@ -139,6 +139,6 @@ imagesLoaded('.masonry .item').on('progress',callback);LazyloadHandler.add(".ite
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "ae4ac7683cec03753406014b5c3e89ea047eaf7e61b0d9bc477fa191659fc93f",
+	"app": "75098a576ff04bec1f7baf3da2b4f340a0a4f067af5320d34e0255fabb0968d2",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
