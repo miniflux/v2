@@ -26,12 +26,14 @@ func (s *Storage) CacheMedias(days int) error {
 		if !m.Cached {
 			fm, err := media.FindMedia(m.URL)
 			if err != nil {
-				return err
+				logger.Error("[Storage:CacheMedias] unable to cache media %s: %v", m.URL, err)
+				continue
 			}
 			fm.ID = m.ID
 			err = s.UpdateMedia(fm)
 			if err != nil {
-				return err
+				logger.Error("[Storage:CacheMedias] unable to cache media %s: %v", m.URL, err)
+				continue
 			}
 		}
 		sql := fmt.Sprintf(`UPDATE entry_medias set use_cache='t' WHERE media_id=%d AND entry_id in (%s)`, m.ID, entries)
@@ -223,9 +225,7 @@ func (s *Storage) CleanupCaches() error {
 		return fmt.Errorf("unable to remove CleanupCaches: %v", err)
 	}
 
-	if count == 0 {
-		return errors.New("no cache has been removed")
-	}
+	logger.Info("%d media cache removed.", count)
 	return nil
 }
 
