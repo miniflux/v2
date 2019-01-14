@@ -1,3 +1,37 @@
+Version 2.0.14 (Jan 13, 2018)
+-----------------------------
+
+* Only attempt to change password if the confirmation field is filled in (Firefox)
+* Remove URL from client user agent
+* Make the feed list order case-insensitive
+* Handle XHTML Summary elements for Atom feeds
+* Make UTF-8 the default encoding for XML feeds
+* Add more targets to Makefile
+* Add -mod=vendor in Makefile
+* Move health check endpoint from ui package to httpd service
+* Add workaround for non GMT dates (RFC822, RFC850, and RFC1123)
+* Make sure `<strong>` elements are bold
+* Show scrollbars only when necessary for <pre> elements
+* Add Italian translation
+* Allow to switch between unread only and all entries on category/feed views
+* Add function storage.UpdateFeedError()
+* Add BBC News scraping rule
+* Ignore JSON feeds from EnsureUnicode()
+* Preserve category selection when no feed is found
+* Update XML encoding regex to take single quotes into consideration
+* Send cli errors to stderr
+* Update dependencies
+* Make password prompt compatible with Windows
+* Make configurable the number of days to archive read items
+* Change log level to debug when starting workers
+* Do not show $DATABASE_URL warning when showing application info
+* Move image proxy filter to template functions
+* Update scraper rule for lemonde.fr
+* Refactor manual entry scraper
+* Apply rewriter rules on manual "Fetch Original Content"
+* Add Makefile target for current OS and architecture
+* Improve Makefile
+
 Version 2.0.13 (Nov 25, 2018)
 -----------------------------
 
