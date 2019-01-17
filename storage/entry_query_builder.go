@@ -34,7 +34,7 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		e.args = append(e.args, query)
 	}
 	// ordered by relevance, can be overrode
-	e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, to_tsquery('%s'))", query))
+	e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery('%s'))", query))
 	e.WithDirection("DESC")
 	return e
 }
