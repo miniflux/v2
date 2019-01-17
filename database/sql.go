@@ -142,7 +142,7 @@ alter table users add column extra hstore;
 create index users_extra_idx on users using gin(extra);
 `,
 	"schema_version_20": `alter table entries add column document_vectors tsvector;
-update entries set document_vectors = to_tsvector(substring(title || ' ' || coalesce(content, '') for 1000000));
+update entries set document_vectors = setweight(to_tsvector(coalesce(title, '')), 'A') || setweight(to_tsvector(coalesce(content, '')), 'B');
 create index document_vectors_idx on entries using gin(document_vectors);`,
 	"schema_version_21": `alter table feeds add column user_agent text default '';`,
 	"schema_version_3": `create table tokens (
@@ -192,7 +192,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_18": "c0ec24847612c7f2dc326cf735baffba79391a56aedd73292371a39f38724a71",
 	"schema_version_19": "a83f77b41cc213d282805a5b518f15abbf96331599119f0ef4aca4be037add7b",
 	"schema_version_2":  "e8e9ff32478df04fcddad10a34cba2e8bb1e67e7977b5bd6cdc4c31ec94282b4",
-	"schema_version_20": "5d414c0cfc0da2863c641079afa58b7ff42dccb0f0e01c822ad435c3e3aa9201",
+	"schema_version_20": "44790faf5806cccc9b785faee4f852554ce4dc7d67f2281548f2004902e857fd",
 	"schema_version_21": "77da01ee38918ff4fe33985fbb20ed3276a717a7584c2ca9ebcf4d4ab6cb6910",
 	"schema_version_3":  "a54745dbc1c51c000f74d4e5068f1e2f43e83309f023415b1749a47d5c1e0f12",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
