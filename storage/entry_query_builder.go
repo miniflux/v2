@@ -33,6 +33,9 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
 		e.args = append(e.args, query)
 	}
+	// ordered by relevance, can be overrode
+	e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, to_tsquery('%s'))", query))
+	e.WithDirection("DESC")
 	return e
 }
 
@@ -315,7 +318,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 	var parts []string
 
 	if e.order != "" {
-		parts = append(parts, fmt.Sprintf(`ORDER BY "%s"`, e.order))
+		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, e.order))
 	}
 
 	if e.direction != "" {
