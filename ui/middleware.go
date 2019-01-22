@@ -78,7 +78,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 				}
 			}
 
-			http.SetCookie(w, cookie.New(cookie.CookieSessionID, session.ID, m.cfg.IsHTTPS, m.cfg.BasePath()))
+			http.SetCookie(w, cookie.New(cookie.CookieAppSessionID, session.ID, m.cfg.IsHTTPS, m.cfg.BasePath()))
 		} else {
 			logger.Debug("[UI:AppSession] %s", session)
 		}
@@ -108,7 +108,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 }
 
 func (m *middleware) getAppSessionValueFromCookie(r *http.Request) *model.Session {
-	cookieValue := request.CookieValue(r, cookie.CookieSessionID)
+	cookieValue := request.CookieValue(r, cookie.CookieAppSessionID)
 	if cookieValue == "" {
 		return nil
 	}

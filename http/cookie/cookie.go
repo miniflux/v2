@@ -11,8 +11,8 @@ import (
 
 // Cookie names.
 const (
-	CookieSessionID     = "sessionID"
-	CookieUserSessionID = "userSessionID"
+	CookieAppSessionID  = "MinifluxAppSessionID"
+	CookieUserSessionID = "MinifluxUserSessionID"
 
 	// Cookie duration in days.
 	cookieDuration = 30
