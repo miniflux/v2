@@ -18,7 +18,7 @@ type SessionData struct {
 	FlashMessage       string `json:"flash_message"`
 	FlashErrorMessage  string `json:"flash_error_message"`
 	Language           string `json:"language"`
-	Theme              string `json:"Theme"`
+	Theme              string `json:"theme"`
 	PocketRequestToken string `json:"pocket_request_token"`
 }
 

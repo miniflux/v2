@@ -12,24 +12,48 @@ import (
 	"miniflux.app/model"
 )
 
-// CreateSession creates a new session.
-func (s *Storage) CreateSession() (*model.Session, error) {
-	session := model.Session{
-		ID:   crypto.GenerateRandomString(32),
-		Data: &model.SessionData{CSRF: crypto.GenerateRandomString(64)},
-	}
-
-	query := "INSERT INTO sessions (id, data) VALUES ($1, $2)"
-	_, err := s.db.Exec(query, session.ID, session.Data)
+// CreateAppSessionWithUserPrefs creates a new application session with the given user preferences.
+func (s *Storage) CreateAppSessionWithUserPrefs(userID int64) (*model.Session, error) {
+	user, err := s.UserByID(userID)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create session: %v", err)
+		return nil, err
 	}
 
-	return &session, nil
+	session := model.Session{
+		ID: crypto.GenerateRandomString(32),
+		Data: &model.SessionData{
+			CSRF:     crypto.GenerateRandomString(64),
+			Theme:    user.Theme,
+			Language: user.Language,
+		},
+	}
+
+	return s.createAppSession(&session)
 }
 
-// UpdateSessionField updates only one session field.
-func (s *Storage) UpdateSessionField(sessionID, field string, value interface{}) error {
+// CreateAppSession creates a new application session.
+func (s *Storage) CreateAppSession() (*model.Session, error) {
+	session := model.Session{
+		ID: crypto.GenerateRandomString(32),
+		Data: &model.SessionData{
+			CSRF: crypto.GenerateRandomString(64),
+		},
+	}
+
+	return s.createAppSession(&session)
+}
+
+func (s *Storage) createAppSession(session *model.Session) (*model.Session, error) {
+	_, err := s.db.Exec(`INSERT INTO sessions (id, data) VALUES ($1, $2)`, session.ID, session.Data)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create app session: %v", err)
+	}
+
+	return session, nil
+}
+
+// UpdateAppSessionField updates only one session field.
+func (s *Storage) UpdateAppSessionField(sessionID, field string, value interface{}) error {
 	query := `UPDATE sessions
 		SET data = jsonb_set(data, '{%s}', to_jsonb($1::text), true)
 		WHERE id=$2`
@@ -42,8 +66,8 @@ func (s *Storage) UpdateSessionField(sessionID, field string, value interface{})
 	return nil
 }
 
-// Session returns the given session.
-func (s *Storage) Session(id string) (*model.Session, error) {
+// AppSession returns the given session.
+func (s *Storage) AppSession(id string) (*model.Session, error) {
 	var session model.Session
 
 	query := "SELECT id, data FROM sessions WHERE id=$1"

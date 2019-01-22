@@ -18,49 +18,49 @@ type Session struct {
 // NewOAuth2State generates a new OAuth2 state and stores the value into the database.
 func (s *Session) NewOAuth2State() string {
 	state := crypto.GenerateRandomString(32)
-	s.store.UpdateSessionField(s.sessionID, "oauth2_state", state)
+	s.store.UpdateAppSessionField(s.sessionID, "oauth2_state", state)
 	return state
 }
 
 // NewFlashMessage creates a new flash message.
 func (s *Session) NewFlashMessage(message string) {
-	s.store.UpdateSessionField(s.sessionID, "flash_message", message)
+	s.store.UpdateAppSessionField(s.sessionID, "flash_message", message)
 }
 
 // FlashMessage returns the current flash message if any.
 func (s *Session) FlashMessage(message string) string {
 	if message != "" {
-		s.store.UpdateSessionField(s.sessionID, "flash_message", "")
+		s.store.UpdateAppSessionField(s.sessionID, "flash_message", "")
 	}
 	return message
 }
 
 // NewFlashErrorMessage creates a new flash error message.
 func (s *Session) NewFlashErrorMessage(message string) {
-	s.store.UpdateSessionField(s.sessionID, "flash_error_message", message)
+	s.store.UpdateAppSessionField(s.sessionID, "flash_error_message", message)
 }
 
 // FlashErrorMessage returns the last flash error message if any.
 func (s *Session) FlashErrorMessage(message string) string {
 	if message != "" {
-		s.store.UpdateSessionField(s.sessionID, "flash_error_message", "")
+		s.store.UpdateAppSessionField(s.sessionID, "flash_error_message", "")
 	}
 	return message
 }
 
 // SetLanguage updates the language field in session.
 func (s *Session) SetLanguage(language string) {
-	s.store.UpdateSessionField(s.sessionID, "language", language)
+	s.store.UpdateAppSessionField(s.sessionID, "language", language)
 }
 
 // SetTheme updates the theme field in session.
 func (s *Session) SetTheme(theme string) {
-	s.store.UpdateSessionField(s.sessionID, "theme", theme)
+	s.store.UpdateAppSessionField(s.sessionID, "theme", theme)
 }
 
 // SetPocketRequestToken updates Pocket Request Token.
 func (s *Session) SetPocketRequestToken(requestToken string) {
-	s.store.UpdateSessionField(s.sessionID, "pocket_request_token", requestToken)
+	s.store.UpdateAppSessionField(s.sessionID, "pocket_request_token", requestToken)
 }
 
 // New returns a new session handler.

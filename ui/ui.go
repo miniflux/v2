@@ -22,8 +22,8 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	handler := &handler{router, cfg, store, template.NewEngine(cfg, router), pool, feedHandler}
 
 	uiRouter := router.NewRoute().Subrouter()
-	uiRouter.Use(middleware.handleAppSession)
 	uiRouter.Use(middleware.handleUserSession)
+	uiRouter.Use(middleware.handleAppSession)
 
 	// Static assets.
 	uiRouter.HandleFunc("/stylesheets/{name}.css", handler.showStylesheet).Name("stylesheet").Methods("GET")
