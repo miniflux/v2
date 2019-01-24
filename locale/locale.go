@@ -8,6 +8,7 @@ package locale // import "miniflux.app/locale"
 func AvailableLanguages() map[string]string {
 	return map[string]string{
 		"en_US": "English",
+		"es_ES": "Español",
 		"fr_FR": "Français",
 		"de_DE": "Deutsch",
 		"pl_PL": "Polski",
