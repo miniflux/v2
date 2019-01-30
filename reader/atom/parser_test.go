@@ -546,7 +546,7 @@ func TestParseEntryWithPublishedAndUpdated(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !feed.Entries[0].Date.Equal(time.Date(2003, time.December, 13, 18, 30, 2, 0, time.UTC)) {
+	if !feed.Entries[0].Date.Equal(time.Date(2002, time.November, 12, 18, 30, 2, 0, time.UTC)) {
 		t.Errorf("Incorrect entry date, got: %v", feed.Entries[0].Date)
 	}
 }

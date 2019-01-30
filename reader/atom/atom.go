@@ -130,9 +130,13 @@ func getRelationURL(links []atomLink, relation string) string {
 }
 
 func getDate(a *atomEntry) time.Time {
-	dateText := a.Updated
+	// Note: The published date represents the original creation date for YouTube feeds.
+	// Example:
+	// <published>2019-01-26T08:02:28+00:00</published>
+	// <updated>2019-01-29T07:27:27+00:00</updated>
+	dateText := a.Published
 	if dateText == "" {
-		dateText = a.Published
+		dateText = a.Updated
 	}
 
 	if dateText != "" {
