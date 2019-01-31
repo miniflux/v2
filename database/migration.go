@@ -12,7 +12,7 @@ import (
 	"miniflux.app/logger"
 )
 
-const schemaVersion = 21
+const schemaVersion = 22
 
 // Migrate executes database migrations.
 func Migrate(db *sql.DB) {
