@@ -50,7 +50,7 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 
 	query := `
 		UPDATE entries
-		update entries set document_vectors = setweight(to_tsvector(substring(coalesce(title, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce(content, '') for 1000000)), 'B')
+		SET document_vectors = setweight(to_tsvector(substring(coalesce(title, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce(content, '') for 1000000)), 'B')
 		WHERE id=$1 AND user_id=$2
 	`
 	_, err = tx.Exec(query, entry.ID, entry.UserID)
