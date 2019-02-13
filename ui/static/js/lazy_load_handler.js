@@ -26,7 +26,7 @@ class LazyloadHandler {
                 let items = Array.from(document.querySelectorAll(selector));
                 if (!items || !items.length) return null;
                 let len = items.length;
-                if (len - 1 <= lastVisbileIndex) return;
+                if (len <= lastVisbileIndex) return;
 
                 let seeHeight = document.documentElement.clientHeight;
                 let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -37,8 +37,8 @@ class LazyloadHandler {
                         break;
                     }
                 }
-                if (i - 1 <= lastVisbileIndex) return;
-                lastVisbileIndex = i - 1;
+                if (i <= lastVisbileIndex) return;
+                lastVisbileIndex = i;
                 // pre-load images for the next 10 entries.
                 items.slice(0, lastVisbileIndex + 10)
                     .reduce((imgs, item) => {
