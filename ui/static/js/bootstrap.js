@@ -98,7 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
             navigator.serviceWorker.register(scriptElement.src);
         }
     }
+});
 
+window.onload = function () {
+    // masonry has to wait for all resources loaded to get the right layout
     let msnryElement = document.querySelector('.masonry');
     if (msnryElement) {
         var msnry = new Masonry(msnryElement, {
@@ -107,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             gutter: 10
         })
         let callback = (instance, image) => {
-            if (!image.img.dataset.src && !image.isLoaded) {
+            if (image && image.img && !image.img.dataset.src && !image.isLoaded) {
                 let thumbnail = DomHelper.findParent(image.img, "thumbnail");
                 if (thumbnail) thumbnail.parentNode.removeChild(thumbnail);
             }
@@ -116,4 +119,4 @@ document.addEventListener("DOMContentLoaded", function () {
         imagesLoaded('.masonry .item').on('progress', callback);
         LazyloadHandler.add(".item", 'progress', callback);
     }
-});
+};
