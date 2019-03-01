@@ -316,9 +316,9 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 }
 
 // EntryURLExists returns true if an entry with this URL already exists.
-func (s *Storage) EntryURLExists(userID int64, entryURL string) bool {
+func (s *Storage) EntryURLExists(feedID int64, entryURL string) bool {
 	var result int
-	query := `SELECT count(*) as c FROM entries WHERE user_id=$1 AND url=$2`
-	s.db.QueryRow(query, userID, entryURL).Scan(&result)
+	query := `SELECT count(*) as c FROM entries WHERE feed_id=$1 AND url=$2`
+	s.db.QueryRow(query, feedID, entryURL).Scan(&result)
 	return result >= 1
 }
