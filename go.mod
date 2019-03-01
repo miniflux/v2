@@ -10,7 +10,7 @@ require (
 	github.com/lib/pq v1.0.0
 	github.com/tdewolff/minify/v2 v2.3.8 // indirect
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
-	golang.org/x/net v0.0.0-20181207154023-610586996380
+	golang.org/x/net v0.0.0-20190228165749-92fc7df08ae7
 	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
 	golang.org/x/sys v0.0.0-20181208175041-ad97f365e150 // indirect

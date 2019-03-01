@@ -187,7 +187,10 @@ func TestDifferentEncodingWithResponse(t *testing.T) {
 		}
 
 		r := &client.Response{Body: bytes.NewReader(content), ContentType: tc.contentType}
-		r.EnsureUnicodeBody()
+		if encodingErr := r.EnsureUnicodeBody(); encodingErr != nil {
+			t.Fatalf(`Encoding error for %q: %v`, tc.filename, encodingErr)
+		}
+
 		feed, parseErr := ParseFeed(r.String())
 		if parseErr != nil {
 			t.Fatalf(`Parsing error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
