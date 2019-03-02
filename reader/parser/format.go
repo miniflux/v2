@@ -27,6 +27,7 @@ func DetectFeedFormat(data string) string {
 	}
 
 	decoder := xml.NewDecoder(strings.NewReader(data))
+	decoder.Entity = xml.HTMLEntity
 	decoder.CharsetReader = encoding.CharsetReader
 
 	for {
