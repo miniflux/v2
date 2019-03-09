@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     FormHandler.handleSubmitButtons();
 
-    let touchHandler = new TouchHandler();
-    touchHandler.listen();
-
     let navHandler = new NavHandler();
     let keyboardHandler = new KeyboardHandler();
     keyboardHandler.on("g u", () => navHandler.goToPage("unread"));
@@ -32,6 +29,9 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("/", (e) => navHandler.setFocusToSearchInput(e));
     keyboardHandler.on("Escape", () => ModalHandler.close());
     keyboardHandler.listen();
+
+    let touchHandler = new TouchHandler(navHandler);
+    touchHandler.listen();
 
     let mouseHandler = new MouseHandler();
     mouseHandler.onClick("a[data-save-entry]", (event) => {
