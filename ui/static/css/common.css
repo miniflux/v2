@@ -142,6 +142,9 @@ a:hover {
         margin: auto;
         max-width: 750px;
     }
+    .pagination-bottom {
+        max-width: 750px;
+    }
 
     .header {
         margin-bottom: 0;
@@ -526,17 +529,34 @@ a.button {
 }
 
 .pagination-bottom {
-    border-top: 1px dotted #ddd;
-    margin-bottom: 15px;
-    margin-top: 50px;
+    border-top: 2px dotted #ddd;
+    padding-left:20px;
+    padding-right:20px;
+    padding-bottom:10px;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    margin: auto;
+    z-index: 9990;
 }
+
+.pagination-bottom > a {
+   display:inline-flex;
+   width:95%;
+   padding: 10px;
+ }
 
 .pagination > div {
     flex: 1;
 }
 
+.pagination-prev {
+    text-align: left;
+    justify-content: left;
+}
 .pagination-next {
     text-align: right;
+    justify-content: right;
 }
 
 .pagination-prev:before {

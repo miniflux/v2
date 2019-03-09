@@ -154,6 +154,7 @@ input[type="text"]:focus {
 
 .pagination-bottom {
     border-color: #333;
+    background: #222;
 }
 
 /* List view */
