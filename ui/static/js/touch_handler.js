@@ -1,5 +1,6 @@
 class TouchHandler {
-    constructor() {
+    constructor(navHandler) {
+        this.navHandler = navHandler;
         this.reset();
     }
 
@@ -93,5 +94,36 @@ class TouchHandler {
             element.addEventListener("touchend", (e) => this.onTouchEnd(e), hasPassiveOption ? { passive: true } : false);
             element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
         });
+
+        let entryContentElement = document.querySelector(".entry-content");
+        if (entryContentElement) {
+            let doubleTapTimers = {
+                previous: null,
+                next: null
+            };
+    
+            const detectDoubleTap = (doubleTapTimer, event) => {
+                const timer = doubleTapTimers[doubleTapTimer];
+                if (timer === null) {
+                    doubleTapTimers[doubleTapTimer] = setTimeout(() => {
+                        doubleTapTimers[doubleTapTimer] = null;
+                    }, 200);
+                } else {
+                    event.preventDefault();
+                    this.navHandler.goToPage(doubleTapTimer);
+                }
+            };
+    
+            entryContentElement.addEventListener("touchend", (e) => {
+                    if (e.changedTouches[0].clientX >= (entryContentElement.offsetWidth / 2)) {
+                        detectDoubleTap("next", e);
+                    } else {
+                        detectDoubleTap("previous", e);
+                    }
+                }, hasPassiveOption ? { passive: false } : false);
+            entryContentElement.addEventListener("touchmove", (e) => {
+                Object.keys(doubleTapTimers).forEach(timer => doubleTapTimers[timer] = null);
+            });
+        }
     }
 }
