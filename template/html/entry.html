@@ -1,7 +1,7 @@
 {{ define "title"}}{{ .entry.Title }}{{ end }}
 
 {{ define "content"}}
-<section class="entry" data-id="{{ .entry.ID }}">
+<section class="entry touch-article" data-id="{{ .entry.ID }}">
     <header class="entry-header">
         <h1>
             <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
@@ -122,4 +122,5 @@
 <div class="pagination-bottom">
     {{ template "entry_pagination" . }}
 </div>
+<div id="toaster"></div>
 {{ end }}

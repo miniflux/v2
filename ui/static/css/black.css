@@ -147,6 +147,11 @@ input[type="text"]:focus {
     color: #aaa;
 }
 
+/* Toaster */
+#toaster {
+    border-color: #333;
+    background: #222;
+}
 /* Pagination */
 .pagination a {
     color: #aaa;

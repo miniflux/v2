@@ -539,6 +539,22 @@ a.button {
     margin: auto;
     z-index: 9990;
 }
+#toaster {
+    text-align:center;
+    opacity:0.3;
+    width: 100px;
+    height: 40px;
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, 40px);
+    z-index: 9999;
+    border-top: 2px solid #ddd;
+    border-left: 2px solid #ddd;
+    border-right: 2px solid #ddd;
+    padding:10px;
+    margin: auto;
+}
 
 .pagination-next > a {
    display:inline-flex;
@@ -656,6 +672,9 @@ article.feed-parsing-error {
 }
 
 /* Entry view */
+.entry {
+    padding-bottom: 20px;
+}
 .entry header {
     padding-bottom: 5px;
     border-bottom: 1px dotted #ddd;
