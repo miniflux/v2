@@ -188,6 +188,9 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 
 // ArchiveEntries changes the status of read items to "removed" after specified days.
 func (s *Storage) ArchiveEntries(days int) error {
+	if days < 0 {
+		return nil
+	}
 	query := fmt.Sprintf(`
 			UPDATE entries SET status='removed'
 			WHERE id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '%d days'::interval LIMIT 5000)
