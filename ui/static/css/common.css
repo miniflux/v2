@@ -558,7 +558,7 @@ a.button {
 
 .pagination-next > a {
    display:inline-flex;
-   width:95%;
+   width:90%;
    padding: 6px;
    justify-content: right;
    align-items: center;
@@ -566,7 +566,7 @@ a.button {
 
 .pagination-prev > a {
    display:inline-flex;
-   width:95%;
+   width:90%;
    padding: 6px;
    justify-content: left;
    align-items: center;
@@ -904,4 +904,8 @@ article.feed-parsing-error {
     font-weight: 600;
     text-decoration: none;
     font-size: 1.2em;
+}
+.toaster
+{
+
 }

@@ -129,14 +129,14 @@ class TouchHandler {
 
         if (this.touch.element !== null) {
             let distance = this.calculateDistance();
-            if (Math.abs(distance) > 150) {
-          if (distance < 100) {
+            if (Math.abs(distance) > 100) {
+          if (distance < 0) {
              let element = document.querySelector("a[data-page=next]");
              if (element) {
                 document.location.href = element.href;
              }
           }
-          if (distance > 100) {
+          if (distance > 0) {
              let element = document.querySelector("a[data-page=previous]");
 
              if (element) {
