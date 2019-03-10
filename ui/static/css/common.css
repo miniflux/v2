@@ -540,23 +540,24 @@ a.button {
     z-index: 9990;
 }
 
-.pagination-bottom > a {
+.pagination-next > a {
    display:inline-flex;
    width:95%;
-   padding: 10px;
+   padding: 6px;
+   justify-content: right;
+   align-items: center;
+ }
+
+.pagination-prev > a {
+   display:inline-flex;
+   width:95%;
+   padding: 6px;
+   justify-content: left;
+   align-items: center;
  }
 
 .pagination > div {
     flex: 1;
-}
-
-.pagination-prev {
-    text-align: left;
-    justify-content: left;
-}
-.pagination-next {
-    text-align: right;
-    justify-content: right;
 }
 
 .pagination-prev:before {
