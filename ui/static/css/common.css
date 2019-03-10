@@ -29,7 +29,6 @@ a:focus {
     outline: 0;
     color: red;
     text-decoration: none;
-    border: 1px dotted #aaa;
 }
 
 a:hover {
@@ -559,7 +558,7 @@ a.button {
 .pagination-next > a {
    display:inline-flex;
    width:90%;
-   padding: 6px;
+   padding: 5px;
    justify-content: right;
    align-items: center;
  }
@@ -567,7 +566,7 @@ a.button {
 .pagination-prev > a {
    display:inline-flex;
    width:90%;
-   padding: 6px;
+   padding: 5px;
    justify-content: left;
    align-items: center;
  }
