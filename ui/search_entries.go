@@ -27,8 +27,6 @@ func (h *handler) showSearchEntriesPage(w http.ResponseWriter, r *http.Request) 
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithSearchQuery(searchQuery)
 	builder.WithoutStatus(model.EntryStatusRemoved)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 

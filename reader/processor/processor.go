@@ -17,7 +17,7 @@ import (
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 	for _, entry := range feed.Entries {
 		if feed.Crawler {
-			if !store.EntryURLExists(feed.UserID, entry.URL) {
+			if !store.EntryURLExists(feed.ID, entry.URL) {
 				content, err := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
 				if err != nil {
 					logger.Error(`[Filter] Unable to crawl this entry: %q => %v`, entry.URL, err)

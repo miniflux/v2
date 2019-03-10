@@ -18,7 +18,7 @@ golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/acme
 golang.org/x/crypto/blowfish
-# golang.org/x/net v0.0.0-20181207154023-610586996380
+# golang.org/x/net v0.0.0-20190228165749-92fc7df08ae7
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom

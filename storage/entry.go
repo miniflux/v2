@@ -50,7 +50,7 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 
 	query := `
 		UPDATE entries
-		SET document_vectors = to_tsvector(substring(title || ' ' || coalesce(content, '') for 1000000))
+		SET document_vectors = setweight(to_tsvector(substring(coalesce(title, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce(content, '') for 1000000)), 'B')
 		WHERE id=$1 AND user_id=$2
 	`
 	_, err = tx.Exec(query, entry.ID, entry.UserID)
@@ -68,7 +68,7 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		INSERT INTO entries
 		(title, hash, url, comments_url, published_at, content, author, user_id, feed_id, document_vectors)
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8, $9, to_tsvector(substring($1 || ' ' || coalesce($6, '') for 1000000)))
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($6, '') for 1000000)), 'B'))
 		RETURNING id, status
 	`
 	err := s.db.QueryRow(
@@ -107,7 +107,7 @@ func (s *Storage) updateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE entries SET
 		title=$1, url=$2, comments_url=$3, content=$4, author=$5,
-		document_vectors=to_tsvector(substring($1 || ' ' || coalesce($4, '') for 1000000))
+		document_vectors = setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($4, '') for 1000000)), 'B')
 		WHERE user_id=$6 AND feed_id=$7 AND hash=$8
 		RETURNING id
 	`
@@ -316,9 +316,9 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 }
 
 // EntryURLExists returns true if an entry with this URL already exists.
-func (s *Storage) EntryURLExists(userID int64, entryURL string) bool {
+func (s *Storage) EntryURLExists(feedID int64, entryURL string) bool {
 	var result int
-	query := `SELECT count(*) as c FROM entries WHERE user_id=$1 AND url=$2`
-	s.db.QueryRow(query, userID, entryURL).Scan(&result)
+	query := `SELECT count(*) as c FROM entries WHERE feed_id=$1 AND url=$2`
+	s.db.QueryRow(query, feedID, entryURL).Scan(&result)
 	return result >= 1
 }
