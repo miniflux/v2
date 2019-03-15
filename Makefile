@@ -1,4 +1,5 @@
 APP := miniflux
+DOCKER_IMAGE := miniflux/miniflux
 VERSION := $(shell git rev-parse --short HEAD)
 BUILD_DATE := `date +%FT%T%z`
 LD_FLAGS := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'"
@@ -7,25 +8,32 @@ DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
 export GO111MODULE=on
 
-.PHONY: generate
-.PHONY: miniflux
-.PHONY: linux-amd64
-.PHONY: linux-armv8
-.PHONY: linux-armv7
-.PHONY: linux-armv6
-.PHONY: linux-armv5
-.PHONY: darwin-amd64
-.PHONY: freebsd-amd64
-.PHONY: openbsd-amd64
-.PHONY: windows-amd64
-.PHONY: netbsd-amd64
-.PHONY: linux-x86
-.PHONY: darwin-x86
-.PHONY: freebsd-x86
-.PHONY: netbsd-x86
-.PHONY: openbsd-x86
-.PHONY: windows-x86
-.PHONY: build run clean test lint integration-test clean-integration-test
+.PHONY: generate \
+	miniflux \
+	linux-amd64 \
+	linux-armv8 \
+	linux-armv7 \
+	linux-armv6 \
+	linux-armv5 \
+	linux-x86 \
+	darwin-amd64 \
+	freebsd-amd64 \
+	freebsd-x86 \
+	openbsd-amd64 \
+	openbsd-x86 \
+	netbsd-x86 \
+	netbsd-amd64 \
+	windows-amd64 \
+	windows-x86 \
+	build \
+	run \
+	clean \
+	test \
+	lint \
+	integration-test \
+	clean-integration-test \
+	docker-images \
+	docker-manifest
 
 generate:
 	@ go generate -mod=vendor
@@ -65,12 +73,9 @@ build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 
 # NOTE: unsupported targets
 netbsd-amd64: generate
 	@ GOOS=netbsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-amd64 main.go
-	
+
 linux-x86: generate
 	@ GOOS=linux GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-x86 main.go
-
-darwin-x86: generate
-	@ GOOS=darwin GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-darwin-x86 main.go
 
 freebsd-x86: generate
 	@ GOOS=freebsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
@@ -111,3 +116,35 @@ clean-integration-test:
 	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
 	@ rm miniflux-test
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
+
+docker-images:
+	for arch in amd64 arm32v6 arm64v8; do \
+	  case $${arch} in \
+		amd64   ) miniflux_arch="amd64";; \
+		arm32v6 ) miniflux_arch="armv6";; \
+		arm64v8 ) miniflux_arch="armv8";; \
+	  esac ;\
+	  cp Dockerfile Dockerfile.$${arch} && \
+	  sed -i"" -e "s|__BASEIMAGE_ARCH__|$${arch}|g" Dockerfile.$${arch} && \
+	  sed -i"" -e "s|__MINIFLUX_VERSION__|$(VERSION)|g" Dockerfile.$${arch} && \
+	  sed -i"" -e "s|__MINIFLUX_ARCH__|$${miniflux_arch}|g" Dockerfile.$${arch} && \
+	  docker build --pull -f Dockerfile.$${arch} -t $(DOCKER_IMAGE):$${arch}-$(VERSION) . && \
+	  docker tag $(DOCKER_IMAGE):$${arch}-${VERSION} $(DOCKER_IMAGE):$${arch}-latest && \
+	  rm -f Dockerfile.$${arch}* ;\
+	done
+
+docker-manifest:
+	for version in $(VERSION) latest; do \
+		docker push $(DOCKER_IMAGE):amd64-$${version} && \
+		docker push $(DOCKER_IMAGE):arm32v6-$${version} && \
+		docker push $(DOCKER_IMAGE):arm64v8-$${version} && \
+		docker manifest create --amend $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):amd64-$${version} \
+			$(DOCKER_IMAGE):arm32v6-$${version} \
+			$(DOCKER_IMAGE):arm64v8-$${version} && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm32v6-$${version} --os linux --arch arm --variant v6 && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm64v8-$${version} --os linux --arch arm64 --variant v8 && \
+		docker manifest push --purge $(DOCKER_IMAGE):$${version} ;\
+	done
