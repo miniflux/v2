@@ -110,7 +110,7 @@ var templateCommonMap = map[string]string{
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}?{{ .theme_checksum }}">
 
     <script type="text/javascript" src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
-    <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
+    <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script" data-add-subscription-url="{{ route "addWebpushSubscription" }}"></script>
 </head>
 <body data-entries-status-url="{{ route "updateEntriesStatus" }}">
     {{ if .user }}
@@ -245,6 +245,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "4a5339267f67b5999a22ece7584df4c75785bc3bf95d44e1891da763aaea7991",
+	"layout":           "da04c4237adeeb98e5700fbe3917c0bde94485c3a5e7a4d33b9678bcdf426cca",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

@@ -80,7 +80,28 @@ document.addEventListener("DOMContentLoaded", function() {
     if ("serviceWorker" in navigator) {
         let scriptElement = document.getElementById("service-worker-script");
         if (scriptElement) {
-            navigator.serviceWorker.register(scriptElement.src);
+            let webpushHandler = new WebpushHandler();
+            let serviceWorker = navigator.serviceWorker.register(scriptElement.src)
+
+            if (('PushManager' in window)) {
+                webpushHandler.askPermissionToSubscribe().then((permissionGranted) => {
+                    if (!permissionGranted) {
+                        return;
+                    }
+
+                    serviceWorker.then(function (swReg) {
+                        swReg.pushManager.getSubscription().then((subscription) => {
+                            if (subscription) {
+                                return;
+                            }
+
+                            webpushHandler.subscribeUserToPush(swReg)
+                                .then(webpushHandler.registerSubscription);
+
+                        });
+                    })
+                })
+            }
         }
     }
 });

@@ -114,6 +114,9 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/import", handler.showImportPage).Name("import").Methods("GET")
 	uiRouter.HandleFunc("/upload", handler.uploadOPML).Name("uploadOPML").Methods("POST")
 
+	// WebPush pages.
+	uiRouter.HandleFunc("/webpush/subscription/add", handler.addWebpushSubscription).Name("addWebpushSubscription").Methods("POST")
+
 	// OAuth2 flow.
 	uiRouter.HandleFunc("/oauth2/{provider}/unlink", handler.oauth2Unlink).Name("oauth2Unlink").Methods("GET")
 	uiRouter.HandleFunc("/oauth2/{provider}/redirect", handler.oauth2Redirect).Name("oauth2Redirect").Methods("GET")
