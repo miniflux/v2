@@ -1,4 +1,21 @@
-Version 2.0.14 (Jan 13, 2018)
+Version 2.0.15 (Mar 16, 2019)
+-----------------------------
+
+* Move Dockerfile to main repo
+* Change location of the binary from /usr/local/bin to /usr/bin in Docker image
+* Add double tap detection for next/previous page navigation
+* Allow users to disable auto-remove
+* Make parser compatible with Go 1.12
+* Add Golang 1.12 to CI
+* Use feed ID instead of user ID to check entry URLs presence
+* Fix typo in stylesheet
+* Sort search results by relevance
+* Use preferably the published date for Atom feeds
+* Add Spanish translation
+* Rename session cookies
+* Handle the case when application session is expired and not user session
+
+Version 2.0.14 (Jan 13, 2019)
 -----------------------------
 
 * Only attempt to change password if the confirmation field is filled in (Firefox)
