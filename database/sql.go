@@ -146,6 +146,13 @@ update entries set document_vectors = to_tsvector(substring(title || ' ' || coal
 create index document_vectors_idx on entries using gin(document_vectors);`,
 	"schema_version_21": `alter table feeds add column user_agent text default '';`,
 	"schema_version_22": `update entries set document_vectors = setweight(to_tsvector(substring(coalesce(title, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce(content, '') for 1000000)), 'B');`,
+	"schema_version_23": `create table webpush_subscriptions (
+    id bigserial not null,
+    user_id int not null,
+    subscription text not null,
+    primary key (id),
+    foreign key (user_id) references users(id) on delete cascade
+);`,
 	"schema_version_3": `create table tokens (
     id text not null,
     value text not null,
@@ -196,6 +203,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_20": "5d414c0cfc0da2863c641079afa58b7ff42dccb0f0e01c822ad435c3e3aa9201",
 	"schema_version_21": "77da01ee38918ff4fe33985fbb20ed3276a717a7584c2ca9ebcf4d4ab6cb6910",
 	"schema_version_22": "51ed5fbcae9877e57274511f0ef8c61d254ebd78dfbcbc043a2acd30f4c93ca3",
+	"schema_version_23": "67e500013a17bc4caa2fa905b4652509e01cadd9b36f2219be2ae6277b8f5568",
 	"schema_version_3":  "a54745dbc1c51c000f74d4e5068f1e2f43e83309f023415b1749a47d5c1e0f12",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",
