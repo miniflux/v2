@@ -137,7 +137,7 @@ func getExtraAttributes(tagName string) ([]string, []string) {
 	case "video", "audio":
 		return []string{"controls"}, []string{"controls"}
 	case "iframe":
-		return []string{"sandbox"}, []string{`sandbox="allow-scripts allow-same-origin"`}
+		return []string{"sandbox"}, []string{`sandbox="allow-scripts allow-same-origin allow-popups"`}
 	default:
 		return nil, nil
 	}
