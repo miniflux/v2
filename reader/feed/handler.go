@@ -6,6 +6,7 @@ package feed // import "miniflux.app/reader/feed"
 
 import (
 	"fmt"
+	"miniflux.app/config"
 	"time"
 
 	"miniflux.app/errors"
@@ -29,7 +30,8 @@ var (
 
 // Handler contains all the logic to create and refresh feeds.
 type Handler struct {
-	store      *storage.Storage
+	store  *storage.Storage
+	config *config.Config
 }
 
 // CreateFeed fetch, parse and store a new feed.
@@ -143,8 +145,8 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 }
 
 // NewFeedHandler returns a feed handler.
-func NewFeedHandler(store *storage.Storage) *Handler {
-	return &Handler{store}
+func NewFeedHandler(store *storage.Storage, cfg *config.Config) *Handler {
+	return &Handler{store, cfg}
 }
 
 func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string) {

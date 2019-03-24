@@ -16,8 +16,8 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/reader/feed"
-	"miniflux.app/service/scheduler"
 	"miniflux.app/service/httpd"
+	"miniflux.app/service/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
 )
@@ -29,7 +29,7 @@ func startDaemon(cfg *config.Config, store *storage.Storage) {
 	signal.Notify(stop, os.Interrupt)
 	signal.Notify(stop, syscall.SIGTERM)
 
-	feedHandler := feed.NewFeedHandler(store)
+	feedHandler := feed.NewFeedHandler(store, cfg)
 	pool := worker.NewPool(feedHandler, cfg.WorkerPoolSize())
 
 	go showProcessStatistics()
