@@ -35,3 +35,36 @@ func (s *Storage) CreateWebpushSubscription(subscription *model.WebpushSubscript
 
 	return nil
 }
+
+func (s *Storage) GetSubscriptions(userID int64) (model.UserWebpushSubscriptions, error) {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:WebPushSubscriptions] userID=%d", userID))
+
+	webpushSubscriptions := make(model.UserWebpushSubscriptions, 0)
+	query := `SELECT
+		id, user_id, subscription
+		FROM webpush_subscriptions
+		WHERE user_id=$1`
+
+	rows, err := s.db.Query(query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch WebPush subscriptions: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var webpush_subscription model.WebpushSubscription
+
+		err := rows.Scan(
+			&webpush_subscription.ID,
+			&webpush_subscription.UserID,
+			&webpush_subscription.Subscription)
+
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch WebPush subscriptions row: %v", err)
+		}
+
+		webpushSubscriptions = append(webpushSubscriptions, &webpush_subscription)
+	}
+
+	return webpushSubscriptions, nil
+}
