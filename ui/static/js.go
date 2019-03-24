@@ -110,10 +110,10 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 if(('PushManager'in window)){webpushHandler.askPermissionToSubscribe().then((permissionGranted)=>{if(!permissionGranted){return;}
 serviceWorker.then(function(swReg){swReg.pushManager.getSubscription().then((subscription)=>{if(subscription){return;}
 webpushHandler.subscribeUserToPush(swReg).then(webpushHandler.registerSubscription);});})})}}}});})();`,
-	"sw": `'use strict';self.addEventListener("fetch",(event)=>{if(event.request.url.includes("/feed/icon/")){event.respondWith(caches.open("feed_icons").then((cache)=>{return cache.match(event.request).then((response)=>{return response||fetch(event.request).then((response)=>{cache.put(event.request,response.clone());return response;});});}));}});`,
+	"sw": `'use strict';self.addEventListener("fetch",(event)=>{if(event.request.url.includes("/feed/icon/")){event.respondWith(caches.open("feed_icons").then((cache)=>{return cache.match(event.request).then((response)=>{return response||fetch(event.request).then((response)=>{cache.put(event.request,response.clone());return response;});});}));}});self.addEventListener("push",(event)=>{let notification=event.data.json();const promiseChain=self.registration.showNotification("Miniflux: "+notification.feed_title,{"body":notification.entry_title+"\n"+notification.entry_content});event.waitUntil(promiseChain);});`,
 }
 
 var JavascriptsChecksums = map[string]string{
 	"app": "55e184ace87d90f5d5224919cc7963c6e039fb7cf7733114c929de68aa9e7b9a",
-	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
+	"sw":  "7400c34c2f155a7e2fbdfd6cca2bcc6b27cba047c8062cb8a6e422f8e29943c2",
 }

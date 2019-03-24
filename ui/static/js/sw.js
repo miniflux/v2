@@ -12,3 +12,12 @@ self.addEventListener("fetch", (event) => {
         );
     }
 });
+
+self.addEventListener("push", (event) => {
+    let notification = event.data.json();
+    const promiseChain = self.registration.showNotification("Miniflux: " + notification.feed_title, {
+        "body": notification.entry_title + "\n" + notification.entry_content
+    });
+
+    event.waitUntil(promiseChain);
+});
