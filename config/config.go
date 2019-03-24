@@ -14,25 +14,29 @@ import (
 )
 
 const (
-	defaultBaseURL            = "http://localhost"
-	defaultDatabaseURL        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
-	defaultWorkerPoolSize     = 5
-	defaultPollingFrequency   = 60
-	defaultBatchSize          = 10
-	defaultDatabaseMaxConns   = 20
-	defaultDatabaseMinConns   = 1
-	defaultArchiveReadDays    = 60
-	defaultListenAddr         = "127.0.0.1:8080"
-	defaultCertFile           = ""
-	defaultKeyFile            = ""
-	defaultCertDomain         = ""
-	defaultCertCache          = "/tmp/cert_cache"
-	defaultCleanupFrequency   = 24
-	defaultProxyImages        = "http-only"
-	defaultOAuth2ClientID     = ""
-	defaultOAuth2ClientSecret = ""
-	defaultOAuth2RedirectURL  = ""
-	defaultOAuth2Provider     = ""
+	defaultBaseURL                = "http://localhost"
+	defaultDatabaseURL            = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	defaultWorkerPoolSize         = 5
+	defaultPollingFrequency       = 60
+	defaultBatchSize              = 10
+	defaultDatabaseMaxConns       = 20
+	defaultDatabaseMinConns       = 1
+	defaultArchiveReadDays        = 60
+	defaultListenAddr             = "127.0.0.1:8080"
+	defaultCertFile               = ""
+	defaultKeyFile                = ""
+	defaultCertDomain             = ""
+	defaultCertCache              = "/tmp/cert_cache"
+	defaultCleanupFrequency       = 24
+	defaultProxyImages            = "http-only"
+	defaultOAuth2ClientID         = ""
+	defaultOAuth2ClientSecret     = ""
+	defaultOAuth2RedirectURL      = ""
+	defaultOAuth2Provider         = ""
+	defaultWebPushSubscriberEmail = ""
+	defaultWebPushVAPIDPublicKey  = ""
+	defaultWebPushVAPIDPrivateKey = ""
+	defaultWebPushTTL             = 30
 )
 
 // Config manages configuration parameters.
@@ -188,6 +192,26 @@ func (c *Config) OAuth2RedirectURL() string {
 // OAuth2Provider returns the name of the OAuth2 provider configured.
 func (c *Config) OAuth2Provider() string {
 	return getStringValue("OAUTH2_PROVIDER", defaultOAuth2Provider)
+}
+
+// WebPushSubscriberEmail returns the email of the WebPush sender subscriber.
+func (c *Config) WebPushSubscriberEmail() string {
+	return getStringValue("WEBPUSH_SUBSCRIBER_EMAIL", defaultWebPushSubscriberEmail)
+}
+
+// WebPushVAPIDPublicKey returns the WebPush VAPID public key.
+func (c *Config) WebPushVAPIDPublicKey() string {
+	return getStringValue("WEBPUSH_VAPID_PUBLIC_KEY", defaultWebPushVAPIDPublicKey)
+}
+
+// WebPushVAPIDPrivateKey returns the WebPush VAPID private key.
+func (c *Config) WebPushVAPIDPrivateKey() string {
+	return getStringValue("WEBPUSH_VAPID_PRIVATE_KEY", defaultWebPushVAPIDPrivateKey)
+}
+
+// WebPushTTL returns the WebPush TTL.
+func (c *Config) WebPushTTL() int {
+	return getIntValue("WEBPUSH_TTL", defaultWebPushTTL)
 }
 
 // HasHSTS returns true if HTTP Strict Transport Security is enabled.
