@@ -36,7 +36,7 @@ func (s *Storage) CreateWebpushSubscription(subscription *model.WebpushSubscript
 	return nil
 }
 
-// GetSubscription gets all the subscriptions for a user.
+// GetSubscriptions gets all the subscriptions for a user.
 func (s *Storage) GetSubscriptions(userID int64) (model.UserWebpushSubscriptions, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:WebPushSubscriptions] userID=%d", userID))
 
