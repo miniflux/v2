@@ -53,18 +53,18 @@ func (s *Storage) GetSubscriptions(userID int64) (model.UserWebpushSubscriptions
 	defer rows.Close()
 
 	for rows.Next() {
-		var webpush_subscription model.WebpushSubscription
+		var webpushSubscription model.WebpushSubscription
 
 		err := rows.Scan(
-			&webpush_subscription.ID,
-			&webpush_subscription.UserID,
-			&webpush_subscription.Subscription)
+			&webpushSubscription.ID,
+			&webpushSubscription.UserID,
+			&webpushSubscription.Subscription)
 
 		if err != nil {
 			return nil, fmt.Errorf("unable to fetch WebPush subscriptions row: %v", err)
 		}
 
-		webpushSubscriptions = append(webpushSubscriptions, &webpush_subscription)
+		webpushSubscriptions = append(webpushSubscriptions, &webpushSubscription)
 	}
 
 	return webpushSubscriptions, nil

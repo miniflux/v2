@@ -30,7 +30,7 @@ func SendPush(cfg *config.Config, subscriptions model.UserWebpushSubscriptions, 
 			continue
 		}
 
-		notification := new(Notification)
+		notification := new(notificationSummary)
 		notification.EntryTitle = entry.Title
 		notification.EntryContent = sanitizeContent(entry)
 		notification.FeedTitle = feed.Title
@@ -64,7 +64,7 @@ func toJSON(v interface{}) []byte {
 	return b
 }
 
-type Notification struct {
+type notificationSummary struct {
 	FeedTitle    string `json:"feed_title"`
 	EntryTitle   string `json:"entry_title"`
 	EntryContent string `json:"entry_content"`
