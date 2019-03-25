@@ -16,7 +16,7 @@ github.com/gorilla/mux
 github.com/lib/pq
 github.com/lib/pq/hstore
 github.com/lib/pq/oid
-# golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
+# golang.org/x/crypto v0.0.0-20190131182504-b8fe1690c613
 golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
