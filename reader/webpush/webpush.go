@@ -12,6 +12,7 @@ import (
 	"strings"
 )
 
+// SendPush sends a WebPush notification for every subscription.
 func SendPush(cfg *config.Config, subscriptions model.UserWebpushSubscriptions, entry *model.Entry, feed *model.Feed) {
 	if "" == cfg.WebPushSubscriberEmail() || "" == cfg.WebPushVAPIDPublicKey() || "" == cfg.WebPushVAPIDPrivateKey() {
 		return

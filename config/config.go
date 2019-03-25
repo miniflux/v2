@@ -194,7 +194,7 @@ func (c *Config) OAuth2Provider() string {
 	return getStringValue("OAUTH2_PROVIDER", defaultOAuth2Provider)
 }
 
-// WebPushSubscriberEmail returns the email of the WebPush sender subscriber.
+// WebPushEnabled returns the email of the WebPush sender subscriber.
 func (c *Config) WebPushEnabled() bool {
 	return getBooleanValue("WEBPUSH_ENABLED")
 }

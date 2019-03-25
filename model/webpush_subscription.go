@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// UserSession represents a user session in the system.
+// WebpushSubscription represents a WebPush subscription for a given user.
 type WebpushSubscription struct {
 	ID           int64
 	UserID       int64
