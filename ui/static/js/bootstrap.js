@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let scriptElement = document.getElementById("service-worker-script");
         if (scriptElement) {
             let webpushHandler = new WebpushHandler();
-            let serviceWorker = navigator.serviceWorker.register(scriptElement.src)
+            let serviceWorker = navigator.serviceWorker.register(scriptElement.src);
 
             if (('PushManager' in window)) {
                 webpushHandler.askPermissionToSubscribe().then((permissionGranted) => {
@@ -99,8 +99,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 .then(webpushHandler.registerSubscription);
 
                         });
-                    })
-                })
+                    });
+                });
             }
         }
     }

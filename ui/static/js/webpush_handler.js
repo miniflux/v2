@@ -2,7 +2,7 @@ class WebpushHandler {
     askPermissionToSubscribe() {
         return Notification.requestPermission().then((permissionResult) => {
             return 'granted' === permissionResult;
-        }).catch(() => false)
+        }).catch(() => false);
     }
 
     subscribeUserToPush(registration) {
@@ -20,7 +20,7 @@ class WebpushHandler {
             }
 
             return outputArray;
-        }
+        };
 
 
         const subscribeOptions = {
@@ -40,7 +40,7 @@ class WebpushHandler {
                 subscription: JSON.stringify(pushSubscription)
             });
 
-        request.execute()
+        request.execute();
 
         return pushSubscription;
     }
