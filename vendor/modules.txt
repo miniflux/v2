@@ -1,7 +1,11 @@
 # github.com/PuerkitoBio/goquery v1.5.0
 github.com/PuerkitoBio/goquery
+# github.com/SherClockHolmes/webpush-go v1.0.1
+github.com/SherClockHolmes/webpush-go
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+github.com/dgrijalva/jwt-go
 # github.com/golang/protobuf v1.1.0
 github.com/golang/protobuf/proto
 # github.com/gorilla/context v1.1.1
@@ -16,6 +20,7 @@ github.com/lib/pq/oid
 golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
+golang.org/x/crypto/hkdf
 golang.org/x/crypto/acme
 golang.org/x/crypto/blowfish
 # golang.org/x/net v0.0.0-20190228165749-92fc7df08ae7

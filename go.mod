@@ -4,6 +4,7 @@ module miniflux.app
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/SherClockHolmes/webpush-go v1.0.1
 	github.com/golang/protobuf v1.1.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/mux v1.6.2
