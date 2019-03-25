@@ -7,6 +7,7 @@ package feed // import "miniflux.app/reader/feed"
 import (
 	"fmt"
 	"miniflux.app/config"
+	"miniflux.app/reader/webpush"
 	"time"
 
 	"miniflux.app/errors"
@@ -116,6 +117,9 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
+		if h.config.WebPushEnabled() {
+			h.sendNotificationsForEntries(userID, originalFeed)
+		}
 		processor.ProcessFeedEntries(h.store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
@@ -160,6 +164,20 @@ func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string) {
 			if err := store.CreateFeedIcon(feedID, icon); err != nil {
 				logger.Debug("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
 			}
+		}
+	}
+}
+
+func (h *Handler) sendNotificationsForEntries(userID int64, feed *model.Feed) {
+	// FIXME: Make it so this isn't requested every single time a feed is refreshed
+	subscriptions, _ := h.store.GetSubscriptions(userID)
+
+	for _, entry := range feed.Entries {
+		entry.UserID = userID
+		entry.FeedID = feed.ID
+
+		if !h.store.EntryExists(entry) {
+			webpush.SendPush(h.config, subscriptions, entry, feed)
 		}
 	}
 }
