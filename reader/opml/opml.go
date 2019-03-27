@@ -4,7 +4,9 @@
 
 package opml // import "miniflux.app/reader/opml"
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+)
 
 type opml struct {
 	XMLName  xml.Name  `xml:"opml"`
@@ -48,10 +50,6 @@ func (o *outline) GetSiteURL() string {
 	return o.FeedURL
 }
 
-func (o *outline) IsCategory() bool {
-	return o.Text != "" && o.SiteURL == "" && o.FeedURL == ""
-}
-
 func (o *outline) Append(subscriptions SubcriptionList, category string) SubcriptionList {
 	if o.FeedURL != "" {
 		subscriptions = append(subscriptions, &Subcription{
@@ -67,10 +65,10 @@ func (o *outline) Append(subscriptions SubcriptionList, category string) Subcrip
 
 func (o *opml) Transform() SubcriptionList {
 	var subscriptions SubcriptionList
-
 	for _, outline := range o.Outlines {
-		if outline.IsCategory() {
+		if len(outline.Outlines) > 0 {
 			for _, element := range outline.Outlines {
+				// outline.Text is only available in OPML v2.
 				subscriptions = element.Append(subscriptions, outline.Text)
 			}
 		} else {
