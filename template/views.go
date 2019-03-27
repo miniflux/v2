@@ -1103,7 +1103,7 @@ var templateViewsMap = map[string]string{
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" required>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.login" }}</button>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "action.login" }}</button>
         </div>
     </form>
     {{ if hasOAuth2Provider "google" }}
@@ -1420,7 +1420,7 @@ var templateViewsMapChecksums = map[string]string{
 	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
-	"login":               "f9e6714d34fdce82266c8b23b0ff449d05ba71e474d26f711da66f8c4fdc076a",
+	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",
 	"search_entries":      "d71849a4f2b0573c7c76ad0ea941812009e9f022de60895987a781d3e6f08a01",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "bc04faf83dd977306825973375954600bd014619340188e1243fd9e2f5d5e1a9",
