@@ -16,7 +16,7 @@
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" required>
 
         <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.login" }}</button>
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "action.login" }}</button>
         </div>
     </form>
     {{ if hasOAuth2Provider "google" }}
