@@ -122,6 +122,77 @@ func TestParseOpmlWithEmptyTitleAndEmptySiteURL(t *testing.T) {
 	}
 }
 
+func TestParseOpmlVersion1(t *testing.T) {
+	data := `<?xml version="1.0"?>
+	<opml version="1.0">
+		<head>
+			<title>mySubscriptions.opml</title>
+			<dateCreated>Wed, 13 Mar 2019 11:51:41 GMT</dateCreated>
+		</head>
+		<body>
+			<outline title="Feed 1">
+				<outline type="rss" title="Feed 1" xmlUrl="http://example.org/feed1/" htmlUrl="http://example.org/1"></outline>
+			</outline>
+			<outline title="Feed 2">
+				<outline type="rss" title="Feed 2" xmlUrl="http://example.org/feed2/" htmlUrl="http://example.org/2"></outline>
+			</outline>
+		</body>
+	</opml>
+	`
+
+	var expected SubcriptionList
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: ""})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: ""})
+
+	subscriptions, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(subscriptions) != 2 {
+		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
+	}
+
+	for i := 0; i < len(subscriptions); i++ {
+		if !subscriptions[i].Equals(expected[i]) {
+			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+		}
+	}
+}
+
+func TestParseOpmlVersion1WithoutOuterOutline(t *testing.T) {
+	data := `<?xml version="1.0"?>
+	<opml version="1.0">
+		<head>
+			<title>mySubscriptions.opml</title>
+			<dateCreated>Wed, 13 Mar 2019 11:51:41 GMT</dateCreated>
+		</head>
+		<body>
+			<outline type="rss" title="Feed 1" xmlUrl="http://example.org/feed1/" htmlUrl="http://example.org/1"></outline>
+			<outline type="rss" title="Feed 2" xmlUrl="http://example.org/feed2/" htmlUrl="http://example.org/2"></outline>
+		</body>
+	</opml>
+	`
+
+	var expected SubcriptionList
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: ""})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: ""})
+
+	subscriptions, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(subscriptions) != 2 {
+		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
+	}
+
+	for i := 0; i < len(subscriptions); i++ {
+		if !subscriptions[i].Equals(expected[i]) {
+			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+		}
+	}
+}
 func TestParseInvalidXML(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))
