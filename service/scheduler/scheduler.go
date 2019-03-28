@@ -22,7 +22,7 @@ func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool) {
 
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {
 	c := time.Tick(time.Duration(frequency) * time.Minute)
-	for range c {
+	for ; true; <- c {
 		jobs, err := store.NewBatch(batchSize)
 		if err != nil {
 			logger.Error("[Scheduler:Feed] %v", err)
@@ -35,7 +35,7 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 
 func cleanupScheduler(store *storage.Storage, frequency int, archiveDays int) {
 	c := time.Tick(time.Duration(frequency) * time.Hour)
-	for range c {
+	for ; true; <- c {
 		nbSessions := store.CleanOldSessions()
 		nbUserSessions := store.CleanOldUserSessions()
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
