@@ -27,7 +27,7 @@ class NavHandler {
         }
     }
 
-    markPageAsRead() {
+    markPageAsRead(showOnlyUnread) {
         let items = DomHelper.getVisibleElements(".items .item");
         let entryIDs = [];
 
@@ -39,7 +39,11 @@ class NavHandler {
         if (entryIDs.length > 0) {
             EntryHandler.updateEntriesStatus(entryIDs, "read", () => {
                 // This callback make sure the Ajax request reach the server before we reload the page.
-                this.goToPage("next", true);
+                if (showOnlyUnread) {
+                    window.location.reload();
+                } else {
+                    this.goToPage("next", true);
+                }
             });
         }
     }

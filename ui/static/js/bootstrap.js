@@ -57,7 +57,9 @@ document.addEventListener("DOMContentLoaded", function() {
         EntryHandler.fetchOriginalContent(event.target);
     });
 
-    mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
+    mouseHandler.onClick("a[data-on-click=markPageAsRead]", (event) => {
+        navHandler.markPageAsRead(event.target.dataset.showOnlyUnread || false);
+    });
 
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);
