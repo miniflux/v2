@@ -20,7 +20,10 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("o", () => navHandler.openSelectedItem());
     keyboardHandler.on("v", () => navHandler.openOriginalLink());
     keyboardHandler.on("m", () => navHandler.toggleEntryStatus());
-    keyboardHandler.on("A", () => navHandler.markPageAsRead());
+    keyboardHandler.on("A", () => {
+        let element = document.querySelector("a[data-on-click=markPageAsRead]");
+        navHandler.markPageAsRead(element.dataset.showOnlyUnread || false);
+    });
     keyboardHandler.on("s", () => navHandler.saveEntry());
     keyboardHandler.on("d", () => navHandler.fetchOriginalContent());
     keyboardHandler.on("f", () => navHandler.toggleBookmark());
