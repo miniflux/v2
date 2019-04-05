@@ -6,7 +6,10 @@
     <ul>
     {{ if .entries }}
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
+            <a href="#" data-on-click="markPageAsRead"
+               data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">
+                {{ t "menu.mark_page_as_read" }}
+            </a>
         </li>
     {{ end }}
     {{ if .showOnlyUnreadEntries }}
@@ -44,7 +47,10 @@
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
+                <a href="#" data-on-click="markPageAsRead"
+                   data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">
+                    {{ t "menu.mark_page_as_read" }}
+                </a>
             </li>
         </ul>
         {{ end }}

@@ -20,7 +20,10 @@ document.addEventListener("DOMContentLoaded", function() {
     keyboardHandler.on("o", () => navHandler.openSelectedItem());
     keyboardHandler.on("v", () => navHandler.openOriginalLink());
     keyboardHandler.on("m", () => navHandler.toggleEntryStatus());
-    keyboardHandler.on("A", () => navHandler.markPageAsRead());
+    keyboardHandler.on("A", () => {
+        let element = document.querySelector("a[data-on-click=markPageAsRead]");
+        navHandler.markPageAsRead(element.dataset.showOnlyUnread || false);
+    });
     keyboardHandler.on("s", () => navHandler.saveEntry());
     keyboardHandler.on("d", () => navHandler.fetchOriginalContent());
     keyboardHandler.on("f", () => navHandler.toggleBookmark());
@@ -57,7 +60,9 @@ document.addEventListener("DOMContentLoaded", function() {
         EntryHandler.fetchOriginalContent(event.target);
     });
 
-    mouseHandler.onClick("a[data-on-click=markPageAsRead]", () => navHandler.markPageAsRead());
+    mouseHandler.onClick("a[data-on-click=markPageAsRead]", (event) => {
+        navHandler.markPageAsRead(event.target.dataset.showOnlyUnread || false);
+    });
 
     mouseHandler.onClick("a[data-confirm]", (event) => {
         (new ConfirmHandler()).handle(event);
