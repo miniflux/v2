@@ -104,6 +104,7 @@
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",
     "page.edit_feed.last_parsing_error": "Последняя ошибка парсинга",
+    "page.entry.attachments": "Вложения",
     "page.keyboard_shortcuts.title": "Сочетания клавиш",
     "page.keyboard_shortcuts.subtitle.sections": "Навигация по секциям",
     "page.keyboard_shortcuts.subtitle.items": "Навигация по элементам",

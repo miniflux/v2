@@ -660,7 +660,7 @@ var templateViewsMap = map[string]string{
     </article>
     {{ if .entry.Enclosures }}
     <aside class="entry-enclosures">
-        <h3>{{ t "Attachments" }}</h3>
+        <h3>{{ t "page.entry.attachments" }}</h3>
         {{ range .entry.Enclosures }}
             <div class="entry-enclosure">
                 {{ if hasPrefix .MimeType "audio/" }}
@@ -1428,7 +1428,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
 	"edit_feed":           "ab30c31a4385a7b16c54baa78bdcb93a57181ed1c5018ce097d7eb50673bb995",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
-	"entry":               "2ea9fee1ae5513ef1abb5923221c2ef1212e26d3bb651da66069ce8a336cbb7c",
+	"entry":               "1626bf4dd3223b2f730865676162aa0a9f0a0e009cdea90f705230542922e0f4",
 	"feed_entries":        "0b97344b4045058b7154d0c01b85e4afd957c23e7cb2d011451f96baf6233dfc",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
 	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
