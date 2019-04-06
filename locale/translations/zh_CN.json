@@ -100,6 +100,7 @@
     "page.edit_feed.etag_header": "ETag 标题：",
     "page.edit_feed.no_header": "无",
     "page.edit_feed.last_parsing_error": "最后一次解析错误",
+    "page.entry.attachments": "附件",
     "page.keyboard_shortcuts.title": "快捷键",
     "page.keyboard_shortcuts.subtitle.sections": "分区导航",
     "page.keyboard_shortcuts.subtitle.items": "条目导航",

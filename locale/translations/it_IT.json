@@ -102,6 +102,7 @@
     "page.edit_feed.etag_header": "Header ETag:",
     "page.edit_feed.no_header": "Nessun header",
     "page.edit_feed.last_parsing_error": "Ultimo errore di parsing",
+    "page.entry.attachments": "Allegati",
     "page.keyboard_shortcuts.title": "Scorciatoie da tastiera",
     "page.keyboard_shortcuts.subtitle.sections": "Navigazione sezioni",
     "page.keyboard_shortcuts.subtitle.items": "Navigazione articoli",

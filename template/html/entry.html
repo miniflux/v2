@@ -88,7 +88,7 @@
     </article>
     {{ if .entry.Enclosures }}
     <aside class="entry-enclosures">
-        <h3>{{ t "Attachments" }}</h3>
+        <h3>{{ t "page.entry.attachments" }}</h3>
         {{ range .entry.Enclosures }}
             <div class="entry-enclosure">
                 {{ if hasPrefix .MimeType "audio/" }}

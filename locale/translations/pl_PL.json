@@ -104,6 +104,7 @@
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
     "page.edit_feed.last_parsing_error": "Ostatni błąd analizy",
+    "page.entry.attachments": "Załączniki",
     "page.keyboard_shortcuts.title": "Skróty klawiszowe",
     "page.keyboard_shortcuts.subtitle.sections": "Nawigacja między punktami menu",
     "page.keyboard_shortcuts.subtitle.items": "Nawigacja między artykułami",
