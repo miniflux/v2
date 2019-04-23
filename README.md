@@ -2,7 +2,6 @@ Miniflux 2
 ==========
 [![Build Status](https://travis-ci.org/miniflux/miniflux.svg?branch=master)](https://travis-ci.org/miniflux/miniflux)
 [![GoDoc](https://godoc.org/miniflux.app?status.svg)](https://godoc.org/miniflux.app)
-[![Documentation Status](https://readthedocs.org/projects/miniflux/badge/?version=latest)](https://docs.miniflux.app/)
 
 Miniflux is a minimalist and opinionated feed reader:
 
@@ -21,36 +20,34 @@ Official website: <https://miniflux.app>
 Documentation
 -------------
 
-The Miniflux documentation is available here: <https://docs.miniflux.app/> ([Man page](https://miniflux.app/miniflux.1.html))
+The Miniflux documentation is available here: <https://miniflux.app/docs/> ([Man page](https://miniflux.app/miniflux.1.html))
 
-- [Opinionated?](https://docs.miniflux.app/en/latest/opinionated.html)
-- [Features](https://docs.miniflux.app/en/latest/features.html)
-- [Requirements](https://docs.miniflux.app/en/latest/requirements.html)
-- [Installation Instructions](https://docs.miniflux.app/en/latest/installation.html)
-- [Installation Tutorials](https://docs.miniflux.app/en/latest/tutorials.html)
-- [Upgrading to a New Version](https://docs.miniflux.app/en/latest/upgrade.html)
-- [Configuration](https://docs.miniflux.app/en/latest/configuration.html)
-- [Command Line Usage](https://docs.miniflux.app/en/latest/cli.html)
-- [User Interface Usage](https://docs.miniflux.app/en/latest/usage.html)
-- [Keyboard Shortcuts](https://docs.miniflux.app/en/latest/keyboard_shortcuts.html)
-- [Integration with External Services](https://docs.miniflux.app/en/latest/integration.html)
-- [Scraper Rules](https://docs.miniflux.app/en/latest/scraper_rules.html)
-- [Rewrite Rules](https://docs.miniflux.app/en/latest/rewrite_rules.html)
-- [REST API](https://docs.miniflux.app/en/latest/api.html)
-- [Development](https://docs.miniflux.app/en/latest/development.html)
-- [Internationalization](https://docs.miniflux.app/en/latest/i18n.html)
-- [Frequently Asked Questions](https://docs.miniflux.app/en/latest/faq.html)
+- [Opinionated?](https://miniflux.app/opinionated.html)
+- [Features](https://miniflux.app/features.html)
+- [Requirements](https://miniflux.app/docs/requirements.html)
+- [Installation Instructions](https://miniflux.app/docs/installation.html)
+- [Upgrading to a New Version](https://miniflux.app/docs/upgrade.html)
+- [Configuration](https://miniflux.app/docs/configuration.html)
+- [Command Line Usage](https://miniflux.app/docs/cli.html)
+- [User Interface Usage](https://miniflux.app/docs/ui.html)
+- [Keyboard Shortcuts](https://miniflux.app/docs/keyboard_shortcuts.html)
+- [Integration with External Services](https://miniflux.app/docs/services.html)
+- [Rewrite and Scraper Rules](https://miniflux.app/docs/rules.html)
+- [API Reference](https://miniflux.app/docs/api.html)
+- [Development](https://miniflux.app/docs/development.html)
+- [Internationalization](https://miniflux.app/docs/i18n.html)
+- [Frequently Asked Questions](https://miniflux.app/faq.html)
 
 Screenshots
 -----------
 
 Default theme:
 
-![Default theme](https://miniflux.app/image/overview.png)
+![Default theme](https://miniflux.app/images/overview.png)
 
 Dark theme when using keyboard navigation:
 
-![Dark theme](https://miniflux.app/image/item-selection-black-theme.png)
+![Dark theme](https://miniflux.app/images/item-selection-black-theme.png)
 
 Credits
 -------
