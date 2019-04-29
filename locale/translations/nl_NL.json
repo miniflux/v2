@@ -216,6 +216,7 @@
     "form.prefs.label.entry_sorting": "Volgorde van items",
     "form.prefs.select.older_first": "Oudere items eerst",
     "form.prefs.select.recent_first": "Recente items eerst",
+    "form.prefs.label.keyboard_shortcuts": "Schakel sneltoetsen in",
     "form.import.label.file": "OPML-bestand",
     "form.integration.fever_activate": "Activeer Fever API",
     "form.integration.fever_username": "Fever gebruikersnaam",
