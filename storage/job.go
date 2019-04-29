@@ -6,17 +6,14 @@ package storage // import "miniflux.app/storage"
 
 import (
 	"fmt"
-	"time"
 
 	"miniflux.app/model"
-	"miniflux.app/timer"
 )
 
 const maxParsingError = 3
 
 // NewBatch returns a serie of jobs.
 func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetJobs] batchSize=%d", batchSize))
 	query := `
 		SELECT
 		id, user_id
@@ -29,8 +26,6 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 
 // NewUserBatch returns a serie of jobs but only for a given user.
 func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList, err error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:GetUserJobs] batchSize=%d, userID=%d", batchSize, userID))
-
 	// We do not take the error counter into consideration when the given
 	// user refresh manually all his feeds to force a refresh.
 	query := `

@@ -8,16 +8,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"time"
 
 	"miniflux.app/model"
-	"miniflux.app/timer"
 )
 
 // AnotherCategoryExists checks if another category exists with the same title.
 func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:AnotherCategoryExists] userID=%d, categoryID=%d, title=%s", userID, categoryID, title))
-
 	var result int
 	query := `SELECT count(*) as c FROM categories WHERE user_id=$1 AND id != $2 AND title=$3`
 	s.db.QueryRow(query, userID, categoryID, title).Scan(&result)
@@ -26,8 +22,6 @@ func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) 
 
 // CategoryExists checks if the given category exists into the database.
 func (s *Storage) CategoryExists(userID, categoryID int64) bool {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoryExists] userID=%d, categoryID=%d", userID, categoryID))
-
 	var result int
 	query := `SELECT count(*) as c FROM categories WHERE user_id=$1 AND id=$2`
 	s.db.QueryRow(query, userID, categoryID).Scan(&result)
@@ -36,7 +30,6 @@ func (s *Storage) CategoryExists(userID, categoryID int64) bool {
 
 // Category returns a category from the database.
 func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Category] userID=%d, getCategory=%d", userID, categoryID))
 	var category model.Category
 
 	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 AND id=$2`
@@ -52,7 +45,6 @@ func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
 
 // FirstCategory returns the first category for the given user.
 func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FirstCategory] userID=%d", userID))
 	var category model.Category
 
 	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC LIMIT 1`
@@ -68,7 +60,6 @@ func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 
 // CategoryByTitle finds a category by the title.
 func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoryByTitle] userID=%d, title=%s", userID, title))
 	var category model.Category
 
 	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 AND title=$2`
@@ -84,8 +75,6 @@ func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, 
 
 // Categories returns all categories that belongs to the given user.
 func (s *Storage) Categories(userID int64) (model.Categories, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:Categories] userID=%d", userID))
-
 	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
@@ -108,7 +97,6 @@ func (s *Storage) Categories(userID int64) (model.Categories, error) {
 
 // CategoriesWithFeedCount returns all categories with the number of feeds.
 func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CategoriesWithFeedCount] userID=%d", userID))
 	query := `SELECT
 		c.id, c.user_id, c.title,
 		(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count
@@ -136,8 +124,6 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 
 // CreateCategory creates a new category.
 func (s *Storage) CreateCategory(category *model.Category) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:CreateCategory] title=%s", category.Title))
-
 	query := `
 		INSERT INTO categories
 		(user_id, title)
@@ -160,8 +146,6 @@ func (s *Storage) CreateCategory(category *model.Category) error {
 
 // UpdateCategory updates an existing category.
 func (s *Storage) UpdateCategory(category *model.Category) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:UpdateCategory] categoryID=%d", category.ID))
-
 	query := `UPDATE categories SET title=$1 WHERE id=$2 AND user_id=$3`
 	_, err := s.db.Exec(
 		query,
@@ -179,8 +163,6 @@ func (s *Storage) UpdateCategory(category *model.Category) error {
 
 // RemoveCategory deletes a category.
 func (s *Storage) RemoveCategory(userID, categoryID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:RemoveCategory] userID=%d, categoryID=%d", userID, categoryID))
-
 	result, err := s.db.Exec("DELETE FROM categories WHERE id = $1 AND user_id = $2", categoryID, userID)
 	if err != nil {
 		return fmt.Errorf("Unable to remove this category: %v", err)
