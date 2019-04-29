@@ -112,7 +112,9 @@ var templateCommonMap = map[string]string{
     <script type="text/javascript" src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
     <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>
-<body data-entries-status-url="{{ route "updateEntriesStatus" }}">
+<body
+    data-entries-status-url="{{ route "updateEntriesStatus" }}"
+    {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
     {{ if .user }}
     <header class="header">
         <nav>
@@ -245,6 +247,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "4a5339267f67b5999a22ece7584df4c75785bc3bf95d44e1891da763aaea7991",
+	"layout":           "838fb8ec4df4120ff63168c15d900e3734f52e4b7473fb1d45695e6b27540d11",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

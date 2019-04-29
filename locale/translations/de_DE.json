@@ -216,6 +216,7 @@
     "form.prefs.label.entry_sorting": "Sortierung der Artikel",
     "form.prefs.select.older_first": "Älteste Artikel zuerst",
     "form.prefs.select.recent_first": "Neueste Artikel zuerst",
+    "form.prefs.label.keyboard_shortcuts": "Tastaturkürzel aktivieren",
     "form.import.label.file": "OPML Datei",
     "form.integration.fever_activate": "Fever API aktivieren",
     "form.integration.fever_username": "Fever Benutzername",

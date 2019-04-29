@@ -64,5 +64,4 @@ class KeyboardHandler {
 
         return event.key;
     }
-
 }
