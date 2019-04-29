@@ -11,7 +11,6 @@ import (
 
 	"miniflux.app/logger"
 	"miniflux.app/model"
-	"miniflux.app/timer"
 
 	"github.com/lib/pq"
 )
@@ -204,8 +203,6 @@ func (s *Storage) ArchiveEntries(days int) error {
 
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:SetEntriesStatus] userID=%d, entryIDs=%v, status=%s", userID, entryIDs, status))
-
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, status, userID, pq.Array(entryIDs))
 	if err != nil {
@@ -226,8 +223,6 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 
 // ToggleBookmark toggles entry bookmark value.
 func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:ToggleBookmark] userID=%d, entryID=%d", userID, entryID))
-
 	query := `UPDATE entries SET starred = NOT starred WHERE user_id=$1 AND id=$2`
 	result, err := s.db.Exec(query, userID, entryID)
 	if err != nil {
@@ -248,8 +243,6 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 
 // FlushHistory set all entries with the status "read" to "removed".
 func (s *Storage) FlushHistory(userID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:FlushHistory] userID=%d", userID))
-
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3 AND starred='f'`
 	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
 	if err != nil {
@@ -261,8 +254,6 @@ func (s *Storage) FlushHistory(userID int64) error {
 
 // MarkAllAsRead updates all user entries to the read status.
 func (s *Storage) MarkAllAsRead(userID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkAllAsRead] userID=%d", userID))
-
 	query := `UPDATE entries SET status=$1 WHERE user_id=$2 AND status=$3`
 	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread)
 	if err != nil {
@@ -277,8 +268,6 @@ func (s *Storage) MarkAllAsRead(userID int64) error {
 
 // MarkFeedAsRead updates all feed entries to the read status.
 func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkFeedAsRead] userID=%d, feedID=%d, before=%v", userID, feedID, before))
-
 	query := `
 		UPDATE entries
 		SET status=$1
@@ -298,8 +287,6 @@ func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
 
 // MarkCategoryAsRead updates all category entries to the read status.
 func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Storage:MarkCategoryAsRead] userID=%d, categoryID=%d, before=%v", userID, categoryID, before))
-
 	query := `
 		UPDATE entries
 		SET status=$1

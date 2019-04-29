@@ -7,14 +7,10 @@ package storage // import "miniflux.app/storage"
 import (
 	"fmt"
 	"strings"
-	"time"
-
-	"miniflux.app/timer"
 )
 
 // Timezones returns all timezones supported by the database.
 func (s *Storage) Timezones() (map[string]string, error) {
-	defer timer.ExecutionTime(time.Now(), "[Storage:Timezones]")
 	timezones := make(map[string]string)
 	rows, err := s.db.Query(`SELECT name FROM pg_timezone_names() ORDER BY name ASC`)
 	if err != nil {
