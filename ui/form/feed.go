@@ -6,6 +6,7 @@ package form // import "miniflux.app/ui/form"
 
 import (
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"miniflux.app/errors"
@@ -14,22 +15,36 @@ import (
 
 // FeedForm represents a feed form in the UI
 type FeedForm struct {
-	FeedURL      string
-	SiteURL      string
-	Title        string
-	ScraperRules string
-	RewriteRules string
-	Crawler      bool
-	UserAgent    string
-	CategoryID   int64
-	Username     string
-	Password     string
+	FeedURL       string
+	SiteURL       string
+	Title         string
+	ScraperRules  string
+	RewriteRules  string
+	TitleFilter   string
+	ContentFilter string
+	Crawler       bool
+	UserAgent     string
+	CategoryID    int64
+	Username      string
+	Password      string
 }
 
 // ValidateModification validates FeedForm fields
 func (f FeedForm) ValidateModification() error {
 	if f.FeedURL == "" || f.SiteURL == "" || f.Title == "" || f.CategoryID == 0 {
 		return errors.NewLocalizedError("error.fields_mandatory")
+	}
+	if f.TitleFilter != "" || f.ContentFilter != "" {
+		var err error
+		_, err = regexp.CompilePOSIX(f.TitleFilter)
+		if err != nil {
+			return errors.NewLocalizedError("error.title_filter_cannot_compile")
+		}
+		_, err = regexp.CompilePOSIX(f.ContentFilter)
+		if err != nil {
+			return errors.NewLocalizedError("error.content_filter_cannot_compile")
+		}
+
 	}
 	return nil
 }
@@ -42,6 +57,8 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.FeedURL = f.FeedURL
 	feed.ScraperRules = f.ScraperRules
 	feed.RewriteRules = f.RewriteRules
+	feed.TitleFilter = f.TitleFilter
+	feed.ContentFilter = f.ContentFilter
 	feed.Crawler = f.Crawler
 	feed.UserAgent = f.UserAgent
 	feed.ParsingErrorCount = 0
@@ -59,15 +76,17 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	}
 
 	return &FeedForm{
-		FeedURL:      r.FormValue("feed_url"),
-		SiteURL:      r.FormValue("site_url"),
-		Title:        r.FormValue("title"),
-		ScraperRules: r.FormValue("scraper_rules"),
-		UserAgent:    r.FormValue("user_agent"),
-		RewriteRules: r.FormValue("rewrite_rules"),
-		Crawler:      r.FormValue("crawler") == "1",
-		CategoryID:   int64(categoryID),
-		Username:     r.FormValue("feed_username"),
-		Password:     r.FormValue("feed_password"),
+		FeedURL:       r.FormValue("feed_url"),
+		SiteURL:       r.FormValue("site_url"),
+		Title:         r.FormValue("title"),
+		ScraperRules:  r.FormValue("scraper_rules"),
+		UserAgent:     r.FormValue("user_agent"),
+		RewriteRules:  r.FormValue("rewrite_rules"),
+		TitleFilter:   r.FormValue("title_filter"),
+		ContentFilter: r.FormValue("content_filter"),
+		Crawler:       r.FormValue("crawler") == "1",
+		CategoryID:    int64(categoryID),
+		Username:      r.FormValue("feed_username"),
+		Password:      r.FormValue("feed_password"),
 	}
 }

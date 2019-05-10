@@ -29,7 +29,7 @@ var (
 
 // Handler contains all the logic to create and refresh feeds.
 type Handler struct {
-	store      *storage.Storage
+	store *storage.Storage
 }
 
 // CreateFeed fetch, parse and store a new feed.
@@ -122,13 +122,28 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 			h.store.UpdateFeedError(originalFeed)
 			return storeErr
 		}
-
 		// We update caching headers only if the feed has been modified,
 		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.WithClientResponse(response)
 		checkFeedIcon(h.store, originalFeed.ID, originalFeed.SiteURL)
 	} else {
 		logger.Debug("[Handler:RefreshFeed] Feed #%d not modified", feedID)
+	}
+
+	if originalFeed.TitleFilter != "" {
+		if storeErr := h.store.FilterByTitle(originalFeed.UserID, originalFeed.ID, originalFeed.TitleFilter); storeErr != nil {
+			originalFeed.WithError(storeErr.Error())
+			h.store.UpdateFeedError(originalFeed)
+			return storeErr
+		}
+	}
+
+	if originalFeed.ContentFilter != "" {
+		if storeErr := h.store.FilterByContent(originalFeed.UserID, originalFeed.ID, originalFeed.ContentFilter); storeErr != nil {
+			originalFeed.WithError(storeErr.Error())
+			h.store.UpdateFeedError(originalFeed)
+			return storeErr
+		}
 	}
 
 	originalFeed.ResetErrorCounter()

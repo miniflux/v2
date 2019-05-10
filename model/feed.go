@@ -25,6 +25,8 @@ type Feed struct {
 	ParsingErrorCount  int       `json:"parsing_error_count"`
 	ScraperRules       string    `json:"scraper_rules"`
 	RewriteRules       string    `json:"rewrite_rules"`
+	TitleFilter        string    `json:"title_filter"`
+	ContentFilter      string    `json:"content_filter"`
 	Crawler            bool      `json:"crawler"`
 	UserAgent          string    `json:"user_agent"`
 	Username           string    `json:"username"`

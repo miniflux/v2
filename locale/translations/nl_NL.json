@@ -205,6 +205,8 @@
     "form.feed.label.user_agent": "Standaard User Agent overschrijven",
     "form.feed.label.scraper_rules": "Scraper regels",
     "form.feed.label.rewrite_rules": "Rewrite regels",
+    "form.feed.label.title_filter": "Titelfilter",
+    "form.feed.label.content_filter": "Inhoudsfilter",
     "form.category.label.title": "Naam",
     "form.user.label.username": "Gebruikersnaam",
     "form.user.label.password": "Wachtwoord",

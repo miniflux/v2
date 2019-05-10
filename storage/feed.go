@@ -132,7 +132,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at at time zone u.timezone,
 		f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
+		f.scraper_rules, f.rewrite_rules, f.title_filter, f.content_filter, f.crawler, f.user_agent,
 		f.username, f.password,
 		f.category_id, c.title as category_title,
 		fi.icon_id,
@@ -156,6 +156,8 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.ParsingErrorMsg,
 		&feed.ScraperRules,
 		&feed.RewriteRules,
+		&feed.TitleFilter,
+		&feed.ContentFilter,
 		&feed.Crawler,
 		&feed.UserAgent,
 		&feed.Username,
@@ -224,9 +226,10 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	query := `UPDATE feeds SET
 		feed_url=$1, site_url=$2, title=$3, category_id=$4, etag_header=$5, last_modified_header=$6, checked_at=$7,
-		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, crawler=$12, user_agent=$13,
-		username=$14, password=$15
-		WHERE id=$16 AND user_id=$17`
+		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, title_filter=$12, content_filter=$13,
+		 crawler=$14, user_agent=$15,
+		username=$16, password=$17
+		WHERE id=$18 AND user_id=$19`
 
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -240,6 +243,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ParsingErrorCount,
 		feed.ScraperRules,
 		feed.RewriteRules,
+		feed.TitleFilter,
+		feed.ContentFilter,
 		feed.Crawler,
 		feed.UserAgent,
 		feed.Username,
@@ -303,4 +308,24 @@ func (s *Storage) RemoveFeed(userID, feedID int64) error {
 func (s *Storage) ResetFeedErrors() error {
 	_, err := s.db.Exec(`UPDATE feeds SET parsing_error_count=0, parsing_error_msg=''`)
 	return err
+}
+
+// Remove Entries match by title filter
+func (s *Storage) FilterByTitle(userID, feedID int64, regex string) error {
+	_, err := s.db.Exec(`UPDATE entries SET status=$1  WHERE feed_id=$2 AND user_id=$3 AND title ~* $4;`,
+		model.EntryStatusRemoved, feedID, userID, regex)
+	if err != nil {
+		return fmt.Errorf("unable to remove entries #%d filter: %s: %v", feedID, regex, err)
+	}
+	return nil
+}
+
+// Remove Entries match by content filter
+func (s *Storage) FilterByContent(userID, feedID int64, regex string) error {
+	_, err := s.db.Exec(`UPDATE entries SET status=$1  WHERE feed_id=$2 AND user_id=$3 AND content ~* $4;`,
+		model.EntryStatusRemoved, feedID, userID, regex)
+	if err != nil {
+		return fmt.Errorf("unable to remove entries #%d filter: %s: %v", feedID, regex, err)
+	}
+	return nil
 }

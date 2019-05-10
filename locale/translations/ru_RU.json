@@ -207,6 +207,8 @@
     "form.feed.label.user_agent": "Переопределить User Agent по умолчанию",
     "form.feed.label.scraper_rules": "Правила Scraper",
     "form.feed.label.rewrite_rules": "Правила Rewrite",
+    "form.feed.label.title_filter": "Фильтр заголовков",
+    "form.feed.label.content_filter": "Фильтр содержимого",
     "form.category.label.title": "Название",
     "form.user.label.username": "Имя пользователя",
     "form.user.label.password": "Пароль",

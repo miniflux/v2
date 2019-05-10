@@ -203,6 +203,8 @@
     "form.feed.label.user_agent": "覆盖默认 User-Agent",
     "form.feed.label.scraper_rules": "Scraper 规则",
     "form.feed.label.rewrite_rules": "重写规则",
+    "form.feed.label.title_filter": "标题过滤器",
+    "form.feed.label.content_filter": "内容过滤器",
     "form.category.label.title": "标题",
     "form.user.label.username": "用户名",
     "form.user.label.password": "密码",

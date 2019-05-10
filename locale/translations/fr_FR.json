@@ -205,6 +205,8 @@
     "form.feed.label.user_agent": "Remplacer l'agent utilisateur par défaut",
     "form.feed.label.scraper_rules": "Règles pour récupérer le contenu original",
     "form.feed.label.rewrite_rules": "Règles de réécriture",
+    "form.feed.label.title_filter": "Filtre de titre",
+    "form.feed.label.content_filter": "Filtre de contenu",
     "form.category.label.title": "Titre",
     "form.user.label.username": "Nom d'utilisateur",
     "form.user.label.password": "Mot de passe",
