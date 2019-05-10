@@ -7,6 +7,7 @@ package config // import "miniflux.app/config"
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func TestGetBooleanValueWithUnsetVariable(t *testing.T) {
@@ -844,7 +845,7 @@ func TestRequestTimeout(t *testing.T) {
 	os.Setenv("REQUEST_MAX_TIMEOUT", "500")
 	cfg := NewConfig()
 	timeout := cfg.RequestTimeout()
-	if timeout != 500 {
+	if timeout != 500 * time.Second {
 		t.Fatalf(`Unexpected RequestTimeout value, got "%v"`, timeout)
 	}
 }
