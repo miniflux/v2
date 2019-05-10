@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"miniflux.app/logger"
 )
@@ -33,14 +34,16 @@ const (
 	defaultOAuth2ClientSecret = ""
 	defaultOAuth2RedirectURL  = ""
 	defaultOAuth2Provider     = ""
+	defaultRequestTimeout     = 20 //Second
 )
 
 // Config manages configuration parameters.
 type Config struct {
-	IsHTTPS  bool
-	baseURL  string
-	rootURL  string
-	basePath string
+	IsHTTPS       bool
+	baseURL       string
+	rootURL       string
+	basePath      string
+	requestTimout int
 }
 
 func (c *Config) parseBaseURL() {
@@ -230,12 +233,19 @@ func (c *Config) ArchiveReadDays() int {
 	return getIntValue("ARCHIVE_READ_DAYS", defaultArchiveReadDays)
 }
 
+// RequestTimout returns a Duration.time represent the request timeout
+func (c *Config) RequestTimeout() time.Duration {
+	requestTimout := getIntValue("REQUEST_MAX_TIMEOUT", defaultRequestTimeout)
+	return time.Duration(requestTimout * int(time.Second))
+}
+
 // NewConfig returns a new Config.
 func NewConfig() *Config {
 	cfg := &Config{
-		baseURL: defaultBaseURL,
-		rootURL: defaultBaseURL,
-		IsHTTPS: getBooleanValue("HTTPS"),
+		baseURL:       defaultBaseURL,
+		rootURL:       defaultBaseURL,
+		IsHTTPS:       getBooleanValue("HTTPS"),
+		requestTimout: defaultRequestTimeout,
 	}
 
 	cfg.parseBaseURL()

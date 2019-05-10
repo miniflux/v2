@@ -838,3 +838,13 @@ func TestHTTPSOn(t *testing.T) {
 		t.Fatalf(`Unexpected HTTPS value, got "%v"`, cfg.IsHTTPS)
 	}
 }
+
+func TestRequestTimeout(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("REQUEST_MAX_TIMEOUT", "500")
+	cfg := NewConfig()
+	timeout := cfg.RequestTimeout()
+	if timeout != 500 {
+		t.Fatalf(`Unexpected RequestTimeout value, got "%v"`, timeout)
+	}
+}

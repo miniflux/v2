@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"miniflux.app/config"
 	"net"
 	"net/http"
 	"net/url"
@@ -25,12 +26,11 @@ import (
 )
 
 const (
-	// 20 seconds max.
-	requestTimeout = 20
-
 	// 15MB max.
 	maxBodySize = 1024 * 1024 * 15
 )
+
+var cfg = config.NewConfig()
 
 var (
 	// DefaultUserAgent sets the User-Agent header used for any requests by miniflux.
@@ -144,7 +144,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 			case net.Error:
 				nerr := uerr.Err.(net.Error)
 				if nerr.Timeout() {
-					err = errors.NewLocalizedError(errRequestTimeout, requestTimeout)
+					err = errors.NewLocalizedError(errRequestTimeout, cfg.RequestTimeout())
 				} else if nerr.Temporary() {
 					err = errors.NewLocalizedError(errTemporaryNetworkOperation, nerr)
 				}
@@ -212,7 +212,7 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 }
 
 func (c *Client) buildClient() http.Client {
-	client := http.Client{Timeout: time.Duration(requestTimeout * time.Second)}
+	client := http.Client{Timeout: cfg.RequestTimeout()}
 	if c.Insecure {
 		client.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
