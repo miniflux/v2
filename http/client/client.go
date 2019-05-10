@@ -144,7 +144,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 			case net.Error:
 				nerr := uerr.Err.(net.Error)
 				if nerr.Timeout() {
-					err = errors.NewLocalizedError(errRequestTimeout, cfg.RequestTimeout())
+					err = errors.NewLocalizedError(errRequestTimeout, cfg.RequestTimeout().Seconds())
 				} else if nerr.Temporary() {
 					err = errors.NewLocalizedError(errTemporaryNetworkOperation, nerr)
 				}
