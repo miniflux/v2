@@ -233,7 +233,7 @@ func (c *Config) ArchiveReadDays() int {
 	return getIntValue("ARCHIVE_READ_DAYS", defaultArchiveReadDays)
 }
 
-// RequestTimout returns a Duration.time represent the request timeout
+// RequestTimeout returns a Duration.time represent the request timeout
 func (c *Config) RequestTimeout() time.Duration {
 	requestTimout := getIntValue("REQUEST_MAX_TIMEOUT", defaultRequestTimeout)
 	return time.Duration(requestTimout * int(time.Second))
