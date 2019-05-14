@@ -310,7 +310,7 @@ func (s *Storage) ResetFeedErrors() error {
 	return err
 }
 
-// Remove Entries match by title filter
+// FilterByTitle remove Entries match by title filter
 func (s *Storage) FilterByTitle(userID, feedID int64, regex string) error {
 	_, err := s.db.Exec(`UPDATE entries SET status=$1  WHERE feed_id=$2 AND user_id=$3 AND title ~* $4;`,
 		model.EntryStatusRemoved, feedID, userID, regex)
@@ -320,7 +320,7 @@ func (s *Storage) FilterByTitle(userID, feedID int64, regex string) error {
 	return nil
 }
 
-// Remove Entries match by content filter
+// FilterByContent remove Entries match by content filter
 func (s *Storage) FilterByContent(userID, feedID int64, regex string) error {
 	_, err := s.db.Exec(`UPDATE entries SET status=$1  WHERE feed_id=$2 AND user_id=$3 AND content ~* $4;`,
 		model.EntryStatusRemoved, feedID, userID, regex)
