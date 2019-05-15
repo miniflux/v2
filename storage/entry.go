@@ -156,8 +156,29 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 	return nil
 }
 
+// FilterByTitle remove Entries match by title filter
+func (s *Storage) FilterByTitle(userID, feedID int64, regex string) error {
+	_, err := s.db.Exec(`UPDATE entries SET status=$1  WHERE feed_id=$2 AND user_id=$3 AND title ~* $4;`,
+		model.EntryStatusRemoved, feedID, userID, regex)
+	if err != nil {
+		return fmt.Errorf("unable to remove entries #%d filter: %s: %v", feedID, regex, err)
+	}
+	return nil
+}
+
+// FilterByContent remove Entries match by content filter
+func (s *Storage) FilterByContent(userID, feedID int64, regex string) error {
+	_, err := s.db.Exec(`UPDATE entries SET status=$1  WHERE feed_id=$2 AND user_id=$3 AND content ~* $4;`,
+		model.EntryStatusRemoved, feedID, userID, regex)
+	if err != nil {
+		return fmt.Errorf("unable to remove entries #%d filter: %s: %v", feedID, regex, err)
+	}
+	return nil
+}
+
+
 // UpdateEntries updates a list of entries while refreshing a feed.
-func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
+func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool, titleFilter, contentFilter string) (err error) {
 	var entryHashes []string
 	for _, entry := range entries {
 		entry.UserID = userID
@@ -180,6 +201,14 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 
 	if err := s.cleanupEntries(feedID, entryHashes); err != nil {
 		logger.Error("[Storage:CleanupEntries] feed #%d: %v", feedID, err)
+	}
+
+	if err := s.FilterByTitle(userID, feedID, titleFilter); err != nil {
+		logger.Error("[Storage:FilterByTitle]  feed #%d: %v", feedID, err)
+	}
+
+	if err := s.FilterByContent(userID, feedID, contentFilter); err != nil {
+		logger.Error("[Storage:FilterByContent]  feed #%d: %v", feedID, err)
 	}
 
 	return nil
