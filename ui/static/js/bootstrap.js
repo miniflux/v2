@@ -13,9 +13,9 @@ document.addEventListener("DOMContentLoaded", function() {
         keyboardHandler.on("g s", () => navHandler.goToPage("settings"));
         keyboardHandler.on("ArrowLeft", () => navHandler.goToPrevious());
         keyboardHandler.on("ArrowRight", () => navHandler.goToNext());
-        keyboardHandler.on("j", () => navHandler.goToPrevious());
+        keyboardHandler.on("k", () => navHandler.goToPrevious());        
         keyboardHandler.on("p", () => navHandler.goToPrevious());
-        keyboardHandler.on("k", () => navHandler.goToNext());
+        keyboardHandler.on("j", () => navHandler.goToNext());
         keyboardHandler.on("n", () => navHandler.goToNext());
         keyboardHandler.on("h", () => navHandler.goToPage("previous"));
         keyboardHandler.on("l", () => navHandler.goToPage("next"));
