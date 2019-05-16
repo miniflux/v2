@@ -7,7 +7,7 @@ require (
 	github.com/golang/protobuf v1.1.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/mux v1.6.2
-	github.com/lib/pq v1.0.0
+	github.com/lib/pq v1.1.1
 	github.com/tdewolff/minify/v2 v2.3.8 // indirect
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/net v0.0.0-20190228165749-92fc7df08ae7
