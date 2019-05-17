@@ -203,12 +203,16 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 		logger.Error("[Storage:CleanupEntries] feed #%d: %v", feedID, err)
 	}
 
-	if err := s.FilterByTitle(userID, feedID, titleFilter); err != nil {
-		logger.Error("[Storage:FilterByTitle]  feed #%d: %v", feedID, err)
+	if titleFilter != "" {
+		if err := s.FilterByTitle(userID, feedID, titleFilter); err != nil {
+			logger.Error("[Storage:FilterByTitle]  feed #%d: %v", feedID, err)
+		}
 	}
 
-	if err := s.FilterByContent(userID, feedID, contentFilter); err != nil {
-		logger.Error("[Storage:FilterByContent]  feed #%d: %v", feedID, err)
+	if contentFilter != "" {
+		if err := s.FilterByContent(userID, feedID, contentFilter); err != nil {
+			logger.Error("[Storage:FilterByContent]  feed #%d: %v", feedID, err)
+		}
 	}
 
 	return nil
