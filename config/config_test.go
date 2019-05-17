@@ -842,7 +842,7 @@ func TestHTTPSOn(t *testing.T) {
 
 func TestRequestTimeout(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("REQUEST_MAX_TIMEOUT", "500")
+	os.Setenv("HTTP_CLIENT_TIMEOUT", "500")
 	cfg := NewConfig()
 	timeout := cfg.RequestTimeout()
 	if timeout != 500 * time.Second {
