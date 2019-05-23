@@ -191,8 +191,8 @@ var templateCommonMap = map[string]string{
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
                 <ul>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>j</strong>, <strong>◄</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>k</strong>, <strong>►</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>◄</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>►</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>g + f</strong></li>
                 </ul>
 
@@ -247,6 +247,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "838fb8ec4df4120ff63168c15d900e3734f52e4b7473fb1d45695e6b27540d11",
+	"layout":           "cc9ae6a3c430a6be67787318292e1bcec7bf27e96a4f6664dcebc5d19419cfba",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }
