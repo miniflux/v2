@@ -45,6 +45,8 @@ func parse() (opts *Options, err error) {
 	opts.batchSize = getIntValue("BATCH_SIZE", defaultBatchSize)
 	opts.archiveReadDays = getIntValue("ARCHIVE_READ_DAYS", defaultArchiveReadDays)
 	opts.proxyImages = getStringValue("PROXY_IMAGES", defaultProxyImages)
+	opts.createAdmin = getBooleanValue("CREATE_ADMIN")
+	opts.pocketConsumerKey = getStringValue("POCKET_CONSUMER_KEY", "")
 
 	opts.oauth2UserCreationAllowed = getBooleanValue("OAUTH2_USER_CREATION")
 	opts.oauth2ClientID = getStringValue("OAUTH2_CLIENT_ID", defaultOAuth2ClientID)
@@ -52,9 +54,8 @@ func parse() (opts *Options, err error) {
 	opts.oauth2RedirectURL = getStringValue("OAUTH2_REDIRECT_URL", defaultOAuth2RedirectURL)
 	opts.oauth2Provider = getStringValue("OAUTH2_PROVIDER", defaultOAuth2Provider)
 
-	opts.pocketConsumerKey = getStringValue("POCKET_CONSUMER_KEY", "")
-
-	opts.createAdmin = getBooleanValue("CREATE_ADMIN")
+	opts.httpClientTimeout = getIntValue("HTTP_CLIENT_TIMEOUT", defaultHTTPClientTimeout)
+	opts.httpClientMaxBodySize = int64(getIntValue("HTTP_CLIENT_MAX_BODY_SIZE", defaultHTTPClientMaxBodySize) * 1024 * 1024)
 
 	return opts, nil
 }
