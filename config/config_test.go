@@ -984,3 +984,69 @@ func TestHTTPSOn(t *testing.T) {
 		t.Fatalf(`Unexpected HTTPS value, got "%v"`, opts.HTTPS)
 	}
 }
+
+func TestHTTPClientTimeout(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("HTTP_CLIENT_TIMEOUT", "42")
+
+	opts, err := parse()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %q`, err)
+	}
+
+	expected := 42
+	result := opts.HTTPClientTimeout()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestDefaultHTTPClientTimeoutValue(t *testing.T) {
+	os.Clearenv()
+
+	opts, err := parse()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %q`, err)
+	}
+
+	expected := defaultHTTPClientTimeout
+	result := opts.HTTPClientTimeout()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestHTTPClientMaxBodySize(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("HTTP_CLIENT_MAX_BODY_SIZE", "42")
+
+	opts, err := parse()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %q`, err)
+	}
+
+	expected := int64(42 * 1024 * 1024)
+	result := opts.HTTPClientMaxBodySize()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_MAX_BODY_SIZE value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestDefaultHTTPClientMaxBodySizeValue(t *testing.T) {
+	os.Clearenv()
+
+	opts, err := parse()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %q`, err)
+	}
+
+	expected := int64(defaultHTTPClientMaxBodySize * 1024 * 1024)
+	result := opts.HTTPClientMaxBodySize()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_MAX_BODY_SIZE value, got %d instead of %d`, result, expected)
+	}
+}

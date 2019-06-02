@@ -5,25 +5,27 @@
 package config // import "miniflux.app/config"
 
 const (
-	defaultBaseURL            = "http://localhost"
-	defaultWorkerPoolSize     = 5
-	defaultPollingFrequency   = 60
-	defaultBatchSize          = 10
-	defaultDatabaseURL        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
-	defaultDatabaseMaxConns   = 20
-	defaultDatabaseMinConns   = 1
-	defaultArchiveReadDays    = 60
-	defaultListenAddr         = "127.0.0.1:8080"
-	defaultCertFile           = ""
-	defaultKeyFile            = ""
-	defaultCertDomain         = ""
-	defaultCertCache          = "/tmp/cert_cache"
-	defaultCleanupFrequency   = 24
-	defaultProxyImages        = "http-only"
-	defaultOAuth2ClientID     = ""
-	defaultOAuth2ClientSecret = ""
-	defaultOAuth2RedirectURL  = ""
-	defaultOAuth2Provider     = ""
+	defaultBaseURL               = "http://localhost"
+	defaultWorkerPoolSize        = 5
+	defaultPollingFrequency      = 60
+	defaultBatchSize             = 10
+	defaultDatabaseURL           = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	defaultDatabaseMaxConns      = 20
+	defaultDatabaseMinConns      = 1
+	defaultArchiveReadDays       = 60
+	defaultListenAddr            = "127.0.0.1:8080"
+	defaultCertFile              = ""
+	defaultKeyFile               = ""
+	defaultCertDomain            = ""
+	defaultCertCache             = "/tmp/cert_cache"
+	defaultCleanupFrequency      = 24
+	defaultProxyImages           = "http-only"
+	defaultOAuth2ClientID        = ""
+	defaultOAuth2ClientSecret    = ""
+	defaultOAuth2RedirectURL     = ""
+	defaultOAuth2Provider        = ""
+	defaultHTTPClientTimeout     = 20
+	defaultHTTPClientMaxBodySize = 15
 )
 
 // Options contains configuration options.
@@ -58,6 +60,8 @@ type Options struct {
 	oauth2RedirectURL         string
 	oauth2Provider            string
 	pocketConsumerKey         string
+	httpClientTimeout         int
+	httpClientMaxBodySize     int64
 }
 
 // HasDebugMode returns true if debug mode is enabled.
@@ -211,4 +215,14 @@ func (o *Options) PocketConsumerKey(defaultValue string) string {
 		return o.pocketConsumerKey
 	}
 	return defaultValue
+}
+
+// HTTPClientTimeout returns the time limit in seconds before the HTTP client cancel the request.
+func (o *Options) HTTPClientTimeout() int {
+	return o.httpClientTimeout
+}
+
+// HTTPClientMaxBodySize returns the number of bytes allowed for the HTTP client to transfer.
+func (o *Options) HTTPClientMaxBodySize() int64 {
+	return o.httpClientMaxBodySize
 }
