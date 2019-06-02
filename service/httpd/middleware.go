@@ -13,32 +13,24 @@ import (
 	"miniflux.app/logger"
 )
 
-type middleware struct {
-	cfg *config.Config
-}
-
-func newMiddleware(cfg *config.Config) *middleware {
-	return &middleware{cfg}
-}
-
-func (m *middleware) Serve(next http.Handler) http.Handler {
+func middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := request.FindClientIP(r)
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, request.ClientIPContextKey, clientIP)
 
 		if r.Header.Get("X-Forwarded-Proto") == "https" {
-			m.cfg.IsHTTPS = true
+			config.Opts.HTTPS = true
 		}
 
 		protocol := "HTTP"
-		if m.cfg.IsHTTPS {
+		if config.Opts.HTTPS {
 			protocol = "HTTPS"
 		}
 
 		logger.Debug("[%s] %s %s %s", protocol, clientIP, r.Method, r.RequestURI)
 
-		if m.cfg.IsHTTPS && m.cfg.HasHSTS() {
+		if config.Opts.HTTPS && config.Opts.HasHSTS() {
 			w.Header().Set("Strict-Transport-Security", "max-age=31536000")
 		}
 

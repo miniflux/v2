@@ -14,10 +14,10 @@ import (
 )
 
 // Serve starts the internal scheduler.
-func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool) {
+func Serve(store *storage.Storage, pool *worker.Pool) {
 	logger.Info(`Starting scheduler...`)
-	go feedScheduler(store, pool, cfg.PollingFrequency(), cfg.BatchSize())
-	go cleanupScheduler(store, cfg.CleanupFrequency(), cfg.ArchiveReadDays())
+	go feedScheduler(store, pool, config.Opts.PollingFrequency(), config.Opts.BatchSize())
+	go cleanupScheduler(store, config.Opts.CleanupFrequency(), config.Opts.ArchiveReadDays())
 }
 
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {

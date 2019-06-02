@@ -3,6 +3,7 @@ package ui  // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/cookie"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -55,8 +56,8 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,
 		sessionToken,
-		h.cfg.IsHTTPS,
-		h.cfg.BasePath(),
+		config.Opts.HTTPS,
+		config.Opts.BasePath(),
 	))
 
 	html.Redirect(w, r, route.Path(h.router, "unread"))

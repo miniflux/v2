@@ -16,7 +16,7 @@ import (
 )
 
 // SendEntry send the entry to the activated providers.
-func SendEntry(cfg *config.Config, entry *model.Entry, integration *model.Integration) {
+func SendEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.PinboardEnabled {
 		client := pinboard.NewClient(integration.PinboardToken)
 		err := client.AddBookmark(
@@ -64,7 +64,7 @@ func SendEntry(cfg *config.Config, entry *model.Entry, integration *model.Integr
 	}
 
 	if integration.PocketEnabled {
-		client := pocket.NewClient(cfg.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
+		client := pocket.NewClient(config.Opts.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}

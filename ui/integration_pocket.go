@@ -2,13 +2,14 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/response/html"
+	"miniflux.app/config"
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/integration/pocket"
 	"miniflux.app/locale"
@@ -31,8 +32,8 @@ func (h *handler) pocketAuthorize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
-	connector := pocket.NewConnector(h.cfg.PocketConsumerKey(integration.PocketConsumerKey))
-	redirectURL := h.cfg.BaseURL() + route.Path(h.router, "pocketCallback")
+	connector := pocket.NewConnector(config.Opts.PocketConsumerKey(integration.PocketConsumerKey))
+	redirectURL := config.Opts.BaseURL() + route.Path(h.router, "pocketCallback")
 	requestToken, err := connector.RequestToken(redirectURL)
 	if err != nil {
 		logger.Error("[Pocket:Authorize] %v", err)
@@ -61,7 +62,7 @@ func (h *handler) pocketCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	connector := pocket.NewConnector(h.cfg.PocketConsumerKey(integration.PocketConsumerKey))
+	connector := pocket.NewConnector(config.Opts.PocketConsumerKey(integration.PocketConsumerKey))
 	accessToken, err := connector.AccessToken(request.PocketRequestToken(r))
 	if err != nil {
 		logger.Error("[Pocket:Callback] %v", err)

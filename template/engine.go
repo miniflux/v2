@@ -9,7 +9,6 @@ import (
 	"html/template"
 	"time"
 
-	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/locale"
 	"miniflux.app/logger"
@@ -78,10 +77,10 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 }
 
 // NewEngine returns a new template engine.
-func NewEngine(cfg *config.Config, router *mux.Router) *Engine {
+func NewEngine(router *mux.Router) *Engine {
 	tpl := &Engine{
 		templates: make(map[string]*template.Template),
-		funcMap:   newFuncMap(cfg, router),
+		funcMap:   &funcMap{router},
 	}
 
 	tpl.parseAll()
