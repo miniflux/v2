@@ -27,17 +27,17 @@ import (
 )
 
 // Serve starts a new HTTP server.
-func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) *http.Server {
-	certFile := cfg.CertFile()
-	keyFile := cfg.KeyFile()
-	certDomain := cfg.CertDomain()
-	certCache := cfg.CertCache()
-	listenAddr := cfg.ListenAddr()
+func Serve(store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) *http.Server {
+	certFile := config.Opts.CertFile()
+	keyFile := config.Opts.CertKeyFile()
+	certDomain := config.Opts.CertDomain()
+	certCache := config.Opts.CertCache()
+	listenAddr := config.Opts.ListenAddr()
 	server := &http.Server{
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  60 * time.Second,
-		Handler:      setupHandler(cfg, store, feedHandler, pool),
+		Handler:      setupHandler(store, feedHandler, pool),
 	}
 
 	switch {
@@ -46,10 +46,10 @@ func Serve(cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHa
 	case strings.HasPrefix(listenAddr, "/"):
 		startUnixSocketServer(server, listenAddr)
 	case certDomain != "" && certCache != "":
-		cfg.IsHTTPS = true
+		config.Opts.HTTPS = true
 		startAutoCertTLSServer(server, certDomain, certCache)
 	case certFile != "" && keyFile != "":
-		cfg.IsHTTPS = true
+		config.Opts.HTTPS = true
 		server.Addr = listenAddr
 		startTLSServer(server, certFile, keyFile)
 	default:
@@ -156,18 +156,18 @@ func startHTTPServer(server *http.Server) {
 	}()
 }
 
-func setupHandler(cfg *config.Config, store *storage.Storage, feedHandler *feed.Handler, pool *worker.Pool) *mux.Router {
+func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worker.Pool) *mux.Router {
 	router := mux.NewRouter()
 
-	if cfg.BasePath() != "" {
-		router = router.PathPrefix(cfg.BasePath()).Subrouter()
+	if config.Opts.BasePath() != "" {
+		router = router.PathPrefix(config.Opts.BasePath()).Subrouter()
 	}
 
-	router.Use(newMiddleware(cfg).Serve)
+	router.Use(middleware)
 
-	fever.Serve(router, cfg, store)
+	fever.Serve(router, store)
 	api.Serve(router, store, feedHandler)
-	ui.Serve(router, cfg, store, pool, feedHandler)
+	ui.Serve(router, store, pool, feedHandler)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))

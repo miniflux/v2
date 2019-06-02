@@ -7,7 +7,6 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/config"
 	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/template"
@@ -17,9 +16,9 @@ import (
 )
 
 // Serve declares all routes for the user interface.
-func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
-	middleware := newMiddleware(router, cfg, store)
-	handler := &handler{router, cfg, store, template.NewEngine(cfg, router), pool, feedHandler}
+func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
+	middleware := newMiddleware(router, store)
+	handler := &handler{router, store, template.NewEngine(router), pool, feedHandler}
 
 	uiRouter := router.NewRoute().Subrouter()
 	uiRouter.Use(middleware.handleUserSession)

@@ -51,9 +51,11 @@ func Parse() {
 	flag.BoolVar(&flagDebugMode, "debug", false, flagDebugModeHelp)
 	flag.Parse()
 
-	cfg := config.NewConfig()
+	if err := config.ParseConfig(); err != nil {
+		logger.Fatal("%v", err)
+	}
 
-	if flagDebugMode || cfg.HasDebugMode() {
+	if flagDebugMode || config.Opts.HasDebugMode() {
 		logger.EnableDebug()
 	}
 
@@ -67,7 +69,15 @@ func Parse() {
 		return
 	}
 
-	db, err := database.NewConnectionPool(cfg.DatabaseURL(), cfg.DatabaseMinConns(), cfg.DatabaseMaxConns())
+	if config.Opts.IsDefaultDatabaseURL() {
+		logger.Info("The default value for DATABASE_URL is used")
+	}
+
+	db, err := database.NewConnectionPool(
+		config.Opts.DatabaseURL(),
+		config.Opts.DatabaseMinConns(),
+		config.Opts.DatabaseMaxConns(),
+	)
 	if err != nil {
 		logger.Fatal("Unable to connect to the database: %v", err)
 	}
@@ -101,14 +111,14 @@ func Parse() {
 	}
 
 	// Run migrations and start the deamon.
-	if cfg.RunMigrations() {
+	if config.Opts.RunMigrations() {
 		database.Migrate(db)
 	}
 
 	// Create admin user and start the deamon.
-	if cfg.CreateAdmin() {
+	if config.Opts.CreateAdmin() {
 		createAdmin(store)
 	}
 
-	startDaemon(cfg, store)
+	startDaemon(store)
 }

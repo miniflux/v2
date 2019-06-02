@@ -16,13 +16,13 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/reader/feed"
-	"miniflux.app/service/scheduler"
 	"miniflux.app/service/httpd"
+	"miniflux.app/service/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
 )
 
-func startDaemon(cfg *config.Config, store *storage.Storage) {
+func startDaemon(store *storage.Storage) {
 	logger.Info("Starting Miniflux...")
 
 	stop := make(chan os.Signal, 1)
@@ -30,17 +30,17 @@ func startDaemon(cfg *config.Config, store *storage.Storage) {
 	signal.Notify(stop, syscall.SIGTERM)
 
 	feedHandler := feed.NewFeedHandler(store)
-	pool := worker.NewPool(feedHandler, cfg.WorkerPoolSize())
+	pool := worker.NewPool(feedHandler, config.Opts.WorkerPoolSize())
 
 	go showProcessStatistics()
 
-	if cfg.HasSchedulerService() {
-		scheduler.Serve(cfg, store, pool)
+	if config.Opts.HasSchedulerService() {
+		scheduler.Serve(store, pool)
 	}
 
 	var httpServer *http.Server
-	if cfg.HasHTTPService() {
-		httpServer = httpd.Serve(cfg, store, pool, feedHandler)
+	if config.Opts.HasHTTPService() {
+		httpServer = httpd.Serve(store, pool, feedHandler)
 	}
 
 	<-stop

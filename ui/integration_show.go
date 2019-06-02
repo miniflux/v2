@@ -7,6 +7,7 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/ui/form"
@@ -59,7 +60,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
-	view.Set("hasPocketConsumerKeyConfigured", h.cfg.PocketConsumerKey("") != "")
+	view.Set("hasPocketConsumerKeyConfigured", config.Opts.PocketConsumerKey("") != "")
 
 	html.OK(w, r, view.Render("integrations"))
 }

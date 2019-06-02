@@ -7,6 +7,7 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/cookie"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -43,7 +44,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authProvider, err := getOAuth2Manager(h.cfg).Provider(provider)
+	authProvider, err := getOAuth2Manager().Provider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "login"))
@@ -90,7 +91,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if user == nil {
-		if !h.cfg.IsOAuth2UserCreationAllowed() {
+		if !config.Opts.IsOAuth2UserCreationAllowed() {
 			html.Forbidden(w, r)
 			return
 		}
@@ -121,8 +122,8 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie.New(
 		cookie.CookieUserSessionID,
 		sessionToken,
-		h.cfg.IsHTTPS,
-		h.cfg.BasePath(),
+		config.Opts.HTTPS,
+		config.Opts.BasePath(),
 	))
 
 	html.Redirect(w, r, route.Path(h.router, "unread"))
