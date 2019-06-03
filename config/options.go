@@ -4,11 +4,24 @@
 
 package config // import "miniflux.app/config"
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
+	defaultHTTPS                 = false
+	defaultHSTS                  = true
+	defaultHTTPService           = true
+	defaultSchedulerService      = true
+	defaultDebug                 = false
 	defaultBaseURL               = "http://localhost"
+	defaultRootURL               = "http://localhost"
+	defaultBasePath              = ""
 	defaultWorkerPoolSize        = 5
 	defaultPollingFrequency      = 60
 	defaultBatchSize             = 10
+	defaultRunMigrations         = false
 	defaultDatabaseURL           = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
 	defaultDatabaseMaxConns      = 20
 	defaultDatabaseMinConns      = 1
@@ -20,10 +33,13 @@ const (
 	defaultCertCache             = "/tmp/cert_cache"
 	defaultCleanupFrequency      = 24
 	defaultProxyImages           = "http-only"
+	defaultCreateAdmin           = false
+	defaultOAuth2UserCreation    = false
 	defaultOAuth2ClientID        = ""
 	defaultOAuth2ClientSecret    = ""
 	defaultOAuth2RedirectURL     = ""
 	defaultOAuth2Provider        = ""
+	defaultPocketConsumerKey     = ""
 	defaultHTTPClientTimeout     = 20
 	defaultHTTPClientMaxBodySize = 15
 )
@@ -62,6 +78,44 @@ type Options struct {
 	pocketConsumerKey         string
 	httpClientTimeout         int
 	httpClientMaxBodySize     int64
+}
+
+// NewOptions returns Options with default values.
+func NewOptions() *Options {
+	return &Options{
+		HTTPS:                     defaultHTTPS,
+		hsts:                      defaultHSTS,
+		httpService:               defaultHTTPService,
+		schedulerService:          defaultSchedulerService,
+		debug:                     defaultDebug,
+		baseURL:                   defaultBaseURL,
+		rootURL:                   defaultRootURL,
+		basePath:                  defaultBasePath,
+		databaseURL:               defaultDatabaseURL,
+		databaseMaxConns:          defaultDatabaseMaxConns,
+		databaseMinConns:          defaultDatabaseMinConns,
+		runMigrations:             defaultRunMigrations,
+		listenAddr:                defaultListenAddr,
+		certFile:                  defaultCertFile,
+		certDomain:                defaultCertDomain,
+		certCache:                 defaultCertCache,
+		certKeyFile:               defaultKeyFile,
+		cleanupFrequency:          defaultCleanupFrequency,
+		archiveReadDays:           defaultArchiveReadDays,
+		pollingFrequency:          defaultPollingFrequency,
+		batchSize:                 defaultBatchSize,
+		workerPoolSize:            defaultWorkerPoolSize,
+		createAdmin:               defaultCreateAdmin,
+		proxyImages:               defaultProxyImages,
+		oauth2UserCreationAllowed: defaultOAuth2UserCreation,
+		oauth2ClientID:            defaultOAuth2ClientID,
+		oauth2ClientSecret:        defaultOAuth2ClientSecret,
+		oauth2RedirectURL:         defaultOAuth2RedirectURL,
+		oauth2Provider:            defaultOAuth2Provider,
+		pocketConsumerKey:         defaultPocketConsumerKey,
+		httpClientTimeout:         defaultHTTPClientTimeout,
+		httpClientMaxBodySize:     defaultHTTPClientMaxBodySize * 1024 * 1024,
+	}
 }
 
 // HasDebugMode returns true if debug mode is enabled.
@@ -225,4 +279,41 @@ func (o *Options) HTTPClientTimeout() int {
 // HTTPClientMaxBodySize returns the number of bytes allowed for the HTTP client to transfer.
 func (o *Options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
+}
+
+func (o *Options) String() string {
+	var builder strings.Builder
+	builder.WriteString(fmt.Sprintf("DEBUG: %v\n", o.debug))
+	builder.WriteString(fmt.Sprintf("HTTP_SERVICE: %v\n", o.httpService))
+	builder.WriteString(fmt.Sprintf("SCHEDULER_SERVICE: %v\n", o.schedulerService))
+	builder.WriteString(fmt.Sprintf("HTTPS: %v\n", o.HTTPS))
+	builder.WriteString(fmt.Sprintf("HSTS: %v\n", o.hsts))
+	builder.WriteString(fmt.Sprintf("BASE_URL: %v\n", o.baseURL))
+	builder.WriteString(fmt.Sprintf("ROOT_URL: %v\n", o.rootURL))
+	builder.WriteString(fmt.Sprintf("BASE_PATH: %v\n", o.basePath))
+	builder.WriteString(fmt.Sprintf("LISTEN_ADDR: %v\n", o.listenAddr))
+	builder.WriteString(fmt.Sprintf("DATABASE_URL: %v\n", o.databaseURL))
+	builder.WriteString(fmt.Sprintf("DATABASE_MAX_CONNS: %v\n", o.databaseMaxConns))
+	builder.WriteString(fmt.Sprintf("DATABASE_MIN_CONNS: %v\n", o.databaseMinConns))
+	builder.WriteString(fmt.Sprintf("RUN_MIGRATIONS: %v\n", o.runMigrations))
+	builder.WriteString(fmt.Sprintf("CERT_FILE: %v\n", o.certFile))
+	builder.WriteString(fmt.Sprintf("KEY_FILE: %v\n", o.certKeyFile))
+	builder.WriteString(fmt.Sprintf("CERT_DOMAIN: %v\n", o.certDomain))
+	builder.WriteString(fmt.Sprintf("CERT_CACHE: %v\n", o.certCache))
+	builder.WriteString(fmt.Sprintf("CLEANUP_FREQUENCY: %v\n", o.cleanupFrequency))
+	builder.WriteString(fmt.Sprintf("WORKER_POOL_SIZE: %v\n", o.workerPoolSize))
+	builder.WriteString(fmt.Sprintf("POLLING_FREQUENCY: %v\n", o.pollingFrequency))
+	builder.WriteString(fmt.Sprintf("BATCH_SIZE: %v\n", o.batchSize))
+	builder.WriteString(fmt.Sprintf("ARCHIVE_READ_DAYS: %v\n", o.archiveReadDays))
+	builder.WriteString(fmt.Sprintf("PROXY_IMAGES: %v\n", o.proxyImages))
+	builder.WriteString(fmt.Sprintf("CREATE_ADMIN: %v\n", o.createAdmin))
+	builder.WriteString(fmt.Sprintf("POCKET_CONSUMER_KEY: %v\n", o.pocketConsumerKey))
+	builder.WriteString(fmt.Sprintf("OAUTH2_USER_CREATION: %v\n", o.oauth2UserCreationAllowed))
+	builder.WriteString(fmt.Sprintf("OAUTH2_CLIENT_ID: %v\n", o.oauth2ClientID))
+	builder.WriteString(fmt.Sprintf("OAUTH2_CLIENT_SECRET: %v\n", o.oauth2ClientSecret))
+	builder.WriteString(fmt.Sprintf("OAUTH2_REDIRECT_URL: %v\n", o.oauth2RedirectURL))
+	builder.WriteString(fmt.Sprintf("OAUTH2_PROVIDER: %v\n", o.oauth2Provider))
+	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_TIMEOUT: %v\n", o.httpClientTimeout))
+	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_MAX_BODY_SIZE: %v\n", o.httpClientMaxBodySize))
+	return builder.String()
 }

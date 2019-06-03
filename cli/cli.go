@@ -24,11 +24,14 @@ const (
 	flagResetPasswordHelp   = "Reset user password"
 	flagResetFeedErrorsHelp = "Clear all feed errors for all users"
 	flagDebugModeHelp       = "Show debug logs"
+	flagConfigFileHelp      = "Load configuration file"
+	flagConfigDumpHelp      = "Print parsed configuration values"
 )
 
 // Parse parses command line arguments.
 func Parse() {
 	var (
+		err                 error
 		flagInfo            bool
 		flagVersion         bool
 		flagMigrate         bool
@@ -37,6 +40,8 @@ func Parse() {
 		flagResetPassword   bool
 		flagResetFeedErrors bool
 		flagDebugMode       bool
+		flagConfigFile      string
+		flagConfigDump      bool
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -49,10 +54,28 @@ func Parse() {
 	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
 	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)
 	flag.BoolVar(&flagDebugMode, "debug", false, flagDebugModeHelp)
+	flag.StringVar(&flagConfigFile, "config-file", "", flagConfigFileHelp)
+	flag.StringVar(&flagConfigFile, "c", "", flagConfigFileHelp)
+	flag.BoolVar(&flagConfigDump, "config-dump", false, flagConfigDumpHelp)
 	flag.Parse()
 
-	if err := config.ParseConfig(); err != nil {
+	cfg := config.NewParser()
+
+	if flagConfigFile != "" {
+		config.Opts, err = cfg.ParseFile(flagConfigFile)
+		if err != nil {
+			logger.Fatal("%v", err)
+		}
+	}
+
+	config.Opts, err = cfg.ParseEnvironmentVariables()
+	if err != nil {
 		logger.Fatal("%v", err)
+	}
+
+	if flagConfigDump {
+		fmt.Print(config.Opts)
+		return
 	}
 
 	if flagDebugMode || config.Opts.HasDebugMode() {

@@ -4,11 +4,5 @@
 
 package config // import "miniflux.app/config"
 
-// Opts contains configuration options after parsing.
+// Opts holds parsed configuration options.
 var Opts *Options
-
-// ParseConfig parses configuration options.
-func ParseConfig() (err error) {
-	Opts, err = parse()
-	return err
-}
