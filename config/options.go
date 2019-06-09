@@ -11,6 +11,7 @@ import (
 
 const (
 	defaultHTTPS                 = false
+	defaultLogDateTime           = false
 	defaultHSTS                  = true
 	defaultHTTPService           = true
 	defaultSchedulerService      = true
@@ -47,6 +48,7 @@ const (
 // Options contains configuration options.
 type Options struct {
 	HTTPS                     bool
+	logDateTime               bool
 	hsts                      bool
 	httpService               bool
 	schedulerService          bool
@@ -84,6 +86,7 @@ type Options struct {
 func NewOptions() *Options {
 	return &Options{
 		HTTPS:                     defaultHTTPS,
+		logDateTime:               defaultLogDateTime,
 		hsts:                      defaultHSTS,
 		httpService:               defaultHTTPService,
 		schedulerService:          defaultSchedulerService,
@@ -116,6 +119,11 @@ func NewOptions() *Options {
 		httpClientTimeout:         defaultHTTPClientTimeout,
 		httpClientMaxBodySize:     defaultHTTPClientMaxBodySize * 1024 * 1024,
 	}
+}
+
+// LogDateTime returns true if the date/time should be displayed in log messages.
+func (o *Options) LogDateTime() bool {
+	return o.logDateTime
 }
 
 // HasDebugMode returns true if debug mode is enabled.
@@ -283,6 +291,7 @@ func (o *Options) HTTPClientMaxBodySize() int64 {
 
 func (o *Options) String() string {
 	var builder strings.Builder
+	builder.WriteString(fmt.Sprintf("LOG_DATE_TIME: %v\n", o.logDateTime))
 	builder.WriteString(fmt.Sprintf("DEBUG: %v\n", o.debug))
 	builder.WriteString(fmt.Sprintf("HTTP_SERVICE: %v\n", o.httpService))
 	builder.WriteString(fmt.Sprintf("SCHEDULER_SERVICE: %v\n", o.schedulerService))

@@ -78,10 +78,29 @@ Show application version\&.
 Show application version\&.
 .RE
 
+.SH CONFIGURATION FILE
+The configuration file is a text file that follow these rules:
+.LP
+- Miniflux expects each line to be in KEY=VALUE format.
+.br
+- Lines beginning with # are processed as comments and ignored.
+.br
+- Blank lines are ignored.
+.br
+- There is no variable interpolation.
+.PP
+Keys are the same as the environment variables described below.
+.br
+Environment variables override the values defined in the config file.
+
 .SH ENVIRONMENT
 .TP
 .B DEBUG
 Set the value to 1 to enable debug logs\&.
+.TP
+.TP
+.B LOG_DATE_TIME
+Display the date and time in log messages\&.
 .TP
 .B WORKER_POOL_SIZE
 Number of background workers (default is 5)\&.
