@@ -8,10 +8,11 @@ github.com/golang/protobuf/proto
 github.com/gorilla/context
 # github.com/gorilla/mux v1.6.2
 github.com/gorilla/mux
-# github.com/lib/pq v1.0.0
+# github.com/lib/pq v1.1.1
 github.com/lib/pq
 github.com/lib/pq/hstore
 github.com/lib/pq/oid
+github.com/lib/pq/scram
 # golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 golang.org/x/crypto/ssh/terminal
 golang.org/x/crypto/acme/autocert
