@@ -7,9 +7,11 @@ package logger // import "miniflux.app/logger"
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 var requestedLevel = InfoLevel
+var displayDateTime = false
 
 // LogLevel type.
 type LogLevel uint32
@@ -41,6 +43,11 @@ func (level LogLevel) String() string {
 	default:
 		return "UNKNOWN"
 	}
+}
+
+// EnableDateTime enables date time in log messages.
+func EnableDateTime() {
+	displayDateTime = true
 }
 
 // EnableDebug increases logging, more verbose (debug)
@@ -79,6 +86,13 @@ func Fatal(format string, v ...interface{}) {
 }
 
 func formatMessage(level LogLevel, format string, v ...interface{}) {
-	prefix := fmt.Sprintf("[%s] ", level.String())
+	var prefix string
+
+	if displayDateTime {
+		prefix = fmt.Sprintf("[%s] [%s] ", time.Now().Format("2006-01-02T15:04:05"), level)
+	} else {
+		prefix = fmt.Sprintf("[%s] ", level)
+	}
+
 	fmt.Fprintf(os.Stderr, prefix+format+"\n", v...)
 }

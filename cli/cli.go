@@ -78,6 +78,10 @@ func Parse() {
 		return
 	}
 
+	if config.Opts.LogDateTime() {
+		logger.EnableDateTime()
+	}
+
 	if flagDebugMode || config.Opts.HasDebugMode() {
 		logger.EnableDebug()
 	}

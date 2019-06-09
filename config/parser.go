@@ -71,6 +71,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		value := strings.TrimSpace(fields[1])
 
 		switch key {
+		case "LOG_DATE_TIME":
+			p.opts.logDateTime = parseBool(value, defaultLogDateTime)
 		case "DEBUG":
 			p.opts.debug = parseBool(value, defaultDebug)
 		case "BASE_URL":
