@@ -1,3 +1,24 @@
+Version 2.0.16 (Jun 8, 2019)
+----------------------------
+
+* Add option to toggle date/time in log messages
+* Add optional config file parser in addition to environment variables
+* Make HTTP Client timeout and max body size configurable
+* Refactor config package:
+    - Parse configuration only once during startup time
+    - Store configuration values in a global variable
+* Flip behavior of j and k keyboard shortcuts
+* Bump Postgresql client library to v1.1.1 to bring in SCRAM-SHA-256 authentication
+* Add option to enable/disable keyboard shortcuts
+* Add missing translation
+* Improve page reload when showing unread/all entries:
+    - Show only unread entries = refresh current page
+    - Show all entries = go to next page
+* Always display feed entries even when there is a feed error
+* Use loading label instead of saving when submitting login form
+* Add OPML v1 support during importation
+* Add 'allow-popups' to iframe sandbox permissions
+
 Version 2.0.15 (Mar 16, 2019)
 -----------------------------
 
