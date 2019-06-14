@@ -29,11 +29,11 @@ var (
 
 // Handler contains all the logic to create and refresh feeds.
 type Handler struct {
-	store      *storage.Storage
+	store *storage.Storage
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password string) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password string, defaultRead bool) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -59,7 +59,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 
 	subscription.UserID = userID
 	subscription.WithCategoryID(categoryID)
-	subscription.WithBrowsingParameters(crawler, userAgent, username, password)
+	subscription.WithBrowsingParameters(crawler, defaultRead, userAgent, username, password)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
@@ -117,7 +117,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		processor.ProcessFeedEntries(h.store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
-		if storeErr := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
+		if storeErr := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler, originalFeed.DefaultRead); storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
 			h.store.UpdateFeedError(originalFeed)
 			return storeErr

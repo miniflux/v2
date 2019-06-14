@@ -26,6 +26,7 @@ type Feed struct {
 	ScraperRules       string    `json:"scraper_rules"`
 	RewriteRules       string    `json:"rewrite_rules"`
 	Crawler            bool      `json:"crawler"`
+	DefaultRead        bool      `json:"default_read"`
 	UserAgent          string    `json:"user_agent"`
 	Username           string    `json:"username"`
 	Password           string    `json:"password"`
@@ -58,8 +59,9 @@ func (f *Feed) WithCategoryID(categoryID int64) {
 }
 
 // WithBrowsingParameters defines browsing parameters.
-func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password string) {
+func (f *Feed) WithBrowsingParameters(crawler, defaultRead bool, userAgent, username, password string) {
 	f.Crawler = crawler
+	f.DefaultRead = defaultRead
 	f.UserAgent = userAgent
 	f.Username = username
 	f.Password = password

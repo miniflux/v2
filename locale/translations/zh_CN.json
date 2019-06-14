@@ -198,6 +198,7 @@
     "form.feed.label.feed_url": "源 URL",
     "form.feed.label.category": "类别",
     "form.feed.label.crawler": "获取原始内容",
+    "form.feed.label.default_read": "默认置为已读",
     "form.feed.label.feed_username": "源用户名",
     "form.feed.label.feed_password": "源密码",
     "form.feed.label.user_agent": "覆盖默认 User-Agent",

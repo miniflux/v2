@@ -24,12 +24,13 @@ type entriesResponse struct {
 }
 
 type feedCreation struct {
-	FeedURL    string `json:"feed_url"`
-	CategoryID int64  `json:"category_id"`
-	UserAgent  string `json:"user_agent"`
-	Username   string `json:"username"`
-	Password   string `json:"password"`
-	Crawler    bool   `json:"crawler"`
+	FeedURL     string `json:"feed_url"`
+	CategoryID  int64  `json:"category_id"`
+	UserAgent   string `json:"user_agent"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	Crawler     bool   `json:"crawler"`
+	DefaultRead bool   `json:"default_read"`
 }
 
 type subscriptionDiscovery struct {

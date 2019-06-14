@@ -12,6 +12,7 @@ type Enclosure struct {
 	URL      string `json:"url"`
 	MimeType string `json:"mime_type"`
 	Size     int64  `json:"size"`
+	Status   string `json:"status"`
 }
 
 // EnclosureList represents a list of attachments.

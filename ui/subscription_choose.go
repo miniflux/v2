@@ -8,8 +8,8 @@ import (
 	"net/http"
 
 	"miniflux.app/http/client"
-	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
@@ -55,6 +55,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		subscriptionForm.UserAgent,
 		subscriptionForm.Username,
 		subscriptionForm.Password,
+		subscriptionForm.DefaultRead,
 	)
 	if err != nil {
 		view.Set("form", subscriptionForm)

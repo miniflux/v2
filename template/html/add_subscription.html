@@ -40,6 +40,7 @@
             <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+                <label><input type="checkbox" name="default_read" value="1" {{ if .form.DefaultRead }}checked{{ end }}> {{ t "form.feed.label.default_read" }}</label>
 
                 <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
                 <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">

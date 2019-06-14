@@ -65,9 +65,9 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 func (s *Storage) createEntry(entry *model.Entry) error {
 	query := `
 		INSERT INTO entries
-		(title, hash, url, comments_url, published_at, content, author, user_id, feed_id, document_vectors)
+		(title, hash, url, comments_url, published_at, content, author, user_id, feed_id, status, document_vectors)
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8, $9, setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($6, '') for 1000000)), 'B'))
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($6, '') for 1000000)), 'B'))
 		RETURNING id, status
 	`
 	err := s.db.QueryRow(
@@ -81,6 +81,7 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		entry.Author,
 		entry.UserID,
 		entry.FeedID,
+		entry.Status,
 	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {
@@ -157,7 +158,7 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 }
 
 // UpdateEntries updates a list of entries while refreshing a feed.
-func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
+func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries, defaultRead bool) (err error) {
 	var entryHashes []string
 	for _, entry := range entries {
 		entry.UserID = userID
@@ -168,6 +169,9 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 				err = s.updateEntry(entry)
 			}
 		} else {
+			if defaultRead {
+				entry.Status = model.EntryStatusRead
+			}
 			err = s.createEntry(entry)
 		}
 

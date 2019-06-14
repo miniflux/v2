@@ -2495,6 +2495,7 @@ var translations = map[string]string{
     "form.feed.label.feed_url": "源 URL",
     "form.feed.label.category": "类别",
     "form.feed.label.crawler": "获取原始内容",
+    "form.feed.label.default_read": "默认置为已读",
     "form.feed.label.feed_username": "源用户名",
     "form.feed.label.feed_password": "源密码",
     "form.feed.label.user_agent": "覆盖默认 User-Agent",
@@ -2591,5 +2592,5 @@ var translationsChecksums = map[string]string{
 	"nl_NL": "7d095d9c8915e7ae79d28d35793cb6fce04c867e35b9b4a956da45a7f1a0925c",
 	"pl_PL": "d99b8dcf56f5672e261b231f01cdf5e17f9c3aa422c798f994aa480a1d9a92e6",
 	"ru_RU": "4c135a56164be9223d87c50d738d8096c9e732c8ec51ee4a7c7db09ee634837a",
-	"zh_CN": "c1481025b98c282b284aae12e61d5f2356f4d83797d25a596afb67c3e170c6bf",
+	"zh_CN": "39caef036a3ad2b3132f1bccdc12f4be2ba5358bde6de1b4b0e1202dafe2d077",
 }

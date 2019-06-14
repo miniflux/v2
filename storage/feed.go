@@ -185,8 +185,8 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 func (s *Storage) CreateFeed(feed *model.Feed) error {
 	sql := `
 		INSERT INTO feeds
-		(feed_url, site_url, title, category_id, user_id, etag_header, last_modified_header, crawler, user_agent, username, password)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		(feed_url, site_url, title, category_id, user_id, etag_header, last_modified_header, crawler, user_agent, username, password, default_read)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING id
 	`
 
@@ -203,6 +203,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.UserAgent,
 		feed.Username,
 		feed.Password,
+		feed.DefaultRead,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf("unable to create feed %q: %v", feed.FeedURL, err)
@@ -211,6 +212,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	for i := 0; i < len(feed.Entries); i++ {
 		feed.Entries[i].FeedID = feed.ID
 		feed.Entries[i].UserID = feed.UserID
+		feed.Entries[i].Status = model.EntryStatusRead
 		err := s.createEntry(feed.Entries[i])
 		if err != nil {
 			return err
