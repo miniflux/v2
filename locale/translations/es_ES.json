@@ -200,6 +200,7 @@
     "form.feed.label.feed_url": "URL de la fuente",
     "form.feed.label.category": "Categoría",
     "form.feed.label.crawler": "Obtener contento original",
+    "form.feed.label.default_read": "Establecer para leer por defecto",
     "form.feed.label.feed_username": "Nombre de usuario de fuente",
     "form.feed.label.feed_password": "Contraseña de fuente",
     "form.feed.label.user_agent": "Invalidar el agente de usuario predeterminado",

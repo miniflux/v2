@@ -200,6 +200,7 @@
     "form.feed.label.feed_url": "Feed URL",
     "form.feed.label.category": "Category",
     "form.feed.label.crawler": "Fetch original content",
+    "form.feed.label.default_read": "Set to read by default",
     "form.feed.label.feed_username": "Feed Username",
     "form.feed.label.feed_password": "Feed Password",
     "form.feed.label.user_agent": "Override Default User Agent",

@@ -200,6 +200,7 @@
     "form.feed.label.feed_url": "URL del feed",
     "form.feed.label.category": "Categoria",
     "form.feed.label.crawler": "Scarica il contenuto integrale",
+    "form.feed.label.default_read": "Impostare per leggere per impostazione predefinita",
     "form.feed.label.feed_username": "Nome utente del feed",
     "form.feed.label.feed_password": "Password del feed",
     "form.feed.label.user_agent": "Usa user agent personalizzato",

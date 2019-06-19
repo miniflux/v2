@@ -132,7 +132,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
 		f.user_id, f.checked_at at time zone u.timezone,
 		f.parsing_error_count, f.parsing_error_msg,
-		f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
+		f.scraper_rules, f.rewrite_rules, f.crawler, f.default_read, f.user_agent,
 		f.username, f.password,
 		f.category_id, c.title as category_title,
 		fi.icon_id,
@@ -157,6 +157,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.ScraperRules,
 		&feed.RewriteRules,
 		&feed.Crawler,
+		&feed.DefaultRead,
 		&feed.UserAgent,
 		&feed.Username,
 		&feed.Password,
@@ -212,7 +213,9 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	for i := 0; i < len(feed.Entries); i++ {
 		feed.Entries[i].FeedID = feed.ID
 		feed.Entries[i].UserID = feed.UserID
-		feed.Entries[i].Status = model.EntryStatusRead
+		if feed.DefaultRead {
+			feed.Entries[i].Status = model.EntryStatusRead
+		}
 		err := s.createEntry(feed.Entries[i])
 		if err != nil {
 			return err
@@ -227,7 +230,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 	query := `UPDATE feeds SET
 		feed_url=$1, site_url=$2, title=$3, category_id=$4, etag_header=$5, last_modified_header=$6, checked_at=$7,
 		parsing_error_msg=$8, parsing_error_count=$9, scraper_rules=$10, rewrite_rules=$11, crawler=$12, user_agent=$13,
-		username=$14, password=$15
+		username=$14, password=$15, default_read=$18
 		WHERE id=$16 AND user_id=$17`
 
 	_, err = s.db.Exec(query,
@@ -248,6 +251,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.Password,
 		feed.ID,
 		feed.UserID,
+		feed.DefaultRead,
 	)
 
 	if err != nil {

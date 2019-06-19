@@ -70,6 +70,12 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($6, '') for 1000000)), 'B'))
 		RETURNING id, status
 	`
+	var entryStatus string
+	if entry.Status != "" {
+		entryStatus = entry.Status
+	} else {
+		entryStatus = model.EntryStatusUnread
+	}
 	err := s.db.QueryRow(
 		query,
 		entry.Title,
@@ -81,7 +87,7 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 		entry.Author,
 		entry.UserID,
 		entry.FeedID,
-		entry.Status,
+		entryStatus,
 	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {
