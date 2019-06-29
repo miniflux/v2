@@ -40,6 +40,9 @@ class AppearHandler {
 
         let rightAfterLeftEdge = left + element.clientWidth >= windowLeft;
         let leftBeforeRightEdge = left <= windowLeft + window.innerWidth;
+
+        element.dataset.belowTopEdge = belowTopEdge;
+
         return belowTopEdge && aboveBottomEdge && rightAfterLeftEdge && leftBeforeRightEdge;
     }
 

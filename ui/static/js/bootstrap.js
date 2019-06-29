@@ -39,8 +39,20 @@ document.addEventListener("DOMContentLoaded", function() {
     let touchHandler = new TouchHandler(navHandler);
     touchHandler.listen();
 
-    new AppearHandler(".item-status-unread");
+    new AppearHandler(
+        ".item-status-unread",
+        {
+            "onappear" : function(e){
 
+            },
+            "ondisappear" : function(element) {
+                let currentStatus = element.querySelector("a[data-toggle-status]").dataset.value;
+                if (element.dataset.belowTopEdge == "false" && currentStatus == "unread") {
+                    EntryHandler.toggleEntryStatus(element, "silently");
+                }
+            }
+        }
+    );
     let mouseHandler = new MouseHandler();
     mouseHandler.onClick("a[data-save-entry]", (event) => {
         EntryHandler.saveEntry(event.target);

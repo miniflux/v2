@@ -13,7 +13,7 @@ class EntryHandler {
         }
     }
 
-    static toggleEntryStatus(element) {
+    static toggleEntryStatus(element, silently=false) {
         let entryID = parseInt(element.dataset.id, 10);
         let link = element.querySelector("a[data-toggle-status]");
 
@@ -30,7 +30,7 @@ class EntryHandler {
             link.dataset.value = "read";
         }
 
-        if (element.classList.contains("item-status-" + currentStatus)) {
+        if (element.classList.contains("item-status-" + currentStatus) && !silently) {
             element.classList.remove("item-status-" + currentStatus);
             element.classList.add("item-status-" + newStatus);
         }
