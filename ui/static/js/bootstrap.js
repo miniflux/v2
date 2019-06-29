@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let touchHandler = new TouchHandler(navHandler);
     touchHandler.listen();
 
+    new AppearHandler(".item-status-unread");
+
     let mouseHandler = new MouseHandler();
     mouseHandler.onClick("a[data-save-entry]", (event) => {
         EntryHandler.saveEntry(event.target);
