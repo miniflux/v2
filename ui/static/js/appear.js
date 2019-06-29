@@ -1,3 +1,7 @@
+/**
+ * Trigger event when element appear after scroll
+ * Vanilla version of (MIT) https://github.com/morr/jquery.appear/blob/master/index.js
+ */
 class AppearHandler {
   constructor(selector, opts = {"onappear" : function(e){}, "ondisappear" : function(e){}}) {
       this.selectors = [
