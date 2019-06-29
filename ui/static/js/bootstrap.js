@@ -46,6 +46,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
             },
             "ondisappear" : function(element) {
+                if (! document.querySelector("body[data-auto-mark-as-read=true]")) {
+                    return;
+                }
                 let currentStatus = element.querySelector("a[data-toggle-status]").dataset.value;
                 if (element.dataset.belowTopEdge == "false" && currentStatus == "unread") {
                     EntryHandler.toggleEntryStatus(element, "silently");
