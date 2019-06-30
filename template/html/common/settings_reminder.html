@@ -2,7 +2,15 @@
     {{ if .user }}
         {{ if     .user.EntryEmbedded }}
             <li>
-                Embedded : <a href="#" class="toggle-entry-embedded" title="turn off temporarily">on</a>
+            {{ t "page.entry_embedded.label" }} : <a
+                    href="#"
+                    class="toggle-entry-embedded"
+                    title="{{ t "tooltip.entry_embedded.on" }}"
+                    data-entry-embedded-title-on="{{ t "tooltip.entry_embedded.on" }}"
+                    data-entry-embedded-title-off="{{ t "tooltip.entry_embedded.off" }}"
+                    data-entry-embedded-text-on="{{ t "page.entry_embedded.on" }}"
+                    data-entry-embedded-text-off="{{ t "page.entry_embedded.off" }}"
+                    >{{ t "page.entry_embedded.on" }}</a>
             </li>
         {{ end }}
     {{ end }}

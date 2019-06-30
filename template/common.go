@@ -250,7 +250,15 @@ var templateCommonMap = map[string]string{
     {{ if .user }}
         {{ if     .user.EntryEmbedded }}
             <li>
-                Embedded : <a href="#" class="toggle-entry-embedded" title="turn off temporarily">on</a>
+            {{ t "page.entry_embedded.label" }} : <a
+                    href="#"
+                    class="toggle-entry-embedded"
+                    title="{{ t "tooltip.entry_embedded.on" }}"
+                    data-entry-embedded-title-on="{{ t "tooltip.entry_embedded.on" }}"
+                    data-entry-embedded-title-off="{{ t "tooltip.entry_embedded.off" }}"
+                    data-entry-embedded-text-on="{{ t "page.entry_embedded.on" }}"
+                    data-entry-embedded-text-off="{{ t "page.entry_embedded.off" }}"
+                    >{{ t "page.entry_embedded.on" }}</a>
             </li>
         {{ end }}
     {{ end }}
@@ -262,5 +270,5 @@ var templateCommonMapChecksums = map[string]string{
 	"item_meta":         "0659868e5ca0d564610cbfbc1a3856f5f3a630536eb11f4889ff659665c2ec55",
 	"layout":            "a1af576c213d5bee46cb63c6a35a5aa582594812333d7899bb1c09930e504365",
 	"pagination":        "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
-	"settings_reminder": "765574672155e77006137b6cc18062abe2b911a2eb5b2f57e3cb1fd285415cdf",
+	"settings_reminder": "94046496260fbc8fae792b42d2462f53bad79f1bd010bcf4bc38f49ccfa4c48e",
 }

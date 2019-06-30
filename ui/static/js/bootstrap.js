@@ -113,10 +113,12 @@ document.addEventListener("DOMContentLoaded", function() {
     mouseHandler.onClick(".toggle-entry-embedded", (event) => {
         if (document.querySelector("body").dataset.entryEmbedded == "true") {
             document.querySelector("body").dataset.entryEmbedded = "false";
-            event.target.innerText = "off";
+            event.target.innerText = event.target.dataset.entryEmbeddedTextOff;
+            event.target.setAttribute("title", event.target.dataset.entryEmbeddedTitleOff);
         } else if (document.querySelector("body").dataset.entryEmbedded == "false") {
             document.querySelector("body").dataset.entryEmbedded = "true";
-            event.target.innerText = "on";
+            event.target.innerText = event.target.dataset.entryEmbeddedTextOn
+            event.target.setAttribute("title", event.target.dataset.entryEmbeddedTitleOn);
         }
         return false;
     });
