@@ -518,6 +518,7 @@ var translations = map[string]string{
     "form.prefs.select.recent_first": "Recent entries first",
     "form.prefs.label.keyboard_shortcuts": "Enable keyboard shortcuts",
     "form.prefs.label.auto_mark_as_read": "Mark as read when article is scrolled",
+    "form.prefs.label.entry_embedded": "Load content directly in list (embedded)",
     "form.import.label.file": "OPML file",
     "form.integration.fever_activate": "Activate Fever API",
     "form.integration.fever_username": "Fever Username",
@@ -1069,6 +1070,7 @@ var translations = map[string]string{
     "form.prefs.select.recent_first": "Éléments récents en premier",
     "form.prefs.label.keyboard_shortcuts": "Activer les raccourcis clavier",
     "form.prefs.label.auto_mark_as_read": "Marquer comme lu au défilement",
+    "form.prefs.label.entry_embedded": "Charger la vue article directement dans les listes",
     "form.import.label.file": "Fichier OPML",
     "form.integration.fever_activate": "Activer l'API de Fever",
     "form.integration.fever_username": "Nom d'utilisateur pour l'API de Fever",
@@ -2586,9 +2588,9 @@ var translations = map[string]string{
 
 var translationsChecksums = map[string]string{
 	"de_DE": "24812dcba285e56e042486c7f3d6fd9b915b37dc8473640d5099bade94e702b2",
-	"en_US": "2ade4f0b91816dd1d75e4bd66052e9c7fba3ad1eb6412b50fd850e03e40fdcb5",
+	"en_US": "a4e7d6cd463859d346d059544f752ab002295ae05d7130becc7c7d8ebcf572b6",
 	"es_ES": "89b84d2505fc27d3f75b2622eae78373c6ce465dc180e1e5bf2a4aca25f73f2e",
-	"fr_FR": "176bbb9252538e7417a916a95ede2511e810c1c26432c129e1ee5df13178308a",
+	"fr_FR": "8570feb39a47674f5a0d838a53735e51389803d6d7a1a61458c19344b43807f2",
 	"it_IT": "b3521ffb2f56810568bc2317846f2dd16dad77b76dadec5990598af2a6e49403",
 	"nl_NL": "7d095d9c8915e7ae79d28d35793cb6fce04c867e35b9b4a956da45a7f1a0925c",
 	"pl_PL": "d99b8dcf56f5672e261b231f01cdf5e17f9c3aa422c798f994aa480a1d9a92e6",

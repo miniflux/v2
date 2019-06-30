@@ -218,6 +218,7 @@
     "form.prefs.select.recent_first": "Éléments récents en premier",
     "form.prefs.label.keyboard_shortcuts": "Activer les raccourcis clavier",
     "form.prefs.label.auto_mark_as_read": "Marquer comme lu au défilement",
+    "form.prefs.label.entry_embedded": "Charger la vue article directement dans les listes",
     "form.import.label.file": "Fichier OPML",
     "form.integration.fever_activate": "Activer l'API de Fever",
     "form.integration.fever_username": "Nom d'utilisateur pour l'API de Fever",

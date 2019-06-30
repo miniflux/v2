@@ -115,11 +115,12 @@ document.addEventListener("DOMContentLoaded",function(){FormHandler.handleSubmit
 let touchHandler=new TouchHandler(navHandler);touchHandler.listen();new AppearHandler(".item-status-unread",{"onappear":function(e){},"ondisappear":function(element){if(!document.querySelector("body[data-auto-mark-as-read=true]")){return;}
 let currentStatus=element.querySelector("a[data-toggle-status]").dataset.value;if(element.dataset.belowTopEdge=="false"&&currentStatus=="unread"){EntryHandler.toggleEntryStatus(element,"silently");}}});let mouseHandler=new MouseHandler();mouseHandler.onClick("a[data-save-entry]",(event)=>{EntryHandler.saveEntry(event.target);});mouseHandler.onClick("a[data-toggle-bookmark]",(event)=>{EntryHandler.toggleBookmark(event.target);});mouseHandler.onClick("a[data-toggle-status]",(event)=>{let currentItem=DomHelper.findParent(event.target,"entry");if(!currentItem){currentItem=DomHelper.findParent(event.target,"item");}
 if(currentItem){EntryHandler.toggleEntryStatus(currentItem);}});mouseHandler.onClick("a[data-fetch-content-entry]",(event)=>{EntryHandler.fetchOriginalContent(event.target);});mouseHandler.onClick("a[data-on-click=markPageAsRead]",(event)=>{navHandler.markPageAsRead(event.target.dataset.showOnlyUnread||false);});mouseHandler.onClick("a[data-confirm]",(event)=>{(new ConfirmHandler()).handle(event);});mouseHandler.onClick("a[data-action=search]",(event)=>{navHandler.setFocusToSearchInput(event);});mouseHandler.onClick("a[data-link-state=flip]",(event)=>{LinkStateHandler.flip(event.target);},true);if(document.documentElement.clientWidth<600){let menuHandler=new MenuHandler();mouseHandler.onClick(".logo",()=>menuHandler.toggleMainMenu());mouseHandler.onClick(".header nav li",(event)=>menuHandler.clickMenuListItem(event));}
-ArticleHandler.load();if("serviceWorker"in navigator){let scriptElement=document.getElementById("service-worker-script");if(scriptElement){navigator.serviceWorker.register(scriptElement.src);}}});})();`,
+if(document.querySelector("body[data-entry-embedded=true]")){ArticleHandler.load();}
+if("serviceWorker"in navigator){let scriptElement=document.getElementById("service-worker-script");if(scriptElement){navigator.serviceWorker.register(scriptElement.src);}}});})();`,
 	"sw": `'use strict';self.addEventListener("fetch",(event)=>{if(event.request.url.includes("/feed/icon/")){event.respondWith(caches.open("feed_icons").then((cache)=>{return cache.match(event.request).then((response)=>{return response||fetch(event.request).then((response)=>{cache.put(event.request,response.clone());return response;});});}));}});`,
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "eb2f115a89f2a7bd205498ec955bbada2e73c48bc88883201b1619f948af931f",
+	"app": "691054f93ee8a87f7b672d4e15d2f6a279c0c1f012b1589a1aa94ce39e93d346",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }

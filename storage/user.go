@@ -65,7 +65,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		VALUES
 			(LOWER($1), $2, $3, $4)
 		RETURNING
-			id, username, is_admin, language, theme, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read
+			id, username, is_admin, language, theme, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read, entry_embedded
 	`
 
 	err = s.db.QueryRow(query, user.Username, password, user.IsAdmin, extra).Scan(
@@ -78,6 +78,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		&user.EntryDirection,
 		&user.KeyboardShortcuts,
 		&user.AutoMarkAsRead,
+		&user.EntryEmbedded,
 	)
 	if err != nil {
 		return fmt.Errorf("unable to create user: %v", err)
@@ -126,9 +127,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				timezone=$6,
 				entry_direction=$7,
 				keyboard_shortcuts=$8,
-				auto_mark_as_read=$9
+				auto_mark_as_read=$9,
+				entry_embedded=$10
 			WHERE
-				id=$10
+				id=$11
 		`
 
 		_, err = s.db.Exec(
@@ -142,6 +144,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.EntryDirection,
 			user.KeyboardShortcuts,
 			user.AutoMarkAsRead,
+			user.EntryEmbedded,
 			user.ID,
 		)
 		if err != nil {
@@ -157,9 +160,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				timezone=$5,
 				entry_direction=$6,
 				keyboard_shortcuts=$7,
-				auto_mark_as_read=$8
+				auto_mark_as_read=$8,
+				entry_embedded=$9
 			WHERE
-				id=$9
+				id=$10
 		`
 
 		_, err := s.db.Exec(
@@ -172,6 +176,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.EntryDirection,
 			user.KeyboardShortcuts,
 			user.AutoMarkAsRead,
+			user.EntryEmbedded,
 			user.ID,
 		)
 
@@ -197,7 +202,7 @@ func (s *Storage) UserLanguage(userID int64) (language string) {
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read, 
+			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read, entry_embedded,
 			last_login_at, extra
 		FROM
 			users
@@ -212,7 +217,7 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 func (s *Storage) UserByUsername(username string) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read,
+			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read, entry_embedded,
 			last_login_at, extra
 		FROM
 			users
@@ -227,7 +232,7 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read,
+			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read, entry_embedded,
 			last_login_at, extra
 		FROM
 			users
@@ -252,6 +257,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.EntryDirection,
 		&user.KeyboardShortcuts,
 		&user.AutoMarkAsRead,
+		&user.EntryEmbedded,
 		&user.LastLoginAt,
 		&extra,
 	)
@@ -294,7 +300,7 @@ func (s *Storage) RemoveUser(userID int64) error {
 func (s *Storage) Users() (model.Users, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read,
+			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts, auto_mark_as_read, entry_embedded,
 			last_login_at, extra
 		FROM
 			users
@@ -321,6 +327,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.EntryDirection,
 			&user.KeyboardShortcuts,
 			&user.AutoMarkAsRead,
+			&user.EntryEmbedded,
 			&user.LastLoginAt,
 			&extra,
 		)

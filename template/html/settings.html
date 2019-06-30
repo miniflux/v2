@@ -66,6 +66,7 @@
 
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
     <label><input type="checkbox" name="auto_mark_as_read" value="1" {{ if .form.AutoMarkAsRead }}checked{{ end }}> {{ t "form.prefs.label.auto_mark_as_read" }}</label>
+    <label><input type="checkbox" name="entry_embedded" value="1" {{ if .form.EntryEmbedded }}checked{{ end }}> {{ t "form.prefs.label.entry_embedded" }}</label>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

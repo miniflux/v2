@@ -42,6 +42,7 @@
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}
     {{ if .user }}{{ if     .user.AutoMarkAsRead }}   data-auto-mark-as-read="true"         {{ end }}{{ end }}
+    {{ if .user }}{{ if     .user.EntryEmbedded }}    data-entry-embedded="true"         {{ end }}{{ end }}
     >
     {{ if .user }}
     <header class="header">
