@@ -46,5 +46,6 @@
                 >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
         </li>
     </ul>
+    <a class="article_view_url" href="{{ route "fetchContent" "entryID" .entry.ID }}" style="display:none"></a>
 </div>
 {{ end }}

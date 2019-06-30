@@ -200,6 +200,7 @@ func main() {
 			"ui/static/js/modal_handler.js",
 			"ui/static/js/nav_handler.js",
 			"ui/static/js/link_state_handler.js",
+			"ui/static/js/article_view.js",
 			"ui/static/js/bootstrap.js",
 		},
 		"sw": []string{
