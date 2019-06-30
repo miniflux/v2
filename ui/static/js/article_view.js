@@ -1,6 +1,6 @@
 class ArticleHandler {
-    static load() {
-        let elements = document.querySelectorAll(".article_view_url");
+    static load(element) {
+        let elements = element.querySelectorAll(".article_view_url");
         elements.forEach((element) => {
             let loadingElementWrapper = document.createElement("div");
             loadingElementWrapper.className = "lds-dual-ring-wrapper";
@@ -18,6 +18,7 @@ class ArticleHandler {
                     view.innerHTML = json.content;
                     loadingElementWrapper.remove();
                     element.parentNode.appendChild(view);
+                    element.remove();
                 });
             });
 
