@@ -115,7 +115,9 @@ var templateCommonMap = map[string]string{
 </head>
 <body
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
-    {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
+    {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}
+    {{ if .user }}{{ if     .user.AutoMarkAsRead }}   data-auto-mark-as-read="true"         {{ end }}{{ end }}
+    >
     {{ if .user }}
     <header class="header">
         <nav>
@@ -248,6 +250,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "0659868e5ca0d564610cbfbc1a3856f5f3a630536eb11f4889ff659665c2ec55",
-	"layout":           "cc9ae6a3c430a6be67787318292e1bcec7bf27e96a4f6664dcebc5d19419cfba",
+	"layout":           "9970ee1628c2c7d056e9ac867b9c293f45754c93c468b5e986b98cd0b523479b",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

@@ -22,6 +22,7 @@ type User struct {
 	Timezone          string            `json:"timezone"`
 	EntryDirection    string            `json:"entry_sorting_direction"`
 	KeyboardShortcuts bool              `json:"keyboard_shortcuts"`
+	AutoMarkAsRead    bool              `json:"auto_mark_as_read"`
 	LastLoginAt       *time.Time        `json:"last_login_at,omitempty"`
 	Extra             map[string]string `json:"extra"`
 }

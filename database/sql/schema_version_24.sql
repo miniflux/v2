@@ -1,0 +1,1 @@
+alter table users add column auto_mark_as_read boolean default 'f';
