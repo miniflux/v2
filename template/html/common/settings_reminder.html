@@ -1,0 +1,9 @@
+{{ define "settings_reminder" }}
+    {{ if .user }}
+        {{ if     .user.EntryEmbedded }}
+            <li>
+                Embedded : <a href="#" class="toggle-entry-embedded" title="turn off temporarily">on</a>
+            </li>
+        {{ end }}
+    {{ end }}
+{{ end }}

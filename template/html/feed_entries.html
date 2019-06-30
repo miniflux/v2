@@ -38,6 +38,7 @@
                 data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
                 data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
         </li>
+        {{ template "settings_reminder" dict "user" $.user }}
     </ul>
 </section>
 

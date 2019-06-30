@@ -882,7 +882,9 @@ article.feed-parsing-error {
     }
 }
 
-
+body[data-entry-embedded="false"] .entry-content{
+    display: none;
+}
 
 /* Bookmarlet */
 .bookmarklet {

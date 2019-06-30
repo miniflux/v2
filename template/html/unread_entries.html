@@ -13,6 +13,7 @@
                data-label-new-state="{{ t "menu.mark_all_as_read_wip" }}"
                href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
+        {{ template "settings_reminder" dict "user" $.user }}
     </ul>
     {{ end }}
 </section>

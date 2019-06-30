@@ -21,6 +21,7 @@
             <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
         </li>
     {{ end }}
+    {{ template "settings_reminder" dict "user" $.user }}
     </ul>
 </section>
 

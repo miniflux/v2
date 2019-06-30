@@ -246,11 +246,21 @@ var templateCommonMap = map[string]string{
 </div>
 {{ end }}
 `,
+	"settings_reminder": `{{ define "settings_reminder" }}
+    {{ if .user }}
+        {{ if     .user.EntryEmbedded }}
+            <li>
+                Embedded : <a href="#" class="toggle-entry-embedded" title="turn off temporarily">on</a>
+            </li>
+        {{ end }}
+    {{ end }}
+{{ end }}`,
 }
 
 var templateCommonMapChecksums = map[string]string{
-	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
-	"item_meta":        "0659868e5ca0d564610cbfbc1a3856f5f3a630536eb11f4889ff659665c2ec55",
-	"layout":           "a1af576c213d5bee46cb63c6a35a5aa582594812333d7899bb1c09930e504365",
-	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
+	"entry_pagination":  "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
+	"item_meta":         "0659868e5ca0d564610cbfbc1a3856f5f3a630536eb11f4889ff659665c2ec55",
+	"layout":            "a1af576c213d5bee46cb63c6a35a5aa582594812333d7899bb1c09930e504365",
+	"pagination":        "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
+	"settings_reminder": "765574672155e77006137b6cc18062abe2b911a2eb5b2f57e3cb1fd285415cdf",
 }

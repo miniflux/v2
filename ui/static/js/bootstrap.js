@@ -104,6 +104,16 @@ document.addEventListener("DOMContentLoaded", function() {
         mouseHandler.onClick(".header nav li", (event) => menuHandler.clickMenuListItem(event));
     }
 
+    mouseHandler.onClick(".toggle-entry-embedded", (event) => {
+        if (document.querySelector("body").dataset.entryEmbedded == "true") {
+            document.querySelector("body").dataset.entryEmbedded = "false";
+            event.target.innerText = "off";
+        } else if (document.querySelector("body").dataset.entryEmbedded == "false") {
+            document.querySelector("body").dataset.entryEmbedded = "true";
+            event.target.innerText = "on";
+        }
+        return false;
+    });
 
     if ("serviceWorker" in navigator) {
         let scriptElement = document.getElementById("service-worker-script");

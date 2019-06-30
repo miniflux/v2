@@ -224,6 +224,7 @@ var templateViewsMap = map[string]string{
             <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
         </li>
     {{ end }}
+    {{ template "settings_reminder" dict "user" $.user }}
     </ul>
 </section>
 
@@ -736,6 +737,7 @@ var templateViewsMap = map[string]string{
                 data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
                 data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
         </li>
+        {{ template "settings_reminder" dict "user" $.user }}
     </ul>
 </section>
 
@@ -1318,6 +1320,7 @@ var templateViewsMap = map[string]string{
                data-label-new-state="{{ t "menu.mark_all_as_read_wip" }}"
                href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
+        {{ template "settings_reminder" dict "user" $.user }}
     </ul>
     {{ end }}
 </section>
@@ -1425,7 +1428,7 @@ var templateViewsMapChecksums = map[string]string{
 	"add_subscription":    "a0f1d2bc02b6adc83dbeae593f74d9b936102cd6dd73302cdbec2137cafdcdd9",
 	"bookmark_entries":    "609f4b2342152fe495a219a32f17a4528b01807d61f53cee0cbebf728be73c42",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
-	"category_entries":    "8ed501d58fd659c6f505d200f5f92dc2d3f8ed8893c7a8076d05ca54c9adb944",
+	"category_entries":    "369cd77cc14d87b82a5065a9bfcfaa39f07b5481cb2635ba4dc0864c32cb12d2",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
@@ -1433,7 +1436,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "ab30c31a4385a7b16c54baa78bdcb93a57181ed1c5018ce097d7eb50673bb995",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "1626bf4dd3223b2f730865676162aa0a9f0a0e009cdea90f705230542922e0f4",
-	"feed_entries":        "0b97344b4045058b7154d0c01b85e4afd957c23e7cb2d011451f96baf6233dfc",
+	"feed_entries":        "faddf453c9a8db6156d7bee95273486ed9cba176d6f205f94ab96bec5df1ddbf",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
 	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
@@ -1442,6 +1445,6 @@ var templateViewsMapChecksums = map[string]string{
 	"search_entries":      "d71849a4f2b0573c7c76ad0ea941812009e9f022de60895987a781d3e6f08a01",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "2e63f2765d6b8835fd01eca69ce39969c162a1b4dc7859ae1c1cd03fc1af91cb",
-	"unread_entries":      "880018cbc59ec09b23dd800c4010fadad944d7023e0d36a3872c09b5d4952799",
+	"unread_entries":      "07ef65848612f51d574cc234adaade3677be0e6ea8756799408f32ae4db42e7a",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }
