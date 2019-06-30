@@ -3,7 +3,7 @@
  * Vanilla version of (MIT) https://github.com/morr/jquery.appear/blob/master/index.js
  */
 class AppearHandler {
-  constructor(selector, opts = {"onappear" : function(e){}, "ondisappear" : function(e){}}) {
+  constructor(selector = "", opts = {}) {
       this.selectors = [
           /* None at the moment */
       ];
@@ -14,7 +14,7 @@ class AppearHandler {
           force_process: false
       };
       this.priorAppeared = [];
-      if (typeof(selector) != "undefined") {
+      if (selector != "") {
         this.addSelector(selector, opts)
       }
       this.startMonitorLoop();
@@ -66,7 +66,15 @@ class AppearHandler {
     }
   }
 
-  addSelector (selector, opts = {"onappear" : function(e){}, "ondisappear" : function(e){}}) {
+  addSelector (selector, opts = {}) {
+      if (typeof(opts.onappear) == "undefined") {
+          opts.onappear = function(e){};
+      }
+      if (typeof(opts.ondisappear) == "undefined") {
+          opts.ondisappear = function(e){};
+      }
+
+
       let elements = Array.prototype.slice.call(document.querySelectorAll(selector));
 
       this.priorAppeared.push(elements);

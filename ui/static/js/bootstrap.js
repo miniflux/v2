@@ -39,21 +39,27 @@ document.addEventListener("DOMContentLoaded", function() {
     let touchHandler = new TouchHandler(navHandler);
     touchHandler.listen();
 
-    new AppearHandler(
+    let appearHandler = new AppearHandler();
+    appearHandler.addSelector(
         ".item-status-unread",
         {
             "onappear" : function(element){
                 if (document.querySelector("body[data-entry-embedded=true]")) {
                     ArticleHandler.load(element);
                 }
-            },
+            }
+        }
+    );
+    appearHandler.addSelector(
+        ".item-header",
+        {
             "ondisappear" : function(element) {
                 if (! document.querySelector("body[data-auto-mark-as-read=true]")) {
                     return;
                 }
-                let currentStatus = element.querySelector("a[data-toggle-status]").dataset.value;
+                let currentStatus = element.parentNode.querySelector("a[data-toggle-status]").dataset.value;
                 if (element.dataset.belowTopEdge == "false" && currentStatus == "unread") {
-                    EntryHandler.toggleEntryStatus(element, "silently");
+                    EntryHandler.toggleEntryStatus(element.parentNode, "silently");
                 }
             }
         }
