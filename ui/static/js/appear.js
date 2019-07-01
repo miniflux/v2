@@ -14,8 +14,8 @@ class AppearHandler {
           force_process: false
       };
       this.priorAppeared = [];
-      if (selector != "") {
-        this.addSelector(selector, opts)
+      if (selector !== "") {
+        this.addSelector(selector, opts);
       }
       this.startMonitorLoop();
   }
@@ -50,27 +50,38 @@ class AppearHandler {
         return belowTopEdge && aboveBottomEdge && rightAfterLeftEdge && leftBeforeRightEdge;
     }
 
-    for (var index = 0, selectorsLength = this.selectors.length; index < selectorsLength; index++) {
-      var appeared = this.selectors[index].filter(isAppeared);
+    function dispatchAppear(element) {
+        element.dispatchEvent(new Event("appear"));
+    }
+
+    function dispatchDisapear(element) {
+        element.dispatchEvent(new Event("disappear"));
+    }
+    function arrayIntersect(x, y) {
+        return x.filter(e => !y.includes(e));
+    }
+
+    for (let index = 0, selectorsLength = this.selectors.length; index < selectorsLength; index++) {
+      let appeared = this.selectors[index].filter(isAppeared);
 
       appeared
-        .filter(element => element.dataset._appearTriggered != "true")
-        .map(element => element.dispatchEvent(new Event("appear")));
+        .filter(element => element.dataset._appearTriggered !== "true")
+        .map(dispatchAppear);
 
       if (this.priorAppeared[index]) {
-        var disappeared = this.priorAppeared[index].filter(x => !appeared.includes(x));
-        disappeared.filter(element => element.dataset._appearTriggered == "true")
-            .map(element => element.dispatchEvent(new Event("disappear")));
+        let disappeared = arrayIntersect(this.priorAppeared[index], appeared);
+        disappeared.filter(element => element.dataset._appearTriggered === "true")
+            .map(dispatchDisapear);
       }
       this.priorAppeared[index] = appeared;
     }
   }
 
   addSelector (selector, opts = {}) {
-      if (typeof(opts.onappear) == "undefined") {
+      if (typeof(opts.onappear) === "undefined") {
           opts.onappear = function(e){};
       }
-      if (typeof(opts.ondisappear) == "undefined") {
+      if (typeof(opts.ondisappear) === "undefined") {
           opts.ondisappear = function(e){};
       }
 

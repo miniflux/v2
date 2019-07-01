@@ -6,7 +6,7 @@ class ArticleHandler {
             loadingElementWrapper.className = "lds-dual-ring-wrapper";
             let loadingElement = document.createElement("div");
             loadingElement.className = "lds-dual-ring";
-            loadingElementWrapper.appendChild(loadingElement)
+            loadingElementWrapper.appendChild(loadingElement);
             element.parentNode.appendChild(loadingElementWrapper);
 
             let request = new RequestBuilder(element.href);

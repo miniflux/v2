@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     return;
                 }
                 let currentStatus = element.parentNode.querySelector("a[data-toggle-status]").dataset.value;
-                if (element.dataset.belowTopEdge == "false" && currentStatus == "unread") {
+                if (element.dataset.belowTopEdge === "false" && currentStatus === "unread") {
                     EntryHandler.toggleEntryStatus(element.parentNode, "silently");
                 }
             }
@@ -111,13 +111,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     mouseHandler.onClick(".toggle-entry-embedded", (event) => {
-        if (document.querySelector("body").dataset.entryEmbedded == "true") {
+        if (document.querySelector("body").dataset.entryEmbedded === "true") {
             document.querySelector("body").dataset.entryEmbedded = "false";
             event.target.innerText = event.target.dataset.entryEmbeddedTextOff;
             event.target.setAttribute("title", event.target.dataset.entryEmbeddedTitleOff);
-        } else if (document.querySelector("body").dataset.entryEmbedded == "false") {
+        } else if (document.querySelector("body").dataset.entryEmbedded === "false") {
             document.querySelector("body").dataset.entryEmbedded = "true";
-            event.target.innerText = event.target.dataset.entryEmbeddedTextOn
+            event.target.innerText = event.target.dataset.entryEmbeddedTextOn;
             event.target.setAttribute("title", event.target.dataset.entryEmbeddedTitleOn);
         }
         return false;
