@@ -83,7 +83,7 @@ var templateCommonMap = map[string]string{
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
-    <link rel="manifest" href="{{ route "webManifest" }}">
+    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials"/>
 
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
@@ -247,6 +247,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "cc9ae6a3c430a6be67787318292e1bcec7bf27e96a4f6664dcebc5d19419cfba",
+	"layout":           "0204dc6636be38ff00a2ad6b70ac56c4ae8f8fb0a27f987a73819520129cbb84",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }
