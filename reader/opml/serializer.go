@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/xml"
+	"sort"
 
 	"miniflux.app/logger"
 )
@@ -18,23 +19,7 @@ func Serialize(subscriptions SubcriptionList) string {
 	writer := bufio.NewWriter(&b)
 	writer.WriteString(xml.Header)
 
-	feeds := new(opml)
-	feeds.Version = "2.0"
-	for categoryName, subs := range groupSubscriptionsByFeed(subscriptions) {
-		category := outline{Text: categoryName}
-
-		for _, subscription := range subs {
-			category.Outlines = append(category.Outlines, outline{
-				Title:   subscription.Title,
-				Text:    subscription.Title,
-				FeedURL: subscription.FeedURL,
-				SiteURL: subscription.SiteURL,
-			})
-		}
-
-		feeds.Outlines = append(feeds.Outlines, category)
-	}
-
+	feeds := normalizeFeeds(subscriptions)
 	encoder := xml.NewEncoder(writer)
 	encoder.Indent("    ", "    ")
 	if err := encoder.Encode(feeds); err != nil {
@@ -53,4 +38,32 @@ func groupSubscriptionsByFeed(subscriptions SubcriptionList) map[string]Subcript
 	}
 
 	return groups
+}
+
+func normalizeFeeds(subscriptions SubcriptionList) *opml {
+	feeds := new(opml)
+	feeds.Version = "2.0"
+
+	groupedSubs := groupSubscriptionsByFeed(subscriptions)
+	var categories []string
+	for k := range groupedSubs {
+		categories = append(categories, k)
+	}
+	sort.Strings(categories)
+
+	for _, categoryName := range categories {
+		category := outline{Text: categoryName}
+		for _, subscription := range groupedSubs[categoryName] {
+			category.Outlines = append(category.Outlines, outline{
+				Title:   subscription.Title,
+				Text:    subscription.Title,
+				FeedURL: subscription.FeedURL,
+				SiteURL: subscription.SiteURL,
+			})
+		}
+
+		feeds.Outlines = append(feeds.Outlines, category)
+	}
+
+	return feeds
 }
