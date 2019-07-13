@@ -183,6 +183,7 @@ a:hover {
         text-align: right;
         display: block;
         margin-top: 10px;
+        margin-right: 5px;
     }
 
     .search-toggle-switch {
