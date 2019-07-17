@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
         keyboardHandler.on("v", () => navHandler.openOriginalLink());
         keyboardHandler.on("m", () => navHandler.toggleEntryStatus());
         keyboardHandler.on("A", () => {
-            let element = document.querySelector("a[data-on-click=markPageAsRead]");
+            let element = document.querySelector("a[data-mark-page-as-read]");
             navHandler.markPageAsRead(element.dataset.showOnlyUnread || false);
         });
         keyboardHandler.on("s", () => navHandler.saveEntry());
