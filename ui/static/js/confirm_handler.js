@@ -32,9 +32,9 @@ class ConfirmHandler {
             questionElement.remove();
             containerElement.appendChild(loadingElement);
 
-            if(linkElement.dataset.markPageAsRead){
+            if (linkElement.dataset.markPageAsRead) {
                 (new NavHandler()).markPageAsRead(event.target.dataset.showOnlyUnread || false);
-            }else{
+            } else {
                 this.executeRequest(linkElement.dataset.url, linkElement.dataset.redirectUrl);
             }
         };
