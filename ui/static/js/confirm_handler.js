@@ -33,7 +33,7 @@ class ConfirmHandler {
             containerElement.appendChild(loadingElement);
 
             if (linkElement.dataset.markPageAsRead) {
-                (new NavHandler()).markPageAsRead(event.target.dataset.showOnlyUnread || false);
+                markPageAsRead(event.target.dataset.showOnlyUnread || false);
             } else {
                 this.executeRequest(linkElement.dataset.url, linkElement.dataset.redirectUrl);
             }
