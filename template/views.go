@@ -884,7 +884,13 @@ var templateViewsMap = map[string]string{
     {{ if .entries }}
     <ul>
         <li>
-            <a href="{{ route "flushHistory" }}">{{ t "menu.flush_history" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-url="{{ route "flushHistory" }}"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
         </li>
     </ul>
     {{ end }}
@@ -1455,7 +1461,7 @@ var templateViewsMapChecksums = map[string]string{
 	"entry":               "1626bf4dd3223b2f730865676162aa0a9f0a0e009cdea90f705230542922e0f4",
 	"feed_entries":        "4bb6b96ba4d13dbaf22dcf6dd95ae36b6e5a0c99175d502865a164dc68fd4bae",
 	"feeds":               "31acc253c547a6cce5710d72a6f6b3b396162ecd5e5af295b2cf47c1ff55bd06",
-	"history_entries":     "b65ca1d85615caa7c314a33f1cb997aa3477a79e66b9894b2fd387271ad467d2",
+	"history_entries":     "9763d2120cfaeb78d406fdc029197fed2f7cfa7682970eeedae82ae79be65519",
 	"import":              "8349e47a783bb40d8e9248b4771656e5f006185e11079e1c4680dd52633420ed",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
 	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",

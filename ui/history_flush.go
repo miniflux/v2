@@ -8,16 +8,15 @@ import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response/html"
-	"miniflux.app/http/route"
+	"miniflux.app/http/response/json"
 )
 
 func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
 	err := h.store.FlushHistory(request.UserID(r))
 	if err != nil {
-		html.ServerError(w, r, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "history"))
+	json.OK(w, r, "OK")
 }
