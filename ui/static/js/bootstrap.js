@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     onClick("a[data-toggle-bookmark]", () => handleBookmark());
     onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
     onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
-    onClick("a[data-on-click=markPageAsRead]", () => markPageAsRead());
+    onClick("a[data-action=markPageAsRead]", () => handleConfirmationMessage(event.target, () => markPageAsRead()));
 
     onClick("a[data-toggle-status]", (event) => {
         let currentItem = DomHelper.findParent(event.target, "entry");
@@ -51,9 +51,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    onClick("a[data-confirm]", (event) => {
-        (new ConfirmHandler()).handle(event);
-    });
+    onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
+        let request = new RequestBuilder(url);
+
+        request.withCallback(() => {
+            if (redirectURL) {
+                window.location.href = redirectURL;
+            } else {
+                window.location.reload();
+            }
+        });
+
+        request.execute();
+    }));
 
     onClick("a[data-link-state=flip]", (event) => {
         flipElementState(event.target);

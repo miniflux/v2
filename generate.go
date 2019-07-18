@@ -190,7 +190,6 @@ func main() {
 			"ui/static/js/touch_handler.js",
 			"ui/static/js/keyboard_handler.js",
 			"ui/static/js/request_builder.js",
-			"ui/static/js/confirm_handler.js",
 			"ui/static/js/modal_handler.js",
 			"ui/static/js/app.js",
 			"ui/static/js/bootstrap.js",

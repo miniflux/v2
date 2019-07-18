@@ -7,15 +7,12 @@
     {{ if .entries }}
         <li>
             <a href="#"
-                data-confirm="true"
+                data-action="markPageAsRead"
                 data-label-question="{{ t "confirm.question" }}"
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
-                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}"
-                data-mark-page-as-read="true">
-                    {{ t "menu.mark_page_as_read" }}
-            </a>
+                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
         </li>
     {{ end }}
     {{ if .showOnlyUnreadEntries }}
@@ -54,15 +51,12 @@
         <ul>
             <li>
                 <a href="#"
-                    data-confirm="true"
+                    data-action="markPageAsRead"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}"
-                    data-mark-page-as-read="true">
-                        {{ t "menu.mark_page_as_read" }}
-                </a>
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}
