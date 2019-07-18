@@ -33,7 +33,6 @@
     "menu.create_category": "Kategorie anlegen",
     "menu.mark_page_as_read": "Diese Seite als gelesen markieren",
     "menu.mark_all_as_read": "Alle als gelesen markieren",
-    "menu.mark_all_as_read_wip": "In Arbeit...",
     "menu.show_all_entries": "Zeige alle Artikel",
     "menu.show_only_unread_entries": "Nur ungelesene Artikel anzeigen",
     "menu.refresh_feed": "Aktualisieren",

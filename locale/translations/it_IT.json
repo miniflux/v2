@@ -33,7 +33,6 @@
     "menu.create_category": "Aggiungi una categoria",
     "menu.mark_page_as_read": "Segna questa pagina come letta",
     "menu.mark_all_as_read": "Segna tutti gli articoli come letti",
-    "menu.mark_all_as_read_wip": "Operazione in corso...",
     "menu.show_all_entries": "Mostra tutte le voci",
     "menu.show_only_unread_entries": "Mostra solo voci non lette",
     "menu.refresh_feed": "Aggiorna",
