@@ -33,7 +33,6 @@
     "menu.create_category": "新建分类",
     "menu.mark_page_as_read": "标记为已读",
     "menu.mark_all_as_read": "全部标为已读",
-    "menu.mark_all_as_read_wip": "执行中…",
     "menu.show_all_entries": "显示所有条目",
     "menu.show_only_unread_entries": "仅显示未读文章",
     "menu.refresh_feed": "更新",

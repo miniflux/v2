@@ -8,15 +8,14 @@ import (
 	"net/http"
 
 	"miniflux.app/http/request"
-	"miniflux.app/http/response/html"
-	"miniflux.app/http/route"
-	"miniflux.app/logger"
+	"miniflux.app/http/response/json"
 )
 
 func (h *handler) markAllAsRead(w http.ResponseWriter, r *http.Request) {
 	if err := h.store.MarkAllAsRead(request.UserID(r)); err != nil {
-		logger.Error("[MarkAllAsRead] %v", err)
+		json.ServerError(w, r, err)
+		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "unread"))
+	json.OK(w, r, "OK")
 }

@@ -1335,9 +1335,14 @@ var templateViewsMap = map[string]string{
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         <li>
-            <a data-link-state="flip"
-               data-label-new-state="{{ t "menu.mark_all_as_read_wip" }}"
-               href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-url="{{ route "markAllAsRead" }}"
+                data-redirect-url="{{ route "unread" }}"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
     </ul>
     {{ end }}
@@ -1468,6 +1473,6 @@ var templateViewsMapChecksums = map[string]string{
 	"search_entries":      "d71849a4f2b0573c7c76ad0ea941812009e9f022de60895987a781d3e6f08a01",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "152143e58d057ea6ab3bfd8dd947bfd70685843ca40e40542484b23849746df4",
-	"unread_entries":      "5d23dc604496bcfa5ddfd1f5b8693aa5d94d2faa10979d04983e8bd8c7de36e9",
+	"unread_entries":      "5c8c67d69da3e1d9437fdae967206b6dec84b241c806f32373071558f72d05d7",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }

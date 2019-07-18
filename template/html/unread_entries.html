@@ -14,9 +14,14 @@
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         <li>
-            <a data-link-state="flip"
-               data-label-new-state="{{ t "menu.mark_all_as_read_wip" }}"
-               href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-url="{{ route "markAllAsRead" }}"
+                data-redirect-url="{{ route "unread" }}"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
     </ul>
     {{ end }}

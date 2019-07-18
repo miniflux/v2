@@ -65,10 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
         request.execute();
     }));
 
-    onClick("a[data-link-state=flip]", (event) => {
-        flipElementState(event.target);
-    }, true);
-
     if (document.documentElement.clientWidth < 600) {
         onClick(".logo", () => toggleMainMenu());
         onClick(".header nav li", (event) => onClickMainMenuListItem(event));
