@@ -99,10 +99,10 @@ function markPageAsRead() {
         updateEntriesStatus(entryIDs, "read", () => {
             // Make sure the Ajax request reach the server before we reload the page.
 
-            let element = document.querySelector("a[data-mark-page-as-read]");
+            let element = document.querySelector("a[data-action=markPageAsRead]");
             let showOnlyUnread = false;
             if (element) {
-                showOnlyUnread = element.dataset.showOnlyUnread;
+                showOnlyUnread = element.dataset.showOnlyUnread || false;
             }
 
             if (showOnlyUnread) {
@@ -461,4 +461,44 @@ function flipElementState(element) {
 
     element.parentNode.appendChild(labelElement);
     element.parentNode.removeChild(element);
+}
+
+function handleConfirmationMessage(linkElement, callback) {
+    linkElement.style.display = "none";
+
+    let containerElement = linkElement.parentNode;
+    let questionElement = document.createElement("span");
+
+    let yesElement = document.createElement("a");
+    yesElement.href = "#";
+    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
+    yesElement.onclick = (event) => {
+        event.preventDefault();
+
+        let loadingElement = document.createElement("span");
+        loadingElement.className = "loading";
+        loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
+
+        questionElement.remove();
+        containerElement.appendChild(loadingElement);
+
+        callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
+    };
+
+    let noElement = document.createElement("a");
+    noElement.href = "#";
+    noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
+    noElement.onclick = (event) => {
+        event.preventDefault();
+        linkElement.style.display = "inline";
+        questionElement.remove();
+    };
+
+    questionElement.className = "confirm";
+    questionElement.appendChild(document.createTextNode(linkElement.dataset.labelQuestion + " "));
+    questionElement.appendChild(yesElement);
+    questionElement.appendChild(document.createTextNode(", "));
+    questionElement.appendChild(noElement);
+
+    containerElement.appendChild(questionElement);
 }
