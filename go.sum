@@ -21,6 +21,7 @@ github.com/tdewolff/minify/v2 v2.3.8 h1:Eyv23Tu+Rb5Q2vyxmvzUgtHetgneqAsaGv3950s1
 github.com/tdewolff/minify/v2 v2.3.8/go.mod h1:DD1stRlSx6JsHfl1+E/HVMQeXiec9rD1UQ0epklIZLc=
 github.com/tdewolff/parse/v2 v2.3.5 h1:/uS8JfhwVJsNkEh769GM5ENv6L9LOh2Z9uW3tCdlhs0=
 github.com/tdewolff/parse/v2 v2.3.5/go.mod h1:HansaqmN4I/U7L6/tUp0NcwT2tFO0F4EAWYGSDzkYNk=
+github.com/tdewolff/test v1.0.0 h1:jOwzqCXr5ePXEPGJaq2ivoR6HOCi+D5TPfpoyg8yvmU=
 github.com/tdewolff/test v1.0.0/go.mod h1:DiQUlutnqlEvdvhSn2LPGy4TFwRauAaYDsL+683RNX4=
 golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9 h1:mKdxBk7AujPs8kU4m80U72y/zjbZ3UcXC7dClwKbUI0=
 golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
