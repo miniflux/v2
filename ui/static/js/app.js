@@ -115,17 +115,15 @@ function markPageAsRead() {
 }
 
 // Handle entry status changes from the list view and entry view.
-function handleEntryStatus() {
-    if (isListView()) {
-        let currentItem = document.querySelector(".current-item");
-        if (currentItem !== null) {
-            // The order is important here,
-            // On the unread page, the read item will be hidden.
-            goToNextListItem();
-            toggleEntryStatus(currentItem);
-        }
-    } else {
-        toggleEntryStatus(document.querySelector(".entry"));
+function handleEntryStatus(element) {
+    let currentEntry = findEntry(element);
+    if (currentEntry) {
+        // The order is important here,
+        // On the unread page, the read item will be hidden.
+        // If "goToNextListItem" first, it may go to an item about to hide:
+        // Imagine that user click 'mark as read' right below the '.current-item'
+        toggleEntryStatus(currentEntry);
+        if (isListView() && currentEntry.classList.contains('current-item')) goToNextListItem();
     }
 }
 
@@ -180,15 +178,9 @@ function updateEntriesStatus(entryIDs, status, callback) {
 }
 
 // Handle save entry from list view and entry view.
-function handleSaveEntry() {
-    if (isListView()) {
-        let currentItem = document.querySelector(".current-item");
-        if (currentItem !== null) {
-            saveEntry(currentItem.querySelector("a[data-save-entry]"));
-        }
-    } else {
-        saveEntry(document.querySelector("a[data-save-entry]"));
-    }
+function handleSaveEntry(element) {
+    let currentEntry = findEntry(element);
+    if (currentEntry) saveEntry(currentEntry.querySelector("a[data-save-entry]"));
 }
 
 // Send the Ajax request to save an entry.
@@ -212,15 +204,9 @@ function saveEntry(element) {
 }
 
 // Handle bookmark from the list view and entry view.
-function handleBookmark() {
-    if (isListView()) {
-        let currentItem = document.querySelector(".current-item");
-        if (currentItem !== null) {
-            toggleBookmark(currentItem);
-        }
-    } else {
-        toggleBookmark(document.querySelector(".entry"));
-    }
+function handleBookmark(element) {
+    let currentEntry = findEntry(element);
+    if (currentEntry) toggleBookmark(currentEntry);
 }
 
 // Send the Ajax request and change the icon when bookmarking an entry.
@@ -452,6 +438,17 @@ function isEntry() {
 
 function isListView() {
     return document.querySelector(".items") !== null;
+}
+
+function findEntry(element) {
+    if (isListView()) {
+        if (element)
+            return DomHelper.findParent(element, "item");
+        else
+            return document.querySelector(".current-item");
+    } else {
+        return document.querySelector(".entry");
+    }
 }
 
 function handleConfirmationMessage(linkElement, callback) {

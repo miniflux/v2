@@ -611,7 +611,7 @@ a.button {
     overflow-x: hidden;
 }
 
-.hide-read-items .item-status-read {
+.hide-read-items .item-status-read:not(.current-item) {
     display: none;
 }
 
