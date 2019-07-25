@@ -123,7 +123,9 @@ function handleEntryStatus(element) {
         // If "goToNextListItem" first, it may go to an item about to hide:
         // Imagine that user click 'mark as read' right below the '.current-item'
         toggleEntryStatus(currentEntry);
-        if (isListView() && currentEntry.classList.contains('current-item')) goToNextListItem();
+        if (isListView() && currentEntry.classList.contains('current-item')) {
+            goToNextListItem();
+        }
     }
 }
 
@@ -180,7 +182,9 @@ function updateEntriesStatus(entryIDs, status, callback) {
 // Handle save entry from list view and entry view.
 function handleSaveEntry(element) {
     let currentEntry = findEntry(element);
-    if (currentEntry) saveEntry(currentEntry.querySelector("a[data-save-entry]"));
+    if (currentEntry) {
+        saveEntry(currentEntry.querySelector("a[data-save-entry]"));
+    }
 }
 
 // Send the Ajax request to save an entry.
@@ -206,7 +210,9 @@ function saveEntry(element) {
 // Handle bookmark from the list view and entry view.
 function handleBookmark(element) {
     let currentEntry = findEntry(element);
-    if (currentEntry) toggleBookmark(currentEntry);
+    if (currentEntry) {
+        toggleBookmark(currentEntry);
+    }
 }
 
 // Send the Ajax request and change the icon when bookmarking an entry.
@@ -442,10 +448,11 @@ function isListView() {
 
 function findEntry(element) {
     if (isListView()) {
-        if (element)
+        if (element) {
             return DomHelper.findParent(element, "item");
-        else
+        } else {
             return document.querySelector(".current-item");
+        }
     } else {
         return document.querySelector(".entry");
     }
