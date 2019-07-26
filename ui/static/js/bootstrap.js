@@ -34,22 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let touchHandler = new TouchHandler();
     touchHandler.listen();
 
-    onClick("a[data-save-entry]", () => handleSaveEntry());
-    onClick("a[data-toggle-bookmark]", () => handleBookmark());
+    onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
+    onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
     onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
     onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
     onClick("a[data-action=markPageAsRead]", () => handleConfirmationMessage(event.target, () => markPageAsRead()));
-
-    onClick("a[data-toggle-status]", (event) => {
-        let currentItem = DomHelper.findParent(event.target, "entry");
-        if (!currentItem) {
-            currentItem = DomHelper.findParent(event.target, "item");
-        }
-
-        if (currentItem) {
-            toggleEntryStatus(currentItem);
-        }
-    });
+    onClick("a[data-toggle-status]", (event) => handleEntryStatus(event.target));
 
     onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
