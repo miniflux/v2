@@ -204,6 +204,7 @@
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.rewrite_rules": "Umschreiberegeln",
+    "form.feed.label.disabled": "Aktualisieren Sie diesen Feed nicht",
     "form.category.label.title": "Titel",
     "form.user.label.username": "Benutzername",
     "form.user.label.password": "Passwort",
