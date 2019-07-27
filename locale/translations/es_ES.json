@@ -204,6 +204,7 @@
     "form.feed.label.user_agent": "Invalidar el agente de usuario predeterminado",
     "form.feed.label.scraper_rules": "Reglas de raspador",
     "form.feed.label.rewrite_rules": "Reglas de reescribir",
+    "form.feed.label.disabled": "No actualice este feed",
     "form.category.label.title": "Título",
     "form.user.label.username": "Nombre de usuario",
     "form.user.label.password": "Contraseña",

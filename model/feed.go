@@ -29,6 +29,7 @@ type Feed struct {
 	UserAgent          string    `json:"user_agent"`
 	Username           string    `json:"username"`
 	Password           string    `json:"password"`
+	Disabled           bool      `json:"disabled"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon"`

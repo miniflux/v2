@@ -118,10 +118,6 @@ function markPageAsRead() {
 function handleEntryStatus(element) {
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        // The order is important here,
-        // On the unread page, the read item will be hidden.
-        // If "goToNextListItem" first, it may go to an item about to hide:
-        // Imagine that user click 'mark as read' right below the '.current-item'
         toggleEntryStatus(currentEntry);
         if (isListView() && currentEntry.classList.contains('current-item')) {
             goToNextListItem();

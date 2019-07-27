@@ -138,6 +138,33 @@ func TestUpdateFeedUsernameWhenNotSet(t *testing.T) {
 	}
 }
 
+func TestUpdateFeedDisabled(t *testing.T) {
+	valueTrue := true
+	valueFalse := false
+	scenarios := []struct {
+		changes  *feedModification
+		feed     *model.Feed
+		expected bool
+	}{
+		{&feedModification{}, &model.Feed{Disabled: true}, true},
+		{&feedModification{Disabled: &valueTrue}, &model.Feed{Disabled: true}, true},
+		{&feedModification{Disabled: &valueFalse}, &model.Feed{Disabled: true}, false},
+		{&feedModification{}, &model.Feed{Disabled: false}, false},
+		{&feedModification{Disabled: &valueTrue}, &model.Feed{Disabled: false}, true},
+		{&feedModification{Disabled: &valueFalse}, &model.Feed{Disabled: false}, false},
+	}
+
+	for _, scenario := range scenarios {
+		scenario.changes.Update(scenario.feed)
+		if scenario.feed.Disabled != scenario.expected {
+			t.Errorf(`Unexpected result, got %v, want: %v`,
+				scenario.feed.Disabled,
+				scenario.expected,
+			)
+		}
+	}
+}
+
 func TestUpdateFeedCategory(t *testing.T) {
 	categoryID := int64(1)
 	changes := &feedModification{CategoryID: &categoryID}
