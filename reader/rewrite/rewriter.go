@@ -27,6 +27,8 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 		switch strings.TrimSpace(rule) {
 		case "add_image_title":
 			entryContent = addImageTitle(entryURL, entryContent)
+		case "add_mailto_subject":
+			entryContent = addMailtoSubject(entryURL, entryContent)
 		case "add_dynamic_image":
 			entryContent = addDynamicImage(entryURL, entryContent)
 		case "add_youtube_video":

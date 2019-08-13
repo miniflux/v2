@@ -22,6 +22,7 @@ var predefinedRules = map[string]string{
 	"oglaf.com":              "add_image_title",
 	"optipess.com":           "add_image_title",
 	"peebleslab.com":         "add_image_title",
+	"www.qwantz.com":         "add_image_title,add_mailto_subject",
 	"sentfromthemoon.com":    "add_image_title",
 	"thedoghousediaries.com": "add_image_title",
 	"treelobsters.com":       "add_image_title",
