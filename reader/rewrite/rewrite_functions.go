@@ -6,6 +6,7 @@ package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
 	"fmt"
+	"html"
 	"regexp"
 	"strings"
 
@@ -32,7 +33,7 @@ func addImageTitle(entryURL, entryContent string) string {
 			srcAttr, _ := img.Attr("src")
 			titleAttr, _ := img.Attr("title")
 
-			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + titleAttr + `</p></figcaption></figure>`)
+			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + html.EscapeString(titleAttr) + `</p></figcaption></figure>`)
 		})
 
 		output, _ := doc.Find("body").First().Html()

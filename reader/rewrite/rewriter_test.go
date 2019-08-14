@@ -61,6 +61,15 @@ func TestRewriteWithXkcdLink(t *testing.T) {
 	}
 }
 
+func TestRewriteWithXkcdLinkHtmlInjection(t *testing.T) {
+	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="<foo>" alt="<foo>" />`
+	output := Rewriter("https://xkcd.com/1912/", description, ``)
+	expected := `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="&lt;foo&gt;"/><figcaption><p>&lt;foo&gt;</p></figcaption></figure>`
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
 func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
 	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`
 	output := Rewriter("https://xkcd.com/1912/", description, ``)
