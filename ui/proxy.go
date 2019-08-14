@@ -7,10 +7,10 @@ package ui // import "miniflux.app/ui"
 import (
 	"encoding/base64"
 	"errors"
-	"io/ioutil"
 	"net/http"
 	"time"
 
+	"miniflux.app/config"
 	"miniflux.app/crypto"
 	"miniflux.app/http/client"
 	"miniflux.app/http/request"
@@ -37,24 +37,35 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clt := client.New(string(decodedURL))
-	resp, err := clt.Get()
+	req, err := http.NewRequest("GET", string(decodedURL), nil)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
+	req.Header.Add("User-Agent", client.DefaultUserAgent)
+	req.Header.Add("Connection", "close")
 
-	if resp.HasServerFailure() {
+	clt := &http.Client{
+		Timeout: time.Duration(config.Opts.HTTPClientTimeout()) * time.Second,
+	}
+
+	resp, err := clt.Do(req)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
 		html.NotFound(w, r)
 		return
 	}
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	etag := crypto.HashFromBytes(body)
+	etag := crypto.HashFromBytes(decodedURL)
 
-	response.New(w ,r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		b.WithHeader("Content-Type", resp.ContentType)
-		b.WithBody(body)
+	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
+		b.WithBody(resp.Body)
 		b.WithoutCompression()
 		b.Write()
 	})

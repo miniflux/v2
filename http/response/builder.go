@@ -8,6 +8,7 @@ import (
 	"compress/flate"
 	"compress/gzip"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -84,6 +85,10 @@ func (b *Builder) Write() {
 		b.compress([]byte(v))
 	case error:
 		b.compress([]byte(v.Error()))
+	case io.Reader:
+		// Compression not implemented in this case
+		b.writeHeaders()
+		io.Copy(b.w, v)
 	}
 }
 
