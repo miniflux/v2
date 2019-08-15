@@ -220,6 +220,7 @@
     "form.prefs.select.recent_first": "Сначала последние записи",
     "form.prefs.label.keyboard_shortcuts": "Включить сочетания клавиш",
     "form.import.label.file": "OPML файл",
+    "form.import.label.url": "URL",
     "form.integration.fever_activate": "Активировать Fever API",
     "form.integration.fever_username": "Имя пользователя Fever",
     "form.integration.fever_password": "Пароль Fever",
