@@ -31,4 +31,15 @@
     </div>
 </form>
 
+<form action="{{ route "fetchOPML" }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ .csrf }}">
+
+    <label for="form-url">{{ t "form.import.label.url" }}</label>
+    <input type="url" name="url" id="form-url">
+
+    <div class="buttons">
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.import" }}</button>
+    </div>
+</form>
+
 {{ end }}

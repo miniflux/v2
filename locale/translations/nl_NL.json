@@ -218,6 +218,7 @@
     "form.prefs.select.recent_first": "Recente items eerst",
     "form.prefs.label.keyboard_shortcuts": "Schakel sneltoetsen in",
     "form.import.label.file": "OPML-bestand",
+    "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activeer Fever API",
     "form.integration.fever_username": "Fever gebruikersnaam",
     "form.integration.fever_password": "Fever wachtwoord",

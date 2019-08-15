@@ -218,6 +218,7 @@
     "form.prefs.select.recent_first": "Éléments récents en premier",
     "form.prefs.label.keyboard_shortcuts": "Activer les raccourcis clavier",
     "form.import.label.file": "Fichier OPML",
+    "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activer l'API de Fever",
     "form.integration.fever_username": "Nom d'utilisateur pour l'API de Fever",
     "form.integration.fever_password": "Mot de passe pour l'API de Fever",

@@ -216,6 +216,7 @@
     "form.prefs.select.recent_first": "新->旧",
     "form.prefs.label.keyboard_shortcuts": "启用键盘快捷键",
     "form.import.label.file": "OPML 文件",
+    "form.import.label.url": "URL",
     "form.integration.fever_activate": "启用 Fever API",
     "form.integration.fever_username": "Fever 用户名",
     "form.integration.fever_password": "Fever 密码",

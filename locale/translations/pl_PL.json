@@ -220,6 +220,7 @@
     "form.prefs.label.keyboard_shortcuts": "Włącz skróty klawiaturowe",
     "form.prefs.select.recent_first": "Najnowsze wpisy jako pierwsze",
     "form.import.label.file": "Plik OPML",
+    "form.import.label.url": "URL",
     "form.integration.fever_activate": "Aktywuj Fever API",
     "form.integration.fever_username": "Login do Fever",
     "form.integration.fever_password": "Hasło do Fever",
