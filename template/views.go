@@ -940,12 +940,12 @@ var templateViewsMap = map[string]string{
     </ul>
 </section>
 
+{{ if .errorMessage }}
+    <div class="alert alert-error">{{ t .errorMessage }}</div>
+{{ end }}
+
 <form action="{{ route "uploadOPML" }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
-
-    {{ if .errorMessage }}
-        <div class="alert alert-error">{{ t .errorMessage }}</div>
-    {{ end }}
 
     <label for="form-file">{{ t "form.import.label.file" }}</label>
     <input type="file" name="file" id="form-file">
@@ -954,12 +954,12 @@ var templateViewsMap = map[string]string{
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.import" }}</button>
     </div>
 </form>
-
+<hr>
 <form action="{{ route "fetchOPML" }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     <label for="form-url">{{ t "form.import.label.url" }}</label>
-    <input type="url" name="url" id="form-url">
+    <input type="url" name="url" id="form-url" required>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.import" }}</button>
@@ -1480,7 +1480,7 @@ var templateViewsMapChecksums = map[string]string{
 	"feed_entries":        "4bb6b96ba4d13dbaf22dcf6dd95ae36b6e5a0c99175d502865a164dc68fd4bae",
 	"feeds":               "d11fb629921e22bbf6d9ecb1adcc38922fafcee84f81c437abf47209544bd1c5",
 	"history_entries":     "9763d2120cfaeb78d406fdc029197fed2f7cfa7682970eeedae82ae79be65519",
-	"import":              "d7abfdc2cd4db38ed695d5fecd140e2e736d3633127589e1292736224dc23798",
+	"import":              "5eb56cecaa4d369b9acc991a82be7617710c551089a2e99d34ce8b6e5c37df0a",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
 	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",
 	"search_entries":      "d71849a4f2b0573c7c76ad0ea941812009e9f022de60895987a781d3e6f08a01",
