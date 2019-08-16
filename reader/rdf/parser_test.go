@@ -78,7 +78,7 @@ func TestParseRDFSample(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Title != "XML.com" {
@@ -189,7 +189,7 @@ func TestParseRDFSampleWithDublinCore(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Title != "Meerkat" {
@@ -256,7 +256,7 @@ func TestParseItemWithOnlyFeedAuthor(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "Rael Dornfest (mailto:rael@oreilly.com)" {
@@ -281,7 +281,7 @@ func TestParseItemRelativeURL(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].URL != "http://example.org/something.html" {
@@ -310,7 +310,7 @@ func TestParseItemWithoutLink(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Hash != "37f5223ebd58639aa62a49afbb61df960efb7dc5db5181dfb3cedd9a49ad34c6" {
@@ -341,7 +341,7 @@ func TestParseItemWithDublicCoreDate(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	expectedDate := time.Date(2018, time.April, 10, 5, 0, 0, 0, time.UTC)
@@ -367,7 +367,7 @@ func TestParseItemWithoutDate(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	expectedDate := time.Now().In(time.Local)
@@ -381,6 +381,25 @@ func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
-		t.Error("Parse should returns an error")
+		t.Fatal("Parse should returns an error")
+	}
+}
+
+func TestParseFeedWithHTMLEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example &nbsp; Feed</title>
+			<link>http://example.org</link>
+	  </channel>
+	</rdf:RDF>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Example \u00a0 Feed" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }

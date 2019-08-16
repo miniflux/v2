@@ -34,7 +34,7 @@ func TestParseAtomSample(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Title != "Example Feed" {
@@ -88,7 +88,7 @@ func TestParseFeedWithoutTitle(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Title != "https://example.org/" {
@@ -119,7 +119,7 @@ func TestParseEntryWithoutTitle(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "http://example.org/2003/12/13/atom03" {
@@ -138,7 +138,7 @@ func TestParseFeedURL(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.SiteURL != "https://example.org/" {
@@ -168,7 +168,7 @@ func TestParseEntryWithRelativeURL(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].URL != "http://example.org/something.html" {
@@ -196,7 +196,7 @@ func TestParseEntryTitleWithWhitespaces(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "Some Title" {
@@ -222,7 +222,7 @@ func TestParseEntryTitleWithHTMLAndCDATA(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "Test “Test”" {
@@ -248,7 +248,7 @@ func TestParseEntryTitleWithHTML(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "Test Test" {
@@ -274,7 +274,7 @@ func TestParseEntryTitleWithXHTML(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "Test Test" {
@@ -300,7 +300,7 @@ func TestParseEntrySummaryWithXHTML(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Content != "<p>Some text.</p>" {
@@ -326,7 +326,7 @@ func TestParseEntrySummaryWithHTML(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Content != "<p>Some text.</p>" {
@@ -352,7 +352,7 @@ func TestParseEntrySummaryWithPlainText(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Content != "&lt;Some text.&gt;" {
@@ -381,7 +381,7 @@ func TestParseEntryWithAuthorName(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "Me" {
@@ -410,7 +410,7 @@ func TestParseEntryWithoutAuthorName(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "me@localhost" {
@@ -460,7 +460,7 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(feed.Entries) != 1 {
@@ -517,7 +517,7 @@ func TestParseEntryWithPublished(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if !feed.Entries[0].Date.Equal(time.Date(2003, time.December, 13, 18, 30, 2, 0, time.UTC)) {
@@ -543,7 +543,7 @@ func TestParseEntryWithPublishedAndUpdated(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if !feed.Entries[0].Date.Equal(time.Date(2002, time.November, 12, 18, 30, 2, 0, time.UTC)) {
@@ -556,5 +556,24 @@ func TestParseInvalidXml(t *testing.T) {
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should returns an error")
+	}
+}
+
+func TestParseWithHTMLEntity(t *testing.T) {
+	data := `
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+			<title>Example &nbsp; Feed</title>
+			<link href="http://example.org/"/>
+		</feed>
+	`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Example \u00a0 Feed" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
