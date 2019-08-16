@@ -56,7 +56,7 @@ func TestParseRss2Sample(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Title != "Liftoff News" {
@@ -107,7 +107,7 @@ func TestParseFeedWithoutTitle(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Title != "https://example.org/" {
@@ -128,7 +128,7 @@ func TestParseEntryWithoutTitle(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "https://example.org/item" {
@@ -149,7 +149,7 @@ func TestParseEntryWithoutLink(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].URL != "https://example.org/" {
@@ -175,7 +175,7 @@ func TestParseEntryWithAtomLink(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].URL != "https://example.org/item" {
@@ -198,7 +198,7 @@ func TestParseEntryWithMultipleAtomLinks(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].URL != "https://example.org/b" {
@@ -218,7 +218,7 @@ func TestParseFeedURLWithAtomLink(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.FeedURL != "https://example.org/rss" {
@@ -247,7 +247,7 @@ func TestParseEntryWithAuthorAndInnerHTML(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "by Foo Bar" {
@@ -277,7 +277,7 @@ func TestParseEntryWithAtomAuthor(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "Foo Bar" {
@@ -301,7 +301,7 @@ func TestParseEntryWithDublinCoreAuthor(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "Me (me@example.com)" {
@@ -325,7 +325,7 @@ func TestParseEntryWithItunesAuthor(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "Someone" {
@@ -349,7 +349,7 @@ func TestParseFeedWithItunesAuthor(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Author != "Someone" {
@@ -375,7 +375,7 @@ func TestParseEntryWithDublinCoreDate(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	location, _ := time.LoadLocation("EST")
@@ -403,7 +403,7 @@ func TestParseEntryWithContentEncoded(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Content != `<p><a href="http://www.example.org/">Example</a>.</p>` {
@@ -427,7 +427,7 @@ func TestParseEntryWithFeedBurnerLink(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].URL != "http://example.org/original" {
@@ -453,7 +453,7 @@ func TestParseEntryTitleWithWhitespaces(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "Some Title" {
@@ -483,7 +483,7 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(feed.Entries) != 1 {
@@ -532,7 +532,7 @@ func TestParseEntryWithFeedBurnerEnclosures(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(feed.Entries) != 1 {
@@ -573,7 +573,7 @@ func TestParseEntryWithRelativeURL(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != "https://example.org/item.html" {
@@ -599,7 +599,7 @@ func TestParseEntryWithCommentsURL(t *testing.T) {
 
 	feed, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if feed.Entries[0].CommentsURL != "https://example.org/comments" {
@@ -612,5 +612,24 @@ func TestParseInvalidXml(t *testing.T) {
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should returns an error")
+	}
+}
+
+func TestParseWithHTMLEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example &nbsp; Feed</title>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Example \u00a0 Feed" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
