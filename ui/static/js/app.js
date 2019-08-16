@@ -45,7 +45,7 @@ function handleSubmitButtons() {
     let elements = document.querySelectorAll("form");
     elements.forEach((element) => {
         element.onsubmit = () => {
-            let button = document.querySelector("button");
+            let button = element.querySelector("button");
 
             if (button) {
                 button.innerHTML = button.dataset.labelLoading;

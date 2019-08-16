@@ -15,6 +15,13 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+hr {
+    border: 0;
+    height: 0;
+    border-top: 1px dotted #ccc;
+    padding-bottom: 10px;
+}
+
 main {
     padding-left: 5px;
     padding-right: 5px;
