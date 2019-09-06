@@ -9,6 +9,7 @@ go_import_path: "miniflux.app"
 go:
   - "1.11"
   - "1.12"
+  - "1.13"
 before_install:
   - npm install -g jshint
   - go get -u golang.org/x/lint/golint
