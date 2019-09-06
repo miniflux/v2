@@ -36,7 +36,7 @@ a:focus {
     outline: 0;
     color: red;
     text-decoration: none;
-    border: 1px dotted #aaa;
+    outline: 1px dotted #aaa;
 }
 
 a:hover {
