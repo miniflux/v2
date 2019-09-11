@@ -118,6 +118,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
 		case "ARCHIVE_READ_DAYS":
 			p.opts.archiveReadDays = parseInt(value, defaultArchiveReadDays)
+		case "REMOVE_SESSIONS_DAYS":
+			p.opts.removeSessionsDays = parseInt(value, defaultRemoveSessionsDays)
 		case "PROXY_IMAGES":
 			p.opts.proxyImages = parseString(value, defaultProxyImages)
 		case "CREATE_ADMIN":

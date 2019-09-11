@@ -124,10 +124,10 @@ func (s *Storage) RemoveUserSessionByID(userID, sessionID int64) error {
 	return nil
 }
 
-// CleanOldUserSessions removes user sessions older than 30 days.
-func (s *Storage) CleanOldUserSessions() int64 {
-	query := `DELETE FROM user_sessions
-		WHERE id IN (SELECT id FROM user_sessions WHERE created_at < now() - interval '30 days')`
+// CleanOldUserSessions removes user sessions older than specified days.
+func (s *Storage) CleanOldUserSessions(days int) int64 {
+	query := fmt.Sprintf(`DELETE FROM user_sessions
+		WHERE id IN (SELECT id FROM user_sessions WHERE created_at < now() - interval '%d days')`, days)
 
 	result, err := s.db.Exec(query)
 	if err != nil {

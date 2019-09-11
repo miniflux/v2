@@ -27,6 +27,7 @@ const (
 	defaultDatabaseMaxConns      = 20
 	defaultDatabaseMinConns      = 1
 	defaultArchiveReadDays       = 60
+	defaultRemoveSessionsDays    = 30
 	defaultListenAddr            = "127.0.0.1:8080"
 	defaultCertFile              = ""
 	defaultKeyFile               = ""
@@ -67,6 +68,7 @@ type Options struct {
 	certKeyFile               string
 	cleanupFrequency          int
 	archiveReadDays           int
+	removeSessionsDays        int
 	pollingFrequency          int
 	batchSize                 int
 	workerPoolSize            int
@@ -105,6 +107,7 @@ func NewOptions() *Options {
 		certKeyFile:               defaultKeyFile,
 		cleanupFrequency:          defaultCleanupFrequency,
 		archiveReadDays:           defaultArchiveReadDays,
+		removeSessionsDays:        defaultRemoveSessionsDays,
 		pollingFrequency:          defaultPollingFrequency,
 		batchSize:                 defaultBatchSize,
 		workerPoolSize:            defaultWorkerPoolSize,
@@ -269,6 +272,11 @@ func (o *Options) HasSchedulerService() bool {
 // ArchiveReadDays returns the number of days after which marking read items as removed.
 func (o *Options) ArchiveReadDays() int {
 	return o.archiveReadDays
+}
+
+// RemoveSessionsDays returns the number of days after which to remove sessions.
+func (o *Options) RemoveSessionsDays() int {
+	return o.removeSessionsDays
 }
 
 // PocketConsumerKey returns the Pocket Consumer Key if configured.
