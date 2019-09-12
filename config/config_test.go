@@ -882,6 +882,41 @@ func TestArchiveReadDays(t *testing.T) {
 	}
 }
 
+func TestRemoveSessionsDays(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("REMOVE_SESSIONS_DAYS", "7")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.RemoveSessionsDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefaultRemoveSessionsDays(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 30
+	result := opts.RemoveSessionsDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestRunMigrationsWhenUnset(t *testing.T) {
 	os.Clearenv()
 
