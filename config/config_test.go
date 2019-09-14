@@ -444,7 +444,7 @@ func TestDefaultCertCacheValue(t *testing.T) {
 	}
 }
 
-func TestDefaultCleanupFrequencyValue(t *testing.T) {
+func TestDefaultCleanupFrequencyHoursValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -453,15 +453,34 @@ func TestDefaultCleanupFrequencyValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultCleanupFrequency
-	result := opts.CleanupFrequency()
+	expected := defaultCleanupFrequencyHours
+	result := opts.CleanupFrequencyHours()
 
 	if result != expected {
-		t.Fatalf(`Unexpected CLEANUP_FREQUENCY value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected CLEANUP_FREQUENCY_HOURS value, got %v instead of %v`, result, expected)
 	}
 }
 
-func TestCleanupFrequency(t *testing.T) {
+func TestCleanupFrequencyHours(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_FREQUENCY_HOURS", "42")
+	os.Setenv("CLEANUP_FREQUENCY", "19")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 42
+	result := opts.CleanupFrequencyHours()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_FREQUENCY_HOURS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDeprecatedCleanupFrequencyHoursVar(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("CLEANUP_FREQUENCY", "42")
 
@@ -472,10 +491,99 @@ func TestCleanupFrequency(t *testing.T) {
 	}
 
 	expected := 42
-	result := opts.CleanupFrequency()
+	result := opts.CleanupFrequencyHours()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_FREQUENCY value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefaultCleanupArchiveReadDaysValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 60
+	result := opts.CleanupArchiveReadDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCleanupArchiveReadDays(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_ARCHIVE_READ_DAYS", "7")
+	os.Setenv("ARCHIVE_READ_DAYS", "19")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.CleanupArchiveReadDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDeprecatedCleanupArchiveReadDaysVar(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("ARCHIVE_READ_DAYS", "7")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.CleanupArchiveReadDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefaultCleanupRemoveSessionsDaysValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 30
+	result := opts.CleanupRemoveSessionsDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCleanupRemoveSessionsDays(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_REMOVE_SESSIONS_DAYS", "7")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.CleanupRemoveSessionsDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
 	}
 }
 
@@ -861,59 +969,6 @@ func TestDisableSchedulerService(t *testing.T) {
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_SCHEDULER_SERVICE value, got %v instead of %v`, result, expected)
-	}
-}
-
-func TestArchiveReadDays(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("ARCHIVE_READ_DAYS", "7")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := 7
-	result := opts.ArchiveReadDays()
-
-	if result != expected {
-		t.Fatalf(`Unexpected ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
-	}
-}
-
-func TestRemoveSessionsDays(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("REMOVE_SESSIONS_DAYS", "7")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := 7
-	result := opts.RemoveSessionsDays()
-
-	if result != expected {
-		t.Fatalf(`Unexpected REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
-	}
-}
-
-func TestDefaultRemoveSessionsDays(t *testing.T) {
-	os.Clearenv()
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := 30
-	result := opts.RemoveSessionsDays()
-
-	if result != expected {
-		t.Fatalf(`Unexpected REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
 	}
 }
 
