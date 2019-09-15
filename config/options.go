@@ -10,40 +10,40 @@ import (
 )
 
 const (
-	defaultHTTPS                 = false
-	defaultLogDateTime           = false
-	defaultHSTS                  = true
-	defaultHTTPService           = true
-	defaultSchedulerService      = true
-	defaultDebug                 = false
-	defaultBaseURL               = "http://localhost"
-	defaultRootURL               = "http://localhost"
-	defaultBasePath              = ""
-	defaultWorkerPoolSize        = 5
-	defaultPollingFrequency      = 60
-	defaultBatchSize             = 10
-	defaultRunMigrations         = false
-	defaultDatabaseURL           = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
-	defaultDatabaseMaxConns      = 20
-	defaultDatabaseMinConns      = 1
-	defaultArchiveReadDays       = 60
-	defaultRemoveSessionsDays    = 30
-	defaultListenAddr            = "127.0.0.1:8080"
-	defaultCertFile              = ""
-	defaultKeyFile               = ""
-	defaultCertDomain            = ""
-	defaultCertCache             = "/tmp/cert_cache"
-	defaultCleanupFrequency      = 24
-	defaultProxyImages           = "http-only"
-	defaultCreateAdmin           = false
-	defaultOAuth2UserCreation    = false
-	defaultOAuth2ClientID        = ""
-	defaultOAuth2ClientSecret    = ""
-	defaultOAuth2RedirectURL     = ""
-	defaultOAuth2Provider        = ""
-	defaultPocketConsumerKey     = ""
-	defaultHTTPClientTimeout     = 20
-	defaultHTTPClientMaxBodySize = 15
+	defaultHTTPS                     = false
+	defaultLogDateTime               = false
+	defaultHSTS                      = true
+	defaultHTTPService               = true
+	defaultSchedulerService          = true
+	defaultDebug                     = false
+	defaultBaseURL                   = "http://localhost"
+	defaultRootURL                   = "http://localhost"
+	defaultBasePath                  = ""
+	defaultWorkerPoolSize            = 5
+	defaultPollingFrequency          = 60
+	defaultBatchSize                 = 10
+	defaultRunMigrations             = false
+	defaultDatabaseURL               = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	defaultDatabaseMaxConns          = 20
+	defaultDatabaseMinConns          = 1
+	defaultListenAddr                = "127.0.0.1:8080"
+	defaultCertFile                  = ""
+	defaultKeyFile                   = ""
+	defaultCertDomain                = ""
+	defaultCertCache                 = "/tmp/cert_cache"
+	defaultCleanupFrequencyHours     = 24
+	defaultCleanupArchiveReadDays    = 60
+	defaultCleanupRemoveSessionsDays = 30
+	defaultProxyImages               = "http-only"
+	defaultCreateAdmin               = false
+	defaultOAuth2UserCreation        = false
+	defaultOAuth2ClientID            = ""
+	defaultOAuth2ClientSecret        = ""
+	defaultOAuth2RedirectURL         = ""
+	defaultOAuth2Provider            = ""
+	defaultPocketConsumerKey         = ""
+	defaultHTTPClientTimeout         = 20
+	defaultHTTPClientMaxBodySize     = 15
 )
 
 // Options contains configuration options.
@@ -66,9 +66,9 @@ type Options struct {
 	certDomain                string
 	certCache                 string
 	certKeyFile               string
-	cleanupFrequency          int
-	archiveReadDays           int
-	removeSessionsDays        int
+	cleanupFrequencyHours     int
+	cleanupArchiveReadDays    int
+	cleanupRemoveSessionsDays int
 	pollingFrequency          int
 	batchSize                 int
 	workerPoolSize            int
@@ -105,9 +105,9 @@ func NewOptions() *Options {
 		certDomain:                defaultCertDomain,
 		certCache:                 defaultCertCache,
 		certKeyFile:               defaultKeyFile,
-		cleanupFrequency:          defaultCleanupFrequency,
-		archiveReadDays:           defaultArchiveReadDays,
-		removeSessionsDays:        defaultRemoveSessionsDays,
+		cleanupFrequencyHours:     defaultCleanupFrequencyHours,
+		cleanupArchiveReadDays:    defaultCleanupArchiveReadDays,
+		cleanupRemoveSessionsDays: defaultCleanupRemoveSessionsDays,
 		pollingFrequency:          defaultPollingFrequency,
 		batchSize:                 defaultBatchSize,
 		workerPoolSize:            defaultWorkerPoolSize,
@@ -194,9 +194,19 @@ func (o *Options) CertCache() string {
 	return o.certCache
 }
 
-// CleanupFrequency returns the interval for cleanup jobs.
-func (o *Options) CleanupFrequency() int {
-	return o.cleanupFrequency
+// CleanupFrequencyHours returns the interval in hours for cleanup jobs.
+func (o *Options) CleanupFrequencyHours() int {
+	return o.cleanupFrequencyHours
+}
+
+// CleanupArchiveReadDays returns the number of days after which marking read items as removed.
+func (o *Options) CleanupArchiveReadDays() int {
+	return o.cleanupArchiveReadDays
+}
+
+// CleanupRemoveSessionsDays returns the number of days after which to remove sessions.
+func (o *Options) CleanupRemoveSessionsDays() int {
+	return o.cleanupRemoveSessionsDays
 }
 
 // WorkerPoolSize returns the number of background worker.
@@ -269,16 +279,6 @@ func (o *Options) HasSchedulerService() bool {
 	return o.schedulerService
 }
 
-// ArchiveReadDays returns the number of days after which marking read items as removed.
-func (o *Options) ArchiveReadDays() int {
-	return o.archiveReadDays
-}
-
-// RemoveSessionsDays returns the number of days after which to remove sessions.
-func (o *Options) RemoveSessionsDays() int {
-	return o.removeSessionsDays
-}
-
 // PocketConsumerKey returns the Pocket Consumer Key if configured.
 func (o *Options) PocketConsumerKey(defaultValue string) string {
 	if o.pocketConsumerKey != "" {
@@ -317,11 +317,12 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("KEY_FILE: %v\n", o.certKeyFile))
 	builder.WriteString(fmt.Sprintf("CERT_DOMAIN: %v\n", o.certDomain))
 	builder.WriteString(fmt.Sprintf("CERT_CACHE: %v\n", o.certCache))
-	builder.WriteString(fmt.Sprintf("CLEANUP_FREQUENCY: %v\n", o.cleanupFrequency))
+	builder.WriteString(fmt.Sprintf("CLEANUP_FREQUENCY_HOURS: %v\n", o.cleanupFrequencyHours))
+	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_READ_DAYS: %v\n", o.cleanupArchiveReadDays))
+	builder.WriteString(fmt.Sprintf("CLEANUP_REMOVE_SESSIONS_DAYS: %v\n", o.cleanupRemoveSessionsDays))
 	builder.WriteString(fmt.Sprintf("WORKER_POOL_SIZE: %v\n", o.workerPoolSize))
 	builder.WriteString(fmt.Sprintf("POLLING_FREQUENCY: %v\n", o.pollingFrequency))
 	builder.WriteString(fmt.Sprintf("BATCH_SIZE: %v\n", o.batchSize))
-	builder.WriteString(fmt.Sprintf("ARCHIVE_READ_DAYS: %v\n", o.archiveReadDays))
 	builder.WriteString(fmt.Sprintf("PROXY_IMAGES: %v\n", o.proxyImages))
 	builder.WriteString(fmt.Sprintf("CREATE_ADMIN: %v\n", o.createAdmin))
 	builder.WriteString(fmt.Sprintf("POCKET_CONSUMER_KEY: %v\n", o.pocketConsumerKey))

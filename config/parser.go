@@ -13,6 +13,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"miniflux.app/logger"
 )
 
 // Parser handles configuration parsing.
@@ -108,18 +110,34 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.certDomain = parseString(value, defaultCertDomain)
 		case "CERT_CACHE":
 			p.opts.certCache = parseString(value, defaultCertCache)
+		case "CLEANUP_FREQUENCY_HOURS":
+			p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
+		case "CLEANUP_ARCHIVE_READ_DAYS":
+			p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
+		case "CLEANUP_REMOVE_SESSIONS_DAYS":
+			p.opts.cleanupRemoveSessionsDays = parseInt(value, defaultCleanupRemoveSessionsDays)
 		case "CLEANUP_FREQUENCY":
-			p.opts.cleanupFrequency = parseInt(value, defaultCleanupFrequency)
+			logger.Error("[Config] CLEANUP_FREQUENCY has been deprecated in favor of CLEANUP_FREQUENCY_HOURS.")
+
+			if p.opts.cleanupFrequencyHours != defaultCleanupFrequencyHours {
+				logger.Error("[Config] Ignoring CLEANUP_FREQUENCY as CLEANUP_FREQUENCY_HOURS is already specified.")
+			} else {
+				p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
+			}
+		case "ARCHIVE_READ_DAYS":
+			logger.Error("[Config] ARCHIVE_READ_DAYS has been deprecated in favor of CLEANUP_ARCHIVE_READ_DAYS.")
+
+			if p.opts.cleanupArchiveReadDays != defaultCleanupArchiveReadDays {
+				logger.Error("[Config] Ignoring ARCHIVE_READ_DAYS as CLEANUP_ARCHIVE_READ_DAYS is already specified.")
+			} else {
+				p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
+			}
 		case "WORKER_POOL_SIZE":
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
 		case "POLLING_FREQUENCY":
 			p.opts.pollingFrequency = parseInt(value, defaultPollingFrequency)
 		case "BATCH_SIZE":
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
-		case "ARCHIVE_READ_DAYS":
-			p.opts.archiveReadDays = parseInt(value, defaultArchiveReadDays)
-		case "REMOVE_SESSIONS_DAYS":
-			p.opts.removeSessionsDays = parseInt(value, defaultRemoveSessionsDays)
 		case "PROXY_IMAGES":
 			p.opts.proxyImages = parseString(value, defaultProxyImages)
 		case "CREATE_ADMIN":
