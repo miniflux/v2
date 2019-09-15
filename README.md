@@ -1,6 +1,5 @@
 Miniflux 2
 ==========
-[![Build Status](https://travis-ci.org/miniflux/miniflux.svg?branch=master)](https://travis-ci.org/miniflux/miniflux)
 [![GoDoc](https://godoc.org/miniflux.app?status.svg)](https://godoc.org/miniflux.app)
 
 Miniflux is a minimalist and opinionated feed reader:
