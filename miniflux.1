@@ -134,15 +134,20 @@ Base URL to generate HTML links and base path for cookies\&.
 .br
 Default is http://localhost/\&.
 .TP
-.B CLEANUP_FREQUENCY
+.B CLEANUP_FREQUENCY_HOURS
 Cleanup job frequency, remove old sessions and archive read entries\&.
 .br
 Default is 24 hours\&.
 .TP
-.B ARCHIVE_READ_DAYS
+.B CLEANUP_ARCHIVE_READ_DAYS
 Number of days after marking read items as removed\&.
 .br
 Default is 60 days\&.
+.TP
+.B CLEANUP_REMOVE_SESSIONS_DAYS
+Number of days after removing old sessions from the database\&.
+.br
+Default is 30 days\&.
 .TP
 .B HTTPS
 Forces cookies to use secure flag and send HSTS header\&.
