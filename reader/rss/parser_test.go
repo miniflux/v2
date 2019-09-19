@@ -633,3 +633,22 @@ func TestParseWithHTMLEntity(t *testing.T) {
 		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
+
+func TestParseWithInvalidCharacterEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/a&b</link>
+			<title>Example Feed</title>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "https://example.org/a&b" {
+		t.Errorf(`Incorrect url, got: %q`, feed.SiteURL)
+	}
+}

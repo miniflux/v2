@@ -403,3 +403,22 @@ func TestParseFeedWithHTMLEntity(t *testing.T) {
 		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
+
+func TestParseFeedWithInvalidCharacterEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example Feed</title>
+			<link>http://example.org/a&b</link>
+	  </channel>
+	</rdf:RDF>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "http://example.org/a&b" {
+		t.Errorf(`Incorrect URL, got: %q`, feed.SiteURL)
+	}
+}

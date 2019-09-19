@@ -577,3 +577,22 @@ func TestParseWithHTMLEntity(t *testing.T) {
 		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
+
+func TestParseWithInvalidCharacterEntity(t *testing.T) {
+	data := `
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+			<title>Example Feed</title>
+			<link href="http://example.org/a&b"/>
+		</feed>
+	`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "http://example.org/a&b" {
+		t.Errorf(`Incorrect URL, got: %q`, feed.SiteURL)
+	}
+}
