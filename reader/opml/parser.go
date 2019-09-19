@@ -17,6 +17,7 @@ func Parse(data io.Reader) (SubcriptionList, *errors.LocalizedError) {
 	feeds := new(opml)
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
+	decoder.Strict = false
 	decoder.CharsetReader = encoding.CharsetReader
 
 	err := decoder.Decode(feeds)

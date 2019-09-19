@@ -18,6 +18,7 @@ func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 	feed := new(rssFeed)
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
+	decoder.Strict = false
 	decoder.CharsetReader = encoding.CharsetReader
 
 	err := decoder.Decode(feed)
