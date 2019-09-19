@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"mime"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -74,17 +73,12 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 // - Feeds with wrong encoding defined and already in UTF-8
 func (r *Response) EnsureUnicodeBody() (err error) {
 	if r.ContentType != "" {
-		mediaType, _, mediaErr := mime.ParseMediaType(r.ContentType)
-		if mediaErr != nil {
-			return mediaErr
-		}
-
 		// JSON feeds are always in UTF-8.
-		if strings.Contains(mediaType, "json") {
+		if strings.Contains(r.ContentType, "json") {
 			return
 		}
 
-		if strings.Contains(mediaType, "xml") {
+		if strings.Contains(r.ContentType, "xml") {
 			buffer, _ := ioutil.ReadAll(r.Body)
 			r.Body = bytes.NewReader(buffer)
 
