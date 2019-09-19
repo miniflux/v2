@@ -121,6 +121,7 @@ func TestEnsureUnicodeWithHTMLDocuments(t *testing.T) {
 		{"urdu.xml", "text/xml; charset=utf-8", true},
 		{"content-type-only-win-8859-1.xml", "application/xml; charset=ISO-8859-1", true},
 		{"rdf_utf8.xml", "application/rss+xml; charset=utf-8", true},
+		{"rdf_utf8.xml", "application/rss+xml; charset: utf-8", true}, // Invalid Content-Type
 		{"charset-content-type-xml-iso88591.xml", "application/rss+xml; charset=ISO-8859-1", false},
 		{"windows_1251.xml", "text/xml", false},
 		{"smallfile.xml", "text/xml; charset=utf-8", true},
@@ -136,7 +137,7 @@ func TestEnsureUnicodeWithHTMLDocuments(t *testing.T) {
 		r := &Response{Body: bytes.NewReader(content), ContentType: tc.contentType}
 		parseErr := r.EnsureUnicodeBody()
 		if parseErr != nil {
-			t.Fatalf(`Unicode conversion error for %q - %q: %v`, tc.filename, tc.contentType, err)
+			t.Fatalf(`Unicode conversion error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
 		}
 
 		isUnicode := utf8.ValidString(r.String())
