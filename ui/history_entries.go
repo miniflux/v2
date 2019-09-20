@@ -25,8 +25,8 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithStatus(model.EntryStatusRead)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(user.EntryDirection)
+	builder.WithOrder("changed_at")
+	builder.WithDirection("desc")
 	builder.WithOffset(offset)
 	builder.WithLimit(nbItemsPerPage)
 
