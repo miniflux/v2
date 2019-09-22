@@ -122,6 +122,7 @@ docker-images:
 	  case $${arch} in \
 		amd64   ) miniflux_arch="amd64";; \
 		arm32v6 ) miniflux_arch="armv6";; \
+		arm32v7 ) miniflux_arch="armv7";; \
 		arm64v8 ) miniflux_arch="armv8";; \
 	  esac ;\
 	  cp Dockerfile Dockerfile.$${arch} && \
@@ -137,13 +138,17 @@ docker-manifest:
 	for version in $(VERSION) latest; do \
 		docker push $(DOCKER_IMAGE):amd64-$${version} && \
 		docker push $(DOCKER_IMAGE):arm32v6-$${version} && \
+		docker push $(DOCKER_IMAGE):arm32v7-$${version} && \
 		docker push $(DOCKER_IMAGE):arm64v8-$${version} && \
 		docker manifest create --amend $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):amd64-$${version} \
 			$(DOCKER_IMAGE):arm32v6-$${version} \
+			$(DOCKER_IMAGE):arm32v7-$${version} \
 			$(DOCKER_IMAGE):arm64v8-$${version} && \
 		docker manifest annotate $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):arm32v6-$${version} --os linux --arch arm --variant v6 && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm32v7-$${version} --os linux --arch arm --variant v7 && \
 		docker manifest annotate $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):arm64v8-$${version} --os linux --arch arm64 --variant v8 && \
 		docker manifest push --purge $(DOCKER_IMAGE):$${version} ;\

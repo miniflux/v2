@@ -1,4 +1,4 @@
-FROM golang:1.12-alpine3.10 as build
+FROM golang:1.13-alpine3.10 as build
 ENV GO111MODULE=on
 WORKDIR /go/src/app
 RUN apk add --no-cache --update build-base git
