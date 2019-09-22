@@ -425,6 +425,7 @@ a.button {
     border-color: var(--alert-error-border-color);
 }
 
+.alert-error h3,
 .alert-error a {
     color: var(--alert-error-color);
 }
