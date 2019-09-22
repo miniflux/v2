@@ -39,7 +39,7 @@ func TestValidateUserModification(t *testing.T) {
 		t.Error(`There is no changes, so we should not have an error`)
 	}
 
-	user = &User{Theme: "default"}
+	user = &User{Theme: "system_serif"}
 	if err := user.ValidateUserModification(); err != nil {
 		t.Error(`A valid theme should not generate any errors`)
 	}
