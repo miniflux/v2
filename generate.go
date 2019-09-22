@@ -205,9 +205,12 @@ func main() {
 	})
 
 	generateCSSBundle("ui/static/css.go", map[string][]string{
-		"default":   []string{"ui/static/css/common.css"},
-		"black":     []string{"ui/static/css/common.css", "ui/static/css/black.css"},
-		"sansserif": []string{"ui/static/css/common.css", "ui/static/css/sansserif.css"},
+		"light_serif":       []string{"ui/static/css/light.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"light_sans_serif":  []string{"ui/static/css/light.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"dark_serif":        []string{"ui/static/css/dark.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"dark_sans_serif":   []string{"ui/static/css/dark.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"system_serif":      []string{"ui/static/css/system.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"system_sans_serif": []string{"ui/static/css/system.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
 	})
 
 	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))

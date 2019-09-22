@@ -9,9 +9,12 @@ import "miniflux.app/errors"
 // Themes returns the list of available themes.
 func Themes() map[string]string {
 	return map[string]string{
-		"default":   "Default",
-		"black":     "Black",
-		"sansserif": "Sans-Serif",
+		"light_serif":       "Light - Serif",
+		"light_sans_serif":  "Light - Sans Serif",
+		"dark_serif":        "Dark - Serif",
+		"dark_sans_serif":   "Dark - Sans Serif",
+		"system_serif":      "System - Serif",
+		"system_sans_serif": "System - Sans Serif",
 	}
 }
 
@@ -20,7 +23,7 @@ func Themes() map[string]string {
 // https://developers.google.com/web/tools/lighthouse/audits/address-bar
 func ThemeColor(theme string) string {
 	switch theme {
-	case "black":
+	case "dark_serif", "dark_sans_serif":
 		return "#222"
 	default:
 		return "#fff"

@@ -64,7 +64,7 @@ func UserLanguage(r *http.Request) string {
 func UserTheme(r *http.Request) string {
 	theme := getContextStringValue(r, UserThemeContextKey)
 	if theme == "" {
-		theme = "default"
+		theme = "light_serif"
 	}
 	return theme
 }
