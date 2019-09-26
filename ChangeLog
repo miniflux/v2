@@ -1,3 +1,33 @@
+Version 2.0.18 (Sep 25, 2019)
+-----------------------------
+
+* Add Docker image variant for arm32v7
+* Add theme variants
+    - Use CSS variables instead of inherence
+    - Rename default theme to "Light - Serif"
+    - Rename Black theme to "Dark - Serif"
+    - Rename "Sans-Serif" theme to "Light - Sans Serif"
+    - Add "System" theme that use system preferences: Dark or Light
+    - Add Serif and Sans-Serif variants for each color theme
+* Avoid constraint error when having duplicate entries during feed creation
+* Disable strict XML parsing
+* Ignore invalid content type
+* Update man page
+* Replace Travis by GitHub Actions
+* Rename cleanup config variables and deprecate old ones
+    - CLEANUP_FREQUENCY_HOURS instead of CLEANUP_FREQUENCY
+    - CLEANUP_ARCHIVE_READ_DAYS instead of ARCHIVE_READ_DAYS
+* Make configurable the number of days to remove old sessions
+* Add native lazy loading for images and iframes
+* Do not buffer responses in the image proxy
+* Update dependencies
+* Add Go 1.13 to test matrix
+* Replace link border by outline to avoid slight content shift
+* New rewrite function: add_mailto_subject
+* Import OPML from URL
+* Fix HTML injection in addImageTitle
+* Accept HTML entities when parsing XML
+
 Version 2.0.17 (Aug 3, 2019)
 ----------------------------
 
