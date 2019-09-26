@@ -19,7 +19,7 @@ const (
 	flagInfoHelp            = "Show application information"
 	flagVersionHelp         = "Show application version"
 	flagMigrateHelp         = "Run SQL migrations"
-	flagFlsuhSessionsHelp   = "Flush all sessions (disconnect users)"
+	flagFlushSessionsHelp   = "Flush all sessions (disconnect users)"
 	flagCreateAdminHelp     = "Create admin user"
 	flagResetPasswordHelp   = "Reset user password"
 	flagResetFeedErrorsHelp = "Clear all feed errors for all users"
@@ -49,7 +49,7 @@ func Parse() {
 	flag.BoolVar(&flagVersion, "version", false, flagVersionHelp)
 	flag.BoolVar(&flagVersion, "v", false, flagVersionHelp)
 	flag.BoolVar(&flagMigrate, "migrate", false, flagMigrateHelp)
-	flag.BoolVar(&flagFlushSessions, "flush-sessions", false, flagFlsuhSessionsHelp)
+	flag.BoolVar(&flagFlushSessions, "flush-sessions", false, flagFlushSessionsHelp)
 	flag.BoolVar(&flagCreateAdmin, "create-admin", false, flagCreateAdminHelp)
 	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
 	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)

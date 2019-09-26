@@ -841,6 +841,12 @@ article.feed-parsing-error {
     margin-bottom: 15px;
 }
 
+.entry-content li ul,
+.entry-content li ol {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .entry-content ul {
     list-style-type: square;
 }
