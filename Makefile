@@ -118,7 +118,7 @@ clean-integration-test:
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-images:
-	for arch in amd64 arm32v6 arm64v8; do \
+	for arch in amd64 arm32v6 arm32v7 arm64v8; do \
 	  case $${arch} in \
 		amd64   ) miniflux_arch="amd64";; \
 		arm32v6 ) miniflux_arch="armv6";; \
