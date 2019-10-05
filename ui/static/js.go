@@ -27,13 +27,13 @@ if(this.touch.element!==null){let distance=Math.abs(this.calculateDistance());if
 this.touch.element.style.opacity=1;this.touch.element.style.transform="none";}
 this.reset();}
 listen(){let elements=document.querySelectorAll(".touch-item");let hasPassiveOption=DomHelper.hasPassiveEventListenerOption();elements.forEach((element)=>{element.addEventListener("touchstart",(e)=>this.onTouchStart(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchmove",(e)=>this.onTouchMove(e),hasPassiveOption?{passive:false}:false);element.addEventListener("touchend",(e)=>this.onTouchEnd(e),hasPassiveOption?{passive:true}:false);element.addEventListener("touchcancel",()=>this.reset(),hasPassiveOption?{passive:true}:false);});let entryContentElement=document.querySelector(".entry-content");if(entryContentElement){let doubleTapTimers={previous:null,next:null};const detectDoubleTap=(doubleTapTimer,event)=>{const timer=doubleTapTimers[doubleTapTimer];if(timer===null){doubleTapTimers[doubleTapTimer]=setTimeout(()=>{doubleTapTimers[doubleTapTimer]=null;},200);}else{event.preventDefault();goToPage(doubleTapTimer);}};entryContentElement.addEventListener("touchend",(e)=>{if(e.changedTouches[0].clientX>=(entryContentElement.offsetWidth/2)){detectDoubleTap("next",e);}else{detectDoubleTap("previous",e);}},hasPassiveOption?{passive:false}:false);entryContentElement.addEventListener("touchmove",(e)=>{Object.keys(doubleTapTimers).forEach(timer=>doubleTapTimers[timer]=null);});}}}
-class KeyboardHandler{constructor(){this.queue=[];this.shortcuts={};}
-on(combination,callback){this.shortcuts[combination]=callback;}
-listen(){document.onkeydown=(event)=>{if(this.isEventIgnored(event)||this.isModifierKeyDown(event)){return;}
-let key=this.getKey(event);this.queue.push(key);for(let combination in this.shortcuts){let keys=combination.split(" ");if(keys.every((value,index)=>value===this.queue[index])){this.queue=[];this.shortcuts[combination](event);return;}
+class KeyboardHandler{constructor(){this.queue=[];this.shortcuts={};this.triggers=[];}
+on(combination,callback){this.shortcuts[combination]=callback;this.triggers.push(combination.split(" ")[0]);}
+listen(){document.onkeydown=(event)=>{let key=this.getKey(event);if(this.isEventIgnored(event,key)||this.isModifierKeyDown(event)){return;}else{event.preventDefault();}
+this.queue.push(key);for(let combination in this.shortcuts){let keys=combination.split(" ");if(keys.every((value,index)=>value===this.queue[index])){this.queue=[];this.shortcuts[combination](event);return;}
 if(keys.length===1&&key===keys[0]){this.queue=[];this.shortcuts[combination](event);return;}}
 if(this.queue.length>=2){this.queue=[];}};}
-isEventIgnored(event){return event.target.tagName==="INPUT"||event.target.tagName==="TEXTAREA";}
+isEventIgnored(event,key){return event.target.tagName==="INPUT"||event.target.tagName==="TEXTAREA"||(this.queue.length<1&&!this.triggers.includes(key));}
 isModifierKeyDown(event){return event.getModifierState("Control")||event.getModifierState("Alt")||event.getModifierState("Meta");}
 getKey(event){const mapping={'Esc':'Escape','Up':'ArrowUp','Down':'ArrowDown','Left':'ArrowLeft','Right':'ArrowRight'};for(let key in mapping){if(mapping.hasOwnProperty(key)&&key===event.key){return mapping[key];}}
 return event.key;}}
@@ -105,6 +105,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "3e73bb4f1be3c679e59dcf91560efdf8646d7d549e682e5ad83f3bb1a6eeeff7",
+	"app": "ef0f82521c4b721401ee093f08788dd1416fd461bc4023ef6f81f2fa813aed73",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }

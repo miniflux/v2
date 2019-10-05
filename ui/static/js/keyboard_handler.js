@@ -2,19 +2,23 @@ class KeyboardHandler {
     constructor() {
         this.queue = [];
         this.shortcuts = {};
+        this.triggers = [];
     }
 
     on(combination, callback) {
         this.shortcuts[combination] = callback;
+        this.triggers.push(combination.split(" ")[0]);
     }
 
     listen() {
         document.onkeydown = (event) => {
-            if (this.isEventIgnored(event) || this.isModifierKeyDown(event)) {
+            let key = this.getKey(event);
+            if (this.isEventIgnored(event, key) || this.isModifierKeyDown(event)) {
                 return;
+            } else {
+                event.preventDefault();
             }
 
-            let key = this.getKey(event);
             this.queue.push(key);
 
             for (let combination in this.shortcuts) {
@@ -39,8 +43,11 @@ class KeyboardHandler {
         };
     }
 
-    isEventIgnored(event) {
-        return event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA";
+    isEventIgnored(event, key) {
+        return event.target.tagName === "INPUT" ||
+            event.target.tagName === "TEXTAREA" ||
+            (this.queue.length < 1 && !this.triggers.includes(key));
+
     }
 
     isModifierKeyDown(event) {
