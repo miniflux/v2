@@ -168,6 +168,9 @@ alter table entries alter column changed_at set not null;
     unique (user_id, description)
 );
 `,
+	"schema_version_28": `alter table entries add column share_code text not null default '';
+create unique index entries_share_code_idx on entries using btree(share_code) where share_code <> '';
+`,
 	"schema_version_3": `create table tokens (
     id text not null,
     value text not null,
@@ -223,6 +226,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_25": "5262d2d4c88d637b6603a1fcd4f68ad257bd59bd1adf89c58a18ee87b12050d7",
 	"schema_version_26": "64f14add40691f18f514ac0eed10cd9b19c83a35e5c3d8e0bce667e0ceca9094",
 	"schema_version_27": "4235396b37fd7f52ff6f7526416042bb1649701233e2d99f0bcd583834a0a967",
+	"schema_version_28": "a64b5ba0b37fe3f209617b7d0e4dd05018d2b8362d2c9c528ba8cce19b77e326",
 	"schema_version_3":  "a54745dbc1c51c000f74d4e5068f1e2f43e83309f023415b1749a47d5c1e0f12",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"miniflux.app/crypto"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 
@@ -350,4 +351,36 @@ func (s *Storage) EntryURLExists(feedID int64, entryURL string) bool {
 	query := `SELECT true FROM entries WHERE feed_id=$1 AND url=$2`
 	s.db.QueryRow(query, feedID, entryURL).Scan(&result)
 	return result
+}
+
+// GetEntryShareCode returns the share code of the provided entry.
+// It generates a new one if not already defined.
+func (s *Storage) GetEntryShareCode(userID int64, entryID int64) (shareCode string, err error) {
+	query := `SELECT share_code FROM entries WHERE user_id=$1 AND id=$2`
+	err = s.db.QueryRow(query, userID, entryID).Scan(&shareCode)
+
+	if err != nil || shareCode != "" {
+		return
+	}
+
+	shareCode = crypto.GenerateRandomStringHex(16)
+
+	query = `UPDATE entries SET share_code = $1 WHERE user_id=$2 AND id=$3`
+	result, err := s.db.Exec(query, shareCode, userID, entryID)
+	if err != nil {
+		err = fmt.Errorf(`store: unable to set share_code for entry #%d: %v`, entryID, err)
+		return
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf(`store: unable to set share_code for entry #%d: %v`, entryID, err)
+		return
+	}
+
+	if count == 0 {
+		err = errors.New(`store: nothing has been updated`)
+	}
+
+	return
 }

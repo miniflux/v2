@@ -6,6 +6,7 @@
         <h1>
             <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
+        {{ if .user }}
         <div class="entry-actions">
             <ul>
                 <li>
@@ -44,6 +45,12 @@
                     </li>
                 {{ end }}
                 <li>
+                    <a href="{{ route "shareGenerate" "entryID" .entry.ID }}"
+                        title="{{ t "entry.share.title" }}"
+                        target="_blank"
+                        >{{ t "entry.share.label" }}</a>
+                </li>
+                <li>
                     <a href="#"
                         title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
@@ -59,9 +66,10 @@
                 {{ end }}
             </ul>
         </div>
+        {{ end }}
         <div class="entry-meta">
             <span class="entry-website">
-                {{ if ne .entry.Feed.Icon.IconID 0 }}
+                {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                     <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
                 {{ end }}
                 <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
@@ -75,21 +83,33 @@
                     {{ end }}
                 </span>
             {{ end }}
-            <span class="category">
-                <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
-            </span>
+            {{ if .user }}
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
+                </span>
+            {{ end }}
         </div>
         <div class="entry-date">
-            <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
+            {{ if .user }}
+                <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
+            {{ else }}
+                <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed "UTC" .entry.Date }}</time>
+            {{ end }}
         </div>
     </header>
     {{ if gt (len .entry.Content) 120 }}
+    {{ if .user }}
     <div class="pagination-top">
         {{ template "entry_pagination" . }}
     </div>
     {{ end }}
+    {{ end }}
     <article class="entry-content">
-        {{ noescape (proxyFilter .entry.Content) }}
+        {{ if .user }}
+            {{ noescape (proxyFilter .entry.Content) }}
+        {{ else }}
+            {{ noescape .entry.Content }}
+        {{ end }}
     </article>
     {{ if .entry.Enclosures }}
     <details class="entry-enclosures">
@@ -111,7 +131,11 @@
                     </div>
                 {{ else if hasPrefix .MimeType "image/" }}
                     <div class="enclosure-image">
-                        <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ if .user }}
+                            <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ else }}
+                            <img src="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ end }}
                     </div>
                 {{ end }}
 
@@ -126,7 +150,9 @@
     {{ end }}
 </section>
 
+{{ if .user }}
 <div class="pagination-bottom">
     {{ template "entry_pagination" . }}
 </div>
+{{ end }}
 {{ end }}

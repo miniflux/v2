@@ -88,6 +88,10 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/proxy/{encodedURL}", handler.imageProxy).Name("proxy").Methods("GET")
 	uiRouter.HandleFunc("/entry/bookmark/{entryID}", handler.toggleBookmark).Name("toggleBookmark").Methods("POST")
 
+	// Share pages.
+	uiRouter.HandleFunc("/entry/share/{entryID}", handler.shareGenerate).Name("shareGenerate").Methods("GET")
+	uiRouter.HandleFunc("/shared/{shareCode}", handler.sharePage).Name("share").Methods("GET")
+
 	// User pages.
 	uiRouter.HandleFunc("/users", handler.showUsersPage).Name("users").Methods("GET")
 	uiRouter.HandleFunc("/user/create", handler.showCreateUserPage).Name("createUser").Methods("GET")
