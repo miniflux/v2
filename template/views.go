@@ -653,6 +653,7 @@ var templateViewsMap = map[string]string{
         <h1>
             <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
+        {{ if .user }}
         <div class="entry-actions">
             <ul>
                 <li>
@@ -691,6 +692,12 @@ var templateViewsMap = map[string]string{
                     </li>
                 {{ end }}
                 <li>
+                    <a href="{{ route "shareGenerate" "entryID" .entry.ID }}"
+                        title="{{ t "entry.share.title" }}"
+                        target="_blank"
+                        >{{ t "entry.share.label" }}</a>
+                </li>
+                <li>
                     <a href="#"
                         title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
@@ -706,9 +713,10 @@ var templateViewsMap = map[string]string{
                 {{ end }}
             </ul>
         </div>
+        {{ end }}
         <div class="entry-meta">
             <span class="entry-website">
-                {{ if ne .entry.Feed.Icon.IconID 0 }}
+                {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                     <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
                 {{ end }}
                 <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
@@ -722,21 +730,33 @@ var templateViewsMap = map[string]string{
                     {{ end }}
                 </span>
             {{ end }}
-            <span class="category">
-                <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
-            </span>
+            {{ if .user }}
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
+                </span>
+            {{ end }}
         </div>
         <div class="entry-date">
-            <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
+            {{ if .user }}
+                <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
+            {{ else }}
+                <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed "UTC" .entry.Date }}</time>
+            {{ end }}
         </div>
     </header>
     {{ if gt (len .entry.Content) 120 }}
+    {{ if .user }}
     <div class="pagination-top">
         {{ template "entry_pagination" . }}
     </div>
     {{ end }}
+    {{ end }}
     <article class="entry-content">
-        {{ noescape (proxyFilter .entry.Content) }}
+        {{ if .user }}
+            {{ noescape (proxyFilter .entry.Content) }}
+        {{ else }}
+            {{ noescape .entry.Content }}
+        {{ end }}
     </article>
     {{ if .entry.Enclosures }}
     <details class="entry-enclosures">
@@ -758,7 +778,11 @@ var templateViewsMap = map[string]string{
                     </div>
                 {{ else if hasPrefix .MimeType "image/" }}
                     <div class="enclosure-image">
-                        <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ if .user }}
+                            <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ else }}
+                            <img src="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ end }}
                     </div>
                 {{ end }}
 
@@ -773,9 +797,11 @@ var templateViewsMap = map[string]string{
     {{ end }}
 </section>
 
+{{ if .user }}
 <div class="pagination-bottom">
     {{ template "entry_pagination" . }}
 </div>
+{{ end }}
 {{ end }}
 `,
 	"feed_entries": `{{ define "title"}}{{ .feed.Title }} ({{ .total }}){{ end }}
@@ -1422,7 +1448,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "513183f0f0b11a199630562f5a85eb9a5646051aae278cbc682bac13d62e65cc",
+	"entry":               "ef9cd8bb99c561023c1dcea1dbd7f90c4cdc195ed70e2ed9c88213fec875d770",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
