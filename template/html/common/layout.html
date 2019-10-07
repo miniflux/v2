@@ -41,6 +41,9 @@
 <body
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
+    <div class="toast-wrap">
+        <span class="toast-msg"></span>
+    </div>
     {{ if .user }}
     <header class="header">
         <nav>
