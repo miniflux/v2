@@ -593,6 +593,8 @@ var templateViewsMap = map[string]string{
                         data-toggle-status="true"
                         data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
                         data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
+                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
+                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                         >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
                 </li>
@@ -603,6 +605,8 @@ var templateViewsMap = map[string]string{
                         data-label-loading="{{ t "entry.state.saving" }}"
                         data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
                         data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
+                        data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
+                        data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
                         >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
                 </li>
@@ -614,6 +618,7 @@ var templateViewsMap = map[string]string{
                             data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
                             data-label-loading="{{ t "entry.state.saving" }}"
                             data-label-done="{{ t "entry.save.completed" }}"
+                            data-toast-done="{{ t "entry.save.toast.completed" }}"
                             >{{ t "entry.save.title" }}</a>
                     </li>
                 {{ end }}
@@ -1476,7 +1481,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
 	"edit_feed":           "34aa0d668b3ea1a1b5fa480c20cebeae729b37010af3bb915d2a9eed73d3b996",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
-	"entry":               "e14434fc6f57963eae26057a18c835d0328af783d41f5af04b03387b4da604be",
+	"entry":               "24aeba26ef9a51ce585ca5c4af090f1de7d7bfd7f1e3ff1b63af520e2afa76bd",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "fa2dad422445eca898c1daa4ab742691207a8c0d3c274eed84462bc610d22219",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",

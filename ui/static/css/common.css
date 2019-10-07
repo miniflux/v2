@@ -151,6 +151,35 @@ a:hover {
     display: none;
 }
 
+.toast-wrap {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    left: 0;
+    bottom: 10%;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+ }
+
+ .toast-msg {
+    background-color: rgba(0,0,0,0.7);
+    padding: 2px 5px;
+    border-radius: 5px;
+ }
+ 
+.toastAnimate {
+    animation: toastKeyFrames 2s;
+}
+
+@keyframes toastKeyFrames {
+    0% {visibility: hidden; opacity: 0;}
+   25% {visibility: visible; opacity: 1; z-index: 9999}
+   50% {visibility: visible; opacity: 1; z-index: 9999}
+   75% {visibility: visible; opacity: 1; z-index: 9999}
+   100% {visibility: hidden; opacity: 0; z-index: 0}
+}
+
 @media (min-width: 600px) {
     body {
         margin: auto;

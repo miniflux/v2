@@ -14,6 +14,8 @@
                         data-toggle-status="true"
                         data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
                         data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
+                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
+                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                         >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
                 </li>
@@ -24,6 +26,8 @@
                         data-label-loading="{{ t "entry.state.saving" }}"
                         data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
                         data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
+                        data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
+                        data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
                         >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
                 </li>
@@ -35,6 +39,7 @@
                             data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
                             data-label-loading="{{ t "entry.state.saving" }}"
                             data-label-done="{{ t "entry.save.completed" }}"
+                            data-toast-done="{{ t "entry.save.toast.completed" }}"
                             >{{ t "entry.save.title" }}</a>
                     </li>
                 {{ end }}
