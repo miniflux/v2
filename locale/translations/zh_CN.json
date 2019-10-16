@@ -279,6 +279,7 @@
     "Unable to parse Atom feed: %q": "无法解析Atom源: %q",
     "Unable to parse JSON feed: %q": "无法解析JSON源: %q",
     "Unable to parse RDF feed: %q": "无法解析RDF源: %q",
+    "Unable to read data: %q": "无法读取数据: %q",
     "Unable to normalize encoding: %q": "无法正则化编码: %q",
     "Category not found for this user": "未找到该用户的这一分类",
     "This feed is empty": "该源是空的",
