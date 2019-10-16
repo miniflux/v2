@@ -17,20 +17,25 @@ import (
 
 // Parse returns a normalized feed struct from a RSS feed.
 func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
-	// be more tolerant to the payload by filtering illegal characters
-	rawData, err := ioutil.ReadAll(data)
-	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to read data: %q", err)
-	}
-	filteredBytes := bytes.Map(isInCharacterRange, rawData)
-
 	feed := new(rssFeed)
-	decoder := xml.NewDecoder(bytes.NewReader(filteredBytes))
+	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
 	decoder.Strict = false
-	decoder.CharsetReader = encoding.CharsetReader
+	decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
+		utf8Reader, err := encoding.CharsetReader(charset, input)
+		if err != nil {
+			return nil, err
+		}
+		// be more tolerant to the payload by filtering illegal characters
+		rawData, err := ioutil.ReadAll(utf8Reader)
+		if err != nil {
+			return nil, errors.NewLocalizedError("Unable to read data: %q", err)
+		}
+		filteredBytes := bytes.Map(isInCharacterRange, rawData)
+		return bytes.NewReader(filteredBytes), nil
+	}
 
-	err = decoder.Decode(feed)
+	err := decoder.Decode(feed)
 	if err != nil {
 		return nil, errors.NewLocalizedError("Unable to parse RSS feed: %q", err)
 	}
