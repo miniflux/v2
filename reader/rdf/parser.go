@@ -5,22 +5,17 @@
 package rdf // import "miniflux.app/reader/rdf"
 
 import (
-	"encoding/xml"
 	"io"
 
 	"miniflux.app/errors"
 	"miniflux.app/model"
-	"miniflux.app/reader/encoding"
+	"miniflux.app/reader/xml"
 )
 
 // Parse returns a normalized feed struct from a RDF feed.
 func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
+	decoder := xml.GetDecoder(data)
 	feed := new(rdfFeed)
-	decoder := xml.NewDecoder(data)
-	decoder.Entity = xml.HTMLEntity
-	decoder.Strict = false
-	decoder.CharsetReader = encoding.CharsetReader
-
 	err := decoder.Decode(feed)
 	if err != nil {
 		return nil, errors.NewLocalizedError("Unable to parse RDF feed: %q", err)
