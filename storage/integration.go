@@ -32,7 +32,7 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 			users.id, users.is_admin, users.timezone
 		FROM users
 		LEFT JOIN integrations ON integrations.user_id=users.id
-		WHERE integrations.fever_enabled='t' AND integrations.fever_token=$1
+		WHERE integrations.fever_enabled='t' AND lower(integrations.fever_token)=lower($1)
 	`
 
 	var user model.User
