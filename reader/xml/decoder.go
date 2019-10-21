@@ -19,21 +19,21 @@ func GetDecoder(data io.Reader) *xml.Decoder {
 		if err != nil {
 			return nil, err
 		}
-		// be more tolerant to the payload by filtering illegal characters
+		// be more tolerant to the payload by filtering out illegal characters
 		rawData, err := ioutil.ReadAll(utf8Reader)
 		if err != nil {
 			return nil, fmt.Errorf("Unable to read data: %q", err)
 		}
-		filteredBytes := bytes.Map(isInCharacterRange, rawData)
+		filteredBytes := bytes.Map(filterValidXMLChar, rawData)
 		return bytes.NewReader(filteredBytes), nil
 	}
 
 	return decoder
 }
 
-// isInCharacterRange is copied from encoding/xml package,
+// filterValidXMLChar is copied from encoding/xml package,
 // and is used to check if all the characters are legal.
-func isInCharacterRange(r rune) rune {
+func filterValidXMLChar(r rune) rune {
 	if r == 0x09 ||
 		r == 0x0A ||
 		r == 0x0D ||
