@@ -10,6 +10,7 @@ import (
 	"miniflux.app/reader/encoding"
 )
 
+// GetDecoder returns a XML decoder that filters out illegal characters
 func GetDecoder(data io.Reader) *xml.Decoder {
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
