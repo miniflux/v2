@@ -6,6 +6,7 @@ LD_FLAGS := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
+export PGPASSWORD := postgres
 export GO111MODULE=on
 
 .PHONY: generate \
@@ -99,7 +100,7 @@ test:
 	go test -mod=vendor -cover -race -count=1 ./...
 
 lint:
-	@ golint -set_exit_status ${PKG_LIST}
+	golint -set_exit_status ${PKG_LIST}
 
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
@@ -109,7 +110,7 @@ integration-test:
 	go build -mod=vendor -o miniflux-test main.go
 	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
-	go test -mod=vendor -v -tags=integration -count=1 miniflux.app/tests || cat /tmp/miniflux.log
+	go test -mod=vendor -v -tags=integration -count=1 miniflux.app/tests
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
