@@ -1,3 +1,7 @@
+// Copyright 2019 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
 package xml // import "miniflux.app/reader/xml"
 
 import (
@@ -5,8 +9,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-
-	"miniflux.app/reader/encoding"
 )
 
 func Test(t *testing.T) {
@@ -18,17 +20,9 @@ func Test(t *testing.T) {
 	// Add the body contains illegal characters
 	data := fmt.Sprintf(`<?xml version="1.0" encoding="windows-1251"?><rss version="2.0"><title>%s</title></rss>`, "\x10")
 	var x myxml
-	decoder := xml.NewDecoder(strings.NewReader(data))
-	decoder.Entity = xml.HTMLEntity
-	decoder.Strict = false
-	decoder.CharsetReader = encoding.CharsetReader
-	err := decoder.Decode(&x)
-	if _, ok := err.(*xml.SyntaxError); !ok {
-		t.Errorf("Unexpected error: %v, expected xml.SyntaxError", err)
-	}
 
-	decoder = GetDecoder(strings.NewReader(data))
-	err = decoder.Decode(&x)
+	decoder := NewDecoder(strings.NewReader(data))
+	err := decoder.Decode(&x)
 	if err != nil {
 		t.Error(err)
 	}

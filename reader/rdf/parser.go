@@ -14,7 +14,7 @@ import (
 
 // Parse returns a normalized feed struct from a RDF feed.
 func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
-	decoder := xml.GetDecoder(data)
+	decoder := xml.NewDecoder(data)
 	feed := new(rdfFeed)
 	err := decoder.Decode(feed)
 	if err != nil {

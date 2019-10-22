@@ -14,7 +14,7 @@ import (
 
 // Parse returns a normalized feed struct from a Atom feed.
 func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
-	decoder := xml.GetDecoder(data)
+	decoder := xml.NewDecoder(data)
 	atomFeed := new(atomFeed)
 	err := decoder.Decode(atomFeed)
 	if err != nil {

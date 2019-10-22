@@ -1,3 +1,7 @@
+// Copyright 2019 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
 package xml // import "miniflux.app/reader/xml"
 
 import (
@@ -10,8 +14,8 @@ import (
 	"miniflux.app/reader/encoding"
 )
 
-// GetDecoder returns a XML decoder that filters out illegal characters
-func GetDecoder(data io.Reader) *xml.Decoder {
+// NewDecoder returns a XML decoder that filters out illegal characters
+func NewDecoder(data io.Reader) *xml.Decoder {
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
 	decoder.Strict = false
