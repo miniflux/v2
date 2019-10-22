@@ -100,7 +100,7 @@ func TestSearchEntries(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://github.com/miniflux/miniflux/releases.atom", categories[0].ID)
+	feedID, err := client.CreateFeed("https://miniflux.app/feed.xml", categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}

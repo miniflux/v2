@@ -67,7 +67,7 @@ func TestGetUsers(t *testing.T) {
 		t.Fatalf(`Invalid language, got "%v"`, users[0].Language)
 	}
 
-	if users[0].Theme != "default" {
+	if users[0].Theme != "light_serif" {
 		t.Fatalf(`Invalid theme, got "%v"`, users[0].Theme)
 	}
 
@@ -104,7 +104,7 @@ func TestCreateStandardUser(t *testing.T) {
 		t.Fatalf(`Invalid language, got "%v"`, user.Language)
 	}
 
-	if user.Theme != "default" {
+	if user.Theme != "light_serif" {
 		t.Fatalf(`Invalid theme, got "%v"`, user.Theme)
 	}
 
@@ -168,7 +168,7 @@ func TestGetUserByID(t *testing.T) {
 		t.Fatalf(`Invalid language, got "%v"`, user.Language)
 	}
 
-	if user.Theme != "default" {
+	if user.Theme != "light_serif" {
 		t.Fatalf(`Invalid theme, got "%v"`, user.Theme)
 	}
 
@@ -219,7 +219,7 @@ func TestGetUserByUsername(t *testing.T) {
 		t.Fatalf(`Invalid language, got "%v"`, user.Language)
 	}
 
-	if user.Theme != "default" {
+	if user.Theme != "light_serif" {
 		t.Fatalf(`Invalid theme, got "%v"`, user.Theme)
 	}
 
@@ -244,7 +244,7 @@ func TestUpdateUserTheme(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	theme := "black"
+	theme := "dark_serif"
 	user, err = client.UpdateUser(user.ID, &miniflux.UserModification{Theme: &theme})
 	if err != nil {
 		t.Fatal(err)
