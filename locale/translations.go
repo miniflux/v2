@@ -2624,6 +2624,7 @@ var translations = map[string]string{
     "Unable to parse Atom feed: %q": "无法解析Atom源: %q",
     "Unable to parse JSON feed: %q": "无法解析JSON源: %q",
     "Unable to parse RDF feed: %q": "无法解析RDF源: %q",
+    "Unable to read data: %q": "无法读取数据: %q",
     "Unable to normalize encoding: %q": "无法正则化编码: %q",
     "Category not found for this user": "未找到该用户的这一分类",
     "This feed is empty": "该源是空的",
@@ -2645,5 +2646,5 @@ var translationsChecksums = map[string]string{
 	"nl_NL": "a91e2195ac0731a3788405a51c4201e1a89dcce35ef792356e8c17adb57aee97",
 	"pl_PL": "097bc9beac12f33d3a5e5ee98ccba0875e4d1c1bf13e38251a66ac450834c5b3",
 	"ru_RU": "b253bf709a2f4bcac2f894bd1797247481fa7c6b70a0a0d8785d8680be83bac8",
-	"zh_CN": "cb974ad8c374278057db4ca58ff0e59314dc191e2ea59af0d1472a438a9ce3e0",
+	"zh_CN": "5004e07fa535ea56e7fbe1501bb8ff4191d1d214e51b4590110b660994c39f0d",
 }
