@@ -29,6 +29,21 @@ func (s *Storage) CountUnreadEntries(userID int64) int {
 	return n
 }
 
+// CountUnreadFeedEntries returns the number of unread entries in a specific feed.
+func (s *Storage) CountUnreadFeedEntries(userID int64, feedID int64) int {
+	builder := s.NewEntryQueryBuilder(userID)
+	builder.WithFeedID(feedID)
+	builder.WithStatus(model.EntryStatusUnread)
+
+	n, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("unable to count unread entries for user #%d for feed #%d: %v", userID, feedID, err)
+		return 0
+	}
+
+	return n
+}
+
 // NewEntryQueryBuilder returns a new EntryQueryBuilder
 func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)
