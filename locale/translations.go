@@ -387,6 +387,7 @@ var translations = map[string]string{
     "page.edit_user.title": "Edit User: %s",
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Last check:",
+    "page.feeds.unread": "Unread:",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -2639,7 +2640,7 @@ var translations = map[string]string{
 
 var translationsChecksums = map[string]string{
 	"de_DE": "52c82c151a27455501e54a4ea20339c965f030d7204ae9f55bf2639ef396b015",
-	"en_US": "ef73c3934c5df6c2346f96a4eb4b308f84404c58029aac2ee6859bc205ecb6b3",
+	"en_US": "7992fd4e6fafceccbcf0b0972f0c085ad9a0eb7507de60eac407882c1f6457f5",
 	"es_ES": "567fad5046d07efd69b9d29a3e8fa05503f935c02624c71851d9b1b3a8fa82d5",
 	"fr_FR": "11a3f01603a73b4a0c2921aea592bdb24086286f4f1343df4adaeb4a1471c1b9",
 	"it_IT": "19b9614980ded9ee4a5eea1f6623a8d2d4b763ffe81eae633d8c768bb58d6aea",

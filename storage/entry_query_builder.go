@@ -168,6 +168,35 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	return count, nil
 }
 
+// CountEntriesPerFeed count the number of entries in each feed that match the condition.
+func (e *EntryQueryBuilder) CountEntriesPerFeed() (counts map[int64]int, err error) {
+	query := `SELECT feed_id, count(*) FROM entries e LEFT JOIN feeds f ON f.id=e.feed_id WHERE %s GROUP BY e.feed_id`
+	condition := e.buildCondition()
+
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:CountEntriesPerFeed] %s, args=%v", condition, e.args))
+
+	rows, err := e.store.db.Query(fmt.Sprintf(query, condition), e.args...)
+	if err != nil {
+		return nil, fmt.Errorf("unable to count entries per feed: %v", err)
+	}
+	defer rows.Close()
+
+	counts = make(map[int64]int)
+	for rows.Next() {
+		var feedID int64
+		var count int
+
+		err := rows.Scan(&feedID, &count)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
+		}
+
+		counts[feedID] = count
+	}
+
+	return counts, nil
+}
+
 // GetEntry returns a single entry that match the condition.
 func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 	e.limit = 1

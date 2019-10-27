@@ -26,11 +26,6 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feedCountUnread := make(map[int64]int)
-	for _, feed := range feeds {
-		feedCountUnread[feed.ID] = h.store.CountUnreadFeedEntries(user.ID, feed.ID)
-	}
-
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("feeds", feeds)
@@ -39,7 +34,7 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
-	view.Set("feedCountUnread", feedCountUnread)
+	view.Set("feedCountUnread", h.store.CountUnreadEntriesPerFeed(user.ID))
 
 	html.OK(w, r, view.Render("feeds"))
 }
