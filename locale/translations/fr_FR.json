@@ -81,6 +81,7 @@
     "page.edit_user.title": "Modification de l'utilisateur : %s",
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Dernière vérification :",
+    "page.feeds.unread": "Non lus:",
     "page.feeds.error_count": [
         "%d erreur",
         "%d erreurs"

@@ -81,6 +81,7 @@
     "page.edit_user.title": "Editar usuario: %s",
     "page.feeds.title": "Fuentes",
     "page.feeds.last_check": "Última verificación:",
+    "page.feeds.unread": "No leídos:",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"
