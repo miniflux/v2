@@ -285,7 +285,7 @@ function handleFetchOriginalContent() {
 function openOriginalLink() {
     let entryLink = document.querySelector(".entry h1 a");
     if (entryLink !== null) {
-        DomHelper.openNewTab(entryLink.getAttribute("href"));
+        window.location.href = entryLink.getAttribute("href");
         return;
     }
 
