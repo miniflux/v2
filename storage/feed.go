@@ -140,7 +140,7 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN users u ON u.id=f.user_id
 		WHERE f.user_id=$1
-		ORDER BY f.parsing_error_count DESC, lower(f.title) ASC`
+		ORDER BY f.parsing_error_count DESC, unread_count DESC, lower(f.title) ASC`
 
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
