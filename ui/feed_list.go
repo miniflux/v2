@@ -20,7 +20,7 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feeds, err := h.store.Feeds(user.ID)
+	feeds, err := h.store.FeedsWithCounters(user.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -34,7 +34,6 @@ func (h *handler) showFeedsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
-	view.Set("feedCountUnread", h.store.CountUnreadEntriesPerFeed(user.ID))
 
 	html.OK(w, r, view.Render("feeds"))
 }

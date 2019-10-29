@@ -121,6 +121,80 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	return feeds, nil
 }
 
+// FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
+func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
+	feeds := make(model.Feeds, 0)
+	query := `SELECT
+		f.id, f.feed_url, f.site_url, f.title, f.etag_header, f.last_modified_header,
+		f.user_id, f.checked_at at time zone u.timezone,
+		f.parsing_error_count, f.parsing_error_msg,
+		f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
+		f.username, f.password, f.disabled,
+		f.category_id, c.title as category_title,
+		fi.icon_id,
+		u.timezone,
+        (SELECT count(*) FROM entries WHERE entries.feed_id=f.id AND status='unread') as unread_count,
+        (SELECT count(*) FROM entries WHERE entries.feed_id=f.id AND status='read') as read_count
+		FROM feeds f
+		LEFT JOIN categories c ON c.id=f.category_id
+		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN users u ON u.id=f.user_id
+		WHERE f.user_id=$1
+		ORDER BY f.parsing_error_count DESC, lower(f.title) ASC`
+
+	rows, err := s.db.Query(query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch feeds: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var feed model.Feed
+		var iconID interface{}
+		var tz string
+		feed.Category = &model.Category{UserID: userID}
+
+		err := rows.Scan(
+			&feed.ID,
+			&feed.FeedURL,
+			&feed.SiteURL,
+			&feed.Title,
+			&feed.EtagHeader,
+			&feed.LastModifiedHeader,
+			&feed.UserID,
+			&feed.CheckedAt,
+			&feed.ParsingErrorCount,
+			&feed.ParsingErrorMsg,
+			&feed.ScraperRules,
+			&feed.RewriteRules,
+			&feed.Crawler,
+			&feed.UserAgent,
+			&feed.Username,
+			&feed.Password,
+			&feed.Disabled,
+			&feed.Category.ID,
+			&feed.Category.Title,
+			&iconID,
+			&tz,
+			&feed.UnreadCount,
+			&feed.ReadCount,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch feeds row: %v", err)
+		}
+
+		if iconID != nil {
+			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
+		}
+
+		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
+		feeds = append(feeds, &feed)
+	}
+
+	return feeds, nil
+}
+
 // FeedByID returns a feed by the ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	var feed model.Feed
