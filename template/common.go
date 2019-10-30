@@ -87,6 +87,7 @@ var templateCommonMap = map[string]string{
 
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
+    <meta name="google" content="notranslate">
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ route "appIcon" "filename" "favicon-16.png" }}">
@@ -250,6 +251,6 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "93a4873adf5deb99b77f60e71465eab817c32a381de696b93ff27b7eaa47bb3b",
+	"layout":           "010e31c9dde88cb429b21f4b0c24bb3769043a3ef1ef4a57100314f5910c8725",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }
