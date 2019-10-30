@@ -354,6 +354,22 @@ function goToNext() {
     }
 }
 
+function goUp() {
+    if (isListView()) {
+        goToPreviousListItem();
+    } else {
+        window.scrollTo(window.scrollX, window.scrollY - 20);
+    }
+}
+
+function goDown() {
+    if (isListView()) {
+        goToNextListItem();
+    } else {
+        window.scrollTo(window.scrollX, window.scrollY + 20);
+    }
+}
+
 function goToFeedOrFeeds() {
     if (isEntry()) {
         let feedAnchor = document.querySelector("span.entry-website a");

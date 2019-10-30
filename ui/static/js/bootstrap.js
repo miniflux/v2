@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("g s", () => goToPage("settings"));
         keyboardHandler.on("ArrowLeft", () => goToPrevious());
         keyboardHandler.on("ArrowRight", () => goToNext());
-        keyboardHandler.on("k", () => goToPrevious());
+        keyboardHandler.on("k", () => goUp());
         keyboardHandler.on("p", () => goToPrevious());
-        keyboardHandler.on("j", () => goToNext());
+        keyboardHandler.on("j", () => goDown());
         keyboardHandler.on("n", () => goToNext());
         keyboardHandler.on("h", () => goToPage("previous"));
         keyboardHandler.on("l", () => goToPage("next"));
