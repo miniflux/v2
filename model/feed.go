@@ -33,8 +33,8 @@ type Feed struct {
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon"`
-	UnreadCount        int       `json:"unread_count"`
-	ReadCount          int       `json:"read_count"`
+	UnreadCount        int
+	ReadCount          int
 }
 
 func (f *Feed) String() string {
