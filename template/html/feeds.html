@@ -45,6 +45,11 @@
                     <li>
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
+                    {{ if gt .UnreadCount 0 }}
+                    <li>
+                        {{ t "page.feeds.unread" }} <span class="unread-counter">{{ .UnreadCount }}</span>
+                    </li>
+                    {{ end }}
                 </ul>
                 <ul>
                     <li>

@@ -81,6 +81,7 @@
     "page.edit_user.title": "Bewerk gebruiker: %s",
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Laatste update:",
+    "page.feeds.unread": "Ongelezen:",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
