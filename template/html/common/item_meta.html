@@ -2,7 +2,17 @@
 <div class="item-meta">
     <ul>
         <li>
-            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+            {{ if  $.pageEntriesType}}
+                {{ if eq  $.pageEntriesType "all" }}
+                    <a href="{{ route "feedEntriesAll" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+                {{ else if eq  $.pageEntriesType "starred" }}
+                    <a href="{{ route "feedEntriesStarred" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+                {{ else }}
+                    <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+                {{ end }}
+            {{ else }}
+                <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+            {{ end }}
         </li>
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>

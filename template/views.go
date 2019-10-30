@@ -123,9 +123,10 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
-    <div class="items">
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
             <div class="item-header">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
@@ -133,9 +134,19 @@ var templateViewsMap = map[string]string{
                     {{ end }}
                     <a href="{{ route "starredEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
             </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
         </article>
         {{ end }}
     </div>
@@ -204,53 +215,31 @@ var templateViewsMap = map[string]string{
 	"category_entries": `{{ define "title"}}{{ .category.Title }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
-<section class="page-header">
+<section class="page-header clearfix">
     <h1>{{ .category.Title }} ({{ .total }})</h1>
-    <ul>
-    {{ if .entries }}
+    <ul class="left">
         <li>
-            <a href="#"
-                data-action="markPageAsRead"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}"
-                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}" {{ if .showOnlyUnreadEntries }}class="disabled"{{ end }}>{{ t "menu.show_only_unread_entries" }}</a>
         </li>
-    {{ end }}
-    {{ if .showOnlyUnreadEntries }}
         <li>
-            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ t "menu.show_all_entries" }}</a>
+            <a href="{{ route "categoryEntriesStarred" "categoryID" .category.ID }}" {{ if .showOnlyStarredEntries }}class="disabled"{{ end }}>{{ t "menu.show_only_starred_entries" }}</a>
         </li>
-    {{ else }}
         <li>
-            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}" {{ if and (not .showOnlyUnreadEntries) (not .showOnlyStarredEntries) }}class="disabled"{{ end }}>{{ t "menu.show_all_entries" }}</a>
         </li>
-    {{ end }}
     </ul>
 </section>
 
 {{ if not .entries }}
+    {{ if .showOnlyUnreadEntries }}
+    <p class="alert">{{ t "alert.no_unread_category_entry" }}</p>
+    {{ else if .showOnlyStarredEntries }}
+    <p class="alert">{{ t "alert.no_starred_category_entry" }}</p>
+    {{ else }}
     <p class="alert">{{ t "alert.no_category_entry" }}</p>
+    {{ end }}
 {{ else }}
-    <div class="items">
-        {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">{{ .Title }}</a>
-                </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
-        </article>
-        {{ end }}
-    </div>
     <section class="page-footer">
-        {{ if .entries }}
         <ul>
             <li>
                 <a href="#"
@@ -262,7 +251,46 @@ var templateViewsMap = map[string]string{
                     data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
+    </section>
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
+        </article>
         {{ end }}
+    </div>
+    <section class="page-footer">
+        <ul>
+            <li>
+                <a href="#"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+            </li>
+        </ul>
     </section>
     {{ template "pagination" .pagination }}
 {{ end }}
@@ -711,29 +739,18 @@ var templateViewsMap = map[string]string{
 	"feed_entries": `{{ define "title"}}{{ .feed.Title }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
-<section class="page-header">
+<section class="page-header clearfix">
     <h1>{{ .feed.Title }} ({{ .total }})</h1>
-    <ul>
-        {{ if .entries }}
+    <ul class="left">
         <li>
-            <a href="#"
-                data-action="markPageAsRead"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}"
-                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}" {{ if .showOnlyUnreadEntries }}class="disabled"{{ end }}>{{ t "menu.show_only_unread_entries" }}</a>
         </li>
-        {{ end }}
-        {{ if .showOnlyUnreadEntries }}
         <li>
-            <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ t "menu.show_all_entries" }}</a>
+            <a href="{{ route "feedEntriesStarred" "feedID" .feed.ID }}" {{ if .showOnlyStarredEntries }}class="disabled"{{ end }}>{{ t "menu.show_only_starred_entries" }}</a>
         </li>
-        {{ else }}
         <li>
-            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+            <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}" {{ if and (not .showOnlyUnreadEntries) (not .showOnlyStarredEntries) }}class="disabled"{{ end }}>{{ t "menu.show_all_entries" }}</a>
         </li>
-        {{ end }}
         <li>
             <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
         </li>
@@ -760,32 +777,16 @@ var templateViewsMap = map[string]string{
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
 {{ end }}
-
 {{ if not .entries }}
     {{ if .showOnlyUnreadEntries }}
-        <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+        <p class="alert">{{ t "alert.no_unread_feed_entry" }}</p>
+    {{ else if .showOnlyStarredEntries }}
+        <p class="alert">{{ t "alert.no_starred_feed_entry" }}</p>
     {{ else }}
         <p class="alert">{{ t "alert.no_feed_entry" }}</p>
     {{ end }}
 {{ else }}
-    <div class="items">
-        {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}">{{ .Title }}</a>
-                </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
-        </article>
-        {{ end }}
-    </div>
     <section class="page-footer">
-        {{ if .entries }}
         <ul>
             <li>
                 <a href="#"
@@ -797,7 +798,46 @@ var templateViewsMap = map[string]string{
                     data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
+    </section>
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "feedEntry" "feedID" .Feed.ID "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
+        </article>
         {{ end }}
+    </div>
+    <section class="page-footer">
+        <ul>
+            <li>
+                <a href="#"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+            </li>
+        </ul>
     </section>
     {{ template "pagination" .pagination }}
 {{ end }}
@@ -911,9 +951,10 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
-    <div class="items">
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
             <div class="item-header">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
@@ -921,9 +962,19 @@ var templateViewsMap = map[string]string{
                     {{ end }}
                     <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
             </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
         </article>
         {{ end }}
     </div>
@@ -1179,9 +1230,10 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_search_result" }}</p>
 {{ else }}
-    <div class="items">
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
             <div class="item-header">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
@@ -1189,9 +1241,19 @@ var templateViewsMap = map[string]string{
                     {{ end }}
                     <a href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">{{ .Title }}</a>
                 </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
             </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
         </article>
         {{ end }}
     </div>
@@ -1342,6 +1404,124 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
+	"stat": `{{ define "title"}}{{ t "page.stat.title" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.stat.title" }}</h1>
+</section>
+
+<div class='items{{ if ne .view "list" }} masonry col{{ .colCount }}{{ end }}'>
+    <div class="item-sizer"></div>
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.articles" }}
+            </span>
+        </div>
+        <li class="list-body">
+            <ul class="list-item">
+                <a href="{{ route "unread" }}">
+                    <span class="title">{{ t "page.stat.articles.unread" }}</span>
+                    <span class="count">{{ .countUnread }}</span>
+                </a>
+            </ul>
+            <ul class="list-item">
+                    <a href="{{ route "starred" }}">
+                    <span class="title">{{ t "page.stat.articles.starred" }}</span>
+                    <span class="count">{{ .countStarred }}</span>
+                </a>
+            </ul>
+        </li>
+        {{ if gt (len .unreadByCategory) 0 }}
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.categories.unread" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .unreadByCategory }}
+            <ul class="list-item">
+                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">
+                        <span class="title">{{ .Category.Title }}</span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+        {{ end }}
+    </div>
+    {{ if gt (len .unreadByFeed) 0 }}
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.feeds.unread" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .unreadByFeed }}
+            <ul class="list-item">
+                <a href="{{ route "feedEntries" "feedID" .Feed.ID }}">
+                    <span class="title">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                            <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                        {{ end }}
+                        {{ .Feed.Title }}
+                    </span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+    </div>
+    {{ end }}
+    {{ if gt (len .starredByCategory) 0 }}
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.categories.starred" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .starredByCategory }}
+            <ul class="list-item">
+                    <a href="{{ route "categoryEntriesStarred" "categoryID" .Category.ID }}">
+                        <span class="title">{{ .Category.Title }}</span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+    </div>
+    {{ end }}
+    {{ if gt (len .starredByFeed) 0 }}
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.feeds.starred" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .starredByFeed }}
+            <ul class="list-item">
+                <a href="{{ route "feedEntriesStarred" "feedID" .Feed.ID }}">
+                    <span class="title">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                            <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                        {{ end }}
+                        {{ .Feed.Title }}
+                    </span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+    </div>
+    {{ end }}
+</div>
+
+{{ end }}
+`,
 	"unread_entries": `{{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
 {{ define "content"}}
@@ -1374,9 +1554,10 @@ var templateViewsMap = map[string]string{
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
-    <div class="items hide-read-items">
+    <div class='{{ if eq .view "masonry" }}items masonry{{ else }}items hide-read-items{{ end }}'>
+        <div class="item-sizer"></div>
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
             <div class="item-header">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
@@ -1384,9 +1565,19 @@ var templateViewsMap = map[string]string{
                     {{ end }}
                     <a href="{{ route "unreadEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
+                {{ if $.pageEntriesType}}
+                    {{ if eq $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
             </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
         </article>
         {{ end }}
     </div>
@@ -1477,9 +1668,9 @@ var templateViewsMap = map[string]string{
 var templateViewsMapChecksums = map[string]string{
 	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
 	"add_subscription":    "a0f1d2bc02b6adc83dbeae593f74d9b936102cd6dd73302cdbec2137cafdcdd9",
-	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
+	"bookmark_entries":    "2b1b3a0e37df4e9892182bff736558debf5f78c6d8b8df0513239464ddfb29f7",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
-	"category_entries":    "3ec30d2cb97f29514ff61898a4f23d2aa73a24b3468b6d410b1c2d18c8808927",
+	"category_entries":    "9ee4d510dd3c1fbe0764306f87a58388e5e1154b87db370a17c6bb4504a0f401",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
@@ -1487,15 +1678,16 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "34aa0d668b3ea1a1b5fa480c20cebeae729b37010af3bb915d2a9eed73d3b996",
 	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
 	"entry":               "24aeba26ef9a51ce585ca5c4af090f1de7d7bfd7f1e3ff1b63af520e2afa76bd",
-	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
+	"feed_entries":        "d0ea5d83456ee6b75e8b64c7650a7404bb00eb99619ad898d04a56052ecea45b",
 	"feeds":               "55317035a4c008a720294c1858e9dc626f19e222ae41498db67dbb537ba7a456",
-	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
+	"history_entries":     "f30b2a070bbf12b3434f626aaed719a85d956530113a614c52e031a9794743b8",
 	"import":              "5eb56cecaa4d369b9acc991a82be7617710c551089a2e99d34ce8b6e5c37df0a",
 	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
 	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",
-	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
+	"search_entries":      "e7bf267d2eac9d7e5344b2a6be8c00dba1ebf6a6ee4a644b3edd8ea0f3339b0b",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "152143e58d057ea6ab3bfd8dd947bfd70685843ca40e40542484b23849746df4",
-	"unread_entries":      "e38f7ffce17dfad3151b08cd33771a2cefe8ca9db42df04fc98bd1d675dd6075",
+	"stat":                "44d480593cd078b33f9d34b1adb9e4a6bc49bebfb93606d41c5d8dae91fbebe8",
+	"unread_entries":      "00c014ff11c0b17bdfc355bf12effeacb4152b9a59c798829a36decdf47dc4b7",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }

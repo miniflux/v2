@@ -48,9 +48,12 @@
     <header class="header">
         <nav>
             <div class="logo">
-                <a href="{{ route "unread" }}">Mini<span>flux</span></a>
+                <a href="{{ route "stat" }}">Mini<span>flux</span></a>
             </div>
             <ul>
+                <li id="menu-home" {{ if eq .menu "home" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
+                    <a href="{{ route "stat" }}" data-page="home">{{ t "menu.home" }}</a>
+                </li>
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
                     <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
                       {{ if gt .countUnread 0 }}

@@ -512,6 +512,22 @@ function handleConfirmationMessage(linkElement, callback) {
     containerElement.appendChild(questionElement);
 }
 
+function initMasonryLayout() {
+    let layoutCallback;
+    let msnryElement = document.querySelector('.masonry');
+    if (msnryElement) {
+        let msnry = new Masonry(msnryElement, {
+            itemSelector: '.item',
+            columnWidth: '.item-sizer',
+            gutter: 10
+        })
+        layoutCallback = throttle(() => msnry.layout(), 500, 1000);
+        // initialize layout
+        // important for layout of masonry view without images. e.g.: statistics page.
+        layoutCallback();
+    }
+}
+
 function toast(msg) {
     if (!msg) return;
     document.querySelector('.toast-wrap .toast-msg').innerHTML = msg;
@@ -520,4 +536,19 @@ function toast(msg) {
     setTimeout(function () {
         toastWrapper.classList.add('toastAnimate');
     }, 100);
+}
+
+function throttle(fn, delay, atleast) {
+    var timeout = null,
+        startTime = new Date();
+    return function (...args) {
+        var curTime = new Date();
+        clearTimeout(timeout);
+        if (curTime - startTime >= atleast) {
+            fn(...args);
+            startTime = curTime;
+        } else {
+            timeout = setTimeout(() => fn(...args), delay);
+        }
+    }
 }

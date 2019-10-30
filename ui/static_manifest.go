@@ -37,7 +37,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		ShortName:       "Miniflux",
 		Description:     "Minimalist Feed Reader",
 		Display:         "minimal-ui",
-		StartURL:        route.Path(h.router, "unread"),
+		StartURL:        route.Path(h.router, "stat"),
 		ThemeColor:      themeColor,
 		BackgroundColor: themeColor,
 		Icons: []webManifestIcon{

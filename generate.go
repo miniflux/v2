@@ -193,6 +193,7 @@ func main() {
 			"ui/static/js/modal_handler.js",
 			"ui/static/js/app.js",
 			"ui/static/js/bootstrap.js",
+			"ui/static/js/masonry.pkgd.min.js",
 		},
 		"sw": []string{
 			"ui/static/js/sw.js",

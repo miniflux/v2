@@ -67,6 +67,8 @@ func (h *handler) showCategoryEntriesPage(w http.ResponseWriter, r *http.Request
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 	view.Set("showOnlyUnreadEntries", true)
+	view.Set("pageEntriesType", "unread")
+	view.Set("view", "default")
 
 	html.OK(w, r, view.Render("category_entries"))
 }

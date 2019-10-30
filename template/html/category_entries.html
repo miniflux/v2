@@ -1,53 +1,31 @@
 {{ define "title"}}{{ .category.Title }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
-<section class="page-header">
+<section class="page-header clearfix">
     <h1>{{ .category.Title }} ({{ .total }})</h1>
-    <ul>
-    {{ if .entries }}
+    <ul class="left">
         <li>
-            <a href="#"
-                data-action="markPageAsRead"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}"
-                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}" {{ if .showOnlyUnreadEntries }}class="disabled"{{ end }}>{{ t "menu.show_only_unread_entries" }}</a>
         </li>
-    {{ end }}
-    {{ if .showOnlyUnreadEntries }}
         <li>
-            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ t "menu.show_all_entries" }}</a>
+            <a href="{{ route "categoryEntriesStarred" "categoryID" .category.ID }}" {{ if .showOnlyStarredEntries }}class="disabled"{{ end }}>{{ t "menu.show_only_starred_entries" }}</a>
         </li>
-    {{ else }}
         <li>
-            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}" {{ if and (not .showOnlyUnreadEntries) (not .showOnlyStarredEntries) }}class="disabled"{{ end }}>{{ t "menu.show_all_entries" }}</a>
         </li>
-    {{ end }}
     </ul>
 </section>
 
 {{ if not .entries }}
+    {{ if .showOnlyUnreadEntries }}
+    <p class="alert">{{ t "alert.no_unread_category_entry" }}</p>
+    {{ else if .showOnlyStarredEntries }}
+    <p class="alert">{{ t "alert.no_starred_category_entry" }}</p>
+    {{ else }}
     <p class="alert">{{ t "alert.no_category_entry" }}</p>
+    {{ end }}
 {{ else }}
-    <div class="items">
-        {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">{{ .Title }}</a>
-                </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
-        </article>
-        {{ end }}
-    </div>
     <section class="page-footer">
-        {{ if .entries }}
         <ul>
             <li>
                 <a href="#"
@@ -59,7 +37,46 @@
                     data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
+    </section>
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
+        </article>
         {{ end }}
+    </div>
+    <section class="page-footer">
+        <ul>
+            <li>
+                <a href="#"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+            </li>
+        </ul>
     </section>
     {{ template "pagination" .pagination }}
 {{ end }}

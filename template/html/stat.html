@@ -1,0 +1,117 @@
+{{ define "title"}}{{ t "page.stat.title" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.stat.title" }}</h1>
+</section>
+
+<div class='items{{ if ne .view "list" }} masonry col{{ .colCount }}{{ end }}'>
+    <div class="item-sizer"></div>
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.articles" }}
+            </span>
+        </div>
+        <li class="list-body">
+            <ul class="list-item">
+                <a href="{{ route "unread" }}">
+                    <span class="title">{{ t "page.stat.articles.unread" }}</span>
+                    <span class="count">{{ .countUnread }}</span>
+                </a>
+            </ul>
+            <ul class="list-item">
+                    <a href="{{ route "starred" }}">
+                    <span class="title">{{ t "page.stat.articles.starred" }}</span>
+                    <span class="count">{{ .countStarred }}</span>
+                </a>
+            </ul>
+        </li>
+        {{ if gt (len .unreadByCategory) 0 }}
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.categories.unread" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .unreadByCategory }}
+            <ul class="list-item">
+                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">
+                        <span class="title">{{ .Category.Title }}</span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+        {{ end }}
+    </div>
+    {{ if gt (len .unreadByFeed) 0 }}
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.feeds.unread" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .unreadByFeed }}
+            <ul class="list-item">
+                <a href="{{ route "feedEntries" "feedID" .Feed.ID }}">
+                    <span class="title">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                            <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                        {{ end }}
+                        {{ .Feed.Title }}
+                    </span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+    </div>
+    {{ end }}
+    {{ if gt (len .starredByCategory) 0 }}
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.categories.starred" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .starredByCategory }}
+            <ul class="list-item">
+                    <a href="{{ route "categoryEntriesStarred" "categoryID" .Category.ID }}">
+                        <span class="title">{{ .Category.Title }}</span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+    </div>
+    {{ end }}
+    {{ if gt (len .starredByFeed) 0 }}
+    <div class="item statistics-list">
+        <div class="list-header">
+            <span class="item-title">
+                {{ t "page.stat.feeds.starred" }}
+            </span>
+        </div>
+        <li class="list-body">
+            {{ range .starredByFeed }}
+            <ul class="list-item">
+                <a href="{{ route "feedEntriesStarred" "feedID" .Feed.ID }}">
+                    <span class="title">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                            <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                        {{ end }}
+                        {{ .Feed.Title }}
+                    </span>
+                    <span class="count">{{ .Count }}</span>
+                </a>
+            </ul>
+            {{ end }}
+        </li>
+    </div>
+    {{ end }}
+</div>
+
+{{ end }}

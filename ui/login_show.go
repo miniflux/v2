@@ -7,8 +7,8 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
@@ -16,7 +16,7 @@ import (
 
 func (h *handler) showLoginPage(w http.ResponseWriter, r *http.Request) {
 	if request.IsAuthenticated(r) {
-		html.Redirect(w, r, route.Path(h.router, "unread"))
+		html.Redirect(w, r, route.Path(h.router, "stat"))
 		return
 	}
 

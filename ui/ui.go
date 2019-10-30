@@ -41,6 +41,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/mark-all-as-read", handler.markAllAsRead).Name("markAllAsRead").Methods("POST")
 	uiRouter.HandleFunc("/unread", handler.showUnreadPage).Name("unread").Methods("GET")
 	uiRouter.HandleFunc("/unread/entry/{entryID}", handler.showUnreadEntryPage).Name("unreadEntry").Methods("GET")
+	uiRouter.HandleFunc("/stat", handler.showStatPage).Name("stat").Methods("GET")
 
 	// History pages.
 	uiRouter.HandleFunc("/history", handler.showHistoryPage).Name("history").Methods("GET")
@@ -65,6 +66,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/feed/{feedID}/remove", handler.removeFeed).Name("removeFeed").Methods("POST")
 	uiRouter.HandleFunc("/feed/{feedID}/update", handler.updateFeed).Name("updateFeed").Methods("POST")
 	uiRouter.HandleFunc("/feed/{feedID}/entries", handler.showFeedEntriesPage).Name("feedEntries").Methods("GET")
+	uiRouter.HandleFunc("/feed/{feedID}/entries/starred", handler.showFeedEntriesStarredPage).Name("feedEntriesStarred").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/entries/all", handler.showFeedEntriesAllPage).Name("feedEntriesAll").Methods("GET")
 	uiRouter.HandleFunc("/feed/{feedID}/entry/{entryID}", handler.showFeedEntryPage).Name("feedEntry").Methods("GET")
 	uiRouter.HandleFunc("/feed/icon/{iconID}", handler.showIcon).Name("icon").Methods("GET")
@@ -76,6 +78,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/category/save", handler.saveCategory).Name("saveCategory").Methods("POST")
 	uiRouter.HandleFunc("/category/{categoryID}/entries", handler.showCategoryEntriesPage).Name("categoryEntries").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage).Name("categoryEntriesAll").Methods("GET")
+	uiRouter.HandleFunc("/category/{categoryID}/entries/starred", handler.showCategoryEntriesStarredPage).Name("categoryEntriesStarred").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/edit", handler.showEditCategoryPage).Name("editCategory").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/update", handler.updateCategory).Name("updateCategory").Methods("POST")
 	uiRouter.HandleFunc("/category/{categoryID}/remove", handler.removeCategory).Name("removeCategory").Methods("POST")

@@ -26,7 +26,17 @@ var templateCommonMap = map[string]string{
 <div class="item-meta">
     <ul>
         <li>
-            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+            {{ if  $.pageEntriesType}}
+                {{ if eq  $.pageEntriesType "all" }}
+                    <a href="{{ route "feedEntriesAll" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+                {{ else if eq  $.pageEntriesType "starred" }}
+                    <a href="{{ route "feedEntriesStarred" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+                {{ else }}
+                    <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+                {{ end }}
+            {{ else }}
+                <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+            {{ end }}
         </li>
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
@@ -122,9 +132,12 @@ var templateCommonMap = map[string]string{
     <header class="header">
         <nav>
             <div class="logo">
-                <a href="{{ route "unread" }}">Mini<span>flux</span></a>
+                <a href="{{ route "stat" }}">Mini<span>flux</span></a>
             </div>
             <ul>
+                <li id="menu-home" {{ if eq .menu "home" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
+                    <a href="{{ route "stat" }}" data-page="home">{{ t "menu.home" }}</a>
+                </li>
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
                     <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
                       {{ if gt .countUnread 0 }}
@@ -249,7 +262,7 @@ var templateCommonMap = map[string]string{
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
-	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "93a4873adf5deb99b77f60e71465eab817c32a381de696b93ff27b7eaa47bb3b",
+	"item_meta":        "58b2b18bf338ab72d7dbfd54d69bd0f97cdd8869912bceccf6463df171c23bfd",
+	"layout":           "d48ea83fb1ddae1f3011d8dd79e3715feaea136569c8ec3cedd49a06f0519ce5",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 }

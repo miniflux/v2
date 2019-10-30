@@ -1,4 +1,4 @@
-package ui  // import "miniflux.app/ui"
+package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
@@ -60,5 +60,5 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	html.Redirect(w, r, route.Path(h.router, "unread"))
+	html.Redirect(w, r, route.Path(h.router, "stat"))
 }

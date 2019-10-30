@@ -21,9 +21,10 @@
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
-    <div class="items">
+    <div class='items{{ if eq .view "masonry" }} masonry{{ end }}'>
+        <div class="item-sizer"></div>
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item touch-item item-status-{{ .Status }}{{ if .Starred }} item-starred{{ end }}" data-id="{{ .ID }}">
             <div class="item-header">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
@@ -31,9 +32,19 @@
                     {{ end }}
                     <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
+                {{ if  $.pageEntriesType}}
+                    {{ if eq  $.pageEntriesType "all" }}
+                    <span class="category"><a href="{{ route "categoryEntriesAll" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else if eq  $.pageEntriesType "starred" }}
+                    <span class="category"><a href="{{ route "categoryEntriesStarred" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ else }}
+                    <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                    {{ end }}
+                {{ else }}
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+                {{ end }}
             </div>
-            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry "pageEntriesType" $.pageEntriesType }}
         </article>
         {{ end }}
     </div>

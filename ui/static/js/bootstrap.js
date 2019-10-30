@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     handleSubmitButtons();
-
+    initMasonryLayout();
+    
     if (!document.querySelector("body[data-disable-keyboard-shortcuts=true]")) {
         let keyboardHandler = new KeyboardHandler();
         keyboardHandler.on("g u", () => goToPage("unread"));
