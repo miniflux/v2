@@ -12,7 +12,6 @@ import (
 	"github.com/lib/pq"
 
 	"miniflux.app/model"
-	"miniflux.app/timer"
 	"miniflux.app/timezone"
 )
 
@@ -158,8 +157,6 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	query := `SELECT count(*) FROM entries e LEFT JOIN feeds f ON f.id=e.feed_id WHERE %s`
 	condition := e.buildCondition()
 
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:CountEntries] %s, args=%v", condition, e.args))
-
 	err = e.store.db.QueryRow(fmt.Sprintf(query, condition), e.args...).Scan(&count)
 	if err != nil {
 		return 0, fmt.Errorf("unable to count entries: %v", err)
@@ -209,8 +206,6 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	condition := e.buildCondition()
 	sorting := e.buildSorting()
 	query = fmt.Sprintf(query, condition, sorting)
-
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:GetEntries] %s, args=%v, sorting=%s", condition, e.args, sorting))
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
@@ -285,9 +280,6 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 
 	condition := e.buildCondition()
 	query = fmt.Sprintf(query, condition, e.buildSorting())
-	// log.Println(query)
-
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryQueryBuilder:GetEntryIDs] condition=%s, args=%v", condition, e.args))
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
