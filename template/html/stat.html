@@ -4,11 +4,14 @@
 <section class="page-header">
     <h1>{{ t "page.stat.title" }}</h1>
 </section>
-
-<div class='items{{ if ne .view "list" }} masonry col{{ .colCount }}{{ end }}'>
+{{ if and (eq .countUnread 0) (eq .countStarred 0) }}
+    <p class="alert alert-info">{{ t "alert.no_unread_entry" }}</p>
+{{ else }}
+<div class='items{{ if ne .view "list" }} masonry col-2{{ end }}'>
     <div class="item-sizer"></div>
+    {{ if gt (len .unreadByCategory) 0 }}
     <div class="item statistics-list">
-        <div class="list-header">
+        <!-- <div class="list-header">
             <span class="item-title">
                 {{ t "page.stat.articles" }}
             </span>
@@ -26,8 +29,7 @@
                     <span class="count">{{ .countStarred }}</span>
                 </a>
             </ul>
-        </li>
-        {{ if gt (len .unreadByCategory) 0 }}
+        </li> -->
         <div class="list-header">
             <span class="item-title">
                 {{ t "page.stat.categories.unread" }}
@@ -43,8 +45,8 @@
             </ul>
             {{ end }}
         </li>
-        {{ end }}
     </div>
+    {{ end }}
     {{ if gt (len .unreadByFeed) 0 }}
     <div class="item statistics-list">
         <div class="list-header">
@@ -113,5 +115,6 @@
     </div>
     {{ end }}
 </div>
+{{ end }}
 
 {{ end }}

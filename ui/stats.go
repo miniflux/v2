@@ -64,19 +64,6 @@ func (h *handler) showStatPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// colCount := 1
-	// if len(unreadByFeed) > 0 {
-	// 	colCount++
-	// }
-	// if len(starredByFeed) > 0 {
-	// 	colCount++
-	// }
-	// if len(starredByCategory) > 0 {
-	// 	colCount++
-	// }
-	colCount := 2
-
-	view.Set("colCount", colCount)
 	view.Set("unreadByFeed", unreadByFeed)
 	view.Set("unreadByCategory", unreadByCategory)
 	view.Set("starredByFeed", starredByFeed)

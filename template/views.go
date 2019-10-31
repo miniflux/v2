@@ -1410,11 +1410,14 @@ var templateViewsMap = map[string]string{
 <section class="page-header">
     <h1>{{ t "page.stat.title" }}</h1>
 </section>
-
-<div class='items{{ if ne .view "list" }} masonry col{{ .colCount }}{{ end }}'>
+{{ if and (eq .countUnread 0) (eq .countStarred 0) }}
+    <p class="alert alert-info">{{ t "alert.no_unread_entry" }}</p>
+{{ else }}
+<div class='items{{ if ne .view "list" }} masonry col-2{{ end }}'>
     <div class="item-sizer"></div>
+    {{ if gt (len .unreadByCategory) 0 }}
     <div class="item statistics-list">
-        <div class="list-header">
+        <!-- <div class="list-header">
             <span class="item-title">
                 {{ t "page.stat.articles" }}
             </span>
@@ -1432,8 +1435,7 @@ var templateViewsMap = map[string]string{
                     <span class="count">{{ .countStarred }}</span>
                 </a>
             </ul>
-        </li>
-        {{ if gt (len .unreadByCategory) 0 }}
+        </li> -->
         <div class="list-header">
             <span class="item-title">
                 {{ t "page.stat.categories.unread" }}
@@ -1449,8 +1451,8 @@ var templateViewsMap = map[string]string{
             </ul>
             {{ end }}
         </li>
-        {{ end }}
     </div>
+    {{ end }}
     {{ if gt (len .unreadByFeed) 0 }}
     <div class="item statistics-list">
         <div class="list-header">
@@ -1519,6 +1521,7 @@ var templateViewsMap = map[string]string{
     </div>
     {{ end }}
 </div>
+{{ end }}
 
 {{ end }}
 `,
@@ -1687,7 +1690,7 @@ var templateViewsMapChecksums = map[string]string{
 	"search_entries":      "e7bf267d2eac9d7e5344b2a6be8c00dba1ebf6a6ee4a644b3edd8ea0f3339b0b",
 	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
 	"settings":            "152143e58d057ea6ab3bfd8dd947bfd70685843ca40e40542484b23849746df4",
-	"stat":                "44d480593cd078b33f9d34b1adb9e4a6bc49bebfb93606d41c5d8dae91fbebe8",
+	"stat":                "78a6d8989f09ae30811c8ea0d9952d499e8890b8e08c2883642aaec808ed96e8",
 	"unread_entries":      "00c014ff11c0b17bdfc355bf12effeacb4152b9a59c798829a36decdf47dc4b7",
 	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
 }
