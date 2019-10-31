@@ -75,7 +75,7 @@ function handleFetchOriginalContent(){if(isListView()){return;}
 let element=document.querySelector("a[data-fetch-content-entry]");if(!element){return;}
 if(element.dataset.completed){return;}
 element.innerHTML=element.dataset.labelLoading;let request=new RequestBuilder(element.dataset.fetchContentUrl);request.withCallback((response)=>{element.innerHTML=element.dataset.labelDone;element.dataset.completed=true;response.json().then((data)=>{if(data.hasOwnProperty("content")){document.querySelector(".entry-content").innerHTML=data.content;}});});request.execute();}
-function openOriginalLink(){let entryLink=document.querySelector(".entry h1 a");if(entryLink!==null){DomHelper.openNewTab(entryLink.getAttribute("href"));return;}
+function openOriginalLink(){let entryLink=document.querySelector(".entry h1 a");if(entryLink!==null){window.location.href=entryLink.getAttribute("href");return;}
 let currentItemOriginalLink=document.querySelector(".current-item a[data-original-link]");if(currentItemOriginalLink!==null){DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));let currentItem=document.querySelector(".current-item");goToNextListItem();markEntryAsRead(currentItem);}}
 function openSelectedItem(){let currentItemLink=document.querySelector(".current-item .item-title a");if(currentItemLink!==null){window.location.href=currentItemLink.getAttribute("href");}}
 function unsubscribeFromFeed(){let unsubscribeLinks=document.querySelectorAll("[data-action=remove-feed]");if(unsubscribeLinks.length===1){let unsubscribeLink=unsubscribeLinks[0];let request=new RequestBuilder(unsubscribeLink.dataset.url);request.withCallback(()=>{if(unsubscribeLink.dataset.redirectUrl){window.location.href=unsubscribeLink.dataset.redirectUrl;}else{window.location.reload();}});request.execute();}}
@@ -106,6 +106,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "a42ba7e5f07586c160c427db8329463bed97fc88e7948c1c7ad9c2e698f620d8",
+	"app": "9689f826a27ae23590f2315519b9850acacf7b357c7cae2bddaa64805c2877ce",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
