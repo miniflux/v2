@@ -398,6 +398,8 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if entry == nil {
+		logger.Debug("[Fever] Marking entry #%d but not found, ignored", entryID)
+		json.OK(w, r, newBaseResponse())
 		return
 	}
 
