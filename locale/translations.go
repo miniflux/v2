@@ -194,7 +194,7 @@ var translations = map[string]string{
     "error.user_already_exists": "Dieser Benutzer existiert bereits.",
     "error.unable_to_create_user": "Dieser Benutzer kann nicht erstellt werden.",
     "error.unable_to_update_user": "Dieser Benutzer konnte nicht aktualisiert werden.",
-    "error.unable_to_update_feed": "Dieser Feed konnte nicht aktualisiert werden.",
+    "error.unable_to_update_feed": "Dieses Abonnement konnte nicht aktualisiert werden.",
     "error.subscription_not_found": "Es wurden keine Abonnements gefunden.",
     "error.empty_file": "Diese Datei ist leer.",
     "error.bad_credentials": "Benutzername oder Passwort ungültig.",
@@ -215,7 +215,7 @@ var translations = map[string]string{
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.rewrite_rules": "Umschreiberegeln",
-    "form.feed.label.disabled": "Aktualisieren Sie diesen Feed nicht",
+    "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.category.label.title": "Titel",
     "form.user.label.username": "Benutzername",
     "form.user.label.password": "Passwort",
@@ -2647,7 +2647,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "c743f9eeca5d486c7b788e6ab20cf9f859e6c2138563d09599220fe40b3e25b5",
+	"de_DE": "805b758dbe45e62583375c8ecdbbc48019ff9745e4a6f4bc481ad7cb8bf79005",
 	"en_US": "7992fd4e6fafceccbcf0b0972f0c085ad9a0eb7507de60eac407882c1f6457f5",
 	"es_ES": "e97765769afac01f4fd4cf868fa75657bd4d4e63999d9145a42d4de4248a9b2a",
 	"fr_FR": "50146f82d9b8e9ab69a5b3950827f7db47ba590ef074cf7f78b18f7e26fb0074",
