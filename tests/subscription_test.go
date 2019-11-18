@@ -21,8 +21,8 @@ func TestDiscoverSubscriptions(t *testing.T) {
 		t.Fatalf(`Invalid number of subscriptions, got "%v" instead of "%v"`, len(subscriptions), 2)
 	}
 
-	if subscriptions[0].Title != testFeedTitle {
-		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, subscriptions[0].Title, testFeedTitle)
+	if subscriptions[0].Title != testSubscriptionTitle {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, subscriptions[0].Title, testSubscriptionTitle)
 	}
 
 	if subscriptions[0].Type != "atom" {

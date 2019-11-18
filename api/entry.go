@@ -164,7 +164,7 @@ func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
 func (h *handler) setEntryStatus(w http.ResponseWriter, r *http.Request) {
 	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
 	if err != nil {
-		json.BadRequest(w , r, errors.New("Invalid JSON payload"))
+		json.BadRequest(w, r, errors.New("Invalid JSON payload"))
 		return
 	}
 
@@ -193,23 +193,28 @@ func (h *handler) toggleBookmark(w http.ResponseWriter, r *http.Request) {
 
 func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0)
-	if beforeEntryID != 0 {
+	if beforeEntryID > 0 {
 		builder.BeforeEntryID(beforeEntryID)
 	}
 
 	afterEntryID := request.QueryInt64Param(r, "after_entry_id", 0)
-	if afterEntryID != 0 {
+	if afterEntryID > 0 {
 		builder.AfterEntryID(afterEntryID)
 	}
 
 	beforeTimestamp := request.QueryInt64Param(r, "before", 0)
-	if beforeTimestamp != 0 {
+	if beforeTimestamp > 0 {
 		builder.BeforeDate(time.Unix(beforeTimestamp, 0))
 	}
 
 	afterTimestamp := request.QueryInt64Param(r, "after", 0)
-	if afterTimestamp != 0 {
+	if afterTimestamp > 0 {
 		builder.AfterDate(time.Unix(afterTimestamp, 0))
+	}
+
+	categoryID := request.QueryInt64Param(r, "category_id", 0)
+	if categoryID > 0 {
+		builder.WithCategoryID(categoryID)
 	}
 
 	if request.HasQueryParam(r, "starred") {
