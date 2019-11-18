@@ -8,22 +8,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.about.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.preferences" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        {{ if .user.IsAdmin }}
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        {{ end }}
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <div class="panel">
@@ -345,23 +330,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.new_user.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <form action="{{ route "saveUser" }}" method="post" autocomplete="off">
@@ -531,26 +500,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.edit_user.title" .selected_user.Username }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <form action="{{ route "updateUser" "userID" .selected_user.ID }}" method="post" autocomplete="off">
@@ -983,22 +933,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.integrations.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        {{ if .user.IsAdmin }}
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        {{ end }}
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <form method="post" autocomplete="off" action="{{ route "updateIntegration" }}">
@@ -1205,25 +1140,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.sessions.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        {{ if .user.IsAdmin }}
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
-        </li>
-        {{ end }}
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <table>
@@ -1262,22 +1179,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.settings.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        {{ if .user.IsAdmin }}
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        {{ end }}
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <form method="post" autocomplete="off" action="{{ route "updateSettings" }}">
@@ -1413,23 +1315,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.users.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 {{ if eq (len .users) 1 }}
@@ -1475,27 +1361,27 @@ var templateViewsMap = map[string]string{
 }
 
 var templateViewsMapChecksums = map[string]string{
-	"about":               "844e3313c33ae31a74b904f6ef5d60299773620d8450da6f760f9f317217c51e",
+	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
 	"add_subscription":    "a0f1d2bc02b6adc83dbeae593f74d9b936102cd6dd73302cdbec2137cafdcdd9",
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
 	"categories":          "642ee3cddbd825ee6ab5a77caa0d371096b55de0f1bd4ae3055b8c8a70507d8d",
 	"category_entries":    "3ec30d2cb97f29514ff61898a4f23d2aa73a24b3468b6d410b1c2d18c8808927",
 	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
-	"create_user":         "1e940be3afefc0a5c6273bbadcddc1e29811e9548e5227ac2adfe697ca5ce081",
+	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "daf073d2944a180ce5aaeb80b597eb69597a50dff55a9a1d6cf7938b48d768cb",
 	"edit_feed":           "34aa0d668b3ea1a1b5fa480c20cebeae729b37010af3bb915d2a9eed73d3b996",
-	"edit_user":           "f4f99412ba771cfca2a2a42778b023b413c5494e9a287053ba8cf380c2865c5f",
+	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
 	"entry":               "24aeba26ef9a51ce585ca5c4af090f1de7d7bfd7f1e3ff1b63af520e2afa76bd",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "55317035a4c008a720294c1858e9dc626f19e222ae41498db67dbb537ba7a456",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
 	"import":              "5eb56cecaa4d369b9acc991a82be7617710c551089a2e99d34ce8b6e5c37df0a",
-	"integrations":        "f85b4a48ab1fc13b8ca94bfbbc44bd5e8784f35b26a63ec32cbe82b96b45e008",
+	"integrations":        "6104ff6ff3ac3c1ae5e850c78250aab6e99e2342a337589f3848459fa333766a",
 	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",
 	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
-	"sessions":            "1b3ec0970a4111b81f86d6ed187bb410f88972e2ede6723b9febcc4c7e5fc921",
-	"settings":            "152143e58d057ea6ab3bfd8dd947bfd70685843ca40e40542484b23849746df4",
+	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
+	"settings":            "56f7c06f24eef317353582b0191aa9a5985f46ed755accf97e723ceb4bba4469",
 	"unread_entries":      "e38f7ffce17dfad3151b08cd33771a2cefe8ca9db42df04fc98bd1d675dd6075",
-	"users":               "4b56cc76fbcc424e7c870d0efca93bb44dbfcc2a08b685cf799c773fbb8dfb2f",
+	"users":               "17d0b7c760557e20f888d83d6a1b0d4506dab071a593cc42080ec0dbf16adf9e",
 }

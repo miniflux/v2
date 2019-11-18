@@ -3,22 +3,7 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.integrations.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        {{ if .user.IsAdmin }}
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        {{ end }}
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <form method="post" autocomplete="off" action="{{ route "updateIntegration" }}">

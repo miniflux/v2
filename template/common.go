@@ -246,6 +246,30 @@ var templateCommonMap = map[string]string{
 </div>
 {{ end }}
 `,
+	"settings_menu": `{{ define "settings_menu" }}
+<ul>
+    <li>
+        <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
+    </li>
+    {{ if .user.IsAdmin }}
+        <li>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
+        </li>
+    {{ end }}
+    <li>
+        <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
+    </li>
+</ul>
+{{ end }}`,
 }
 
 var templateCommonMapChecksums = map[string]string{
@@ -253,4 +277,5 @@ var templateCommonMapChecksums = map[string]string{
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
 	"layout":           "010e31c9dde88cb429b21f4b0c24bb3769043a3ef1ef4a57100314f5910c8725",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
+	"settings_menu":    "78e5a487ede18610b23db74184dab023170f9e083cc0625bc2c874d1eea1a4ce",
 }
