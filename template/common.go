@@ -22,6 +22,62 @@ var templateCommonMap = map[string]string{
     </div>
 </div>
 {{ end }}`,
+	"feed_list": `{{ define "feed_list" }}
+    <div class="items">
+        {{ range .feeds }}
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if .Icon }}
+                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
+                    {{ end }}
+                    {{ if .Disabled }} 🚫 {{ end }}
+                    <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="feed-entries-counter">
+                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                </span>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
+                </span>
+            </div>
+            <div class="item-meta">
+                <ul>
+                    <li>
+                        <a href="{{ .SiteURL }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
+                    </li>
+                    <li>
+                        {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ t "menu.refresh_feed" }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ t "menu.edit_feed" }}</a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            data-confirm="true"
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}"
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ t "action.remove" }}</a>
+                    </li>
+                </ul>
+            </div>
+            {{ if ne .ParsingErrorCount 0 }}
+                <div class="parsing-error">
+                    <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "page.feeds.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
+                    - <small class="parsing-error-message">{{ .ParsingErrorMsg }}</small>
+                </div>
+            {{ end }}
+        </article>
+        {{ end }}
+    </div>
+{{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
 <div class="item-meta">
     <ul>
@@ -274,6 +330,7 @@ var templateCommonMap = map[string]string{
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
+	"feed_list":        "7b7ea2c7df07d048c83d86237d5b5e41bddce561273c652d9265950093ca261b",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
 	"layout":           "010e31c9dde88cb429b21f4b0c24bb3769043a3ef1ef4a57100314f5910c8725",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",

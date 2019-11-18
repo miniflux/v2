@@ -71,6 +71,7 @@
     "page.starred.title": "星标",
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
+    "page.categories.feeds": "查看订阅",
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
@@ -171,6 +172,7 @@
     "alert.no_history": "目前没有历史",
     "alert.feed_error": "该源存在问题",
     "alert.no_search_result": "该搜索没有结果",
+    "alert.no_feed_in_category": "没有该类别的订阅。",
     "alert.no_unread_entry": "目前没有未读文章",
     "alert.no_user": "您是目前仅有的用户",
     "alert.account_unlinked": "您的外部帐户现已解除关联！",

@@ -76,6 +76,7 @@ var translations = map[string]string{
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
     "page.categories.no_feed": "Kein Abonnement.",
+    "page.categories.feeds": "Siehe Abonnements",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."
@@ -175,6 +176,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "Es befindet sich kein Artikel in dieser Kategorie.",
     "alert.no_feed_entry": "Es existiert kein Artikel für dieses Abonnement.",
     "alert.no_feed": "Es sind keine Abonnements vorhanden.",
+    "alert.no_feed_in_category": "Für diese Kategorie gibt es kein Abonnement.",
     "alert.no_history": "Es existiert zur Zeit kein Verlauf.",
     "alert.feed_error": "Es gibt ein Problem mit diesem Abonnement",
     "alert.no_search_result": "Es gibt kein Ergebnis für diese Suche.",
@@ -379,6 +381,7 @@ var translations = map[string]string{
     "page.starred.title": "Starred",
     "page.categories.title": "Categories",
     "page.categories.no_feed": "No feed.",
+    "page.categories.feeds": "See subscriptions",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."
@@ -478,6 +481,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "There are no articles in this category.",
     "alert.no_feed_entry": "There are no articles for this feed.",
     "alert.no_feed": "You don't have any subscriptions.",
+    "alert.no_feed_in_category": "There is no subscription for this category.",
     "alert.no_history": "There is no history at the moment.",
     "alert.feed_error": "There is a problem with this feed",
     "alert.no_search_result": "There are no results for this search.",
@@ -662,6 +666,7 @@ var translations = map[string]string{
     "page.starred.title": "Marcadores",
     "page.categories.title": "Categorias",
     "page.categories.no_feed": "No fuente.",
+    "page.categories.feeds": "Ver suscripciones",
     "page.categories.feed_count": [
         "Hay %d fuente.",
         "Hay %d fuentes."
@@ -761,6 +766,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "No hay artículos en esta categoria.",
     "alert.no_feed_entry": "No hay artículos para esta fuente.",
     "alert.no_feed": "No tienes suscripciones.",
+    "alert.no_feed_in_category": "No hay suscripción para esta categoría.",
     "alert.no_history": "No hay historial en este momento.",
     "alert.feed_error": "Hay un problema con esta fuente.",
     "alert.no_search_result": "No hay resultados para esta búsqueda.",
@@ -945,6 +951,7 @@ var translations = map[string]string{
     "page.starred.title": "Favoris",
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
+    "page.categories.feeds": "Voir les abonnements",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
@@ -1044,6 +1051,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "Il n'y a aucun article dans cette catégorie.",
     "alert.no_feed_entry": "Il n'y a aucun article pour cet abonnement.",
     "alert.no_feed": "Vous n'avez aucun abonnement.",
+    "alert.no_feed_in_category": "Il n'y a pas d'abonnement pour cette catégorie.",
     "alert.no_history": "Il n'y a aucun historique pour le moment.",
     "alert.feed_error": "Il y a un problème avec cet abonnement",
     "alert.no_search_result": "Il n'y a aucun résultat pour cette recherche.",
@@ -1248,6 +1256,7 @@ var translations = map[string]string{
     "page.starred.title": "Preferiti",
     "page.categories.title": "Categorie",
     "page.categories.no_feed": "Nessun feed.",
+    "page.categories.feeds": "Vedi abbonamenti",
     "page.categories.feed_count": [
         "C'è %d feed.",
         "Ci sono %d feed."
@@ -1347,6 +1356,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "Questa categoria non contiene alcun articolo.",
     "alert.no_feed_entry": "Questo feed non contiene alcun articolo.",
     "alert.no_feed": "Nessun feed disponibile.",
+    "alert.no_feed_in_category": "Non esiste un abbonamento per questa categoria.",
     "alert.no_history": "La tua cronologia al momento è vuota.",
     "alert.feed_error": "Sembra ci sia un problema con questo feed",
     "alert.no_search_result": "La ricerca non ha prodotto risultati.",
@@ -1531,6 +1541,7 @@ var translations = map[string]string{
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
     "page.categories.no_feed": "Geen feeds.",
+    "page.categories.feeds": "Zie abonnementen",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."
@@ -1630,6 +1641,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "Deze categorie bevat geen feeds.",
     "alert.no_feed_entry": "Er zijn geen artikelen in deze feed.",
     "alert.no_feed": "Je hebt nog geen feeds geabboneerd staan.",
+    "alert.no_feed_in_category": "Er is geen abonnement voor deze categorie.",
     "alert.no_history": "Geschiedenis is op dit moment leeg.",
     "alert.feed_error": "Er is een probleem met deze feed",
     "alert.no_search_result": "Er is geen resultaat voor deze zoekopdracht.",
@@ -1832,6 +1844,7 @@ var translations = map[string]string{
     "page.starred.title": "Oznaczone gwiazdką",
     "page.categories.title": "Kategorie",
     "page.categories.no_feed": "Brak kanałów.",
+    "page.categories.feeds": "Zobacz subskrypcje",
     "page.categories.feed_count": [
         "Jest %d kanał.",
         "Są %d kanały.",
@@ -1933,6 +1946,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "W tej kategorii nie ma żadnych artykułów",
     "alert.no_feed_entry": "Nie ma artykułu dla tego kanału.",
     "alert.no_feed": "Nie masz żadnej subskrypcji.",
+    "alert.no_feed_in_category": "Nie ma subskrypcji dla tej kategorii.",
     "alert.no_history": "Obecnie nie ma żadnej historii.",
     "alert.feed_error": "Z tym kanałem jest problem",
     "alert.no_search_result": "Brak wyników dla tego wyszukiwania.",
@@ -2141,6 +2155,7 @@ var translations = map[string]string{
     "page.starred.title": "Избранное",
     "page.categories.title": "Категории",
     "page.categories.no_feed": "Нет подписок.",
+    "page.categories.feeds": "Посмотреть подписку",
     "page.categories.feed_count": [
         "Есть %d подписка.",
         "Есть %d подписки.",
@@ -2242,6 +2257,7 @@ var translations = map[string]string{
     "alert.no_category_entry": "В этой категории нет статей.",
     "alert.no_feed_entry": "В этой подписке отсутствуют статьи.",
     "alert.no_feed": "У вас нет ни одной подписки.",
+    "alert.no_feed_in_category": "Для этой категории нет подписки.",
     "alert.no_history": "Истории пока нет.",
     "alert.feed_error": "С этой подпиской есть проблема",
     "alert.no_search_result": "Нет результатов для данного поискового запроса.",
@@ -2432,6 +2448,7 @@ var translations = map[string]string{
     "page.starred.title": "星标",
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
+    "page.categories.feeds": "查看订阅",
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
@@ -2532,6 +2549,7 @@ var translations = map[string]string{
     "alert.no_history": "目前没有历史",
     "alert.feed_error": "该源存在问题",
     "alert.no_search_result": "该搜索没有结果",
+    "alert.no_feed_in_category": "没有该类别的订阅。",
     "alert.no_unread_entry": "目前没有未读文章",
     "alert.no_user": "您是目前仅有的用户",
     "alert.account_unlinked": "您的外部帐户现已解除关联！",
@@ -2656,13 +2674,13 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "ec2dd4be11e4bb29efaa6cd124a1edd2e5271889d31d7fda92781be014388387",
-	"en_US": "8010481cea76d28aad37c00fb0f481514f81c1581a6172b4a4ad17ad61e2eee0",
-	"es_ES": "be58c4452068277826022931d86bd561fe150250756a6254985de5aa6d8129b7",
-	"fr_FR": "4d3fa6084994a7b3121dd9c1f3baf8c1b0e519f6012aeaa805e5132ec1eaa60e",
-	"it_IT": "3246b020b7ea01f762f19c9ee2825605b0e42f6ffdd34fd6306193597650f8d7",
-	"nl_NL": "c58d1100bcd345824086d0df255381f7789379d0e2b95e146be009ad82e0aa5f",
-	"pl_PL": "b438c4119ed5685950293f5c3c629a940c6475ca243c53f65879dfca6fc8cdd6",
-	"ru_RU": "5b42510b54c678563791010f4c1fad1a024fa7029d268667bbfde1e7a1f02d88",
-	"zh_CN": "30f72b341911682877bb86b0e82e9127be833625502ae41e9530447bb2f27de3",
+	"de_DE": "08618fb4a57b1d427ec627ac6c46958bbe16b262a588aa640ad5be8b5e15562d",
+	"en_US": "a611f133d106bb896bbe15df036838f33b7c7848abbf15829e918233e91783eb",
+	"es_ES": "f47862bcd9af07d96510c3c24f89f0718f1325cde375954babe73766c62a6eca",
+	"fr_FR": "0aca382d06630935b905452960a8dceac6f062cd5ebe2967b3837006a282f171",
+	"it_IT": "60716683ca6d6e311154900508c0f8c389664096f3ab41eb9dd745914d497034",
+	"nl_NL": "516c91a2be0f0b5c09e0183d61e53bfce2c8f60b8a5cb06593f0170ad6043f99",
+	"pl_PL": "1fcf9422514fc7ebac57355a50c37d146fad6d19b879ba0dad29c49dfb20e00a",
+	"ru_RU": "e701297d7c1b456dda066877bc5c6d18c9523f96eff3b4d53d13c6e6bf8f84a6",
+	"zh_CN": "4da796ef2fdaf1898d2a17be6668b8308daebc97185bf69a698809067856c6ce",
 }

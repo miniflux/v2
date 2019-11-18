@@ -71,6 +71,7 @@
     "page.starred.title": "Избранное",
     "page.categories.title": "Категории",
     "page.categories.no_feed": "Нет подписок.",
+    "page.categories.feeds": "Посмотреть подписку",
     "page.categories.feed_count": [
         "Есть %d подписка.",
         "Есть %d подписки.",
@@ -172,6 +173,7 @@
     "alert.no_category_entry": "В этой категории нет статей.",
     "alert.no_feed_entry": "В этой подписке отсутствуют статьи.",
     "alert.no_feed": "У вас нет ни одной подписки.",
+    "alert.no_feed_in_category": "Для этой категории нет подписки.",
     "alert.no_history": "Истории пока нет.",
     "alert.feed_error": "С этой подпиской есть проблема",
     "alert.no_search_result": "Нет результатов для данного поискового запроса.",

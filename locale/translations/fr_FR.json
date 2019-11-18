@@ -71,6 +71,7 @@
     "page.starred.title": "Favoris",
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
+    "page.categories.feeds": "Voir les abonnements",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
@@ -170,6 +171,7 @@
     "alert.no_category_entry": "Il n'y a aucun article dans cette catégorie.",
     "alert.no_feed_entry": "Il n'y a aucun article pour cet abonnement.",
     "alert.no_feed": "Vous n'avez aucun abonnement.",
+    "alert.no_feed_in_category": "Il n'y a pas d'abonnement pour cette catégorie.",
     "alert.no_history": "Il n'y a aucun historique pour le moment.",
     "alert.feed_error": "Il y a un problème avec cet abonnement",
     "alert.no_search_result": "Il n'y a aucun résultat pour cette recherche.",
