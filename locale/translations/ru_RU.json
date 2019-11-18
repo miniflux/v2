@@ -82,7 +82,8 @@
     "page.edit_user.title": "Изменить пользователя: %s",
     "page.feeds.title": "Подписки",
     "page.feeds.last_check": "Последняя проверка:",
-    "page.feeds.unread": "Непрочитано:",
+    "page.feeds.unread_counter": "Количество непрочитанных записей",
+    "page.feeds.read_counter": "Количество прочитанных записей",
     "page.feeds.error_count": [
         "%d ошибка",
         "%d ошибки",

@@ -82,7 +82,8 @@
     "page.edit_user.title": "Edytuj użytkownika: %s",
     "page.feeds.title": "Kanały",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
-    "page.feeds.unread": "Nieprzeczytane:",
+    "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
+    "page.feeds.read_counter": "Liczba przeczytanych wpisów",
     "page.feeds.error_count": [
         "%d błąd",
         "%d błąd",

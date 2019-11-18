@@ -80,7 +80,8 @@
     "page.edit_user.title": "编辑用户 : %s",
     "page.feeds.title": "源",
     "page.feeds.last_check": "最后检查时间：",
-    "page.feeds.unread": "未读:",
+    "page.feeds.unread_counter": "未读条目数",
+    "page.feeds.read_counter": "读取条目数",
     "page.feeds.error_count": [
         "%d 错误"
     ],

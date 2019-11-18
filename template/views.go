@@ -789,6 +789,9 @@ var templateViewsMap = map[string]string{
                     {{ if .Disabled }} 🚫 {{ end }}
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
                 </span>
+                <span class="feed-entries-counter">
+                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                </span>
                 <span class="category">
                     <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
                 </span>
@@ -801,11 +804,6 @@ var templateViewsMap = map[string]string{
                     <li>
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
-                    {{ if gt .UnreadCount 0 }}
-                    <li>
-                        {{ t "page.feeds.unread" }} <span class="unread-counter">{{ .UnreadCount }}</span>
-                    </li>
-                    {{ end }}
                 </ul>
                 <ul>
                     <li>
@@ -1374,7 +1372,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
 	"entry":               "24aeba26ef9a51ce585ca5c4af090f1de7d7bfd7f1e3ff1b63af520e2afa76bd",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
-	"feeds":               "55317035a4c008a720294c1858e9dc626f19e222ae41498db67dbb537ba7a456",
+	"feeds":               "f11ba1c45cf3966843ddc406d96e048fc8f2235428e10111a1660a141ea2c42f",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
 	"import":              "5eb56cecaa4d369b9acc991a82be7617710c551089a2e99d34ce8b6e5c37df0a",
 	"integrations":        "6104ff6ff3ac3c1ae5e850c78250aab6e99e2342a337589f3848459fa333766a",

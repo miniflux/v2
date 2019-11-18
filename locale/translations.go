@@ -86,7 +86,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Benutzer bearbeiten: %s",
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Letzte Aktualisierung:",
-    "page.feeds.unread": "Ungelesen:",
+    "page.feeds.unread_counter": "Anzahl der ungelesenen Einträge",
+    "page.feeds.read_counter": "Anzahl der gelesenen Einträge",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"
@@ -388,7 +389,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Edit User: %s",
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Last check:",
-    "page.feeds.unread": "Unread:",
+    "page.feeds.unread_counter": "Number of unread entries",
+    "page.feeds.read_counter": "Number of read entries",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -670,7 +672,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Editar usuario: %s",
     "page.feeds.title": "Fuentes",
     "page.feeds.last_check": "Última verificación:",
-    "page.feeds.unread": "No leídos:",
+    "page.feeds.unread_counter": "Número de entradas no leídas",
+    "page.feeds.read_counter": "Número de entradas leídas",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"
@@ -952,7 +955,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Modification de l'utilisateur : %s",
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Dernière vérification :",
-    "page.feeds.unread": "Non lus:",
+    "page.feeds.unread_counter": "Nombre d'entrées non lues",
+    "page.feeds.read_counter": "Nombre d'entrées lues",
     "page.feeds.error_count": [
         "%d erreur",
         "%d erreurs"
@@ -1254,7 +1258,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Modifica utente: %s",
     "page.feeds.title": "Feed",
     "page.feeds.last_check": "Ultimo controllo:",
-    "page.feeds.unread": "Da leggere:",
+    "page.feeds.unread_counter": "Numero di voci non lette",
+    "page.feeds.read_counter": "Numero di voci lette",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"
@@ -1536,7 +1541,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Bewerk gebruiker: %s",
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Laatste update:",
-    "page.feeds.unread": "Ongelezen:",
+    "page.feeds.unread_counter": "Aantal ongelezen vermeldingen",
+    "page.feeds.read_counter": "Aantal gelezen vermeldingen",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -1837,7 +1843,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Edytuj użytkownika: %s",
     "page.feeds.title": "Kanały",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
-    "page.feeds.unread": "Nieprzeczytane:",
+    "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
+    "page.feeds.read_counter": "Liczba przeczytanych wpisów",
     "page.feeds.error_count": [
         "%d błąd",
         "%d błąd",
@@ -2145,7 +2152,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Изменить пользователя: %s",
     "page.feeds.title": "Подписки",
     "page.feeds.last_check": "Последняя проверка:",
-    "page.feeds.unread": "Непрочитано:",
+    "page.feeds.unread_counter": "Количество непрочитанных записей",
+    "page.feeds.read_counter": "Количество прочитанных записей",
     "page.feeds.error_count": [
         "%d ошибка",
         "%d ошибки",
@@ -2433,7 +2441,8 @@ var translations = map[string]string{
     "page.edit_user.title": "编辑用户 : %s",
     "page.feeds.title": "源",
     "page.feeds.last_check": "最后检查时间：",
-    "page.feeds.unread": "未读:",
+    "page.feeds.unread_counter": "未读条目数",
+    "page.feeds.read_counter": "读取条目数",
     "page.feeds.error_count": [
         "%d 错误"
     ],
@@ -2647,13 +2656,13 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "805b758dbe45e62583375c8ecdbbc48019ff9745e4a6f4bc481ad7cb8bf79005",
-	"en_US": "7992fd4e6fafceccbcf0b0972f0c085ad9a0eb7507de60eac407882c1f6457f5",
-	"es_ES": "e97765769afac01f4fd4cf868fa75657bd4d4e63999d9145a42d4de4248a9b2a",
-	"fr_FR": "50146f82d9b8e9ab69a5b3950827f7db47ba590ef074cf7f78b18f7e26fb0074",
-	"it_IT": "6a9f44c98b0dc8ab34306868bb9f93c4e511579a45c1fa8a48d637e10b2feca6",
-	"nl_NL": "afa731bd75e18b9483e9c6842b647f9d85405994ceca42f24b314bc967680606",
-	"pl_PL": "40aa0998688fb8dc1a308cda35bcea04be16c852944088c844c676c601a90bbd",
-	"ru_RU": "a1c72bb9ab48cf1b4fb47bfed081df75e391bb8d5c8b70036c1bdd38c57b6cb3",
-	"zh_CN": "a349de59436db0dc07172de89a481d95a660af206b13ae0de236a0cb8e31014b",
+	"de_DE": "ec2dd4be11e4bb29efaa6cd124a1edd2e5271889d31d7fda92781be014388387",
+	"en_US": "8010481cea76d28aad37c00fb0f481514f81c1581a6172b4a4ad17ad61e2eee0",
+	"es_ES": "be58c4452068277826022931d86bd561fe150250756a6254985de5aa6d8129b7",
+	"fr_FR": "4d3fa6084994a7b3121dd9c1f3baf8c1b0e519f6012aeaa805e5132ec1eaa60e",
+	"it_IT": "3246b020b7ea01f762f19c9ee2825605b0e42f6ffdd34fd6306193597650f8d7",
+	"nl_NL": "c58d1100bcd345824086d0df255381f7789379d0e2b95e146be009ad82e0aa5f",
+	"pl_PL": "b438c4119ed5685950293f5c3c629a940c6475ca243c53f65879dfca6fc8cdd6",
+	"ru_RU": "5b42510b54c678563791010f4c1fad1a024fa7029d268667bbfde1e7a1f02d88",
+	"zh_CN": "30f72b341911682877bb86b0e82e9127be833625502ae41e9530447bb2f27de3",
 }

@@ -81,7 +81,8 @@
     "page.edit_user.title": "Benutzer bearbeiten: %s",
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Letzte Aktualisierung:",
-    "page.feeds.unread": "Ungelesen:",
+    "page.feeds.unread_counter": "Anzahl der ungelesenen Einträge",
+    "page.feeds.read_counter": "Anzahl der gelesenen Einträge",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"

@@ -81,7 +81,8 @@
     "page.edit_user.title": "Modifica utente: %s",
     "page.feeds.title": "Feed",
     "page.feeds.last_check": "Ultimo controllo:",
-    "page.feeds.unread": "Da leggere:",
+    "page.feeds.unread_counter": "Numero di voci non lette",
+    "page.feeds.read_counter": "Numero di voci lette",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"
