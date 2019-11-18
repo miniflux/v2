@@ -33,6 +33,9 @@
                     {{ if .Disabled }} 🚫 {{ end }}
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
                 </span>
+                <span class="feed-entries-counter">
+                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                </span>
                 <span class="category">
                     <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
                 </span>
@@ -45,11 +48,6 @@
                     <li>
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
-                    {{ if gt .UnreadCount 0 }}
-                    <li>
-                        {{ t "page.feeds.unread" }} <span class="unread-counter">{{ .UnreadCount }}</span>
-                    </li>
-                    {{ end }}
                 </ul>
                 <ul>
                     <li>
