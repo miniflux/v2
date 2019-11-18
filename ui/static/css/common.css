@@ -858,7 +858,6 @@ article.feed-parsing-error {
 }
 
 .entry-content table {
-    table-layout: fixed;
     max-width: 100%;
 }
 
