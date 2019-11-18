@@ -71,6 +71,7 @@
     "page.starred.title": "Marcadores",
     "page.categories.title": "Categorias",
     "page.categories.no_feed": "No fuente.",
+    "page.categories.feeds": "Ver suscripciones",
     "page.categories.feed_count": [
         "Hay %d fuente.",
         "Hay %d fuentes."
@@ -170,6 +171,7 @@
     "alert.no_category_entry": "No hay artículos en esta categoria.",
     "alert.no_feed_entry": "No hay artículos para esta fuente.",
     "alert.no_feed": "No tienes suscripciones.",
+    "alert.no_feed_in_category": "No hay suscripción para esta categoría.",
     "alert.no_history": "No hay historial en este momento.",
     "alert.feed_error": "Hay un problema con esta fuente.",
     "alert.no_search_result": "No hay resultados para esta búsqueda.",

@@ -71,6 +71,7 @@
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
     "page.categories.no_feed": "Kein Abonnement.",
+    "page.categories.feeds": "Siehe Abonnements",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."
@@ -170,6 +171,7 @@
     "alert.no_category_entry": "Es befindet sich kein Artikel in dieser Kategorie.",
     "alert.no_feed_entry": "Es existiert kein Artikel für dieses Abonnement.",
     "alert.no_feed": "Es sind keine Abonnements vorhanden.",
+    "alert.no_feed_in_category": "Für diese Kategorie gibt es kein Abonnement.",
     "alert.no_history": "Es existiert zur Zeit kein Verlauf.",
     "alert.feed_error": "Es gibt ein Problem mit diesem Abonnement",
     "alert.no_search_result": "Es gibt kein Ergebnis für diese Suche.",

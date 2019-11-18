@@ -71,6 +71,7 @@
     "page.starred.title": "Oznaczone gwiazdką",
     "page.categories.title": "Kategorie",
     "page.categories.no_feed": "Brak kanałów.",
+    "page.categories.feeds": "Zobacz subskrypcje",
     "page.categories.feed_count": [
         "Jest %d kanał.",
         "Są %d kanały.",
@@ -172,6 +173,7 @@
     "alert.no_category_entry": "W tej kategorii nie ma żadnych artykułów",
     "alert.no_feed_entry": "Nie ma artykułu dla tego kanału.",
     "alert.no_feed": "Nie masz żadnej subskrypcji.",
+    "alert.no_feed_in_category": "Nie ma subskrypcji dla tej kategorii.",
     "alert.no_history": "Obecnie nie ma żadnej historii.",
     "alert.feed_error": "Z tym kanałem jest problem",
     "alert.no_search_result": "Brak wyników dla tego wyszukiwania.",

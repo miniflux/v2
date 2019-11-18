@@ -66,5 +66,5 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "categories"))
+	html.Redirect(w, r, route.Path(h.router, "categoryFeeds", "categoryID", categoryID))
 }

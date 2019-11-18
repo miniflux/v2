@@ -24,6 +24,9 @@
             <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
         </li>
     {{ end }}
+        <li>
+            <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ t "menu.feeds" }}</a>
+        </li>
     </ul>
 </section>
 

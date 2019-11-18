@@ -71,6 +71,7 @@
     "page.starred.title": "Preferiti",
     "page.categories.title": "Categorie",
     "page.categories.no_feed": "Nessun feed.",
+    "page.categories.feeds": "Vedi abbonamenti",
     "page.categories.feed_count": [
         "C'è %d feed.",
         "Ci sono %d feed."
@@ -170,6 +171,7 @@
     "alert.no_category_entry": "Questa categoria non contiene alcun articolo.",
     "alert.no_feed_entry": "Questo feed non contiene alcun articolo.",
     "alert.no_feed": "Nessun feed disponibile.",
+    "alert.no_feed_in_category": "Non esiste un abbonamento per questa categoria.",
     "alert.no_history": "La tua cronologia al momento è vuota.",
     "alert.feed_error": "Sembra ci sia un problema con questo feed",
     "alert.no_search_result": "La ricerca non ha prodotto risultati.",

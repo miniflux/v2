@@ -74,6 +74,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/categories", handler.showCategoryListPage).Name("categories").Methods("GET")
 	uiRouter.HandleFunc("/category/create", handler.showCreateCategoryPage).Name("createCategory").Methods("GET")
 	uiRouter.HandleFunc("/category/save", handler.saveCategory).Name("saveCategory").Methods("POST")
+	uiRouter.HandleFunc("/category/{categoryID}/feeds", handler.showCategoryFeedsPage).Name("categoryFeeds").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/entries", handler.showCategoryEntriesPage).Name("categoryEntries").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage).Name("categoryEntriesAll").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/edit", handler.showEditCategoryPage).Name("editCategory").Methods("GET")

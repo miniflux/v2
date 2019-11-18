@@ -71,6 +71,7 @@
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
     "page.categories.no_feed": "Geen feeds.",
+    "page.categories.feeds": "Zie abonnementen",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."
@@ -170,6 +171,7 @@
     "alert.no_category_entry": "Deze categorie bevat geen feeds.",
     "alert.no_feed_entry": "Er zijn geen artikelen in deze feed.",
     "alert.no_feed": "Je hebt nog geen feeds geabboneerd staan.",
+    "alert.no_feed_in_category": "Er is geen abonnement voor deze categorie.",
     "alert.no_history": "Geschiedenis is op dit moment leeg.",
     "alert.feed_error": "Er is een probleem met deze feed",
     "alert.no_search_result": "Er is geen resultaat voor deze zoekopdracht.",
