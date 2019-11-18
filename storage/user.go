@@ -6,7 +6,6 @@ package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -288,18 +287,23 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 
 // RemoveUser deletes a user.
 func (s *Storage) RemoveUser(userID int64) error {
-	result, err := s.db.Exec("DELETE FROM users WHERE id = $1", userID)
+	ts, err := s.db.Begin()
 	if err != nil {
-		return fmt.Errorf(`store: unable to remove this user: %v`, err)
+		return fmt.Errorf(`store: unable to start transaction: %v`, err)
 	}
 
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf(`store: unable to remove this user: %v`, err)
+	if _, err := ts.Exec(`DELETE FROM users WHERE id=$1`, userID); err != nil {
+		ts.Rollback()
+		return fmt.Errorf(`store: unable to remove user #%d: %v`, userID, err)
 	}
 
-	if count == 0 {
-		return errors.New(`store: nothing has been removed`)
+	if _, err := ts.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID); err != nil {
+		ts.Rollback()
+		return fmt.Errorf(`store: unable to remove integration settings for user #%d: %v`, userID, err)
+	}
+
+	if err := ts.Commit(); err != nil {
+		return fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return nil
