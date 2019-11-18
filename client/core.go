@@ -48,7 +48,7 @@ type UserModification struct {
 // Users represents a list of users.
 type Users []User
 
-// Category represents a category in the system.
+// Category represents a feed category.
 type Category struct {
 	ID     int64  `json:"id,omitempty"`
 	Title  string `json:"title,omitempty"`
@@ -169,6 +169,7 @@ type Filter struct {
 	BeforeEntryID int64
 	AfterEntryID  int64
 	Search        string
+	CategoryID    int64
 }
 
 // EntryResultSet represents the response when fetching entries.

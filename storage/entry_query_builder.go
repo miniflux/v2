@@ -103,7 +103,7 @@ func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
 
 // WithCategoryID set the categoryID.
 func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder {
-	if categoryID != 0 {
+	if categoryID > 0 {
 		e.conditions = append(e.conditions, fmt.Sprintf("f.category_id = $%d", len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
