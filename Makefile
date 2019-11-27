@@ -33,6 +33,7 @@ export GO111MODULE=on
 	lint \
 	integration-test \
 	clean-integration-test \
+	docker-image \
 	docker-images \
 	docker-manifest
 
@@ -117,6 +118,14 @@ clean-integration-test:
 	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
 	@ rm miniflux-test
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
+
+docker-image:
+	cp Dockerfile Dockerfile.amd64
+	sed -i.bak "s/__BASEIMAGE_ARCH__/amd64/" Dockerfile.amd64
+	sed -i.bak "s/__MINIFLUX_VERSION__/$(VERSION)/" Dockerfile.amd64
+	sed -i.bak "s/__MINIFLUX_ARCH__/amd64/" Dockerfile.amd64
+	docker build --pull -f Dockerfile.amd64 -t $(DOCKER_IMAGE):$(VERSION) .
+	rm -f Dockerfile.amd64*
 
 docker-images:
 	for arch in amd64 arm32v6 arm32v7 arm64v8; do \

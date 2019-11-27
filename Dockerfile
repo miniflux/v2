@@ -5,7 +5,7 @@ RUN apk add --no-cache --update build-base git
 COPY . .
 RUN make linux-__MINIFLUX_ARCH__ VERSION=__MINIFLUX_VERSION__
 
-FROM __BASEIMAGE_ARCH__/alpine:3.10.1
+FROM __BASEIMAGE_ARCH__/alpine:3.10.3
 EXPOSE 8080
 ENV LISTEN_ADDR 0.0.0.0:8080
 RUN apk --no-cache add ca-certificates tzdata
