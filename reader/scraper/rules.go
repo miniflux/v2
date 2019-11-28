@@ -39,4 +39,5 @@ var predefinedRules = map[string]string{
 	"wired.com":           "main figure, article",
 	"zeit.de":             ".summary, .article-body",
 	"zdnet.com":           "div.storyBody",
+	"openingsource.org":   "article.suxing-popup-gallery",
 }
