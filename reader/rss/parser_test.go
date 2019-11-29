@@ -771,3 +771,52 @@ func TestParseEntryWithMediaContent(t *testing.T) {
 		}
 	}
 }
+
+func TestParseEntryWithMediaPeerLink(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+		<channel>
+		<title>My Example Feed</title>
+		<link>http://example.org</link>
+		<item>
+			<title>Example Item</title>
+			<link>http://www.example.org/entries/1</link>
+			<media:peerLink type="application/x-bittorrent" href="http://www.example.org/file.torrent" />
+		</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+	if len(feed.Entries[0].Enclosures) != 1 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	expectedResults := []struct {
+		url      string
+		mimeType string
+		size     int64
+	}{
+		{"http://www.example.org/file.torrent", "application/x-bittorrent", 0},
+	}
+
+	for index, enclosure := range feed.Entries[0].Enclosures {
+		if expectedResults[index].url != enclosure.URL {
+			t.Errorf(`Unexpected enclosure URL, got %q instead of %q`, enclosure.URL, expectedResults[index].url)
+		}
+
+		if expectedResults[index].mimeType != enclosure.MimeType {
+			t.Errorf(`Unexpected enclosure type, got %q instead of %q`, enclosure.MimeType, expectedResults[index].mimeType)
+		}
+
+		if expectedResults[index].size != enclosure.Size {
+			t.Errorf(`Unexpected enclosure size, got %d instead of %d`, enclosure.Size, expectedResults[index].size)
+		}
+	}
+}

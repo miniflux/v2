@@ -15,6 +15,7 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/date"
+	"miniflux.app/reader/media"
 	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 )
@@ -29,15 +30,15 @@ type atomFeed struct {
 }
 
 type atomEntry struct {
-	ID         string         `xml:"id"`
-	Title      atomContent    `xml:"title"`
-	Published  string         `xml:"published"`
-	Updated    string         `xml:"updated"`
-	Links      []atomLink     `xml:"link"`
-	Summary    atomContent    `xml:"summary"`
-	Content    atomContent    `xml:"content"`
-	MediaGroup atomMediaGroup `xml:"http://search.yahoo.com/mrss/ group"`
-	Author     atomAuthor     `xml:"author"`
+	ID        string      `xml:"id"`
+	Title     atomContent `xml:"title"`
+	Published string      `xml:"published"`
+	Updated   string      `xml:"updated"`
+	Links     []atomLink  `xml:"link"`
+	Summary   atomContent `xml:"summary"`
+	Content   atomContent `xml:"http://www.w3.org/2005/Atom content"`
+	Author    atomAuthor  `xml:"author"`
+	media.Element
 }
 
 type atomAuthor struct {
@@ -56,10 +57,6 @@ type atomContent struct {
 	Type string `xml:"type,attr"`
 	Data string `xml:",chardata"`
 	XML  string `xml:",innerxml"`
-}
-
-type atomMediaGroup struct {
-	Description string `xml:"http://search.yahoo.com/mrss/ description"`
 }
 
 func (a *atomFeed) Transform() *model.Feed {
@@ -179,8 +176,9 @@ func getContent(a *atomEntry) string {
 		return r
 	}
 
-	if a.MediaGroup.Description != "" {
-		return a.MediaGroup.Description
+	mediaDescription := a.FirstMediaDescription()
+	if mediaDescription != "" {
+		return mediaDescription
 	}
 
 	return ""
@@ -203,11 +201,48 @@ func getHash(a *atomEntry) string {
 
 func getEnclosures(a *atomEntry) model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
+	duplicates := make(map[string]bool, 0)
+
+	for _, mediaThumbnail := range a.AllMediaThumbnails() {
+		if _, found := duplicates[mediaThumbnail.URL]; !found {
+			duplicates[mediaThumbnail.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaThumbnail.URL,
+				MimeType: mediaThumbnail.MimeType(),
+				Size:     mediaThumbnail.Size(),
+			})
+		}
+	}
 
 	for _, link := range a.Links {
 		if strings.ToLower(link.Rel) == "enclosure" {
-			length, _ := strconv.ParseInt(link.Length, 10, 0)
-			enclosures = append(enclosures, &model.Enclosure{URL: link.URL, MimeType: link.Type, Size: length})
+			if _, found := duplicates[link.URL]; !found {
+				duplicates[link.URL] = true
+				length, _ := strconv.ParseInt(link.Length, 10, 0)
+				enclosures = append(enclosures, &model.Enclosure{URL: link.URL, MimeType: link.Type, Size: length})
+			}
+		}
+	}
+
+	for _, mediaContent := range a.AllMediaContents() {
+		if _, found := duplicates[mediaContent.URL]; !found {
+			duplicates[mediaContent.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaContent.URL,
+				MimeType: mediaContent.MimeType(),
+				Size:     mediaContent.Size(),
+			})
+		}
+	}
+
+	for _, mediaPeerLink := range a.AllMediaPeerLinks() {
+		if _, found := duplicates[mediaPeerLink.URL]; !found {
+			duplicates[mediaPeerLink.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaPeerLink.URL,
+				MimeType: mediaPeerLink.MimeType(),
+				Size:     mediaPeerLink.Size(),
+			})
 		}
 	}
 
