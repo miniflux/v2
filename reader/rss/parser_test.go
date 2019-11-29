@@ -652,3 +652,122 @@ func TestParseWithInvalidCharacterEntity(t *testing.T) {
 		t.Errorf(`Incorrect url, got: %q`, feed.SiteURL)
 	}
 }
+
+func TestParseEntryWithMediaGroup(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+		<channel>
+		<title>My Example Feed</title>
+		<link>http://example.org</link>
+		<item>
+			<title>Example Item</title>
+			<link>http://www.example.org/entries/1</link>
+			<enclosure type="application/x-bittorrent" url="https://example.org/file3.torrent" length="670053113">
+			</enclosure>
+			<media:group>
+				<media:content type="application/x-bittorrent" url="https://example.org/file1.torrent"></media:content>
+				<media:content type="application/x-bittorrent" url="https://example.org/file2.torrent" isDefault="true"></media:content>
+				<media:content type="application/x-bittorrent" url="https://example.org/file3.torrent"></media:content>
+				<media:content type="application/x-bittorrent" url="https://example.org/file4.torrent"></media:content>
+				<media:content type="application/x-bittorrent" url="https://example.org/file5.torrent" fileSize="42"></media:content>
+				<media:rating>nonadult</media:rating>
+			</media:group>
+			<media:thumbnail url="https://example.org/image.jpg" height="122" width="223"></media:thumbnail>
+		</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+	if len(feed.Entries[0].Enclosures) != 6 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	expectedResults := []struct {
+		url      string
+		mimeType string
+		size     int64
+	}{
+		{"https://example.org/image.jpg", "image/*", 0},
+		{"https://example.org/file3.torrent", "application/x-bittorrent", 670053113},
+		{"https://example.org/file1.torrent", "application/x-bittorrent", 0},
+		{"https://example.org/file2.torrent", "application/x-bittorrent", 0},
+		{"https://example.org/file4.torrent", "application/x-bittorrent", 0},
+		{"https://example.org/file5.torrent", "application/x-bittorrent", 42},
+	}
+
+	for index, enclosure := range feed.Entries[0].Enclosures {
+		if expectedResults[index].url != enclosure.URL {
+			t.Errorf(`Unexpected enclosure URL, got %q instead of %q`, enclosure.URL, expectedResults[index].url)
+		}
+
+		if expectedResults[index].mimeType != enclosure.MimeType {
+			t.Errorf(`Unexpected enclosure type, got %q instead of %q`, enclosure.MimeType, expectedResults[index].mimeType)
+		}
+
+		if expectedResults[index].size != enclosure.Size {
+			t.Errorf(`Unexpected enclosure size, got %d instead of %d`, enclosure.Size, expectedResults[index].size)
+		}
+	}
+}
+
+func TestParseEntryWithMediaContent(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+		<channel>
+		<title>My Example Feed</title>
+		<link>http://example.org</link>
+		<item>
+			<title>Example Item</title>
+			<link>http://www.example.org/entries/1</link>
+			<media:thumbnail url="https://example.org/thumbnail.jpg" />
+			<media:content url="https://example.org/media1.jpg" medium="image">
+				<media:title type="html">Some Title for Media 1</media:title>
+			</media:content>
+			<media:content url="https://example.org/media2.jpg" medium="image" />
+		</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+	if len(feed.Entries[0].Enclosures) != 3 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	expectedResults := []struct {
+		url      string
+		mimeType string
+		size     int64
+	}{
+		{"https://example.org/thumbnail.jpg", "image/*", 0},
+		{"https://example.org/media1.jpg", "image/*", 0},
+		{"https://example.org/media2.jpg", "image/*", 0},
+	}
+
+	for index, enclosure := range feed.Entries[0].Enclosures {
+		if expectedResults[index].url != enclosure.URL {
+			t.Errorf(`Unexpected enclosure URL, got %q instead of %q`, enclosure.URL, expectedResults[index].url)
+		}
+
+		if expectedResults[index].mimeType != enclosure.MimeType {
+			t.Errorf(`Unexpected enclosure type, got %q instead of %q`, enclosure.MimeType, expectedResults[index].mimeType)
+		}
+
+		if expectedResults[index].size != enclosure.Size {
+			t.Errorf(`Unexpected enclosure size, got %d instead of %d`, enclosure.Size, expectedResults[index].size)
+		}
+	}
+}
