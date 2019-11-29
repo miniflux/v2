@@ -156,3 +156,23 @@ func TestRewriteWithUnknownLazyNoScriptImage(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
+func TestNewLineRewriteRule(t *testing.T) {
+	description := "A\nB\nC"
+	output := Rewriter("https://example.org/article", description, "nl2br")
+	expected := `A<br>B<br>C`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestConvertTextLinkRewriteRule(t *testing.T) {
+	description := "Test: http://example.org/a/b"
+	output := Rewriter("https://example.org/article", description, "convert_text_link")
+	expected := `Test: <a href="http://example.org/a/b">http://example.org/a/b</a>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
