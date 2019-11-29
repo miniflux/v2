@@ -129,6 +129,7 @@
     "page.keyboard_shortcuts.go_to_next_page": "Zur nächsten Seite gehen",
     "page.keyboard_shortcuts.open_item": "Gewählten Artikel öffnen",
     "page.keyboard_shortcuts.open_original": "Original-Artikel öffnen",
+    "page.keyboard_shortcuts.open_original_same_window": "Öffne den Original-Link in der aktuellen Registerkarte",
     "page.keyboard_shortcuts.toggle_read_status": "Gewählten Artikel als gelesen/ungelesen markieren",
     "page.keyboard_shortcuts.mark_page_as_read": "Aktuelle Seite als gelesen markieren",
     "page.keyboard_shortcuts.download_content": "Vollständigen Inhalt herunterladen",

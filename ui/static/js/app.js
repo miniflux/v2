@@ -282,10 +282,14 @@ function handleFetchOriginalContent() {
     request.execute();
 }
 
-function openOriginalLink() {
+function openOriginalLink(openLinkInCurrentTab) {
     let entryLink = document.querySelector(".entry h1 a");
     if (entryLink !== null) {
-        window.location.href = entryLink.getAttribute("href");
+        if (openLinkInCurrentTab) {
+            window.location.href = entryLink.getAttribute("href");
+        } else {
+            DomHelper.openNewTab(entryLink.getAttribute("href"));
+        }
         return;
     }
 

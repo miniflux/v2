@@ -266,6 +266,7 @@ var templateCommonMap = map[string]string{
                 <ul>
                     <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_original_same_window" }} = <strong>V</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.toggle_read_status" }} = <strong>m</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
@@ -332,7 +333,7 @@ var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"feed_list":        "7b7ea2c7df07d048c83d86237d5b5e41bddce561273c652d9265950093ca261b",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "010e31c9dde88cb429b21f4b0c24bb3769043a3ef1ef4a57100314f5910c8725",
+	"layout":           "f19597d8cd74e17b33826c25b8421f46fef87276f0d95c695bba8f53bb4f95e6",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 	"settings_menu":    "78e5a487ede18610b23db74184dab023170f9e083cc0625bc2c874d1eea1a4ce",
 }

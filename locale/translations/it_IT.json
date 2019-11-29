@@ -129,6 +129,7 @@
     "page.keyboard_shortcuts.go_to_next_page": "Mostra la pagina successiva",
     "page.keyboard_shortcuts.open_item": "Apri l'articolo selezionato",
     "page.keyboard_shortcuts.open_original": "Apri la pagina web originale",
+    "page.keyboard_shortcuts.open_original_same_window": "Apri il link originale nella scheda corrente",
     "page.keyboard_shortcuts.toggle_read_status": "Cambia lo stato di lettura (letto/da leggere)",
     "page.keyboard_shortcuts.mark_page_as_read": "Segna la pagina attuale come letta",
     "page.keyboard_shortcuts.download_content": "Scarica il contenuto integrale",
