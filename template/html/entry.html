@@ -92,8 +92,8 @@
         {{ noescape (proxyFilter .entry.Content) }}
     </article>
     {{ if .entry.Enclosures }}
-    <aside class="entry-enclosures">
-        <h3>{{ t "page.entry.attachments" }}</h3>
+    <details class="entry-enclosures">
+        <summary>{{ t "page.entry.attachments" }} ({{ len .entry.Enclosures }})</summary>
         {{ range .entry.Enclosures }}
             <div class="entry-enclosure">
                 {{ if hasPrefix .MimeType "audio/" }}
@@ -120,7 +120,7 @@
                 </div>
             </div>
         {{ end }}
-    </aside>
+        </details>
     {{ end }}
 </section>
 
