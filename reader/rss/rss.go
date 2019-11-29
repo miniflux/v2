@@ -56,20 +56,71 @@ type rssEnclosure struct {
 	Length string `xml:"length,attr"`
 }
 
+func (enclosure *rssEnclosure) Size() int64 {
+	if enclosure.Length == "" {
+		return 0
+	}
+	size, _ := strconv.ParseInt(enclosure.Length, 10, 0)
+	return size
+}
+
 type rssItem struct {
-	GUID              string           `xml:"guid"`
-	Title             string           `xml:"title"`
-	Links             []rssLink        `xml:"link"`
-	OriginalLink      string           `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
-	CommentLinks      []rssCommentLink `xml:"comments"`
-	Description       string           `xml:"description"`
-	EncodedContent    string           `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
-	PubDate           string           `xml:"pubDate"`
-	Date              string           `xml:"http://purl.org/dc/elements/1.1/ date"`
-	Authors           []rssAuthor      `xml:"author"`
-	Creator           string           `xml:"http://purl.org/dc/elements/1.1/ creator"`
-	EnclosureLinks    []rssEnclosure   `xml:"enclosure"`
-	OrigEnclosureLink string           `xml:"http://rssnamespace.org/feedburner/ext/1.0 origEnclosureLink"`
+	GUID              string               `xml:"guid"`
+	Title             string               `xml:"title"`
+	Links             []rssLink            `xml:"link"`
+	OriginalLink      string               `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
+	CommentLinks      []rssCommentLink     `xml:"comments"`
+	Description       string               `xml:"description"`
+	EncodedContent    string               `xml:"http://purl.org/rss/1.0/modules/content/ encoded"`
+	PubDate           string               `xml:"pubDate"`
+	Date              string               `xml:"http://purl.org/dc/elements/1.1/ date"`
+	Authors           []rssAuthor          `xml:"author"`
+	Creator           string               `xml:"http://purl.org/dc/elements/1.1/ creator"`
+	EnclosureLinks    []rssEnclosure       `xml:"enclosure"`
+	OrigEnclosureLink string               `xml:"http://rssnamespace.org/feedburner/ext/1.0 origEnclosureLink"`
+	MediaGroup        []rssMediaGroup      `xml:"http://search.yahoo.com/mrss/ group"`
+	MediaContents     []rssMediaContent    `xml:"http://search.yahoo.com/mrss/ content"`
+	MediaThumbnails   []rssMediaThumbnails `xml:"http://search.yahoo.com/mrss/ thumbnail"`
+}
+
+type rssMediaGroup struct {
+	MediaList []rssMediaContent `xml:"content"`
+}
+
+type rssMediaContent struct {
+	URL      string `xml:"url,attr"`
+	Type     string `xml:"type,attr"`
+	FileSize string `xml:"fileSize,attr"`
+	Medium   string `xml:"medium,attr"`
+}
+
+func (mediaContent *rssMediaContent) MimeType() string {
+	switch {
+	case mediaContent.Type == "" && mediaContent.Medium == "image":
+		return "image/*"
+	case mediaContent.Type == "" && mediaContent.Medium == "video":
+		return "video/*"
+	case mediaContent.Type == "" && mediaContent.Medium == "audio":
+		return "audio/*"
+	case mediaContent.Type == "" && mediaContent.Medium == "video":
+		return "video/*"
+	case mediaContent.Type != "":
+		return mediaContent.Type
+	default:
+		return "application/octet-stream"
+	}
+}
+
+func (mediaContent *rssMediaContent) Size() int64 {
+	if mediaContent.FileSize == "" {
+		return 0
+	}
+	size, _ := strconv.ParseInt(mediaContent.FileSize, 10, 0)
+	return size
+}
+
+type rssMediaThumbnails struct {
+	URL string `xml:"url,attr"`
 }
 
 func (r *rssFeed) SiteURL() string {
@@ -200,9 +251,20 @@ func (r *rssItem) URL() string {
 
 func (r *rssItem) Enclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
+	duplicates := make(map[string]bool, 0)
+
+	for _, mediaThumbnail := range r.MediaThumbnails {
+		if _, found := duplicates[mediaThumbnail.URL]; !found {
+			duplicates[mediaThumbnail.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaThumbnail.URL,
+				MimeType: "image/*",
+				Size:     0,
+			})
+		}
+	}
 
 	for _, enclosure := range r.EnclosureLinks {
-		length, _ := strconv.ParseInt(enclosure.Length, 10, 0)
 		enclosureURL := enclosure.URL
 
 		if r.OrigEnclosureLink != "" {
@@ -212,11 +274,32 @@ func (r *rssItem) Enclosures() model.EnclosureList {
 			}
 		}
 
-		enclosures = append(enclosures, &model.Enclosure{
-			URL:      enclosureURL,
-			MimeType: enclosure.Type,
-			Size:     length,
-		})
+		if _, found := duplicates[enclosureURL]; !found {
+			duplicates[enclosureURL] = true
+
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      enclosureURL,
+				MimeType: enclosure.Type,
+				Size:     enclosure.Size(),
+			})
+		}
+	}
+
+	for _, mediaContentItem := range r.MediaGroup {
+		for _, mediaContent := range mediaContentItem.MediaList {
+			r.MediaContents = append(r.MediaContents, mediaContent)
+		}
+	}
+
+	for _, mediaContent := range r.MediaContents {
+		if _, found := duplicates[mediaContent.URL]; !found {
+			duplicates[mediaContent.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaContent.URL,
+				MimeType: mediaContent.MimeType(),
+				Size:     mediaContent.Size(),
+			})
+		}
 	}
 
 	return enclosures
