@@ -491,7 +491,7 @@ a.button {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 360px;
+    width: 380px;
     overflow: auto;
     color: var(--modal-color);
     background: var(--modal-background);
