@@ -882,8 +882,13 @@ article.feed-parsing-error {
     font-weight: 600;
 }
 
-.entry-enclosures h3 {
+details.entry-enclosures {
+    margin-top: 25px;
+}
+
+.entry-enclosures summary {
     font-weight: 500;
+    font-size: 1.2em;
 }
 
 .entry-enclosure {
