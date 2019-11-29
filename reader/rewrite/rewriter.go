@@ -35,6 +35,10 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 			entryContent = addYoutubeVideo(entryURL, entryContent)
 		case "add_pdf_download_link":
 			entryContent = addPDFLink(entryURL, entryContent)
+		case "nl2br":
+			entryContent = replaceLineFeeds(entryContent)
+		case "convert_text_link":
+			entryContent = replaceTextLinks(entryContent)
 		}
 	}
 
