@@ -314,3 +314,22 @@ func TestProxyFilterWithHttpsInvalid(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
+func TestFormatFileSize(t *testing.T) {
+	scenarios := []struct {
+		input    int64
+		expected string
+	}{
+		{500, "500 B"},
+		{1024, "1.0 KiB"},
+		{43520, "42.5 KiB"},
+		{5000 * 1024 * 1024, "4.9 GiB"},
+	}
+
+	for _, scenario := range scenarios {
+		result := formatFileSize(scenario.input)
+		if result != scenario.expected {
+			t.Errorf(`Unexpected result, got %q instead of %q for %d`, result, scenario.expected, scenario.input)
+		}
+	}
+}

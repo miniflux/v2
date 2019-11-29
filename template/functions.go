@@ -31,10 +31,11 @@ type funcMap struct {
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
-		"dict":     dict,
-		"hasKey":   hasKey,
-		"truncate": truncate,
-		"isEmail":  isEmail,
+		"formatFileSize": formatFileSize,
+		"dict":           dict,
+		"hasKey":         hasKey,
+		"truncate":       truncate,
+		"isEmail":        isEmail,
 		"baseURL": func() string {
 			return config.Opts.BaseURL()
 		},
@@ -199,4 +200,18 @@ func imageProxyFilter(router *mux.Router, data string) string {
 func proxify(router *mux.Router, link string) string {
 	// We use base64 url encoding to avoid slash in the URL.
 	return route.Path(router, "proxy", "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
+}
+
+func formatFileSize(b int64) string {
+	const unit = 1024
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %ciB",
+		float64(b)/float64(div), "KMGTPE"[exp])
 }
