@@ -37,7 +37,7 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 			entryContent = addPDFLink(entryURL, entryContent)
 		case "nl2br":
 			entryContent = replaceLineFeeds(entryContent)
-		case "convert_text_link":
+		case "convert_text_link", "convert_text_links":
 			entryContent = replaceTextLinks(entryContent)
 		}
 	}

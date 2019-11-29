@@ -56,6 +56,12 @@
                     - Using a different input name doesn't change anything
                 -->
                 <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+
+                <label for="form-scraper-rules">{{ t "form.feed.label.scraper_rules" }}</label>
+                <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
+
+                <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
+                <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
             </div>
         </details>
 

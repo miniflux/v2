@@ -13,12 +13,14 @@ import (
 
 // SubscriptionForm represents the subscription form.
 type SubscriptionForm struct {
-	URL        string
-	CategoryID int64
-	Crawler    bool
-	UserAgent  string
-	Username   string
-	Password   string
+	URL          string
+	CategoryID   int64
+	Crawler      bool
+	UserAgent    string
+	Username     string
+	Password     string
+	ScraperRules string
+	RewriteRules string
 }
 
 // Validate makes sure the form values are valid.
@@ -38,11 +40,13 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 	}
 
 	return &SubscriptionForm{
-		URL:        r.FormValue("url"),
-		Crawler:    r.FormValue("crawler") == "1",
-		CategoryID: int64(categoryID),
-		UserAgent:  r.FormValue("user_agent"),
-		Username:   r.FormValue("feed_username"),
-		Password:   r.FormValue("feed_password"),
+		URL:          r.FormValue("url"),
+		Crawler:      r.FormValue("crawler") == "1",
+		CategoryID:   int64(categoryID),
+		UserAgent:    r.FormValue("user_agent"),
+		Username:     r.FormValue("feed_username"),
+		Password:     r.FormValue("feed_password"),
+		ScraperRules: r.FormValue("scraper_rules"),
+		RewriteRules: r.FormValue("rewrite_rules"),
 	}
 }

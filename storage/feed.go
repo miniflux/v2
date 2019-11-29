@@ -346,10 +346,12 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			user_agent,
 			username,
 			password,
-			disabled
+			disabled,
+			scraper_rules,
+			rewrite_rules
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		RETURNING
 			id
 	`
@@ -367,6 +369,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Username,
 		feed.Password,
 		feed.Disabled,
+		feed.ScraperRules,
+		feed.RewriteRules,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)

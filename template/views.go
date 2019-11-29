@@ -87,6 +87,12 @@ var templateViewsMap = map[string]string{
                     - Using a different input name doesn't change anything
                 -->
                 <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+
+                <label for="form-scraper-rules">{{ t "form.feed.label.scraper_rules" }}</label>
+                <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
+
+                <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
+                <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
             </div>
         </details>
 
@@ -311,6 +317,8 @@ var templateViewsMap = map[string]string{
     <input type="hidden" name="user_agent" value="{{ .form.UserAgent }}">
     <input type="hidden" name="feed_username" value="{{ .form.Username }}">
     <input type="hidden" name="feed_password" value="{{ .form.Password }}">
+    <input type="hidden" name="scraper_rules" value="{{ .form.ScraperRules }}">
+    <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">
     {{ end }}
@@ -1343,12 +1351,12 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
-	"add_subscription":    "a0f1d2bc02b6adc83dbeae593f74d9b936102cd6dd73302cdbec2137cafdcdd9",
+	"add_subscription":    "5bae8c60989593257f515f9c73b35c854a94bee4b2fb08ad38aa93b17be9c1b5",
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
 	"categories":          "2c5dd0ed6355bd5acc393bbf6117d20458b5581aab82036008324f6bbbe2af75",
 	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
 	"category_feeds":      "527c2ffbc4fcec775071424ba1022ae003525dba53a28cc41f48fb7b30aa984b",
-	"choose_subscription": "33c04843d7c1b608d034e605e52681822fc6d79bc6b900c04915dd9ebae584e2",
+	"choose_subscription": "5f21556e6cecfd64b1cff30e22ef313d2f09698cebb03f711cbac8ec7f2c1d04",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
