@@ -63,7 +63,7 @@ func (r *rdfItem) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.Title = strings.TrimSpace(r.Title)
 	entry.Author = strings.TrimSpace(r.Creator)
-	entry.URL = r.Link
+	entry.URL = strings.TrimSpace(r.Link)
 	entry.Content = r.Description
 	entry.Hash = getHash(r)
 	entry.Date = getDate(r)
