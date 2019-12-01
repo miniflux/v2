@@ -143,7 +143,7 @@ func addYoutubeVideo(entryURL, entryContent string) string {
 
 	if len(matches) == 2 {
 		video := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/` + matches[1] + `" allowfullscreen></iframe>`
-		return video + "<p>" + replaceLineFeeds(replaceTextLinks(entryContent)) + "</p>"
+		return video + `<br>` + entryContent
 	}
 	return entryContent
 }
