@@ -1,3 +1,33 @@
+Version 2.0.19 (Dec 1, 2019)
+----------------------------
+
+* Add shortcut "V" to open original link in current tab
+* Add the possibility to add rules during feed creation
+* Wrap attachments into <details> disclosure element
+* Show attachment size on entry page
+* Add support of RSS Media elements (group, description, peer link, and thumbnails)
+* Add rewrite functions: convert_text_link and nl2br
+* Add scraper rule for openingsource.org
+* Add Makefile target to build only amd64 Docker image
+* Make sure to remove integration settings when removing a user
+* Add API parameter to filter entries by category
+* Display list of feeds per category
+* Show the number of read and unread entries for each feed
+* Make sure settings menu is consistent
+* Remove fixed table-layout for entry content
+* Update autocert lib because ACME v1 is EOL
+* Do not lighten blockquote font color
+* Update de_DE translation
+* Send a response when changing status of removed entries in Fever API
+* Add meta tag to disable Google Translate
+* Improve storage module
+* Improve XML decoder to remove illegal characters
+* Compare Fever token case-insensitively
+* Make sure integration tests are marked as failed in Github Actions
+* Add new formats to date parser
+* Add notification message when using keyboard shortcuts: f, s, and m.
+* Avoid keyboard shortcuts to conflict with Firefox’s "Find as you type" feature
+
 Version 2.0.18 (Sep 25, 2019)
 -----------------------------
 
