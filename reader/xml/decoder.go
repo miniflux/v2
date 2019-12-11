@@ -10,13 +10,25 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strings"
 
 	"miniflux.app/reader/encoding"
 )
 
 // NewDecoder returns a XML decoder that filters illegal characters.
 func NewDecoder(data io.Reader) *xml.Decoder {
-	decoder := xml.NewDecoder(data)
+	var decoder *xml.Decoder
+	buffer, _ := ioutil.ReadAll(data)
+	enc := procInst("encoding", string(buffer))
+	if enc != "" && enc != "utf-8" && enc != "UTF-8" && !strings.EqualFold(enc, "utf-8") {
+		// filter invalid chars later within decoder.CharsetReader
+		decoder = xml.NewDecoder(bytes.NewReader(buffer))
+	} else {
+		// filter invalid chars now, since decoder.CharsetReader not called for utf-8 content
+		filteredBytes := bytes.Map(filterValidXMLChar, buffer)
+		decoder = xml.NewDecoder(bytes.NewReader(filteredBytes))
+	}
+
 	decoder.Entity = xml.HTMLEntity
 	decoder.Strict = false
 	decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
@@ -47,4 +59,29 @@ func filterValidXMLChar(r rune) rune {
 		return r
 	}
 	return -1
+}
+
+// This function is copied from encoding/xml package,
+// procInst parses the `param="..."` or `param='...'`
+// value out of the provided string, returning "" if not found.
+func procInst(param, s string) string {
+	// TODO: this parsing is somewhat lame and not exact.
+	// It works for all actual cases, though.
+	param = param + "="
+	idx := strings.Index(s, param)
+	if idx == -1 {
+		return ""
+	}
+	v := s[idx+len(param):]
+	if v == "" {
+		return ""
+	}
+	if v[0] != '\'' && v[0] != '"' {
+		return ""
+	}
+	idx = strings.IndexRune(v[1:], rune(v[0]))
+	if idx == -1 {
+		return ""
+	}
+	return v[1 : idx+1]
 }
