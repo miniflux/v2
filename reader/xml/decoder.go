@@ -5,32 +5,26 @@
 package xml // import "miniflux.app/reader/xml"
 
 import (
-	"bytes"
 	"encoding/xml"
-	"fmt"
 	"io"
 	"io/ioutil"
-
-	"miniflux.app/reader/encoding"
+	"strings"
 )
 
 // NewDecoder returns a XML decoder that filters illegal characters.
 func NewDecoder(data io.Reader) *xml.Decoder {
-	decoder := xml.NewDecoder(data)
+	var newr io.Reader
+	rawData, err := ioutil.ReadAll(data)
+	if err == nil {
+		xmlStr := strings.Map(filterValidXMLChar, string(rawData))
+		newr = strings.NewReader(xmlStr)
+	} else {
+		newr = data
+	}
+
+	decoder := xml.NewDecoder(newr)
 	decoder.Entity = xml.HTMLEntity
 	decoder.Strict = false
-	decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
-		utf8Reader, err := encoding.CharsetReader(charset, input)
-		if err != nil {
-			return nil, err
-		}
-		rawData, err := ioutil.ReadAll(utf8Reader)
-		if err != nil {
-			return nil, fmt.Errorf("Unable to read data: %q", err)
-		}
-		filteredBytes := bytes.Map(filterValidXMLChar, rawData)
-		return bytes.NewReader(filteredBytes), nil
-	}
 
 	return decoder
 }
