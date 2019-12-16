@@ -648,6 +648,7 @@ a.button {
 
 .item-meta ul {
     margin-top: 5px;
+    float: right;
 }
 
 .item-meta li {
