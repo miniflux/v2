@@ -75,13 +75,7 @@ func scrapContent(page io.Reader, rules string) (string, error) {
 	document.Find(rules).Each(func(i int, s *goquery.Selection) {
 		var content string
 
-		// For some inline elements, we get the parent.
-		if s.Is("img") || s.Is("iframe") {
-			content, _ = s.Parent().Html()
-		} else {
-			content, _ = s.Html()
-		}
-
+		content, _ = goquery.OuterHtml(s)
 		contents += content
 	})
 

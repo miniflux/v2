@@ -4,7 +4,12 @@
 
 package scraper // import "miniflux.app/reader/scraper"
 
-import "testing"
+import (
+	"bytes"
+	"io/ioutil"
+	"strings"
+	"testing"
+)
 
 func TestGetPredefinedRules(t *testing.T) {
 	if getPredefinedScraperRules("http://www.phoronix.com/") == "" {
@@ -37,6 +42,35 @@ func TestWhitelistedContentTypes(t *testing.T) {
 		actualResult := isWhitelistedContentType(inputValue)
 		if actualResult != expectedResult {
 			t.Errorf(`Unexpected result for content type whitelist, got "%v" instead of "%v"`, actualResult, expectedResult)
+		}
+	}
+}
+
+func TestSelectorRules(t *testing.T) {
+	var ruleTestCases = map[string]string {
+		"img.html":	"article > img",
+		"iframe.html":	"article > iframe",
+		"p.html":	"article > p",
+	}
+
+	for filename, rule := range ruleTestCases {
+		html, err := ioutil.ReadFile("testdata/" + filename)
+		if err != nil {
+			t.Fatalf(`Unable to read file %q: %v`, filename, err)
+		}
+
+		actualResult, err := scrapContent(bytes.NewReader(html), rule)
+		if err != nil {
+			t.Fatalf(`Scraping error for %q - %q: %v`, filename, rule, err)
+		}
+
+		expectedResult, err := ioutil.ReadFile("testdata/" + filename + "-result")
+		if err != nil {
+			t.Fatalf(`Unable to read file %q: %v`, filename, err)
+		}
+
+		if actualResult != strings.TrimSpace(string(expectedResult)) {
+			t.Errorf(`Unexpected result for %q, got "%s" instead of "%s"`, rule, actualResult, expectedResult)
 		}
 	}
 }
