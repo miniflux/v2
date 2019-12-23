@@ -230,6 +230,59 @@ func TestParseFeedURLWithAtomLink(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithWebmaster(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<webMaster>webmaster@example.com</webMaster>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "webmaster@example.com"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseFeedWithManagingEditor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<webMaster>webmaster@example.com</webMaster>
+			<managingEditor>editor@example.com</managingEditor>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "editor@example.com"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
 func TestParseEntryWithAuthorAndInnerHTML(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
@@ -250,12 +303,14 @@ func TestParseEntryWithAuthorAndInnerHTML(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Author != "by Foo Bar" {
-		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	expected := "by Foo Bar"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
 	}
 }
 
-func TestParseEntryWithAtomAuthor(t *testing.T) {
+func TestParseEntryWithNonStandardAtomAuthor(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
@@ -280,8 +335,68 @@ func TestParseEntryWithAtomAuthor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Author != "Foo Bar" {
-		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	expected := "Foo Bar"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseEntryWithAtomAuthorEmail(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<atom:author>
+					<email>author@example.org</email>
+				</atom:author>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "author@example.org"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseEntryWithAtomAuthor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<atom:author>
+					<name>Foo Bar</name>
+				</atom:author>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "Foo Bar"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got: %q instead of %q", result, expected)
 	}
 }
 
@@ -304,8 +419,10 @@ func TestParseEntryWithDublinCoreAuthor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Author != "Me (me@example.com)" {
-		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	expected := "Me (me@example.com)"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
 	}
 }
 
@@ -328,8 +445,10 @@ func TestParseEntryWithItunesAuthor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Author != "Someone" {
-		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	expected := "Someone"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
 	}
 }
 
@@ -352,8 +471,119 @@ func TestParseFeedWithItunesAuthor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Author != "Someone" {
-		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	expected := "Someone"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseFeedWithItunesOwner(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<itunes:owner>
+				<itunes:name>John Doe</itunes:name>
+				<itunes:email>john.doe@example.com</itunes:email>
+			</itunes:owner>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "John Doe"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseFeedWithItunesOwnerEmail(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<itunes:owner>
+				<itunes:email>john.doe@example.com</itunes:email>
+			</itunes:owner>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "john.doe@example.com"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseEntryWithGooglePlayAuthor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<googleplay:author>Someone</googleplay:author>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "Someone"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseFeedWithGooglePlayAuthor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<googleplay:author>Someone</googleplay:author>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "Someone"
+	result := feed.Entries[0].Author
+	if result != expected {
+		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
 	}
 }
 
@@ -794,6 +1024,7 @@ func TestParseEntryWithMediaPeerLink(t *testing.T) {
 	if len(feed.Entries) != 1 {
 		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
+
 	if len(feed.Entries[0].Enclosures) != 1 {
 		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
 	}
@@ -818,5 +1049,102 @@ func TestParseEntryWithMediaPeerLink(t *testing.T) {
 		if expectedResults[index].size != enclosure.Size {
 			t.Errorf(`Unexpected enclosure size, got %d instead of %d`, enclosure.Size, expectedResults[index].size)
 		}
+	}
+}
+
+func TestEntryDescriptionFromItunesSummary(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Podcast Episode</title>
+				<guid>http://example.com/episode.m4a</guid>
+				<pubDate>Tue, 08 Mar 2016 12:00:00 GMT</pubDate>
+				<itunes:subtitle>Episode Subtitle</itunes:subtitle>
+				<itunes:summary>Episode Summary</itunes:summary>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	expected := "Episode Summary"
+	result := feed.Entries[0].Content
+	if expected != result {
+		t.Errorf(`Unexpected podcast content, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestEntryDescriptionFromItunesSubtitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Podcast Episode</title>
+				<guid>http://example.com/episode.m4a</guid>
+				<pubDate>Tue, 08 Mar 2016 12:00:00 GMT</pubDate>
+				<itunes:subtitle>Episode Subtitle</itunes:subtitle>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	expected := "Episode Subtitle"
+	result := feed.Entries[0].Content
+	if expected != result {
+		t.Errorf(`Unexpected podcast content, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestEntryDescriptionFromGooglePlayDescription(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0"
+		xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+		xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Podcast Episode</title>
+				<guid>http://example.com/episode.m4a</guid>
+				<pubDate>Tue, 08 Mar 2016 12:00:00 GMT</pubDate>
+				<itunes:subtitle>Episode Subtitle</itunes:subtitle>
+				<googleplay:description>Episode Description</googleplay:description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	expected := "Episode Description"
+	result := feed.Entries[0].Content
+	if expected != result {
+		t.Errorf(`Unexpected podcast content, got %q instead of %q`, result, expected)
 	}
 }
