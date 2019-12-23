@@ -486,3 +486,36 @@ func TestParseFeedWithURLWrappedInSpaces(t *testing.T) {
 		t.Errorf(`Unexpected entry URL, got %q`, feed.Entries[0].URL)
 	}
 }
+
+func TestParseRDFWithContentEncoded(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/"
+		xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<title>Item Title</title>
+			<link>http://example.org/</link>
+			<content:encoded><![CDATA[<p>Test</p>]]></content:encoded>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `<p>Test</p>`
+	result := feed.Entries[0].Content
+	if result != expected {
+		t.Errorf(`Unexpected entry URL, got %q instead of %q`, result, expected)
+	}
+}
