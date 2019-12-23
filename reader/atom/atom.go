@@ -99,6 +99,7 @@ func (a *atomEntry) Transform() *model.Entry {
 	entry.Content = getContent(a)
 	entry.Title = getTitle(a)
 	entry.Enclosures = getEnclosures(a)
+	entry.CommentsURL = getRelationURLWithType(a.Links, "replies", "text/html")
 	return entry
 }
 
@@ -119,6 +120,16 @@ func getURL(links []atomLink) string {
 func getRelationURL(links []atomLink, relation string) string {
 	for _, link := range links {
 		if strings.ToLower(link.Rel) == relation {
+			return strings.TrimSpace(link.URL)
+		}
+	}
+
+	return ""
+}
+
+func getRelationURLWithType(links []atomLink, relation, contentType string) string {
+	for _, link := range links {
+		if strings.ToLower(link.Rel) == relation && strings.ToLower(link.Type) == contentType {
 			return strings.TrimSpace(link.URL)
 		}
 	}
