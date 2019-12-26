@@ -6,6 +6,7 @@ package client // import "miniflux.app/http/client"
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"regexp"
@@ -24,8 +25,22 @@ type Response struct {
 	EffectiveURL  string
 	LastModified  string
 	ETag          string
+	Expires       string
 	ContentType   string
 	ContentLength int64
+}
+
+func (r *Response) String() string {
+	return fmt.Sprintf(
+		`StatusCode=%d EffectiveURL=%q LastModified=%q ETag=%s Expires=%s ContentType=%q ContentLength=%d`,
+		r.StatusCode,
+		r.EffectiveURL,
+		r.LastModified,
+		r.ETag,
+		r.Expires,
+		r.ContentType,
+		r.ContentLength,
+	)
 }
 
 // IsNotFound returns true if the resource doesn't exists anymore.
@@ -105,8 +120,8 @@ func (r *Response) EnsureUnicodeBody() (err error) {
 	return err
 }
 
-// String returns the response body as string.
-func (r *Response) String() string {
+// BodyAsString returns the response body as string.
+func (r *Response) BodyAsString() string {
 	bytes, _ := ioutil.ReadAll(r.Body)
 	return string(bytes)
 }

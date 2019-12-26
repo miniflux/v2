@@ -95,7 +95,7 @@ func TestToString(t *testing.T) {
 	input := `test`
 	r := &Response{Body: strings.NewReader(input)}
 
-	if r.String() != input {
+	if r.BodyAsString() != input {
 		t.Error(`Unexpected ouput`)
 	}
 }
@@ -140,7 +140,7 @@ func TestEnsureUnicodeWithHTMLDocuments(t *testing.T) {
 			t.Fatalf(`Unicode conversion error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
 		}
 
-		isUnicode := utf8.ValidString(r.String())
+		isUnicode := utf8.ValidString(r.BodyAsString())
 		if isUnicode != tc.convertedToUnicode {
 			t.Errorf(`Unicode conversion %q - %q, got: %v, expected: %v`,
 				tc.filename, tc.contentType, isUnicode, tc.convertedToUnicode)

@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	errUnreadableDoc     = "Unable to analyze this page: %v"
+	errUnreadableDoc = "Unable to analyze this page: %v"
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
@@ -31,7 +31,7 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 		return nil, err
 	}
 
-	body := response.String()
+	body := response.BodyAsString()
 	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
 		var subscriptions Subscriptions
 		subscriptions = append(subscriptions, &Subscription{
