@@ -22,6 +22,7 @@ import (
 	"miniflux.app/errors"
 	"miniflux.app/logger"
 	"miniflux.app/timer"
+	url_helper "miniflux.app/url"
 	"miniflux.app/version"
 )
 
@@ -37,7 +38,8 @@ var (
 
 // Client is a HTTP Client :)
 type Client struct {
-	url                 string
+	inputURL            string
+	requestURL          string
 	etagHeader          string
 	lastModifiedHeader  string
 	authorizationHeader string
@@ -45,6 +47,18 @@ type Client struct {
 	password            string
 	userAgent           string
 	Insecure            bool
+}
+
+func (c *Client) String() string {
+	return fmt.Sprintf(
+		`InputURL=%q RequestURL=%q ETag=%s LastModified=%q BasicAuth=%v UserAgent=%q`,
+		c.inputURL,
+		c.requestURL,
+		c.etagHeader,
+		c.lastModifiedHeader,
+		c.authorizationHeader != "" || (c.username != "" && c.password != ""),
+		c.userAgent,
+	)
 }
 
 // WithCredentials defines the username/password for HTTP Basic authentication.
@@ -115,7 +129,12 @@ func (c *Client) PostJSON(data interface{}) (*Response, error) {
 }
 
 func (c *Client) executeRequest(request *http.Request) (*Response, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] url=%s", c.url))
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] inputURL=%s", c.inputURL))
+
+	logger.Debug("[HttpClient:Before] Method=%s %s",
+		request.Method,
+		c.String(),
+	)
 
 	client := c.buildClient()
 	resp, err := client.Do(request)
@@ -162,21 +181,15 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		EffectiveURL:  resp.Request.URL.String(),
 		LastModified:  resp.Header.Get("Last-Modified"),
 		ETag:          resp.Header.Get("ETag"),
+		Expires:       resp.Header.Get("Expires"),
 		ContentType:   resp.Header.Get("Content-Type"),
 		ContentLength: resp.ContentLength,
 	}
 
-	logger.Debug("[HttpClient:%s] URL=%s, EffectiveURL=%s, Code=%d, Length=%d, Type=%s, ETag=%s, LastMod=%s, Expires=%s, Auth=%v",
+	logger.Debug("[HttpClient:After] Method=%s %s; Response => %s",
 		request.Method,
-		c.url,
-		response.EffectiveURL,
-		response.StatusCode,
-		resp.ContentLength,
-		response.ContentType,
-		response.ETag,
-		response.LastModified,
-		resp.Header.Get("Expires"),
-		c.username != "",
+		c.String(),
+		response,
 	)
 
 	// Ignore caching headers for feeds that do not want any cache.
@@ -190,7 +203,8 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 }
 
 func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, error) {
-	request, err := http.NewRequest(method, c.url, body)
+	c.requestURL = url_helper.RequestURI(c.inputURL)
+	request, err := http.NewRequest(method, c.requestURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,5 +252,5 @@ func (c *Client) buildHeaders() http.Header {
 
 // New returns a new HTTP client.
 func New(url string) *Client {
-	return &Client{url: url, userAgent: DefaultUserAgent, Insecure: false}
+	return &Client{inputURL: url, userAgent: DefaultUserAgent, Insecure: false}
 }
