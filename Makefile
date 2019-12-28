@@ -120,29 +120,35 @@ clean-integration-test:
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-image:
-	cp Dockerfile Dockerfile.amd64
-	sed -i.bak "s/__BASEIMAGE_ARCH__/amd64/" Dockerfile.amd64
-	sed -i.bak "s/__MINIFLUX_VERSION__/$(VERSION)/" Dockerfile.amd64
-	sed -i.bak "s/__MINIFLUX_ARCH__/amd64/" Dockerfile.amd64
-	docker build --pull -f Dockerfile.amd64 -t $(DOCKER_IMAGE):$(VERSION) .
-	rm -f Dockerfile.amd64*
+	docker build -t $(DOCKER_IMAGE):$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=amd64 \
+		--build-arg BASE_IMAGE_ARCH=amd64 .
 
 docker-images:
-	for arch in amd64 arm32v6 arm32v7 arm64v8; do \
-	  case $${arch} in \
-		amd64   ) miniflux_arch="amd64";; \
-		arm32v6 ) miniflux_arch="armv6";; \
-		arm32v7 ) miniflux_arch="armv7";; \
-		arm64v8 ) miniflux_arch="armv8";; \
-	  esac ;\
-	  cp Dockerfile Dockerfile.$${arch} && \
-	  sed -i"" -e "s|__BASEIMAGE_ARCH__|$${arch}|g" Dockerfile.$${arch} && \
-	  sed -i"" -e "s|__MINIFLUX_VERSION__|$(VERSION)|g" Dockerfile.$${arch} && \
-	  sed -i"" -e "s|__MINIFLUX_ARCH__|$${miniflux_arch}|g" Dockerfile.$${arch} && \
-	  docker build --pull -f Dockerfile.$${arch} -t $(DOCKER_IMAGE):$${arch}-$(VERSION) . && \
-	  docker tag $(DOCKER_IMAGE):$${arch}-${VERSION} $(DOCKER_IMAGE):$${arch}-latest && \
-	  rm -f Dockerfile.$${arch}* ;\
-	done
+	docker build -t $(DOCKER_IMAGE):amd64-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=amd64 \
+		--build-arg BASE_IMAGE_ARCH=amd64 .
+	docker tag $(DOCKER_IMAGE):amd64-$(VERSION) $(DOCKER_IMAGE):amd64-latest
+
+	docker build -t $(DOCKER_IMAGE):arm32v6-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=armv6 \
+		--build-arg BASE_IMAGE_ARCH=arm32v6 .
+	docker tag $(DOCKER_IMAGE):arm32v6-$(VERSION) $(DOCKER_IMAGE):arm32v6-latest
+
+	docker build -t $(DOCKER_IMAGE):arm32v7-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=armv7 \
+		--build-arg BASE_IMAGE_ARCH=arm32v7 .
+	docker tag $(DOCKER_IMAGE):arm32v7-$(VERSION) $(DOCKER_IMAGE):arm32v7-latest
+
+	docker build -t $(DOCKER_IMAGE):arm64v8-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=armv8 \
+		--build-arg BASE_IMAGE_ARCH=arm64v8 .
+	docker tag $(DOCKER_IMAGE):arm64v8-$(VERSION) $(DOCKER_IMAGE):arm64v8-latest
 
 docker-manifest:
 	for version in $(VERSION) latest; do \
