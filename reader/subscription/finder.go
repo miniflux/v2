@@ -31,7 +31,7 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 		return nil, err
 	}
 
-	body := parser.StripInvalidCharacter(BodyAsString())
+	body := parser.StripInvalidCharacter(response.BodyAsString())
 	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
 		var subscriptions Subscriptions
 		subscriptions = append(subscriptions, &Subscription{
