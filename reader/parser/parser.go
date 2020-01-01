@@ -17,6 +17,9 @@ import (
 
 // ParseFeed analyzes the input data and returns a normalized feed object.
 func ParseFeed(data string) (*model.Feed, *errors.LocalizedError) {
+	// Strip some invalid character, such as non-print character
+	data = StripInvalidCharacter(data)
+
 	switch DetectFeedFormat(data) {
 	case FormatAtom:
 		return atom.Parse(strings.NewReader(data))

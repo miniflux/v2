@@ -29,7 +29,7 @@ var (
 
 // Handler contains all the logic to create and refresh feeds.
 type Handler struct {
-	store      *storage.Storage
+	store *storage.Storage
 }
 
 // CreateFeed fetch, parse and store a new feed.
