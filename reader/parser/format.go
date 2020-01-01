@@ -8,7 +8,7 @@ import (
 	"encoding/xml"
 	"strings"
 
-	"miniflux.app/reader/encoding"
+	rxml "miniflux.app/reader/xml"
 )
 
 // List of feed formats.
@@ -26,9 +26,7 @@ func DetectFeedFormat(data string) string {
 		return FormatJSON
 	}
 
-	decoder := xml.NewDecoder(strings.NewReader(data))
-	decoder.Entity = xml.HTMLEntity
-	decoder.CharsetReader = encoding.CharsetReader
+	decoder := rxml.NewDecoder(strings.NewReader(data))
 
 	for {
 		token, _ := decoder.Token()
