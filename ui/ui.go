@@ -7,7 +7,6 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/config"
 	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/template"
@@ -17,9 +16,9 @@ import (
 )
 
 // Serve declares all routes for the user interface.
-func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
-	middleware := newMiddleware(router, cfg, store)
-	handler := &handler{router, cfg, store, template.NewEngine(cfg, router), pool, feedHandler}
+func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
+	middleware := newMiddleware(router, store)
+	handler := &handler{router, store, template.NewEngine(router), pool, feedHandler}
 
 	uiRouter := router.NewRoute().Subrouter()
 	uiRouter.Use(middleware.handleUserSession)
@@ -39,14 +38,14 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/bookmarklet", handler.bookmarklet).Name("bookmarklet").Methods("GET")
 
 	// Unread page.
-	uiRouter.HandleFunc("/mark-all-as-read", handler.markAllAsRead).Name("markAllAsRead").Methods("GET")
+	uiRouter.HandleFunc("/mark-all-as-read", handler.markAllAsRead).Name("markAllAsRead").Methods("POST")
 	uiRouter.HandleFunc("/unread", handler.showUnreadPage).Name("unread").Methods("GET")
 	uiRouter.HandleFunc("/unread/entry/{entryID}", handler.showUnreadEntryPage).Name("unreadEntry").Methods("GET")
 
 	// History pages.
 	uiRouter.HandleFunc("/history", handler.showHistoryPage).Name("history").Methods("GET")
 	uiRouter.HandleFunc("/history/entry/{entryID}", handler.showReadEntryPage).Name("readEntry").Methods("GET")
-	uiRouter.HandleFunc("/history/flush", handler.flushHistory).Name("flushHistory").Methods("GET")
+	uiRouter.HandleFunc("/history/flush", handler.flushHistory).Name("flushHistory").Methods("POST")
 
 	// Bookmark pages.
 	uiRouter.HandleFunc("/starred", handler.showStarredPage).Name("starred").Methods("GET")
@@ -75,6 +74,7 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/categories", handler.showCategoryListPage).Name("categories").Methods("GET")
 	uiRouter.HandleFunc("/category/create", handler.showCreateCategoryPage).Name("createCategory").Methods("GET")
 	uiRouter.HandleFunc("/category/save", handler.saveCategory).Name("saveCategory").Methods("POST")
+	uiRouter.HandleFunc("/category/{categoryID}/feeds", handler.showCategoryFeedsPage).Name("categoryFeeds").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/entries", handler.showCategoryEntriesPage).Name("categoryEntries").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage).Name("categoryEntriesAll").Methods("GET")
 	uiRouter.HandleFunc("/category/{categoryID}/edit", handler.showEditCategoryPage).Name("editCategory").Methods("GET")
@@ -113,6 +113,7 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage, pool 
 	uiRouter.HandleFunc("/export", handler.exportFeeds).Name("export").Methods("GET")
 	uiRouter.HandleFunc("/import", handler.showImportPage).Name("import").Methods("GET")
 	uiRouter.HandleFunc("/upload", handler.uploadOPML).Name("uploadOPML").Methods("POST")
+	uiRouter.HandleFunc("/fetch", handler.fetchOPML).Name("fetchOPML").Methods("POST")
 
 	// OAuth2 flow.
 	uiRouter.HandleFunc("/oauth2/{provider}/unlink", handler.oauth2Unlink).Name("oauth2Unlink").Methods("GET")

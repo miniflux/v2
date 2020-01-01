@@ -13,16 +13,10 @@ import (
 
 // HasDuplicateFeverUsername checks if another user have the same fever username.
 func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) bool {
-	query := `
-		SELECT
-			count(*) as c
-		FROM integrations
-		WHERE user_id != $1 AND fever_username=$2
-	`
-
-	var result int
+	query := `SELECT true FROM integrations WHERE user_id != $1 AND fever_username=$2`
+	var result bool
 	s.db.QueryRow(query, userID, feverUsername).Scan(&result)
-	return result >= 1
+	return result
 }
 
 // UserByFeverToken returns a user by using the Fever API token.
@@ -32,7 +26,8 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 			users.id, users.is_admin, users.timezone
 		FROM users
 		LEFT JOIN integrations ON integrations.user_id=users.id
-		WHERE integrations.fever_enabled='t' AND integrations.fever_token=$1
+		WHERE
+			integrations.fever_enabled='t' AND lower(integrations.fever_token)=lower($1)
 	`
 
 	var user model.User
@@ -42,14 +37,15 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("unable to fetch user: %v", err)
+	default:
+		return &user, nil
 	}
-
-	return &user, nil
 }
 
 // Integration returns user integration settings.
 func (s *Storage) Integration(userID int64) (*model.Integration, error) {
-	query := `SELECT
+	query := `
+		SELECT
 			user_id,
 			pinboard_enabled,
 			pinboard_token,
@@ -74,8 +70,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			pocket_enabled,
 			pocket_access_token,
 			pocket_consumer_key
-		FROM integrations
-		WHERE user_id=$1
+		FROM
+			integrations
+		WHERE
+			user_id=$1
 	`
 	var integration model.Integration
 	err := s.db.QueryRow(query, userID).Scan(
@@ -108,16 +106,18 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 	case err == sql.ErrNoRows:
 		return &integration, nil
 	case err != nil:
-		return &integration, fmt.Errorf("unable to fetch integration row: %v", err)
+		return &integration, fmt.Errorf(`store: unable to fetch integration row: %v`, err)
+	default:
+		return &integration, nil
 	}
-
-	return &integration, nil
 }
 
 // UpdateIntegration saves user integration settings.
 func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 	query := `
-		UPDATE integrations SET
+		UPDATE
+			integrations
+		SET
 			pinboard_enabled=$1,
 			pinboard_token=$2,
 			pinboard_tags=$3,
@@ -141,7 +141,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pocket_enabled=$21,
 			pocket_access_token=$22,
 			pocket_consumer_key=$23
-		WHERE user_id=$24
+		WHERE
+			user_id=$24
 	`
 	_, err := s.db.Exec(
 		query,
@@ -172,7 +173,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 	)
 
 	if err != nil {
-		return fmt.Errorf("unable to update integration row: %v", err)
+		return fmt.Errorf(`store: unable to update integration row: %v`, err)
 	}
 
 	return nil
@@ -183,7 +184,7 @@ func (s *Storage) CreateIntegration(userID int64) error {
 	query := `INSERT INTO integrations (user_id) VALUES ($1)`
 	_, err := s.db.Exec(query, userID)
 	if err != nil {
-		return fmt.Errorf("unable to create integration row: %v", err)
+		return fmt.Errorf(`store: unable to create integration row: %v`, err)
 	}
 
 	return nil
@@ -192,11 +193,15 @@ func (s *Storage) CreateIntegration(userID int64) error {
 // HasSaveEntry returns true if the given user can save articles to third-parties.
 func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 	query := `
-		SELECT true FROM integrations
-		WHERE user_id=$1 AND
-		(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR pocket_enabled='t')
+		SELECT
+			true
+		FROM
+			integrations
+		WHERE
+			user_id=$1
+		AND
+			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR pocket_enabled='t')
 	`
-
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
 		result = false
 	}

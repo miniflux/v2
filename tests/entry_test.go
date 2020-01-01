@@ -93,6 +93,40 @@ func TestGetAllEntries(t *testing.T) {
 	}
 }
 
+func TestFilterEntriesByCategory(t *testing.T) {
+	client := createClient(t)
+	category, err := client.CreateCategory("Test Filter by Category")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed(testFeedURL, category.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	results, err := client.Entries(&miniflux.Filter{CategoryID: category.ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if results.Total == 0 {
+		t.Fatalf(`We should have more than one entry`)
+	}
+
+	if results.Entries[0].Feed.Category == nil {
+		t.Fatalf(`The entry feed category should not be nil`)
+	}
+
+	if results.Entries[0].Feed.Category.ID != category.ID {
+		t.Errorf(`Entries should be filtered by category_id=%d`, category.ID)
+	}
+}
+
 func TestSearchEntries(t *testing.T) {
 	client := createClient(t)
 	categories, err := client.Categories()
@@ -100,7 +134,7 @@ func TestSearchEntries(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed("https://github.com/miniflux/miniflux/releases.atom", categories[0].ID)
+	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}

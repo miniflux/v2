@@ -9,10 +9,10 @@ import (
 	"miniflux.app/oauth2"
 )
 
-func getOAuth2Manager(cfg *config.Config) *oauth2.Manager {
+func getOAuth2Manager() *oauth2.Manager {
 	return oauth2.NewManager(
-		cfg.OAuth2ClientID(),
-		cfg.OAuth2ClientSecret(),
-		cfg.OAuth2RedirectURL(),
+		config.Opts.OAuth2ClientID(),
+		config.Opts.OAuth2ClientSecret(),
+		config.Opts.OAuth2RedirectURL(),
 	)
 }

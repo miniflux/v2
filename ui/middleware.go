@@ -14,21 +14,20 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
-	"miniflux.app/storage"
 	"miniflux.app/logger"
 	"miniflux.app/model"
+	"miniflux.app/storage"
 
 	"github.com/gorilla/mux"
 )
 
 type middleware struct {
 	router *mux.Router
-	cfg *config.Config
-	store *storage.Storage
+	store  *storage.Storage
 }
 
-func newMiddleware(router *mux.Router, cfg *config.Config, store *storage.Storage) *middleware {
-	return &middleware{router, cfg, store}
+func newMiddleware(router *mux.Router, store *storage.Storage) *middleware {
+	return &middleware{router, store}
 }
 
 func (m *middleware) handleUserSession(next http.Handler) http.Handler {
@@ -61,7 +60,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 		session := m.getAppSessionValueFromCookie(r)
 
 		if session == nil {
-			if (request.IsAuthenticated(r)) {
+			if request.IsAuthenticated(r) {
 				userID := request.UserID(r)
 				logger.Debug("[UI:AppSession] Cookie expired but user #%d is logged: creating a new session", userID)
 				session, err = m.store.CreateAppSessionWithUserPrefs(userID)
@@ -78,7 +77,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 				}
 			}
 
-			http.SetCookie(w, cookie.New(cookie.CookieAppSessionID, session.ID, m.cfg.IsHTTPS, m.cfg.BasePath()))
+			http.SetCookie(w, cookie.New(cookie.CookieAppSessionID, session.ID, config.Opts.HTTPS, config.Opts.BasePath()))
 		} else {
 			logger.Debug("[UI:AppSession] %s", session)
 		}

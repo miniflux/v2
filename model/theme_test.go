@@ -7,7 +7,7 @@ package model // import "miniflux.app/model"
 import "testing"
 
 func TestValidateTheme(t *testing.T) {
-	for _, status := range []string{"default", "black", "sansserif"} {
+	for _, status := range []string{"light_serif", "dark_sans_serif", "system_serif"} {
 		if err := ValidateTheme(status); err != nil {
 			t.Error(`A valid theme should not generate any error`)
 		}

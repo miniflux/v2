@@ -6,6 +6,8 @@ package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
 	"fmt"
+	"html"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -32,7 +34,39 @@ func addImageTitle(entryURL, entryContent string) string {
 			srcAttr, _ := img.Attr("src")
 			titleAttr, _ := img.Attr("title")
 
-			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + titleAttr + `</p></figcaption></figure>`)
+			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + html.EscapeString(titleAttr) + `</p></figcaption></figure>`)
+		})
+
+		output, _ := doc.Find("body").First().Html()
+		return output
+	}
+
+	return entryContent
+}
+
+func addMailtoSubject(entryURL, entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	matches := doc.Find(`a[href^="mailto:"]`)
+
+	if matches.Length() > 0 {
+		matches.Each(func(i int, a *goquery.Selection) {
+			hrefAttr, _ := a.Attr("href")
+
+			mailto, err := url.Parse(hrefAttr)
+			if err != nil {
+				return
+			}
+
+			subject := mailto.Query().Get("subject")
+			if subject == "" {
+				return
+			}
+
+			a.AppendHtml(" [" + html.EscapeString(subject) + "]")
 		})
 
 		output, _ := doc.Find("body").First().Html()
@@ -109,7 +143,7 @@ func addYoutubeVideo(entryURL, entryContent string) string {
 
 	if len(matches) == 2 {
 		video := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/` + matches[1] + `" allowfullscreen></iframe>`
-		return video + "<p>" + replaceLineFeeds(replaceTextLinks(entryContent)) + "</p>"
+		return video + `<br>` + entryContent
 	}
 	return entryContent
 }

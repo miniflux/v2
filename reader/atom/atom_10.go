@@ -1,0 +1,216 @@
+// Copyright 2019 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package atom // import "miniflux.app/reader/atom"
+
+import (
+	"encoding/xml"
+	"html"
+	"strconv"
+	"strings"
+	"time"
+
+	"miniflux.app/crypto"
+	"miniflux.app/logger"
+	"miniflux.app/model"
+	"miniflux.app/reader/date"
+	"miniflux.app/reader/media"
+	"miniflux.app/reader/sanitizer"
+	"miniflux.app/url"
+)
+
+// Specs:
+// https://tools.ietf.org/html/rfc4287
+// https://validator.w3.org/feed/docs/atom.html
+type atom10Feed struct {
+	XMLName xml.Name      `xml:"http://www.w3.org/2005/Atom feed"`
+	ID      string        `xml:"id"`
+	Title   atom10Text    `xml:"title"`
+	Author  atomPerson    `xml:"author"`
+	Links   atomLinks     `xml:"link"`
+	Entries []atom10Entry `xml:"entry"`
+}
+
+func (a *atom10Feed) Transform() *model.Feed {
+	feed := new(model.Feed)
+	feed.FeedURL = a.Links.firstLinkWithRelation("self")
+	feed.SiteURL = a.Links.originalLink()
+	feed.Title = a.Title.String()
+
+	if feed.Title == "" {
+		feed.Title = feed.SiteURL
+	}
+
+	for _, entry := range a.Entries {
+		item := entry.Transform()
+		entryURL, err := url.AbsoluteURL(feed.SiteURL, item.URL)
+		if err == nil {
+			item.URL = entryURL
+		}
+
+		if item.Author == "" {
+			item.Author = a.Author.String()
+		}
+
+		if item.Title == "" {
+			item.Title = item.URL
+		}
+
+		feed.Entries = append(feed.Entries, item)
+	}
+
+	return feed
+}
+
+type atom10Entry struct {
+	ID        string     `xml:"id"`
+	Title     atom10Text `xml:"title"`
+	Published string     `xml:"published"`
+	Updated   string     `xml:"updated"`
+	Links     atomLinks  `xml:"link"`
+	Summary   atom10Text `xml:"summary"`
+	Content   atom10Text `xml:"http://www.w3.org/2005/Atom content"`
+	Author    atomPerson `xml:"author"`
+	media.Element
+}
+
+func (a *atom10Entry) Transform() *model.Entry {
+	entry := new(model.Entry)
+	entry.URL = a.Links.originalLink()
+	entry.Date = a.entryDate()
+	entry.Author = a.Author.String()
+	entry.Hash = a.entryHash()
+	entry.Content = a.entryContent()
+	entry.Title = a.entryTitle()
+	entry.Enclosures = a.entryEnclosures()
+	entry.CommentsURL = a.Links.firstLinkWithRelationAndType("replies", "text/html")
+	return entry
+}
+
+func (a *atom10Entry) entryTitle() string {
+	return sanitizer.StripTags(a.Title.String())
+}
+
+func (a *atom10Entry) entryContent() string {
+	content := a.Content.String()
+	if content != "" {
+		return content
+	}
+
+	summary := a.Summary.String()
+	if summary != "" {
+		return summary
+	}
+
+	mediaDescription := a.FirstMediaDescription()
+	if mediaDescription != "" {
+		return mediaDescription
+	}
+
+	return ""
+}
+
+// Note: The published date represents the original creation date for YouTube feeds.
+// Example:
+// <published>2019-01-26T08:02:28+00:00</published>
+// <updated>2019-01-29T07:27:27+00:00</updated>
+func (a *atom10Entry) entryDate() time.Time {
+	dateText := a.Published
+	if dateText == "" {
+		dateText = a.Updated
+	}
+
+	if dateText != "" {
+		result, err := date.Parse(dateText)
+		if err != nil {
+			logger.Error("atom: %v", err)
+			return time.Now()
+		}
+
+		return result
+	}
+
+	return time.Now()
+}
+
+func (a *atom10Entry) entryHash() string {
+	for _, value := range []string{a.ID, a.Links.originalLink()} {
+		if value != "" {
+			return crypto.Hash(value)
+		}
+	}
+
+	return ""
+}
+
+func (a *atom10Entry) entryEnclosures() model.EnclosureList {
+	enclosures := make(model.EnclosureList, 0)
+	duplicates := make(map[string]bool, 0)
+
+	for _, mediaThumbnail := range a.AllMediaThumbnails() {
+		if _, found := duplicates[mediaThumbnail.URL]; !found {
+			duplicates[mediaThumbnail.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaThumbnail.URL,
+				MimeType: mediaThumbnail.MimeType(),
+				Size:     mediaThumbnail.Size(),
+			})
+		}
+	}
+
+	for _, link := range a.Links {
+		if strings.ToLower(link.Rel) == "enclosure" {
+			if _, found := duplicates[link.URL]; !found {
+				duplicates[link.URL] = true
+				length, _ := strconv.ParseInt(link.Length, 10, 0)
+				enclosures = append(enclosures, &model.Enclosure{URL: link.URL, MimeType: link.Type, Size: length})
+			}
+		}
+	}
+
+	for _, mediaContent := range a.AllMediaContents() {
+		if _, found := duplicates[mediaContent.URL]; !found {
+			duplicates[mediaContent.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaContent.URL,
+				MimeType: mediaContent.MimeType(),
+				Size:     mediaContent.Size(),
+			})
+		}
+	}
+
+	for _, mediaPeerLink := range a.AllMediaPeerLinks() {
+		if _, found := duplicates[mediaPeerLink.URL]; !found {
+			duplicates[mediaPeerLink.URL] = true
+			enclosures = append(enclosures, &model.Enclosure{
+				URL:      mediaPeerLink.URL,
+				MimeType: mediaPeerLink.MimeType(),
+				Size:     mediaPeerLink.Size(),
+			})
+		}
+	}
+
+	return enclosures
+}
+
+type atom10Text struct {
+	Type string `xml:"type,attr"`
+	Data string `xml:",chardata"`
+	XML  string `xml:",innerxml"`
+}
+
+func (a *atom10Text) String() string {
+	content := ""
+
+	switch {
+	case a.Type == "xhtml":
+		content = a.XML
+	case a.Type == "html":
+		content = a.Data
+	case a.Type == "text" || a.Type == "":
+		content = html.EscapeString(a.Data)
+	}
+
+	return strings.TrimSpace(content)
+}

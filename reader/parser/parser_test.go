@@ -191,7 +191,7 @@ func TestDifferentEncodingWithResponse(t *testing.T) {
 			t.Fatalf(`Encoding error for %q: %v`, tc.filename, encodingErr)
 		}
 
-		feed, parseErr := ParseFeed(r.String())
+		feed, parseErr := ParseFeed(r.BodyAsString())
 		if parseErr != nil {
 			t.Fatalf(`Parsing error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
 		}

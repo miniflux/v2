@@ -189,17 +189,9 @@ func main() {
 			"ui/static/js/dom_helper.js",
 			"ui/static/js/touch_handler.js",
 			"ui/static/js/keyboard_handler.js",
-			"ui/static/js/mouse_handler.js",
-			"ui/static/js/form_handler.js",
 			"ui/static/js/request_builder.js",
-			"ui/static/js/unread_counter_handler.js",
-			"ui/static/js/entry_handler.js",
-			"ui/static/js/feed_handler.js",
-			"ui/static/js/confirm_handler.js",
-			"ui/static/js/menu_handler.js",
 			"ui/static/js/modal_handler.js",
-			"ui/static/js/nav_handler.js",
-			"ui/static/js/link_state_handler.js",
+			"ui/static/js/app.js",
 			"ui/static/js/bootstrap.js",
 		},
 		"sw": []string{
@@ -213,9 +205,12 @@ func main() {
 	})
 
 	generateCSSBundle("ui/static/css.go", map[string][]string{
-		"default":   []string{"ui/static/css/common.css"},
-		"black":     []string{"ui/static/css/common.css", "ui/static/css/black.css"},
-		"sansserif": []string{"ui/static/css/common.css", "ui/static/css/sansserif.css"},
+		"light_serif":       []string{"ui/static/css/light.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"light_sans_serif":  []string{"ui/static/css/light.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"dark_serif":        []string{"ui/static/css/dark.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"dark_sans_serif":   []string{"ui/static/css/dark.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"system_serif":      []string{"ui/static/css/system.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"system_sans_serif": []string{"ui/static/css/system.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
 	})
 
 	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))

@@ -1,0 +1,34 @@
+{{ define "title"}}{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }})</h1>
+    <ul>
+        <li>
+            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "editCategory" "categoryID" .category.ID }}">{{ t "menu.edit_category" }}</a>
+        </li>
+        {{ if eq .total 0 }}
+        <li>
+            <a href="#"
+                data-confirm="true"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-redirect-url="{{ route "categories" }}"
+                data-url="{{ route "removeCategory" "categoryID" .category.ID }}">{{ t "action.remove" }}</a>
+        </li>
+        {{ end }}
+    </ul>
+</section>
+
+{{ if not .feeds }}
+    <p class="alert">{{ t "alert.no_feed_in_category" }}</p>
+{{ else }}
+    {{ template "feed_list" dict "user" .user "feeds" .feeds "ParsingErrorCount" .ParsingErrorCount }}
+{{ end }}
+
+{{ end }}

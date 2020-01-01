@@ -14,6 +14,8 @@
                         data-toggle-status="true"
                         data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
                         data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
+                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
+                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                         >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
                 </li>
@@ -24,6 +26,8 @@
                         data-label-loading="{{ t "entry.state.saving" }}"
                         data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
                         data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
+                        data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
+                        data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
                         >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
                 </li>
@@ -35,6 +39,7 @@
                             data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
                             data-label-loading="{{ t "entry.state.saving" }}"
                             data-label-done="{{ t "entry.save.completed" }}"
+                            data-toast-done="{{ t "entry.save.toast.completed" }}"
                             >{{ t "entry.save.title" }}</a>
                     </li>
                 {{ end }}
@@ -57,7 +62,7 @@
         <div class="entry-meta">
             <span class="entry-website">
                 {{ if ne .entry.Feed.Icon.IconID 0 }}
-                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" alt="{{ .entry.Feed.Title }}">
+                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
                 {{ end }}
                 <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
             </span>
@@ -87,8 +92,8 @@
         {{ noescape (proxyFilter .entry.Content) }}
     </article>
     {{ if .entry.Enclosures }}
-    <aside class="entry-enclosures">
-        <h3>{{ t "page.entry.attachments" }}</h3>
+    <details class="entry-enclosures">
+        <summary>{{ t "page.entry.attachments" }} ({{ len .entry.Enclosures }})</summary>
         {{ range .entry.Enclosures }}
             <div class="entry-enclosure">
                 {{ if hasPrefix .MimeType "audio/" }}
@@ -105,17 +110,17 @@
                     </div>
                 {{ else if hasPrefix .MimeType "image/" }}
                     <div class="enclosure-image">
-                        <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" alt="{{ .URL }} ({{ .MimeType }})">
+                        <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
                     </div>
                 {{ end }}
 
                 <div class="entry-enclosure-download">
-                    <a href="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "action.download" }}</a>
-                    <small>({{ .URL }})</small>
+                    <a href="{{ .URL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL }}</a>
+                    <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
                 </div>
             </div>
         {{ end }}
-    </aside>
+        </details>
     {{ end }}
 </section>
 

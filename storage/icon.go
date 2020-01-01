@@ -14,10 +14,10 @@ import (
 
 // HasIcon checks if the given feed has an icon.
 func (s *Storage) HasIcon(feedID int64) bool {
-	var result int
-	query := `SELECT count(*) as c FROM feed_icons WHERE feed_id=$1`
+	var result bool
+	query := `SELECT true FROM feed_icons WHERE feed_id=$1`
 	s.db.QueryRow(query, feedID).Scan(&result)
-	return result == 1
+	return result
 }
 
 // IconByID returns an icon by the ID.
@@ -38,18 +38,21 @@ func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
 	query := `
 		SELECT
-		icons.id, icons.hash, icons.mime_type, icons.content
+			icons.id,
+			icons.hash,
+			icons.mime_type,
+			icons.content
 		FROM icons
 		LEFT JOIN feed_icons ON feed_icons.icon_id=icons.id
 		LEFT JOIN feeds ON feeds.id=feed_icons.feed_id
-		WHERE feeds.user_id=$1 AND feeds.id=$2
+		WHERE
+			feeds.user_id=$1 AND feeds.id=$2
 		LIMIT 1
 	`
-
 	var icon model.Icon
 	err := s.db.QueryRow(query, userID, feedID).Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content)
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch icon: %v", err)
+		return nil, fmt.Errorf(`store: unable to fetch icon: %v`, err)
 	}
 
 	return &icon, nil
@@ -61,7 +64,7 @@ func (s *Storage) IconByHash(icon *model.Icon) error {
 	if err == sql.ErrNoRows {
 		return nil
 	} else if err != nil {
-		return fmt.Errorf("Unable to fetch icon by hash: %v", err)
+		return fmt.Errorf(`store: unable to fetch icon by hash: %v`, err)
 	}
 
 	return nil
@@ -71,10 +74,11 @@ func (s *Storage) IconByHash(icon *model.Icon) error {
 func (s *Storage) CreateIcon(icon *model.Icon) error {
 	query := `
 		INSERT INTO icons
-		(hash, mime_type, content)
+			(hash, mime_type, content)
 		VALUES
-		($1, $2, $3)
-		RETURNING id
+			($1, $2, $3)
+		RETURNING
+			id
 	`
 	err := s.db.QueryRow(
 		query,
@@ -84,7 +88,7 @@ func (s *Storage) CreateIcon(icon *model.Icon) error {
 	).Scan(&icon.ID)
 
 	if err != nil {
-		return fmt.Errorf("Unable to create icon: %v", err)
+		return fmt.Errorf(`store: unable to create icon: %v`, err)
 	}
 
 	return nil
@@ -106,7 +110,7 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 
 	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feedID, icon.ID)
 	if err != nil {
-		return fmt.Errorf("unable to create feed icon: %v", err)
+		return fmt.Errorf(`store: unable to create feed icon: %v`, err)
 	}
 
 	return nil
@@ -116,16 +120,19 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 func (s *Storage) Icons(userID int64) (model.Icons, error) {
 	query := `
 		SELECT
-		icons.id, icons.hash, icons.mime_type, icons.content
+			icons.id,
+			icons.hash,
+			icons.mime_type,
+			icons.content
 		FROM icons
 		LEFT JOIN feed_icons ON feed_icons.icon_id=icons.id
 		LEFT JOIN feeds ON feeds.id=feed_icons.feed_id
-		WHERE feeds.user_id=$1
+		WHERE
+			feeds.user_id=$1
 	`
-
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch icons: %v", err)
+		return nil, fmt.Errorf(`store: unable to fetch icons: %v`, err)
 	}
 	defer rows.Close()
 
@@ -134,7 +141,7 @@ func (s *Storage) Icons(userID int64) (model.Icons, error) {
 		var icon model.Icon
 		err := rows.Scan(&icon.ID, &icon.Hash, &icon.MimeType, &icon.Content)
 		if err != nil {
-			return nil, fmt.Errorf("unable to fetch icons row: %v", err)
+			return nil, fmt.Errorf(`store: unable to fetch icons row: %v`, err)
 		}
 		icons = append(icons, &icon)
 	}

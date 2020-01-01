@@ -51,6 +51,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		CategoryID:   feed.Category.ID,
 		Username:     feed.Username,
 		Password:     feed.Password,
+		Disabled:     feed.Disabled,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

@@ -1,206 +1,139 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
+// Copyright 2019 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
 package config // import "miniflux.app/config"
 
 import (
+	"io/ioutil"
 	"os"
 	"testing"
 )
 
-func TestGetBooleanValueWithUnsetVariable(t *testing.T) {
-	os.Clearenv()
-	if getBooleanValue("MY_TEST_VARIABLE") {
-		t.Errorf(`Unset variables should returns false`)
-	}
-}
-
-func TestGetBooleanValue(t *testing.T) {
-	scenarios := map[string]bool{
-		"":        false,
-		"1":       true,
-		"Yes":     true,
-		"yes":     true,
-		"True":    true,
-		"true":    true,
-		"on":      true,
-		"false":   false,
-		"off":     false,
-		"invalid": false,
-	}
-
-	for input, expected := range scenarios {
-		os.Clearenv()
-		os.Setenv("MY_TEST_VARIABLE", input)
-		result := getBooleanValue("MY_TEST_VARIABLE")
-		if result != expected {
-			t.Errorf(`Unexpected result for %q, got %v instead of %v`, input, result, expected)
-		}
-	}
-}
-
-func TestGetStringValueWithUnsetVariable(t *testing.T) {
-	os.Clearenv()
-	if getStringValue("MY_TEST_VARIABLE", "defaultValue") != "defaultValue" {
-		t.Errorf(`Unset variables should returns the default value`)
-	}
-}
-
-func TestGetStringValue(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MY_TEST_VARIABLE", "test")
-	if getStringValue("MY_TEST_VARIABLE", "defaultValue") != "test" {
-		t.Errorf(`Defined variables should returns the specified value`)
-	}
-}
-
-func TestGetIntValueWithUnsetVariable(t *testing.T) {
-	os.Clearenv()
-	if getIntValue("MY_TEST_VARIABLE", 42) != 42 {
-		t.Errorf(`Unset variables should returns the default value`)
-	}
-}
-
-func TestGetIntValueWithInvalidInput(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MY_TEST_VARIABLE", "invalid integer")
-	if getIntValue("MY_TEST_VARIABLE", 42) != 42 {
-		t.Errorf(`Invalid integer should returns the default value`)
-	}
-}
-
-func TestGetIntValue(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("MY_TEST_VARIABLE", "2018")
-	if getIntValue("MY_TEST_VARIABLE", 42) != 2018 {
-		t.Errorf(`Defined variables should returns the specified value`)
-	}
-}
-
 func TestDebugModeOn(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DEBUG", "1")
-	cfg := NewConfig()
 
-	if !cfg.HasDebugMode() {
-		t.Fatalf(`Unexpected debug mode value, got "%v"`, cfg.HasDebugMode())
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if !opts.HasDebugMode() {
+		t.Fatalf(`Unexpected debug mode value, got "%v"`, opts.HasDebugMode())
 	}
 }
 
 func TestDebugModeOff(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
 
-	if cfg.HasDebugMode() {
-		t.Fatalf(`Unexpected debug mode value, got "%v"`, cfg.HasDebugMode())
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if opts.HasDebugMode() {
+		t.Fatalf(`Unexpected debug mode value, got "%v"`, opts.HasDebugMode())
 	}
 }
 
 func TestCustomBaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example.org")
-	cfg := NewConfig()
 
-	if cfg.BaseURL() != "http://example.org" {
-		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	if cfg.RootURL() != "http://example.org" {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	if opts.BaseURL() != "http://example.org" {
+		t.Fatalf(`Unexpected base URL, got "%s"`, opts.BaseURL())
 	}
 
-	if cfg.BasePath() != "" {
-		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	if opts.RootURL() != "http://example.org" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, opts.RootURL())
+	}
+
+	if opts.BasePath() != "" {
+		t.Fatalf(`Unexpected base path, got "%s"`, opts.BasePath())
 	}
 }
 
 func TestCustomBaseURLWithTrailingSlash(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example.org/folder/")
-	cfg := NewConfig()
 
-	if cfg.BaseURL() != "http://example.org/folder" {
-		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	if cfg.RootURL() != "http://example.org" {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	if opts.BaseURL() != "http://example.org/folder" {
+		t.Fatalf(`Unexpected base URL, got "%s"`, opts.BaseURL())
 	}
 
-	if cfg.BasePath() != "/folder" {
-		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	if opts.RootURL() != "http://example.org" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, opts.RootURL())
+	}
+
+	if opts.BasePath() != "/folder" {
+		t.Fatalf(`Unexpected base path, got "%s"`, opts.BasePath())
 	}
 }
 
 func TestBaseURLWithoutScheme(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "example.org/folder/")
-	cfg := NewConfig()
 
-	if cfg.BaseURL() != "http://localhost" {
-		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
-	}
-
-	if cfg.RootURL() != "http://localhost" {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
-	}
-
-	if cfg.BasePath() != "" {
-		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	_, err := NewParser().ParseEnvironmentVariables()
+	if err == nil {
+		t.Fatalf(`Parsing must fail`)
 	}
 }
 
 func TestBaseURLWithInvalidScheme(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "ftp://example.org/folder/")
-	cfg := NewConfig()
 
-	if cfg.BaseURL() != "http://localhost" {
-		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
-	}
-
-	if cfg.RootURL() != "http://localhost" {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
-	}
-
-	if cfg.BasePath() != "" {
-		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	_, err := NewParser().ParseEnvironmentVariables()
+	if err == nil {
+		t.Fatalf(`Parsing must fail`)
 	}
 }
 
 func TestInvalidBaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example|org")
-	cfg := NewConfig()
 
-	if cfg.BaseURL() != defaultBaseURL {
-		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
-	}
-
-	if cfg.RootURL() != defaultBaseURL {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
-	}
-
-	if cfg.BasePath() != "" {
-		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	_, err := NewParser().ParseEnvironmentVariables()
+	if err == nil {
+		t.Fatalf(`Parsing must fail`)
 	}
 }
 
 func TestDefaultBaseURL(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
 
-	if cfg.BaseURL() != defaultBaseURL {
-		t.Fatalf(`Unexpected base URL, got "%s"`, cfg.BaseURL())
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	if cfg.RootURL() != defaultBaseURL {
-		t.Fatalf(`Unexpected root URL, got "%s"`, cfg.RootURL())
+	if opts.BaseURL() != defaultBaseURL {
+		t.Fatalf(`Unexpected base URL, got "%s"`, opts.BaseURL())
 	}
 
-	if cfg.BasePath() != "" {
-		t.Fatalf(`Unexpected base path, got "%s"`, cfg.BasePath())
+	if opts.RootURL() != defaultBaseURL {
+		t.Fatalf(`Unexpected root URL, got "%s"`, opts.RootURL())
+	}
+
+	if opts.BasePath() != "" {
+		t.Fatalf(`Unexpected base path, got "%s"`, opts.BasePath())
 	}
 }
 
@@ -208,45 +141,74 @@ func TestDatabaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DATABASE_URL", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "foobar"
-	result := cfg.DatabaseURL()
+	result := opts.DatabaseURL()
 
 	if result != expected {
-		t.Fatalf(`Unexpected DATABASE_URL value, got %q instead of %q`, result, expected)
+		t.Errorf(`Unexpected DATABASE_URL value, got %q instead of %q`, result, expected)
+	}
+
+	if opts.IsDefaultDatabaseURL() {
+		t.Errorf(`This is not the default database URL and it should returns false`)
 	}
 }
 
 func TestDefaultDatabaseURLValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.DatabaseURL()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultDatabaseURL
+	result := opts.DatabaseURL()
 
 	if result != expected {
-		t.Fatalf(`Unexpected DATABASE_URL value, got %q instead of %q`, result, expected)
+		t.Errorf(`Unexpected DATABASE_URL value, got %q instead of %q`, result, expected)
+	}
+
+	if !opts.IsDefaultDatabaseURL() {
+		t.Errorf(`This is the default database URL and it should returns true`)
 	}
 }
 
 func TestDefaultDatabaseMaxConnsValue(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultDatabaseMaxConns
-	result := cfg.DatabaseMaxConns()
+	result := opts.DatabaseMaxConns()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DATABASE_MAX_CONNS value, got %v instead of %v`, result, expected)
 	}
 }
 
-func TestDeatabaseMaxConns(t *testing.T) {
+func TestDatabaseMaxConns(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DATABASE_MAX_CONNS", "42")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := 42
-	result := cfg.DatabaseMaxConns()
+	result := opts.DatabaseMaxConns()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DATABASE_MAX_CONNS value, got %v instead of %v`, result, expected)
@@ -256,9 +218,14 @@ func TestDeatabaseMaxConns(t *testing.T) {
 func TestDefaultDatabaseMinConnsValue(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultDatabaseMinConns
-	result := cfg.DatabaseMinConns()
+	result := opts.DatabaseMinConns()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DATABASE_MIN_CONNS value, got %v instead of %v`, result, expected)
@@ -269,9 +236,14 @@ func TestDatabaseMinConns(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DATABASE_MIN_CONNS", "42")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := 42
-	result := cfg.DatabaseMinConns()
+	result := opts.DatabaseMinConns()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DATABASE_MIN_CONNS value, got %v instead of %v`, result, expected)
@@ -282,9 +254,14 @@ func TestListenAddr(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("LISTEN_ADDR", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "foobar"
-	result := cfg.ListenAddr()
+	result := opts.ListenAddr()
 
 	if result != expected {
 		t.Fatalf(`Unexpected LISTEN_ADDR value, got %q instead of %q`, result, expected)
@@ -296,9 +273,14 @@ func TestListenAddrWithPortDefined(t *testing.T) {
 	os.Setenv("PORT", "3000")
 	os.Setenv("LISTEN_ADDR", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := ":3000"
-	result := cfg.ListenAddr()
+	result := opts.ListenAddr()
 
 	if result != expected {
 		t.Fatalf(`Unexpected LISTEN_ADDR value, got %q instead of %q`, result, expected)
@@ -307,9 +289,15 @@ func TestListenAddrWithPortDefined(t *testing.T) {
 
 func TestDefaultListenAddrValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.ListenAddr()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultListenAddr
+	result := opts.ListenAddr()
 
 	if result != expected {
 		t.Fatalf(`Unexpected LISTEN_ADDR value, got %q instead of %q`, result, expected)
@@ -320,9 +308,14 @@ func TestCertFile(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("CERT_FILE", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "foobar"
-	result := cfg.CertFile()
+	result := opts.CertFile()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CERT_FILE value, got %q instead of %q`, result, expected)
@@ -331,9 +324,15 @@ func TestCertFile(t *testing.T) {
 
 func TestDefaultCertFileValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.CertFile()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultCertFile
+	result := opts.CertFile()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CERT_FILE value, got %q instead of %q`, result, expected)
@@ -344,9 +343,14 @@ func TestKeyFile(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("KEY_FILE", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "foobar"
-	result := cfg.KeyFile()
+	result := opts.CertKeyFile()
 
 	if result != expected {
 		t.Fatalf(`Unexpected KEY_FILE value, got %q instead of %q`, result, expected)
@@ -355,9 +359,15 @@ func TestKeyFile(t *testing.T) {
 
 func TestDefaultKeyFileValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.KeyFile()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultKeyFile
+	result := opts.CertKeyFile()
 
 	if result != expected {
 		t.Fatalf(`Unexpected KEY_FILE value, got %q instead of %q`, result, expected)
@@ -368,9 +378,14 @@ func TestCertDomain(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("CERT_DOMAIN", "example.org")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "example.org"
-	result := cfg.CertDomain()
+	result := opts.CertDomain()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CERT_DOMAIN value, got %q instead of %q`, result, expected)
@@ -379,9 +394,15 @@ func TestCertDomain(t *testing.T) {
 
 func TestDefaultCertDomainValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.CertDomain()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultCertDomain
+	result := opts.CertDomain()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CERT_DOMAIN value, got %q instead of %q`, result, expected)
@@ -392,9 +413,14 @@ func TestCertCache(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("CERT_CACHE", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "foobar"
-	result := cfg.CertCache()
+	result := opts.CertCache()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CERT_CACHE value, got %q instead of %q`, result, expected)
@@ -403,46 +429,175 @@ func TestCertCache(t *testing.T) {
 
 func TestDefaultCertCacheValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.CertCache()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultCertCache
+	result := opts.CertCache()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CERT_CACHE value, got %q instead of %q`, result, expected)
 	}
 }
 
-func TestDefaultCleanupFrequencyValue(t *testing.T) {
+func TestDefaultCleanupFrequencyHoursValue(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
-	expected := defaultCleanupFrequency
-	result := cfg.CleanupFrequency()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultCleanupFrequencyHours
+	result := opts.CleanupFrequencyHours()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_FREQUENCY_HOURS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCleanupFrequencyHours(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_FREQUENCY_HOURS", "42")
+	os.Setenv("CLEANUP_FREQUENCY", "19")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 42
+	result := opts.CleanupFrequencyHours()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_FREQUENCY_HOURS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDeprecatedCleanupFrequencyHoursVar(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_FREQUENCY", "42")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 42
+	result := opts.CleanupFrequencyHours()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_FREQUENCY value, got %v instead of %v`, result, expected)
 	}
 }
 
-func TestCleanupFrequency(t *testing.T) {
+func TestDefaultCleanupArchiveReadDaysValue(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("CLEANUP_FREQUENCY", "42")
 
-	cfg := NewConfig()
-	expected := 42
-	result := cfg.CleanupFrequency()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 60
+	result := opts.CleanupArchiveReadDays()
 
 	if result != expected {
-		t.Fatalf(`Unexpected CLEANUP_FREQUENCY value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCleanupArchiveReadDays(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_ARCHIVE_READ_DAYS", "7")
+	os.Setenv("ARCHIVE_READ_DAYS", "19")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.CleanupArchiveReadDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDeprecatedCleanupArchiveReadDaysVar(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("ARCHIVE_READ_DAYS", "7")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.CleanupArchiveReadDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefaultCleanupRemoveSessionsDaysValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 30
+	result := opts.CleanupRemoveSessionsDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCleanupRemoveSessionsDays(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CLEANUP_REMOVE_SESSIONS_DAYS", "7")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 7
+	result := opts.CleanupRemoveSessionsDays()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CLEANUP_REMOVE_SESSIONS_DAYS value, got %v instead of %v`, result, expected)
 	}
 }
 
 func TestDefaultWorkerPoolSizeValue(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultWorkerPoolSize
-	result := cfg.WorkerPoolSize()
+	result := opts.WorkerPoolSize()
 
 	if result != expected {
 		t.Fatalf(`Unexpected WORKER_POOL_SIZE value, got %v instead of %v`, result, expected)
@@ -453,9 +608,14 @@ func TestWorkerPoolSize(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("WORKER_POOL_SIZE", "42")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := 42
-	result := cfg.WorkerPoolSize()
+	result := opts.WorkerPoolSize()
 
 	if result != expected {
 		t.Fatalf(`Unexpected WORKER_POOL_SIZE value, got %v instead of %v`, result, expected)
@@ -465,9 +625,14 @@ func TestWorkerPoolSize(t *testing.T) {
 func TestDefautPollingFrequencyValue(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultPollingFrequency
-	result := cfg.PollingFrequency()
+	result := opts.PollingFrequency()
 
 	if result != expected {
 		t.Fatalf(`Unexpected POLLING_FREQUENCY value, got %v instead of %v`, result, expected)
@@ -478,9 +643,14 @@ func TestPollingFrequency(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("POLLING_FREQUENCY", "42")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := 42
-	result := cfg.PollingFrequency()
+	result := opts.PollingFrequency()
 
 	if result != expected {
 		t.Fatalf(`Unexpected POLLING_FREQUENCY value, got %v instead of %v`, result, expected)
@@ -490,9 +660,14 @@ func TestPollingFrequency(t *testing.T) {
 func TestDefaultBatchSizeValue(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultBatchSize
-	result := cfg.BatchSize()
+	result := opts.BatchSize()
 
 	if result != expected {
 		t.Fatalf(`Unexpected BATCH_SIZE value, got %v instead of %v`, result, expected)
@@ -503,9 +678,14 @@ func TestBatchSize(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BATCH_SIZE", "42")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := 42
-	result := cfg.BatchSize()
+	result := opts.BatchSize()
 
 	if result != expected {
 		t.Fatalf(`Unexpected BATCH_SIZE value, got %v instead of %v`, result, expected)
@@ -515,9 +695,14 @@ func TestBatchSize(t *testing.T) {
 func TestOAuth2UserCreationWhenUnset(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := false
-	result := cfg.IsOAuth2UserCreationAllowed()
+	result := opts.IsOAuth2UserCreationAllowed()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_USER_CREATION value, got %v instead of %v`, result, expected)
@@ -528,9 +713,14 @@ func TestOAuth2UserCreationAdmin(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("OAUTH2_USER_CREATION", "1")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := true
-	result := cfg.IsOAuth2UserCreationAllowed()
+	result := opts.IsOAuth2UserCreationAllowed()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_USER_CREATION value, got %v instead of %v`, result, expected)
@@ -541,9 +731,14 @@ func TestOAuth2ClientID(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("OAUTH2_CLIENT_ID", "foobar")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "foobar"
-	result := cfg.OAuth2ClientID()
+	result := opts.OAuth2ClientID()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_CLIENT_ID value, got %q instead of %q`, result, expected)
@@ -552,9 +747,15 @@ func TestOAuth2ClientID(t *testing.T) {
 
 func TestDefaultOAuth2ClientIDValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.OAuth2ClientID()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultOAuth2ClientID
+	result := opts.OAuth2ClientID()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_CLIENT_ID value, got %q instead of %q`, result, expected)
@@ -565,9 +766,14 @@ func TestOAuth2ClientSecret(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("OAUTH2_CLIENT_SECRET", "secret")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "secret"
-	result := cfg.OAuth2ClientSecret()
+	result := opts.OAuth2ClientSecret()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_CLIENT_SECRET value, got %q instead of %q`, result, expected)
@@ -576,9 +782,15 @@ func TestOAuth2ClientSecret(t *testing.T) {
 
 func TestDefaultOAuth2ClientSecretValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.OAuth2ClientSecret()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultOAuth2ClientSecret
+	result := opts.OAuth2ClientSecret()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_CLIENT_SECRET value, got %q instead of %q`, result, expected)
@@ -589,9 +801,14 @@ func TestOAuth2RedirectURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("OAUTH2_REDIRECT_URL", "http://example.org")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "http://example.org"
-	result := cfg.OAuth2RedirectURL()
+	result := opts.OAuth2RedirectURL()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_REDIRECT_URL value, got %q instead of %q`, result, expected)
@@ -600,9 +817,15 @@ func TestOAuth2RedirectURL(t *testing.T) {
 
 func TestDefaultOAuth2RedirectURLValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.OAuth2RedirectURL()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultOAuth2RedirectURL
+	result := opts.OAuth2RedirectURL()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_REDIRECT_URL value, got %q instead of %q`, result, expected)
@@ -613,9 +836,14 @@ func TestOAuth2Provider(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("OAUTH2_PROVIDER", "google")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "google"
-	result := cfg.OAuth2Provider()
+	result := opts.OAuth2Provider()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_PROVIDER value, got %q instead of %q`, result, expected)
@@ -624,9 +852,15 @@ func TestOAuth2Provider(t *testing.T) {
 
 func TestDefaultOAuth2ProviderValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.OAuth2Provider()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultOAuth2Provider
+	result := opts.OAuth2Provider()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_PROVIDER value, got %q instead of %q`, result, expected)
@@ -636,9 +870,14 @@ func TestDefaultOAuth2ProviderValue(t *testing.T) {
 func TestHSTSWhenUnset(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := true
-	result := cfg.HasHSTS()
+	result := opts.HasHSTS()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_HSTS value, got %v instead of %v`, result, expected)
@@ -649,9 +888,14 @@ func TestHSTS(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DISABLE_HSTS", "1")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := false
-	result := cfg.HasHSTS()
+	result := opts.HasHSTS()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_HSTS value, got %v instead of %v`, result, expected)
@@ -661,9 +905,14 @@ func TestHSTS(t *testing.T) {
 func TestDisableHTTPServiceWhenUnset(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := true
-	result := cfg.HasHTTPService()
+	result := opts.HasHTTPService()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
@@ -674,9 +923,14 @@ func TestDisableHTTPService(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DISABLE_HTTP_SERVICE", "1")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := false
-	result := cfg.HasHTTPService()
+	result := opts.HasHTTPService()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_HTTP_SERVICE value, got %v instead of %v`, result, expected)
@@ -686,9 +940,14 @@ func TestDisableHTTPService(t *testing.T) {
 func TestDisableSchedulerServiceWhenUnset(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := true
-	result := cfg.HasSchedulerService()
+	result := opts.HasSchedulerService()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_SCHEDULER_SERVICE value, got %v instead of %v`, result, expected)
@@ -699,34 +958,31 @@ func TestDisableSchedulerService(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DISABLE_SCHEDULER_SERVICE", "1")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := false
-	result := cfg.HasSchedulerService()
+	result := opts.HasSchedulerService()
 
 	if result != expected {
 		t.Fatalf(`Unexpected DISABLE_SCHEDULER_SERVICE value, got %v instead of %v`, result, expected)
 	}
 }
 
-func TestArchiveReadDays(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("ARCHIVE_READ_DAYS", "7")
-
-	cfg := NewConfig()
-	expected := 7
-	result := cfg.ArchiveReadDays()
-
-	if result != expected {
-		t.Fatalf(`Unexpected ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
-	}
-}
-
 func TestRunMigrationsWhenUnset(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := false
-	result := cfg.RunMigrations()
+	result := opts.RunMigrations()
 
 	if result != expected {
 		t.Fatalf(`Unexpected RUN_MIGRATIONS value, got %v instead of %v`, result, expected)
@@ -737,9 +993,14 @@ func TestRunMigrations(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("RUN_MIGRATIONS", "yes")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := true
-	result := cfg.RunMigrations()
+	result := opts.RunMigrations()
 
 	if result != expected {
 		t.Fatalf(`Unexpected RUN_MIGRATIONS value, got %v instead of %v`, result, expected)
@@ -749,9 +1010,14 @@ func TestRunMigrations(t *testing.T) {
 func TestCreateAdminWhenUnset(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := false
-	result := cfg.CreateAdmin()
+	result := opts.CreateAdmin()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CREATE_ADMIN value, got %v instead of %v`, result, expected)
@@ -762,9 +1028,14 @@ func TestCreateAdmin(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("CREATE_ADMIN", "true")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := true
-	result := cfg.CreateAdmin()
+	result := opts.CreateAdmin()
 
 	if result != expected {
 		t.Fatalf(`Unexpected CREATE_ADMIN value, got %v instead of %v`, result, expected)
@@ -775,9 +1046,14 @@ func TestPocketConsumerKeyFromEnvVariable(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("POCKET_CONSUMER_KEY", "something")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "something"
-	result := cfg.PocketConsumerKey("default")
+	result := opts.PocketConsumerKey("default")
 
 	if result != expected {
 		t.Fatalf(`Unexpected POCKET_CONSUMER_KEY value, got %q instead of %q`, result, expected)
@@ -787,9 +1063,14 @@ func TestPocketConsumerKeyFromEnvVariable(t *testing.T) {
 func TestPocketConsumerKeyFromUserPrefs(t *testing.T) {
 	os.Clearenv()
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "default"
-	result := cfg.PocketConsumerKey("default")
+	result := opts.PocketConsumerKey("default")
 
 	if result != expected {
 		t.Fatalf(`Unexpected POCKET_CONSUMER_KEY value, got %q instead of %q`, result, expected)
@@ -800,9 +1081,14 @@ func TestProxyImages(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("PROXY_IMAGES", "all")
 
-	cfg := NewConfig()
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := "all"
-	result := cfg.ProxyImages()
+	result := opts.ProxyImages()
 
 	if result != expected {
 		t.Fatalf(`Unexpected PROXY_IMAGES value, got %q instead of %q`, result, expected)
@@ -811,9 +1097,15 @@ func TestProxyImages(t *testing.T) {
 
 func TestDefaultProxyImagesValue(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
-	result := cfg.ProxyImages()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
 	expected := defaultProxyImages
+	result := opts.ProxyImages()
 
 	if result != expected {
 		t.Fatalf(`Unexpected PROXY_IMAGES value, got %q instead of %q`, result, expected)
@@ -822,19 +1114,146 @@ func TestDefaultProxyImagesValue(t *testing.T) {
 
 func TestHTTPSOff(t *testing.T) {
 	os.Clearenv()
-	cfg := NewConfig()
 
-	if cfg.IsHTTPS {
-		t.Fatalf(`Unexpected HTTPS value, got "%v"`, cfg.IsHTTPS)
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if opts.HTTPS {
+		t.Fatalf(`Unexpected HTTPS value, got "%v"`, opts.HTTPS)
 	}
 }
 
 func TestHTTPSOn(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("HTTPS", "on")
-	cfg := NewConfig()
 
-	if !cfg.IsHTTPS {
-		t.Fatalf(`Unexpected HTTPS value, got "%v"`, cfg.IsHTTPS)
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if !opts.HTTPS {
+		t.Fatalf(`Unexpected HTTPS value, got "%v"`, opts.HTTPS)
+	}
+}
+
+func TestHTTPClientTimeout(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("HTTP_CLIENT_TIMEOUT", "42")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 42
+	result := opts.HTTPClientTimeout()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestDefaultHTTPClientTimeoutValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultHTTPClientTimeout
+	result := opts.HTTPClientTimeout()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestHTTPClientMaxBodySize(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("HTTP_CLIENT_MAX_BODY_SIZE", "42")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := int64(42 * 1024 * 1024)
+	result := opts.HTTPClientMaxBodySize()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_MAX_BODY_SIZE value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestDefaultHTTPClientMaxBodySizeValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := int64(defaultHTTPClientMaxBodySize * 1024 * 1024)
+	result := opts.HTTPClientMaxBodySize()
+
+	if result != expected {
+		t.Fatalf(`Unexpected HTTP_CLIENT_MAX_BODY_SIZE value, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestParseConfigFile(t *testing.T) {
+	content := []byte(`
+ # This is a comment
+
+DEBUG = yes
+
+ POCKET_CONSUMER_KEY= >#1234
+
+Invalid text
+`)
+
+	tmpfile, err := ioutil.TempFile(".", "miniflux.*.unit_test.conf")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := tmpfile.Write(content); err != nil {
+		t.Fatal(err)
+	}
+
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseFile(tmpfile.Name())
+	if err != nil {
+		t.Errorf(`Parsing failure: %v`, err)
+	}
+
+	if opts.HasDebugMode() != true {
+		t.Errorf(`Unexpected debug mode value, got "%v"`, opts.HasDebugMode())
+	}
+
+	expected := ">#1234"
+	result := opts.PocketConsumerKey("default")
+	if result != expected {
+		t.Errorf(`Unexpected POCKET_CONSUMER_KEY value, got %q instead of %q`, result, expected)
+	}
+
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Remove(tmpfile.Name()); err != nil {
+		t.Fatal(err)
 	}
 }

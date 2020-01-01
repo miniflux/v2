@@ -6,12 +6,22 @@
     {{ if .entries }}
     <ul>
         <li>
-            <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
+            <a href="#"
+                data-action="markPageAsRead"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_page_as_read" }}</a>
         </li>
         <li>
-            <a data-link-state="flip"
-               data-label-new-state="{{ t "menu.mark_all_as_read_wip" }}"
-               href="{{ route "markAllAsRead" }}">{{ t "menu.mark_all_as_read" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-url="{{ route "markAllAsRead" }}"
+                data-redirect-url="{{ route "unread" }}"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
     </ul>
     {{ end }}
@@ -26,7 +36,7 @@
             <div class="item-header">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" alt="{{ .Feed.Title }}">
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                     {{ end }}
                     <a href="{{ route "unreadEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
@@ -40,7 +50,12 @@
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#" data-on-click="markPageAsRead">{{ t "menu.mark_page_as_read" }}</a>
+                <a href="#"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}

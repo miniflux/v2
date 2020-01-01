@@ -283,7 +283,8 @@ func TestParseFeedItemWithInvalidDate(t *testing.T) {
 		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
 
-	if !feed.Entries[0].Date.Before(time.Now()) {
+	duration := time.Since(feed.Entries[0].Date)
+	if duration.Seconds() > 1 {
 		t.Errorf("Incorrect entry date, got: %v", feed.Entries[0].Date)
 	}
 }

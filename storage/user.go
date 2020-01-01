@@ -6,7 +6,6 @@ package storage // import "miniflux.app/storage"
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -18,10 +17,10 @@ import (
 
 // SetLastLogin updates the last login date of a user.
 func (s *Storage) SetLastLogin(userID int64) error {
-	query := "UPDATE users SET last_login_at=now() WHERE id=$1"
+	query := `UPDATE users SET last_login_at=now() WHERE id=$1`
 	_, err := s.db.Exec(query, userID)
 	if err != nil {
-		return fmt.Errorf("unable to update last login date: %v", err)
+		return fmt.Errorf(`store: unable to update last login date: %v`, err)
 	}
 
 	return nil
@@ -29,16 +28,16 @@ func (s *Storage) SetLastLogin(userID int64) error {
 
 // UserExists checks if a user exists by using the given username.
 func (s *Storage) UserExists(username string) bool {
-	var result int
-	s.db.QueryRow(`SELECT count(*) as c FROM users WHERE username=LOWER($1)`, username).Scan(&result)
-	return result >= 1
+	var result bool
+	s.db.QueryRow(`SELECT true FROM users WHERE username=LOWER($1)`, username).Scan(&result)
+	return result
 }
 
 // AnotherUserExists checks if another user exists with the given username.
 func (s *Storage) AnotherUserExists(userID int64, username string) bool {
-	var result int
-	s.db.QueryRow(`SELECT count(*) as c FROM users WHERE id != $1 AND username=LOWER($2)`, userID, username).Scan(&result)
-	return result >= 1
+	var result bool
+	s.db.QueryRow(`SELECT true FROM users WHERE id != $1 AND username=LOWER($2)`, userID, username).Scan(&result)
+	return result
 }
 
 // CreateUser creates a new user.
@@ -79,7 +78,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		&user.KeyboardShortcuts,
 	)
 	if err != nil {
-		return fmt.Errorf("unable to create user: %v", err)
+		return fmt.Errorf(`store: unable to create user: %v`, err)
 	}
 
 	s.CreateCategory(&model.Category{Title: "All", UserID: user.ID})
@@ -92,7 +91,7 @@ func (s *Storage) UpdateExtraField(userID int64, field, value string) error {
 	query := fmt.Sprintf(`UPDATE users SET extra = hstore('%s', $1) WHERE id=$2`, field)
 	_, err := s.db.Exec(query, value, userID)
 	if err != nil {
-		return fmt.Errorf("unable to update user extra field: %v", err)
+		return fmt.Errorf(`store: unable to update user extra field: %v`, err)
 	}
 	return nil
 }
@@ -102,7 +101,7 @@ func (s *Storage) RemoveExtraField(userID int64, field string) error {
 	query := `UPDATE users SET extra = delete(extra, $1) WHERE id=$2`
 	_, err := s.db.Exec(query, field, userID)
 	if err != nil {
-		return fmt.Errorf("unable to remove user extra field: %v", err)
+		return fmt.Errorf(`store: unable to remove user extra field: %v`, err)
 	}
 	return nil
 }
@@ -142,7 +141,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.ID,
 		)
 		if err != nil {
-			return fmt.Errorf("unable to update user: %v", err)
+			return fmt.Errorf(`store: unable to update user: %v`, err)
 		}
 	} else {
 		query := `
@@ -171,7 +170,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 		)
 
 		if err != nil {
-			return fmt.Errorf("unable to update user: %v", err)
+			return fmt.Errorf(`store: unable to update user: %v`, err)
 		}
 	}
 
@@ -192,14 +191,21 @@ func (s *Storage) UserLanguage(userID int64) (language string) {
 func (s *Storage) UserByID(userID int64) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts,
-			last_login_at, extra
+			id,
+			username,
+			is_admin,
+			theme,
+			language,
+			timezone,
+			entry_direction,
+			keyboard_shortcuts,
+			last_login_at,
+			extra
 		FROM
 			users
 		WHERE
 			id = $1
 	`
-
 	return s.fetchUser(query, userID)
 }
 
@@ -207,14 +213,21 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 func (s *Storage) UserByUsername(username string) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts,
-			last_login_at, extra
+			id,
+			username,
+			is_admin,
+			theme,
+			language,
+			timezone,
+			entry_direction,
+			keyboard_shortcuts,
+			last_login_at,
+			extra
 		FROM
 			users
 		WHERE
 			username=LOWER($1)
 	`
-
 	return s.fetchUser(query, username)
 }
 
@@ -222,14 +235,21 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts,
-			last_login_at, extra
+			id,
+			username,
+			is_admin,
+			theme,
+			language,
+			timezone,
+			entry_direction,
+			keyboard_shortcuts,
+			last_login_at,
+			extra
 		FROM
 			users
 		WHERE
 			extra->$1=$2
 	`
-
 	return s.fetchUser(query, field, value)
 }
 
@@ -253,7 +273,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("unable to fetch user: %v", err)
+		return nil, fmt.Errorf(`store: unable to fetch user: %v`, err)
 	}
 
 	for key, value := range extra.Map {
@@ -267,18 +287,23 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 
 // RemoveUser deletes a user.
 func (s *Storage) RemoveUser(userID int64) error {
-	result, err := s.db.Exec("DELETE FROM users WHERE id = $1", userID)
+	ts, err := s.db.Begin()
 	if err != nil {
-		return fmt.Errorf("unable to remove this user: %v", err)
+		return fmt.Errorf(`store: unable to start transaction: %v`, err)
 	}
 
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("unable to remove this user: %v", err)
+	if _, err := ts.Exec(`DELETE FROM users WHERE id=$1`, userID); err != nil {
+		ts.Rollback()
+		return fmt.Errorf(`store: unable to remove user #%d: %v`, userID, err)
 	}
 
-	if count == 0 {
-		return errors.New("nothing has been removed")
+	if _, err := ts.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID); err != nil {
+		ts.Rollback()
+		return fmt.Errorf(`store: unable to remove integration settings for user #%d: %v`, userID, err)
+	}
+
+	if err := ts.Commit(); err != nil {
+		return fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return nil
@@ -288,16 +313,23 @@ func (s *Storage) RemoveUser(userID int64) error {
 func (s *Storage) Users() (model.Users, error) {
 	query := `
 		SELECT
-			id, username, is_admin, theme, language, timezone, entry_direction, keyboard_shortcuts,
-			last_login_at, extra
+			id,
+			username,
+			is_admin,
+			theme,
+			language,
+			timezone,
+			entry_direction,
+			keyboard_shortcuts,
+			last_login_at,
+			extra
 		FROM
 			users
 		ORDER BY username ASC
 	`
-
 	rows, err := s.db.Query(query)
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch users: %v", err)
+		return nil, fmt.Errorf(`store: unable to fetch users: %v`, err)
 	}
 	defer rows.Close()
 
@@ -319,7 +351,7 @@ func (s *Storage) Users() (model.Users, error) {
 		)
 
 		if err != nil {
-			return nil, fmt.Errorf("unable to fetch users row: %v", err)
+			return nil, fmt.Errorf(`store: unable to fetch users row: %v`, err)
 		}
 
 		for key, value := range extra.Map {
@@ -341,13 +373,13 @@ func (s *Storage) CheckPassword(username, password string) error {
 
 	err := s.db.QueryRow("SELECT password FROM users WHERE username=$1", username).Scan(&hash)
 	if err == sql.ErrNoRows {
-		return fmt.Errorf("unable to find this user: %s", username)
+		return fmt.Errorf(`store: unable to find this user: %s`, username)
 	} else if err != nil {
-		return fmt.Errorf("unable to fetch user: %v", err)
+		return fmt.Errorf(`store: unable to fetch user: %v`, err)
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
-		return fmt.Errorf(`invalid password for "%s" (%v)`, username, err)
+		return fmt.Errorf(`store: invalid password for "%s" (%v)`, username, err)
 	}
 
 	return nil
@@ -362,7 +394,7 @@ func (s *Storage) HasPassword(userID int64) (bool, error) {
 	if err == sql.ErrNoRows {
 		return false, nil
 	} else if err != nil {
-		return false, fmt.Errorf("unable to execute query: %v", err)
+		return false, fmt.Errorf(`store: unable to execute query: %v`, err)
 	}
 
 	if result {

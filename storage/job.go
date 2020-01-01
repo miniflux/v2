@@ -16,11 +16,14 @@ const maxParsingError = 3
 func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 	query := `
 		SELECT
-		id, user_id
-		FROM feeds
-		WHERE parsing_error_count < $1
-		ORDER BY checked_at ASC LIMIT %d`
-
+			id,
+			user_id
+		FROM
+			feeds
+		WHERE
+			parsing_error_count < $1 AND disabled is false
+		ORDER BY checked_at ASC LIMIT %d
+	`
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), maxParsingError)
 }
 
@@ -30,25 +33,28 @@ func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList,
 	// user refresh manually all his feeds to force a refresh.
 	query := `
 		SELECT
-		id, user_id
-		FROM feeds
-		WHERE user_id=$1
-		ORDER BY checked_at ASC LIMIT %d`
-
+			id,
+			user_id
+		FROM
+			feeds
+		WHERE
+			user_id=$1 AND disabled is false
+		ORDER BY checked_at ASC LIMIT %d
+	`
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID)
 }
 
 func (s *Storage) fetchBatchRows(query string, args ...interface{}) (jobs model.JobList, err error) {
 	rows, err := s.db.Query(query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch batch of jobs: %v", err)
+		return nil, fmt.Errorf(`store: unable to fetch batch of jobs: %v`, err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var job model.Job
 		if err := rows.Scan(&job.FeedID, &job.UserID); err != nil {
-			return nil, fmt.Errorf("unable to fetch job: %v", err)
+			return nil, fmt.Errorf(`store: unable to fetch job: %v`, err)
 		}
 
 		jobs = append(jobs, job)

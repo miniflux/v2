@@ -17,7 +17,7 @@ var predefinedRules = map[string]string{
 	"igen.fr":             "section.corps",
 	"ing.dk":              "section.body",
 	"lapresse.ca":         ".amorce, .entry",
-	"lemonde.fr":          "section.article__content",
+	"lemonde.fr":          "article",
 	"lepoint.fr":          ".art-text",
 	"lesjoiesducode.fr":   ".blog-post-content img",
 	"lesnumeriques.com":   ".text",
@@ -39,4 +39,5 @@ var predefinedRules = map[string]string{
 	"wired.com":           "main figure, article",
 	"zeit.de":             ".summary, .article-body",
 	"zdnet.com":           "div.storyBody",
+	"openingsource.org":   "article.suxing-popup-gallery",
 }

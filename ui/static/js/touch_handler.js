@@ -1,13 +1,12 @@
 class TouchHandler {
-    constructor(navHandler) {
-        this.navHandler = navHandler;
+    constructor() {
         this.reset();
     }
 
     reset() {
         this.touch = {
-            start: {x: -1, y: -1},
-            move: {x: -1, y: -1},
+            start: { x: -1, y: -1 },
+            move: { x: -1, y: -1 },
             element: null
         };
     }
@@ -75,8 +74,9 @@ class TouchHandler {
             let distance = Math.abs(this.calculateDistance());
 
             if (distance > 75) {
-                EntryHandler.toggleEntryStatus(this.touch.element);
+                toggleEntryStatus(this.touch.element);
             }
+
             this.touch.element.style.opacity = 1;
             this.touch.element.style.transform = "none";
         }
@@ -101,7 +101,7 @@ class TouchHandler {
                 previous: null,
                 next: null
             };
-    
+
             const detectDoubleTap = (doubleTapTimer, event) => {
                 const timer = doubleTapTimers[doubleTapTimer];
                 if (timer === null) {
@@ -110,17 +110,18 @@ class TouchHandler {
                     }, 200);
                 } else {
                     event.preventDefault();
-                    this.navHandler.goToPage(doubleTapTimer);
+                    goToPage(doubleTapTimer);
                 }
             };
-    
+
             entryContentElement.addEventListener("touchend", (e) => {
-                    if (e.changedTouches[0].clientX >= (entryContentElement.offsetWidth / 2)) {
-                        detectDoubleTap("next", e);
-                    } else {
-                        detectDoubleTap("previous", e);
-                    }
-                }, hasPassiveOption ? { passive: false } : false);
+                if (e.changedTouches[0].clientX >= (entryContentElement.offsetWidth / 2)) {
+                    detectDoubleTap("next", e);
+                } else {
+                    detectDoubleTap("previous", e);
+                }
+            }, hasPassiveOption ? { passive: false } : false);
+
             entryContentElement.addEventListener("touchmove", (e) => {
                 Object.keys(doubleTapTimers).forEach(timer => doubleTapTimers[timer] = null);
             });

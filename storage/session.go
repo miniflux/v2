@@ -44,9 +44,10 @@ func (s *Storage) CreateAppSession() (*model.Session, error) {
 }
 
 func (s *Storage) createAppSession(session *model.Session) (*model.Session, error) {
-	_, err := s.db.Exec(`INSERT INTO sessions (id, data) VALUES ($1, $2)`, session.ID, session.Data)
+	query := `INSERT INTO sessions (id, data) VALUES ($1, $2)`
+	_, err := s.db.Exec(query, session.ID, session.Data)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create app session: %v", err)
+		return nil, fmt.Errorf(`store: unable to create app session: %v`, err)
 	}
 
 	return session, nil
@@ -54,13 +55,17 @@ func (s *Storage) createAppSession(session *model.Session) (*model.Session, erro
 
 // UpdateAppSessionField updates only one session field.
 func (s *Storage) UpdateAppSessionField(sessionID, field string, value interface{}) error {
-	query := `UPDATE sessions
-		SET data = jsonb_set(data, '{%s}', to_jsonb($1::text), true)
-		WHERE id=$2`
-
+	query := `
+		UPDATE
+			sessions
+		SET
+			data = jsonb_set(data, '{%s}', to_jsonb($1::text), true)
+		WHERE
+			id=$2
+	`
 	_, err := s.db.Exec(fmt.Sprintf(query, field), value, sessionID)
 	if err != nil {
-		return fmt.Errorf("unable to update session field: %v", err)
+		return fmt.Errorf(`store: unable to update session field: %v`, err)
 	}
 
 	return nil
@@ -76,13 +81,14 @@ func (s *Storage) AppSession(id string) (*model.Session, error) {
 		&session.Data,
 	)
 
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("session not found: %s", id)
-	} else if err != nil {
-		return nil, fmt.Errorf("unable to fetch session: %v", err)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, fmt.Errorf(`store: session not found: %s`, id)
+	case err != nil:
+		return nil, fmt.Errorf(`store: unable to fetch session: %v`, err)
+	default:
+		return &session, nil
 	}
-
-	return &session, nil
 }
 
 // FlushAllSessions removes all sessions from the database.
@@ -100,12 +106,15 @@ func (s *Storage) FlushAllSessions() (err error) {
 	return nil
 }
 
-// CleanOldSessions removes sessions older than 30 days.
-func (s *Storage) CleanOldSessions() int64 {
-	query := `DELETE FROM sessions
-		WHERE id IN (SELECT id FROM sessions WHERE created_at < now() - interval '30 days')`
-
-	result, err := s.db.Exec(query)
+// CleanOldSessions removes sessions older than specified days.
+func (s *Storage) CleanOldSessions(days int) int64 {
+	query := `
+		DELETE FROM
+			sessions
+		WHERE
+			id IN (SELECT id FROM sessions WHERE created_at < now() - interval '%d days')
+	`
+	result, err := s.db.Exec(fmt.Sprintf(query, days))
 	if err != nil {
 		return 0
 	}

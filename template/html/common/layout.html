@@ -9,10 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
-    <link rel="manifest" href="{{ route "webManifest" }}">
+    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials"/>
 
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
+    <meta name="google" content="notranslate">
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ route "appIcon" "filename" "favicon-16.png" }}">
@@ -41,6 +42,9 @@
 <body
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
+    <div class="toast-wrap">
+        <span class="toast-msg"></span>
+    </div>
     {{ if .user }}
     <header class="header">
         <nav>
@@ -117,8 +121,8 @@
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
                 <ul>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>j</strong>, <strong>◄</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>k</strong>, <strong>►</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>◄</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>►</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>g + f</strong></li>
                 </ul>
 
@@ -132,6 +136,7 @@
                 <ul>
                     <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_original_same_window" }} = <strong>V</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.toggle_read_status" }} = <strong>m</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>

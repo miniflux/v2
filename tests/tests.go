@@ -15,13 +15,14 @@ import (
 )
 
 const (
-	testBaseURL          = "http://127.0.0.1:8080/"
-	testAdminUsername    = "admin"
-	testAdminPassword    = "test123"
-	testStandardPassword = "secret"
-	testFeedURL          = "https://github.com/miniflux/miniflux/commits/master.atom"
-	testFeedTitle        = "Recent Commits to miniflux:master"
-	testWebsiteURL       = "https://github.com/miniflux/miniflux/commits/master"
+	testBaseURL           = "http://127.0.0.1:8080/"
+	testAdminUsername     = "admin"
+	testAdminPassword     = "test123"
+	testStandardPassword  = "secret"
+	testFeedURL           = "https://miniflux.app/feed.xml"
+	testFeedTitle         = "Miniflux"
+	testSubscriptionTitle = "Miniflux Releases"
+	testWebsiteURL        = "https://miniflux.app/"
 )
 
 func getRandomUsername() string {

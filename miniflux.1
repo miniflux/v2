@@ -1,17 +1,32 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "November 9, 2018" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "June 8, 2019" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
 
 .SH SYNOPSIS
-\fBminiflux\fR [-vi] [-create-admin] [-debug] [-flush-sessions] [-info] [-migrate]
-         [-reset-feed-errors] [-reset-password] [-version]
+\fBminiflux\fR [-vic] [-create-admin] [-debug] [-flush-sessions] [-info] [-migrate]
+         [-reset-feed-errors] [-reset-password] [-version] [-config-file] [-config-dump]
 
 .SH DESCRIPTION
 \fBminiflux\fR is a minimalist and opinionated feed reader.
 
 .SH OPTIONS
+.PP
+.B \-c
+.RS 4
+Load configuration file\&.
+.RE
+.PP
+.B \-config-file
+.RS 4
+Load configuration file\&.
+.RE
+.PP
+.B \-config-dump
+.RS 4
+Print parsed configuration values\&.
+.RE
 .PP
 .B \-create-admin
 .RS 4
@@ -63,10 +78,28 @@ Show application version\&.
 Show application version\&.
 .RE
 
+.SH CONFIGURATION FILE
+The configuration file is a text file that follow these rules:
+.LP
+- Miniflux expects each line to be in KEY=VALUE format.
+.br
+- Lines beginning with # are processed as comments and ignored.
+.br
+- Blank lines are ignored.
+.br
+- There is no variable interpolation.
+.PP
+Keys are the same as the environment variables described below.
+.br
+Environment variables override the values defined in the config file.
+
 .SH ENVIRONMENT
 .TP
 .B DEBUG
 Set the value to 1 to enable debug logs\&.
+.TP
+.B LOG_DATE_TIME
+Display the date and time in log messages\&.
 .TP
 .B WORKER_POOL_SIZE
 Number of background workers (default is 5)\&.
@@ -101,15 +134,20 @@ Base URL to generate HTML links and base path for cookies\&.
 .br
 Default is http://localhost/\&.
 .TP
-.B CLEANUP_FREQUENCY
+.B CLEANUP_FREQUENCY_HOURS
 Cleanup job frequency, remove old sessions and archive read entries\&.
 .br
 Default is 24 hours\&.
 .TP
-.B ARCHIVE_READ_DAYS
+.B CLEANUP_ARCHIVE_READ_DAYS
 Number of days after marking read items as removed\&.
 .br
 Default is 60 days\&.
+.TP
+.B CLEANUP_REMOVE_SESSIONS_DAYS
+Number of days after removing old sessions from the database\&.
+.br
+Default is 30 days\&.
 .TP
 .B HTTPS
 Forces cookies to use secure flag and send HSTS header\&.
@@ -169,11 +207,21 @@ Pocket consumer API key for all users\&.
 Avoids mixed content warnings for external images: http-only, all, or none\&.
 .br
 Default is http-only\&.
+.TP
+.B HTTP_CLIENT_TIMEOUT
+Time limit in seconds before the HTTP client cancel the request\&.
+.br
+Default is 20 seconds\&.
+.TP
+.B HTTP_CLIENT_MAX_BODY_SIZE
+Maximum body size for HTTP requests in Mebibyte (MiB)\&.
+.br
+Default is 15 MiB\&.
 
 .SH AUTHORS
-.sp
+.P
 Miniflux is written and maintained by Fr\['e]d\['e]ric Guillot\&.
 
 .SH "COPYRIGHT"
-.sp
+.P
 Miniflux is released under the Apache 2.0 license\&.

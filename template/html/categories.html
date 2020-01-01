@@ -20,18 +20,13 @@
                 <span class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
                 </span>
+                (<span title="{{ if eq .FeedCount 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" .FeedCount .FeedCount }}{{ end }}">{{ .FeedCount }}</span>)
             </div>
             <div class="item-meta">
                 <ul>
                     <li>
-                        {{ if eq .FeedCount 0 }}
-                            {{ t "page.categories.no_feed" }}
-                        {{ else }}
-                            {{ plural "page.categories.feed_count" .FeedCount .FeedCount }}
-                        {{ end }}
+                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ t "page.categories.feeds" }}</a>
                     </li>
-                </ul>
-                <ul>
                     <li>
                         <a href="{{ route "editCategory" "categoryID" .ID }}">{{ t "menu.edit_category" }}</a>
                     </li>

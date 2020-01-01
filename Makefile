@@ -6,6 +6,7 @@ LD_FLAGS := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app
 PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 DB_URL := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 
+export PGPASSWORD := postgres
 export GO111MODULE=on
 
 .PHONY: generate \
@@ -32,6 +33,7 @@ export GO111MODULE=on
 	lint \
 	integration-test \
 	clean-integration-test \
+	docker-image \
 	docker-images \
 	docker-manifest
 
@@ -99,7 +101,7 @@ test:
 	go test -mod=vendor -cover -race -count=1 ./...
 
 lint:
-	@ golint -set_exit_status ${PKG_LIST}
+	golint -set_exit_status ${PKG_LIST}
 
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
@@ -109,7 +111,7 @@ integration-test:
 	go build -mod=vendor -o miniflux-test main.go
 	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
-	go test -mod=vendor -v -tags=integration -count=1 miniflux.app/tests || cat /tmp/miniflux.log
+	go test -mod=vendor -v -tags=integration -count=1 miniflux.app/tests
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
@@ -117,33 +119,52 @@ clean-integration-test:
 	@ rm miniflux-test
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
+docker-image:
+	docker build -t $(DOCKER_IMAGE):$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=amd64 \
+		--build-arg BASE_IMAGE_ARCH=amd64 .
+
 docker-images:
-	for arch in amd64 arm32v6 arm64v8; do \
-	  case $${arch} in \
-		amd64   ) miniflux_arch="amd64";; \
-		arm32v6 ) miniflux_arch="armv6";; \
-		arm64v8 ) miniflux_arch="armv8";; \
-	  esac ;\
-	  cp Dockerfile Dockerfile.$${arch} && \
-	  sed -i"" -e "s|__BASEIMAGE_ARCH__|$${arch}|g" Dockerfile.$${arch} && \
-	  sed -i"" -e "s|__MINIFLUX_VERSION__|$(VERSION)|g" Dockerfile.$${arch} && \
-	  sed -i"" -e "s|__MINIFLUX_ARCH__|$${miniflux_arch}|g" Dockerfile.$${arch} && \
-	  docker build --pull -f Dockerfile.$${arch} -t $(DOCKER_IMAGE):$${arch}-$(VERSION) . && \
-	  docker tag $(DOCKER_IMAGE):$${arch}-${VERSION} $(DOCKER_IMAGE):$${arch}-latest && \
-	  rm -f Dockerfile.$${arch}* ;\
-	done
+	docker build -t $(DOCKER_IMAGE):amd64-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=amd64 \
+		--build-arg BASE_IMAGE_ARCH=amd64 .
+	docker tag $(DOCKER_IMAGE):amd64-$(VERSION) $(DOCKER_IMAGE):amd64-latest
+
+	docker build -t $(DOCKER_IMAGE):arm32v6-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=armv6 \
+		--build-arg BASE_IMAGE_ARCH=arm32v6 .
+	docker tag $(DOCKER_IMAGE):arm32v6-$(VERSION) $(DOCKER_IMAGE):arm32v6-latest
+
+	docker build -t $(DOCKER_IMAGE):arm32v7-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=armv7 \
+		--build-arg BASE_IMAGE_ARCH=arm32v7 .
+	docker tag $(DOCKER_IMAGE):arm32v7-$(VERSION) $(DOCKER_IMAGE):arm32v7-latest
+
+	docker build -t $(DOCKER_IMAGE):arm64v8-$(VERSION) \
+		--build-arg APP_VERSION=$(VERSION) \
+		--build-arg APP_ARCH=armv8 \
+		--build-arg BASE_IMAGE_ARCH=arm64v8 .
+	docker tag $(DOCKER_IMAGE):arm64v8-$(VERSION) $(DOCKER_IMAGE):arm64v8-latest
 
 docker-manifest:
 	for version in $(VERSION) latest; do \
 		docker push $(DOCKER_IMAGE):amd64-$${version} && \
 		docker push $(DOCKER_IMAGE):arm32v6-$${version} && \
+		docker push $(DOCKER_IMAGE):arm32v7-$${version} && \
 		docker push $(DOCKER_IMAGE):arm64v8-$${version} && \
 		docker manifest create --amend $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):amd64-$${version} \
 			$(DOCKER_IMAGE):arm32v6-$${version} \
+			$(DOCKER_IMAGE):arm32v7-$${version} \
 			$(DOCKER_IMAGE):arm64v8-$${version} && \
 		docker manifest annotate $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):arm32v6-$${version} --os linux --arch arm --variant v6 && \
+		docker manifest annotate $(DOCKER_IMAGE):$${version} \
+			$(DOCKER_IMAGE):arm32v7-$${version} --os linux --arch arm --variant v7 && \
 		docker manifest annotate $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):arm64v8-$${version} --os linux --arch arm64 --variant v8 && \
 		docker manifest push --purge $(DOCKER_IMAGE):$${version} ;\

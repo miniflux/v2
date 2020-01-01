@@ -40,3 +40,27 @@ func TestSerialize(t *testing.T) {
 		t.Error("Serialized feed is incorrect")
 	}
 }
+
+func TestNormalizedCategoriesOrder(t *testing.T) {
+	var orderTests = []struct {
+		naturalOrderName string
+		correctOrderName string
+	}{
+		{"Category 2", "Category 1"},
+		{"Category 3", "Category 2"},
+		{"Category 1", "Category 3"},
+	}
+
+	var subscriptions SubcriptionList
+	subscriptions = append(subscriptions, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed/1", SiteURL: "http://example.org/1", CategoryName: orderTests[0].naturalOrderName})
+	subscriptions = append(subscriptions, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed/2", SiteURL: "http://example.org/2", CategoryName: orderTests[1].naturalOrderName})
+	subscriptions = append(subscriptions, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: orderTests[2].naturalOrderName})
+
+	feeds := normalizeFeeds(subscriptions)
+
+	for i, o := range orderTests {
+		if feeds.Outlines[i].Text != o.correctOrderName {
+			t.Fatalf("need %v, got %v", o.correctOrderName, feeds.Outlines[i].Text)
+		}
+	}
+}

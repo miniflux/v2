@@ -14,14 +14,14 @@ func (s *Storage) Timezones() (map[string]string, error) {
 	timezones := make(map[string]string)
 	rows, err := s.db.Query(`SELECT name FROM pg_timezone_names() ORDER BY name ASC`)
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch timezones: %v", err)
+		return nil, fmt.Errorf(`store: unable to fetch timezones: %v`, err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var timezone string
 		if err := rows.Scan(&timezone); err != nil {
-			return nil, fmt.Errorf("unable to fetch timezones row: %v", err)
+			return nil, fmt.Errorf(`store: unable to fetch timezones row: %v`, err)
 		}
 
 		if !strings.HasPrefix(timezone, "posix") && !strings.HasPrefix(timezone, "SystemV") && timezone != "localtime" {

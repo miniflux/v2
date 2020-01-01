@@ -241,18 +241,18 @@ func TestUserTheme(t *testing.T) {
 	r, _ := http.NewRequest("GET", "http://example.org", nil)
 
 	result := UserTheme(r)
-	expected := "default"
+	expected := "light_serif"
 
 	if result != expected {
 		t.Errorf(`Unexpected context value, got %q instead of %q`, result, expected)
 	}
 
 	ctx := r.Context()
-	ctx = context.WithValue(ctx, UserThemeContextKey, "black")
+	ctx = context.WithValue(ctx, UserThemeContextKey, "dark_serif")
 	r = r.WithContext(ctx)
 
 	result = UserTheme(r)
-	expected = "black"
+	expected = "dark_serif"
 
 	if result != expected {
 		t.Errorf(`Unexpected context value, got %q instead of %q`, result, expected)

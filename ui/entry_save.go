@@ -37,7 +37,7 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-		integration.SendEntry(h.cfg, entry, settings)
+		integration.SendEntry(entry, settings)
 	}()
 
 	json.Created(w, r, map[string]string{"message": "saved"})

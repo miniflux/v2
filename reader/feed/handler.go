@@ -33,7 +33,7 @@ type Handler struct {
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password string) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password, scraperRules, rewriteRules string) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -52,14 +52,14 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 		return nil, errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 	}
 
-	subscription, parseErr := parser.ParseFeed(response.String())
+	subscription, parseErr := parser.ParseFeed(response.BodyAsString())
 	if parseErr != nil {
 		return nil, parseErr
 	}
 
 	subscription.UserID = userID
 	subscription.WithCategoryID(categoryID)
-	subscription.WithBrowsingParameters(crawler, userAgent, username, password)
+	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
@@ -106,7 +106,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	if response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		logger.Debug("[Handler:RefreshFeed] Feed #%d has been modified", feedID)
 
-		updatedFeed, parseErr := parser.ParseFeed(response.String())
+		updatedFeed, parseErr := parser.ParseFeed(response.BodyAsString())
 		if parseErr != nil {
 			originalFeed.WithError(parseErr.Localize(printer))
 			h.store.UpdateFeedError(originalFeed)

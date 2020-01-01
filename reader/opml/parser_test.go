@@ -193,6 +193,40 @@ func TestParseOpmlVersion1WithoutOuterOutline(t *testing.T) {
 		}
 	}
 }
+
+func TestParseOpmlWithInvalidCharacterEntity(t *testing.T) {
+	data := `<?xml version="1.0"?>
+	<opml version="1.0">
+		<head>
+			<title>mySubscriptions.opml</title>
+		</head>
+		<body>
+			<outline title="Feed 1">
+				<outline type="rss" title="Feed 1" xmlUrl="http://example.org/feed1/a&b" htmlUrl="http://example.org/c&d"></outline>
+			</outline>
+		</body>
+	</opml>
+	`
+
+	var expected SubcriptionList
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/a&b", SiteURL: "http://example.org/c&d", CategoryName: ""})
+
+	subscriptions, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(subscriptions) != 1 {
+		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 1)
+	}
+
+	for i := 0; i < len(subscriptions); i++ {
+		if !subscriptions[i].Equals(expected[i]) {
+			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+		}
+	}
+}
+
 func TestParseInvalidXML(t *testing.T) {
 	data := `garbage`
 	_, err := Parse(bytes.NewBufferString(data))

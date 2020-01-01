@@ -3,26 +3,7 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.edit_user.title" .selected_user.Username }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
-        </li>
-    </ul>
+    {{ template "settings_menu" dict "user" .user }}
 </section>
 
 <form action="{{ route "updateUser" "userID" .selected_user.ID }}" method="post" autocomplete="off">

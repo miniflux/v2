@@ -49,6 +49,8 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		feedInfo.UserAgent,
 		feedInfo.Username,
 		feedInfo.Password,
+		feedInfo.ScraperRules,
+		feedInfo.RewriteRules,
 	)
 	if err != nil {
 		json.ServerError(w, r, err)

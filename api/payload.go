@@ -24,12 +24,14 @@ type entriesResponse struct {
 }
 
 type feedCreation struct {
-	FeedURL    string `json:"feed_url"`
-	CategoryID int64  `json:"category_id"`
-	UserAgent  string `json:"user_agent"`
-	Username   string `json:"username"`
-	Password   string `json:"password"`
-	Crawler    bool   `json:"crawler"`
+	FeedURL      string `json:"feed_url"`
+	CategoryID   int64  `json:"category_id"`
+	UserAgent    string `json:"user_agent"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	Crawler      bool   `json:"crawler"`
+	ScraperRules string `json:"scraper_rules"`
+	RewriteRules string `json:"rewrite_rules"`
 }
 
 type subscriptionDiscovery struct {
@@ -50,6 +52,7 @@ type feedModification struct {
 	Username     *string `json:"username"`
 	Password     *string `json:"password"`
 	CategoryID   *int64  `json:"category_id"`
+	Disabled     *bool   `json:"disabled"`
 }
 
 func (f *feedModification) Update(feed *model.Feed) {
@@ -91,6 +94,10 @@ func (f *feedModification) Update(feed *model.Feed) {
 
 	if f.CategoryID != nil && *f.CategoryID > 0 {
 		feed.Category.ID = *f.CategoryID
+	}
+
+	if f.Disabled != nil {
+		feed.Disabled = *f.Disabled
 	}
 }
 

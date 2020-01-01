@@ -1,3 +1,95 @@
+Version 2.0.19 (Dec 1, 2019)
+----------------------------
+
+* Add shortcut "V" to open original link in current tab
+* Add the possibility to add rules during feed creation
+* Wrap attachments into <details> disclosure element
+* Show attachment size on entry page
+* Add support of RSS Media elements (group, description, peer link, and thumbnails)
+* Add rewrite functions: convert_text_link and nl2br
+* Add scraper rule for openingsource.org
+* Add Makefile target to build only amd64 Docker image
+* Make sure to remove integration settings when removing a user
+* Add API parameter to filter entries by category
+* Display list of feeds per category
+* Show the number of read and unread entries for each feed
+* Make sure settings menu is consistent
+* Remove fixed table-layout for entry content
+* Update autocert lib because ACME v1 is EOL
+* Do not lighten blockquote font color
+* Update de_DE translation
+* Send a response when changing status of removed entries in Fever API
+* Add meta tag to disable Google Translate
+* Improve storage module
+* Improve XML decoder to remove illegal characters
+* Compare Fever token case-insensitively
+* Make sure integration tests are marked as failed in Github Actions
+* Add new formats to date parser
+* Add notification message when using keyboard shortcuts: f, s, and m.
+* Avoid keyboard shortcuts to conflict with Firefox’s "Find as you type" feature
+
+Version 2.0.18 (Sep 25, 2019)
+-----------------------------
+
+* Add Docker image variant for arm32v7
+* Add theme variants
+    - Use CSS variables instead of inherence
+    - Rename default theme to "Light - Serif"
+    - Rename Black theme to "Dark - Serif"
+    - Rename "Sans-Serif" theme to "Light - Sans Serif"
+    - Add "System" theme that use system preferences: Dark or Light
+    - Add Serif and Sans-Serif variants for each color theme
+* Avoid constraint error when having duplicate entries during feed creation
+* Disable strict XML parsing
+* Ignore invalid content type
+* Update man page
+* Replace Travis by GitHub Actions
+* Rename cleanup config variables and deprecate old ones
+    - CLEANUP_FREQUENCY_HOURS instead of CLEANUP_FREQUENCY
+    - CLEANUP_ARCHIVE_READ_DAYS instead of ARCHIVE_READ_DAYS
+* Make configurable the number of days to remove old sessions
+* Add native lazy loading for images and iframes
+* Do not buffer responses in the image proxy
+* Update dependencies
+* Add Go 1.13 to test matrix
+* Replace link border by outline to avoid slight content shift
+* New rewrite function: add_mailto_subject
+* Import OPML from URL
+* Fix HTML injection in addImageTitle
+* Accept HTML entities when parsing XML
+
+Version 2.0.17 (Aug 3, 2019)
+----------------------------
+
+* Update Docker image to Alpine Linux 3.10.1
+* Pass auth header to manifest request (crossorigin attribute)
+* Sort feed categories before serialization
+* Fix syntax errors in man page
+* Add .search margin-right
+* Ask for confirmation before flushing history, marking page as read, and mark all as read
+* Add option to disable feeds
+
+Version 2.0.16 (Jun 8, 2019)
+----------------------------
+
+* Add option to toggle date/time in log messages
+* Add optional config file parser in addition to environment variables
+* Make HTTP Client timeout and max body size configurable
+* Refactor config package:
+    - Parse configuration only once during startup time
+    - Store configuration values in a global variable
+* Flip behavior of j and k keyboard shortcuts
+* Bump Postgresql client library to v1.1.1 to bring in SCRAM-SHA-256 authentication
+* Add option to enable/disable keyboard shortcuts
+* Add missing translation
+* Improve page reload when showing unread/all entries:
+    - Show only unread entries = refresh current page
+    - Show all entries = go to next page
+* Always display feed entries even when there is a feed error
+* Use loading label instead of saving when submitting login form
+* Add OPML v1 support during importation
+* Add 'allow-popups' to iframe sandbox permissions
+
 Version 2.0.15 (Mar 16, 2019)
 -----------------------------
 

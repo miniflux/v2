@@ -26,8 +26,17 @@ func TestDetectRSS(t *testing.T) {
 	}
 }
 
-func TestDetectAtom(t *testing.T) {
+func TestDetectAtom10(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
+	format := DetectFeedFormat(data)
+
+	if format != FormatAtom {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatAtom)
+	}
+}
+
+func TestDetectAtom03(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?><feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="en"></feed>`
 	format := DetectFeedFormat(data)
 
 	if format != FormatAtom {

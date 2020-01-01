@@ -7,8 +7,8 @@ package template // import "miniflux.app/template"
 import (
 	"encoding/base64"
 	"fmt"
-	"math"
 	"html/template"
+	"math"
 	"net/mail"
 	"strings"
 	"time"
@@ -20,30 +20,30 @@ import (
 	"miniflux.app/timezone"
 	"miniflux.app/url"
 
-	"github.com/gorilla/mux"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gorilla/mux"
 )
 
 type funcMap struct {
-	cfg    *config.Config
 	router *mux.Router
 }
 
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
-		"dict":     dict,
-		"hasKey":   hasKey,
-		"truncate": truncate,
-		"isEmail":  isEmail,
+		"formatFileSize": formatFileSize,
+		"dict":           dict,
+		"hasKey":         hasKey,
+		"truncate":       truncate,
+		"isEmail":        isEmail,
 		"baseURL": func() string {
-			return f.cfg.BaseURL()
+			return config.Opts.BaseURL()
 		},
 		"rootURL": func() string {
-			return f.cfg.RootURL()
+			return config.Opts.RootURL()
 		},
 		"hasOAuth2Provider": func(provider string) bool {
-			return f.cfg.OAuth2Provider() == provider
+			return config.Opts.OAuth2Provider() == provider
 		},
 		"route": func(name string, args ...interface{}) string {
 			return route.Path(f.router, name, args...)
@@ -52,10 +52,10 @@ func (f *funcMap) Map() template.FuncMap {
 			return template.HTML(str)
 		},
 		"proxyFilter": func(data string) string {
-			return imageProxyFilter(f.router, f.cfg, data)
+			return imageProxyFilter(f.router, data)
 		},
 		"proxyURL": func(link string) string {
-			proxyImages := f.cfg.ProxyImages()
+			proxyImages := config.Opts.ProxyImages()
 
 			if proxyImages == "all" || (proxyImages != "none" && !url.IsHTTPS(link)) {
 				return proxify(f.router, link)
@@ -90,10 +90,6 @@ func (f *funcMap) Map() template.FuncMap {
 			return ""
 		},
 	}
-}
-
-func newFuncMap(cfg *config.Config, router *mux.Router) *funcMap {
-	return &funcMap{cfg, router}
 }
 
 func dict(values ...interface{}) (map[string]interface{}, error) {
@@ -178,8 +174,8 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 	}
 }
 
-func imageProxyFilter(router *mux.Router, cfg *config.Config, data string) string {
-	proxyImages := cfg.ProxyImages()
+func imageProxyFilter(router *mux.Router, data string) string {
+	proxyImages := config.Opts.ProxyImages()
 	if proxyImages == "none" {
 		return data
 	}
@@ -204,4 +200,18 @@ func imageProxyFilter(router *mux.Router, cfg *config.Config, data string) strin
 func proxify(router *mux.Router, link string) string {
 	// We use base64 url encoding to avoid slash in the URL.
 	return route.Path(router, "proxy", "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
+}
+
+func formatFileSize(b int64) string {
+	const unit = 1024
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %ciB",
+		float64(b)/float64(div), "KMGTPE"[exp])
 }

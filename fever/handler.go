@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/config"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/integration"
@@ -22,8 +21,8 @@ import (
 )
 
 // Serve handles Fever API calls.
-func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage) {
-	handler := &handler{cfg, store}
+func Serve(router *mux.Router, store *storage.Storage) {
+	handler := &handler{store}
 
 	sr := router.PathPrefix("/fever").Subrouter()
 	sr.Use(newMiddleware(store).serve)
@@ -31,7 +30,6 @@ func Serve(router *mux.Router, cfg *config.Config, store *storage.Storage) {
 }
 
 type handler struct {
-	cfg   *config.Config
 	store *storage.Storage
 }
 
@@ -400,6 +398,8 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if entry == nil {
+		logger.Debug("[Fever] Marking entry #%d but not found, ignored", entryID)
+		json.OK(w, r, newBaseResponse())
 		return
 	}
 
@@ -424,7 +424,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go func() {
-			integration.SendEntry(h.cfg, entry, settings)
+			integration.SendEntry(entry, settings)
 		}()
 	}
 

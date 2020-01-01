@@ -22,6 +22,62 @@ var templateCommonMap = map[string]string{
     </div>
 </div>
 {{ end }}`,
+	"feed_list": `{{ define "feed_list" }}
+    <div class="items">
+        {{ range .feeds }}
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if .Icon }}
+                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
+                    {{ end }}
+                    {{ if .Disabled }} 🚫 {{ end }}
+                    <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="feed-entries-counter">
+                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                </span>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
+                </span>
+            </div>
+            <div class="item-meta">
+                <ul>
+                    <li>
+                        <a href="{{ .SiteURL }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
+                    </li>
+                    <li>
+                        {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ t "menu.refresh_feed" }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ t "menu.edit_feed" }}</a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            data-confirm="true"
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}"
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ t "action.remove" }}</a>
+                    </li>
+                </ul>
+            </div>
+            {{ if ne .ParsingErrorCount 0 }}
+                <div class="parsing-error">
+                    <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "page.feeds.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
+                    - <small class="parsing-error-message">{{ .ParsingErrorMsg }}</small>
+                </div>
+            {{ end }}
+        </article>
+        {{ end }}
+    </div>
+{{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
 <div class="item-meta">
     <ul>
@@ -83,10 +139,11 @@ var templateCommonMap = map[string]string{
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
-    <link rel="manifest" href="{{ route "webManifest" }}">
+    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials"/>
 
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
+    <meta name="google" content="notranslate">
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ route "appIcon" "filename" "favicon-16.png" }}">
@@ -115,6 +172,9 @@ var templateCommonMap = map[string]string{
 <body
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
+    <div class="toast-wrap">
+        <span class="toast-msg"></span>
+    </div>
     {{ if .user }}
     <header class="header">
         <nav>
@@ -191,8 +251,8 @@ var templateCommonMap = map[string]string{
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.items" }}</p>
                 <ul>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>j</strong>, <strong>◄</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>k</strong>, <strong>►</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>◄</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>►</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>g + f</strong></li>
                 </ul>
 
@@ -206,6 +266,7 @@ var templateCommonMap = map[string]string{
                 <ul>
                     <li>{{ t "page.keyboard_shortcuts.open_item" }} = <strong>o</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.open_original" }} = <strong>v</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.open_original_same_window" }} = <strong>V</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.toggle_read_status" }} = <strong>m</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.mark_page_as_read" }} = <strong>A</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
@@ -242,11 +303,37 @@ var templateCommonMap = map[string]string{
 </div>
 {{ end }}
 `,
+	"settings_menu": `{{ define "settings_menu" }}
+<ul>
+    <li>
+        <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
+    </li>
+    {{ if .user.IsAdmin }}
+        <li>
+            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
+        </li>
+    {{ end }}
+    <li>
+        <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
+    </li>
+</ul>
+{{ end }}`,
 }
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
+	"feed_list":        "7b7ea2c7df07d048c83d86237d5b5e41bddce561273c652d9265950093ca261b",
 	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
-	"layout":           "838fb8ec4df4120ff63168c15d900e3734f52e4b7473fb1d45695e6b27540d11",
+	"layout":           "f19597d8cd74e17b33826c25b8421f46fef87276f0d95c695bba8f53bb4f95e6",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
+	"settings_menu":    "78e5a487ede18610b23db74184dab023170f9e083cc0625bc2c874d1eea1a4ce",
 }
