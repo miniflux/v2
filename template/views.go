@@ -327,8 +327,8 @@ var templateViewsMap = map[string]string{
 
     {{ range .subscriptions }}
         <div class="radio-group">
-            <label title="{{ .URL }}"><input type="radio" name="url" value="{{ .URL }}"> {{ .Title }}</label> ({{ .Type }})
-            <small title="Type = {{ .Type }}"><a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL }}</a></small>
+            <label title="{{ .URL | safeURL  }}"><input type="radio" name="url" value="{{ .URL | safeURL  }}"> {{ .Title }}</label> ({{ .Type }})
+            <small title="Type = {{ .Type }}"><a href="{{ .URL | safeURL  }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a></small>
         </div>
     {{ end }}
 
@@ -577,7 +577,7 @@ var templateViewsMap = map[string]string{
 <section class="entry" data-id="{{ .entry.ID }}">
     <header class="entry-header">
         <h1>
-            <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
         <div class="entry-actions">
             <ul>
@@ -627,7 +627,7 @@ var templateViewsMap = map[string]string{
                 </li>
                 {{ if .entry.CommentsURL }}
                     <li>
-                        <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
+                        <a href="{{ .entry.CommentsURL | safeURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
                     </li>
                 {{ end }}
             </ul>
@@ -688,7 +688,7 @@ var templateViewsMap = map[string]string{
                 {{ end }}
 
                 <div class="entry-enclosure-download">
-                    <a href="{{ .URL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL }}</a>
+                    <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
                     <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
                 </div>
             </div>
@@ -1356,13 +1356,13 @@ var templateViewsMapChecksums = map[string]string{
 	"categories":          "2c5dd0ed6355bd5acc393bbf6117d20458b5581aab82036008324f6bbbe2af75",
 	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
 	"category_feeds":      "527c2ffbc4fcec775071424ba1022ae003525dba53a28cc41f48fb7b30aa984b",
-	"choose_subscription": "5f21556e6cecfd64b1cff30e22ef313d2f09698cebb03f711cbac8ec7f2c1d04",
+	"choose_subscription": "26f37a6e1c52cf70a0900dbbbb99f9ee905698ea11b722798093e22166798755",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "34aa0d668b3ea1a1b5fa480c20cebeae729b37010af3bb915d2a9eed73d3b996",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "fc21489367156b0cd71888e6485f47f3146c73f2a28d1ce8d147771b99478038",
+	"entry":               "4258936829a5baf9d5b95d3884add13034105a931ee844ee4c4d3a6f1928f61a",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "fa06cd1e1e3fec79132386972c640a2fe91237f5dba572389d5f45be74545f25",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
