@@ -8,13 +8,10 @@
             <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
         </li>
     </ul>
 </section>

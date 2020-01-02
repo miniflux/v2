@@ -42,6 +42,7 @@
     "menu.add_feed": "Abonnement hinzufügen",
     "menu.add_user": "Benutzer anlegen",
     "menu.flush_history": "Verlauf leeren",
+    "menu.feed_entries": "Artikel",
     "search.label": "Suche",
     "search.placeholder": "Suche...",
     "pagination.next": "Nächste",

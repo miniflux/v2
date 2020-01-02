@@ -34,17 +34,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.add_feed.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
-        </li>
-    </ul>
+    {{ template "feed_menu" }}
 </section>
 
 {{ if not .categories }}
@@ -298,17 +288,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.add_feed.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
-        </li>
-    </ul>
+    {{ template "feed_menu" }}
 </section>
 
 <form action="{{ route "chooseSubscription" }}" method="POST">
@@ -442,13 +422,10 @@ var templateViewsMap = map[string]string{
             <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
         </li>
     </ul>
 </section>
@@ -803,20 +780,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.feeds.title" }} ({{ .total }})</h1>
-    <ul>
-        <li>
-            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
-        </li>
-    </ul>
+    {{ template "feed_menu" }}
 </section>
 
 {{ if not .feeds }}
@@ -876,17 +840,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.import.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-    </ul>
+    {{ template "feed_menu" }}
 </section>
 
 {{ if .errorMessage }}
@@ -1351,22 +1305,22 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
-	"add_subscription":    "5bae8c60989593257f515f9c73b35c854a94bee4b2fb08ad38aa93b17be9c1b5",
+	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
 	"categories":          "2c5dd0ed6355bd5acc393bbf6117d20458b5581aab82036008324f6bbbe2af75",
 	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
 	"category_feeds":      "527c2ffbc4fcec775071424ba1022ae003525dba53a28cc41f48fb7b30aa984b",
-	"choose_subscription": "26f37a6e1c52cf70a0900dbbbb99f9ee905698ea11b722798093e22166798755",
+	"choose_subscription": "84c9730cadd78e6ee5a6b4c499aab33acddb4324ac01924d33387543eec4d702",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
-	"edit_feed":           "34aa0d668b3ea1a1b5fa480c20cebeae729b37010af3bb915d2a9eed73d3b996",
+	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
 	"entry":               "4258936829a5baf9d5b95d3884add13034105a931ee844ee4c4d3a6f1928f61a",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
-	"feeds":               "fa06cd1e1e3fec79132386972c640a2fe91237f5dba572389d5f45be74545f25",
+	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
-	"import":              "5eb56cecaa4d369b9acc991a82be7617710c551089a2e99d34ce8b6e5c37df0a",
+	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "6104ff6ff3ac3c1ae5e850c78250aab6e99e2342a337589f3848459fa333766a",
 	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",
 	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",

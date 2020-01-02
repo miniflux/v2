@@ -3,20 +3,7 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.feeds.title" }} ({{ .total }})</h1>
-    <ul>
-        <li>
-            <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
-        </li>
-    </ul>
+    {{ template "feed_menu" }}
 </section>
 
 {{ if not .feeds }}

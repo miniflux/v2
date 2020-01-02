@@ -42,6 +42,7 @@
     "menu.add_feed": "Add subscription",
     "menu.add_user": "Add user",
     "menu.flush_history": "Flush history",
+    "menu.feed_entries": "Entries",
     "search.label": "Search",
     "search.placeholder": "Search...",
     "pagination.next": "Next",

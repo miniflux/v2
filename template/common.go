@@ -78,6 +78,25 @@ var templateCommonMap = map[string]string{
         {{ end }}
     </div>
 {{ end }}`,
+	"feed_menu": `{{ define "feed_menu" }}
+<ul>
+    <li>
+        <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+    </li>
+</ul>
+{{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
 <div class="item-meta">
     <ul>
@@ -332,6 +351,7 @@ var templateCommonMap = map[string]string{
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
 	"feed_list":        "db406e7cb81292ce1d974d63f63270384a286848b2e74fe36bf711b4eb5717dd",
+	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"item_meta":        "285daae854456d0156967fdbe2834c954f2c772239bb736c88041d49a4a21219",
 	"layout":           "f19597d8cd74e17b33826c25b8421f46fef87276f0d95c695bba8f53bb4f95e6",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
