@@ -32,8 +32,8 @@
 
     {{ range .subscriptions }}
         <div class="radio-group">
-            <label title="{{ .URL }}"><input type="radio" name="url" value="{{ .URL }}"> {{ .Title }}</label> ({{ .Type }})
-            <small title="Type = {{ .Type }}"><a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL }}</a></small>
+            <label title="{{ .URL | safeURL  }}"><input type="radio" name="url" value="{{ .URL | safeURL  }}"> {{ .Title }}</label> ({{ .Type }})
+            <small title="Type = {{ .Type }}"><a href="{{ .URL | safeURL  }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a></small>
         </div>
     {{ end }}
 
