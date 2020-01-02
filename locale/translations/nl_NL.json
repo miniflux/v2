@@ -42,6 +42,7 @@
     "menu.add_feed": "Feed toevoegen",
     "menu.add_user": "Gebruiker toevoegen",
     "menu.flush_history": "Verwijder geschiedenis",
+    "menu.feed_entries": "Lidwoord",
     "search.label": "Zoeken",
     "search.placeholder": "Zoeken...",
     "pagination.next": "Volgende",

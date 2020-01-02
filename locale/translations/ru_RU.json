@@ -42,6 +42,7 @@
     "menu.add_feed": "Добавить подписку",
     "menu.add_user": "Добавить пользователя",
     "menu.flush_history": "Отчистить историю",
+    "menu.feed_entries": "статьи",
     "search.label": "Поиск",
     "search.placeholder": "Поиск…",
     "pagination.next": "Следующая",
