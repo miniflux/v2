@@ -111,7 +111,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 					continue
 				}
 
-				if !hasValidScheme(value) || isBlacklistedResource(value) {
+				if !hasValidURIScheme(value) || isBlacklistedResource(value) {
 					continue
 				}
 			}
@@ -221,17 +221,19 @@ func hasRequiredAttributes(tagName string, attributes []string) bool {
 	return true
 }
 
-func hasValidScheme(src string) bool {
-	// See https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+// See https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+func hasValidURIScheme(src string) bool {
 	whitelist := []string{
-		"apt://",
-		"bitcoin://",
-		"callto://",
+		"apt:",
+		"bitcoin:",
+		"callto:",
+		"dav:",
+		"davs:",
 		"ed2k://",
 		"facetime://",
-		"feed://",
+		"feed:",
 		"ftp://",
-		"geo://",
+		"geo:",
 		"gopher://",
 		"git://",
 		"http://",
@@ -240,27 +242,24 @@ func hasValidScheme(src string) bool {
 		"irc6://",
 		"ircs://",
 		"itms://",
-		"jabber://",
-		"magnet://",
-		"mailto://",
-		"maps://",
-		"news://",
-		"nfs://",
-		"nntp://",
+		"itms-apps://",
+		"magnet:",
+		"mailto:",
+		"news:",
+		"nntp:",
 		"rtmp://",
-		"sip://",
-		"sips://",
-		"skype://",
-		"smb://",
-		"sms://",
-		"spotify://",
+		"sip:",
+		"sips:",
+		"skype:",
+		"spotify:",
 		"ssh://",
 		"sftp://",
 		"steam://",
 		"svn://",
-		"tel://",
+		"svn+ssh://",
+		"tel:",
 		"webcal://",
-		"xmpp://",
+		"xmpp:",
 	}
 
 	for _, prefix := range whitelist {
