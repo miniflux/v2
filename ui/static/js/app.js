@@ -304,6 +304,23 @@ function openOriginalLink(openLinkInCurrentTab) {
     }
 }
 
+function openCommentLink(openLinkInCurrentTab) {
+    let entryLink = document.querySelector("a[data-comments-link]");
+    if (entryLink !== null) {
+        if (openLinkInCurrentTab) {
+            window.location.href = entryLink.getAttribute("href");
+        } else {
+            DomHelper.openNewTab(entryLink.getAttribute("href"));
+        }
+        return;
+    }
+
+    let currentItemCommentsLink = document.querySelector(".current-item a[data-comments-link]");
+    if (currentItemCommentsLink !== null) {
+        DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
+    }
+}
+
 function openSelectedItem() {
     let currentItemLink = document.querySelector(".current-item .item-title a");
     if (currentItemLink !== null) {
