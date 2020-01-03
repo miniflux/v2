@@ -42,6 +42,7 @@
     "menu.add_feed": "新增订阅",
     "menu.add_user": "新建用户",
     "menu.flush_history": "清理历史",
+    "menu.feed_entries": "文章",
     "search.label": "搜索",
     "search.placeholder": "搜索…",
     "pagination.next": "下一页",

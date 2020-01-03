@@ -1,0 +1,19 @@
+{{ define "feed_menu" }}
+<ul>
+    <li>
+        <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+    </li>
+</ul>
+{{ end }}

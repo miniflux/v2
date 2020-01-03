@@ -44,7 +44,7 @@ var templateCommonMap = map[string]string{
             <div class="item-meta">
                 <ul>
                     <li>
-                        <a href="{{ .SiteURL }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
+                        <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
@@ -78,6 +78,25 @@ var templateCommonMap = map[string]string{
         {{ end }}
     </div>
 {{ end }}`,
+	"feed_menu": `{{ define "feed_menu" }}
+<ul>
+    <li>
+        <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
+    </li>
+    <li>
+        <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+    </li>
+</ul>
+{{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
 <div class="item-meta">
     <ul>
@@ -99,11 +118,11 @@ var templateCommonMap = map[string]string{
             </li>
         {{ end }}
         <li>
-            <a href="{{ .entry.URL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "entry.original.label" }}</a>
+            <a href="{{ .entry.URL | safeURL  }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ t "entry.original.label" }}</a>
         </li>
         {{ if .entry.CommentsURL }}
             <li>
-                <a href="{{ .entry.CommentsURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
+                <a href="{{ .entry.CommentsURL | safeURL  }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
             </li>
         {{ end }}
         <li>
@@ -331,8 +350,9 @@ var templateCommonMap = map[string]string{
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
-	"feed_list":        "7b7ea2c7df07d048c83d86237d5b5e41bddce561273c652d9265950093ca261b",
-	"item_meta":        "34deb081a054f2948ad808bdb2c8603d6ab00c58f2f50c4ead0b47ae092888eb",
+	"feed_list":        "db406e7cb81292ce1d974d63f63270384a286848b2e74fe36bf711b4eb5717dd",
+	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
+	"item_meta":        "285daae854456d0156967fdbe2834c954f2c772239bb736c88041d49a4a21219",
 	"layout":           "f19597d8cd74e17b33826c25b8421f46fef87276f0d95c695bba8f53bb4f95e6",
 	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
 	"settings_menu":    "78e5a487ede18610b23db74184dab023170f9e083cc0625bc2c874d1eea1a4ce",

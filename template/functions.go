@@ -48,6 +48,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"route": func(name string, args ...interface{}) string {
 			return route.Path(f.router, name, args...)
 		},
+		"safeURL": func(url string) template.URL {
+			return template.URL(url)
+		},
 		"noescape": func(str string) template.HTML {
 			return template.HTML(str)
 		},

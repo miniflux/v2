@@ -42,6 +42,7 @@
     "menu.add_feed": "Ajouter un abonnement",
     "menu.add_user": "Ajouter un utilisateur",
     "menu.flush_history": "Supprimer l'historique",
+    "menu.feed_entries": "Articles",
     "search.label": "Recherche",
     "search.placeholder": "Recherche...",
     "pagination.next": "Suivant",
