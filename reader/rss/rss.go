@@ -317,7 +317,12 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 func (r *rssItem) entryCommentsURL() string {
 	for _, commentLink := range r.CommentLinks {
 		if commentLink.XMLName.Space == "" {
-			return strings.TrimSpace(commentLink.Data)
+			commentsURL := strings.TrimSpace(commentLink.Data)
+			// The comments URL is supposed to be absolute (some feeds publishes incorrect comments URL)
+			// See https://cyber.harvard.edu/rss/rss.html#ltcommentsgtSubelementOfLtitemgt
+			if url.IsAbsoluteURL(commentsURL) {
+				return commentsURL
+			}
 		}
 	}
 
