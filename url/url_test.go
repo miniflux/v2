@@ -6,6 +6,21 @@ package url // import "miniflux.app/url"
 
 import "testing"
 
+func TestIsAbsoluteURL(t *testing.T) {
+	scenarios := map[string]bool{
+		"https://example.org/file.pdf": true,
+		"magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7": true,
+		"invalid url": false,
+	}
+
+	for input, expected := range scenarios {
+		actual := IsAbsoluteURL(input)
+		if actual != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v for %q`, actual, expected, input)
+		}
+	}
+}
+
 func TestAbsoluteURL(t *testing.T) {
 	scenarios := [][]string{
 		[]string{"https://example.org/path/file.ext", "https://example.org/folder/", "/path/file.ext"},

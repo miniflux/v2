@@ -777,3 +777,43 @@ func TestParseRepliesLinkRelation(t *testing.T) {
 		t.Errorf("Incorrect entry comments URL, got: %s", feed.Entries[0].CommentsURL)
 	}
 }
+
+func TestAbsoluteCommentsURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom"
+			xmlns:thr="http://purl.org/syndication/thread/1.0">
+		<id>http://www.example.org/myfeed</id>
+		<title>My Example Feed</title>
+		<updated>2005-07-28T12:00:00Z</updated>
+		<link href="http://www.example.org/myfeed" />
+		<author><name>James</name></author>
+		<entry>
+			<id>tag:entries.com,2005:1</id>
+			<title>My original entry</title>
+			<updated>2006-03-01T12:12:12Z</updated>
+			<link href="http://www.example.org/entries/1" />
+			<link rel="replies"
+				type="text/html"
+				href="invalid url"
+				thr:count="10" thr:updated="2005-07-28T12:10:00Z" />
+			<summary>This is my original entry</summary>
+		</entry>
+	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+
+	if feed.Entries[0].CommentsURL != "" {
+		t.Errorf("Incorrect entry comments URL, got: %s", feed.Entries[0].CommentsURL)
+	}
+}

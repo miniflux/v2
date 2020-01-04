@@ -11,6 +11,15 @@ import (
 	"strings"
 )
 
+// IsAbsoluteURL returns true if the link is absolute.
+func IsAbsoluteURL(link string) bool {
+	u, err := url.Parse(link)
+	if err != nil {
+		return false
+	}
+	return u.IsAbs()
+}
+
 // AbsoluteURL converts the input URL as absolute URL if necessary.
 func AbsoluteURL(baseURL, input string) (string, error) {
 	if strings.HasPrefix(input, "//") {
