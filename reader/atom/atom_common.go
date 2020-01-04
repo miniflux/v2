@@ -57,10 +57,14 @@ func (a atomLinks) firstLinkWithRelation(relation string) string {
 	return ""
 }
 
-func (a atomLinks) firstLinkWithRelationAndType(relation, contentType string) string {
+func (a atomLinks) firstLinkWithRelationAndType(relation string, contentTypes ...string) string {
 	for _, link := range a {
-		if strings.ToLower(link.Rel) == relation && strings.ToLower(link.Type) == contentType {
-			return strings.TrimSpace(link.URL)
+		if strings.ToLower(link.Rel) == relation {
+			for _, contentType := range contentTypes {
+				if strings.ToLower(link.Type) == contentType {
+					return strings.TrimSpace(link.URL)
+				}
+			}
 		}
 	}
 
