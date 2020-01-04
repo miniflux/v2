@@ -194,9 +194,11 @@ func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 	return enclosures
 }
 
-// See https://tools.ietf.org/html/rfc4685#section-3
+// See https://tools.ietf.org/html/rfc4685#section-4
+// If the type attribute of the atom:link is omitted, its value is assumed to be "application/atom+xml".
+// We accept only HTML or XHTML documents for now since the intention is to have the same behavior as RSS.
 func (a *atom10Entry) entryCommentsURL() string {
-	commentsURL := a.Links.firstLinkWithRelationAndType("replies", "text/html")
+	commentsURL := a.Links.firstLinkWithRelationAndType("replies", "text/html", "application/xhtml+xml")
 	if url.IsAbsoluteURL(commentsURL) {
 		return commentsURL
 	}
