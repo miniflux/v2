@@ -34,7 +34,6 @@ type Entry struct {
 	Starred     bool          `json:"starred"`
 	Enclosures  EnclosureList `json:"enclosures,omitempty"`
 	Feed        *Feed         `json:"feed,omitempty"`
-	Category    *Category     `json:"category,omitempty"`
 }
 
 // Entries represents a list of entries.
