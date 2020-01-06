@@ -131,6 +131,8 @@
     "page.keyboard_shortcuts.open_item": "Abrir el elemento seleccionado",
     "page.keyboard_shortcuts.open_original": "Abrir el enlace original",
     "page.keyboard_shortcuts.open_original_same_window": "Abrir enlace original en la pestaña actual",
+    "page.keyboard_shortcuts.open_comments": "Abrir el enlace de comentarios",
+    "page.keyboard_shortcuts.open_comments_same_window": "Abrir enlace de comentarios en la pestaña actual",
     "page.keyboard_shortcuts.toggle_read_status": "Marcar como leído o no leído",
     "page.keyboard_shortcuts.mark_page_as_read": "Marcar pagína actual como leída",
     "page.keyboard_shortcuts.download_content": "Descargar el contento original",

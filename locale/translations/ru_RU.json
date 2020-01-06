@@ -133,6 +133,8 @@
     "page.keyboard_shortcuts.open_item": "Открыть выбранный элемент",
     "page.keyboard_shortcuts.open_original_same_window": "Открыть оригинальную ссылку в текущей вкладке",
     "page.keyboard_shortcuts.open_original": "Открыть оригинальную ссылку",
+    "page.keyboard_shortcuts.open_comments_same_window": "Открыть ссылку на комментарии в текущей вкладке",
+    "page.keyboard_shortcuts.open_comments": "Открыть ссылку для комментариев",
     "page.keyboard_shortcuts.toggle_read_status": "Переключатель прочитанного",
     "page.keyboard_shortcuts.mark_page_as_read": "Отметить текущую страницу прочитанной",
     "page.keyboard_shortcuts.download_content": "Загрузить оригинальное содержимое",
