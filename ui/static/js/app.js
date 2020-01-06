@@ -305,19 +305,21 @@ function openOriginalLink(openLinkInCurrentTab) {
 }
 
 function openCommentLink(openLinkInCurrentTab) {
-    let entryLink = document.querySelector("a[data-comments-link]");
-    if (entryLink !== null) {
-        if (openLinkInCurrentTab) {
-            window.location.href = entryLink.getAttribute("href");
-        } else {
-            DomHelper.openNewTab(entryLink.getAttribute("href"));
+    if (!isListView()) {
+        let entryLink = document.querySelector("a[data-comments-link]");
+        if (entryLink !== null) {
+            if (openLinkInCurrentTab) {
+                window.location.href = entryLink.getAttribute("href");
+            } else {
+                DomHelper.openNewTab(entryLink.getAttribute("href"));
+            }
+            return;
         }
-        return;
-    }
-
-    let currentItemCommentsLink = document.querySelector(".current-item a[data-comments-link]");
-    if (currentItemCommentsLink !== null) {
-        DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
+    } else {
+        let currentItemCommentsLink = document.querySelector(".current-item a[data-comments-link]");
+        if (currentItemCommentsLink !== null) {
+            DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
+        }
     }
 }
 

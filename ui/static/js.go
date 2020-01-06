@@ -78,9 +78,8 @@ element.innerHTML=element.dataset.labelLoading;let request=new RequestBuilder(el
 function openOriginalLink(openLinkInCurrentTab){let entryLink=document.querySelector(".entry h1 a");if(entryLink!==null){if(openLinkInCurrentTab){window.location.href=entryLink.getAttribute("href");}else{DomHelper.openNewTab(entryLink.getAttribute("href"));}
 return;}
 let currentItemOriginalLink=document.querySelector(".current-item a[data-original-link]");if(currentItemOriginalLink!==null){DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));let currentItem=document.querySelector(".current-item");goToNextListItem();markEntryAsRead(currentItem);}}
-function openCommentLink(openLinkInCurrentTab){let entryLink=document.querySelector("a[data-comments-link]");if(entryLink!==null){if(openLinkInCurrentTab){window.location.href=entryLink.getAttribute("href");}else{DomHelper.openNewTab(entryLink.getAttribute("href"));}
-return;}
-let currentItemCommentsLink=document.querySelector(".current-item a[data-comments-link]");if(currentItemCommentsLink!==null){DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));}}
+function openCommentLink(openLinkInCurrentTab){if(!isListView()){let entryLink=document.querySelector("a[data-comments-link]");if(entryLink!==null){if(openLinkInCurrentTab){window.location.href=entryLink.getAttribute("href");}else{DomHelper.openNewTab(entryLink.getAttribute("href"));}
+return;}}else{let currentItemCommentsLink=document.querySelector(".current-item a[data-comments-link]");if(currentItemCommentsLink!==null){DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));}}}
 function openSelectedItem(){let currentItemLink=document.querySelector(".current-item .item-title a");if(currentItemLink!==null){window.location.href=currentItemLink.getAttribute("href");}}
 function unsubscribeFromFeed(){let unsubscribeLinks=document.querySelectorAll("[data-action=remove-feed]");if(unsubscribeLinks.length===1){let unsubscribeLink=unsubscribeLinks[0];let request=new RequestBuilder(unsubscribeLink.dataset.url);request.withCallback(()=>{if(unsubscribeLink.dataset.redirectUrl){window.location.href=unsubscribeLink.dataset.redirectUrl;}else{window.location.reload();}});request.execute();}}
 function goToPage(page,fallbackSelf){let element=document.querySelector("a[data-page="+page+"]");if(element){document.location.href=element.href;}else if(fallbackSelf){window.location.reload();}}
@@ -110,6 +109,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "345d2545427fb172fecffd4a60b42f74aab97078c08ef6da91f43af8efb3d405",
+	"app": "f33c45750b6bcc73a33fa39a6ae5d879a53e6edfc99e3eec15c258e18d1d3c35",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
