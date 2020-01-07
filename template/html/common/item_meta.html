@@ -23,7 +23,7 @@
         </li>
         {{ if .entry.CommentsURL }}
             <li>
-                <a href="{{ .entry.CommentsURL | safeURL  }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ t "entry.comments.label" }}</a>
+                <a href="{{ .entry.CommentsURL | safeURL  }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-comments-link="true">{{ t "entry.comments.label" }}</a>
             </li>
         {{ end }}
         <li>

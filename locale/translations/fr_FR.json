@@ -131,6 +131,8 @@
     "page.keyboard_shortcuts.open_item": "Ouvrir élément sélectionné",
     "page.keyboard_shortcuts.open_original": "Ouvrir le lien original",
     "page.keyboard_shortcuts.open_original_same_window": "Ouvrir le lien original dans l'onglet en cours",
+    "page.keyboard_shortcuts.open_comments": "Ouvrir le lien des commentaires",
+    "page.keyboard_shortcuts.open_comments_same_window": "Ouvrir le lien des commentaires dans l'onglet en cours",
     "page.keyboard_shortcuts.toggle_read_status": "Basculer entre lu/non lu",
     "page.keyboard_shortcuts.mark_page_as_read": "Marquer la page actuelle comme lu",
     "page.keyboard_shortcuts.download_content": "Télécharger le contenu original",

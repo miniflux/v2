@@ -131,6 +131,8 @@
     "page.keyboard_shortcuts.open_item": "Apri l'articolo selezionato",
     "page.keyboard_shortcuts.open_original": "Apri la pagina web originale",
     "page.keyboard_shortcuts.open_original_same_window": "Apri il link originale nella scheda corrente",
+    "page.keyboard_shortcuts.open_comments": "Apri la pagina web dei commenti",
+    "page.keyboard_shortcuts.open_comments_same_window": "Apri il link dei commenti nella scheda corrente",
     "page.keyboard_shortcuts.toggle_read_status": "Cambia lo stato di lettura (letto/da leggere)",
     "page.keyboard_shortcuts.mark_page_as_read": "Segna la pagina attuale come letta",
     "page.keyboard_shortcuts.download_content": "Scarica il contenuto integrale",

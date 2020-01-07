@@ -132,6 +132,8 @@
     "page.keyboard_shortcuts.open_item": "Open geselecteerde link",
     "page.keyboard_shortcuts.open_original": "Open originele link",
     "page.keyboard_shortcuts.open_original_same_window": "Oorspronkelijke koppeling op huidig tabblad openen",
+    "page.keyboard_shortcuts.open_comments": "Open opmerkingen link",
+    "page.keyboard_shortcuts.open_comments_same_window": "Open de reactiekoppeling op het huidige tabblad",
     "page.keyboard_shortcuts.toggle_read_status": "Markeer gelezen/ongelezen",
     "page.keyboard_shortcuts.mark_page_as_read": "Markeer deze pagina als gelezen",
     "page.keyboard_shortcuts.download_content": "Download originele content",

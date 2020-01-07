@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("o", () => openSelectedItem());
         keyboardHandler.on("v", () => openOriginalLink());
         keyboardHandler.on("V", () => openOriginalLink(true));
+        keyboardHandler.on("c", () => openCommentLink());
+        keyboardHandler.on("C", () => openCommentLink(true));
         keyboardHandler.on("m", () => handleEntryStatus());
         keyboardHandler.on("A", () => markPageAsRead());
         keyboardHandler.on("s", () => handleSaveEntry());

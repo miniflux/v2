@@ -133,6 +133,8 @@
     "page.keyboard_shortcuts.open_item": "Otwórz zaznaczony artykuł",
     "page.keyboard_shortcuts.open_original": "Otwórz oryginalny artykuł",
     "page.keyboard_shortcuts.open_original_same_window": "Otwórz oryginalny link w bieżącej karcie",
+    "page.keyboard_shortcuts.open_comments": "Otwórz link do komentarzy",
+    "page.keyboard_shortcuts.open_comments_same_window": "Otwórz link do komentarzy w bieżącej karcie",
     "page.keyboard_shortcuts.toggle_read_status": "Oznacz jako przeczytane/nieprzeczytane",
     "page.keyboard_shortcuts.mark_page_as_read": "Zaznacz aktualną stronę jako przeczytaną",
     "page.keyboard_shortcuts.download_content": "Pobierz oryginalną zawartość",
