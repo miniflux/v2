@@ -95,7 +95,6 @@ type Feed struct {
 	Username           string    `json:"username"`
 	Password           string    `json:"password"`
 	Category           *Category `json:"category,omitempty"`
-	Entries            Entries   `json:"entries,omitempty"`
 }
 
 // FeedModification represents changes for a feed.
