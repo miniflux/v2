@@ -297,9 +297,11 @@ function openOriginalLink(openLinkInCurrentTab) {
     if (currentItemOriginalLink !== null) {
         DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
 
-        // Move to the next item and if we are on the unread page mark this item as read.
         let currentItem = document.querySelector(".current-item");
-        goToNextListItem();
+        // If we are not on the list of starred items, move to the next item
+        if (document.location.href != document.querySelector('a[data-page=starred]').href){
+            goToNextListItem();
+        }
         markEntryAsRead(currentItem);
     }
 }
