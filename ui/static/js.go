@@ -77,7 +77,8 @@ if(element.dataset.completed){return;}
 element.innerHTML=element.dataset.labelLoading;let request=new RequestBuilder(element.dataset.fetchContentUrl);request.withCallback((response)=>{element.innerHTML=element.dataset.labelDone;element.dataset.completed=true;response.json().then((data)=>{if(data.hasOwnProperty("content")){document.querySelector(".entry-content").innerHTML=data.content;}});});request.execute();}
 function openOriginalLink(openLinkInCurrentTab){let entryLink=document.querySelector(".entry h1 a");if(entryLink!==null){if(openLinkInCurrentTab){window.location.href=entryLink.getAttribute("href");}else{DomHelper.openNewTab(entryLink.getAttribute("href"));}
 return;}
-let currentItemOriginalLink=document.querySelector(".current-item a[data-original-link]");if(currentItemOriginalLink!==null){DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));let currentItem=document.querySelector(".current-item");goToNextListItem();markEntryAsRead(currentItem);}}
+let currentItemOriginalLink=document.querySelector(".current-item a[data-original-link]");if(currentItemOriginalLink!==null){DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));let currentItem=document.querySelector(".current-item");if(document.location.href!=document.querySelector('a[data-page=starred]').href){goToNextListItem();}
+markEntryAsRead(currentItem);}}
 function openCommentLink(openLinkInCurrentTab){if(!isListView()){let entryLink=document.querySelector("a[data-comments-link]");if(entryLink!==null){if(openLinkInCurrentTab){window.location.href=entryLink.getAttribute("href");}else{DomHelper.openNewTab(entryLink.getAttribute("href"));}
 return;}}else{let currentItemCommentsLink=document.querySelector(".current-item a[data-comments-link]");if(currentItemCommentsLink!==null){DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));}}}
 function openSelectedItem(){let currentItemLink=document.querySelector(".current-item .item-title a");if(currentItemLink!==null){window.location.href=currentItemLink.getAttribute("href");}}
@@ -109,6 +110,6 @@ if("serviceWorker"in navigator){let scriptElement=document.getElementById("servi
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "be87d5db4f4373b0a2db87952db4200888cff16e0a400130c931436d475a72d6",
+	"app": "d8e3f4b637310a178cafbfdc5d6726e590951147718de733f12bb90100c1b9d3",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }
