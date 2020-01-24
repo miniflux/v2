@@ -35,7 +35,7 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if entry == nil {
-		html.NotFound(w, r)
+		html.Redirect(w, r, route.Path(h.router, "unread"))
 		return
 	}
 
