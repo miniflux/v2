@@ -632,6 +632,9 @@ a.button {
 }
 
 .item-meta {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
     color: var(--item-meta-focus-color);
     font-size: 0.8em;
 }
