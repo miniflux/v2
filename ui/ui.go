@@ -123,7 +123,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	// Authentication pages.
 	uiRouter.HandleFunc("/login", handler.checkLogin).Name("checkLogin").Methods("POST")
 	uiRouter.HandleFunc("/logout", handler.logout).Name("logout").Methods("GET")
-	uiRouter.HandleFunc("/", handler.showLoginPage).Name("login").Methods("GET")
+	uiRouter.Handle("/", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage))).Name("login").Methods("GET")
 
 	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")

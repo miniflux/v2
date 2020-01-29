@@ -17,6 +17,7 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
+	"miniflux.app/ui/session"
 
 	"github.com/gorilla/mux"
 )
@@ -154,4 +155,67 @@ func (m *middleware) getUserSessionFromCookie(r *http.Request) *model.UserSessio
 	}
 
 	return session
+}
+
+func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if request.IsAuthenticated(r) || config.Opts.AuthProxyHeader() == "" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		username := r.Header.Get(config.Opts.AuthProxyHeader())
+		if username == "" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		sess := session.New(m.store, request.SessionID(r))
+		clientIP := request.ClientIP(r)
+
+		logger.Info("[AuthProxy] Successful auth for %s", username)
+
+		user, err := m.store.UserByUsername(username)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		if user == nil {
+			if !config.Opts.IsAuthProxyUserCreationAllowed() {
+				html.Forbidden(w, r)
+				return
+			}
+
+			user = model.NewUser()
+			user.Username = username
+			user.IsAdmin = false
+
+			if err := m.store.CreateUser(user); err != nil {
+				html.ServerError(w, r, err)
+				return
+			}
+		}
+
+		sessionToken, _, err := m.store.CreateUserSession(user.Username, r.UserAgent(), clientIP)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		logger.Info("[AuthProxy] username=%s just logged in", user.Username)
+
+		m.store.SetLastLogin(user.ID)
+		sess.SetLanguage(user.Language)
+		sess.SetTheme(user.Theme)
+
+		http.SetCookie(w, cookie.New(
+			cookie.CookieUserSessionID,
+			sessionToken,
+			config.Opts.HTTPS,
+			config.Opts.BasePath(),
+		))
+
+		html.Redirect(w, r, route.Path(m.router, "unread"))
+	})
 }
