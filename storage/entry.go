@@ -259,7 +259,7 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf(`store: unable to toogle bookmark flag for entry #%d: %v`, entryID, err)
+		return fmt.Errorf(`store: unable to toggle bookmark flag for entry #%d: %v`, entryID, err)
 	}
 
 	if count == 0 {
