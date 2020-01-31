@@ -741,6 +741,42 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithEmptyEnclosureURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+		<title>My Podcast Feed</title>
+		<link>http://example.org</link>
+		<author>some.email@example.org</author>
+		<item>
+			<title>Podcasting with RSS</title>
+			<link>http://www.example.org/entries/1</link>
+			<description>An overview of RSS podcasting</description>
+			<pubDate>Fri, 15 Jul 2005 00:00:00 -0500</pubDate>
+			<guid isPermaLink="true">http://www.example.org/entries/1</guid>
+			<enclosure url="" length="0"/>
+		</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+
+	if len(feed.Entries[0].Enclosures) != 0 {
+		t.Errorf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+}
+
 func TestParseEntryWithFeedBurnerEnclosures(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">

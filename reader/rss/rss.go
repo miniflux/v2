@@ -278,6 +278,10 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 			}
 		}
 
+		if enclosureURL == "" {
+			continue
+		}
+
 		if _, found := duplicates[enclosureURL]; !found {
 			duplicates[enclosureURL] = true
 
