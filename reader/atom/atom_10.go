@@ -161,6 +161,10 @@ func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 
 	for _, link := range a.Links {
 		if strings.ToLower(link.Rel) == "enclosure" {
+			if link.URL == "" {
+				continue
+			}
+
 			if _, found := duplicates[link.URL]; !found {
 				duplicates[link.URL] = true
 				length, _ := strconv.ParseInt(link.Length, 10, 0)

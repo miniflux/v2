@@ -57,6 +57,10 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 
 // CreateEnclosure creates a new attachment.
 func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
+	if enclosure.URL == "" {
+		return nil
+	}
+
 	query := `
 		INSERT INTO enclosures
 			(url, size, mime_type, entry_id, user_id)

@@ -95,6 +95,7 @@
     <details class="entry-enclosures">
         <summary>{{ t "page.entry.attachments" }} ({{ len .entry.Enclosures }})</summary>
         {{ range .entry.Enclosures }}
+            {{ if ne .URL "" }}
             <div class="entry-enclosure">
                 {{ if hasPrefix .MimeType "audio/" }}
                     <div class="enclosure-audio">
@@ -119,6 +120,7 @@
                     <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
                 </div>
             </div>
+            {{ end }}
         {{ end }}
         </details>
     {{ end }}

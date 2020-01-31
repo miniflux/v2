@@ -503,6 +503,43 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithoutEnclosureURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+		<id>http://www.example.org/myfeed</id>
+		<title>My Podcast Feed</title>
+		<updated>2005-07-15T12:00:00Z</updated>
+		<link href="http://example.org" />
+		<link rel="self" href="http://example.org/myfeed" />
+		<entry>
+			<id>http://www.example.org/entries/1</id>
+			<title>Atom 1.0</title>
+			<updated>2005-07-15T12:00:00Z</updated>
+			<link href="http://www.example.org/entries/1" />
+			<summary>An overview of Atom 1.0</summary>
+			<link rel="enclosure" href="" length="0" />
+			<content type="xhtml">Test</content>
+		</entry>
+  	</feed>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+
+	if len(feed.Entries[0].Enclosures) != 0 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+}
+
 func TestParseEntryWithPublished(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">

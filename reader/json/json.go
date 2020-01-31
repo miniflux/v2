@@ -136,6 +136,10 @@ func (j *jsonItem) GetEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 
 	for _, attachment := range j.Attachments {
+		if attachment.URL == "" {
+			continue
+		}
+
 		enclosures = append(enclosures, &model.Enclosure{
 			URL:      attachment.URL,
 			MimeType: attachment.MimeType,
