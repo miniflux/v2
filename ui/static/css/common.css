@@ -151,6 +151,29 @@ a:hover {
     display: none;
 }
 
+/* PWA prompt */
+#prompt-home-screen {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    text-align: center;
+    background: #000;
+    opacity: 85%;
+}
+
+#btn-add-to-home-screen {
+    text-decoration: none;
+    line-height: 30px;
+    color: #fff;
+}
+
+#btn-add-to-home-screen:hover {
+    color: red;
+}
+
+/* Notification - "Toast" */
 .toast-wrap {
     visibility: hidden;
     opacity: 0;
@@ -162,11 +185,11 @@ a:hover {
     text-align: center;
  }
 
- .toast-msg {
+.toast-msg {
     background-color: rgba(0,0,0,0.7);
     padding: 2px 5px;
     border-radius: 5px;
- }
+}
  
 .toastAnimate {
     animation: toastKeyFrames 2s;
@@ -174,10 +197,10 @@ a:hover {
 
 @keyframes toastKeyFrames {
     0% {visibility: hidden; opacity: 0;}
-   25% {visibility: visible; opacity: 1; z-index: 9999}
-   50% {visibility: visible; opacity: 1; z-index: 9999}
-   75% {visibility: visible; opacity: 1; z-index: 9999}
-   100% {visibility: hidden; opacity: 0; z-index: 0}
+    25% {visibility: visible; opacity: 1; z-index: 9999}
+    50% {visibility: visible; opacity: 1; z-index: 9999}
+    75% {visibility: visible; opacity: 1; z-index: 9999}
+    100% {visibility: hidden; opacity: 0; z-index: 0}
 }
 
 @media (min-width: 600px) {

@@ -14,6 +14,7 @@
     "action.download": "Pobierz",
     "action.import": "Importuj",
     "action.login": "Zaloguj się",
+    "action.home_screen": "Dodaj do ekranu głównego",
     "tooltip.keyboard_shortcuts": "Skróty klawiszowe: %s",
     "tooltip.logged_user": "Zalogowany jako %s",
     "menu.unread": "Nieprzeczytane",

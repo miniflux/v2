@@ -14,6 +14,7 @@
     "action.download": "Download",
     "action.import": "Importeren",
     "action.login": "Inloggen",
+    "action.home_screen": "Toevoegen aan startscherm",
     "tooltip.keyboard_shortcuts": "Sneltoets: %s",
     "tooltip.logged_user": "Ingelogd als %s",
     "menu.unread": "Ongelezen",

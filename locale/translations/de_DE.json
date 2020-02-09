@@ -14,6 +14,7 @@
     "action.download": "Herunterladen",
     "action.import": "Importieren",
     "action.login": "Anmelden",
+    "action.home_screen": "Zum Startbildschirm hinzufügen",
     "tooltip.keyboard_shortcuts": "Tastenkürzel: %s",
     "tooltip.logged_user": "Angemeldet als %s",
     "menu.unread": "Ungelesen",

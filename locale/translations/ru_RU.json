@@ -14,6 +14,7 @@
     "action.download": "Загрузить",
     "action.import": "Импорт",
     "action.login": "Войти",
+    "action.home_screen": "Добавить на домашний экран",
     "tooltip.keyboard_shortcuts": "Сочетания клавиш: %s",
     "tooltip.logged_user": "Авторизован как %s",
     "menu.unread": "Непрочитанное",

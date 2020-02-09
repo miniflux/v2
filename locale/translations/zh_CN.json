@@ -14,6 +14,7 @@
     "action.download": "下载",
     "action.import": "导入",
     "action.login": "登陆",
+    "action.home_screen": "添加到主屏幕",
     "tooltip.keyboard_shortcuts": "快捷键: %s",
     "tooltip.logged_user": "当前登录 %s",
     "menu.unread": "未读",
