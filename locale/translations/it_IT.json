@@ -14,6 +14,7 @@
     "action.download": "Scarica",
     "action.import": "Importa",
     "action.login": "Accedi",
+    "action.home_screen": "Aggiungere alla schermata Home",
     "tooltip.keyboard_shortcuts": "Scorciatoia da tastiera: %s",
     "tooltip.logged_user": "Autenticato come %s",
     "menu.unread": "Da leggere",

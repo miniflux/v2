@@ -69,4 +69,27 @@ document.addEventListener("DOMContentLoaded", function () {
             navigator.serviceWorker.register(scriptElement.src);
         }
     }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt.
+        e.preventDefault();
+
+        let deferredPrompt = e;
+        const promptHomeScreen = document.getElementById('prompt-home-screen');
+        if (promptHomeScreen) {
+            promptHomeScreen.style.display = "block";
+
+            const btnAddToHomeScreen = document.getElementById('btn-add-to-home-screen');
+            if (btnAddToHomeScreen) {
+                btnAddToHomeScreen.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(() => {
+                        deferredPrompt = null;
+                        promptHomeScreen.style.display = "none";
+                    });
+                });
+            }
+        }
+    });    
 });

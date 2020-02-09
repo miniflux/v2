@@ -14,6 +14,7 @@
     "action.download": "Télécharger",
     "action.import": "Importer",
     "action.login": "Se connecter",
+    "action.home_screen": "Ajouter à l'écran d'accueil",
     "tooltip.keyboard_shortcuts": "Raccourci clavier : %s",
     "tooltip.logged_user": "Connecté en tant que %s",
     "menu.unread": "Non lus",

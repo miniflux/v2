@@ -1047,6 +1047,9 @@ var templateViewsMap = map[string]string{
     </div>
     {{ end }}
 </section>
+<footer id="prompt-home-screen">
+    <a href="#" id="btn-add-to-home-screen">★ {{ t "action.home_screen" }}</a>
+</footer>
 {{ end }}
 `,
 	"search_entries": `{{ define "title"}}{{ t "page.search.title" }} ({{ .total }}){{ end }}
@@ -1324,7 +1327,7 @@ var templateViewsMapChecksums = map[string]string{
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "6104ff6ff3ac3c1ae5e850c78250aab6e99e2342a337589f3848459fa333766a",
-	"login":               "2e72d2d4b9786641b696bedbed5e10b04bdfd68254ddbbdb0a53cca621d200c7",
+	"login":               "0657174d13229bb6d0bc470ccda06bb1f15c1af65c86b20b41ffa5c819eef0cc",
 	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
 	"settings":            "56f7c06f24eef317353582b0191aa9a5985f46ed755accf97e723ceb4bba4469",
