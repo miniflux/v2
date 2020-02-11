@@ -153,6 +153,10 @@ UPDATE users SET theme='light_serif' WHERE theme='default';
 UPDATE users SET theme='light_sans_serif' WHERE theme='sansserif';
 UPDATE users SET theme='dark_serif' WHERE theme='black';
 `,
+	"schema_version_26": `alter table entries add column changed_at timestamp with time zone;
+update entries set changed_at = published_at;
+alter table entries alter column changed_at set not null;
+`,
 	"schema_version_3": `create table tokens (
     id text not null,
     value text not null,
@@ -206,6 +210,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_23": "cb3512d328436447f114e305048c0daa8af7505cfe5eab02778b0de1156081b2",
 	"schema_version_24": "1224754c5b9c6b4038599852bbe72656d21b09cb018d3970bd7c00f0019845bf",
 	"schema_version_25": "5262d2d4c88d637b6603a1fcd4f68ad257bd59bd1adf89c58a18ee87b12050d7",
+	"schema_version_26": "64f14add40691f18f514ac0eed10cd9b19c83a35e5c3d8e0bce667e0ceca9094",
 	"schema_version_3":  "a54745dbc1c51c000f74d4e5068f1e2f43e83309f023415b1749a47d5c1e0f12",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",

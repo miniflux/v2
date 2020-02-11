@@ -257,3 +257,29 @@ func TestToggleBookmark(t *testing.T) {
 		t.Fatal("The entry should be starred")
 	}
 }
+
+func TestHistoryOrder(t *testing.T) {
+	client := createClient(t)
+	createFeed(t, client)
+
+	result, err := client.Entries(&miniflux.Filter{Limit: 3})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	selectedEntry := result.Entries[2].ID
+
+	err = client.UpdateEntries([]int64{selectedEntry}, miniflux.EntryStatusRead)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	history, err := client.Entries(&miniflux.Filter{Order: "changed_at", Direction: "desc", Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if history.Entries[0].ID != selectedEntry {
+		t.Fatal("The entry that we just read should be at the top of the history")
+	}
+}
