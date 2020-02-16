@@ -1,3 +1,35 @@
+Version 2.0.20 (Feb 15, 2020)
+-----------------------------
+
+* Add Japanese translation
+* History: show entries in the order in which they were read
+* Add button to add to Home screen
+* Ignore enclosures without URL
+* Correct spelling of "toggle"
+* List view: align information to the left side, and the actionable buttons to the right
+* Redirect to /unread when getting a 404 for an unread expired entry
+* Do not advance to the next item when using the 'v' shortcut on the list of starred items
+* Wrap around when navigating with keyboard shortcuts on a list view
+* Remove unused Feed.Entries and Entry.Category from API client
+* Add comments link keyboard shortcut
+* Allow application/xhtml+xml links as comments URL in Atom replies
+* Allow only absolute URLs in comments URL
+* Use internal XML workarounds to detect feed format
+* Make menu consistent across feed pages
+* Make sure external URLs are not encoded incorrectly by Go template engine
+* Make sure whitelisted URI schemes are handled properly by the sanitizer
+* Use white background for favicon (Improve legibility when using a dark theme)
+* Remove dependency on Sed to build Docker images
+* Normalize URL query string before executing HTTP requests
+* Improve Dublin Core support for RDF feeds
+* Improve Podcast support (iTunes and Google Play feeds)
+* Add support for Atom 0.3
+* Add support for Atom "replies" link relation
+* Return outer HTML when scraping elements
+* Update scraper rule for "Le Monde"
+* Filter valid XML characters for UTF-8 XML documents before decoding
+* Trim spaces for RDF entry links
+
 Version 2.0.19 (Dec 1, 2019)
 ----------------------------
 
