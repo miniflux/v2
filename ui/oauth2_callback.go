@@ -44,14 +44,14 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authProvider, err := getOAuth2Manager().Provider(provider)
+	authProvider, err := getOAuth2Manager(r.Context()).Provider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
-	profile, err := authProvider.GetProfile(code)
+	profile, err := authProvider.GetProfile(r.Context(), code)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "login"))

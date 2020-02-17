@@ -31,9 +31,8 @@ func (g googleProvider) GetRedirectURL(state string) string {
 	return g.config().AuthCodeURL(state)
 }
 
-func (g googleProvider) GetProfile(code string) (*Profile, error) {
+func (g googleProvider) GetProfile(ctx context.Context, code string) (*Profile, error) {
 	conf := g.config()
-	ctx := context.Background()
 	token, err := conf.Exchange(ctx, code)
 	if err != nil {
 		return nil, err
