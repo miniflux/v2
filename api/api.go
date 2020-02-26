@@ -7,13 +7,14 @@ package api // import "miniflux.app/api"
 import (
 	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
+	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
 )
 
 // Serve declares API routes for the application.
-func Serve(router *mux.Router, store *storage.Storage, feedHandler *feed.Handler) {
-	handler := &handler{store, feedHandler}
+func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
+	handler := &handler{store, pool, feedHandler}
 
 	sr := router.PathPrefix("/v1").Subrouter()
 	sr.Use(newMiddleware(store).serve)
@@ -31,6 +32,7 @@ func Serve(router *mux.Router, store *storage.Storage, feedHandler *feed.Handler
 	sr.HandleFunc("/discover", handler.getSubscriptions).Methods("POST")
 	sr.HandleFunc("/feeds", handler.createFeed).Methods("POST")
 	sr.HandleFunc("/feeds", handler.getFeeds).Methods("GET")
+	sr.HandleFunc("/feeds/refresh", handler.refreshAllFeeds).Methods("PUT")
 	sr.HandleFunc("/feeds/{feedID}/refresh", handler.refreshFeed).Methods("PUT")
 	sr.HandleFunc("/feeds/{feedID}", handler.getFeed).Methods("GET")
 	sr.HandleFunc("/feeds/{feedID}", handler.updateFeed).Methods("PUT")
