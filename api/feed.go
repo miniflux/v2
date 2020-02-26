@@ -82,6 +82,21 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
+func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	jobs, err := h.store.NewUserBatch(userID, h.store.CountFeeds(userID))
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	go func() {
+		h.pool.Push(jobs)
+	}()
+
+	json.NoContent(w, r)
+}
+
 func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	feedChanges, err := decodeFeedModificationPayload(r.Body)

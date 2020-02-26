@@ -166,7 +166,7 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 	router.Use(middleware)
 
 	fever.Serve(router, store)
-	api.Serve(router, store, feedHandler)
+	api.Serve(router, store, pool, feedHandler)
 	ui.Serve(router, store, pool, feedHandler)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
