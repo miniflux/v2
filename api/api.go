@@ -17,7 +17,9 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	handler := &handler{store, pool, feedHandler}
 
 	sr := router.PathPrefix("/v1").Subrouter()
-	sr.Use(newMiddleware(store).serve)
+	middleware := newMiddleware(store)
+	sr.Use(middleware.apiKeyAuth)
+	sr.Use(middleware.basicAuth)
 	sr.HandleFunc("/users", handler.createUser).Methods("POST")
 	sr.HandleFunc("/users", handler.users).Methods("GET")
 	sr.HandleFunc("/users/{userID:[0-9]+}", handler.userByID).Methods("GET")

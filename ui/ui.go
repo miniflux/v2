@@ -109,6 +109,12 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/sessions", handler.showSessionsPage).Name("sessions").Methods("GET")
 	uiRouter.HandleFunc("/sessions/{sessionID}/remove", handler.removeSession).Name("removeSession").Methods("POST")
 
+	// API Keys pages.
+	uiRouter.HandleFunc("/keys", handler.showAPIKeysPage).Name("apiKeys").Methods("GET")
+	uiRouter.HandleFunc("/keys/{keyID}/remove", handler.removeAPIKey).Name("removeAPIKey").Methods("POST")
+	uiRouter.HandleFunc("/keys/create", handler.showCreateAPIKeyPage).Name("createAPIKey").Methods("GET")
+	uiRouter.HandleFunc("/keys/save", handler.saveAPIKey).Name("saveAPIKey").Methods("POST")
+
 	// OPML pages.
 	uiRouter.HandleFunc("/export", handler.exportFeeds).Name("export").Methods("GET")
 	uiRouter.HandleFunc("/import", handler.showImportPage).Name("import").Methods("GET")
