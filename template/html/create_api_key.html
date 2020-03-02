@@ -1,0 +1,23 @@
+{{ define "title"}}{{ t "page.new_api_key.title" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.new_api_key.title" }}</h1>
+    {{ template "settings_menu" dict "user" .user }}
+</section>
+
+<form action="{{ route "saveAPIKey" }}" method="post" autocomplete="off">
+    <input type="hidden" name="csrf" value="{{ .csrf }}">
+
+    {{ if .errorMessage }}
+        <div class="alert alert-error">{{ t .errorMessage }}</div>
+    {{ end }}
+
+    <label for="form-description">{{ t "form.api_key.label.description" }}</label>
+    <input type="text" name="description" id="form-description" value="{{ .form.Description }}" required autofocus>
+
+    <div class="buttons">
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "apiKeys" }}">{{ t "action.cancel" }}</a>
+    </div>
+</form>
+{{ end }}

@@ -7,7 +7,7 @@ var templateCommonMap = map[string]string{
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .prevEntry }}
-            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous">{{ t "pagination.previous" }}</a>
+            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
         {{ else }}
             {{ t "pagination.previous" }}
         {{ end }}
@@ -15,13 +15,14 @@ var templateCommonMap = map[string]string{
 
     <div class="pagination-next">
         {{ if .nextEntry }}
-            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next">{{ t "pagination.next" }}</a>
+            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
         {{ else }}
             {{ t "pagination.next" }}
         {{ end }}
     </div>
 </div>
-{{ end }}`,
+{{ end }}
+`,
 	"feed_list": `{{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
@@ -311,7 +312,7 @@ var templateCommonMap = map[string]string{
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .ShowPrev }}
-            <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous">{{ t "pagination.previous" }}</a>
+            <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
         {{ else }}
             {{ t "pagination.previous" }}
         {{ end }}
@@ -319,7 +320,7 @@ var templateCommonMap = map[string]string{
 
     <div class="pagination-next">
         {{ if .ShowNext }}
-            <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next">{{ t "pagination.next" }}</a>
+            <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
         {{ else }}
             {{ t "pagination.next" }}
         {{ end }}
@@ -336,14 +337,14 @@ var templateCommonMap = map[string]string{
         <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
     </li>
     <li>
+        <a href="{{ route "apiKeys" }}">{{ t "menu.api_keys" }}</a>
+    </li>
+    <li>
         <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
     </li>
     {{ if .user.IsAdmin }}
         <li>
             <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createUser" }}">{{ t "menu.add_user" }}</a>
         </li>
     {{ end }}
     <li>
@@ -354,11 +355,11 @@ var templateCommonMap = map[string]string{
 }
 
 var templateCommonMapChecksums = map[string]string{
-	"entry_pagination": "4faa91e2eae150c5e4eab4d258e039dfdd413bab7602f0009360e6d52898e353",
+	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
 	"feed_list":        "db406e7cb81292ce1d974d63f63270384a286848b2e74fe36bf711b4eb5717dd",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"item_meta":        "d046305e8935ecd8643a94d28af384df29e40fc7ce334123cd057a6522bac23f",
 	"layout":           "a1f67b8908745ee4f9cee6f7bbbb0b242d4dcc101207ad4a9d67242b45683299",
-	"pagination":       "3386e90c6e1230311459e9a484629bc5d5bf39514a75ef2e73bbbc61142f7abb",
-	"settings_menu":    "78e5a487ede18610b23db74184dab023170f9e083cc0625bc2c874d1eea1a4ce",
+	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
+	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",
 }

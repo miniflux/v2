@@ -22,39 +22,81 @@ func newMiddleware(s *storage.Storage) *middleware {
 	return &middleware{s}
 }
 
-// BasicAuth handles HTTP basic authentication.
-func (m *middleware) serve(next http.Handler) http.Handler {
+func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		clientIP := request.ClientIP(r)
+		token := r.Header.Get("X-Auth-Token")
+
+		if token == "" {
+			logger.Debug("[API][TokenAuth] [ClientIP=%s] No API Key provided, go to the next middleware", clientIP)
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		user, err := m.store.UserByAPIKey(token)
+		if err != nil {
+			logger.Error("[API][TokenAuth] %v", err)
+			json.ServerError(w, r, err)
+			return
+		}
+
+		if user == nil {
+			logger.Error("[API][TokenAuth] [ClientIP=%s] No user found with the given API key", clientIP)
+			json.Unauthorized(w, r)
+			return
+		}
+
+		logger.Info("[API][TokenAuth] [ClientIP=%s] User authenticated: %s", clientIP, user.Username)
+		m.store.SetLastLogin(user.ID)
+		m.store.SetAPIKeyUsedTimestamp(user.ID, token)
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
+		ctx = context.WithValue(ctx, request.UserTimezoneContextKey, user.Timezone)
+		ctx = context.WithValue(ctx, request.IsAdminUserContextKey, user.IsAdmin)
+		ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (m *middleware) basicAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if request.IsAuthenticated(r) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 
 		clientIP := request.ClientIP(r)
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
-			logger.Debug("[API] No authentication headers sent")
+			logger.Debug("[API][BasicAuth] [ClientIP=%s] No authentication headers sent", clientIP)
 			json.Unauthorized(w, r)
 			return
 		}
 
 		if err := m.store.CheckPassword(username, password); err != nil {
-			logger.Error("[API] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
+			logger.Error("[API][BasicAuth] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
 			json.Unauthorized(w, r)
 			return
 		}
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
-			logger.Error("[API] %v", err)
+			logger.Error("[API][BasicAuth] %v", err)
 			json.ServerError(w, r, err)
 			return
 		}
 
 		if user == nil {
-			logger.Error("[API] [ClientIP=%s] User not found: %s", clientIP, username)
+			logger.Error("[API][BasicAuth] [ClientIP=%s] User not found: %s", clientIP, username)
 			json.Unauthorized(w, r)
 			return
 		}
 
-		logger.Info("[API] User authenticated: %s", username)
+		logger.Info("[API][BasicAuth] [ClientIP=%s] User authenticated: %s", clientIP, username)
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()

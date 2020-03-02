@@ -18,6 +18,14 @@ type Client struct {
 	request *request
 }
 
+// New returns a new Miniflux client.
+func New(endpoint string, credentials ...string) *Client {
+	if len(credentials) == 2 {
+		return &Client{request: &request{endpoint: endpoint, username: credentials[0], password: credentials[1]}}
+	}
+	return &Client{request: &request{endpoint: endpoint, apiKey: credentials[0]}}
+}
+
 // Me returns the logged user information.
 func (c *Client) Me() (*User, error) {
 	body, err := c.request.Get("/v1/me")
@@ -446,11 +454,6 @@ func (c *Client) ToggleBookmark(entryID int64) error {
 	body.Close()
 
 	return nil
-}
-
-// New returns a new Miniflux client.
-func New(endpoint, username, password string) *Client {
-	return &Client{request: &request{endpoint: endpoint, username: username, password: password}}
 }
 
 func buildFilterQueryString(path string, filter *Filter) string {
