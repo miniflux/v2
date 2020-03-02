@@ -96,33 +96,10 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 	}(socketFile)
 }
 
-func startAutoCertTLSServer(server *http.Server, certDomain, certCache string) {
-	server.Addr = ":https"
-	certManager := autocert.Manager{
-		Cache:      autocert.DirCache(certCache),
-		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist(certDomain),
-	}
-
-	// Handle http-01 challenge.
-	s := &http.Server{
-		Handler: certManager.HTTPHandler(nil),
-		Addr:    ":http",
-	}
-	go s.ListenAndServe()
-
-	go func() {
-		logger.Info(`Listening on %q by using auto-configured certificate for %q`, server.Addr, certDomain)
-		if err := server.Serve(certManager.Listener()); err != http.ErrServerClosed {
-			logger.Fatal(`Server failed to start: %v`, err)
-		}
-	}()
-}
-
-func startTLSServer(server *http.Server, certFile, keyFile string) {
+func tlsConfig() *tls.Config {
 	// See https://blog.cloudflare.com/exposing-go-on-the-internet/
-	// And https://wiki.mozilla.org/Security/Server_Side_TLS
-	server.TLSConfig = &tls.Config{
+	// And https://wikia.mozilla.org/Security/Server_Side_TLS
+	return &tls.Config{
 		MinVersion:               tls.VersionTLS12,
 		PreferServerCipherSuites: true,
 		CurvePreferences: []tls.CurveID{
@@ -138,7 +115,35 @@ func startTLSServer(server *http.Server, certFile, keyFile string) {
 			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 		},
 	}
+}
 
+func startAutoCertTLSServer(server *http.Server, certDomain, certCache string) {
+	server.Addr = ":https"
+	certManager := autocert.Manager{
+		Cache:      autocert.DirCache(certCache),
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist(certDomain),
+	}
+	server.TLSConfig = tlsConfig()
+	server.TLSConfig.GetCertificate = certManager.GetCertificate
+
+	// Handle http-01 challenge.
+	s := &http.Server{
+		Handler: certManager.HTTPHandler(nil),
+		Addr:    ":http",
+	}
+	go s.ListenAndServe()
+
+	go func() {
+		logger.Info(`Listening on %q by using auto-configured certificate for %q`, server.Addr, certDomain)
+		if err := server.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
+			logger.Fatal(`Server failed to start: %v`, err)
+		}
+	}()
+}
+
+func startTLSServer(server *http.Server, certFile, keyFile string) {
+	server.TLSConfig = tlsConfig()
 	go func() {
 		logger.Info(`Listening on %q by using certificate %q and key %q`, server.Addr, certFile, keyFile)
 		if err := server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
