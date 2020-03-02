@@ -320,7 +320,17 @@ func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModification) (*Feed,
 	return f, nil
 }
 
-// RefreshFeed refresh a feed.
+// RefreshAllFeeds refreshes all feeds.
+func (c *Client) RefreshAllFeeds() error {
+	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/refresh"), nil)
+	if err != nil {
+		return err
+	}
+	body.Close()
+	return nil
+}
+
+// RefreshFeed refreshes a feed.
 func (c *Client) RefreshFeed(feedID int64) error {
 	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d/refresh", feedID), nil)
 	if err != nil {
