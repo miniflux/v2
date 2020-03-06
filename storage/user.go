@@ -253,6 +253,30 @@ func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 	return s.fetchUser(query, field, value)
 }
 
+// UserByAPIKey returns a User from an API Key.
+func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
+	query := `
+		SELECT
+			u.id,
+			u.username,
+			u.is_admin,
+			u.theme,
+			u.language,
+			u.timezone,
+			u.entry_direction,
+			u.keyboard_shortcuts,
+			u.last_login_at,
+			u.extra
+		FROM
+			users u
+		LEFT JOIN
+			api_keys ON api_keys.user_id=u.id
+		WHERE
+			api_keys.token = $1
+	`
+	return s.fetchUser(query, token)
+}
+
 func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, error) {
 	var extra hstore.Hstore
 

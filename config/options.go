@@ -45,6 +45,8 @@ const (
 	defaultPocketConsumerKey           = ""
 	defaultHTTPClientTimeout           = 20
 	defaultHTTPClientMaxBodySize       = 15
+	defaultAuthProxyHeader             = ""
+	defaultAuthProxyUserCreation       = false
 )
 
 // Options contains configuration options.
@@ -84,6 +86,8 @@ type Options struct {
 	pocketConsumerKey           string
 	httpClientTimeout           int
 	httpClientMaxBodySize       int64
+	authProxyHeader             string
+	authProxyUserCreation       bool
 }
 
 // NewOptions returns Options with default values.
@@ -124,6 +128,8 @@ func NewOptions() *Options {
 		pocketConsumerKey:           defaultPocketConsumerKey,
 		httpClientTimeout:           defaultHTTPClientTimeout,
 		httpClientMaxBodySize:       defaultHTTPClientMaxBodySize * 1024 * 1024,
+		authProxyHeader:             defaultAuthProxyHeader,
+		authProxyUserCreation:       defaultAuthProxyUserCreation,
 	}
 }
 
@@ -305,6 +311,18 @@ func (o *Options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
 }
 
+// AuthProxyHeader returns an HTTP header name that contains username for
+// authentication using auth proxy.
+func (o *Options) AuthProxyHeader() string {
+	return o.authProxyHeader
+}
+
+// IsAuthProxyUserCreationAllowed returns true if user creation is allowed for
+// users authenticated using auth proxy.
+func (o *Options) IsAuthProxyUserCreationAllowed() bool {
+	return o.authProxyUserCreation
+}
+
 func (o *Options) String() string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("LOG_DATE_TIME: %v\n", o.logDateTime))
@@ -342,5 +360,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("OAUTH2_PROVIDER: %v\n", o.oauth2Provider))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_TIMEOUT: %v\n", o.httpClientTimeout))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_MAX_BODY_SIZE: %v\n", o.httpClientMaxBodySize))
+	builder.WriteString(fmt.Sprintf("AUTH_PROXY_HEADER: %v\n", o.authProxyHeader))
+	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
 	return builder.String()
 }

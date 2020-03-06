@@ -1,0 +1,72 @@
+{{ define "title"}}{{ t "page.api_keys.title" }}{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.api_keys.title" }}</h1>
+    {{ template "settings_menu" dict "user" .user }}
+</section>
+
+{{ if .apiKeys }}
+{{ range .apiKeys }}
+    <table>
+    <tr>
+        <th class="column-25">{{ t "page.api_keys.table.description" }}</th>
+        <td>{{ .Description }}</td>
+    </tr>
+    <tr>
+        <th>{{ t "page.api_keys.table.token" }}</th>
+        <td>{{ .Token }}</td>
+    </tr>
+    <tr>
+        <th>{{ t "page.api_keys.table.last_used_at" }}</th>
+        <td>
+            {{ if .LastUsedAt }}
+                <time datetime="{{ isodate .LastUsedAt }}" title="{{ isodate .LastUsedAt }}">{{ elapsed $.user.Timezone .LastUsedAt }}</time>
+            {{ else }}
+                {{ t "page.api_keys.never_used"  }}
+            {{ end }}
+        </td>
+    </tr>
+    <tr>
+        <th>{{ t "page.api_keys.table.created_at" }}</th>
+        <td>
+            <time datetime="{{ isodate .CreatedAt }}" title="{{ isodate .CreatedAt }}">{{ elapsed $.user.Timezone .CreatedAt }}</time>
+        </td>
+    </tr>
+    <tr>
+        <th>{{ t "page.api_keys.table.actions" }}</th>
+        <td>
+            <a href="#"
+                data-confirm="true"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-url="{{ route "removeAPIKey" "keyID" .ID }}">{{ t "action.remove" }}</a>
+        </td>
+    </tr>
+    </table>
+    <br>
+{{ end }}
+{{ end }}
+
+<h3>{{ t "page.integration.miniflux_api" }}</h3>
+<div class="panel">
+    <ul>
+        <li>
+            {{ t "page.integration.miniflux_api_endpoint" }} = <strong>{{ baseURL }}/v1/</strong>
+        </li>
+        <li>
+            {{ t "page.integration.miniflux_api_username" }} = <strong>{{ .user.Username }}</strong>
+        </li>
+        <li>
+            {{ t "page.integration.miniflux_api_password" }} = <strong>{{ t "page.integration.miniflux_api_password_value" }}</strong>
+        </li>
+    </ul>
+</div>
+
+<p>
+    <a href="{{ route "createAPIKey" }}" class="button button-primary">{{ t "menu.create_api_key" }}</a>
+</p>
+
+{{ end }}

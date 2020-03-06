@@ -38,6 +38,7 @@ type request struct {
 	endpoint string
 	username string
 	password string
+	apiKey   string
 }
 
 func (r *request) Get(path string) (io.ReadCloser, error) {
@@ -75,7 +76,10 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 		Method: method,
 		Header: r.buildHeaders(),
 	}
-	request.SetBasicAuth(r.username, r.password)
+
+	if r.username != "" && r.password != "" {
+		request.SetBasicAuth(r.username, r.password)
+	}
 
 	if data != nil {
 		switch data.(type) {
@@ -131,6 +135,9 @@ func (r *request) buildHeaders() http.Header {
 	headers.Add("User-Agent", userAgent)
 	headers.Add("Content-Type", "application/json")
 	headers.Add("Accept", "application/json")
+	if r.apiKey != "" {
+		headers.Add("X-Auth-Token", r.apiKey)
+	}
 	return headers
 }
 

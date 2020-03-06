@@ -18,6 +18,14 @@ type Client struct {
 	request *request
 }
 
+// New returns a new Miniflux client.
+func New(endpoint string, credentials ...string) *Client {
+	if len(credentials) == 2 {
+		return &Client{request: &request{endpoint: endpoint, username: credentials[0], password: credentials[1]}}
+	}
+	return &Client{request: &request{endpoint: endpoint, apiKey: credentials[0]}}
+}
+
 // Me returns the logged user information.
 func (c *Client) Me() (*User, error) {
 	body, err := c.request.Get("/v1/me")
@@ -312,7 +320,17 @@ func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModification) (*Feed,
 	return f, nil
 }
 
-// RefreshFeed refresh a feed.
+// RefreshAllFeeds refreshes all feeds.
+func (c *Client) RefreshAllFeeds() error {
+	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/refresh"), nil)
+	if err != nil {
+		return err
+	}
+	body.Close()
+	return nil
+}
+
+// RefreshFeed refreshes a feed.
 func (c *Client) RefreshFeed(feedID int64) error {
 	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d/refresh", feedID), nil)
 	if err != nil {
@@ -446,11 +464,6 @@ func (c *Client) ToggleBookmark(entryID int64) error {
 	body.Close()
 
 	return nil
-}
-
-// New returns a new Miniflux client.
-func New(endpoint, username, password string) *Client {
-	return &Client{request: &request{endpoint: endpoint, username: username, password: password}}
 }
 
 func buildFilterQueryString(path string, filter *Filter) string {

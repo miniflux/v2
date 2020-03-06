@@ -109,6 +109,12 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/sessions", handler.showSessionsPage).Name("sessions").Methods("GET")
 	uiRouter.HandleFunc("/sessions/{sessionID}/remove", handler.removeSession).Name("removeSession").Methods("POST")
 
+	// API Keys pages.
+	uiRouter.HandleFunc("/keys", handler.showAPIKeysPage).Name("apiKeys").Methods("GET")
+	uiRouter.HandleFunc("/keys/{keyID}/remove", handler.removeAPIKey).Name("removeAPIKey").Methods("POST")
+	uiRouter.HandleFunc("/keys/create", handler.showCreateAPIKeyPage).Name("createAPIKey").Methods("GET")
+	uiRouter.HandleFunc("/keys/save", handler.saveAPIKey).Name("saveAPIKey").Methods("POST")
+
 	// OPML pages.
 	uiRouter.HandleFunc("/export", handler.exportFeeds).Name("export").Methods("GET")
 	uiRouter.HandleFunc("/import", handler.showImportPage).Name("import").Methods("GET")
@@ -123,7 +129,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	// Authentication pages.
 	uiRouter.HandleFunc("/login", handler.checkLogin).Name("checkLogin").Methods("POST")
 	uiRouter.HandleFunc("/logout", handler.logout).Name("logout").Methods("GET")
-	uiRouter.HandleFunc("/", handler.showLoginPage).Name("login").Methods("GET")
+	uiRouter.Handle("/", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage))).Name("login").Methods("GET")
 
 	router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
