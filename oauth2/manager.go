@@ -30,12 +30,12 @@ func (m *Manager) AddProvider(name string, provider Provider) {
 }
 
 // NewManager returns a new Manager.
-func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDisoveryEndpoint string) *Manager {
+func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
 	m := &Manager{providers: make(map[string]Provider)}
 	m.AddProvider("google", newGoogleProvider(clientID, clientSecret, redirectURL))
 
-	if oidcDisoveryEndpoint != "" {
-		if genericOidcProvider, err := newOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDisoveryEndpoint); err != nil {
+	if oidcDiscoveryEndpoint != "" {
+		if genericOidcProvider, err := newOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
 			logger.Error("[OAuth2] failed to initialize OIDC provider: %v", err)
 		} else {
 			m.AddProvider("oidc", genericOidcProvider)
