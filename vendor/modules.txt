@@ -2,6 +2,8 @@
 github.com/PuerkitoBio/goquery
 # github.com/andybalholm/cascadia v1.0.0
 github.com/andybalholm/cascadia
+# github.com/coreos/go-oidc v2.2.1+incompatible
+github.com/coreos/go-oidc
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 # github.com/gorilla/mux v1.7.3
@@ -11,11 +13,17 @@ github.com/lib/pq
 github.com/lib/pq/hstore
 github.com/lib/pq/oid
 github.com/lib/pq/scram
+# github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35
+github.com/pquerna/cachecontrol
+github.com/pquerna/cachecontrol/cacheobject
 # golang.org/x/crypto v0.0.0-20191112222119-e1110fd1c708
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/ssh/terminal
 # golang.org/x/net v0.0.0-20191112182307-2180aed22343
 golang.org/x/net/context
@@ -59,3 +67,7 @@ google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
+# gopkg.in/square/go-jose.v2 v2.4.1
+gopkg.in/square/go-jose.v2
+gopkg.in/square/go-jose.v2/cipher
+gopkg.in/square/go-jose.v2/json

@@ -1127,6 +1127,10 @@ var templateViewsMap = map[string]string{
     <div class="oauth2">
         <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.login.google_signin" }}</a>
     </div>
+    {{ else if hasOAuth2Provider "oidc" }}
+    <div class="oauth2">
+        <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.login.oidc_signin" }}</a>
+    </div>
     {{ end }}
 </section>
 <footer id="prompt-home-screen">
@@ -1268,6 +1272,14 @@ var templateViewsMap = map[string]string{
         <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
     {{ else }}
         <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.settings.link_google_account" }}</a>
+    {{ end }}
+</div>
+{{ else if hasOAuth2Provider "oidc" }}
+<div class="panel">
+    {{ if hasKey .user.Extra "oidc_id" }}
+        <a href="{{ route "oauth2Unlink" "provider" "oidc" }}">{{ t "page.settings.unlink_oidc_account" }}</a>
+    {{ else }}
+        <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.settings.link_oidc_account" }}</a>
     {{ end }}
 </div>
 {{ end }}
@@ -1416,10 +1428,10 @@ var templateViewsMapChecksums = map[string]string{
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "30329452743b35c668278f519245fd9be05c1726856e0384ba542f7c307f2788",
-	"login":               "0657174d13229bb6d0bc470ccda06bb1f15c1af65c86b20b41ffa5c819eef0cc",
+	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "56f7c06f24eef317353582b0191aa9a5985f46ed755accf97e723ceb4bba4469",
+	"settings":            "d949ecdd28a33eadafaa3a727e548b3466c5aa44b0a4bbf86cc49784704ff7f6",
 	"unread_entries":      "e38f7ffce17dfad3151b08cd33771a2cefe8ca9db42df04fc98bd1d675dd6075",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",
 }

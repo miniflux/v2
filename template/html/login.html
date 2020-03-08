@@ -23,6 +23,10 @@
     <div class="oauth2">
         <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.login.google_signin" }}</a>
     </div>
+    {{ else if hasOAuth2Provider "oidc" }}
+    <div class="oauth2">
+        <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.login.oidc_signin" }}</a>
+    </div>
     {{ end }}
 </section>
 <footer id="prompt-home-screen">
