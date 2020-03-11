@@ -29,12 +29,12 @@ type EntryQueryBuilder struct {
 // WithSearchQuery adds full-text search query to the condition.
 func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 	if query != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", len(e.args)+1))
+		nArgs := len(e.args) + 1
+		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
 		e.args = append(e.args, query)
+		e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d))", nArgs))
+		e.WithDirection("DESC")
 	}
-	// ordered by relevance, can be overrode
-	e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery('%s'))", query))
-	e.WithDirection("DESC")
 	return e
 }
 
@@ -189,17 +189,39 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	query := `
 		SELECT
-		e.id, e.user_id, e.feed_id, e.hash, e.published_at at time zone u.timezone, e.title,
-		e.url, e.comments_url, e.author, e.content, e.status, e.starred,
-		f.title as feed_title, f.feed_url, f.site_url, f.checked_at,
-		f.category_id, c.title as category_title, f.scraper_rules, f.rewrite_rules, f.crawler, f.user_agent,
-		fi.icon_id,
-		u.timezone
-		FROM entries e
-		LEFT JOIN feeds f ON f.id=e.feed_id
-		LEFT JOIN categories c ON c.id=f.category_id
-		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
-		LEFT JOIN users u ON u.id=e.user_id
+			e.id,
+			e.user_id,
+			e.feed_id,
+			e.hash,
+			e.published_at at time zone u.timezone,
+			e.title,
+			e.url,
+			e.comments_url,
+			e.author,
+			e.content,
+			e.status,
+			e.starred,
+			f.title as feed_title,
+			f.feed_url,
+			f.site_url,
+			f.checked_at,
+			f.category_id, c.title as category_title,
+			f.scraper_rules,
+			f.rewrite_rules,
+			f.crawler,
+			f.user_agent,
+			fi.icon_id,
+			u.timezone
+		FROM
+			entries e
+		LEFT JOIN
+			feeds f ON f.id=e.feed_id
+		LEFT JOIN
+			categories c ON c.id=f.category_id
+		LEFT JOIN
+			feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN
+			users u ON u.id=e.user_id
 		WHERE %s %s
 	`
 
