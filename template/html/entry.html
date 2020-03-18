@@ -72,7 +72,11 @@
                 {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                     <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
                 {{ end }}
-                <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+                {{ if .user }}
+                    <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+                {{ else }}
+                    <a href="{{ .entry.Feed.SiteURL | safeURL }}">{{ .entry.Feed.Title }}</a>
+                {{ end }}
             </span>
             {{ if .entry.Author }}
                 <span class="entry-author">

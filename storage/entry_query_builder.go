@@ -128,7 +128,7 @@ func (e *EntryQueryBuilder) WithoutStatus(status string) *EntryQueryBuilder {
 	return e
 }
 
-// WithShareCode set the entry hash.
+// WithShareCode set the entry share code.
 func (e *EntryQueryBuilder) WithShareCode(shareCode string) *EntryQueryBuilder {
 	e.conditions = append(e.conditions, fmt.Sprintf("e.share_code = $%d", len(e.args)+1))
 	e.args = append(e.args, shareCode)
