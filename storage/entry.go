@@ -363,7 +363,7 @@ func (s *Storage) GetEntryShareCode(userID int64, entryID int64) (shareCode stri
 		return
 	}
 
-	shareCode = crypto.GenerateRandomStringHex(16)
+	shareCode = crypto.GenerateRandomStringHex(20)
 
 	query = `UPDATE entries SET share_code = $1 WHERE user_id=$2 AND id=$3`
 	result, err := s.db.Exec(query, shareCode, userID, entryID)

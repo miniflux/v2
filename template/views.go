@@ -719,7 +719,11 @@ var templateViewsMap = map[string]string{
                 {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                     <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
                 {{ end }}
-                <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+                {{ if .user }}
+                    <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+                {{ else }}
+                    <a href="{{ .entry.Feed.SiteURL | safeURL }}">{{ .entry.Feed.Title }}</a>
+                {{ end }}
             </span>
             {{ if .entry.Author }}
                 <span class="entry-author">
@@ -1448,7 +1452,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "ef9cd8bb99c561023c1dcea1dbd7f90c4cdc195ed70e2ed9c88213fec875d770",
+	"entry":               "25c2781b7a42725f38a7dd0795a90647db515e19893671dc10900eeda2282419",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
