@@ -124,21 +124,21 @@
                 {{ if hasPrefix .MimeType "audio/" }}
                     <div class="enclosure-audio">
                         <audio controls preload="metadata">
-                            <source src="{{ .URL }}" type="{{ .MimeType }}">
+                            <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
                         </audio>
                     </div>
                 {{ else if hasPrefix .MimeType "video/" }}
                     <div class="enclosure-video">
                         <video controls preload="metadata">
-                            <source src="{{ .URL }}" type="{{ .MimeType }}">
+                            <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
                         </video>
                     </div>
                 {{ else if hasPrefix .MimeType "image/" }}
                     <div class="enclosure-image">
-                        {{ if .user }}
+                        {{ if $.user }}
                             <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
                         {{ else }}
-                            <img src="{{ .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                            <img src="{{ .URL | safeURL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
                         {{ end }}
                     </div>
                 {{ end }}
