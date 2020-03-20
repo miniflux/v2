@@ -90,7 +90,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 
 	// Share pages.
 	uiRouter.HandleFunc("/entry/share/{entryID}", handler.shareGenerate).Name("shareGenerate").Methods("GET")
-	uiRouter.HandleFunc("/shared/{shareCode}", handler.sharePage).Name("share").Methods("GET")
+	uiRouter.HandleFunc("/share/{shareCode}", handler.sharePage).Name("share").Methods("GET")
 
 	// User pages.
 	uiRouter.HandleFunc("/users", handler.showUsersPage).Name("users").Methods("GET")
