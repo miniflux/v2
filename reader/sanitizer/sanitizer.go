@@ -292,6 +292,7 @@ func isBlacklistedResource(src string) bool {
 
 func isValidIframeSource(src string) bool {
 	whitelist := []string{
+		"https://invidio.us",
 		"//www.youtube.com",
 		"http://www.youtube.com",
 		"https://www.youtube.com",

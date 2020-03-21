@@ -33,6 +33,10 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 			entryContent = addDynamicImage(entryURL, entryContent)
 		case "add_youtube_video":
 			entryContent = addYoutubeVideo(entryURL, entryContent)
+		case "add_invidious_video":
+			entryContent = addInvidiousVideo(entryURL, entryContent)
+		case "add_youtube_video_using_invidious_player":
+			entryContent = addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent)
 		case "add_pdf_download_link":
 			entryContent = addPDFLink(entryURL, entryContent)
 		case "nl2br":
@@ -47,7 +51,6 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 
 func getPredefinedRewriteRules(entryURL string) string {
 	urlDomain := url.Domain(entryURL)
-
 	for domain, rules := range predefinedRules {
 		if strings.Contains(urlDomain, domain) {
 			return rules

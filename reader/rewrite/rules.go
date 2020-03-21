@@ -27,6 +27,7 @@ var predefinedRules = map[string]string{
 	"thedoghousediaries.com": "add_image_title",
 	"treelobsters.com":       "add_image_title",
 	"youtube.com":            "add_youtube_video",
+	"invidio.us":             "add_invidious_video",
 	"xkcd.com":               "add_image_title",
 	"framatube.org":          "nl2br,convert_text_link",
 }
