@@ -17,7 +17,7 @@ const schemaVersion = 28
 // Migrate executes database migrations.
 func Migrate(db *sql.DB) {
 	var currentVersion int
-	db.QueryRow(`select version from schema_version`).Scan(&currentVersion)
+	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
 	fmt.Println("Current schema version:", currentVersion)
 	fmt.Println("Latest schema version:", schemaVersion)
@@ -43,7 +43,7 @@ func Migrate(db *sql.DB) {
 			logger.Fatal("[Migrate] %v", err)
 		}
 
-		if _, err := tx.Exec(`insert into schema_version (version) values($1)`, version); err != nil {
+		if _, err := tx.Exec(`INSERT INTO schema_version (version) VALUES ($1)`, version); err != nil {
 			tx.Rollback()
 			logger.Fatal("[Migrate] %v", err)
 		}
@@ -52,4 +52,14 @@ func Migrate(db *sql.DB) {
 			logger.Fatal("[Migrate] %v", err)
 		}
 	}
+}
+
+// IsSchemaUpToDate checks if the database schema is up to date.
+func IsSchemaUpToDate(db *sql.DB) error {
+	var currentVersion int
+	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
+	if currentVersion != schemaVersion {
+		return fmt.Errorf(`database schema is not up to date: current=v%d expected=v%d`, currentVersion, schemaVersion)
+	}
+	return nil
 }
