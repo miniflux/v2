@@ -115,6 +115,10 @@ func Parse() {
 		return
 	}
 
+	if err := database.IsSchemaUpToDate(db); err != nil {
+		logger.Fatal(`You must run the SQL migrations, %v`, err)
+	}
+
 	store := storage.NewStorage(db)
 
 	if flagResetFeedErrors {
