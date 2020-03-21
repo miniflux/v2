@@ -115,10 +115,6 @@ func Parse() {
 		return
 	}
 
-	if err := database.IsSchemaUpToDate(db); err != nil {
-		logger.Fatal(`You must run the SQL migrations, %v`, err)
-	}
-
 	store := storage.NewStorage(db)
 
 	if flagResetFeedErrors {
@@ -144,6 +140,10 @@ func Parse() {
 	// Run migrations and start the deamon.
 	if config.Opts.RunMigrations() {
 		database.Migrate(db)
+	}
+
+	if err := database.IsSchemaUpToDate(db); err != nil {
+		logger.Fatal(`You must run the SQL migrations, %v`, err)
 	}
 
 	// Create admin user and start the deamon.
