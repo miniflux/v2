@@ -689,6 +689,18 @@ a.button {
     content: "";
 }
 
+.item-meta-icons li:after {
+    content: "";
+}
+
+.item-meta-icons li {
+    margin-right: 10px;
+}
+
+.item-meta-icons li:last-child {
+    margin-right: 0;
+}
+
 .items {
     overflow-x: hidden;
 }
@@ -711,6 +723,18 @@ article.feed-parsing-error {
 
 .parsing-error-count {
     cursor: pointer;
+}
+
+/* Icons */
+.icon,
+.icon-label {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
 }
 
 /* Entry view */
@@ -744,11 +768,8 @@ article.feed-parsing-error {
 }
 
 .entry-actions li {
-    display: inline;
-}
-
-.entry-actions li:not(:last-child):after {
-    content: "|";
+    display: inline-block;
+    margin-right: 15px;
 }
 
 .entry-meta {
