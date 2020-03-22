@@ -660,12 +660,12 @@ var templateViewsMap = map[string]string{
                     <a href="#"
                         title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
-                        data-label-read="✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}"
-                        data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
-                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
-                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
+                        data-label-read="✘&nbsp;{{ t "entry.status.unread" }}"
+                        data-label-unread="✔︎&nbsp;{{ t "entry.status.read" }}"
+                        data-toast-read="✘&nbsp;{{ t "entry.status.toast.unread" }}"
+                        data-toast-unread="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&#xfe0e;&nbsp;{{ t "entry.status.read" }}{{ end }}</a>
+                        ><span class="icon-label">{{ if eq .entry.Status "read" }}✔&nbsp;{{ t "entry.status.read" }}{{ else }}✘&nbsp;{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
                 <li>
                     <a href="#"
@@ -677,7 +677,7 @@ var templateViewsMap = map[string]string{
                         data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
                         data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</a>
+                        ><span class="icon-label">{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>
@@ -688,14 +688,14 @@ var templateViewsMap = map[string]string{
                             data-label-loading="{{ t "entry.state.saving" }}"
                             data-label-done="{{ t "entry.save.completed" }}"
                             data-toast-done="{{ t "entry.save.toast.completed" }}"
-                            >{{ t "entry.save.title" }}</a>
+                            >{{ template "icon_save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></a>
                     </li>
                 {{ end }}
                 <li>
                     <a href="{{ route "shareGenerate" "entryID" .entry.ID }}"
                         title="{{ t "entry.share.title" }}"
                         target="_blank"
-                        >{{ t "entry.share.label" }}</a>
+                        >{{ template "icon_share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
                 </li>
                 <li>
                     <a href="#"
@@ -703,12 +703,17 @@ var templateViewsMap = map[string]string{
                         data-fetch-content-entry="true"
                         data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
                         data-label-loading="{{ t "entry.state.loading" }}"
-                        data-label-done="{{ t "entry.scraper.completed" }}"
-                        >{{ t "entry.scraper.label" }}</a>
+                        >{{ template "icon_scraper" }}<span class="icon-label">{{ t "entry.scraper.label" }}</span></a>
                 </li>
                 {{ if .entry.CommentsURL }}
                     <li>
-                        <a href="{{ .entry.CommentsURL | safeURL }}" title="{{ t "entry.comments.title" }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-comments-link="true">{{ t "entry.comments.label" }}</a>
+                        <a href="{{ .entry.CommentsURL | safeURL }}"
+                           title="{{ t "entry.comments.title" }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           referrerpolicy="no-referrer"
+                           data-comments-link="true"
+                        >{{ template "icon_comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
                     </li>
                 {{ end }}
             </ul>
@@ -1452,7 +1457,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "0b66e8fa35f301808122f405544021b1c7070ea8734cc4348ba1a85a338d3646",
+	"entry":               "03814d36909f3af1a9164c407d8733bcf1f15c4aee516186d07561a81fa42eb3",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",

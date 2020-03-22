@@ -137,13 +137,13 @@ function toggleEntryStatus(element, toasting) {
     updateEntriesStatus([entryID], newStatus);
 
     if (currentStatus === "read") {
-        link.innerHTML = link.dataset.labelRead;
+        link.innerHTML = '<span class="icon-label">' + link.dataset.labelRead + '</span>';
         link.dataset.value = "unread";
         if (toasting) {
             toast(link.dataset.toastUnread);
         }
     } else {
-        link.innerHTML = link.dataset.labelUnread;
+        link.innerHTML = '<span class="icon-label">' + link.dataset.labelUnread + '</span>';
         link.dataset.value = "read";
         if (toasting) {
             toast(link.dataset.toastRead);
@@ -201,11 +201,12 @@ function saveEntry(element, toasting) {
         return;
     }
 
-    element.innerHTML = element.dataset.labelLoading;
+    let previousInnerHTML = element.innerHTML;
+    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
-        element.innerHTML = element.dataset.labelDone;
+        element.innerHTML = previousInnerHTML;
         element.dataset.completed = true;
         if (toasting) {
             toast(element.dataset.toastDone);
@@ -230,18 +231,18 @@ function toggleBookmark(parentElement, toasting) {
         return;
     }
 
-    element.innerHTML = element.dataset.labelLoading;
+    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.bookmarkUrl);
     request.withCallback(() => {
         if (element.dataset.value === "star") {
-            element.innerHTML = element.dataset.labelStar;
+            element.innerHTML = '<span class="icon-label">' + element.dataset.labelStar + '</span>';
             element.dataset.value = "unstar";
             if (toasting) {
                 toast(element.dataset.toastUnstar);
             }
         } else {
-            element.innerHTML = element.dataset.labelUnstar;
+            element.innerHTML = '<span class="icon-label">' + element.dataset.labelUnstar + '</span>';
             element.dataset.value = "star";
             if (toasting) {
                 toast(element.dataset.toastStar);
@@ -262,16 +263,12 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    if (element.dataset.completed) {
-        return;
-    }
-
-    element.innerHTML = element.dataset.labelLoading;
+    let previousInnerHTML = element.innerHTML;
+    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.fetchContentUrl);
     request.withCallback((response) => {
-        element.innerHTML = element.dataset.labelDone;
-        element.dataset.completed = true;
+        element.innerHTML = previousInnerHTML;
 
         response.json().then((data) => {
             if (data.hasOwnProperty("content")) {
