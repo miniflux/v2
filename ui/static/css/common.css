@@ -680,21 +680,17 @@ a.button {
     display: inline;
 }
 
-.item-meta li:after {
+.item-meta-info li:after {
     content: "|";
     color: var(--item-meta-li-color);
 }
 
-.item-meta li:last-child:after {
-    content: "";
-}
-
-.item-meta-icons li:after {
+.item-meta-info li:last-child:after {
     content: "";
 }
 
 .item-meta-icons li {
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .item-meta-icons li:last-child {

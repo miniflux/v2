@@ -43,7 +43,7 @@ var templateCommonMap = map[string]string{
                 </span>
             </div>
             <div class="item-meta">
-                <ul>
+                <ul class="item-meta-info">
                     <li>
                         <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
@@ -51,7 +51,7 @@ var templateCommonMap = map[string]string{
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
                 </ul>
-                <ul>
+                <ul class="item-meta-info">
                     <li>
                         <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ t "menu.refresh_feed" }}</a>
                     </li>
@@ -188,7 +188,7 @@ SOFTWARE.
 {{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
 <div class="item-meta">
-    <ul>
+    <ul class="item-meta-info">
         <li>
             <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
@@ -453,10 +453,10 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "db406e7cb81292ce1d974d63f63270384a286848b2e74fe36bf711b4eb5717dd",
+	"feed_list":        "46cbfc441404dc55c56a9fd7ddc43d98216762f2562f2a17e35eb508dc84246f",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "d9b4105a89364d913ad975b569286e6bd79f270da995856d21a10537e42b93f4",
-	"item_meta":        "d7aac9a904f07c57e35c9756c3fafb03e6b65c7e72a301e81cb62d99be2bd866",
+	"item_meta":        "be80837365e7dbcf28da44fbb2a31cccc29f29d83b88bf8da06609739a91a383",
 	"layout":           "a1f67b8908745ee4f9cee6f7bbbb0b242d4dcc101207ad4a9d67242b45683299",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",

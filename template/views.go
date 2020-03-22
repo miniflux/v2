@@ -223,7 +223,7 @@ var templateViewsMap = map[string]string{
                 (<span title="{{ if eq .FeedCount 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" .FeedCount .FeedCount }}{{ end }}">{{ .FeedCount }}</span>)
             </div>
             <div class="item-meta">
-                <ul>
+                <ul class="item-meta-info">
                     <li>
                         <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ t "page.categories.feeds" }}</a>
                     </li>
@@ -1447,7 +1447,7 @@ var templateViewsMapChecksums = map[string]string{
 	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
-	"categories":          "2c5dd0ed6355bd5acc393bbf6117d20458b5581aab82036008324f6bbbe2af75",
+	"categories":          "7a927a2c28ae60c995df9d94220153418d3bd31bf35e0800980a215b1a6a80c7",
 	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
 	"category_feeds":      "527c2ffbc4fcec775071424ba1022ae003525dba53a28cc41f48fb7b30aa984b",
 	"choose_subscription": "84c9730cadd78e6ee5a6b4c499aab33acddb4324ac01924d33387543eec4d702",

@@ -1,6 +1,6 @@
 {{ define "item_meta" }}
 <div class="item-meta">
-    <ul>
+    <ul class="item-meta-info">
         <li>
             <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
