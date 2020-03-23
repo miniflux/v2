@@ -1,0 +1,71 @@
+{{ define "title"}}{{ t "page.shared_entries.title" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.shared_entries.title" }} ({{ .total }})</h1>
+    {{ if .entries }}
+    <ul>
+        <li>
+            <a href="#"
+                data-confirm="true"
+                data-url="{{ route "flushHistory" }}"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+        </li>
+    </ul>
+    {{ end }}
+</section>
+
+{{ if not .entries }}
+    <p class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    {{ if .ShareCode }}
+                        <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
+                            title="{{ t "entry.shared_entry.title" }}"
+                            target="_blank">{{ template "icon_share" }}</a>
+                    {{ end }}
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            <div class="item-meta">
+                <ul class="item-meta-info">
+                    <li>
+                        <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
+                    </li>
+                    <li>
+                        <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed $.user.Timezone .Date }}</time>
+                    </li>
+                </ul>
+                <ul class="item-meta-icons">
+                    <li>
+                        {{ template "icon_delete" }}
+                        <a href="#"
+                            data-confirm="true"
+                            data-url="{{ route "unshareEntry" "entryID" .ID }}"
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}">{{ t "entry.unshare.label" }}</a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ end }}

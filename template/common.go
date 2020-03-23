@@ -185,6 +185,16 @@ SOFTWARE.
     <line x1="10" y1="14" x2="20" y2="4" />
     <polyline points="15 4 20 4 20 9" />
 </svg>
+{{ end }}
+{{ define "icon_delete" }}
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z"/>
+    <line x1="4" y1="7" x2="20" y2="7" />
+    <line x1="10" y1="11" x2="10" y2="17" />
+    <line x1="14" y1="11" x2="14" y2="17" />
+    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+</svg>
 {{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
 <div class="item-meta">
@@ -197,6 +207,13 @@ SOFTWARE.
         </li>
     </ul>
     <ul class="item-meta-icons">
+        {{ if .entry.ShareCode }}
+            <li>
+                <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                    title="{{ t "entry.shared_entry.title" }}"
+                    target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+            </li>
+        {{ end }}
         {{ if .hasSaveEntry }}
             <li>
                 <a href="#"
@@ -455,8 +472,8 @@ var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
 	"feed_list":        "46cbfc441404dc55c56a9fd7ddc43d98216762f2562f2a17e35eb508dc84246f",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
-	"icons":            "d9b4105a89364d913ad975b569286e6bd79f270da995856d21a10537e42b93f4",
-	"item_meta":        "be80837365e7dbcf28da44fbb2a31cccc29f29d83b88bf8da06609739a91a383",
+	"icons":            "f0d94c2cfa6655b44adaf97f0b95c52a9cff5c31f3a8829ad438e4db7114af7e",
+	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
 	"layout":           "a1f67b8908745ee4f9cee6f7bbbb0b242d4dcc101207ad4a9d67242b45683299",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",

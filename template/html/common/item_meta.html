@@ -9,6 +9,13 @@
         </li>
     </ul>
     <ul class="item-meta-icons">
+        {{ if .entry.ShareCode }}
+            <li>
+                <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                    title="{{ t "entry.shared_entry.title" }}"
+                    target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+            </li>
+        {{ end }}
         {{ if .hasSaveEntry }}
             <li>
                 <a href="#"

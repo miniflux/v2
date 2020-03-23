@@ -692,10 +692,15 @@ var templateViewsMap = map[string]string{
                     </li>
                 {{ end }}
                 <li>
-                    <a href="{{ route "shareGenerate" "entryID" .entry.ID }}"
-                        title="{{ t "entry.share.title" }}"
-                        target="_blank"
-                        >{{ template "icon_share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
+                    {{ if .entry.ShareCode }}
+                        <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                            title="{{ t "entry.shared_entry.title" }}"
+                            target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+                    {{ else }}
+                        <a href="{{ route "shareEntry" "entryID" .entry.ID }}"
+                            title="{{ t "entry.share.title" }}"
+                            target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
+                    {{ end }}
                 </li>
                 <li>
                     <a href="#"
@@ -940,6 +945,15 @@ var templateViewsMap = map[string]string{
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+        </li>
+    </ul>
+    {{ else }}
+    <ul>
+        <li>
+            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
         </li>
     </ul>
     {{ end }}
@@ -1321,6 +1335,78 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
+	"shared_entries": `{{ define "title"}}{{ t "page.shared_entries.title" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.shared_entries.title" }} ({{ .total }})</h1>
+    {{ if .entries }}
+    <ul>
+        <li>
+            <a href="#"
+                data-confirm="true"
+                data-url="{{ route "flushHistory" }}"
+                data-label-question="{{ t "confirm.question" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+        </li>
+    </ul>
+    {{ end }}
+</section>
+
+{{ if not .entries }}
+    <p class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    {{ if .ShareCode }}
+                        <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
+                            title="{{ t "entry.shared_entry.title" }}"
+                            target="_blank">{{ template "icon_share" }}</a>
+                    {{ end }}
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            <div class="item-meta">
+                <ul class="item-meta-info">
+                    <li>
+                        <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
+                    </li>
+                    <li>
+                        <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed $.user.Timezone .Date }}</time>
+                    </li>
+                </ul>
+                <ul class="item-meta-icons">
+                    <li>
+                        {{ template "icon_delete" }}
+                        <a href="#"
+                            data-confirm="true"
+                            data-url="{{ route "unshareEntry" "entryID" .ID }}"
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}">{{ t "entry.unshare.label" }}</a>
+                    </li>
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ end }}
+`,
 	"unread_entries": `{{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
 {{ define "content"}}
@@ -1457,16 +1543,17 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "03814d36909f3af1a9164c407d8733bcf1f15c4aee516186d07561a81fa42eb3",
+	"entry":               "0e405b2370aaefaaa122c955f58fd395b9f19612e4cc7b209fc79e7b00c5561b",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
-	"history_entries":     "87e17d39de70eb3fdbc4000326283be610928758eae7924e4b08dcb446f3b6a9",
+	"history_entries":     "93c0c4cc541eec7f07f5c2634f250ea82ac64024939179276b6f636b72c189bf",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "30329452743b35c668278f519245fd9be05c1726856e0384ba542f7c307f2788",
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
 	"settings":            "d949ecdd28a33eadafaa3a727e548b3466c5aa44b0a4bbf86cc49784704ff7f6",
+	"shared_entries":      "19caea053664220bb9519df295eb2a17cf5836eaa9104b7ee24c60b88bb524e9",
 	"unread_entries":      "e38f7ffce17dfad3151b08cd33771a2cefe8ca9db42df04fc98bd1d675dd6075",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",
 }

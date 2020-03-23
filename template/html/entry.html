@@ -45,10 +45,15 @@
                     </li>
                 {{ end }}
                 <li>
-                    <a href="{{ route "shareGenerate" "entryID" .entry.ID }}"
-                        title="{{ t "entry.share.title" }}"
-                        target="_blank"
-                        >{{ template "icon_share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
+                    {{ if .entry.ShareCode }}
+                        <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                            title="{{ t "entry.shared_entry.title" }}"
+                            target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+                    {{ else }}
+                        <a href="{{ route "shareEntry" "entryID" .entry.ID }}"
+                            title="{{ t "entry.share.title" }}"
+                            target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
+                    {{ end }}
                 </li>
                 <li>
                     <a href="#"
