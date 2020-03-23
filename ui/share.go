@@ -1,4 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2020 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
@@ -17,18 +17,28 @@ import (
 	"miniflux.app/ui/view"
 )
 
-func (h *handler) shareGenerate(w http.ResponseWriter, r *http.Request) {
+func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {
 	entryID := request.RouteInt64Param(r, "entryID")
-	shareCode, err := h.store.GetEntryShareCode(request.UserID(r), entryID)
+	shareCode, err := h.store.EntryShareCode(request.UserID(r), entryID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	html.Redirect(w, r, route.Path(h.router, "share", "shareCode", shareCode))
+	html.Redirect(w, r, route.Path(h.router, "sharedEntry", "shareCode", shareCode))
 }
 
-func (h *handler) sharePage(w http.ResponseWriter, r *http.Request) {
+func (h *handler) unshareEntry(w http.ResponseWriter, r *http.Request) {
+	entryID := request.RouteInt64Param(r, "entryID")
+	if err := h.store.UnshareEntry(request.UserID(r), entryID); err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	html.Redirect(w, r, route.Path(h.router, "sharedEntries"))
+}
+
+func (h *handler) sharedEntry(w http.ResponseWriter, r *http.Request) {
 	shareCode := request.RouteStringParam(r, "shareCode")
 	if shareCode == "" {
 		html.NotFound(w, r)

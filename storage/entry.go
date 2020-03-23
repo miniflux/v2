@@ -272,7 +272,15 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 
 // FlushHistory set all entries with the status "read" to "removed".
 func (s *Storage) FlushHistory(userID int64) error {
-	query := `UPDATE entries SET status=$1, changed_at=now() WHERE user_id=$2 AND status=$3 AND starred='f'`
+	query := `
+		UPDATE
+			entries
+		SET
+			status=$1,
+			changed_at=now()
+		WHERE
+			user_id=$2 AND status=$3 AND starred='f' AND share_code=''
+	`
 	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
 	if err != nil {
 		return fmt.Errorf(`store: unable to flush history: %v`, err)
@@ -353,34 +361,36 @@ func (s *Storage) EntryURLExists(feedID int64, entryURL string) bool {
 	return result
 }
 
-// GetEntryShareCode returns the share code of the provided entry.
+// EntryShareCode returns the share code of the provided entry.
 // It generates a new one if not already defined.
-func (s *Storage) GetEntryShareCode(userID int64, entryID int64) (shareCode string, err error) {
+func (s *Storage) EntryShareCode(userID int64, entryID int64) (shareCode string, err error) {
 	query := `SELECT share_code FROM entries WHERE user_id=$1 AND id=$2`
 	err = s.db.QueryRow(query, userID, entryID).Scan(&shareCode)
-
-	if err != nil || shareCode != "" {
-		return
-	}
-
-	shareCode = crypto.GenerateRandomStringHex(20)
-
-	query = `UPDATE entries SET share_code = $1 WHERE user_id=$2 AND id=$3`
-	result, err := s.db.Exec(query, shareCode, userID, entryID)
 	if err != nil {
-		err = fmt.Errorf(`store: unable to set share_code for entry #%d: %v`, entryID, err)
+		err = fmt.Errorf(`store: unable to get share code for entry #%d: %v`, entryID, err)
 		return
 	}
 
-	count, err := result.RowsAffected()
+	if shareCode == "" {
+		shareCode = crypto.GenerateRandomStringHex(20)
+
+		query = `UPDATE entries SET share_code = $1 WHERE user_id=$2 AND id=$3`
+		_, err = s.db.Exec(query, shareCode, userID, entryID)
+		if err != nil {
+			err = fmt.Errorf(`store: unable to set share code for entry #%d: %v`, entryID, err)
+			return
+		}
+	}
+
+	return
+}
+
+// UnshareEntry removes the share code for the given entry.
+func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
+	query := `UPDATE entries SET share_code='' WHERE user_id=$1 AND id=$2`
+	_, err = s.db.Exec(query, userID, entryID)
 	if err != nil {
-		err = fmt.Errorf(`store: unable to set share_code for entry #%d: %v`, entryID, err)
-		return
+		err = fmt.Errorf(`store: unable to remove share code for entry #%d: %v`, entryID, err)
 	}
-
-	if count == 0 {
-		err = errors.New(`store: nothing has been updated`)
-	}
-
 	return
 }

@@ -14,6 +14,15 @@
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
         </li>
+        <li>
+            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+        </li>
+    </ul>
+    {{ else }}
+    <ul>
+        <li>
+            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+        </li>
     </ul>
     {{ end }}
 </section>

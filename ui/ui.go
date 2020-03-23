@@ -89,8 +89,10 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter.HandleFunc("/entry/bookmark/{entryID}", handler.toggleBookmark).Name("toggleBookmark").Methods("POST")
 
 	// Share pages.
-	uiRouter.HandleFunc("/entry/share/{entryID}", handler.shareGenerate).Name("shareGenerate").Methods("GET")
-	uiRouter.HandleFunc("/share/{shareCode}", handler.sharePage).Name("share").Methods("GET")
+	uiRouter.HandleFunc("/entry/share/{entryID}", handler.createSharedEntry).Name("shareEntry").Methods("GET")
+	uiRouter.HandleFunc("/entry/unshare/{entryID}", handler.unshareEntry).Name("unshareEntry").Methods("POST")
+	uiRouter.HandleFunc("/share/{shareCode}", handler.sharedEntry).Name("sharedEntry").Methods("GET")
+	uiRouter.HandleFunc("/shares", handler.sharedEntries).Name("sharedEntries").Methods("GET")
 
 	// User pages.
 	uiRouter.HandleFunc("/users", handler.showUsersPage).Name("users").Methods("GET")

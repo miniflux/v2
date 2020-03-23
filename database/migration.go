@@ -59,7 +59,7 @@ func IsSchemaUpToDate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 	if currentVersion != schemaVersion {
-		return fmt.Errorf(`database schema is not up to date: current=v%d expected=v%d`, currentVersion, schemaVersion)
+		return fmt.Errorf(`the database schema is not up to date: current=v%d expected=v%d`, currentVersion, schemaVersion)
 	}
 	return nil
 }
