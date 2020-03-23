@@ -51,7 +51,7 @@ var translations = map[string]string{
     "menu.feed_entries": "Artikel",
     "menu.api_keys": "API-Schlüssel",
     "menu.create_api_key": "Erstellen Sie einen neuen API-Schlüssel",
-    "menu.shared_entries": "Geteilte Einträge",
+    "menu.shared_entries": "Geteilte Artikel",
     "search.label": "Suche",
     "search.placeholder": "Suche...",
     "pagination.next": "Nächste",
@@ -79,10 +79,10 @@ var translations = map[string]string{
     "entry.comments.title": "Kommentare anzeigen",
     "entry.share.label": "Teilen",
     "entry.share.title": "Diesen Artikel teilen",
-    "entry.unshare.label": "Unshare",
+    "entry.unshare.label": "Nicht teilen",
     "entry.shared_entry.title": "Öffnen Sie den öffentlichen Link",
     "entry.shared_entry.label": "Teilen",
-    "page.shared_entries.title": "Geteilte Einträge",
+    "page.shared_entries.title": "Geteilte Artikel",
     "page.unread.title": "Ungelesen",
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
@@ -98,8 +98,8 @@ var translations = map[string]string{
     "page.edit_user.title": "Benutzer bearbeiten: %s",
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Letzte Aktualisierung:",
-    "page.feeds.unread_counter": "Anzahl der ungelesenen Einträge",
-    "page.feeds.read_counter": "Anzahl der gelesenen Einträge",
+    "page.feeds.unread_counter": "Anzahl der ungelesenen Artikel",
+    "page.feeds.read_counter": "Anzahl der gelesenen Artikel",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"
@@ -196,7 +196,7 @@ var translations = map[string]string{
     "page.api_keys.table.actions": "Aktionen",
     "page.api_keys.never_used": "Nie benutzt",
     "page.new_api_key.title": "Neuer API-Schlüssel",
-    "alert.no_shared_entry": "Es gibt keinen gemeinsamen Eintrag.",
+    "alert.no_shared_entry": "Es existieren derzeit keine geteilten Artikel.",
     "alert.no_bookmark": "Es existiert derzeit kein Lesezeichen.",
     "alert.no_category": "Es ist keine Kategorie vorhanden.",
     "alert.no_category_entry": "Es befindet sich kein Artikel in dieser Kategorie.",
@@ -3249,7 +3249,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "aa7025ff266508152d31ed22e816588c3beaf6ef0ddff20012d303ab55a584d1",
+	"de_DE": "1b69b48622854bdab214411c75e22bb66b51054354aae0c50222d966b5563dcd",
 	"en_US": "c1cd8a4c6360881299609332bc930c0d59a30aea5ae90a6c87bcc06dbba7c69d",
 	"es_ES": "94f4da8c6160ca30c59294ec520f8648496b94904b61ac47c7ca24bfa4fe793b",
 	"fr_FR": "80a2d02c7a90e90024af4f5eb3aad710f245963df99538d7d71c0efcaae79f82",
