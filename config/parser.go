@@ -78,10 +78,12 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		case "DEBUG":
 			p.opts.debug = parseBool(value, defaultDebug)
 		case "BASE_URL":
-			p.opts.baseURL, p.opts.rootURL, p.opts.basePath, err = parseBaseURL(value)
+			p.opts.baseURL, p.opts.rootURL, p.opts.basePath, p.opts.host, err = parseBaseURL(value)
 			if err != nil {
 				return err
 			}
+		case "CANONICAL_HOST_REDIRECT":
+			p.opts.canonicalHostRedirect = parseBool(value, defaultCanonicalHostRedirect)
 		case "PORT":
 			port = value
 		case "LISTEN_ADDR":
@@ -173,9 +175,9 @@ func (p *Parser) parseLines(lines []string) (err error) {
 	return nil
 }
 
-func parseBaseURL(value string) (string, string, string, error) {
+func parseBaseURL(value string) (string, string, string, string, error) {
 	if value == "" {
-		return defaultBaseURL, defaultRootURL, "", nil
+		return defaultBaseURL, defaultRootURL, "", defaultHost, nil
 	}
 
 	if value[len(value)-1:] == "/" {
@@ -184,17 +186,19 @@ func parseBaseURL(value string) (string, string, string, error) {
 
 	url, err := url_parser.Parse(value)
 	if err != nil {
-		return "", "", "", fmt.Errorf("Invalid BASE_URL: %v", err)
+		return "", "", "", "", fmt.Errorf("Invalid BASE_URL: %v", err)
 	}
 
 	scheme := strings.ToLower(url.Scheme)
 	if scheme != "https" && scheme != "http" {
-		return "", "", "", errors.New("Invalid BASE_URL: scheme must be http or https")
+		return "", "", "", "", errors.New("Invalid BASE_URL: scheme must be http or https")
 	}
+
+	host := strings.ToLower(url.Hostname() + url.Port())
 
 	basePath := url.Path
 	url.Path = ""
-	return value, url.String(), basePath, nil
+	return value, url.String(), basePath, host, nil
 }
 
 func parseBool(value string, fallback bool) bool {

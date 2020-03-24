@@ -28,6 +28,12 @@ func middleware(next http.Handler) http.Handler {
 			protocol = "HTTPS"
 		}
 
+		if config.Opts.IsCanonicalHostRedirectEnabled() && config.Opts.Host() != r.Host {
+			url := r.URL
+			url.Host = config.Opts.Host()
+			http.Redirect(w, r, url.String(), http.StatusMovedPermanently)
+		}
+
 		logger.Debug("[%s] %s %s %s", protocol, clientIP, r.Method, r.RequestURI)
 
 		if config.Opts.HTTPS && config.Opts.HasHSTS() {

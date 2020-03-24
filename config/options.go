@@ -19,6 +19,8 @@ const (
 	defaultBaseURL                     = "http://localhost"
 	defaultRootURL                     = "http://localhost"
 	defaultBasePath                    = ""
+	defaultHost                        = "localhost"
+	defaultCanonicalHostRedirect       = false
 	defaultWorkerPoolSize              = 5
 	defaultPollingFrequency            = 60
 	defaultBatchSize                   = 10
@@ -60,6 +62,8 @@ type Options struct {
 	baseURL                     string
 	rootURL                     string
 	basePath                    string
+	host                        string
+	canonicalHostRedirect       bool
 	databaseURL                 string
 	databaseMaxConns            int
 	databaseMinConns            int
@@ -102,6 +106,8 @@ func NewOptions() *Options {
 		baseURL:                     defaultBaseURL,
 		rootURL:                     defaultRootURL,
 		basePath:                    defaultBasePath,
+		host:                        defaultHost,
+		canonicalHostRedirect:       defaultCanonicalHostRedirect,
 		databaseURL:                 defaultDatabaseURL,
 		databaseMaxConns:            defaultDatabaseMaxConns,
 		databaseMinConns:            defaultDatabaseMinConns,
@@ -156,6 +162,17 @@ func (o *Options) RootURL() string {
 // BasePath returns the application base path according to the base URL.
 func (o *Options) BasePath() string {
 	return o.basePath
+}
+
+// Host returns the application host according to the base URL.
+func (o *Options) Host() string {
+	return o.host
+}
+
+// IsCanonicalHostRedirectEnabled returns true if a redirect to a canonical
+// host from a non-canonical host is enabled.
+func (o *Options) IsCanonicalHostRedirectEnabled() bool {
+	return o.canonicalHostRedirect
 }
 
 // IsDefaultDatabaseURL returns true if the default database URL is used.
@@ -334,6 +351,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("BASE_URL: %v\n", o.baseURL))
 	builder.WriteString(fmt.Sprintf("ROOT_URL: %v\n", o.rootURL))
 	builder.WriteString(fmt.Sprintf("BASE_PATH: %v\n", o.basePath))
+	builder.WriteString(fmt.Sprintf("CANONICAL_HOST_REDIRECT: %v\n", o.canonicalHostRedirect))
 	builder.WriteString(fmt.Sprintf("LISTEN_ADDR: %v\n", o.listenAddr))
 	builder.WriteString(fmt.Sprintf("DATABASE_URL: %v\n", o.databaseURL))
 	builder.WriteString(fmt.Sprintf("DATABASE_MAX_CONNS: %v\n", o.databaseMaxConns))

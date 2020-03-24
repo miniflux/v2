@@ -137,6 +137,41 @@ func TestDefaultBaseURL(t *testing.T) {
 	}
 }
 
+func TestCanonicalHostRedirectWhenUnset(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := false
+	result := opts.IsCanonicalHostRedirectEnabled()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CANONICAL_HOST_REDIRECT value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestCanonicalHostRedirect(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CANONICAL_HOST_REDIRECT", "1")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := true
+	result := opts.IsCanonicalHostRedirectEnabled()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CANONICAL_HOST_REDIRECT value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestDatabaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("DATABASE_URL", "foobar")
