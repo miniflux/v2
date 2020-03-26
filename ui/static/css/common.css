@@ -208,6 +208,9 @@ a:hover {
         margin: auto;
         max-width: 750px;
     }
+    .pagination-bottom {
+        max-width: 750px;
+    }
 
     .header {
         margin-bottom: 0;
@@ -604,7 +607,30 @@ a.button {
     border-top: 1px dotted var(--pagination-border-color);
     margin-bottom: 15px;
     margin-top: 50px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-bottom:10px;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    margin: auto;
+    z-index: 9990;
 }
+.pagination-next > a {
+   display:inline-flex;
+   width:90%;
+   padding: 5px;
+   justify-content: right;
+   align-items: center;
+ }
+
+.pagination-prev > a {
+   display:inline-flex;
+   width:90%;
+   padding: 5px;
+   justify-content: left;
+   align-items: center;
+ }
 
 .pagination > div {
     flex: 1;
