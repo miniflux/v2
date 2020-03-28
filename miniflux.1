@@ -185,6 +185,9 @@ OAuth2 client secret\&.
 .B OAUTH2_REDIRECT_URL
 OAuth2 redirect URL\&.
 .TP
+.B OAUTH2_OIDC_DISCOVERY_ENDPOINT
+OpenID Connect discovery endpoint\&.
+.TP
 .B OAUTH2_USER_CREATION
 Set to 1 to authorize OAuth2 user creation\&.
 .TP
@@ -217,6 +220,12 @@ Default is 20 seconds\&.
 Maximum body size for HTTP requests in Mebibyte (MiB)\&.
 .br
 Default is 15 MiB\&.
+.TP
+.B AUTH_PROXY_HEADER
+Proxy authentication HTTP header\&.
+.TP
+.B AUTH_PROXY_USER_CREATION
+Set to 1 to create users based on proxy authentication information\&.
 
 .SH AUTHORS
 .P
