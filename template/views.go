@@ -662,8 +662,8 @@ var templateViewsMap = map[string]string{
                         data-toggle-status="true"
                         data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
                         data-label-read="✔︎&nbsp;{{ t "entry.status.read" }}"
-                        data-toast-read="✘&nbsp;{{ t "entry.status.toast.unread" }}"
-                        data-toast-unread="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
+                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
+                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                         ><span class="icon-label">{{ if eq .entry.Status "unread" }}✔&nbsp;{{ t "entry.status.read" }}{{ else }}✘&nbsp;{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
@@ -1543,7 +1543,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "aa9d988039b55e7446c3d2644d0b5ee08c6ab088e1d816606aa2afd8123eae47",
+	"entry":               "d8c30d412d58e14c946ba682166f7c582948e7b0f657d04dcbc3d004267627bb",
 	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "93c0c4cc541eec7f07f5c2634f250ea82ac64024939179276b6f636b72c189bf",
