@@ -1,3 +1,24 @@
+Version 2.0.21 (Mar 28, 2020)
+-----------------------------
+
+* Add SVG icons to entry actions
+* Add support for Invidious
+    - Embed Invidious player for invidio.us feeds
+    - Add new rewrite rule to use Invidious player for Youtube feeds
+* Check during application startup if the database schema is up to date
+* Change default theme for public pages to "System Serif"
+* Add feature to share an article (create a public link of a feed entry)
+* Fix SQL injection in full-text search rank ordering
+* Add generic OpenID Connect provider (OAuth2)
+* Use more secure TLS configuration for autocert server (increase SSL Labs score from B to A+)
+* Add feature to create per-application API Keys
+* Add Go 1.14 to GitHub Actions
+* Add scraper rule for wdwnt.com
+* Add API client function to refresh all feeds
+* Add API endpoint to refresh all feeds
+* Add Auth Proxy authentication
+* Use rel=prev/next on pagination links
+
 Version 2.0.20 (Feb 15, 2020)
 -----------------------------
 
