@@ -15,8 +15,8 @@
                         data-toggle-status="true"
                         data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
                         data-label-read="✔︎&nbsp;{{ t "entry.status.read" }}"
-                        data-toast-read="✘&nbsp;{{ t "entry.status.toast.unread" }}"
-                        data-toast-unread="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
+                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
+                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                         ><span class="icon-label">{{ if eq .entry.Status "unread" }}✔&nbsp;{{ t "entry.status.read" }}{{ else }}✘&nbsp;{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
