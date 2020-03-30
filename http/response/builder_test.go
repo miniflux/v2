@@ -32,7 +32,7 @@ func TestResponseHasCommonHeaders(t *testing.T) {
 		"X-XSS-Protection":        "1; mode=block",
 		"X-Content-Type-Options":  "nosniff",
 		"X-Frame-Options":         "DENY",
-		"Content-Security-Policy": "default-src 'self'; img-src *; media-src *; frame-src *; child-src *",
+		"Content-Security-Policy": "default-src 'self'; img-src *; media-src *; frame-src *; child-src *; frame-src *; worker-src *",
 	}
 
 	for header, expected := range headers {
