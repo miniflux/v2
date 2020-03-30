@@ -1310,6 +1310,7 @@ var templateViewsMap = map[string]string{
 
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
+    <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="5">{{ .form.CustomCSS }}</textarea>
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
@@ -1552,7 +1553,7 @@ var templateViewsMapChecksums = map[string]string{
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "d949ecdd28a33eadafaa3a727e548b3466c5aa44b0a4bbf86cc49784704ff7f6",
+	"settings":            "3ab566c3220c62edc3edc51f2e93c1101b728e9f62f52f23de6bc6322d86aeb6",
 	"shared_entries":      "19caea053664220bb9519df295eb2a17cf5836eaa9104b7ee24c60b88bb524e9",
 	"unread_entries":      "e38f7ffce17dfad3151b08cd33771a2cefe8ca9db42df04fc98bd1d675dd6075",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",

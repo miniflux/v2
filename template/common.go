@@ -302,6 +302,9 @@ SOFTWARE.
 
     <meta name="theme-color" content="{{ theme_color .theme }}">
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}?{{ .theme_checksum }}">
+    {{ if .user }} {{ if ne (index .user.Extra "custom_css") ("") }}
+    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" "custom_css" }}">
+    {{ end }}{{ end }}
 
     <script type="text/javascript" src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
     <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
@@ -474,7 +477,7 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "f0d94c2cfa6655b44adaf97f0b95c52a9cff5c31f3a8829ad438e4db7114af7e",
 	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
-	"layout":           "a1f67b8908745ee4f9cee6f7bbbb0b242d4dcc101207ad4a9d67242b45683299",
+	"layout":           "a4ed0b69bf16342166358ca9c3cf23c27d61443eca2e5da9fa46ff7474afe55b",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",
 }

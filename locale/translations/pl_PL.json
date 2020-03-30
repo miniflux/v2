@@ -256,6 +256,7 @@
     "form.prefs.select.older_first": "Najstarsze wpisy jako pierwsze",
     "form.prefs.label.keyboard_shortcuts": "Włącz skróty klawiaturowe",
     "form.prefs.select.recent_first": "Najnowsze wpisy jako pierwsze",
+    "form.prefs.label.custom_css": "Niestandardowy CSS",
     "form.import.label.file": "Plik OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Aktywuj Fever API",

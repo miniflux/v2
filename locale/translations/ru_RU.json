@@ -256,6 +256,7 @@
     "form.prefs.select.older_first": "Сначала старые записи",
     "form.prefs.select.recent_first": "Сначала последние записи",
     "form.prefs.label.keyboard_shortcuts": "Включить сочетания клавиш",
+    "form.prefs.label.custom_css": "Пользовательские CSS",
     "form.import.label.file": "OPML файл",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Активировать Fever API",

@@ -35,6 +35,9 @@
 
     <meta name="theme-color" content="{{ theme_color .theme }}">
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}?{{ .theme_checksum }}">
+    {{ if .user }} {{ if ne (index .user.Extra "custom_css") ("") }}
+    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" "custom_css" }}">
+    {{ end }}{{ end }}
 
     <script type="text/javascript" src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
     <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>

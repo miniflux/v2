@@ -254,6 +254,7 @@
     "form.prefs.select.older_first": "Ancien éléments en premier",
     "form.prefs.select.recent_first": "Éléments récents en premier",
     "form.prefs.label.keyboard_shortcuts": "Activer les raccourcis clavier",
+    "form.prefs.label.custom_css": "CSS personnalisé",
     "form.import.label.file": "Fichier OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activer l'API de Fever",

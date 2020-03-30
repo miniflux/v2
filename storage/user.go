@@ -172,6 +172,11 @@ func (s *Storage) UpdateUser(user *model.User) error {
 		if err != nil {
 			return fmt.Errorf(`store: unable to update user: %v`, err)
 		}
+
+		err = s.UpdateExtraField(user.ID, "custom_css", user.Extra["custom_css"])
+		if err != nil {
+			return fmt.Errorf(`store: unable to update user css: %v`, err)
+		}
 	}
 
 	return nil
