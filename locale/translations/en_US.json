@@ -254,6 +254,7 @@
     "form.prefs.select.older_first": "Older entries first",
     "form.prefs.select.recent_first": "Recent entries first",
     "form.prefs.label.keyboard_shortcuts": "Enable keyboard shortcuts",
+    "form.prefs.label.custom_css": "Custom CSS",
     "form.import.label.file": "OPML file",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activate Fever API",

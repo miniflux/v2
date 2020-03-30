@@ -254,6 +254,7 @@
     "form.prefs.select.older_first": "Älteste Artikel zuerst",
     "form.prefs.select.recent_first": "Neueste Artikel zuerst",
     "form.prefs.label.keyboard_shortcuts": "Tastaturkürzel aktivieren",
+    "form.prefs.label.custom_css": "Benutzerdefiniertes CSS",
     "form.import.label.file": "OPML Datei",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API aktivieren",

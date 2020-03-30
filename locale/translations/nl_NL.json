@@ -254,6 +254,7 @@
     "form.prefs.select.older_first": "Oudere items eerst",
     "form.prefs.select.recent_first": "Recente items eerst",
     "form.prefs.label.keyboard_shortcuts": "Schakel sneltoetsen in",
+    "form.prefs.label.custom_css": "Aangepaste CSS",
     "form.import.label.file": "OPML-bestand",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activeer Fever API",

@@ -21,6 +21,7 @@ type SettingsForm struct {
 	Timezone          string
 	EntryDirection    string
 	KeyboardShortcuts bool
+	CustomCSS         string
 }
 
 // Merge updates the fields of the given user.
@@ -31,6 +32,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Timezone = s.Timezone
 	user.EntryDirection = s.EntryDirection
 	user.KeyboardShortcuts = s.KeyboardShortcuts
+	user.Extra["custom_css"] = s.CustomCSS
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -74,5 +76,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		Timezone:          r.FormValue("timezone"),
 		EntryDirection:    r.FormValue("entry_direction"),
 		KeyboardShortcuts: r.FormValue("keyboard_shortcuts") == "1",
+		CustomCSS:         r.FormValue("custom_css"),
 	}
 }

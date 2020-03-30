@@ -252,6 +252,7 @@
     "form.prefs.select.older_first": "旧->新",
     "form.prefs.select.recent_first": "新->旧",
     "form.prefs.label.keyboard_shortcuts": "启用键盘快捷键",
+    "form.prefs.label.custom_css": "自定义CSS",
     "form.import.label.file": "OPML 文件",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "启用 Fever API",
