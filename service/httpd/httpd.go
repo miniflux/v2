@@ -20,6 +20,7 @@ import (
 	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/ui"
+	"miniflux.app/version"
 	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
@@ -177,6 +178,9 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	}).Name("healthcheck")
+	router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(version.Version))
+	}).Name("version")
 
 	return router
 }
