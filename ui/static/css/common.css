@@ -618,16 +618,12 @@ a.button {
     z-index: 9990;
 }
 .pagination-next > a {
-   display:inline-flex;
-   width:90%;
    padding: 5px;
    justify-content: right;
    align-items: center;
  }
 
 .pagination-prev > a {
-   display:inline-flex;
-   width:90%;
    padding: 5px;
    justify-content: left;
    align-items: center;
@@ -651,6 +647,7 @@ a.button {
 
 .pagination a {
     color: var(--pagination-color);
+    width:90%;
 }
 
 .pagination a:hover,
