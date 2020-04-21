@@ -606,8 +606,6 @@ a.button {
 .pagination-bottom {
     border-top: 1px dotted var(--pagination-border-color);
     background: var(--body-background);
-    margin-bottom: 15px;
-    margin-top: 50px;
     padding-right:10px;
     padding-bottom:10px;
     position: fixed;
@@ -646,6 +644,7 @@ a.button {
 .pagination a {
     color: var(--pagination-color);
     width:90%;
+    display: inline-block;
 }
 
 .pagination a:hover,
