@@ -21,8 +21,8 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 		FROM
 			feeds
 		WHERE
-			parsing_error_count < $1 AND disabled is false
-		ORDER BY checked_at ASC LIMIT %d
+			parsing_error_count < $1 AND disabled is false AND next_check_at < now()
+		ORDER BY next_check_at ASC LIMIT %d
 	`
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), maxParsingError)
 }
@@ -39,7 +39,7 @@ func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList,
 			feeds
 		WHERE
 			user_id=$1 AND disabled is false
-		ORDER BY checked_at ASC LIMIT %d
+		ORDER BY next_check_at ASC LIMIT %d
 	`
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID)
 }

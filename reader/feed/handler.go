@@ -90,7 +90,13 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		return errors.NewLocalizedError(errNotFound, feedID)
 	}
 
+	weeklyCount, parametersErr := h.store.FeedSchedulerParameters(userID, feedID)
+	if parametersErr != nil {
+		return parametersErr
+	}
+
 	originalFeed.CheckedNow()
+	originalFeed.ScheduleNextCheck(weeklyCount)
 
 	request := client.New(originalFeed.FeedURL)
 	request.WithCredentials(originalFeed.Username, originalFeed.Password)

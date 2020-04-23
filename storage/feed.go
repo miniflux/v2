@@ -8,7 +8,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
+	"miniflux.app/config"
 	"miniflux.app/model"
 	"miniflux.app/timezone"
 )
@@ -255,6 +257,39 @@ func (s *Storage) fetchFeedsWithCounters(query string, args ...interface{}) (mod
 	return feeds, nil
 }
 
+// FeedSchedulerParameters returns the parameters used for the scheduler.
+func (s *Storage) FeedSchedulerParameters(userID, feedID int64) (int, error) {
+	scheduler := strings.ToLower(config.Opts.PollingScheduler())
+	if scheduler != model.SchedulerEntryCountBased {
+		return 0, nil
+	}
+	var weeklyCount int
+
+	query := `
+		SELECT
+			count(*)
+		FROM
+			entries
+		WHERE
+			entries.user_id=$1 AND 
+			entries.feed_id=$2 AND 
+			entries.published_at BETWEEN (now() - interval '1 week') AND now();
+	`
+
+	err := s.db.QueryRow(query, userID, feedID).Scan(
+		&weeklyCount,
+	)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return 0, nil
+	case err != nil:
+		return 0, fmt.Errorf(`store: unable to fetch scheduler parameters for feed #%d: %v`, feedID, err)
+	}
+
+	return weeklyCount, nil
+}
+
 // FeedByID returns a feed by the ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	var feed model.Feed
@@ -412,9 +447,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			user_agent=$13,
 			username=$14,
 			password=$15,
-			disabled=$16
+			disabled=$16,
+			next_check_at=$17
 		WHERE
-			id=$17 AND user_id=$18
+			id=$18 AND user_id=$19
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -433,6 +469,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.Username,
 		feed.Password,
 		feed.Disabled,
+		feed.NextCheckAt,
 		feed.ID,
 		feed.UserID,
 	)
@@ -452,14 +489,16 @@ func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 		SET
 			parsing_error_msg=$1,
 			parsing_error_count=$2,
-			checked_at=$3
+			checked_at=$3,
+			next_check_at=$4
 		WHERE
-			id=$4 AND user_id=$5
+			id=$5 AND user_id=$6
 	`
 	_, err = s.db.Exec(query,
 		feed.ParsingErrorMsg,
 		feed.ParsingErrorCount,
 		feed.CheckedAt,
+		feed.NextCheckAt,
 		feed.ID,
 		feed.UserID,
 	)

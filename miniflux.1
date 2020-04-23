@@ -110,6 +110,15 @@ Refresh interval in minutes for feeds (default is 60 minutes)\&.
 .B BATCH_SIZE
 Number of feeds to send to the queue for each interval (default is 10)\&.
 .TP
+.B POLLING_SCHEDULER
+The scheduler used for polling feeds. Possible values include: "round_robin", "entry_count_based"
+.TP
+.B SCHEDULER_ENTRY_COUNT_BASED_MAX_INTERVAL
+The maximum interval in minutes for the entry-count-based scheduler
+.TP
+.B SCHEDULER_ENTRY_COUNT_BASED_MIN_INTERVAL
+The minimum interval in minutes for the entry-count-based scheduler
+.TP
 .B DATABASE_URL
 Postgresql connection parameters\&.
 .br
