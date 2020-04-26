@@ -41,64 +41,64 @@ generate:
 	@ go generate -mod=vendor
 
 miniflux: generate
-	@ go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP) main.go
+	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 linux-amd64: generate
-	@ GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
+	@ GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
 
 linux-armv8: generate
-	@ GOOS=linux GOARCH=arm64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv8 main.go
+	@ GOOS=linux GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv8 main.go
 
 linux-armv7: generate
-	@ GOOS=linux GOARCH=arm GOARM=7 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv7 main.go
+	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv7 main.go
 
 linux-armv6: generate
-	@ GOOS=linux GOARCH=arm GOARM=6 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv6 main.go
+	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv6 main.go
 
 linux-armv5: generate
-	@ GOOS=linux GOARCH=arm GOARM=5 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv5 main.go
+	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv5 main.go
 
 darwin-amd64: generate
-	@ GOOS=darwin GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-darwin-amd64 main.go
+	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-darwin-amd64 main.go
 
 freebsd-amd64: generate
-	@ GOOS=freebsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-amd64 main.go
+	@ GOOS=freebsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-amd64 main.go
 
 openbsd-amd64: generate
-	@ GOOS=openbsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-openbsd-amd64 main.go
+	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-openbsd-amd64 main.go
 
 windows-amd64: generate
-	@ GOOS=windows GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
+	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
 
 build: linux-amd64 linux-armv8 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 freebsd-amd64 openbsd-amd64 windows-amd64
 
 # NOTE: unsupported targets
 netbsd-amd64: generate
-	@ GOOS=netbsd GOARCH=amd64 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-amd64 main.go
+	@ GOOS=netbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-amd64 main.go
 
 linux-x86: generate
-	@ GOOS=linux GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-linux-x86 main.go
+	@ GOOS=linux GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-x86 main.go
 
 freebsd-x86: generate
-	@ GOOS=freebsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
+	@ GOOS=freebsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
 
 netbsd-x86: generate
-	@ GOOS=netbsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-x86 main.go
+	@ GOOS=netbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-x86 main.go
 
 openbsd-x86: generate
-	@ GOOS=openbsd GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
+	@ GOOS=openbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
 
 windows-x86: generate
-	@ GOOS=windows GOARCH=386 go build -mod=vendor -ldflags=$(LD_FLAGS) -o $(APP)-windows-x86 main.go
+	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-x86 main.go
 
 run: generate
-	@ go run -mod=vendor main.go -debug
+	@ go run main.go -debug
 
 clean:
 	@ rm -f $(APP)-* $(APP)
 
 test:
-	go test -mod=vendor -cover -race -count=1 ./...
+	go test -cover -race -count=1 ./...
 
 lint:
 	golint -set_exit_status ${PKG_LIST}
@@ -106,12 +106,12 @@ lint:
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
 	psql -U postgres -c 'create database miniflux_test;'
-	DATABASE_URL=$(DB_URL) go run -mod=vendor main.go -migrate
-	DATABASE_URL=$(DB_URL) ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run -mod=vendor main.go -create-admin
-	go build -mod=vendor -o miniflux-test main.go
+	DATABASE_URL=$(DB_URL) go run main.go -migrate
+	DATABASE_URL=$(DB_URL) ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go -create-admin
+	go build -o miniflux-test main.go
 	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
-	go test -mod=vendor -v -tags=integration -count=1 miniflux.app/tests
+	go test -v -tags=integration -count=1 miniflux.app/tests
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
