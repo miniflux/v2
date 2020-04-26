@@ -370,6 +370,24 @@ input[type="checkbox"] {
     margin-bottom: 15px;
 }
 
+textarea {
+    width: 350px;
+    color: var(--input-color);
+    background: var(--input-background);
+    border: var(--input-border);
+    padding: 3px;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    -webkit-appearance: none;
+}
+
+textarea:focus {
+    color: var(--input-focus-color);
+    border-color: var(--input-focus-border-color);
+    outline: 0;
+    box-shadow: var(--input-focus-box-shadow);
+}
+
 ::-moz-placeholder,
 ::-ms-input-placeholder,
 ::-webkit-input-placeholder {
