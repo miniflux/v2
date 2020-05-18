@@ -29,6 +29,37 @@ func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	return result
 }
 
+// CountAllFeeds returns the number of feeds in the database.
+func (s *Storage) CountAllFeeds() map[string]int64 {
+	rows, err := s.db.Query(`SELECT disabled, count(*) FROM feeds GROUP BY disabled`)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	results := make(map[string]int64)
+	results["active"] = 0
+	results["inactive"] = 0
+
+	for rows.Next() {
+		var disabled bool
+		var count int64
+
+		if err := rows.Scan(&disabled, &count); err != nil {
+			continue
+		}
+
+		if disabled {
+			results["inactive"] = count
+		} else {
+			results["active"] = count
+		}
+	}
+
+	results["total"] = results["inactive"] + results["active"]
+	return results
+}
+
 // CountFeeds returns the number of feeds that belongs to the given user.
 func (s *Storage) CountFeeds(userID int64) int {
 	var result int

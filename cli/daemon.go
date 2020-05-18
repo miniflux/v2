@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime"
 	"syscall"
 	"time"
 
@@ -20,6 +19,8 @@ import (
 	"miniflux.app/service/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 func startDaemon(store *storage.Storage) {
@@ -32,8 +33,6 @@ func startDaemon(store *storage.Storage) {
 	feedHandler := feed.NewFeedHandler(store)
 	pool := worker.NewPool(feedHandler, config.Opts.WorkerPoolSize())
 
-	go showProcessStatistics()
-
 	if config.Opts.HasSchedulerService() {
 		scheduler.Serve(store, pool)
 	}
@@ -41,6 +40,55 @@ func startDaemon(store *storage.Storage) {
 	var httpServer *http.Server
 	if config.Opts.HasHTTPService() {
 		httpServer = httpd.Serve(store, pool, feedHandler)
+	}
+
+	if config.Opts.HasMetricsCollector() {
+		usersGauge := prometheus.NewGaugeFunc(
+			prometheus.GaugeOpts{
+				Namespace: "miniflux",
+				Name:      "users",
+				Help:      "Number of users",
+			},
+			func() float64 {
+				return float64(store.CountUsers())
+			},
+		)
+
+		feedsGauge := prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: "miniflux",
+				Name:      "feeds",
+				Help:      "Number of feeds by status",
+			},
+			[]string{"status"},
+		)
+
+		entriesGauge := prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: "miniflux",
+				Name:      "entries",
+				Help:      "Number of entries by status",
+			},
+			[]string{"status"},
+		)
+
+		prometheus.MustRegister(usersGauge)
+		prometheus.MustRegister(feedsGauge)
+		prometheus.MustRegister(entriesGauge)
+
+		go func() {
+			for range time.Tick(time.Duration(config.Opts.MetricsRefreshInterval()) * time.Second) {
+				feedsCount := store.CountAllFeeds()
+				for status, count := range feedsCount {
+					feedsGauge.WithLabelValues(status).Set(float64(count))
+				}
+
+				entriesCount := store.CountAllEntries()
+				for status, count := range entriesCount {
+					entriesGauge.WithLabelValues(status).Set(float64(count))
+				}
+			}
+		}()
 	}
 
 	<-stop
@@ -53,15 +101,4 @@ func startDaemon(store *storage.Storage) {
 	}
 
 	logger.Info("Process gracefully stopped")
-}
-
-func showProcessStatistics() {
-	for {
-		var m runtime.MemStats
-		runtime.ReadMemStats(&m)
-		logger.Debug("Sys=%vK, InUse=%vK, HeapInUse=%vK, StackSys=%vK, StackInUse=%vK, GoRoutines=%d, NumCPU=%d",
-			m.Sys/1024, (m.Sys-m.HeapReleased)/1024, m.HeapInuse/1024, m.StackSys/1024, m.StackInuse/1024,
-			runtime.NumGoroutine(), runtime.NumCPU())
-		time.Sleep(30 * time.Second)
-	}
 }

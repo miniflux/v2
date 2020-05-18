@@ -24,6 +24,7 @@ import (
 	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -169,6 +170,10 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 		router = router.PathPrefix(config.Opts.BasePath()).Subrouter()
 	}
 
+	if config.Opts.HasMetricsCollector() {
+		router.Handle("/metrics", promhttp.Handler())
+	}
+
 	router.Use(middleware)
 
 	fever.Serve(router, store)
@@ -178,6 +183,7 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	}).Name("healthcheck")
+
 	router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(version.Version))
 	}).Name("version")

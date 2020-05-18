@@ -16,6 +16,34 @@ import (
 	"github.com/lib/pq"
 )
 
+// CountAllEntries returns the number of entries for each status in the database.
+func (s *Storage) CountAllEntries() map[string]int64 {
+	rows, err := s.db.Query(`SELECT status, count(*) FROM entries GROUP BY status`)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	results := make(map[string]int64)
+	results["unread"] = 0
+	results["read"] = 0
+	results["removed"] = 0
+
+	for rows.Next() {
+		var status string
+		var count int64
+
+		if err := rows.Scan(&status, &count); err != nil {
+			continue
+		}
+
+		results[status] = count
+	}
+
+	results["total"] = results["unread"] + results["read"] + results["removed"]
+	return results
+}
+
 // CountUnreadEntries returns the number of unread entries.
 func (s *Storage) CountUnreadEntries(userID int64) int {
 	builder := s.NewEntryQueryBuilder(userID)

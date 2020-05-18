@@ -164,6 +164,10 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.authProxyHeader = parseString(value, defaultAuthProxyHeader)
 		case "AUTH_PROXY_USER_CREATION":
 			p.opts.authProxyUserCreation = parseBool(value, defaultAuthProxyUserCreation)
+		case "METRICS_COLLECTOR":
+			p.opts.metricsCollector = parseBool(value, defaultMetricsCollector)
+		case "METRICS_REFRESH_INTERVAL":
+			p.opts.metricsRefreshInterval = parseInt(value, defaultMetricsRefreshInterval)
 		}
 	}
 
