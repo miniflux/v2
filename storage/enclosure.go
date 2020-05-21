@@ -88,7 +88,7 @@ func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
 // IsEnclosureExists checks if an attachment exists.
 func (s *Storage) IsEnclosureExists(enclosure *model.Enclosure) bool {
 	var result int
-	query := `SELECT count(*) as c FROM enclosures WHERE user_id=$1 AND entry_id=$2 AND url=$3`
+	query := `SELECT 1 FROM enclosures WHERE user_id=$1 AND entry_id=$2 AND url=$3`
 	s.db.QueryRow(query, enclosure.UserID, enclosure.EntryID, enclosure.URL).Scan(&result)
 	return result >= 1
 }
