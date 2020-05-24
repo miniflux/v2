@@ -11,6 +11,7 @@ var predefinedRules = map[string]string{
 	"cbc.ca":              ".story-content",
 	"darkreading.com":     "#article-main:not(header)",
 	"developpez.com":      "div[itemprop=articleBody]",
+	"financialsamurai.com": "article",
 	"francetvinfo.fr":     ".text",
 	"github.com":          "article.entry-content",
 	"heise.de":            "header .article-content__lead, header .article-image, div.article-layout__content.article-content",
