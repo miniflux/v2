@@ -6,8 +6,11 @@ package model // import "miniflux.app/model"
 
 import (
 	"fmt"
+	"math"
+	"strings"
 	"time"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 )
 
@@ -19,6 +22,7 @@ type Feed struct {
 	SiteURL            string    `json:"site_url"`
 	Title              string    `json:"title"`
 	CheckedAt          time.Time `json:"checked_at"`
+	NextCheckAt        time.Time `json:"next_check_at"`
 	EtagHeader         string    `json:"etag_header"`
 	LastModifiedHeader string    `json:"last_modified_header"`
 	ParsingErrorMsg    string    `json:"parsing_error_message"`
@@ -36,6 +40,11 @@ type Feed struct {
 	UnreadCount        int       `json:"-"`
 	ReadCount          int       `json:"-"`
 }
+
+const (
+	// SchedulerEntryCountBased represnets the name of the scheduler based on entry counts.
+	SchedulerEntryCountBased = "entry_count_based"
+)
 
 func (f *Feed) String() string {
 	return fmt.Sprintf("ID=%d, UserID=%d, FeedURL=%s, SiteURL=%s, Title=%s, Category={%s}",
@@ -89,6 +98,28 @@ func (f *Feed) CheckedNow() {
 	if f.SiteURL == "" {
 		f.SiteURL = f.FeedURL
 	}
+}
+
+// ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
+func (f *Feed) ScheduleNextCheck(weeklyCount int) {
+	var nextCheckAt time.Time
+	switch strings.ToLower(config.Opts.PollingScheduler()) {
+	case SchedulerEntryCountBased:
+		var intervalMinutes int
+		if weeklyCount == 0 {
+			intervalMinutes = config.Opts.SchedulerCountBasedMaxInterval()
+		} else {
+			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount)))
+		}
+		intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerCountBasedMaxInterval())))
+		intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerCountBasedMinInterval())))
+		nextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
+	default:
+		// round robin
+		// omit the interval because they are same for all feeds.
+		nextCheckAt = time.Now()
+	}
+	f.NextCheckAt = nextCheckAt
 }
 
 // Feeds is a list of feed
