@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
 	"miniflux.app/locale"
@@ -90,13 +91,17 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		return errors.NewLocalizedError(errNotFound, feedID)
 	}
 
-	weeklyCount, parametersErr := h.store.FeedSchedulerParameters(userID, feedID)
-	if parametersErr != nil {
-		return parametersErr
+	weeklyEntryCount := 0
+	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
+		var weeklyCountErr error
+		weeklyEntryCount, weeklyCountErr = h.store.WeeklyFeedEntryCount(userID, feedID)
+		if weeklyCountErr != nil {
+			return weeklyCountErr
+		}
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyCount)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount)
 
 	request := client.New(originalFeed.FeedURL)
 	request.WithCredentials(originalFeed.Username, originalFeed.Password)

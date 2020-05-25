@@ -133,9 +133,9 @@ func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
 	maxInterval := 5
 	minInterval := 1
 	os.Clearenv()
-	os.Setenv("POLLING_SCHEDULER", "entry_count_based")
-	os.Setenv("SCHEDULER_ENTRY_COUNT_BASED_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_COUNT_BASED_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
 
 	var err error
 	parser := config.NewParser()
@@ -160,9 +160,9 @@ func TestFeedScheduleNextCheckEntryCountBasedMinInterval(t *testing.T) {
 	maxInterval := 500
 	minInterval := 100
 	os.Clearenv()
-	os.Setenv("POLLING_SCHEDULER", "entry_count_based")
-	os.Setenv("SCHEDULER_ENTRY_COUNT_BASED_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
-	os.Setenv("SCHEDULER_ENTRY_COUNT_BASED_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
 
 	var err error
 	parser := config.NewParser()
