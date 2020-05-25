@@ -144,6 +144,7 @@
     "page.keyboard_shortcuts.open_comments": "Kommentare öffnen",
     "page.keyboard_shortcuts.open_comments_same_window": "Öffne den Kommentare-Link in der aktuellen Registerkarte",
     "page.keyboard_shortcuts.toggle_read_status": "Gewählten Artikel als gelesen/ungelesen markieren",
+    "page.keyboard_shortcuts.refresh_all_feeds": "Alle Abonnements im Hintergrund aktualisieren",
     "page.keyboard_shortcuts.mark_page_as_read": "Aktuelle Seite als gelesen markieren",
     "page.keyboard_shortcuts.download_content": "Vollständigen Inhalt herunterladen",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Lesezeichen hinzufügen/entfernen",

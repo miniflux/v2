@@ -142,6 +142,7 @@
     "page.keyboard_shortcuts.open_comments": "打开评论链接",
     "page.keyboard_shortcuts.open_comments_same_window": "在当前标签页中打开评论链接",
     "page.keyboard_shortcuts.toggle_read_status": "切换已读/未读状态",
+    "page.keyboard_shortcuts.refresh_all_feeds": "在后台更新全部源",
     "page.keyboard_shortcuts.mark_page_as_read": "标记当前页已读",
     "page.keyboard_shortcuts.download_content": "下载原始内容",
     "page.keyboard_shortcuts.toggle_bookmark_status": "切换收藏状态",
