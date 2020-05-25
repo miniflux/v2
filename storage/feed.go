@@ -8,9 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
-	"miniflux.app/config"
 	"miniflux.app/model"
 	"miniflux.app/timezone"
 )
@@ -274,14 +272,8 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}
 	return feeds, nil
 }
 
-// FeedSchedulerParameters returns the parameters used for the scheduler.
-func (s *Storage) FeedSchedulerParameters(userID, feedID int64) (int, error) {
-	scheduler := strings.ToLower(config.Opts.PollingScheduler())
-	if scheduler != model.SchedulerEntryCountBased {
-		return 0, nil
-	}
-	var weeklyCount int
-
+// WeeklyFeedEntryCount returns the weekly entry count for a feed.
+func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 	query := `
 		SELECT
 			count(*)
@@ -293,15 +285,14 @@ func (s *Storage) FeedSchedulerParameters(userID, feedID int64) (int, error) {
 			entries.published_at BETWEEN (now() - interval '1 week') AND now();
 	`
 
-	err := s.db.QueryRow(query, userID, feedID).Scan(
-		&weeklyCount,
-	)
+	var weeklyCount int
+	err := s.db.QueryRow(query, userID, feedID).Scan(&weeklyCount)
 
 	switch {
 	case err == sql.ErrNoRows:
 		return 0, nil
 	case err != nil:
-		return 0, fmt.Errorf(`store: unable to fetch scheduler parameters for feed #%d: %v`, feedID, err)
+		return 0, fmt.Errorf(`store: unable to fetch weekly count for feed #%d: %v`, feedID, err)
 	}
 
 	return weeklyCount, nil

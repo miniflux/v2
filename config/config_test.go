@@ -736,17 +736,17 @@ func TestDefautSchedulerCountBasedMaxIntervalValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultSchedulerCountBasedMaxInterval
-	result := opts.SchedulerCountBasedMaxInterval()
+	expected := defaultSchedulerEntryFrequencyMaxInterval
+	result := opts.SchedulerEntryFrequencyMaxInterval()
 
 	if result != expected {
-		t.Fatalf(`Unexpected SCHEDULER_ENTRY_COUNT_BASED_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 
 func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("SCHEDULER_ENTRY_COUNT_BASED_MAX_INTERVAL", "30")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", "30")
 
 	parser := NewParser()
 	opts, err := parser.ParseEnvironmentVariables()
@@ -755,10 +755,10 @@ func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
 	}
 
 	expected := 30
-	result := opts.SchedulerCountBasedMaxInterval()
+	result := opts.SchedulerEntryFrequencyMaxInterval()
 
 	if result != expected {
-		t.Fatalf(`Unexpected SCHEDULER_ENTRY_COUNT_BASED_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 
@@ -771,17 +771,17 @@ func TestDefautSchedulerCountBasedMinIntervalValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultSchedulerCountBasedMinInterval
-	result := opts.SchedulerCountBasedMinInterval()
+	expected := defaultSchedulerEntryFrequencyMinInterval
+	result := opts.SchedulerEntryFrequencyMinInterval()
 
 	if result != expected {
-		t.Fatalf(`Unexpected SCHEDULER_ENTRY_COUNT_BASED_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 
 func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("SCHEDULER_ENTRY_COUNT_BASED_MIN_INTERVAL", "30")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", "30")
 
 	parser := NewParser()
 	opts, err := parser.ParseEnvironmentVariables()
@@ -790,10 +790,10 @@ func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
 	}
 
 	expected := 30
-	result := opts.SchedulerCountBasedMinInterval()
+	result := opts.SchedulerEntryFrequencyMinInterval()
 
 	if result != expected {
-		t.Fatalf(`Unexpected SCHEDULER_ENTRY_COUNT_BASED_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 

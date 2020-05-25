@@ -7,7 +7,6 @@ package model // import "miniflux.app/model"
 import (
 	"fmt"
 	"math"
-	"strings"
 	"time"
 
 	"miniflux.app/config"
@@ -41,9 +40,10 @@ type Feed struct {
 	ReadCount          int       `json:"-"`
 }
 
+// List of supported schedulers.
 const (
-	// SchedulerEntryCountBased represnets the name of the scheduler based on entry counts.
-	SchedulerEntryCountBased = "entry_count_based"
+	SchedulerRoundRobin     = "round_robin"
+	SchedulerEntryFrequency = "entry_frequency"
 )
 
 func (f *Feed) String() string {
@@ -102,24 +102,20 @@ func (f *Feed) CheckedNow() {
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
 func (f *Feed) ScheduleNextCheck(weeklyCount int) {
-	var nextCheckAt time.Time
-	switch strings.ToLower(config.Opts.PollingScheduler()) {
-	case SchedulerEntryCountBased:
+	switch config.Opts.PollingScheduler() {
+	case SchedulerEntryFrequency:
 		var intervalMinutes int
 		if weeklyCount == 0 {
-			intervalMinutes = config.Opts.SchedulerCountBasedMaxInterval()
+			intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
 		} else {
 			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount)))
 		}
-		intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerCountBasedMaxInterval())))
-		intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerCountBasedMinInterval())))
-		nextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
+		intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
+		intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
+		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 	default:
-		// round robin
-		// omit the interval because they are same for all feeds.
-		nextCheckAt = time.Now()
+		f.NextCheckAt = time.Now()
 	}
-	f.NextCheckAt = nextCheckAt
 }
 
 // Feeds is a list of feed
