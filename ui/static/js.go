@@ -64,7 +64,7 @@ function handleEntryStatus(element){let toasting=!element;let currentEntry=findE
 function toggleEntryStatus(element,toasting){let entryID=parseInt(element.dataset.id,10);let link=element.querySelector("a[data-toggle-status]");let currentStatus=link.dataset.value;let newStatus=currentStatus==="read"?"unread":"read";updateEntriesStatus([entryID],newStatus);if(currentStatus==="read"){link.innerHTML='<span class="icon-label">'+link.dataset.labelRead+'</span>';link.dataset.value="unread";if(toasting){toast(link.dataset.toastUnread);}}else{link.innerHTML='<span class="icon-label">'+link.dataset.labelUnread+'</span>';link.dataset.value="read";if(toasting){toast(link.dataset.toastRead);}}
 if(element.classList.contains("item-status-"+currentStatus)){element.classList.remove("item-status-"+currentStatus);element.classList.add("item-status-"+newStatus);}}
 function markEntryAsRead(element){if(element.classList.contains("item-status-unread")){element.classList.remove("item-status-unread");element.classList.add("item-status-read");let entryID=parseInt(element.dataset.id,10);updateEntriesStatus([entryID],"read");}}
-function handleRefreshAllFeeds(){let url="/feeds/refresh";let request=new RequestBuilder(url);request.withCallback(()=>{window.location.reload();});request.withHttpMethod("GET");request.execute();}
+function handleRefreshAllFeeds(){let url=document.body.dataset.refreshAllFeedsUrl;let request=new RequestBuilder(url);request.withCallback(()=>{window.location.reload();});request.withHttpMethod("GET");request.execute();}
 function updateEntriesStatus(entryIDs,status,callback){let url=document.body.dataset.entriesStatusUrl;let request=new RequestBuilder(url);request.withBody({entry_ids:entryIDs,status:status});request.withCallback(callback);request.execute();if(status==="read"){decrementUnreadCounter(1);}else{incrementUnreadCounter(1);}}
 function handleSaveEntry(element){let toasting=!element;let currentEntry=findEntry(element);if(currentEntry){saveEntry(currentEntry.querySelector("a[data-save-entry]"),toasting);}}
 function saveEntry(element,toasting){if(!element){return;}
@@ -112,6 +112,6 @@ window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();let defer
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "dffcdb5ea25c1705f6bd5d0b22c39d77ec0492866289e71a9739b252d7866fdb",
+	"app": "5b7b79ccbdaa1820052f5cf45f7dc92c58cb6362dffb01f8428db9bb82fa705b",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }

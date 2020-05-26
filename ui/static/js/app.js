@@ -169,7 +169,7 @@ function markEntryAsRead(element) {
 
 // Send the Ajax request to refresh all feeds in the background
 function handleRefreshAllFeeds() {
-    let url = "/feeds/refresh";
+    let url = document.body.dataset.refreshAllFeedsUrl;
     let request = new RequestBuilder(url);
 
     request.withCallback(() => {

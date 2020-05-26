@@ -311,6 +311,7 @@ SOFTWARE.
 </head>
 <body
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
+    data-refresh-all-feeds-url="{{ route "refreshAllFeeds" }}"
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
     <div class="toast-wrap">
         <span class="toast-msg"></span>
@@ -478,7 +479,7 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "f0d94c2cfa6655b44adaf97f0b95c52a9cff5c31f3a8829ad438e4db7114af7e",
 	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
-	"layout":           "6cff072d731828de1fad447bec7b37a7a6a1efe91725e765516b38f95ade334d",
+	"layout":           "91d2ab3f683a2ced5e9ce5cd04919e74b3e3f329a5eedcc60015b8d49ecb1b77",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",
 }
