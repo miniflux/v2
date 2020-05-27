@@ -14,6 +14,11 @@ class RequestBuilder {
         };
     }
 
+    withHttpMethod(method) {
+        this.options.method = method;
+        return this;
+    }
+
     withBody(body) {
         this.options.body = JSON.stringify(body);
         return this;

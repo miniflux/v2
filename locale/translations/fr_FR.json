@@ -144,6 +144,7 @@
     "page.keyboard_shortcuts.open_comments": "Ouvrir le lien des commentaires",
     "page.keyboard_shortcuts.open_comments_same_window": "Ouvrir le lien des commentaires dans l'onglet en cours",
     "page.keyboard_shortcuts.toggle_read_status": "Basculer entre lu/non lu",
+    "page.keyboard_shortcuts.refresh_all_feeds": "Actualiser les abonnements en arrière-plan",
     "page.keyboard_shortcuts.mark_page_as_read": "Marquer la page actuelle comme lu",
     "page.keyboard_shortcuts.download_content": "Télécharger le contenu original",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Ajouter/Enlever favoris",

@@ -144,6 +144,7 @@
     "page.keyboard_shortcuts.open_comments": "コメントリンクを開く",
     "page.keyboard_shortcuts.open_comments_same_window": "現在のタブでコメントリンクを開く",
     "page.keyboard_shortcuts.toggle_read_status": "既読/未読 切り替え",
+    "page.keyboard_shortcuts.refresh_all_feeds": "全てのフィードをバックグラウンドで更新",
     "page.keyboard_shortcuts.mark_page_as_read": "現在のページを既読にする",
     "page.keyboard_shortcuts.download_content": "オリジナルの内容をダウンロード",
     "page.keyboard_shortcuts.toggle_bookmark_status": "星を付ける/外す",
