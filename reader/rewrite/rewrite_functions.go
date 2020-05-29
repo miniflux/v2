@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 
 	"miniflux.app/http/client"
 
@@ -195,16 +196,25 @@ func resolveRedirects(entryContent string) string {
 	matches := doc.Find("a[href]")
 
 	if matches.Length() > 0 {
-		matches.Each(func(i int, anchor *goquery.Selection) {
-			if url, exists := anchor.Attr("href"); exists {
-				clt := client.New(url)
-				resp, err := clt.Head()
+		var wg sync.WaitGroup
+		wg.Add(matches.Length())
 
-				if err == nil {
-					anchor.SetAttr("href", resp.EffectiveURL)
+		matches.Each(func(i int, anchor *goquery.Selection) {
+			go func(anchor *goquery.Selection) {
+				defer wg.Done()
+
+				if url, exists := anchor.Attr("href"); exists {
+					clt := client.New(url)
+					resp, err := clt.Head()
+
+					if err == nil {
+						anchor.SetAttr("href", resp.EffectiveURL)
+					}
 				}
-			}
+			}(anchor)
 		})
+
+		wg.Wait()
 
 		output, _ := doc.Find("body").First().Html()
 		return output
