@@ -111,6 +111,16 @@ func (c *Client) Get() (*Response, error) {
 	return c.executeRequest(request)
 }
 
+// Head execute a HEAD HTTP request.
+func (c *Client) Head() (*Response, error) {
+	request, err := c.buildRequest(http.MethodHead, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.executeRequest(request)
+}
+
 // PostForm execute a POST HTTP request with form values.
 func (c *Client) PostForm(values url.Values) (*Response, error) {
 	request, err := c.buildRequest(http.MethodPost, strings.NewReader(values.Encode()))
