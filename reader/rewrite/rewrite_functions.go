@@ -11,6 +11,8 @@ import (
 	"regexp"
 	"strings"
 
+	"miniflux.app/http/client"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -182,4 +184,31 @@ func replaceTextLinks(input string) string {
 
 func replaceLineFeeds(input string) string {
 	return strings.Replace(input, "\n", "<br>", -1)
+}
+
+func resolveRedirects(entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	matches := doc.Find("a[href]")
+
+	if matches.Length() > 0 {
+		matches.Each(func(i int, anchor *goquery.Selection) {
+			if url, exists := anchor.Attr("href"); exists {
+				clt := client.New(url)
+				resp, err := clt.Head()
+
+				if err == nil {
+					anchor.SetAttr("href", resp.EffectiveURL)
+				}
+			}
+		})
+
+		output, _ := doc.Find("body").First().Html()
+		return output
+	}
+
+	return entryContent
 }
