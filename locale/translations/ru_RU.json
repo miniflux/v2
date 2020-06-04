@@ -96,6 +96,7 @@
     "page.feeds.title": "Подписки",
     "page.feeds.last_check": "Последняя проверка:",
     "page.feeds.unread_counter": "Количество непрочитанных записей",
+    "page.feeds.total_counter": "Количество общих записей",
     "page.feeds.read_counter": "Количество прочитанных записей",
     "page.feeds.error_count": [
         "%d ошибка",

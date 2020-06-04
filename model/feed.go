@@ -22,6 +22,7 @@ type Feed struct {
 	Title              string    `json:"title"`
 	CheckedAt          time.Time `json:"checked_at"`
 	NextCheckAt        time.Time `json:"next_check_at"`
+	PublishedAt        time.Time `json:"published_at"`
 	EtagHeader         string    `json:"etag_header"`
 	LastModifiedHeader string    `json:"last_modified_header"`
 	ParsingErrorMsg    string    `json:"parsing_error_message"`
@@ -39,6 +40,7 @@ type Feed struct {
 	Icon               *FeedIcon `json:"icon"`
 	UnreadCount        int       `json:"-"`
 	ReadCount          int       `json:"-"`
+	TotalCount         int       `json:"-"`
 }
 
 // List of supported schedulers.

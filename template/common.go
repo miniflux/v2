@@ -36,7 +36,11 @@ var templateCommonMap = map[string]string{
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
                 </span>
                 <span class="feed-entries-counter">
-                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                    (
+                        <span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/
+                        <span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>/
+                        <span title="{{ t "page.feeds.total_counter" }}">{{ .TotalCount }}</span>
+                    )
                 </span>
                 <span class="category">
                     <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
@@ -46,6 +50,9 @@ var templateCommonMap = map[string]string{
                 <ul class="item-meta-info">
                     <li dir="auto">
                         <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
+                    </li>
+                    <li>
+                        <time datetime="{{ isodate .PublishedAt }}" title="{{ isodate .PublishedAt }}">{{ elapsed $.user.Timezone .PublishedAt }}</time>
                     </li>
                     <li>
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
@@ -507,7 +514,7 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "30acc9ecc413811e73a1dad120b5d44e29564de3ba794fb07ee886b30addfb19",
+	"feed_list":        "66b0d4aa3592823aec3fd43d37fa64085cdd2ec2e87680bb3aa162955b8645aa",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
 	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",

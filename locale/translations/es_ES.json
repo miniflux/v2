@@ -96,6 +96,7 @@
     "page.feeds.last_check": "Última verificación:",
     "page.feeds.unread_counter": "Número de entradas no leídas",
     "page.feeds.read_counter": "Número de entradas leídas",
+    "page.feeds.total_counter": "Número de entradas totales",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"

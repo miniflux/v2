@@ -101,6 +101,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "Letzte Aktualisierung:",
     "page.feeds.unread_counter": "Anzahl der ungelesenen Artikel",
     "page.feeds.read_counter": "Anzahl der gelesenen Artikel",
+    "page.feeds.total_counter": "Anzahl der gesamten Artikel",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"
@@ -439,6 +440,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "Last check:",
     "page.feeds.unread_counter": "Number of unread entries",
     "page.feeds.read_counter": "Number of read entries",
+    "page.feeds.total_counter": "Number of total entries",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -757,6 +759,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "Última verificación:",
     "page.feeds.unread_counter": "Número de entradas no leídas",
     "page.feeds.read_counter": "Número de entradas leídas",
+    "page.feeds.total_counter": "Número de entradas totales",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"
@@ -1075,6 +1078,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "Dernière vérification :",
     "page.feeds.unread_counter": "Nombre d'entrées non lues",
     "page.feeds.read_counter": "Nombre d'entrées lues",
+    "page.feeds.total_counter": "Nombre total d'entrées",
     "page.feeds.error_count": [
         "%d erreur",
         "%d erreurs"
@@ -1413,6 +1417,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "Ultimo controllo:",
     "page.feeds.unread_counter": "Numero di voci non lette",
     "page.feeds.read_counter": "Numero di voci lette",
+    "page.feeds.total_counter": "Numero di voci totali",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"
@@ -1731,6 +1736,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "最終チェック:",
     "page.feeds.unread_counter": "未読記事の数",
     "page.feeds.read_counter": "既読記事の数",
+    "page.feeds.total_counter": "合計エントリ数",
     "page.feeds.error_count": [
         "%d 個のエラー",
         "%d 個のエラー"
@@ -2049,6 +2055,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "Laatste update:",
     "page.feeds.unread_counter": "Aantal ongelezen vermeldingen",
     "page.feeds.read_counter": "Aantal gelezen vermeldingen",
+    "page.feeds.total_counter": "Totaal aantal inzendingen",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -2385,6 +2392,7 @@ var translations = map[string]string{
     "page.feeds.title": "Kanały",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
     "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
+    "page.feeds.total_counter": "Liczba wszystkich wpisów",
     "page.feeds.read_counter": "Liczba przeczytanych wpisów",
     "page.feeds.error_count": [
         "%d błąd",
@@ -2729,6 +2737,7 @@ var translations = map[string]string{
     "page.feeds.title": "Подписки",
     "page.feeds.last_check": "Последняя проверка:",
     "page.feeds.unread_counter": "Количество непрочитанных записей",
+    "page.feeds.total_counter": "Количество общих записей",
     "page.feeds.read_counter": "Количество прочитанных записей",
     "page.feeds.error_count": [
         "%d ошибка",
@@ -3054,6 +3063,7 @@ var translations = map[string]string{
     "page.feeds.last_check": "最后检查时间：",
     "page.feeds.unread_counter": "未读条目数",
     "page.feeds.read_counter": "读取条目数",
+    "page.feeds.total_counter": "总条目数",
     "page.feeds.error_count": [
         "%d 错误"
     ],
@@ -3289,14 +3299,14 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "ddb063682852c86361af350be616d3bd328373ecb927804824008d016aa7c67c",
-	"en_US": "350b835f759212abd2110322394aa00b666fbf27d752532a7700fb52d5af3f02",
-	"es_ES": "26efc79faaf35efe5a33528cedc2522496987d290c9e86d8fff3a9bcbed3e441",
-	"fr_FR": "e8736791d5373b955cacce215b3ae67d56280bfa5d4596899e4e5e37ff962afd",
-	"it_IT": "8ec2311e00c45b4d2b939ad0280fe49277f5c851a4cd521f42be1a88baef4c34",
-	"ja_JP": "237f49939be015b509d4b3a02890691c3766df8878109114493624cfd13c0cad",
-	"nl_NL": "c70e1eaa3c2e8c0130522189c3932b52ee6e9ff91c91b0090eb9178f2f23c588",
-	"pl_PL": "1d5e05789a3150a8f1ddbe57616d509d1d33c61b60200c563a5e23571671209e",
-	"ru_RU": "b0408b7a150bd79e411376ced3acb706a12e6b28e564a6abfedbdebc2d552915",
-	"zh_CN": "7732905e498d087c9a11ecc3eae8736e758c6b053da13de64fd6599ca40d8ee6",
+	"de_DE": "1ed31a961d37fb9b94ec995ee787a879680acc38df9653ca14125ece39061fc7",
+	"en_US": "a02bd88d2197dfc76568271f037b5469197b0055e5330ab464724c2c0289a230",
+	"es_ES": "75c871af804bb0acde68bed0fdca75c0ebb0a73d5d9269fed816d529fc511c81",
+	"fr_FR": "0a14dfeb92dbbefe08aff6a2e0f1a0f81a5a879199bcdfe6d1a25396ee051512",
+	"it_IT": "b0714b773a678d8a082dae310401bc0df2721098f8386b4e81f90043764eb8af",
+	"ja_JP": "490f31c346f947cf6a5e1aae667e30c1a74f96ea3b34e3d6bf903275cd2d966d",
+	"nl_NL": "815307bdd44a4407a7d6eebb828a9c74ea83870b95b410a449efb4cc9e518ccb",
+	"pl_PL": "f462fe44aa8ae1ebf3bc4daae6af5726472e69437160fa788bf5297b2347b442",
+	"ru_RU": "0d5e2cd9c619357d84d09951853817554d06725fc37e647659722b87b1b7b1f5",
+	"zh_CN": "2f45753089ff6c2760500e70e10a04c7d9ba13e5e889c4b66c8e9a2e13b34ea6",
 }

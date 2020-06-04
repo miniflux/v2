@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"miniflux.app/model"
 	"miniflux.app/timezone"
@@ -92,7 +93,7 @@ func (s *Storage) CountErrorFeeds(userID int64) int {
 
 // Feeds returns all feeds that belongs to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
-	return s.fetchFeeds(feedListQuery, "", userID)
+	return s.fetchFeeds(feedListQuery, "", "", userID)
 }
 
 // FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
@@ -105,11 +106,24 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 		FROM
 			entries
 		WHERE
-			user_id=$1 AND status IN ('read', 'unread')
+			user_id=$1 AND status<>'removed'
 		GROUP BY
 			feed_id, status
 	`
-	return s.fetchFeeds(feedListQuery, counterQuery, userID)
+
+	publishedAtQuery := `
+		SELECT
+			feed_id,
+			COALESCE(MAX(published_at), '2000/01/01')
+		FROM
+			entries
+		WHERE
+			user_id=$1
+		GROUP BY
+			feed_id
+	`
+
+	return s.fetchFeeds(feedListQuery, counterQuery, publishedAtQuery, userID)
 }
 
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
@@ -162,50 +176,97 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 		LEFT JOIN
 			feeds f ON f.id=e.feed_id
 		WHERE
-			e.user_id=$1 AND f.category_id=$2 AND e.status IN ('read', 'unread')
+			e.user_id=$1 AND f.category_id=$2 AND e.status<>'removed'
 		GROUP BY
 			e.feed_id, e.status
 	`
 
-	return s.fetchFeeds(feedQuery, counterQuery, userID, categoryID)
+	publishedAtQuery := `
+		SELECT
+			e.feed_id,
+			COALESCE(MAX(e.published_at), '2000/01/01')
+		FROM
+			entries e
+		LEFT JOIN
+			feeds f ON f.id=e.feed_id
+		WHERE
+			e.user_id=$1 AND f.category_id=$2
+		GROUP BY
+			e.feed_id
+	`
+
+	return s.fetchFeeds(feedQuery, counterQuery, publishedAtQuery, userID, categoryID)
 }
 
-func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (unreadCounters map[int64]int, readCounters map[int64]int, err error) {
+func (s *Storage) fetchFeedPublishedAt(query string, args ...interface{}) (publishedAt map[int64]time.Time, err error) {
 	rows, err := s.db.Query(query, args...)
 	if err != nil {
-		return nil, nil, fmt.Errorf(`store: unable to fetch feed counts: %v`, err)
+		return nil, fmt.Errorf(`store: unable to fetch published-at: %v`, err)
+	}
+	defer rows.Close()
+	publishedAt = make(map[int64]time.Time)
+	for rows.Next() {
+		var feedID int64
+		var publishedAtScan time.Time
+		if err := rows.Scan(&feedID, &publishedAtScan); err != nil {
+			return nil, fmt.Errorf(`store: unable to fetch published-at row: %v`, err)
+		}
+		publishedAt[feedID] = publishedAtScan
+	}
+	return publishedAt, nil
+}
+
+type feedCounter struct {
+	Read   int
+	Unread int
+}
+
+func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (feedCounters map[int64]feedCounter, err error) {
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf(`store: unable to fetch feed counts: %v`, err)
 	}
 	defer rows.Close()
 
-	readCounters = make(map[int64]int)
-	unreadCounters = make(map[int64]int)
+	feedCounters = make(map[int64]feedCounter)
 	for rows.Next() {
 		var feedID int64
 		var status string
 		var count int
 		if err := rows.Scan(&feedID, &status, &count); err != nil {
-			return nil, nil, fmt.Errorf(`store: unable to fetch feed counter row: %v`, err)
+			return nil, fmt.Errorf(`store: unable to fetch feed counter row: %v`, err)
 		}
 
-		if status == "read" {
-			readCounters[feedID] = count
-		} else if status == "unread" {
-			unreadCounters[feedID] = count
+		fcount, _ := feedCounters[feedID]
+		switch status {
+		case "read":
+			fcount.Read = count
+		case "unread":
+			fcount.Unread = count
 		}
+		feedCounters[feedID] = fcount
 	}
 
-	return readCounters, unreadCounters, nil
+	return feedCounters, nil
 }
 
-func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}) (model.Feeds, error) {
+func (s *Storage) fetchFeeds(feedQuery, counterQuery, publishedAtQuery string, args ...interface{}) (model.Feeds, error) {
 	var (
-		readCounters   map[int64]int
-		unreadCounters map[int64]int
+		feedCounters map[int64]feedCounter
+		publishedAt  map[int64]time.Time
 	)
 
 	if counterQuery != "" {
 		var err error
-		readCounters, unreadCounters, err = s.fetchFeedCounter(counterQuery, args...)
+		feedCounters, err = s.fetchFeedCounter(counterQuery, args...)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if publishedAtQuery != "" {
+		var err error
+		publishedAt, err = s.fetchFeedPublishedAt(publishedAtQuery, args...)
 		if err != nil {
 			return nil, err
 		}
@@ -258,12 +319,16 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}
 		}
 
 		if counterQuery != "" {
-			if count, found := readCounters[feed.ID]; found {
-				feed.ReadCount = count
+			if count, found := feedCounters[feed.ID]; found {
+				feed.ReadCount = count.Read
+				feed.UnreadCount = count.Unread
+				feed.TotalCount = count.Read + count.Unread
 			}
+		}
 
-			if count, found := unreadCounters[feed.ID]; found {
-				feed.UnreadCount = count
+		if publishedAtQuery != "" {
+			if feedPublishedAt, found := publishedAt[feed.ID]; found {
+				feed.PublishedAt = timezone.Convert(tz, feedPublishedAt)
 			}
 		}
 

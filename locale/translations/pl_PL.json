@@ -96,6 +96,7 @@
     "page.feeds.title": "Kanały",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
     "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
+    "page.feeds.total_counter": "Liczba wszystkich wpisów",
     "page.feeds.read_counter": "Liczba przeczytanych wpisów",
     "page.feeds.error_count": [
         "%d błąd",
