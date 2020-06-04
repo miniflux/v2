@@ -91,12 +91,12 @@ function markPageAsRead() {
     let entryIDs = [];
 
     items.forEach((element) => {
-        element.classList.add("item-status-read");
+        element.classList.add("item-status-marked");
         entryIDs.push(parseInt(element.dataset.id, 10));
     });
 
     if (entryIDs.length > 0) {
-        updateEntriesStatus(entryIDs, "read", () => {
+        updateEntriesStatus(entryIDs, "marked", () => {
             // Make sure the Ajax request reach the server before we reload the page.
 
             let element = document.querySelector("a[data-action=markPageAsRead]");
@@ -188,7 +188,7 @@ function updateEntriesStatus(entryIDs, status, callback) {
     request.withCallback(callback);
     request.execute();
 
-    if (status === "read") {
+    if (status === "read" || status === "marked") {
         decrementUnreadCounter(1);
     } else {
         incrementUnreadCounter(1);

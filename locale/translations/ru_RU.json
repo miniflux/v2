@@ -36,6 +36,7 @@
     "menu.mark_all_as_read": "Отметить всё как прочитанное",
     "menu.show_all_entries": "Показать все статьи",
     "menu.show_only_unread_entries": "Показывать только непрочитанные статьи",
+    "menu.show_only_read_entries": "Показывать только прочитанные статьи",
     "menu.refresh_feed": "Обновить",
     "menu.refresh_all_feeds": "Обновить все подписки в фоне",
     "menu.edit_feed": "Изменить",
@@ -105,6 +106,7 @@
     "page.feeds.unread_counter": "Количество непрочитанных записей",
     "page.feeds.total_counter": "Количество общих записей",
     "page.feeds.read_counter": "Количество прочитанных записей",
+    "page.feeds.total_counter": "Количество общих записей",
     "page.feeds.error_count": [
         "%d ошибка",
         "%d ошибки",

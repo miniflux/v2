@@ -183,6 +183,24 @@ create unique index entries_share_code_idx on entries using btree(share_code) wh
 create index entries_user_feed_idx on entries (user_id, feed_id);
 `,
 	"schema_version_31": `alter table feeds add column ignore_http_cache bool default false;`,
+	"schema_version_32": `-- The following command is easier, but not working for postgres 10.
+-- ALTER TYPE entry_status ADD VALUE 'marked';
+
+-- Use the alternative method for older postgres.
+-- rename the old enum
+alter type entry_status rename to entry_status__;
+-- create the new enum
+create type entry_status as enum('unread', 'read', 'removed', 'marked');
+
+-- alter all you enum columns
+ALTER TABLE entries 
+  ALTER COLUMN status DROP DEFAULT, 
+  ALTER COLUMN status TYPE entry_status USING (status::text::entry_status), 
+  ALTER COLUMN status SET DEFAULT 'unread';
+
+-- drop the old enum
+drop type entry_status__;
+`,
 	"schema_version_4": `create type entry_sorting_direction as enum('asc', 'desc');
 alter table users add column entry_direction entry_sorting_direction default 'asc';
 `,
@@ -237,6 +255,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_3":  "a54745dbc1c51c000f74d4e5068f1e2f43e83309f023415b1749a47d5c1e0f12",
 	"schema_version_30": "3ec48a9b2e7a0fc32c85f31652f723565c34213f5f2d7e5e5076aad8f0b40d23",
 	"schema_version_31": "9290ef295731b03ddfe32dcaded0be70d41b63572420ad379cf2874a9b54581c",
+	"schema_version_32": "a4d95520b1592e6c4df11f8d538179a34b38f36b154588ed8c1d656c93f2e185",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",
 	"schema_version_6":  "9d05b4fb223f0e60efc716add5048b0ca9c37511cf2041721e20505d6d798ce4",

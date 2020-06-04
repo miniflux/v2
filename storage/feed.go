@@ -219,6 +219,7 @@ func (s *Storage) fetchFeedPublishedAt(query string, args ...interface{}) (publi
 type feedCounter struct {
 	Read   int
 	Unread int
+	Marked int
 }
 
 func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (feedCounters map[int64]feedCounter, err error) {
@@ -243,6 +244,8 @@ func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (feedCount
 			fcount.Read = count
 		case "unread":
 			fcount.Unread = count
+		case "marked":
+			fcount.Marked = count
 		}
 		feedCounters[feedID] = fcount
 	}
@@ -322,7 +325,7 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery, publishedAtQuery string, a
 			if count, found := feedCounters[feed.ID]; found {
 				feed.ReadCount = count.Read
 				feed.UnreadCount = count.Unread
-				feed.TotalCount = count.Read + count.Unread
+				feed.TotalCount = count.Read + count.Unread + count.Marked
 			}
 		}
 

@@ -36,6 +36,7 @@
     "menu.mark_all_as_read": "Segna tutti gli articoli come letti",
     "menu.show_all_entries": "Mostra tutte le voci",
     "menu.show_only_unread_entries": "Mostra solo voci non lette",
+    "menu.show_only_read_entries": "Mostra solo voci lette",
     "menu.refresh_feed": "Aggiorna",
     "menu.refresh_all_feeds": "Aggiorna tutti i feed in background",
     "menu.edit_feed": "Modifica",

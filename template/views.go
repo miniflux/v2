@@ -942,13 +942,13 @@ var templateViewsMap = map[string]string{
 
 {{ end }}
 `,
-	"history_entries": `{{ define "title"}}{{ t "page.history.title" }} ({{ .total }}){{ end }}
+	"history_entries": `{{ define "title"}}{{ t "page.history.title" }} ({{ .display_count }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
-    {{ if .entries }}
+    <h1>{{ t "page.history.title" }} ({{ .display_count }})</h1>
     <ul>
+        {{ if .entries }}
         <li>
             <a href="#"
                 data-confirm="true"
@@ -958,23 +958,27 @@ var templateViewsMap = map[string]string{
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
         </li>
+        {{ end }}
         <li>
             <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
         </li>
-    </ul>
-    {{ else }}
-    <ul>
+        {{ if .showOnlyReadEntries }}
         <li>
-            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+            <a href="{{ route "history" }}">{{ t "menu.show_all_entries" }}</a>
         </li>
+        {{ else }}
+        <li>
+            <a href="{{ route "historyReadEntries" }}">{{ t "menu.show_only_read_entries" }}</a>
+        </li>
+        {{ end }}
     </ul>
-    {{ end }}
 </section>
 
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
     <div class="items">
+        {{ if .showOnlyReadEntries }}
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
@@ -982,12 +986,28 @@ var templateViewsMap = map[string]string{
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                     {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    <a href="{{ route "historyReadEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
         </article>
+        {{ end }}
+        {{ else }}
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "historyEntry" "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+        </article>
+        {{ end }}
         {{ end }}
     </div>
     {{ template "pagination" .pagination }}
@@ -1382,7 +1402,7 @@ var templateViewsMap = map[string]string{
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                     {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    <a href="{{ route "historyEntry" "entryID" .ID }}">{{ .Title }}</a>
                     {{ if .ShareCode }}
                         <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
                             title="{{ t "entry.shared_entry.title" }}"
@@ -1559,14 +1579,14 @@ var templateViewsMapChecksums = map[string]string{
 	"entry":               "c503dcf77de37090b9f05352bb9d99729085eec6e7bc22be94f2b4b244b4e48c",
 	"feed_entries":        "ea5b88e3ad6b166d83b70e021d7b420d025f80decb6e24c79d13f8ce7c910b04",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
-	"history_entries":     "341f0da8b6c27a8377901aa80bb1d5c923672af32f689d36de14deabce5c737f",
+	"history_entries":     "2527a81e9b45c5818f8ac13996097967976a3ab05ff42373fe7d113968ef033e",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "30329452743b35c668278f519245fd9be05c1726856e0384ba542f7c307f2788",
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "c0786ddc6b17e865007b975eefb97417935cbc601f5917cca1ee0d3f584594bc",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
 	"settings":            "3ab566c3220c62edc3edc51f2e93c1101b728e9f62f52f23de6bc6322d86aeb6",
-	"shared_entries":      "1494d81e46f6af534a73cf6a91f8dfda1932a477bb3a70143513896ac0f0220b",
+	"shared_entries":      "f30d3bef54a13be66eafcca9cad288423a5f2e5f0dbca34d7b0cab22aad88de6",
 	"unread_entries":      "e0080d0cf3583cda51d865422960137c8556c432853657086e43daf6bd5b73be",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",
 }

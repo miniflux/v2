@@ -36,6 +36,7 @@
     "menu.mark_all_as_read": "全て既読にする",
     "menu.show_all_entries": "全ての記事を表示",
     "menu.show_only_unread_entries": "未読の記事だけを表示",
+    "menu.show_only_read_entries": "既読の記事だけを表示",
     "menu.refresh_feed": "更新",
     "menu.refresh_all_feeds": "全てのフィードをバックグラウンドで更新",
     "menu.edit_feed": "編集",

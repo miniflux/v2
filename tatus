@@ -1,0 +1,4182 @@
+[33mcommit cdd4ea60e1849981ff1b4c44b178ff04241644ca[m[33m ([m[1;36mHEAD -> [m[1;32madd-link-to-feed-header[m[33m)[m
+Author: shizunge <shizunge@gmail.com>
+Date:   Wed Jun 10 20:15:03 2020 -0500
+
+    add site links to feed page headers
+
+[33mcommit d2b360f7b312cb56930184e47d59835c3b23e8f2[m[33m ([m[1;31mupstream/master[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Shizun Ge <shizunge@gmail.com>
+Date:   Wed Jun 10 22:33:58 2020 -0500
+
+    Replace link to categories by a link to the list of entries in "Category > Feeds" page
+    
+    Solves #659
+
+[33mcommit c9618458cb2ad42c2a588c34f2c870d93df032d5[m
+Author: Shizun Ge <shizunge@gmail.com>
+Date:   Wed Jun 10 22:24:11 2020 -0500
+
+    Always align action items to the right even when the window is small
+
+[33mcommit ca918bc7e3288b0486c27f67bb086bcd264607a2[m
+Author: Manuel Müller <manuel.mueller@geekinbusiness.de>
+Date:   Wed Jun 10 23:31:27 2020 +0200
+
+    Added scraper rule for dilbert.com and turnoff.us
+
+[33mcommit c8201976675d73f44206467d27a1c8607bb76faa[m
+Author: schlich <txtd@users.noreply.github.com>
+Date:   Sat Jun 6 22:40:44 2020 +0200
+
+    Fix typo in German translation
+
+[33mcommit 6c6ca69141df526b074ce15e42ea7221ab35ea72[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jun 5 21:50:59 2020 -0700
+
+    Add feed option to ignore HTTP cache
+
+[33mcommit 57f62b47974001577be376390c5312c576a15762[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 2 20:55:34 2020 -0700
+
+    Update Docker image to Alpine 3.12
+
+[33mcommit 1811522473398891ca004c988ae14efd4b857376[m
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Wed Jun 3 01:58:01 2020 +0000
+
+    Bump github.com/lib/pq from 1.4.0 to 1.6.0
+    
+    Bumps [github.com/lib/pq](https://github.com/lib/pq) from 1.4.0 to 1.6.0.
+    - [Release notes](https://github.com/lib/pq/releases)
+    - [Commits](https://github.com/lib/pq/compare/v1.4.0...v1.6.0)
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+[33mcommit 8e500e8bef0b4edcf2d710125efc20eba224d9c8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 2 18:56:42 2020 -0700
+
+    Move dependabot.yml to .github folder
+
+[33mcommit a2abd38ccf80fdc37f82f89cc8c8ea391adb3c69[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jun 1 21:55:01 2020 -0700
+
+    Add Dependabot
+
+[33mcommit 7fb0bdc9a57995efd654a5951701d484f02e50f2[m
+Author: Vitor Pellegrino <vitorp@gmail.com>
+Date:   Wed May 27 06:35:44 2020 +0200
+
+    Adds keyboard shortcut for refreshing all feeds
+    
+    - Binds the 'R' key to trigger a refresh in the background for all
+    feeds.
+    - Updates the locale, using the same description as the link in the
+    feeds page.
+    
+    Co-authored-by: Vitor Pellegrino <pellegrino@linux.com>
+
+[33mcommit 7e5157f218b1a545108ed533fe64c0afe1bfb151[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon May 25 14:59:15 2020 -0700
+
+    Rename alternative scheduler to entry_frequency
+
+[33mcommit cead85b1654aa972917e4b602009f1dc035379f4[m
+Author: Shizun Ge <shizunge@gmail.com>
+Date:   Mon May 25 16:06:56 2020 -0500
+
+    Add alternative scheduler based on the number of entries
+
+[33mcommit 25d4b9fc0c81c807ee5f7865931a77d306b158d0[m
+Author: Corey McCaffrey <coreymcc@users.noreply.github.com>
+Date:   Sun May 24 11:51:47 2020 -0400
+
+    Added scraper rule for financialsamurai.com
+    
+    The default rule results in blank content.
+
+[33mcommit 4cdfd64db0d0b18a5d72ef579da6dc29bbcc6296[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri May 22 17:48:53 2020 -0700
+
+    Speed up feed list page rendering
+
+[33mcommit 70c2568af86a302c592b3f1f995c97b57bd8a755[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed May 20 18:06:22 2020 -0700
+
+    Add index to speed up slow query
+
+[33mcommit 0683074b8bddaa8c87e0503b2ac2350e5cc2c56f[m
+Author: Corey McCaffrey <coreymcc@users.noreply.github.com>
+Date:   Wed May 13 22:53:29 2020 -0400
+
+    Added scraper rule for TheOatmeal.com
+    
+    The default rule does not show the comic posted to the feed. The comic image is in a div with id "comic".
+
+[33mcommit 8f6c07afd6aafc08736450645aa3f7d8c78b2587[m
+Author: Corey McCaffrey <coreymcc@users.noreply.github.com>
+Date:   Wed May 13 22:33:48 2020 -0400
+
+    Added scraper rule for RayWenderlich.com
+    
+    RayWenderlich.com is a popular developer's community for iOS and Android developers. The default rule results in "GROUP GROUP GROUP GROUP…" instead of the content posted on the blog.
+
+[33mcommit 3b2f0a633cf6894054b54521319a8d6f1750095f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 25 20:55:33 2020 -0700
+
+    Update dependencies and remove vendor folder
+
+[33mcommit c920a8607cce2a50117209ab02c417a9e7274b51[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 25 20:25:22 2020 -0700
+
+    Add CSS styles for textarea
+
+[33mcommit eb8d8e84f20444d72e7502bbee9a25131e8e2eb9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 25 20:18:10 2020 -0700
+
+    Updating custom css field should also happen when updating the password
+    
+    Bug introduced in PR #627
+
+[33mcommit 619aa58fb3a6a1f6c744d105968d7011792b9da8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 25 20:03:39 2020 -0700
+
+    Handle more invalid dates
+    
+    Fixes #617
+
+[33mcommit 7accdc4416b19bd1f54c153c6930107dbc81257f[m
+Author: Alex McGrath <amk@amk.ie>
+Date:   Tue Mar 31 00:54:02 2020 +0100
+
+    Add the ability to use custom css
+
+[33mcommit ae8e5c4dbc4c80977bc60624e30c5f2add4f2fd4[m
+Author: Sebastian Wiesner <sebastian@swsnr.de>
+Date:   Sat Apr 11 22:08:17 2020 +0200
+
+    Add /version endpoint
+    
+    Closes #629
+
+[33mcommit 454eb590cef6aa15f2abf01157a6c07f54df0c94[m
+Author: Savely Krasovsky <savely@krasovsky.me>
+Date:   Wed Apr 1 05:50:25 2020 +0300
+
+    Remove child-src CSP policy (deprecated)
+
+[33mcommit 9698c5e40adac988bc68c80e1e3b250a8525eb83[m[33m ([m[1;33mtag: 2.0.21[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Mar 28 14:51:26 2020 -0700
+
+    Update ChangeLog
+
+[33mcommit 48680577a8a5a7cadbeb06ef8ee6ee8a69b144f0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Mar 28 14:50:11 2020 -0700
+
+    Update man page
+
+[33mcommit a170e6454f1bde15b8b02b0d18669f88582fdc04[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Mar 28 10:45:31 2020 -0700
+
+    Restore original read/unread popups
+
+[33mcommit 25f90bc6255f6d087d8f755e7896ab0574f499c6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Mar 25 20:22:40 2020 -0700
+
+    Restore original read/unread button in entry view
+
+[33mcommit c3f3cc085ab9a1851cf288da40a13a1d893629dd[m
+Author: Benedikt Hopmann <2770597+stratmaster@users.noreply.github.com>
+Date:   Tue Mar 24 02:20:40 2020 +0100
+
+    Update German translation
+
+[33mcommit 9871e4f5d084a2678b2a5b5ce051151a98158777[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 22 18:48:14 2020 -0700
+
+    Add page to list and remove shared entries
+
+[33mcommit 84229f1af9663b80574f22953c00242b8171aa69[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 22 16:33:35 2020 -0700
+
+    Add some CSS tweaks for mobile devices
+
+[33mcommit 3c3241f93c77980a936d1beb04de7958c5e6206c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 22 15:18:12 2020 -0700
+
+    Add SVG icons to entry actions
+
+[33mcommit 53dd2c1f1d8be3f3e1b120f5b897e59f821427c2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Mar 21 15:01:16 2020 -0700
+
+    Move schema version check after migration execution
+
+[33mcommit 592151bdb6071699ef50e8b5139f210920b6d176[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Mar 20 20:45:37 2020 -0700
+
+    Add support for Invidious
+    
+    - Embed Invidious player for invidio.us feeds
+    - Add new rewrite rule to use Invidious player for Youtube feeds
+
+[33mcommit e494d6e38100554a16afeaa2d127a281edeb0863[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Mar 20 19:56:06 2020 -0700
+
+    Check during startup if the database schema is up to date
+
+[33mcommit 05b88c8add0ad020abb3e6d70ffcecb12660156e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Mar 19 20:56:23 2020 -0700
+
+    Change share uri
+
+[33mcommit 7a397c3d13d59a4110d54c2bb246571fae4569b3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Mar 19 20:45:05 2020 -0700
+
+    Change default theme to "system_serif"
+
+[33mcommit bd5aed7b9039aba590361618e817279239673f37[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Mar 18 17:55:15 2020 -0700
+
+    Fix template execution error (related to share feature)
+
+[33mcommit 59c8dac851c6bf0d3da90028e029f54b672f2287[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Mar 17 20:22:02 2020 -0700
+
+    Display Feed URL on shared page instead of user feed entries
+
+[33mcommit 41a2b7e58eaa9861ae1df5993d19d5eabb12469f[m
+Author: Lesterpig <git@lesterpig.com>
+Date:   Sat Oct 5 13:30:25 2019 +0200
+
+    Add "Share article" feature
+    
+    A new "shareCode" field is generated for each entry, and allows
+    unlogged users to access the entry through the /shared endpoint.
+    This feature is particularly useful to share articles from miniflux
+    to third-party users without having them to visit the original source.
+    
+    The image proxy is disabled and special cache headers are proposed in
+    the shared page to avoid denial of service.
+
+[33mcommit 1b86913c005c082ed27fd7f1f42fc6ae9bdcbb9b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Mar 10 20:58:45 2020 -0700
+
+    Fix SQL injection in full-text search rank ordering
+    
+    Introduced in commit 267b7065444b2904e1172817c661709e0b456b80
+
+[33mcommit 3e1e0b604fb42eba4617d77a164cca37d4cae1aa[m
+Author: Patrick <pmarschik@users.noreply.github.com>
+Date:   Sun Mar 8 03:45:19 2020 +0100
+
+    Add generic OpenID Connect provider (OAuth2)
+    
+    This adds the oauth2 provider `oidc`. It needs an additional argument, the OIDC discovery endpoint to figure out where the auth and token URLs are.
+    
+    Configuration is similar to setting up the Google Authentication with these changes:
+    
+     * `OAUTH2_PROVIDER = oidc`
+     * `OAUTH2_OIDC_DISCOVERY_ENDPOINT = https://auth.exampe.org/discovery`
+
+[33mcommit 54602b55bb56f0d299c1fcc84f512125d145c204[m
+Author: Dave Marquard <dave-atx@users.noreply.github.com>
+Date:   Tue Mar 3 00:30:48 2020 -0500
+
+    Use secure TLS configuration for autocert server
+    
+    This change lets Miniflux use the same secure TLS configuration options when using Let's Encrypt / Autocert as when using a manually specified certificate. It raises the server’s SSL Labs score from a B to an A+ with LetsEncrypt.
+
+[33mcommit 086b9853837f29a3f54ec3fec687fbe30e2d296e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 1 19:36:48 2020 -0800
+
+    Add API Client function to refresh all feeds
+
+[33mcommit 25cc0d24477d6bbecc1406721663a2693aa15b39[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 1 17:38:29 2020 -0800
+
+    Add per-application API Keys
+
+[33mcommit d1afe13a1cc4153c8ce97a930eff418642a6cd0c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 1 10:12:59 2020 -0800
+
+    Add Go 1.14 to GitHub Actions
+
+[33mcommit 9974e0f45889bbdeecaaace09f490c4012075317[m
+Author: Andrew Williams <andy@tensixtyone.com>
+Date:   Fri Feb 28 13:24:54 2020 +0000
+
+    Addition of scraper rule for wdwnt.com
+    
+    By default fetching original content for wdwnt.com results in a snippet of the comments section, this rule captures the article content.
+
+[33mcommit 7b32f59281953ec7ca3a457109591e3187dc6c76[m
+Author: Aled Griffiths <aled.griffiths@gmail.com>
+Date:   Wed Feb 26 21:32:18 2020 +0000
+
+    Add refreshAllFeeds to the API
+    
+    Adds refreshAllFeeds to the API, following the suggestion given in the
+    comments of #359.
+
+[33mcommit 7389c79c523215300a65e065004b983b376f0378[m
+Author: Pavel Borzenkov <pavel.borzenkov@gmail.com>
+Date:   Wed Jan 29 13:45:59 2020 +0300
+
+    Implement support for authentication via Auth Proxy
+    
+    Auth Proxy allows to authenticate a user using an HTTP header provided
+    by an external authentication service. This provides a way to
+    authenticate users in miniflux using authentication schemes not
+    supported by miniflux itself (LDAP, non-Google OAuth2 providers, etc.)
+    and to implement SSO for multiple applications behind single
+    authentication service.
+    
+    Auth Proxy header is checked for the '/' endpoint only, as the rest are
+    protected by the miniflux user/app sessions.
+    
+    Closes #534
+    
+    Signed-off-by: Pavel Borzenkov <pavel.borzenkov@gmail.com>
+
+[33mcommit d5adf8b9f6e3e6445b162be6792bdbb980ac5ed1[m
+Author: Vincent Bernat <vincent@bernat.ch>
+Date:   Sun Feb 23 14:47:08 2020 +0100
+
+    Use rel=prev/next on pagination link
+    
+    While this is widely documented for SEO reason, it also helps for
+    accessibility. Notably, if you are using tools like Vimium to browse
+    using only the keyboard, these hints help to select the links. It's
+    all the more useful when the text is not in English.
+
+[33mcommit 47de317b65c5e06939375926b92bb77da4e2edf3[m[33m ([m[1;33mtag: 2.0.20[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 15 18:00:00 2020 -0800
+
+    Update list of changes
+
+[33mcommit 9e3252d1b011a277185436f72469abc779752b67[m
+Author: Hiroshi Okada <okadahiroshi@miobox.jp>
+Date:   Fri Feb 14 19:40:24 2020 +0900
+
+    Add Japanese translation
+
+[33mcommit 2570c3410bc933c1e188f343c93e8cd3f855dd95[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Tue Feb 11 05:20:03 2020 +0100
+
+    History: show entries in the order in which they were read
+    
+    Add a changed_at timestamp to the entries table. This field is updated
+    whenever the entry's metadata changes.
+
+[33mcommit dc4240e7026c6918d1043fd77ac62ecd0e00a69b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Feb 9 11:41:00 2020 -0800
+
+    Add button to add to Home screen
+
+[33mcommit 997e9422eb26385f59190bee4dcdd996bd7b4982[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 30 21:08:11 2020 -0800
+
+    Ignore enclosures without URL
+
+[33mcommit cb494ac4166368c843521d96257df3673af15326[m
+Author: Benjamin Barenblat <bbaren@google.com>
+Date:   Wed Jan 29 17:21:48 2020 -0500
+
+    Correct spelling of “toggle”
+
+[33mcommit 078f886f39e86c9a5b7daea832ea2af97e73c344[m
+Author: somini <dev@somini.xyz>
+Date:   Tue Jan 28 02:41:34 2020 +0000
+
+    Align Info and Actionable items separately
+    
+    Align the information to the left side, and the actionable buttons to
+    the right.
+    
+    See https://github.com/miniflux/miniflux/pull/531#issuecomment-578547488
+
+[33mcommit 15727f716a83c1671b85a18aef723d99ca633cda[m
+Author: Vincent Bernat <vincent@bernat.ch>
+Date:   Fri Jan 24 09:10:47 2020 +0100
+
+    Redirect to /unread when getting a 404 for an unread expired entry
+    
+    Hosted miniflux don't keep read entries for long. If I leave my PC at
+    home on an unread entry, read everything pending at work and get back
+    to home later, when I click "next", I get a bare 404 error. I have to
+    go back to /unread myself. I think it would be more user friendly (but
+    maybe a bit suprising) to go directly to /unread in this case.
+
+[33mcommit 476898b1d4371ecd5bec407592a8b08b90963cab[m
+Author: Richard Schneider <richard@schneiderbox.net>
+Date:   Mon Jan 13 14:57:31 2020 -0600
+
+    Do not advance to the next item when using the 'v' shortcut on the list of starred items
+
+[33mcommit 1a78e3a5bc5edd644b99a958efc91e9cd05b1078[m
+Author: Richard Schneider <richard@schneiderbox.net>
+Date:   Wed Jan 8 15:52:36 2020 -0600
+
+    Wrap around when navigating with keyboard shortcuts on a list view
+
+[33mcommit 86e71c48f50cd85d85ae58b0c45385b7ca7a542e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 7 21:33:26 2020 -0800
+
+    Remove unused Feed.Entries from API client
+
+[33mcommit 6ebb29cd22f864842bd763828e914d172ce6f46b[m
+Author: Richard Schneider <richard@schneiderbox.net>
+Date:   Tue Jan 7 00:02:02 2020 -0600
+
+    Add comments link keyboard shortcut
+
+[33mcommit e2315e6a54c93ff44f99482fae6a0931444dc27a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jan 5 22:47:06 2020 -0800
+
+    Remove unused Entry.Category in API client
+
+[33mcommit 61f0c8aa6628efe91cb4ebc7e03ec17a0d4eb03d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jan 4 15:56:00 2020 -0800
+
+    Allow application/xhtml+xml links as comments URL in Atom replies
+
+[33mcommit bf632fad2e19e9ece4db5957f05727f373541917[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jan 4 15:18:24 2020 -0800
+
+    Allow only absolute URLs in comments URL
+    
+    Some feeds are using invalid URLs (random text).
+
+[33mcommit 8cebd985a267f6fbcc363672ca81780dd5407eff[m
+Author: Kebin Liu <lkebin@gmail.com>
+Date:   Fri Jan 3 14:19:15 2020 +0800
+
+    Use internal XML workarounds to detect feed format
+
+[33mcommit 6ff617a73374c77a0356d0418b558eecf566f4c5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 2 13:03:34 2020 -0800
+
+    Make menu consistent across feed pages
+
+[33mcommit 4d9956cf658d7a970654ae3baf23ad995e287525[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 2 11:06:57 2020 -0800
+
+    Make sure external URLs are not encoded incorrectly by Go template engine
+
+[33mcommit ac3c936820033f27e32c9a4490f2f33d6ffd6b05[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 2 11:03:03 2020 -0800
+
+    Make sure whitelisted URI schemes are handled properly by the sanitizer
+
+[33mcommit 08fc32b0e14cccb46819976f213678e2b68f5b02[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 30 15:43:49 2019 -0800
+
+    Use white background for favicon
+    
+    Improve legibility when using a dark theme.
+
+[33mcommit d8ad49d14d6aaae26fc7437d3b9a597353b0aeec[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 28 11:23:25 2019 -0800
+
+    Remove dependency on Sed to build Docker images
+    
+    - Keep the Dockerfile standard and avoid external dependencies
+    - Use build args instead of Sed
+    - Bump Alpine Linux to version 3.11
+    - Always use the latest version of Golang
+
+[33mcommit 3debf75eb9229144a05701e03ba59408a75dd815[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Dec 26 15:26:23 2019 -0800
+
+    Normalize URL query string before executing HTTP requests
+    
+    - Make sure query strings parameters are encoded
+    - As opposed to the standard library, do not append equal sign
+    for query parameters with empty value
+    - Strip URL fragments like Web browsers
+
+[33mcommit 200b1c304b999191a29f36d4122e7aa05481125c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 23 14:39:54 2019 -0800
+
+    Improve Dublin Core support for RDF feeds
+
+[33mcommit 1b33bb3d1cc01067fa8091b0e73a389fc189958c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 23 13:29:53 2019 -0800
+
+    Improve Podcast support (iTunes and Google Play feeds)
+    
+    - Add support for Google Play XML namespace
+    - Improve existing iTunes namespace implementation
+
+[33mcommit 33fdb2c489727f8af972d69506fef02c121c4fd0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 22 22:18:21 2019 -0800
+
+    Add support for Atom 0.3
+
+[33mcommit cfb6ddfcea3e387a7141d4c65099d2f08bc1732b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 22 17:47:56 2019 -0800
+
+    Add support for Atom 'replies' link relation
+    
+    Show comments URL for Atom feeds as per RFC 4685.
+    See https://tools.ietf.org/html/rfc4685#section-4
+    
+    Note that only the first link with type "text/html" is taken into consideration.
+
+[33mcommit 8e1ed8bef3b65cb75c476ebafc1492fea97754d5[m
+Author: cinput <59012355+cinput@users.noreply.github.com>
+Date:   Sat Dec 21 21:18:31 2019 -0800
+
+    Return outer HTML when scraping elements
+
+[33mcommit 30f22fbd78fcbd8e46f4c449928bfca289913efd[m
+Author: somini <somini@users.noreply.github.com>
+Date:   Fri Dec 20 02:35:29 2019 +0000
+
+    Update scraper rule for "Le Monde"
+
+[33mcommit a155ab6debe1f271f809cce2ff4a20b2626e7d69[m
+Author: Jebbs <qjebbs@gmail.com>
+Date:   Fri Dec 20 10:31:52 2019 +0800
+
+    Filter valid XML characters for UTF-8 XML documents before decoding
+    
+    This change should reduce "illegal character code" XML errors.
+
+[33mcommit a4ebb33cd5f61ae30b4925a89119f20d2ed02408[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 1 14:58:07 2019 -0800
+
+    Trim spaces for RDF entry links
+
+[33mcommit 64fa1aa8cf7d2b726842dcb7d2dd62919a0b7bd4[m[33m ([m[1;33mtag: 2.0.19[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 1 11:44:42 2019 -0800
+
+    Update ChangeLog
+
+[33mcommit 120d6ec7d837eac2825de3edb870d63bd0493853[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 30 22:46:12 2019 -0800
+
+    Do no rewrite Youtube description twice in "add_youtube_video" rule
+    
+    This is already done before in <media:description>.
+
+[33mcommit 6291b598495732d0470bbfb2f26c7025d64e7880[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 29 13:48:56 2019 -0800
+
+    Use V to open original link in current tab
+    
+    - To avoid a breaking change, keep v to open the original link in new tab.
+    - People who prefers to open the link in the current tab should use V.
+
+[33mcommit a96e966911dd6c57f8b4c4c7ace65a8a4b9d913c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 29 11:49:53 2019 -0800
+
+    Do not expose yet feed counter via API
+
+[33mcommit 69aa650203087ad6365fcd6769a49bdf327e9efb[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 29 11:17:14 2019 -0800
+
+    Add the possibility to add rules during feed creation
+
+[33mcommit 8028cc764ff7d53370b64ec8110cbcdece787432[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 29 10:43:30 2019 -0800
+
+    Wrap attachments into <details> disclosure element
+
+[33mcommit b3869a783323fc424f8321d1a9a6379ef90b32c0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 29 10:27:25 2019 -0800
+
+    Show attachment size on entry page
+
+[33mcommit 912a98788e66b836125fe8ef37672a4de20c169c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Nov 28 23:47:53 2019 -0800
+
+    Add support of media elements for Atom feeds
+
+[33mcommit f90e9dfab015a2ebdbbe66334a29477152a948f5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Nov 28 21:21:00 2019 -0800
+
+    Add support of media elements for RSS 2 feeds
+
+[33mcommit c43c9458a95552f0a68084a91c631e9e45713a19[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Nov 28 20:11:39 2019 -0800
+
+    Add rewrite functions: convert_text_link and nl2br
+
+[33mcommit 90064a8cf02e67dbe796a7bb88d39705344d14ee[m
+Author: Neo Ng <hqng98@outlook.com>
+Date:   Thu Nov 28 13:13:25 2019 +0800
+
+    Update scraper rule for openingsource.org
+
+[33mcommit bacab20f4a9b5b3374a3f15923edd102b9a4b24f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 26 22:22:55 2019 -0800
+
+    Add Makefile target to build only amd64 Docker image
+
+[33mcommit 7b995044b48e0c18a6b345f6d784191ac97ad264[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 17 22:13:16 2019 -0800
+
+    Make sure to remove integration settings when removing a user
+
+[33mcommit e878dca3d74e1b8644d56e4f717b0a8e0362e888[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 17 22:53:11 2019 -0800
+
+    Add API parameter to filter entries by category
+
+[33mcommit fad9ad2be4fc800f8710e2a498cc8f536af8827c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 17 19:44:12 2019 -0800
+
+    Display list of feeds per category
+
+[33mcommit 15fe9c20df7eaab4c1e10461f1a9965eeaf85f0f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 17 17:54:42 2019 -0800
+
+    Show the number of read and unread entries for each feed
+
+[33mcommit 789ad8257a84dfaa973ffa5e547cd419d933253d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 17 17:26:47 2019 -0800
+
+    Make sure settings menu is consistent
+
+[33mcommit 63a549f0e3d552075e927b2e43a4003fcf59cbf2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 17 17:08:20 2019 -0800
+
+    Remove fixed table-layout for entry content
+
+[33mcommit d422d4e0670f3736b3b94448970182a15d663564[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 15 20:23:43 2019 -0800
+
+    Update autocert lib because ACME v1 is EOL
+
+[33mcommit 881c0f406b8d33e1deddbfd6c6b36c37c5a09070[m
+Author: Vincent Bernat <vincent@bernat.ch>
+Date:   Fri Nov 15 14:09:01 2019 +0100
+
+    Do not lighten blockquote font color
+    
+    It is confusing to have blockquote content displayed with a lighter
+    font color. Usually, quotes are important to the text while reducing
+    the contrast may hint a user it is not. In my case, I usually skip the
+    content of the blockquote as it was some additional note in the text.
+    
+    Without the color change, the blockquote is still indented
+    differently, with the vertical bar. It should be enough for a user to
+    identify it as a quote.
+
+[33mcommit ee84731153565746f3d03c0f2f13c5b6ed6f27cf[m
+Author: benne <2770597+stratmaster@users.noreply.github.com>
+Date:   Sat Nov 2 04:23:51 2019 +0100
+
+    Update de_DE translation
+
+[33mcommit b62ecc6699c82e716b0b53bdd11636b0f9c1dd68[m
+Author: Jebbs <qjebbs@gmail.com>
+Date:   Fri Nov 1 09:59:04 2019 +0800
+
+    Send a response when changing status of removed entries in Fever API
+    
+    When a client, like Reeder, tries to mark an item which is removed on Miniflux, the server doesn't response OK. This may terminate the sync process, the PR fixes it.
+
+[33mcommit 21f8b034830efa139560092e28f2834119e10a70[m
+Author: Maxim Baz <git@maximbaz.com>
+Date:   Thu Oct 31 04:19:48 2019 +0100
+
+    Make "v" open link in the current tab on entry page
+
+[33mcommit 03406c68d0f993f68ca45c868cc9eda6ac110c8d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Oct 29 23:06:25 2019 -0700
+
+    Add meta tag to disable Google Translate
+
+[33mcommit d3883126bfca47f1af57a6388ff7b00c997c924f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Oct 29 22:48:07 2019 -0700
+
+    Improve storage module
+
+[33mcommit e38333e272b24b6fcfa5399aa944f771558eb7aa[m
+Author: Maxim Baz <github@maximbaz.com>
+Date:   Wed Oct 30 05:44:35 2019 +0100
+
+    Show unread counters on feeds page
+
+[33mcommit 2eb2441f2ba9fcb50d17d8f7deead756187b3586[m
+Author: Tony Wang <wwwjfy@gmail.com>
+Date:   Wed Oct 23 11:27:27 2019 +0800
+
+    Improve XML decoder to remove illegal characters
+
+[33mcommit 7409bba0d8c8ab74b57cb05cb1571a7e72a7073e[m
+Author: Tony Wang <wwwjfy@gmail.com>
+Date:   Tue Oct 22 11:00:16 2019 +0800
+
+    Compare Fever token case-insensitively
+
+[33mcommit 70940e768c3f7d3c8772040d516f5e63a6cbdef5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 21 19:51:22 2019 -0700
+
+    Fix integration tests
+
+[33mcommit 37f93d5127eb31fb0566f1a95b6016980cf2b99b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 21 19:10:17 2019 -0700
+
+    Make sure integration tests are marked as failed in Github Actions
+
+[33mcommit 5517eebafe0cbacb2f5d0d495fb2dca3ba4f1f82[m
+Author: Tony Wang <wwwjfy@gmail.com>
+Date:   Mon Oct 21 00:52:18 2019 +0800
+
+    Add new formats to date parser
+
+[33mcommit bf357a0e2dee24d80dc17082b1f685e8ee1ed9aa[m
+Author: Jebbs <qjebbs@gmail.com>
+Date:   Mon Oct 7 11:55:15 2019 +0800
+
+    Add toast message for some keyboard shortcuts
+    
+    Add notification message when using keyboard shortcuts: f, s, and m.
+
+[33mcommit 02dbe3ef2edaa40658862c1c92e73730c8e75ee1[m
+Author: Adam Hess <adamhess1991@gmail.com>
+Date:   Sun Oct 6 16:24:39 2019 -0700
+
+    call preventDefault() when the user is trying to enter a keyboard shortcut
+    
+    Keyboard shortcuts might conflict with Firefox’s "Find as you type" feature.
+
+[33mcommit bf2ceded96139ccff66ab8a78fefa1ec0c8be43f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Sep 30 23:20:22 2019 -0700
+
+    Add missing arm32v7 in loop
+
+[33mcommit 97d1c6f02bf3d3deeaaed29e7885b20eedf881c4[m[33m ([m[1;33mtag: 2.0.18[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Sep 25 20:16:18 2019 -0700
+
+    Update ChangeLog for v2.0.18
+
+[33mcommit e0b600b6519c57febb93f19aa7bcb525b1a59bca[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Sep 25 18:55:16 2019 -0700
+
+    Add CSS tweak and fix typo in variable name
+
+[33mcommit 3379429329fc566ea0c36a15bfb0c653d4bdbe6b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 22 11:17:15 2019 -0700
+
+    Log image proxy URL in debug mode
+
+[33mcommit bdca3372f94681aadd712e2508ccaf48435af709[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 22 10:20:55 2019 -0700
+
+    Add few CSS teaks
+
+[33mcommit ca9cc692e40e9e216c252330dc5529950e8dd3e8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 22 10:16:59 2019 -0700
+
+    Add Docker image variant for arm32v7
+
+[33mcommit afe1faf2141ef9cd3a5564fa33646b821ae5162b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Sep 21 19:10:08 2019 -0700
+
+    Add theme variants
+    
+    - Use CSS variables instead of inherence
+    - Rename default theme to "Light - Serif"
+    - Rename Black theme to "Dark - Serif"
+    - Rename "Sans-Serif" theme to "Light - Sans Serif"
+    - Add "System" theme that use system preferences: Dark or Light
+    - Add Serif and Sans-Serif variants for each color theme
+
+[33mcommit d610d091fed6dbac3a7ae7e6a67e6e8455b77755[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Sep 18 22:41:33 2019 -0700
+
+    Avoid constraint error when having duplicate entries
+    
+    During feed creation, duplicated entries will generate an SQL contraint error.
+    
+    This change ignore the duplicated entry to avoid showing an error.
+
+[33mcommit 36d773223481dd42d31499b3ea73e6999ff9f58e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Sep 18 22:27:25 2019 -0700
+
+    Disable strict XML parsing
+    
+    This change should improve parsing of broken XML feeds.
+    
+    See https://golang.org/pkg/encoding/xml/#Decoder
+
+[33mcommit ca48f7612ada5d64d1097c40321a919eb28eb2bf[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Sep 18 22:12:15 2019 -0700
+
+    Ignore invalid content type
+
+[33mcommit 7d50cc40de4487eba3da5635ba85cc2e956bad98[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 15 11:55:56 2019 -0700
+
+    Update man page
+
+[33mcommit 934385ff5535ee32a90d95411f99db933ad805a8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 15 11:32:12 2019 -0700
+
+    Replace Travis by GitHub Actions
+
+[33mcommit fb9a1a61297a8f1882d27067f69d84d46c8286e7[m
+Author: Ty Cobb <ty.cobb.m@gmail.com>
+Date:   Sun Sep 15 13:47:39 2019 -0500
+
+    Rename cleanup config variables
+    
+    The config parser logs a warning when the user uses a deprecated variable. It also ignores the value from a deprecated variable if it has already been set using the corresponding non-deprecated variable (and logs another warning).
+    
+    - CLEANUP_FREQUENCY_HOURS instead of CLEANUP_FREQUENCY
+    - CLEANUP_ARCHIVE_READ_DAYS instead of ARCHIVE_READ_DAYS
+
+[33mcommit 3a60abbac07bd342f261fccb46bfd5b0039b3f74[m
+Author: Ty Cobb <ty.cobb.m@gmail.com>
+Date:   Wed Sep 11 22:10:34 2019 -0500
+
+    Make configurable the number of days to remove old sessions
+
+[33mcommit 8d8f78241d303381abf6879cc007ca9cbc2a12e2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Sep 10 21:12:38 2019 -0700
+
+    Add native lazy loading for images and iframes
+    
+    This feature is available only in Chrome >= 76 for now.
+    
+    See https://web.dev/native-lazy-loading
+
+[33mcommit 937492f6f554d51d8cae62829b6229071cac994e[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Wed Aug 14 17:54:02 2019 +0200
+
+    Do not buffer responses in the image proxy
+    
+    The image proxy buffered the whole image before sending it to the
+    browser. If the image is large and/or hosted on a slow server, this
+    caused a long delay before the user's browser could display anything.
+
+[33mcommit b94160df725a52af53f113bf27de7a7b8723174c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Sep 5 21:39:32 2019 -0700
+
+    Update dependencies
+
+[33mcommit 456ebaf423ce2122bf8faa36da464c5d90361204[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Sep 5 21:20:11 2019 -0700
+
+    Add Go 1.13 to test matrix
+
+[33mcommit 2d27f53941bdb0e48dceb0015ec854333ec7c683[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Sep 5 21:17:18 2019 -0700
+
+    Replace link border by outline to avoid slight content shift
+
+[33mcommit b6f3160dbc3efe7a86d39d526a1780eb320eefd4[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Tue Aug 13 17:44:23 2019 +0200
+
+    add_mailto_subject: New rewrite function
+    
+    Dinosaur Comics (qwantz.com) likes to hide jokes in mailto: links, but
+    miniflux's sanitizer strips those out.
+
+[33mcommit 77125f45ccebc1b9abc9aeef2a8576b6841c5768[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Aug 15 22:08:24 2019 -0700
+
+    Improve import form
+
+[33mcommit d882bbca85b801ed408644800364ec0a5bdcffd4[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Thu Aug 15 09:48:07 2019 +0200
+
+    Import OPML from URL
+
+[33mcommit ac45307da63186fea074e8a5573af6d0dad0fd26[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Aug 15 21:37:17 2019 -0700
+
+    Add test case for parsing HTML entities
+
+[33mcommit ea2b6e3608624a2a14af1956a3ad0035b7fb09f0[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Wed Aug 14 09:33:54 2019 +0200
+
+    addImageTitle: Fix HTML injection
+    
+    This rewrite rule would change this:
+    
+        <img title="<foo>">
+    
+    to this:
+    
+        <figure><img><figcaption><foo></figcaption></figure>
+    
+    The image title needs to be properly escaped.
+
+[33mcommit 3a39d110f0f2a3e976df1e810a861c602a634d14[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Sat Mar 2 16:38:02 2019 +0100
+
+    Accept HTML entities when parsing XML
+    
+    Every once in a while, one of my feeds would throw an XML parse error
+    because it used `&nbsp;` or some other HTML entity. I feel Miniflux
+    should be lenient here, and Go already has a handy hook to make this
+    work.
+
+[33mcommit 6d39f2a4cb6b00e11defff08dab82ef3a5df5a42[m[33m ([m[1;33mtag: 2.0.17[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 3 14:38:14 2019 -0700
+
+    Update ChangeLog for version 2.0.17
+
+[33mcommit f82736641f1d76fd613f9c1d00c4eacc692dc047[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 3 14:35:15 2019 -0700
+
+    Update Docker image to Alpine Linux 3.10.1
+
+[33mcommit 3d19313a7f655bc2626990650c4de8141485eea3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jul 26 21:13:06 2019 -0700
+
+    Add option to disable feeds
+
+[33mcommit 17aae725830cdd27131d40e20f3901d7da25e281[m
+Author: Jebbs <qjebbs@gmail.com>
+Date:   Fri Jul 26 10:02:39 2019 +0800
+
+    Fix regressions introduced in previous JS refactoring
+
+[33mcommit a6348396780a155bfab527a18a544959a6ab9d26[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 17 21:52:45 2019 -0700
+
+    Ask for confirmation before clicking on mark all as read
+
+[33mcommit ac3693562b635aaab4f43ad5d1343aae7ba5b7d2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 17 21:29:00 2019 -0700
+
+    Ask for confirmation before flushing history
+
+[33mcommit 99149d9f2a32dd7426c6c2e51762e0895ed8199c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 17 21:07:29 2019 -0700
+
+    Refactor confirmation handler
+
+[33mcommit 2b6e17c1ef7f54f822e37991eaf7a309013182e2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 17 20:27:39 2019 -0700
+
+    Refactoring of Javascript code
+
+[33mcommit 34421dcd496198db82ca7c7fd54362d9b600fbb3[m
+Author: Matías Lang <yo@matiaslang.me>
+Date:   Wed Jul 17 21:44:32 2019 -0300
+
+    Require confirmation for marking pages as read
+
+[33mcommit 48abf5721815e975726fab96fef8810724fa031b[m
+Author: Frode Aannevik <frode.aa@gmail.com>
+Date:   Sat Jul 13 13:11:39 2019 +0200
+
+    Add .search margin-right
+
+[33mcommit 867dcb0004204172efe75e29ab220222688492c4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 10 17:27:17 2019 -0700
+
+    Fix syntax errors in man page
+
+[33mcommit c840268678897c4bd95857a9b099fa4f149fcd8f[m
+Author: Ilya Glotov <contact@ilyaglotov.com>
+Date:   Fri Jul 5 19:05:42 2019 +0300
+
+    Sort feed categories before serialization
+    
+    A function is added for feeds and its categories normalization.
+    The test will ensure that the order is right.
+
+[33mcommit f783b135c770449f5890e4ef71ff682e95f36b55[m
+Author: Pierre Dubouilh <pldubouilh@users.noreply.github.com>
+Date:   Fri Jul 5 08:13:25 2019 +0200
+
+    Pass auth header to manifest request
+
+[33mcommit a04fe1aa7ec53418c25a43938273a439981e7412[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jun 20 21:00:59 2019 -0700
+
+    Update Docker image to Alpine Linux 3.10.0
+
+[33mcommit d01a2dd65194a588010701f7abf4be0a7db312b8[m[33m ([m[1;33mtag: 2.0.16[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 8 20:13:40 2019 -0700
+
+    Update ChangeLog
+
+[33mcommit ec8fa56c95c90fb90925c723d7afd0d5fd642a76[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 8 18:00:10 2019 -0700
+
+    Update vendor folder
+
+[33mcommit 91508c50b54c9a0375856a17b2e774d42782b81d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 8 17:16:12 2019 -0700
+
+    Add option to toggle date/time in log messages
+
+[33mcommit f7b7b63e3f30b4d855a26d550ddf726116c65846[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jun 2 18:20:59 2019 -0700
+
+    Add optional config file parser in addition to environment variables
+
+[33mcommit bb720c87c191efe36a328d95a918f75df51d4976[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jun 2 07:13:35 2019 -0700
+
+    Make HTTP Client timeout and max body size configurable
+
+[33mcommit 228862fefaa645026caa483ffe9993bf8c00b22e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 1 18:18:09 2019 -0700
+
+    Refactor config package
+    
+    - Parse configuration only once during startup time
+    - Store configuration values in a global variable
+
+[33mcommit 04d85b3c63afcf6c9539fc8dc7a91c4e36c2e8fb[m
+Author: Ben Cohen <heliostatic@gmail.com>
+Date:   Sun May 26 14:02:52 2019 -0400
+
+    Flip behavior of j and k keyboard shortcuts
+
+[33mcommit 5f487e8c791bcfd8e0dccf6133b3d3e989f75dcd[m
+Author: Aaron Bieber <aaron@bolddaemon.com>
+Date:   Thu May 16 16:40:06 2019 -0600
+
+    Bump pq to v1.1.1 to bring in SCRAM-SHA-256 authentication.
+
+[33mcommit 0dff43233791ae7949ea6f9a50326bbb3f3769e5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 28 20:13:34 2019 -0700
+
+    Remove debug timer from most storage functions
+
+[33mcommit 4295a86e55e765e3e396a03c090bd08be9e0a390[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 28 18:20:46 2019 -0700
+
+    Add option to enable/disable keyboard shortcuts
+
+[33mcommit 3c8cc0b2b69c8de7343dfbec0e22934c954487df[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 22 20:37:58 2019 -0700
+
+    Update links to the documentation
+
+[33mcommit 34df45da2f3085f7b0e1d82af573f8f59d900ac7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Apr 5 19:10:52 2019 -0700
+
+    Add missing translation
+
+[33mcommit a6068aae1d715a6cd23ba54e115fa5a21037b2ad[m
+Author: Diego Agulló <aeoris@gmail.com>
+Date:   Fri Apr 5 03:59:04 2019 +0200
+
+    Improve page reload when showing unread/all entries
+    
+    - Show only unread entries = refresh current page
+    - Show all entries = go to next page
+
+[33mcommit 8ee1a09dc71ad779e36175b38450576ae510daf8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Apr 2 21:17:01 2019 -0700
+
+    Always display feed entries even when there is a feed error
+
+[33mcommit f593dc8463b5b13da4f87c57bc3c131fb1003024[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Mar 26 20:47:04 2019 -0700
+
+    Use loading label instead of saving when submitting login form
+
+[33mcommit 129f1bf3da188756c8c2ab6c894457e55987af5a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Mar 26 19:49:59 2019 -0700
+
+    Add support for OPML v1 import
+
+[33mcommit 304b43cb308f326e2a5a5cda6fa886906b6c4f83[m
+Author: Jeremy Apthorp <nornagon@nornagon.net>
+Date:   Tue Mar 26 18:26:56 2019 -0700
+
+    Add 'allow-popups' to iframe sandbox permissions
+
+[33mcommit 3a483be25876faa8e4c6a15c9c6b2949b96e1bc9[m[33m ([m[1;33mtag: 2.0.15[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Mar 16 18:14:00 2019 -0700
+
+    Update ChangeLog
+
+[33mcommit 220d9e3d5639a0fecb10bc69d3f012ce885873ff[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Mar 14 20:54:05 2019 -0700
+
+    Move Dockerfile to main repo
+
+[33mcommit fc473f1d11a29bc8ae54d08322542245f6481da1[m
+Author: 3ddysan <3ddysan@users.noreply.github.com>
+Date:   Sat Mar 9 14:00:26 2019 +0100
+
+    Add double tap detection for next/previous page navigation
+
+[33mcommit 22b68eefd864a119bac1ba4784d60011c96659af[m
+Author: Jacob Wahlgren <jacob@dstsrc.net>
+Date:   Sun Mar 10 18:51:21 2019 +0100
+
+    Allow users to disable auto-remove
+    
+    Adds ARCHIVE_READ_DAYS="-1"
+
+[33mcommit 6764a420b0b135e55bcf885eb4bd2031bf5f7604[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Feb 28 21:22:58 2019 -0800
+
+    Make parser compatible with Go 1.12
+    
+    See changes in strings.Map(): https://golang.org/doc/go1.12#strings
+
+[33mcommit 45df254fe74ec42d426b00b1dcfb9a274bca08dd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Feb 28 20:48:33 2019 -0800
+
+    Add Golang 1.12 to CI
+
+[33mcommit f3fc8b70721524867a3dac7d2bcb548b830c282a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Feb 28 20:43:33 2019 -0800
+
+    Use feed ID instead of user ID to check entry URLs presence
+
+[33mcommit 1634e267b8fe33d2f74454fb43c471d224642a89[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Feb 19 17:57:40 2019 -0800
+
+    Fix typo in stylesheet
+
+[33mcommit 267b7065444b2904e1172817c661709e0b456b80[m
+Author: Jebbs <qjebbs@gmail.com>
+Date:   Tue Feb 12 14:20:07 2019 +0800
+
+    Sort search results by relevance
+
+[33mcommit ed6ae7e0d277c53ac77b5f17327355ca76275556[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 29 20:01:36 2019 -0800
+
+    Use preferably the published date for Atom feeds
+    
+    YouTube feeds use the published date for the original creation date.
+
+[33mcommit c71681b197f0612eed337ebd6c8e732788756e2d[m
+Author: e.g. pavelka <egpavelka@users.noreply.github.com>
+Date:   Wed Jan 23 22:45:47 2019 -0500
+
+    Add Spanish translation
+
+[33mcommit 04b6eb509c6b81b6fbe6f3acf7bfb4b7eaebe2de[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 21 20:26:46 2019 -0800
+
+    Rename session cookies
+
+[33mcommit 7897d8a8ad87c0bb26bb8156ba09fc9fab62f565[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 21 20:21:05 2019 -0800
+
+    Handle the case when application session is expired and not user session
+
+[33mcommit 6378ad27342da3b4c531539bcf2c539b4ac92c57[m[33m ([m[1;33mtag: 2.0.14[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jan 13 20:34:06 2019 -0800
+
+    Update ChangeLog
+
+[33mcommit 6f5ef1055337bc1abfc8c59bc89cd9934def80a6[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Tue Jan 1 21:53:52 2019 +0100
+
+    Only attempt to change password if the confirmation field is filled in
+    
+    Firefox autocompletes the password field (but not the password
+    confirmation field) for me. This makes it annoying to use the settings
+    page, because miniflux thinks I'm trying to change my password and
+    complains that the fields don't match.
+
+[33mcommit 28ba09e952e9875ad701e51bf524bbe7589efb25[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 7 18:08:42 2019 -0800
+
+    Remove URL from client user agent
+
+[33mcommit a86a7dce570fc5e10ee09904dc23a51779a9e71d[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Sun Jan 6 21:23:51 2019 +0100
+
+    Use the appropriate message if there are no unread entries
+
+[33mcommit 27e79a4693f2921588b2df110449f4a302856317[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Fri Jan 4 21:42:15 2019 +0100
+
+    Make the feed list order case-insensitive
+
+[33mcommit 0cdcec10caffab74ff742e7bc8379a956357d73f[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Tue Jan 1 22:01:19 2019 +0100
+
+    More robust Atom text handling
+    
+    Miniflux couldn't deal with XHTML Summary elements.
+    
+    - Make Summary an 'atomContent' field
+    - Define an atomContentToString function rather than inling it three times
+    - Also properly escape special characters in plain text fields.
+
+[33mcommit 15505ee4a2bd4963d0cbc9d1820e9be641b221ca[m
+Author: Peter De Wachter <pdewacht@gmail.com>
+Date:   Tue Jan 1 22:06:58 2019 +0100
+
+    Make UTF-8 the default encoding for XML feeds
+    
+    Consider the feed http://planet.haskell.org/atom.xml
+    - This is a UTF-8 encoded XML file
+    - No encoding declaration in the XML header
+    - No Unicode byte order mark
+    - Served with HTTP Content-Type "text/xml" (no charset parameter)
+    
+    Miniflux lets charset.NewReader handle this. The charset package
+    implements the HTML5 character encoding algorithm, which, in this
+    situation, defaults to windows-1252 encoding if there are no UTF-8
+    characters in the first 1000 bytes. So for this feed, we get the wrong
+    encoding.
+    
+    I inserted an explicit "utf8.Valid()" check, which fixes this problem.
+
+[33mcommit 31e2669c4db077b15fce496e92e20a05d7a979cb[m
+Author: Clar Charr <them@lightdark.xyz>
+Date:   Tue Jan 1 16:22:45 2019 -0500
+
+    Add more targets to Makefile
+    
+    I put a comment above them saying that they're unsupported as they won't be tested on CI, etc., but they're still nice to have.
+
+[33mcommit 362fc5c2ff15cb73b3c8e053c6c97b3d2110f207[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 28 13:58:01 2018 -0800
+
+    Add -mod=vendor in Makefile
+
+[33mcommit 79e7d007a46c1f6fa4b5799d470766ff859804d2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 28 13:55:12 2018 -0800
+
+    Update man page
+
+[33mcommit a9fad093e6383c21a45de069795a77f2cab9c318[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 28 13:41:26 2018 -0800
+
+    Move healthcheck endpoint from ui package to httpd service
+
+[33mcommit 56efd2eb3f554b590fad8bebc4a1d752b66e5363[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 26 20:24:38 2018 -0800
+
+    Add workaround for non GMT dates (RFC822, RFC850, and RFC1123)
+    
+    RFC822, RFC850, and RFC1123 are supposed to be always in GMT.
+    
+    This is a workaround for the one defined in PST timezone.
+
+[33mcommit 078cd0050a38ae5cf1e1d8f6d932eed6d37daff2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 19 22:30:05 2018 -0800
+
+    Make sure that <strong> elements are bold
+
+[33mcommit e367f4ca21ac97046c9432e6ec28e7c220421dbc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 16 20:12:26 2018 -0800
+
+    Show scrollbars only when necessary for <pre> elements
+
+[33mcommit 0b63e05fe2f4dc0c465e0a7eb2924c7bce61dfc6[m
+Author: Nicola Moretto <nicolamoretto88@gmail.com>
+Date:   Sun Dec 16 11:48:43 2018 +0100
+
+    Add Italian translation
+
+[33mcommit cf25efb4d9202573b5b8eeb8ff56df9568b4c331[m
+Author: Diego Agulló <diego.agullo@mo2o.com>
+Date:   Fri Dec 14 09:54:25 2018 +0100
+
+    Allow to switch between unread only and all entries on category/feed views
+
+[33mcommit 012138179c4210313f63ec8a4982d366ccee299c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 15 13:04:38 2018 -0800
+
+    Add function storage.UpdateFeedError()
+
+[33mcommit 8b40778ee170240ea7bcd64316daae89f40fff3a[m
+Author: Tom Matthews <info@axiom-partners.com>
+Date:   Fri Dec 14 04:25:30 2018 +0000
+
+    Add BBC News scraping rule
+
+[33mcommit 6ae935309a8cb2674a9e41db73f81f76ed77b7cc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 12 21:37:39 2018 -0800
+
+    Ignore JSON feeds from EnsureUnicode()
+
+[33mcommit 43ccaf52af1ddaf847ed0fc4969418e6480dc18b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 12 21:31:50 2018 -0800
+
+    Preserve category selection when no feed is found
+
+[33mcommit 82e08d0f698a181617aa727345a29eb6500d1d4c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 12 21:13:06 2018 -0800
+
+    Update XML encoding regex to take single quotes into consideration
+
+[33mcommit 266d97ad63df7be8c4ed96de00398432d63487d7[m
+Author: Bryan Roth <broth@buildertrend.com>
+Date:   Wed Dec 12 11:57:04 2018 -0600
+
+    Update en_US.json
+    
+    Fixing translations.
+
+[33mcommit 6869c6fe6faf7343769d146b8171ab5084b9b56c[m
+Author: Frederic Guillot <fred@miniflux.net>
+Date:   Sun Dec 9 18:05:40 2018 -0800
+
+    Send cli errors to stderr
+
+[33mcommit 59d8e9b95eddc6b74b76bfc0bd8b786750e800a6[m
+Author: Frederic Guillot <fred@miniflux.net>
+Date:   Sun Dec 9 17:59:39 2018 -0800
+
+    Update dependencies
+
+[33mcommit 61bfb3cfa8857a144460d05330c1d1fccded960b[m
+Author: Frederic Guillot <fred@miniflux.net>
+Date:   Sun Dec 9 17:44:33 2018 -0800
+
+    Make password prompt compatible with Windows
+
+[33mcommit 87648490fda1d765fb7b78544b2b01847550c82b[m
+Author: Jebbs <qjebbs@gmail.com>
+Date:   Thu Dec 6 12:35:30 2018 +0800
+
+    Make configurable the number of days to archive read items
+
+[33mcommit 3e392dc3ae7926266f18edbc2a6309cf195cb676[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 21:21:18 2018 -0800
+
+    Change log level to debug when starting workers
+
+[33mcommit 35b890aadcf50217b7a85db8c1f9112076f32c32[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 21:19:09 2018 -0800
+
+    Do not show $DATABASE_URL warning when showing application info
+
+[33mcommit 1bc8535dbb2974be04d7e9b1dd9045a8322d3595[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 21:09:53 2018 -0800
+
+    Move image proxy filter to template functions
+
+[33mcommit 6f5d93cbbee0bbbd0bbb23e0116b023025da7576[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 20:53:22 2018 -0800
+
+    Update scraper rule for lemonde.fr
+
+[33mcommit 311a133ab87423958d850a91dea0b49543b97c2a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 20:51:06 2018 -0800
+
+    Refactor manual entry scraper
+
+[33mcommit 52de36b158ab2340d2c206adabb7568d036f1aa2[m
+Author: djbshfbzehr <djbshfbzehr@outlook.fr>
+Date:   Mon Dec 3 05:29:44 2018 +0100
+
+    Apply rewriter rules on manual "Fetch Original Content"
+
+[33mcommit b51e7ea448bc40b4737bb3747dee666ea25dbd2a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 13:35:13 2018 -0800
+
+    Add Makefile target for current OS and architecture
+
+[33mcommit 154b6a3bf7b7bb8b7254347e043922c9d384815d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 2 11:09:06 2018 -0800
+
+    Improve Makefile
+    
+    - Use -mod=vendor
+    - Use same naming convention for all platforms
+    - Move go generate to its own target
+
+[33mcommit 04220ca1e7171e4adf1a858b9df87fe59f724f7d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 1 18:24:01 2018 -0800
+
+    Remove date and time from log messages
+    
+    We assume that logs are sent to Syslog or similar.
+    
+    Syslog or systemd already adds the timetamp.
+
+[33mcommit 8d9e6a2c62a4a2b684b2f67b512d7047ca5c2f2a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 1 18:11:25 2018 -0800
+
+    Add Windows build target
+
+[33mcommit e47188eab26431663861c16842ef6726f46e0dbe[m
+Author: mapl <9784732+mapl@users.noreply.github.com>
+Date:   Sat Dec 1 20:49:30 2018 +0100
+
+    Update scraper rule for heise.de
+
+[33mcommit 0be619355f1f48e926d563d73139b56463291cbe[m[33m ([m[1;33mtag: 2.0.13[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 25 19:49:05 2018 -0800
+
+    Update ChangeLog
+
+[33mcommit af4c68feac8e01631cc156ee3b48b85b75e59085[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 25 17:41:16 2018 -0800
+
+    Add support for Systemd Socket Activation
+
+[33mcommit 7838870a0ca57d48ed230e9dd58c79b0cfd9f809[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 25 16:13:52 2018 -0800
+
+    Change Unix socket permission to make it accessible from other services
+
+[33mcommit cb037910dfb8695c63722a8082db8124008bac80[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 25 15:01:01 2018 -0800
+
+    Archive more read entries
+
+[33mcommit f3bff76aa1739ad37c225e578e7e64be6fea46d7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 24 12:17:00 2018 -0800
+
+    Make sure slice is not out of range when reading XML prolog
+
+[33mcommit 70be08eaf856f3a1bb724a160c44e515e07b2294[m
+Author: ReVanTis <revantis0@gmail.com>
+Date:   Wed Nov 21 14:15:58 2018 +0800
+
+    Improve overall Simplified Chinese translations.
+    
+    - Unified few keywords.
+    - Unified all symbols to Chinese Symbols.
+    - Remove trailing period since it's not commonly used for Chinese on websites.
+    - Add one space between English words and Chinese words.
+
+[33mcommit 3d04d92aa271c4b215460e086b9a50ade00eeea3[m
+Author: ariddell <ariddell@users.noreply.github.com>
+Date:   Sun Nov 11 06:43:42 2018 -0500
+
+    Improve time since post date displays
+    
+    - 15 days now is "15 days" rather than "3 weeks" ago.
+    - 32 days is now "1 month" rather than "2 months" ago.
+    - 366 days is now "1 year" rather than "2 years" ago.
+    
+    Closes #267
+
+[33mcommit 5cd7152ae7a136bc29a339aae4e363c1f9e7c1c5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 12 10:23:39 2018 -0800
+
+    Simplify application HTTP middlewares
+
+[33mcommit 9f85f6703116c3d01d3d1b768df22b466d5d3613[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 16:42:30 2018 -0800
+
+    Make sure the remote address is populated even when using unix socket
+
+[33mcommit 1315282c7ff46f1ac048022f7eeb0b4d09eedb57[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 16:21:57 2018 -0800
+
+    Add the possiblity to listen on Unix socket
+
+[33mcommit becd086865f35d64a80d01ffb1ca96d0493dfa03[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 15:54:19 2018 -0800
+
+    Add config options to disable HTTP and scheduler services
+
+[33mcommit 487852f07eb191ef56967b7b7d7f01537a55eabd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 15:32:48 2018 -0800
+
+    Replace daemon and scheduler package with service package
+
+[33mcommit ca45765c46de3b00c3b22936c885b57c37186e3d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 11:40:40 2018 -0800
+
+    Improve logging messages in ui package
+
+[33mcommit 5a69a61d4841a35d7ddcb761a688db8c688314d6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 11:28:29 2018 -0800
+
+    Move UI middlewares and routes to ui package
+
+[33mcommit 0925899cee9362cf09e982487bd480e2b09041f4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 10:22:47 2018 -0800
+
+    Move API middleware and routes to api package
+
+[33mcommit a9f98adb0739f78495af745d30839a8aaf2f6979[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 11 09:52:12 2018 -0800
+
+    Move Fever middleware and routes to fever package
+
+[33mcommit 25c12053a6253f4a129016f8b5ef2638395f960f[m
+Author: Piotr Kubisa <piotrkubisa@users.noreply.github.com>
+Date:   Sun Nov 11 14:51:54 2018 +0100
+
+    Typo in README.md
+
+[33mcommit 36564ffbcdee24d043b44b556d5dda7662a255de[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 10 11:18:40 2018 -0800
+
+    Add link to HTML man page
+
+[33mcommit 2f6e241417e00839d4fc861d09fef740b0ae943f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 9 22:00:06 2018 -0800
+
+    Add man page
+
+[33mcommit 186f2b11c346ef676c224320b3735f42b8b96ca3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 9 21:58:09 2018 -0800
+
+    Change default database connection string
+
+[33mcommit 3b6e44c33131eb06287d070c3f4b6d19b465f4f5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 3 13:44:13 2018 -0700
+
+    Allow the scraper to parse XHTML documents
+    
+    Only "text/html" was authorized before.
+
+[33mcommit 1ff9950a551e1f96415cf918cd306b4eefb65c07[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 3 12:03:06 2018 -0700
+
+    Remove charset=utf-8 from JSON responses
+    
+    See: https://www.iana.org/assignments/media-types/application/json
+
+[33mcommit a70e9d03ffdc876446d39f25b331ba4db914d10d[m
+Author: Diego Agulló <diego.agullo@mo2o.com>
+Date:   Wed Oct 31 13:59:02 2018 +0100
+
+    Ignore hotkeys containing Control, Alt or Meta keys
+    
+    Fixes #260
+
+[33mcommit ae1dc1a91eea23be14f952efb130412fe6a7996b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 29 23:00:03 2018 -0700
+
+    Handle more encoding conversion edge cases
+
+[33mcommit 5ff06307265f773a39819d8229d7bc058f3bd7dc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 29 22:46:08 2018 -0700
+
+    Disable go test caching
+
+[33mcommit 7d1b471d88fd18a914a5eb4ea8810994120aaf2c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 29 19:04:36 2018 -0700
+
+    Add test case to check different feed encoding and HTTP headers
+
+[33mcommit 054fc8ef990185dee6cf5495dbbcd0a0301ae292[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 28 22:22:48 2018 -0700
+
+    Avoid duplication of ldflags in Makefile
+
+[33mcommit 03d0114dcd6fe5cd9fe8d89f244e96b53fbd3dc6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Oct 27 17:11:05 2018 -0700
+
+    Fix wrong translation key for category pages
+
+[33mcommit b17e01a2881b5f4244283540de28aa2e450d16f9[m[33m ([m[1;33mtag: 2.0.12[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Oct 26 20:07:56 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit f6028f38634c548d13232fc9b86a9428e5ec8c81[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Oct 26 19:49:49 2018 -0700
+
+    Improve Fever middleware and handle groupID=0
+
+[33mcommit 92c98bd9860a2839248d5d2c66488190ce4d81d9[m
+Author: Ashe Connor <kivikakk@github.com>
+Date:   Wed Oct 24 13:29:50 2018 +1100
+
+    Add OpenBSD build
+
+[33mcommit dc8668b9040ad99d30dd32ae7fe5b51b68ec8e99[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 22 20:49:10 2018 -0700
+
+    Improve logging for OAuth2 callback
+
+[33mcommit f06a19814bde280277d7e7309d83a4ac538840f2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 22 20:26:17 2018 -0700
+
+    Revert "Call preventDefault() when a keyboard shortcut is executed"
+    
+    This reverts commit 9440bf47a521a61c91073425bd613710cf7dd1cb.
+
+[33mcommit 86dc2bf1c9547f92d717456d4b059bcae1c3e3d2[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Mon Oct 22 10:54:48 2018 +0200
+
+    Unify german translation
+
+[33mcommit 9440bf47a521a61c91073425bd613710cf7dd1cb[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 21 18:32:07 2018 -0700
+
+    Call preventDefault() when a keyboard shortcut is executed
+
+[33mcommit 8c65c78904225e92df045cac43700210936ca148[m
+Author: Carl Helmertz <carl.helmertz@elvaco.se>
+Date:   Sun Oct 14 16:28:24 2018 +0200
+
+    NavHandler: Make "g f" go to feed, or list of feeds
+    
+    When you're reading an entry, you may want to go to the feed first,
+    before quickly continuing to reading all of the feeds with another "g
+    f".
+
+[33mcommit 74c35ad000a09d689e501f5995a109708fb4ff00[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 21 11:45:32 2018 -0700
+
+    Add more details in feed storage errors to facilitate debugging
+
+[33mcommit 85d48c8a7188fc426a1269b1eeccb09ae3e83e43[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 21 11:44:29 2018 -0700
+
+    Add entries storage error to feed errors count
+
+[33mcommit a614f980634003dae14b3675125f704d37856d0b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Oct 19 21:40:59 2018 -0700
+
+    Set arbitrary maximum size for tsvector column
+    
+    - The max size for tsvector is 1 MiB
+    - We index only the first million of characters,
+      it should be enough for most feed entries.
+
+[33mcommit 715575001a2b5a96fa0cfc4402d29c959f1f48a0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Oct 19 21:38:21 2018 -0700
+
+    Use different variable names for localized errors
+
+[33mcommit 15a11c3da98a5375fad22c7cdeaa73d073bb473d[m
+Author: Carl Helmertz <carl.helmertz@elvaco.se>
+Date:   Sun Oct 14 00:43:09 2018 +0200
+
+    Unsubscribe from feed through link or "#"
+    
+    After importing old OPML files, you may discover that many feeds are
+    obsolete or uninteresting. You list the feeds entries and determine that
+    you want to unsubscribe. This needs three clicks (edit feed, delete,
+    confirm) and requires moving the mouse to hit the different targets.
+    
+    This quickly becomes tiring, if you are up to possibly deleting hundreds
+    of feeds. One mediation, introduced in this commit, is to add an
+    unsubscribe link to each feed's entry listing view, and also adding a
+    keyboard shortcut.
+    
+    The keyboard shortcut "#" is:
+    * longer than one keystroke (requires shift)
+    * hard to type by accident
+    * used in Google products (thanks for the hint @fguillot)
+    
+    In an effort to try to reduce the number of accidental feed
+    unsubscriptions.
+
+[33mcommit b8f874a37d5ce57fb139e857b5cbd2276da46714[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 14 22:33:19 2018 -0700
+
+    Simplify feed entries filtering
+    
+    - Rename processor package to filter
+    - Remove boilerplate code
+
+[33mcommit 234b3710d4d3bc3b5cb5e56feaf74ceabfb9ef41[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 14 22:23:46 2018 -0700
+
+    Fix golint import in travis.yml
+
+[33mcommit 778346b0b04bc52c89529668b37c1086bebe1674[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 14 21:43:48 2018 -0700
+
+    Simplify feed fetcher
+    
+    - Add browser package to handle HTTP errors
+    - Reduce code duplication
+
+[33mcommit 5870f0426002c8e26a9ff472b23e15d7bf1235f7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 14 11:46:41 2018 -0700
+
+    Simplify feed parser and format detection
+    
+    - Avoid doing multiple buffer copies
+    - Move parser and format detection logic to its own package
+
+[33mcommit d5ff4191b6087b96b88221c6d939f73931001f2a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Oct 12 18:33:59 2018 -0700
+
+    Improve unit tests in url package
+
+[33mcommit c1fe84521ec43fd35dd4a6ff4fb9aa9ffb85d394[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 8 21:08:43 2018 -0700
+
+    Fix jshint error introduced in commit d4c1677
+
+[33mcommit 3daef197e98ca3e85c7043dff19081b12bb55d6c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 8 21:00:00 2018 -0700
+
+    Add short cli flags -i and -v
+
+[33mcommit 9606126196e520bbae405e2a837daa00ca512c64[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 8 20:47:10 2018 -0700
+
+    Convert text links and line feeds to HTML in YouTube channels
+
+[33mcommit d4c1677e3860667f7b7ebf61d11d33b9495da64d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 8 18:49:15 2018 -0700
+
+    Change link state when marking all entries as read
+
+[33mcommit 9dc38a0803ba8b5a7d0cfe023b21ee2ea2aff88a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 8 17:24:47 2018 -0700
+
+    Add missing package descriptions for GoDoc
+
+[33mcommit 11dfcdd3d602f1a5e9a2cc87e0e296c6c5507ee8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Oct 8 15:50:15 2018 -0700
+
+    Fix typo in license header
+
+[33mcommit 1f58b37a5e86603b16e137031c36f37580e9d410[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 7 18:42:43 2018 -0700
+
+    Refactor HTTP response builder
+
+[33mcommit ddfe969d6cbc8d23326cb9a3ca9a265d4e9d3e45[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Oct 7 12:50:59 2018 -0700
+
+    Improve Fever API performances when marking a feed or group as read
+
+[33mcommit 98206059fc55e68b3b0f8c95b74c331dd56da84c[m
+Author: Diego Agulló <aeoris@gmail.com>
+Date:   Tue Oct 2 05:52:51 2018 +0200
+
+    Set focus on article link when pressing prev/next hotkeys
+    
+    This enhancement offer the possibility to open articles in the background by using the browser hotkey Ctrl+Return or Cmd+Return.
+
+[33mcommit 9d08139f4363d3503398002bc82cb3746e3438cf[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 23 21:02:26 2018 -0700
+
+    Improve request package and add more unit tests
+
+[33mcommit 844680e57328034c20a2d2b84bd315b55fee9e23[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 23 15:23:46 2018 -0700
+
+    Add more unit tests for config package
+
+[33mcommit 8601a67a7d11a626c89c205023d497d13e76220f[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Sun Sep 23 21:50:13 2018 +0200
+
+    Add another fix for translations
+
+[33mcommit b1e8f534eff7569dc2e8dab4dee851d1b709f71b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Sep 22 15:04:55 2018 -0700
+
+    Simplify locale package usage (refactoring)
+
+[33mcommit aae9b4eb835c72c0b7ecd8fa6565eacce3963d00[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Sep 22 10:39:33 2018 -0700
+
+    Add missing translations and few fixes
+
+[33mcommit 0e23f37f5797ef35abad23f059fa48e56ff27b37[m
+Author: Savely Krasovsky <savely@krasovsky.me>
+Date:   Sat Sep 22 20:22:58 2018 +0300
+
+    Translate application in Russian
+
+[33mcommit 37ab6eec15804b3d122471bbb732eb106f107504[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Sat Sep 22 18:58:23 2018 +0200
+
+    Update German translation
+
+[33mcommit 5d75089127da39d063a2b0c2a995865032853c55[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Sep 21 22:27:53 2018 -0700
+
+    Use disclosure widget <details> for advanced feed options
+
+[33mcommit beb7a0cfcb6a5a76d680707a4c458eee51d87c07[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Sep 21 18:53:29 2018 -0700
+
+    Use unique translation IDs instead of English text as key
+
+[33mcommit f244df62936eea307a5fc3f27fb9968527d402ac[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Sep 20 19:45:56 2018 -0700
+
+    Add more unit tests for template functions
+
+[33mcommit d79bab2997350de8f7a8f7216eaa0599567775ae[m
+Author: Savely Krasovsky <savely@krasovsky.me>
+Date:   Fri Sep 21 05:11:13 2018 +0300
+
+    Fix invalid output when truncating Unicode text in templates
+
+[33mcommit 2538eea1776e1d03d33465ad2001512caca93937[m
+Author: Patrick <pmarschik@users.noreply.github.com>
+Date:   Thu Sep 20 03:19:24 2018 +0200
+
+    Add the possibility to override default user agent for each feed
+
+[33mcommit 1d335390c2ac7c0feeb94fce89eefdae9a1e7c17[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 16 19:14:44 2018 -0700
+
+    Split Makefile linux targets by architecture
+
+[33mcommit b9fee95cf24d594862200eb466456e518b25b78e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 16 19:13:16 2018 -0700
+
+    Add compiler, Arch, and OS to info command
+
+[33mcommit 359aea8308dbbd5ff235a78c04d23e5f9225c2fc[m
+Author: Diego Agulló <aeoris@gmail.com>
+Date:   Sat Sep 15 20:28:44 2018 +0200
+
+    Avoid line break between emoji and (un)read/(un)star links
+
+[33mcommit e0bfd220f786e7b2016f2b93a46829cfc685acc8[m[33m ([m[1;33mtag: 2.0.11[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Sep 11 18:29:28 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit c9f9dd3262b9f8437981f92fac100e508e3c3bcd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 9 15:15:14 2018 -0700
+
+    Store client IP address in request context
+
+[33mcommit c1e1506720e3c8b4e8782da9ff73ce1c57ce71a5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Sep 9 14:25:56 2018 -0700
+
+    Revert cookie flag from strict to lax mode otherwise oauth2 won't work
+
+[33mcommit 46932c91a6d8960a687ac29a57efaa4cac74c028[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Sep 8 21:43:45 2018 -0700
+
+    Use predefined Ciphers when TLS is configured
+
+[33mcommit 2306a4b2f6464b0f3cb822405e37471a37abe46f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Sep 8 21:20:24 2018 -0700
+
+    Avoid displaying an error when shutting down the daemon
+
+[33mcommit 07cd7d2135b13ea211ce7d950ef903b85f190f85[m
+Author: Adam Vigneaux <adam@adamvig.com>
+Date:   Sat Sep 8 21:40:23 2018 -0400
+
+    Add "Mark this page as read" to the bottom
+    
+    This better matches the most common use case for the "Mark this page as
+    read" link, which is to click it once you have reached the bottom of the
+    page. Especially on mobile, it can be annoying to scroll to the top of
+    the page to click the link.
+
+[33mcommit eee1f3190355224eef63a4dcdef8c36eb3ca3738[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Sep 3 14:26:40 2018 -0700
+
+    Refactor HTTP context handling
+
+[33mcommit 88e81d4d800ff6433518522954197d75203a25c2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Aug 29 21:09:42 2018 -0700
+
+    Set cookie attribute SameSite to strict mode
+
+[33mcommit 6137b401eec5a96101a6acb3c3547e7269d7eeb6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Aug 29 20:58:03 2018 -0700
+
+    Make user creation via environment variables idempotent
+
+[33mcommit 41ce0a3b80af2d17aa32e6064b94a7fdf156dea5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Aug 29 20:45:49 2018 -0700
+
+    Make latest changes compatible with Heroku
+
+[33mcommit 9ba9858bea1779e39b9ce264b1d70d08e456a8b9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Aug 28 20:46:15 2018 -0700
+
+    Use regular text version of ✔︎ instead of emoji version on iOS
+    
+    See this workaround: https://stackoverflow.com/questions/32639694/ios-9-removed-the-possibility-to-change-certain-symbol-colors-using-css/38362138#38362138
+
+[33mcommit 5341bbcbe27fd8a9e73f4eeb18319daf5421dcb4[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Tue Aug 28 23:44:34 2018 -0400
+
+    Add toggle status button to entry page
+
+[33mcommit 4f62a704e2cb77e2c9d99c6f9fa45f3485cf0af7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Aug 26 17:18:17 2018 -0700
+
+    Improve readme
+    
+    - Add more links to the docs
+    - Add screenshots
+
+[33mcommit a3f3f51c60e91f22cc57ecc23cf828421d46b6b7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Aug 26 16:43:53 2018 -0700
+
+    Migrate to go modules (Go 1.11)
+
+[33mcommit a9e9c347f4d385b4a297a45be96cddfc3a1c7814[m
+Author: Michael <michael-k@users.noreply.github.com>
+Date:   Sun Aug 26 19:19:13 2018 +0000
+
+    Switch Travis to Go 1.11
+
+[33mcommit 9169fbafb2e07b33b2ca175c7ac4a9558280912c[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Sun Aug 26 19:18:07 2018 -0400
+
+    Show count of feeds with permanent errors in header menu
+    
+    Only for feeds that reach `maxParsingError` are counted (so transient errors do not trigger counter).
+
+[33mcommit aae62aae08c7581822db0318dba21782d613b4bb[m
+Author: dzaikos <you@example.com>
+Date:   Sat Aug 25 16:59:17 2018 -0400
+
+    Added remote client IP to API login failure error message.
+    
+    Addresses #205
+    
+    Changed error level reporting on API login failure to Error from Info to match the web login reporting.
+
+[33mcommit 62ec185154385a178bf5525ed83682e5828942b0[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Sat Aug 25 22:55:21 2018 +0200
+
+    Add german translation string
+
+[33mcommit 551b73acfb6ed4620387c7345b117d32697deb77[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 25 12:21:54 2018 -0700
+
+    Add remove button in feed edit page
+
+[33mcommit febce4f2e3a86da4171783fcc593b25a807c3da8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 25 11:53:14 2018 -0700
+
+    Split integration tests into multiple files
+
+[33mcommit df2bebaf3dc9ab46c03883d795ae6637faa4a2c1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 25 10:33:08 2018 -0700
+
+    Update scraper rule for heise.de
+
+[33mcommit b17e4e88f6f09a578be22d5a39cb47c8f14422ed[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 25 10:04:38 2018 -0700
+
+    Expose real error messages for internal server API errors
+
+[33mcommit c327833314fafd4accb9bbfbaf01f0dbee7a9a10[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Aug 25 09:50:43 2018 -0700
+
+    Simplify context keys
+
+[33mcommit 4148d8af80ba97b176568c2ac52ffce3721ddde0[m
+Author: dzaikos <you@example.com>
+Date:   Sat Aug 25 02:47:34 2018 -0400
+
+    Added remote client IP to login failure error message.
+    
+    Fixes #205
+
+[33mcommit f43a055d63d33599404d2616bf54216bc74a2506[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Aug 24 22:23:03 2018 -0700
+
+    Move Golang API client here
+
+[33mcommit dbcc5d8a972f4f169e9e2c0636450555a06152b9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Aug 24 21:51:50 2018 -0700
+
+    Use canonical imports
+
+[33mcommit 7f2612d9a67ccb97a9cee8c330b7445f11497d01[m
+Author: tleb <tleb@openmailbox.org>
+Date:   Mon Aug 6 14:54:33 2018 +0200
+
+    Add Procfile
+    
+    Allows to git push to heroku/self-hosted alternatives easily
+
+[33mcommit cf03e0e33859b213f1d7e55b300a074eea107100[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Aug 1 20:28:45 2018 -0700
+
+    Create database package (refactoring)
+
+[33mcommit 17054b396eff571f49812074024cb9db2e098bdc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jul 28 10:32:48 2018 -0700
+
+    Update user agent with new website URL
+
+[33mcommit 72bc113b886b0ae09f3d2df3fc1422807d3c9dfb[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Mon Jul 23 22:02:01 2018 +0200
+
+    Remove white spaces in German translation
+
+[33mcommit 33dcbae7057c19179fe0b3e6766d5f3bee9d75f8[m[33m ([m[1;33mtag: 2.0.10[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jul 22 21:29:30 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit cfc1f3eb699cf07efac034d6a76ab19c8cd7e656[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jul 22 12:24:46 2018 -0700
+
+    Avoid browser caching issues when assets changes
+
+[33mcommit 9f6533ece90c6b528dd0af6f1b6dec4a7fa2fa3b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jul 19 19:27:05 2018 -0700
+
+    Compress JSON, CSS and Javascript responses
+
+[33mcommit a291d8a38b40569fdd1f00125ca0b29e4b9264f2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 18 22:30:05 2018 -0700
+
+    Improve themes handling
+    
+    - Store user theme in session
+    - Logged out users will keep their theme
+    - Add theme background color to web manifest and meta tag
+
+[33mcommit c1ab27172c0d82f9289aeb3402056f727bc473fd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 18 21:30:54 2018 -0700
+
+    Update application icon with different sizes
+
+[33mcommit d10312fe156444c54b2580e335bb09d39aff7a75[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 18 17:28:57 2018 -0700
+
+    Update URLs in readme
+
+[33mcommit 5365f31e901757ad7a2b69aebf1fabc34e7f9a68[m
+Author: neepl <1105374+neepl@users.noreply.github.com>
+Date:   Wed Jul 18 07:52:05 2018 +0300
+
+    Add support for published tag in Atom feeds
+
+[33mcommit 73a6e617bbde69ed0e68c6ad96cbfa2e72ecdcfd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jul 17 19:01:28 2018 -0700
+
+    Add few tweaks to the layout
+    
+    - Increase truncate length to 35 chars for feed titles
+    - Add bottom margin for main menu in mobile view
+    - Add tooltip to feed domain in feeds list
+
+[33mcommit 3f3174491103fc5a96b36918d8eada778f5b7210[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Tue Jul 17 21:48:56 2018 -0400
+
+    Prevent vertical scrolling on swipe
+
+[33mcommit 3b018bc6bf3b182b0ed24ee2956d0d7ef31ebb07[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Tue Jul 17 21:48:28 2018 -0400
+
+    Show feed title instead of domain in items list
+
+[33mcommit 6aa02680d80709d714672dd842dc3dc2533339fe[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jul 15 21:51:09 2018 -0700
+
+    Add service worker to cache feed icons
+
+[33mcommit c926498d3d12f4e59c5fe0cd40a77c42d15c30b9[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Thu Jul 12 20:41:09 2018 -0400
+
+    Make image proxy configurable
+    
+    Adds IMAGE_PROXY configuration setting to change image proxy filter behaviour:
+    
+    - none = No proxy
+    - http-only = Proxy only non-HTTPS images (default)
+    - all = Proxy everything
+
+[33mcommit 6fd6f79daf8a55eb97345f377d136cc320637580[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jul 10 23:20:32 2018 -0700
+
+    Add alt attribute for feed icons
+
+[33mcommit aceea56681a318413f0cafd63e8c7f472baae02c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jul 10 20:59:39 2018 -0700
+
+    Update CI jshint check
+
+[33mcommit a786e78acab6d5334c895421a5f15edaac6a90fb[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jul 10 20:56:54 2018 -0700
+
+    Add embedly.com to iframe whitelist
+
+[33mcommit 3bdb9251da602067e365fe45f3c6259b0ca27a0a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jul 10 20:41:27 2018 -0700
+
+    Use passive event listeners for touch events
+    
+    Avoid this warning in Chrome console: https://www.chromestatus.com/feature/5745543795965952
+
+[33mcommit 6d25e02cb5e3ddd9f3fc8dfb44cf29c98866d587[m
+Author: dzaikos <you@example.com>
+Date:   Mon Jul 9 01:22:48 2018 -0400
+
+    New `add_dynamic_image` rewriter for JavaScript-loaded images.
+    
+    Searches tags for various `data-*` attributes and sets `img` tag `src` attribute appropriately. Falls back to searching `noscript` for `img` tags.
+    
+    Includes unit tests.
+
+[33mcommit 8ee4280461aef523677a41a358e86f4918bcffa9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jul 8 18:21:56 2018 -0700
+
+    Change feed password field type to text to avoid autocomplete with Firefox
+    
+    - Using autocomplete="off" or autocomplete="new-password" doesn't change anything
+    - Changing the input ID doesn't change anything
+    - Using a different input name doesn't change anything
+    - Only Chrome supports autocomplete="new-password"
+
+[33mcommit 55a1e97778f45058ff3407a92303f6d57c0b15fe[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jul 7 14:01:02 2018 -0700
+
+    Add base URL validation
+
+[33mcommit cda0efb731e927226cc6e007ff734e45405195b9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jul 7 12:07:34 2018 -0700
+
+    Update default stylesheet name in HTML layout
+
+[33mcommit 364198ba4a32f6123bd72f44c2aefc03b4a669f2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jul 7 12:02:59 2018 -0700
+
+    Add integration test for search query
+
+[33mcommit ca30800e6a6b234e178baab06f794e56233a9de3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jul 7 11:00:39 2018 -0700
+
+    Pre-generate themes stylesheets at build time
+
+[33mcommit 459bb4531f92f8663afb6f36aa9be5b789bd591f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jul 6 21:18:14 2018 -0700
+
+    Update vendor dependencies
+
+[33mcommit 34a3fe426b33a63f2d8e02d4a70c88f137fa5410[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jul 6 20:39:28 2018 -0700
+
+    Compress HTML responses to Gzip/Deflate if supported by browser
+
+[33mcommit 53deb0b8cd1899ec325eca93631b3e137bdd3ec3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jul 5 22:18:51 2018 -0700
+
+    Refactor assets bundler and split Javascript files
+
+[33mcommit e1c56b2e53ba3c6f48d5e159d18ae59c180cc388[m
+Author: dzaikos <you@example.com>
+Date:   Fri Jul 6 00:17:03 2018 -0400
+
+    Processor: Do rewriter before sanitizer for `entry.Content`.
+    
+    Addresses #163.
+
+[33mcommit 845cf2adba92dc3b646f1e33117c032625ae411a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jul 5 12:52:29 2018 -0700
+
+    Remove timestamp from generated files
+
+[33mcommit 7ed8401088aeddc0d217031e923168a26f3f5036[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Thu Jul 5 19:42:49 2018 +0200
+
+    Add German translation for search form
+
+[33mcommit de1a4aad302e3366b13e683dbe0ca10407a4c57b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 4 22:45:44 2018 -0700
+
+    Add support for protocol relative YouTube URLs
+
+[33mcommit 6d0dc451e45effc8cbb6953a766b111036d893ce[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 4 22:05:19 2018 -0700
+
+    Add search form
+
+[33mcommit af15412954b9b36365f3fd723bf91b3c7c2f88bd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jul 4 17:40:03 2018 -0700
+
+    Add full-text search for entries and add search parameter to the API
+
+[33mcommit 89e5dacca9359b49c21e052e39206ad1c07ebbf1[m
+Author: Daan Sprenkels <hello@dsprenkels.com>
+Date:   Mon Jul 2 11:16:46 2018 +0200
+
+    Improve updates to dutch locale
+
+[33mcommit 7d4a1955193e105b911811a1653acf109f156e5b[m
+Author: dzaikos <you@example.com>
+Date:   Mon Jul 2 03:16:27 2018 -0400
+
+    Sandbox iframes when sanitizing.
+    
+    Updated iframe unit tests.
+    
+    Refactored sanitizer.getExtraAttributes() to use `switch` instead of multiple `if` statements.
+
+[33mcommit c3628813c6f37f2330f7b9c48b5dad867e66bed1[m
+Author: dzaikos <you@example.com>
+Date:   Mon Jul 2 01:27:47 2018 -0400
+
+    Keep consistent text size on mobile orientation change
+    
+    using vendor-specific CSS `*-text-size-adjust`.
+
+[33mcommit d3b48b76955d8c0668f50242350ad77c22196a60[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Tue Jul 3 00:37:07 2018 -0400
+
+    Update unit test for Sans-Serif theme
+
+[33mcommit 29131d4ee656ab8c659bd5219b7eed5d4d64daa5[m[33m ([m[1;33mtag: 2.0.9[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Jul 1 11:50:43 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit cc1e4f916f9b0eb248f4648951f8e511285c1960[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 30 18:05:51 2018 -0700
+
+    Avoid Chrome to autocomplete no-login password fields
+    
+    Browsers always autocomplete saved passwords even with autocomplete="off".
+    
+    https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion
+
+[33mcommit 240f8017557c356f3048d00c45c2664372d26fa9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 30 17:35:06 2018 -0700
+
+    Always mark the entry as read after fetching the pagination in unread mode
+
+[33mcommit 4c7fce0233dcc3914d9cffe46d509a58a2eb11e5[m
+Author: Unknown <stratmaster@users.noreply.github.com>
+Date:   Sat Jun 30 23:46:39 2018 +0200
+
+    Update German translation
+
+[33mcommit 5cf504745b07ac017e7c62e83b5efe797d3b74e3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 30 14:22:45 2018 -0700
+
+    Add cli flag to reset all feed errors
+
+[33mcommit 9c0f882ba0c7f8635ff7ab8007d134f7aefd69f2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 30 12:42:12 2018 -0700
+
+    Add specific 404 and 401 error messages
+
+[33mcommit a40f592aab89cc6e5c8f2a9be8ed912f8204f070[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jun 29 20:43:03 2018 -0700
+
+    Strip binaries to reduce size
+
+[33mcommit 77947282e4d18c6396bf82bf12ea29da382d37af[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jun 29 20:29:04 2018 -0700
+
+    Make sure we always get the pagination in unread mode
+
+[33mcommit 0b0f4751fa250dfba49d941bc5d3670bc9629354[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Thu Jun 28 21:56:04 2018 -0400
+
+    Fix incorrect data value when toggling bookmark flag on entry page
+
+[33mcommit 0227bb98281a4cd3d00dca6b01df11d2a02da5fc[m
+Author: dzaikos <you@example.com>
+Date:   Thu Jun 28 02:08:21 2018 -0400
+
+    Set opener to null when opening original URL with JavaScript.
+
+[33mcommit 9d8b5421ed69f4abe07bddd085b4374c99e4f069[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 26 22:59:16 2018 -0700
+
+    Remove unnecessary style
+
+[33mcommit dd78fb4340847fc090a6050a39f12582a8ff684d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 26 22:55:44 2018 -0700
+
+    Do not ignore errored feeds when a user refresh feeds manually
+
+[33mcommit 45d7105ed15dd80c9fdd76f61cf239b0a6177a4c[m
+Author: dzaikos <you@example.com>
+Date:   Tue Jun 26 17:39:56 2018 -0400
+
+    Refactor AddImageTitle rewriter.
+    
+    * Only processes images with `src` **and** `title` attributes (others are ignored).
+    * Processes **all** images in the document (not just the first one).
+    * Wraps the image and its title attribute in a `figure` tag with the title attribute's contents in a `figcaption` tag.
+    
+    Updated xkcd rewriter unit test.
+    
+    Added another xkcd rewriter unit test to check rendering of images without title tags.
+
+[33mcommit c9131b0e89db2989dd5e2e6894d6bec6c0075cb6[m
+Author: dzaikos <you@example.com>
+Date:   Sun Jun 24 13:16:07 2018 -0400
+
+    Improve sanitizer to remove style tag contents.
+    
+    See #157.
+    
+    Refactored how blacklisted tags are handled so they're easier manage in the future.
+
+[33mcommit d847b10e32270c3cf7bafe6e2914e82bda39a924[m
+Author: Dave Z <dzaikos@users.noreply.github.com>
+Date:   Sat Jun 23 20:50:43 2018 -0400
+
+    Improve sanitizer to remove script and noscript contents
+    
+    These tags where removed but the content was rendered as escaped HTML.
+    
+    See #157
+
+[33mcommit 7039df9af1de1aea72e90d4aa9fa6a37d21e1be0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 23 16:16:54 2018 -0700
+
+    Improve feed and user API updates with optional values
+
+[33mcommit cd77ebd7422b0988df9a5c017901a51507e79abd[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Thu Jun 21 15:47:23 2018 +0200
+
+    Corrected hard coded strings
+
+[33mcommit eb9d23c796b6c209543e15d815e46d85de382d60[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Wed Jun 20 23:27:36 2018 +0200
+
+    Update German translation
+
+[33mcommit bddca15b69692bd055c507f2469e68dca1e56098[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 19 22:58:29 2018 -0700
+
+    Add new fields for feed username/password
+
+[33mcommit 261695c14c2d768f392cfb774e7940660edaa3d9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 19 20:55:29 2018 -0700
+
+    Improve memory usage debug log
+
+[33mcommit b5c317f971f4d2b85127e6730ea52866b004e694[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 19 20:21:24 2018 -0700
+
+    Disable keep-alive for HTTP client
+
+[33mcommit 7914261437305c3eb2ad2f1c750be91d95af718c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 19 20:13:13 2018 -0700
+
+    Close HTTP response body even for failed requests
+
+[33mcommit be95e87e0ecd77023dda4f4cf390703e768c9378[m
+Author: Dave Z <noreply@example.com>
+Date:   Tue Jun 19 00:57:30 2018 -0400
+
+    Added Sans-Serif theme.
+
+[33mcommit c719cf7df0ca8dd8d2034ed1c2cb75e9b59bc086[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jun 12 18:45:09 2018 -0700
+
+    Rewrite iframe Youtube URLs to https://www.youtube-nocookie.com
+
+[33mcommit 36dab8b5182215d53512525991cc23523bdf23dc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 9 19:13:41 2018 -0700
+
+    Add more filters for API call /entries
+    
+    New filters:
+    
+    - before (unix timestamp)
+    - before_entry_id
+    - after
+    - after_entry_id
+    - starred (boolean)
+
+[33mcommit c5373ff2bffb3a3e3d37b3eb6bd1cdc733d9c590[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jun 9 13:40:20 2018 -0700
+
+    Rewrite individual entry pagination SQL queries
+
+[33mcommit bd70640794e93ed31f153dd9d4152d6ccb8b0e2f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jun 8 18:24:41 2018 -0700
+
+    Simplify entry query builder
+
+[33mcommit 2bbe21fb89bf00bcb52369a32d992aecca07a2ab[m
+Author: Dave Z <noreply@example.com>
+Date:   Wed Jun 6 18:31:06 2018 +0000
+
+    Prevent items from sticking on touchend.
+
+[33mcommit 084642eb0a991b738da9c5b2bf7ae4956514f05b[m
+Author: Dave Z <noreply@example.com>
+Date:   Wed Jun 6 18:18:41 2018 +0000
+
+    Extended horizontal overflow to feed and category views.
+
+[33mcommit 11d880087d3a2aaa478b071caf99d446da3ad2a7[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Wed Jun 6 03:36:03 2018 +0200
+
+    Update German translation
+
+[33mcommit 77cafe9c2c599f047b499fa09e9c1b126742af7d[m[33m ([m[1;33mtag: 2.0.8[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jun 4 18:48:27 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit 3b39f0883c60b6978c6c6df2c0029bd4c96613fe[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jun 1 07:22:18 2018 -0700
+
+    Rewrite RealIP() to avoid returning an empty string
+
+[33mcommit cf7a7e25fbf94c16ca08ff3e889bdd4373751e2c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon May 21 12:36:21 2018 -0700
+
+    Convert IP field from text to inet type
+
+[33mcommit fb49ad24d5418ee9b7f65e9c36f07a1717608fcb[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon May 21 12:24:48 2018 -0700
+
+    Improve error handling in integration clients
+
+[33mcommit b270159aae97359afe02f3c4843fa0f4e9a1a1b6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon May 21 12:19:56 2018 -0700
+
+    Offer the possibility to set Pocket Consumer Key as environment variable
+
+[33mcommit 44decae557a6f78eda57b8f407d35b10233538e4[m
+Author: Pascal Widdershoven <pascal@kabisa.nl>
+Date:   Mon May 21 12:38:44 2018 +0200
+
+    Fix unread count in menu not triggering click
+    
+    By moving unread count into anchor.
+    
+    Previously, clicking the unread count would not cause the anchor to be
+    invoked. This was confusing. This change includes the unread count span
+    in the anchor.
+
+[33mcommit 7f2fd1fdd85a62b187ad901d4917e561e39e37b2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun May 20 15:29:14 2018 -0700
+
+    Add Pocket authorization flow in the user interface
+
+[33mcommit 0f3f5e442f81d37a03618d0df5ea8f0524a24029[m
+Author: Allan Reyes <allanbreyes@users.noreply.github.com>
+Date:   Sun May 20 13:31:56 2018 -0700
+
+    Add Pocket integration
+
+[33mcommit f19ab21b7d7dcddb3de0536c272cb22d581eb8d7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat May 19 16:40:24 2018 -0700
+
+    Archive read entries automatically after 60 days
+
+[33mcommit ff8e0c6b3dca3bf46b0abda284b486467a23dd07[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat May 19 15:47:46 2018 -0700
+
+    Update readme and rebuild CSS
+
+[33mcommit b0667e1b7878c7eb8f93171cbe2d6b6b835c1385[m
+Author: Allan Reyes <allanbreyes@users.noreply.github.com>
+Date:   Sat May 19 11:38:31 2018 -0700
+
+    Hide horizontal overflow on hiding articles; fixes #130
+
+[33mcommit 9554d0bd53e02e6844e5e8811c3e8557fd0b7d17[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon May 14 18:52:12 2018 -0700
+
+    Add integration test for /me endpoint
+
+[33mcommit e81e4f0ac34569f9ab3f05b33fb05125c1d52026[m
+Author: Leviathan Jeanis <isavegas2006@gmail.com>
+Date:   Mon May 14 18:41:41 2018 -0700
+
+    Add API endpoint to get logged user
+
+[33mcommit 4674d559a4e8e36d1440165c2bb991a5a27da811[m
+Author: Abhinand <abhinandh@gmail.com>
+Date:   Tue May 8 22:08:01 2018 -0700
+
+    Fever API: Return response with an empty list if there is no items
+
+[33mcommit 0c2e5ff0dce3f81235367eb6d9404d3710a0f3e7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue May 8 20:41:24 2018 -0700
+
+    Handle feeds with dates formatted as Unix timestamp
+
+[33mcommit 39c44521428869620ef97d72e5449c03ddaede8b[m[33m ([m[1;33mtag: 2.0.7[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon May 7 20:14:54 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit 2f4cd59ad990ac1c43a2262279e3b1bd91cd18c7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 29 23:11:10 2018 -0700
+
+    Make sure to close request body in HTTP client
+
+[33mcommit 5cacae6cf2e1f2f59cf294139fd0c626a3b256fc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 29 18:56:40 2018 -0700
+
+    Add API endpoint to import OPML file
+
+[33mcommit 7a1653a2e9e0802677d34f513828b33c0ef5c576[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 29 17:58:09 2018 -0700
+
+    Make sure integrations are configured before to make any HTTP requests
+
+[33mcommit 31da4db14fdda364b1c72460a81e3ccce67ff7e8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 29 17:43:40 2018 -0700
+
+    Do not show save link if no integration is configured
+
+[33mcommit b166ceaea72dc6db77467621ffc270fbdccb6566[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 29 17:04:23 2018 -0700
+
+    Avoid people to unlink their OAuth2 account without having a local password
+
+[33mcommit f49b42f70f902d4da1e0fa4080e99164b331b716[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 29 16:35:04 2018 -0700
+
+    Use vanilla HTTP handlers (refactoring)
+
+[33mcommit 1eba1730d1af50ed545f4fde78b22d6fb62ca11e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 28 10:51:07 2018 -0700
+
+    Move HTTP client to its own package
+
+[33mcommit 04adf5fdf53951f270923c41171a52575db53e46[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Apr 27 22:25:00 2018 -0700
+
+    Add middleware to read X-Forwarded-Proto header
+
+[33mcommit ddd3af4b85f5a2fe85c17a9cc30cf54743b9eb59[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Apr 27 22:07:46 2018 -0700
+
+    Do not use shared variable to translate templates
+
+[33mcommit 6b360d08c1f6c8a6cd1b7608f7af734a3ceef8d7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Apr 27 20:38:46 2018 -0700
+
+    Use Gorilla middleware (refactoring)
+
+[33mcommit 322b265d7aec7731f7fa703c9a74ceb61ae73f3f[m
+Author: aniran <aniran.chandravongsri@gmail.com>
+Date:   Thu Apr 26 16:51:07 2018 -0400
+
+    Scrape parent element for iframe
+    
+    Current behavior: if you have an `iframe` scraper rule, `scrapContent`
+    tries to return the inner HTML of the `iframe`, which turns up blank.
+    
+    New behavior: like `img` elements, if an `iframe` is matched by a scraper rule,
+    the parent element's inner HTML (i.e. the `iframe` is returned).
+
+[33mcommit 920dda79b7d66f30a05aaa03e3fe8dc74aab515b[m
+Author: aniran <aniran.chandravongsri@gmail.com>
+Date:   Thu Apr 26 16:46:40 2018 -0400
+
+    Add soundcloud and bandcamp iframe sources
+
+[33mcommit 1ce522b98a35688f00e2cbe5bca20cc4a666bb66[m[33m ([m[1;33mtag: 2.0.6[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Apr 20 21:56:38 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit 657e96e13342a9fe968bad3fb752ad72271f2484[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Apr 17 21:50:52 2018 -0700
+
+    Improve graceful shutdown
+
+[33mcommit 0429bbb19db777bf5979df02ab21815b33541e7e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Apr 15 20:27:10 2018 -0700
+
+    Simplify Heroku deployment
+
+[33mcommit 45dde0cf4a5794f36fb278e24e2cd9899d03922a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 14 14:23:05 2018 -0700
+
+    Display memory usage and some metrics in logs
+
+[33mcommit 4cdb2f820b5a2bd5cb211be09e6794f333355794[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 14 13:52:53 2018 -0700
+
+    Increase read/write timeout for HTTP server
+
+[33mcommit dcbb5047b1cb9189ff270ead27a6e619e58f00c2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Apr 10 18:13:05 2018 -0700
+
+    Add support for Dublin Core date in RDF feeds
+
+[33mcommit 15202b8675544e12f935f9f8f906ee7f387facad[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 9 21:52:24 2018 -0700
+
+    Do not return an error if the user session is not found
+
+[33mcommit 02ba735ba92e47b6f1136d051dfe6923fd742be1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 9 21:27:15 2018 -0700
+
+    Handle some non-english date formats
+
+[33mcommit 20f874399db84032ebfba1769267470a4494d554[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 9 20:39:56 2018 -0700
+
+    Add missing French translation
+
+[33mcommit e2d02bac5a407d9de6bac94b034f1f6b7ebdddc9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 9 20:38:12 2018 -0700
+
+    Rename RSS parser getters
+
+[33mcommit f76093690c0b3a1364269e0bfc9086ac9f60f184[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 9 20:30:55 2018 -0700
+
+    Get the right comments URL when having multiple namespaces
+
+[33mcommit 7640a8cbab897b6791e885534ec9650dee669ce2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Apr 9 20:18:54 2018 -0700
+
+    Ignore caching headers for feeds that send "Expires: 0"
+
+[33mcommit 3d59cdba103f99e93612c9b9a91cc63361f1d8d0[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Tue Apr 10 03:24:24 2018 +0200
+
+    Add missing translation string
+
+[33mcommit d3855fef3f5ff2cb5a5ca4cc455919d4c4d37138[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Mon Apr 9 19:33:40 2018 +0200
+
+    Update German translation
+
+[33mcommit 336d44b00e312cd6124a82044f5d970ab5419a77[m[33m ([m[1;33mtag: 2.0.5[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 7 15:47:18 2018 -0700
+
+    Update ChangeLog
+
+[33mcommit 46d67acf224d333942ff87cfce9e60c2dd36ad0a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 7 14:20:42 2018 -0700
+
+    Avoid unread counter to be off by one
+
+[33mcommit 702256bcc0e829b49a875e7c2b70c5078ff2c665[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Apr 7 13:56:11 2018 -0700
+
+    Add unit test for comments url and French translation
+
+[33mcommit 538d08c16ce72dcbb8c6d041bdf9643cf4a16763[m
+Author: Ben Brooks <ben@bbrks.me>
+Date:   Sat Apr 7 21:50:45 2018 +0100
+
+    Add CommentsURL to entry
+
+[33mcommit 449020c1e8019ca3c7032be77eb533fc2eed04e6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 18 20:48:58 2018 -0700
+
+    Update .gitignore
+
+[33mcommit c8118497715a122c7ed120758f54091c0094ce18[m
+Author: MoritzFago <MoritzFago@users.noreply.github.com>
+Date:   Mon Mar 19 04:44:13 2018 +0100
+
+    Add FreeBSD build target
+
+[33mcommit 6ea4da3bce2cc9321926be74d0cbc6ad0f01f363[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 18 11:57:46 2018 -0700
+
+    Handle RSS author elements with inner HTML
+
+[33mcommit 34cdffda8878b8d2e37373c55d0bb2ac5993ca1e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Mar 17 13:39:08 2018 -0700
+
+    Fix typo in translations
+
+[33mcommit b1da081ae61f6a81269e679e88cac3173e00dd27[m
+Author: Daan Sprenkels <hello@dsprenkels.com>
+Date:   Fri Mar 16 15:15:15 2018 +0100
+
+    Add dutch translations
+
+[33mcommit 482785c5e6a1acdba8750b99b13288ad62c6d29d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Mar 14 20:09:06 2018 -0700
+
+    Convert enclosure size field to bigint
+
+[33mcommit fec391a336697a6536be9a04cee55b2f85da9a5d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Mar 14 18:51:41 2018 -0700
+
+    Switch Travis to Go 1.10
+
+[33mcommit ec08f45bf5bec3d6c359352f65e50d39a8306a51[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Mar 14 18:50:06 2018 -0700
+
+    Fix broken OPML import with Go 1.10
+
+[33mcommit dd68181a83f383f80234080d7fd5b5532415cace[m[33m ([m[1;33mtag: 2.0.4[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Mar 5 21:42:52 2018 -0800
+
+    Update ChangeLog
+
+[33mcommit a8be61cdbb09a895f48884a1567a8e6aa2694381[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 4 17:38:08 2018 -0800
+
+    Filter the list of timezones
+
+[33mcommit 609c57332e73aa753d9c198cad3595cde501c1ff[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Mar 4 17:04:31 2018 -0800
+
+    Show last login and session creation date in current timezone
+
+[33mcommit 5185bf0c7ea5522ee2b00d57e3954549b314553a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Mar 1 23:06:28 2018 -0800
+
+    Fix typo in edit user template
+
+[33mcommit cbd273da2bf722ce121dec3c6dc91d5187a17c08[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Mar 1 21:31:57 2018 -0800
+
+    Improve for/range loop to avoid linter error
+
+[33mcommit 0c7039de0e22587913e23988a4e2d6c06fd3bb34[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Mar 1 21:24:58 2018 -0800
+
+    Entries date should contains user timezone (API)
+
+[33mcommit f110384f113002ad022c677ea138a0f77fad4a62[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Feb 27 21:19:59 2018 -0800
+
+    Improve parser error messages
+
+[33mcommit 953d0a2dc05714c22f7c9c389a860fd38c07b66e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Feb 27 21:08:32 2018 -0800
+
+    Support localized feed errors generated by background workers
+
+[33mcommit 9694861cb6ad08ded824b9bf04ef19a3a168d7b9[m
+Author: ReVanTis, Zhao <revantis0@gmail.com>
+Date:   Tue Feb 27 14:36:07 2018 +0800
+
+    Add Simplified Chinese Localization
+
+[33mcommit 34ce1142313b74e21a74c08c6dbd8d4312d7e336[m
+Author: Nicolas Carlier <n.carlier@nunux.org>
+Date:   Sun Feb 25 19:49:08 2018 +0000
+
+    Add Nunux Keeper integration
+
+[33mcommit 3030145b3048245405766c3a73a099af82ba9750[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Feb 23 19:58:08 2018 -0800
+
+    Remove parentheses around feed error messages
+
+[33mcommit a9f0fdaf22459b338c4958083b2b52e674bdffca[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Feb 23 18:26:34 2018 -0800
+
+    Print info message if DATABASE_URL is not set
+
+[33mcommit 73a0a25b6cf9e2b11476c9b6504c69e7d33f4ccc[m[33m ([m[1;33mtag: 2.0.3[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Feb 19 20:15:57 2018 -0800
+
+    Update ChangeLog
+
+[33mcommit 2786b8f1637458e2a53018385565838ca91e83d7[m
+Author: Sebastian Korotkiewicz <sebastian@korotkiewicz.eu>
+Date:   Mon Feb 19 22:49:49 2018 +0100
+
+    Update Polish translation
+
+[33mcommit 9292d5d6049de7a876c5428039c63e7c7720452b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 17 12:21:58 2018 -0800
+
+    Handle Atom feeds with HTML title
+
+[33mcommit 3ba280e10c4b876331b964c93d720ad50d9f99d7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 17 11:43:37 2018 -0800
+
+    There are more than 2 plurals in Polish
+
+[33mcommit 4eceeaaca47394c2a69cbe53895734c6605e59e7[m
+Author: Sebastian Korotkiewicz <skorotkiewicz@gmail.com>
+Date:   Sat Feb 17 20:29:14 2018 +0100
+
+    Add Polish translation
+
+[33mcommit 205aef595b072bf430adce46ae1094214d370505[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 10 22:34:50 2018 -0800
+
+    Change color of <q> tags for black theme
+
+[33mcommit a006a93a04eda5d8d6947eb1ccc675a79266dbf4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 10 22:30:43 2018 -0800
+
+    Add indexes
+
+[33mcommit 30e80c675ec31d376571d36a6523b68280d9060d[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Sat Feb 10 03:20:06 2018 +0100
+
+    Update German translation
+
+[33mcommit dda9114692c712c3139b156d968db66bff6ccabc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Feb 8 18:16:54 2018 -0800
+
+    Improve error handling for HTTP client
+
+[33mcommit 16c2dc4a8c2cdb49d18205835e6dd77a2a79c4b9[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Thu Feb 8 21:41:14 2018 +0100
+
+    Add missing German string
+
+[33mcommit 7b0bfd930839e6ebe4b64f37cbdc6efbf7dbd090[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Feb 7 20:57:56 2018 -0800
+
+    Strip invalid XML characters to avoid parsing errors
+
+[33mcommit c6fd9eb9b1a26c7f029cfd97fb1637d2ab867173[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Feb 7 19:10:36 2018 -0800
+
+    Remove period for feed errors
+
+[33mcommit 0fb87eba3f763658e3bf864a9cf78adbdae590c6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Feb 7 18:47:47 2018 -0800
+
+    Improve error handling when the response is empty
+
+[33mcommit 1e70ca1a199199853d3ae95c666400a9a70255e2[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Thu Feb 8 03:05:58 2018 +0100
+
+    Add missing French translation
+
+[33mcommit ccb7306dcb9efdda7db17e371583476508d4cdea[m[33m ([m[1;33mtag: 2.0.2[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Feb 5 20:29:42 2018 -0800
+
+    Update ChangeLog
+
+[33mcommit 12ff562d31fc5ab53c74aacb6ab2cd26444ed978[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Feb 4 18:05:45 2018 -0800
+
+    Add support for Let's Encrypt http-01 challenge
+
+[33mcommit 3884a33b3623ee5166f8254a0919e65be9bfb49b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Feb 4 15:45:07 2018 -0800
+
+    Move template functions outside engine (refactoring)
+
+[33mcommit b5b1930599190e2d7a6613db8779d9bbb970a1f7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Feb 4 14:37:42 2018 -0800
+
+    Take timezone into consideration when calculating relative time
+
+[33mcommit 61bc012a6284f90001b2339ecfdfb5b96e38be10[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 3 15:54:02 2018 -0800
+
+    Add support for HTTP Strict Transport Security header
+
+[33mcommit 9c4299720900fce52daedfce2314d31e92f7fe1d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Feb 3 15:33:17 2018 -0800
+
+    Add support for base URLs with subfolders
+
+[33mcommit 78385a351e208feb183549c2fa854b302da0c690[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Fri Feb 2 05:46:53 2018 +0100
+
+    Update German translation
+
+[33mcommit 32cec5bad04e17d576b04ca2f063274d7a29eecd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jan 31 22:03:21 2018 -0800
+
+    Add missing about menu in settings
+
+[33mcommit b78172033fe9f03b5e1ffe4d235b9ab4fb23766d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jan 31 21:57:20 2018 -0800
+
+    Show API URL endpoints in user interface
+
+[33mcommit b0442e027771c2cf33b92557a7e73fa4f85849cf[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 29 21:07:55 2018 -0800
+
+    Do not update entry date while refreshing a feed
+    
+    We do not update the published date because some feeds do not contains any date,
+    in this case it default to time.Now(), which could change the order of items on
+    the history page.
+
+[33mcommit bca717873e678dcbf2865087a22959475ee24fec[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 29 20:58:11 2018 -0800
+
+    Enable debug mode for integration tests
+
+[33mcommit 23d2d9109f060978705f3c7a8d2f8691b6f9107f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 29 20:54:38 2018 -0800
+
+    Add the possiblity to enable debug mode with an environment variable
+
+[33mcommit c8138351c9737e3286a128c78f39e4f8a23e7bc9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 29 20:46:01 2018 -0800
+
+    Keep code base tidy
+
+[33mcommit 24a2f472ec8593b4734e91ac15ee5503d16ae63a[m
+Author: Rogier Lommers <rogier@lommers.org>
+Date:   Tue Jan 30 05:34:00 2018 +0100
+
+    Add flag to enable debug logging
+
+[33mcommit 40eb1b10fe40bd23e40708f734b74b992547d8ca[m
+Author: Mahendra Kalkura <mahendra@kalkura.com>
+Date:   Fri Jan 26 09:43:38 2018 +0530
+
+    Improve unread counter updates
+
+[33mcommit 26af3f98d2e7b5d3bbb8865dfaf38d80f7845335[m[33m ([m[1;33mtag: 2.0.1[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 22 21:03:46 2018 -0800
+
+    Add ChangeLog
+
+[33mcommit 577bcddb2afc1d337ea2bbe74b5e6dc7c54f6c00[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 22 20:43:03 2018 -0800
+
+    Change user agent
+
+[33mcommit da5c8c2edb4e7978bc3ef989ee774c3407905fac[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jan 20 16:49:47 2018 -0800
+
+    Move environment variables to config package
+
+[33mcommit ffabb009b8e9649eb6450a8edc1ebfdc9fdbb8c3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jan 20 14:04:19 2018 -0800
+
+    Do not override existing entries when the crawler is enabled
+
+[33mcommit 208cf9892d853a94e5512702c0ff6ed1cafe322a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 19 22:50:40 2018 -0800
+
+    Compile all ARM architectures
+
+[33mcommit 713b38e34c6d4a232af871659793bb9674e020f7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 19 22:42:55 2018 -0800
+
+    Handle more encoding edge cases
+    
+    - Feeds with charset specified only in Content-Type header and not in XML document
+    - Feeds with charset specified in both places
+    - Feeds with charset specified only in XML document and not in HTTP header
+
+[33mcommit 3b62f904d6d3fdad168d3b212ff7c465c01b50f4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 19 18:43:27 2018 -0800
+
+    Do not crawl existing entry URLs
+
+[33mcommit 09785df07f4b954698aa97be39c8cd9fdf7959fc[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Sat Jan 20 00:29:15 2018 +0100
+
+    Update German translation strings
+
+[33mcommit bdcc4134fa37a071d696afdcaadf21ffa5f3c323[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 18 21:53:31 2018 -0800
+
+    Store language in session to show the login page translated
+
+[33mcommit 6302c3b2194e43add648724044bb293ea15c5116[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 18 20:23:26 2018 -0800
+
+    Add mark as read/unread link on list items
+
+[33mcommit 68508ff8008740444808a13c21369c6fbc2a66d0[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Thu Jan 18 00:57:30 2018 +0100
+
+    Updated Strings for Keyboard Shortcuts & added missing strings
+    
+    - added missing String for "Pages Navigation", "Logged as" and "Unread Items"
+    - fixed some other strings
+
+[33mcommit 45f0d3bed3a506424becdc296b8fdd756058c686[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Wed Jan 17 20:08:57 2018 +0100
+
+    Update German translation
+    
+    Since "Next/Previous" are used for switching between single articles and whole pages, the translation has to be more universal. Furthermore unification for Star/Favorites as "Lesezeichen" and items/articels as "Artikel". Some other small fixes.
+
+[33mcommit 13db40f6bb5cd12410cfc71ad41b3156a854e017[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Wed Jan 17 03:01:24 2018 +0100
+
+    Update German translation
+
+[33mcommit c2fd2e747aea3a175f5caf327d4f82deda2ce5e0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 15 18:08:30 2018 -0800
+
+    Add functions to get config values
+
+[33mcommit d7f66ffa5cd6f1a07dbdba4e52cff1370e858d65[m
+Author: stratmaster <stratmaster@users.noreply.github.com>
+Date:   Tue Jan 16 02:23:47 2018 +0100
+
+    Add German translation
+
+[33mcommit 631e0a2e204efd1c4686e6803714dc7874638125[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 12 18:16:51 2018 -0800
+
+    Add integration test for export API endpoint
+
+[33mcommit 4aec2453f442277c858bab99ae4d0a6cba857a10[m
+Author: Rogier Lommers <rogier@lommers.org>
+Date:   Fri Jan 12 22:42:36 2018 +0100
+
+    Add API endpoint for OPML export
+
+[33mcommit 9652dfa1feccd15bbb56d61281f148f71afcb800[m[33m ([m[1;33mtag: 2.0.0[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 11 19:21:20 2018 -0800
+
+    Add more comments (GoDoc)
+
+[33mcommit ce4de8aecebcbf98b392ba54832fa6f56ae7457c[m
+Author: Rogier Lommers <rogier@lommers.org>
+Date:   Thu Jan 11 01:18:57 2018 +0100
+
+    Fix for unstarring/unsaving bookmark with Fever API
+
+[33mcommit 7f8e9c9c17155209169c0adc792fbf4e1111f079[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Jan 8 21:56:46 2018 -0800
+
+    Remove useless import
+
+[33mcommit 1d7fe892e1016785e6f9f60e25d2a5b9b25766e3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Jan 6 13:25:12 2018 -0800
+
+    Add scraper rule for darkreading.com
+
+[33mcommit a52359fedb82606f2230fe6f85326b08d009a0d2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 5 18:07:15 2018 -0800
+
+    Do not display users links on sessions page
+
+[33mcommit 19494742ffe30f72d66f607410a2185c60a11df2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 5 18:02:43 2018 -0800
+
+    Add bottom margin
+
+[33mcommit 9329c924d98e93a4970975138e1e02ed37e32336[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Jan 5 18:00:11 2018 -0800
+
+    Update app.js path in .travis.yml
+
+[33mcommit 5a0598d7adfd1840150f19ca2ee314142733b11c[m[33m ([m[1;33mtag: 2.0.0-rc1[m[33m)[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 4 22:04:18 2018 -0800
+
+    Update project path in Makefile
+
+[33mcommit 48aa0d07ef98fe5ebc1a762a876f140cb9528a6a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 4 19:32:24 2018 -0800
+
+    Add more scraper rules
+
+[33mcommit 7d278d49f1da6b8dc8b31faf46d4127db5f7f711[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 4 18:32:36 2018 -0800
+
+    Add content length check when refreshing feeds
+
+[33mcommit c57cafbef28a8a12cae02674b3c36979acb0e576[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Jan 4 18:11:15 2018 -0800
+
+    Add link to mark everything as read
+
+[33mcommit efac11e0829ded936b08f1e3e072d4f3792fd7da[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jan 3 18:59:29 2018 -0800
+
+    Handle more date formats
+
+[33mcommit 462b4a26425a82987c778a0a09dabc788bd8f7ca[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jan 3 18:31:33 2018 -0800
+
+    Remove underline for entry action links
+
+[33mcommit ec63cbe7bb0455d76c4505abbfd546a1b056f807[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Jan 3 18:23:21 2018 -0800
+
+    If the website URL is empty, assign the feed URL
+
+[33mcommit d2b137d0386d89fd3f3cef333b9a6fd1d5ab4148[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 2 22:40:26 2018 -0800
+
+    Handle SIGTERM signal
+
+[33mcommit 0394c1a2b2db8a42f181769a4af818b637846206[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 2 22:18:24 2018 -0800
+
+    Add command to reset user password
+
+[33mcommit 320d1b016747ba4501da9417d9ce5f99368a5768[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 2 22:04:48 2018 -0800
+
+    Refactor packages to have more idiomatic code base
+
+[33mcommit c39f2e1a8d2de6d412bcc673d29eb0f7a2d1f5f7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 2 19:15:08 2018 -0800
+
+    Rename helper packages
+
+[33mcommit 3c3f397bf57e232201fccd64bad2820e6ade567a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 2 18:32:01 2018 -0800
+
+    Make sure the scraper parse only HTML documents
+
+[33mcommit aae3d75490e5bddc7bae8d141d8e6f901c22fdd1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Jan 2 18:30:26 2018 -0800
+
+    Add body size limit
+
+[33mcommit 5558c94a575f72f56983165c7dfd847a8e7ee59f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 29 15:32:04 2017 -0800
+
+    Improve Fever API handlers
+
+[33mcommit 747e3edab38b68534af0a4d4e55c947549c3cb0f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 29 14:55:16 2017 -0800
+
+    Make sure username are always lowercase
+
+[33mcommit 038ea790f76243b7e08119438bed24a37d452cb7[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 29 14:38:43 2017 -0800
+
+    Make sure people don't create duplicate Fever usernames
+
+[33mcommit 9eb91e6f0b175a1e96fd252924a52261ee595ba8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 29 14:17:53 2017 -0800
+
+    Make sure OAuth2 users cannot be associated multiple times
+
+[33mcommit 0f053b07a55c6dad2ec4b6da75995ccfa26bcb4e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 29 13:53:02 2017 -0800
+
+    Improve user API responses
+
+[33mcommit 7c19febd7362a2e78146fb7c40baa54901703190[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Dec 28 20:34:18 2017 -0800
+
+    Add configurable HTTPS flag for secure cookie flag
+
+[33mcommit a63105e13b7641dfbcd9ebb973f2541c7660c67e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Dec 28 19:20:14 2017 -0800
+
+    Improve timezone handling
+
+[33mcommit 519d4fcd739cf306c97cd04c3f786f5fb9a2b800[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Dec 28 18:59:17 2017 -0800
+
+    Update unread counter when using keyboard to navigate
+
+[33mcommit 8cd58a746a730cb2344aa9c6997cfd9ff03a4bf1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Thu Dec 28 16:27:54 2017 -0800
+
+    Show keyboard shortcuts in modal dialog
+
+[33mcommit cc0acabfe09abb3652f6b45f4e9e701bed4c894d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 27 19:45:59 2017 -0800
+
+    Avoid Javascript error if unable to download full contents
+
+[33mcommit c454f6703752f4effcb5caa2a77218b2e1a0fc5c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 27 19:44:23 2017 -0800
+
+    Add scraper rules for version2.dk and ing.dk
+
+[33mcommit d4839b559795fbaaf664f765ad92402688cfaaea[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 27 13:36:07 2017 -0800
+
+    Add more scraper rules
+
+[33mcommit 44799b05f848950111b3e53c965a0bde550a0898[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 27 12:17:01 2017 -0800
+
+    Add build targets for ARM architectures
+
+[33mcommit 884446e7b651a39403e538eee34b4255bcbe836c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Dec 26 20:58:16 2017 -0800
+
+    Show more feed information on edit page
+
+[33mcommit a475b875c5abb9544b215a9f2af8ee2ae6b6775f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Dec 26 20:42:43 2017 -0800
+
+    Show feeds with errors first
+
+[33mcommit 5a721e694be19b0b9a50c893bb85be312073dc0a[m
+Author: Thomas <sullivan.t@gmail.com>
+Date:   Tue Dec 26 09:40:44 2017 -0600
+
+    Spelling correction on README.md
+    
+    Corrected the spelling of 'voluntarily'.
+
+[33mcommit c3c27e3637e63af5fe2d9bb45712838740063906[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Dec 26 12:10:48 2017 -0800
+
+    Add API handler to fetch user by username
+
+[33mcommit d5b8f2fb8839189bdf6893da0f86f3bb26001d3d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 24 18:04:34 2017 -0800
+
+    Improve API
+
+[33mcommit 3f473e4a0910d95bc5adb57d367f6f3a060de08d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 20:17:48 2017 -0800
+
+    Improve response methods
+
+[33mcommit 589aee9f8977be985f0f8f8378fe9a64325bdccb[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 20:16:49 2017 -0800
+
+    Add web manifest file
+
+[33mcommit f6a5d7d6ed08169caa533fe0d89e7077acf2354d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 19:01:39 2017 -0800
+
+    Add support for data URL favicons
+
+[33mcommit f546552a1d7212e426cd6000da87e5aaa391bdc0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 18:13:14 2017 -0800
+
+    Clicking on refresh feeds should refresh only user feeds
+
+[33mcommit e7afec7ecaadd90711f2453e9b6b249ef1672864[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 17:59:28 2017 -0800
+
+    Handle more date formats
+
+[33mcommit e4b4beabf0e82c51b64c64a1216b04cb3b519f6d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 16:42:17 2017 -0800
+
+    Increase session cookies expiration
+
+[33mcommit 948e12c861de75c8fa56a74dba744f2fece8d955[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 16:36:10 2017 -0800
+
+    Fix typo in initial schema
+
+[33mcommit e031dad1e78b5ec434fac143e4bc716a82efeae6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 16:30:17 2017 -0800
+
+    Fill login form on failed sign in
+
+[33mcommit 9868f900e972edd6d4811b4a93b1955e4222e9b1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 22 11:33:01 2017 -0800
+
+    Add bookmarks
+
+[33mcommit b153fa8b3cd2e48bbe13326695f11d2013427ebc[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 18 20:52:46 2017 -0800
+
+    Add Wallabag integration
+
+[33mcommit ce75748cf25d05f795b0ec8c659824345c7f3868[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 18 18:06:53 2017 -0800
+
+    Use base64 URL encoding instead of standard encoding
+
+[33mcommit 99dc590e459eb760a3aae963226ff843c2f51917[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 18 17:59:35 2017 -0800
+
+    Change user agent to bypass some website restrictions
+
+[33mcommit 18f55d156995371bfb06ca8cd91da5a922d2a937[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 16 18:48:17 2017 -0800
+
+    Add scheduler to clean old sessions
+
+[33mcommit 00257988ef1707a028cd7dd0b1f8f68e6e8fac53[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 16 18:07:53 2017 -0800
+
+    Session management refactoring
+
+[33mcommit 58acd1d5e3a997d27f60549b51bdf41df900c6c6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 16 12:15:33 2017 -0800
+
+    Rename sessions table to user_sessions
+
+[33mcommit 27196589fbd36f5f840e51b59bd6253d0f865db3[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 16 11:25:18 2017 -0800
+
+    Add FeedIcon API call and update dependencies
+
+[33mcommit 231ebf2daa9c024fbe99277f57935444946824bd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 15 21:28:54 2017 -0800
+
+    Add application icons
+
+[33mcommit 1d8193b892bf63db6b91c66b9d048873bf1bc4cf[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 15 18:55:57 2017 -0800
+
+    Add logger
+
+[33mcommit c6d9eb361454b70406cf6573b284d5e99ba3a2d2[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 13 21:30:40 2017 -0800
+
+    Improve content scraper
+
+[33mcommit 827683ab59131ec38ed7cfa268bcaa6dc77d1412[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Dec 13 20:16:15 2017 -0800
+
+    Make sure that item URL are absolute
+
+[33mcommit 84d912c9794eaaef0f06638d9d23716f4e02b42f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Dec 12 21:48:13 2017 -0800
+
+    Rewrite imports
+
+[33mcommit 9b1128d56dc2129a8cb90e882f67155ab74521b9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Dec 12 21:02:04 2017 -0800
+
+    Update readme
+
+[33mcommit ef097f02fe76572d2b1887c28da3f2bd83a993a0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Dec 12 19:19:36 2017 -0800
+
+    Add the possibility to enable crawler for feeds
+
+[33mcommit 33445e5b681bbdffaf0925ed020ecdcc49687f15[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 11 22:16:32 2017 -0800
+
+    Add the possibility to define rewrite rules for each feed
+
+[33mcommit 87ccad5c7f1edf8bce37af547ca1659326398fa8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 10 20:51:04 2017 -0800
+
+    Add scraper rules
+
+[33mcommit 7a35c58f53d76356292e3e0ca9c91add3595a9e0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 10 19:01:38 2017 -0800
+
+    Add readability package to fetch original content
+
+[33mcommit b75a9987ba99047efe846b8f196bc5a28b7474c1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 4 21:24:30 2017 -0800
+
+    Change wording in French translation
+
+[33mcommit eefab601da940d60bef42bf6972b37d546091981[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 4 21:24:01 2017 -0800
+
+    Reinitialize offset if greater than number of unread items
+
+[33mcommit 56e9a2fdd676dc81968e27a71226f399714b4420[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 4 21:09:08 2017 -0800
+
+    Do not show top naviguation if the content is very short
+
+[33mcommit 321d7182ae436dfea1a81a7f6e1444bded42fcf8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 4 20:46:49 2017 -0800
+
+    Add child-src CSP directive
+
+[33mcommit 0e6fc2db1ec04d82154517202a5cc1339dcce250[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Dec 4 20:40:23 2017 -0800
+
+    Improve naviguation
+
+[33mcommit 5546dd99a5d9d677187037a22f4b1ae43d2c6c21[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 3 17:48:12 2017 -0800
+
+    Avoid text overflow when displaying attachments
+
+[33mcommit bc20e0884b3ca051ae77e1bb6e2de11419d36d4d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Dec 3 17:44:27 2017 -0800
+
+    Add Fever API
+
+[33mcommit ae62e543d3a1173cd39f1910cb67c95a56a7a6a4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 2 21:12:03 2017 -0800
+
+    Add Instapaper integration
+
+[33mcommit 6f5350a4978c7ef6fa68e526ec8a2ba917d33953[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 2 20:26:21 2017 -0800
+
+    Move packages http and url
+
+[33mcommit 2356ddad28d50aacc8bbb3e020792d3b92f2fb4d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 2 19:32:14 2017 -0800
+
+    Add Pinboard integration
+
+[33mcommit 2f1367a8d4c33e7c6ba459cfc6756e079c7a1af4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 2 17:04:01 2017 -0800
+
+    Make entries sorting configurable
+
+[33mcommit 453ff64f29c5ca330b20fb9c3dd41bbf7e7b7396[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Dec 2 15:01:05 2017 -0800
+
+    Handle touch events
+
+[33mcommit 677ba1eef363d98a8bbbf14a703c92991407bb0f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 1 22:55:00 2017 -0800
+
+    Do not display mark page as read if there is no entry
+
+[33mcommit fb2a73c91ef76472d44a36c8214f46dc8fbbf538[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 1 22:29:18 2017 -0800
+
+    Proxify image enclosures
+
+[33mcommit 1a90c059e716a90c9132fd211df9adda038b8950[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Dec 1 21:51:22 2017 -0800
+
+    Store tokens in database instead of cookie
+
+[33mcommit 7cecdbb8561e03868392dde12a2c763e782c948b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 29 21:41:16 2017 -0800
+
+    Add charset to CSS and JS mime type
+
+[33mcommit 92dff28f526cbd626362c12f8e16fa59e72983c5[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 29 21:40:38 2017 -0800
+
+    Make sure entry meta doesn't break the layout on mobile
+
+[33mcommit bb8e61c7c5d9f297bde207c6de07a5d4b67dcd29[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 27 21:30:04 2017 -0800
+
+    Make sure golint pass on the code base
+
+[33mcommit 8781648af9f730d8bd1a7d9c395c1f28f9058716[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 26 15:07:59 2017 -0800
+
+    Add integration tests for entries
+
+[33mcommit 51f77754660ddcd29f61be293a8e405d8cd3ba18[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 19:06:02 2017 -0800
+
+    Add unit tests for models
+
+[33mcommit 4560af165e7fa25dddd46f49ad4a0d9f3149336c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 18:21:02 2017 -0800
+
+    Add Content-Security-Policy header
+
+[33mcommit bd663b43a0b2d26936ba8a6172090b845a17550c[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 18:08:59 2017 -0800
+
+    Improve HTML sanitizer
+
+[33mcommit 1f015d5dfeb3eba7c0c2d1eb2f697dd18c128ecd[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 17:32:43 2017 -0800
+
+    Add integration tests for feeds
+
+[33mcommit 29c5d8201653d8a2fd33b4c1b5dc31cc15ca1091[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 17:08:04 2017 -0800
+
+    Add template helper isEmail()
+
+[33mcommit 39b03cc393da657b11dbf25e51e2495f8739e491[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 16:53:51 2017 -0800
+
+    Add integration tests for feed creation
+
+[33mcommit f072439b79ff6a003810a337664961865fefa755[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 15:56:44 2017 -0800
+
+    Make sure the package locale pass golint
+
+[33mcommit db77e551191b8f60ab657b549bc5499b9266cf69[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 15:38:43 2017 -0800
+
+    Add integration test for discover endpoint
+
+[33mcommit f644f2580b25acbeed880f12277473596457307e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 14:35:10 2017 -0800
+
+    Add integration tests for categories
+
+[33mcommit ec0f642d5d3ec636b158b5fb0125f3a28ff9bf37[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 12:44:32 2017 -0800
+
+    Add integration tests for users
+
+[33mcommit 142e8b3e0c94757585005cd00fc9ed24afe43f81[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sat Nov 25 10:40:23 2017 -0800
+
+    Add first integration test
+
+[33mcommit 71bf7e43580377a9bb98c6444c32e95b53602f12[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 24 22:29:20 2017 -0800
+
+    Improve API
+
+[33mcommit 747da03e4cf1478937a434792fdb52dd10ae8cda[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Fri Nov 24 16:09:10 2017 -0800
+
+    Improve OAuth2 integration
+
+[33mcommit cc6d272eb7719bcca02c7f36a1badbeecb153759[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 22 22:22:33 2017 -0800
+
+    Add OAuth2 authentication
+
+[33mcommit 9877051f12621aa71daad520caa2847c47c746f8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 22 16:00:20 2017 -0800
+
+    Improve CSS
+
+[33mcommit 2b641cc224c39487297d3e19b2dc7af316deda14[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 22 14:52:31 2017 -0800
+
+    Improve feed parsers
+
+[33mcommit 3b40ce49603e106a38a156b3749f5f612914cd5d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 22 13:11:01 2017 -0800
+
+    Add Let's Encrypt integration
+
+[33mcommit 199b1fd6c36bf767967435ebb33acb795564aa48[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Wed Nov 22 11:16:48 2017 -0800
+
+    Add the possibility to use TLS
+
+[33mcommit 38941f58cf72e8e8811377570fdab1426cc6947b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 23:09:01 2017 -0800
+
+    Improve image proxy
+
+[33mcommit 99dfbdbb471ffc4e32fed78f23383b221d73155a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 22:55:19 2017 -0800
+
+    Convert feed encoding only if the charset is specified
+
+[33mcommit 855fb06bc93a628108990013813725996a090c17[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 22:36:00 2017 -0800
+
+    Add feature to refresh all feeds from the user interface
+
+[33mcommit 480b0d94e2f67e96285ff9265f4c1c81d3c0392d[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 20:52:43 2017 -0800
+
+    Use serif fonts for article contents
+
+[33mcommit 9ff3c4504cc06291aad5a055ba5db35c6d1fb9e0[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 20:20:20 2017 -0800
+
+    Set all default config values in config package
+
+[33mcommit 6690f6a70eb319c1156f8a1bb7465e048567580a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 19:37:47 2017 -0800
+
+    Add bookmarklet
+
+[33mcommit 1bc43ec2bc2282d9e18ca622444d45f09c1b6378[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 18:37:08 2017 -0800
+
+    Improve Context to be more idiomatic
+
+[33mcommit 02ff7b4bcf2b2c691e55ae61fe97bfd9ae37658e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 18:30:16 2017 -0800
+
+    Improve Response to be more idiomatic
+
+[33mcommit 25cbd657771a67ef41abac4089a231369b96276e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 18:14:45 2017 -0800
+
+    Improve Request to be more idiomatic
+
+[33mcommit 4fc18647ca73fed5cc3357eb0b50bcff8263f171[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 17:40:29 2017 -0800
+
+    Make sure that items marked as removed are not shown
+
+[33mcommit e52f0b9cd29b1e0bfb8f45bc4ef8507dc7a721f8[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 16:33:36 2017 -0800
+
+    Cleanup entries marked as removed
+
+[33mcommit 9457b3e5d6ed487c48144b1ae0c18ae0ddc20580[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 16:08:43 2017 -0800
+
+    Add missing attachments while refreshing a feed
+
+[33mcommit 549a4277b0c000d7cf0b2867c895599d283d70a1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 15:46:59 2017 -0800
+
+    Add flush history feature
+
+[33mcommit 238b9e4c8594b8846b3cd9a24702a2299581a0a1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 14:57:27 2017 -0800
+
+    Check for category uniqueness before saving
+
+[33mcommit 5983db1a770e458c4ecbbe9a4a2df70f0ebc0d9a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 14:44:47 2017 -0800
+
+    Ask for confirmation before removing something
+
+[33mcommit 25a5250eb9c6410fcd2876a941f9128ebd3d9bc4[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Tue Nov 21 13:28:52 2017 -0800
+
+    Add badge for documentation
+
+[33mcommit 5f0ae8196c8be7444890b3648483357051ce3bed[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 19:44:28 2017 -0800
+
+    Add timeout for HTTP client
+
+[33mcommit eb9f5882167058ddf754803b3506e3fce61090b6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 19:25:30 2017 -0800
+
+    Make sure RDF entries have a date
+
+[33mcommit d5838b67340ca83dcc32f6d1775c183188ec5e7a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 19:17:04 2017 -0800
+
+    Move feed parsers packages in reader package
+
+[33mcommit c26787f47667f69a2d3e85db01fe20b9bc70bc9a[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 19:11:06 2017 -0800
+
+    Improve OPML package to be more idiomatic
+
+[33mcommit e91a9b4f13b50bd7ac112510d80fbe61e039a9e9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 18:57:54 2017 -0800
+
+    Export only necessary structs in JsonFeed package
+
+[33mcommit 6618caca81a1fc0742034937e3a8c3f503d41852[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 18:50:16 2017 -0800
+
+    Use more idiomatic code for Atom parser
+
+[33mcommit 89307010adab9c1b0c8b963f50898ee449bbe42f[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 18:34:11 2017 -0800
+
+    Add parser for RDF feeds
+
+[33mcommit c5cd38de832fffb20cbf97a60babe8cbc42fde1e[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 17:25:45 2017 -0800
+
+    Add unit test for HTTP client response functions
+
+[33mcommit aecda64030ef1231244b8b2ab8be0174f6bfd992[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 17:12:37 2017 -0800
+
+    Make sure XML feeds are always encoded in UTF-8
+
+[33mcommit 0e6717b7c86a1761b1ae515dd212a78f1d1e7c8b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 16:11:55 2017 -0800
+
+    Ensure that LocalizedError are returned by parsers
+
+[33mcommit 557cf9c21d08d93a8f71e12957f5c270f7c050b1[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 15:48:26 2017 -0800
+
+    Handle RSS entries with Atom links
+
+[33mcommit cf8af56a994ba8ad77f90cbd66d6ff3219493676[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 15:15:10 2017 -0800
+
+    Handle RSS feeds without entry links
+
+[33mcommit a76c2a8c22a44bbaada4434ff5ecfaaf54de7d44[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 14:35:11 2017 -0800
+
+    Improve OPML import/export
+
+[33mcommit ace752490554ab3abc03f1befe2a6e28ffd5d5e6[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 13:55:14 2017 -0800
+
+    Run automatically jshint
+
+[33mcommit cb4f4970b067797c474da7bdb5b41ee5ae7d127b[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 13:50:50 2017 -0800
+
+    Disable CI email notifications
+
+[33mcommit 228768dcc3be6ad5917184cc5233fbb83e93c392[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Mon Nov 20 13:46:22 2017 -0800
+
+    Run gofmt on generated files
+
+[33mcommit 8ffb773f43c8dc54801ca1d111854e7e881c93c9[m
+Author: Frédéric Guillot <fred@miniflux.net>
+Date:   Sun Nov 19 21:10:04 2017 -0800
+
+    First commit

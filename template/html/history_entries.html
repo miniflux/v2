@@ -1,10 +1,10 @@
-{{ define "title"}}{{ t "page.history.title" }} ({{ .total }}){{ end }}
+{{ define "title"}}{{ t "page.history.title" }} ({{ .display_count }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
-    {{ if .entries }}
+    <h1>{{ t "page.history.title" }} ({{ .display_count }})</h1>
     <ul>
+        {{ if .entries }}
         <li>
             <a href="#"
                 data-confirm="true"
@@ -14,23 +14,27 @@
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
         </li>
+        {{ end }}
         <li>
             <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
         </li>
-    </ul>
-    {{ else }}
-    <ul>
+        {{ if .showOnlyReadEntries }}
         <li>
-            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+            <a href="{{ route "history" }}">{{ t "menu.show_all_entries" }}</a>
         </li>
+        {{ else }}
+        <li>
+            <a href="{{ route "historyReadEntries" }}">{{ t "menu.show_only_read_entries" }}</a>
+        </li>
+        {{ end }}
     </ul>
-    {{ end }}
 </section>
 
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
     <div class="items">
+        {{ if .showOnlyReadEntries }}
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
@@ -38,12 +42,28 @@
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                     {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    <a href="{{ route "historyReadEntry" "entryID" .ID }}">{{ .Title }}</a>
                 </span>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
             </div>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
         </article>
+        {{ end }}
+        {{ else }}
+        {{ range .entries }}
+        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "historyEntry" "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+        </article>
+        {{ end }}
         {{ end }}
     </div>
     {{ template "pagination" .pagination }}

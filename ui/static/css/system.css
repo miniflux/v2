@@ -79,6 +79,9 @@
     --item-status-read-title-link-color: #777;
     --item-status-read-title-focus-color: #777;
 
+    --item-status-marked-title-link-color: #777;
+    --item-status-marked-title-focus-color: #777;
+
     --item-meta-focus-color: #777;
     --item-meta-li-color: #aaa;
 
@@ -185,6 +188,9 @@
 
         --item-status-read-title-link-color: #666;
         --item-status-read-title-focus-color: rgba(82, 168, 236, 0.6);
+
+        --item-status-marked-title-link-color: #666;
+        --item-status-marked-title-focus-color: rgba(82, 168, 236, 0.6);
 
         --item-meta-focus-color: #aaa;
         --item-meta-li-color: #ddd;

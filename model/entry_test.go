@@ -7,7 +7,7 @@ package model // import "miniflux.app/model"
 import "testing"
 
 func TestValidateEntryStatus(t *testing.T) {
-	for _, status := range []string{EntryStatusRead, EntryStatusUnread, EntryStatusRemoved} {
+	for _, status := range []string{EntryStatusRead, EntryStatusUnread, EntryStatusMarked, EntryStatusRemoved} {
 		if err := ValidateEntryStatus(status); err != nil {
 			t.Error(`A valid status should not generate any error`)
 		}

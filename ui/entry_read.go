@@ -16,7 +16,7 @@ import (
 	"miniflux.app/ui/view"
 )
 
-func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
+func showReadEntryPage(h *handler, w http.ResponseWriter, r *http.Request, readEntryOnly bool) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -39,24 +39,52 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
-	entryPaginationBuilder.WithStatus(model.EntryStatusRead)
-	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
+	if entry.Status == model.EntryStatusUnread || entry.Status == model.EntryStatusMarked {
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		entry.Status = model.EntryStatusRead
 	}
 
 	nextEntryRoute := ""
-	if nextEntry != nil {
-		nextEntryRoute = route.Path(h.router, "readEntry", "entryID", nextEntry.ID)
-	}
-
 	prevEntryRoute := ""
-	if prevEntry != nil {
-		prevEntryRoute = route.Path(h.router, "readEntry", "entryID", prevEntry.ID)
-	}
+	var prevEntry, nextEntry *model.Entry 
+	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
+	if readEntryOnly {
+		entryPaginationBuilder.WithStatus(model.EntryStatusRead)
+		prevEntry, nextEntry, err = entryPaginationBuilder.Entries()
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
 
+		if nextEntry != nil {
+			nextEntryRoute = route.Path(h.router, "historyReadEntry", "entryID", nextEntry.ID)
+		}
+
+		if prevEntry != nil {
+			prevEntryRoute = route.Path(h.router, "historyReadEntry", "entryID", prevEntry.ID)
+		}
+	} else {
+		entryPaginationBuilder.WithStatus(model.EntryStatusRead, model.EntryStatusMarked)
+		prevEntry, nextEntry, err = entryPaginationBuilder.Entries()
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		if nextEntry != nil {
+			nextEntryRoute = route.Path(h.router, "historyEntry", "entryID", nextEntry.ID)
+		}
+
+		if prevEntry != nil {
+			prevEntryRoute = route.Path(h.router, "historyEntry", "entryID", prevEntry.ID)
+		}
+	}
+	
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("entry", entry)
@@ -71,4 +99,12 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("entry"))
+}
+
+func (h *handler) showHistoryEntryPage(w http.ResponseWriter, r *http.Request) {
+	showReadEntryPage(h, w, r, /*readEntryOnly=*/false)
+}
+
+func (h *handler) showHistoryReadEntryPage(w http.ResponseWriter, r *http.Request) {
+	showReadEntryPage(h, w, r, /*readEntryOnly=*/true)
 }

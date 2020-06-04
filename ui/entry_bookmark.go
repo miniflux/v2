@@ -39,7 +39,7 @@ func (h *handler) showStarredEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if entry.Status == model.EntryStatusUnread {
+	if entry.Status == model.EntryStatusUnread || entry.Status == model.EntryStatusMarked {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
 			html.ServerError(w, r, err)

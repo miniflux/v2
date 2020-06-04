@@ -222,9 +222,9 @@ func (s *Storage) ArchiveEntries(days int) error {
 		SET
 			status=$1
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status=$2 AND starred is false AND share_code='' AND published_at < $3 LIMIT 5000)
+			id=ANY(SELECT id FROM entries WHERE (status=$2 OR status=$3) AND starred is false AND share_code='' AND published_at < $4 LIMIT 5000)
 	`
-	if _, err := s.db.Exec(query, model.EntryStatusRemoved, model.EntryStatusRead, before); err != nil {
+	if _, err := s.db.Exec(query, model.EntryStatusRemoved, model.EntryStatusRead, model.EntryStatusMarked, before); err != nil {
 		return fmt.Errorf(`store: unable to archive read entries: %v`, err)
 	}
 
@@ -280,9 +280,9 @@ func (s *Storage) FlushHistory(userID int64) error {
 			status=$1,
 			changed_at=now()
 		WHERE
-			user_id=$2 AND status=$3 AND starred is false AND share_code=''
+			user_id=$2 AND (status=$3 OR status=$4) AND starred is false AND share_code=''
 	`
-	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
+	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead, model.EntryStatusMarked)
 	if err != nil {
 		return fmt.Errorf(`store: unable to flush history: %v`, err)
 	}
@@ -293,7 +293,7 @@ func (s *Storage) FlushHistory(userID int64) error {
 // MarkAllAsRead updates all user entries to the read status.
 func (s *Storage) MarkAllAsRead(userID int64) error {
 	query := `UPDATE entries SET status=$1, changed_at=now() WHERE user_id=$2 AND status=$3`
-	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread)
+	result, err := s.db.Exec(query, model.EntryStatusMarked, userID, model.EntryStatusUnread)
 	if err != nil {
 		return fmt.Errorf(`store: unable to mark all entries as read: %v`, err)
 	}
@@ -315,7 +315,7 @@ func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
 		WHERE
 			user_id=$2 AND feed_id=$3 AND status=$4 AND published_at < $5
 	`
-	result, err := s.db.Exec(query, model.EntryStatusRead, userID, feedID, model.EntryStatusUnread, before)
+	result, err := s.db.Exec(query, model.EntryStatusMarked, userID, feedID, model.EntryStatusUnread, before)
 	if err != nil {
 		return fmt.Errorf(`store: unable to mark feed entries as read: %v`, err)
 	}
@@ -343,7 +343,7 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 		AND
 			feed_id IN (SELECT id FROM feeds WHERE user_id=$2 AND category_id=$5)
 	`
-	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread, before, categoryID)
+	result, err := s.db.Exec(query, model.EntryStatusMarked, userID, model.EntryStatusUnread, before, categoryID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to mark category entries as read: %v`, err)
 	}

@@ -13,6 +13,7 @@ import (
 const (
 	EntryStatusUnread       = "unread"
 	EntryStatusRead         = "read"
+	EntryStatusMarked       = "marked"
 	EntryStatusRemoved      = "removed"
 	DefaultSortingOrder     = "published_at"
 	DefaultSortingDirection = "asc"
@@ -43,7 +44,7 @@ type Entries []*Entry
 // ValidateEntryStatus makes sure the entry status is valid.
 func ValidateEntryStatus(status string) error {
 	switch status {
-	case EntryStatusRead, EntryStatusUnread, EntryStatusRemoved:
+	case EntryStatusRead, EntryStatusUnread, EntryStatusMarked, EntryStatusRemoved:
 		return nil
 	}
 

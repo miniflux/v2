@@ -13,6 +13,7 @@ import (
 const (
 	EntryStatusUnread  = "unread"
 	EntryStatusRead    = "read"
+	EntryStatusMarked  = "marked"
 	EntryStatusRemoved = "removed"
 )
 

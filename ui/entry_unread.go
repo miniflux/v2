@@ -40,7 +40,7 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Make sure we always get the pagination in unread mode even if the page is refreshed.
-	if entry.Status == model.EntryStatusRead {
+	if entry.Status == model.EntryStatusRead || entry.Status == model.EntryStatusMarked {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
 		if err != nil {
 			html.ServerError(w, r, err)

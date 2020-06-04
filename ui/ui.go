@@ -44,7 +44,9 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 
 	// History pages.
 	uiRouter.HandleFunc("/history", handler.showHistoryPage).Name("history").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/history/entry/{entryID}", handler.showReadEntryPage).Name("readEntry").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/history/entry/{entryID}", handler.showHistoryEntryPage).Name("historyEntry").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/history/read", handler.showHistoryReadEntriesPage).Name("historyReadEntries").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/history/read/entry/{entryID}", handler.showHistoryReadEntryPage).Name("historyReadEntry").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/history/flush", handler.flushHistory).Name("flushHistory").Methods(http.MethodPost)
 
 	// Bookmark pages.

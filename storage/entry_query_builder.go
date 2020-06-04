@@ -113,10 +113,23 @@ func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder 
 }
 
 // WithStatus set the entry status.
-func (e *EntryQueryBuilder) WithStatus(status string) *EntryQueryBuilder {
-	if status != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
-		e.args = append(e.args, status)
+func (e *EntryQueryBuilder) WithStatus(statuses... string) *EntryQueryBuilder {
+	if len(statuses) == 1 {
+		status := statuses[0]
+		if status != "" {
+			e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+			e.args = append(e.args, status)
+		}
+	} else if len(statuses) > 1 {
+		statusConditions := []string{}
+		for _, status := range statuses {
+			if status != "" {
+				statusConditions = append(statusConditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+				e.args = append(e.args, status)
+			}
+		}
+		statusCondition := strings.Join(statusConditions, " OR ")
+		e.conditions = append(e.conditions, fmt.Sprintf("(%s)", statusCondition))
 	}
 	return e
 }

@@ -58,14 +58,14 @@ function setFocusToSearchInput(event){event.preventDefault();event.stopPropagati
 let searchFormElement=document.querySelector(".search-form");if(searchFormElement){searchFormElement.style.display="block";}
 let searchInputElement=document.getElementById("search-input");if(searchInputElement){searchInputElement.focus();searchInputElement.value="";}}
 function showKeyboardShortcuts(){let template=document.getElementById("keyboard-shortcuts");if(template!==null){ModalHandler.open(template.content);}}
-function markPageAsRead(){let items=DomHelper.getVisibleElements(".items .item");let entryIDs=[];items.forEach((element)=>{element.classList.add("item-status-read");entryIDs.push(parseInt(element.dataset.id,10));});if(entryIDs.length>0){updateEntriesStatus(entryIDs,"read",()=>{let element=document.querySelector("a[data-action=markPageAsRead]");let showOnlyUnread=false;if(element){showOnlyUnread=element.dataset.showOnlyUnread||false;}
+function markPageAsRead(){let items=DomHelper.getVisibleElements(".items .item");let entryIDs=[];items.forEach((element)=>{element.classList.add("item-status-marked");entryIDs.push(parseInt(element.dataset.id,10));});if(entryIDs.length>0){updateEntriesStatus(entryIDs,"marked",()=>{let element=document.querySelector("a[data-action=markPageAsRead]");let showOnlyUnread=false;if(element){showOnlyUnread=element.dataset.showOnlyUnread||false;}
 if(showOnlyUnread){window.location.reload();}else{goToPage("next",true);}});}}
 function handleEntryStatus(element){let toasting=!element;let currentEntry=findEntry(element);if(currentEntry){toggleEntryStatus(currentEntry,toasting);if(isListView()&&currentEntry.classList.contains('current-item')){goToNextListItem();}}}
 function toggleEntryStatus(element,toasting){let entryID=parseInt(element.dataset.id,10);let link=element.querySelector("a[data-toggle-status]");let currentStatus=link.dataset.value;let newStatus=currentStatus==="read"?"unread":"read";updateEntriesStatus([entryID],newStatus);if(currentStatus==="read"){link.innerHTML='<span class="icon-label">'+link.dataset.labelRead+'</span>';link.dataset.value="unread";if(toasting){toast(link.dataset.toastUnread);}}else{link.innerHTML='<span class="icon-label">'+link.dataset.labelUnread+'</span>';link.dataset.value="read";if(toasting){toast(link.dataset.toastRead);}}
 if(element.classList.contains("item-status-"+currentStatus)){element.classList.remove("item-status-"+currentStatus);element.classList.add("item-status-"+newStatus);}}
 function markEntryAsRead(element){if(element.classList.contains("item-status-unread")){element.classList.remove("item-status-unread");element.classList.add("item-status-read");let entryID=parseInt(element.dataset.id,10);updateEntriesStatus([entryID],"read");}}
 function handleRefreshAllFeeds(){let url=document.body.dataset.refreshAllFeedsUrl;let request=new RequestBuilder(url);request.withCallback(()=>{window.location.reload();});request.withHttpMethod("GET");request.execute();}
-function updateEntriesStatus(entryIDs,status,callback){let url=document.body.dataset.entriesStatusUrl;let request=new RequestBuilder(url);request.withBody({entry_ids:entryIDs,status:status});request.withCallback(callback);request.execute();if(status==="read"){decrementUnreadCounter(1);}else{incrementUnreadCounter(1);}}
+function updateEntriesStatus(entryIDs,status,callback){let url=document.body.dataset.entriesStatusUrl;let request=new RequestBuilder(url);request.withBody({entry_ids:entryIDs,status:status});request.withCallback(callback);request.execute();if(status==="read"||status==="marked"){decrementUnreadCounter(1);}else{incrementUnreadCounter(1);}}
 function handleSaveEntry(element){let toasting=!element;let currentEntry=findEntry(element);if(currentEntry){saveEntry(currentEntry.querySelector("a[data-save-entry]"),toasting);}}
 function saveEntry(element,toasting){if(!element){return;}
 if(element.dataset.completed){return;}
@@ -122,6 +122,6 @@ window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();let defer
 }
 
 var JavascriptsChecksums = map[string]string{
-	"app": "94f7ea67423fdea469e66e2837fcc4c829d29472374a0080daa5482d2171c2ff",
+	"app": "4e1edbd17c181501eaf8e131af68d931429d485652b17e2c77abf8872edca40c",
 	"sw":  "55fffa223919cc18572788fb9c62fccf92166c0eb5d3a1d6f91c31f24d020be9",
 }

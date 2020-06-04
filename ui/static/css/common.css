@@ -682,6 +682,10 @@ a.button {
     color: var(--item-status-read-title-link-color);
 }
 
+.item-status-marked .item-title a {
+    color: var(--item-status-marked-title-link-color);
+}
+
 .item-meta {
     display: flex;
     flex-flow: row wrap;
@@ -730,6 +734,10 @@ a.button {
 }
 
 .hide-read-items .item-status-read:not(.current-item) {
+    display: none;
+}
+
+.hide-read-items .item-status-marked:not(.current-item) {
     display: none;
 }
 

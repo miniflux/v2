@@ -53,10 +53,23 @@ func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
 }
 
 // WithStatus adds status to the condition.
-func (e *EntryPaginationBuilder) WithStatus(status string) {
-	if status != "" {
-		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
-		e.args = append(e.args, status)
+func (e *EntryPaginationBuilder) WithStatus(statuses... string) {
+	if len(statuses) == 1 {
+		status := statuses[0]
+		if status != "" {
+			e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+			e.args = append(e.args, status)
+		}
+	} else if len(statuses) > 1 {
+		statusConditions := []string{}
+		for _, status := range statuses {
+			if status != "" {
+				statusConditions = append(statusConditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
+				e.args = append(e.args, status)
+			}
+		}
+		statusCondition := strings.Join(statusConditions, " OR ")
+		e.conditions = append(e.conditions, fmt.Sprintf("(%s)", statusCondition))
 	}
 }
 
