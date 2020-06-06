@@ -242,7 +242,7 @@
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.rewrite_rules": "Umschreiberegeln",
-    "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
+    "form.feed.label.ignore_http_cache": "Ignoriere HTTP-cache",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.category.label.title": "Titel",
     "form.user.label.username": "Benutzername",
