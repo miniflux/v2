@@ -247,7 +247,7 @@ var translations = map[string]string{
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.rewrite_rules": "Umschreiberegeln",
-    "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
+    "form.feed.label.ignore_http_cache": "Ignoriere HTTP-cache",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.category.label.title": "Titel",
     "form.user.label.username": "Benutzername",
@@ -3279,7 +3279,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "d648712531636d88c3c4d0cc6a509c80afc30f9999a8a591db6cbfcbb084db0b",
+	"de_DE": "4975f99941dbcd712fab6b381027e1cbcbe588d957fbe2c033e5b63466592011",
 	"en_US": "3fc6d6aa333363b81b88e33300e62db8878d190bc35e1c16881fded5d3d805d4",
 	"es_ES": "b441b4bff456bbb40332798f434b08b69e204e6ab7518d18a769df8ab6a56666",
 	"fr_FR": "1b5710d2803b634bd901611e204bd92a8702c5c4e637e26a0fb8c4061ce2cbb3",
