@@ -242,6 +242,7 @@
     "form.feed.label.user_agent": "ディフォルトの User Agent を上書きする",
     "form.feed.label.scraper_rules": "スクラップルール",
     "form.feed.label.rewrite_rules": "Rewrite ルール",
+    "form.feed.label.ignore_http_cache": "HTTPキャッシュを無視",
     "form.feed.label.disabled": "このフィードを更新しない",
     "form.category.label.title": "タイトル",
     "form.user.label.username": "ユーザー名",

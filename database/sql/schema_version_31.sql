@@ -1,0 +1,1 @@
+alter table feeds add column ignore_http_cache bool default false;

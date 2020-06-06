@@ -33,6 +33,7 @@ type Feed struct {
 	Username           string    `json:"username"`
 	Password           string    `json:"password"`
 	Disabled           bool      `json:"disabled"`
+	IgnoreHTTPCache    bool      `json:"ignore_http_cache"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon"`

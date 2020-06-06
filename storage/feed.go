@@ -31,6 +31,7 @@ var feedListQuery = `
 		f.user_agent,
 		f.username,
 		f.password,
+		f.ignore_http_cache,
 		f.disabled,
 		f.category_id,
 		c.title as category_title,
@@ -131,6 +132,7 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 			f.user_agent,
 			f.username,
 			f.password,
+			f.ignore_http_cache,
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
@@ -239,6 +241,7 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}
 			&feed.UserAgent,
 			&feed.Username,
 			&feed.Password,
+			&feed.IgnoreHTTPCache,
 			&feed.Disabled,
 			&feed.Category.ID,
 			&feed.Category.Title,
@@ -322,6 +325,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 			f.user_agent,
 			f.username,
 			f.password,
+			f.ignore_http_cache,
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
@@ -352,6 +356,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.UserAgent,
 		&feed.Username,
 		&feed.Password,
+		&feed.IgnoreHTTPCache,
 		&feed.Disabled,
 		&feed.Category.ID,
 		&feed.Category.Title,
@@ -456,9 +461,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			username=$14,
 			password=$15,
 			disabled=$16,
-			next_check_at=$17
+			next_check_at=$17,
+			ignore_http_cache=$18
 		WHERE
-			id=$18 AND user_id=$19
+			id=$19 AND user_id=$20
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -478,6 +484,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.Password,
 		feed.Disabled,
 		feed.NextCheckAt,
+		feed.IgnoreHTTPCache,
 		feed.ID,
 		feed.UserID,
 	)
