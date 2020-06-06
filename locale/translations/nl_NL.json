@@ -242,6 +242,7 @@
     "form.feed.label.user_agent": "Standaard User Agent overschrijven",
     "form.feed.label.scraper_rules": "Scraper regels",
     "form.feed.label.rewrite_rules": "Rewrite regels",
+    "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
     "form.category.label.title": "Naam",
     "form.user.label.username": "Gebruikersnaam",

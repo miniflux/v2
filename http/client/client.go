@@ -50,12 +50,22 @@ type Client struct {
 }
 
 func (c *Client) String() string {
+	etagHeader := c.etagHeader
+	if c.etagHeader == "" {
+		etagHeader = "None"
+	}
+
+	lastModifiedHeader := c.lastModifiedHeader
+	if c.lastModifiedHeader == "" {
+		lastModifiedHeader = "None"
+	}
+
 	return fmt.Sprintf(
-		`InputURL=%q RequestURL=%q ETag=%s LastModified=%q BasicAuth=%v UserAgent=%q`,
+		`InputURL=%q RequestURL=%q ETag=%s LastModified=%s BasicAuth=%v UserAgent=%q`,
 		c.inputURL,
 		c.requestURL,
-		c.etagHeader,
-		c.lastModifiedHeader,
+		etagHeader,
+		lastModifiedHeader,
 		c.authorizationHeader != "" || (c.username != "" && c.password != ""),
 		c.userAgent,
 	)
