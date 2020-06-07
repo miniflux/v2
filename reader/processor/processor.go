@@ -5,6 +5,8 @@
 package processor
 
 import (
+	"sync"
+
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/rewrite"
@@ -15,26 +17,34 @@ import (
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
-	for _, entry := range feed.Entries {
-		logger.Debug("[Feed #%d] Processing entry %s", feed.ID, entry.URL)
+	var wg sync.WaitGroup
+	wg.Add(len(feed.Entries))
 
-		if feed.Crawler {
-			if !store.EntryURLExists(feed.ID, entry.URL) {
-				content, err := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
-				if err != nil {
-					logger.Error(`[Filter] Unable to crawl this entry: %q => %v`, entry.URL, err)
-				} else if content != "" {
-					// We replace the entry content only if the scraper doesn't return any error.
-					entry.Content = content
+	for _, entry := range feed.Entries {
+		go func(entry *model.Entry) {
+			defer wg.Done()
+
+			logger.Debug("[Feed #%d] Processing entry %s", feed.ID, entry.URL)
+
+			if feed.Crawler {
+				if !store.EntryURLExists(feed.ID, entry.URL) {
+					content, err := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
+					if err != nil {
+						logger.Error(`[Filter] Unable to crawl this entry: %q => %v`, entry.URL, err)
+					} else if content != "" {
+						// We replace the entry content only if the scraper doesn't return any error.
+						entry.Content = content
+					}
 				}
 			}
-		}
 
-		entry.Content = rewrite.Rewriter(entry.URL, entry.Content, feed.RewriteRules)
+			entry.Content = rewrite.Rewriter(entry.URL, entry.Content, feed.RewriteRules)
 
-		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
-		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
+			// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
+			entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
+		}(entry)
 	}
+	wg.Wait()
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
