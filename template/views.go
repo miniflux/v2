@@ -823,7 +823,10 @@ var templateViewsMap = map[string]string{
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .feed.Title }} ({{ .total }})</h1>
+    <h1>
+        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ .feed.Title }}</a> 
+        ({{ .total }})
+    </h1>
     <ul>
         {{ if .entries }}
         <li>
@@ -1546,7 +1549,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_feed":           "635bb8f7b927f3216ccd35cc6d9edd4b2af96e8677a14766a86fb77fa9fb4e38",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
 	"entry":               "d8c30d412d58e14c946ba682166f7c582948e7b0f657d04dcbc3d004267627bb",
-	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
+	"feed_entries":        "614357a9369237e54be45b40c516fe70a751bfb4311660746ae229e6be88fdac",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "93c0c4cc541eec7f07f5c2634f250ea82ac64024939179276b6f636b72c189bf",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",

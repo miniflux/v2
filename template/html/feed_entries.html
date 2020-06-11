@@ -2,7 +2,10 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .feed.Title }} ({{ .total }})</h1>
+    <h1>
+        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ .feed.Title }}</a> 
+        ({{ .total }})
+    </h1>
     <ul>
         {{ if .entries }}
         <li>
