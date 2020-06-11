@@ -328,7 +328,7 @@ var templateViewsMap = map[string]string{
     <h1>{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }})</h1>
     <ul>
         <li>
-            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
             <a href="{{ route "editCategory" "categoryID" .category.ID }}">{{ t "menu.edit_category" }}</a>
@@ -1537,7 +1537,7 @@ var templateViewsMapChecksums = map[string]string{
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
 	"categories":          "7a927a2c28ae60c995df9d94220153418d3bd31bf35e0800980a215b1a6a80c7",
 	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
-	"category_feeds":      "527c2ffbc4fcec775071424ba1022ae003525dba53a28cc41f48fb7b30aa984b",
+	"category_feeds":      "02b255603dc58122afbbcce573e88d648cad176b9cd0a7bba7e07f95694de75d",
 	"choose_subscription": "84c9730cadd78e6ee5a6b4c499aab33acddb4324ac01924d33387543eec4d702",
 	"create_api_key":      "5f74d4e92a6684927f5305096378c8be278159a5cd88ce652c7be3280a7d1685",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
