@@ -694,6 +694,10 @@ a.button {
     margin-top: 5px;
 }
 
+.item-meta ul:last-child {
+    margin-left: auto;
+}
+
 .item-meta li {
     display: inline;
 }
