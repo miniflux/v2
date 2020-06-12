@@ -107,6 +107,16 @@ a:hover {
     border-bottom: 1px dotted var(--page-header-title-border-color);
 }
 
+.page-header h1 a {
+    text-decoration: none;
+    color: var(--page-header-title-color);
+}
+
+.page-header h1 a:hover,
+.page-header h1 a:focus {
+    color: #666;
+}
+
 .page-header ul,
 .page-footer ul {
     margin-left: 25px;
