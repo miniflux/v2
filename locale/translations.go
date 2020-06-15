@@ -87,7 +87,8 @@ var translations = map[string]string{
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
     "page.categories.no_feed": "Kein Abonnement.",
-    "page.categories.feeds": "Siehe Abonnements",
+    "page.categories.entries": "Artikel",
+    "page.categories.feeds": "Abonnements",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."
@@ -424,7 +425,8 @@ var translations = map[string]string{
     "page.starred.title": "Starred",
     "page.categories.title": "Categories",
     "page.categories.no_feed": "No feed.",
-    "page.categories.feeds": "See subscriptions",
+    "page.categories.entries": "Articles",
+    "page.categories.feeds": "Subscriptions",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."
@@ -741,7 +743,8 @@ var translations = map[string]string{
     "page.starred.title": "Marcadores",
     "page.categories.title": "Categorias",
     "page.categories.no_feed": "No fuente.",
-    "page.categories.feeds": "Ver suscripciones",
+    "page.categories.entries": "Artículos",
+    "page.categories.feeds": "Suscripciones",
     "page.categories.feed_count": [
         "Hay %d fuente.",
         "Hay %d fuentes."
@@ -1058,7 +1061,8 @@ var translations = map[string]string{
     "page.starred.title": "Favoris",
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
-    "page.categories.feeds": "Voir les abonnements",
+    "page.categories.entries": "Articles",
+    "page.categories.feeds": "Abonnements",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
@@ -1395,7 +1399,8 @@ var translations = map[string]string{
     "page.starred.title": "Preferiti",
     "page.categories.title": "Categorie",
     "page.categories.no_feed": "Nessun feed.",
-    "page.categories.feeds": "Vedi abbonamenti",
+    "page.categories.entries": "Articoli",
+    "page.categories.feeds": "Abbonamenti",
     "page.categories.feed_count": [
         "C'è %d feed.",
         "Ci sono %d feed."
@@ -1712,6 +1717,7 @@ var translations = map[string]string{
     "page.starred.title": "星付き",
     "page.categories.title": "カテゴリ",
     "page.categories.no_feed": "フィード無し",
+    "page.categories.entries": "記事",
     "page.categories.feeds": "フィード購読を見る",
     "page.categories.feed_count": [
         "%d 個の記事があります。",
@@ -2029,7 +2035,8 @@ var translations = map[string]string{
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
     "page.categories.no_feed": "Geen feeds.",
-    "page.categories.feeds": "Zie abonnementen",
+    "page.categories.entries": "Lidwoord",
+    "page.categories.feeds": "Abonnementen",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."
@@ -2364,7 +2371,8 @@ var translations = map[string]string{
     "page.starred.title": "Oznaczone gwiazdką",
     "page.categories.title": "Kategorie",
     "page.categories.no_feed": "Brak kanałów.",
-    "page.categories.feeds": "Zobacz subskrypcje",
+    "page.categories.entries": "Artykuły",
+    "page.categories.feeds": "Subskrypcje",
     "page.categories.feed_count": [
         "Jest %d kanał.",
         "Są %d kanały.",
@@ -2707,7 +2715,8 @@ var translations = map[string]string{
     "page.starred.title": "Избранное",
     "page.categories.title": "Категории",
     "page.categories.no_feed": "Нет подписок.",
-    "page.categories.feeds": "Посмотреть подписку",
+    "page.categories.entries": "Cтатьи",
+    "page.categories.feeds": "Подписку",
     "page.categories.feed_count": [
         "Есть %d подписка.",
         "Есть %d подписки.",
@@ -3032,6 +3041,7 @@ var translations = map[string]string{
     "page.starred.title": "星标",
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
+    "page.categories.entries": "文章",
     "page.categories.feeds": "查看订阅",
     "page.categories.feed_count": [
         "有 %d 个源"
@@ -3279,14 +3289,14 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "4975f99941dbcd712fab6b381027e1cbcbe588d957fbe2c033e5b63466592011",
-	"en_US": "3fc6d6aa333363b81b88e33300e62db8878d190bc35e1c16881fded5d3d805d4",
-	"es_ES": "b441b4bff456bbb40332798f434b08b69e204e6ab7518d18a769df8ab6a56666",
-	"fr_FR": "1b5710d2803b634bd901611e204bd92a8702c5c4e637e26a0fb8c4061ce2cbb3",
-	"it_IT": "c543e0803c78b8549702e37c8c259cce43925fa8a949a6b48f89a9223bed9f24",
-	"ja_JP": "5a11a2a4c632f8df45d107750ab11149eff603eb944233393784d8b53183d086",
-	"nl_NL": "dd802be5de3a82924eb51f84e565151a1fb68fc13e0d75f81d10de90386b55d0",
-	"pl_PL": "32f8a9cfd193297cfe9c2747056621a8f57c17c50b816bf665647de05cdb328d",
-	"ru_RU": "b6664af10cc9c4acf111b196f92b6c1d7c271c764970250d48655057348add77",
-	"zh_CN": "08deb6dab5a9613a25f693aec1594564de9eae2a3fbccaea5147870499921e46",
+	"de_DE": "ddb063682852c86361af350be616d3bd328373ecb927804824008d016aa7c67c",
+	"en_US": "350b835f759212abd2110322394aa00b666fbf27d752532a7700fb52d5af3f02",
+	"es_ES": "26efc79faaf35efe5a33528cedc2522496987d290c9e86d8fff3a9bcbed3e441",
+	"fr_FR": "e8736791d5373b955cacce215b3ae67d56280bfa5d4596899e4e5e37ff962afd",
+	"it_IT": "41e6eba2d92a684ef90462226db312285d1d94a07a5bb917cfce4f64df290a86",
+	"ja_JP": "237f49939be015b509d4b3a02890691c3766df8878109114493624cfd13c0cad",
+	"nl_NL": "c70e1eaa3c2e8c0130522189c3932b52ee6e9ff91c91b0090eb9178f2f23c588",
+	"pl_PL": "1d5e05789a3150a8f1ddbe57616d509d1d33c61b60200c563a5e23571671209e",
+	"ru_RU": "f02fa11074bc38e9542a72b7200a4a3731b4a2f1b64b001d3e7fa6370fc1bdcc",
+	"zh_CN": "7732905e498d087c9a11ecc3eae8736e758c6b053da13de64fd6599ca40d8ee6",
 }

@@ -82,7 +82,8 @@
     "page.starred.title": "Lesezeichen",
     "page.categories.title": "Kategorien",
     "page.categories.no_feed": "Kein Abonnement.",
-    "page.categories.feeds": "Siehe Abonnements",
+    "page.categories.entries": "Artikel",
+    "page.categories.feeds": "Abonnements",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."

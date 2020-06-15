@@ -82,6 +82,7 @@
     "page.starred.title": "星标",
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
+    "page.categories.entries": "文章",
     "page.categories.feeds": "查看订阅",
     "page.categories.feed_count": [
         "有 %d 个源"

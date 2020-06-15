@@ -82,7 +82,8 @@
     "page.starred.title": "Избранное",
     "page.categories.title": "Категории",
     "page.categories.no_feed": "Нет подписок.",
-    "page.categories.feeds": "Посмотреть подписку",
+    "page.categories.entries": "Cтатьи",
+    "page.categories.feeds": "Подписку",
     "page.categories.feed_count": [
         "Есть %d подписка.",
         "Есть %d подписки.",

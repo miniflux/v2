@@ -82,6 +82,7 @@
     "page.starred.title": "星付き",
     "page.categories.title": "カテゴリ",
     "page.categories.no_feed": "フィード無し",
+    "page.categories.entries": "記事",
     "page.categories.feeds": "フィード購読を見る",
     "page.categories.feed_count": [
         "%d 個の記事があります。",

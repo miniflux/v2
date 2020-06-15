@@ -82,7 +82,8 @@
     "page.starred.title": "Favorieten",
     "page.categories.title": "Categorieën",
     "page.categories.no_feed": "Geen feeds.",
-    "page.categories.feeds": "Zie abonnementen",
+    "page.categories.entries": "Lidwoord",
+    "page.categories.feeds": "Abonnementen",
     "page.categories.feed_count": [
         "Er is %d feed.",
         "Er zijn %d feeds."
