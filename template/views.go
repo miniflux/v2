@@ -225,10 +225,18 @@ var templateViewsMap = map[string]string{
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li>
-                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ t "page.categories.feeds" }}</a>
+                        {{ if eq .FeedCount 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" .FeedCount .FeedCount }}{{ end }}
+                    </li>
+                </ul>
+                <ul class="item-meta-icons">
+                    <li>
+                        <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ template "icon_entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
                     </li>
                     <li>
-                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ t "menu.edit_category" }}</a>
+                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ template "icon_feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
+                    </li>
+                    <li>
+                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ template "icon_edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
                     </li>
                     {{ if eq .FeedCount 0 }}
                     <li>
@@ -238,7 +246,7 @@ var templateViewsMap = map[string]string{
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ t "action.remove" }}</a>
+                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ end }}
                 </ul>
@@ -1538,7 +1546,7 @@ var templateViewsMapChecksums = map[string]string{
 	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
-	"categories":          "7a927a2c28ae60c995df9d94220153418d3bd31bf35e0800980a215b1a6a80c7",
+	"categories":          "21d2efb06d8330ab1fd363449c7144ce7191779bafa33d5c0cec63f2c443ec03",
 	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
 	"category_feeds":      "02b255603dc58122afbbcce573e88d648cad176b9cd0a7bba7e07f95694de75d",
 	"choose_subscription": "84c9730cadd78e6ee5a6b4c499aab33acddb4324ac01924d33387543eec4d702",

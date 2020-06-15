@@ -82,7 +82,8 @@
     "page.starred.title": "Marcadores",
     "page.categories.title": "Categorias",
     "page.categories.no_feed": "No fuente.",
-    "page.categories.feeds": "Ver suscripciones",
+    "page.categories.entries": "Artículos",
+    "page.categories.feeds": "Suscripciones",
     "page.categories.feed_count": [
         "Hay %d fuente.",
         "Hay %d fuentes."

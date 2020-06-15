@@ -82,7 +82,8 @@
     "page.starred.title": "Favoris",
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
-    "page.categories.feeds": "Voir les abonnements",
+    "page.categories.entries": "Articles",
+    "page.categories.feeds": "Abonnements",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."

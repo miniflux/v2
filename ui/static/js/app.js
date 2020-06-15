@@ -517,8 +517,12 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    linkElement.style.display = "none";
+    if (linkElement.tagName != 'A') {
+        linkElement = linkElement.parentNode;
+    }
 
+    linkElement.style.display = "none";
+    
     let containerElement = linkElement.parentNode;
     let questionElement = document.createElement("span");
 

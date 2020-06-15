@@ -82,7 +82,8 @@
     "page.starred.title": "Oznaczone gwiazdką",
     "page.categories.title": "Kategorie",
     "page.categories.no_feed": "Brak kanałów.",
-    "page.categories.feeds": "Zobacz subskrypcje",
+    "page.categories.entries": "Artykuły",
+    "page.categories.feeds": "Subskrypcje",
     "page.categories.feed_count": [
         "Jest %d kanał.",
         "Są %d kanały.",

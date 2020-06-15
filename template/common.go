@@ -51,12 +51,12 @@ var templateCommonMap = map[string]string{
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
                 </ul>
-                <ul class="item-meta-info">
+                <ul class="item-meta-icons">
                     <li>
-                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ t "menu.refresh_feed" }}</a>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ template "icon_refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
                     <li>
-                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ t "menu.edit_feed" }}</a>
+                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ template "icon_edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li>
                         <a href="#"
@@ -65,7 +65,7 @@ var templateCommonMap = map[string]string{
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ t "action.remove" }}</a>
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                 </ul>
             </div>
@@ -194,6 +194,37 @@ SOFTWARE.
     <line x1="14" y1="11" x2="14" y2="17" />
     <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+</svg>
+{{ end }}
+{{ define "icon_edit" }}
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z"/>
+    <path d="M9 7 h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3" />
+    <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3" />
+    <line x1="16" y1="5" x2="19" y2="8" />
+</svg>
+{{ end }}
+{{ define "icon_feeds" }}
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folders" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z"/>
+    <path d="M9 4h3l2 2h5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+    <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
+</svg>
+{{ end }}
+{{ define "icon_entries" }}
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-news" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z"/>
+    <path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11" />
+    <line x1="8" y1="8" x2="12" y2="8" />
+    <line x1="8" y1="12" x2="12" y2="12" />
+    <line x1="8" y1="16" x2="12" y2="16" />
+</svg>
+{{ end }}
+{{ define "icon_refresh" }}
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z"/>
+    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
+    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
 </svg>
 {{ end }}`,
 	"item_meta": `{{ define "item_meta" }}
@@ -475,9 +506,9 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "46cbfc441404dc55c56a9fd7ddc43d98216762f2562f2a17e35eb508dc84246f",
+	"feed_list":        "4f0bddcc6596aca9f42d2aace7f676ed26a3c6b33a3793e2376d9446d6abe392",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
-	"icons":            "f0d94c2cfa6655b44adaf97f0b95c52a9cff5c31f3a8829ad438e4db7114af7e",
+	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
 	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
 	"layout":           "91d2ab3f683a2ced5e9ce5cd04919e74b3e3f329a5eedcc60015b8d49ecb1b77",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",

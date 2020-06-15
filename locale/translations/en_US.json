@@ -82,7 +82,8 @@
     "page.starred.title": "Starred",
     "page.categories.title": "Categories",
     "page.categories.no_feed": "No feed.",
-    "page.categories.feeds": "See subscriptions",
+    "page.categories.entries": "Articles",
+    "page.categories.feeds": "Subscriptions",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."
