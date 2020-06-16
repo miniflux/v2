@@ -43,7 +43,11 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 		return subscriptions, nil
 	}
 
-	return parseDocument(response.EffectiveURL, strings.NewReader(body))
+	subscriptions, err := parseDocument(response.EffectiveURL, strings.NewReader(body))
+	if err != nil || subscriptions != nil {
+		return subscriptions, err
+	}
+	return tryWellKnownUrls(websiteURL, userAgent, username, password)
 }
 
 func parseDocument(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
@@ -82,6 +86,47 @@ func parseDocument(websiteURL string, data io.Reader) (Subscriptions, *errors.Lo
 				subscriptions = append(subscriptions, subscription)
 			}
 		})
+	}
+
+	return subscriptions, nil
+}
+
+func tryWellKnownUrls(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
+	var subscriptions Subscriptions
+	knownURLs := map[string]string{
+		"/atom.xml": "atom",
+		"/feed.xml": "atom",
+		"/feed/":    "atom",
+		"/rss.xml":  "rss",
+	}
+
+	lastCharacter := websiteURL[len(websiteURL)-1:]
+	if lastCharacter == "/" {
+		websiteURL = websiteURL[:len(websiteURL)-1]
+	}
+
+	for knownURL, kind := range knownURLs {
+		fullURL, err := url.AbsoluteURL(websiteURL, knownURL)
+		if err != nil {
+			continue
+		}
+		request := client.New(fullURL)
+		request.WithCredentials(username, password)
+		request.WithUserAgent(userAgent)
+		response, err := request.Get()
+		if err != nil {
+			continue
+		}
+
+		if response != nil && response.StatusCode == 200 {
+			subscription := new(Subscription)
+			subscription.Type = kind
+			subscription.Title = fullURL
+			subscription.URL = fullURL
+			if subscription.URL != "" {
+				subscriptions = append(subscriptions, subscription)
+			}
+		}
 	}
 
 	return subscriptions, nil
