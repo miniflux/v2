@@ -13,15 +13,16 @@ import (
 
 // SettingsForm represents the settings form.
 type SettingsForm struct {
-	Username          string
-	Password          string
-	Confirmation      string
-	Theme             string
-	Language          string
-	Timezone          string
-	EntryDirection    string
-	KeyboardShortcuts bool
-	CustomCSS         string
+	Username            string
+	Password            string
+	Confirmation        string
+	Theme               string
+	Language            string
+	Timezone            string
+	EntryDirection      string
+	KeyboardShortcuts   bool
+	ShowShortPagination bool
+	CustomCSS           string
 }
 
 // Merge updates the fields of the given user.
@@ -32,6 +33,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Timezone = s.Timezone
 	user.EntryDirection = s.EntryDirection
 	user.KeyboardShortcuts = s.KeyboardShortcuts
+	user.ShowShortPagination = s.ShowShortPagination
 	user.Extra["custom_css"] = s.CustomCSS
 
 	if s.Password != "" {
@@ -68,14 +70,15 @@ func (s *SettingsForm) Validate() error {
 // NewSettingsForm returns a new SettingsForm.
 func NewSettingsForm(r *http.Request) *SettingsForm {
 	return &SettingsForm{
-		Username:          r.FormValue("username"),
-		Password:          r.FormValue("password"),
-		Confirmation:      r.FormValue("confirmation"),
-		Theme:             r.FormValue("theme"),
-		Language:          r.FormValue("language"),
-		Timezone:          r.FormValue("timezone"),
-		EntryDirection:    r.FormValue("entry_direction"),
-		KeyboardShortcuts: r.FormValue("keyboard_shortcuts") == "1",
-		CustomCSS:         r.FormValue("custom_css"),
+		Username:            r.FormValue("username"),
+		Password:            r.FormValue("password"),
+		Confirmation:        r.FormValue("confirmation"),
+		Theme:               r.FormValue("theme"),
+		Language:            r.FormValue("language"),
+		Timezone:            r.FormValue("timezone"),
+		EntryDirection:      r.FormValue("entry_direction"),
+		KeyboardShortcuts:   r.FormValue("keyboard_shortcuts") == "1",
+		ShowShortPagination: r.FormValue("show_short_pagination") == "1",
+		CustomCSS:           r.FormValue("custom_css"),
 	}
 }
