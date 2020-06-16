@@ -600,6 +600,7 @@ var translations = map[string]string{
     "form.prefs.select.older_first": "Older entries first",
     "form.prefs.select.recent_first": "Recent entries first",
     "form.prefs.label.keyboard_shortcuts": "Enable keyboard shortcuts",
+    "form.prefs.label.show_short_pagination": "Show all pagination controls on short articles",
     "form.prefs.label.custom_css": "Custom CSS",
     "form.import.label.file": "OPML file",
     "form.import.label.url": "URL",
@@ -3290,7 +3291,7 @@ var translations = map[string]string{
 
 var translationsChecksums = map[string]string{
 	"de_DE": "ddb063682852c86361af350be616d3bd328373ecb927804824008d016aa7c67c",
-	"en_US": "350b835f759212abd2110322394aa00b666fbf27d752532a7700fb52d5af3f02",
+	"en_US": "b270222524b9c3d2213294f79e3799a8a09ac609b9d8c78f2ce916d9ad5db92b",
 	"es_ES": "26efc79faaf35efe5a33528cedc2522496987d290c9e86d8fff3a9bcbed3e441",
 	"fr_FR": "e8736791d5373b955cacce215b3ae67d56280bfa5d4596899e4e5e37ff962afd",
 	"it_IT": "41e6eba2d92a684ef90462226db312285d1d94a07a5bb917cfce4f64df290a86",
