@@ -111,7 +111,7 @@
             {{ end }}
         </div>
     </header>
-    {{ if gt (len .entry.Content) 120 }}
+    {{ if gt (len .entry.Content) 120 or .user.ShowPaginationControls }}
     {{ if .user }}
     <div class="pagination-top">
         {{ template "entry_pagination" . }}

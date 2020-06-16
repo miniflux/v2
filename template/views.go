@@ -767,7 +767,7 @@ var templateViewsMap = map[string]string{
             {{ end }}
         </div>
     </header>
-    {{ if gt (len .entry.Content) 120 }}
+    {{ if gt (len .entry.Content) 120 or .user.ShowPaginationControls }}
     {{ if .user }}
     <div class="pagination-top">
         {{ template "entry_pagination" . }}
@@ -1556,7 +1556,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "635bb8f7b927f3216ccd35cc6d9edd4b2af96e8677a14766a86fb77fa9fb4e38",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "d8c30d412d58e14c946ba682166f7c582948e7b0f657d04dcbc3d004267627bb",
+	"entry":               "29d826d9a19e2586a102872d154ec89fa809ce55dab6b83c902fa7ae180e3ac0",
 	"feed_entries":        "614357a9369237e54be45b40c516fe70a751bfb4311660746ae229e6be88fdac",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "93c0c4cc541eec7f07f5c2634f250ea82ac64024939179276b6f636b72c189bf",
