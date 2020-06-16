@@ -18,8 +18,10 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 
 	sr := router.PathPrefix("/v1").Subrouter()
 	middleware := newMiddleware(store)
+	sr.Use(middleware.handleCORS)
 	sr.Use(middleware.apiKeyAuth)
 	sr.Use(middleware.basicAuth)
+	sr.Methods("OPTIONS")
 	sr.HandleFunc("/users", handler.createUser).Methods("POST")
 	sr.HandleFunc("/users", handler.users).Methods("GET")
 	sr.HandleFunc("/users/{userID:[0-9]+}", handler.userByID).Methods("GET")
