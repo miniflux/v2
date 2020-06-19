@@ -1,3 +1,24 @@
+Version 2.0.22 (Jun 19, 2020)
+-----------------------------
+
+* Remove child-src CSP policy (deprecated)
+* Add /version endpoint
+* Add the ability to use custom css
+* Handle more invalid dates
+* Add CSS styles for textarea
+* Add index to speed up slow query
+* Speed up feed list page rendering
+* Add alternative scheduler based on the number of entries
+* Setup Dependabot on GitHub
+* Update Docker image to Alpine 3.12
+* Add feed option to ignore HTTP cache
+* Fix some Italian and German translations
+* Added scraper rule for RayWenderlich.com, TheOatmeal.com, financialsamurai.com, dilbert.com and turnoff.us
+* Replace link to categories by a link to the list of entries in "Category > Feeds" page
+* Change feed title to a link to the original website
+* Add icons to feeds and categories list
+* Update dependencies and remove vendor folder
+
 Version 2.0.21 (Mar 28, 2020)
 -----------------------------
 
