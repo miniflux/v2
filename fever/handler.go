@@ -325,15 +325,15 @@ func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
-	entries, err := builder.GetEntries()
+	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
 	var itemIDs []string
-	for _, entry := range entries {
-		itemIDs = append(itemIDs, strconv.FormatInt(entry.ID, 10))
+	for _, entryID := range rawEntryIDs {
+		itemIDs = append(itemIDs, strconv.FormatInt(entryID, 10))
 	}
 
 	var result unreadResponse
