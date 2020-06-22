@@ -83,7 +83,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 			logger.Debug("[UI:AppSession] %s", session)
 		}
 
-		if r.Method == "POST" {
+		if r.Method == http.MethodPost {
 			formValue := r.FormValue("csrf")
 			headerValue := r.Header.Get("X-Csrf-Token")
 
