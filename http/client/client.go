@@ -94,6 +94,7 @@ func (c *Client) WithCacheHeaders(etagHeader, lastModifiedHeader string) *Client
 	return c
 }
 
+// WithProxy enable proxy for current HTTP client request.
 func (c *Client) WithProxy() *Client {
 	c.fetchViaProxy = true
 	return c
