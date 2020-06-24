@@ -242,6 +242,7 @@
     "form.feed.label.scraper_rules": "Scraper 规则",
     "form.feed.label.rewrite_rules": "重写规则",
     "form.feed.label.ignore_http_cache": "忽略HTTP缓存",
+    "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此Feed",
     "form.category.label.title": "标题",
     "form.user.label.username": "用户名",

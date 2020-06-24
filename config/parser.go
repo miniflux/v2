@@ -166,6 +166,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.httpClientTimeout = parseInt(value, defaultHTTPClientTimeout)
 		case "HTTP_CLIENT_MAX_BODY_SIZE":
 			p.opts.httpClientMaxBodySize = int64(parseInt(value, defaultHTTPClientMaxBodySize) * 1024 * 1024)
+		case "HTTP_CLIENT_PROXY":
+			p.opts.httpClientProxy = parseString(value, defaultHTTPClientProxy)
 		case "AUTH_PROXY_HEADER":
 			p.opts.authProxyHeader = parseString(value, defaultAuthProxyHeader)
 		case "AUTH_PROXY_USER_CREATION":

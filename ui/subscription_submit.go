@@ -54,6 +54,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.UserAgent,
 		subscriptionForm.Username,
 		subscriptionForm.Password,
+		subscriptionForm.FetchViaProxy,
 	)
 	if findErr != nil {
 		logger.Error("[UI:SubmitSubscription] %s", findErr)
@@ -82,6 +83,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			subscriptionForm.Password,
 			subscriptionForm.ScraperRules,
 			subscriptionForm.RewriteRules,
+			subscriptionForm.FetchViaProxy,
 		)
 		if err != nil {
 			v.Set("form", subscriptionForm)

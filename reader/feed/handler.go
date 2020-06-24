@@ -34,7 +34,7 @@ type Handler struct {
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password, scraperRules, rewriteRules string) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password, scraperRules, rewriteRules string, fetchViaProxy bool) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -44,6 +44,11 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 	request := client.New(url)
 	request.WithCredentials(username, password)
 	request.WithUserAgent(userAgent)
+
+	if fetchViaProxy {
+		request.WithProxy()
+	}
+
 	response, requestErr := browser.Exec(request)
 	if requestErr != nil {
 		return nil, requestErr
@@ -60,7 +65,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 
 	subscription.UserID = userID
 	subscription.WithCategoryID(categoryID)
-	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules)
+	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules, fetchViaProxy)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
@@ -72,7 +77,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 
 	logger.Debug("[Handler:CreateFeed] Feed saved with ID: %d", subscription.ID)
 
-	checkFeedIcon(h.store, subscription.ID, subscription.SiteURL)
+	checkFeedIcon(h.store, subscription.ID, subscription.SiteURL, fetchViaProxy)
 	return subscription, nil
 }
 
@@ -111,6 +116,10 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		request.WithCacheHeaders(originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
 	}
 
+	if originalFeed.FetchViaProxy {
+		request.WithProxy()
+	}
+
 	response, requestErr := browser.Exec(request)
 	if requestErr != nil {
 		originalFeed.WithError(requestErr.Localize(printer))
@@ -141,7 +150,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		// We update caching headers only if the feed has been modified,
 		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.WithClientResponse(response)
-		checkFeedIcon(h.store, originalFeed.ID, originalFeed.SiteURL)
+		checkFeedIcon(h.store, originalFeed.ID, originalFeed.SiteURL, originalFeed.FetchViaProxy)
 	} else {
 		logger.Debug("[Handler:RefreshFeed] Feed #%d not modified", feedID)
 	}
@@ -162,9 +171,9 @@ func NewFeedHandler(store *storage.Storage) *Handler {
 	return &Handler{store}
 }
 
-func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string) {
+func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string, fetchViaProxy bool) {
 	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL)
+		icon, err := icon.FindIcon(websiteURL, fetchViaProxy)
 		if err != nil {
 			logger.Debug("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
 		} else if icon == nil {

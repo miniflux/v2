@@ -47,6 +47,7 @@ type Client struct {
 	password            string
 	userAgent           string
 	Insecure            bool
+	fetchViaProxy       bool
 }
 
 func (c *Client) String() string {
@@ -90,6 +91,11 @@ func (c *Client) WithAuthorization(authorization string) *Client {
 func (c *Client) WithCacheHeaders(etagHeader, lastModifiedHeader string) *Client {
 	c.etagHeader = etagHeader
 	c.lastModifiedHeader = lastModifiedHeader
+	return c
+}
+
+func (c *Client) WithProxy() *Client {
+	c.fetchViaProxy = true
 	return c
 }
 
@@ -230,11 +236,26 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 
 func (c *Client) buildClient() http.Client {
 	client := http.Client{Timeout: time.Duration(config.Opts.HTTPClientTimeout()) * time.Second}
+	transport := &http.Transport{}
 	if c.Insecure {
-		client.Transport = &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
+	if c.fetchViaProxy {
+		proxy := config.Opts.HTTPClientProxy()
+		logger.Debug("[HttpClient] Build client with proxy: %s", proxy)
+		if proxy != "" {
+			proxyURL, err := url.Parse(proxy)
+			if err != nil {
+				logger.Error(fmt.Sprintf("[HttpClient] Parse HTTPClientProxy to URL error: %s", err))
+			}
+			transport.Proxy = http.ProxyURL(proxyURL)
+		} else {
+			logger.Debug("[HttpClient] HTTPClientProxy not config yet")
 		}
 	}
+
+	client.Transport = transport
 
 	return client
 }

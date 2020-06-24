@@ -52,6 +52,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		Username:        feed.Username,
 		Password:        feed.Password,
 		IgnoreHTTPCache: feed.IgnoreHTTPCache,
+		FetchViaProxy:   feed.FetchViaProxy,
 		Disabled:        feed.Disabled,
 	}
 

@@ -592,6 +592,7 @@ var templateViewsMap = map[string]string{
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
+        <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
         <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
 
         <div class="buttons">
@@ -1554,7 +1555,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
-	"edit_feed":           "635bb8f7b927f3216ccd35cc6d9edd4b2af96e8677a14766a86fb77fa9fb4e38",
+	"edit_feed":           "552abcd7755579ac0f60b5338abe6709b91cc12152f548748f0b170f1c69b859",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
 	"entry":               "d8c30d412d58e14c946ba682166f7c582948e7b0f657d04dcbc3d004267627bb",
 	"feed_entries":        "614357a9369237e54be45b40c516fe70a751bfb4311660746ae229e6be88fdac",

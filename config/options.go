@@ -48,6 +48,7 @@ const (
 	defaultPocketConsumerKey                  = ""
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
+	defaultHTTPClientProxy                    = ""
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
 )
@@ -92,6 +93,7 @@ type Options struct {
 	pocketConsumerKey                  string
 	httpClientTimeout                  int
 	httpClientMaxBodySize              int64
+	httpClientProxy                    string
 	authProxyHeader                    string
 	authProxyUserCreation              bool
 }
@@ -137,6 +139,7 @@ func NewOptions() *Options {
 		pocketConsumerKey:                  defaultPocketConsumerKey,
 		httpClientTimeout:                  defaultHTTPClientTimeout,
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
+		httpClientProxy:                    defaultHTTPClientProxy,
 		authProxyHeader:                    defaultAuthProxyHeader,
 		authProxyUserCreation:              defaultAuthProxyUserCreation,
 	}
@@ -335,6 +338,11 @@ func (o *Options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
 }
 
+// HTTPClientProxy returns the proxy URL for HTTP client
+func (o *Options) HTTPClientProxy() string {
+	return o.httpClientProxy
+}
+
 // AuthProxyHeader returns an HTTP header name that contains username for
 // authentication using auth proxy.
 func (o *Options) AuthProxyHeader() string {
@@ -387,6 +395,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("OAUTH2_PROVIDER: %v\n", o.oauth2Provider))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_TIMEOUT: %v\n", o.httpClientTimeout))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_MAX_BODY_SIZE: %v\n", o.httpClientMaxBodySize))
+	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_PROXY: %v\n", o.httpClientProxy))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_HEADER: %v\n", o.authProxyHeader))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
 	return builder.String()

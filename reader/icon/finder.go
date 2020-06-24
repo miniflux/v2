@@ -21,9 +21,12 @@ import (
 )
 
 // FindIcon try to find the website's icon.
-func FindIcon(websiteURL string) (*model.Icon, error) {
+func FindIcon(websiteURL string, fetchViaProxy bool) (*model.Icon, error) {
 	rootURL := url.RootURL(websiteURL)
 	clt := client.New(rootURL)
+	if fetchViaProxy {
+		clt.WithProxy()
+	}
 	response, err := clt.Get()
 	if err != nil {
 		return nil, fmt.Errorf("unable to download website index page: %v", err)
@@ -43,7 +46,7 @@ func FindIcon(websiteURL string) (*model.Icon, error) {
 	}
 
 	logger.Debug("[FindIcon] Fetching icon => %s", iconURL)
-	icon, err := downloadIcon(iconURL)
+	icon, err := downloadIcon(iconURL, fetchViaProxy)
 	if err != nil {
 		return nil, err
 	}
@@ -86,8 +89,11 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 	return iconURL, nil
 }
 
-func downloadIcon(iconURL string) (*model.Icon, error) {
+func downloadIcon(iconURL string, fetchViaProxy bool) (*model.Icon, error) {
 	clt := client.New(iconURL)
+	if fetchViaProxy {
+		clt.WithProxy()
+	}
 	response, err := clt.Get()
 	if err != nil {
 		return nil, fmt.Errorf("unable to download iconURL: %v", err)

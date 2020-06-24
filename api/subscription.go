@@ -23,6 +23,7 @@ func (h *handler) getSubscriptions(w http.ResponseWriter, r *http.Request) {
 		subscriptionInfo.UserAgent,
 		subscriptionInfo.Username,
 		subscriptionInfo.Password,
+		subscriptionInfo.FetchViaProxy,
 	)
 	if finderErr != nil {
 		json.ServerError(w, r, finderErr)
