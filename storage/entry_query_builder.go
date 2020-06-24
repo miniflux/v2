@@ -32,7 +32,7 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		nArgs := len(e.args) + 1
 		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
 		e.args = append(e.args, query)
-		e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d))", nArgs))
+		e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - (ln(extract (epoch from now() - published_at)))", nArgs))
 		e.WithDirection("DESC")
 	}
 	return e
