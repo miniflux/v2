@@ -246,6 +246,7 @@
     "form.feed.label.scraper_rules": "Правила Scraper",
     "form.feed.label.rewrite_rules": "Правила Rewrite",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP-кеш",
+    "form.feed.label.fetch_via_proxy": "Получить через прокси",
     "form.feed.label.disabled": "Не обновлять этот канал",
     "form.category.label.title": "Название",
     "form.user.label.username": "Имя пользователя",

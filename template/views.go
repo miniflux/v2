@@ -61,6 +61,7 @@ var templateViewsMap = map[string]string{
             <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+                <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
 
                 <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
                 <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
@@ -1544,7 +1545,7 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
-	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
+	"add_subscription":    "5171b5eea46c097d3c7ded853cf0f70c849f979348e56a00f14b573f45843f6a",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
 	"categories":          "21d2efb06d8330ab1fd363449c7144ce7191779bafa33d5c0cec63f2c443ec03",

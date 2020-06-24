@@ -246,6 +246,7 @@
     "form.feed.label.scraper_rules": "Zasady ekstrakcji",
     "form.feed.label.rewrite_rules": "Reguły zapisu",
     "form.feed.label.ignore_http_cache": "Zignoruj ​​pamięć podręczną HTTP",
+    "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
     "form.feed.label.disabled": "Не обновлять этот канал",
     "form.category.label.title": "Tytuł",
     "form.user.label.username": "Nazwa użytkownika",

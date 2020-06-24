@@ -244,6 +244,7 @@
     "form.feed.label.scraper_rules": "Règles pour récupérer le contenu original",
     "form.feed.label.rewrite_rules": "Règles de réécriture",
     "form.feed.label.ignore_http_cache": "Ignore cache HTTP",
+    "form.feed.label.fetch_via_proxy": "Récupérer via proxy",
     "form.feed.label.disabled": "Ne pas actualiser ce flux",
     "form.category.label.title": "Titre",
     "form.user.label.username": "Nom d'utilisateur",
