@@ -16,7 +16,7 @@
     <div class="items">
         {{ range .categories }}
         <article class="item">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
                 </span>

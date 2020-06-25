@@ -27,7 +27,7 @@ var templateCommonMap = map[string]string{
     <div class="items">
         {{ range .feeds }}
         <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}
                         <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
@@ -44,7 +44,7 @@ var templateCommonMap = map[string]string{
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">
-                    <li>
+                    <li dir="auto">
                         <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
@@ -78,7 +78,8 @@ var templateCommonMap = map[string]string{
         </article>
         {{ end }}
     </div>
-{{ end }}`,
+{{ end }}
+`,
 	"feed_menu": `{{ define "feed_menu" }}
 <ul>
     <li>
@@ -506,7 +507,7 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "4f0bddcc6596aca9f42d2aace7f676ed26a3c6b33a3793e2376d9446d6abe392",
+	"feed_list":        "30acc9ecc413811e73a1dad120b5d44e29564de3ba794fb07ee886b30addfb19",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
 	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
