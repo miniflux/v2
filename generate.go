@@ -193,6 +193,7 @@ func main() {
 			"ui/static/js/modal_handler.js",
 			"ui/static/js/app.js",
 			"ui/static/js/bootstrap.js",
+			"ui/static/js/feeds.js",
 		},
 		"sw": []string{
 			"ui/static/js/sw.js",

@@ -1,7 +1,12 @@
 {{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
-        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}" 
+                data-name="{{ .Title }}" 
+                data-lastcheck="{{ isodate .CheckedAt }}" 
+                data-errors={{ .ParsingErrorCount }}
+                data-unread={{ .UnreadCount }} 
+                data-read={{ .ReadCount }}> 
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}

@@ -26,7 +26,12 @@ var templateCommonMap = map[string]string{
 	"feed_list": `{{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
-        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}" 
+                data-name="{{ .Title }}" 
+                data-lastcheck="{{ isodate .CheckedAt }}" 
+                data-errors={{ .ParsingErrorCount }}
+                data-unread={{ .UnreadCount }} 
+                data-read={{ .ReadCount }}> 
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}
@@ -96,6 +101,17 @@ var templateCommonMap = map[string]string{
     </li>
     <li>
         <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+    </li>
+    <li>
+        <a href="#" 
+            data-action="triggerSortFeeds"
+            data-sort-by-name="{{ t "menu.sort_feeds_name" }}"
+            data-sort-by-lastcheck="{{ t "menu.sort_feeds_last_check" }}"
+            data-sort-by-errors="{{ t "menu.sort_feeds_errors" }}"
+            data-sort-by-read="{{ t "menu.sort_feeds_read" }}"
+            data-sort-by-unread="{{ t "menu.sort_feeds_unread" }}"
+            data-label-loading="{{ t "confirm.loading" }}"
+            >{{ t "menu.sort_feeds_sort" }}</a>
     </li>
 </ul>
 {{ end }}`,
@@ -507,8 +523,8 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "30acc9ecc413811e73a1dad120b5d44e29564de3ba794fb07ee886b30addfb19",
-	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
+	"feed_list":        "2609e76c86a9f96d702e508de59bf2abf75e00bb911f7d6c4940f0cbbbb07f90",
+	"feed_menu":        "78c203f3d5ee30cf0b69feb955a528fb6cc6a7995df5efa5677b2e856c5d37df",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
 	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
 	"layout":           "91d2ab3f683a2ced5e9ce5cd04919e74b3e3f329a5eedcc60015b8d49ecb1b77",
