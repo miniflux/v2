@@ -39,6 +39,8 @@ const (
 	defaultCleanupRemoveSessionsDays          = 30
 	defaultProxyImages                        = "http-only"
 	defaultCreateAdmin                        = false
+	defaultAdminUsername                      = ""
+	defaultAdminPassword                      = ""
 	defaultOAuth2UserCreation                 = false
 	defaultOAuth2ClientID                     = ""
 	defaultOAuth2ClientSecret                 = ""
@@ -82,6 +84,8 @@ type Options struct {
 	schedulerEntryFrequencyMaxInterval int
 	workerPoolSize                     int
 	createAdmin                        bool
+	adminUsername                      string
+	adminPassword                      string
 	proxyImages                        string
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
@@ -302,6 +306,16 @@ func (o *Options) CreateAdmin() bool {
 	return o.createAdmin
 }
 
+// AdminUsername returns the admin username if defined.
+func (o *Options) AdminUsername() string {
+	return o.adminUsername
+}
+
+// AdminPassword returns the admin password if defined.
+func (o *Options) AdminPassword() string {
+	return o.adminPassword
+}
+
 // ProxyImages returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
 func (o *Options) ProxyImages() string {
 	return o.proxyImages
@@ -378,6 +392,8 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL: %v\n", o.schedulerEntryFrequencyMinInterval))
 	builder.WriteString(fmt.Sprintf("PROXY_IMAGES: %v\n", o.proxyImages))
 	builder.WriteString(fmt.Sprintf("CREATE_ADMIN: %v\n", o.createAdmin))
+	builder.WriteString(fmt.Sprintf("ADMIN_USERNAME: %v\n", o.adminUsername))
+	builder.WriteString(fmt.Sprintf("ADMIN_PASSWORD: %v\n", o.adminPassword))
 	builder.WriteString(fmt.Sprintf("POCKET_CONSUMER_KEY: %v\n", o.pocketConsumerKey))
 	builder.WriteString(fmt.Sprintf("OAUTH2_USER_CREATION: %v\n", o.oauth2UserCreationAllowed))
 	builder.WriteString(fmt.Sprintf("OAUTH2_CLIENT_ID: %v\n", o.oauth2ClientID))

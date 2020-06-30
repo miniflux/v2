@@ -124,6 +124,9 @@ Postgresql connection parameters\&.
 .br
 Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
 .TP
+.B DATABASE_URL_FILE
+Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
+.TP
 .B DATABASE_MAX_CONNS
 Maximum number of database connections (default is 20)\&.
 .TP
@@ -188,8 +191,14 @@ OAuth2 provider to use\&. Only google is supported\&.
 .B OAUTH2_CLIENT_ID
 OAuth2 client ID\&.
 .TP
+.B OAUTH2_CLIENT_ID_FILE
+Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_ID value\&.
+.TP
 .B OAUTH2_CLIENT_SECRET
 OAuth2 client secret\&.
+.TP
+.B OAUTH2_CLIENT_SECRET_FILE
+Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_SECRET value\&.
 .TP
 .B OAUTH2_REDIRECT_URL
 OAuth2 redirect URL\&.
@@ -207,13 +216,22 @@ Set to 1 to run database migrations\&.
 Set to 1 to create an admin user from environment variables\&.
 .TP
 .B ADMIN_USERNAME
-Admin user login, used only if \fBCREATE_ADMIN\fR is enabled\&.
+Admin user login, used only if $CREATE_ADMIN is enabled\&.
+.TP
+.B ADMIN_USERNAME_FILE
+Path to a secret key exposed as a file, it should contain $ADMIN_USERNAME value\&.
 .TP
 .B ADMIN_PASSWORD
-Admin user password, used only if \fBCREATE_ADMIN\fR is enabled\&.
+Admin user password, used only if $CREATE_ADMIN is enabled\&.
+.TP
+.B ADMIN_PASSWORD_FILE
+Path to a secret key exposed as a file, it should contain $ADMIN_PASSWORD value\&.
 .TP
 .B POCKET_CONSUMER_KEY
 Pocket consumer API key for all users\&.
+.TP
+.B POCKET_CONSUMER_KEY_FILE
+Path to a secret key exposed as a file, it should contain $POCKET_CONSUMER_KEY value\&.
 .TP
 .B PROXY_IMAGES
 Avoids mixed content warnings for external images: http-only, all, or none\&.
