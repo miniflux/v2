@@ -5,6 +5,7 @@ var sort_ascending = {
     read:-1,
     unread:-1,
 };
+const arrowElementId = "arrowElement";
 function compareName(a,b) {
     if (a.dataset.name<b.dataset.name)return -sort_ascending.name;
     if (a.dataset.name>b.dataset.name)return sort_ascending.name;
@@ -56,6 +57,13 @@ function createSortElement(containerElement, sortText, compareFunction, ascendin
     element.onclick = (event) => {
         event.preventDefault();
 
+        let arrowElement = document.getElementById(arrowElementId);
+        let arrow = "&uarr; ";
+        if (sort_ascending[ascendingKey]==1) {
+            arrow = "&darr; ";
+        }
+        arrowElement.innerHTML = arrow;
+
         let loadingElement = document.createElement("a");
         loadingElement.className = "loading";
         loadingElement.appendChild(document.createTextNode(containerElement.dataset.labelLoading));
@@ -65,7 +73,7 @@ function createSortElement(containerElement, sortText, compareFunction, ascendin
             sortFeedsBy(compareFunction);
             sort_ascending[ascendingKey] = -sort_ascending[ascendingKey];
             loadingElement.remove();
-        },20);
+        }, 20);
     };
 
     containerElement.appendChild(element);
@@ -94,6 +102,10 @@ function triggerSortFeeds(linkElement) {
         questionElement.dataset.labelLoading = linkElement.dataset.labelLoading;
         questionElement.className = "confirm";
 
+        let arrowElement = document.createElement("a");
+        arrowElement.setAttribute("id", arrowElementId);
+        arrowElement.innerHTML = "&varr; ";
+        questionElement.appendChild(arrowElement);
         createSortElement(questionElement, linkElement.dataset.sortByName, compareName, "name", false);
         createSortElement(questionElement, linkElement.dataset.sortByLastcheck, compareLastCheck, "lastcheck", false);
         createSortElement(questionElement, linkElement.dataset.sortByErrors, compareErrors, "errors", false);
