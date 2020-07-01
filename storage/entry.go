@@ -219,11 +219,11 @@ func (s *Storage) ArchiveEntries(days int) error {
 		UPDATE
 			entries
 		SET
-			status='removed'
+			status=$1
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status='read' AND starred is false AND published_at < now () - '%d days'::interval LIMIT 5000)
+			id=ANY(SELECT id FROM entries WHERE status=$2 AND starred is false AND share_code='' AND published_at < now () - $3::interval LIMIT 5000)
 	`
-	if _, err := s.db.Exec(fmt.Sprintf(query, days)); err != nil {
+	if _, err := s.db.Exec(query, model.EntryStatusRemoved, model.EntryStatusRead, fmt.Sprintf("%d days", days)); err != nil {
 		return fmt.Errorf(`store: unable to archive read entries: %v`, err)
 	}
 
@@ -279,7 +279,7 @@ func (s *Storage) FlushHistory(userID int64) error {
 			status=$1,
 			changed_at=now()
 		WHERE
-			user_id=$2 AND status=$3 AND starred='f' AND share_code=''
+			user_id=$2 AND status=$3 AND starred is false AND share_code=''
 	`
 	_, err := s.db.Exec(query, model.EntryStatusRemoved, userID, model.EntryStatusRead)
 	if err != nil {
