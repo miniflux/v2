@@ -215,15 +215,16 @@ func (s *Storage) ArchiveEntries(days int) error {
 		return nil
 	}
 
+	before := time.Now().AddDate(0, 0, -days)
 	query := `
 		UPDATE
 			entries
 		SET
 			status=$1
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status=$2 AND starred is false AND share_code='' AND published_at < now () - $3::interval LIMIT 5000)
+			id=ANY(SELECT id FROM entries WHERE status=$2 AND starred is false AND share_code='' AND published_at < $3 LIMIT 5000)
 	`
-	if _, err := s.db.Exec(query, model.EntryStatusRemoved, model.EntryStatusRead, fmt.Sprintf("%d days", days)); err != nil {
+	if _, err := s.db.Exec(query, model.EntryStatusRemoved, model.EntryStatusRead, before); err != nil {
 		return fmt.Errorf(`store: unable to archive read entries: %v`, err)
 	}
 
