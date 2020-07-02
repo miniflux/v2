@@ -7,6 +7,9 @@
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
+        <li>
+            <span>{{ timeToRead .entry.Content }} min read</span>
+        </li>
     </ul>
     <ul class="item-meta-icons">
         {{ if .entry.ShareCode }}

@@ -92,6 +92,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"plural": func(key string, n int, args ...interface{}) string {
 			return ""
 		},
+		"timeToRead": func(content string) int {
+			return 0
+		},
 	}
 }
 
@@ -217,4 +220,10 @@ func formatFileSize(b int64) string {
 	}
 	return fmt.Sprintf("%.1f %ciB",
 		float64(b)/float64(div), "KMGTPE"[exp])
+}
+
+func timeToRead(content string) int {
+	nbOfWords := len(strings.Fields(content))
+
+	return int(math.Ceil(float64(nbOfWords) / 265))
 }
