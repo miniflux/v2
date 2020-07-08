@@ -109,6 +109,7 @@ type userModification struct {
 	Language       *string `json:"language"`
 	Timezone       *string `json:"timezone"`
 	EntryDirection *string `json:"entry_sorting_direction"`
+	EntriesPerPage *int    `json:"entries_per_page"`
 }
 
 func (u *userModification) Update(user *model.User) {
@@ -138,6 +139,10 @@ func (u *userModification) Update(user *model.User) {
 
 	if u.EntryDirection != nil {
 		user.EntryDirection = *u.EntryDirection
+	}
+
+	if u.EntriesPerPage != nil {
+		user.EntriesPerPage = *u.EntriesPerPage
 	}
 }
 

@@ -1320,6 +1320,9 @@ var templateViewsMap = map[string]string{
         <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
     </select>
 
+    <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
+    <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
+
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
     <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="5">{{ .form.CustomCSS }}</textarea>
@@ -1565,7 +1568,7 @@ var templateViewsMapChecksums = map[string]string{
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "c0786ddc6b17e865007b975eefb97417935cbc601f5917cca1ee0d3f584594bc",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "3ab566c3220c62edc3edc51f2e93c1101b728e9f62f52f23de6bc6322d86aeb6",
+	"settings":            "3d6dd0d7fa0ca48cfd9a5edb43c055af8b816eb4460f16b71ae22db40ed9b754",
 	"shared_entries":      "1494d81e46f6af534a73cf6a91f8dfda1932a477bb3a70143513896ac0f0220b",
 	"unread_entries":      "e0080d0cf3583cda51d865422960137c8556c432853657086e43daf6bd5b73be",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",

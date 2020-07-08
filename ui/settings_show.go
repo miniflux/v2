@@ -32,6 +32,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		Language:          user.Language,
 		Timezone:          user.Timezone,
 		EntryDirection:    user.EntryDirection,
+		EntriesPerPage:    user.EntriesPerPage,
 		KeyboardShortcuts: user.KeyboardShortcuts,
 		CustomCSS:         user.Extra["custom_css"],
 	}

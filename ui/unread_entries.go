@@ -43,7 +43,7 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
-	builder.WithLimit(nbItemsPerPage)
+	builder.WithLimit(user.EntriesPerPage)
 	entries, err := builder.GetEntries()
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -51,7 +51,7 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	view.Set("entries", entries)
-	view.Set("pagination", getPagination(route.Path(h.router, "unread"), countUnread, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "unread"), countUnread, offset, user.EntriesPerPage))
 	view.Set("menu", "unread")
 	view.Set("user", user)
 	view.Set("countUnread", countUnread)
