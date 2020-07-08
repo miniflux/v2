@@ -64,7 +64,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		VALUES
 			(LOWER($1), $2, $3, $4)
 		RETURNING
-			id, username, is_admin, language, theme, timezone, entry_direction, keyboard_shortcuts
+			id, username, is_admin, language, theme, timezone, entry_direction, entries_per_page, keyboard_shortcuts
 	`
 
 	err = s.db.QueryRow(query, user.Username, password, user.IsAdmin, extra).Scan(
@@ -75,6 +75,7 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 		&user.Theme,
 		&user.Timezone,
 		&user.EntryDirection,
+		&user.EntriesPerPage,
 		&user.KeyboardShortcuts,
 	)
 	if err != nil {
@@ -123,9 +124,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				language=$5,
 				timezone=$6,
 				entry_direction=$7,
-				keyboard_shortcuts=$8
+				entries_per_page=$8,
+				keyboard_shortcuts=$9
 			WHERE
-				id=$9
+				id=$10
 		`
 
 		_, err = s.db.Exec(
@@ -137,6 +139,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.Language,
 			user.Timezone,
 			user.EntryDirection,
+			user.EntriesPerPage,
 			user.KeyboardShortcuts,
 			user.ID,
 		)
@@ -152,9 +155,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				language=$4,
 				timezone=$5,
 				entry_direction=$6,
-				keyboard_shortcuts=$7
+				entries_per_page=$7,
+				keyboard_shortcuts=$8
 			WHERE
-				id=$8
+				id=$9
 		`
 
 		_, err := s.db.Exec(
@@ -165,6 +169,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.Language,
 			user.Timezone,
 			user.EntryDirection,
+			user.EntriesPerPage,
 			user.KeyboardShortcuts,
 			user.ID,
 		)
@@ -202,6 +207,7 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			language,
 			timezone,
 			entry_direction,
+			entries_per_page,
 			keyboard_shortcuts,
 			last_login_at,
 			extra
@@ -224,6 +230,7 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			language,
 			timezone,
 			entry_direction,
+			entries_per_page,
 			keyboard_shortcuts,
 			last_login_at,
 			extra
@@ -246,6 +253,7 @@ func (s *Storage) UserByExtraField(field, value string) (*model.User, error) {
 			language,
 			timezone,
 			entry_direction,
+			entries_per_page,
 			keyboard_shortcuts,
 			last_login_at,
 			extra
@@ -268,6 +276,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.language,
 			u.timezone,
 			u.entry_direction,
+			u.entries_per_page,
 			u.keyboard_shortcuts,
 			u.last_login_at,
 			u.extra
@@ -293,6 +302,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.Language,
 		&user.Timezone,
 		&user.EntryDirection,
+		&user.EntriesPerPage,
 		&user.KeyboardShortcuts,
 		&user.LastLoginAt,
 		&extra,
@@ -348,6 +358,7 @@ func (s *Storage) Users() (model.Users, error) {
 			language,
 			timezone,
 			entry_direction,
+			entries_per_page,
 			keyboard_shortcuts,
 			last_login_at,
 			extra
@@ -373,6 +384,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.Language,
 			&user.Timezone,
 			&user.EntryDirection,
+			&user.EntriesPerPage,
 			&user.KeyboardShortcuts,
 			&user.LastLoginAt,
 			&extra,

@@ -49,6 +49,9 @@
         <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
     </select>
 
+    <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
+    <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
+
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
     <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="5">{{ .form.CustomCSS }}</textarea>

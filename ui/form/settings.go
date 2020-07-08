@@ -6,6 +6,7 @@ package form // import "miniflux.app/ui/form"
 
 import (
 	"net/http"
+	"strconv"
 
 	"miniflux.app/errors"
 	"miniflux.app/model"
@@ -20,6 +21,7 @@ type SettingsForm struct {
 	Language          string
 	Timezone          string
 	EntryDirection    string
+	EntriesPerPage    int
 	KeyboardShortcuts bool
 	CustomCSS         string
 }
@@ -31,6 +33,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Language = s.Language
 	user.Timezone = s.Timezone
 	user.EntryDirection = s.EntryDirection
+	user.EntriesPerPage = s.EntriesPerPage
 	user.KeyboardShortcuts = s.KeyboardShortcuts
 	user.Extra["custom_css"] = s.CustomCSS
 
@@ -45,6 +48,10 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 func (s *SettingsForm) Validate() error {
 	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
+	}
+
+	if s.EntriesPerPage < 1 {
+		return errors.NewLocalizedError("error.entries_per_page_invalid")
 	}
 
 	if s.Confirmation == "" {
@@ -67,6 +74,10 @@ func (s *SettingsForm) Validate() error {
 
 // NewSettingsForm returns a new SettingsForm.
 func NewSettingsForm(r *http.Request) *SettingsForm {
+	entriesPerPage, err := strconv.ParseInt(r.FormValue("entries_per_page"), 10, 64)
+	if err != nil {
+		entriesPerPage = 0
+	}
 	return &SettingsForm{
 		Username:          r.FormValue("username"),
 		Password:          r.FormValue("password"),
@@ -75,6 +86,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		Language:          r.FormValue("language"),
 		Timezone:          r.FormValue("timezone"),
 		EntryDirection:    r.FormValue("entry_direction"),
+		EntriesPerPage:    int(entriesPerPage),
 		KeyboardShortcuts: r.FormValue("keyboard_shortcuts") == "1",
 		CustomCSS:         r.FormValue("custom_css"),
 	}

@@ -4,10 +4,6 @@
 
 package ui // import "miniflux.app/ui"
 
-const (
-	nbItemsPerPage = 100
-)
-
 type pagination struct {
 	Route        string
 	Total        int
@@ -20,7 +16,7 @@ type pagination struct {
 	SearchQuery  string
 }
 
-func getPagination(route string, total, offset int) pagination {
+func getPagination(route string, total, offset, nbItemsPerPage int) pagination {
 	nextOffset := 0
 	prevOffset := 0
 	showNext := (total - offset) > nbItemsPerPage

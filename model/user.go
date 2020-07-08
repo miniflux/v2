@@ -21,6 +21,7 @@ type User struct {
 	Language          string            `json:"language"`
 	Timezone          string            `json:"timezone"`
 	EntryDirection    string            `json:"entry_sorting_direction"`
+	EntriesPerPage    int               `json:"entries_per_page"`
 	KeyboardShortcuts bool              `json:"keyboard_shortcuts"`
 	LastLoginAt       *time.Time        `json:"last_login_at,omitempty"`
 	Extra             map[string]string `json:"extra"`

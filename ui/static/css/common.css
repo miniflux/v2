@@ -353,7 +353,8 @@ select {
 input[type="search"],
 input[type="url"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+input[type="number"] {
     color: var(--input-color);
     background: var(--input-background);
     border: var(--input-border);
@@ -369,11 +370,16 @@ input[type="text"] {
 input[type="search"]:focus,
 input[type="url"]:focus,
 input[type="password"]:focus,
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="number"]:focus {
     color: var(--input-focus-color);
     border-color: var(--input-focus-border-color);
     outline: 0;
     box-shadow: var(--input-focus-box-shadow);
+}
+
+#form-entries-per-page {
+    max-width: 80px;
 }
 
 input[type="checkbox"] {
