@@ -34,6 +34,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		EntryDirection:    user.EntryDirection,
 		EntriesPerPage:    user.EntriesPerPage,
 		KeyboardShortcuts: user.KeyboardShortcuts,
+		ShowReadingTime:   user.ShowReadingTime,
 		CustomCSS:         user.Extra["custom_css"],
 	}
 
