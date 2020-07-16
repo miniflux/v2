@@ -77,6 +77,10 @@
     "entry.unshare.label": "Удалить из общедоступных",
     "entry.shared_entry.title": "Открыть публичную ссылку",
     "entry.shared_entry.label": "Поделиться",
+    "entry.estimated_reading_time": [
+        "%d минута чтения",
+        "%d минут чтения"
+    ],
     "page.shared_entries.title": "Общедоступные записи",
     "page.unread.title": "Непрочитанное",
     "page.starred.title": "Избранное",

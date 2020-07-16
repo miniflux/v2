@@ -77,6 +77,10 @@
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Otwórz publiczny link",
     "entry.shared_entry.label": "Udostępnianie",
+    "entry.estimated_reading_time": [
+        "%d minuta czytania",
+        "%d minut czytania"
+    ],
     "page.shared_entries.title": "Udostępnione wpisy",
     "page.unread.title": "Nieprzeczytane",
     "page.starred.title": "Oznaczone gwiazdką",

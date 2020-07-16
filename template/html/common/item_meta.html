@@ -9,7 +9,9 @@
         </li>
         {{ if .user.ShowReadingTime }}
         <li>
-            <span>{{ timeToRead .entry.Content }} min read</span>
+            <span>
+            {{ plural "entry.estimated_reading_time" (timeToRead .entry.Content) (timeToRead .entry.Content) }}
+            </span>
         </li>
         {{ end }}
     </ul>

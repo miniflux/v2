@@ -77,6 +77,10 @@
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Apri il link pubblico",
     "entry.shared_entry.label": "Condivisione",
+    "entry.estimated_reading_time": [
+        "%d minuto di lettura",
+        "%d minuti di lettura"
+    ],
     "page.shared_entries.title": "Voci condivise",
     "page.unread.title": "Da leggere",
     "page.starred.title": "Preferiti",

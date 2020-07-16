@@ -77,6 +77,10 @@
     "entry.unshare.label": "共有解除",
     "entry.shared_entry.title": "公開リンクを開く",
     "entry.shared_entry.label": "共有する",
+    "entry.estimated_reading_time": [
+        "%d分で読む",
+        "%d分で読む"
+    ],
     "page.shared_entries.title": "共有エントリ",
     "page.unread.title": "未読",
     "page.starred.title": "星付き",

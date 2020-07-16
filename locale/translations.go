@@ -82,6 +82,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Nicht teilen",
     "entry.shared_entry.title": "Öffnen Sie den öffentlichen Link",
     "entry.shared_entry.label": "Teilen",
+    "entry.estimated_reading_time": [
+        "%d Minute gelesen",
+        "%d Minuten gelesen"
+    ],
     "page.shared_entries.title": "Geteilte Artikel",
     "page.unread.title": "Ungelesen",
     "page.starred.title": "Lesezeichen",
@@ -423,6 +427,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Open the public link",
     "entry.shared_entry.label": "Share",
+    "entry.estimated_reading_time": [
+        "%d minute read",
+        "%d minutes read"
+    ],
     "page.shared_entries.title": "Shared Entries",
     "page.unread.title": "Unread",
     "page.starred.title": "Starred",
@@ -744,6 +752,10 @@ var translations = map[string]string{
     "entry.unshare.label": "No compartir",
     "entry.shared_entry.title": "Abrir el enlace público",
     "entry.shared_entry.label": "Compartir",
+    "entry.estimated_reading_time": [
+        "%d minuto de lectura",
+        "%d minutos de lectura"
+    ],
     "page.shared_entries.title": "Entradas compartidas",
     "page.unread.title": "No leídos",
     "page.starred.title": "Marcadores",
@@ -1065,6 +1077,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Enlever le partage",
     "entry.shared_entry.title": "Ouvrir le lien public",
     "entry.shared_entry.label": "Partage",
+    "entry.estimated_reading_time": [
+        "%d minute de lecture",
+        "%d minutes de lecture"
+    ],
     "page.shared_entries.title": "Articles partagés",
     "page.unread.title": "Non lus",
     "page.starred.title": "Favoris",
@@ -1406,6 +1422,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Apri il link pubblico",
     "entry.shared_entry.label": "Condivisione",
+    "entry.estimated_reading_time": [
+        "%d minuto di lettura",
+        "%d minuti di lettura"
+    ],
     "page.shared_entries.title": "Voci condivise",
     "page.unread.title": "Da leggere",
     "page.starred.title": "Preferiti",
@@ -1727,6 +1747,10 @@ var translations = map[string]string{
     "entry.unshare.label": "共有解除",
     "entry.shared_entry.title": "公開リンクを開く",
     "entry.shared_entry.label": "共有する",
+    "entry.estimated_reading_time": [
+        "%d分で読む",
+        "%d分で読む"
+    ],
     "page.shared_entries.title": "共有エントリ",
     "page.unread.title": "未読",
     "page.starred.title": "星付き",
@@ -2048,6 +2072,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Delen ongedaan maken",
     "entry.shared_entry.title": "Open de openbare link",
     "entry.shared_entry.label": "Delen",
+    "entry.estimated_reading_time": [
+        "%d minuut gelezen",
+        "%d minuten gelezen"
+    ],
     "page.shared_entries.title": "Gedeelde vermeldingen",
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",
@@ -2387,6 +2415,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Otwórz publiczny link",
     "entry.shared_entry.label": "Udostępnianie",
+    "entry.estimated_reading_time": [
+        "%d minuta czytania",
+        "%d minut czytania"
+    ],
     "page.shared_entries.title": "Udostępnione wpisy",
     "page.unread.title": "Nieprzeczytane",
     "page.starred.title": "Oznaczone gwiazdką",
@@ -2734,6 +2766,10 @@ var translations = map[string]string{
     "entry.unshare.label": "Удалить из общедоступных",
     "entry.shared_entry.title": "Открыть публичную ссылку",
     "entry.shared_entry.label": "Поделиться",
+    "entry.estimated_reading_time": [
+        "%d минута чтения",
+        "%d минут чтения"
+    ],
     "page.shared_entries.title": "Общедоступные записи",
     "page.unread.title": "Непрочитанное",
     "page.starred.title": "Избранное",
@@ -3063,6 +3099,10 @@ var translations = map[string]string{
     "entry.unshare.label": "取消分享",
     "entry.shared_entry.title": "打开公共链接",
     "entry.shared_entry.label": "分享分享",
+    "entry.estimated_reading_time": [
+        "%d分钟阅读",
+        "%d分钟阅读"
+    ],
     "page.shared_entries.title": "共享条目",
     "page.unread.title": "未读",
     "page.starred.title": "星标",
@@ -3319,14 +3359,14 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "9e5d0b1dbf713d5bee43eb7449b495e5573f270816999c76db60268c419d5e8f",
-	"en_US": "92a6935b93e2aebeedc9fcb85c1aa77622ef94af72b9a64f2f5c2d21e9a72063",
-	"es_ES": "d73f7f35ed437d4fcf2b8f6ed59b5b5b793aa6c3a7ce24493a1f46effa921dc3",
-	"fr_FR": "f163582a783a013ce9945c1d57c05a3bdfcfa565a43900f1819aa1493be8ad87",
-	"it_IT": "8d32673d46c3ffe1340293137bc0d0d7a9032b28b7d1ea7444cbef9ff1d3b349",
-	"ja_JP": "283ed0d7085d9e454456a57256cee4ac665365eba92d421ba84aa7c72569854c",
-	"nl_NL": "ebf75351ebf8837ff58094e224857ed42dfa616bd6c2e59fbcce087a5aad143b",
-	"pl_PL": "f2333df69401f366bc2a98e4333f66c7afd981d6f5f58253c23e15eea504ea6f",
-	"ru_RU": "2509f9a240f96abee3d03d8c6f022e236b779c54a38cb16ce5cb66d10381e854",
-	"zh_CN": "ac399063e8fe52409952aaa93da9418d019a7ece690c922c18e81a0c41857f14",
+	"de_DE": "f3dd20afc5cbd9ac689bec2939c1d2fbe71372360c4e8f335e3b8cbce4228958",
+	"en_US": "30cbcb2170782f1e66f69066947bf053f68065d7b270eea879f2c573819dd52b",
+	"es_ES": "50dc7c8c2db7368bae133f5b455721470d314321153d41e4f27436a0f3f176e6",
+	"fr_FR": "373fd2db868961758bd1483c34f117b03aadea17080f268bc8bbd0acdfbc5eed",
+	"it_IT": "8d8f0bd75b4e7dec9370647c888dd9438b691130d9c41f839cdfff8cbc606cb5",
+	"ja_JP": "ec3a21c547e4625ad359624e43ba31b556fb8d8b8ff7fc7a20df089317db99b3",
+	"nl_NL": "20e180be2375f07ec02eb05f372a9102c13037a79e5651ce9bd41507fd2180d2",
+	"pl_PL": "b1526955641823708b4c1ca753b61e1e0561d0a3d33da3f62170540903031b0d",
+	"ru_RU": "4056e4e94861835d44064273371adbbded7190e2b719769886eb99e6c9feaf82",
+	"zh_CN": "044abb0a34eee3d8d5597811d40166762311b8e4cd08b891796113790cc775f0",
 }

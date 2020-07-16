@@ -77,6 +77,10 @@
     "entry.unshare.label": "No compartir",
     "entry.shared_entry.title": "Abrir el enlace público",
     "entry.shared_entry.label": "Compartir",
+    "entry.estimated_reading_time": [
+        "%d minuto de lectura",
+        "%d minutos de lectura"
+    ],
     "page.shared_entries.title": "Entradas compartidas",
     "page.unread.title": "No leídos",
     "page.starred.title": "Marcadores",

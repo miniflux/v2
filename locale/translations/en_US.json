@@ -77,6 +77,10 @@
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Open the public link",
     "entry.shared_entry.label": "Share",
+    "entry.estimated_reading_time": [
+        "%d minute read",
+        "%d minutes read"
+    ],
     "page.shared_entries.title": "Shared Entries",
     "page.unread.title": "Unread",
     "page.starred.title": "Starred",

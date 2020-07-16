@@ -77,6 +77,10 @@
     "entry.unshare.label": "Delen ongedaan maken",
     "entry.shared_entry.title": "Open de openbare link",
     "entry.shared_entry.label": "Delen",
+    "entry.estimated_reading_time": [
+        "%d minuut gelezen",
+        "%d minuten gelezen"
+    ],
     "page.shared_entries.title": "Gedeelde vermeldingen",
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",
