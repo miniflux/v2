@@ -12,6 +12,7 @@ func AvailableLanguages() map[string]string {
 		"fr_FR": "Français",
 		"de_DE": "Deutsch",
 		"pl_PL": "Polski",
+		"pt_BR": "Português Brasileiro",
 		"zh_CN": "简体中文",
 		"nl_NL": "Nederlands",
 		"ru_RU": "Русский",
