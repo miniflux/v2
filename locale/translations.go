@@ -3010,7 +3010,8 @@ var translations = map[string]string{
         "há %d ano",
         "há %d anos"
     ]
-  },
+}
+`,
 	"ru_RU": `{
     "confirm.question": "Вы уверены?",
     "confirm.yes": "да",
