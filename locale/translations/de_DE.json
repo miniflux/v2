@@ -78,8 +78,8 @@
     "entry.shared_entry.title": "Öffnen Sie den öffentlichen Link",
     "entry.shared_entry.label": "Teilen",
     "entry.estimated_reading_time": [
-        "%d Minute gelesen",
-        "%d Minuten gelesen"
+        "%d Minute zu lesen",
+        "%d Minuten zu lesen"
     ],
     "page.shared_entries.title": "Geteilte Artikel",
     "page.unread.title": "Ungelesen",
