@@ -77,6 +77,10 @@
     "entry.unshare.label": "Удалить из общедоступных",
     "entry.shared_entry.title": "Открыть публичную ссылку",
     "entry.shared_entry.label": "Поделиться",
+    "entry.estimated_reading_time": [
+        "%d минута чтения",
+        "%d минут чтения"
+    ],
     "page.shared_entries.title": "Общедоступные записи",
     "page.unread.title": "Непрочитанное",
     "page.starred.title": "Избранное",
@@ -261,6 +265,7 @@
     "form.prefs.select.older_first": "Сначала старые записи",
     "form.prefs.select.recent_first": "Сначала последние записи",
     "form.prefs.label.keyboard_shortcuts": "Включить сочетания клавиш",
+    "form.prefs.label.show_reading_time": "Показать примерное время чтения статей",
     "form.prefs.label.custom_css": "Пользовательские CSS",
     "form.import.label.file": "OPML файл",
     "form.import.label.url": "URL",

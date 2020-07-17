@@ -77,6 +77,10 @@
     "entry.unshare.label": "Delen ongedaan maken",
     "entry.shared_entry.title": "Open de openbare link",
     "entry.shared_entry.label": "Delen",
+    "entry.estimated_reading_time": [
+        "%d minuut gelezen",
+        "%d minuten gelezen"
+    ],
     "page.shared_entries.title": "Gedeelde vermeldingen",
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",
@@ -259,6 +263,7 @@
     "form.prefs.select.older_first": "Oudere items eerst",
     "form.prefs.select.recent_first": "Recente items eerst",
     "form.prefs.label.keyboard_shortcuts": "Schakel sneltoetsen in",
+    "form.prefs.label.show_reading_time": "Toon geschatte leestijd voor artikelen",
     "form.prefs.label.custom_css": "Aangepaste CSS",
     "form.import.label.file": "OPML-bestand",
     "form.import.label.url": "URL",

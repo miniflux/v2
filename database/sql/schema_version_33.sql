@@ -1,0 +1,1 @@
+alter table users add column show_reading_time boolean default 't';

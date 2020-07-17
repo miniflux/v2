@@ -1324,6 +1324,8 @@ var templateViewsMap = map[string]string{
     <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
+    
+    <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
     <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="5">{{ .form.CustomCSS }}</textarea>
     <div class="buttons">
@@ -1568,7 +1570,7 @@ var templateViewsMapChecksums = map[string]string{
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "c0786ddc6b17e865007b975eefb97417935cbc601f5917cca1ee0d3f584594bc",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "3d6dd0d7fa0ca48cfd9a5edb43c055af8b816eb4460f16b71ae22db40ed9b754",
+	"settings":            "a4d3df17e6abc75881ec1ca5f92a9c2cfe24e3e08e5d844df848b4d6aaa1bbc0",
 	"shared_entries":      "1494d81e46f6af534a73cf6a91f8dfda1932a477bb3a70143513896ac0f0220b",
 	"unread_entries":      "e0080d0cf3583cda51d865422960137c8556c432853657086e43daf6bd5b73be",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",

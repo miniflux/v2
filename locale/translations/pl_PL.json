@@ -77,6 +77,10 @@
     "entry.unshare.label": "Unshare",
     "entry.shared_entry.title": "Otwórz publiczny link",
     "entry.shared_entry.label": "Udostępnianie",
+    "entry.estimated_reading_time": [
+        "%d minuta czytania",
+        "%d minut czytania"
+    ],
     "page.shared_entries.title": "Udostępnione wpisy",
     "page.unread.title": "Nieprzeczytane",
     "page.starred.title": "Oznaczone gwiazdką",
@@ -260,6 +264,7 @@
     "form.prefs.label.entries_per_page": "Wpisy na stronie",
     "form.prefs.select.older_first": "Najstarsze wpisy jako pierwsze",
     "form.prefs.label.keyboard_shortcuts": "Włącz skróty klawiaturowe",
+    "form.prefs.label.show_reading_time": "Pokaż szacowany czas czytania artykułów",
     "form.prefs.select.recent_first": "Najnowsze wpisy jako pierwsze",
     "form.prefs.label.custom_css": "Niestandardowy CSS",
     "form.import.label.file": "Plik OPML",

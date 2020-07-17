@@ -77,6 +77,10 @@
     "entry.unshare.label": "取消分享",
     "entry.shared_entry.title": "打开公共链接",
     "entry.shared_entry.label": "分享分享",
+    "entry.estimated_reading_time": [
+        "%d分钟阅读",
+        "%d分钟阅读"
+    ],
     "page.shared_entries.title": "共享条目",
     "page.unread.title": "未读",
     "page.starred.title": "星标",
@@ -257,6 +261,7 @@
     "form.prefs.select.older_first": "旧->新",
     "form.prefs.select.recent_first": "新->旧",
     "form.prefs.label.keyboard_shortcuts": "启用键盘快捷键",
+    "form.prefs.label.show_reading_time": "显示文章的预计阅读时间",
     "form.prefs.label.custom_css": "自定义CSS",
     "form.import.label.file": "OPML 文件",
     "form.import.label.url": "URL",

@@ -77,6 +77,10 @@
     "entry.unshare.label": "No compartir",
     "entry.shared_entry.title": "Abrir el enlace público",
     "entry.shared_entry.label": "Compartir",
+    "entry.estimated_reading_time": [
+        "%d minuto de lectura",
+        "%d minutos de lectura"
+    ],
     "page.shared_entries.title": "Entradas compartidas",
     "page.unread.title": "No leídos",
     "page.starred.title": "Marcadores",
@@ -259,6 +263,7 @@
     "form.prefs.select.older_first": "Entradas más viejas primero",
     "form.prefs.select.recent_first": "Entradas recientes primero",
     "form.prefs.label.keyboard_shortcuts": "Habilitar atajos de teclado",
+    "form.prefs.label.show_reading_time": "Mostrar el tiempo estimado de lectura de los artículos",
     "form.prefs.label.custom_css": "CSS personalizado",
     "form.import.label.file": "Archivo OPML",
     "form.import.label.url": "URL",

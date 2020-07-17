@@ -23,6 +23,7 @@ type SettingsForm struct {
 	EntryDirection    string
 	EntriesPerPage    int
 	KeyboardShortcuts bool
+	ShowReadingTime   bool
 	CustomCSS         string
 }
 
@@ -35,6 +36,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.EntryDirection = s.EntryDirection
 	user.EntriesPerPage = s.EntriesPerPage
 	user.KeyboardShortcuts = s.KeyboardShortcuts
+	user.ShowReadingTime = s.ShowReadingTime
 	user.Extra["custom_css"] = s.CustomCSS
 
 	if s.Password != "" {
@@ -88,6 +90,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		EntryDirection:    r.FormValue("entry_direction"),
 		EntriesPerPage:    int(entriesPerPage),
 		KeyboardShortcuts: r.FormValue("keyboard_shortcuts") == "1",
+		ShowReadingTime:   r.FormValue("show_reading_time") == "1",
 		CustomCSS:         r.FormValue("custom_css"),
 	}
 }
