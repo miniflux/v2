@@ -57,8 +57,9 @@ func (r *request) Put(path string, data interface{}) (io.ReadCloser, error) {
 	return r.execute(http.MethodPut, path, data)
 }
 
-func (r *request) Delete(path string) (io.ReadCloser, error) {
-	return r.execute(http.MethodDelete, path, nil)
+func (r *request) Delete(path string) error {
+	_, err := r.execute(http.MethodDelete, path, nil)
+	return err
 }
 
 func (r *request) execute(method, path string, data interface{}) (io.ReadCloser, error) {
@@ -98,13 +99,20 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 
 	switch response.StatusCode {
 	case http.StatusUnauthorized:
+		response.Body.Close()
 		return nil, ErrNotAuthorized
 	case http.StatusForbidden:
+		response.Body.Close()
 		return nil, ErrForbidden
 	case http.StatusInternalServerError:
+		response.Body.Close()
 		return nil, ErrServerError
 	case http.StatusNotFound:
+		response.Body.Close()
 		return nil, ErrNotFound
+	case http.StatusNoContent:
+		response.Body.Close()
+		return nil, nil
 	case http.StatusBadRequest:
 		defer response.Body.Close()
 
@@ -118,6 +126,7 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 	}
 
 	if response.StatusCode > 400 {
+		response.Body.Close()
 		return nil, fmt.Errorf("miniflux: status code=%d", response.StatusCode)
 	}
 
