@@ -16,6 +16,25 @@
         {{ end }}
     </ul>
     <ul class="item-meta-icons">
+        <li>
+            <a href="#"
+                title="{{ t "entry.status.title" }}"
+                data-toggle-status="true"
+                data-label-read="✔&nbsp;{{ t "entry.status.read" }}"
+                data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
+                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
+                ><span class="icon-label">{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&nbsp;{{ t "entry.status.read" }}{{ end }}</span></a>
+        </li>
+        <li>
+            <a href="#"
+                data-toggle-bookmark="true"
+                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
+                data-label-loading="{{ t "entry.state.saving" }}"
+                data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
+                data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
+                data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
+                ><span class="icon-label">{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+        </li>
         {{ if .entry.ShareCode }}
             <li>
                 <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
@@ -51,25 +70,6 @@
                     data-comments-link="true">{{ template "icon_comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
             </li>
         {{ end }}
-        <li>
-            <a href="#"
-                data-toggle-bookmark="true"
-                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
-                data-label-loading="{{ t "entry.state.saving" }}"
-                data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
-                data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
-                data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                ><span class="icon-label">{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
-        </li>
-        <li>
-            <a href="#"
-                title="{{ t "entry.status.title" }}"
-                data-toggle-status="true"
-                data-label-read="✔&nbsp;{{ t "entry.status.read" }}"
-                data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
-                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                ><span class="icon-label">{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&nbsp;{{ t "entry.status.read" }}{{ end }}</span></a>
-        </li>
     </ul>
 </div>
 {{ end }}
