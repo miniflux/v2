@@ -169,10 +169,11 @@ func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.RemoveUser(user.ID); err != nil {
-		json.BadRequest(w, r, errors.New("Unable to remove this user from the database"))
+	if user.ID == request.UserID(r) {
+		json.BadRequest(w, r, errors.New("You cannot remove yourself"))
 		return
 	}
 
+	h.store.RemoveUserAsync(user.ID)
 	json.NoContent(w, r)
 }
