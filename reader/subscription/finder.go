@@ -5,7 +5,9 @@
 package subscription // import "miniflux.app/reader/subscription"
 
 import (
+	"fmt"
 	"io"
+	"regexp"
 	"strings"
 
 	"miniflux.app/errors"
@@ -18,11 +20,14 @@ import (
 )
 
 var (
-	errUnreadableDoc = "Unable to analyze this page: %v"
+	errUnreadableDoc    = "Unable to analyze this page: %v"
+	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)`)
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
 func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
+	websiteURL = findYoutubeChannelFeed(websiteURL)
+
 	request := client.New(websiteURL)
 	request.WithCredentials(username, password)
 	request.WithUserAgent(userAgent)
@@ -89,6 +94,15 @@ func parseDocument(websiteURL string, data io.Reader) (Subscriptions, *errors.Lo
 	}
 
 	return subscriptions, nil
+}
+
+func findYoutubeChannelFeed(websiteURL string) string {
+	matches := youtubeChannelRegex.FindStringSubmatch(websiteURL)
+
+	if len(matches) == 2 {
+		return fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, matches[1])
+	}
+	return websiteURL
 }
 
 func tryWellKnownUrls(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
