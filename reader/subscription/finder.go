@@ -22,11 +22,13 @@ import (
 var (
 	errUnreadableDoc    = "Unable to analyze this page: %v"
 	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)`)
+	youtubeVideoRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
 func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
 	websiteURL = findYoutubeChannelFeed(websiteURL)
+	websiteURL = parseYoutubeVideoPage(websiteURL)
 
 	request := client.New(websiteURL)
 	request.WithCredentials(username, password)
@@ -48,14 +50,15 @@ func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscr
 		return subscriptions, nil
 	}
 
-	subscriptions, err := parseDocument(response.EffectiveURL, strings.NewReader(body))
+	subscriptions, err := parseWebPage(response.EffectiveURL, strings.NewReader(body))
 	if err != nil || subscriptions != nil {
 		return subscriptions, err
 	}
+
 	return tryWellKnownUrls(websiteURL, userAgent, username, password)
 }
 
-func parseDocument(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
+func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
 	var subscriptions Subscriptions
 	queries := map[string]string{
 		"link[type='application/rss+xml']":  "rss",
@@ -102,6 +105,29 @@ func findYoutubeChannelFeed(websiteURL string) string {
 	if len(matches) == 2 {
 		return fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, matches[1])
 	}
+	return websiteURL
+}
+
+func parseYoutubeVideoPage(websiteURL string) string {
+	if !youtubeVideoRegex.MatchString(websiteURL) {
+		return websiteURL
+	}
+
+	request := client.New(websiteURL)
+	response, browserErr := browser.Exec(request)
+	if browserErr != nil {
+		return websiteURL
+	}
+
+	doc, docErr := goquery.NewDocumentFromReader(response.Body)
+	if docErr != nil {
+		return websiteURL
+	}
+
+	if channelID, exists := doc.Find(`meta[itemprop="channelId"]`).First().Attr("content"); exists {
+		return fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, channelID)
+	}
+
 	return websiteURL
 }
 
