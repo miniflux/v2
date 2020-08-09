@@ -415,13 +415,13 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 
 	switch r.FormValue("as") {
 	case "read":
-		logger.Debug("[Fever] Mark entry #%d as read", entryID)
+		logger.Debug("[Fever] Mark entry #%d as read for user #%d", entryID, userID)
 		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
 	case "unread":
-		logger.Debug("[Fever] Mark entry #%d as unread", entryID)
+		logger.Debug("[Fever] Mark entry #%d as unread for user #%d", entryID, userID)
 		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
-	case "saved", "unsaved":
-		logger.Debug("[Fever] Mark entry #%d as saved/unsaved", entryID)
+	case "saved":
+		logger.Debug("[Fever] Mark entry #%d as saved for user #%d", entryID, userID)
 		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
@@ -436,6 +436,12 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		go func() {
 			integration.SendEntry(entry, settings)
 		}()
+	case "unsaved":
+		logger.Debug("[Fever] Mark entry #%d as unsaved for user #%d", entryID, userID)
+		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
 	}
 
 	json.OK(w, r, newBaseResponse())
@@ -452,7 +458,7 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	feedID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
 
-	logger.Debug("[Fever] mark=feed, userID=%d, feedID=%d, before=%v", userID, feedID, before)
+	logger.Debug("[Fever] Mark feed #%d as read for user #%d before %v", feedID, userID, before)
 
 	if feedID <= 0 {
 		return
@@ -478,7 +484,7 @@ func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	groupID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
 
-	logger.Debug("[Fever] mark=group, userID=%d, groupID=%d, before=%v", userID, groupID, before)
+	logger.Debug("[Fever] Mark group #%d as read for user #%d before %v", groupID, userID, before)
 
 	if groupID < 0 {
 		return
