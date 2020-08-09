@@ -80,7 +80,7 @@ is_spark equal to 1.
 */
 func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching groups for userID=%d", userID)
+	logger.Debug("[Fever] Fetching groups for user #%d", userID)
 
 	categories, err := h.store.Categories(userID)
 	if err != nil {
@@ -183,7 +183,7 @@ A PHP/HTML example:
 */
 func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching favicons for userID=%d", userID)
+	logger.Debug("[Fever] Fetching favicons for user #%d", userID)
 
 	icons, err := h.store.Icons(userID)
 	if err != nil {
@@ -238,7 +238,6 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	var result itemsResponse
 
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching items for userID=%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -250,13 +249,16 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	case request.HasQueryParam(r, "since_id"):
 		sinceID := request.QueryInt64Param(r, "since_id", 0)
 		if sinceID > 0 {
+			logger.Debug("[Fever] Fetching items since #%d for user #%d", sinceID, userID)
 			builder.AfterEntryID(sinceID)
 		}
 	case request.HasQueryParam(r, "max_id"):
 		maxID := request.QueryInt64Param(r, "max_id", 0)
 		if maxID == 0 {
+			logger.Debug("[Fever] Fetching most recent items for user #%d", userID)
 			builder.WithDirection("desc")
 		} else if maxID > 0 {
+			logger.Debug("[Fever] Fetching items before #%d for user #%d", maxID, userID)
 			builder.BeforeEntryID(maxID)
 			builder.WithDirection("desc")
 		}
@@ -273,6 +275,8 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 
 			builder.WithEntryIDs(itemIDs)
 		}
+	default:
+		logger.Debug("[Fever] Fetching oldest items for user #%d", userID)
 	}
 
 	entries, err := builder.GetEntries()
@@ -327,7 +331,7 @@ A request with the unread_item_ids argument will return one additional member:
 */
 func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching unread items for userID=%d", userID)
+	logger.Debug("[Fever] Fetching unread items for user #%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
@@ -358,7 +362,7 @@ with the remote Fever installation.
 */
 func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
+	logger.Debug("[Fever] Fetching saved items for user #%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStarred()
@@ -386,7 +390,7 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 */
 func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Receiving mark=item call for userID=%d", userID)
+	logger.Debug("[Fever] Receiving mark=item call for user #%d", userID)
 
 	entryID := request.FormInt64Value(r, "id")
 	if entryID <= 0 {

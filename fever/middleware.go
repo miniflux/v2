@@ -44,7 +44,7 @@ func (m *middleware) serve(next http.Handler) http.Handler {
 			return
 		}
 
-		logger.Info("[Fever] User #%d is authenticated", user.ID)
+		logger.Info("[Fever] User #%d is authenticated with user agent %q", user.ID, r.UserAgent())
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
