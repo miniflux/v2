@@ -24,9 +24,10 @@ func newMiddleware(s *storage.Storage) *middleware {
 
 func (m *middleware) serve(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		clientIP := request.ClientIP(r)
 		apiKey := r.FormValue("api_key")
 		if apiKey == "" {
-			logger.Info("[Fever] No API key provided")
+			logger.Info("[Fever] [ClientIP=%s] No API key provided", clientIP)
 			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
@@ -39,12 +40,12 @@ func (m *middleware) serve(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
-			logger.Info("[Fever] No user found with this API key")
+			logger.Info("[Fever] [ClientIP=%s] No user found with this API key", clientIP)
 			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
-		logger.Info("[Fever] User #%d is authenticated with user agent %q", user.ID, r.UserAgent())
+		logger.Info("[Fever] [ClientIP=%s] User #%d is authenticated with user agent %q", clientIP, user.ID, r.UserAgent())
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()
