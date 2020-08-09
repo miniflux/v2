@@ -89,6 +89,12 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 
 			if session.Data.CSRF != formValue && session.Data.CSRF != headerValue {
 				logger.Error(`[UI:AppSession] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
+
+				if mux.CurrentRoute(r).GetName() == "checkLogin" {
+					html.Redirect(w, r, route.Path(m.router, "login"))
+					return
+				}
+
 				html.BadRequest(w, r, errors.New("Invalid or missing CSRF"))
 				return
 			}
