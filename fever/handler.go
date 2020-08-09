@@ -246,27 +246,33 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder.WithOrder("id")
 	builder.WithDirection(model.DefaultSortingDirection)
 
-	sinceID := request.QueryIntParam(r, "since_id", 0)
-	if sinceID > 0 {
-		builder.AfterEntryID(int64(sinceID))
-	}
-
-	maxID := request.QueryIntParam(r, "max_id", 0)
-	if maxID > 0 {
-		builder.WithOffset(maxID)
-	}
-
-	csvItemIDs := request.QueryStringParam(r, "with_ids", "")
-	if csvItemIDs != "" {
-		var itemIDs []int64
-
-		for _, strItemID := range strings.Split(csvItemIDs, ",") {
-			strItemID = strings.TrimSpace(strItemID)
-			itemID, _ := strconv.Atoi(strItemID)
-			itemIDs = append(itemIDs, int64(itemID))
+	switch {
+	case request.HasQueryParam(r, "since_id"):
+		sinceID := request.QueryInt64Param(r, "since_id", 0)
+		if sinceID > 0 {
+			builder.AfterEntryID(sinceID)
 		}
+	case request.HasQueryParam(r, "max_id"):
+		maxID := request.QueryInt64Param(r, "max_id", 0)
+		if maxID == 0 {
+			builder.WithDirection("desc")
+		} else if maxID > 0 {
+			builder.BeforeEntryID(maxID)
+			builder.WithDirection("desc")
+		}
+	case request.HasQueryParam(r, "with_ids"):
+		csvItemIDs := request.QueryStringParam(r, "with_ids", "")
+		if csvItemIDs != "" {
+			var itemIDs []int64
 
-		builder.WithEntryIDs(itemIDs)
+			for _, strItemID := range strings.Split(csvItemIDs, ",") {
+				strItemID = strings.TrimSpace(strItemID)
+				itemID, _ := strconv.ParseInt(strItemID, 10, 64)
+				itemIDs = append(itemIDs, itemID)
+			}
+
+			builder.WithEntryIDs(itemIDs)
+		}
 	}
 
 	entries, err := builder.GetEntries()
