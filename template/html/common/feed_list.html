@@ -42,6 +42,11 @@
                             data-label-loading="{{ t "confirm.loading" }}"
                             data-url="{{ route "removeFeed" "feedID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
+                    {{ if .UnreadCount }}
+                      <li>
+                        <a href="{{ route "markFeedAsRead" "feedID" .ID }}">{{ template "icon_read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                      </li>
+                    {{ end }}
                 </ul>
             </div>
             {{ if ne .ParsingErrorCount 0 }}
