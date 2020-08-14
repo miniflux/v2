@@ -233,7 +233,7 @@ func sendTelegramMsg(userID int64, feedID int64, telegramItemMsg []string, s *St
 				message.ParseMode = "markdown"
 				_, err := bot.Send(message)
 				if err != nil {
-					logger.Error(`telegram: send msg error%v`, feedID, err)
+					logger.Error(`telegram: send msg error %v`, feedID, err)
 				}
 			}
 		}
