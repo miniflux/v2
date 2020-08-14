@@ -1580,7 +1580,7 @@ var templateViewsMapChecksums = map[string]string{
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "341f0da8b6c27a8377901aa80bb1d5c923672af32f689d36de14deabce5c737f",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
-	"integrations":        "f90255636415ef289a8449dc700769155706efb78cdd99c26a69588b40bb1ac7",
+	"integrations":        "f052308711db05da6d89148a116501c9787002a8488e96e3adafcaf45ffe42aa",
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "c0786ddc6b17e865007b975eefb97417935cbc601f5917cca1ee0d3f584594bc",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
