@@ -1145,6 +1145,20 @@ var templateViewsMap = map[string]string{
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
     </div>
 
+    <h3>Telegram</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="telegram_enabled" value="1"
+                   {{ if .form.TelegramEnabled }}checked{{ end }}> {{ t "form.integration.telegram_activate" }}
+        </label>
+
+        <label for="form-telegram-token">{{ t "form.integration.telegram_token" }}</label>
+        <input type="text" name="telegram_token" id="form-telegram-token" value="{{ .form.TelegramToken }}">
+
+        <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
+        <input type="text" name="telegram_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramChatId }}">
+    </div>
+
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
@@ -1566,7 +1580,7 @@ var templateViewsMapChecksums = map[string]string{
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "341f0da8b6c27a8377901aa80bb1d5c923672af32f689d36de14deabce5c737f",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
-	"integrations":        "30329452743b35c668278f519245fd9be05c1726856e0384ba542f7c307f2788",
+	"integrations":        "f90255636415ef289a8449dc700769155706efb78cdd99c26a69588b40bb1ac7",
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
 	"search_entries":      "c0786ddc6b17e865007b975eefb97417935cbc601f5917cca1ee0d3f584594bc",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",

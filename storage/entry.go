@@ -7,6 +7,10 @@ package storage // import "miniflux.app/storage"
 import (
 	"errors"
 	"fmt"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"miniflux.app/crypto"
@@ -183,6 +187,7 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 // UpdateEntries updates a list of entries while refreshing a feed.
 func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
 	var entryHashes []string
+	var telegramItemMsg []string
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
@@ -200,13 +205,39 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 		}
 
 		entryHashes = append(entryHashes, entry.Hash)
+
+		tempText := fmt.Sprintf("%v. [%v](%v)", len(telegramItemMsg)+1, entry.Title, entry.URL)
+		telegramItemMsg = append(telegramItemMsg, tempText)
 	}
+
+	sendTelegramMsg(userID, feedID, telegramItemMsg, s)
 
 	if err := s.cleanupEntries(feedID, entryHashes); err != nil {
 		logger.Error(`store: feed #%d: %v`, feedID, err)
 	}
 
 	return nil
+}
+
+func sendTelegramMsg(userID int64, feedID int64, telegramItemMsg []string, s *Storage) {
+	if len(telegramItemMsg) > 0 {
+		integration, _ := s.Integration(userID)
+		if integration != nil && integration.TelegramEnabled && len(integration.TelegramToken) > 0 {
+			feed, _ := s.FeedByID(userID, feedID)
+			bot, _ := tgbotapi.NewBotAPIWithClient(integration.TelegramToken, &http.Client{Timeout: 15 * time.Second})
+			if bot != nil {
+				text := fmt.Sprintf("**%v**\n\n", feed.Title) + strings.Join(telegramItemMsg, "\n")
+				chatId, _ := strconv.ParseInt(integration.TelegramChatId, 10, 64)
+				message := tgbotapi.NewMessage(chatId, text)
+				message.DisableWebPagePreview = true
+				message.ParseMode = "markdown"
+				_, err := bot.Send(message)
+				if err != nil {
+					logger.Error(`telegram: send msg error%v`, feedID, err)
+				}
+			}
+		}
+	}
 }
 
 // ArchiveEntries changes the status of read items to "removed" after specified days.

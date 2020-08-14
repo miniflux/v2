@@ -641,6 +641,9 @@ var translations = map[string]string{
     "form.integration.nunux_keeper_activate": "Save articles to Nunux Keeper",
     "form.integration.nunux_keeper_endpoint": "Nunux Keeper API Endpoint",
     "form.integration.nunux_keeper_api_key": "Nunux Keeper API key",
+    "form.integration.telegram_activate": "Forward to Telegram",
+    "form.integration.telegram_token": "Telegram Bot Token",
+    "form.integration.telegram_chat_id": "Recipient ChatId",
     "form.api_key.label.description": "API Key Label",
     "form.submit.loading": "Loading...",
     "form.submit.saving": "Saving...",
@@ -3636,6 +3639,9 @@ var translations = map[string]string{
     "form.integration.nunux_keeper_activate": "保存文章到 Nunux Keeper",
     "form.integration.nunux_keeper_endpoint": "Nunux Keeper API Endpoint",
     "form.integration.nunux_keeper_api_key": "Nunux Keeper API 密钥",
+    "form.integration.telegram_activate": "转发至 Telegram",
+    "form.integration.telegram_token": "Telegram 机器人 Token",
+    "form.integration.telegram_chat_id": "接收者 ChatId",
     "form.api_key.label.description": "API密钥标签",
     "form.submit.loading": "载入中…",
     "form.submit.saving": "保存中…",
@@ -3685,7 +3691,7 @@ var translations = map[string]string{
 
 var translationsChecksums = map[string]string{
 	"de_DE": "21e1bfb0f43d71efe38812b4337ddf6980c11ed18f4d06446ff7eda9dfa6b1f1",
-	"en_US": "30cbcb2170782f1e66f69066947bf053f68065d7b270eea879f2c573819dd52b",
+	"en_US": "bf985665228062c9c3fc5ed29ec28834e3beef173cacb526326df2863ece69fd",
 	"es_ES": "50dc7c8c2db7368bae133f5b455721470d314321153d41e4f27436a0f3f176e6",
 	"fr_FR": "373fd2db868961758bd1483c34f117b03aadea17080f268bc8bbd0acdfbc5eed",
 	"it_IT": "8d8f0bd75b4e7dec9370647c888dd9438b691130d9c41f839cdfff8cbc606cb5",
@@ -3694,5 +3700,5 @@ var translationsChecksums = map[string]string{
 	"pl_PL": "b1526955641823708b4c1ca753b61e1e0561d0a3d33da3f62170540903031b0d",
 	"pt_BR": "cf8e131d39daac82d3157c6538c0643392a06358b7bc98be8579412ebd63f60e",
 	"ru_RU": "4056e4e94861835d44064273371adbbded7190e2b719769886eb99e6c9feaf82",
-	"zh_CN": "044abb0a34eee3d8d5597811d40166762311b8e4cd08b891796113790cc775f0",
+	"zh_CN": "48b19c5e68e323d2e584d3c3c57018e7f174f5c3668a14647996598c8024a24b",
 }
