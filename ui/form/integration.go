@@ -36,7 +36,7 @@ type IntegrationForm struct {
 	PocketConsumerKey    string
 	TelegramEnabled      bool
 	TelegramToken        string
-	TelegramChatId       string
+	TelegramChatID       string
 }
 
 // Merge copy form values to the model.
@@ -65,7 +65,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.PocketConsumerKey = i.PocketConsumerKey
 	integration.TelegramEnabled = i.TelegramEnabled
 	integration.TelegramToken = i.TelegramToken
-	integration.TelegramChatId = i.TelegramChatId
+	integration.TelegramChatID = i.TelegramChatID
 }
 
 // NewIntegrationForm returns a new AuthForm.
@@ -95,6 +95,6 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		PocketConsumerKey:    r.FormValue("pocket_consumer_key"),
 		TelegramEnabled:      r.FormValue("telegram_enabled") == "1",
 		TelegramToken:        r.FormValue("telegram_token"),
-		TelegramChatId:       r.FormValue("telegram_chat_id"),
+		TelegramChatID:       r.FormValue("telegram_chat_id"),
 	}
 }

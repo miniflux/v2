@@ -106,7 +106,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.PocketConsumerKey,
 		&integration.TelegramEnabled,
 		&integration.TelegramToken,
-		&integration.TelegramChatId,
+		&integration.TelegramChatID,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -180,7 +180,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PocketConsumerKey,
 		integration.TelegramEnabled,
 		integration.TelegramToken,
-		integration.TelegramChatId,
+		integration.TelegramChatID,
 		integration.UserID,
 	)
 

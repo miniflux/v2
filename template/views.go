@@ -1156,7 +1156,7 @@ var templateViewsMap = map[string]string{
         <input type="text" name="telegram_token" id="form-telegram-token" value="{{ .form.TelegramToken }}">
 
         <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
-        <input type="text" name="telegram_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramChatId }}">
+        <input type="text" name="telegram_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramChatID }}">
     </div>
 
     <div class="buttons">

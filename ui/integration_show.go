@@ -53,7 +53,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		PocketConsumerKey:    integration.PocketConsumerKey,
 		TelegramEnabled:      integration.TelegramEnabled,
 		TelegramToken:        integration.TelegramToken,
-		TelegramChatId:       integration.TelegramChatId,
+		TelegramChatID:       integration.TelegramChatID,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
