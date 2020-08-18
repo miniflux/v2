@@ -226,7 +226,7 @@ func sendTelegramMsg(userID int64, feedID int64, telegramItemMsg []string, s *St
 			feed, _ := s.FeedByID(userID, feedID)
 			bot, _ := tgbotapi.NewBotAPIWithClient(integration.TelegramToken, &http.Client{Timeout: 15 * time.Second})
 			if bot != nil {
-				text := fmt.Sprintf("**%v**\n\n", feed.Title) + strings.Join(telegramItemMsg, "\n")
+				text := fmt.Sprintf("*%v*\n\n", feed.Title) + strings.Join(telegramItemMsg, "\n")
 				chatID, _ := strconv.ParseInt(integration.TelegramChatID, 10, 64)
 				message := tgbotapi.NewMessage(chatID, text)
 				message.DisableWebPagePreview = true
