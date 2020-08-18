@@ -199,7 +199,7 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 		} else {
 			err = s.createEntry(entry)
 
-			tempText := fmt.Sprintf("%v. [%v](%v)", len(telegramItemMsg)+1, entry.Title, entry.URL)
+			tempText := fmt.Sprintf("[%v](%v)", entry.Title, entry.URL)
 			telegramItemMsg = append(telegramItemMsg, tempText)
 		}
 
