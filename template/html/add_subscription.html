@@ -52,6 +52,12 @@
 
                 <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
                 <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
+
+                <label for="form-blacklist-rules">{{ t "form.feed.label.blocklist_rules" }}</label>
+                <input type="text" name="blocklist_rules" id="form-blacklist-rules" value="{{ .form.BlocklistRules }}">
+ 
+                <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
+                <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}">
             </div>
         </details>
 

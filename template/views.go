@@ -83,6 +83,12 @@ var templateViewsMap = map[string]string{
 
                 <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
                 <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
+
+                <label for="form-blacklist-rules">{{ t "form.feed.label.blocklist_rules" }}</label>
+                <input type="text" name="blocklist_rules" id="form-blacklist-rules" value="{{ .form.BlocklistRules }}">
+ 
+                <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
+                <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}">
             </div>
         </details>
 
@@ -1548,7 +1554,7 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
-	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
+	"add_subscription":    "196dbedce7a027981abc0acbd9e0f769f47754e4fecc131086001de896d6ed4c",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "892fe6cbf5a3301416dfb76e62935b495ca194275cfe113105a85b40ce7c200f",
 	"categories":          "9dfc3cb7bb91c7750753fe962ee4540dd1843e5f75f9e0a575ee964f6f9923e9",

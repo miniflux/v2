@@ -24,14 +24,16 @@ type entriesResponse struct {
 }
 
 type feedCreation struct {
-	FeedURL      string `json:"feed_url"`
-	CategoryID   int64  `json:"category_id"`
-	UserAgent    string `json:"user_agent"`
-	Username     string `json:"username"`
-	Password     string `json:"password"`
-	Crawler      bool   `json:"crawler"`
-	ScraperRules string `json:"scraper_rules"`
-	RewriteRules string `json:"rewrite_rules"`
+	FeedURL        string `json:"feed_url"`
+	CategoryID     int64  `json:"category_id"`
+	UserAgent      string `json:"user_agent"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	Crawler        bool   `json:"crawler"`
+	ScraperRules   string `json:"scraper_rules"`
+	RewriteRules   string `json:"rewrite_rules"`
+	BlocklistRules string `json:"blocklist_rules"`
+	KeeplistRules  string `json:"keeplist_rules"`
 }
 
 type subscriptionDiscovery struct {

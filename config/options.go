@@ -26,7 +26,7 @@ const (
 	defaultSchedulerEntryFrequencyMinInterval = 5
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
 	defaultRunMigrations                      = false
-	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
+	defaultDatabaseURL                        = "user=miniflux password=miniflux dbname=miniflux sslmode=disable"
 	defaultDatabaseMaxConns                   = 20
 	defaultDatabaseMinConns                   = 1
 	defaultListenAddr                         = "127.0.0.1:8080"

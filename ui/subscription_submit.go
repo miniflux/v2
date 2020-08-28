@@ -82,6 +82,8 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			subscriptionForm.Password,
 			subscriptionForm.ScraperRules,
 			subscriptionForm.RewriteRules,
+			subscriptionForm.BlocklistRules,
+			subscriptionForm.KeeplistRules,
 		)
 		if err != nil {
 			v.Set("form", subscriptionForm)
