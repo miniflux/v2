@@ -1,1 +1,1 @@
-alter table feeds add column fetch_via_proxy bool default false;
+alter table users add column entries_per_page int default 100;

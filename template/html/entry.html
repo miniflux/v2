@@ -3,7 +3,7 @@
 {{ define "content"}}
 <section class="entry" data-id="{{ .entry.ID }}">
     <header class="entry-header">
-        <h1>
+        <h1 dir="auto">
             <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
         {{ if .user }}
@@ -77,7 +77,7 @@
             </ul>
         </div>
         {{ end }}
-        <div class="entry-meta">
+        <div class="entry-meta" dir="auto">
             <span class="entry-website">
                 {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                     <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
@@ -118,7 +118,7 @@
     </div>
     {{ end }}
     {{ end }}
-    <article class="entry-content">
+    <article class="entry-content" dir="auto">
         {{ if .user }}
             {{ noescape (proxyFilter .entry.Content) }}
         {{ else }}

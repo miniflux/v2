@@ -2,7 +2,7 @@
     <div class="items">
         {{ range .feeds }}
         <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}
                         <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
@@ -19,7 +19,7 @@
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">
-                    <li>
+                    <li dir="auto">
                         <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
@@ -42,6 +42,11 @@
                             data-label-loading="{{ t "confirm.loading" }}"
                             data-url="{{ route "removeFeed" "feedID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
+                    {{ if .UnreadCount }}
+                      <li>
+                        <a href="{{ route "markFeedAsRead" "feedID" .ID }}">{{ template "icon_read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                      </li>
+                    {{ end }}
                 </ul>
             </div>
             {{ if ne .ParsingErrorCount 0 }}

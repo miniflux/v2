@@ -1,3 +1,37 @@
+Version 2.0.23 (Aug 15, 2020)
+-----------------------------
+
+* Try known URLs when discovering subscriptions
+* Add workarounds to find YouTube channel feeds (YouTube doesn't expose RSS links anymore for new-style URLs)
+* Increase HTTP server timeout values
+* Use stdlib constants for HTTP methods instead of strings
+* Add support for RTL feed content
+* Ignore <media:title> to avoid overriding the default title if they are different
+* Add support for secret keys exposed as a file (useful for containerized environments)
+* Display recent entries first in search results
+* Do not archive shared items
+* Add option to change the number of entries per page
+* Add Brazilian Portuguese (pt_BR) translation
+* Add reading time for entries
+* Redirect to login page if CSRF token is expired
+* Fever API:
+    - Use getEntryIDs instead of getEntries to reduce memory consumption
+    - Fix max_id argument logic to follow the specs
+    - Improve logging
+    - Do not send articles to external services when unsaving an item
+    - Create index to speed up API calls
+    - Log client IP in middleware
+* API client: Do not return body for response with no content
+* REST API:
+    - Delete users asynchronously (Deleting large users might lock the tables)
+    - Add CORS support
+* Align entry actions to the left
+    - Attempt to avoid awkward alignment on smartphone screens
+    - Keep the read/star actions aligned to the left
+    - Remove CSS flex to allow easier override with custom CSS
+* Upgrade Postgres client library
+* Upgrade CI checks to Go 1.15
+
 Version 2.0.22 (Jun 19, 2020)
 -----------------------------
 

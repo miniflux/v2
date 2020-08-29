@@ -27,7 +27,7 @@ var templateCommonMap = map[string]string{
     <div class="items">
         {{ range .feeds }}
         <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}
                         <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
@@ -44,7 +44,7 @@ var templateCommonMap = map[string]string{
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">
-                    <li>
+                    <li dir="auto">
                         <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
                     <li>
@@ -67,6 +67,11 @@ var templateCommonMap = map[string]string{
                             data-label-loading="{{ t "confirm.loading" }}"
                             data-url="{{ route "removeFeed" "feedID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
+                    {{ if .UnreadCount }}
+                      <li>
+                        <a href="{{ route "markFeedAsRead" "feedID" .ID }}">{{ template "icon_read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                      </li>
+                    {{ end }}
                 </ul>
             </div>
             {{ if ne .ParsingErrorCount 0 }}
@@ -78,7 +83,8 @@ var templateCommonMap = map[string]string{
         </article>
         {{ end }}
     </div>
-{{ end }}`,
+{{ end }}
+`,
 	"feed_menu": `{{ define "feed_menu" }}
 <ul>
     <li>
@@ -236,8 +242,34 @@ SOFTWARE.
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
+        {{ if .user.ShowReadingTime }}
+        <li>
+            <span>
+            {{ plural "entry.estimated_reading_time" (timeToRead .entry.Content) (timeToRead .entry.Content) }}
+            </span>
+        </li>
+        {{ end }}
     </ul>
     <ul class="item-meta-icons">
+        <li>
+            <a href="#"
+                title="{{ t "entry.status.title" }}"
+                data-toggle-status="true"
+                data-label-read="✔&nbsp;{{ t "entry.status.read" }}"
+                data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
+                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
+                ><span class="icon-label">{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&nbsp;{{ t "entry.status.read" }}{{ end }}</span></a>
+        </li>
+        <li>
+            <a href="#"
+                data-toggle-bookmark="true"
+                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
+                data-label-loading="{{ t "entry.state.saving" }}"
+                data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
+                data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
+                data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
+                ><span class="icon-label">{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+        </li>
         {{ if .entry.ShareCode }}
             <li>
                 <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
@@ -273,25 +305,6 @@ SOFTWARE.
                     data-comments-link="true">{{ template "icon_comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
             </li>
         {{ end }}
-        <li>
-            <a href="#"
-                data-toggle-bookmark="true"
-                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
-                data-label-loading="{{ t "entry.state.saving" }}"
-                data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
-                data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
-                data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                ><span class="icon-label">{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
-        </li>
-        <li>
-            <a href="#"
-                title="{{ t "entry.status.title" }}"
-                data-toggle-status="true"
-                data-label-read="✔&nbsp;{{ t "entry.status.read" }}"
-                data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
-                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                ><span class="icon-label">{{ if eq .entry.Status "read" }}✘&nbsp;{{ t "entry.status.unread" }}{{ else }}✔&nbsp;{{ t "entry.status.read" }}{{ end }}</span></a>
-        </li>
     </ul>
 </div>
 {{ end }}
@@ -506,10 +519,10 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "4f0bddcc6596aca9f42d2aace7f676ed26a3c6b33a3793e2376d9446d6abe392",
+	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
-	"item_meta":        "a5b07cc6597e5c8f3ca849ee486acb3f16f062d8a1eaa47d2fb402ae6825b7ef",
+	"item_meta":        "8306adf3ef9966de3e3dc74ca1042e51d778b027ab8cf0a60a2e94a0115982dc",
 	"layout":           "91d2ab3f683a2ced5e9ce5cd04919e74b3e3f329a5eedcc60015b8d49ecb1b77",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",

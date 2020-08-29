@@ -6,8 +6,8 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/golang/protobuf v1.4.0 // indirect
-	github.com/gorilla/mux v1.7.4
-	github.com/lib/pq v1.7.0
+	github.com/gorilla/mux v1.8.0
+	github.com/lib/pq v1.8.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/tdewolff/minify/v2 v2.7.4 // indirect
 	golang.org/x/crypto v0.0.0-20200423211502-4bdfaf469ed5

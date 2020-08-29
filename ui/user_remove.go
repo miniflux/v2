@@ -5,6 +5,7 @@
 package ui // import "miniflux.app/ui"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/http/request"
@@ -13,19 +14,19 @@ import (
 )
 
 func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
-	user, err := h.store.UserByID(request.UserID(r))
+	loggedUser, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	if !user.IsAdmin {
+	if !loggedUser.IsAdmin {
 		html.Forbidden(w, r)
 		return
 	}
 
-	userID := request.RouteInt64Param(r, "userID")
-	selectedUser, err := h.store.UserByID(userID)
+	selectedUserID := request.RouteInt64Param(r, "userID")
+	selectedUser, err := h.store.UserByID(selectedUserID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -33,6 +34,11 @@ func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
 
 	if selectedUser == nil {
 		html.NotFound(w, r)
+		return
+	}
+
+	if selectedUser.ID == loggedUser.ID {
+		html.BadRequest(w, r, errors.New("You cannot remove yourself"))
 		return
 	}
 

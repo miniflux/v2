@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 
+	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
@@ -15,8 +16,8 @@ import (
 
 func createAdmin(store *storage.Storage) {
 	user := model.NewUser()
-	user.Username = os.Getenv("ADMIN_USERNAME")
-	user.Password = os.Getenv("ADMIN_PASSWORD")
+	user.Username = config.Opts.AdminUsername()
+	user.Password = config.Opts.AdminPassword()
 	user.IsAdmin = true
 
 	if user.Username == "" || user.Password == "" {

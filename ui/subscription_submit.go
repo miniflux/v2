@@ -7,6 +7,7 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -40,6 +41,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	v.Set("defaultUserAgent", client.DefaultUserAgent)
+	v.Set("isFetchViaProxyPresent", config.Opts.HTTPClientProxy() != "")
 
 	subscriptionForm := form.NewSubscriptionForm(r)
 	if err := subscriptionForm.Validate(); err != nil {

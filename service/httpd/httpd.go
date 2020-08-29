@@ -35,9 +35,9 @@ func Serve(store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler)
 	certCache := config.Opts.CertCache()
 	listenAddr := config.Opts.ListenAddr()
 	server := &http.Server{
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		ReadTimeout:  300 * time.Second,
+		WriteTimeout: 300 * time.Second,
+		IdleTimeout:  300 * time.Second,
 		Handler:      setupHandler(store, feedHandler, pool),
 	}
 
