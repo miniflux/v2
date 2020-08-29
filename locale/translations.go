@@ -2947,6 +2947,7 @@ var translations = map[string]string{
     "form.feed.label.rewrite_rules": "Regras para o Rewrite",
     "form.feed.label.ignore_http_cache": "Ignorar cache HTTP",
     "form.feed.label.disabled": "Não atualizar esta fonte",
+    "form.feed.label.fetch_via_proxy": "Buscar via proxy",
     "form.category.label.title": "Título",
     "form.user.label.username": "Nome de usuário",
     "form.user.label.password": "Senha",
@@ -3702,7 +3703,7 @@ var translationsChecksums = map[string]string{
 	"ja_JP": "5c4c063ebaee14bed941b020e0d19de5ef5e8d3bf11c1967b1f321d57d5af6a9",
 	"nl_NL": "f862027e192be7a09730470acc2639971c4abf01b256d5bb81246960cc54adcf",
 	"pl_PL": "35147e55f1800964d268dc04b9cc25a9c8fa98077f759c5d3a5bd339f0eee53e",
-	"pt_BR": "cf8e131d39daac82d3157c6538c0643392a06358b7bc98be8579412ebd63f60e",
+	"pt_BR": "2461105ebc2a2d57b3a63a29ee21f74e3d1eba54c049abcfd077dd30acc8d0a2",
 	"ru_RU": "402f15d3c68e008a1ffa3dddb4002126a29c1cf93359a64bca944a8da541da72",
 	"zh_CN": "bbea61a08bec37518d8c8c7735c7b8001d011a1d43ddb15ab639fee11b45ca87",
 }
