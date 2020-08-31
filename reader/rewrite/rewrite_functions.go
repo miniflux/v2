@@ -16,7 +16,7 @@ import (
 
 var (
 	youtubeRegex  = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-	invidioRegex  = regexp.MustCompile(`invidio\.us\/watch\?v=(.*)`)
+	invidioRegex  = regexp.MustCompile(`https?:\/\/(.*)\/watch\?v=(.*)`)
 	imgRegex      = regexp.MustCompile(`<img [^>]+>`)
 	textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
@@ -161,9 +161,8 @@ func addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent string) string {
 
 func addInvidiousVideo(entryURL, entryContent string) string {
 	matches := invidioRegex.FindStringSubmatch(entryURL)
-	fmt.Println(matches)
-	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="https://invidio.us/embed/` + matches[1] + `" allowfullscreen></iframe>`
+	if len(matches) == 3 {
+		video := `<iframe width="650" height="350" frameborder="0" src="https://` + matches[1] + `/embed/` + matches[2] + `" allowfullscreen></iframe>`
 		return video + `<br>` + entryContent
 	}
 	return entryContent
