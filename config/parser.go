@@ -6,9 +6,11 @@ package config // import "miniflux.app/config"
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	url_parser "net/url"
 	"os"
 	"strconv"
@@ -88,6 +90,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.listenAddr = parseString(value, defaultListenAddr)
 		case "DATABASE_URL":
 			p.opts.databaseURL = parseString(value, defaultDatabaseURL)
+		case "DATABASE_URL_FILE":
+			p.opts.databaseURL = readSecretFile(value, defaultDatabaseURL)
 		case "DATABASE_MAX_CONNS":
 			p.opts.databaseMaxConns = parseInt(value, defaultDatabaseMaxConns)
 		case "DATABASE_MIN_CONNS":
@@ -138,18 +142,38 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.pollingFrequency = parseInt(value, defaultPollingFrequency)
 		case "BATCH_SIZE":
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
+		case "POLLING_SCHEDULER":
+			p.opts.pollingScheduler = strings.ToLower(parseString(value, defaultPollingScheduler))
+		case "SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL":
+			p.opts.schedulerEntryFrequencyMaxInterval = parseInt(value, defaultSchedulerEntryFrequencyMaxInterval)
+		case "SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL":
+			p.opts.schedulerEntryFrequencyMinInterval = parseInt(value, defaultSchedulerEntryFrequencyMinInterval)
 		case "PROXY_IMAGES":
 			p.opts.proxyImages = parseString(value, defaultProxyImages)
 		case "CREATE_ADMIN":
 			p.opts.createAdmin = parseBool(value, defaultCreateAdmin)
+		case "ADMIN_USERNAME":
+			p.opts.adminUsername = parseString(value, defaultAdminUsername)
+		case "ADMIN_USERNAME_FILE":
+			p.opts.adminUsername = readSecretFile(value, defaultAdminUsername)
+		case "ADMIN_PASSWORD":
+			p.opts.adminPassword = parseString(value, defaultAdminPassword)
+		case "ADMIN_PASSWORD_FILE":
+			p.opts.adminPassword = readSecretFile(value, defaultAdminPassword)
 		case "POCKET_CONSUMER_KEY":
 			p.opts.pocketConsumerKey = parseString(value, defaultPocketConsumerKey)
+		case "POCKET_CONSUMER_KEY_FILE":
+			p.opts.pocketConsumerKey = readSecretFile(value, defaultPocketConsumerKey)
 		case "OAUTH2_USER_CREATION":
 			p.opts.oauth2UserCreationAllowed = parseBool(value, defaultOAuth2UserCreation)
 		case "OAUTH2_CLIENT_ID":
 			p.opts.oauth2ClientID = parseString(value, defaultOAuth2ClientID)
+		case "OAUTH2_CLIENT_ID_FILE":
+			p.opts.oauth2ClientID = readSecretFile(value, defaultOAuth2ClientID)
 		case "OAUTH2_CLIENT_SECRET":
 			p.opts.oauth2ClientSecret = parseString(value, defaultOAuth2ClientSecret)
+		case "OAUTH2_CLIENT_SECRET_FILE":
+			p.opts.oauth2ClientSecret = readSecretFile(value, defaultOAuth2ClientSecret)
 		case "OAUTH2_REDIRECT_URL":
 			p.opts.oauth2RedirectURL = parseString(value, defaultOAuth2RedirectURL)
 		case "OAUTH2_OIDC_DISCOVERY_ENDPOINT":
@@ -227,5 +251,19 @@ func parseString(value string, fallback string) string {
 	if value == "" {
 		return fallback
 	}
+	return value
+}
+
+func readSecretFile(filename, fallback string) string {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return fallback
+	}
+
+	value := string(bytes.TrimSpace(data))
+	if value == "" {
+		return fallback
+	}
+
 	return value
 }

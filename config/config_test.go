@@ -692,6 +692,111 @@ func TestBatchSize(t *testing.T) {
 	}
 }
 
+func TestDefautPollingSchedulerValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultPollingScheduler
+	result := opts.PollingScheduler()
+
+	if result != expected {
+		t.Fatalf(`Unexpected POLLING_SCHEDULER value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestPollingScheduler(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_count_based")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := "entry_count_based"
+	result := opts.PollingScheduler()
+
+	if result != expected {
+		t.Fatalf(`Unexpected POLLING_SCHEDULER value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefautSchedulerCountBasedMaxIntervalValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultSchedulerEntryFrequencyMaxInterval
+	result := opts.SchedulerEntryFrequencyMaxInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", "30")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 30
+	result := opts.SchedulerEntryFrequencyMaxInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefautSchedulerCountBasedMinIntervalValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultSchedulerEntryFrequencyMinInterval
+	result := opts.SchedulerEntryFrequencyMinInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", "30")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 30
+	result := opts.SchedulerEntryFrequencyMinInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestOAuth2UserCreationWhenUnset(t *testing.T) {
 	os.Clearenv()
 

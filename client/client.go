@@ -130,12 +130,7 @@ func (c *Client) UpdateUser(userID int64, userChanges *UserModification) (*User,
 
 // DeleteUser removes a user from the system.
 func (c *Client) DeleteUser(userID int64) error {
-	body, err := c.request.Delete(fmt.Sprintf("/v1/users/%d", userID))
-	if err != nil {
-		return err
-	}
-	body.Close()
-	return nil
+	return c.request.Delete(fmt.Sprintf("/v1/users/%d", userID))
 }
 
 // Discover try to find subscriptions from a website.
@@ -214,13 +209,7 @@ func (c *Client) UpdateCategory(categoryID int64, title string) (*Category, erro
 
 // DeleteCategory removes a category.
 func (c *Client) DeleteCategory(categoryID int64) error {
-	body, err := c.request.Delete(fmt.Sprintf("/v1/categories/%d", categoryID))
-	if err != nil {
-		return err
-	}
-	defer body.Close()
-
-	return nil
+	return c.request.Delete(fmt.Sprintf("/v1/categories/%d", categoryID))
 }
 
 // Feeds gets all feeds.
@@ -322,32 +311,19 @@ func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModification) (*Feed,
 
 // RefreshAllFeeds refreshes all feeds.
 func (c *Client) RefreshAllFeeds() error {
-	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/refresh"), nil)
-	if err != nil {
-		return err
-	}
-	body.Close()
-	return nil
+	_, err := c.request.Put(fmt.Sprintf("/v1/feeds/refresh"), nil)
+	return err
 }
 
 // RefreshFeed refreshes a feed.
 func (c *Client) RefreshFeed(feedID int64) error {
-	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d/refresh", feedID), nil)
-	if err != nil {
-		return err
-	}
-	body.Close()
-	return nil
+	_, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d/refresh", feedID), nil)
+	return err
 }
 
 // DeleteFeed removes a feed.
 func (c *Client) DeleteFeed(feedID int64) error {
-	body, err := c.request.Delete(fmt.Sprintf("/v1/feeds/%d", feedID))
-	if err != nil {
-		return err
-	}
-	body.Close()
-	return nil
+	return c.request.Delete(fmt.Sprintf("/v1/feeds/%d", feedID))
 }
 
 // FeedIcon gets a feed icon.
@@ -446,24 +422,14 @@ func (c *Client) UpdateEntries(entryIDs []int64, status string) error {
 		Status   string  `json:"status"`
 	}
 
-	body, err := c.request.Put("/v1/entries", &payload{EntryIDs: entryIDs, Status: status})
-	if err != nil {
-		return err
-	}
-	body.Close()
-
-	return nil
+	_, err := c.request.Put("/v1/entries", &payload{EntryIDs: entryIDs, Status: status})
+	return err
 }
 
 // ToggleBookmark toggles entry bookmark value.
 func (c *Client) ToggleBookmark(entryID int64) error {
-	body, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/bookmark", entryID), nil)
-	if err != nil {
-		return err
-	}
-	body.Close()
-
-	return nil
+	_, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/bookmark", entryID), nil)
+	return err
 }
 
 func buildFilterQueryString(path string, filter *Filter) string {

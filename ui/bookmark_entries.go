@@ -29,7 +29,7 @@ func (h *handler) showStarredPage(w http.ResponseWriter, r *http.Request) {
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
-	builder.WithLimit(nbItemsPerPage)
+	builder.WithLimit(user.EntriesPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -48,7 +48,7 @@ func (h *handler) showStarredPage(w http.ResponseWriter, r *http.Request) {
 
 	view.Set("total", count)
 	view.Set("entries", entries)
-	view.Set("pagination", getPagination(route.Path(h.router, "starred"), count, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "starred"), count, offset, user.EntriesPerPage))
 	view.Set("menu", "starred")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))

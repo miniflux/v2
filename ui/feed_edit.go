@@ -41,17 +41,18 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	feedForm := form.FeedForm{
-		SiteURL:      feed.SiteURL,
-		FeedURL:      feed.FeedURL,
-		Title:        feed.Title,
-		ScraperRules: feed.ScraperRules,
-		RewriteRules: feed.RewriteRules,
-		Crawler:      feed.Crawler,
-		UserAgent:    feed.UserAgent,
-		CategoryID:   feed.Category.ID,
-		Username:     feed.Username,
-		Password:     feed.Password,
-		Disabled:     feed.Disabled,
+		SiteURL:         feed.SiteURL,
+		FeedURL:         feed.FeedURL,
+		Title:           feed.Title,
+		ScraperRules:    feed.ScraperRules,
+		RewriteRules:    feed.RewriteRules,
+		Crawler:         feed.Crawler,
+		UserAgent:       feed.UserAgent,
+		CategoryID:      feed.Category.ID,
+		Username:        feed.Username,
+		Password:        feed.Password,
+		IgnoreHTTPCache: feed.IgnoreHTTPCache,
+		Disabled:        feed.Disabled,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

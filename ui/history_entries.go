@@ -28,7 +28,7 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	builder.WithOrder("changed_at")
 	builder.WithDirection("desc")
 	builder.WithOffset(offset)
-	builder.WithLimit(nbItemsPerPage)
+	builder.WithLimit(user.EntriesPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -46,7 +46,7 @@ func (h *handler) showHistoryPage(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("entries", entries)
 	view.Set("total", count)
-	view.Set("pagination", getPagination(route.Path(h.router, "history"), count, offset))
+	view.Set("pagination", getPagination(route.Path(h.router, "history"), count, offset, user.EntriesPerPage))
 	view.Set("menu", "history")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))

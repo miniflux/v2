@@ -180,7 +180,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -216,7 +216,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .categories }}
         <article class="item">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
                 </span>
@@ -225,10 +225,18 @@ var templateViewsMap = map[string]string{
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li>
-                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ t "page.categories.feeds" }}</a>
+                        {{ if eq .FeedCount 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" .FeedCount .FeedCount }}{{ end }}
+                    </li>
+                </ul>
+                <ul class="item-meta-icons">
+                    <li>
+                        <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ template "icon_entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
                     </li>
                     <li>
-                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ t "menu.edit_category" }}</a>
+                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ template "icon_feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
+                    </li>
+                    <li>
+                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ template "icon_edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
                     </li>
                     {{ if eq .FeedCount 0 }}
                     <li>
@@ -238,7 +246,7 @@ var templateViewsMap = map[string]string{
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ t "action.remove" }}</a>
+                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ end }}
                 </ul>
@@ -254,7 +262,7 @@ var templateViewsMap = map[string]string{
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .category.Title }} ({{ .total }})</h1>
+    <h1 dir="auto">{{ .category.Title }} ({{ .total }})</h1>
     <ul>
     {{ if .entries }}
         <li>
@@ -288,7 +296,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -325,10 +333,10 @@ var templateViewsMap = map[string]string{
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }})</h1>
+    <h1 dir="auto">{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }})</h1>
     <ul>
         <li>
-            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
             <a href="{{ route "editCategory" "categoryID" .category.ID }}">{{ t "menu.edit_category" }}</a>
@@ -513,7 +521,7 @@ var templateViewsMap = map[string]string{
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .feed.Title }}</h1>
+    <h1 dir="auto">{{ .feed.Title }}</h1>
     <ul>
         <li>
             <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
@@ -583,6 +591,7 @@ var templateViewsMap = map[string]string{
         </select>
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+        <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
         <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
 
         <div class="buttons">
@@ -650,7 +659,7 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="entry" data-id="{{ .entry.ID }}">
     <header class="entry-header">
-        <h1>
+        <h1 dir="auto">
             <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
         {{ if .user }}
@@ -724,7 +733,7 @@ var templateViewsMap = map[string]string{
             </ul>
         </div>
         {{ end }}
-        <div class="entry-meta">
+        <div class="entry-meta" dir="auto">
             <span class="entry-website">
                 {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                     <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
@@ -765,7 +774,7 @@ var templateViewsMap = map[string]string{
     </div>
     {{ end }}
     {{ end }}
-    <article class="entry-content">
+    <article class="entry-content" dir="auto">
         {{ if .user }}
             {{ noescape (proxyFilter .entry.Content) }}
         {{ else }}
@@ -822,7 +831,10 @@ var templateViewsMap = map[string]string{
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .feed.Title }} ({{ .total }})</h1>
+    <h1 dir="auto">
+        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ .feed.Title }}</a> 
+        ({{ .total }})
+    </h1>
     <ul>
         {{ if .entries }}
         <li>
@@ -881,7 +893,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -965,7 +977,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -1200,7 +1212,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -1308,8 +1320,14 @@ var templateViewsMap = map[string]string{
         <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
     </select>
 
-    <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
+    <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
+    <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 
+    <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
+    
+    <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
+
+    <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="5">{{ .form.CustomCSS }}</textarea>
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
@@ -1364,7 +1382,7 @@ var templateViewsMap = map[string]string{
     <div class="items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -1442,7 +1460,7 @@ var templateViewsMap = map[string]string{
     <div class="items hide-read-items">
         {{ range .entries }}
         <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header">
+            <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
@@ -1532,28 +1550,28 @@ var templateViewsMapChecksums = map[string]string{
 	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
 	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
-	"bookmark_entries":    "65588da78665699dd3f287f68325e9777d511f1a57fee4131a5bb6d00bb68df8",
-	"categories":          "7a927a2c28ae60c995df9d94220153418d3bd31bf35e0800980a215b1a6a80c7",
-	"category_entries":    "dee7b9cd60c6c46f01dd4289940679df31c1fce28ce4aa7249fa459023e1eeb4",
-	"category_feeds":      "527c2ffbc4fcec775071424ba1022ae003525dba53a28cc41f48fb7b30aa984b",
+	"bookmark_entries":    "892fe6cbf5a3301416dfb76e62935b495ca194275cfe113105a85b40ce7c200f",
+	"categories":          "9dfc3cb7bb91c7750753fe962ee4540dd1843e5f75f9e0a575ee964f6f9923e9",
+	"category_entries":    "8fa0e0b8f85e2572c40dee855b6d636207c3561086b234c93100673774c06746",
+	"category_feeds":      "07154127087f9b127f7290abad6020c35ad9ceb2490b869120b7628bc4413808",
 	"choose_subscription": "84c9730cadd78e6ee5a6b4c499aab33acddb4324ac01924d33387543eec4d702",
 	"create_api_key":      "5f74d4e92a6684927f5305096378c8be278159a5cd88ce652c7be3280a7d1685",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
-	"edit_feed":           "cc0b5dbb73f81398410958b41771ed38246bc7ae4bd548228f0d48c49a598c2a",
+	"edit_feed":           "ff90b1883e2934e0236d530d8b778affe7665a6b08cdf9ae612c7e56469818ef",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "d8c30d412d58e14c946ba682166f7c582948e7b0f657d04dcbc3d004267627bb",
-	"feed_entries":        "9c70b82f55e4b311eff20be1641733612e3c1b406ce8010861e4c417d97b6dcc",
+	"entry":               "c503dcf77de37090b9f05352bb9d99729085eec6e7bc22be94f2b4b244b4e48c",
+	"feed_entries":        "ea5b88e3ad6b166d83b70e021d7b420d025f80decb6e24c79d13f8ce7c910b04",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
-	"history_entries":     "93c0c4cc541eec7f07f5c2634f250ea82ac64024939179276b6f636b72c189bf",
+	"history_entries":     "341f0da8b6c27a8377901aa80bb1d5c923672af32f689d36de14deabce5c737f",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "30329452743b35c668278f519245fd9be05c1726856e0384ba542f7c307f2788",
 	"login":               "79ff2ca488c0a19b37c8fa227a21f73e94472eb357a51a077197c852f7713f11",
-	"search_entries":      "274950d03298c24f3942e209c0faed580a6d57be9cf76a6c236175a7e766ac6a",
+	"search_entries":      "c0786ddc6b17e865007b975eefb97417935cbc601f5917cca1ee0d3f584594bc",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "d949ecdd28a33eadafaa3a727e548b3466c5aa44b0a4bbf86cc49784704ff7f6",
-	"shared_entries":      "19caea053664220bb9519df295eb2a17cf5836eaa9104b7ee24c60b88bb524e9",
-	"unread_entries":      "e38f7ffce17dfad3151b08cd33771a2cefe8ca9db42df04fc98bd1d675dd6075",
+	"settings":            "a4d3df17e6abc75881ec1ca5f92a9c2cfe24e3e08e5d844df848b4d6aaa1bbc0",
+	"shared_entries":      "1494d81e46f6af534a73cf6a91f8dfda1932a477bb3a70143513896ac0f0220b",
+	"unread_entries":      "e0080d0cf3583cda51d865422960137c8556c432853657086e43daf6bd5b73be",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",
 }

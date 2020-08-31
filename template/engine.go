@@ -65,6 +65,9 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 		"plural": func(key string, n int, args ...interface{}) string {
 			return printer.Plural(key, n, args...)
 		},
+		"timeToRead": func(content string) int {
+			return timeToRead(content)
+		},
 	})
 
 	var b bytes.Buffer

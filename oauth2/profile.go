@@ -16,5 +16,5 @@ type Profile struct {
 }
 
 func (p Profile) String() string {
-	return fmt.Sprintf(`ID=%s ; Username=%s`, p.ID, p.Username)
+	return fmt.Sprintf(`Key=%s ; ID=%s ; Username=%s`, p.Key, p.ID, p.Username)
 }

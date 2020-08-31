@@ -78,6 +78,10 @@ func TestGetUsers(t *testing.T) {
 	if !users[0].IsAdmin {
 		t.Fatalf(`Invalid role, got "%v"`, users[0].IsAdmin)
 	}
+
+	if users[0].EntriesPerPage != 100 {
+		t.Fatalf(`Invalid entries per page, got "%v"`, users[0].EntriesPerPage)
+	}
 }
 
 func TestCreateStandardUser(t *testing.T) {
@@ -118,6 +122,10 @@ func TestCreateStandardUser(t *testing.T) {
 
 	if user.LastLoginAt != nil {
 		t.Fatalf(`Invalid last login date, got "%v"`, user.LastLoginAt)
+	}
+
+	if user.EntriesPerPage != 100 {
+		t.Fatalf(`Invalid entries per page, got "%v"`, user.EntriesPerPage)
 	}
 }
 
@@ -183,6 +191,10 @@ func TestGetUserByID(t *testing.T) {
 	if user.LastLoginAt != nil {
 		t.Fatalf(`Invalid last login date, got "%v"`, user.LastLoginAt)
 	}
+
+	if user.EntriesPerPage != 100 {
+		t.Fatalf(`Invalid entries per page, got "%v"`, user.EntriesPerPage)
+	}
 }
 
 func TestGetUserByUsername(t *testing.T) {
@@ -233,6 +245,10 @@ func TestGetUserByUsername(t *testing.T) {
 
 	if user.LastLoginAt != nil {
 		t.Fatalf(`Invalid last login date, got "%v"`, user.LastLoginAt)
+	}
+
+	if user.EntriesPerPage != 100 {
+		t.Fatalf(`Invalid entries per page, got "%v"`, user.EntriesPerPage)
 	}
 }
 

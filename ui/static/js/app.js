@@ -167,11 +167,24 @@ function markEntryAsRead(element) {
     }
 }
 
+// Send the Ajax request to refresh all feeds in the background
+function handleRefreshAllFeeds() {
+    let url = document.body.dataset.refreshAllFeedsUrl;
+    let request = new RequestBuilder(url);
+
+    request.withCallback(() => {
+        window.location.reload();
+    });
+
+    request.withHttpMethod("GET");
+    request.execute();
+}
+
 // Send the Ajax request to change entries statuses.
 function updateEntriesStatus(entryIDs, status, callback) {
     let url = document.body.dataset.entriesStatusUrl;
     let request = new RequestBuilder(url);
-    request.withBody({ entry_ids: entryIDs, status: status });
+    request.withBody({entry_ids: entryIDs, status: status});
     request.withCallback(callback);
     request.execute();
 
@@ -296,7 +309,7 @@ function openOriginalLink(openLinkInCurrentTab) {
 
         let currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
-        if (document.location.href != document.querySelector('a[data-page=starred]').href){
+        if (document.location.href != document.querySelector('a[data-page=starred]').href) {
             goToNextListItem();
         }
         markEntryAsRead(currentItem);
@@ -504,8 +517,12 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    linkElement.style.display = "none";
+    if (linkElement.tagName != 'A') {
+        linkElement = linkElement.parentNode;
+    }
 
+    linkElement.style.display = "none";
+    
     let containerElement = linkElement.parentNode;
     let questionElement = document.createElement("span");
 

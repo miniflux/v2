@@ -2,7 +2,7 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ .feed.Title }}</h1>
+    <h1 dir="auto">{{ .feed.Title }}</h1>
     <ul>
         <li>
             <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
@@ -72,6 +72,7 @@
         </select>
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+        <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
         <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
 
         <div class="buttons">

@@ -28,7 +28,7 @@ func (h *handler) showSearchEntriesPage(w http.ResponseWriter, r *http.Request) 
 	builder.WithSearchQuery(searchQuery)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOffset(offset)
-	builder.WithLimit(nbItemsPerPage)
+	builder.WithLimit(user.EntriesPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -44,7 +44,7 @@ func (h *handler) showSearchEntriesPage(w http.ResponseWriter, r *http.Request) 
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
-	pagination := getPagination(route.Path(h.router, "searchEntries"), count, offset)
+	pagination := getPagination(route.Path(h.router, "searchEntries"), count, offset, user.EntriesPerPage)
 	pagination.SearchQuery = searchQuery
 
 	view.Set("searchQuery", searchQuery)

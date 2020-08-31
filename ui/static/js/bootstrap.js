@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("s", () => handleSaveEntry());
         keyboardHandler.on("d", () => handleFetchOriginalContent());
         keyboardHandler.on("f", () => handleBookmark());
+        keyboardHandler.on("R", () => handleRefreshAllFeeds());
         keyboardHandler.on("?", () => showKeyboardShortcuts());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
         keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
@@ -91,5 +92,5 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         }
-    });    
+    });
 });

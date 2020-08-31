@@ -80,7 +80,7 @@ is_spark equal to 1.
 */
 func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching groups for userID=%d", userID)
+	logger.Debug("[Fever] Fetching groups for user #%d", userID)
 
 	categories, err := h.store.Categories(userID)
 	if err != nil {
@@ -183,7 +183,7 @@ A PHP/HTML example:
 */
 func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching favicons for userID=%d", userID)
+	logger.Debug("[Fever] Fetching favicons for user #%d", userID)
 
 	icons, err := h.store.Icons(userID)
 	if err != nil {
@@ -238,7 +238,6 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	var result itemsResponse
 
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching items for userID=%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -246,27 +245,38 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder.WithOrder("id")
 	builder.WithDirection(model.DefaultSortingDirection)
 
-	sinceID := request.QueryIntParam(r, "since_id", 0)
-	if sinceID > 0 {
-		builder.AfterEntryID(int64(sinceID))
-	}
-
-	maxID := request.QueryIntParam(r, "max_id", 0)
-	if maxID > 0 {
-		builder.WithOffset(maxID)
-	}
-
-	csvItemIDs := request.QueryStringParam(r, "with_ids", "")
-	if csvItemIDs != "" {
-		var itemIDs []int64
-
-		for _, strItemID := range strings.Split(csvItemIDs, ",") {
-			strItemID = strings.TrimSpace(strItemID)
-			itemID, _ := strconv.Atoi(strItemID)
-			itemIDs = append(itemIDs, int64(itemID))
+	switch {
+	case request.HasQueryParam(r, "since_id"):
+		sinceID := request.QueryInt64Param(r, "since_id", 0)
+		if sinceID > 0 {
+			logger.Debug("[Fever] Fetching items since #%d for user #%d", sinceID, userID)
+			builder.AfterEntryID(sinceID)
 		}
+	case request.HasQueryParam(r, "max_id"):
+		maxID := request.QueryInt64Param(r, "max_id", 0)
+		if maxID == 0 {
+			logger.Debug("[Fever] Fetching most recent items for user #%d", userID)
+			builder.WithDirection("desc")
+		} else if maxID > 0 {
+			logger.Debug("[Fever] Fetching items before #%d for user #%d", maxID, userID)
+			builder.BeforeEntryID(maxID)
+			builder.WithDirection("desc")
+		}
+	case request.HasQueryParam(r, "with_ids"):
+		csvItemIDs := request.QueryStringParam(r, "with_ids", "")
+		if csvItemIDs != "" {
+			var itemIDs []int64
 
-		builder.WithEntryIDs(itemIDs)
+			for _, strItemID := range strings.Split(csvItemIDs, ",") {
+				strItemID = strings.TrimSpace(strItemID)
+				itemID, _ := strconv.ParseInt(strItemID, 10, 64)
+				itemIDs = append(itemIDs, itemID)
+			}
+
+			builder.WithEntryIDs(itemIDs)
+		}
+	default:
+		logger.Debug("[Fever] Fetching oldest items for user #%d", userID)
 	}
 
 	entries, err := builder.GetEntries()
@@ -321,19 +331,19 @@ A request with the unread_item_ids argument will return one additional member:
 */
 func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching unread items for userID=%d", userID)
+	logger.Debug("[Fever] Fetching unread items for user #%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
-	entries, err := builder.GetEntries()
+	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
 	var itemIDs []string
-	for _, entry := range entries {
-		itemIDs = append(itemIDs, strconv.FormatInt(entry.ID, 10))
+	for _, entryID := range rawEntryIDs {
+		itemIDs = append(itemIDs, strconv.FormatInt(entryID, 10))
 	}
 
 	var result unreadResponse
@@ -352,7 +362,7 @@ with the remote Fever installation.
 */
 func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching saved items for userID=%d", userID)
+	logger.Debug("[Fever] Fetching saved items for user #%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStarred()
@@ -380,7 +390,7 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 */
 func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Receiving mark=item call for userID=%d", userID)
+	logger.Debug("[Fever] Receiving mark=item call for user #%d", userID)
 
 	entryID := request.FormInt64Value(r, "id")
 	if entryID <= 0 {
@@ -405,13 +415,13 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 
 	switch r.FormValue("as") {
 	case "read":
-		logger.Debug("[Fever] Mark entry #%d as read", entryID)
+		logger.Debug("[Fever] Mark entry #%d as read for user #%d", entryID, userID)
 		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
 	case "unread":
-		logger.Debug("[Fever] Mark entry #%d as unread", entryID)
+		logger.Debug("[Fever] Mark entry #%d as unread for user #%d", entryID, userID)
 		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
-	case "saved", "unsaved":
-		logger.Debug("[Fever] Mark entry #%d as saved/unsaved", entryID)
+	case "saved":
+		logger.Debug("[Fever] Mark entry #%d as saved for user #%d", entryID, userID)
 		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
@@ -426,6 +436,12 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		go func() {
 			integration.SendEntry(entry, settings)
 		}()
+	case "unsaved":
+		logger.Debug("[Fever] Mark entry #%d as unsaved for user #%d", entryID, userID)
+		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
 	}
 
 	json.OK(w, r, newBaseResponse())
@@ -442,7 +458,7 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	feedID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
 
-	logger.Debug("[Fever] mark=feed, userID=%d, feedID=%d, before=%v", userID, feedID, before)
+	logger.Debug("[Fever] Mark feed #%d as read for user #%d before %v", feedID, userID, before)
 
 	if feedID <= 0 {
 		return
@@ -468,7 +484,7 @@ func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	groupID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
 
-	logger.Debug("[Fever] mark=group, userID=%d, groupID=%d, before=%v", userID, groupID, before)
+	logger.Debug("[Fever] Mark group #%d as read for user #%d before %v", groupID, userID, before)
 
 	if groupID < 0 {
 		return

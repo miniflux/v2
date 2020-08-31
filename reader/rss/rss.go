@@ -122,6 +122,12 @@ type rssAuthor struct {
 	Inner   string `xml:",innerxml"`
 }
 
+type rssTitle struct {
+	XMLName xml.Name
+	Data    string `xml:",chardata"`
+	Inner   string `xml:",innerxml"`
+}
+
 type rssEnclosure struct {
 	URL    string `xml:"url,attr"`
 	Type   string `xml:"type,attr"`
@@ -138,7 +144,7 @@ func (enclosure *rssEnclosure) Size() int64 {
 
 type rssItem struct {
 	GUID           string           `xml:"guid"`
-	Title          string           `xml:"title"`
+	Title          []rssTitle       `xml:"title"`
 	Links          []rssLink        `xml:"link"`
 	Description    string           `xml:"description"`
 	PubDate        string           `xml:"pubDate"`
@@ -223,7 +229,24 @@ func (r *rssItem) entryHash() string {
 }
 
 func (r *rssItem) entryTitle() string {
-	return strings.TrimSpace(sanitizer.StripTags(r.Title))
+	var title string
+
+	for _, rssTitle := range r.Title {
+		switch rssTitle.XMLName.Space {
+		case "http://search.yahoo.com/mrss/":
+			// Ignore title in media namespace
+		case "http://purl.org/dc/elements/1.1/":
+			title = rssTitle.Data
+		default:
+			title = rssTitle.Data
+		}
+
+		if title != "" {
+			break
+		}
+	}
+
+	return strings.TrimSpace(sanitizer.StripTags(title))
 }
 
 func (r *rssItem) entryContent() string {

@@ -136,6 +136,51 @@ func TestParseEntryWithoutTitle(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithMediaTitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<title>Entry Title</title>
+				<link>https://example.org/item</link>
+				<media:title>Media Title</media:title>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Entry Title" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryWithDCTitleOnly(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<dc:title>Entry Title</dc:title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Entry Title" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
 func TestParseEntryWithoutLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">

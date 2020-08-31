@@ -26,6 +26,7 @@ type User struct {
 	Language       string            `json:"language"`
 	Timezone       string            `json:"timezone"`
 	EntryDirection string            `json:"entry_sorting_direction"`
+	EntriesPerPage int               `json:"entries_per_page"`
 	LastLoginAt    *time.Time        `json:"last_login_at"`
 	Extra          map[string]string `json:"extra"`
 }
@@ -43,6 +44,7 @@ type UserModification struct {
 	Language       *string `json:"language"`
 	Timezone       *string `json:"timezone"`
 	EntryDirection *string `json:"entry_sorting_direction"`
+	EntriesPerPage *int    `json:"entries_per_page"`
 }
 
 // Users represents a list of users.
