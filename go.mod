@@ -10,6 +10,8 @@ require (
 	github.com/lib/pq v1.8.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/tdewolff/minify/v2 v2.7.4 // indirect
+	github.com/rylans/getlang  v0.0.0-20200505200108-4c3188ff8a2d
+	github.com/grokify/html-strip-tags-go v0.0.0-20200322061010-ea0c1cf2f119
 	golang.org/x/crypto v0.0.0-20200423211502-4bdfaf469ed5
 	golang.org/x/net v0.0.0-20200425230154-ff2c4b7c35a0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
