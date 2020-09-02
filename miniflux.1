@@ -112,6 +112,8 @@ Number of feeds to send to the queue for each interval (default is 10)\&.
 .TP
 .B POLLING_SCHEDULER
 Scheduler used for polling feeds. Possible values are "round_robin" (default) or "entry_frequency"\&.
+The maximum number of feeds polled for a given period is subject to POLLING_FREQUENCY and BATCH_SIZE\&.
+When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&. The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL
 Maximum interval in minutes for the entry frequency scheduler (default is 24 hours)\&.
