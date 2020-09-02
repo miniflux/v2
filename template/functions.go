@@ -18,12 +18,12 @@ import (
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/model"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/timezone"
 	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
-	"github.com/grokify/html-strip-tags-go"
 	"github.com/rylans/getlang"
 )
 
@@ -226,7 +226,7 @@ func formatFileSize(b int64) string {
 }
 
 func timeToRead(content string) int {
-	sanitizedContent := strip.StripTags(content)
+	sanitizedContent := sanitizer.StripTags(content)
 	languageInfo := getlang.FromString(sanitizedContent)
 
 	var timeToReadInt int
