@@ -100,7 +100,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 
 		if isExternalResourceAttribute(attribute.Key) {
 			if tagName == "iframe" {
-				if isValidIframeSource(attribute.Val) {
+				if isValidIframeSource(baseURL, attribute.Val) {
 					value = rewriteIframeURL(attribute.Val)
 				} else {
 					continue
@@ -290,7 +290,7 @@ func isBlacklistedResource(src string) bool {
 	return false
 }
 
-func isValidIframeSource(src string) bool {
+func isValidIframeSource(baseURL, src string) bool {
 	whitelist := []string{
 		"https://invidio.us",
 		"//www.youtube.com",
@@ -310,6 +310,11 @@ func isValidIframeSource(src string) bool {
 		"http://bandcamp.com",
 		"https://bandcamp.com",
 		"https://cdn.embedly.com",
+	}
+
+	// allow iframe from same origin
+	if url.Domain(baseURL) == url.Domain(src) {
+		return true
 	}
 
 	for _, prefix := range whitelist {

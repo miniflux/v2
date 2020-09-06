@@ -106,7 +106,7 @@ func TestInvalidNestedTag(t *testing.T) {
 func TestInvalidIFrame(t *testing.T) {
 	input := `<iframe src="http://example.org/"></iframe>`
 	expected := ``
-	output := Sanitize("http://example.org/", input)
+	output := Sanitize("http://example.com/", input)
 
 	if expected != output {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
