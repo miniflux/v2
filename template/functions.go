@@ -12,16 +12,19 @@ import (
 	"net/mail"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"miniflux.app/config"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/model"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/timezone"
 	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
+	"github.com/rylans/getlang"
 )
 
 type funcMap struct {
@@ -223,7 +226,16 @@ func formatFileSize(b int64) string {
 }
 
 func timeToRead(content string) int {
-	nbOfWords := len(strings.Fields(content))
+	sanitizedContent := sanitizer.StripTags(content)
+	languageInfo := getlang.FromString(sanitizedContent)
 
-	return int(math.Ceil(float64(nbOfWords) / 265))
+	var timeToReadInt int
+	if languageInfo.LanguageCode() == "ko" || languageInfo.LanguageCode() == "zh" || languageInfo.LanguageCode() == "jp" {
+		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / 500))
+	} else {
+		nbOfWords := len(strings.Fields(sanitizedContent))
+		timeToReadInt = int(math.Ceil(float64(nbOfWords) / 265))
+	}
+
+	return timeToReadInt
 }
