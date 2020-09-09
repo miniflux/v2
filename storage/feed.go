@@ -401,10 +401,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			password,
 			disabled,
 			scraper_rules,
-			rewrite_rules
+			rewrite_rules,
+			fetch_via_proxy
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING
 			id
 	`
@@ -424,6 +425,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Disabled,
 		feed.ScraperRules,
 		feed.RewriteRules,
+		feed.FetchViaProxy,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
