@@ -384,7 +384,7 @@ var templateViewsMap = map[string]string{
     <input type="hidden" name="scraper_rules" value="{{ .form.ScraperRules }}">
     <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
     {{ if .form.FetchViaProxy }}
-    <input type="hidden" name="fetch_via_proxy" value="1" >
+    <input type="hidden" name="fetch_via_proxy" value="1">
     {{ end }}
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">
@@ -1563,7 +1563,7 @@ var templateViewsMapChecksums = map[string]string{
 	"categories":          "9dfc3cb7bb91c7750753fe962ee4540dd1843e5f75f9e0a575ee964f6f9923e9",
 	"category_entries":    "8fa0e0b8f85e2572c40dee855b6d636207c3561086b234c93100673774c06746",
 	"category_feeds":      "07154127087f9b127f7290abad6020c35ad9ceb2490b869120b7628bc4413808",
-	"choose_subscription": "5be0afe80dc518685175b2df8d98cb4022b0e6437c556783fea022e2c3d77034",
+	"choose_subscription": "22109d760ea8079c491561d0106f773c885efbf66f87d81fcf8700218260d2a0",
 	"create_api_key":      "5f74d4e92a6684927f5305096378c8be278159a5cd88ce652c7be3280a7d1685",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
