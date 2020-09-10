@@ -242,18 +242,15 @@ func (c *Client) buildClient() http.Client {
 		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 
-	if c.fetchViaProxy {
+	if c.fetchViaProxy && config.Opts.HasHTTPClientProxyConfigured() {
 		proxy := config.Opts.HTTPClientProxy()
 		logger.Debug("[HttpClient] Build client with proxy: %s", proxy)
-		if proxy != "" {
-			proxyURL, err := url.Parse(proxy)
-			if err != nil {
-				logger.Error(fmt.Sprintf("[HttpClient] Parse HTTPClientProxy to URL error: %s", err))
-			}
-			transport.Proxy = http.ProxyURL(proxyURL)
-		} else {
-			logger.Debug("[HttpClient] HTTPClientProxy not config yet")
+
+		proxyURL, err := url.Parse(proxy)
+		if err != nil {
+			logger.Error("[HttpClient] Parse HTTPClientProxy to URL error: %v", err)
 		}
+		transport.Proxy = http.ProxyURL(proxyURL)
 	}
 
 	client.Transport = transport

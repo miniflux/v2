@@ -14,8 +14,8 @@
     <input type="hidden" name="feed_password" value="{{ .form.Password }}">
     <input type="hidden" name="scraper_rules" value="{{ .form.ScraperRules }}">
     <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
-    {{ if .isFetchViaProxyPresent }}
-    <input type="hidden" name="fetch_via_proxy" value="{{- if .form.FetchViaProxy -}}1{{- end -}}" >
+    {{ if .form.FetchViaProxy }}
+    <input type="hidden" name="fetch_via_proxy" value="1" >
     {{ end }}
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">

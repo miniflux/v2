@@ -30,7 +30,7 @@
             <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
-                {{ if .isFetchViaProxyPresent }}
+                {{ if .hasProxyConfigured }}
                 <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
                 {{ end }}
 

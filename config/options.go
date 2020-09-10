@@ -352,9 +352,14 @@ func (o *Options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
 }
 
-// HTTPClientProxy returns the proxy URL for HTTP client
+// HTTPClientProxy returns the proxy URL for HTTP client.
 func (o *Options) HTTPClientProxy() string {
 	return o.httpClientProxy
+}
+
+// HasHTTPClientProxyConfigured returns true if the HTTP proxy is configured.
+func (o *Options) HasHTTPClientProxyConfigured() bool {
+	return o.httpClientProxy != ""
 }
 
 // AuthProxyHeader returns an HTTP header name that contains username for

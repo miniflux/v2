@@ -41,7 +41,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 	v.Set("defaultUserAgent", client.DefaultUserAgent)
-	v.Set("isFetchViaProxyPresent", config.Opts.HTTPClientProxy() != "")
+	v.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 	subscriptionForm := form.NewSubscriptionForm(r)
 	if err := subscriptionForm.Validate(); err != nil {
@@ -103,7 +103,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		v.Set("user", user)
 		v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 		v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
-		v.Set("isFetchViaProxyPresent", config.Opts.HTTPClientProxy() != "")
+		v.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 		html.OK(w, r, v.Render("choose_subscription"))
 	}
