@@ -32,6 +32,7 @@ var feedListQuery = `
 		f.username,
 		f.password,
 		f.ignore_http_cache,
+		f.fetch_via_proxy,
 		f.disabled,
 		f.category_id,
 		c.title as category_title,
@@ -133,6 +134,7 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 			f.username,
 			f.password,
 			f.ignore_http_cache,
+			f.fetch_via_proxy,
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
@@ -242,6 +244,7 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}
 			&feed.Username,
 			&feed.Password,
 			&feed.IgnoreHTTPCache,
+			&feed.FetchViaProxy,
 			&feed.Disabled,
 			&feed.Category.ID,
 			&feed.Category.Title,
@@ -326,6 +329,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 			f.username,
 			f.password,
 			f.ignore_http_cache,
+			f.fetch_via_proxy,
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
@@ -357,6 +361,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.Username,
 		&feed.Password,
 		&feed.IgnoreHTTPCache,
+		&feed.FetchViaProxy,
 		&feed.Disabled,
 		&feed.Category.ID,
 		&feed.Category.Title,
@@ -396,10 +401,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			password,
 			disabled,
 			scraper_rules,
-			rewrite_rules
+			rewrite_rules,
+			fetch_via_proxy
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING
 			id
 	`
@@ -419,6 +425,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Disabled,
 		feed.ScraperRules,
 		feed.RewriteRules,
+		feed.FetchViaProxy,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -462,9 +469,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			password=$15,
 			disabled=$16,
 			next_check_at=$17,
-			ignore_http_cache=$18
+			ignore_http_cache=$18,
+			fetch_via_proxy=$19
 		WHERE
-			id=$19 AND user_id=$20
+			id=$20 AND user_id=$21
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -485,6 +493,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.Disabled,
 		feed.NextCheckAt,
 		feed.IgnoreHTTPCache,
+		feed.FetchViaProxy,
 		feed.ID,
 		feed.UserID,
 	)

@@ -61,6 +61,9 @@ var templateViewsMap = map[string]string{
             <summary>{{ t "page.add_feed.legend.advanced_options" }}</summary>
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+                {{ if .hasProxyConfigured }}
+                <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
+                {{ end }}
 
                 <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
                 <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
@@ -380,6 +383,9 @@ var templateViewsMap = map[string]string{
     <input type="hidden" name="feed_password" value="{{ .form.Password }}">
     <input type="hidden" name="scraper_rules" value="{{ .form.ScraperRules }}">
     <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
+    {{ if .form.FetchViaProxy }}
+    <input type="hidden" name="fetch_via_proxy" value="1">
+    {{ end }}
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">
     {{ end }}
@@ -592,6 +598,9 @@ var templateViewsMap = map[string]string{
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
+        {{ if .hasProxyConfigured }}
+        <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
+        {{ end }}
         <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
 
         <div class="buttons">
@@ -1548,18 +1557,18 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
-	"add_subscription":    "0dbea93b6fc07423fa066122ad960c69616b829533371a2dbadec1e22d4f1ae0",
+	"add_subscription":    "63961a83964acca354bc30eaae1f5e80f410ae4091af8da317380d4298f79032",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "892fe6cbf5a3301416dfb76e62935b495ca194275cfe113105a85b40ce7c200f",
 	"categories":          "9dfc3cb7bb91c7750753fe962ee4540dd1843e5f75f9e0a575ee964f6f9923e9",
 	"category_entries":    "8fa0e0b8f85e2572c40dee855b6d636207c3561086b234c93100673774c06746",
 	"category_feeds":      "07154127087f9b127f7290abad6020c35ad9ceb2490b869120b7628bc4413808",
-	"choose_subscription": "84c9730cadd78e6ee5a6b4c499aab33acddb4324ac01924d33387543eec4d702",
+	"choose_subscription": "22109d760ea8079c491561d0106f773c885efbf66f87d81fcf8700218260d2a0",
 	"create_api_key":      "5f74d4e92a6684927f5305096378c8be278159a5cd88ce652c7be3280a7d1685",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
-	"edit_feed":           "ff90b1883e2934e0236d530d8b778affe7665a6b08cdf9ae612c7e56469818ef",
+	"edit_feed":           "7e86275f8e9325ddbffe79f6db871e58ad86d08c396e9b2ff8af69a09c4bf63b",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
 	"entry":               "c503dcf77de37090b9f05352bb9d99729085eec6e7bc22be94f2b4b244b4e48c",
 	"feed_entries":        "ea5b88e3ad6b166d83b70e021d7b420d025f80decb6e24c79d13f8ce7c910b04",

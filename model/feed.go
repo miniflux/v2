@@ -34,6 +34,7 @@ type Feed struct {
 	Password           string    `json:"password"`
 	Disabled           bool      `json:"disabled"`
 	IgnoreHTTPCache    bool      `json:"ignore_http_cache"`
+	FetchViaProxy      bool      `json:"fetch_via_proxy"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon"`
@@ -71,13 +72,14 @@ func (f *Feed) WithCategoryID(categoryID int64) {
 }
 
 // WithBrowsingParameters defines browsing parameters.
-func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password, scraperRules, rewriteRules string) {
+func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password, scraperRules, rewriteRules string, fetchViaProxy bool) {
 	f.Crawler = crawler
 	f.UserAgent = userAgent
 	f.Username = username
 	f.Password = password
 	f.ScraperRules = scraperRules
 	f.RewriteRules = rewriteRules
+	f.FetchViaProxy = fetchViaProxy
 }
 
 // WithError adds a new error message and increment the error counter.
