@@ -243,14 +243,13 @@ func (c *Client) buildClient() http.Client {
 	}
 
 	if c.fetchViaProxy && config.Opts.HasHTTPClientProxyConfigured() {
-		proxy := config.Opts.HTTPClientProxy()
-		logger.Debug("[HttpClient] Build client with proxy: %s", proxy)
-
-		proxyURL, err := url.Parse(proxy)
+		proxyURL, err := url.Parse(config.Opts.HTTPClientProxy())
 		if err != nil {
-			logger.Error("[HttpClient] Parse HTTPClientProxy to URL error: %v", err)
+			logger.Error("[HttpClient] Proxy URL error: %v", err)
+		} else {
+			logger.Debug("[HttpClient] Use proxy: %s", proxyURL)
+			transport.Proxy = http.ProxyURL(proxyURL)
 		}
-		transport.Proxy = http.ProxyURL(proxyURL)
 	}
 
 	client.Transport = transport
