@@ -1444,6 +1444,7 @@ var templateViewsMap = map[string]string{
         <li>
             <a href="#"
                 data-action="markPageAsRead"
+                data-show-only-unread="1"
                 data-label-question="{{ t "confirm.question" }}"
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
@@ -1581,6 +1582,6 @@ var templateViewsMapChecksums = map[string]string{
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
 	"settings":            "a4d3df17e6abc75881ec1ca5f92a9c2cfe24e3e08e5d844df848b4d6aaa1bbc0",
 	"shared_entries":      "1494d81e46f6af534a73cf6a91f8dfda1932a477bb3a70143513896ac0f0220b",
-	"unread_entries":      "e0080d0cf3583cda51d865422960137c8556c432853657086e43daf6bd5b73be",
+	"unread_entries":      "fbb368f70ee78bd605ac4c13707bd79ea50c6980248da0ac3830253b36ea83ad",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",
 }
