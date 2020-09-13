@@ -209,26 +209,32 @@ func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, upd
 	return nil
 }
 
-// ArchiveEntries changes the status of read items to "removed" after specified days.
-func (s *Storage) ArchiveEntries(days int) error {
+// ArchiveEntries changes the status of entries to "removed" after the given number of days.
+func (s *Storage) ArchiveEntries(status string, days int) (int64, error) {
 	if days < 0 {
-		return nil
+		return 0, nil
 	}
 
-	before := time.Now().AddDate(0, 0, -days)
 	query := `
 		UPDATE
 			entries
 		SET
-			status=$1
+			status='removed'
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status=$2 AND starred is false AND share_code='' AND published_at < $3 LIMIT 5000)
+			id=ANY(SELECT id FROM entries WHERE status=$1 AND starred is false AND share_code='' AND published_at < now () - '%d days'::interval LIMIT 5000)
 	`
-	if _, err := s.db.Exec(query, model.EntryStatusRemoved, model.EntryStatusRead, before); err != nil {
-		return fmt.Errorf(`store: unable to archive read entries: %v`, err)
+
+	result, err := s.db.Exec(fmt.Sprintf(query, days), status)
+	if err != nil {
+		return 0, fmt.Errorf(`store: unable to archive %s entries: %v`, status, err)
 	}
 
-	return nil
+	count, err := result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf(`store: unable to get the number of rows affected: %v`, err)
+	}
+
+	return count, nil
 }
 
 // SetEntriesStatus update the status of the given list of entries.

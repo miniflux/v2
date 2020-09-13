@@ -36,6 +36,7 @@ const (
 	defaultCertCache                          = "/tmp/cert_cache"
 	defaultCleanupFrequencyHours              = 24
 	defaultCleanupArchiveReadDays             = 60
+	defaultCleanupArchiveUnreadDays           = 180
 	defaultCleanupRemoveSessionsDays          = 30
 	defaultProxyImages                        = "http-only"
 	defaultCreateAdmin                        = false
@@ -79,6 +80,7 @@ type Options struct {
 	certKeyFile                        string
 	cleanupFrequencyHours              int
 	cleanupArchiveReadDays             int
+	cleanupArchiveUnreadDays           int
 	cleanupRemoveSessionsDays          int
 	pollingFrequency                   int
 	batchSize                          int
@@ -129,6 +131,7 @@ func NewOptions() *Options {
 		certKeyFile:                        defaultKeyFile,
 		cleanupFrequencyHours:              defaultCleanupFrequencyHours,
 		cleanupArchiveReadDays:             defaultCleanupArchiveReadDays,
+		cleanupArchiveUnreadDays:           defaultCleanupArchiveUnreadDays,
 		cleanupRemoveSessionsDays:          defaultCleanupRemoveSessionsDays,
 		pollingFrequency:                   defaultPollingFrequency,
 		batchSize:                          defaultBatchSize,
@@ -243,6 +246,11 @@ func (o *Options) CleanupFrequencyHours() int {
 // CleanupArchiveReadDays returns the number of days after which marking read items as removed.
 func (o *Options) CleanupArchiveReadDays() int {
 	return o.cleanupArchiveReadDays
+}
+
+// CleanupArchiveUnreadDays returns the number of days after which marking unread items as removed.
+func (o *Options) CleanupArchiveUnreadDays() int {
+	return o.cleanupArchiveUnreadDays
 }
 
 // CleanupRemoveSessionsDays returns the number of days after which to remove sessions.
@@ -412,6 +420,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("CERT_CACHE: %v\n", o.certCache))
 	builder.WriteString(fmt.Sprintf("CLEANUP_FREQUENCY_HOURS: %v\n", o.cleanupFrequencyHours))
 	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_READ_DAYS: %v\n", o.cleanupArchiveReadDays))
+	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_UNREAD_DAYS: %v\n", o.cleanupArchiveUnreadDays))
 	builder.WriteString(fmt.Sprintf("CLEANUP_REMOVE_SESSIONS_DAYS: %v\n", o.cleanupRemoveSessionsDays))
 	builder.WriteString(fmt.Sprintf("WORKER_POOL_SIZE: %v\n", o.workerPoolSize))
 	builder.WriteString(fmt.Sprintf("POLLING_FREQUENCY: %v\n", o.pollingFrequency))
