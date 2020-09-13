@@ -169,6 +169,14 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 		router = router.PathPrefix(config.Opts.BasePath()).Subrouter()
 	}
 
+	if config.Opts.HasMaintenanceMode() {
+		router.Use(func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Write([]byte(config.Opts.MaintenanceMessage()))
+			})
+		})
+	}
+
 	router.Use(middleware)
 
 	fever.Serve(router, store)
