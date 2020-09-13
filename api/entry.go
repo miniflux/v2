@@ -111,8 +111,8 @@ func (h *handler) getFeedEntries(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
-	status := request.QueryStringParam(r, "status", "")
-	if status != "" {
+	statuses := request.QueryStringParamList(r, "status")
+	for _, status := range statuses {
 		if err := model.ValidateEntryStatus(status); err != nil {
 			json.BadRequest(w, r, err)
 			return
@@ -139,7 +139,7 @@ func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
 	}
 
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithStatus(status)
+	builder.WithStatuses(statuses)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)
