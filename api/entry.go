@@ -138,7 +138,15 @@ func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
+	userID := request.UserID(r)
+	categoryID := request.QueryInt64Param(r, "category_id", 0)
+	if categoryID > 0 && !h.store.CategoryExists(userID, categoryID) {
+		json.BadRequest(w, r, errors.New("Invalid category ID"))
+		return
+	}
+
+	builder := h.store.NewEntryQueryBuilder(userID)
+	builder.WithCategoryID(categoryID)
 	builder.WithStatuses(statuses)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
