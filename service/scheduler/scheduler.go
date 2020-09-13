@@ -9,6 +9,7 @@ import (
 
 	"miniflux.app/config"
 	"miniflux.app/logger"
+	"miniflux.app/model"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
 )
@@ -28,6 +29,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) {
 		store,
 		config.Opts.CleanupFrequencyHours(),
 		config.Opts.CleanupArchiveReadDays(),
+		config.Opts.CleanupArchiveUnreadDays(),
 		config.Opts.CleanupRemoveSessionsDays(),
 	)
 }
@@ -45,15 +47,23 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 	}
 }
 
-func cleanupScheduler(store *storage.Storage, frequency int, archiveDays int, sessionsDays int) {
+func cleanupScheduler(store *storage.Storage, frequency, archiveReadDays, archiveUnreadDays, sessionsDays int) {
 	c := time.Tick(time.Duration(frequency) * time.Hour)
 	for range c {
 		nbSessions := store.CleanOldSessions(sessionsDays)
 		nbUserSessions := store.CleanOldUserSessions(sessionsDays)
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
-		if err := store.ArchiveEntries(archiveDays); err != nil {
-			logger.Error("[Scheduler:Cleanup] %v", err)
+		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusRead, archiveReadDays); err != nil {
+			logger.Error("[Scheduler:ArchiveReadEntries] %v", err)
+		} else {
+			logger.Info("[Scheduler:ArchiveReadEntries] %d entries changed", rowsAffected)
+		}
+
+		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusUnread, archiveUnreadDays); err != nil {
+			logger.Error("[Scheduler:ArchiveUnreadEntries] %v", err)
+		} else {
+			logger.Info("[Scheduler:ArchiveUnreadEntries] %d entries changed", rowsAffected)
 		}
 	}
 }

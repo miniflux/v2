@@ -15,8 +15,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"miniflux.app/logger"
 )
 
 // Parser handles configuration parsing.
@@ -118,24 +116,10 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
 		case "CLEANUP_ARCHIVE_READ_DAYS":
 			p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
+		case "CLEANUP_ARCHIVE_UNREAD_DAYS":
+			p.opts.cleanupArchiveUnreadDays = parseInt(value, defaultCleanupArchiveUnreadDays)
 		case "CLEANUP_REMOVE_SESSIONS_DAYS":
 			p.opts.cleanupRemoveSessionsDays = parseInt(value, defaultCleanupRemoveSessionsDays)
-		case "CLEANUP_FREQUENCY":
-			logger.Error("[Config] CLEANUP_FREQUENCY has been deprecated in favor of CLEANUP_FREQUENCY_HOURS.")
-
-			if p.opts.cleanupFrequencyHours != defaultCleanupFrequencyHours {
-				logger.Error("[Config] Ignoring CLEANUP_FREQUENCY as CLEANUP_FREQUENCY_HOURS is already specified.")
-			} else {
-				p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
-			}
-		case "ARCHIVE_READ_DAYS":
-			logger.Error("[Config] ARCHIVE_READ_DAYS has been deprecated in favor of CLEANUP_ARCHIVE_READ_DAYS.")
-
-			if p.opts.cleanupArchiveReadDays != defaultCleanupArchiveReadDays {
-				logger.Error("[Config] Ignoring ARCHIVE_READ_DAYS as CLEANUP_ARCHIVE_READ_DAYS is already specified.")
-			} else {
-				p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
-			}
 		case "WORKER_POOL_SIZE":
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
 		case "POLLING_FREQUENCY":
