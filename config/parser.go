@@ -190,6 +190,10 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.authProxyHeader = parseString(value, defaultAuthProxyHeader)
 		case "AUTH_PROXY_USER_CREATION":
 			p.opts.authProxyUserCreation = parseBool(value, defaultAuthProxyUserCreation)
+		case "MAINTENANCE_MODE":
+			p.opts.maintenanceMode = parseBool(value, defaultMaintenanceMode)
+		case "MAINTENANCE_MESSAGE":
+			p.opts.maintenanceMessage = parseString(value, defaultMaintenanceMessage)
 		}
 	}
 

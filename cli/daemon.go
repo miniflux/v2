@@ -34,7 +34,7 @@ func startDaemon(store *storage.Storage) {
 
 	go showProcessStatistics()
 
-	if config.Opts.HasSchedulerService() {
+	if config.Opts.HasSchedulerService() && !config.Opts.HasMaintenanceMode() {
 		scheduler.Serve(store, pool)
 	}
 

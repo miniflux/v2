@@ -53,6 +53,8 @@ const (
 	defaultHTTPClientProxy                    = ""
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
+	defaultMaintenanceMode                    = false
+	defaultMaintenanceMessage                 = "Miniflux is currently under maintenance"
 )
 
 // Options contains configuration options.
@@ -100,6 +102,8 @@ type Options struct {
 	httpClientProxy                    string
 	authProxyHeader                    string
 	authProxyUserCreation              bool
+	maintenanceMode                    bool
+	maintenanceMessage                 string
 }
 
 // NewOptions returns Options with default values.
@@ -146,12 +150,24 @@ func NewOptions() *Options {
 		httpClientProxy:                    defaultHTTPClientProxy,
 		authProxyHeader:                    defaultAuthProxyHeader,
 		authProxyUserCreation:              defaultAuthProxyUserCreation,
+		maintenanceMode:                    defaultMaintenanceMode,
+		maintenanceMessage:                 defaultMaintenanceMessage,
 	}
 }
 
 // LogDateTime returns true if the date/time should be displayed in log messages.
 func (o *Options) LogDateTime() bool {
 	return o.logDateTime
+}
+
+// HasMaintenanceMode returns true if maintenance mode is enabled.
+func (o *Options) HasMaintenanceMode() bool {
+	return o.maintenanceMode
+}
+
+// MaintenanceMessage returns maintenance message.
+func (o *Options) MaintenanceMessage() string {
+	return o.maintenanceMessage
 }
 
 // HasDebugMode returns true if debug mode is enabled.
@@ -419,5 +435,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_PROXY: %v\n", o.httpClientProxy))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_HEADER: %v\n", o.authProxyHeader))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
+	builder.WriteString(fmt.Sprintf("MAINTENANCE_MODE: %v\n", o.maintenanceMode))
+	builder.WriteString(fmt.Sprintf("MAINTENANCE_MESSAGE: %v\n", o.maintenanceMessage))
 	return builder.String()
 }
