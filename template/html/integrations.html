@@ -26,6 +26,10 @@
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
 
         <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
     </div>
 
     <h3>Pinboard</h3>
@@ -43,6 +47,10 @@
         <label>
             <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "form.integration.pinboard_bookmark" }}
         </label>
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
     </div>
 
     <h3>Instapaper</h3>
@@ -56,6 +64,10 @@
 
         <label for="form-instapaper-password">{{ t "form.integration.instapaper_password" }}</label>
         <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
     </div>
 
     <h3>Pocket</h3>
@@ -75,6 +87,10 @@
         {{ if not .form.PocketAccessToken }}
             <p><a href="{{ route "pocketAuthorize" }}">{{ t "form.integration.pocket_connect_link" }}</a></p>
         {{ end }}
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
     </div>
 
     <h3>Wallabag</h3>
@@ -97,6 +113,10 @@
 
         <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
         <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
     </div>
 
     <h3>Nunux Keeper</h3>
@@ -110,11 +130,12 @@
 
         <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
+        
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
     </div>
 
-    <div class="buttons">
-        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-    </div>
 </form>
 
 <h3>{{ t "page.integration.bookmarklet" }}</h3>
