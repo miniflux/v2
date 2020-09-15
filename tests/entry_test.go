@@ -127,6 +127,53 @@ func TestFilterEntriesByCategory(t *testing.T) {
 	}
 }
 
+func TestFilterEntriesByStatuses(t *testing.T) {
+	client := createClient(t)
+	category, err := client.CreateCategory("Test Filter by statuses")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed(testFeedURL, category.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	results, err := client.Entries(&miniflux.Filter{FeedID: feedID})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := client.UpdateEntries([]int64{results.Entries[0].ID}, "read"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := client.UpdateEntries([]int64{results.Entries[1].ID}, "removed"); err != nil {
+		t.Fatal(err)
+	}
+
+	results, err = client.Entries(&miniflux.Filter{Statuses: []string{"read", "removed"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if results.Total != 2 {
+		t.Fatalf(`We should have 2 entries`)
+	}
+
+	if results.Entries[0].Status != "read" {
+		t.Errorf(`The first entry has the wrong status: %s`, results.Entries[0].Status)
+	}
+
+	if results.Entries[1].Status != "removed" {
+		t.Errorf(`The 2nd entry has the wrong status: %s`, results.Entries[1].Status)
+	}
+}
+
 func TestSearchEntries(t *testing.T) {
 	client := createClient(t)
 	categories, err := client.Categories()
