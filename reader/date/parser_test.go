@@ -132,6 +132,7 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"March 30 2020 07:02:38 PM",
 		"Mon, 30 Mar 2020 19:53 +0000",
 		"Mon, 03/30/2020 - 19:19",
+		"2018-12-12T12:12",
 	}
 
 	for _, date := range dates {
