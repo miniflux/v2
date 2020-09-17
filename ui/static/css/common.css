@@ -636,6 +636,9 @@ a.button {
     align-items: center;
     padding-top: 8px;
 }
+.bottom-placeholder {
+    height: 50px;
+}
 
 .pagination-bottom {
     border-top: 1px dotted var(--pagination-border-color);
