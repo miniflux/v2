@@ -435,11 +435,20 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Entries[i].FeedID = feed.ID
 		feed.Entries[i].UserID = feed.UserID
 
-		if !s.entryExists(feed.Entries[i]) {
-			err := s.createEntry(feed.Entries[i])
-			if err != nil {
+		tx, err := s.db.Begin()
+		if err != nil {
+			return fmt.Errorf(`store: unable to start transaction: %v`, err)
+		}
+
+		if !s.entryExists(tx, feed.Entries[i]) {
+			if err := s.createEntry(tx, feed.Entries[i]); err != nil {
+				tx.Rollback()
 				return err
 			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf(`store: unable to commit transaction: %v`, err)
 		}
 	}
 

@@ -5,6 +5,7 @@
 package storage // import "miniflux.app/storage"
 
 import (
+	"database/sql"
 	"fmt"
 
 	"miniflux.app/model"
@@ -55,8 +56,7 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 	return enclosures, nil
 }
 
-// CreateEnclosure creates a new attachment.
-func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
+func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error {
 	if enclosure.URL == "" {
 		return nil
 	}
@@ -69,7 +69,7 @@ func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
 		RETURNING
 			id
 	`
-	err := s.db.QueryRow(
+	err := tx.QueryRow(
 		query,
 		enclosure.URL,
 		enclosure.Size,
@@ -85,22 +85,15 @@ func (s *Storage) CreateEnclosure(enclosure *model.Enclosure) error {
 	return nil
 }
 
-// IsEnclosureExists checks if an attachment exists.
-func (s *Storage) IsEnclosureExists(enclosure *model.Enclosure) bool {
-	var result int
-	query := `SELECT 1 FROM enclosures WHERE user_id=$1 AND entry_id=$2 AND url=$3`
-	s.db.QueryRow(query, enclosure.UserID, enclosure.EntryID, enclosure.URL).Scan(&result)
-	return result >= 1
-}
+func (s *Storage) updateEnclosures(tx *sql.Tx, userID, entryID int64, enclosures model.EnclosureList) error {
+	// We delete all attachments in the transaction to keep only the ones visible in the feeds.
+	if _, err := tx.Exec(`DELETE FROM enclosures WHERE user_id=$1 AND entry_id=$2`, userID, entryID); err != nil {
+		return err
+	}
 
-// UpdateEnclosures add missing attachments while updating a feed.
-func (s *Storage) UpdateEnclosures(enclosures model.EnclosureList) error {
 	for _, enclosure := range enclosures {
-		if !s.IsEnclosureExists(enclosure) {
-			err := s.CreateEnclosure(enclosure)
-			if err != nil {
-				return err
-			}
+		if err := s.createEnclosure(tx, enclosure); err != nil {
+			return err
 		}
 	}
 
