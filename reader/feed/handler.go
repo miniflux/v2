@@ -127,6 +127,13 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		return requestErr
 	}
 
+	if h.store.AnotherFeedURLExists(userID, originalFeed.ID, response.EffectiveURL) {
+		storeErr := errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
+		originalFeed.WithError(storeErr.Error())
+		h.store.UpdateFeedError(originalFeed)
+		return storeErr
+	}
+
 	if originalFeed.IgnoreHTTPCache || response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		logger.Debug("[Handler:RefreshFeed] Feed #%d has been modified", feedID)
 
