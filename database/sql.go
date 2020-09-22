@@ -190,6 +190,7 @@ create index entries_user_feed_idx on entries (user_id, feed_id);
 	"schema_version_35": `alter table feeds add column fetch_via_proxy bool default false;
 `,
 	"schema_version_36": `CREATE INDEX entries_feed_id_status_hash_idx ON entries USING btree (feed_id, status, hash);`,
+	"schema_version_37": `CREATE INDEX entries_user_id_status_starred_idx ON entries (user_id, status, starred);`,
 	"schema_version_4": `create type entry_sorting_direction as enum('asc', 'desc');
 alter table users add column entry_direction entry_sorting_direction default 'asc';
 `,
@@ -249,6 +250,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_34": "1a3e036f652fc98b7564a27013f04e1eb36dd0d68893c723168f134dc1065822",
 	"schema_version_35": "162a55df78eed4b9c9c141878132d5f1d97944b96f35a79e38f55716cdd6b3d2",
 	"schema_version_36": "8164be7818268ad3d4bdcad03a7868b58e32b27cde9b4f056cd82f7b182a0722",
+	"schema_version_37": "fc9eb1b452341664ddf24c1a9cf01502ac2578136e54a4853081652959285cb9",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",
 	"schema_version_6":  "9d05b4fb223f0e60efc716add5048b0ca9c37511cf2041721e20505d6d798ce4",
