@@ -5,8 +5,11 @@ module miniflux.app
 require (
 	github.com/PuerkitoBio/goquery v1.6.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
+	github.com/felixge/httpsnoop v1.0.1 // indirect
+	github.com/golang/gddo v0.0.0-20200831202555-721e228c7686 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.9.0
+	github.com/mitchellh/go-server-timing v1.0.2-0.20201108055052-feb680ab92c2
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/prometheus/client_golang v1.8.0
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
