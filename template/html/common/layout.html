@@ -40,7 +40,7 @@
     {{ end }}{{ end }}
 
     <script type="text/javascript" src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
-    <script type="text/javascript" src="{{ route "javascript" "name" "sw" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
+    <script type="text/javascript" src="{{ route "javascript" "name" "service-worker" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>
 <body
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
