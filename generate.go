@@ -194,8 +194,8 @@ func main() {
 			"ui/static/js/app.js",
 			"ui/static/js/bootstrap.js",
 		},
-		"sw": []string{
-			"ui/static/js/sw.js",
+		"service-worker": []string{
+			"ui/static/js/service_worker.js",
 		},
 	}, map[string]string{
 		"app": "(function(){'use strict';",
