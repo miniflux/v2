@@ -42,8 +42,12 @@ github.com/tdewolff/minify v1.1.0 h1:nxHQi1ML+g3ZbZHffiZ6eC7vMqNvSRfX3KB5Y5y/kfw
 github.com/tdewolff/minify v2.3.6+incompatible h1:2hw5/9ZvxhWLvBUnHE06gElGYz+Jv9R4Eys0XUzItYo=
 github.com/tdewolff/minify/v2 v2.9.4 h1:sOqgmowmkZWmHZ0AqIFS300VvCCkgDNTw1eWw1tnNCY=
 github.com/tdewolff/minify/v2 v2.9.4/go.mod h1:4SrPavRSPLpv4U4jqV8jzSjiEuq2BH+BPgxorMkGrhc=
+github.com/tdewolff/minify/v2 v2.9.5 h1:+fHvqLencVdv14B+zgxQGhetF9qXl/nRTN/1mcyQwpM=
+github.com/tdewolff/minify/v2 v2.9.5/go.mod h1:jshtBj/uUJH6JX1fuxTLnnHOA1RVJhF5MM+leJzDKb4=
 github.com/tdewolff/parse/v2 v2.5.2 h1:OIUAejEkj9Oj6N1q18xg7ByYkpQ0xf4nA1aAH5nqxks=
 github.com/tdewolff/parse/v2 v2.5.2/go.mod h1:WzaJpRSbwq++EIQHYIRTpbYKNA3gn9it1Ik++q4zyho=
+github.com/tdewolff/parse/v2 v2.5.3 h1:fnPIstKgEfxd3+wwHnH73sAYydsR0o/jYhcQ6c5PkrA=
+github.com/tdewolff/parse/v2 v2.5.3/go.mod h1:WzaJpRSbwq++EIQHYIRTpbYKNA3gn9it1Ik++q4zyho=
 github.com/tdewolff/test v1.0.6/go.mod h1:6DAvZliBAAnD7rhVgwaM7DE5/d9NMOAJ09SqYqeK4QE=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20200423211502-4bdfaf469ed5 h1:Q7tZBpemrlsc2I7IyODzhtallWRSm4Q0d09pL6XbQtU=
