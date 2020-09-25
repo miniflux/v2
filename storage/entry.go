@@ -7,10 +7,6 @@ package storage // import "miniflux.app/storage"
 import (
 	"errors"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"net/http"
-	"strconv"
-	"strings"
 	"time"
 
 	"miniflux.app/crypto"
@@ -77,8 +73,8 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 	return tx.Commit()
 }
 
-// createEntry add a new entry.
-func (s *Storage) createEntry(entry *model.Entry) error {
+// CreateEntry add a new entry.
+func (s *Storage) CreateEntry(entry *model.Entry) error {
 	query := `
 		INSERT INTO entries
 			(title, hash, url, comments_url, published_at, content, author, user_id, feed_id, changed_at, document_vectors)
@@ -116,10 +112,10 @@ func (s *Storage) createEntry(entry *model.Entry) error {
 	return nil
 }
 
-// updateEntry updates an entry when a feed is refreshed.
+// UpdateEntry updates an entry when a feed is refreshed.
 // Note: we do not update the published date because some feeds do not contains any date,
 // it default to time.Now() which could change the order of items on the history page.
-func (s *Storage) updateEntry(entry *model.Entry) error {
+func (s *Storage) UpdateEntry(entry *model.Entry) error {
 	query := `
 		UPDATE
 			entries
@@ -159,16 +155,16 @@ func (s *Storage) updateEntry(entry *model.Entry) error {
 	return s.UpdateEnclosures(entry.Enclosures)
 }
 
-// entryExists checks if an entry already exists based on its hash when refreshing a feed.
-func (s *Storage) entryExists(entry *model.Entry) bool {
+// EntryExists checks if an entry already exists based on its hash when refreshing a feed.
+func (s *Storage) EntryExists(entry *model.Entry) bool {
 	var result int
 	query := `SELECT 1 FROM entries WHERE user_id=$1 AND feed_id=$2 AND hash=$3`
 	s.db.QueryRow(query, entry.UserID, entry.FeedID, entry.Hash).Scan(&result)
 	return result == 1
 }
 
-// cleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
-func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
+// CleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
+func (s *Storage) CleanupEntries(feedID int64, entryHashes []string) error {
 	query := `
 		DELETE FROM
 			entries
@@ -182,62 +178,6 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 	}
 
 	return nil
-}
-
-// UpdateEntries updates a list of entries while refreshing a feed.
-func (s *Storage) UpdateEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
-	var entryHashes []string
-	var telegramItemMsg []string
-	for _, entry := range entries {
-		entry.UserID = userID
-		entry.FeedID = feedID
-
-		if s.entryExists(entry) {
-			if updateExistingEntries {
-				err = s.updateEntry(entry)
-			}
-		} else {
-			err = s.createEntry(entry)
-
-			tempText := fmt.Sprintf("[%v](%v)", entry.Title, entry.URL)
-			telegramItemMsg = append(telegramItemMsg, tempText)
-		}
-
-		if err != nil {
-			return err
-		}
-
-		entryHashes = append(entryHashes, entry.Hash)
-	}
-
-	sendTelegramMsg(userID, feedID, telegramItemMsg, s)
-
-	if err := s.cleanupEntries(feedID, entryHashes); err != nil {
-		logger.Error(`store: feed #%d: %v`, feedID, err)
-	}
-
-	return nil
-}
-
-func sendTelegramMsg(userID int64, feedID int64, telegramItemMsg []string, s *Storage) {
-	if len(telegramItemMsg) > 0 {
-		integration, _ := s.Integration(userID)
-		if integration != nil && integration.TelegramEnabled && len(integration.TelegramToken) > 0 {
-			feed, _ := s.FeedByID(userID, feedID)
-			bot, _ := tgbotapi.NewBotAPIWithClient(integration.TelegramToken, &http.Client{Timeout: 15 * time.Second})
-			if bot != nil {
-				text := fmt.Sprintf("*%v*\n", feed.Title) + strings.Join(telegramItemMsg, "\n")
-				chatID, _ := strconv.ParseInt(integration.TelegramChatID, 10, 64)
-				message := tgbotapi.NewMessage(chatID, text)
-				message.DisableWebPagePreview = true
-				message.ParseMode = "markdown"
-				_, err := bot.Send(message)
-				if err != nil {
-					logger.Error(`telegram: send msg error %v`, feedID, err)
-				}
-			}
-		}
-	}
 }
 
 // ArchiveEntries changes the status of read items to "removed" after specified days.

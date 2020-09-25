@@ -428,8 +428,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Entries[i].FeedID = feed.ID
 		feed.Entries[i].UserID = feed.UserID
 
-		if !s.entryExists(feed.Entries[i]) {
-			err := s.createEntry(feed.Entries[i])
+		if !s.EntryExists(feed.Entries[i]) {
+			err := s.CreateEntry(feed.Entries[i])
 			if err != nil {
 				return err
 			}

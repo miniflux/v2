@@ -6,8 +6,7 @@ package feed // import "miniflux.app/reader/feed"
 
 import (
 	"fmt"
-	"time"
-
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
@@ -20,6 +19,10 @@ import (
 	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
 	"miniflux.app/timer"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 var (
@@ -132,7 +135,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		processor.ProcessFeedEntries(h.store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
-		if storeErr := h.store.UpdateEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
+		if storeErr := updateEntries(h.store, originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
 			h.store.UpdateFeedError(originalFeed)
 			return storeErr
@@ -155,6 +158,75 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	}
 
 	return nil
+}
+
+// UpdateEntries updates a list of entries while refreshing a feed.
+func updateEntries(store *storage.Storage, userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
+	var entryHashes []string
+	var telegramItemMsg []string
+	for _, entry := range entries {
+		entry.UserID = userID
+		entry.FeedID = feedID
+
+		if store.EntryExists(entry) {
+			if updateExistingEntries {
+				err = store.UpdateEntry(entry)
+			}
+		} else {
+			err = store.CreateEntry(entry)
+			if err != nil {
+				tempText := fmt.Sprintf("[%v](%v)", entry.Title, entry.URL)
+				telegramItemMsg = append(telegramItemMsg, tempText)
+			}
+		}
+
+		if err != nil {
+			return err
+		}
+
+		entryHashes = append(entryHashes, entry.Hash)
+	}
+
+	sendTelegramMsg(store, userID, feedID, telegramItemMsg)
+
+	if err := store.CleanupEntries(feedID, entryHashes); err != nil {
+		logger.Error(`updateEntries: feed #%d: %v`, feedID, err)
+	}
+
+	return nil
+}
+
+func sendTelegramMsg(store *storage.Storage, userID int64, feedID int64, telegramItemMsg []string) {
+	if len(telegramItemMsg) > 0 {
+		integration, err := store.Integration(userID)
+		if err != nil {
+			return
+		}
+		if integration != nil && integration.TelegramEnabled && len(integration.TelegramToken) > 0 {
+			feed, storeErr := store.FeedByID(userID, feedID)
+			if storeErr != nil {
+				return
+			}
+			bot, botErr := tgbotapi.NewBotAPIWithClient(integration.TelegramToken, &http.Client{Timeout: 15 * time.Second})
+			if botErr != nil {
+				return
+			}
+			if bot != nil {
+				text := fmt.Sprintf("*%v*\n", feed.Title) + strings.Join(telegramItemMsg, "\n")
+				chatID, parseErr := strconv.ParseInt(integration.TelegramChatID, 10, 64)
+				if parseErr != nil {
+					return
+				}
+				message := tgbotapi.NewMessage(chatID, text)
+				message.DisableWebPagePreview = true
+				message.ParseMode = "markdown"
+				_, err := bot.Send(message)
+				if err != nil {
+					logger.Error(`telegram: send msg error %v`, feedID, err)
+				}
+			}
+		}
+	}
 }
 
 // NewFeedHandler returns a feed handler.
