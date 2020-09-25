@@ -6,10 +6,10 @@ package feed // import "miniflux.app/reader/feed"
 
 import (
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
+	"miniflux.app/integration/telegram"
 	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/model"
@@ -19,9 +19,7 @@ import (
 	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
 	"miniflux.app/timer"
-	"net/http"
-	"strconv"
-	"strings"
+	"regexp"
 	"time"
 )
 
@@ -175,6 +173,8 @@ func updateEntries(store *storage.Storage, userID, feedID int64, entries model.E
 		} else {
 			err = store.CreateEntry(entry)
 			if err != nil {
+				mkd := regexp.MustCompile("(\\[|\\*|\\`|\\_)")
+				entry.Title = mkd.ReplaceAllString(entry.Title, "\\$1")
 				tempText := fmt.Sprintf("[%v](%v)", entry.Title, entry.URL)
 				telegramItemMsg = append(telegramItemMsg, tempText)
 			}
@@ -187,46 +187,15 @@ func updateEntries(store *storage.Storage, userID, feedID int64, entries model.E
 		entryHashes = append(entryHashes, entry.Hash)
 	}
 
-	sendTelegramMsg(store, userID, feedID, telegramItemMsg)
-
 	if err := store.CleanupEntries(feedID, entryHashes); err != nil {
 		logger.Error(`updateEntries: feed #%d: %v`, feedID, err)
 	}
 
-	return nil
-}
+	go func() {
+		telegram.SendTelegramMsg(store, userID, feedID, telegramItemMsg)
+	}()
 
-func sendTelegramMsg(store *storage.Storage, userID int64, feedID int64, telegramItemMsg []string) {
-	if len(telegramItemMsg) > 0 {
-		integration, err := store.Integration(userID)
-		if err != nil {
-			return
-		}
-		if integration != nil && integration.TelegramEnabled && len(integration.TelegramToken) > 0 {
-			feed, storeErr := store.FeedByID(userID, feedID)
-			if storeErr != nil {
-				return
-			}
-			bot, botErr := tgbotapi.NewBotAPIWithClient(integration.TelegramToken, &http.Client{Timeout: 15 * time.Second})
-			if botErr != nil {
-				return
-			}
-			if bot != nil {
-				text := fmt.Sprintf("*%v*\n", feed.Title) + strings.Join(telegramItemMsg, "\n")
-				chatID, parseErr := strconv.ParseInt(integration.TelegramChatID, 10, 64)
-				if parseErr != nil {
-					return
-				}
-				message := tgbotapi.NewMessage(chatID, text)
-				message.DisableWebPagePreview = true
-				message.ParseMode = "markdown"
-				_, err := bot.Send(message)
-				if err != nil {
-					logger.Error(`telegram: send msg error %v`, feedID, err)
-				}
-			}
-		}
-	}
+	return nil
 }
 
 // NewFeedHandler returns a feed handler.
