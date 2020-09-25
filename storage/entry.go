@@ -186,16 +186,16 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 }
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
-func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
+func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (entry []*model.Entry, err error) {
 	var entryHashes []string
+	var returnNewEntry []*model.Entry
 
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
-
 		tx, err := s.db.Begin()
 		if err != nil {
-			return fmt.Errorf(`store: unable to start transaction: %v`, err)
+			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
 		if s.entryExists(tx, entry) {
@@ -204,15 +204,14 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			}
 		} else {
 			err = s.createEntry(tx, entry)
+			returnNewEntry = append(returnNewEntry, entry)
 		}
-
 		if err != nil {
 			tx.Rollback()
-			return err
+			return nil, err
 		}
-
 		if err := tx.Commit(); err != nil {
-			return fmt.Errorf(`store: unable to commit transaction: %v`, err)
+			return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 		}
 
 		entryHashes = append(entryHashes, entry.Hash)
@@ -224,7 +223,7 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 		}
 	}()
 
-	return nil
+	return returnNewEntry, nil
 }
 
 // ArchiveEntries changes the status of entries to "removed" after the given number of days.

@@ -6,11 +6,10 @@ package feed // import "miniflux.app/reader/feed"
 
 import (
 	"fmt"
-	"time"
-
 	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
+	"miniflux.app/integration/telegram"
 	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/model"
@@ -20,6 +19,8 @@ import (
 	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
 	"miniflux.app/timer"
+	"regexp"
+	"time"
 )
 
 var (
@@ -148,11 +149,23 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 		processor.ProcessFeedEntries(h.store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
-		if storeErr := h.store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
+		entries, storeErr := h.store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler)
+		if storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
 			h.store.UpdateFeedError(originalFeed)
 			return storeErr
 		}
+
+		go func() {
+			var telegramItemMsg []string
+			for _, entry := range entries {
+				mkd := regexp.MustCompile("(\\[|\\*|\\`|\\_)")
+				entry.Title = mkd.ReplaceAllString(entry.Title, "\\$1")
+				tempText := fmt.Sprintf("[%v](%v)", entry.Title, entry.URL)
+				telegramItemMsg = append(telegramItemMsg, tempText)
+			}
+			telegram.SendTelegramMsg(h.store, userID, feedID, telegramItemMsg)
+		}()
 
 		// We update caching headers only if the feed has been modified,
 		// because some websites don't return the same headers when replying with a 304.
