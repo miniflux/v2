@@ -172,7 +172,7 @@ func updateEntries(store *storage.Storage, userID, feedID int64, entries model.E
 			}
 		} else {
 			err = store.CreateEntry(entry)
-			if err != nil {
+			if err == nil {
 				mkd := regexp.MustCompile("(\\[|\\*|\\`|\\_)")
 				entry.Title = mkd.ReplaceAllString(entry.Title, "\\$1")
 				tempText := fmt.Sprintf("[%v](%v)", entry.Title, entry.URL)
