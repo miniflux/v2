@@ -1,5 +1,5 @@
 :root {
-	--entry-content-font-weight: 400;
+    --entry-content-font-weight: 400;
     --entry-content-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --entry-content-quote-font-family: var(--entry-content-font-family);
 }
