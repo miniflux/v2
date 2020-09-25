@@ -130,24 +130,24 @@
 
         <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
+    </div>
 
-        <h3>Telegram</h3>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="telegram_enabled" value="1"
-                       {{ if .form.TelegramEnabled }}checked{{ end }}> {{ t "form.integration.telegram_activate" }}
-            </label>
+    <h3>Telegram</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="telegram_enabled" value="1"
+                   {{ if .form.TelegramEnabled }}checked{{ end }}> {{ t "form.integration.telegram_activate" }}
+        </label>
 
-            <label for="form-telegram-token">{{ t "form.integration.telegram_token" }}</label>
-            <input type="text" name="telegram_token" id="form-telegram-token" value="{{ .form.TelegramToken }}">
+        <label for="form-telegram-token">{{ t "form.integration.telegram_token" }}</label>
+        <input type="text" name="telegram_token" id="form-telegram-token" value="{{ .form.TelegramToken }}">
 
-            <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
-            <input type="text" name="telegram_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramChatID }}">
-        </div>
+        <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
+        <input type="text" name="telegram_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramChatID }}">
+    </div>
 
-        <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-        </div>
+    <div class="buttons">
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
 
 </form>
