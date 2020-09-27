@@ -9,6 +9,7 @@ import (
 
 	"miniflux.app/config"
 	"miniflux.app/logger"
+	"miniflux.app/metric"
 	"miniflux.app/model"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
@@ -35,8 +36,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) {
 }
 
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {
-	c := time.Tick(time.Duration(frequency) * time.Minute)
-	for range c {
+	for range time.Tick(time.Duration(frequency) * time.Minute) {
 		jobs, err := store.NewBatch(batchSize)
 		if err != nil {
 			logger.Error("[Scheduler:Feed] %v", err)
@@ -48,22 +48,31 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 }
 
 func cleanupScheduler(store *storage.Storage, frequency, archiveReadDays, archiveUnreadDays, sessionsDays int) {
-	c := time.Tick(time.Duration(frequency) * time.Hour)
-	for range c {
+	for range time.Tick(time.Duration(frequency) * time.Hour) {
 		nbSessions := store.CleanOldSessions(sessionsDays)
 		nbUserSessions := store.CleanOldUserSessions(sessionsDays)
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
+		startTime := time.Now()
 		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusRead, archiveReadDays); err != nil {
 			logger.Error("[Scheduler:ArchiveReadEntries] %v", err)
 		} else {
 			logger.Info("[Scheduler:ArchiveReadEntries] %d entries changed", rowsAffected)
+
+			if config.Opts.HasMetricsCollector() {
+				metric.ArchiveEntriesDuration.WithLabelValues(model.EntryStatusRead).Observe(time.Since(startTime).Seconds())
+			}
 		}
 
+		startTime = time.Now()
 		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusUnread, archiveUnreadDays); err != nil {
 			logger.Error("[Scheduler:ArchiveUnreadEntries] %v", err)
 		} else {
 			logger.Info("[Scheduler:ArchiveUnreadEntries] %d entries changed", rowsAffected)
+
+			if config.Opts.HasMetricsCollector() {
+				metric.ArchiveEntriesDuration.WithLabelValues(model.EntryStatusUnread).Observe(time.Since(startTime).Seconds())
+			}
 		}
 	}
 }

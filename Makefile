@@ -92,7 +92,7 @@ windows-x86: generate
 	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-x86 main.go
 
 run: generate
-	@ go run main.go -debug
+	@ LOG_DATE_TIME=1 go run main.go -debug
 
 clean:
 	@ rm -f $(APP)-* $(APP)

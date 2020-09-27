@@ -178,6 +178,12 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.maintenanceMode = parseBool(value, defaultMaintenanceMode)
 		case "MAINTENANCE_MESSAGE":
 			p.opts.maintenanceMessage = parseString(value, defaultMaintenanceMessage)
+		case "METRICS_COLLECTOR":
+			p.opts.metricsCollector = parseBool(value, defaultMetricsCollector)
+		case "METRICS_REFRESH_INTERVAL":
+			p.opts.metricsRefreshInterval = parseInt(value, defaultMetricsRefreshInterval)
+		case "METRICS_ALLOWED_NETWORKS":
+			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
 		}
 	}
 
@@ -242,6 +248,20 @@ func parseString(value string, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func parseStringList(value string, fallback []string) []string {
+	if value == "" {
+		return fallback
+	}
+
+	var strList []string
+	items := strings.Split(value, ",")
+	for _, item := range items {
+		strList = append(strList, strings.TrimSpace(item))
+	}
+
+	return strList
 }
 
 func readSecretFile(filename, fallback string) string {

@@ -56,6 +56,9 @@ const (
 	defaultAuthProxyUserCreation              = false
 	defaultMaintenanceMode                    = false
 	defaultMaintenanceMessage                 = "Miniflux is currently under maintenance"
+	defaultMetricsCollector                   = false
+	defaultMetricsRefreshInterval             = 60
+	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
 )
 
 // Options contains configuration options.
@@ -106,6 +109,9 @@ type Options struct {
 	authProxyUserCreation              bool
 	maintenanceMode                    bool
 	maintenanceMessage                 string
+	metricsCollector                   bool
+	metricsRefreshInterval             int
+	metricsAllowedNetworks             []string
 }
 
 // NewOptions returns Options with default values.
@@ -155,6 +161,9 @@ func NewOptions() *Options {
 		authProxyUserCreation:              defaultAuthProxyUserCreation,
 		maintenanceMode:                    defaultMaintenanceMode,
 		maintenanceMessage:                 defaultMaintenanceMessage,
+		metricsCollector:                   defaultMetricsCollector,
+		metricsRefreshInterval:             defaultMetricsRefreshInterval,
+		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
 	}
 }
 
@@ -398,6 +407,21 @@ func (o *Options) IsAuthProxyUserCreationAllowed() bool {
 	return o.authProxyUserCreation
 }
 
+// HasMetricsCollector returns true if metrics collection is enabled.
+func (o *Options) HasMetricsCollector() bool {
+	return o.metricsCollector
+}
+
+// MetricsRefreshInterval returns the refresh interval in seconds.
+func (o *Options) MetricsRefreshInterval() int {
+	return o.metricsRefreshInterval
+}
+
+// MetricsAllowedNetworks returns the list of networks allowed to connect to the metrics endpoint.
+func (o *Options) MetricsAllowedNetworks() []string {
+	return o.metricsAllowedNetworks
+}
+
 func (o *Options) String() string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("LOG_DATE_TIME: %v\n", o.logDateTime))
@@ -446,5 +470,8 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
 	builder.WriteString(fmt.Sprintf("MAINTENANCE_MODE: %v\n", o.maintenanceMode))
 	builder.WriteString(fmt.Sprintf("MAINTENANCE_MESSAGE: %v\n", o.maintenanceMessage))
+	builder.WriteString(fmt.Sprintf("METRICS_COLLECTOR: %v\n", o.metricsCollector))
+	builder.WriteString(fmt.Sprintf("METRICS_REFRESH_INTERVAL: %v\n", o.metricsRefreshInterval))
+	builder.WriteString(fmt.Sprintf("METRICS_ALLOWED_NETWORKS: %v\n", o.metricsAllowedNetworks))
 	return builder.String()
 }

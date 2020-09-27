@@ -81,7 +81,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 	return subscription, nil
 }
 
-// RefreshFeed fetch and update a feed if necessary.
+// RefreshFeed refreshes a feed.
 func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
 	userLanguage := h.store.UserLanguage(userID)
