@@ -264,6 +264,7 @@
     "form.prefs.select.older_first": "Itens mais velhos primeiro",
     "form.prefs.select.recent_first": "Itens mais recentes",
     "form.prefs.label.keyboard_shortcuts": "Habilitar atalhos do teclado",
+    "form.prefs.label.entry_swipe": "Ativar gesto de deslizar nas entradas no celular",
     "form.prefs.label.show_reading_time": "Mostrar tempo estimado de leitura de artigos",
     "form.prefs.label.custom_css": "CSS customizado",
     "form.import.label.file": "Arquivo OPML",
