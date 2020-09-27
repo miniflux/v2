@@ -1,5 +1,5 @@
 :root {
-    --font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --body-color: #333;
     --body-background: #fff;
     --hr-border-color: #ccc;
@@ -93,7 +93,6 @@
     --entry-content-code-background: #f0f0f0;
     --entry-content-code-border-color: #ddd;
     --entry-content-quote-color: #666;
-    --entry-content-quote-font-family: Georgia, 'Times New Roman', Times, serif;
     --entry-enclosure-border-color: #333;
 
     --parsing-error-color: #333;
@@ -106,7 +105,6 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
         --body-color: #efefef;
         --body-background: #222;
         --hr-border-color: #555;
@@ -200,7 +198,6 @@
         --entry-content-code-background: #555;
         --entry-content-code-border-color: #888;
         --entry-content-quote-color: #777;
-        --entry-content-quote-font-family: Georgia, 'Times New Roman', Times, serif;
         --entry-enclosure-border-color: #333;
 
         --parsing-error-color: #eee;
