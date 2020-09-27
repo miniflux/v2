@@ -237,7 +237,22 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 
 func (c *Client) buildClient() http.Client {
 	client := http.Client{Timeout: time.Duration(config.Opts.HTTPClientTimeout()) * time.Second}
-	transport := &http.Transport{}
+	transport := &http.Transport{
+		DialContext: (&net.Dialer{
+			// Default is 30s.
+			Timeout: 10 * time.Second,
+
+			// Default is 30s.
+			KeepAlive: 15 * time.Second,
+		}).DialContext,
+
+		// Default is 100.
+		MaxIdleConns: 50,
+
+		// Default is 90s.
+		IdleConnTimeout: 10 * time.Second,
+	}
+
 	if c.Insecure {
 		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
