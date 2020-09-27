@@ -3,7 +3,7 @@
 {{ define "content"}}
 <section class="page-header">
     <h1 dir="auto">
-        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ .feed.Title }}</a> 
+        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ .feed.Title }}</a>
         ({{ .total }})
     </h1>
     <ul>
@@ -63,7 +63,7 @@
 {{ else }}
     <div class="items">
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}

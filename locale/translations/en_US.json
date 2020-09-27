@@ -264,6 +264,7 @@
     "form.prefs.select.older_first": "Older entries first",
     "form.prefs.select.recent_first": "Recent entries first",
     "form.prefs.label.keyboard_shortcuts": "Enable keyboard shortcuts",
+    "form.prefs.label.entry_swipe": "Enable swipe gesture on entries on mobile",
     "form.prefs.label.show_reading_time": "Show estimated reading time for articles",
     "form.prefs.label.custom_css": "Custom CSS",
     "form.import.label.file": "OPML file",

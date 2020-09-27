@@ -265,6 +265,7 @@
     "form.prefs.label.entries_per_page": "Wpisy na stronie",
     "form.prefs.select.older_first": "Najstarsze wpisy jako pierwsze",
     "form.prefs.label.keyboard_shortcuts": "Włącz skróty klawiaturowe",
+    "form.prefs.label.entry_swipe": "Włącz gest przesuwania na wpisach na telefonie komórkowym",
     "form.prefs.label.show_reading_time": "Pokaż szacowany czas czytania artykułów",
     "form.prefs.select.recent_first": "Najnowsze wpisy jako pierwsze",
     "form.prefs.label.custom_css": "Niestandardowy CSS",

@@ -36,6 +36,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		KeyboardShortcuts: user.KeyboardShortcuts,
 		ShowReadingTime:   user.ShowReadingTime,
 		CustomCSS:         user.Extra["custom_css"],
+		EntrySwipe:        user.EntrySwipe,
 	}
 
 	timezones, err := h.store.Timezones()
