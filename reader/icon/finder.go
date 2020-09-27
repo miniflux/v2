@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"miniflux.app/config"
 	"miniflux.app/crypto"
 	"miniflux.app/http/client"
 	"miniflux.app/logger"
@@ -23,7 +24,7 @@ import (
 // FindIcon try to find the website's icon.
 func FindIcon(websiteURL string, fetchViaProxy bool) (*model.Icon, error) {
 	rootURL := url.RootURL(websiteURL)
-	clt := client.New(rootURL)
+	clt := client.NewClientWithConfig(rootURL, config.Opts)
 	if fetchViaProxy {
 		clt.WithProxy()
 	}
@@ -90,7 +91,7 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 }
 
 func downloadIcon(iconURL string, fetchViaProxy bool) (*model.Icon, error) {
-	clt := client.New(iconURL)
+	clt := client.NewClientWithConfig(iconURL, config.Opts)
 	if fetchViaProxy {
 		clt.WithProxy()
 	}
