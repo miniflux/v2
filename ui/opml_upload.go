@@ -7,6 +7,7 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -87,7 +88,7 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
 
-	clt := client.New(url)
+	clt := client.NewClientWithConfig(url, config.Opts)
 	resp, err := clt.Get()
 	if err != nil {
 		view.Set("errorMessage", err)

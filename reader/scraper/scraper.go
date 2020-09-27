@@ -10,6 +10,7 @@ import (
 	"io"
 	"strings"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 	"miniflux.app/logger"
 	"miniflux.app/reader/readability"
@@ -20,7 +21,7 @@ import (
 
 // Fetch downloads a web page and returns relevant contents.
 func Fetch(websiteURL, rules, userAgent string) (string, error) {
-	clt := client.New(websiteURL)
+	clt := client.NewClientWithConfig(websiteURL, config.Opts)
 	if userAgent != "" {
 		clt.WithUserAgent(userAgent)
 	}
