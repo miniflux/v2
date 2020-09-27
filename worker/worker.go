@@ -5,7 +5,11 @@
 package worker // import "miniflux.app/worker"
 
 import (
+	"time"
+
+	"miniflux.app/config"
 	"miniflux.app/logger"
+	"miniflux.app/metric"
 	"miniflux.app/model"
 	"miniflux.app/reader/feed"
 )
@@ -22,11 +26,21 @@ func (w *Worker) Run(c chan model.Job) {
 
 	for {
 		job := <-c
-		logger.Debug("[Worker #%d] got userID=%d, feedID=%d", w.id, job.UserID, job.FeedID)
+		logger.Debug("[Worker #%d] Received feed #%d for user #%d", w.id, job.FeedID, job.UserID)
 
-		err := w.feedHandler.RefreshFeed(job.UserID, job.FeedID)
-		if err != nil {
-			logger.Error("[Worker] Feed #%d: %v", job.FeedID, err)
+		startTime := time.Now()
+		refreshErr := w.feedHandler.RefreshFeed(job.UserID, job.FeedID)
+
+		if config.Opts.HasMetricsCollector() {
+			status := "success"
+			if refreshErr != nil {
+				status = "error"
+			}
+			metric.BackgroundFeedRefreshDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
+		}
+
+		if refreshErr != nil {
+			logger.Error("[Worker] Refreshing the feed #%d returned this error: %v", job.FeedID, refreshErr)
 		}
 	}
 }

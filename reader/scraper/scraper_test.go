@@ -39,7 +39,7 @@ func TestWhitelistedContentTypes(t *testing.T) {
 	}
 
 	for inputValue, expectedResult := range scenarios {
-		actualResult := isWhitelistedContentType(inputValue)
+		actualResult := isAllowedContentType(inputValue)
 		if actualResult != expectedResult {
 			t.Errorf(`Unexpected result for content type whitelist, got "%v" instead of "%v"`, actualResult, expectedResult)
 		}
@@ -47,10 +47,10 @@ func TestWhitelistedContentTypes(t *testing.T) {
 }
 
 func TestSelectorRules(t *testing.T) {
-	var ruleTestCases = map[string]string {
-		"img.html":	"article > img",
-		"iframe.html":	"article > iframe",
-		"p.html":	"article > p",
+	var ruleTestCases = map[string]string{
+		"img.html":    "article > img",
+		"iframe.html": "article > iframe",
+		"p.html":      "article > p",
 	}
 
 	for filename, rule := range ruleTestCases {

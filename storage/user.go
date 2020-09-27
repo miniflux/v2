@@ -16,6 +16,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// CountUsers returns the total number of users.
+func (s *Storage) CountUsers() int {
+	var result int
+	err := s.db.QueryRow(`SELECT count(*) FROM users`).Scan(&result)
+	if err != nil {
+		return 0
+	}
+
+	return result
+}
+
 // SetLastLogin updates the last login date of a user.
 func (s *Storage) SetLastLogin(userID int64) error {
 	query := `UPDATE users SET last_login_at=now() WHERE id=$1`

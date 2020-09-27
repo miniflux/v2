@@ -192,6 +192,17 @@ Use Let's Encrypt to get automatically a certificate for this domain\&.
 .B CERT_CACHE
 Let's Encrypt cache directory (default is /tmp/cert_cache)\&.
 .TP
+.B METRICS_COLLECTOR
+Toggle metrics collector. Disabled by default\&.
+.TP
+.B METRICS_REFRESH_INTERVAL
+Refresh interval to collect database metrics\&. Default is 60 seconds\&.
+.TP
+.B METRICS_ALLOWED_NETWORKS
+List of networks allowed to access the metrics endpoint (comma-separated values)\&.
+.br
+Default is 127.0.0.1/8\&.
+.TP
 .B OAUTH2_PROVIDER
 OAuth2 provider to use\&. Only google is supported\&.
 .TP

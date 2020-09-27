@@ -7,9 +7,9 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
-	"miniflux.app/http/request"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/ui/form"
@@ -32,7 +32,7 @@ func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "categories")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
 	if err := categoryForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
