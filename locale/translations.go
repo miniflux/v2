@@ -3576,7 +3576,7 @@ var translations = map[string]string{
     "page.sessions.table.current_session": "当前会话",
     "page.api_keys.title": "API密钥",
     "page.api_keys.table.description": "描述",
-    "page.api_keys.table.token": "代币",
+    "page.api_keys.table.token": "密钥",
     "page.api_keys.table.last_used_at": "最后使用",
     "page.api_keys.table.created_at": "创立日期",
     "page.api_keys.table.actions": "操作",
@@ -3738,5 +3738,5 @@ var translationsChecksums = map[string]string{
 	"pl_PL": "338c9e32f70f32373248b247c0e510c2e50e0fbf926fcf37ffe6580d27142a1b",
 	"pt_BR": "35a461beec2ba7fea7aa98143651f5def9636cda0eabdac121109373a17cc429",
 	"ru_RU": "5b0bbb0803df799da1a933d7137d00a802bf5dfadea93efaf16eaf1d1793a789",
-	"zh_CN": "661078119856fa903824ec4073b7875e8e481c446a23904b3e27b3ecfedb4dbf",
+	"zh_CN": "73ed57b4029c7f9e2e0fd014b8c9b002ef250a94febbda42280b25ee459b90e8",
 }

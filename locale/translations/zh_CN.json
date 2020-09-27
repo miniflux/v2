@@ -189,7 +189,7 @@
     "page.sessions.table.current_session": "当前会话",
     "page.api_keys.title": "API密钥",
     "page.api_keys.table.description": "描述",
-    "page.api_keys.table.token": "代币",
+    "page.api_keys.table.token": "密钥",
     "page.api_keys.table.last_used_at": "最后使用",
     "page.api_keys.table.created_at": "创立日期",
     "page.api_keys.table.actions": "操作",
