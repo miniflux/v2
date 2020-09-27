@@ -26,7 +26,7 @@ func (w *Worker) Run(c chan model.Job) {
 
 		err := w.feedHandler.RefreshFeed(job.UserID, job.FeedID)
 		if err != nil {
-			logger.Error("[Worker] %v", err)
+			logger.Error("[Worker] Feed #%d: %v", job.FeedID, err)
 		}
 	}
 }
