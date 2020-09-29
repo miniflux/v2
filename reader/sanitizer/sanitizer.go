@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"miniflux.app/url"
@@ -60,14 +61,14 @@ func Sanitize(baseURL, input string) string {
 
 					tagStack = append(tagStack, tagName)
 				}
-			} else if isBlacklistedTag(tagName) {
+			} else if isBlockedTag(tagName) {
 				blacklistedTagDepth++
 			}
 		case html.EndTagToken:
 			tagName := token.DataAtom.String()
 			if isValidTag(tagName) && inList(tagName, tagStack) {
 				buffer.WriteString(fmt.Sprintf("</%s>", tagName))
-			} else if isBlacklistedTag(tagName) {
+			} else if isBlockedTag(tagName) {
 				blacklistedTagDepth--
 			}
 		case html.SelfClosingTagToken:
@@ -98,6 +99,10 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 			continue
 		}
 
+		if (tagName == "img" || tagName == "source") && attribute.Key == "srcset" {
+			value = sanitizeSrcsetAttr(baseURL, value)
+		}
+
 		if isExternalResourceAttribute(attribute.Key) {
 			if tagName == "iframe" {
 				if isValidIframeSource(baseURL, attribute.Val) {
@@ -111,7 +116,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 					continue
 				}
 
-				if !hasValidURIScheme(value) || isBlacklistedResource(value) {
+				if !hasValidURIScheme(value) || isBlockedResource(value) {
 					continue
 				}
 			}
@@ -146,7 +151,7 @@ func getExtraAttributes(tagName string) ([]string, []string) {
 }
 
 func isValidTag(tagName string) bool {
-	for element := range getTagWhitelist() {
+	for element := range getTagAllowList() {
 		if tagName == element {
 			return true
 		}
@@ -156,7 +161,7 @@ func isValidTag(tagName string) bool {
 }
 
 func isValidAttribute(tagName, attributeName string) bool {
-	for element, attributes := range getTagWhitelist() {
+	for element, attributes := range getTagAllowList() {
 		if tagName == element {
 			if inList(attributeName, attributes) {
 				return true
@@ -202,7 +207,7 @@ func hasRequiredAttributes(tagName string, attributes []string) bool {
 	elements["a"] = []string{"href"}
 	elements["iframe"] = []string{"src"}
 	elements["img"] = []string{"src"}
-	elements["source"] = []string{"src"}
+	elements["source"] = []string{"src", "srcset"}
 
 	for element, attrs := range elements {
 		if tagName == element {
@@ -271,7 +276,7 @@ func hasValidURIScheme(src string) bool {
 	return false
 }
 
-func isBlacklistedResource(src string) bool {
+func isBlockedResource(src string) bool {
 	blacklist := []string{
 		"feedsportal.com",
 		"api.flattr.com",
@@ -326,12 +331,13 @@ func isValidIframeSource(baseURL, src string) bool {
 	return false
 }
 
-func getTagWhitelist() map[string][]string {
+func getTagAllowList() map[string][]string {
 	whitelist := make(map[string][]string)
-	whitelist["img"] = []string{"alt", "title", "src"}
+	whitelist["img"] = []string{"alt", "title", "src", "srcset", "sizes"}
+	whitelist["picture"] = []string{}
 	whitelist["audio"] = []string{"src"}
 	whitelist["video"] = []string{"poster", "height", "width", "src"}
-	whitelist["source"] = []string{"src", "type"}
+	whitelist["source"] = []string{"src", "type", "srcset", "sizes", "media"}
 	whitelist["dt"] = []string{}
 	whitelist["dd"] = []string{}
 	whitelist["dl"] = []string{}
@@ -404,8 +410,7 @@ func rewriteIframeURL(link string) string {
 	return link
 }
 
-// Blacklisted tags remove the tag and all descendants.
-func isBlacklistedTag(tagName string) bool {
+func isBlockedTag(tagName string) bool {
 	blacklist := []string{
 		"noscript",
 		"script",
@@ -419,4 +424,52 @@ func isBlacklistedTag(tagName string) bool {
 	}
 
 	return false
+}
+
+/*
+
+One or more strings separated by commas, indicating possible image sources for the user agent to use.
+
+Each string is composed of:
+- A URL to an image
+- Optionally, whitespace followed by one of:
+- A width descriptor (a positive integer directly followed by w). The width descriptor is divided by the source size given in the sizes attribute to calculate the effective pixel density.
+- A pixel density descriptor (a positive floating point number directly followed by x).
+
+*/
+func sanitizeSrcsetAttr(baseURL, value string) string {
+	var sanitizedSources []string
+	rawSources := strings.Split(value, ",")
+	for _, rawSource := range rawSources {
+		parts := strings.Split(strings.TrimSpace(rawSource), " ")
+		nbParts := len(parts)
+
+		if nbParts > 0 {
+			sanitizedSource, err := url.AbsoluteURL(baseURL, parts[0])
+			if err != nil {
+				continue
+			}
+
+			if nbParts == 2 && isValidWidthOrDensityDescriptor(parts[1]) {
+				sanitizedSource += " " + parts[1]
+			}
+
+			sanitizedSources = append(sanitizedSources, sanitizedSource)
+		}
+	}
+	return strings.Join(sanitizedSources, ", ")
+}
+
+func isValidWidthOrDensityDescriptor(value string) bool {
+	if value == "" {
+		return false
+	}
+
+	lastChar := value[len(value)-1:]
+	if lastChar != "w" && lastChar != "x" {
+		return false
+	}
+
+	_, err := strconv.ParseFloat(value[0:len(value)-1], 32)
+	return err == nil
 }
