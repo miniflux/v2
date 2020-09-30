@@ -76,7 +76,7 @@ func ExtractContent(page io.Reader) (string, error) {
 		return "", err
 	}
 
-	document.Find("script,style,noscript").Each(func(i int, s *goquery.Selection) {
+	document.Find("script,style").Each(func(i int, s *goquery.Selection) {
 		removeNodes(s)
 	})
 

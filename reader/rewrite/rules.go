@@ -30,4 +30,5 @@ var predefinedRules = map[string]string{
 	"invidio.us":             "add_invidious_video",
 	"xkcd.com":               "add_image_title",
 	"framatube.org":          "nl2br,convert_text_link",
+	"medium.com":             "fix_medium_images",
 }
