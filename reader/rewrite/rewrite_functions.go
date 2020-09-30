@@ -139,6 +139,21 @@ func addDynamicImage(entryURL, entryContent string) string {
 	return entryContent
 }
 
+func fixMediumImages(entryURL, entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	doc.Find("figure.paragraph-image").Each(func(i int, paragraphImage *goquery.Selection) {
+		noscriptElement := paragraphImage.Find("noscript")
+		paragraphImage.ReplaceWithHtml(noscriptElement.Text())
+	})
+
+	output, _ := doc.Find("body").First().Html()
+	return output
+}
+
 func addYoutubeVideo(entryURL, entryContent string) string {
 	matches := youtubeRegex.FindStringSubmatch(entryURL)
 
