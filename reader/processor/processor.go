@@ -5,7 +5,11 @@
 package processor
 
 import (
+	"time"
+
+	"miniflux.app/config"
 	"miniflux.app/logger"
+	"miniflux.app/metric"
 	"miniflux.app/model"
 	"miniflux.app/reader/rewrite"
 	"miniflux.app/reader/sanitizer"
@@ -20,9 +24,19 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 
 		if feed.Crawler {
 			if !store.EntryURLExists(feed.ID, entry.URL) {
-				content, err := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
-				if err != nil {
-					logger.Error(`[Filter] Unable to crawl this entry: %q => %v`, entry.URL, err)
+				startTime := time.Now()
+				content, scraperErr := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
+
+				if config.Opts.HasMetricsCollector() {
+					status := "success"
+					if scraperErr != nil {
+						status = "error"
+					}
+					metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
+				}
+
+				if scraperErr != nil {
+					logger.Error(`[Filter] Unable to crawl this entry: %q => %v`, entry.URL, scraperErr)
 				} else if content != "" {
 					// We replace the entry content only if the scraper doesn't return any error.
 					entry.Content = content
@@ -39,9 +53,18 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
 func ProcessEntryWebPage(entry *model.Entry) error {
-	content, err := scraper.Fetch(entry.URL, entry.Feed.ScraperRules, entry.Feed.UserAgent)
-	if err != nil {
-		return err
+	startTime := time.Now()
+	content, scraperErr := scraper.Fetch(entry.URL, entry.Feed.ScraperRules, entry.Feed.UserAgent)
+	if config.Opts.HasMetricsCollector() {
+		status := "success"
+		if scraperErr != nil {
+			status = "error"
+		}
+		metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
+	}
+
+	if scraperErr != nil {
+		return scraperErr
 	}
 
 	content = rewrite.Rewriter(entry.URL, content, entry.Feed.RewriteRules)

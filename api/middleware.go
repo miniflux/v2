@@ -89,6 +89,12 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 			return
 		}
 
+		if username == "" || password == "" {
+			logger.Error("[API][BasicAuth] [ClientIP=%s] Empty username or password", clientIP)
+			json.Unauthorized(w, r)
+			return
+		}
+
 		if err := m.store.CheckPassword(username, password); err != nil {
 			logger.Error("[API][BasicAuth] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
 			json.Unauthorized(w, r)

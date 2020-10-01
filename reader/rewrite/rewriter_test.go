@@ -4,7 +4,10 @@
 
 package rewrite // import "miniflux.app/reader/rewrite"
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestReplaceTextLinks(t *testing.T) {
 	scenarios := map[string]string{
@@ -174,5 +177,34 @@ func TestConvertTextLinkRewriteRule(t *testing.T) {
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	}
+}
+
+func TestMediumImage(t *testing.T) {
+	content := `
+		<figure class="ht hu hv hw hx hy cy cz paragraph-image">
+			<div class="hz ia ib ic aj">
+				<div class="cy cz hs">
+					<div class="ii s ib ij">
+						<div class="ik il s">
+							<div class="id ie t u v if aj bk ig ih">
+								<img alt="Image for post" class="t u v if aj im in io" src="https://miro.medium.com/max/60/1*ephLSqSzQYLvb7faDwzRbw.jpeg?q=20" width="1280" height="720"/>
+							</div>
+							<img alt="Image for post" class="id ie t u v if aj c" width="1280" height="720"/>
+							<noscript>
+								<img alt="Image for post" class="t u v if aj" src="https://miro.medium.com/max/2560/1*ephLSqSzQYLvb7faDwzRbw.jpeg" width="1280" height="720" srcSet="https://miro.medium.com/max/552/1*ephLSqSzQYLvb7faDwzRbw.jpeg 276w, https://miro.medium.com/max/1104/1*ephLSqSzQYLvb7faDwzRbw.jpeg 552w, https://miro.medium.com/max/1280/1*ephLSqSzQYLvb7faDwzRbw.jpeg 640w, https://miro.medium.com/max/1400/1*ephLSqSzQYLvb7faDwzRbw.jpeg 700w" sizes="700px"/>
+							</noscript>
+						</div>
+					</div>
+				</div>
+			</div>
+		</figure>
+	`
+	expected := `<img alt="Image for post" class="t u v if aj" src="https://miro.medium.com/max/2560/1*ephLSqSzQYLvb7faDwzRbw.jpeg" width="1280" height="720" srcset="https://miro.medium.com/max/552/1*ephLSqSzQYLvb7faDwzRbw.jpeg 276w, https://miro.medium.com/max/1104/1*ephLSqSzQYLvb7faDwzRbw.jpeg 552w, https://miro.medium.com/max/1280/1*ephLSqSzQYLvb7faDwzRbw.jpeg 640w, https://miro.medium.com/max/1400/1*ephLSqSzQYLvb7faDwzRbw.jpeg 700w" sizes="700px"/>`
+	output := Rewriter("https://example.org/article", content, "fix_medium_images")
+	output = strings.TrimSpace(output)
+
+	if expected != output {
+		t.Errorf(`Not expected output: %s`, output)
 	}
 }

@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "June 8, 2019" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "September 28, 2020" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -112,8 +112,12 @@ Number of feeds to send to the queue for each interval (default is 10)\&.
 .TP
 .B POLLING_SCHEDULER
 Scheduler used for polling feeds. Possible values are "round_robin" (default) or "entry_frequency"\&.
+.IP
 The maximum number of feeds polled for a given period is subject to POLLING_FREQUENCY and BATCH_SIZE\&.
-When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&. The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
+.IP
+When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&.
+.IP
+The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL
 Maximum interval in minutes for the entry frequency scheduler (default is 24 hours)\&.
@@ -149,7 +153,7 @@ Base URL to generate HTML links and base path for cookies\&.
 Default is http://localhost/\&.
 .TP
 .B CLEANUP_FREQUENCY_HOURS
-Cleanup job frequency, remove old sessions and archive read entries\&.
+Cleanup job frequency. Remove old sessions and archive entries\&.
 .br
 Default is 24 hours\&.
 .TP
@@ -191,6 +195,19 @@ Use Let's Encrypt to get automatically a certificate for this domain\&.
 .TP
 .B CERT_CACHE
 Let's Encrypt cache directory (default is /tmp/cert_cache)\&.
+.TP
+.B METRICS_COLLECTOR
+Set to 1 to enable metrics collector. Expose a /metrics endpoint for Prometheus.
+.br
+Disabled by default\&.
+.TP
+.B METRICS_REFRESH_INTERVAL
+Refresh interval to collect database metrics\&. Default is 60 seconds\&.
+.TP
+.B METRICS_ALLOWED_NETWORKS
+List of networks allowed to access the metrics endpoint (comma-separated values)\&.
+.br
+Default is 127.0.0.1/8\&.
 .TP
 .B OAUTH2_PROVIDER
 OAuth2 provider to use\&. Only google is supported\&.

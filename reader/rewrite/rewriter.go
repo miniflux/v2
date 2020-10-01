@@ -43,6 +43,8 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 			entryContent = replaceLineFeeds(entryContent)
 		case "convert_text_link", "convert_text_links":
 			entryContent = replaceTextLinks(entryContent)
+		case "fix_medium_images":
+			entryContent = fixMediumImages(entryURL, entryContent)
 		}
 	}
 

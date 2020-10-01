@@ -42,7 +42,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
 	}
 
-	request := client.New(url)
+	request := client.NewClientWithConfig(url, config.Opts)
 	request.WithCredentials(username, password)
 	request.WithUserAgent(userAgent)
 
@@ -82,7 +82,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 	return subscription, nil
 }
 
-// RefreshFeed fetch and update a feed if necessary.
+// RefreshFeed refreshes a feed.
 func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
 	userLanguage := h.store.UserLanguage(userID)
@@ -109,7 +109,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	originalFeed.CheckedNow()
 	originalFeed.ScheduleNextCheck(weeklyEntryCount)
 
-	request := client.New(originalFeed.FeedURL)
+	request := client.NewClientWithConfig(originalFeed.FeedURL, config.Opts)
 	request.WithCredentials(originalFeed.Username, originalFeed.Password)
 	request.WithUserAgent(originalFeed.UserAgent)
 

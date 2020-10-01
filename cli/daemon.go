@@ -9,12 +9,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime"
 	"syscall"
 	"time"
 
 	"miniflux.app/config"
 	"miniflux.app/logger"
+	"miniflux.app/metric"
 	"miniflux.app/reader/feed"
 	"miniflux.app/service/httpd"
 	"miniflux.app/service/scheduler"
@@ -32,8 +32,6 @@ func startDaemon(store *storage.Storage) {
 	feedHandler := feed.NewFeedHandler(store)
 	pool := worker.NewPool(feedHandler, config.Opts.WorkerPoolSize())
 
-	go showProcessStatistics()
-
 	if config.Opts.HasSchedulerService() && !config.Opts.HasMaintenanceMode() {
 		scheduler.Serve(store, pool)
 	}
@@ -41,6 +39,11 @@ func startDaemon(store *storage.Storage) {
 	var httpServer *http.Server
 	if config.Opts.HasHTTPService() {
 		httpServer = httpd.Serve(store, pool, feedHandler)
+	}
+
+	if config.Opts.HasMetricsCollector() {
+		collector := metric.NewCollector(store, config.Opts.MetricsRefreshInterval())
+		go collector.GatherStorageMetrics()
 	}
 
 	<-stop
@@ -53,15 +56,4 @@ func startDaemon(store *storage.Storage) {
 	}
 
 	logger.Info("Process gracefully stopped")
-}
-
-func showProcessStatistics() {
-	for {
-		var m runtime.MemStats
-		runtime.ReadMemStats(&m)
-		logger.Debug("Sys=%vK, InUse=%vK, HeapInUse=%vK, StackSys=%vK, StackInUse=%vK, GoRoutines=%d, NumCPU=%d",
-			m.Sys/1024, (m.Sys-m.HeapReleased)/1024, m.HeapInuse/1024, m.StackSys/1024, m.StackInuse/1024,
-			runtime.NumGoroutine(), runtime.NumCPU())
-		time.Sleep(30 * time.Second)
-	}
 }
