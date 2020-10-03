@@ -16,7 +16,6 @@ type Integration struct {
 	InstapaperPassword   string
 	FeverEnabled         bool
 	FeverUsername        string
-	FeverPassword        string
 	FeverToken           string
 	WallabagEnabled      bool
 	WallabagURL          string

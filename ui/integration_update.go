@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/ui/form"
@@ -42,7 +42,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if integration.FeverEnabled {
-		integration.FeverToken = fmt.Sprintf("%x", md5.Sum([]byte(integration.FeverUsername+":"+integration.FeverPassword)))
+		integration.FeverToken = fmt.Sprintf("%x", md5.Sum([]byte(integration.FeverUsername+":"+integrationForm.FeverPassword)))
 	} else {
 		integration.FeverToken = ""
 	}
