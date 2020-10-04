@@ -1,3 +1,49 @@
+Version 2.0.24 (Oct 3, 2020)
+----------------------------
+
+* Add rewrite rule to fix Medium.com images
+* Update sanitizer to support responsive images:
+    - Add support for picture HTML tag
+    - Add support for srcset, media, and sizes attributes to img and source tags
+* Enhance man page formatting
+* Add Prometheus exporter
+* Remove dependency on global config options in HTTP client
+* API:
+    - Avoid database lookup if empty credentials are provided
+    - Add the possibility to filter entries by category ID
+    - Add the possibility to filter entries by a list of statuses
+* Add Feed ID in worker error logs
+* Tweak default HTTP client transport timeout values to reduce the number of file descriptors
+* CSS tweaks and optimizations:
+    - Prevent sub and sup from affecting line-height
+    - Set touch-action on .items to prevent browser navigation
+    - Move font-family specific CSS to the appropriate file
+    - Update primary font-family for UI to be even more compatible with various operating systems
+    - Make .entry-content font-weight variable depending on font-family used
+* Avoid Javascript minifier to break keyboard shortcuts
+* Rename service worker script to avoid being blocked by uBlock
+* Update date parser to handle Pacific Daylight Time in addition to Pacific Standard Time
+* Create index to speed up bookmark page
+* Do not try to update a duplicated feed after a refresh
+* Use a transaction to refresh and create entries
+* Speed up entries clean up with an index and a goroutine
+* Avoid the accumulation of enclosures by keeping only what is referenced in the feed
+* Add workarounds for parsing an invalid date
+* Archive older entries first
+* Update API client to support more filters
+* Avoid duplication between get feed entries and get entries API endpoints
+* Enable strict slash to avoid a page not found (404) when using a trailing slash in the URLs
+* Add a submit button to each section of the integration page
+* Reload page after making page as read when showing unread entries
+* Add option to archive unread entries
+* Add option to enable maintenance mode
+* Add HTTP proxy option for subscriptions
+* Make add_invidious_video rule applicable for different invidious instances
+* Fix reading time for jp, ko and zh languages
+* Update POLLING_SCHEDULER description in man page
+* Bump gorilla/mux from 1.7.4 to 1.8.0
+* Add link to mark a feed as read
+
 Version 2.0.23 (Aug 15, 2020)
 -----------------------------
 
