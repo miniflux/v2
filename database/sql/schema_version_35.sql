@@ -1,4 +1,1 @@
-alter table feeds 
-    add column blocklist_rules text not null default '',
-    add column keeplist_rules text not null default ''
-;
+alter table feeds add column fetch_via_proxy bool default false;

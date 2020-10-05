@@ -48,7 +48,7 @@ func TestFeedCategorySetter(t *testing.T) {
 
 func TestFeedBrowsingParams(t *testing.T) {
 	feed := &Feed{}
-	feed.WithBrowsingParameters(true, "Custom User Agent", "Username", "Secret", "Some Rule", "Another Rule", "Look a Rule", "Oh wow another Rule")
+	feed.WithBrowsingParameters(true, "Custom User Agent", "Username", "Secret", "Some Rule", "Another Rule", "Look a Rule", "Oh wow another Rule", false)
 
 	if !feed.Crawler {
 		t.Error(`The crawler must be activated`)

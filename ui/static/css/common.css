@@ -735,6 +735,7 @@ a.button {
 
 .items {
     overflow-x: hidden;
+    touch-action: pan-y;
 }
 
 .hide-read-items .item-status-read:not(.current-item) {
@@ -836,7 +837,7 @@ article.feed-parsing-error {
 .entry-content {
     padding-top: 15px;
     font-size: 1.2em;
-    font-weight: 300;
+    font-weight: var(--entry-content-font-weight);
     font-family: var(--entry-content-font-family);
     color: var(--entry-content-color);
     line-height: 1.4em;
@@ -960,6 +961,22 @@ article.feed-parsing-error {
 
 .entry-content strong {
     font-weight: 600;
+}
+
+.entry-content sub,
+.entry-content sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+.entry-content sub {
+    bottom: -0.25em;
+}
+
+.entry-content sup {
+    top: -0.5em;
 }
 
 details.entry-enclosures {

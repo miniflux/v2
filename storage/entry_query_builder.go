@@ -78,14 +78,14 @@ func (e *EntryQueryBuilder) AfterEntryID(entryID int64) *EntryQueryBuilder {
 	return e
 }
 
-// WithEntryIDs adds a condition to fetch only the given entry IDs.
+// WithEntryIDs filter by entry IDs.
 func (e *EntryQueryBuilder) WithEntryIDs(entryIDs []int64) *EntryQueryBuilder {
 	e.conditions = append(e.conditions, fmt.Sprintf("e.id = ANY($%d)", len(e.args)+1))
-	e.args = append(e.args, pq.Array(entryIDs))
+	e.args = append(e.args, pq.Int64Array(entryIDs))
 	return e
 }
 
-// WithEntryID set the entryID.
+// WithEntryID filter by entry ID.
 func (e *EntryQueryBuilder) WithEntryID(entryID int64) *EntryQueryBuilder {
 	if entryID != 0 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.id = $%d", len(e.args)+1))
@@ -94,16 +94,16 @@ func (e *EntryQueryBuilder) WithEntryID(entryID int64) *EntryQueryBuilder {
 	return e
 }
 
-// WithFeedID set the feedID.
+// WithFeedID filter by feed ID.
 func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
-	if feedID != 0 {
+	if feedID > 0 {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.feed_id = $%d", len(e.args)+1))
 		e.args = append(e.args, feedID)
 	}
 	return e
 }
 
-// WithCategoryID set the categoryID.
+// WithCategoryID filter by category ID.
 func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder {
 	if categoryID > 0 {
 		e.conditions = append(e.conditions, fmt.Sprintf("f.category_id = $%d", len(e.args)+1))
@@ -112,11 +112,20 @@ func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder 
 	return e
 }
 
-// WithStatus set the entry status.
+// WithStatus filter by entry status.
 func (e *EntryQueryBuilder) WithStatus(status string) *EntryQueryBuilder {
 	if status != "" {
 		e.conditions = append(e.conditions, fmt.Sprintf("e.status = $%d", len(e.args)+1))
 		e.args = append(e.args, status)
+	}
+	return e
+}
+
+// WithStatuses filter by a list of entry statuses.
+func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
+	if len(statuses) > 0 {
+		e.conditions = append(e.conditions, fmt.Sprintf("e.status = ANY($%d)", len(e.args)+1))
+		e.args = append(e.args, pq.StringArray(statuses))
 	}
 	return e
 }

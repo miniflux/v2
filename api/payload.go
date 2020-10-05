@@ -30,6 +30,7 @@ type feedCreation struct {
 	Username       string `json:"username"`
 	Password       string `json:"password"`
 	Crawler        bool   `json:"crawler"`
+	FetchViaProxy  bool   `json:"fetch_via_proxy"`
 	ScraperRules   string `json:"scraper_rules"`
 	RewriteRules   string `json:"rewrite_rules"`
 	BlocklistRules string `json:"blocklist_rules"`
@@ -37,10 +38,11 @@ type feedCreation struct {
 }
 
 type subscriptionDiscovery struct {
-	URL       string `json:"url"`
-	UserAgent string `json:"user_agent"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
+	URL           string `json:"url"`
+	UserAgent     string `json:"user_agent"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	FetchViaProxy bool   `json:"fetch_via_proxy"`
 }
 
 type feedModification struct {

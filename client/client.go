@@ -480,6 +480,18 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("search", filter.Search)
 		}
 
+		if filter.CategoryID > 0 {
+			values.Set("category_id", strconv.FormatInt(filter.CategoryID, 10))
+		}
+
+		if filter.FeedID > 0 {
+			values.Set("feed_id", strconv.FormatInt(filter.FeedID, 10))
+		}
+
+		for _, status := range filter.Statuses {
+			values.Add("status", status)
+		}
+
 		path = fmt.Sprintf("%s?%s", path, values.Encode())
 	}
 

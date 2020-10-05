@@ -480,24 +480,6 @@ func TestCleanupFrequencyHours(t *testing.T) {
 	}
 }
 
-func TestDeprecatedCleanupFrequencyHoursVar(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("CLEANUP_FREQUENCY", "42")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := 42
-	result := opts.CleanupFrequencyHours()
-
-	if result != expected {
-		t.Fatalf(`Unexpected CLEANUP_FREQUENCY value, got %v instead of %v`, result, expected)
-	}
-}
-
 func TestDefaultCleanupArchiveReadDaysValue(t *testing.T) {
 	os.Clearenv()
 
@@ -531,24 +513,6 @@ func TestCleanupArchiveReadDays(t *testing.T) {
 
 	if result != expected {
 		t.Fatalf(`Unexpected CLEANUP_ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
-	}
-}
-
-func TestDeprecatedCleanupArchiveReadDaysVar(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("ARCHIVE_READ_DAYS", "7")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := 7
-	result := opts.CleanupArchiveReadDays()
-
-	if result != expected {
-		t.Fatalf(`Unexpected ARCHIVE_READ_DAYS value, got %v instead of %v`, result, expected)
 	}
 }
 

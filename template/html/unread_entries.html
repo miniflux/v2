@@ -8,6 +8,7 @@
         <li>
             <a href="#"
                 data-action="markPageAsRead"
+                data-show-only-unread="1"
                 data-label-question="{{ t "confirm.question" }}"
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
@@ -32,7 +33,7 @@
 {{ else }}
     <div class="items hide-read-items">
         {{ range .entries }}
-        <article class="item touch-item item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}

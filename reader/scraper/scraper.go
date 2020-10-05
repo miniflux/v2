@@ -10,6 +10,7 @@ import (
 	"io"
 	"strings"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 	"miniflux.app/logger"
 	"miniflux.app/reader/readability"
@@ -20,7 +21,7 @@ import (
 
 // Fetch downloads a web page and returns relevant contents.
 func Fetch(websiteURL, rules, userAgent string) (string, error) {
-	clt := client.New(websiteURL)
+	clt := client.NewClientWithConfig(websiteURL, config.Opts)
 	if userAgent != "" {
 		clt.WithUserAgent(userAgent)
 	}
@@ -34,7 +35,7 @@ func Fetch(websiteURL, rules, userAgent string) (string, error) {
 		return "", errors.New("scraper: unable to download web page")
 	}
 
-	if !isWhitelistedContentType(response.ContentType) {
+	if !isAllowedContentType(response.ContentType) {
 		return "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", response.ContentType)
 	}
 
@@ -94,7 +95,7 @@ func getPredefinedScraperRules(websiteURL string) string {
 	return ""
 }
 
-func isWhitelistedContentType(contentType string) bool {
+func isAllowedContentType(contentType string) bool {
 	contentType = strings.ToLower(contentType)
 	return strings.HasPrefix(contentType, "text/html") ||
 		strings.HasPrefix(contentType, "application/xhtml+xml")

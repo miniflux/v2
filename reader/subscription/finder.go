@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
 	"miniflux.app/reader/browser"
@@ -26,14 +27,19 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, username, password string, fetchViaProxy bool) (Subscriptions, *errors.LocalizedError) {
 	websiteURL = findYoutubeChannelFeed(websiteURL)
 	websiteURL = parseYoutubeVideoPage(websiteURL)
 
-	request := client.New(websiteURL)
-	request.WithCredentials(username, password)
-	request.WithUserAgent(userAgent)
-	response, err := browser.Exec(request)
+	clt := client.NewClientWithConfig(websiteURL, config.Opts)
+	clt.WithCredentials(username, password)
+	clt.WithUserAgent(userAgent)
+
+	if fetchViaProxy {
+		clt.WithProxy()
+	}
+
+	response, err := browser.Exec(clt)
 	if err != nil {
 		return nil, err
 	}
@@ -113,8 +119,8 @@ func parseYoutubeVideoPage(websiteURL string) string {
 		return websiteURL
 	}
 
-	request := client.New(websiteURL)
-	response, browserErr := browser.Exec(request)
+	clt := client.NewClientWithConfig(websiteURL, config.Opts)
+	response, browserErr := browser.Exec(clt)
 	if browserErr != nil {
 		return websiteURL
 	}
@@ -150,10 +156,10 @@ func tryWellKnownUrls(websiteURL, userAgent, username, password string) (Subscri
 		if err != nil {
 			continue
 		}
-		request := client.New(fullURL)
-		request.WithCredentials(username, password)
-		request.WithUserAgent(userAgent)
-		response, err := request.Get()
+		clt := client.NewClientWithConfig(fullURL, config.Opts)
+		clt.WithCredentials(username, password)
+		clt.WithUserAgent(userAgent)
+		response, err := clt.Get()
 		if err != nil {
 			continue
 		}

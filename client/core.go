@@ -175,6 +175,8 @@ type Filter struct {
 	AfterEntryID  int64
 	Search        string
 	CategoryID    int64
+	FeedID        int64
+	Statuses      []string
 }
 
 // EntryResultSet represents the response when fetching entries.

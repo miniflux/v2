@@ -53,6 +53,7 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		feedInfo.RewriteRules,
 		feedInfo.BlocklistRules,
 		feedInfo.KeeplistRules,
+		feedInfo.FetchViaProxy,
 	)
 	if err != nil {
 		json.ServerError(w, r, err)

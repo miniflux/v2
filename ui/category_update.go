@@ -44,7 +44,7 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "categories")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
 	if err := categoryForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())

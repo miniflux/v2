@@ -7,6 +7,7 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -54,6 +55,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		Username:        feed.Username,
 		Password:        feed.Password,
 		IgnoreHTTPCache: feed.IgnoreHTTPCache,
+		FetchViaProxy:   feed.FetchViaProxy,
 		Disabled:        feed.Disabled,
 	}
 
@@ -65,8 +67,9 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
+	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 	html.OK(w, r, view.Render("edit_feed"))
 }

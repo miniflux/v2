@@ -23,6 +23,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHa
 	uiRouter := router.NewRoute().Subrouter()
 	uiRouter.Use(middleware.handleUserSession)
 	uiRouter.Use(middleware.handleAppSession)
+	uiRouter.StrictSlash(true)
 
 	// Static assets.
 	uiRouter.HandleFunc("/stylesheets/{name}.css", handler.showStylesheet).Name("stylesheet").Methods(http.MethodGet)

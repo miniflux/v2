@@ -1,3 +1,5 @@
 :root {
+    --entry-content-font-weight: 300;
     --entry-content-font-family: Georgia, 'Times New Roman', Times, serif;
+    --entry-content-quote-font-family: var(--entry-content-font-family);
 }

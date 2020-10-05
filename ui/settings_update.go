@@ -7,8 +7,8 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/http/response/html"
 	"miniflux.app/http/request"
+	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/logger"
@@ -43,7 +43,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("menu", "settings")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
 	if err := settingsForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
