@@ -16,6 +16,7 @@ type SubscriptionForm struct {
 	URL            string
 	CategoryID     int64
 	Crawler        bool
+	FetchViaProxy  bool
 	UserAgent      string
 	Username       string
 	Password       string

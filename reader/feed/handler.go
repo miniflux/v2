@@ -65,7 +65,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 
 	subscription.UserID = userID
 	subscription.WithCategoryID(categoryID)
-	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules, locklistRules, keeplistRules, fetchViaProxy)
+	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules, fetchViaProxy)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
