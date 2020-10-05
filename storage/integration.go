@@ -125,21 +125,21 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			instapaper_password=$7,
 			fever_enabled=$8,
 			fever_username=$9,
-			fever_token=$11,
-			wallabag_enabled=$12,
-			wallabag_url=$13,
-			wallabag_client_id=$14,
-			wallabag_client_secret=$15,
-			wallabag_username=$16,
-			wallabag_password=$17,
-			nunux_keeper_enabled=$18,
-			nunux_keeper_url=$19,
-			nunux_keeper_api_key=$20,
-			pocket_enabled=$21,
-			pocket_access_token=$22,
-			pocket_consumer_key=$23
+			fever_token=$10,
+			wallabag_enabled=$11,
+			wallabag_url=$12,
+			wallabag_client_id=$13,
+			wallabag_client_secret=$14,
+			wallabag_username=$15,
+			wallabag_password=$16,
+			nunux_keeper_enabled=$17,
+			nunux_keeper_url=$18,
+			nunux_keeper_api_key=$19,
+			pocket_enabled=$20,
+			pocket_access_token=$21,
+			pocket_consumer_key=$22
 		WHERE
-			user_id=$24
+			user_id=$23
 	`
 	_, err := s.db.Exec(
 		query,
