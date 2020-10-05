@@ -57,6 +57,8 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		subscriptionForm.Password,
 		subscriptionForm.ScraperRules,
 		subscriptionForm.RewriteRules,
+		subscriptionForm.BlocklistRules,
+		subscriptionForm.KeeplistRules,
 	)
 	if err != nil {
 		view.Set("form", subscriptionForm)

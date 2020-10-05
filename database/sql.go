@@ -187,6 +187,11 @@ create index entries_user_feed_idx on entries (user_id, feed_id);
 `,
 	"schema_version_33": `alter table users add column show_reading_time boolean default 't';`,
 	"schema_version_34": `CREATE INDEX entries_id_user_status_idx ON entries USING btree (id, user_id, status);`,
+	"schema_version_35": `alter table feeds 
+    add column blocklist_rules text not null default '',
+    add column keeplist_rules text not null default ''
+;
+`,
 	"schema_version_4": `create type entry_sorting_direction as enum('asc', 'desc');
 alter table users add column entry_direction entry_sorting_direction default 'asc';
 `,
@@ -244,6 +249,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_32": "5b4de8dd2d7e3c6ae4150e0e3931df2ee989f2c667145bd67294e5a5f3fae456",
 	"schema_version_33": "bf38514efeb6c12511f41b1cc484f92722240b0a6ae874c32a958dfea3433d02",
 	"schema_version_34": "1a3e036f652fc98b7564a27013f04e1eb36dd0d68893c723168f134dc1065822",
+	"schema_version_35": "6a8fec92399f853ed6817aff4cfa43255dce4c19afad796e41519d09de62105e",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",
 	"schema_version_6":  "9d05b4fb223f0e60efc716add5048b0ca9c37511cf2041721e20505d6d798ce4",
