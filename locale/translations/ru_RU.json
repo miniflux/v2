@@ -143,6 +143,7 @@
     "page.keyboard_shortcuts.go_to_previous_item": "Перейти к предыдущему элементу",
     "page.keyboard_shortcuts.go_to_next_item": "Перейти к следующему элементу",
     "page.keyboard_shortcuts.go_to_feed": "Перейти к подписке",
+    "page.keyboard_shortcuts.go_to_item_feed": "Перейти к подписке элемента",
     "page.keyboard_shortcuts.go_to_previous_page": "Перейти к предыдущей странице",
     "page.keyboard_shortcuts.go_to_next_page": "Перейти к следующей странице",
     "page.keyboard_shortcuts.open_item": "Открыть выбранный элемент",

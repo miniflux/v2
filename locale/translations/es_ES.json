@@ -141,6 +141,7 @@
     "page.keyboard_shortcuts.go_to_previous_item": "Ir al elemento anterior",
     "page.keyboard_shortcuts.go_to_next_item": "Ir al elemento siguiente",
     "page.keyboard_shortcuts.go_to_feed": "Ir a la fuente",
+    "page.keyboard_shortcuts.go_to_item_feed": "Ir a la feunte del elemento",
     "page.keyboard_shortcuts.go_to_previous_page": "Ir al pagína anterior",
     "page.keyboard_shortcuts.go_to_next_page": "Ir al pagína siguiente",
     "page.keyboard_shortcuts.open_item": "Abrir el elemento seleccionado",

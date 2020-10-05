@@ -141,6 +141,7 @@
     "page.keyboard_shortcuts.go_to_previous_item": "Mostra l'articolo precedente",
     "page.keyboard_shortcuts.go_to_next_item": "Mostra l'articolo successivo",
     "page.keyboard_shortcuts.go_to_feed": "Mostra il feed",
+    "page.keyboard_shortcuts.go_to_item_feed": "Mostra il feed dell'articolo",
     "page.keyboard_shortcuts.go_to_previous_page": "Mostra la pagina precedente",
     "page.keyboard_shortcuts.go_to_next_page": "Mostra la pagina successiva",
     "page.keyboard_shortcuts.open_item": "Apri l'articolo selezionato",

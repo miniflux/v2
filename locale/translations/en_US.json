@@ -135,6 +135,7 @@
     "page.keyboard_shortcuts.go_to_starred": "Go to bookmarks",
     "page.keyboard_shortcuts.go_to_history": "Go to history",
     "page.keyboard_shortcuts.go_to_feeds": "Go to feeds",
+    "page.keyboard_shortcuts.go_to_item_feed": "Go to item's feed",
     "page.keyboard_shortcuts.go_to_categories": "Go to categories",
     "page.keyboard_shortcuts.go_to_settings": "Go to settings",
     "page.keyboard_shortcuts.show_keyboard_shortcuts": "Show keyboard shortcuts",
