@@ -405,9 +405,9 @@ function goToFeed() {
         }
     } else {
         let currentItemFeed = document.querySelector(".current-item a[data-feed-link]");
-	if (currentItemFeed !== null) {
+        if (currentItemFeed !== null) {
             window.location.href = currentItemFeed.getAttribute("href");
-	}
+        }
     }
 }
 
