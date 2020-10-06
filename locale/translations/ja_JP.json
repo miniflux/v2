@@ -141,7 +141,6 @@
     "page.keyboard_shortcuts.go_to_previous_item": "前のアイテム",
     "page.keyboard_shortcuts.go_to_next_item": "次のアイテム",
     "page.keyboard_shortcuts.go_to_feed": "フィードへ移動",
-    "page.keyboard_shortcuts.go_to_item_feed": "アイテマのフィードへ移動",
     "page.keyboard_shortcuts.go_to_previous_page": "前のページに移動",
     "page.keyboard_shortcuts.go_to_next_page": "次のページに移動",
     "page.keyboard_shortcuts.open_item": "選択されたアイテムを開く",

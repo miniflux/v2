@@ -429,7 +429,6 @@ SOFTWARE.
                     <li>{{ t "page.keyboard_shortcuts.go_to_starred" }} = <strong>g + b</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_history" }} = <strong>g + h</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_feeds" }} = <strong>g + f</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_item_feed" }} = <strong>F</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_categories" }} = <strong>g + c</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_settings" }} = <strong>g + s</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.show_keyboard_shortcuts" }} = <strong>?</strong></li>
@@ -439,7 +438,7 @@ SOFTWARE.
                 <ul>
                     <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>◄</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>►</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>g + f</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>F</strong></li>
                 </ul>
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
@@ -524,7 +523,7 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
 	"item_meta":        "b7d69c26be12f72f821d7b509a9f910b1f341c2db02f138d5178f72a2c5b7939",
-	"layout":           "e8fc37cc30fbf0c43faca323c5af2b7b9b89a3e1d6ebec034b81ef74125c275e",
+	"layout":           "affdf6da489d9fbc50a58ffcab0e64d784d8befb32031f1249dee4c1f8d967e1",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",
 }
