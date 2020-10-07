@@ -237,7 +237,7 @@ SOFTWARE.
 <div class="item-meta">
     <ul class="item-meta-info">
         <li>
-            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}">{{ truncate .entry.Feed.Title 35 }}</a>
+            <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}" data-feed-link="true">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
@@ -438,7 +438,7 @@ SOFTWARE.
                 <ul>
                     <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>◄</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>►</strong></li>
-                    <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>g + f</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>F</strong></li>
                 </ul>
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>
@@ -522,8 +522,8 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
-	"item_meta":        "8306adf3ef9966de3e3dc74ca1042e51d778b027ab8cf0a60a2e94a0115982dc",
-	"layout":           "e44dd40d22aec224b9f3d29391e21d4c066f8ecebbd3678a9b4832d014fffe65",
+	"item_meta":        "b7d69c26be12f72f821d7b509a9f910b1f341c2db02f138d5178f72a2c5b7939",
+	"layout":           "affdf6da489d9fbc50a58ffcab0e64d784d8befb32031f1249dee4c1f8d967e1",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",
 }

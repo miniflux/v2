@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("s", () => handleSaveEntry());
         keyboardHandler.on("d", () => handleFetchOriginalContent());
         keyboardHandler.on("f", () => handleBookmark());
+        keyboardHandler.on("F", () => goToFeed());
         keyboardHandler.on("R", () => handleRefreshAllFeeds());
         keyboardHandler.on("?", () => showKeyboardShortcuts());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
