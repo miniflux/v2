@@ -200,10 +200,47 @@ func imageProxyFilter(router *mux.Router, data string) string {
 				img.SetAttr("src", proxify(router, srcAttr))
 			}
 		}
+
+		if srcsetAttr, ok := img.Attr("srcset"); ok {
+			if proxyImages == "all" || !url.IsHTTPS(srcsetAttr) {
+				proxifySourceSet(img, router, srcsetAttr)
+			}
+		}
+	})
+
+	doc.Find("picture source").Each(func(i int, sourceElement *goquery.Selection) {
+		if srcsetAttr, ok := sourceElement.Attr("srcset"); ok {
+			if proxyImages == "all" || !url.IsHTTPS(srcsetAttr) {
+				proxifySourceSet(sourceElement, router, srcsetAttr)
+			}
+		}
 	})
 
 	output, _ := doc.Find("body").First().Html()
 	return output
+}
+
+func proxifySourceSet(element *goquery.Selection, router *mux.Router, attributeValue string) {
+	var proxifiedSources []string
+
+	for _, source := range strings.Split(attributeValue, ",") {
+		parts := strings.Split(strings.TrimSpace(source), " ")
+		nbParts := len(parts)
+
+		if nbParts > 0 {
+			source = proxify(router, parts[0])
+
+			if nbParts > 1 {
+				source += " " + parts[1]
+			}
+
+			proxifiedSources = append(proxifiedSources, source)
+		}
+	}
+
+	if len(proxifiedSources) > 0 {
+		element.SetAttr("srcset", strings.Join(proxifiedSources, ", "))
+	}
 }
 
 func proxify(router *mux.Router, link string) string {
