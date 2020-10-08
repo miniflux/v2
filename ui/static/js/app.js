@@ -475,6 +475,13 @@ function goToNextListItem() {
     }
 }
 
+function scrollToCurrentItem() {
+    let currentItem = document.querySelector(".current-item");
+    if (currentItem !== null) {
+        DomHelper.scrollPageTo(currentItem, true);
+    }
+}
+
 function decrementUnreadCounter(n) {
     updateUnreadCounterValue((current) => {
         return current - n;
