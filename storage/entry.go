@@ -265,7 +265,8 @@ func (s *Storage) ArchiveEntries(status string, days int) (int64, error) {
 		UPDATE
 			entries
 		SET
-			status='removed'
+			status='removed',
+			changed_at=now()
 		WHERE
 			id=ANY(SELECT id FROM entries WHERE status=$1 AND starred is false AND share_code='' AND published_at < now () - '%d days'::interval ORDER BY published_at ASC LIMIT 5000)
 	`
