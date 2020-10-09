@@ -182,8 +182,8 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 			f.parsing_error_msg,
 			f.scraper_rules,
 			f.rewrite_rules,
-            f.blocklist_rules,
-            f.keeplist_rules,
+			f.blocklist_rules,
+			f.keeplist_rules,
 			f.crawler,
 			f.user_agent,
 			f.username,
@@ -545,7 +545,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			password=$17,
 			disabled=$18,
 			next_check_at=$19,
-			ignore_http_cache=$20
+			ignore_http_cache=$20,
 			fetch_via_proxy=$21
 		WHERE
 			id=$22 AND user_id=$23
