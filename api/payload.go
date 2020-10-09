@@ -46,17 +46,19 @@ type subscriptionDiscovery struct {
 }
 
 type feedModification struct {
-	FeedURL      *string `json:"feed_url"`
-	SiteURL      *string `json:"site_url"`
-	Title        *string `json:"title"`
-	ScraperRules *string `json:"scraper_rules"`
-	RewriteRules *string `json:"rewrite_rules"`
-	Crawler      *bool   `json:"crawler"`
-	UserAgent    *string `json:"user_agent"`
-	Username     *string `json:"username"`
-	Password     *string `json:"password"`
-	CategoryID   *int64  `json:"category_id"`
-	Disabled     *bool   `json:"disabled"`
+	FeedURL        *string `json:"feed_url"`
+	SiteURL        *string `json:"site_url"`
+	Title          *string `json:"title"`
+	ScraperRules   *string `json:"scraper_rules"`
+	RewriteRules   *string `json:"rewrite_rules"`
+	BlocklistRules *string `json:"blocklist_rules"`
+	KeeplistRules  *string `json:"keeplist_rules"`
+	Crawler        *bool   `json:"crawler"`
+	UserAgent      *string `json:"user_agent"`
+	Username       *string `json:"username"`
+	Password       *string `json:"password"`
+	CategoryID     *int64  `json:"category_id"`
+	Disabled       *bool   `json:"disabled"`
 }
 
 func (f *feedModification) Update(feed *model.Feed) {
@@ -78,6 +80,14 @@ func (f *feedModification) Update(feed *model.Feed) {
 
 	if f.RewriteRules != nil {
 		feed.RewriteRules = *f.RewriteRules
+	}
+
+	if f.KeeplistRules != nil {
+		feed.KeeplistRules = *f.KeeplistRules
+	}
+
+	if f.BlocklistRules != nil {
+		feed.BlocklistRules = *f.BlocklistRules
 	}
 
 	if f.Crawler != nil {
