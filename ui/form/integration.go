@@ -47,7 +47,6 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.InstapaperPassword = i.InstapaperPassword
 	integration.FeverEnabled = i.FeverEnabled
 	integration.FeverUsername = i.FeverUsername
-	integration.FeverPassword = i.FeverPassword
 	integration.WallabagEnabled = i.WallabagEnabled
 	integration.WallabagURL = i.WallabagURL
 	integration.WallabagClientID = i.WallabagClientID

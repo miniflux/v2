@@ -5,7 +5,6 @@
 package template // import "miniflux.app/template"
 
 import (
-	"encoding/base64"
 	"fmt"
 	"html/template"
 	"math"
@@ -18,11 +17,11 @@ import (
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/model"
+	"miniflux.app/proxy"
 	"miniflux.app/reader/sanitizer"
 	"miniflux.app/timezone"
 	"miniflux.app/url"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
 	"github.com/rylans/getlang"
 )
@@ -58,13 +57,13 @@ func (f *funcMap) Map() template.FuncMap {
 			return template.HTML(str)
 		},
 		"proxyFilter": func(data string) string {
-			return imageProxyFilter(f.router, data)
+			return proxy.ImageProxyRewriter(f.router, data)
 		},
 		"proxyURL": func(link string) string {
 			proxyImages := config.Opts.ProxyImages()
 
 			if proxyImages == "all" || (proxyImages != "none" && !url.IsHTTPS(link)) {
-				return proxify(f.router, link)
+				return proxy.ProxifyURL(f.router, link)
 			}
 
 			return link
@@ -181,34 +180,6 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 		years := int(math.Round(float64(d) / 365))
 		return printer.Plural("time_elapsed.years", years, years)
 	}
-}
-
-func imageProxyFilter(router *mux.Router, data string) string {
-	proxyImages := config.Opts.ProxyImages()
-	if proxyImages == "none" {
-		return data
-	}
-
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(data))
-	if err != nil {
-		return data
-	}
-
-	doc.Find("img").Each(func(i int, img *goquery.Selection) {
-		if srcAttr, ok := img.Attr("src"); ok {
-			if proxyImages == "all" || !url.IsHTTPS(srcAttr) {
-				img.SetAttr("src", proxify(router, srcAttr))
-			}
-		}
-	})
-
-	output, _ := doc.Find("body").First().Html()
-	return output
-}
-
-func proxify(router *mux.Router, link string) string {
-	// We use base64 url encoding to avoid slash in the URL.
-	return route.Path(router, "proxy", "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
 }
 
 func formatFileSize(b int64) string {
