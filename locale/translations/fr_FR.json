@@ -154,6 +154,7 @@
     "page.keyboard_shortcuts.download_content": "Télécharger le contenu original",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Ajouter/Enlever favoris",
     "page.keyboard_shortcuts.save_article": "Sauvegarder l'article",
+    "page.keyboard_shortcuts.scroll_item_to_top": "Faire défiler l'élément vers le haut",
     "page.keyboard_shortcuts.remove_feed": "Supprimer ce flux",
     "page.keyboard_shortcuts.go_to_search": "Mettre le focus sur le champ de recherche",
     "page.keyboard_shortcuts.close_modal": "Fermer la boite de dialogue",

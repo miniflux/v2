@@ -154,6 +154,7 @@
     "page.keyboard_shortcuts.download_content": "Buscar o conteúdo original",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Marcar ou desmarcar como favorito",
     "page.keyboard_shortcuts.save_article": "Salvar item",
+    "page.keyboard_shortcuts.scroll_item_to_top": "Role o item para cima",
     "page.keyboard_shortcuts.remove_feed": "Remover essa fonte",
     "page.keyboard_shortcuts.go_to_search": "Ir para o campo de busca",
     "page.keyboard_shortcuts.close_modal": "Fechar janela",

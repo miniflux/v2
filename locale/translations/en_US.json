@@ -154,6 +154,7 @@
     "page.keyboard_shortcuts.download_content": "Download original content",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Toggle bookmark",
     "page.keyboard_shortcuts.save_article": "Save article",
+    "page.keyboard_shortcuts.scroll_item_to_top": "Scroll item to top",
     "page.keyboard_shortcuts.remove_feed": "Remove this feed",
     "page.keyboard_shortcuts.go_to_search": "Set focus on search form",
     "page.keyboard_shortcuts.close_modal": "Close modal dialog",

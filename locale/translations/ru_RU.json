@@ -156,6 +156,7 @@
     "page.keyboard_shortcuts.download_content": "Загрузить оригинальное содержимое",
     "page.keyboard_shortcuts.toggle_bookmark_status": "Переключатель избранного",
     "page.keyboard_shortcuts.save_article": "Сохранить статью",
+    "page.keyboard_shortcuts.scroll_item_to_top": "Прокрутите элемент вверх",
     "page.keyboard_shortcuts.remove_feed": "Удалить эту подписку",
     "page.keyboard_shortcuts.go_to_search": "Установить фокус в поисковой форме",
     "page.keyboard_shortcuts.close_modal": "Закрыть модальный диалог",
