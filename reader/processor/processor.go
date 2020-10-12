@@ -20,6 +20,9 @@ import (
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
+
+	filterFeedEntries(feed)
+
 	for _, entry := range feed.Entries {
 		logger.Debug("[Feed #%d] Processing entry %s", feed.ID, entry.URL)
 		if feed.Crawler {
@@ -49,8 +52,6 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
 		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 	}
-
-	filterFeedEntries(feed)
 }
 
 /*
