@@ -15,9 +15,29 @@ func TestValidInput(t *testing.T) {
 	}
 }
 
+func TestImgWithDataURL(t *testing.T) {
+	input := `<img src="data:image/gif;base64,test" alt="Example">`
+	expected := `<img src="data:image/gif;base64,test" alt="Example" loading="lazy">`
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
 func TestImgWithSrcset(t *testing.T) {
-	input := `<img srcset="example-320w.jpg, example-480w.jpg 1.5x, example-640w.jpg 2x,example-640w.jpg 640w" src="example-640w.jpg" alt="Example">`
+	input := `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" src="example-640w.jpg" alt="Example">`
 	expected := `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" src="http://example.org/example-640w.jpg" alt="Example" loading="lazy">`
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithSrcsetAndDataURL(t *testing.T) {
+	input := `<img srcset="data:image/gif;base64,test" src="http://example.org/example-320w.jpg" alt="Example">`
+	expected := `<img srcset="data:image/gif;base64,test" src="http://example.org/example-320w.jpg" alt="Example" loading="lazy">`
 	output := Sanitize("http://example.org/", input)
 
 	if output != expected {

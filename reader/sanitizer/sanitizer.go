@@ -19,6 +19,7 @@ import (
 
 var (
 	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)`)
+	splitSrcsetRegex  = regexp.MustCompile(`,\s+`)
 )
 
 // Sanitize returns safe HTML.
@@ -110,6 +111,8 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 				} else {
 					continue
 				}
+			} else if tagName == "img" && attribute.Key == "src" && strings.HasPrefix(attribute.Val, "data:") {
+				value = attribute.Val
 			} else {
 				value, err = url.AbsoluteURL(baseURL, value)
 				if err != nil {
@@ -439,15 +442,19 @@ Each string is composed of:
 */
 func sanitizeSrcsetAttr(baseURL, value string) string {
 	var sanitizedSources []string
-	rawSources := strings.Split(value, ",")
+	rawSources := splitSrcsetRegex.Split(value, -1)
 	for _, rawSource := range rawSources {
 		parts := strings.Split(strings.TrimSpace(rawSource), " ")
 		nbParts := len(parts)
 
 		if nbParts > 0 {
-			sanitizedSource, err := url.AbsoluteURL(baseURL, parts[0])
-			if err != nil {
-				continue
+			sanitizedSource := parts[0]
+			if !strings.HasPrefix(parts[0], "data:") {
+				var err error
+				sanitizedSource, err = url.AbsoluteURL(baseURL, parts[0])
+				if err != nil {
+					continue
+				}
 			}
 
 			if nbParts == 2 && isValidWidthOrDensityDescriptor(parts[1]) {
