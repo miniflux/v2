@@ -234,8 +234,54 @@ func TestProxyFilterWithPictureSource(t *testing.T) {
 	r := mux.NewRouter()
 	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
-	input := `<picture><source srcset="http://website/folder/image2.png 656w, http://website/folder/image3.png 360w"></picture>`
+	input := `<picture><source srcset="http://website/folder/image2.png 656w,   http://website/folder/image3.png 360w"></picture>`
 	expected := `<picture><source srcset="/proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, /proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMy5wbmc= 360w"/></picture>`
+	output := ImageProxyRewriter(r, input)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %s`, output)
+	}
+}
+
+func TestImageProxyWithImageDataURL(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "all")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<img src="data:image/gif;base64,test">`
+	expected := `<img src="data:image/gif;base64,test"/>`
+	output := ImageProxyRewriter(r, input)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %s`, output)
+	}
+}
+
+func TestImageProxyWithImageSourceDataURL(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "all")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<picture><source srcset="data:image/gif;base64,test"/></picture>`
+	expected := `<picture><source srcset="data:image/gif;base64,test"/></picture>`
 	output := ImageProxyRewriter(r, input)
 
 	if expected != output {
