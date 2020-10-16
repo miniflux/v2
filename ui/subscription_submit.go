@@ -7,6 +7,7 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
+	"miniflux.app/config"
 	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -38,8 +39,9 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	v.Set("menu", "feeds")
 	v.Set("user", user)
 	v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	v.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	v.Set("defaultUserAgent", client.DefaultUserAgent)
+	v.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 	subscriptionForm := form.NewSubscriptionForm(r)
 	if err := subscriptionForm.Validate(); err != nil {
@@ -54,6 +56,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.UserAgent,
 		subscriptionForm.Username,
 		subscriptionForm.Password,
+		subscriptionForm.FetchViaProxy,
 	)
 	if findErr != nil {
 		logger.Error("[UI:SubmitSubscription] %s", findErr)
@@ -82,6 +85,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			subscriptionForm.Password,
 			subscriptionForm.ScraperRules,
 			subscriptionForm.RewriteRules,
+			subscriptionForm.FetchViaProxy,
 		)
 		if err != nil {
 			v.Set("form", subscriptionForm)
@@ -98,7 +102,8 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		v.Set("menu", "feeds")
 		v.Set("user", user)
 		v.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-		v.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+		v.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+		v.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 		html.OK(w, r, v.Render("choose_subscription"))
 	}

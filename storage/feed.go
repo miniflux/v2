@@ -32,6 +32,7 @@ var feedListQuery = `
 		f.username,
 		f.password,
 		f.ignore_http_cache,
+		f.fetch_via_proxy,
 		f.disabled,
 		f.category_id,
 		c.title as category_title,
@@ -67,6 +68,45 @@ func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	return result
 }
 
+// AnotherFeedURLExists checks if the user a duplicated feed.
+func (s *Storage) AnotherFeedURLExists(userID, feedID int64, feedURL string) bool {
+	var result bool
+	query := `SELECT true FROM feeds WHERE id <> $1 AND user_id=$2 AND feed_url=$3`
+	s.db.QueryRow(query, feedID, userID, feedURL).Scan(&result)
+	return result
+}
+
+// CountAllFeeds returns the number of feeds in the database.
+func (s *Storage) CountAllFeeds() map[string]int64 {
+	rows, err := s.db.Query(`SELECT disabled, count(*) FROM feeds GROUP BY disabled`)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	results := make(map[string]int64)
+	results["enabled"] = 0
+	results["disabled"] = 0
+
+	for rows.Next() {
+		var disabled bool
+		var count int64
+
+		if err := rows.Scan(&disabled, &count); err != nil {
+			continue
+		}
+
+		if disabled {
+			results["disabled"] = count
+		} else {
+			results["enabled"] = count
+		}
+	}
+
+	results["total"] = results["disabled"] + results["enabled"]
+	return results
+}
+
 // CountFeeds returns the number of feeds that belongs to the given user.
 func (s *Storage) CountFeeds(userID int64) int {
 	var result int
@@ -78,11 +118,23 @@ func (s *Storage) CountFeeds(userID int64) int {
 	return result
 }
 
-// CountErrorFeeds returns the number of feeds with parse errors that belong to the given user.
-func (s *Storage) CountErrorFeeds(userID int64) int {
-	query := `SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count>=$2`
+// CountUserFeedsWithErrors returns the number of feeds with parsing errors that belong to the given user.
+func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
+	query := `SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count >= $2`
 	var result int
 	err := s.db.QueryRow(query, userID, maxParsingError).Scan(&result)
+	if err != nil {
+		return 0
+	}
+
+	return result
+}
+
+// CountAllFeedsWithErrors returns the number of feeds with parsing errors.
+func (s *Storage) CountAllFeedsWithErrors() int {
+	query := `SELECT count(*) FROM feeds WHERE parsing_error_count >= $1`
+	var result int
+	err := s.db.QueryRow(query, maxParsingError).Scan(&result)
 	if err != nil {
 		return 0
 	}
@@ -133,6 +185,7 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 			f.username,
 			f.password,
 			f.ignore_http_cache,
+			f.fetch_via_proxy,
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
@@ -242,6 +295,7 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}
 			&feed.Username,
 			&feed.Password,
 			&feed.IgnoreHTTPCache,
+			&feed.FetchViaProxy,
 			&feed.Disabled,
 			&feed.Category.ID,
 			&feed.Category.Title,
@@ -326,6 +380,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 			f.username,
 			f.password,
 			f.ignore_http_cache,
+			f.fetch_via_proxy,
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
@@ -357,6 +412,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 		&feed.Username,
 		&feed.Password,
 		&feed.IgnoreHTTPCache,
+		&feed.FetchViaProxy,
 		&feed.Disabled,
 		&feed.Category.ID,
 		&feed.Category.Title,
@@ -396,10 +452,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			password,
 			disabled,
 			scraper_rules,
-			rewrite_rules
+			rewrite_rules,
+			fetch_via_proxy
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING
 			id
 	`
@@ -419,6 +476,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Disabled,
 		feed.ScraperRules,
 		feed.RewriteRules,
+		feed.FetchViaProxy,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -428,11 +486,20 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Entries[i].FeedID = feed.ID
 		feed.Entries[i].UserID = feed.UserID
 
-		if !s.entryExists(feed.Entries[i]) {
-			err := s.createEntry(feed.Entries[i])
-			if err != nil {
+		tx, err := s.db.Begin()
+		if err != nil {
+			return fmt.Errorf(`store: unable to start transaction: %v`, err)
+		}
+
+		if !s.entryExists(tx, feed.Entries[i]) {
+			if err := s.createEntry(tx, feed.Entries[i]); err != nil {
+				tx.Rollback()
 				return err
 			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf(`store: unable to commit transaction: %v`, err)
 		}
 	}
 
@@ -462,9 +529,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			password=$15,
 			disabled=$16,
 			next_check_at=$17,
-			ignore_http_cache=$18
+			ignore_http_cache=$18,
+			fetch_via_proxy=$19
 		WHERE
-			id=$19 AND user_id=$20
+			id=$20 AND user_id=$21
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -485,6 +553,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.Disabled,
 		feed.NextCheckAt,
 		feed.IgnoreHTTPCache,
+		feed.FetchViaProxy,
 		feed.ID,
 		feed.UserID,
 	)

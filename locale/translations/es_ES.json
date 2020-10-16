@@ -249,6 +249,7 @@
     "form.feed.label.scraper_rules": "Reglas de raspador",
     "form.feed.label.rewrite_rules": "Reglas de reescribir",
     "form.feed.label.ignore_http_cache": "Ignorar caché HTTP",
+    "form.feed.label.fetch_via_proxy": "Buscar a través de proxy",
     "form.feed.label.disabled": "No actualice este feed",
     "form.category.label.title": "Título",
     "form.user.label.username": "Nombre de usuario",

@@ -58,61 +58,16 @@ func (h *handler) getEntry(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) getFeedEntries(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-
-	status := request.QueryStringParam(r, "status", "")
-	if status != "" {
-		if err := model.ValidateEntryStatus(status); err != nil {
-			json.BadRequest(w, r, err)
-			return
-		}
-	}
-
-	order := request.QueryStringParam(r, "order", model.DefaultSortingOrder)
-	if err := model.ValidateEntryOrder(order); err != nil {
-		json.BadRequest(w, r, err)
-		return
-	}
-
-	direction := request.QueryStringParam(r, "direction", model.DefaultSortingDirection)
-	if err := model.ValidateDirection(direction); err != nil {
-		json.BadRequest(w, r, err)
-		return
-	}
-
-	limit := request.QueryIntParam(r, "limit", 100)
-	offset := request.QueryIntParam(r, "offset", 0)
-	if err := model.ValidateRange(offset, limit); err != nil {
-		json.BadRequest(w, r, err)
-		return
-	}
-
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithFeedID(feedID)
-	builder.WithStatus(status)
-	builder.WithOrder(order)
-	builder.WithDirection(direction)
-	builder.WithOffset(offset)
-	builder.WithLimit(limit)
-	configureFilters(builder, r)
-
-	entries, err := builder.GetEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	count, err := builder.CountEntries()
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})
+	h.findEntries(w, r, feedID)
 }
 
 func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
-	status := request.QueryStringParam(r, "status", "")
-	if status != "" {
+	h.findEntries(w, r, 0)
+}
+
+func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int64) {
+	statuses := request.QueryStringParamList(r, "status")
+	for _, status := range statuses {
 		if err := model.ValidateEntryStatus(status); err != nil {
 			json.BadRequest(w, r, err)
 			return
@@ -138,8 +93,23 @@ func (h *handler) getEntries(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
-	builder.WithStatus(status)
+	userID := request.UserID(r)
+	categoryID := request.QueryInt64Param(r, "category_id", 0)
+	if categoryID > 0 && !h.store.CategoryExists(userID, categoryID) {
+		json.BadRequest(w, r, errors.New("Invalid category ID"))
+		return
+	}
+
+	feedID = request.QueryInt64Param(r, "feed_id", feedID)
+	if feedID > 0 && !h.store.FeedExists(userID, feedID) {
+		json.BadRequest(w, r, errors.New("Invalid feed ID"))
+		return
+	}
+
+	builder := h.store.NewEntryQueryBuilder(userID)
+	builder.WithFeedID(feedID)
+	builder.WithCategoryID(categoryID)
+	builder.WithStatuses(statuses)
 	builder.WithOrder(order)
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)

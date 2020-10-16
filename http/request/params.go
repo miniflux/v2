@@ -7,6 +7,7 @@ package request // import "miniflux.app/http/request"
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -50,6 +51,23 @@ func QueryStringParam(r *http.Request, param, defaultValue string) string {
 		value = defaultValue
 	}
 	return value
+}
+
+// QueryStringParamList returns all values associated to the parameter.
+func QueryStringParamList(r *http.Request, param string) []string {
+	var results []string
+	values := r.URL.Query()
+
+	if _, found := values[param]; found {
+		for _, value := range values[param] {
+			value = strings.TrimSpace(value)
+			if value != "" {
+				results = append(results, value)
+			}
+		}
+	}
+
+	return results
 }
 
 // QueryIntParam returns a query string parameter as integer.

@@ -156,6 +156,7 @@ var dateFormats = []string{
 	"2006-01-02T15:04:05 -0700",
 	"2006-01-02T15:04:05:00",
 	"2006-01-02T15:04:05",
+	"2006-01-02T15:04",
 	"2006-01-02 at 15:04:05",
 	"2006-01-02 15:04:05Z",
 	"2006-01-02 15:04:05 MST",
@@ -242,7 +243,7 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 	loc := time.UTC
 
 	// Workaround for dates that don't use GMT.
-	if strings.HasSuffix(ds, "PST") {
+	if strings.HasSuffix(ds, "PST") || strings.HasSuffix(ds, "PDT") {
 		loc, _ = time.LoadLocation("America/Los_Angeles")
 	}
 

@@ -16,6 +16,7 @@ import (
 	"miniflux.app/api"
 	"miniflux.app/config"
 	"miniflux.app/fever"
+	"miniflux.app/http/request"
 	"miniflux.app/logger"
 	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
@@ -24,6 +25,7 @@ import (
 	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -169,6 +171,14 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 		router = router.PathPrefix(config.Opts.BasePath()).Subrouter()
 	}
 
+	if config.Opts.HasMaintenanceMode() {
+		router.Use(func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Write([]byte(config.Opts.MaintenanceMessage()))
+			})
+		})
+	}
+
 	router.Use(middleware)
 
 	fever.Serve(router, store)
@@ -178,9 +188,45 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	}).Name("healthcheck")
+
 	router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(version.Version))
 	}).Name("version")
 
+	if config.Opts.HasMetricsCollector() {
+		router.Handle("/metrics", promhttp.Handler()).Name("metrics")
+		router.Use(func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				route := mux.CurrentRoute(r)
+
+				// Returns a 404 if the client is not authorized to access the metrics endpoint.
+				if route.GetName() == "metrics" && !isAllowedToAccessMetricsEndpoint(r) {
+					logger.Error(`[Metrics] Client not allowed: %s`, request.ClientIP(r))
+					http.NotFound(w, r)
+					return
+				}
+
+				next.ServeHTTP(w, r)
+			})
+		})
+	}
+
 	return router
+}
+
+func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
+	clientIP := net.ParseIP(request.ClientIP(r))
+
+	for _, cidr := range config.Opts.MetricsAllowedNetworks() {
+		_, network, err := net.ParseCIDR(cidr)
+		if err != nil {
+			logger.Fatal(`[Metrics] Unable to parse CIDR %v`, err)
+		}
+
+		if network.Contains(clientIP) {
+			return true
+		}
+	}
+
+	return false
 }

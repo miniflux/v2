@@ -36,6 +36,7 @@ const (
 	defaultCertCache                          = "/tmp/cert_cache"
 	defaultCleanupFrequencyHours              = 24
 	defaultCleanupArchiveReadDays             = 60
+	defaultCleanupArchiveUnreadDays           = 180
 	defaultCleanupRemoveSessionsDays          = 30
 	defaultProxyImages                        = "http-only"
 	defaultCreateAdmin                        = false
@@ -50,8 +51,14 @@ const (
 	defaultPocketConsumerKey                  = ""
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
+	defaultHTTPClientProxy                    = ""
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
+	defaultMaintenanceMode                    = false
+	defaultMaintenanceMessage                 = "Miniflux is currently under maintenance"
+	defaultMetricsCollector                   = false
+	defaultMetricsRefreshInterval             = 60
+	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
 )
 
 // Options contains configuration options.
@@ -76,6 +83,7 @@ type Options struct {
 	certKeyFile                        string
 	cleanupFrequencyHours              int
 	cleanupArchiveReadDays             int
+	cleanupArchiveUnreadDays           int
 	cleanupRemoveSessionsDays          int
 	pollingFrequency                   int
 	batchSize                          int
@@ -96,8 +104,14 @@ type Options struct {
 	pocketConsumerKey                  string
 	httpClientTimeout                  int
 	httpClientMaxBodySize              int64
+	httpClientProxy                    string
 	authProxyHeader                    string
 	authProxyUserCreation              bool
+	maintenanceMode                    bool
+	maintenanceMessage                 string
+	metricsCollector                   bool
+	metricsRefreshInterval             int
+	metricsAllowedNetworks             []string
 }
 
 // NewOptions returns Options with default values.
@@ -123,6 +137,7 @@ func NewOptions() *Options {
 		certKeyFile:                        defaultKeyFile,
 		cleanupFrequencyHours:              defaultCleanupFrequencyHours,
 		cleanupArchiveReadDays:             defaultCleanupArchiveReadDays,
+		cleanupArchiveUnreadDays:           defaultCleanupArchiveUnreadDays,
 		cleanupRemoveSessionsDays:          defaultCleanupRemoveSessionsDays,
 		pollingFrequency:                   defaultPollingFrequency,
 		batchSize:                          defaultBatchSize,
@@ -141,14 +156,30 @@ func NewOptions() *Options {
 		pocketConsumerKey:                  defaultPocketConsumerKey,
 		httpClientTimeout:                  defaultHTTPClientTimeout,
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
+		httpClientProxy:                    defaultHTTPClientProxy,
 		authProxyHeader:                    defaultAuthProxyHeader,
 		authProxyUserCreation:              defaultAuthProxyUserCreation,
+		maintenanceMode:                    defaultMaintenanceMode,
+		maintenanceMessage:                 defaultMaintenanceMessage,
+		metricsCollector:                   defaultMetricsCollector,
+		metricsRefreshInterval:             defaultMetricsRefreshInterval,
+		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
 	}
 }
 
 // LogDateTime returns true if the date/time should be displayed in log messages.
 func (o *Options) LogDateTime() bool {
 	return o.logDateTime
+}
+
+// HasMaintenanceMode returns true if maintenance mode is enabled.
+func (o *Options) HasMaintenanceMode() bool {
+	return o.maintenanceMode
+}
+
+// MaintenanceMessage returns maintenance message.
+func (o *Options) MaintenanceMessage() string {
+	return o.maintenanceMessage
 }
 
 // HasDebugMode returns true if debug mode is enabled.
@@ -224,6 +255,11 @@ func (o *Options) CleanupFrequencyHours() int {
 // CleanupArchiveReadDays returns the number of days after which marking read items as removed.
 func (o *Options) CleanupArchiveReadDays() int {
 	return o.cleanupArchiveReadDays
+}
+
+// CleanupArchiveUnreadDays returns the number of days after which marking unread items as removed.
+func (o *Options) CleanupArchiveUnreadDays() int {
+	return o.cleanupArchiveUnreadDays
 }
 
 // CleanupRemoveSessionsDays returns the number of days after which to remove sessions.
@@ -349,6 +385,16 @@ func (o *Options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
 }
 
+// HTTPClientProxy returns the proxy URL for HTTP client.
+func (o *Options) HTTPClientProxy() string {
+	return o.httpClientProxy
+}
+
+// HasHTTPClientProxyConfigured returns true if the HTTP proxy is configured.
+func (o *Options) HasHTTPClientProxyConfigured() bool {
+	return o.httpClientProxy != ""
+}
+
 // AuthProxyHeader returns an HTTP header name that contains username for
 // authentication using auth proxy.
 func (o *Options) AuthProxyHeader() string {
@@ -359,6 +405,21 @@ func (o *Options) AuthProxyHeader() string {
 // users authenticated using auth proxy.
 func (o *Options) IsAuthProxyUserCreationAllowed() bool {
 	return o.authProxyUserCreation
+}
+
+// HasMetricsCollector returns true if metrics collection is enabled.
+func (o *Options) HasMetricsCollector() bool {
+	return o.metricsCollector
+}
+
+// MetricsRefreshInterval returns the refresh interval in seconds.
+func (o *Options) MetricsRefreshInterval() int {
+	return o.metricsRefreshInterval
+}
+
+// MetricsAllowedNetworks returns the list of networks allowed to connect to the metrics endpoint.
+func (o *Options) MetricsAllowedNetworks() []string {
+	return o.metricsAllowedNetworks
 }
 
 func (o *Options) String() string {
@@ -383,6 +444,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("CERT_CACHE: %v\n", o.certCache))
 	builder.WriteString(fmt.Sprintf("CLEANUP_FREQUENCY_HOURS: %v\n", o.cleanupFrequencyHours))
 	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_READ_DAYS: %v\n", o.cleanupArchiveReadDays))
+	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_UNREAD_DAYS: %v\n", o.cleanupArchiveUnreadDays))
 	builder.WriteString(fmt.Sprintf("CLEANUP_REMOVE_SESSIONS_DAYS: %v\n", o.cleanupRemoveSessionsDays))
 	builder.WriteString(fmt.Sprintf("WORKER_POOL_SIZE: %v\n", o.workerPoolSize))
 	builder.WriteString(fmt.Sprintf("POLLING_FREQUENCY: %v\n", o.pollingFrequency))
@@ -403,7 +465,13 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("OAUTH2_PROVIDER: %v\n", o.oauth2Provider))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_TIMEOUT: %v\n", o.httpClientTimeout))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_MAX_BODY_SIZE: %v\n", o.httpClientMaxBodySize))
+	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_PROXY: %v\n", o.httpClientProxy))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_HEADER: %v\n", o.authProxyHeader))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
+	builder.WriteString(fmt.Sprintf("MAINTENANCE_MODE: %v\n", o.maintenanceMode))
+	builder.WriteString(fmt.Sprintf("MAINTENANCE_MESSAGE: %v\n", o.maintenanceMessage))
+	builder.WriteString(fmt.Sprintf("METRICS_COLLECTOR: %v\n", o.metricsCollector))
+	builder.WriteString(fmt.Sprintf("METRICS_REFRESH_INTERVAL: %v\n", o.metricsRefreshInterval))
+	builder.WriteString(fmt.Sprintf("METRICS_ALLOWED_NETWORKS: %v\n", o.metricsAllowedNetworks))
 	return builder.String()
 }

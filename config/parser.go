@@ -15,8 +15,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"miniflux.app/logger"
 )
 
 // Parser handles configuration parsing.
@@ -118,24 +116,10 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
 		case "CLEANUP_ARCHIVE_READ_DAYS":
 			p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
+		case "CLEANUP_ARCHIVE_UNREAD_DAYS":
+			p.opts.cleanupArchiveUnreadDays = parseInt(value, defaultCleanupArchiveUnreadDays)
 		case "CLEANUP_REMOVE_SESSIONS_DAYS":
 			p.opts.cleanupRemoveSessionsDays = parseInt(value, defaultCleanupRemoveSessionsDays)
-		case "CLEANUP_FREQUENCY":
-			logger.Error("[Config] CLEANUP_FREQUENCY has been deprecated in favor of CLEANUP_FREQUENCY_HOURS.")
-
-			if p.opts.cleanupFrequencyHours != defaultCleanupFrequencyHours {
-				logger.Error("[Config] Ignoring CLEANUP_FREQUENCY as CLEANUP_FREQUENCY_HOURS is already specified.")
-			} else {
-				p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
-			}
-		case "ARCHIVE_READ_DAYS":
-			logger.Error("[Config] ARCHIVE_READ_DAYS has been deprecated in favor of CLEANUP_ARCHIVE_READ_DAYS.")
-
-			if p.opts.cleanupArchiveReadDays != defaultCleanupArchiveReadDays {
-				logger.Error("[Config] Ignoring ARCHIVE_READ_DAYS as CLEANUP_ARCHIVE_READ_DAYS is already specified.")
-			} else {
-				p.opts.cleanupArchiveReadDays = parseInt(value, defaultCleanupArchiveReadDays)
-			}
 		case "WORKER_POOL_SIZE":
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
 		case "POLLING_FREQUENCY":
@@ -184,10 +168,22 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.httpClientTimeout = parseInt(value, defaultHTTPClientTimeout)
 		case "HTTP_CLIENT_MAX_BODY_SIZE":
 			p.opts.httpClientMaxBodySize = int64(parseInt(value, defaultHTTPClientMaxBodySize) * 1024 * 1024)
+		case "HTTP_CLIENT_PROXY":
+			p.opts.httpClientProxy = parseString(value, defaultHTTPClientProxy)
 		case "AUTH_PROXY_HEADER":
 			p.opts.authProxyHeader = parseString(value, defaultAuthProxyHeader)
 		case "AUTH_PROXY_USER_CREATION":
 			p.opts.authProxyUserCreation = parseBool(value, defaultAuthProxyUserCreation)
+		case "MAINTENANCE_MODE":
+			p.opts.maintenanceMode = parseBool(value, defaultMaintenanceMode)
+		case "MAINTENANCE_MESSAGE":
+			p.opts.maintenanceMessage = parseString(value, defaultMaintenanceMessage)
+		case "METRICS_COLLECTOR":
+			p.opts.metricsCollector = parseBool(value, defaultMetricsCollector)
+		case "METRICS_REFRESH_INTERVAL":
+			p.opts.metricsRefreshInterval = parseInt(value, defaultMetricsRefreshInterval)
+		case "METRICS_ALLOWED_NETWORKS":
+			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
 		}
 	}
 
@@ -252,6 +248,20 @@ func parseString(value string, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func parseStringList(value string, fallback []string) []string {
+	if value == "" {
+		return fallback
+	}
+
+	var strList []string
+	items := strings.Split(value, ",")
+	for _, item := range items {
+		strList = append(strList, strings.TrimSpace(item))
+	}
+
+	return strList
 }
 
 func readSecretFile(filename, fallback string) string {

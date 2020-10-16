@@ -15,10 +15,9 @@ class KeyboardHandler {
             let key = this.getKey(event);
             if (this.isEventIgnored(event, key) || this.isModifierKeyDown(event)) {
                 return;
-            } else {
-                event.preventDefault();
             }
 
+            event.preventDefault();
             this.queue.push(key);
 
             for (let combination in this.shortcuts) {
@@ -47,7 +46,6 @@ class KeyboardHandler {
         return event.target.tagName === "INPUT" ||
             event.target.tagName === "TEXTAREA" ||
             (this.queue.length < 1 && !this.triggers.includes(key));
-
     }
 
     isModifierKeyDown(event) {

@@ -36,7 +36,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	view.Set("menu", "feeds")
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountErrorFeeds(user.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("defaultUserAgent", client.DefaultUserAgent)
 
 	subscriptionForm := form.NewSubscriptionForm(r)
@@ -57,6 +57,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		subscriptionForm.Password,
 		subscriptionForm.ScraperRules,
 		subscriptionForm.RewriteRules,
+		subscriptionForm.FetchViaProxy,
 	)
 	if err != nil {
 		view.Set("form", subscriptionForm)
