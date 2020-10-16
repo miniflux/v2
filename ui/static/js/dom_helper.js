@@ -10,13 +10,13 @@ class DomHelper {
         win.focus();
     }
 
-    static scrollPageTo(element) {
+    static scrollPageTo(element, evenIfOnScreen) {
         let windowScrollPosition = window.pageYOffset;
         let windowHeight = document.documentElement.clientHeight;
         let viewportPosition = windowScrollPosition + windowHeight;
         let itemBottomPosition = element.offsetTop + element.offsetHeight;
 
-        if (viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
+        if (evenIfOnScreen || viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
             window.scrollTo(0, element.offsetTop - 10);
         }
     }

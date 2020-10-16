@@ -459,6 +459,7 @@ SOFTWARE.
                     <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.toggle_bookmark_status" }} = <strong>f</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.save_article" }} = <strong>s</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.scroll_item_to_top" }} = <strong>z + t</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.refresh_all_feeds" }} = <strong>R</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.remove_feed" }} = <strong>#</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_search" }} = <strong>/</strong></li>
@@ -523,7 +524,7 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "3dbe754a98f524a227111191d76b8c6944711b13613cc548ee9e9808fe0bffb4",
 	"item_meta":        "b7d69c26be12f72f821d7b509a9f910b1f341c2db02f138d5178f72a2c5b7939",
-	"layout":           "affdf6da489d9fbc50a58ffcab0e64d784d8befb32031f1249dee4c1f8d967e1",
+	"layout":           "65767e7dbebe1f7ed42895ecd5a737b0693e4a2ec35e84e3e391f462beb11977",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",
 }
