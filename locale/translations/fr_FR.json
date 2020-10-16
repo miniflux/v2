@@ -248,6 +248,8 @@
     "form.feed.label.user_agent": "Remplacer l'agent utilisateur par défaut",
     "form.feed.label.scraper_rules": "Règles pour récupérer le contenu original",
     "form.feed.label.rewrite_rules": "Règles de réécriture",
+    "form.feed.label.blocklist_rules": "Règles de blocage",
+    "form.feed.label.keeplist_rules": "Règles d'autorisation",
     "form.feed.label.ignore_http_cache": "Ignore cache HTTP",
     "form.feed.label.fetch_via_proxy": "Récupérer via proxy",
     "form.feed.label.disabled": "Ne pas actualiser ce flux",

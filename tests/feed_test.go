@@ -195,6 +195,31 @@ func TestUpdateFeedRewriteRules(t *testing.T) {
 	}
 }
 
+func TestUpdateFeedKeeplistRules(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	keeplistRules := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModification{KeeplistRules: &keeplistRules})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.KeeplistRules != keeplistRules {
+		t.Fatalf(`Wrong KeeplistRules value, got "%v" instead of "%v"`, updatedFeed.KeeplistRules, keeplistRules)
+	}
+
+	keeplistRules = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModification{KeeplistRules: &keeplistRules})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.KeeplistRules != keeplistRules {
+		t.Fatalf(`Wrong KeeplistRules value, got "%v" instead of "%v"`, updatedFeed.KeeplistRules, keeplistRules)
+	}
+}
+
 func TestUpdateFeedUserAgent(t *testing.T) {
 	client := createClient(t)
 	feed, _ := createFeed(t, client)

@@ -198,6 +198,11 @@ create index entries_user_feed_idx on entries (user_id, feed_id);
 	"schema_version_4": `create type entry_sorting_direction as enum('asc', 'desc');
 alter table users add column entry_direction entry_sorting_direction default 'asc';
 `,
+	"schema_version_40": `alter table feeds 
+    add column blocklist_rules text not null default '',
+    add column keeplist_rules text not null default ''
+;
+`,
 	"schema_version_5": `create table integrations (
     user_id int not null,
     pinboard_enabled bool default 'f',
@@ -258,6 +263,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_38": "e91d2f4075ceb7b8a16a25f350f36dee12cfd1ad86b8b6414c4cf2e9a003358c",
 	"schema_version_39": "b0f90b97502921d4681a07c64d180a91a0b4ccac7d3c1dbe30519ad6f1bf1737",
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
+	"schema_version_40": "6a8fec92399f853ed6817aff4cfa43255dce4c19afad796e41519d09de62105e",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",
 	"schema_version_6":  "9d05b4fb223f0e60efc716add5048b0ca9c37511cf2041721e20505d6d798ce4",
 	"schema_version_7":  "33f298c9aa30d6de3ca28e1270df51c2884d7596f1283a75716e2aeb634cd05c",

@@ -248,6 +248,8 @@
     "form.feed.label.user_agent": "Standaard User Agent overschrijven",
     "form.feed.label.scraper_rules": "Scraper regels",
     "form.feed.label.rewrite_rules": "Rewrite regels",
+    "form.feed.label.blocklist_rules": "Blokkeer regels",
+    "form.feed.label.keeplist_rules": "toestemmingsregels",
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",

@@ -5,6 +5,7 @@
 package processor
 
 import (
+	"regexp"
 	"time"
 
 	"miniflux.app/config"
@@ -19,9 +20,11 @@ import (
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
+
+	filterFeedEntries(feed)
+
 	for _, entry := range feed.Entries {
 		logger.Debug("[Feed #%d] Processing entry %s", feed.ID, entry.URL)
-
 		if feed.Crawler {
 			if !store.EntryURLExists(feed.ID, entry.URL) {
 				startTime := time.Now()
@@ -49,6 +52,37 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
 		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 	}
+}
+
+/*
+Filters feed entries based on regex rules
+First we filter based on our keep list, then we remove those entries that match the block list
+*/
+func filterFeedEntries(feed *model.Feed) {
+	var filteredEntries []*model.Entry
+
+	if len(feed.KeeplistRules) > 0 {
+		for _, entry := range feed.Entries {
+			match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
+			if match == true {
+				filteredEntries = append(filteredEntries, entry)
+			}
+		}
+	} else {
+		filteredEntries = feed.Entries
+	}
+	if len(feed.BlocklistRules) > 0 {
+		k := 0
+		for _, entry := range filteredEntries {
+			match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
+			if match != true {
+				filteredEntries[k] = entry
+				k++
+			}
+		}
+		filteredEntries = filteredEntries[:k]
+	}
+	feed.Entries = filteredEntries
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.

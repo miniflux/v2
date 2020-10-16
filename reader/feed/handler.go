@@ -34,7 +34,7 @@ type Handler struct {
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password, scraperRules, rewriteRules string, fetchViaProxy bool) (*model.Feed, error) {
+func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules string, fetchViaProxy bool) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
 
 	if !h.store.CategoryExists(userID, categoryID) {
@@ -65,7 +65,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 
 	subscription.UserID = userID
 	subscription.WithCategoryID(categoryID)
-	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules, fetchViaProxy)
+	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules, fetchViaProxy)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
