@@ -35,7 +35,7 @@ export PGPASSWORD := postgres
 	clean-integration-test \
 	docker-image \
 	docker-images \
-	docker-manifest
+	rpm
 
 generate:
 	@ go generate
@@ -95,7 +95,7 @@ run: generate
 	@ LOG_DATE_TIME=1 go run main.go -debug
 
 clean:
-	@ rm -f $(APP)-* $(APP)
+	@ rm -f $(APP)-* $(APP) $(APP)*.rpm
 
 test:
 	go test -cover -race -count=1 ./...
@@ -128,3 +128,12 @@ docker-images:
 		--file packaging/docker/Dockerfile \
 		--tag $(DOCKER_IMAGE):$(VERSION) \
 		--push .
+
+rpm: clean
+	@ docker build \
+		-t miniflux-rpm-builder \
+		-f packaging/rpm/Dockerfile \
+		.
+	@ docker run --rm \
+		-v ${PWD}:/root/rpmbuild/RPMS/x86_64/ miniflux-rpm-builder \
+		rpmbuild -bb --define "_miniflux_version $(VERSION)" /root/rpmbuild/SPECS/miniflux.spec
