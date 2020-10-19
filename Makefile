@@ -6,6 +6,7 @@ BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.Commit=$(COMMIT)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'"
 PKG_LIST     := $(shell go list ./... | grep -v /vendor/)
 DB_URL       := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
+DEB_IMG_ARCH := amd64
 
 export PGPASSWORD := postgres
 
@@ -35,7 +36,9 @@ export PGPASSWORD := postgres
 	clean-integration-test \
 	docker-image \
 	docker-images \
-	rpm
+	rpm \
+	debian \
+	debian-packages
 
 generate:
 	@ go generate
@@ -95,7 +98,7 @@ run: generate
 	@ LOG_DATE_TIME=1 go run main.go -debug
 
 clean:
-	@ rm -f $(APP)-* $(APP) $(APP)*.rpm
+	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb
 
 test:
 	go test -cover -race -count=1 ./...
@@ -135,5 +138,19 @@ rpm: clean
 		-f packaging/rpm/Dockerfile \
 		.
 	@ docker run --rm \
-		-v ${PWD}:/root/rpmbuild/RPMS/x86_64/ miniflux-rpm-builder \
+		-v ${PWD}:/root/rpmbuild/RPMS/x86_64 miniflux-rpm-builder \
 		rpmbuild -bb --define "_miniflux_version $(VERSION)" /root/rpmbuild/SPECS/miniflux.spec
+
+debian:
+	@ docker build \
+		--build-arg BASE_IMAGE_ARCH=$(DEB_IMG_ARCH) \
+		-t $(DEB_IMG_ARCH)/miniflux-deb-builder \
+		-f packaging/debian/Dockerfile \
+		.
+	@ docker run --rm \
+		-v ${PWD}:/pkg $(DEB_IMG_ARCH)/miniflux-deb-builder
+
+debian-packages: clean
+	$(MAKE) debian DEB_IMG_ARCH=amd64
+	$(MAKE) debian DEB_IMG_ARCH=arm64v8
+	$(MAKE) debian DEB_IMG_ARCH=arm32v7

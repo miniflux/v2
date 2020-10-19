@@ -1,0 +1,12 @@
+Source: miniflux
+Maintainer: Frédéric Guillot <f@miniflux.net>
+Build-Depends: debhelper (>= 9), dh-systemd
+
+Package: miniflux
+Architecture: __PKG_ARCH__
+Section: web
+Priority: optional
+Description: Minimalist Feed Reader
+ Miniflux is a minimalist and opinionated feed reader
+Homepage: https://miniflux.app
+Depends: ${misc:Depends}, ${shlibs:Depends}, adduser
