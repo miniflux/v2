@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+DESTDIR=debian/miniflux
+
+%:
+	dh $@ --with=systemd
+
+override_dh_auto_clean:
+override_dh_auto_test:
+override_dh_auto_build:
+override_dh_auto_install:
+	mkdir -p $(DESTDIR)/etc
+	mkdir -p $(DESTDIR)/usr/bin
+	cp miniflux.conf $(DESTDIR)/etc/miniflux.conf
+	cp miniflux $(DESTDIR)/usr/bin/miniflux
+
+override_dh_installinit:
+	dh_installinit --noscripts
