@@ -1,6 +1,8 @@
 Miniflux API Client
 ===================
 
+[![PkgGoDev](https://pkg.go.dev/badge/miniflux.app/client)](https://pkg.go.dev/miniflux.app/client)
+
 Client library for Miniflux REST API.
 
 Installation

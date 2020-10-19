@@ -1,6 +1,5 @@
 Miniflux 2
 ==========
-[![GoDoc](https://godoc.org/miniflux.app?status.svg)](https://godoc.org/miniflux.app)
 
 Miniflux is a minimalist and opinionated feed reader:
 
@@ -51,5 +50,5 @@ Dark theme when using keyboard navigation:
 Credits
 -------
 
-- Authors: Frédéric Guillot - [List of contributors](https://github.com/miniflux/miniflux/graphs/contributors)
+- Authors: Frédéric Guillot - [List of contributors](https://github.com/miniflux/v2/graphs/contributors)
 - Distributed under Apache 2.0 License
