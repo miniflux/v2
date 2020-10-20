@@ -20,13 +20,19 @@ import (
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
-
-	filterFeedEntries(feed)
+	var filteredEntries model.Entries
 
 	for _, entry := range feed.Entries {
-		logger.Debug("[Feed #%d] Processing entry %s", feed.ID, entry.URL)
+		logger.Debug("[Processor] Processing entry %q from feed %q", entry.URL, feed.FeedURL)
+
+		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) {
+			continue
+		}
+
 		if feed.Crawler {
 			if !store.EntryURLExists(feed.ID, entry.URL) {
+				logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
+
 				startTime := time.Now()
 				content, scraperErr := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
 
@@ -39,7 +45,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 				}
 
 				if scraperErr != nil {
-					logger.Error(`[Filter] Unable to crawl this entry: %q => %v`, entry.URL, scraperErr)
+					logger.Error(`[Processor] Unable to crawl this entry: %q => %v`, entry.URL, scraperErr)
 				} else if content != "" {
 					// We replace the entry content only if the scraper doesn't return any error.
 					entry.Content = content
@@ -51,38 +57,34 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
 		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
+
+		filteredEntries = append(filteredEntries, entry)
 	}
+
+	feed.Entries = filteredEntries
 }
 
-/*
-Filters feed entries based on regex rules
-First we filter based on our keep list, then we remove those entries that match the block list
-*/
-func filterFeedEntries(feed *model.Feed) {
-	var filteredEntries []*model.Entry
+func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
+	if feed.BlocklistRules != "" {
+		match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
+		if match {
+			logger.Debug("[Processor] Blocking entry %q from feed %q based on rule %q", entry.Title, feed.FeedURL, feed.BlocklistRules)
+			return true
+		}
+	}
+	return false
+}
 
-	if len(feed.KeeplistRules) > 0 {
-		for _, entry := range feed.Entries {
-			match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
-			if match == true {
-				filteredEntries = append(filteredEntries, entry)
-			}
+func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
+	if feed.KeeplistRules != "" {
+		match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
+		if match {
+			logger.Debug("[Processor] Allow entry %q from feed %q based on rule %q", entry.Title, feed.FeedURL, feed.KeeplistRules)
+			return true
 		}
-	} else {
-		filteredEntries = feed.Entries
+		return false
 	}
-	if len(feed.BlocklistRules) > 0 {
-		k := 0
-		for _, entry := range filteredEntries {
-			match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
-			if match != true {
-				filteredEntries[k] = entry
-				k++
-			}
-		}
-		filteredEntries = filteredEntries[:k]
-	}
-	feed.Entries = filteredEntries
+	return true
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
