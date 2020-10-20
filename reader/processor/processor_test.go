@@ -1,88 +1,49 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
+// Copyright 2020 Frédéric Guillot. All rights reserved.
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
 package processor // import "miniflux.app/reader/processor"
 
 import (
-	"miniflux.app/reader/parser"
 	"testing"
+
+	"miniflux.app/model"
 )
 
-func TestKeeplistRules(t *testing.T) {
-	data := `<?xml version="1.0"?>
-	<rss version="2.0">
-	<channel>
-		<title>SomeGood News</title>
-		<link>http://foo.bar/</link>
-		<item>
-			<title>Kitten News</title>
-			<link>http://kitties.today/daily-kitten</link>
-			<description>Kitten picture of the day.</description>
-			<pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
-			<guid>http://kitties.today</guid>
-		</item>
-		<item>
-			<title>Daily Covid DoomScrolling News</title>
-			<link>http://covid.doom/daily-panic-dose</link>
-			<description>Did you know that you can get COVID IN YOUR DREAMS?.</description>
-			<pubDate>Tue, 03 Jun 2020 09:39:21 GMT</pubDate>
-			<guid>http://covid.doom</guid>
-		</item>
-	</channel>
-	</rss>`
-
-	feed, err := parser.ParseFeed(data)
-	if err != nil {
-		t.Error(err)
-	}
-	if len(feed.Entries) != 2 {
-		t.Errorf("Error parsing feed")
+func TestBlockingEntries(t *testing.T) {
+	var scenarios = []struct {
+		feed     *model.Feed
+		entry    *model.Entry
+		expected bool
+	}{
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, false},
+		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, false},
 	}
 
-	//case insensitive
-	feed.KeeplistRules = "(?i)kitten"
-	filterFeedEntries(feed)
-	if len(feed.Entries) != 1 {
-		t.Errorf("Keeplist filter rule did not properly filter the feed")
+	for _, tc := range scenarios {
+		result := isBlockedEntry(tc.feed, tc.entry)
+		if tc.expected != result {
+			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
+		}
 	}
 }
 
-func TestBlocklistRules(t *testing.T) {
-	data := `<?xml version="1.0"?>
-	<rss version="2.0">
-	<channel>
-		<title>SomeGood News</title>
-		<link>http://foo.bar/</link>
-		<item>
-			<title>Kitten News</title>
-			<link>http://kitties.today/daily-kitten</link>
-			<description>Kitten picture of the day.</description>
-			<pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
-			<guid>http://kitties.today</guid>
-		</item>
-		<item>
-			<title>Daily Covid DoomScrolling News</title>
-			<link>http://covid.doom/daily-panic-dose</link>
-			<description>Did you know that you can get COVID IN YOUR DREAMS?.</description>
-			<pubDate>Tue, 03 Jun 2020 09:39:21 GMT</pubDate>
-			<guid>http://covid.doom</guid>
-		</item>
-	</channel>
-	</rss>`
-
-	feed, err := parser.ParseFeed(data)
-	if err != nil {
-		t.Error(err)
-	}
-	if len(feed.Entries) != 2 {
-		t.Errorf("Error parsing feed")
+func TestAllowEntries(t *testing.T) {
+	var scenarios = []struct {
+		feed     *model.Feed
+		entry    *model.Entry
+		expected bool
+	}{
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, false},
+		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, true},
 	}
 
-	//case insensitive
-	feed.BlocklistRules = "(?i)covid"
-	filterFeedEntries(feed)
-	if len(feed.Entries) != 1 {
-		t.Errorf("Keeplist filter rule did not properly filter the feed")
+	for _, tc := range scenarios {
+		result := isAllowedEntry(tc.feed, tc.entry)
+		if tc.expected != result {
+			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
+		}
 	}
 }

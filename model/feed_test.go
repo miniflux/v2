@@ -48,7 +48,17 @@ func TestFeedCategorySetter(t *testing.T) {
 
 func TestFeedBrowsingParams(t *testing.T) {
 	feed := &Feed{}
-	feed.WithBrowsingParameters(true, "Custom User Agent", "Username", "Secret", "Some Rule", "Another Rule", "Look a Rule", "Oh wow another Rule", false)
+	feed.WithBrowsingParameters(
+		true,
+		"Custom User Agent",
+		"Username",
+		"Secret",
+		"Scraper Rule",
+		"Rewrite Rule",
+		"Block Rule",
+		"Allow Rule",
+		true,
+	)
 
 	if !feed.Crawler {
 		t.Error(`The crawler must be activated`)
@@ -66,12 +76,24 @@ func TestFeedBrowsingParams(t *testing.T) {
 		t.Error(`The password must be set`)
 	}
 
-	if feed.ScraperRules != "Some Rule" {
+	if feed.ScraperRules != "Scraper Rule" {
 		t.Errorf(`The scraper rules must be set`)
 	}
 
-	if feed.RewriteRules != "Another Rule" {
+	if feed.RewriteRules != "Rewrite Rule" {
 		t.Errorf(`The rewrite rules must be set`)
+	}
+
+	if feed.BlocklistRules != "Block Rule" {
+		t.Errorf(`The block list rules must be set`)
+	}
+
+	if feed.KeeplistRules != "Allow Rule" {
+		t.Errorf(`The keep list rules must be set`)
+	}
+
+	if !feed.FetchViaProxy {
+		t.Errorf(`The fetch via proxy is no set`)
 	}
 }
 

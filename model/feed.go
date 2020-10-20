@@ -74,7 +74,7 @@ func (f *Feed) WithCategoryID(categoryID int64) {
 }
 
 // WithBrowsingParameters defines browsing parameters.
-func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password, scraperRules, rewriteRules, blacklistRules, keeplistRules string, fetchViaProxy bool) {
+func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules string, fetchViaProxy bool) {
 	f.Crawler = crawler
 	f.UserAgent = userAgent
 	f.Username = username
@@ -82,7 +82,7 @@ func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, passwor
 	f.ScraperRules = scraperRules
 	f.RewriteRules = rewriteRules
 	f.FetchViaProxy = fetchViaProxy
-	f.BlocklistRules = blacklistRules
+	f.BlocklistRules = blocklistRules
 	f.KeeplistRules = keeplistRules
 }
 
