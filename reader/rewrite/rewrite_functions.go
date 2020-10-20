@@ -147,7 +147,31 @@ func fixMediumImages(entryURL, entryContent string) string {
 
 	doc.Find("figure.paragraph-image").Each(func(i int, paragraphImage *goquery.Selection) {
 		noscriptElement := paragraphImage.Find("noscript")
-		paragraphImage.ReplaceWithHtml(noscriptElement.Text())
+		if noscriptElement.Length() > 0 {
+			paragraphImage.ReplaceWithHtml(noscriptElement.Text())
+		}
+	})
+
+	output, _ := doc.Find("body").First().Html()
+	return output
+}
+
+func useNoScriptImages(entryURL, entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	doc.Find("figure").Each(func(i int, figureElement *goquery.Selection) {
+		imgElement := figureElement.Find("img")
+		if imgElement.Length() > 0 {
+			noscriptElement := figureElement.Find("noscript")
+			if noscriptElement.Length() > 0 {
+				figureElement.PrependHtml(noscriptElement.Text())
+				imgElement.Remove()
+				noscriptElement.Remove()
+			}
+		}
 	})
 
 	output, _ := doc.Find("body").First().Html()

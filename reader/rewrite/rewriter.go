@@ -45,6 +45,8 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 			entryContent = replaceTextLinks(entryContent)
 		case "fix_medium_images":
 			entryContent = fixMediumImages(entryURL, entryContent)
+		case "use_noscript_figure_images":
+			entryContent = useNoScriptImages(entryURL, entryContent)
 		}
 	}
 

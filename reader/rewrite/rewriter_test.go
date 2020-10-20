@@ -208,3 +208,25 @@ func TestMediumImage(t *testing.T) {
 		t.Errorf(`Not expected output: %s`, output)
 	}
 }
+
+func TestRewriteNoScriptImageWithoutNoScriptTag(t *testing.T) {
+	content := `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><figcaption>MDN Logo</figcaption></figure>`
+	expected := `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."/><figcaption>MDN Logo</figcaption></figure>`
+	output := Rewriter("https://example.org/article", content, "use_noscript_figure_images")
+	output = strings.TrimSpace(output)
+
+	if expected != output {
+		t.Errorf(`Not expected output: %s`, output)
+	}
+}
+
+func TestRewriteNoScriptImageWithNoScriptTag(t *testing.T) {
+	content := `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><noscript><img src="http://example.org/logo.svg"></noscript><figcaption>MDN Logo</figcaption></figure>`
+	expected := `<figure><img src="http://example.org/logo.svg"/><figcaption>MDN Logo</figcaption></figure>`
+	output := Rewriter("https://example.org/article", content, "use_noscript_figure_images")
+	output = strings.TrimSpace(output)
+
+	if expected != output {
+		t.Errorf(`Not expected output: %s`, output)
+	}
+}
