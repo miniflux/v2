@@ -1,0 +1,8 @@
+---
+  miniflux_linux_user: miniflux
+  miniflux_db_user_name: miniflux_db_user
+  miniflux_db_user_password: miniflux_db_user_password
+  miniflux_db: miniflux_db
+  miniflux_admin_name: admin
+  miniflux_admin_passwort: miniflux_admin_password
+  miniflux_port: 8080
