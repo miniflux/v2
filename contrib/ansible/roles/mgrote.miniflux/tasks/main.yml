@@ -7,7 +7,7 @@
   - name: add miniflux-repo
     become: yes
     apt_repository:
-      repo: 'deb https://apt.miniflux.app/ /' # Der einzelne "/" muss vorhanden sein, sonst ist die Sytax ungültig!
+      repo: 'deb https://apt.miniflux.app/ /' 
       state: present
       filename: miniflux_repo
       update_cache: yes

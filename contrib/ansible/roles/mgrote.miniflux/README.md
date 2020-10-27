@@ -1,24 +1,23 @@
 ## mgrote.miniflux
 
-### Beschreibung
-Installiert miniflux.
-Und konfiguriert es.
-Es wird ein Nutzer(Linux, PosGreSQL und miniflux) angelegt: "admin:hallowelt"
-### Funktioniert auf
+### Details
+Installs and configures Miniflux v2 with ansible
+
+### Works on...
 - [x] Ubuntu (>=18.04)
 
-### Variablen + Defaults
-##### Linux Nutzer für miniflux
+### Variables and Defaults
+##### Linux User
     miniflux_linux_user: miniflux
-##### Datenbanknutzer für ...
+##### DB User
     miniflux_db_user_name: miniflux_db_user
-##### Datenbanknutzerpasswort für ...
+##### DB Password
     miniflux_db_user_password: qqqqqqqqqqqqq
-##### Datenbank für ...
+##### Database
     miniflux_db: miniflux_db
-##### Nutzername für den Administrator
+##### Username Miniflux Admin
     miniflux_admin_name: admin
-##### Passwort für den Administrator
+##### Password Miniflux Admin
     miniflux_admin_passwort: hallowelt
-##### Port auf dem Miniflux erreichbar sein soll
+##### Port for Miniflux Frontend
     miniflux_port: 8080
