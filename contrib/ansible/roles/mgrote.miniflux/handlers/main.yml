@@ -1,0 +1,11 @@
+---
+  - name: start_miniflux.service
+    become: yes
+    systemd:
+      name: miniflux
+      state: restarted
+      enabled: yes
+# wait 15 seconds(for systemd)
+  - name: miniflux_wait
+    wait_for:
+      timeout: 15

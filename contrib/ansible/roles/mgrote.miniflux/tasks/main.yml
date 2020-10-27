@@ -1,0 +1,43 @@
+  - name: add Apt-key for miniflux-repo
+    become: yes
+    apt_key:
+      url: https://apt.miniflux.app/KEY.gpg
+      state: present
+
+  - name: add miniflux-repo
+    become: yes
+    apt_repository:
+      repo: 'deb https://apt.miniflux.app/ /' 
+      state: present
+      filename: miniflux_repo
+      update_cache: yes
+
+  - name: install miniflux
+    become: yes
+    apt:
+      name: miniflux
+      state: present
+
+  - name: add miniflux linux_user
+    become: yes
+    user:
+      name: "{{ miniflux_linux_user }}"
+      home: "/var/empty"
+      create_home: "no"
+      system: "yes"
+      shell: "/bin/false"
+
+  - name: create directory "/etc/miniflux.d"
+    become: yes
+    file:
+      path: /etc/miniflux.d
+      state: directory
+
+  - name: copy miniflux.conf
+    become: yes
+    template:
+      src: "miniflux.conf"
+      dest: "/etc/miniflux.conf"
+    notify:
+      - start_miniflux.service
+      - miniflux_wait
