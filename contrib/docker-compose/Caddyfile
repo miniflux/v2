@@ -1,0 +1,2 @@
+miniflux.example.org
+reverse_proxy miniflux:8080
