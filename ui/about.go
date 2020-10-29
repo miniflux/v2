@@ -24,6 +24,7 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("version", version.Version)
+	view.Set("commit", version.Commit)
 	view.Set("build_date", version.BuildDate)
 	view.Set("menu", "settings")
 	view.Set("user", user)

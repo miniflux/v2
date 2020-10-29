@@ -15,6 +15,7 @@ var templateViewsMap = map[string]string{
     <h3>Miniflux</h3>
     <ul>
         <li><strong>{{ t "page.about.version" }}</strong> {{ .version }}</li>
+        <li><strong>Git Commit</strong> {{ .commit }}</li>
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
     </ul>
 </div>
@@ -1593,7 +1594,7 @@ var templateViewsMap = map[string]string{
 }
 
 var templateViewsMapChecksums = map[string]string{
-	"about":               "4035658497363d7af7f79be83190404eb21ec633fe8ec636bdfc219d9fc78cfc",
+	"about":               "504b3635a7f898c12a1120c2270a2911aa8378c0fa272ea0980feca1fa3161f2",
 	"add_subscription":    "82bf0dfadd64d3b6eda323a8174dd1446665b0804d27ca8718a828488627b287",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "eacbbdce7fa85ec66c4c12f02879daab562a17ff79f1aac1805617e83e3a3a42",
