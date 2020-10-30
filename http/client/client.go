@@ -268,6 +268,7 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 func (c *Client) buildClient() http.Client {
 	client := http.Client{Timeout: time.Duration(c.ClientTimeout) * time.Second}
 	transport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
 			// Default is 30s.
 			Timeout: 10 * time.Second,
