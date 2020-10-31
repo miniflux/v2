@@ -6,7 +6,6 @@ package atom // import "miniflux.app/reader/atom"
 
 import (
 	"encoding/xml"
-	"html"
 	"strconv"
 	"strings"
 	"time"
@@ -221,10 +220,8 @@ func (a *atom10Text) String() string {
 	switch {
 	case a.Type == "xhtml":
 		content = a.XML
-	case a.Type == "html":
+	default:
 		content = a.Data
-	case a.Type == "text" || a.Type == "":
-		content = html.EscapeString(a.Data)
 	}
 
 	return strings.TrimSpace(content)

@@ -359,7 +359,7 @@ func TestParseEntrySummaryWithPlainText(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Content != "&lt;Some text.&gt;" {
+	if feed.Entries[0].Content != "<Some text.>" {
 		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
 	}
 }
@@ -596,6 +596,63 @@ func TestParseInvalidXml(t *testing.T) {
 	_, err := Parse(bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should returns an error")
+	}
+}
+
+func TestParseTitleWithSingleQuote(t *testing.T) {
+	data := `
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+			<title>' or ’</title>
+			<link href="http://example.org/"/>
+		</feed>
+	`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "' or ’" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+	}
+}
+
+func TestParseTitleWithEncodedSingleQuote(t *testing.T) {
+	data := `
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+			<title type="html">Test&#39;s Blog</title>
+			<link href="http://example.org/"/>
+		</feed>
+	`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Test's Blog" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+	}
+}
+
+func TestParseTitleWithSingleQuoteAndHTMLType(t *testing.T) {
+	data := `
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+			<title type="html">O’Hara</title>
+			<link href="http://example.org/"/>
+		</feed>
+	`
+
+	feed, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "O’Hara" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
 
