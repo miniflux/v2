@@ -87,32 +87,26 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 // - Feeds with encoding specified only in XML document and not in HTTP header
 // - Feeds with wrong encoding defined and already in UTF-8
 func (r *Response) EnsureUnicodeBody() (err error) {
-	if r.ContentType != "" {
-		// JSON feeds are always in UTF-8.
-		if strings.Contains(r.ContentType, "json") {
-			return
+	buffer, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	r.Body = bytes.NewReader(buffer)
+	if utf8.Valid(buffer) {
+		return nil
+	}
+
+	if strings.Contains(r.ContentType, "xml") {
+		// We ignore documents with encoding specified in XML prolog.
+		// This is going to be handled by the XML parser.
+		length := 1024
+		if len(buffer) < 1024 {
+			length = len(buffer)
 		}
 
-		if strings.Contains(r.ContentType, "xml") {
-			buffer, _ := ioutil.ReadAll(r.Body)
-			r.Body = bytes.NewReader(buffer)
-
-			// We ignore documents with encoding specified in XML prolog.
-			// This is going to be handled by the XML parser.
-			length := 1024
-			if len(buffer) < 1024 {
-				length = len(buffer)
-			}
-
-			if xmlEncodingRegex.Match(buffer[0:length]) {
-				return
-			}
-
-			// If no encoding is specified in the XML prolog and
-			// the document is valid UTF-8, nothing needs to be done.
-			if utf8.Valid(buffer) {
-				return
-			}
+		if xmlEncodingRegex.Match(buffer[0:length]) {
+			return nil
 		}
 	}
 
