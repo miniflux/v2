@@ -734,6 +734,13 @@ var templateViewsMap = map[string]string{
                     {{ end }}
                 </li>
                 <li>
+                    <a href="{{ .entry.URL | safeURL  }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        referrerpolicy="no-referrer"
+                        data-original-link="true">{{ template "icon_external_link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
+                </li>
+                <li>
                     <a href="#"
                         title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
@@ -1608,7 +1615,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "5de7626448c48de384a0388227ab0c3b75b1ec19b5de440c91039180852cc5dc",
 	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
-	"entry":               "c503dcf77de37090b9f05352bb9d99729085eec6e7bc22be94f2b4b244b4e48c",
+	"entry":               "8fdecabc90354615cdf213542620e5ac16632a494fd6a87b3b2280ac879f6c34",
 	"feed_entries":        "89977ea86b8d43305d587b70e6d9c45c2c88249b3966f2d31051dc7a5f1c48b6",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "261b47e5f2f699a9cef1b3b690f80d7aabf585d05b77d67645d623f7ff6c0fbb",

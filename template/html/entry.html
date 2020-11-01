@@ -56,6 +56,13 @@
                     {{ end }}
                 </li>
                 <li>
+                    <a href="{{ .entry.URL | safeURL  }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        referrerpolicy="no-referrer"
+                        data-original-link="true">{{ template "icon_external_link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
+                </li>
+                <li>
                     <a href="#"
                         title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
