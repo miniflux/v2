@@ -1,6 +1,6 @@
 APP          := miniflux
 DOCKER_IMAGE := miniflux/miniflux
-VERSION      := $(shell git describe --abbrev=0)
+VERSION      := $(shell git describe --tags --abbrev=0)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.Commit=$(COMMIT)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'"
