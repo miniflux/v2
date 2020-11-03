@@ -1,3 +1,31 @@
+Version 2.0.25 (Nov 3, 2020)
+----------------------------
+
+* Rename "original" link to be more explicit
+* Do not escape HTML for Atom 1.0 text content during parsing (Avoid HTML entities issues)
+* Do not use charset.NewReader if the body is a valid UTF-8 document
+* Restore the ability to use a proxy for all HTTP requests (see https://golang.org/pkg/net/http/#ProxyFromEnvironment)
+* Show Git commit in about page
+* Publish Docker images to GitHub Container Registry
+* Added few Docker Compose examples in contrib folder
+* Added Ansible Role + Playbook for Miniflux in contrib folder
+* Add rewrite rule to use noscript content for images rendered with Javascript
+* Bump github.com/prometheus/client_golang from 1.7.1 to 1.8.0
+* Update contributor link and Godoc badge for API client
+* Move Debian package builder to main repository
+* Move RPM build files to main repository
+* Add GitHub Action to generate Docker images
+* Build multi-platform images with Docker Buildx
+* Add keyboard shortcut to scroll current item to the top
+* Add feed filters (Keeplist and Blocklist)
+* Do not proxy image with a data URL
+* Bump github.com/PuerkitoBio/goquery from 1.5.1 to 1.6.0
+* Proxify articles crawled manually
+* Proxify images defined in srcset attribute
+* Remove plaintext Fever password from database
+* Add keyboard shortcut to jump to an item's feed page
+* Add option for swipe gesture on entries on mobile
+
 Version 2.0.24 (Oct 3, 2020)
 ----------------------------
 
