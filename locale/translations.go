@@ -74,7 +74,7 @@ var translations = map[string]string{
     "entry.scraper.label": "Herunterladen",
     "entry.scraper.title": "Inhalt herunterladen",
     "entry.scraper.completed": "Erledigt!",
-    "entry.external_link.label": "Externer link",
+    "entry.external_link.label": "Externer Link",
     "entry.comments.label": "Kommentare",
     "entry.comments.title": "Kommentare anzeigen",
     "entry.share.label": "Teilen",
@@ -3740,7 +3740,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "d8b49d111bf258226dbf7e0db14116469feb2f44dcc7bfcd323a29fb9badfdaf",
+	"de_DE": "66d6feafa5f92c35b10f8c07aa693afe1ea7dca73708cdebfc4cf3edb0478512",
 	"en_US": "fa1771f155b439b46f282069a1628dc95d4170a5d7db14c1b90fa753936e7856",
 	"es_ES": "5b65c97c14e4b1f833ce6047be4b8b29bcb777d7a7a21420d1fb619584746649",
 	"fr_FR": "b58d74f73de2e775cc3f883f2fb19451e306ff32772f2fa8cb3c630d9df395d3",
