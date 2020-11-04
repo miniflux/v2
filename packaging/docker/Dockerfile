@@ -9,6 +9,7 @@ RUN go build \
     main.go
 
 FROM alpine:latest
+EXPOSE 8080
 ENV LISTEN_ADDR 0.0.0.0:8080
 RUN apk --no-cache add ca-certificates tzdata
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
