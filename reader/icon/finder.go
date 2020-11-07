@@ -72,7 +72,7 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 	for _, query := range queries {
 		doc.Find(query).Each(func(i int, s *goquery.Selection) {
 			if href, exists := s.Attr("href"); exists {
-				iconURL = href
+				iconURL = strings.TrimSpace(href)
 			}
 		})
 
