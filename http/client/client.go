@@ -52,7 +52,8 @@ type Client struct {
 	requestPassword            string
 	requestUserAgent           string
 
-	useProxy bool
+	useProxy             bool
+	doNotFollowRedirects bool
 
 	ClientTimeout     int
 	ClientMaxBodySize int64
@@ -124,9 +125,15 @@ func (c *Client) WithCacheHeaders(etagHeader, lastModifiedHeader string) *Client
 	return c
 }
 
-// WithProxy enable proxy for the current HTTP request.
+// WithProxy enables proxy for the current HTTP request.
 func (c *Client) WithProxy() *Client {
 	c.useProxy = true
+	return c
+}
+
+// WithoutRedirects disables HTTP redirects.
+func (c *Client) WithoutRedirects() *Client {
+	c.doNotFollowRedirects = true
 	return c
 }
 
@@ -266,7 +273,10 @@ func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, err
 }
 
 func (c *Client) buildClient() http.Client {
-	client := http.Client{Timeout: time.Duration(c.ClientTimeout) * time.Second}
+	client := http.Client{
+		Timeout: time.Duration(c.ClientTimeout) * time.Second,
+	}
+
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
@@ -282,6 +292,12 @@ func (c *Client) buildClient() http.Client {
 
 		// Default is 90s.
 		IdleConnTimeout: 10 * time.Second,
+	}
+
+	if c.doNotFollowRedirects {
+		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}
 	}
 
 	if c.useProxy && c.ClientProxyURL != "" {
