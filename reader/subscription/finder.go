@@ -156,9 +156,16 @@ func tryWellKnownUrls(websiteURL, userAgent, username, password string) (Subscri
 		if err != nil {
 			continue
 		}
+
 		clt := client.NewClientWithConfig(fullURL, config.Opts)
 		clt.WithCredentials(username, password)
 		clt.WithUserAgent(userAgent)
+
+		// Some websites redirects unknown URLs to the home page.
+		// As result, the list of known URLs is returned to the subscription list.
+		// We don't want the user to choose between invalid feed URLs.
+		clt.WithoutRedirects()
+
 		response, err := clt.Get()
 		if err != nil {
 			continue
