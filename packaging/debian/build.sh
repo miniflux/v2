@@ -20,6 +20,7 @@ cd /src && \
     cp /src/packaging/debian/compat /build/debian/compat && \
     cp /src/packaging/debian/copyright /build/debian/copyright && \
     cp /src/packaging/debian/miniflux.manpages /build/debian/miniflux.manpages && \
+    cp /src/packaging/debian/miniflux.postinst /build/debian/miniflux.postinst && \
     cp /src/packaging/debian/rules /build/debian/rules && \
     echo "miniflux ($PKG_VERSION) experimental; urgency=low" > /build/debian/changelog && \
     echo "  * Miniflux version $PKG_VERSION" >> /build/debian/changelog && \
