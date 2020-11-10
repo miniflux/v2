@@ -1,3 +1,8 @@
+# Changing the systemd config can be done like this:
+# 1) Edit the config file: vim /usr/lib/systemd/system/miniflux.service
+# 2) Reload systemd: systemctl daemon-reload
+# 3) Restart the process: systemctl restart miniflux
+
 [Unit]
 Description=Miniflux Feed Reader
 After=network.target postgresql.service
@@ -9,15 +14,34 @@ User=miniflux
 ExecStart=/usr/bin/miniflux
 Restart=always
 
-# Hardening options:
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#NoNewPrivileges=
 NoNewPrivileges=true
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#PrivateDevices=
 PrivateDevices=true
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectControlGroups=
 ProtectControlGroups=true
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectHome=
 ProtectHome=true
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectKernelModules=
 ProtectKernelModules=true
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectKernelTunables=
 ProtectKernelTunables=true
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectSystem=
 ProtectSystem=strict
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RestrictRealtime=
 RestrictRealtime=true
+
+# Keep at least the /run folder writeable if Miniflux is configured to use a Unix socket.
+# For example, the socket could be LISTEN_ADDR=/run/miniflux/miniflux.sock
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ReadWritePaths=
+ReadWritePaths=/run
 
 [Install]
 WantedBy=multi-user.target
