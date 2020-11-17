@@ -23,6 +23,7 @@ var dateFormats = []string{
 	time.RFC1123Z,
 	time.RFC1123,
 	time.ANSIC,
+	"Mon, January 2, 2006, 3:04 PM MST",
 	"Mon, January 2 2006 15:04:05 -0700",
 	"Mon, January 02, 2006, 15:04:05 MST",
 	"Mon, January 02, 2006 15:04:05 MST",
@@ -37,6 +38,8 @@ var dateFormats = []string{
 	"Mon Jan 02, 2006 3:04 pm",
 	"Mon, Jan 02,2006 15:04:05 MST",
 	"Mon Jan 02 2006 15:04:05 -0700",
+	"Monday, 2. January 2006 - 15:04",
+	"Monday 02 January 2006",
 	"Monday, January 2, 2006 15:04:05 MST",
 	"Monday, January 2, 2006 03:04 PM",
 	"Monday, January 2, 2006",
@@ -111,6 +114,11 @@ var dateFormats = []string{
 	"Mon, 02 Jan 2006",
 	"Mon, 02 Jan 06 15:04:05 MST",
 	"Mon, 02 Jan 2006 3:04 PM MST",
+	"Mon Jan 02 2006 15:04:05 MST",
+	"Mon, 01 02 2006 15:04:05 -0700",
+	"Mon, 2th Jan 2006 15:05:05 MST",
+	"Jan. 2, 2006, 3:04 a.m.",
+	"fri, 02 jan 2006 15:04:05 -0700",
 	"January 02 2006 03:04:05 PM",
 	"January 2, 2006 3:04 PM",
 	"January 2, 2006, 3:04 p.m.",
@@ -145,6 +153,7 @@ var dateFormats = []string{
 	"2006-1-2T15:04:05Z",
 	"2006-1-2 15:04:05",
 	"2006-1-2",
+	"2006-01-02T15:04:05-07:00Z",
 	"2006-1-02T15:04:05Z",
 	"2006-01-02T15:04Z",
 	"2006-01-02T15:04-07:00",
@@ -196,41 +205,106 @@ var dateFormats = []string{
 	"01/02/2006 - 15:04",
 	"01/02/2006",
 	"01-02-2006",
+	"Jan. 2006",
 }
+
+var invalidTimezoneReplacer = strings.NewReplacer(
+	"Europe/Brussels", "CET",
+	"GMT+0000 (Coordinated Universal Time)", "GMT",
+)
+
+var invalidLocalizedDateReplacer = strings.NewReplacer(
+	"Mo,", "Mon,",
+	"Di,", "Tue,",
+	"Mi,", "Wed,",
+	"Do,", "Thu,",
+	"Fr,", "Fri,",
+	"Sa,", "Sat,",
+	"So,", "Sun,",
+	"Mär ", "Mar ",
+	"Mai ", "May ",
+	"Okt ", "Oct ",
+	"Dez ", "Dec ",
+	"lun,", "Mon,",
+	"mar,", "Tue,",
+	"mer,", "Wed,",
+	"jeu,", "Thu,",
+	"ven,", "Fri,",
+	"sam,", "Sat,",
+	"dim,", "Sun,",
+	"lun.", "Mon",
+	"mar.", "Tue",
+	"mer.", "Wed",
+	"jeu.", "Thu",
+	"ven.", "Fri",
+	"sam.", "Sat",
+	"dim.", "Sun",
+	"Lundi,", "Monday,",
+	"Mardi,", "Tuesday,",
+	"Mercredi,", "Wednesday,",
+	"Jeudi,", "Thursday,",
+	"Vendredi,", "Friday,",
+	"Samedi,", "Saturday,",
+	"Dimanche,", "Sunday,",
+	"avr ", "Apr ",
+	"mai ", "May ",
+	"jui ", "Jun ",
+	"juin ", "June ",
+	"jan.", "January ",
+	"feb.", "February ",
+	"mars.", "March ",
+	"avril.", "April ",
+	"mai.", "May ",
+	"juin.", "June ",
+	"juil.", "july",
+	"août.", "august",
+	"sept.", "september",
+	"oct.", "october",
+	"nov.", "november",
+	"dec.", "december",
+	"Janvier", "January",
+	"Février", "February",
+	"Mars", "March",
+	"Avril", "April",
+	"Mai", "May",
+	"Juin", "June",
+	"Juillet", "July",
+	"Août", "August",
+	"Septembre", "September",
+	"Octobre", "October",
+	"Novembre", "November",
+	"Décembre", "December",
+)
 
 // Parse parses a given date string using a large
 // list of commonly found feed date formats.
-func Parse(ds string) (t time.Time, err error) {
-	timestamp, err := strconv.ParseInt(ds, 10, 64)
+func Parse(rawInput string) (t time.Time, err error) {
+	timestamp, err := strconv.ParseInt(rawInput, 10, 64)
 	if err == nil {
 		return time.Unix(timestamp, 0), nil
 	}
 
-	ds = replaceNonEnglishWords(ds)
-	d := strings.TrimSpace(ds)
-	if d == "" {
-		return t, errors.New("date parser: empty value")
+	processedInput := invalidLocalizedDateReplacer.Replace(rawInput)
+	processedInput = invalidTimezoneReplacer.Replace(processedInput)
+	processedInput = strings.TrimSpace(processedInput)
+	if processedInput == "" {
+		return t, errors.New(`date parser: empty value`)
 	}
 
 	for _, layout := range dateFormats {
 		switch layout {
 		case time.RFC822, time.RFC850, time.RFC1123:
-			if t, err = parseLocalTimeDates(layout, d); err == nil {
+			if t, err = parseLocalTimeDates(layout, processedInput); err == nil {
 				return
 			}
 		}
 
-		if t, err = time.Parse(layout, d); err == nil {
+		if t, err = time.Parse(layout, processedInput); err == nil {
 			return
 		}
 	}
 
-	lastSpace := strings.LastIndex(ds, " ")
-	if lastSpace > 0 {
-		return Parse(ds[0:lastSpace])
-	}
-
-	err = fmt.Errorf(`date parser: failed to parse date "%s"`, ds)
+	err = fmt.Errorf(`date parser: failed to parse date "%s"`, rawInput)
 	return
 }
 
@@ -248,33 +322,4 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 	}
 
 	return time.ParseInLocation(layout, ds, loc)
-}
-
-// Replace German and French dates to English.
-func replaceNonEnglishWords(ds string) string {
-	r := strings.NewReplacer(
-		"Mo,", "Mon,",
-		"Di,", "Tue,",
-		"Mi,", "Wed,",
-		"Do,", "Thu,",
-		"Fr,", "Fri,",
-		"Sa,", "Sat,",
-		"So,", "Sun,",
-		"Mär ", "Mar ",
-		"Mai ", "May ",
-		"Okt ", "Oct ",
-		"Dez ", "Dec ",
-		"lun,", "Mon,",
-		"mar,", "Tue,",
-		"mer,", "Wed,",
-		"jeu,", "Thu,",
-		"ven,", "Fri,",
-		"sam,", "Sat,",
-		"dim,", "Sun,",
-		"avr ", "Apr ",
-		"mai ", "May ",
-		"jui ", "Jun ",
-	)
-
-	return r.Replace(ds)
 }

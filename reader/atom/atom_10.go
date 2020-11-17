@@ -123,7 +123,7 @@ func (a *atom10Entry) entryDate() time.Time {
 	if dateText != "" {
 		result, err := date.Parse(dateText)
 		if err != nil {
-			logger.Error("atom: %v", err)
+			logger.Error("atom: %v (entry ID = %s)", err, a.ID)
 			return time.Now()
 		}
 

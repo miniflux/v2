@@ -179,7 +179,7 @@ func (r *rssItem) entryDate() time.Time {
 	if value != "" {
 		result, err := date.Parse(value)
 		if err != nil {
-			logger.Error("rss: %v", err)
+			logger.Error("rss: %v (entry GUID = %s)", err, r.GUID)
 			return time.Now()
 		}
 
