@@ -133,11 +133,21 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"Mon, 30 Mar 2020 19:53 +0000",
 		"Mon, 03/30/2020 - 19:19",
 		"2018-12-12T12:12",
+		"2020-11-08T16:20:00-05:00Z",
+		"Nov. 16, 2020, 10:57 a.m.",
+		"Friday 06 November 2020",
+		"Mon, November 16, 2020, 11:12 PM EST",
+		"Lundi, 16. Novembre 2020 - 15:54",
+		"Thu Nov 12 2020 17:00:00 GMT+0000 (Coordinated Universal Time)",
+		"Sat, 11 04 2020 08:51:49 +0100",
+		"Mon, 16th Nov 2020 13:16:28 GMT",
+		"Nov. 2020",
+		"ven., 03 juil. 2020 15:09:58 +0000",
 	}
 
 	for _, date := range dates {
 		if _, err := Parse(date); err != nil {
-			t.Fatalf(`Unable to parse date: %q`, date)
+			t.Errorf(`Unable to parse date: %q`, date)
 		}
 	}
 }
