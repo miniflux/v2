@@ -95,7 +95,7 @@ func (r *rdfItem) entryDate() time.Time {
 	if r.DublinCoreDate != "" {
 		result, err := date.Parse(r.DublinCoreDate)
 		if err != nil {
-			logger.Error("rdf: %v", err)
+			logger.Error("rdf: %v (entry link = %s)", err, r.Link)
 			return time.Now()
 		}
 
