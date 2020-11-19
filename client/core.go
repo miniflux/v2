@@ -129,20 +129,21 @@ type Feeds []*Feed
 
 // Entry represents a subscription item in the system.
 type Entry struct {
-	ID         int64      `json:"id"`
-	UserID     int64      `json:"user_id"`
-	FeedID     int64      `json:"feed_id"`
-	Status     string     `json:"status"`
-	Hash       string     `json:"hash"`
-	Title      string     `json:"title"`
-	URL        string     `json:"url"`
-	Date       time.Time  `json:"published_at"`
-	Content    string     `json:"content"`
-	Author     string     `json:"author"`
-	ShareCode  string     `json:"share_code"`
-	Starred    bool       `json:"starred"`
-	Enclosures Enclosures `json:"enclosures,omitempty"`
-	Feed       *Feed      `json:"feed,omitempty"`
+	ID          int64      `json:"id"`
+	UserID      int64      `json:"user_id"`
+	FeedID      int64      `json:"feed_id"`
+	Status      string     `json:"status"`
+	Hash        string     `json:"hash"`
+	Title       string     `json:"title"`
+	URL         string     `json:"url"`
+	Date        time.Time  `json:"published_at"`
+	Content     string     `json:"content"`
+	Author      string     `json:"author"`
+	ShareCode   string     `json:"share_code"`
+	Starred     bool       `json:"starred"`
+	ReadingTime int        `json:"reading_time"`
+	Enclosures  Enclosures `json:"enclosures,omitempty"`
+	Feed        *Feed      `json:"feed,omitempty"`
 }
 
 // Entries represents a list of entries.

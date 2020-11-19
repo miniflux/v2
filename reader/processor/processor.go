@@ -5,8 +5,11 @@
 package processor
 
 import (
+	"math"
 	"regexp"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"miniflux.app/config"
 	"miniflux.app/logger"
@@ -16,6 +19,8 @@ import (
 	"miniflux.app/reader/sanitizer"
 	"miniflux.app/reader/scraper"
 	"miniflux.app/storage"
+
+	"github.com/rylans/getlang"
 )
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
@@ -58,6 +63,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
 		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 
+		entry.ReadingTime = calculateReadingTime(entry.Content)
 		filteredEntries = append(filteredEntries, entry)
 	}
 
@@ -108,7 +114,23 @@ func ProcessEntryWebPage(entry *model.Entry) error {
 
 	if content != "" {
 		entry.Content = content
+		entry.ReadingTime = calculateReadingTime(content)
 	}
 
 	return nil
+}
+
+func calculateReadingTime(content string) int {
+	sanitizedContent := sanitizer.StripTags(content)
+	languageInfo := getlang.FromString(sanitizedContent)
+
+	var timeToReadInt int
+	if languageInfo.LanguageCode() == "ko" || languageInfo.LanguageCode() == "zh" || languageInfo.LanguageCode() == "jp" {
+		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / 500))
+	} else {
+		nbOfWords := len(strings.Fields(sanitizedContent))
+		timeToReadInt = int(math.Ceil(float64(nbOfWords) / 265))
+	}
+
+	return timeToReadInt
 }
