@@ -242,10 +242,10 @@ SOFTWARE.
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
-        {{ if .user.ShowReadingTime }}
+        {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) }}
         <li>
             <span>
-            {{ plural "entry.estimated_reading_time" (timeToRead .entry.Content) (timeToRead .entry.Content) }}
+            {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
             </span>
         </li>
         {{ end }}
@@ -523,7 +523,7 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "9a41753778072f286216085d8712495e2ccca20c7a24f5c982775436a3d38579",
-	"item_meta":        "eb72c6e2a924759af20b8ef41f2ce7495aedc053181c2e5ca1b063f9410c58b0",
+	"item_meta":        "56ab09d7dd46eeb2e2ee11ddcec0c157a5832c896dbd2887d9e2b013680b2af6",
 	"layout":           "65767e7dbebe1f7ed42895ecd5a737b0693e4a2ec35e84e3e391f462beb11977",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",

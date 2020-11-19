@@ -11,19 +11,16 @@ import (
 	"net/mail"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"miniflux.app/config"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/model"
 	"miniflux.app/proxy"
-	"miniflux.app/reader/sanitizer"
 	"miniflux.app/timezone"
 	"miniflux.app/url"
 
 	"github.com/gorilla/mux"
-	"github.com/rylans/getlang"
 )
 
 type funcMap struct {
@@ -93,9 +90,6 @@ func (f *funcMap) Map() template.FuncMap {
 		},
 		"plural": func(key string, n int, args ...interface{}) string {
 			return ""
-		},
-		"timeToRead": func(content string) int {
-			return 0
 		},
 	}
 }
@@ -194,19 +188,4 @@ func formatFileSize(b int64) string {
 	}
 	return fmt.Sprintf("%.1f %ciB",
 		float64(b)/float64(div), "KMGTPE"[exp])
-}
-
-func timeToRead(content string) int {
-	sanitizedContent := sanitizer.StripTags(content)
-	languageInfo := getlang.FromString(sanitizedContent)
-
-	var timeToReadInt int
-	if languageInfo.LanguageCode() == "ko" || languageInfo.LanguageCode() == "zh" || languageInfo.LanguageCode() == "jp" {
-		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / 500))
-	} else {
-		nbOfWords := len(strings.Fields(sanitizedContent))
-		timeToReadInt = int(math.Ceil(float64(nbOfWords) / 265))
-	}
-
-	return timeToReadInt
 }

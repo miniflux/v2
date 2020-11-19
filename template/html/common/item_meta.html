@@ -7,10 +7,10 @@
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
-        {{ if .user.ShowReadingTime }}
+        {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) }}
         <li>
             <span>
-            {{ plural "entry.estimated_reading_time" (timeToRead .entry.Content) (timeToRead .entry.Content) }}
+            {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
             </span>
         </li>
         {{ end }}
