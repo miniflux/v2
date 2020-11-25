@@ -230,3 +230,13 @@ func TestRewriteNoScriptImageWithNoScriptTag(t *testing.T) {
 		t.Errorf(`Not expected output: %s`, output)
 	}
 }
+
+func TestRewriteReplaceCustom(t *testing.T) {
+	content := `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.svg">`
+	expected := `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.png">`
+	output := Rewriter("https://example.org/artcle", content, `replace("article/(.*).svg"|"article/$1.png")`)
+
+	if expected != output {
+		t.Errorf(`Not expected output: %s`, output)
+	}
+}
