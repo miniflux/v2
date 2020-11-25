@@ -6,10 +6,13 @@ package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
 	"strings"
+	"regexp"
 
 	"miniflux.app/logger"
 	"miniflux.app/url"
 )
+
+var customReplaceRuleRegex = regexp.MustCompile(`replace\("(.*)"\|"(.*)"\)`)
 
 // Rewriter modify item contents with a set of rewriting rules.
 func Rewriter(entryURL, entryContent, customRewriteRules string) string {
@@ -24,7 +27,8 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 	logger.Debug(`[Rewrite] Applying rules %v for %q`, rules, entryURL)
 
 	for _, rule := range rules {
-		switch strings.TrimSpace(rule) {
+		rule := strings.TrimSpace(rule)
+		switch rule {
 		case "add_image_title":
 			entryContent = addImageTitle(entryURL, entryContent)
 		case "add_mailto_subject":
@@ -47,6 +51,16 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 			entryContent = fixMediumImages(entryURL, entryContent)
 		case "use_noscript_figure_images":
 			entryContent = useNoScriptImages(entryURL, entryContent)
+		default:
+			if strings.Contains(rule, "replace") {
+				// Format: replace("search-term"|"replace-term")
+				args := customReplaceRuleRegex.FindStringSubmatch(rule)
+				if len(args) >= 3 {
+					entryContent = replaceCustom(entryContent, args[1], args[2])
+				} else {
+					logger.Debug("[Rewrite] Cannot find search and replace terms for replace rule %s", rule)
+				}
+			}
 		}
 	}
 

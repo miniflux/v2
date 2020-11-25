@@ -221,3 +221,12 @@ func replaceTextLinks(input string) string {
 func replaceLineFeeds(input string) string {
 	return strings.Replace(input, "\n", "<br>", -1)
 }
+
+func replaceCustom(entryContent string, searchTerm string, replaceTerm string) string {
+	re, err := regexp.Compile(searchTerm)
+	if err == nil {
+		return re.ReplaceAllString(entryContent, replaceTerm)
+	}
+	return entryContent
+}
+
