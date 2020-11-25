@@ -394,3 +394,65 @@ func TestCannotDeleteUserAsNonAdmin(t *testing.T) {
 		t.Fatal(`A "Forbidden" error should be raised`)
 	}
 }
+
+func TestMarkUserAsReadAsUser(t *testing.T) {
+	username := getRandomUsername()
+	adminClient := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := adminClient.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client := miniflux.New(testBaseURL, username, testStandardPassword)
+	feed, _ := createFeed(t, client)
+
+	results, err := client.FeedEntries(feed.ID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+	if results.Total == 0 {
+		t.Fatalf(`Invalid number of entries: %d`, results.Total)
+	}
+	if results.Entries[0].Status != miniflux.EntryStatusUnread {
+		t.Fatalf(`Invalid entry status, got %q instead of %q`, results.Entries[0].Status, miniflux.EntryStatusUnread)
+	}
+
+	if err := client.MarkAllAsRead(user.ID); err != nil {
+		t.Fatalf(`Failed to mark user's unread entries as read: %v`, err)
+	}
+
+	results, err = client.FeedEntries(feed.ID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get updated entries: %v`, err)
+	}
+
+	for _, entry := range results.Entries {
+		if entry.Status != miniflux.EntryStatusRead {
+			t.Errorf(`Status for entry %d was %q instead of %q`, entry.ID, entry.Status, miniflux.EntryStatusRead)
+		}
+	}
+}
+
+func TestCannotMarkUserAsReadAsOtherUser(t *testing.T) {
+	username := getRandomUsername()
+	adminClient := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user1, err := adminClient.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	createFeed(t, miniflux.New(testBaseURL, username, testStandardPassword))
+
+	username2 := getRandomUsername()
+	if _, err = adminClient.CreateUser(username2, testStandardPassword, false); err != nil {
+		t.Fatal(err)
+	}
+
+	client := miniflux.New(testBaseURL, username2, testStandardPassword)
+	err = client.MarkAllAsRead(user1.ID)
+	if err == nil {
+		t.Fatalf(`Non-admin users should not be able to mark another user as read`)
+	}
+	if err != miniflux.ErrForbidden {
+		t.Errorf(`A "Forbidden" error should be raised, got %q`, err)
+	}
+}
