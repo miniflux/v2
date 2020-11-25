@@ -7,6 +7,7 @@ package api // import "miniflux.app/api"
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
@@ -140,6 +141,29 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Created(w, r, originalFeed)
+}
+
+func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
+	feedID := request.RouteInt64Param(r, "feedID")
+	userID := request.UserID(r)
+
+	feed, err := h.store.FeedByID(userID, feedID)
+	if err != nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	if feed == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	if err := h.store.MarkFeedAsRead(userID, feedID, time.Now()); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.NoContent(w, r)
 }
 
 func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {

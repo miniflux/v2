@@ -8,6 +8,8 @@ package tests
 
 import (
 	"testing"
+
+	miniflux "miniflux.app/client"
 )
 
 func TestCreateCategory(t *testing.T) {
@@ -78,6 +80,38 @@ func TestUpdateCategory(t *testing.T) {
 
 	if category.Title != categoryName {
 		t.Fatalf(`Invalid title, got "%v" instead of "%v"`, category.Title, categoryName)
+	}
+}
+
+func TestMarkCategoryAsRead(t *testing.T) {
+	client := createClient(t)
+
+	feed, category := createFeed(t, client)
+
+	results, err := client.FeedEntries(feed.ID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+	if results.Total == 0 {
+		t.Fatalf(`Invalid number of entries: %d`, results.Total)
+	}
+	if results.Entries[0].Status != miniflux.EntryStatusUnread {
+		t.Fatalf(`Invalid entry status, got %q instead of %q`, results.Entries[0].Status, miniflux.EntryStatusUnread)
+	}
+
+	if err := client.MarkCategoryAsRead(category.ID); err != nil {
+		t.Fatalf(`Failed to mark category as read: %v`, err)
+	}
+
+	results, err = client.FeedEntries(feed.ID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get updated entries: %v`, err)
+	}
+
+	for _, entry := range results.Entries {
+		if entry.Status != miniflux.EntryStatusRead {
+			t.Errorf(`Status for entry %d was %q instead of %q`, entry.ID, entry.Status, miniflux.EntryStatusRead)
+		}
 	}
 }
 

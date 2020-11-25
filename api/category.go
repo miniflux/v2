@@ -7,6 +7,7 @@ package api // import "miniflux.app/api"
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
@@ -62,6 +63,29 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Created(w, r, category)
+}
+
+func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	categoryID := request.RouteInt64Param(r, "categoryID")
+
+	category, err := h.store.Category(userID, categoryID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if category == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	if err = h.store.MarkCategoryAsRead(userID, categoryID, time.Now()); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.NoContent(w, r)
 }
 
 func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {

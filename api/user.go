@@ -92,6 +92,26 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	json.Created(w, r, originalUser)
 }
 
+func (h *handler) markUserAsRead(w http.ResponseWriter, r *http.Request) {
+	userID := request.RouteInt64Param(r, "userID")
+	if userID != request.UserID(r) {
+		json.Forbidden(w, r)
+		return
+	}
+
+	if _, err := h.store.UserByID(userID); err != nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	if err := h.store.MarkAllAsRead(userID); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.NoContent(w, r)
+}
+
 func (h *handler) users(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		json.Forbidden(w, r)

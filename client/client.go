@@ -133,6 +133,12 @@ func (c *Client) DeleteUser(userID int64) error {
 	return c.request.Delete(fmt.Sprintf("/v1/users/%d", userID))
 }
 
+// MarkAllAsRead marks all unread entries as read for a given user.
+func (c *Client) MarkAllAsRead(userID int64) error {
+	_, err := c.request.Put(fmt.Sprintf("/v1/users/%d/mark-all-as-read", userID), nil)
+	return err
+}
+
 // Discover try to find subscriptions from a website.
 func (c *Client) Discover(url string) (Subscriptions, error) {
 	body, err := c.request.Post("/v1/discover", map[string]string{"url": url})
@@ -205,6 +211,12 @@ func (c *Client) UpdateCategory(categoryID int64, title string) (*Category, erro
 	}
 
 	return category, nil
+}
+
+// MarkCategoryAsRead marks all unread entries in a category as read.
+func (c *Client) MarkCategoryAsRead(categoryID int64) error {
+	_, err := c.request.Put(fmt.Sprintf("/v1/categories/%d/mark-all-as-read", categoryID), nil)
+	return err
 }
 
 // DeleteCategory removes a category.
@@ -307,6 +319,12 @@ func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModification) (*Feed,
 	}
 
 	return f, nil
+}
+
+// MarkFeedAsRead marks all unread entries of the feed as read.
+func (c *Client) MarkFeedAsRead(feedID int64) error {
+	_, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d/mark-all-as-read", feedID), nil)
+	return err
 }
 
 // RefreshAllFeeds refreshes all feeds.
