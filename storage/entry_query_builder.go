@@ -227,6 +227,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.status,
 			e.starred,
 			e.reading_time,
+			e.created_at,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
@@ -286,6 +287,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Status,
 			&entry.Starred,
 			&entry.ReadingTime,
+			&entry.CreatedAt,
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,
@@ -312,6 +314,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 		// Make sure that timestamp fields contains timezone information (API)
 		entry.Date = timezone.Convert(tz, entry.Date)
+		entry.CreatedAt = timezone.Convert(tz, entry.CreatedAt)
 		entry.Feed.CheckedAt = timezone.Convert(tz, entry.Feed.CheckedAt)
 
 		entry.Feed.ID = entry.FeedID
