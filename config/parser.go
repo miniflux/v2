@@ -184,6 +184,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.metricsRefreshInterval = parseInt(value, defaultMetricsRefreshInterval)
 		case "METRICS_ALLOWED_NETWORKS":
 			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
+		case "USER_AGENT":
+			p.opts.userAgent = parseString(value, defaultUserAgent)
 		}
 	}
 

@@ -59,6 +59,7 @@ const (
 	defaultMetricsCollector                   = false
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
+	defaultUserAgent                          = ""
 )
 
 // Options contains configuration options.
@@ -112,6 +113,7 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
+	userAgent                          string
 }
 
 // NewOptions returns Options with default values.
@@ -164,6 +166,7 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
+		userAgent:                          defaultUserAgent,
 	}
 }
 
@@ -422,6 +425,11 @@ func (o *Options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
 }
 
+// UserAgent returns the global User-Agent header for miniflux.
+func (o *Options) UserAgent() string {
+	return o.userAgent
+}
+
 func (o *Options) String() string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("LOG_DATE_TIME: %v\n", o.logDateTime))
@@ -473,5 +481,6 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("METRICS_COLLECTOR: %v\n", o.metricsCollector))
 	builder.WriteString(fmt.Sprintf("METRICS_REFRESH_INTERVAL: %v\n", o.metricsRefreshInterval))
 	builder.WriteString(fmt.Sprintf("METRICS_ALLOWED_NETWORKS: %v\n", o.metricsAllowedNetworks))
+	builder.WriteString(fmt.Sprintf("USER_AGENT: %v\n", o.userAgent))
 	return builder.String()
 }
