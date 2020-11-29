@@ -72,7 +72,7 @@ func New(url string) *Client {
 
 // NewClientWithConfig initializes a new HTTP client with application config options.
 func NewClientWithConfig(url string, opts *config.Options) *Client {
-	userAgent := opts.UserAgent()
+	userAgent := opts.HTTPClientUserAgent()
 	if userAgent == "" {
 		userAgent = DefaultUserAgent
 	}
