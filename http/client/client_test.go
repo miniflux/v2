@@ -62,7 +62,7 @@ func TestClientRequestUserAgent(t *testing.T) {
 	}
 
 	userAgent := "Custom User Agent"
-	os.Setenv("USER_AGENT", userAgent)
+	os.Setenv("HTTP_CLIENT_USER_AGENT", userAgent)
 	opts, err := config.NewParser().ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing config failed: %v`, err)

@@ -52,6 +52,7 @@ const (
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
 	defaultHTTPClientProxy                    = ""
+	defaultHTTPClientUserAgent                = ""
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
 	defaultMaintenanceMode                    = false
@@ -59,7 +60,6 @@ const (
 	defaultMetricsCollector                   = false
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
-	defaultUserAgent                          = ""
 )
 
 // Options contains configuration options.
@@ -106,6 +106,7 @@ type Options struct {
 	httpClientTimeout                  int
 	httpClientMaxBodySize              int64
 	httpClientProxy                    string
+	httpClientUserAgent                string
 	authProxyHeader                    string
 	authProxyUserCreation              bool
 	maintenanceMode                    bool
@@ -113,7 +114,6 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
-	userAgent                          string
 }
 
 // NewOptions returns Options with default values.
@@ -166,7 +166,7 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
-		userAgent:                          defaultUserAgent,
+		httpClientUserAgent:                defaultHTTPClientUserAgent,
 	}
 }
 
@@ -425,9 +425,9 @@ func (o *Options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
 }
 
-// UserAgent returns the global User-Agent header for miniflux.
-func (o *Options) UserAgent() string {
-	return o.userAgent
+// HTTPClientUserAgent returns the global User-Agent header for miniflux.
+func (o *Options) HTTPClientUserAgent() string {
+	return o.httpClientUserAgent
 }
 
 func (o *Options) String() string {
@@ -474,6 +474,7 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_TIMEOUT: %v\n", o.httpClientTimeout))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_MAX_BODY_SIZE: %v\n", o.httpClientMaxBodySize))
 	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_PROXY: %v\n", o.httpClientProxy))
+	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_USER_AGENT: %v\n", o.httpClientUserAgent))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_HEADER: %v\n", o.authProxyHeader))
 	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
 	builder.WriteString(fmt.Sprintf("MAINTENANCE_MODE: %v\n", o.maintenanceMode))
@@ -481,6 +482,5 @@ func (o *Options) String() string {
 	builder.WriteString(fmt.Sprintf("METRICS_COLLECTOR: %v\n", o.metricsCollector))
 	builder.WriteString(fmt.Sprintf("METRICS_REFRESH_INTERVAL: %v\n", o.metricsRefreshInterval))
 	builder.WriteString(fmt.Sprintf("METRICS_ALLOWED_NETWORKS: %v\n", o.metricsAllowedNetworks))
-	builder.WriteString(fmt.Sprintf("USER_AGENT: %v\n", o.userAgent))
 	return builder.String()
 }
