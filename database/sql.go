@@ -204,6 +204,9 @@ alter table users add column entry_direction entry_sorting_direction default 'as
 ;
 `,
 	"schema_version_41": `alter table entries add column reading_time int not null default 0;`,
+	"schema_version_42": `alter table entries add column created_at timestamp with time zone not null default now();
+update entries set created_at = published_at;
+`,
 	"schema_version_5": `create table integrations (
     user_id int not null,
     pinboard_enabled bool default 'f',
@@ -266,6 +269,7 @@ var SqlMapChecksums = map[string]string{
 	"schema_version_4":  "216ea3a7d3e1704e40c797b5dc47456517c27dbb6ca98bf88812f4f63d74b5d9",
 	"schema_version_40": "6a8fec92399f853ed6817aff4cfa43255dce4c19afad796e41519d09de62105e",
 	"schema_version_41": "128e118ce61267ea1f6ae03b63a6d4734eae87e520b00e309ad083f1f6afdfe5",
+	"schema_version_42": "3d0cd422c6d9d13e7a619a8dbf081e17750881e0ae9ae380475b09d37ada9e33",
 	"schema_version_5":  "46397e2f5f2c82116786127e9f6a403e975b14d2ca7b652a48cd1ba843e6a27c",
 	"schema_version_6":  "9d05b4fb223f0e60efc716add5048b0ca9c37511cf2041721e20505d6d798ce4",
 	"schema_version_7":  "33f298c9aa30d6de3ca28e1270df51c2884d7596f1283a75716e2aeb634cd05c",

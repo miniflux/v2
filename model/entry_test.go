@@ -19,7 +19,7 @@ func TestValidateEntryStatus(t *testing.T) {
 }
 
 func TestValidateEntryOrder(t *testing.T) {
-	for _, status := range []string{"id", "status", "changed_at", "published_at", "category_title", "category_id"} {
+	for _, status := range []string{"id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id"} {
 		if err := ValidateEntryOrder(status); err != nil {
 			t.Error(`A valid order should not generate any error`)
 		}

@@ -29,6 +29,7 @@ type Entry struct {
 	URL         string        `json:"url"`
 	CommentsURL string        `json:"comments_url"`
 	Date        time.Time     `json:"published_at"`
+	CreatedAt   time.Time     `json:"created_at"`
 	Content     string        `json:"content"`
 	Author      string        `json:"author"`
 	ShareCode   string        `json:"share_code"`
@@ -54,11 +55,11 @@ func ValidateEntryStatus(status string) error {
 // ValidateEntryOrder makes sure the sorting order is valid.
 func ValidateEntryOrder(order string) error {
 	switch order {
-	case "id", "status", "changed_at", "published_at", "category_title", "category_id":
+	case "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id":
 		return nil
 	}
 
-	return fmt.Errorf(`Invalid entry order, valid order values are: "id", "status", "changed_at", "published_at", "category_title", "category_id"`)
+	return fmt.Errorf(`Invalid entry order, valid order values are: "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id"`)
 }
 
 // ValidateDirection makes sure the sorting direction is valid.
