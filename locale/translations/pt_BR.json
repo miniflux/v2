@@ -78,8 +78,8 @@
     "entry.shared_entry.title": "Abrir link público",
     "entry.shared_entry.label": "Compartilhar",
     "entry.estimated_reading_time": [
-        "%d minuto lido",
-        "%d minutos lidos"
+        "Leitura de %d minuto",
+        "Leitura de %d minutos"
     ],
     "page.shared_entries.title": "Itens compartilhados",
     "page.unread.title": "Não lídos",

@@ -2808,8 +2808,8 @@ var translations = map[string]string{
     "entry.shared_entry.title": "Abrir link público",
     "entry.shared_entry.label": "Compartilhar",
     "entry.estimated_reading_time": [
-        "%d minuto lido",
-        "%d minutos lidos"
+        "Leitura de %d minuto",
+        "Leitura de %d minutos"
     ],
     "page.shared_entries.title": "Itens compartilhados",
     "page.unread.title": "Não lídos",
@@ -3748,7 +3748,7 @@ var translationsChecksums = map[string]string{
 	"ja_JP": "9a3d1484c46be56286f9abf06b596576a3ae44f571d72a40d2eba5bfb02dd921",
 	"nl_NL": "3b91987a9f6640e827c73ca11bb0f9bc58ff79359e792038746e273cd7ae546d",
 	"pl_PL": "ff1dab97559d16331c374c63a91000b0c27f796bd96595e34ca324eb68a7c06e",
-	"pt_BR": "cdbfbd8e9048a0372f483af767a5fb68e4fa127d3f39b6c29772c0d7244a8728",
+	"pt_BR": "524c0f0dcd81988acd286900481e1a2e0ca9cf789d752e22da8bd5fe31b6acf3",
 	"ru_RU": "805c698b8a053860f737a145acc3616c67c8d80bf1de89bf6bb27fee40e885f2",
 	"zh_CN": "0c6be862c7bd997337696161a1c1d3d2ec5c7adab9c33f29c09d906fcc015a79",
 }
