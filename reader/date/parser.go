@@ -264,6 +264,7 @@ var invalidLocalizedDateReplacer = strings.NewReplacer(
 	"oct.", "October",
 	"nov.", "November",
 	"dec.", "December",
+	"déc.", "December",
 	"janvier ", "January ",
 	"février ", "February ",
 	"mars ", "March ",
