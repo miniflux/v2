@@ -296,7 +296,7 @@ func (s *Storage) ArchiveEntries(status string, days int) (int64, error) {
 		SET
 			status='removed'
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status=$1 AND starred is false AND share_code='' AND published_at < now () - '%d days'::interval ORDER BY published_at ASC LIMIT 5000)
+			id=ANY(SELECT id FROM entries WHERE status=$1 AND starred is false AND share_code='' AND created_at < now () - '%d days'::interval ORDER BY created_at ASC LIMIT 5000)
 	`
 
 	result, err := s.db.Exec(fmt.Sprintf(query, days), status)
