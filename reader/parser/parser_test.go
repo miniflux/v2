@@ -34,13 +34,49 @@ func TestParseAtom(t *testing.T) {
 
 	</feed>`
 
-	feed, err := ParseFeed(data)
+	feed, err := ParseFeed("https://example.org/", data)
 	if err != nil {
 		t.Error(err)
 	}
 
 	if feed.Title != "Example Feed" {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
+func TestParseAtomFeedWithRelativeURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="/blog/atom.xml" rel="self" type="application/atom+xml"/>
+	  <link href="/blog"/>
+
+	  <entry>
+		<title>Test</title>
+		<link href="/blog/article.html"/>
+		<link href="/blog/article.html" rel="alternate" type="text/html"/>
+		<id>/blog/article.html</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := ParseFeed("https://example.org/blog/atom.xml", data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/blog/atom.xml" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+
+	if feed.SiteURL != "https://example.org/blog" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/blog/article.html" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
 	}
 }
 
@@ -60,13 +96,51 @@ func TestParseRSS(t *testing.T) {
 	</channel>
 	</rss>`
 
-	feed, err := ParseFeed(data)
+	feed, err := ParseFeed("http://liftoff.msfc.nasa.gov/", data)
 	if err != nil {
 		t.Error(err)
 	}
 
 	if feed.Title != "Liftoff News" {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
+func TestParseRSSFeedWithRelativeURL(t *testing.T) {
+	data := `<?xml version="1.0"?>
+	<rss version="2.0">
+	<channel>
+		<title>Example Feed</title>
+		<link>/blog</link>
+		<item>
+			<title>Example Entry</title>
+			<link>/blog/article.html</link>
+			<description>Something</description>
+			<pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+			<guid>1234</guid>
+		</item>
+	</channel>
+	</rss>`
+
+	feed, err := ParseFeed("http://example.org/rss.xml", data)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Title != "Example Feed" {
+		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+
+	if feed.FeedURL != "http://example.org/rss.xml" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+
+	if feed.SiteURL != "http://example.org/blog" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+
+	if feed.Entries[0].URL != "http://example.org/blog/article.html" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
 	}
 }
 
@@ -89,13 +163,50 @@ func TestParseRDF(t *testing.T) {
 		  </item>
 		</rdf:RDF>`
 
-	feed, err := ParseFeed(data)
+	feed, err := ParseFeed("http://example.org/", data)
 	if err != nil {
 		t.Error(err)
 	}
 
 	if feed.Title != "RDF Example" {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
+func TestParseRDFWithRelativeURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rdf:RDF
+		  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		  xmlns="http://purl.org/rss/1.0/"
+		>
+
+		  <channel>
+			<title>RDF Example</title>
+			<link>/blog</link>
+		  </channel>
+
+		  <item>
+			<title>Title</title>
+			<link>/blog/article.html</link>
+			<description>Test</description>
+		  </item>
+		</rdf:RDF>`
+
+	feed, err := ParseFeed("http://example.org/rdf.xml", data)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.FeedURL != "http://example.org/rdf.xml" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+
+	if feed.SiteURL != "http://example.org/blog" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+
+	if feed.Entries[0].URL != "http://example.org/blog/article.html" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
 	}
 }
 
@@ -119,13 +230,50 @@ func TestParseJson(t *testing.T) {
 		]
 	}`
 
-	feed, err := ParseFeed(data)
+	feed, err := ParseFeed("https://example.org/feed.json", data)
 	if err != nil {
 		t.Error(err)
 	}
 
 	if feed.Title != "My Example Feed" {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
+func TestParseJsonFeedWithRelativeURL(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "/blog",
+		"feed_url": "/blog/feed.json",
+		"items": [
+			{
+				"id": "2",
+				"content_text": "This is a second item.",
+				"url": "/blog/article.html"
+			}
+		]
+	}`
+
+	feed, err := ParseFeed("https://example.org/blog/feed.json", data)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Title != "My Example Feed" {
+		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+
+	if feed.FeedURL != "https://example.org/blog/feed.json" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+
+	if feed.SiteURL != "https://example.org/blog" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/blog/article.html" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
 	}
 }
 
@@ -142,14 +290,14 @@ func TestParseUnknownFeed(t *testing.T) {
 		</html>
 	`
 
-	_, err := ParseFeed(data)
+	_, err := ParseFeed("https://example.org/", data)
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
 	}
 }
 
 func TestParseEmptyFeed(t *testing.T) {
-	_, err := ParseFeed("")
+	_, err := ParseFeed("", "")
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
 	}
@@ -191,7 +339,7 @@ func TestDifferentEncodingWithResponse(t *testing.T) {
 			t.Fatalf(`Encoding error for %q: %v`, tc.filename, encodingErr)
 		}
 
-		feed, parseErr := ParseFeed(r.BodyAsString())
+		feed, parseErr := ParseFeed("https://example.org/", r.BodyAsString())
 		if parseErr != nil {
 			t.Fatalf(`Parsing error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
 		}

@@ -35,12 +35,24 @@ type rssFeed struct {
 	PodcastFeedElement
 }
 
-func (r *rssFeed) Transform() *model.Feed {
-	feed := new(model.Feed)
-	feed.SiteURL = r.siteURL()
-	feed.FeedURL = r.feedURL()
-	feed.Title = strings.TrimSpace(r.Title)
+func (r *rssFeed) Transform(baseURL string) *model.Feed {
+	var err error
 
+	feed := new(model.Feed)
+
+	siteURL := r.siteURL()
+	feed.SiteURL, err = url.AbsoluteURL(baseURL, siteURL)
+	if err != nil {
+		feed.SiteURL = siteURL
+	}
+
+	feedURL := r.feedURL()
+	feed.FeedURL, err = url.AbsoluteURL(baseURL, feedURL)
+	if err != nil {
+		feed.FeedURL = feedURL
+	}
+
+	feed.Title = strings.TrimSpace(r.Title)
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}

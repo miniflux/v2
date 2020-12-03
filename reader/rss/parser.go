@@ -13,7 +13,7 @@ import (
 )
 
 // Parse returns a normalized feed struct from a RSS feed.
-func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
+func Parse(baseURL string, data io.Reader) (*model.Feed, *errors.LocalizedError) {
 	feed := new(rssFeed)
 	decoder := xml.NewDecoder(data)
 	err := decoder.Decode(feed)
@@ -21,5 +21,5 @@ func Parse(data io.Reader) (*model.Feed, *errors.LocalizedError) {
 		return nil, errors.NewLocalizedError("Unable to parse RSS feed: %q", err)
 	}
 
-	return feed.Transform(), nil
+	return feed.Transform(baseURL), nil
 }
