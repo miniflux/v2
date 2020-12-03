@@ -16,16 +16,16 @@ import (
 )
 
 // ParseFeed analyzes the input data and returns a normalized feed object.
-func ParseFeed(data string) (*model.Feed, *errors.LocalizedError) {
+func ParseFeed(baseURL, data string) (*model.Feed, *errors.LocalizedError) {
 	switch DetectFeedFormat(data) {
 	case FormatAtom:
-		return atom.Parse(strings.NewReader(data))
+		return atom.Parse(baseURL, strings.NewReader(data))
 	case FormatRSS:
-		return rss.Parse(strings.NewReader(data))
+		return rss.Parse(baseURL, strings.NewReader(data))
 	case FormatJSON:
-		return json.Parse(strings.NewReader(data))
+		return json.Parse(baseURL, strings.NewReader(data))
 	case FormatRDF:
-		return rdf.Parse(strings.NewReader(data))
+		return rdf.Parse(baseURL, strings.NewReader(data))
 	default:
 		return nil, errors.NewLocalizedError("Unsupported feed format")
 	}

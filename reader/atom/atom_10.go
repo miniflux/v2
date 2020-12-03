@@ -31,12 +31,24 @@ type atom10Feed struct {
 	Entries []atom10Entry `xml:"entry"`
 }
 
-func (a *atom10Feed) Transform() *model.Feed {
-	feed := new(model.Feed)
-	feed.FeedURL = a.Links.firstLinkWithRelation("self")
-	feed.SiteURL = a.Links.originalLink()
-	feed.Title = a.Title.String()
+func (a *atom10Feed) Transform(baseURL string) *model.Feed {
+	var err error
 
+	feed := new(model.Feed)
+
+	feedURL := a.Links.firstLinkWithRelation("self")
+	feed.FeedURL, err = url.AbsoluteURL(baseURL, feedURL)
+	if err != nil {
+		feed.FeedURL = feedURL
+	}
+
+	siteURL := a.Links.originalLink()
+	feed.SiteURL, err = url.AbsoluteURL(baseURL, siteURL)
+	if err != nil {
+		feed.SiteURL = siteURL
+	}
+
+	feed.Title = a.Title.String()
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}

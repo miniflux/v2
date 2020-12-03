@@ -55,12 +55,22 @@ func (j *jsonFeed) GetAuthor() string {
 	return getAuthor(j.Author)
 }
 
-func (j *jsonFeed) Transform() *model.Feed {
-	feed := new(model.Feed)
-	feed.FeedURL = j.FeedURL
-	feed.SiteURL = j.SiteURL
-	feed.Title = strings.TrimSpace(j.Title)
+func (j *jsonFeed) Transform(baseURL string) *model.Feed {
+	var err error
 
+	feed := new(model.Feed)
+
+	feed.FeedURL, err = url.AbsoluteURL(baseURL, j.FeedURL)
+	if err != nil {
+		feed.FeedURL = j.FeedURL
+	}
+
+	feed.SiteURL, err = url.AbsoluteURL(baseURL, j.SiteURL)
+	if err != nil {
+		feed.SiteURL = j.SiteURL
+	}
+
+	feed.Title = strings.TrimSpace(j.Title)
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}

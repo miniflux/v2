@@ -58,7 +58,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 		return nil, errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 	}
 
-	subscription, parseErr := parser.ParseFeed(response.BodyAsString())
+	subscription, parseErr := parser.ParseFeed(response.EffectiveURL, response.BodyAsString())
 	if parseErr != nil {
 		return nil, parseErr
 	}
@@ -137,7 +137,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	if originalFeed.IgnoreHTTPCache || response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		logger.Debug("[Handler:RefreshFeed] Feed #%d has been modified", feedID)
 
-		updatedFeed, parseErr := parser.ParseFeed(response.BodyAsString())
+		updatedFeed, parseErr := parser.ParseFeed(response.EffectiveURL, response.BodyAsString())
 		if parseErr != nil {
 			originalFeed.WithError(parseErr.Localize(printer))
 			h.store.UpdateFeedError(originalFeed)

@@ -23,13 +23,13 @@ func TestIsAbsoluteURL(t *testing.T) {
 
 func TestAbsoluteURL(t *testing.T) {
 	scenarios := [][]string{
-		[]string{"https://example.org/path/file.ext", "https://example.org/folder/", "/path/file.ext"},
-		[]string{"https://example.org/folder/path/file.ext", "https://example.org/folder/", "path/file.ext"},
-		[]string{"https://example.org/path/file.ext", "https://example.org/folder", "path/file.ext"},
-		[]string{"https://example.org/path/file.ext", "https://example.org/folder/", "https://example.org/path/file.ext"},
-		[]string{"https://static.example.org/path/file.ext", "https://www.example.org/", "//static.example.org/path/file.ext"},
-		[]string{"magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a", "https://www.example.org/", "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"},
-		[]string{"magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7", "https://www.example.org/", "magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7"},
+		{"https://example.org/path/file.ext", "https://example.org/folder/", "/path/file.ext"},
+		{"https://example.org/folder/path/file.ext", "https://example.org/folder/", "path/file.ext"},
+		{"https://example.org/path/file.ext", "https://example.org/folder", "path/file.ext"},
+		{"https://example.org/path/file.ext", "https://example.org/folder/", "https://example.org/path/file.ext"},
+		{"https://static.example.org/path/file.ext", "https://www.example.org/", "//static.example.org/path/file.ext"},
+		{"magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a", "https://www.example.org/", "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a"},
+		{"magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7", "https://www.example.org/", "magnet:?xt.1=urn:sha1:YNCKHTQCWBTRNJIV4WNAE52SJUQCZO5C&xt.2=urn:sha1:TXGCZQTH26NL6OUQAJJPFALHG2LTGBC7"},
 	}
 
 	for _, scenario := range scenarios {

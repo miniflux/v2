@@ -31,7 +31,7 @@ func TestParseJsonFeed(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,7 +113,7 @@ func TestParsePodcast(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://therecord.co/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -197,7 +197,7 @@ func TestParseEntryWithoutAttachmentURL(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://therecord.co/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -226,7 +226,7 @@ func TestParseFeedWithRelativeURL(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -258,7 +258,7 @@ func TestParseAuthor(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -287,7 +287,7 @@ func TestParseFeedWithoutTitle(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -313,7 +313,7 @@ func TestParseFeedItemWithInvalidDate(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -341,7 +341,7 @@ func TestParseFeedItemWithoutID(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -368,7 +368,7 @@ func TestParseFeedItemWithoutTitle(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -395,7 +395,7 @@ func TestParseTruncateItemTitle(t *testing.T) {
 		]
 	}`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -411,7 +411,7 @@ func TestParseTruncateItemTitle(t *testing.T) {
 
 func TestParseInvalidJSON(t *testing.T) {
 	data := `garbage`
-	_, err := Parse(bytes.NewBufferString(data))
+	_, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
 	if err == nil {
 		t.Error("Parse should returns an error")
 	}

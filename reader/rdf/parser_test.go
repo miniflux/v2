@@ -76,7 +76,7 @@ func TestParseRDFSample(t *testing.T) {
 
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://xml.com/pub/rdf.xml", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestParseRDFSample(t *testing.T) {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
 	}
 
-	if feed.FeedURL != "" {
+	if feed.FeedURL != "http://xml.com/pub/rdf.xml" {
 		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
 	}
 
@@ -187,7 +187,7 @@ func TestParseRDFSampleWithDublinCore(t *testing.T) {
 
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com/feed.rdf", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -196,7 +196,7 @@ func TestParseRDFSampleWithDublinCore(t *testing.T) {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
 	}
 
-	if feed.FeedURL != "" {
+	if feed.FeedURL != "http://meerkat.oreillynet.com/feed.rdf" {
 		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
 	}
 
@@ -254,7 +254,7 @@ func TestParseItemWithOnlyFeedAuthor(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -279,7 +279,7 @@ func TestParseItemRelativeURL(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -308,7 +308,7 @@ func TestParseItemWithoutLink(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -339,7 +339,7 @@ func TestParseItemWithDublicCoreDate(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -365,7 +365,7 @@ func TestParseItemWithoutDate(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -379,7 +379,7 @@ func TestParseItemWithoutDate(t *testing.T) {
 
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
-	_, err := Parse(bytes.NewBufferString(data))
+	_, err := Parse("http://example.org", bytes.NewBufferString(data))
 	if err == nil {
 		t.Fatal("Parse should returns an error")
 	}
@@ -394,7 +394,7 @@ func TestParseFeedWithHTMLEntity(t *testing.T) {
 	  </channel>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -413,7 +413,7 @@ func TestParseFeedWithInvalidCharacterEntity(t *testing.T) {
 	  </channel>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -469,7 +469,7 @@ func TestParseFeedWithURLWrappedInSpaces(t *testing.T) {
 	</item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://biorxiv.org", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -504,7 +504,7 @@ func TestParseRDFWithContentEncoded(t *testing.T) {
 		</item>
 	</rdf:RDF>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}

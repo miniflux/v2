@@ -28,7 +28,7 @@ func TestParseAtom03(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +37,7 @@ func TestParseAtom03(t *testing.T) {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
 	}
 
-	if feed.FeedURL != "" {
+	if feed.FeedURL != "http://diveintomark.org/" {
 		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
 	}
 
@@ -88,7 +88,7 @@ func TestParseAtom03WithoutFeedTitle(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -111,7 +111,7 @@ func TestParseAtom03WithoutEntryTitle(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -142,7 +142,7 @@ func TestParseAtom03WithSummaryOnly(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -173,7 +173,7 @@ func TestParseAtom03WithXMLContent(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -204,7 +204,7 @@ func TestParseAtom03WithBase64Content(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse(bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
 	if err != nil {
 		t.Fatal(err)
 	}

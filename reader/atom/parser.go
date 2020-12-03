@@ -15,11 +15,11 @@ import (
 )
 
 type atomFeed interface {
-	Transform() *model.Feed
+	Transform(baseURL string) *model.Feed
 }
 
 // Parse returns a normalized feed struct from a Atom feed.
-func Parse(r io.Reader) (*model.Feed, *errors.LocalizedError) {
+func Parse(baseURL string, r io.Reader) (*model.Feed, *errors.LocalizedError) {
 	var buf bytes.Buffer
 	tee := io.TeeReader(r, &buf)
 
@@ -36,7 +36,7 @@ func Parse(r io.Reader) (*model.Feed, *errors.LocalizedError) {
 		return nil, errors.NewLocalizedError("Unable to parse Atom feed: %q", err)
 	}
 
-	return rawFeed.Transform(), nil
+	return rawFeed.Transform(baseURL), nil
 }
 
 func getAtomFeedVersion(data io.Reader) string {
