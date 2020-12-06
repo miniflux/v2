@@ -1,3 +1,21 @@
+Version 2.0.26 (Dec 5, 2020)
+----------------------------
+
+* Use created_at instead of published_at for archiving entries
+* Add created_at field for entries
+* Handle invalid feeds with relative URLs
+* Add API routes for "mark all as read"
+* Add support for setting a global default User-Agent
+* Add rewrite rule "replace" for custom search and replace
+* Calculate reading time during feed processing
+* Handle various invalid dates
+* systemd: keep /run writeable
+* debian package: add missing post-install script
+* Do not follow redirects when trying known feed URLs
+* Trim spaces around icon URLs
+* Reinstate EXPOSE instruction in Dockerfile
+* Update German and Portuguese translations
+
 Version 2.0.25 (Nov 3, 2020)
 ----------------------------
 
