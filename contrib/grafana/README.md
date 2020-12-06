@@ -1,0 +1,1 @@
+Grafana Dashboard for Miniflux
