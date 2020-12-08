@@ -747,7 +747,9 @@ article.feed-parsing-error {
     background-color: var(--feed-parsing-error-background-color);
     border-color: #aaa;
 }
-
+article.feed-unread {
+    background-color: var(--category-background-color);
+}
 .parsing-error {
     font-size: 0.85em;
     margin-top: 2px;

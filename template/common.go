@@ -26,7 +26,7 @@ var templateCommonMap = map[string]string{
 	"feed_list": `{{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
-        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }} {{ if ne .UnreadCount 0 }}feed-unread{{ end }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}
@@ -520,7 +520,7 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
+	"feed_list":        "bcec7db49269c6499309c9d511e4f677c03498b6b52eec0c8c9e00a5f1069198",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "9a41753778072f286216085d8712495e2ccca20c7a24f5c982775436a3d38579",
 	"item_meta":        "56ab09d7dd46eeb2e2ee11ddcec0c157a5832c896dbd2887d9e2b013680b2af6",
