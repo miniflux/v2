@@ -132,7 +132,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 }
 
 func (h *handler) setEntryStatus(w http.ResponseWriter, r *http.Request) {
-	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
+	entryIDs, status, err := decodeEntryStatusRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, errors.New("Invalid JSON payload"))
 		return

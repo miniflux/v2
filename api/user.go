@@ -28,7 +28,7 @@ func (h *handler) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := decodeUserCreationPayload(r.Body)
+	user, err := decodeUserCreationRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return
@@ -61,7 +61,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.RouteInt64Param(r, "userID")
-	userChanges, err := decodeUserModificationPayload(r.Body)
+	userChanges, err := decodeUserModificationRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return

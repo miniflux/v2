@@ -12,18 +12,18 @@ import (
 )
 
 func (h *handler) getSubscriptions(w http.ResponseWriter, r *http.Request) {
-	subscriptionInfo, bodyErr := decodeURLPayload(r.Body)
+	subscriptionRequest, bodyErr := decodeSubscriptionDiscoveryRequest(r.Body)
 	if bodyErr != nil {
 		json.BadRequest(w, r, bodyErr)
 		return
 	}
 
 	subscriptions, finderErr := subscription.FindSubscriptions(
-		subscriptionInfo.URL,
-		subscriptionInfo.UserAgent,
-		subscriptionInfo.Username,
-		subscriptionInfo.Password,
-		subscriptionInfo.FetchViaProxy,
+		subscriptionRequest.URL,
+		subscriptionRequest.UserAgent,
+		subscriptionRequest.Username,
+		subscriptionRequest.Password,
+		subscriptionRequest.FetchViaProxy,
 	)
 	if finderErr != nil {
 		json.ServerError(w, r, finderErr)

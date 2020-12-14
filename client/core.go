@@ -103,18 +103,21 @@ type Feed struct {
 
 // FeedModification represents changes for a feed.
 type FeedModification struct {
-	FeedURL        *string `json:"feed_url"`
-	SiteURL        *string `json:"site_url"`
-	Title          *string `json:"title"`
-	ScraperRules   *string `json:"scraper_rules"`
-	RewriteRules   *string `json:"rewrite_rules"`
-	BlocklistRules *string `json:"blocklist_rules"`
-	KeeplistRules  *string `json:"keeplist_rules"`
-	Crawler        *bool   `json:"crawler"`
-	UserAgent      *string `json:"user_agent"`
-	Username       *string `json:"username"`
-	Password       *string `json:"password"`
-	CategoryID     *int64  `json:"category_id"`
+	FeedURL         *string `json:"feed_url"`
+	SiteURL         *string `json:"site_url"`
+	Title           *string `json:"title"`
+	ScraperRules    *string `json:"scraper_rules"`
+	RewriteRules    *string `json:"rewrite_rules"`
+	BlocklistRules  *string `json:"blocklist_rules"`
+	KeeplistRules   *string `json:"keeplist_rules"`
+	Crawler         *bool   `json:"crawler"`
+	UserAgent       *string `json:"user_agent"`
+	Username        *string `json:"username"`
+	Password        *string `json:"password"`
+	CategoryID      *int64  `json:"category_id"`
+	Disabled        *bool   `json:"disabled"`
+	IgnoreHTTPCache *bool   `json:"ignore_http_cache"`
+	FetchViaProxy   *bool   `json:"fetch_via_proxy"`
 }
 
 // FeedIcon represents the feed icon.
