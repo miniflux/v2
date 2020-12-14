@@ -79,7 +79,16 @@ func TestUpdateCategory(t *testing.T) {
 	}
 
 	if category.Title != categoryName {
-		t.Fatalf(`Invalid title, got "%v" instead of "%v"`, category.Title, categoryName)
+		t.Fatalf(`Invalid title, got %q instead of %q`, category.Title, categoryName)
+	}
+}
+
+func TestUpdateInexistingCategory(t *testing.T) {
+	client := createClient(t)
+
+	_, err := client.UpdateCategory(4200000, "Test")
+	if err != miniflux.ErrNotFound {
+		t.Errorf(`Updating an inexisting category should returns a 404 instead of %v`, err)
 	}
 }
 

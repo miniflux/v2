@@ -236,14 +236,18 @@ func decodeFeedModificationPayload(r io.ReadCloser) (*feedModification, error) {
 	return &feed, nil
 }
 
-func decodeCategoryPayload(r io.ReadCloser) (*model.Category, error) {
-	var category model.Category
+type categoryRequest struct {
+	Title string `json:"title"`
+}
+
+func decodeCategoryRequest(r io.ReadCloser) (*categoryRequest, error) {
+	var payload categoryRequest
 
 	decoder := json.NewDecoder(r)
 	defer r.Close()
-	if err := decoder.Decode(&category); err != nil {
-		return nil, fmt.Errorf("Unable to decode category JSON object: %v", err)
+	if err := decoder.Decode(&payload); err != nil {
+		return nil, fmt.Errorf("Unable to decode JSON object: %v", err)
 	}
 
-	return &category, nil
+	return &payload, nil
 }
