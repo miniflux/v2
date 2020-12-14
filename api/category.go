@@ -11,17 +11,19 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	"miniflux.app/model"
 )
 
 func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
-	category, err := decodeCategoryPayload(r.Body)
+	userID := request.UserID(r)
+
+	categoryRequest, err := decodeCategoryRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	userID := request.UserID(r)
-	category.UserID = userID
+	category := &model.Category{UserID: userID, Title: categoryRequest.Title}
 	if err := category.ValidateCategoryCreation(); err != nil {
 		json.BadRequest(w, r, err)
 		return
@@ -41,16 +43,27 @@ func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
-	category, err := decodeCategoryPayload(r.Body)
+	category, err := h.store.Category(userID, categoryID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if category == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	categoryRequest, err := decodeCategoryRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	category.UserID = request.UserID(r)
-	category.ID = categoryID
+	category.Title = categoryRequest.Title
 	if err := category.ValidateCategoryModification(); err != nil {
 		json.BadRequest(w, r, err)
 		return
