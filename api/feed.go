@@ -14,7 +14,7 @@ import (
 )
 
 func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
-	feedInfo, err := decodeFeedCreationPayload(r.Body)
+	feedInfo, err := decodeFeedCreationRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return
@@ -61,11 +61,7 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type result struct {
-		FeedID int64 `json:"feed_id"`
-	}
-
-	json.Created(w, r, &result{FeedID: feed.ID})
+	json.Created(w, r, &feedCreationResponse{FeedID: feed.ID})
 }
 
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +99,7 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	feedChanges, err := decodeFeedModificationPayload(r.Body)
+	feedChanges, err := decodeFeedModificationRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return

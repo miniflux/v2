@@ -12,7 +12,7 @@ import (
 	"miniflux.app/model"
 )
 
-type feedIcon struct {
+type feedIconResponse struct {
 	ID       int64  `json:"id"`
 	MimeType string `json:"mime_type"`
 	Data     string `json:"data"`
@@ -23,7 +23,31 @@ type entriesResponse struct {
 	Entries model.Entries `json:"entries"`
 }
 
-type feedCreation struct {
+type subscriptionDiscoveryRequest struct {
+	URL           string `json:"url"`
+	UserAgent     string `json:"user_agent"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	FetchViaProxy bool   `json:"fetch_via_proxy"`
+}
+
+func decodeSubscriptionDiscoveryRequest(r io.ReadCloser) (*subscriptionDiscoveryRequest, error) {
+	defer r.Close()
+
+	var s subscriptionDiscoveryRequest
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&s); err != nil {
+		return nil, fmt.Errorf("invalid JSON payload: %v", err)
+	}
+
+	return &s, nil
+}
+
+type feedCreationResponse struct {
+	FeedID int64 `json:"feed_id"`
+}
+
+type feedCreationRequest struct {
 	FeedURL        string `json:"feed_url"`
 	CategoryID     int64  `json:"category_id"`
 	UserAgent      string `json:"user_agent"`
@@ -37,31 +61,37 @@ type feedCreation struct {
 	KeeplistRules  string `json:"keeplist_rules"`
 }
 
-type subscriptionDiscovery struct {
-	URL           string `json:"url"`
-	UserAgent     string `json:"user_agent"`
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	FetchViaProxy bool   `json:"fetch_via_proxy"`
+func decodeFeedCreationRequest(r io.ReadCloser) (*feedCreationRequest, error) {
+	defer r.Close()
+
+	var fc feedCreationRequest
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&fc); err != nil {
+		return nil, fmt.Errorf("Invalid JSON payload: %v", err)
+	}
+
+	return &fc, nil
 }
 
-type feedModification struct {
-	FeedURL        *string `json:"feed_url"`
-	SiteURL        *string `json:"site_url"`
-	Title          *string `json:"title"`
-	ScraperRules   *string `json:"scraper_rules"`
-	RewriteRules   *string `json:"rewrite_rules"`
-	BlocklistRules *string `json:"blocklist_rules"`
-	KeeplistRules  *string `json:"keeplist_rules"`
-	Crawler        *bool   `json:"crawler"`
-	UserAgent      *string `json:"user_agent"`
-	Username       *string `json:"username"`
-	Password       *string `json:"password"`
-	CategoryID     *int64  `json:"category_id"`
-	Disabled       *bool   `json:"disabled"`
+type feedModificationRequest struct {
+	FeedURL         *string `json:"feed_url"`
+	SiteURL         *string `json:"site_url"`
+	Title           *string `json:"title"`
+	ScraperRules    *string `json:"scraper_rules"`
+	RewriteRules    *string `json:"rewrite_rules"`
+	BlocklistRules  *string `json:"blocklist_rules"`
+	KeeplistRules   *string `json:"keeplist_rules"`
+	Crawler         *bool   `json:"crawler"`
+	UserAgent       *string `json:"user_agent"`
+	Username        *string `json:"username"`
+	Password        *string `json:"password"`
+	CategoryID      *int64  `json:"category_id"`
+	Disabled        *bool   `json:"disabled"`
+	IgnoreHTTPCache *bool   `json:"ignore_http_cache"`
+	FetchViaProxy   *bool   `json:"fetch_via_proxy"`
 }
 
-func (f *feedModification) Update(feed *model.Feed) {
+func (f *feedModificationRequest) Update(feed *model.Feed) {
 	if f.FeedURL != nil && *f.FeedURL != "" {
 		feed.FeedURL = *f.FeedURL
 	}
@@ -113,9 +143,41 @@ func (f *feedModification) Update(feed *model.Feed) {
 	if f.Disabled != nil {
 		feed.Disabled = *f.Disabled
 	}
+
+	if f.IgnoreHTTPCache != nil {
+		feed.IgnoreHTTPCache = *f.IgnoreHTTPCache
+	}
+
+	if f.FetchViaProxy != nil {
+		feed.FetchViaProxy = *f.FetchViaProxy
+	}
 }
 
-type userModification struct {
+func decodeFeedModificationRequest(r io.ReadCloser) (*feedModificationRequest, error) {
+	defer r.Close()
+
+	var feed feedModificationRequest
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&feed); err != nil {
+		return nil, fmt.Errorf("Unable to decode feed modification JSON object: %v", err)
+	}
+
+	return &feed, nil
+}
+
+func decodeUserCreationRequest(r io.ReadCloser) (*model.User, error) {
+	defer r.Close()
+
+	var user model.User
+	decoder := json.NewDecoder(r)
+	if err := decoder.Decode(&user); err != nil {
+		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
+	}
+
+	return &user, nil
+}
+
+type userModificationRequest struct {
 	Username       *string `json:"username"`
 	Password       *string `json:"password"`
 	IsAdmin        *bool   `json:"is_admin"`
@@ -126,7 +188,7 @@ type userModification struct {
 	EntriesPerPage *int    `json:"entries_per_page"`
 }
 
-func (u *userModification) Update(user *model.User) {
+func (u *userModificationRequest) Update(user *model.User) {
 	if u.Username != nil {
 		user.Username = *u.Username
 	}
@@ -160,10 +222,10 @@ func (u *userModification) Update(user *model.User) {
 	}
 }
 
-func decodeUserModificationPayload(r io.ReadCloser) (*userModification, error) {
+func decodeUserModificationRequest(r io.ReadCloser) (*userModificationRequest, error) {
 	defer r.Close()
 
-	var user userModification
+	var user userModificationRequest
 	decoder := json.NewDecoder(r)
 	if err := decoder.Decode(&user); err != nil {
 		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
@@ -172,31 +234,7 @@ func decodeUserModificationPayload(r io.ReadCloser) (*userModification, error) {
 	return &user, nil
 }
 
-func decodeUserCreationPayload(r io.ReadCloser) (*model.User, error) {
-	defer r.Close()
-
-	var user model.User
-	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&user); err != nil {
-		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
-	}
-
-	return &user, nil
-}
-
-func decodeURLPayload(r io.ReadCloser) (*subscriptionDiscovery, error) {
-	defer r.Close()
-
-	var s subscriptionDiscovery
-	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&s); err != nil {
-		return nil, fmt.Errorf("invalid JSON payload: %v", err)
-	}
-
-	return &s, nil
-}
-
-func decodeEntryStatusPayload(r io.ReadCloser) ([]int64, string, error) {
+func decodeEntryStatusRequest(r io.ReadCloser) ([]int64, string, error) {
 	type payload struct {
 		EntryIDs []int64 `json:"entry_ids"`
 		Status   string  `json:"status"`
@@ -210,30 +248,6 @@ func decodeEntryStatusPayload(r io.ReadCloser) ([]int64, string, error) {
 	}
 
 	return p.EntryIDs, p.Status, nil
-}
-
-func decodeFeedCreationPayload(r io.ReadCloser) (*feedCreation, error) {
-	defer r.Close()
-
-	var fc feedCreation
-	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&fc); err != nil {
-		return nil, fmt.Errorf("invalid JSON payload: %v", err)
-	}
-
-	return &fc, nil
-}
-
-func decodeFeedModificationPayload(r io.ReadCloser) (*feedModification, error) {
-	defer r.Close()
-
-	var feed feedModification
-	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&feed); err != nil {
-		return nil, fmt.Errorf("Unable to decode feed modification JSON object: %v", err)
-	}
-
-	return &feed, nil
 }
 
 type categoryRequest struct {

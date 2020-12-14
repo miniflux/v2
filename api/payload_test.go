@@ -12,129 +12,129 @@ import (
 
 func TestUpdateFeedURL(t *testing.T) {
 	feedURL := "http://example.com/"
-	changes := &feedModification{FeedURL: &feedURL}
+	changes := &feedModificationRequest{FeedURL: &feedURL}
 	feed := &model.Feed{FeedURL: "http://example.org/"}
 	changes.Update(feed)
 
 	if feed.FeedURL != feedURL {
-		t.Fatalf(`Unexpected value, got %q instead of %q`, feed.FeedURL, feedURL)
+		t.Errorf(`Unexpected value, got %q instead of %q`, feed.FeedURL, feedURL)
 	}
 }
 
 func TestUpdateFeedURLWithEmptyString(t *testing.T) {
 	feedURL := ""
-	changes := &feedModification{FeedURL: &feedURL}
+	changes := &feedModificationRequest{FeedURL: &feedURL}
 	feed := &model.Feed{FeedURL: "http://example.org/"}
 	changes.Update(feed)
 
 	if feed.FeedURL == feedURL {
-		t.Fatal(`The FeedURL should not be modified`)
+		t.Error(`The FeedURL should not be modified`)
 	}
 }
 
 func TestUpdateFeedURLWhenNotSet(t *testing.T) {
-	changes := &feedModification{}
+	changes := &feedModificationRequest{}
 	feed := &model.Feed{FeedURL: "http://example.org/"}
 	changes.Update(feed)
 
 	if feed.FeedURL != "http://example.org/" {
-		t.Fatal(`The FeedURL should not be modified`)
+		t.Error(`The FeedURL should not be modified`)
 	}
 }
 
 func TestUpdateFeedSiteURL(t *testing.T) {
 	siteURL := "http://example.com/"
-	changes := &feedModification{SiteURL: &siteURL}
+	changes := &feedModificationRequest{SiteURL: &siteURL}
 	feed := &model.Feed{SiteURL: "http://example.org/"}
 	changes.Update(feed)
 
 	if feed.SiteURL != siteURL {
-		t.Fatalf(`Unexpected value, got %q instead of %q`, feed.SiteURL, siteURL)
+		t.Errorf(`Unexpected value, got %q instead of %q`, feed.SiteURL, siteURL)
 	}
 }
 
 func TestUpdateFeedSiteURLWithEmptyString(t *testing.T) {
 	siteURL := ""
-	changes := &feedModification{FeedURL: &siteURL}
+	changes := &feedModificationRequest{FeedURL: &siteURL}
 	feed := &model.Feed{SiteURL: "http://example.org/"}
 	changes.Update(feed)
 
 	if feed.SiteURL == siteURL {
-		t.Fatal(`The FeedURL should not be modified`)
+		t.Error(`The FeedURL should not be modified`)
 	}
 }
 
 func TestUpdateFeedSiteURLWhenNotSet(t *testing.T) {
-	changes := &feedModification{}
+	changes := &feedModificationRequest{}
 	feed := &model.Feed{SiteURL: "http://example.org/"}
 	changes.Update(feed)
 
 	if feed.SiteURL != "http://example.org/" {
-		t.Fatal(`The SiteURL should not be modified`)
+		t.Error(`The SiteURL should not be modified`)
 	}
 }
 
 func TestUpdateFeedTitle(t *testing.T) {
 	title := "Example 2"
-	changes := &feedModification{Title: &title}
+	changes := &feedModificationRequest{Title: &title}
 	feed := &model.Feed{Title: "Example"}
 	changes.Update(feed)
 
 	if feed.Title != title {
-		t.Fatalf(`Unexpected value, got %q instead of %q`, feed.Title, title)
+		t.Errorf(`Unexpected value, got %q instead of %q`, feed.Title, title)
 	}
 }
 
 func TestUpdateFeedTitleWithEmptyString(t *testing.T) {
 	title := ""
-	changes := &feedModification{Title: &title}
+	changes := &feedModificationRequest{Title: &title}
 	feed := &model.Feed{Title: "Example"}
 	changes.Update(feed)
 
 	if feed.Title == title {
-		t.Fatal(`The Title should not be modified`)
+		t.Error(`The Title should not be modified`)
 	}
 }
 
 func TestUpdateFeedTitleWhenNotSet(t *testing.T) {
-	changes := &feedModification{}
+	changes := &feedModificationRequest{}
 	feed := &model.Feed{Title: "Example"}
 	changes.Update(feed)
 
 	if feed.Title != "Example" {
-		t.Fatal(`The Title should not be modified`)
+		t.Error(`The Title should not be modified`)
 	}
 }
 
 func TestUpdateFeedUsername(t *testing.T) {
 	username := "Alice"
-	changes := &feedModification{Username: &username}
+	changes := &feedModificationRequest{Username: &username}
 	feed := &model.Feed{Username: "Bob"}
 	changes.Update(feed)
 
 	if feed.Username != username {
-		t.Fatalf(`Unexpected value, got %q instead of %q`, feed.Username, username)
+		t.Errorf(`Unexpected value, got %q instead of %q`, feed.Username, username)
 	}
 }
 
 func TestUpdateFeedUsernameWithEmptyString(t *testing.T) {
 	username := ""
-	changes := &feedModification{Username: &username}
+	changes := &feedModificationRequest{Username: &username}
 	feed := &model.Feed{Username: "Bob"}
 	changes.Update(feed)
 
 	if feed.Username != "" {
-		t.Fatal(`The Username should be empty now`)
+		t.Error(`The Username should be empty now`)
 	}
 }
 
 func TestUpdateFeedUsernameWhenNotSet(t *testing.T) {
-	changes := &feedModification{}
+	changes := &feedModificationRequest{}
 	feed := &model.Feed{Username: "Alice"}
 	changes.Update(feed)
 
 	if feed.Username != "Alice" {
-		t.Fatal(`The Username should not be modified`)
+		t.Error(`The Username should not be modified`)
 	}
 }
 
@@ -142,16 +142,16 @@ func TestUpdateFeedDisabled(t *testing.T) {
 	valueTrue := true
 	valueFalse := false
 	scenarios := []struct {
-		changes  *feedModification
+		changes  *feedModificationRequest
 		feed     *model.Feed
 		expected bool
 	}{
-		{&feedModification{}, &model.Feed{Disabled: true}, true},
-		{&feedModification{Disabled: &valueTrue}, &model.Feed{Disabled: true}, true},
-		{&feedModification{Disabled: &valueFalse}, &model.Feed{Disabled: true}, false},
-		{&feedModification{}, &model.Feed{Disabled: false}, false},
-		{&feedModification{Disabled: &valueTrue}, &model.Feed{Disabled: false}, true},
-		{&feedModification{Disabled: &valueFalse}, &model.Feed{Disabled: false}, false},
+		{&feedModificationRequest{}, &model.Feed{Disabled: true}, true},
+		{&feedModificationRequest{Disabled: &valueTrue}, &model.Feed{Disabled: true}, true},
+		{&feedModificationRequest{Disabled: &valueFalse}, &model.Feed{Disabled: true}, false},
+		{&feedModificationRequest{}, &model.Feed{Disabled: false}, false},
+		{&feedModificationRequest{Disabled: &valueTrue}, &model.Feed{Disabled: false}, true},
+		{&feedModificationRequest{Disabled: &valueFalse}, &model.Feed{Disabled: false}, false},
 	}
 
 	for _, scenario := range scenarios {
@@ -167,53 +167,75 @@ func TestUpdateFeedDisabled(t *testing.T) {
 
 func TestUpdateFeedCategory(t *testing.T) {
 	categoryID := int64(1)
-	changes := &feedModification{CategoryID: &categoryID}
+	changes := &feedModificationRequest{CategoryID: &categoryID}
 	feed := &model.Feed{Category: &model.Category{ID: 42}}
 	changes.Update(feed)
 
 	if feed.Category.ID != categoryID {
-		t.Fatalf(`Unexpected value, got %q instead of %q`, feed.Username, categoryID)
+		t.Errorf(`Unexpected value, got %q instead of %q`, feed.Username, categoryID)
 	}
 }
 
 func TestUpdateFeedCategoryWithZero(t *testing.T) {
 	categoryID := int64(0)
-	changes := &feedModification{CategoryID: &categoryID}
+	changes := &feedModificationRequest{CategoryID: &categoryID}
 	feed := &model.Feed{Category: &model.Category{ID: 42}}
 	changes.Update(feed)
 
 	if feed.Category.ID != 42 {
-		t.Fatal(`The CategoryID should not be modified`)
+		t.Error(`The CategoryID should not be modified`)
 	}
 }
 
 func TestUpdateFeedCategoryWhenNotSet(t *testing.T) {
-	changes := &feedModification{}
+	changes := &feedModificationRequest{}
 	feed := &model.Feed{Category: &model.Category{ID: 42}}
 	changes.Update(feed)
 
 	if feed.Category.ID != 42 {
-		t.Fatal(`The CategoryID should not be modified`)
+		t.Error(`The CategoryID should not be modified`)
+	}
+}
+
+func TestUpdateFeedToIgnoreCache(t *testing.T) {
+	value := true
+	changes := &feedModificationRequest{IgnoreHTTPCache: &value}
+	feed := &model.Feed{IgnoreHTTPCache: false}
+	changes.Update(feed)
+
+	if feed.IgnoreHTTPCache != value {
+		t.Errorf(`The field IgnoreHTTPCache should be %v`, value)
+	}
+}
+
+func TestUpdateFeedToFetchViaProxy(t *testing.T) {
+	value := true
+	changes := &feedModificationRequest{FetchViaProxy: &value}
+	feed := &model.Feed{FetchViaProxy: false}
+	changes.Update(feed)
+
+	if feed.FetchViaProxy != value {
+		t.Errorf(`The field FetchViaProxy should be %v`, value)
 	}
 }
 
 func TestUpdateUserTheme(t *testing.T) {
 	theme := "Example 2"
-	changes := &userModification{Theme: &theme}
+	changes := &userModificationRequest{Theme: &theme}
 	user := &model.User{Theme: "Example"}
 	changes.Update(user)
 
 	if user.Theme != theme {
-		t.Fatalf(`Unexpected value, got %q instead of %q`, user.Theme, theme)
+		t.Errorf(`Unexpected value, got %q instead of %q`, user.Theme, theme)
 	}
 }
 
 func TestUserThemeWhenNotSet(t *testing.T) {
-	changes := &userModification{}
+	changes := &userModificationRequest{}
 	user := &model.User{Theme: "Example"}
 	changes.Update(user)
 
 	if user.Theme != "Example" {
-		t.Fatal(`The user Theme should not be modified`)
+		t.Error(`The user Theme should not be modified`)
 	}
 }

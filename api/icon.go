@@ -30,7 +30,7 @@ func (h *handler) feedIcon(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, r, &feedIcon{
+	json.OK(w, r, &feedIconResponse{
 		ID:       icon.ID,
 		MimeType: icon.MimeType,
 		Data:     icon.DataURL(),
