@@ -22,7 +22,6 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/timer"
 	url_helper "miniflux.app/url"
-	"miniflux.app/version"
 )
 
 const (
@@ -31,9 +30,6 @@ const (
 )
 
 var (
-	// DefaultUserAgent sets the User-Agent header used for any requests by miniflux.
-	DefaultUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
-
 	errInvalidCertificate        = "Invalid SSL certificate (original error: %q)"
 	errTemporaryNetworkOperation = "This website is temporarily unreachable (original error: %q)"
 	errPermanentNetworkOperation = "This website is permanently unreachable (original error: %q)"
@@ -64,7 +60,6 @@ type Client struct {
 func New(url string) *Client {
 	return &Client{
 		inputURL:          url,
-		requestUserAgent:  DefaultUserAgent,
 		ClientTimeout:     defaultHTTPClientTimeout,
 		ClientMaxBodySize: defaultHTTPClientMaxBodySize,
 	}
@@ -72,13 +67,9 @@ func New(url string) *Client {
 
 // NewClientWithConfig initializes a new HTTP client with application config options.
 func NewClientWithConfig(url string, opts *config.Options) *Client {
-	userAgent := opts.HTTPClientUserAgent()
-	if userAgent == "" {
-		userAgent = DefaultUserAgent
-	}
 	return &Client{
 		inputURL:          url,
-		requestUserAgent:  userAgent,
+		requestUserAgent:  opts.HTTPClientUserAgent(),
 		ClientTimeout:     opts.HTTPClientTimeout(),
 		ClientMaxBodySize: opts.HTTPClientMaxBodySize(),
 		ClientProxyURL:    opts.HTTPClientProxy(),
@@ -321,8 +312,11 @@ func (c *Client) buildClient() http.Client {
 
 func (c *Client) buildHeaders() http.Header {
 	headers := make(http.Header)
-	headers.Add("User-Agent", c.requestUserAgent)
 	headers.Add("Accept", "*/*")
+
+	if c.requestUserAgent != "" {
+		headers.Add("User-Agent", c.requestUserAgent)
+	}
 
 	if c.requestEtagHeader != "" {
 		headers.Add("If-None-Match", c.requestEtagHeader)

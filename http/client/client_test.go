@@ -5,10 +5,7 @@
 package client // import "miniflux.app/http/client"
 
 import (
-	"os"
 	"testing"
-
-	"miniflux.app/config"
 )
 
 func TestClientWithDelay(t *testing.T) {
@@ -52,23 +49,5 @@ func TestClientWithBasicAuth(t *testing.T) {
 	_, err := clt.Get()
 	if err != nil {
 		t.Fatalf(`The client should be authenticated successfully: %v`, err)
-	}
-}
-
-func TestClientRequestUserAgent(t *testing.T) {
-	clt := New("http://httpbin.org")
-	if clt.requestUserAgent != DefaultUserAgent {
-		t.Errorf(`The client had default User-Agent %q, wanted %q`, clt.requestUserAgent, DefaultUserAgent)
-	}
-
-	userAgent := "Custom User Agent"
-	os.Setenv("HTTP_CLIENT_USER_AGENT", userAgent)
-	opts, err := config.NewParser().ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing config failed: %v`, err)
-	}
-	clt = NewClientWithConfig("http://httpbin.org", opts)
-	if clt.requestUserAgent != userAgent {
-		t.Errorf(`The client had User-Agent %q, wanted %q`, clt.requestUserAgent, userAgent)
 	}
 }

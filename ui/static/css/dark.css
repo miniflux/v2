@@ -35,6 +35,7 @@
     --input-border: 1px solid #555;
     --input-background: #333;
     --input-color: #ccc;
+    --input-placeholder-color: #666;
 
     --input-focus-color: #efefef;
     --input-focus-border-color: rgba(82, 168, 236, 0.8);
