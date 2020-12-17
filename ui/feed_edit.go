@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"miniflux.app/config"
-	"miniflux.app/http/client"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/ui/form"
@@ -68,7 +67,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("defaultUserAgent", client.DefaultUserAgent)
+	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 	html.OK(w, r, view.Render("edit_feed"))

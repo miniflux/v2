@@ -404,10 +404,8 @@ textarea:focus {
     box-shadow: var(--input-focus-box-shadow);
 }
 
-::-moz-placeholder,
-::-ms-input-placeholder,
-::-webkit-input-placeholder {
-    color: #ddd;
+input::placeholder {
+    color: var(--input-placeholder-color);
     padding-top: 2px;
 }
 

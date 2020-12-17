@@ -7,6 +7,8 @@ package config // import "miniflux.app/config"
 import (
 	"fmt"
 	"strings"
+
+	"miniflux.app/version"
 )
 
 const (
@@ -52,7 +54,6 @@ const (
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
 	defaultHTTPClientProxy                    = ""
-	defaultHTTPClientUserAgent                = ""
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
 	defaultMaintenanceMode                    = false
@@ -61,6 +62,8 @@ const (
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
 )
+
+var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
 
 // Options contains configuration options.
 type Options struct {
@@ -159,6 +162,7 @@ func NewOptions() *Options {
 		httpClientTimeout:                  defaultHTTPClientTimeout,
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
 		httpClientProxy:                    defaultHTTPClientProxy,
+		httpClientUserAgent:                defaultHTTPClientUserAgent,
 		authProxyHeader:                    defaultAuthProxyHeader,
 		authProxyUserCreation:              defaultAuthProxyUserCreation,
 		maintenanceMode:                    defaultMaintenanceMode,
@@ -166,7 +170,6 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
-		httpClientUserAgent:                defaultHTTPClientUserAgent,
 	}
 }
 
