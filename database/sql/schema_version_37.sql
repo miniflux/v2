@@ -1,1 +1,0 @@
-CREATE INDEX entries_user_id_status_starred_idx ON entries (user_id, status, starred);
