@@ -1,1 +1,0 @@
-alter table enclosures alter column size set data type bigint;

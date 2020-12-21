@@ -1,1 +1,0 @@
-alter table entries add column reading_time int not null default 0;

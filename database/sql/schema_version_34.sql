@@ -1,1 +1,0 @@
-CREATE INDEX entries_id_user_status_idx ON entries USING btree (id, user_id, status);

@@ -1,1 +1,0 @@
-CREATE INDEX entries_feed_id_status_hash_idx ON entries USING btree (feed_id, status, hash);

@@ -1,1 +1,0 @@
-alter table sessions rename to user_sessions;

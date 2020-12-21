@@ -1,1 +1,0 @@
-alter table entries add column comments_url text default '';
