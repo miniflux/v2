@@ -11,10 +11,9 @@ require (
 	github.com/lib/pq v1.9.0
 	github.com/mitchellh/go-server-timing v1.0.2-0.20201108055052-feb680ab92c2
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/prometheus/client_golang v1.8.0
+	github.com/prometheus/client_golang v1.9.0
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
 	github.com/stretchr/testify v1.6.1 // indirect
-	github.com/tdewolff/minify/v2 v2.9.10 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20201029221708-28c70e62bb1d
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
