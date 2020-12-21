@@ -977,6 +977,12 @@ article.feed-parsing-error {
     top: -0.5em;
 }
 
+.entry-content abbr {
+    cursor: pointer;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--entry-content-abbr-border-color);
+}
+
 details.entry-enclosures {
     margin-top: 25px;
 }

@@ -95,6 +95,7 @@
     --entry-content-code-background: #555;
     --entry-content-code-border-color: #888;
     --entry-content-quote-color: #777;
+    --entry-content-abbr-border-color: #777;
     --entry-enclosure-border-color: #333;
 
     --parsing-error-color: #eee;
