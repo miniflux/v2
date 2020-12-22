@@ -175,17 +175,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 	return nil
 }
 
-// CreateIntegration creates initial user integration settings.
-func (s *Storage) CreateIntegration(userID int64) error {
-	query := `INSERT INTO integrations (user_id) VALUES ($1)`
-	_, err := s.db.Exec(query, userID)
-	if err != nil {
-		return fmt.Errorf(`store: unable to create integration row: %v`, err)
-	}
-
-	return nil
-}
-
 // HasSaveEntry returns true if the given user can save articles to third-parties.
 func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 	query := `
