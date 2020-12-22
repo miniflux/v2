@@ -22,7 +22,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 
-	user, err := h.store.UserByID(request.UserID(r))
+	loggedUser, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -41,9 +41,9 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("languages", locale.AvailableLanguages())
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")
-	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("user", loggedUser)
+	view.Set("countUnread", h.store.CountUnreadEntries(loggedUser.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
 
 	if err := settingsForm.Validate(); err != nil {
 		view.Set("errorMessage", err.Error())
@@ -51,13 +51,13 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if h.store.AnotherUserExists(user.ID, settingsForm.Username) {
+	if h.store.AnotherUserExists(loggedUser.ID, settingsForm.Username) {
 		view.Set("errorMessage", "error.user_already_exists")
 		html.OK(w, r, view.Render("settings"))
 		return
 	}
 
-	err = h.store.UpdateUser(settingsForm.Merge(user))
+	err = h.store.UpdateUser(settingsForm.Merge(loggedUser))
 	if err != nil {
 		logger.Error("[UI:UpdateSettings] %v", err)
 		view.Set("errorMessage", "error.unable_to_update_user")
@@ -65,8 +65,8 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.SetLanguage(user.Language)
-	sess.SetTheme(user.Theme)
+	sess.SetLanguage(loggedUser.Language)
+	sess.SetTheme(loggedUser.Theme)
 	sess.NewFlashMessage(locale.NewPrinter(request.UserLanguage(r)).Printf("alert.prefs_saved"))
 	html.Redirect(w, r, route.Path(h.router, "settings"))
 }

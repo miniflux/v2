@@ -63,11 +63,6 @@ func (h *handler) createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
-	if !request.IsAdminUser(r) {
-		json.Forbidden(w, r)
-		return
-	}
-
 	userID := request.RouteInt64Param(r, "userID")
 	userChanges, err := decodeUserModificationRequest(r.Body)
 	if err != nil {
@@ -84,6 +79,18 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	if originalUser == nil {
 		json.NotFound(w, r)
 		return
+	}
+
+	if !request.IsAdminUser(r) {
+		if originalUser.ID != request.UserID(r) {
+			json.Forbidden(w, r)
+			return
+		}
+
+		if userChanges.IsAdmin != nil && *userChanges.IsAdmin {
+			json.BadRequest(w, r, errors.New("Only administrators can change permissions of standard users"))
+			return
+		}
 	}
 
 	userChanges.Update(originalUser)
