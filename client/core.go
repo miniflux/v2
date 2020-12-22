@@ -40,16 +40,31 @@ func (u User) String() string {
 	return fmt.Sprintf("#%d - %s (admin=%v)", u.ID, u.Username, u.IsAdmin)
 }
 
-// UserModification is used to update a user.
+// UserCreationRequest represents the request to create a user.
+type UserCreationRequest struct {
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	IsAdmin         bool   `json:"is_admin"`
+	GoogleID        string `json:"google_id"`
+	OpenIDConnectID string `json:"openid_connect_id"`
+}
+
+// UserModification represents the request to update a user.
 type UserModification struct {
-	Username       *string `json:"username"`
-	Password       *string `json:"password"`
-	IsAdmin        *bool   `json:"is_admin"`
-	Theme          *string `json:"theme"`
-	Language       *string `json:"language"`
-	Timezone       *string `json:"timezone"`
-	EntryDirection *string `json:"entry_sorting_direction"`
-	EntriesPerPage *int    `json:"entries_per_page"`
+	Username          *string `json:"username"`
+	Password          *string `json:"password"`
+	IsAdmin           *bool   `json:"is_admin"`
+	Theme             *string `json:"theme"`
+	Language          *string `json:"language"`
+	Timezone          *string `json:"timezone"`
+	EntryDirection    *string `json:"entry_sorting_direction"`
+	Stylesheet        *string `json:"stylesheet"`
+	GoogleID          *string `json:"google_id"`
+	OpenIDConnectID   *string `json:"openid_connect_id"`
+	EntriesPerPage    *int    `json:"entries_per_page"`
+	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
+	ShowReadingTime   *bool   `json:"show_reading_time"`
+	EntrySwipe        *bool   `json:"entry_swipe"`
 }
 
 // Users represents a list of users.

@@ -271,6 +271,39 @@ func TestUpdateUserTheme(t *testing.T) {
 	}
 }
 
+func TestUpdateUserFields(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	stylesheet := "body { color: red }"
+	swipe := false
+	entriesPerPage := 5
+	user, err = client.UpdateUser(user.ID, &miniflux.UserModification{
+		Stylesheet:     &stylesheet,
+		EntrySwipe:     &swipe,
+		EntriesPerPage: &entriesPerPage,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if user.Stylesheet != stylesheet {
+		t.Fatalf(`Unable to update user stylesheet: got %q instead of %q`, user.Stylesheet, stylesheet)
+	}
+
+	if user.EntrySwipe != swipe {
+		t.Fatalf(`Unable to update user EntrySwipe: got %v instead of %v`, user.EntrySwipe, swipe)
+	}
+
+	if user.EntriesPerPage != entriesPerPage {
+		t.Fatalf(`Unable to update user EntriesPerPage: got %q instead of %q`, user.EntriesPerPage, entriesPerPage)
+	}
+}
+
 func TestUpdateUserThemeWithInvalidValue(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)

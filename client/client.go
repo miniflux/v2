@@ -96,7 +96,11 @@ func (c *Client) UserByUsername(username string) (*User, error) {
 
 // CreateUser creates a new user in the system.
 func (c *Client) CreateUser(username, password string, isAdmin bool) (*User, error) {
-	body, err := c.request.Post("/v1/users", &User{Username: username, Password: password, IsAdmin: isAdmin})
+	body, err := c.request.Post("/v1/users", &UserCreationRequest{
+		Username: username,
+		Password: password,
+		IsAdmin:  isAdmin,
+	})
 	if err != nil {
 		return nil, err
 	}

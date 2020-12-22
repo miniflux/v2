@@ -165,27 +165,41 @@ func decodeFeedModificationRequest(r io.ReadCloser) (*feedModificationRequest, e
 	return &feed, nil
 }
 
-func decodeUserCreationRequest(r io.ReadCloser) (*model.User, error) {
+type userCreationRequest struct {
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	IsAdmin         bool   `json:"is_admin"`
+	GoogleID        string `json:"google_id"`
+	OpenIDConnectID string `json:"openid_connect_id"`
+}
+
+func decodeUserCreationRequest(r io.ReadCloser) (*userCreationRequest, error) {
 	defer r.Close()
 
-	var user model.User
+	var request userCreationRequest
 	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&user); err != nil {
-		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
+	if err := decoder.Decode(&request); err != nil {
+		return nil, fmt.Errorf("Unable to decode user creation JSON object: %v", err)
 	}
 
-	return &user, nil
+	return &request, nil
 }
 
 type userModificationRequest struct {
-	Username       *string `json:"username"`
-	Password       *string `json:"password"`
-	IsAdmin        *bool   `json:"is_admin"`
-	Theme          *string `json:"theme"`
-	Language       *string `json:"language"`
-	Timezone       *string `json:"timezone"`
-	EntryDirection *string `json:"entry_sorting_direction"`
-	EntriesPerPage *int    `json:"entries_per_page"`
+	Username          *string `json:"username"`
+	Password          *string `json:"password"`
+	IsAdmin           *bool   `json:"is_admin"`
+	Theme             *string `json:"theme"`
+	Language          *string `json:"language"`
+	Timezone          *string `json:"timezone"`
+	EntryDirection    *string `json:"entry_sorting_direction"`
+	Stylesheet        *string `json:"stylesheet"`
+	GoogleID          *string `json:"google_id"`
+	OpenIDConnectID   *string `json:"openid_connect_id"`
+	EntriesPerPage    *int    `json:"entries_per_page"`
+	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
+	ShowReadingTime   *bool   `json:"show_reading_time"`
+	EntrySwipe        *bool   `json:"entry_swipe"`
 }
 
 func (u *userModificationRequest) Update(user *model.User) {
@@ -217,21 +231,45 @@ func (u *userModificationRequest) Update(user *model.User) {
 		user.EntryDirection = *u.EntryDirection
 	}
 
+	if u.Stylesheet != nil {
+		user.Stylesheet = *u.Stylesheet
+	}
+
+	if u.GoogleID != nil {
+		user.GoogleID = *u.GoogleID
+	}
+
+	if u.OpenIDConnectID != nil {
+		user.OpenIDConnectID = *u.OpenIDConnectID
+	}
+
 	if u.EntriesPerPage != nil {
 		user.EntriesPerPage = *u.EntriesPerPage
+	}
+
+	if u.KeyboardShortcuts != nil {
+		user.KeyboardShortcuts = *u.KeyboardShortcuts
+	}
+
+	if u.ShowReadingTime != nil {
+		user.ShowReadingTime = *u.ShowReadingTime
+	}
+
+	if u.EntrySwipe != nil {
+		user.EntrySwipe = *u.EntrySwipe
 	}
 }
 
 func decodeUserModificationRequest(r io.ReadCloser) (*userModificationRequest, error) {
 	defer r.Close()
 
-	var user userModificationRequest
+	var request userModificationRequest
 	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&user); err != nil {
+	if err := decoder.Decode(&request); err != nil {
 		return nil, fmt.Errorf("Unable to decode user modification JSON object: %v", err)
 	}
 
-	return &user, nil
+	return &request, nil
 }
 
 func decodeEntryStatusRequest(r io.ReadCloser) ([]int64, string, error) {
