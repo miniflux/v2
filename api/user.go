@@ -10,6 +10,7 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	"miniflux.app/model"
 )
 
 func (h *handler) currentUser(w http.ResponseWriter, r *http.Request) {
@@ -28,11 +29,18 @@ func (h *handler) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := decodeUserCreationRequest(r.Body)
+	userCreationRequest, err := decodeUserCreationRequest(r.Body)
 	if err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
+
+	user := model.NewUser()
+	user.Username = userCreationRequest.Username
+	user.Password = userCreationRequest.Password
+	user.IsAdmin = userCreationRequest.IsAdmin
+	user.GoogleID = userCreationRequest.GoogleID
+	user.OpenIDConnectID = userCreationRequest.OpenIDConnectID
 
 	if err := user.ValidateUserCreation(); err != nil {
 		json.BadRequest(w, r, err)
