@@ -1387,7 +1387,7 @@ var templateViewsMap = map[string]string{
 
 {{ if hasOAuth2Provider "google" }}
 <div class="panel">
-    {{ if hasKey .user.Extra "google_id" }}
+    {{ if .user.GoogleID }}
         <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
     {{ else }}
         <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.settings.link_google_account" }}</a>
@@ -1395,7 +1395,7 @@ var templateViewsMap = map[string]string{
 </div>
 {{ else if hasOAuth2Provider "oidc" }}
 <div class="panel">
-    {{ if hasKey .user.Extra "oidc_id" }}
+    {{ if .user.OpenIDConnectID }}
         <a href="{{ route "oauth2Unlink" "provider" "oidc" }}">{{ t "page.settings.unlink_oidc_account" }}</a>
     {{ else }}
         <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.settings.link_oidc_account" }}</a>
@@ -1624,7 +1624,7 @@ var templateViewsMapChecksums = map[string]string{
 	"login":               "9165434b2405e9332de4bebbb54a93dc5692276ea72e7c5e07f655a002dfd290",
 	"search_entries":      "6a3e5876cb7541a2f08f56e30ab46a2d7d64894ec5e170f627b2dd674d8aeefe",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "6f77f9431beb9aa2e28840a60a6463d1a9eb0e92c1929b204584c85c71d0c7a3",
+	"settings":            "ef2155983f362ef001e0d9b27536a3bea9e04869ee600e8285fff894c39ba1c1",
 	"shared_entries":      "f87a42bf44dc3606c5a44b185263c1b9a612a8ae194f75061253d4dde7b095a2",
 	"unread_entries":      "21c584da7ca8192655c62f16a7ac92dbbfdf1307588ffe51eb4a8bbf3f9f7526",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",

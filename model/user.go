@@ -13,25 +13,27 @@ import (
 
 // User represents a user in the system.
 type User struct {
-	ID                int64             `json:"id"`
-	Username          string            `json:"username"`
-	Password          string            `json:"password,omitempty"`
-	IsAdmin           bool              `json:"is_admin"`
-	Theme             string            `json:"theme"`
-	Language          string            `json:"language"`
-	Timezone          string            `json:"timezone"`
-	EntryDirection    string            `json:"entry_sorting_direction"`
-	EntriesPerPage    int               `json:"entries_per_page"`
-	KeyboardShortcuts bool              `json:"keyboard_shortcuts"`
-	ShowReadingTime   bool              `json:"show_reading_time"`
-	LastLoginAt       *time.Time        `json:"last_login_at,omitempty"`
-	Extra             map[string]string `json:"extra"`
-	EntrySwipe        bool              `json:"entry_swipe"`
+	ID                int64      `json:"id"`
+	Username          string     `json:"username"`
+	Password          string     `json:"password,omitempty"`
+	IsAdmin           bool       `json:"is_admin"`
+	Theme             string     `json:"theme"`
+	Language          string     `json:"language"`
+	Timezone          string     `json:"timezone"`
+	EntryDirection    string     `json:"entry_sorting_direction"`
+	Stylesheet        string     `json:"stylesheet"`
+	GoogleID          string     `json:"google_id"`
+	OpenIDConnectID   string     `json:"openid_connect_id"`
+	EntriesPerPage    int        `json:"entries_per_page"`
+	KeyboardShortcuts bool       `json:"keyboard_shortcuts"`
+	ShowReadingTime   bool       `json:"show_reading_time"`
+	EntrySwipe        bool       `json:"entry_swipe"`
+	LastLoginAt       *time.Time `json:"last_login_at,omitempty"`
 }
 
 // NewUser returns a new User.
 func NewUser() *User {
-	return &User{Extra: make(map[string]string)}
+	return &User{}
 }
 
 // ValidateUserCreation validates new user.

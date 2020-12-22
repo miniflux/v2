@@ -38,8 +38,8 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.EntriesPerPage = s.EntriesPerPage
 	user.KeyboardShortcuts = s.KeyboardShortcuts
 	user.ShowReadingTime = s.ShowReadingTime
-	user.Extra["custom_css"] = s.CustomCSS
-	user.EntrySwipe = s.EntrySwipe;
+	user.Stylesheet = s.CustomCSS
+	user.EntrySwipe = s.EntrySwipe
 
 	if s.Password != "" {
 		user.Password = s.Password

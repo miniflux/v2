@@ -66,7 +66,7 @@
 
 {{ if hasOAuth2Provider "google" }}
 <div class="panel">
-    {{ if hasKey .user.Extra "google_id" }}
+    {{ if .user.GoogleID }}
         <a href="{{ route "oauth2Unlink" "provider" "google" }}">{{ t "page.settings.unlink_google_account" }}</a>
     {{ else }}
         <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.settings.link_google_account" }}</a>
@@ -74,7 +74,7 @@
 </div>
 {{ else if hasOAuth2Provider "oidc" }}
 <div class="panel">
-    {{ if hasKey .user.Extra "oidc_id" }}
+    {{ if .user.OpenIDConnectID }}
         <a href="{{ route "oauth2Unlink" "provider" "oidc" }}">{{ t "page.settings.unlink_oidc_account" }}</a>
     {{ else }}
         <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.settings.link_oidc_account" }}</a>

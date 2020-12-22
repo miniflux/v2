@@ -24,7 +24,7 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authProvider, err := getOAuth2Manager(r.Context()).Provider(provider)
+	authProvider, err := getOAuth2Manager(r.Context()).FindProvider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "settings"))
@@ -32,6 +32,11 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
+	user, err := h.store.UserByID(request.UserID(r))
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
 
 	hasPassword, err := h.store.HasPassword(request.UserID(r))
 	if err != nil {
@@ -45,7 +50,8 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.RemoveExtraField(request.UserID(r), authProvider.GetUserExtraKey()); err != nil {
+	authProvider.UnsetUserProfileID(user)
+	if err := h.store.UpdateUser(user); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}

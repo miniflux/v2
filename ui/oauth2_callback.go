@@ -5,6 +5,7 @@
 package ui // import "miniflux.app/ui"
 
 import (
+	"errors"
 	"net/http"
 
 	"miniflux.app/config"
@@ -44,7 +45,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authProvider, err := getOAuth2Manager(r.Context()).Provider(provider)
+	authProvider, err := getOAuth2Manager(r.Context()).FindProvider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "login"))
@@ -61,20 +62,21 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[OAuth2] [ClientIP=%s] Successful auth for %s", clientIP, profile)
 
 	if request.IsAuthenticated(r) {
-		user, err := h.store.UserByExtraField(profile.Key, profile.ID)
+		loggedUser, err := h.store.UserByID(request.UserID(r))
 		if err != nil {
 			html.ServerError(w, r, err)
 			return
 		}
 
-		if user != nil {
-			logger.Error("[OAuth2] User #%d cannot be associated because %s is already associated", request.UserID(r), user.Username)
+		if h.store.AnotherUserWithFieldExists(loggedUser.ID, profile.Key, profile.ID) {
+			logger.Error("[OAuth2] User #%d cannot be associated because it is already associated with another user", loggedUser.ID)
 			sess.NewFlashErrorMessage(printer.Printf("error.duplicate_linked_account"))
 			html.Redirect(w, r, route.Path(h.router, "settings"))
 			return
 		}
 
-		if err := h.store.UpdateExtraField(request.UserID(r), profile.Key, profile.ID); err != nil {
+		authProvider.PopulateUserWithProfileID(loggedUser, profile)
+		if err := h.store.UpdateUser(loggedUser); err != nil {
 			html.ServerError(w, r, err)
 			return
 		}
@@ -84,7 +86,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.store.UserByExtraField(profile.Key, profile.ID)
+	user, err := h.store.UserByField(profile.Key, profile.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -96,10 +98,15 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if h.store.UserExists(profile.Username) {
+			html.BadRequest(w, r, errors.New(printer.Printf("error.user_already_exists")))
+			return
+		}
+
 		user = model.NewUser()
 		user.Username = profile.Username
 		user.IsAdmin = false
-		user.Extra[profile.Key] = profile.ID
+		authProvider.PopulateUserWithProfileID(user, profile)
 
 		if err := h.store.CreateUser(user); err != nil {
 			html.ServerError(w, r, err)

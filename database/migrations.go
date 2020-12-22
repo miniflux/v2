@@ -4,7 +4,9 @@
 
 package database // import "miniflux.app/database"
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 var schemaVersion = len(migrations)
 
@@ -425,6 +427,73 @@ var migrations = []func(tx *sql.Tx) error{
 			UPDATE entries SET created_at = published_at;
 		`
 		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users
+				ADD column stylesheet text not null default '',
+				ADD column google_id text not null default '',
+				ADD column openid_connect_id text not null default ''
+		`)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(`
+			DECLARE my_cursor CURSOR FOR
+			SELECT
+				id,
+				COALESCE(extra->'custom_css', '') as custom_css,
+				COALESCE(extra->'google_id', '') as google_id,
+				COALESCE(extra->'oidc_id', '') as oidc_id
+			FROM users
+			FOR UPDATE
+		`)
+		if err != nil {
+			return err
+		}
+		defer tx.Exec("CLOSE my_cursor")
+
+		for {
+			var (
+				userID           int64
+				customStylesheet string
+				googleID         string
+				oidcID           string
+			)
+
+			if err := tx.QueryRow(`FETCH NEXT FROM my_cursor`).Scan(&userID, &customStylesheet, &googleID, &oidcID); err != nil {
+				if err == sql.ErrNoRows {
+					break
+				}
+				return err
+			}
+
+			_, err := tx.Exec(
+				`UPDATE
+					users
+				SET
+					stylesheet=$2,
+					google_id=$3,
+					openid_connect_id=$4
+				WHERE
+					id=$1
+				`,
+				userID, customStylesheet, googleID, oidcID)
+			if err != nil {
+				return err
+			}
+		}
+
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users DROP COLUMN extra;
+			CREATE UNIQUE INDEX users_google_id_idx ON users(google_id) WHERE google_id <> '';
+			CREATE UNIQUE INDEX users_openid_connect_id_idx ON users(openid_connect_id) WHERE openid_connect_id <> '';
+		`)
 		return err
 	},
 }

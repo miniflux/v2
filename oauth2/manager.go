@@ -7,6 +7,7 @@ package oauth2 // import "miniflux.app/oauth2"
 import (
 	"context"
 	"errors"
+
 	"miniflux.app/logger"
 )
 
@@ -15,8 +16,8 @@ type Manager struct {
 	providers map[string]Provider
 }
 
-// Provider returns the given provider.
-func (m *Manager) Provider(name string) (Provider, error) {
+// FindProvider returns the given provider.
+func (m *Manager) FindProvider(name string) (Provider, error) {
 	if provider, found := m.providers[name]; found {
 		return provider, nil
 	}
