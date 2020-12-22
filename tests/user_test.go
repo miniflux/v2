@@ -372,21 +372,55 @@ func TestCannotGetUserAsNonAdmin(t *testing.T) {
 }
 
 func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
-	username := getRandomUsername()
-	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
-	user, err := client.CreateUser(username, testStandardPassword, false)
+	adminClient := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+
+	usernameA := getRandomUsername()
+	userA, err := adminClient.CreateUser(usernameA, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client = miniflux.New(testBaseURL, username, testStandardPassword)
-	_, err = client.UpdateUser(user.ID, &miniflux.UserModification{})
+	usernameB := getRandomUsername()
+	_, err = adminClient.CreateUser(usernameB, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entriesPerPage := 10
+	userAClient := miniflux.New(testBaseURL, usernameA, testStandardPassword)
+	userAAfterUpdate, err := userAClient.UpdateUser(userA.ID, &miniflux.UserModification{EntriesPerPage: &entriesPerPage})
+	if err != nil {
+		t.Fatal(`Standard users should be able to update themselves`)
+	}
+
+	if userAAfterUpdate.EntriesPerPage != entriesPerPage {
+		t.Fatalf(`The EntriesPerPage field of this user should be updated`)
+	}
+
+	isAdmin := true
+	_, err = userAClient.UpdateUser(userA.ID, &miniflux.UserModification{IsAdmin: &isAdmin})
 	if err == nil {
-		t.Fatal(`Standard users should not be able to update any users`)
+		t.Fatal(`Standard users should not be able to become admin`)
+	}
+
+	userBClient := miniflux.New(testBaseURL, usernameB, testStandardPassword)
+	_, err = userBClient.UpdateUser(userA.ID, &miniflux.UserModification{})
+	if err == nil {
+		t.Fatal(`Standard users should not be able to update other users`)
 	}
 
 	if err != miniflux.ErrForbidden {
 		t.Fatal(`A "Forbidden" error should be raised`)
+	}
+
+	stylesheet := "test"
+	userC, err := adminClient.UpdateUser(userA.ID, &miniflux.UserModification{Stylesheet: &stylesheet})
+	if err != nil {
+		t.Fatal(`Admin users should be able to update any users`)
+	}
+
+	if userC.Stylesheet != stylesheet {
+		t.Fatalf(`The Stylesheet field of this user should be updated`)
 	}
 }
 
