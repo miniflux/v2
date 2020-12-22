@@ -18,22 +18,17 @@ func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
 	if filename == "custom_css" {
 		user, err := h.store.UserByID(request.UserID(r))
-		if err != nil {
+		if err != nil || user == nil {
 			html.NotFound(w, r)
 			return
 		}
 		b := response.New(w, r)
-		if user == nil {
-			b.WithHeader("Content-Type", "text/css; charset=utf-8")
-			b.WithBody("")
-			b.Write()
-			return
-		}
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBody(user.Extra["custom_css"])
+		b.WithBody(user.Stylesheet)
 		b.Write()
 		return
 	}
+
 	etag, found := static.StylesheetsChecksums[filename]
 	if !found {
 		html.NotFound(w, r)

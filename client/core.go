@@ -18,17 +18,22 @@ const (
 
 // User represents a user in the system.
 type User struct {
-	ID             int64             `json:"id"`
-	Username       string            `json:"username"`
-	Password       string            `json:"password,omitempty"`
-	IsAdmin        bool              `json:"is_admin"`
-	Theme          string            `json:"theme"`
-	Language       string            `json:"language"`
-	Timezone       string            `json:"timezone"`
-	EntryDirection string            `json:"entry_sorting_direction"`
-	EntriesPerPage int               `json:"entries_per_page"`
-	LastLoginAt    *time.Time        `json:"last_login_at"`
-	Extra          map[string]string `json:"extra"`
+	ID                int64      `json:"id"`
+	Username          string     `json:"username"`
+	Password          string     `json:"password,omitempty"`
+	IsAdmin           bool       `json:"is_admin"`
+	Theme             string     `json:"theme"`
+	Language          string     `json:"language"`
+	Timezone          string     `json:"timezone"`
+	EntryDirection    string     `json:"entry_sorting_direction"`
+	Stylesheet        string     `json:"stylesheet"`
+	GoogleID          string     `json:"google_id"`
+	OpenIDConnectID   string     `json:"openid_connect_id"`
+	EntriesPerPage    int        `json:"entries_per_page"`
+	KeyboardShortcuts bool       `json:"keyboard_shortcuts"`
+	ShowReadingTime   bool       `json:"show_reading_time"`
+	EntrySwipe        bool       `json:"entry_swipe"`
+	LastLoginAt       *time.Time `json:"last_login_at"`
 }
 
 func (u User) String() string {

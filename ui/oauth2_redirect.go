@@ -24,7 +24,7 @@ func (h *handler) oauth2Redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authProvider, err := getOAuth2Manager(r.Context()).Provider(provider)
+	authProvider, err := getOAuth2Manager(r.Context()).FindProvider(provider)
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "login"))
