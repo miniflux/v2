@@ -7,6 +7,7 @@ package storage // import "miniflux.app/storage"
 import (
 	"database/sql"
 	"fmt"
+	"runtime"
 	"strings"
 
 	"miniflux.app/logger"
@@ -410,6 +411,7 @@ func (s *Storage) RemoveUserAsync(userID int64) {
 		deleteUserFeeds(s.db, userID)
 		s.db.Exec(`DELETE FROM users WHERE id=$1`, userID)
 		s.db.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID)
+		logger.Debug(`[MASS DELETE] User #%d has been deleted (%d GoRoutines)`, userID, runtime.NumGoroutine())
 	}()
 }
 
@@ -533,18 +535,18 @@ func deleteUserFeeds(db *sql.DB, userID int64) {
 
 	worker := func(jobs <-chan int64, results chan<- bool) {
 		for feedID := range jobs {
+			logger.Debug(`[MASS DELETE] Deleting feed #%d for user #%d (%d GoRoutines)`, feedID, userID, runtime.NumGoroutine())
 			deleteUserEntries(db, userID, feedID)
 			db.Exec(`DELETE FROM feeds WHERE id=$1`, feedID)
 			results <- true
 		}
 	}
 
-	const numWorkers = 3
 	numJobs := len(feedIDs)
 	jobs := make(chan int64, numJobs)
 	results := make(chan bool, numJobs)
 
-	for w := 0; w < numWorkers; w++ {
+	for w := 0; w < 2; w++ {
 		go worker(jobs, results)
 	}
 
@@ -559,8 +561,7 @@ func deleteUserFeeds(db *sql.DB, userID int64) {
 }
 
 func deleteUserEntries(db *sql.DB, userID int64, feedID int64) {
-	query := `SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`
-	rows, err := db.Query(query, userID, feedID)
+	rows, err := db.Query(`SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`, userID, feedID)
 	if err != nil {
 		logger.Error(`store: unable to get user feed entries: %v`, err)
 		return
@@ -570,25 +571,10 @@ func deleteUserEntries(db *sql.DB, userID int64, feedID int64) {
 	for rows.Next() {
 		var entryID int64
 		rows.Scan(&entryID)
-		deleteUserEnclosures(db, userID, entryID)
-		db.Exec(`DELETE FROM entries WHERE id=$1`, entryID)
-	}
-}
 
-func deleteUserEnclosures(db *sql.DB, userID int64, entryID int64) {
-	query := `SELECT id FROM enclosures WHERE user_id=$1 AND entry_id=$2`
-	rows, err := db.Query(query, userID, entryID)
-	if err != nil {
-		logger.Error(`store: unable to get user entry enclosures: %v`, err)
-		return
-	}
-	defer rows.Close()
+		logger.Debug(`[MASS DELETE] Deleting entry #%d for user #%d (%d GoRoutines)`, entryID, userID, runtime.NumGoroutine())
 
-	for rows.Next() {
-		var enclosureID int64
-		rows.Scan(&enclosureID)
-		go func() {
-			db.Exec(`DELETE FROM enclosures WHERE id=$1`, enclosureID)
-		}()
+		db.Exec(`DELETE FROM enclosures WHERE entry_id=$1 AND user_id=$2`, entryID, userID)
+		db.Exec(`DELETE FROM entries WHERE id=$1 AND user_id=$2`, entryID, userID)
 	}
 }
