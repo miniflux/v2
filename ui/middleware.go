@@ -204,7 +204,7 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			}
 		}
 
-		sessionToken, _, err := m.store.CreateUserSession(user.Username, r.UserAgent(), clientIP)
+		sessionToken, _, err := m.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), clientIP)
 		if err != nil {
 			html.ServerError(w, r, err)
 			return

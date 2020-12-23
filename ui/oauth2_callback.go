@@ -114,7 +114,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	sessionToken, _, err := h.store.CreateUserSession(user.Username, r.UserAgent(), clientIP)
+	sessionToken, _, err := h.store.CreateUserSessionFromUsername(user.Username, r.UserAgent(), clientIP)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return

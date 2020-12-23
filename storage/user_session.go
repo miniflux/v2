@@ -55,19 +55,35 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 	return sessions, nil
 }
 
-// CreateUserSession creates a new sessions.
-func (s *Storage) CreateUserSession(username, userAgent, ip string) (sessionID string, userID int64, err error) {
-	query := `SELECT id FROM users WHERE username = LOWER($1)`
-	err = s.db.QueryRow(query, username).Scan(&userID)
+// CreateUserSessionFromUsername creates a new user session.
+func (s *Storage) CreateUserSessionFromUsername(username, userAgent, ip string) (sessionID string, userID int64, err error) {
+	token := crypto.GenerateRandomString(64)
+
+	tx, err := s.db.Begin()
 	if err != nil {
+		return "", 0, fmt.Errorf(`store: unable to start transaction: %v`, err)
+	}
+
+	err = tx.QueryRow(`SELECT id FROM users WHERE username = LOWER($1)`, username).Scan(&userID)
+	if err != nil {
+		tx.Rollback()
 		return "", 0, fmt.Errorf(`store: unable to fetch user ID: %v`, err)
 	}
 
-	token := crypto.GenerateRandomString(64)
-	query = `INSERT INTO user_sessions (token, user_id, user_agent, ip) VALUES ($1, $2, $3, $4)`
-	_, err = s.db.Exec(query, token, userID, userAgent, ip)
+	_, err = tx.Exec(
+		`INSERT INTO user_sessions (token, user_id, user_agent, ip) VALUES ($1, $2, $3, $4)`,
+		token,
+		userID,
+		userAgent,
+		ip,
+	)
 	if err != nil {
+		tx.Rollback()
 		return "", 0, fmt.Errorf(`store: unable to create user session: %v`, err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return "", 0, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return token, userID, nil
