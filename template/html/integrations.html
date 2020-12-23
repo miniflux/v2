@@ -20,7 +20,7 @@
         </label>
 
         <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
-        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}">
+        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}" autocomplete="username">
 
         <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">

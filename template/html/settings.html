@@ -14,7 +14,7 @@
     {{ end }}
 
     <label for="form-username">{{ t "form.user.label.username" }}</label>
-    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required>
+    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required>
 
     <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">

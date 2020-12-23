@@ -480,13 +480,13 @@ var templateViewsMap = map[string]string{
     {{ end }}
 
     <label for="form-username">{{ t "form.user.label.username" }}</label>
-    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password" required autofocus>
+    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required autofocus>
 
     <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password" required>
 
     <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
-    <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" required>
+    <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password" required>
 
     <label><input type="checkbox" name="is_admin" value="1" {{ if .form.IsAdmin }}checked{{ end }}> {{ t "form.user.label.admin" }}</label>
 
@@ -660,7 +660,7 @@ var templateViewsMap = map[string]string{
     {{ end }}
 
     <label for="form-username">{{ t "form.user.label.username" }}</label>
-    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="new-password" required autofocus>
+    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required autofocus>
 
     <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
@@ -1082,7 +1082,7 @@ var templateViewsMap = map[string]string{
         </label>
 
         <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
-        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}">
+        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}" autocomplete="username">
 
         <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
@@ -1335,7 +1335,7 @@ var templateViewsMap = map[string]string{
     {{ end }}
 
     <label for="form-username">{{ t "form.user.label.username" }}</label>
-    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" required>
+    <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required>
 
     <label for="form-password">{{ t "form.user.label.password" }}</label>
     <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
@@ -1611,20 +1611,20 @@ var templateViewsMapChecksums = map[string]string{
 	"choose_subscription": "22109d760ea8079c491561d0106f773c885efbf66f87d81fcf8700218260d2a0",
 	"create_api_key":      "5f74d4e92a6684927f5305096378c8be278159a5cd88ce652c7be3280a7d1685",
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
-	"create_user":         "9b73a55233615e461d1f07d99ad1d4d3b54532588ab960097ba3e090c85aaf3a",
+	"create_user":         "9b650fdbb07fdd4437551060c89414e709cb8c2731fd3ac259cd6ac221cf81ce",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "5de7626448c48de384a0388227ab0c3b75b1ec19b5de440c91039180852cc5dc",
-	"edit_user":           "c692db9de1a084c57b93e95a14b041d39bf489846cbb91fc982a62b72b77062a",
+	"edit_user":           "875292a3e84f700b17ae1e4b7cd40759a4e79a78daccc4e1214d1d22110b6def",
 	"entry":               "8fdecabc90354615cdf213542620e5ac16632a494fd6a87b3b2280ac879f6c34",
 	"feed_entries":        "89977ea86b8d43305d587b70e6d9c45c2c88249b3966f2d31051dc7a5f1c48b6",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "261b47e5f2f699a9cef1b3b690f80d7aabf585d05b77d67645d623f7ff6c0fbb",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
-	"integrations":        "7d0d936a60b50371e9b0ff411ca31a646a5897bc84894febb09cd4b08fc91f2b",
+	"integrations":        "afc7f699e46398b705586d4690a94547fd2d2e3c24ff529fbf2a5e779fb02b32",
 	"login":               "9165434b2405e9332de4bebbb54a93dc5692276ea72e7c5e07f655a002dfd290",
 	"search_entries":      "6a3e5876cb7541a2f08f56e30ab46a2d7d64894ec5e170f627b2dd674d8aeefe",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "ef2155983f362ef001e0d9b27536a3bea9e04869ee600e8285fff894c39ba1c1",
+	"settings":            "a0ee4f0d39c8d28ca0a6960d793fa7899eec9d1676598fca1357f119384ed34e",
 	"shared_entries":      "f87a42bf44dc3606c5a44b185263c1b9a612a8ae194f75061253d4dde7b095a2",
 	"unread_entries":      "21c584da7ca8192655c62f16a7ac92dbbfdf1307588ffe51eb4a8bbf3f9f7526",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",
