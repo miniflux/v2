@@ -137,13 +137,13 @@ function toggleEntryStatus(element, toasting) {
     updateEntriesStatus([entryID], newStatus);
 
     if (currentStatus === "read") {
-        link.innerHTML = '<span class="icon-label">' + link.dataset.labelRead + '</span>';
+        link.innerHTML = link.dataset.iconRead + '<span class="icon-label">' + link.dataset.labelRead + '</span>';
         link.dataset.value = "unread";
         if (toasting) {
             toast(link.dataset.toastUnread);
         }
     } else {
-        link.innerHTML = '<span class="icon-label">' + link.dataset.labelUnread + '</span>';
+        link.innerHTML = link.dataset.iconUnread + '<span class="icon-label">' + link.dataset.labelUnread + '</span>';
         link.dataset.value = "read";
         if (toasting) {
             toast(link.dataset.toastRead);
@@ -249,13 +249,13 @@ function toggleBookmark(parentElement, toasting) {
     let request = new RequestBuilder(element.dataset.bookmarkUrl);
     request.withCallback(() => {
         if (element.dataset.value === "star") {
-            element.innerHTML = '<span class="icon-label">' + element.dataset.labelStar + '</span>';
+            element.innerHTML = element.dataset.iconStar + '<span class="icon-label">' + element.dataset.labelStar + '</span>';
             element.dataset.value = "unstar";
             if (toasting) {
                 toast(element.dataset.toastUnstar);
             }
         } else {
-            element.innerHTML = '<span class="icon-label">' + element.dataset.labelUnstar + '</span>';
+            element.innerHTML = element.dataset.iconUnstar + '<span class="icon-label">' + element.dataset.labelUnstar + '</span>';
             element.dataset.value = "star";
             if (toasting) {
                 toast(element.dataset.toastStar);
