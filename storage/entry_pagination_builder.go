@@ -36,6 +36,11 @@ func (e *EntryPaginationBuilder) WithStarred() {
 	e.conditions = append(e.conditions, "e.starred is true")
 }
 
+// WithOpened adds viewed to the condition.
+func (e *EntryPaginationBuilder) WithOpened() {
+	e.conditions = append(e.conditions, "e.opened is true")
+}
+
 // WithFeedID adds feed_id to the condition.
 func (e *EntryPaginationBuilder) WithFeedID(feedID int64) {
 	if feedID != 0 {

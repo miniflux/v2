@@ -514,4 +514,9 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE entries ADD COLUMN opened bool default 'f'`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

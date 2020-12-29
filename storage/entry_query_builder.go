@@ -47,6 +47,12 @@ func (e *EntryQueryBuilder) WithStarred() *EntryQueryBuilder {
 	return e
 }
 
+// WithOpened adds viewed filter.
+func (e *EntryQueryBuilder) WithOpened() *EntryQueryBuilder {
+	e.conditions = append(e.conditions, "e.opened is true")
+	return e
+}
+
 // BeforeDate adds a condition < published_at
 func (e *EntryQueryBuilder) BeforeDate(date time.Time) *EntryQueryBuilder {
 	e.conditions = append(e.conditions, fmt.Sprintf("e.published_at < $%d", len(e.args)+1))
@@ -233,6 +239,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.starred,
 			e.reading_time,
 			e.created_at,
+			e.opened,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
@@ -293,6 +300,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Starred,
 			&entry.ReadingTime,
 			&entry.CreatedAt,
+			&entry.Opened,
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,

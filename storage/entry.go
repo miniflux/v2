@@ -332,6 +332,26 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 	return nil
 }
 
+// MarkEntryAsOpened updates the status of a single entry to read and mark it as opened.
+func (s *Storage) MarkEntryAsOpened(userID int64, entryID int64) error {
+	query := `UPDATE entries SET status=$1, opened=true, changed_at=now() WHERE user_id=$2 AND id=$3`
+	result, err := s.db.Exec(query, model.EntryStatusRead, userID, entryID)
+	if err != nil {
+		return fmt.Errorf(`store: unable to mark entries as opened %v: %v`, entryID, err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf(`store: unable to mark these entries %v as opened: %v`, entryID, err)
+	}
+
+	if count == 0 {
+		return errors.New(`store: nothing has been marked`)
+	}
+
+	return nil
+}
+
 // ToggleBookmark toggles entry bookmark value.
 func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 	query := `UPDATE entries SET starred = NOT starred, changed_at=now() WHERE user_id=$1 AND id=$2`

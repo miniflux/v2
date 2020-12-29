@@ -66,8 +66,8 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 		prevEntryRoute = route.Path(h.router, "unreadEntry", "entryID", prevEntry.ID)
 	}
 
-	// Always mark the entry as read after fetching the pagination.
-	err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+	// Always mark the entry as viewed after fetching the pagination.
+	err = h.store.MarkEntryAsOpened(user.ID, entry.ID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return

@@ -33,9 +33,15 @@ type Entry struct {
 	Author      string        `json:"author"`
 	ShareCode   string        `json:"share_code"`
 	Starred     bool          `json:"starred"`
+	Opened      bool          `json:"opened"`
 	ReadingTime int           `json:"reading_time"`
 	Enclosures  EnclosureList `json:"enclosures"`
 	Feed        *Feed         `json:"feed,omitempty"`
+}
+
+// IsUnreadOrUnopened returns true if the entry is unread of unopened.
+func (e *Entry) IsUnreadOrUnopened() bool {
+	return e.Status == EntryStatusUnread || !e.Opened
 }
 
 // Entries represents a list of entries.

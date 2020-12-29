@@ -39,6 +39,18 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Users can mark an article as read by clicking that article or using the "mark-all-as-read" button.
+	// 'Viewed' means users actually clicked the article.
+	if entry.IsUnreadOrUnopened() {
+		err = h.store.MarkEntryAsOpened(user.ID, entry.ID)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		entry.Status = model.EntryStatusRead
+	}
+
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
 	entryPaginationBuilder.WithStatus(model.EntryStatusRead)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
