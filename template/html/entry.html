@@ -13,24 +13,28 @@
                     <a href="#"
                         title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
-                        data-label-unread="✘&nbsp;{{ t "entry.status.unread" }}"
-                        data-label-read="✔︎&nbsp;{{ t "entry.status.read" }}"
+                        data-label-unread="{{ t "entry.status.unread" }}"
+                        data-label-read="{{ t "entry.status.read" }}"
                         data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
                         data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        ><span class="icon-label">{{ if eq .entry.Status "unread" }}✔&nbsp;{{ t "entry.status.read" }}{{ else }}✘&nbsp;{{ t "entry.status.unread" }}{{ end }}</span></a>
+                        >
+                        <span class="icon-glyph">{{ if eq .entry.Status "unread" }}{{ template "icon_read" }}{{ else }}{{ template "icon_unread" }}{{ end }}</span>
+                        <span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
                 <li>
                     <a href="#"
                         data-toggle-bookmark="true"
                         data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
                         data-label-loading="{{ t "entry.state.saving" }}"
-                        data-label-star="☆&nbsp;{{ t "entry.bookmark.toggle.on" }}"
-                        data-label-unstar="★&nbsp;{{ t "entry.bookmark.toggle.off" }}"
+                        data-label-star="{{ t "entry.bookmark.toggle.on" }}"
+                        data-label-unstar="{{ t "entry.bookmark.toggle.off" }}"
                         data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
                         data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        ><span class="icon-label">{{ if .entry.Starred }}★&nbsp;{{ t "entry.bookmark.toggle.off" }}{{ else }}☆&nbsp;{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+                        >
+                        <span class="icon-glyph">{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}</span>
+                        <span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>

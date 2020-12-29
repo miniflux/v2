@@ -136,19 +136,24 @@ function toggleEntryStatus(element, toasting) {
 
     updateEntriesStatus([entryID], newStatus);
 
+    let icon, label;
+
     if (currentStatus === "read") {
-        link.innerHTML = link.dataset.iconRead + '<span class="icon-label">' + link.dataset.labelRead + '</span>';
-        link.dataset.value = "unread";
+        icon = document.querySelector("template#icon_read");
+        label = link.dataset.labelRead;
         if (toasting) {
-            toast(link.dataset.toastUnread);
+            toast(link.dataset.toastUnread)
         }
     } else {
-        link.innerHTML = link.dataset.iconUnread + '<span class="icon-label">' + link.dataset.labelUnread + '</span>';
-        link.dataset.value = "read";
+        icon = document.querySelector("template#icon_unread");
+        label = link.dataset.labelUnread;
         if (toasting) {
-            toast(link.dataset.toastRead);
+            toast(link.dataset.toastRead)
         }
     }
+
+    link.innerHTML = '<span class="icon-glyph">' + icon.innerHTML + '</span><span class="icon-label">' + label + '</span>';
+    link.dataset.value = newStatus;
 
     if (element.classList.contains("item-status-" + currentStatus)) {
         element.classList.remove("item-status-" + currentStatus);
@@ -248,19 +253,28 @@ function toggleBookmark(parentElement, toasting) {
 
     let request = new RequestBuilder(element.dataset.bookmarkUrl);
     request.withCallback(() => {
-        if (element.dataset.value === "star") {
-            element.innerHTML = element.dataset.iconStar + '<span class="icon-label">' + element.dataset.labelStar + '</span>';
-            element.dataset.value = "unstar";
+
+        let currentStarStatus = element.dataset.value;
+        let newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
+
+        let icon, label;
+
+        if (currentStarStatus === "star") {
+            icon = document.querySelector("template#icon_star");
+            label = element.dataset.labelStar;
             if (toasting) {
                 toast(element.dataset.toastUnstar);
             }
         } else {
-            element.innerHTML = element.dataset.iconUnstar + '<span class="icon-label">' + element.dataset.labelUnstar + '</span>';
-            element.dataset.value = "star";
+            icon = document.querySelector("template#icon_unstar");
+            label = element.dataset.labelUnstar;
             if (toasting) {
                 toast(element.dataset.toastStar);
             }
         }
+
+        element.innerHTML = '<span class="icon-glyph">' + icon.innerHTML + '<span class="icon-label">' + label + '</span>';
+        element.dataset.value = newStarStatus;
     });
     request.execute();
 }
