@@ -142,13 +142,13 @@ function toggleEntryStatus(element, toasting) {
         icon = document.querySelector("template#icon_read");
         label = link.dataset.labelRead;
         if (toasting) {
-            toast(link.dataset.toastUnread)
+            toast(link.dataset.toastUnread);
         }
     } else {
         icon = document.querySelector("template#icon_unread");
         label = link.dataset.labelUnread;
         if (toasting) {
-            toast(link.dataset.toastRead)
+            toast(link.dataset.toastRead);
         }
     }
 
