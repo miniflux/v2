@@ -152,7 +152,7 @@ function toggleEntryStatus(element, toasting) {
         }
     }
 
-    link.innerHTML = '<span class="icon-glyph">' + icon.innerHTML + '</span><span class="icon-label">' + label + '</span>';
+    link.innerHTML = icon.innerHTML + '<span class="icon-label">' + label + '</span>';
     link.dataset.value = newStatus;
 
     if (element.classList.contains("item-status-" + currentStatus)) {
@@ -273,7 +273,7 @@ function toggleBookmark(parentElement, toasting) {
             }
         }
 
-        element.innerHTML = '<span class="icon-glyph">' + icon.innerHTML + '<span class="icon-label">' + label + '</span>';
+        element.innerHTML = icon.innerHTML + '<span class="icon-label">' + label + '</span>';
         element.dataset.value = newStarStatus;
     });
     request.execute();

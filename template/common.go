@@ -264,9 +264,7 @@ SOFTWARE.
                 data-label-read="{{ t "entry.status.read" }}"
                 data-label-unread="{{ t "entry.status.unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                >
-                    <span class="icon-glyph">{{ if eq .entry.Status "read" }}{{ template "icon_unread" }}{{ else }}{{ template "icon_read" }}{{ end }}</span>
-                    <span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
+                >{{ if eq .entry.Status "read" }}{{ template "icon_unread" }}{{ else }}{{ template "icon_read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
         </li>
         <li>
             <a href="#"
@@ -276,9 +274,7 @@ SOFTWARE.
                 data-label-star="{{ t "entry.bookmark.toggle.on" }}"
                 data-label-unstar="{{ t "entry.bookmark.toggle.off" }}"
                 data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                >
-                    <span class="icon-glyph">{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}</span>
-                    <span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+                >{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
         </li>
         {{ if .entry.ShareCode }}
             <li>
@@ -545,7 +541,7 @@ var templateCommonMapChecksums = map[string]string{
 	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "7161afa4cce46245a99cb1e49a605d3ff30e907c3f568ef9c17218718d20e042",
-	"item_meta":        "674de393f70c890251d8cacfd68ed6703db03de3e90e92184710e08e57a8ca58",
+	"item_meta":        "fefa219c8296f0370632336ed59a2c8b0c2146ee77f3b10de1d9b87982219dc5",
 	"layout":           "03c77ed0163b790c0622ecec173119537087c66f6a3925a931ae83a9a94d32cf",
 	"pagination":       "7b61288e86283c4cf0dc83bcbf8bf1c00c7cb29e60201c8c0b633b2450d2911f",
 	"settings_menu":    "e2b777630c0efdbc529800303c01d6744ed3af80ec505ac5a5b3f99c9b989156",

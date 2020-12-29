@@ -696,9 +696,7 @@ var templateViewsMap = map[string]string{
                         data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
                         data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >
-                        <span class="icon-glyph">{{ if eq .entry.Status "unread" }}{{ template "icon_read" }}{{ else }}{{ template "icon_unread" }}{{ end }}</span>
-                        <span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></a>
+                        >{{ if eq .entry.Status "unread" }}{{ template "icon_read" }}{{ else }}{{ template "icon_unread" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
                 <li>
                     <a href="#"
@@ -710,9 +708,7 @@ var templateViewsMap = map[string]string{
                         data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
                         data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >
-                        <span class="icon-glyph">{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}</span>
-                        <span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+                        >{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>
@@ -1619,7 +1615,7 @@ var templateViewsMapChecksums = map[string]string{
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
 	"edit_feed":           "5de7626448c48de384a0388227ab0c3b75b1ec19b5de440c91039180852cc5dc",
 	"edit_user":           "875292a3e84f700b17ae1e4b7cd40759a4e79a78daccc4e1214d1d22110b6def",
-	"entry":               "5d950545f3519d5cbb18fe4abf08d6adc9eb3c652fc6ea19fe6bcbfe450f3d49",
+	"entry":               "07ccdd5b9e99c63872bcab44b70b347cb59424fc8b69fd671b99b832c47277cc",
 	"feed_entries":        "89977ea86b8d43305d587b70e6d9c45c2c88249b3966f2d31051dc7a5f1c48b6",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
 	"history_entries":     "261b47e5f2f699a9cef1b3b690f80d7aabf585d05b77d67645d623f7ff6c0fbb",

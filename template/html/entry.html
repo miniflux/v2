@@ -18,9 +18,7 @@
                         data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
                         data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >
-                        <span class="icon-glyph">{{ if eq .entry.Status "unread" }}{{ template "icon_read" }}{{ else }}{{ template "icon_unread" }}{{ end }}</span>
-                        <span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></a>
+                        >{{ if eq .entry.Status "unread" }}{{ template "icon_read" }}{{ else }}{{ template "icon_unread" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
                 <li>
                     <a href="#"
@@ -32,9 +30,7 @@
                         data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
                         data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                        >
-                        <span class="icon-glyph">{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}</span>
-                        <span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+                        >{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
                 </li>
                 {{ if .hasSaveEntry }}
                     <li>
