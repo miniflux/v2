@@ -113,6 +113,7 @@
     "page.about.build_date": "Data della build:",
     "page.about.author": "Autore:",
     "page.about.license": "Licenza:",
+    "page.about.global_config_options": "Opzioni di configurazione globali",
     "page.add_feed.title": "Nuovo feed",
     "page.add_feed.no_category": "Nessuna categoria selezionata. Devi scegliere almeno una categoria.",
     "page.add_feed.label.url": "URL",

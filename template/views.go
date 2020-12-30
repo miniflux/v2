@@ -28,6 +28,17 @@ var templateViewsMap = map[string]string{
     </ul>
 </div>
 
+{{ if .user.IsAdmin }}
+<div class="panel">
+    <h3>{{ t "page.about.global_config_options" }}</h3>
+    <ul>
+    {{ range .globalConfigOptions }}
+    <li><code><strong>{{ .Key }}</strong>={{ .Value }}</code></li>
+    {{ end }}
+    </ul>
+</div>
+{{ end }}
+
 {{ end }}
 `,
 	"add_subscription": `{{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
@@ -1601,7 +1612,7 @@ var templateViewsMap = map[string]string{
 }
 
 var templateViewsMapChecksums = map[string]string{
-	"about":               "504b3635a7f898c12a1120c2270a2911aa8378c0fa272ea0980feca1fa3161f2",
+	"about":               "ed362f506b931186b2273655e3264110225154e7756e29d49ba4ede442caffc9",
 	"add_subscription":    "bc0f878b37692a00d51e834536f211843a59703991d2a743ef204b9d6ae38549",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "eacbbdce7fa85ec66c4c12f02879daab562a17ff79f1aac1805617e83e3a3a42",
