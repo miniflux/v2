@@ -113,6 +113,7 @@
     "page.about.build_date": "Compilado em:",
     "page.about.author": "Autor:",
     "page.about.license": "Licença:",
+    "page.about.global_config_options": "opções de configuração global",
     "page.add_feed.title": "Nova inscrição",
     "page.add_feed.no_category": "Não existe uma categoria. Deve existir pelo menos uma categoria.",
     "page.add_feed.label.url": "URL",

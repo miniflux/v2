@@ -111,6 +111,7 @@
     "page.about.build_date": "构建日期：",
     "page.about.author": "作者：",
     "page.about.license": "协议：",
+    "page.about.global_config_options": "全局配置选项",
     "page.add_feed.title": "新增订阅",
     "page.add_feed.no_category": "没有类别，您必须至少有一个类别",
     "page.add_feed.label.url": "网址",

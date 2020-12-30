@@ -23,4 +23,15 @@
     </ul>
 </div>
 
+{{ if .user.IsAdmin }}
+<div class="panel">
+    <h3>{{ t "page.about.global_config_options" }}</h3>
+    <ul>
+    {{ range .globalConfigOptions }}
+    <li><code><strong>{{ .Key }}</strong>={{ .Value }}</code></li>
+    {{ end }}
+    </ul>
+</div>
+{{ end }}
+
 {{ end }}

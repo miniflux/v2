@@ -115,6 +115,7 @@
     "page.about.build_date": "Дата сборки:",
     "page.about.author": "Автор:",
     "page.about.license": "Лицензия:",
+    "page.about.global_config_options": "глобальные параметры конфигурации",
     "page.add_feed.title": "Новая подписка",
     "page.add_feed.no_category": "Категории отсутствуют. У вас должна быть хотя бы одна категория.",
     "page.add_feed.label.url": "URL",

@@ -6,6 +6,7 @@ package config // import "miniflux.app/config"
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"miniflux.app/version"
@@ -65,6 +66,12 @@ const (
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
+
+// Option contains a key to value map of a single option. It may be used to output debug strings.
+type Option struct {
+	Key   string
+	Value interface{}
+}
 
 // Options contains configuration options.
 type Options struct {
@@ -441,58 +448,81 @@ func (o *Options) HTTPClientUserAgent() string {
 	return o.httpClientUserAgent
 }
 
+// SortedOptions returns options as a list of key value pairs, sorted by keys.
+func (o *Options) SortedOptions() []*Option {
+	var keyValues = map[string]interface{}{
+		"ADMIN_PASSWORD":                         o.adminPassword,
+		"ADMIN_USERNAME":                         o.adminUsername,
+		"AUTH_PROXY_HEADER":                      o.authProxyHeader,
+		"AUTH_PROXY_USER_CREATION":               o.authProxyUserCreation,
+		"BASE_PATH":                              o.basePath,
+		"BASE_URL":                               o.baseURL,
+		"BATCH_SIZE":                             o.batchSize,
+		"CERT_CACHE":                             o.certCache,
+		"CERT_DOMAIN":                            o.certDomain,
+		"CERT_FILE":                              o.certFile,
+		"CLEANUP_ARCHIVE_READ_DAYS":              o.cleanupArchiveReadDays,
+		"CLEANUP_ARCHIVE_UNREAD_DAYS":            o.cleanupArchiveUnreadDays,
+		"CLEANUP_FREQUENCY_HOURS":                o.cleanupFrequencyHours,
+		"CLEANUP_REMOVE_SESSIONS_DAYS":           o.cleanupRemoveSessionsDays,
+		"CREATE_ADMIN":                           o.createAdmin,
+		"DATABASE_MAX_CONNS":                     o.databaseMaxConns,
+		"DATABASE_MIN_CONNS":                     o.databaseMinConns,
+		"DATABASE_URL":                           o.databaseURL,
+		"DEBUG":                                  o.debug,
+		"HSTS":                                   o.hsts,
+		"HTTPS":                                  o.HTTPS,
+		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
+		"HTTP_CLIENT_PROXY":                      o.httpClientProxy,
+		"HTTP_CLIENT_TIMEOUT":                    o.httpClientTimeout,
+		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
+		"HTTP_SERVICE":                           o.httpService,
+		"KEY_FILE":                               o.certKeyFile,
+		"LISTEN_ADDR":                            o.listenAddr,
+		"LOG_DATE_TIME":                          o.logDateTime,
+		"MAINTENANCE_MESSAGE":                    o.maintenanceMessage,
+		"MAINTENANCE_MODE":                       o.maintenanceMode,
+		"METRICS_ALLOWED_NETWORKS":               o.metricsAllowedNetworks,
+		"METRICS_COLLECTOR":                      o.metricsCollector,
+		"METRICS_REFRESH_INTERVAL":               o.metricsRefreshInterval,
+		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
+		"OAUTH2_CLIENT_SECRET":                   o.oauth2ClientSecret,
+		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,
+		"OAUTH2_PROVIDER":                        o.oauth2Provider,
+		"OAUTH2_REDIRECT_URL":                    o.oauth2RedirectURL,
+		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
+		"POCKET_CONSUMER_KEY":                    o.pocketConsumerKey,
+		"POLLING_FREQUENCY":                      o.pollingFrequency,
+		"POLLING_SCHEDULER":                      o.pollingScheduler,
+		"PROXY_IMAGES":                           o.proxyImages,
+		"ROOT_URL":                               o.rootURL,
+		"RUN_MIGRATIONS":                         o.runMigrations,
+		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
+		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": o.schedulerEntryFrequencyMinInterval,
+		"SCHEDULER_SERVICE":                      o.schedulerService,
+		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
+		"WORKER_POOL_SIZE":                       o.workerPoolSize,
+	}
+
+	keys := make([]string, 0, len(keyValues))
+	for key := range keyValues {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	var sortedOptions []*Option
+	for _, key := range keys {
+		sortedOptions = append(sortedOptions, &Option{Key: key, Value: keyValues[key]})
+	}
+	return sortedOptions
+}
+
 func (o *Options) String() string {
 	var builder strings.Builder
-	builder.WriteString(fmt.Sprintf("LOG_DATE_TIME: %v\n", o.logDateTime))
-	builder.WriteString(fmt.Sprintf("DEBUG: %v\n", o.debug))
-	builder.WriteString(fmt.Sprintf("SERVER_TIMING_HEADER: %v\n", o.serverTimingHeader))
-	builder.WriteString(fmt.Sprintf("HTTP_SERVICE: %v\n", o.httpService))
-	builder.WriteString(fmt.Sprintf("SCHEDULER_SERVICE: %v\n", o.schedulerService))
-	builder.WriteString(fmt.Sprintf("HTTPS: %v\n", o.HTTPS))
-	builder.WriteString(fmt.Sprintf("HSTS: %v\n", o.hsts))
-	builder.WriteString(fmt.Sprintf("BASE_URL: %v\n", o.baseURL))
-	builder.WriteString(fmt.Sprintf("ROOT_URL: %v\n", o.rootURL))
-	builder.WriteString(fmt.Sprintf("BASE_PATH: %v\n", o.basePath))
-	builder.WriteString(fmt.Sprintf("LISTEN_ADDR: %v\n", o.listenAddr))
-	builder.WriteString(fmt.Sprintf("DATABASE_URL: %v\n", o.databaseURL))
-	builder.WriteString(fmt.Sprintf("DATABASE_MAX_CONNS: %v\n", o.databaseMaxConns))
-	builder.WriteString(fmt.Sprintf("DATABASE_MIN_CONNS: %v\n", o.databaseMinConns))
-	builder.WriteString(fmt.Sprintf("RUN_MIGRATIONS: %v\n", o.runMigrations))
-	builder.WriteString(fmt.Sprintf("CERT_FILE: %v\n", o.certFile))
-	builder.WriteString(fmt.Sprintf("KEY_FILE: %v\n", o.certKeyFile))
-	builder.WriteString(fmt.Sprintf("CERT_DOMAIN: %v\n", o.certDomain))
-	builder.WriteString(fmt.Sprintf("CERT_CACHE: %v\n", o.certCache))
-	builder.WriteString(fmt.Sprintf("CLEANUP_FREQUENCY_HOURS: %v\n", o.cleanupFrequencyHours))
-	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_READ_DAYS: %v\n", o.cleanupArchiveReadDays))
-	builder.WriteString(fmt.Sprintf("CLEANUP_ARCHIVE_UNREAD_DAYS: %v\n", o.cleanupArchiveUnreadDays))
-	builder.WriteString(fmt.Sprintf("CLEANUP_REMOVE_SESSIONS_DAYS: %v\n", o.cleanupRemoveSessionsDays))
-	builder.WriteString(fmt.Sprintf("WORKER_POOL_SIZE: %v\n", o.workerPoolSize))
-	builder.WriteString(fmt.Sprintf("POLLING_FREQUENCY: %v\n", o.pollingFrequency))
-	builder.WriteString(fmt.Sprintf("BATCH_SIZE: %v\n", o.batchSize))
-	builder.WriteString(fmt.Sprintf("POLLING_SCHEDULER: %v\n", o.pollingScheduler))
-	builder.WriteString(fmt.Sprintf("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL: %v\n", o.schedulerEntryFrequencyMaxInterval))
-	builder.WriteString(fmt.Sprintf("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL: %v\n", o.schedulerEntryFrequencyMinInterval))
-	builder.WriteString(fmt.Sprintf("PROXY_IMAGES: %v\n", o.proxyImages))
-	builder.WriteString(fmt.Sprintf("CREATE_ADMIN: %v\n", o.createAdmin))
-	builder.WriteString(fmt.Sprintf("ADMIN_USERNAME: %v\n", o.adminUsername))
-	builder.WriteString(fmt.Sprintf("ADMIN_PASSWORD: %v\n", o.adminPassword))
-	builder.WriteString(fmt.Sprintf("POCKET_CONSUMER_KEY: %v\n", o.pocketConsumerKey))
-	builder.WriteString(fmt.Sprintf("OAUTH2_USER_CREATION: %v\n", o.oauth2UserCreationAllowed))
-	builder.WriteString(fmt.Sprintf("OAUTH2_CLIENT_ID: %v\n", o.oauth2ClientID))
-	builder.WriteString(fmt.Sprintf("OAUTH2_CLIENT_SECRET: %v\n", o.oauth2ClientSecret))
-	builder.WriteString(fmt.Sprintf("OAUTH2_REDIRECT_URL: %v\n", o.oauth2RedirectURL))
-	builder.WriteString(fmt.Sprintf("OAUTH2_OIDC_DISCOVERY_ENDPOINT: %v\n", o.oauth2OidcDiscoveryEndpoint))
-	builder.WriteString(fmt.Sprintf("OAUTH2_PROVIDER: %v\n", o.oauth2Provider))
-	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_TIMEOUT: %v\n", o.httpClientTimeout))
-	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_MAX_BODY_SIZE: %v\n", o.httpClientMaxBodySize))
-	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_PROXY: %v\n", o.httpClientProxy))
-	builder.WriteString(fmt.Sprintf("HTTP_CLIENT_USER_AGENT: %v\n", o.httpClientUserAgent))
-	builder.WriteString(fmt.Sprintf("AUTH_PROXY_HEADER: %v\n", o.authProxyHeader))
-	builder.WriteString(fmt.Sprintf("AUTH_PROXY_USER_CREATION: %v\n", o.authProxyUserCreation))
-	builder.WriteString(fmt.Sprintf("MAINTENANCE_MODE: %v\n", o.maintenanceMode))
-	builder.WriteString(fmt.Sprintf("MAINTENANCE_MESSAGE: %v\n", o.maintenanceMessage))
-	builder.WriteString(fmt.Sprintf("METRICS_COLLECTOR: %v\n", o.metricsCollector))
-	builder.WriteString(fmt.Sprintf("METRICS_REFRESH_INTERVAL: %v\n", o.metricsRefreshInterval))
-	builder.WriteString(fmt.Sprintf("METRICS_ALLOWED_NETWORKS: %v\n", o.metricsAllowedNetworks))
+
+	for _, option := range o.SortedOptions() {
+		builder.WriteString(fmt.Sprintf("%s: %v\n", option.Key, option.Value))
+	}
+
 	return builder.String()
 }

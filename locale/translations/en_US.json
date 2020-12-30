@@ -113,6 +113,7 @@
     "page.about.build_date": "Build Date:",
     "page.about.author": "Author:",
     "page.about.license": "License:",
+    "page.about.global_config_options": "Global configuration options",
     "page.add_feed.title": "New Subscription",
     "page.add_feed.no_category": "There is no category. You must have at least one category.",
     "page.add_feed.label.url": "URL",
