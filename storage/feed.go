@@ -146,7 +146,7 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 
 // Feeds returns all feeds that belongs to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
-	return s.fetchFeeds(feedListQuery, "", userID)
+	return s.fetchFeeds(feedListQuery, /*readCounters=*/nil, /*unreadCounters=*/nil, userID)
 }
 
 // FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
@@ -159,11 +159,15 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 		FROM
 			entries
 		WHERE
-			user_id=$1 AND status IN ('read', 'unread')
+			user_id=$1 AND status IN ($2, $3)
 		GROUP BY
 			feed_id, status
 	`
-	return s.fetchFeeds(feedListQuery, counterQuery, userID)
+	readCounters, unreadCounters, err := s.fetchFeedCounter(counterQuery, userID, model.EntryStatusRead, model.EntryStatusUnread)
+	if err != nil {
+		return nil, err
+	}
+	return s.fetchFeeds(feedListQuery, readCounters, unreadCounters, userID)
 }
 
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
@@ -219,12 +223,16 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 		LEFT JOIN
 			feeds f ON f.id=e.feed_id
 		WHERE
-			e.user_id=$1 AND f.category_id=$2 AND e.status IN ('read', 'unread')
+			e.user_id=$1 AND f.category_id=$2 AND e.status IN ($3, $4)
 		GROUP BY
 			e.feed_id, e.status
 	`
+	readCounters, unreadCounters, err := s.fetchFeedCounter(counterQuery, userID, categoryID, model.EntryStatusRead, model.EntryStatusUnread)
+	if err != nil {
+		return nil, err
+	}
 
-	return s.fetchFeeds(feedQuery, counterQuery, userID, categoryID)
+	return s.fetchFeeds(feedQuery, readCounters, unreadCounters, userID, categoryID)
 }
 
 func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (unreadCounters map[int64]int, readCounters map[int64]int, err error) {
@@ -244,9 +252,9 @@ func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (unreadCou
 			return nil, nil, fmt.Errorf(`store: unable to fetch feed counter row: %v`, err)
 		}
 
-		if status == "read" {
+		if status == model.EntryStatusRead {
 			readCounters[feedID] = count
-		} else if status == "unread" {
+		} else if status == model.EntryStatusUnread {
 			unreadCounters[feedID] = count
 		}
 	}
@@ -254,20 +262,7 @@ func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (unreadCou
 	return readCounters, unreadCounters, nil
 }
 
-func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}) (model.Feeds, error) {
-	var (
-		readCounters   map[int64]int
-		unreadCounters map[int64]int
-	)
-
-	if counterQuery != "" {
-		var err error
-		readCounters, unreadCounters, err = s.fetchFeedCounter(counterQuery, args...)
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func (s *Storage) fetchFeeds(feedQuery string, readCounters, unreadCounters map[int64]int, args ...interface{}) (model.Feeds, error) {
 	feeds := make(model.Feeds, 0)
 	rows, err := s.db.Query(feedQuery, args...)
 	if err != nil {
@@ -317,11 +312,12 @@ func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}
 			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
 		}
 
-		if counterQuery != "" {
+		if readCounters != nil {
 			if count, found := readCounters[feed.ID]; found {
 				feed.ReadCount = count
 			}
-
+		}
+		if unreadCounters != nil {
 			if count, found := unreadCounters[feed.ID]; found {
 				feed.UnreadCount = count
 			}
