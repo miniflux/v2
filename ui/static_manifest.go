@@ -14,6 +14,18 @@ import (
 )
 
 func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
+	type webManifestShareTargetParams struct {
+		URL  string `json:"url"`
+		Text string `json:"text"`
+	}
+
+	type webManifestShareTarget struct {
+		Action  string                       `json:"action"`
+		Method  string                       `json:"method"`
+		Enctype string                       `json:"enctype"`
+		Params  webManifestShareTargetParams `json:"params"`
+	}
+
 	type webManifestIcon struct {
 		Source string `json:"src"`
 		Sizes  string `json:"sizes"`
@@ -21,14 +33,15 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type webManifest struct {
-		Name            string            `json:"name"`
-		Description     string            `json:"description"`
-		ShortName       string            `json:"short_name"`
-		StartURL        string            `json:"start_url"`
-		Icons           []webManifestIcon `json:"icons"`
-		Display         string            `json:"display"`
-		ThemeColor      string            `json:"theme_color"`
-		BackgroundColor string            `json:"background_color"`
+		Name            string                 `json:"name"`
+		Description     string                 `json:"description"`
+		ShortName       string                 `json:"short_name"`
+		StartURL        string                 `json:"start_url"`
+		Icons           []webManifestIcon      `json:"icons"`
+		ShareTarget     webManifestShareTarget `json:"share_target"`
+		Display         string                 `json:"display"`
+		ThemeColor      string                 `json:"theme_color"`
+		BackgroundColor string                 `json:"background_color"`
 	}
 
 	themeColor := model.ThemeColor(request.UserTheme(r))
@@ -44,6 +57,12 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 			webManifestIcon{Source: route.Path(h.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png"},
 			webManifestIcon{Source: route.Path(h.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png"},
 			webManifestIcon{Source: route.Path(h.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png"},
+		},
+		ShareTarget: webManifestShareTarget{
+			Action:  route.Path(h.router, "bookmarklet"),
+			Method:  http.MethodGet,
+			Enctype: "application/x-www-form-urlencoded",
+			Params:  webManifestShareTargetParams{URL: "uri", Text: "text"},
 		},
 	}
 
