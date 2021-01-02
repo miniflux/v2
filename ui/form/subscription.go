@@ -27,6 +27,7 @@ type SubscriptionForm struct {
 	RewriteRules                string
 	BlocklistRules              string
 	KeeplistRules               string
+	PollingInterval             int
 }
 
 // Validate makes sure the form values are valid.
@@ -57,6 +58,11 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		categoryID = 0
 	}
 
+	pollingInterval, err := strconv.Atoi(r.FormValue("polling_interval"))
+	if err != nil {
+		pollingInterval = 0
+	}
+
 	return &SubscriptionForm{
 		URL:                         r.FormValue("url"),
 		CategoryID:                  int64(categoryID),
@@ -71,5 +77,6 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		RewriteRules:                r.FormValue("rewrite_rules"),
 		BlocklistRules:              r.FormValue("blocklist_rules"),
 		KeeplistRules:               r.FormValue("keeplist_rules"),
+		PollingInterval:             int(pollingInterval),
 	}
 }

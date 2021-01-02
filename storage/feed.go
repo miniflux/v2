@@ -194,6 +194,31 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 	return weeklyCount, nil
 }
 
+// FeedPollingInterval returns the update interval and whether we should use it for a feed.
+func (s *Storage) FeedPollingInterval(userID, feedID int64) (int, error) {
+	query := `
+		SELECT
+			polling_interval_minutes
+		FROM
+			feeds
+		WHERE
+			feeds.user_id=$1 AND 
+			feeds.id=$2;
+	`
+
+	var pollingInterval int
+	err := s.db.QueryRow(query, userID, feedID).Scan(&pollingInterval)
+
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return 0, nil
+	case err != nil:
+		return 0, fmt.Errorf(`store: unable to fetch feed update interval for feed #%d: %v`, feedID, err)
+	}
+
+	return pollingInterval, nil
+}
+
 // FeedByID returns a feed by the ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	builder := NewFeedQueryBuilder(s, userID)
@@ -234,10 +259,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			ignore_http_cache,
 			allow_self_signed_certificates,
 			fetch_via_proxy,
-			hide_globally
+			hide_globally,
+			polling_interval_minutes
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
 		RETURNING
 			id
 	`
@@ -264,6 +290,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.AllowSelfSignedCertificates,
 		feed.FetchViaProxy,
 		feed.HideGlobally,
+		feed.PollingInterval,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -322,9 +349,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			ignore_http_cache=$21,
 			allow_self_signed_certificates=$22,
 			fetch_via_proxy=$23,
-			hide_globally=$24
+			hide_globally=$24,
+			polling_interval_minutes=$25
 		WHERE
-			id=$25 AND user_id=$26
+			id=$26 AND user_id=$27
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -351,6 +379,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.AllowSelfSignedCertificates,
 		feed.FetchViaProxy,
 		feed.HideGlobally,
+		feed.PollingInterval,
 		feed.ID,
 		feed.UserID,
 	)

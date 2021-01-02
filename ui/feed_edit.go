@@ -59,6 +59,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		FetchViaProxy:               feed.FetchViaProxy,
 		Disabled:                    feed.Disabled,
 		HideGlobally:                feed.HideGlobally,
+		PollingInterval:             feed.PollingInterval,
 		CategoryHidden:              feed.Category.HideGlobally,
 	}
 

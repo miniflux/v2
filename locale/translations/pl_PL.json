@@ -279,6 +279,8 @@
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
     "form.feed.label.disabled": "Не обновлять этот канал",
     "form.feed.label.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
+    "form.feed.label.polling_interval": "Okres odpytywania w minutach",
+    "form.feed.label.polling_interval_note": "ustaw na 0, aby użyć konfiguracji globalnej",
     "form.category.label.title": "Tytuł",
     "form.category.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
     "form.user.label.username": "Nazwa użytkownika",

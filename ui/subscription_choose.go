@@ -63,6 +63,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		BlocklistRules:              subscriptionForm.BlocklistRules,
 		KeeplistRules:               subscriptionForm.KeeplistRules,
 		FetchViaProxy:               subscriptionForm.FetchViaProxy,
+		PollingInterval:             subscriptionForm.PollingInterval,
 	})
 	if err != nil {
 		view.Set("form", subscriptionForm)

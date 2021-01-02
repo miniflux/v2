@@ -277,6 +277,8 @@
     "form.feed.label.fetch_via_proxy": "Λήψη μέσω διακομιστή μεσολάβησης",
     "form.feed.label.disabled": "Μη ανανέωση αυτής της ροής",
     "form.feed.label.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
+    "form.feed.label.polling_interval": "Διαστήματα ψηφοφορίας σε λεπτά",
+    "form.feed.label.polling_interval_note": "Ορίστε στο 0 για να χρησιμοποιήσετε την καθολική διαμόρφωση",
     "form.category.label.title": "Τίτλος",
     "form.category.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.user.label.username": "Χρήστης",

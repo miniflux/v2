@@ -277,6 +277,8 @@
     "form.feed.label.fetch_via_proxy": "プロキシ経由でフェッチ",
     "form.feed.label.disabled": "このフィードを更新しない",
     "form.feed.label.hide_globally": "グローバル未読リストのエントリーを隠す",
+    "form.feed.label.polling_interval": "分単位のポーリング間隔",
+    "form.feed.label.polling_interval_note": "グローバル構成を使用するには0に設定",
     "form.category.label.title": "タイトル",
     "form.category.hide_globally": "グローバル未読リストのエントリーを隠す",
     "form.user.label.username": "ユーザー名",

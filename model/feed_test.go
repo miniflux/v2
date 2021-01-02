@@ -93,10 +93,41 @@ func TestFeedScheduleNextCheckDefault(t *testing.T) {
 
 	feed := &Feed{}
 	weeklyCount := 10
-	feed.ScheduleNextCheck(weeklyCount)
+	feed.ScheduleNextCheck(weeklyCount, 0)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
+	}
+}
+
+func TestFeedSchedulePollingInterval(t *testing.T) {
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	pollingInterval := 100
+	// The minimal resolution of polling interval is 1 minute.
+	// The next check at should be earlier than now + polling interval to let the feed get fetched by the next job.
+	checkAfter := time.Now().Add(time.Minute * time.Duration(pollingInterval-1))
+	checkBefore := time.Now().Add(time.Minute * time.Duration(pollingInterval))
+
+	feed := &Feed{}
+	weeklyCount := 10
+	feed.ScheduleNextCheck(weeklyCount, pollingInterval)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	if feed.NextCheckAt.Before(checkAfter) {
+		t.Error(`The next_check_at should not be before the polling interval - 1 minute`)
+	}
+
+	if feed.NextCheckAt.After(checkBefore) {
+		t.Error(`The next_check_at should not be after the polling interval`)
 	}
 }
 
@@ -116,7 +147,7 @@ func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
 	}
 	feed := &Feed{}
 	weeklyCount := maxInterval * 100
-	feed.ScheduleNextCheck(weeklyCount)
+	feed.ScheduleNextCheck(weeklyCount, 0)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -143,7 +174,7 @@ func TestFeedScheduleNextCheckEntryCountBasedMinInterval(t *testing.T) {
 	}
 	feed := &Feed{}
 	weeklyCount := minInterval / 2
-	feed.ScheduleNextCheck(weeklyCount)
+	feed.ScheduleNextCheck(weeklyCount, 0)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)

@@ -31,6 +31,7 @@ type FeedForm struct {
 	FetchViaProxy               bool
 	Disabled                    bool
 	HideGlobally                bool
+	PollingInterval             int
 	CategoryHidden              bool // Category has "hide_globally"
 }
 
@@ -56,6 +57,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.FetchViaProxy = f.FetchViaProxy
 	feed.Disabled = f.Disabled
 	feed.HideGlobally = f.HideGlobally
+	feed.PollingInterval = f.PollingInterval
 	return feed
 }
 
@@ -64,6 +66,10 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	categoryID, err := strconv.Atoi(r.FormValue("category_id"))
 	if err != nil {
 		categoryID = 0
+	}
+	pollingInterval, err := strconv.Atoi(r.FormValue("polling_interval"))
+	if err != nil {
+		pollingInterval = 0
 	}
 	return &FeedForm{
 		FeedURL:                     r.FormValue("feed_url"),
@@ -84,5 +90,6 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		Disabled:                    r.FormValue("disabled") == "1",
 		HideGlobally:                r.FormValue("hide_globally") == "1",
+		PollingInterval:             int(pollingInterval),
 	}
 }

@@ -277,6 +277,8 @@
     "form.feed.label.fetch_via_proxy": "Buscar a través de proxy",
     "form.feed.label.disabled": "No actualice este feed",
     "form.feed.label.hide_globally": "Ocultar entradas en la lista global de no leídos",
+    "form.feed.label.polling_interval": "Intervalo de sondeo en minutos",
+    "form.feed.label.polling_interval_note": "establecido en 0 para usar la configuración global",
     "form.category.label.title": "Título",
     "form.category.hide_globally": "Ocultar entradas en la lista global de no leídos",
     "form.user.label.username": "Nombre de usuario",

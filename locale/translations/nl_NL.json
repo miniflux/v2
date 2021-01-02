@@ -277,6 +277,8 @@
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
     "form.feed.label.hide_globally": "Verberg items in de globale ongelezen lijst",
+    "form.feed.label.polling_interval": "Polling-interval in minuten",
+    "form.feed.label.polling_interval_note": "ingesteld op 0 om de algemene configuratie te gebruiken",
     "form.category.label.title": "Naam",
     "form.category.hide_globally": "Verberg items in de globale ongelezen lijst",
     "form.user.label.username": "Gebruikersnaam",

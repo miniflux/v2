@@ -52,6 +52,7 @@ type Feed struct {
 	Entries                     Entries   `json:"entries,omitempty"`
 	Icon                        *FeedIcon `json:"icon"`
 	HideGlobally                bool      `json:"hide_globally"`
+	PollingInterval             int       `json:"polling_interval_minutes"`
 	UnreadCount                 int       `json:"-"`
 	ReadCount                   int       `json:"-"`
 }
@@ -101,21 +102,37 @@ func (f *Feed) CheckedNow() {
 }
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
-func (f *Feed) ScheduleNextCheck(weeklyCount int) {
-	switch config.Opts.PollingScheduler() {
-	case SchedulerEntryFrequency:
-		var intervalMinutes int
-		if weeklyCount == 0 {
-			intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
-		} else {
-			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount)))
+func (f *Feed) ScheduleNextCheck(weeklyCount int, pollingInterval int) {
+	const compensationSeconds = 30
+	var intervalMinutes int
+	if pollingInterval > 0 {
+		intervalMinutes = pollingInterval
+	} else {
+		switch config.Opts.PollingScheduler() {
+		case SchedulerEntryFrequency:
+			if weeklyCount == 0 {
+				intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
+			} else {
+				intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount)))
+			}
+			intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
+			intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
+		default:
+			intervalMinutes = config.Opts.PollingFrequency()
 		}
-		intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
-		intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
-		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
-	default:
-		f.NextCheckAt = time.Now()
 	}
+	// The compensationSeconds compensates the time different between job starts and NextCheckAt is set.
+	// For example, the scheduler is round robin and polling interval is 5 minutes.
+	// Without the compensationSeconds, the following may happend:
+	// (1) The first job starts at 0s; (2) The job sql query runs at 5s, selects a feed, subject to NextCheckAt < now;
+	// (3) The NextCheckAt is set at 10s, the value is 5m10s;
+	// (4) The next job starts at 5m; (5) The job sql query runs at 5m5s, but it won't get the feed because
+	// NextCheckAt (5m10s) is later than now (5m5s). Instead the feed will be fetched by the job run at 10m.
+	// The compensationSeconds tries to solve the problem, letting the feed gets fetched by the job run at 5m.
+	// The compensation should be smaller than the polling interval. Since the minimum resolution of the polling
+	// interval is 1 minute, we use a value smaller than 1 minute.
+	// As the compensation is applied to all feeds, it won't change the order when feeds will be fetched.
+	f.NextCheckAt = time.Now().Add(time.Second * time.Duration(intervalMinutes*60-compensationSeconds))
 }
 
 // FeedCreationRequest represents the request to create a feed.
@@ -136,6 +153,7 @@ type FeedCreationRequest struct {
 	BlocklistRules              string `json:"blocklist_rules"`
 	KeeplistRules               string `json:"keeplist_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
+	PollingInterval             int    `json:"polling_interval_minutes"`
 }
 
 // FeedModificationRequest represents the request to update a feed.
@@ -158,6 +176,7 @@ type FeedModificationRequest struct {
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
+	PollingInterval             *int    `json:"polling_interval_minutes"`
 }
 
 // Patch updates a feed with modified values.
@@ -232,6 +251,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.HideGlobally != nil {
 		feed.HideGlobally = *f.HideGlobally
+	}
+
+	if f.PollingInterval != nil {
+		feed.PollingInterval = *f.PollingInterval
 	}
 }
 

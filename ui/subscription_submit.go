@@ -92,6 +92,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			BlocklistRules:              subscriptionForm.BlocklistRules,
 			KeeplistRules:               subscriptionForm.KeeplistRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
+			PollingInterval:             subscriptionForm.PollingInterval,
 		})
 		if err != nil {
 			v.Set("form", subscriptionForm)

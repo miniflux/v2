@@ -277,6 +277,8 @@
     "form.feed.label.fetch_via_proxy": "Récupérer via proxy",
     "form.feed.label.disabled": "Ne pas actualiser ce flux",
     "form.feed.label.hide_globally": "Masquer les entrées dans la liste globale non lue",
+    "form.feed.label.polling_interval": "Intervalle d'interrogation en minutes",
+    "form.feed.label.polling_interval_note": "défini sur 0 pour utiliser la configuration globale",
     "form.category.label.title": "Titre",
     "form.category.hide_globally": "Masquer les entrées dans la liste globale non lue",
     "form.user.label.username": "Nom d'utilisateur",
