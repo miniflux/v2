@@ -5,6 +5,7 @@
 package storage // import "miniflux.app/storage"
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -269,7 +270,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	entries := make(model.Entries, 0)
 	for rows.Next() {
 		var entry model.Entry
-		var iconID interface{}
+		var iconID sql.NullInt64
 		var tz string
 
 		entry.Feed = &model.Feed{}
@@ -310,10 +311,10 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
 		}
 
-		if iconID == nil {
-			entry.Feed.Icon.IconID = 0
+		if iconID.Valid {
+			entry.Feed.Icon.IconID = iconID.Int64
 		} else {
-			entry.Feed.Icon.IconID = iconID.(int64)
+			entry.Feed.Icon.IconID = 0
 		}
 
 		// Make sure that timestamp fields contains timezone information (API)

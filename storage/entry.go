@@ -26,9 +26,9 @@ func (s *Storage) CountAllEntries() map[string]int64 {
 	defer rows.Close()
 
 	results := make(map[string]int64)
-	results["unread"] = 0
-	results["read"] = 0
-	results["removed"] = 0
+	results[model.EntryStatusUnread] = 0
+	results[model.EntryStatusRead] = 0
+	results[model.EntryStatusRemoved] = 0
 
 	for rows.Next() {
 		var status string
@@ -41,7 +41,7 @@ func (s *Storage) CountAllEntries() map[string]int64 {
 		results[status] = count
 	}
 
-	results["total"] = results["unread"] + results["read"] + results["removed"]
+	results["total"] = results[model.EntryStatusUnread] + results[model.EntryStatusRead] + results[model.EntryStatusRemoved]
 	return results
 }
 
