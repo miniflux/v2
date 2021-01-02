@@ -117,6 +117,7 @@ type Feed struct {
 	RewriteRules       string    `json:"rewrite_rules"`
 	BlocklistRules     string    `json:"blocklist_rules"`
 	KeeplistRules      string    `json:"keeplist_rules"`
+	PollingInterval    int       `json:"polling_interval_minutes"`
 	Crawler            bool      `json:"crawler"`
 	UserAgent          string    `json:"user_agent"`
 	Username           string    `json:"username"`
@@ -139,6 +140,7 @@ type FeedCreationRequest struct {
 	RewriteRules    string `json:"rewrite_rules"`
 	BlocklistRules  string `json:"blocklist_rules"`
 	KeeplistRules   string `json:"keeplist_rules"`
+	PollingInterval int    `json:"polling_interval_minutes"`
 }
 
 // FeedModificationRequest represents the request to update a feed.
@@ -158,6 +160,7 @@ type FeedModificationRequest struct {
 	Disabled        *bool   `json:"disabled"`
 	IgnoreHTTPCache *bool   `json:"ignore_http_cache"`
 	FetchViaProxy   *bool   `json:"fetch_via_proxy"`
+	PollingInterval *int    `json:"polling_interval_minutes"`
 }
 
 // FeedIcon represents the feed icon.

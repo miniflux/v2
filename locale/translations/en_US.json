@@ -269,6 +269,8 @@
     "form.feed.label.ignore_http_cache": "Ignore HTTP cache",
     "form.feed.label.fetch_via_proxy": "Fetch via proxy",
     "form.feed.label.disabled": "Do not refresh this feed",
+    "form.feed.label.polling_interval": "Polling interval in minutes",
+    "form.feed.label.polling_interval_note": "Set to 0 to use the global configurations",
     "form.category.label.title": "Title",
     "form.user.label.username": "Username",
     "form.user.label.password": "Password",

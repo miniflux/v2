@@ -50,17 +50,18 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	feed, err := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
-		CategoryID:     subscriptionForm.CategoryID,
-		FeedURL:        subscriptionForm.URL,
-		Crawler:        subscriptionForm.Crawler,
-		UserAgent:      subscriptionForm.UserAgent,
-		Username:       subscriptionForm.Username,
-		Password:       subscriptionForm.Password,
-		ScraperRules:   subscriptionForm.ScraperRules,
-		RewriteRules:   subscriptionForm.RewriteRules,
-		BlocklistRules: subscriptionForm.BlocklistRules,
-		KeeplistRules:  subscriptionForm.KeeplistRules,
-		FetchViaProxy:  subscriptionForm.FetchViaProxy,
+		CategoryID:      subscriptionForm.CategoryID,
+		FeedURL:         subscriptionForm.URL,
+		Crawler:         subscriptionForm.Crawler,
+		UserAgent:       subscriptionForm.UserAgent,
+		Username:        subscriptionForm.Username,
+		Password:        subscriptionForm.Password,
+		ScraperRules:    subscriptionForm.ScraperRules,
+		RewriteRules:    subscriptionForm.RewriteRules,
+		BlocklistRules:  subscriptionForm.BlocklistRules,
+		KeeplistRules:   subscriptionForm.KeeplistRules,
+		FetchViaProxy:   subscriptionForm.FetchViaProxy,
+		PollingInterval: subscriptionForm.PollingInterval,
 	})
 	if err != nil {
 		view.Set("form", subscriptionForm)

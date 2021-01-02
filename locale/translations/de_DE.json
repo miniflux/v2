@@ -269,6 +269,8 @@
     "form.feed.label.ignore_http_cache": "Ignoriere HTTP-cache",
     "form.feed.label.fetch_via_proxy": "Über Proxy abrufen",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
+    "form.feed.label.polling_interval": "Abfrageintervall in Minuten",
+    "form.feed.label.polling_interval_note": "Zur Verwendung der globalen Konfiguration auf 0 setzen",
     "form.category.label.title": "Titel",
     "form.user.label.username": "Benutzername",
     "form.user.label.password": "Passwort",

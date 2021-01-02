@@ -61,6 +61,9 @@
  
                 <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
                 <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
+
+                <label for="form-polling-interval">{{ t "form.feed.label.polling_interval" }}<br />({{ t "form.feed.label.polling_interval_note" }})</label>
+                <input type="number" name="polling_interval" id="form-polling-interval" value="{{ .form.PollingInterval }}" min="0"> 
             </div>
         </details>
 

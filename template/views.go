@@ -105,6 +105,9 @@ var templateViewsMap = map[string]string{
  
                 <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
                 <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
+
+                <label for="form-polling-interval">{{ t "form.feed.label.polling_interval" }}<br />({{ t "form.feed.label.polling_interval_note" }})</label>
+                <input type="number" name="polling_interval" id="form-polling-interval" value="{{ .form.PollingInterval }}" min="0"> 
             </div>
         </details>
 
@@ -620,6 +623,9 @@ var templateViewsMap = map[string]string{
             <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
         {{ end }}
         </select>
+
+        <label for="form-polling-interval">{{ t "form.feed.label.polling_interval" }}<br />({{ t "form.feed.label.polling_interval_note" }})</label>
+        <input type="number" name="polling_interval" id="form-polling-interval" value="{{ .form.PollingInterval }}" min="0">
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
@@ -1614,7 +1620,7 @@ var templateViewsMap = map[string]string{
 
 var templateViewsMapChecksums = map[string]string{
 	"about":               "ec7987f2612764363a07fa61bdbaacd3ccaa12f567b84677bbd20caf026fe5b2",
-	"add_subscription":    "bc0f878b37692a00d51e834536f211843a59703991d2a743ef204b9d6ae38549",
+	"add_subscription":    "806c800448ac703b22468d0ffda19c106e0804524cb7a76dd24e85cd955cbe7e",
 	"api_keys":            "27d401b31a72881d5232486ba17eb47edaf5246eaedce81de88698c15ebb2284",
 	"bookmark_entries":    "eacbbdce7fa85ec66c4c12f02879daab562a17ff79f1aac1805617e83e3a3a42",
 	"categories":          "9dfc3cb7bb91c7750753fe962ee4540dd1843e5f75f9e0a575ee964f6f9923e9",
@@ -1625,7 +1631,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "cca0dbdbd846639d5295707de0674e5e75df987dd22b80d75f030f8daa503a85",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
-	"edit_feed":           "3da1edc78a464f33359663028f0b3fd11706b98e0c3851b090a20ccb2f780b02",
+	"edit_feed":           "fbd48d0c70c77662f936e70c6a55f5b950f46d4b7053666404ccf7b7d7b53f89",
 	"edit_user":           "04423f5ea4249a97440ddd892f99ff96c646f6ce26313765ac5293abf257ef3c",
 	"entry":               "07ccdd5b9e99c63872bcab44b70b347cb59424fc8b69fd671b99b832c47277cc",
 	"feed_entries":        "89977ea86b8d43305d587b70e6d9c45c2c88249b3966f2d31051dc7a5f1c48b6",

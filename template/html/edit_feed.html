@@ -77,6 +77,9 @@
         {{ end }}
         </select>
 
+        <label for="form-polling-interval">{{ t "form.feed.label.polling_interval" }}<br />({{ t "form.feed.label.polling_interval_note" }})</label>
+        <input type="number" name="polling_interval" id="form-polling-interval" value="{{ .form.PollingInterval }}" min="0">
+
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
         {{ if .hasProxyConfigured }}

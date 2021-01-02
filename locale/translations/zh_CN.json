@@ -267,6 +267,8 @@
     "form.feed.label.ignore_http_cache": "忽略HTTP缓存",
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此Feed",
+    "form.feed.label.polling_interval": "轮询间隔（以分钟为单位）",
+    "form.feed.label.polling_interval_note": "设置为0以使用全局配置",
     "form.category.label.title": "标题",
     "form.user.label.username": "用户名",
     "form.user.label.password": "密码",

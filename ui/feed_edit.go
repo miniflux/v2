@@ -56,6 +56,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		IgnoreHTTPCache: feed.IgnoreHTTPCache,
 		FetchViaProxy:   feed.FetchViaProxy,
 		Disabled:        feed.Disabled,
+		PollingInterval: feed.PollingInterval,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

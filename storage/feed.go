@@ -175,6 +175,31 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 	return weeklyCount, nil
 }
 
+// FeedPollingInterval returns the update interval and whether we should use it for a feed.
+func (s *Storage) FeedPollingInterval(userID, feedID int64) (int, error) {
+	query := `
+		SELECT
+			polling_interval_minutes
+		FROM
+			feeds
+		WHERE
+			feeds.user_id=$1 AND 
+			feeds.id=$2;
+	`
+
+	var pollingInterval int
+	err := s.db.QueryRow(query, userID, feedID).Scan(&pollingInterval)
+
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return 0, nil
+	case err != nil:
+		return 0, fmt.Errorf(`store: unable to fetch feed update interval for feed #%d: %v`, feedID, err)
+	}
+
+	return pollingInterval, nil
+}
+
 // FeedByID returns a feed by the ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	builder := NewFeedQueryBuilder(s, userID)
@@ -212,10 +237,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			blocklist_rules,
 			keeplist_rules,
 			ignore_http_cache,
-			fetch_via_proxy
+			fetch_via_proxy,
+			polling_interval_minutes
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 		RETURNING
 			id
 	`
@@ -239,6 +265,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.KeeplistRules,
 		feed.IgnoreHTTPCache,
 		feed.FetchViaProxy,
+		feed.PollingInterval,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -294,9 +321,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			disabled=$18,
 			next_check_at=$19,
 			ignore_http_cache=$20,
-			fetch_via_proxy=$21
+			fetch_via_proxy=$21,
+			polling_interval_minutes=$22
 		WHERE
-			id=$22 AND user_id=$23
+			id=$23 AND user_id=$24
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -320,6 +348,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.NextCheckAt,
 		feed.IgnoreHTTPCache,
 		feed.FetchViaProxy,
+		feed.PollingInterval,
 		feed.ID,
 		feed.UserID,
 	)

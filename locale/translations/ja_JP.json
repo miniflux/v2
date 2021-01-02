@@ -269,6 +269,8 @@
     "form.feed.label.ignore_http_cache": "HTTPキャッシュを無視",
     "form.feed.label.fetch_via_proxy": "プロキシ経由でフェッチ",
     "form.feed.label.disabled": "このフィードを更新しない",
+    "form.feed.label.polling_interval": "分単位のポーリング間隔",
+    "form.feed.label.polling_interval_note": "グローバル構成を使用するには0に設定",
     "form.category.label.title": "タイトル",
     "form.user.label.username": "ユーザー名",
     "form.user.label.password": "パスワード",

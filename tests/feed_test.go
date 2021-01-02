@@ -202,6 +202,35 @@ func TestCreateFeedWithScraperRule(t *testing.T) {
 	}
 }
 
+func TestCreateFeedWithPollingInterval(t *testing.T) {
+	client := createClient(t)
+
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pollingInterval := 100
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:         testFeedURL,
+		CategoryID:      categories[0].ID,
+		PollingInterval: pollingInterval,
+	})
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	feed, err := client.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.PollingInterval != pollingInterval {
+		t.Fatalf(`Wrong update interval value, got "%v" instead of "%v"`, feed.PollingInterval, pollingInterval)
+	}
+}
+
 func TestCreateFeedWithKeeplistRule(t *testing.T) {
 	client := createClient(t)
 
@@ -561,6 +590,21 @@ func TestUpdateFeedWithInvalidCategoryID(t *testing.T) {
 	categoryID := int64(-1)
 	if _, err := client.UpdateFeed(feed.ID, &miniflux.FeedModificationRequest{CategoryID: &categoryID}); err == nil {
 		t.Error(`Updating a feed with an invalid category should not be possible`)
+	}
+}
+
+func TestUpdateFeedPollingInterval(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	pollingInterval := 100
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModificationRequest{PollingInterval: &pollingInterval})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.PollingInterval != pollingInterval {
+		t.Fatalf(`Wrong update interval value, got "%v" instead of "%v"`, updatedFeed.PollingInterval, pollingInterval)
 	}
 }
 

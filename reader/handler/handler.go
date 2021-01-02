@@ -70,6 +70,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.RewriteRules = feedCreationRequest.RewriteRules
 	subscription.BlocklistRules = feedCreationRequest.BlocklistRules
 	subscription.KeeplistRules = feedCreationRequest.KeeplistRules
+	subscription.PollingInterval = feedCreationRequest.PollingInterval
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
@@ -110,8 +111,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 		}
 	}
 
+	pollingInterval, pollingIntervalErr := store.FeedPollingInterval(userID, feedID)
+	if pollingIntervalErr != nil {
+		return pollingIntervalErr
+	}
+
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount, pollingInterval)
 
 	request := client.NewClientWithConfig(originalFeed.FeedURL, config.Opts)
 	request.WithCredentials(originalFeed.Username, originalFeed.Password)

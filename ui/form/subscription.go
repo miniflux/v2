@@ -14,17 +14,18 @@ import (
 
 // SubscriptionForm represents the subscription form.
 type SubscriptionForm struct {
-	URL            string
-	CategoryID     int64
-	Crawler        bool
-	FetchViaProxy  bool
-	UserAgent      string
-	Username       string
-	Password       string
-	ScraperRules   string
-	RewriteRules   string
-	BlocklistRules string
-	KeeplistRules  string
+	URL             string
+	CategoryID      int64
+	Crawler         bool
+	FetchViaProxy   bool
+	UserAgent       string
+	Username        string
+	Password        string
+	ScraperRules    string
+	RewriteRules    string
+	BlocklistRules  string
+	KeeplistRules   string
+	PollingInterval int
 }
 
 // Validate makes sure the form values are valid.
@@ -55,17 +56,23 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		categoryID = 0
 	}
 
+	pollingInterval, err := strconv.Atoi(r.FormValue("polling_interval"))
+	if err != nil {
+		pollingInterval = 0
+	}
+
 	return &SubscriptionForm{
-		URL:            r.FormValue("url"),
-		CategoryID:     int64(categoryID),
-		Crawler:        r.FormValue("crawler") == "1",
-		FetchViaProxy:  r.FormValue("fetch_via_proxy") == "1",
-		UserAgent:      r.FormValue("user_agent"),
-		Username:       r.FormValue("feed_username"),
-		Password:       r.FormValue("feed_password"),
-		ScraperRules:   r.FormValue("scraper_rules"),
-		RewriteRules:   r.FormValue("rewrite_rules"),
-		BlocklistRules: r.FormValue("blocklist_rules"),
-		KeeplistRules:  r.FormValue("keeplist_rules"),
+		URL:             r.FormValue("url"),
+		CategoryID:      int64(categoryID),
+		Crawler:         r.FormValue("crawler") == "1",
+		FetchViaProxy:   r.FormValue("fetch_via_proxy") == "1",
+		UserAgent:       r.FormValue("user_agent"),
+		Username:        r.FormValue("feed_username"),
+		Password:        r.FormValue("feed_password"),
+		ScraperRules:    r.FormValue("scraper_rules"),
+		RewriteRules:    r.FormValue("rewrite_rules"),
+		BlocklistRules:  r.FormValue("blocklist_rules"),
+		KeeplistRules:   r.FormValue("keeplist_rules"),
+		PollingInterval: int(pollingInterval),
 	}
 }
