@@ -12,7 +12,6 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/date"
-	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 )
 
@@ -123,9 +122,9 @@ func (j *jsonItem) GetHash() string {
 }
 
 func (j *jsonItem) GetTitle() string {
-	for _, value := range []string{j.Title, j.Summary, j.Text, j.HTML} {
+	for _, value := range []string{j.Title, j.Summary, j.Text, j.URL} {
 		if value != "" {
-			return truncate(sanitizer.StripTags(value))
+			return truncate(value)
 		}
 	}
 

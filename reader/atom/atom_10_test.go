@@ -265,7 +265,7 @@ func TestParseEntryTitleWithHTMLAndCDATA(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != "Test “Test”" {
+	if feed.Entries[0].Title != "Test &#8220;Test&#8221;" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
@@ -291,7 +291,7 @@ func TestParseEntryTitleWithHTML(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != "Test Test" {
+	if feed.Entries[0].Title != "<code>Test</code> Test" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
@@ -317,7 +317,7 @@ func TestParseEntryTitleWithXHTML(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != "Test Test" {
+	if feed.Entries[0].Title != "<code>Test</code> Test" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }

@@ -40,7 +40,6 @@ func (r *rdfFeed) Transform(baseURL string) *model.Feed {
 		if entry.Author == "" && r.DublinCoreCreator != "" {
 			entry.Author = strings.TrimSpace(r.DublinCoreCreator)
 		}
-		entry.Author = sanitizer.StripTags(entry.Author)
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
