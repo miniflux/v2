@@ -10,8 +10,6 @@ import (
 
 	// Postgresql driver import
 	_ "github.com/lib/pq"
-
-	"miniflux.app/logger"
 )
 
 // NewConnectionPool configures the database connection pool.
@@ -28,7 +26,7 @@ func NewConnectionPool(dsn string, minConnections, maxConnections int) (*sql.DB,
 }
 
 // Migrate executes database migrations.
-func Migrate(db *sql.DB) {
+func Migrate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
@@ -41,28 +39,30 @@ func Migrate(db *sql.DB) {
 
 		tx, err := db.Begin()
 		if err != nil {
-			logger.Fatal("[Migration v%d] %v", newVersion, err)
+			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 
 		if err := migrations[version](tx); err != nil {
 			tx.Rollback()
-			logger.Fatal("[Migration v%d] %v", newVersion, err)
+			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 
 		if _, err := tx.Exec(`DELETE FROM schema_version`); err != nil {
 			tx.Rollback()
-			logger.Fatal("[Migration v%d] %v", newVersion, err)
+			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 
 		if _, err := tx.Exec(`INSERT INTO schema_version (version) VALUES ($1)`, newVersion); err != nil {
 			tx.Rollback()
-			logger.Fatal("[Migration v%d] %v", newVersion, err)
+			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 
 		if err := tx.Commit(); err != nil {
-			logger.Fatal("[Migration v%d] %v", newVersion, err)
+			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 	}
+
+	return nil
 }
 
 // IsSchemaUpToDate checks if the database schema is up to date.

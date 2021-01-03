@@ -5,7 +5,6 @@
 package ui // import "miniflux.app/ui"
 
 import (
-	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/template"
 	"miniflux.app/worker"
@@ -14,9 +13,8 @@ import (
 )
 
 type handler struct {
-	router      *mux.Router
-	store       *storage.Storage
-	tpl         *template.Engine
-	pool        *worker.Pool
-	feedHandler *feed.Handler
+	router *mux.Router
+	store  *storage.Storage
+	tpl    *template.Engine
+	pool   *worker.Pool
 }

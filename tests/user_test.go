@@ -261,7 +261,7 @@ func TestUpdateUserTheme(t *testing.T) {
 	}
 
 	theme := "dark_serif"
-	user, err = client.UpdateUser(user.ID, &miniflux.UserModification{Theme: &theme})
+	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{Theme: &theme})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -282,7 +282,7 @@ func TestUpdateUserFields(t *testing.T) {
 	stylesheet := "body { color: red }"
 	swipe := false
 	entriesPerPage := 5
-	user, err = client.UpdateUser(user.ID, &miniflux.UserModification{
+	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{
 		Stylesheet:     &stylesheet,
 		EntrySwipe:     &swipe,
 		EntriesPerPage: &entriesPerPage,
@@ -313,7 +313,7 @@ func TestUpdateUserThemeWithInvalidValue(t *testing.T) {
 	}
 
 	theme := "something that doesn't exists"
-	_, err = client.UpdateUser(user.ID, &miniflux.UserModification{Theme: &theme})
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{Theme: &theme})
 	if err == nil {
 		t.Fatal(`Updating a user Theme with an invalid value should raise an error`)
 	}
@@ -388,7 +388,7 @@ func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
 
 	entriesPerPage := 10
 	userAClient := miniflux.New(testBaseURL, usernameA, testStandardPassword)
-	userAAfterUpdate, err := userAClient.UpdateUser(userA.ID, &miniflux.UserModification{EntriesPerPage: &entriesPerPage})
+	userAAfterUpdate, err := userAClient.UpdateUser(userA.ID, &miniflux.UserModificationRequest{EntriesPerPage: &entriesPerPage})
 	if err != nil {
 		t.Fatal(`Standard users should be able to update themselves`)
 	}
@@ -398,13 +398,13 @@ func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
 	}
 
 	isAdmin := true
-	_, err = userAClient.UpdateUser(userA.ID, &miniflux.UserModification{IsAdmin: &isAdmin})
+	_, err = userAClient.UpdateUser(userA.ID, &miniflux.UserModificationRequest{IsAdmin: &isAdmin})
 	if err == nil {
 		t.Fatal(`Standard users should not be able to become admin`)
 	}
 
 	userBClient := miniflux.New(testBaseURL, usernameB, testStandardPassword)
-	_, err = userBClient.UpdateUser(userA.ID, &miniflux.UserModification{})
+	_, err = userBClient.UpdateUser(userA.ID, &miniflux.UserModificationRequest{})
 	if err == nil {
 		t.Fatal(`Standard users should not be able to update other users`)
 	}
@@ -414,7 +414,7 @@ func TestCannotUpdateUserAsNonAdmin(t *testing.T) {
 	}
 
 	stylesheet := "test"
-	userC, err := adminClient.UpdateUser(userA.ID, &miniflux.UserModification{Stylesheet: &stylesheet})
+	userC, err := adminClient.UpdateUser(userA.ID, &miniflux.UserModificationRequest{Stylesheet: &stylesheet})
 	if err != nil {
 		t.Fatal(`Admin users should be able to update any users`)
 	}

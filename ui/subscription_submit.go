@@ -12,6 +12,7 @@ import (
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
+	feedHandler "miniflux.app/reader/handler"
 	"miniflux.app/reader/subscription"
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
@@ -74,20 +75,20 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		v.Set("errorMessage", "error.subscription_not_found")
 		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
-		feed, err := h.feedHandler.CreateFeed(
-			user.ID,
-			subscriptionForm.CategoryID,
-			subscriptions[0].URL,
-			subscriptionForm.Crawler,
-			subscriptionForm.UserAgent,
-			subscriptionForm.Username,
-			subscriptionForm.Password,
-			subscriptionForm.ScraperRules,
-			subscriptionForm.RewriteRules,
-			subscriptionForm.BlocklistRules,
-			subscriptionForm.KeeplistRules,
-			subscriptionForm.FetchViaProxy,
-		)
+		feed, err := feedHandler.CreateFeed(h.store, &feedHandler.FeedCreationArgs{
+			UserID:         user.ID,
+			CategoryID:     subscriptionForm.CategoryID,
+			FeedURL:        subscriptions[0].URL,
+			Crawler:        subscriptionForm.Crawler,
+			UserAgent:      subscriptionForm.UserAgent,
+			Username:       subscriptionForm.Username,
+			Password:       subscriptionForm.Password,
+			ScraperRules:   subscriptionForm.ScraperRules,
+			RewriteRules:   subscriptionForm.RewriteRules,
+			BlocklistRules: subscriptionForm.BlocklistRules,
+			KeeplistRules:  subscriptionForm.KeeplistRules,
+			FetchViaProxy:  subscriptionForm.FetchViaProxy,
+		})
 		if err != nil {
 			v.Set("form", subscriptionForm)
 			v.Set("errorMessage", err)

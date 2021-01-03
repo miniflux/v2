@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
-package feed // import "miniflux.app/reader/feed"
+package handler // import "miniflux.app/reader/handler"
 
 import (
 	"fmt"
@@ -28,24 +28,37 @@ var (
 	errCategoryNotFound = "Category not found for this user"
 )
 
-// Handler contains all the logic to create and refresh feeds.
-type Handler struct {
-	store *storage.Storage
+// FeedCreationArgs represents the arguments required to create a new feed.
+type FeedCreationArgs struct {
+	UserID          int64
+	CategoryID      int64
+	FeedURL         string
+	UserAgent       string
+	Username        string
+	Password        string
+	Crawler         bool
+	Disabled        bool
+	IgnoreHTTPCache bool
+	FetchViaProxy   bool
+	ScraperRules    string
+	RewriteRules    string
+	BlocklistRules  string
+	KeeplistRules   string
 }
 
 // CreateFeed fetch, parse and store a new feed.
-func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules string, fetchViaProxy bool) (*model.Feed, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:CreateFeed] feedUrl=%s", url))
+func CreateFeed(store *storage.Storage, args *FeedCreationArgs) (*model.Feed, error) {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[CreateFeed] FeedURL=%s", args.FeedURL))
 
-	if !h.store.CategoryExists(userID, categoryID) {
+	if !store.CategoryExists(args.UserID, args.CategoryID) {
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
 	}
 
-	request := client.NewClientWithConfig(url, config.Opts)
-	request.WithCredentials(username, password)
-	request.WithUserAgent(userAgent)
+	request := client.NewClientWithConfig(args.FeedURL, config.Opts)
+	request.WithCredentials(args.Username, args.Password)
+	request.WithUserAgent(args.UserAgent)
 
-	if fetchViaProxy {
+	if args.FetchViaProxy {
 		request.WithProxy()
 	}
 
@@ -54,7 +67,7 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 		return nil, requestErr
 	}
 
-	if h.store.FeedURLExists(userID, response.EffectiveURL) {
+	if store.FeedURLExists(args.UserID, response.EffectiveURL) {
 		return nil, errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 	}
 
@@ -63,31 +76,41 @@ func (h *Handler) CreateFeed(userID, categoryID int64, url string, crawler bool,
 		return nil, parseErr
 	}
 
-	subscription.UserID = userID
-	subscription.WithCategoryID(categoryID)
-	subscription.WithBrowsingParameters(crawler, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules, fetchViaProxy)
+	subscription.UserID = args.UserID
+	subscription.UserAgent = args.UserAgent
+	subscription.Username = args.Username
+	subscription.Password = args.Password
+	subscription.Crawler = args.Crawler
+	subscription.Disabled = args.Disabled
+	subscription.IgnoreHTTPCache = args.IgnoreHTTPCache
+	subscription.FetchViaProxy = args.FetchViaProxy
+	subscription.ScraperRules = args.ScraperRules
+	subscription.RewriteRules = args.RewriteRules
+	subscription.BlocklistRules = args.BlocklistRules
+	subscription.KeeplistRules = args.KeeplistRules
+	subscription.WithCategoryID(args.CategoryID)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
-	processor.ProcessFeedEntries(h.store, subscription)
+	processor.ProcessFeedEntries(store, subscription)
 
-	if storeErr := h.store.CreateFeed(subscription); storeErr != nil {
+	if storeErr := store.CreateFeed(subscription); storeErr != nil {
 		return nil, storeErr
 	}
 
-	logger.Debug("[Handler:CreateFeed] Feed saved with ID: %d", subscription.ID)
+	logger.Debug("[CreateFeed] Feed saved with ID: %d", subscription.ID)
 
-	checkFeedIcon(h.store, subscription.ID, subscription.SiteURL, fetchViaProxy)
+	checkFeedIcon(store, subscription.ID, subscription.SiteURL, args.FetchViaProxy)
 	return subscription, nil
 }
 
 // RefreshFeed refreshes a feed.
-func (h *Handler) RefreshFeed(userID, feedID int64) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[Handler:RefreshFeed] feedID=%d", feedID))
-	userLanguage := h.store.UserLanguage(userID)
+func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[RefreshFeed] feedID=%d", feedID))
+	userLanguage := store.UserLanguage(userID)
 	printer := locale.NewPrinter(userLanguage)
 
-	originalFeed, storeErr := h.store.FeedByID(userID, feedID)
+	originalFeed, storeErr := store.FeedByID(userID, feedID)
 	if storeErr != nil {
 		return storeErr
 	}
@@ -99,7 +122,7 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	weeklyEntryCount := 0
 	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
 		var weeklyCountErr error
-		weeklyEntryCount, weeklyCountErr = h.store.WeeklyFeedEntryCount(userID, feedID)
+		weeklyEntryCount, weeklyCountErr = store.WeeklyFeedEntryCount(userID, feedID)
 		if weeklyCountErr != nil {
 			return weeklyCountErr
 		}
@@ -123,71 +146,66 @@ func (h *Handler) RefreshFeed(userID, feedID int64) error {
 	response, requestErr := browser.Exec(request)
 	if requestErr != nil {
 		originalFeed.WithError(requestErr.Localize(printer))
-		h.store.UpdateFeedError(originalFeed)
+		store.UpdateFeedError(originalFeed)
 		return requestErr
 	}
 
-	if h.store.AnotherFeedURLExists(userID, originalFeed.ID, response.EffectiveURL) {
+	if store.AnotherFeedURLExists(userID, originalFeed.ID, response.EffectiveURL) {
 		storeErr := errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 		originalFeed.WithError(storeErr.Error())
-		h.store.UpdateFeedError(originalFeed)
+		store.UpdateFeedError(originalFeed)
 		return storeErr
 	}
 
 	if originalFeed.IgnoreHTTPCache || response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
-		logger.Debug("[Handler:RefreshFeed] Feed #%d has been modified", feedID)
+		logger.Debug("[RefreshFeed] Feed #%d has been modified", feedID)
 
 		updatedFeed, parseErr := parser.ParseFeed(response.EffectiveURL, response.BodyAsString())
 		if parseErr != nil {
 			originalFeed.WithError(parseErr.Localize(printer))
-			h.store.UpdateFeedError(originalFeed)
+			store.UpdateFeedError(originalFeed)
 			return parseErr
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
-		processor.ProcessFeedEntries(h.store, originalFeed)
+		processor.ProcessFeedEntries(store, originalFeed)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
-		if storeErr := h.store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
+		if storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
-			h.store.UpdateFeedError(originalFeed)
+			store.UpdateFeedError(originalFeed)
 			return storeErr
 		}
 
 		// We update caching headers only if the feed has been modified,
 		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.WithClientResponse(response)
-		checkFeedIcon(h.store, originalFeed.ID, originalFeed.SiteURL, originalFeed.FetchViaProxy)
+		checkFeedIcon(store, originalFeed.ID, originalFeed.SiteURL, originalFeed.FetchViaProxy)
 	} else {
-		logger.Debug("[Handler:RefreshFeed] Feed #%d not modified", feedID)
+		logger.Debug("[RefreshFeed] Feed #%d not modified", feedID)
 	}
 
 	originalFeed.ResetErrorCounter()
 
-	if storeErr := h.store.UpdateFeed(originalFeed); storeErr != nil {
+	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
 		originalFeed.WithError(storeErr.Error())
-		h.store.UpdateFeedError(originalFeed)
+		store.UpdateFeedError(originalFeed)
 		return storeErr
 	}
 
 	return nil
 }
 
-// NewFeedHandler returns a feed handler.
-func NewFeedHandler(store *storage.Storage) *Handler {
-	return &Handler{store}
-}
-
 func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string, fetchViaProxy bool) {
 	if !store.HasIcon(feedID) {
 		icon, err := icon.FindIcon(websiteURL, fetchViaProxy)
 		if err != nil {
-			logger.Debug("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
+			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
 		} else if icon == nil {
-			logger.Debug("CheckFeedIcon: No icon found (feedID=%d websiteURL=%s)", feedID, websiteURL)
+			logger.Debug(`[CheckFeedIcon] No icon found (feedID=%d websiteURL=%s)`, feedID, websiteURL)
 		} else {
 			if err := store.CreateFeedIcon(feedID, icon); err != nil {
-				logger.Debug("CheckFeedIcon: %v (feedID=%d websiteURL=%s)", err, feedID, websiteURL)
+				logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
 			}
 		}
 	}

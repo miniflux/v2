@@ -11,11 +11,12 @@ import (
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
+	feedHandler "miniflux.app/reader/handler"
 )
 
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
-	if err := h.feedHandler.RefreshFeed(request.UserID(r), feedID); err != nil {
+	if err := feedHandler.RefreshFeed(h.store, request.UserID(r), feedID); err != nil {
 		logger.Error("[UI:RefreshFeed] %v", err)
 	}
 

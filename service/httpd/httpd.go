@@ -18,7 +18,6 @@ import (
 	"miniflux.app/fever"
 	"miniflux.app/http/request"
 	"miniflux.app/logger"
-	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/ui"
 	"miniflux.app/version"
@@ -30,7 +29,7 @@ import (
 )
 
 // Serve starts a new HTTP server.
-func Serve(store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) *http.Server {
+func Serve(store *storage.Storage, pool *worker.Pool) *http.Server {
 	certFile := config.Opts.CertFile()
 	keyFile := config.Opts.CertKeyFile()
 	certDomain := config.Opts.CertDomain()
@@ -40,7 +39,7 @@ func Serve(store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler)
 		ReadTimeout:  300 * time.Second,
 		WriteTimeout: 300 * time.Second,
 		IdleTimeout:  300 * time.Second,
-		Handler:      setupHandler(store, feedHandler, pool),
+		Handler:      setupHandler(store, pool),
 	}
 
 	switch {
@@ -164,7 +163,7 @@ func startHTTPServer(server *http.Server) {
 	}()
 }
 
-func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worker.Pool) *mux.Router {
+func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	router := mux.NewRouter()
 
 	if config.Opts.BasePath() != "" {
@@ -182,8 +181,8 @@ func setupHandler(store *storage.Storage, feedHandler *feed.Handler, pool *worke
 	router.Use(middleware)
 
 	fever.Serve(router, store)
-	api.Serve(router, store, pool, feedHandler)
-	ui.Serve(router, store, pool, feedHandler)
+	api.Serve(router, store, pool)
+	ui.Serve(router, store, pool)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))

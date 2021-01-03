@@ -139,7 +139,9 @@ func Parse() {
 
 	// Run migrations and start the deamon.
 	if config.Opts.RunMigrations() {
-		database.Migrate(db)
+		if err := database.Migrate(db); err != nil {
+			logger.Fatal(`%v`, err)
+		}
 	}
 
 	if err := database.IsSchemaUpToDate(db); err != nil {

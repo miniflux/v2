@@ -15,7 +15,6 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/metric"
-	"miniflux.app/reader/feed"
 	"miniflux.app/service/httpd"
 	"miniflux.app/service/scheduler"
 	"miniflux.app/storage"
@@ -29,8 +28,7 @@ func startDaemon(store *storage.Storage) {
 	signal.Notify(stop, os.Interrupt)
 	signal.Notify(stop, syscall.SIGTERM)
 
-	feedHandler := feed.NewFeedHandler(store)
-	pool := worker.NewPool(feedHandler, config.Opts.WorkerPoolSize())
+	pool := worker.NewPool(store, config.Opts.WorkerPoolSize())
 
 	if config.Opts.HasSchedulerService() && !config.Opts.HasMaintenanceMode() {
 		scheduler.Serve(store, pool)
@@ -38,7 +36,7 @@ func startDaemon(store *storage.Storage) {
 
 	var httpServer *http.Server
 	if config.Opts.HasHTTPService() {
-		httpServer = httpd.Serve(store, pool, feedHandler)
+		httpServer = httpd.Serve(store, pool)
 	}
 
 	if config.Opts.HasMetricsCollector() {

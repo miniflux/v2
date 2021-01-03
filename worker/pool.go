@@ -6,7 +6,7 @@ package worker // import "miniflux.app/worker"
 
 import (
 	"miniflux.app/model"
-	"miniflux.app/reader/feed"
+	"miniflux.app/storage"
 )
 
 // Pool handles a pool of workers.
@@ -22,13 +22,13 @@ func (p *Pool) Push(jobs model.JobList) {
 }
 
 // NewPool creates a pool of background workers.
-func NewPool(feedHandler *feed.Handler, nbWorkers int) *Pool {
+func NewPool(store *storage.Storage, nbWorkers int) *Pool {
 	workerPool := &Pool{
 		queue: make(chan model.Job),
 	}
 
 	for i := 0; i < nbWorkers; i++ {
-		worker := &Worker{id: i, feedHandler: feedHandler}
+		worker := &Worker{id: i, store: store}
 		go worker.Run(workerPool.queue)
 	}
 

@@ -48,17 +48,19 @@ type feedCreationResponse struct {
 }
 
 type feedCreationRequest struct {
-	FeedURL        string `json:"feed_url"`
-	CategoryID     int64  `json:"category_id"`
-	UserAgent      string `json:"user_agent"`
-	Username       string `json:"username"`
-	Password       string `json:"password"`
-	Crawler        bool   `json:"crawler"`
-	FetchViaProxy  bool   `json:"fetch_via_proxy"`
-	ScraperRules   string `json:"scraper_rules"`
-	RewriteRules   string `json:"rewrite_rules"`
-	BlocklistRules string `json:"blocklist_rules"`
-	KeeplistRules  string `json:"keeplist_rules"`
+	FeedURL         string `json:"feed_url"`
+	CategoryID      int64  `json:"category_id"`
+	UserAgent       string `json:"user_agent"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	Crawler         bool   `json:"crawler"`
+	Disabled        bool   `json:"disabled"`
+	IgnoreHTTPCache bool   `json:"ignore_http_cache"`
+	FetchViaProxy   bool   `json:"fetch_via_proxy"`
+	ScraperRules    string `json:"scraper_rules"`
+	RewriteRules    string `json:"rewrite_rules"`
+	BlocklistRules  string `json:"blocklist_rules"`
+	KeeplistRules   string `json:"keeplist_rules"`
 }
 
 func decodeFeedCreationRequest(r io.ReadCloser) (*feedCreationRequest, error) {

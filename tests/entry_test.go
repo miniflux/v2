@@ -100,7 +100,10 @@ func TestFilterEntriesByCategory(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed(testFeedURL, category.ID)
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:    testFeedURL,
+		CategoryID: category.ID,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -134,7 +137,10 @@ func TestFilterEntriesByStatuses(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed(testFeedURL, category.ID)
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:    testFeedURL,
+		CategoryID: category.ID,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -181,7 +187,10 @@ func TestSearchEntries(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:    testFeedURL,
+		CategoryID: categories[0].ID,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}

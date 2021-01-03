@@ -11,13 +11,14 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/metric"
 	"miniflux.app/model"
-	"miniflux.app/reader/feed"
+	feedHandler "miniflux.app/reader/handler"
+	"miniflux.app/storage"
 )
 
 // Worker refreshes a feed in the background.
 type Worker struct {
-	id          int
-	feedHandler *feed.Handler
+	id    int
+	store *storage.Storage
 }
 
 // Run wait for a job and refresh the given feed.
@@ -29,7 +30,7 @@ func (w *Worker) Run(c chan model.Job) {
 		logger.Debug("[Worker #%d] Received feed #%d for user #%d", w.id, job.FeedID, job.UserID)
 
 		startTime := time.Now()
-		refreshErr := w.feedHandler.RefreshFeed(job.UserID, job.FeedID)
+		refreshErr := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID)
 
 		if config.Opts.HasMetricsCollector() {
 			status := "success"

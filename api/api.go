@@ -7,7 +7,6 @@ package api // import "miniflux.app/api"
 import (
 	"net/http"
 
-	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
 
@@ -15,8 +14,8 @@ import (
 )
 
 // Serve declares API routes for the application.
-func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool, feedHandler *feed.Handler) {
-	handler := &handler{store, pool, feedHandler}
+func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
+	handler := &handler{store, pool}
 
 	sr := router.PathPrefix("/v1").Subrouter()
 	middleware := newMiddleware(store)

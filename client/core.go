@@ -49,8 +49,8 @@ type UserCreationRequest struct {
 	OpenIDConnectID string `json:"openid_connect_id"`
 }
 
-// UserModification represents the request to update a user.
-type UserModification struct {
+// UserModificationRequest represents the request to update a user.
+type UserModificationRequest struct {
 	Username          *string `json:"username"`
 	Password          *string `json:"password"`
 	IsAdmin           *bool   `json:"is_admin"`
@@ -110,6 +110,9 @@ type Feed struct {
 	LastModifiedHeader string    `json:"last_modified_header,omitempty"`
 	ParsingErrorMsg    string    `json:"parsing_error_message,omitempty"`
 	ParsingErrorCount  int       `json:"parsing_error_count,omitempty"`
+	Disabled           bool      `json:"disabled"`
+	IgnoreHTTPCache    bool      `json:"ignore_http_cache"`
+	FetchViaProxy      bool      `json:"fetch_via_proxy"`
 	ScraperRules       string    `json:"scraper_rules"`
 	RewriteRules       string    `json:"rewrite_rules"`
 	BlocklistRules     string    `json:"blocklist_rules"`
@@ -121,8 +124,25 @@ type Feed struct {
 	Category           *Category `json:"category,omitempty"`
 }
 
-// FeedModification represents changes for a feed.
-type FeedModification struct {
+// FeedCreationRequest represents the request to create a feed.
+type FeedCreationRequest struct {
+	FeedURL         string `json:"feed_url"`
+	CategoryID      int64  `json:"category_id"`
+	UserAgent       string `json:"user_agent"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	Crawler         bool   `json:"crawler"`
+	Disabled        bool   `json:"disabled"`
+	IgnoreHTTPCache bool   `json:"ignore_http_cache"`
+	FetchViaProxy   bool   `json:"fetch_via_proxy"`
+	ScraperRules    string `json:"scraper_rules"`
+	RewriteRules    string `json:"rewrite_rules"`
+	BlocklistRules  string `json:"blocklist_rules"`
+	KeeplistRules   string `json:"keeplist_rules"`
+}
+
+// FeedModificationRequest represents the request to update a feed.
+type FeedModificationRequest struct {
 	FeedURL         *string `json:"feed_url"`
 	SiteURL         *string `json:"site_url"`
 	Title           *string `json:"title"`
