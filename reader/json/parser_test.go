@@ -76,7 +76,7 @@ func TestParseJsonFeed(t *testing.T) {
 		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[1].URL)
 	}
 
-	if feed.Entries[1].Title != "Hello, world!" {
+	if feed.Entries[1].Title != "https://example.org/initial-post" {
 		t.Errorf(`Incorrect entry title, got: "%s"`, feed.Entries[1].Title)
 	}
 
@@ -405,6 +405,33 @@ func TestParseTruncateItemTitle(t *testing.T) {
 	}
 
 	if len(feed.Entries[0].Title) != 103 {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithXMLTags(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"title": "</example>"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "</example>" {
 		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
 	}
 }

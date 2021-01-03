@@ -62,7 +62,6 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 		if entry.Author == "" {
 			entry.Author = r.feedAuthor()
 		}
-		entry.Author = sanitizer.StripTags(entry.Author)
 
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
@@ -111,7 +110,7 @@ func (r rssFeed) feedAuthor() string {
 	case r.Webmaster != "":
 		author = r.Webmaster
 	}
-	return strings.TrimSpace(author)
+	return sanitizer.StripTags(strings.TrimSpace(author))
 }
 
 type rssLink struct {
@@ -227,7 +226,7 @@ func (r *rssItem) entryAuthor() string {
 		author = r.DublinCoreCreator
 	}
 
-	return strings.TrimSpace(author)
+	return sanitizer.StripTags(strings.TrimSpace(author))
 }
 
 func (r *rssItem) entryHash() string {
@@ -258,7 +257,7 @@ func (r *rssItem) entryTitle() string {
 		}
 	}
 
-	return strings.TrimSpace(sanitizer.StripTags(title))
+	return strings.TrimSpace(title)
 }
 
 func (r *rssItem) entryContent() string {
