@@ -116,7 +116,7 @@ func (c *Client) CreateUser(username, password string, isAdmin bool) (*User, err
 }
 
 // UpdateUser updates a user in the system.
-func (c *Client) UpdateUser(userID int64, userChanges *UserModification) (*User, error) {
+func (c *Client) UpdateUser(userID int64, userChanges *UserModificationRequest) (*User, error) {
 	body, err := c.request.Put(fmt.Sprintf("/v1/users/%d", userID), userChanges)
 	if err != nil {
 		return nil, err
@@ -285,11 +285,8 @@ func (c *Client) Feed(feedID int64) (*Feed, error) {
 }
 
 // CreateFeed creates a new feed.
-func (c *Client) CreateFeed(url string, categoryID int64) (int64, error) {
-	body, err := c.request.Post("/v1/feeds", map[string]interface{}{
-		"feed_url":    url,
-		"category_id": categoryID,
-	})
+func (c *Client) CreateFeed(feedCreationRequest *FeedCreationRequest) (int64, error) {
+	body, err := c.request.Post("/v1/feeds", feedCreationRequest)
 	if err != nil {
 		return 0, err
 	}
@@ -309,7 +306,7 @@ func (c *Client) CreateFeed(url string, categoryID int64) (int64, error) {
 }
 
 // UpdateFeed updates a feed.
-func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModification) (*Feed, error) {
+func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModificationRequest) (*Feed, error) {
 	body, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d", feedID), feedChanges)
 	if err != nil {
 		return nil, err

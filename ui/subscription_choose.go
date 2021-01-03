@@ -11,6 +11,7 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
+	feedHandler "miniflux.app/reader/handler"
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
@@ -47,20 +48,20 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	feed, err := h.feedHandler.CreateFeed(
-		user.ID,
-		subscriptionForm.CategoryID,
-		subscriptionForm.URL,
-		subscriptionForm.Crawler,
-		subscriptionForm.UserAgent,
-		subscriptionForm.Username,
-		subscriptionForm.Password,
-		subscriptionForm.ScraperRules,
-		subscriptionForm.RewriteRules,
-		subscriptionForm.BlocklistRules,
-		subscriptionForm.KeeplistRules,
-		subscriptionForm.FetchViaProxy,
-	)
+	feed, err := feedHandler.CreateFeed(h.store, &feedHandler.FeedCreationArgs{
+		UserID:         user.ID,
+		CategoryID:     subscriptionForm.CategoryID,
+		FeedURL:        subscriptionForm.URL,
+		Crawler:        subscriptionForm.Crawler,
+		UserAgent:      subscriptionForm.UserAgent,
+		Username:       subscriptionForm.Username,
+		Password:       subscriptionForm.Password,
+		ScraperRules:   subscriptionForm.ScraperRules,
+		RewriteRules:   subscriptionForm.RewriteRules,
+		BlocklistRules: subscriptionForm.BlocklistRules,
+		KeeplistRules:  subscriptionForm.KeeplistRules,
+		FetchViaProxy:  subscriptionForm.FetchViaProxy,
+	})
 	if err != nil {
 		view.Set("form", subscriptionForm)
 		view.Set("errorMessage", err)

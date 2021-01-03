@@ -11,6 +11,7 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	feedHandler "miniflux.app/reader/handler"
 )
 
 func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
@@ -42,20 +43,22 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feed, err := h.feedHandler.CreateFeed(
-		userID,
-		feedInfo.CategoryID,
-		feedInfo.FeedURL,
-		feedInfo.Crawler,
-		feedInfo.UserAgent,
-		feedInfo.Username,
-		feedInfo.Password,
-		feedInfo.ScraperRules,
-		feedInfo.RewriteRules,
-		feedInfo.BlocklistRules,
-		feedInfo.KeeplistRules,
-		feedInfo.FetchViaProxy,
-	)
+	feed, err := feedHandler.CreateFeed(h.store, &feedHandler.FeedCreationArgs{
+		UserID:          userID,
+		CategoryID:      feedInfo.CategoryID,
+		FeedURL:         feedInfo.FeedURL,
+		UserAgent:       feedInfo.UserAgent,
+		Username:        feedInfo.Username,
+		Password:        feedInfo.Password,
+		Crawler:         feedInfo.Crawler,
+		Disabled:        feedInfo.Disabled,
+		IgnoreHTTPCache: feedInfo.IgnoreHTTPCache,
+		FetchViaProxy:   feedInfo.FetchViaProxy,
+		ScraperRules:    feedInfo.ScraperRules,
+		RewriteRules:    feedInfo.RewriteRules,
+		BlocklistRules:  feedInfo.BlocklistRules,
+		KeeplistRules:   feedInfo.KeeplistRules,
+	})
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -73,7 +76,7 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.feedHandler.RefreshFeed(userID, feedID)
+	err := feedHandler.RefreshFeed(h.store, userID, feedID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

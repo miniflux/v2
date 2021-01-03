@@ -5,13 +5,11 @@
 package api // import "miniflux.app/api"
 
 import (
-	"miniflux.app/reader/feed"
 	"miniflux.app/storage"
 	"miniflux.app/worker"
 )
 
 type handler struct {
-	store       *storage.Storage
-	pool        *worker.Pool
-	feedHandler *feed.Handler
+	store *storage.Storage
+	pool  *worker.Pool
 }

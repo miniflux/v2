@@ -51,7 +51,10 @@ func createFeed(t *testing.T, client *miniflux.Client) (*miniflux.Feed, *miniflu
 		t.Fatal(err)
 	}
 
-	feedID, err := client.CreateFeed(testFeedURL, categories[0].ID)
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:    testFeedURL,
+		CategoryID: categories[0].ID,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}

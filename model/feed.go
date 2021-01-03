@@ -73,19 +73,6 @@ func (f *Feed) WithCategoryID(categoryID int64) {
 	f.Category = &Category{ID: categoryID}
 }
 
-// WithBrowsingParameters defines browsing parameters.
-func (f *Feed) WithBrowsingParameters(crawler bool, userAgent, username, password, scraperRules, rewriteRules, blocklistRules, keeplistRules string, fetchViaProxy bool) {
-	f.Crawler = crawler
-	f.UserAgent = userAgent
-	f.Username = username
-	f.Password = password
-	f.ScraperRules = scraperRules
-	f.RewriteRules = rewriteRules
-	f.FetchViaProxy = fetchViaProxy
-	f.BlocklistRules = blocklistRules
-	f.KeeplistRules = keeplistRules
-}
-
 // WithError adds a new error message and increment the error counter.
 func (f *Feed) WithError(message string) {
 	f.ParsingErrorCount++
