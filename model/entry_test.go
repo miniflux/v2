@@ -55,17 +55,3 @@ func TestValidateRange(t *testing.T) {
 		t.Error(`A valid offset and limit should not generate any error`)
 	}
 }
-
-func TestGetOppositeDirection(t *testing.T) {
-	if OppositeDirection("asc") != "desc" {
-		t.Errorf(`The opposite direction of "asc" should be "desc"`)
-	}
-
-	if OppositeDirection("desc") != "asc" {
-		t.Errorf(`The opposite direction of "desc" should be "asc"`)
-	}
-
-	if OppositeDirection("invalid") != "asc" {
-		t.Errorf(`An invalid direction should return "asc"`)
-	}
-}
