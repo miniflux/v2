@@ -6,6 +6,7 @@ package validator // import "miniflux.app/validator"
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 
 	"miniflux.app/locale"
@@ -27,6 +28,29 @@ func (v *ValidationError) String() string {
 
 func (v *ValidationError) Error() error {
 	return errors.New(v.String())
+}
+
+// ValidateRange makes sure the offset/limit values are valid.
+func ValidateRange(offset, limit int) error {
+	if offset < 0 {
+		return fmt.Errorf(`Offset value should be >= 0`)
+	}
+
+	if limit < 0 {
+		return fmt.Errorf(`Limit value should be >= 0`)
+	}
+
+	return nil
+}
+
+// ValidateDirection makes sure the sorting direction is valid.
+func ValidateDirection(direction string) error {
+	switch direction {
+	case "asc", "desc":
+		return nil
+	}
+
+	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
 }
 
 func isValidURL(absoluteURL string) bool {

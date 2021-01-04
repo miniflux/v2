@@ -20,3 +20,29 @@ func TestIsValidURL(t *testing.T) {
 		}
 	}
 }
+
+func TestValidateRange(t *testing.T) {
+	if err := ValidateRange(-1, 0); err == nil {
+		t.Error(`An invalid offset should generate a error`)
+	}
+
+	if err := ValidateRange(0, -1); err == nil {
+		t.Error(`An invalid limit should generate a error`)
+	}
+
+	if err := ValidateRange(42, 42); err != nil {
+		t.Error(`A valid offset and limit should not generate any error`)
+	}
+}
+
+func TestValidateDirection(t *testing.T) {
+	for _, status := range []string{"asc", "desc"} {
+		if err := ValidateDirection(status); err != nil {
+			t.Error(`A valid direction should not generate any error`)
+		}
+	}
+
+	if err := ValidateDirection("invalid"); err == nil {
+		t.Error(`An invalid direction should generate a error`)
+	}
+}

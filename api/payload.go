@@ -5,10 +5,6 @@
 package api // import "miniflux.app/api"
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-
 	"miniflux.app/model"
 )
 
@@ -25,20 +21,4 @@ type entriesResponse struct {
 
 type feedCreationResponse struct {
 	FeedID int64 `json:"feed_id"`
-}
-
-func decodeEntryStatusRequest(r io.ReadCloser) ([]int64, string, error) {
-	type payload struct {
-		EntryIDs []int64 `json:"entry_ids"`
-		Status   string  `json:"status"`
-	}
-
-	var p payload
-	decoder := json.NewDecoder(r)
-	defer r.Close()
-	if err := decoder.Decode(&p); err != nil {
-		return nil, "", fmt.Errorf("invalid JSON payload: %v", err)
-	}
-
-	return p.EntryIDs, p.Status, nil
 }
