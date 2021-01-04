@@ -84,12 +84,3 @@ func ValidateRange(offset, limit int) error {
 
 	return nil
 }
-
-// OppositeDirection returns the opposite sorting direction.
-func OppositeDirection(direction string) string {
-	if direction == "asc" {
-		return "desc"
-	}
-
-	return "asc"
-}
