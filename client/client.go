@@ -314,8 +314,7 @@ func (c *Client) UpdateFeed(feedID int64, feedChanges *FeedModificationRequest) 
 	defer body.Close()
 
 	var f *Feed
-	decoder := json.NewDecoder(body)
-	if err := decoder.Decode(&f); err != nil {
+	if err := json.NewDecoder(body).Decode(&f); err != nil {
 		return nil, fmt.Errorf("miniflux: response error (%v)", err)
 	}
 

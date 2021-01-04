@@ -36,7 +36,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/categories/{categoryID}", handler.updateCategory).Methods(http.MethodPut)
 	sr.HandleFunc("/categories/{categoryID}", handler.removeCategory).Methods(http.MethodDelete)
 	sr.HandleFunc("/categories/{categoryID}/mark-all-as-read", handler.markCategoryAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/discover", handler.getSubscriptions).Methods(http.MethodPost)
+	sr.HandleFunc("/discover", handler.discoverSubscriptions).Methods(http.MethodPost)
 	sr.HandleFunc("/feeds", handler.createFeed).Methods(http.MethodPost)
 	sr.HandleFunc("/feeds", handler.getFeeds).Methods(http.MethodGet)
 	sr.HandleFunc("/feeds/refresh", handler.refreshAllFeeds).Methods(http.MethodPut)

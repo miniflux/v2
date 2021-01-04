@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"miniflux.app/errors"
 	"miniflux.app/model"
 )
 
@@ -29,14 +28,6 @@ type FeedForm struct {
 	IgnoreHTTPCache bool
 	FetchViaProxy   bool
 	Disabled        bool
-}
-
-// ValidateModification validates FeedForm fields
-func (f FeedForm) ValidateModification() error {
-	if f.FeedURL == "" || f.SiteURL == "" || f.Title == "" || f.CategoryID == 0 {
-		return errors.NewLocalizedError("error.fields_mandatory")
-	}
-	return nil
 }
 
 // Merge updates the fields of the given feed.

@@ -28,37 +28,19 @@ var (
 	errCategoryNotFound = "Category not found for this user"
 )
 
-// FeedCreationArgs represents the arguments required to create a new feed.
-type FeedCreationArgs struct {
-	UserID          int64
-	CategoryID      int64
-	FeedURL         string
-	UserAgent       string
-	Username        string
-	Password        string
-	Crawler         bool
-	Disabled        bool
-	IgnoreHTTPCache bool
-	FetchViaProxy   bool
-	ScraperRules    string
-	RewriteRules    string
-	BlocklistRules  string
-	KeeplistRules   string
-}
-
 // CreateFeed fetch, parse and store a new feed.
-func CreateFeed(store *storage.Storage, args *FeedCreationArgs) (*model.Feed, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[CreateFeed] FeedURL=%s", args.FeedURL))
+func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequest) (*model.Feed, error) {
+	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[CreateFeed] FeedURL=%s", feedCreationRequest.FeedURL))
 
-	if !store.CategoryIDExists(args.UserID, args.CategoryID) {
+	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
 	}
 
-	request := client.NewClientWithConfig(args.FeedURL, config.Opts)
-	request.WithCredentials(args.Username, args.Password)
-	request.WithUserAgent(args.UserAgent)
+	request := client.NewClientWithConfig(feedCreationRequest.FeedURL, config.Opts)
+	request.WithCredentials(feedCreationRequest.Username, feedCreationRequest.Password)
+	request.WithUserAgent(feedCreationRequest.UserAgent)
 
-	if args.FetchViaProxy {
+	if feedCreationRequest.FetchViaProxy {
 		request.WithProxy()
 	}
 
@@ -67,7 +49,7 @@ func CreateFeed(store *storage.Storage, args *FeedCreationArgs) (*model.Feed, er
 		return nil, requestErr
 	}
 
-	if store.FeedURLExists(args.UserID, response.EffectiveURL) {
+	if store.FeedURLExists(userID, response.EffectiveURL) {
 		return nil, errors.NewLocalizedError(errDuplicate, response.EffectiveURL)
 	}
 
@@ -76,19 +58,19 @@ func CreateFeed(store *storage.Storage, args *FeedCreationArgs) (*model.Feed, er
 		return nil, parseErr
 	}
 
-	subscription.UserID = args.UserID
-	subscription.UserAgent = args.UserAgent
-	subscription.Username = args.Username
-	subscription.Password = args.Password
-	subscription.Crawler = args.Crawler
-	subscription.Disabled = args.Disabled
-	subscription.IgnoreHTTPCache = args.IgnoreHTTPCache
-	subscription.FetchViaProxy = args.FetchViaProxy
-	subscription.ScraperRules = args.ScraperRules
-	subscription.RewriteRules = args.RewriteRules
-	subscription.BlocklistRules = args.BlocklistRules
-	subscription.KeeplistRules = args.KeeplistRules
-	subscription.WithCategoryID(args.CategoryID)
+	subscription.UserID = userID
+	subscription.UserAgent = feedCreationRequest.UserAgent
+	subscription.Username = feedCreationRequest.Username
+	subscription.Password = feedCreationRequest.Password
+	subscription.Crawler = feedCreationRequest.Crawler
+	subscription.Disabled = feedCreationRequest.Disabled
+	subscription.IgnoreHTTPCache = feedCreationRequest.IgnoreHTTPCache
+	subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
+	subscription.ScraperRules = feedCreationRequest.ScraperRules
+	subscription.RewriteRules = feedCreationRequest.RewriteRules
+	subscription.BlocklistRules = feedCreationRequest.BlocklistRules
+	subscription.KeeplistRules = feedCreationRequest.KeeplistRules
+	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
@@ -100,7 +82,7 @@ func CreateFeed(store *storage.Storage, args *FeedCreationArgs) (*model.Feed, er
 
 	logger.Debug("[CreateFeed] Feed saved with ID: %d", subscription.ID)
 
-	checkFeedIcon(store, subscription.ID, subscription.SiteURL, args.FetchViaProxy)
+	checkFeedIcon(store, subscription.ID, subscription.SiteURL, feedCreationRequest.FetchViaProxy)
 	return subscription, nil
 }
 

@@ -5,60 +5,32 @@
 package api // import "miniflux.app/api"
 
 import (
-	"errors"
+	json_parser "encoding/json"
 	"net/http"
 	"time"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	"miniflux.app/model"
 	feedHandler "miniflux.app/reader/handler"
+	"miniflux.app/validator"
 )
 
 func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
-	feedInfo, err := decodeFeedCreationRequest(r.Body)
-	if err != nil {
+	userID := request.UserID(r)
+
+	var feedCreationRequest model.FeedCreationRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&feedCreationRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	if feedInfo.FeedURL == "" {
-		json.BadRequest(w, r, errors.New("The feed_url is required"))
+	if validationErr := validator.ValidateFeedCreation(h.store, userID, &feedCreationRequest); validationErr != nil {
+		json.BadRequest(w, r, validationErr.Error())
 		return
 	}
 
-	if feedInfo.CategoryID <= 0 {
-		json.BadRequest(w, r, errors.New("The category_id is required"))
-		return
-	}
-
-	userID := request.UserID(r)
-
-	if h.store.FeedURLExists(userID, feedInfo.FeedURL) {
-		json.BadRequest(w, r, errors.New("This feed_url already exists"))
-		return
-	}
-
-	if !h.store.CategoryIDExists(userID, feedInfo.CategoryID) {
-		json.BadRequest(w, r, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
-		return
-	}
-
-	feed, err := feedHandler.CreateFeed(h.store, &feedHandler.FeedCreationArgs{
-		UserID:          userID,
-		CategoryID:      feedInfo.CategoryID,
-		FeedURL:         feedInfo.FeedURL,
-		UserAgent:       feedInfo.UserAgent,
-		Username:        feedInfo.Username,
-		Password:        feedInfo.Password,
-		Crawler:         feedInfo.Crawler,
-		Disabled:        feedInfo.Disabled,
-		IgnoreHTTPCache: feedInfo.IgnoreHTTPCache,
-		FetchViaProxy:   feedInfo.FetchViaProxy,
-		ScraperRules:    feedInfo.ScraperRules,
-		RewriteRules:    feedInfo.RewriteRules,
-		BlocklistRules:  feedInfo.BlocklistRules,
-		KeeplistRules:   feedInfo.KeeplistRules,
-	})
+	feed, err := feedHandler.CreateFeed(h.store, userID, &feedCreationRequest)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -101,14 +73,14 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
-	feedID := request.RouteInt64Param(r, "feedID")
-	feedChanges, err := decodeFeedModificationRequest(r.Body)
-	if err != nil {
+	var feedModificationRequest model.FeedModificationRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&feedModificationRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
 	userID := request.UserID(r)
+	feedID := request.RouteInt64Param(r, "feedID")
 
 	originalFeed, err := h.store.FeedByID(userID, feedID)
 	if err != nil {
@@ -121,13 +93,12 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feedChanges.Update(originalFeed)
-
-	if !h.store.CategoryIDExists(userID, originalFeed.Category.ID) {
-		json.BadRequest(w, r, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
+	if validationErr := validator.ValidateFeedModification(h.store, userID, &feedModificationRequest); validationErr != nil {
+		json.BadRequest(w, r, validationErr.Error())
 		return
 	}
 
+	feedModificationRequest.Patch(originalFeed)
 	if err := h.store.UpdateFeed(originalFeed); err != nil {
 		json.ServerError(w, r, err)
 		return

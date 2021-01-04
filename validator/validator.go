@@ -6,6 +6,7 @@ package validator // import "miniflux.app/validator"
 
 import (
 	"errors"
+	"net/url"
 
 	"miniflux.app/locale"
 )
@@ -26,4 +27,9 @@ func (v *ValidationError) String() string {
 
 func (v *ValidationError) Error() error {
 	return errors.New(v.String())
+}
+
+func isValidURL(absoluteURL string) bool {
+	_, err := url.ParseRequestURI(absoluteURL)
+	return err == nil
 }

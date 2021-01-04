@@ -19,3 +19,11 @@ func OptionalInt(value int) *int {
 	}
 	return nil
 }
+
+// OptionalInt64 populates an optional int64 field.
+func OptionalInt64(value int64) *int64 {
+	if value > 0 {
+		return &value
+	}
+	return nil
+}

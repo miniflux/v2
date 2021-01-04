@@ -8,6 +8,8 @@ package tests
 
 import (
 	"testing"
+
+	miniflux "miniflux.app/client"
 )
 
 func TestDiscoverSubscriptions(t *testing.T) {
@@ -31,5 +33,21 @@ func TestDiscoverSubscriptions(t *testing.T) {
 
 	if subscriptions[0].URL != testFeedURL {
 		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, subscriptions[0].URL, testFeedURL)
+	}
+}
+
+func TestDiscoverSubscriptionsWithInvalidURL(t *testing.T) {
+	client := createClient(t)
+	_, err := client.Discover("invalid")
+	if err == nil {
+		t.Fatal(`Invalid URLs should be rejected`)
+	}
+}
+
+func TestDiscoverSubscriptionsWithNoSubscription(t *testing.T) {
+	client := createClient(t)
+	_, err := client.Discover(testBaseURL)
+	if err != miniflux.ErrNotFound {
+		t.Fatal(`A 404 should be returned when there is no subscription`)
 	}
 }
