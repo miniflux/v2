@@ -11,9 +11,11 @@ import (
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
 	"miniflux.app/logger"
+	"miniflux.app/model"
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
+	"miniflux.app/validator"
 )
 
 func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
@@ -50,8 +52,19 @@ func (h *handler) saveUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUser := userForm.ToUser()
-	if err := h.store.CreateUser(newUser); err != nil {
+	userCreationRequest := &model.UserCreationRequest{
+		Username: userForm.Username,
+		Password: userForm.Password,
+		IsAdmin:  userForm.IsAdmin,
+	}
+
+	if validationErr := validator.ValidateUserCreationWithPassword(h.store, userCreationRequest); validationErr != nil {
+		view.Set("errorMessage", validationErr.TranslationKey)
+		html.OK(w, r, view.Render("create_user"))
+		return
+	}
+
+	if _, err := h.store.CreateUser(userCreationRequest); err != nil {
 		logger.Error("[UI:SaveUser] %v", err)
 		view.Set("errorMessage", "error.unable_to_create_user")
 		html.OK(w, r, view.Render("create_user"))

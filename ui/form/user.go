@@ -29,10 +29,6 @@ func (u UserForm) ValidateCreation() error {
 		return errors.NewLocalizedError("error.different_passwords")
 	}
 
-	if len(u.Password) < 6 {
-		return errors.NewLocalizedError("error.password_min_length")
-	}
-
 	return nil
 }
 
@@ -53,15 +49,6 @@ func (u UserForm) ValidateModification() error {
 	}
 
 	return nil
-}
-
-// ToUser returns a User from the form values.
-func (u UserForm) ToUser() *model.User {
-	return &model.User{
-		Username: u.Username,
-		Password: u.Password,
-		IsAdmin:  u.IsAdmin,
-	}
 }
 
 // Merge updates the fields of the given user.

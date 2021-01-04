@@ -177,10 +177,8 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			return
 		}
 
-		sess := session.New(m.store, request.SessionID(r))
 		clientIP := request.ClientIP(r)
-
-		logger.Info("[AuthProxy] Successful auth for %s", username)
+		logger.Info("[AuthProxy] [ClientIP=%s] Received authenticated requested for %q", clientIP, username)
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
@@ -189,16 +187,14 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
+			logger.Error("[AuthProxy] [ClientIP=%s] %q doesn't exist", clientIP, username)
+
 			if !config.Opts.IsAuthProxyUserCreationAllowed() {
 				html.Forbidden(w, r)
 				return
 			}
 
-			user = model.NewUser()
-			user.Username = username
-			user.IsAdmin = false
-
-			if err := m.store.CreateUser(user); err != nil {
+			if user, err = m.store.CreateUser(&model.UserCreationRequest{Username: username}); err != nil {
 				html.ServerError(w, r, err)
 				return
 			}
@@ -210,9 +206,11 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			return
 		}
 
-		logger.Info("[AuthProxy] username=%s just logged in", user.Username)
+		logger.Info("[AuthProxy] [ClientIP=%s] username=%s just logged in", clientIP, user.Username)
 
 		m.store.SetLastLogin(user.ID)
+
+		sess := session.New(m.store, request.SessionID(r))
 		sess.SetLanguage(user.Language)
 		sess.SetTheme(user.Theme)
 

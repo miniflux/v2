@@ -5,12 +5,14 @@
 package api // import "miniflux.app/api"
 
 import (
+	json_parser "encoding/json"
 	"errors"
 	"net/http"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
+	"miniflux.app/validator"
 )
 
 func (h *handler) currentUser(w http.ResponseWriter, r *http.Request) {
@@ -29,50 +31,38 @@ func (h *handler) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userCreationRequest, err := decodeUserCreationRequest(r.Body)
-	if err != nil {
+	var userCreationRequest model.UserCreationRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&userCreationRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	user := model.NewUser()
-	user.Username = userCreationRequest.Username
-	user.Password = userCreationRequest.Password
-	user.IsAdmin = userCreationRequest.IsAdmin
-	user.GoogleID = userCreationRequest.GoogleID
-	user.OpenIDConnectID = userCreationRequest.OpenIDConnectID
-
-	if err := user.ValidateUserCreation(); err != nil {
-		json.BadRequest(w, r, err)
+	if validationErr := validator.ValidateUserCreationWithPassword(h.store, &userCreationRequest); validationErr != nil {
+		json.BadRequest(w, r, validationErr.Error())
 		return
 	}
 
-	if h.store.UserExists(user.Username) {
-		json.BadRequest(w, r, errors.New("This user already exists"))
-		return
-	}
-
-	err = h.store.CreateUser(user)
+	user, err := h.store.CreateUser(&userCreationRequest)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	user.Password = ""
 	json.Created(w, r, user)
 }
 
 func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	userID := request.RouteInt64Param(r, "userID")
-	userChanges, err := decodeUserModificationRequest(r.Body)
-	if err != nil {
+
+	var userModificationRequest model.UserModificationRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&userModificationRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
 	originalUser, err := h.store.UserByID(userID)
 	if err != nil {
-		json.BadRequest(w, r, errors.New("Unable to fetch this user from the database"))
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -87,18 +77,18 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if userChanges.IsAdmin != nil && *userChanges.IsAdmin {
+		if userModificationRequest.IsAdmin != nil && *userModificationRequest.IsAdmin {
 			json.BadRequest(w, r, errors.New("Only administrators can change permissions of standard users"))
 			return
 		}
 	}
 
-	userChanges.Update(originalUser)
-	if err := originalUser.ValidateUserModification(); err != nil {
-		json.BadRequest(w, r, err)
+	if validationErr := validator.ValidateUserModification(h.store, originalUser.ID, &userModificationRequest); validationErr != nil {
+		json.BadRequest(w, r, validationErr.Error())
 		return
 	}
 
+	userModificationRequest.Patch(originalUser)
 	if err = h.store.UpdateUser(originalUser); err != nil {
 		json.ServerError(w, r, err)
 		return

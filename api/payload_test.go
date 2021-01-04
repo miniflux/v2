@@ -218,24 +218,3 @@ func TestUpdateFeedToFetchViaProxy(t *testing.T) {
 		t.Errorf(`The field FetchViaProxy should be %v`, value)
 	}
 }
-
-func TestUpdateUserTheme(t *testing.T) {
-	theme := "Example 2"
-	changes := &userModificationRequest{Theme: &theme}
-	user := &model.User{Theme: "Example"}
-	changes.Update(user)
-
-	if user.Theme != theme {
-		t.Errorf(`Unexpected value, got %q instead of %q`, user.Theme, theme)
-	}
-}
-
-func TestUserThemeWhenNotSet(t *testing.T) {
-	changes := &userModificationRequest{}
-	user := &model.User{Theme: "Example"}
-	changes.Update(user)
-
-	if user.Theme != "Example" {
-		t.Error(`The user Theme should not be modified`)
-	}
-}

@@ -57,6 +57,10 @@ func (g *googleProvider) GetProfile(ctx context.Context, code string) (*Profile,
 	return profile, nil
 }
 
+func (g *googleProvider) PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *Profile) {
+	user.GoogleID = profile.ID
+}
+
 func (g *googleProvider) PopulateUserWithProfileID(user *model.User, profile *Profile) {
 	user.GoogleID = profile.ID
 }

@@ -166,13 +166,17 @@ func (e *EntryQueryBuilder) WithDirection(direction string) *EntryQueryBuilder {
 
 // WithLimit set the limit.
 func (e *EntryQueryBuilder) WithLimit(limit int) *EntryQueryBuilder {
-	e.limit = limit
+	if limit > 0 {
+		e.limit = limit
+	}
 	return e
 }
 
 // WithOffset set the offset.
 func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
-	e.offset = offset
+	if offset > 0 {
+		e.offset = offset
+	}
 	return e
 }
 
@@ -370,11 +374,11 @@ func (e *EntryQueryBuilder) buildSorting() string {
 		parts = append(parts, fmt.Sprintf(`%s`, e.direction))
 	}
 
-	if e.limit != 0 {
+	if e.limit > 0 {
 		parts = append(parts, fmt.Sprintf(`LIMIT %d`, e.limit))
 	}
 
-	if e.offset != 0 {
+	if e.offset > 0 {
 		parts = append(parts, fmt.Sprintf(`OFFSET %d`, e.offset))
 	}
 

@@ -54,12 +54,13 @@ func (s *Storage) AnotherUserExists(userID int64, username string) bool {
 }
 
 // CreateUser creates a new user.
-func (s *Storage) CreateUser(user *model.User) (err error) {
-	hashedPassword := ""
-	if user.Password != "" {
-		hashedPassword, err = hashPassword(user.Password)
+func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*model.User, error) {
+	var hashedPassword string
+	if userCreationRequest.Password != "" {
+		var err error
+		hashedPassword, err = hashPassword(userCreationRequest.Password)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -87,10 +88,18 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		return fmt.Errorf(`store: unable to start transaction: %v`, err)
+		return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
 	}
 
-	err = tx.QueryRow(query, user.Username, hashedPassword, user.IsAdmin, user.GoogleID, user.OpenIDConnectID).Scan(
+	var user model.User
+	err = tx.QueryRow(
+		query,
+		userCreationRequest.Username,
+		hashedPassword,
+		userCreationRequest.IsAdmin,
+		userCreationRequest.GoogleID,
+		userCreationRequest.OpenIDConnectID,
+	).Scan(
 		&user.ID,
 		&user.Username,
 		&user.IsAdmin,
@@ -108,26 +117,26 @@ func (s *Storage) CreateUser(user *model.User) (err error) {
 	)
 	if err != nil {
 		tx.Rollback()
-		return fmt.Errorf(`store: unable to create user: %v`, err)
+		return nil, fmt.Errorf(`store: unable to create user: %v`, err)
 	}
 
 	_, err = tx.Exec(`INSERT INTO categories (user_id, title) VALUES ($1, $2)`, user.ID, "All")
 	if err != nil {
 		tx.Rollback()
-		return fmt.Errorf(`store: unable to create user default category: %v`, err)
+		return nil, fmt.Errorf(`store: unable to create user default category: %v`, err)
 	}
 
 	_, err = tx.Exec(`INSERT INTO integrations (user_id) VALUES ($1)`, user.ID)
 	if err != nil {
 		tx.Rollback()
-		return fmt.Errorf(`store: unable to create integration row: %v`, err)
+		return nil, fmt.Errorf(`store: unable to create integration row: %v`, err)
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf(`store: unable to commit transaction: %v`, err)
+		return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
-	return nil
+	return &user, nil
 }
 
 // UpdateUser updates a user.
@@ -353,7 +362,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 }
 
 func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, error) {
-	user := model.NewUser()
+	var user model.User
 	err := s.db.QueryRow(query, args...).Scan(
 		&user.ID,
 		&user.Username,
@@ -378,7 +387,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		return nil, fmt.Errorf(`store: unable to fetch user: %v`, err)
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 // RemoveUser deletes a user.
@@ -446,7 +455,7 @@ func (s *Storage) Users() (model.Users, error) {
 
 	var users model.Users
 	for rows.Next() {
-		user := model.NewUser()
+		var user model.User
 		err := rows.Scan(
 			&user.ID,
 			&user.Username,
@@ -469,7 +478,7 @@ func (s *Storage) Users() (model.Users, error) {
 			return nil, fmt.Errorf(`store: unable to fetch users row: %v`, err)
 		}
 
-		users = append(users, user)
+		users = append(users, &user)
 	}
 
 	return users, nil

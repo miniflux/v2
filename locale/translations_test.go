@@ -29,11 +29,11 @@ func TestAllKeysHaveValue(t *testing.T) {
 			switch value := v.(type) {
 			case string:
 				if value == "" {
-					t.Fatalf(`The key %q for the language %q have an empty string as value`, k, language)
+					t.Errorf(`The key %q for the language %q have an empty string as value`, k, language)
 				}
 			case []string:
 				if len(value) == 0 {
-					t.Fatalf(`The key %q for the language %q have an empty list as value`, k, language)
+					t.Errorf(`The key %q for the language %q have an empty list as value`, k, language)
 				}
 			}
 		}

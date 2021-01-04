@@ -44,6 +44,10 @@ func (o *oidcProvider) GetProfile(ctx context.Context, code string) (*Profile, e
 	return profile, nil
 }
 
+func (o *oidcProvider) PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *Profile) {
+	user.OpenIDConnectID = profile.ID
+}
+
 func (o *oidcProvider) PopulateUserWithProfileID(user *model.User, profile *Profile) {
 	user.OpenIDConnectID = profile.ID
 }
