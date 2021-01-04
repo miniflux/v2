@@ -11,6 +11,7 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
+	"miniflux.app/model"
 	feedHandler "miniflux.app/reader/handler"
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
@@ -48,8 +49,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	feed, err := feedHandler.CreateFeed(h.store, &feedHandler.FeedCreationArgs{
-		UserID:         user.ID,
+	feed, err := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
 		CategoryID:     subscriptionForm.CategoryID,
 		FeedURL:        subscriptionForm.URL,
 		Crawler:        subscriptionForm.Crawler,

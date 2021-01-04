@@ -13,6 +13,12 @@ import (
 	"miniflux.app/http/client"
 )
 
+// List of supported schedulers.
+const (
+	SchedulerRoundRobin     = "round_robin"
+	SchedulerEntryFrequency = "entry_frequency"
+)
+
 // Feed represents a feed in the application.
 type Feed struct {
 	ID                 int64     `json:"id"`
@@ -43,12 +49,6 @@ type Feed struct {
 	UnreadCount        int       `json:"-"`
 	ReadCount          int       `json:"-"`
 }
-
-// List of supported schedulers.
-const (
-	SchedulerRoundRobin     = "round_robin"
-	SchedulerEntryFrequency = "entry_frequency"
-)
 
 func (f *Feed) String() string {
 	return fmt.Sprintf("ID=%d, UserID=%d, FeedURL=%s, SiteURL=%s, Title=%s, Category={%s}",
@@ -109,6 +109,105 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int) {
 		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 	default:
 		f.NextCheckAt = time.Now()
+	}
+}
+
+// FeedCreationRequest represents the request to create a feed.
+type FeedCreationRequest struct {
+	FeedURL         string `json:"feed_url"`
+	CategoryID      int64  `json:"category_id"`
+	UserAgent       string `json:"user_agent"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	Crawler         bool   `json:"crawler"`
+	Disabled        bool   `json:"disabled"`
+	IgnoreHTTPCache bool   `json:"ignore_http_cache"`
+	FetchViaProxy   bool   `json:"fetch_via_proxy"`
+	ScraperRules    string `json:"scraper_rules"`
+	RewriteRules    string `json:"rewrite_rules"`
+	BlocklistRules  string `json:"blocklist_rules"`
+	KeeplistRules   string `json:"keeplist_rules"`
+}
+
+// FeedModificationRequest represents the request to update a feed.
+type FeedModificationRequest struct {
+	FeedURL         *string `json:"feed_url"`
+	SiteURL         *string `json:"site_url"`
+	Title           *string `json:"title"`
+	ScraperRules    *string `json:"scraper_rules"`
+	RewriteRules    *string `json:"rewrite_rules"`
+	BlocklistRules  *string `json:"blocklist_rules"`
+	KeeplistRules   *string `json:"keeplist_rules"`
+	Crawler         *bool   `json:"crawler"`
+	UserAgent       *string `json:"user_agent"`
+	Username        *string `json:"username"`
+	Password        *string `json:"password"`
+	CategoryID      *int64  `json:"category_id"`
+	Disabled        *bool   `json:"disabled"`
+	IgnoreHTTPCache *bool   `json:"ignore_http_cache"`
+	FetchViaProxy   *bool   `json:"fetch_via_proxy"`
+}
+
+// Patch updates a feed with modified values.
+func (f *FeedModificationRequest) Patch(feed *Feed) {
+	if f.FeedURL != nil && *f.FeedURL != "" {
+		feed.FeedURL = *f.FeedURL
+	}
+
+	if f.SiteURL != nil && *f.SiteURL != "" {
+		feed.SiteURL = *f.SiteURL
+	}
+
+	if f.Title != nil && *f.Title != "" {
+		feed.Title = *f.Title
+	}
+
+	if f.ScraperRules != nil {
+		feed.ScraperRules = *f.ScraperRules
+	}
+
+	if f.RewriteRules != nil {
+		feed.RewriteRules = *f.RewriteRules
+	}
+
+	if f.KeeplistRules != nil {
+		feed.KeeplistRules = *f.KeeplistRules
+	}
+
+	if f.BlocklistRules != nil {
+		feed.BlocklistRules = *f.BlocklistRules
+	}
+
+	if f.Crawler != nil {
+		feed.Crawler = *f.Crawler
+	}
+
+	if f.UserAgent != nil {
+		feed.UserAgent = *f.UserAgent
+	}
+
+	if f.Username != nil {
+		feed.Username = *f.Username
+	}
+
+	if f.Password != nil {
+		feed.Password = *f.Password
+	}
+
+	if f.CategoryID != nil && *f.CategoryID > 0 {
+		feed.Category.ID = *f.CategoryID
+	}
+
+	if f.Disabled != nil {
+		feed.Disabled = *f.Disabled
+	}
+
+	if f.IgnoreHTTPCache != nil {
+		feed.IgnoreHTTPCache = *f.IgnoreHTTPCache
+	}
+
+	if f.FetchViaProxy != nil {
+		feed.FetchViaProxy = *f.FetchViaProxy
 	}
 }
 
