@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"os"
 
+	"miniflux.app/model"
 	"miniflux.app/storage"
+	"miniflux.app/validator"
 )
 
 func resetPassword(store *storage.Storage) {
@@ -24,9 +26,11 @@ func resetPassword(store *storage.Storage) {
 		os.Exit(1)
 	}
 
-	user.Password = password
-	if err := user.ValidatePassword(); err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
+	userModificationRequest := &model.UserModificationRequest{
+		Password: &password,
+	}
+	if validationErr := validator.ValidateUserModification(store, user.ID, userModificationRequest); validationErr != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", validationErr)
 		os.Exit(1)
 	}
 

@@ -4,8 +4,6 @@
 
 package model // import "miniflux.app/model"
 
-import "miniflux.app/errors"
-
 // Themes returns the list of available themes.
 func Themes() map[string]string {
 	return map[string]string{
@@ -28,15 +26,4 @@ func ThemeColor(theme string) string {
 	default:
 		return "#fff"
 	}
-}
-
-// ValidateTheme validates theme value.
-func ValidateTheme(theme string) error {
-	for key := range Themes() {
-		if key == theme {
-			return nil
-		}
-	}
-
-	return errors.NewLocalizedError("Invalid theme")
 }

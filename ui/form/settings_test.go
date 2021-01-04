@@ -61,21 +61,3 @@ func TestConfirmationIncorrect(t *testing.T) {
 		t.Error("Validate should return an error")
 	}
 }
-
-func TestEntriesPerPageNotValid(t *testing.T) {
-	settings := &SettingsForm{
-		Username:       "user",
-		Password:       "hunter2",
-		Confirmation:   "hunter2",
-		Theme:          "default",
-		Language:       "en_US",
-		Timezone:       "UTC",
-		EntryDirection: "asc",
-		EntriesPerPage: 0,
-	}
-
-	err := settings.Validate()
-	if err == nil {
-		t.Error("Validate should return an error")
-	}
-}

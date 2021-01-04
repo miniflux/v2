@@ -16,6 +16,7 @@ import (
 	"miniflux.app/ui/form"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
+	"miniflux.app/validator"
 )
 
 func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
@@ -51,8 +52,18 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if h.store.AnotherUserExists(loggedUser.ID, settingsForm.Username) {
-		view.Set("errorMessage", "error.user_already_exists")
+	userModificationRequest := &model.UserModificationRequest{
+		Username:       model.OptionalString(settingsForm.Username),
+		Password:       model.OptionalString(settingsForm.Password),
+		Theme:          model.OptionalString(settingsForm.Theme),
+		Language:       model.OptionalString(settingsForm.Language),
+		Timezone:       model.OptionalString(settingsForm.Timezone),
+		EntryDirection: model.OptionalString(settingsForm.EntryDirection),
+		EntriesPerPage: model.OptionalInt(settingsForm.EntriesPerPage),
+	}
+
+	if validationErr := validator.ValidateUserModification(h.store, loggedUser.ID, userModificationRequest); validationErr != nil {
+		view.Set("errorMessage", validationErr.TranslationKey)
 		html.OK(w, r, view.Render("settings"))
 		return
 	}

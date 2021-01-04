@@ -15,6 +15,7 @@ type Provider interface {
 	GetUserExtraKey() string
 	GetRedirectURL(state string) string
 	GetProfile(ctx context.Context, code string) (*Profile, error)
+	PopulateUserCreationWithProfileID(user *model.UserCreationRequest, profile *Profile)
 	PopulateUserWithProfileID(user *model.User, profile *Profile)
 	UnsetUserProfileID(user *model.User)
 }

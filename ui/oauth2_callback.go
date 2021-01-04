@@ -103,12 +103,11 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user = model.NewUser()
-		user.Username = profile.Username
-		user.IsAdmin = false
-		authProvider.PopulateUserWithProfileID(user, profile)
+		userCreationRequest := &model.UserCreationRequest{Username: profile.Username}
+		authProvider.PopulateUserCreationWithProfileID(userCreationRequest, profile)
 
-		if err := h.store.CreateUser(user); err != nil {
+		user, err = h.store.CreateUser(userCreationRequest)
+		if err != nil {
 			html.ServerError(w, r, err)
 			return
 		}
