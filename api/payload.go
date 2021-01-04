@@ -182,19 +182,3 @@ func decodeEntryStatusRequest(r io.ReadCloser) ([]int64, string, error) {
 
 	return p.EntryIDs, p.Status, nil
 }
-
-type categoryRequest struct {
-	Title string `json:"title"`
-}
-
-func decodeCategoryRequest(r io.ReadCloser) (*categoryRequest, error) {
-	var payload categoryRequest
-
-	decoder := json.NewDecoder(r)
-	defer r.Close()
-	if err := decoder.Decode(&payload); err != nil {
-		return nil, fmt.Errorf("Unable to decode JSON object: %v", err)
-	}
-
-	return &payload, nil
-}

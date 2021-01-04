@@ -15,13 +15,21 @@ import (
 // AnotherCategoryExists checks if another category exists with the same title.
 func (s *Storage) AnotherCategoryExists(userID, categoryID int64, title string) bool {
 	var result bool
-	query := `SELECT true FROM categories WHERE user_id=$1 AND id != $2 AND title=$3`
+	query := `SELECT true FROM categories WHERE user_id=$1 AND id != $2 AND lower(title)=lower($3) LIMIT 1`
 	s.db.QueryRow(query, userID, categoryID, title).Scan(&result)
 	return result
 }
 
-// CategoryExists checks if the given category exists into the database.
-func (s *Storage) CategoryExists(userID, categoryID int64) bool {
+// CategoryTitleExists checks if the given category exists into the database.
+func (s *Storage) CategoryTitleExists(userID int64, title string) bool {
+	var result bool
+	query := `SELECT true FROM categories WHERE user_id=$1 AND lower(title)=lower($2) LIMIT 1`
+	s.db.QueryRow(query, userID, title).Scan(&result)
+	return result
+}
+
+// CategoryIDExists checks if the given category exists into the database.
+func (s *Storage) CategoryIDExists(userID, categoryID int64) bool {
 	var result bool
 	query := `SELECT true FROM categories WHERE user_id=$1 AND id=$2`
 	s.db.QueryRow(query, userID, categoryID).Scan(&result)
@@ -135,26 +143,34 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 }
 
 // CreateCategory creates a new category.
-func (s *Storage) CreateCategory(category *model.Category) error {
+func (s *Storage) CreateCategory(userID int64, request *model.CategoryRequest) (*model.Category, error) {
+	var category model.Category
+
 	query := `
 		INSERT INTO categories
 			(user_id, title)
 		VALUES
 			($1, $2)
 		RETURNING
-			id
+			id,
+			user_id,
+			title
 	`
 	err := s.db.QueryRow(
 		query,
-		category.UserID,
-		category.Title,
-	).Scan(&category.ID)
+		userID,
+		request.Title,
+	).Scan(
+		&category.ID,
+		&category.UserID,
+		&category.Title,
+	)
 
 	if err != nil {
-		return fmt.Errorf(`store: unable to create category: %v`, err)
+		return nil, fmt.Errorf(`store: unable to create category %q: %v`, request.Title, err)
 	}
 
-	return nil
+	return &category, nil
 }
 
 // UpdateCategory updates an existing category.

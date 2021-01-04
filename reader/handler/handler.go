@@ -50,7 +50,7 @@ type FeedCreationArgs struct {
 func CreateFeed(store *storage.Storage, args *FeedCreationArgs) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[CreateFeed] FeedURL=%s", args.FeedURL))
 
-	if !store.CategoryExists(args.UserID, args.CategoryID) {
+	if !store.CategoryIDExists(args.UserID, args.CategoryID) {
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
 	}
 
