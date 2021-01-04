@@ -65,12 +65,7 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 				}
 
 				if category == nil {
-					category = &model.Category{
-						UserID: userID,
-						Title:  subscription.CategoryName,
-					}
-
-					err := h.store.CreateCategory(category)
+					category, err = h.store.CreateCategory(userID, &model.CategoryRequest{Title: subscription.CategoryName})
 					if err != nil {
 						logger.Error("[OPML:Import] %v", err)
 						return fmt.Errorf(`unable to create this category: %q`, subscription.CategoryName)

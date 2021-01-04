@@ -38,7 +38,7 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !h.store.CategoryExists(userID, feedInfo.CategoryID) {
+	if !h.store.CategoryIDExists(userID, feedInfo.CategoryID) {
 		json.BadRequest(w, r, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
 		return
 	}
@@ -123,7 +123,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 
 	feedChanges.Update(originalFeed)
 
-	if !h.store.CategoryExists(userID, originalFeed.Category.ID) {
+	if !h.store.CategoryIDExists(userID, originalFeed.Category.ID) {
 		json.BadRequest(w, r, errors.New("This category_id doesn't exists or doesn't belongs to this user"))
 		return
 	}

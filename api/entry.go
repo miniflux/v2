@@ -95,7 +95,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 
 	userID := request.UserID(r)
 	categoryID := request.QueryInt64Param(r, "category_id", 0)
-	if categoryID > 0 && !h.store.CategoryExists(userID, categoryID) {
+	if categoryID > 0 && !h.store.CategoryIDExists(userID, categoryID) {
 		json.BadRequest(w, r, errors.New("Invalid category ID"))
 		return
 	}
