@@ -154,15 +154,15 @@ func TestFilterEntriesByStatuses(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := client.UpdateEntries([]int64{results.Entries[0].ID}, "read"); err != nil {
+	if err := client.UpdateEntries([]int64{results.Entries[0].ID}, miniflux.EntryStatusRead); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := client.UpdateEntries([]int64{results.Entries[1].ID}, "removed"); err != nil {
+	if err := client.UpdateEntries([]int64{results.Entries[1].ID}, miniflux.EntryStatusRemoved); err != nil {
 		t.Fatal(err)
 	}
 
-	results, err = client.Entries(&miniflux.Filter{Statuses: []string{"read", "removed"}})
+	results, err = client.Entries(&miniflux.Filter{Statuses: []string{miniflux.EntryStatusRead, miniflux.EntryStatusRemoved}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -282,7 +282,12 @@ func TestUpdateStatus(t *testing.T) {
 
 	err = client.UpdateEntries([]int64{result.Entries[0].ID}, "invalid")
 	if err == nil {
-		t.Fatal(`Invalid entry status should ne be accepted`)
+		t.Fatal(`Invalid entry status should not be accepted`)
+	}
+
+	err = client.UpdateEntries([]int64{}, miniflux.EntryStatusRead)
+	if err == nil {
+		t.Fatal(`An empty list of entry should not be accepted`)
 	}
 }
 

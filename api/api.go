@@ -13,6 +13,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type handler struct {
+	store *storage.Storage
+	pool  *worker.Pool
+}
+
 // Serve declares API routes for the application.
 func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	handler := &handler{store, pool}

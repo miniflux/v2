@@ -5,11 +5,10 @@
 package model // import "miniflux.app/model"
 
 import (
-	"fmt"
 	"time"
 )
 
-// Entry statuses
+// Entry statuses and default sorting order.
 const (
 	EntryStatusUnread       = "unread"
 	EntryStatusRead         = "read"
@@ -35,52 +34,15 @@ type Entry struct {
 	ShareCode   string        `json:"share_code"`
 	Starred     bool          `json:"starred"`
 	ReadingTime int           `json:"reading_time"`
-	Enclosures  EnclosureList `json:"enclosures,omitempty"`
+	Enclosures  EnclosureList `json:"enclosures"`
 	Feed        *Feed         `json:"feed,omitempty"`
 }
 
 // Entries represents a list of entries.
 type Entries []*Entry
 
-// ValidateEntryStatus makes sure the entry status is valid.
-func ValidateEntryStatus(status string) error {
-	switch status {
-	case EntryStatusRead, EntryStatusUnread, EntryStatusRemoved:
-		return nil
-	}
-
-	return fmt.Errorf(`Invalid entry status, valid status values are: "%s", "%s" and "%s"`, EntryStatusRead, EntryStatusUnread, EntryStatusRemoved)
-}
-
-// ValidateEntryOrder makes sure the sorting order is valid.
-func ValidateEntryOrder(order string) error {
-	switch order {
-	case "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id":
-		return nil
-	}
-
-	return fmt.Errorf(`Invalid entry order, valid order values are: "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id"`)
-}
-
-// ValidateDirection makes sure the sorting direction is valid.
-func ValidateDirection(direction string) error {
-	switch direction {
-	case "asc", "desc":
-		return nil
-	}
-
-	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
-}
-
-// ValidateRange makes sure the offset/limit values are valid.
-func ValidateRange(offset, limit int) error {
-	if offset < 0 {
-		return fmt.Errorf(`Offset value should be >= 0`)
-	}
-
-	if limit < 0 {
-		return fmt.Errorf(`Limit value should be >= 0`)
-	}
-
-	return nil
+// EntriesStatusUpdateRequest represents a request to change entries status.
+type EntriesStatusUpdateRequest struct {
+	EntryIDs []int64 `json:"entry_ids"`
+	Status   string  `json:"status"`
 }

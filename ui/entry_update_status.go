@@ -5,27 +5,28 @@
 package ui // import "miniflux.app/ui"
 
 import (
-	"errors"
+	json_parser "encoding/json"
 	"net/http"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	"miniflux.app/model"
+	"miniflux.app/validator"
 )
 
 func (h *handler) updateEntriesStatus(w http.ResponseWriter, r *http.Request) {
-	entryIDs, status, err := decodeEntryStatusPayload(r.Body)
-	if err != nil {
+	var entriesStatusUpdateRequest model.EntriesStatusUpdateRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&entriesStatusUpdateRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	if len(entryIDs) == 0 {
-		json.BadRequest(w, r, errors.New("The list of entry IDs is empty"))
+	if err := validator.ValidateEntriesStatusUpdateRequest(&entriesStatusUpdateRequest); err != nil {
+		json.BadRequest(w, r, err)
 		return
 	}
 
-	err = h.store.SetEntriesStatus(request.UserID(r), entryIDs, status)
-	if err != nil {
+	if err := h.store.SetEntriesStatus(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
