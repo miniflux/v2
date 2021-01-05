@@ -14,7 +14,7 @@
     {{ end }}
 
     <label for="form-description">{{ t "form.api_key.label.description" }}</label>
-    <input type="text" name="description" id="form-description" value="{{ .form.Description }}" required autofocus>
+    <input type="text" name="description" id="form-description" value="{{ .form.Description }}" spellcheck="false" required autofocus>
 
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.save" }}</button> {{ t "action.or" }} <a href="{{ route "apiKeys" }}">{{ t "action.cancel" }}</a>

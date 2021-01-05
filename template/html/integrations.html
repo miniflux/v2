@@ -20,7 +20,7 @@
         </label>
 
         <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
-        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}" autocomplete="username">
+        <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}" autocomplete="username" spellcheck="false">
 
         <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
         <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
@@ -42,7 +42,7 @@
         <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}" autocomplete="new-password">
 
         <label for="form-pinboard-tags">{{ t "form.integration.pinboard_tags" }}</label>
-        <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}">
+        <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}" spellcheck="false">
 
         <label>
             <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "form.integration.pinboard_bookmark" }}
@@ -60,7 +60,7 @@
         </label>
 
         <label for="form-instapaper-username">{{ t "form.integration.instapaper_username" }}</label>
-        <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}">
+        <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}" spellcheck="false">
 
         <label for="form-instapaper-password">{{ t "form.integration.instapaper_password" }}</label>
         <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
@@ -78,7 +78,7 @@
 
         {{ if not .hasPocketConsumerKeyConfigured }}
             <label for="form-pocket-consumer-key">{{ t "form.integration.pocket_consumer_key" }}</label>
-            <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}">
+            <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}" spellcheck="false">
         {{ end }}
 
         <label for="form-pocket-access-token">{{ t "form.integration.pocket_access_token" }}</label>
@@ -100,16 +100,16 @@
         </label>
 
         <label for="form-wallabag-url">{{ t "form.integration.wallabag_endpoint" }}</label>
-        <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/">
+        <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/" spellcheck="false">
 
         <label for="form-wallabag-client-id">{{ t "form.integration.wallabag_client_id" }}</label>
-        <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}">
+        <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}" spellcheck="false">
 
         <label for="form-wallabag-client-secret">{{ t "form.integration.wallabag_client_secret" }}</label>
         <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}" autocomplete="new-password">
 
         <label for="form-wallabag-username">{{ t "form.integration.wallabag_username" }}</label>
-        <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}">
+        <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}" spellcheck="false">
 
         <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
         <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
@@ -126,10 +126,10 @@
         </label>
 
         <label for="form-nunux-keeper-url">{{ t "form.integration.nunux_keeper_endpoint" }}</label>
-        <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper">
+        <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper" spellcheck="false">
 
         <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
-        <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}">
+        <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}" spellcheck="false">
         
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

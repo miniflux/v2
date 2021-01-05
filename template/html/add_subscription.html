@@ -17,7 +17,7 @@
         {{ end }}
 
         <label for="form-url">{{ t "page.add_feed.label.url" }}</label>
-        <input type="url" name="url" id="form-url" placeholder="https://domain.tld/" value="{{ .form.URL }}" required autofocus>
+        <input type="url" name="url" id="form-url" placeholder="https://domain.tld/" value="{{ .form.URL }}" spellcheck="false" required autofocus>
 
         <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id">
@@ -35,10 +35,10 @@
                 {{ end }}
 
                 <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
-                <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" autocomplete="off">
+                <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}"  spellcheck="false" autocomplete="off">
 
                 <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
-                <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}">
+                <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}" spellcheck="false">
 
                 <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
                 <!--
@@ -48,19 +48,19 @@
                     - Changing the input ID doesn't change anything
                     - Using a different input name doesn't change anything
                 -->
-                <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}">
+                <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}" spellcheck="false">
 
                 <label for="form-scraper-rules">{{ t "form.feed.label.scraper_rules" }}</label>
-                <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}">
+                <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}" spellcheck="false">
 
                 <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
-                <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}">
+                <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}" spellcheck="false">
 
                 <label for="form-blocklist-rules">{{ t "form.feed.label.blocklist_rules" }}</label>
-                <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}">
+                <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}" spellcheck="false">
  
                 <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
-                <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}">
+                <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
             </div>
         </details>
 
