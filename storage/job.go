@@ -7,13 +7,13 @@ package storage // import "miniflux.app/storage"
 import (
 	"fmt"
 
+	"miniflux.app/config"
 	"miniflux.app/model"
 )
 
-const maxParsingError = 3
-
 // NewBatch returns a serie of jobs.
 func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
+	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
 	query := `
 		SELECT
 			id,
@@ -21,10 +21,11 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 		FROM
 			feeds
 		WHERE
-			parsing_error_count < $1 AND disabled is false AND next_check_at < now()
-		ORDER BY next_check_at ASC LIMIT %d
+			disabled is false AND next_check_at < now() AND 
+			CASE WHEN $1 > 0 THEN parsing_error_count < $1 ELSE parsing_error_count >= 0 END
+		ORDER BY next_check_at ASC LIMIT $2
 	`
-	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), maxParsingError)
+	return s.fetchBatchRows(query, pollingParsingErrorLimit, batchSize)
 }
 
 // NewUserBatch returns a serie of jobs but only for a given user.

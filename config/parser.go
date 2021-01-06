@@ -134,6 +134,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.schedulerEntryFrequencyMaxInterval = parseInt(value, defaultSchedulerEntryFrequencyMaxInterval)
 		case "SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL":
 			p.opts.schedulerEntryFrequencyMinInterval = parseInt(value, defaultSchedulerEntryFrequencyMinInterval)
+		case "POLLING_PARSING_ERROR_LIMIT":
+			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		case "PROXY_IMAGES":
 			p.opts.proxyImages = parseString(value, defaultProxyImages)
 		case "CREATE_ADMIN":
