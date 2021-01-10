@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Отметить эту страницу прочитанной",
     "menu.mark_all_as_read": "Отметить всё как прочитанное",
     "menu.show_all_entries": "Показать все статьи",
+    "menu.show_all_history_entries": "Показать все записи в истории",
+    "menu.show_only_opened_entries": "Показать только открытые записи",
     "menu.show_only_unread_entries": "Показывать только непрочитанные статьи",
     "menu.refresh_feed": "Обновить",
     "menu.refresh_all_feeds": "Обновить все подписки в фоне",
@@ -107,6 +109,7 @@
         "%d ошибок"
     ],
     "page.history.title": "История",
+    "page.history_opened.title": "Открытые записи",
     "page.import.title": "Импорт",
     "page.search.title": "Результаты поиска",
     "page.about.title": "О приложении",

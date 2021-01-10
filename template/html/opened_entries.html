@@ -1,25 +1,11 @@
-{{ define "title"}}{{ t "page.history.title" }} ({{ .total }}){{ end }}
+{{ define "title"}}{{ t "page.history_opened.title" }} ({{ .total }}){{ end }}
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
+    <h1>{{ t "page.history_opened.title" }} ({{ .total }})</h1>
     <ul>
-        {{ if .entries }}
         <li>
-            <a href="#"
-                data-confirm="true"
-                data-url="{{ route "flushHistory" }}"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
-        </li>
-        {{ end }}
-        <li>
-            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "historyOpened" }}">{{ t "menu.show_only_opened_entries" }}</a>
+            <a href="{{ route "history" }}">{{ t "menu.show_all_history_entries" }}</a>
         </li>
     </ul>
 </section>

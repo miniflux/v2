@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Diese Seite als gelesen markieren",
     "menu.mark_all_as_read": "Alle als gelesen markieren",
     "menu.show_all_entries": "Zeige alle Artikel",
+    "menu.show_all_history_entries": "Alle Einträge im Verlauf anzeigen",
+    "menu.show_only_opened_entries": "Nur geöffnete Einträge anzeigen",
     "menu.show_only_unread_entries": "Nur ungelesene Artikel anzeigen",
     "menu.refresh_feed": "Aktualisieren",
     "menu.refresh_all_feeds": "Alle Abonnements im Hintergrund aktualisieren",
@@ -105,6 +107,7 @@
         "%d Fehler"
     ],
     "page.history.title": "Verlauf",
+    "page.history_opened.title": "Geöffnete Einträge",
     "page.import.title": "Importieren",
     "page.search.title": "Suchergebnisse",
     "page.about.title": "Über",

@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Markeer deze pagina als gelezen",
     "menu.mark_all_as_read": "Markeer alle items als gelezen",
     "menu.show_all_entries": "Toon alle artikelen",
+    "menu.show_all_history_entries": "Toon alle vermeldingen in de geschiedenis",
+    "menu.show_only_opened_entries": "Toon alleen geopende items",
     "menu.show_only_unread_entries": "Toon alleen ongelezen artikelen",
     "menu.refresh_feed": "Vernieuwen",
     "menu.refresh_all_feeds": "Vernieuw alle feeds in de achtergrond",
@@ -105,6 +107,7 @@
         "%d errors"
     ],
     "page.history.title": "Geschiedenis",
+    "page.history_opened.title": "Geopende inzendingen",
     "page.import.title": "Importeren",
     "page.login.title": "Inloggen",
     "page.search.title": "Zoekresultaten",

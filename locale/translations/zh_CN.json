@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "标记为已读",
     "menu.mark_all_as_read": "全部标为已读",
     "menu.show_all_entries": "显示所有条目",
+    "menu.show_all_history_entries": "显示所有历史文章",
+    "menu.show_only_opened_entries": "仅显示已打开的文章",
     "menu.show_only_unread_entries": "仅显示未读文章",
     "menu.refresh_feed": "更新",
     "menu.refresh_all_feeds": "在后台更新全部源",
@@ -103,6 +105,7 @@
         "%d 错误"
     ],
     "page.history.title": "历史",
+    "page.history_opened.title": "已打开的条目",
     "page.import.title": "导入",
     "page.search.title": "搜索结果",
     "page.about.title": "关于",

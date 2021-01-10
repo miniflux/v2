@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Segna questa pagina come letta",
     "menu.mark_all_as_read": "Segna tutti gli articoli come letti",
     "menu.show_all_entries": "Mostra tutte le voci",
+    "menu.show_all_history_entries": "Mostra tutte le voci nella cronologia",
+    "menu.show_only_opened_entries": "Mostra solo le voci aperte",
     "menu.show_only_unread_entries": "Mostra solo voci non lette",
     "menu.refresh_feed": "Aggiorna",
     "menu.refresh_all_feeds": "Aggiorna tutti i feed in background",
@@ -105,6 +107,7 @@
         "%d errori"
     ],
     "page.history.title": "Cronologia",
+    "page.history_opened.title": "Voci aperte",
     "page.import.title": "Importa",
     "page.search.title": "Risultati della ricerca",
     "page.about.title": "Informazioni",

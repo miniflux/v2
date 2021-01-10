@@ -988,8 +988,8 @@ var templateViewsMap = map[string]string{
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
-    {{ if .entries }}
     <ul>
+        {{ if .entries }}
         <li>
             <a href="#"
                 data-confirm="true"
@@ -999,17 +999,14 @@ var templateViewsMap = map[string]string{
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
         </li>
+        {{ end }}
         <li>
             <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
         </li>
-    </ul>
-    {{ else }}
-    <ul>
         <li>
-            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+            <a href="{{ route "historyOpened" }}">{{ t "menu.show_only_opened_entries" }}</a>
         </li>
     </ul>
-    {{ end }}
 </section>
 
 {{ if not .entries }}
@@ -1259,6 +1256,42 @@ var templateViewsMap = map[string]string{
 <footer id="prompt-home-screen">
     <a href="#" id="btn-add-to-home-screen">★ {{ t "action.home_screen" }}</a>
 </footer>
+{{ end }}
+`,
+	"opened_entries": `{{ define "title"}}{{ t "page.history_opened.title" }} ({{ .total }}){{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+    <h1>{{ t "page.history_opened.title" }} ({{ .total }})</h1>
+    <ul>
+        <li>
+            <a href="{{ route "history" }}">{{ t "menu.show_all_history_entries" }}</a>
+        </li>
+    </ul>
+</section>
+
+{{ if not .entries }}
+    <p class="alert alert-info">{{ t "alert.no_history" }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .entries }}
+        <article class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header" dir="auto">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                </span>
+                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
+            </div>
+            {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+        </article>
+        {{ end }}
+    </div>
+    {{ template "pagination" .pagination }}
+{{ end }}
+
 {{ end }}
 `,
 	"search_entries": `{{ define "title"}}{{ t "page.search.title" }} ({{ .total }}){{ end }}
@@ -1630,10 +1663,11 @@ var templateViewsMapChecksums = map[string]string{
 	"entry":               "07ccdd5b9e99c63872bcab44b70b347cb59424fc8b69fd671b99b832c47277cc",
 	"feed_entries":        "89977ea86b8d43305d587b70e6d9c45c2c88249b3966f2d31051dc7a5f1c48b6",
 	"feeds":               "ec7d3fa96735bd8422ba69ef0927dcccddc1cc51327e0271f0312d3f881c64fd",
-	"history_entries":     "261b47e5f2f699a9cef1b3b690f80d7aabf585d05b77d67645d623f7ff6c0fbb",
+	"history_entries":     "092a054bb640b470a64775481c1130c1129273fc8ad8bfeaf23a13e28a4e06a9",
 	"import":              "1b59b3bd55c59fcbc6fbb346b414dcdd26d1b4e0c307e437bb58b3f92ef01ad1",
 	"integrations":        "92d5ab36361f9a2e2b9b7e2318494123f4976d4410daf117810ebf6eca8250b6",
 	"login":               "9165434b2405e9332de4bebbb54a93dc5692276ea72e7c5e07f655a002dfd290",
+	"opened_entries":      "0c2cf06877a2c85f4b8e92f284bf8c1788b59126cfb6599a0c0d75b9b01596fb",
 	"search_entries":      "6a3e5876cb7541a2f08f56e30ab46a2d7d64894ec5e170f627b2dd674d8aeefe",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
 	"settings":            "8e90e9e48c62990c2aca217054cb4e122e4ed58c377e28d4c150e2d2d22ebe74",

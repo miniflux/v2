@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Mark this page as read",
     "menu.mark_all_as_read": "Mark all as read",
     "menu.show_all_entries": "Show all entries",
+    "menu.show_all_history_entries": "Show all history entries",
+    "menu.show_only_opened_entries": "Show only opened entries",
     "menu.show_only_unread_entries": "Show only unread entries",
     "menu.refresh_feed": "Refresh",
     "menu.refresh_all_feeds": "Refresh all feeds in the background",
@@ -105,6 +107,7 @@
         "%d errors"
     ],
     "page.history.title": "History",
+    "page.history_opened.title": "Opened entries",
     "page.import.title": "Import",
     "page.search.title": "Search Results",
     "page.about.title": "About",

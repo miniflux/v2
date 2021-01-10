@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Marcar essa página como lída",
     "menu.mark_all_as_read": "Marcar todos como lido",
     "menu.show_all_entries": "Mostrar todas os itens",
+    "menu.show_all_history_entries": "Mostrar todas as entradas no histórico",
+    "menu.show_only_opened_entries": "Mostrar apenas entradas abertas",
     "menu.show_only_unread_entries": "Mostrar apenas itens não lidos",
     "menu.refresh_feed": "Atualizar",
     "menu.refresh_all_feeds": "Atualizar todas as fontes",
@@ -105,6 +107,7 @@
         "%d erros"
     ],
     "page.history.title": "Histórico",
+    "page.history_opened.title": "Entradas abertas",
     "page.import.title": "Importar",
     "page.search.title": "Resultados da busca",
     "page.about.title": "Sobre",

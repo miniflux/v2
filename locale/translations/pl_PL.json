@@ -35,6 +35,8 @@
     "menu.mark_page_as_read": "Oznacz jako przeczytane",
     "menu.mark_all_as_read": "Oznacz wszystko jako przeczytane",
     "menu.show_all_entries": "Pokaż wszystkie artykuły",
+    "menu.show_all_history_entries": "Pokaż wszystkie wpisy w historii",
+    "menu.show_only_opened_entries": "Pokaż tylko otwarte wpisy",
     "menu.show_only_unread_entries": "Pokaż tylko nieprzeczytane artykuły",
     "menu.refresh_feed": "Odśwież",
     "menu.refresh_all_feeds": "Odśwież wszystkie subskrypcje w tle",
@@ -107,6 +109,7 @@
         "%d błędów"
     ],
     "page.history.title": "Historia",
+    "page.history_opened.title": "Otwarte wpisy",
     "page.import.title": "Importuj",
     "page.search.title": "Wyniki wyszukiwania",
     "page.about.title": "O",
