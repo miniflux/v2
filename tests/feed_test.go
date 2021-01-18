@@ -661,3 +661,45 @@ func TestGetFeeds(t *testing.T) {
 		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feeds[0].Category.Title, category.Title)
 	}
 }
+
+func TestGetFeedsByCategory(t *testing.T) {
+	client := createClient(t)
+	feed, category := createFeed(t, client)
+
+	feeds, err := client.CategoryFeeds(category.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feeds) != 1 {
+		t.Fatalf(`Invalid number of feeds`)
+	}
+
+	if feeds[0].ID != feed.ID {
+		t.Fatalf(`Invalid feed ID, got "%v" instead of "%v"`, feeds[0].ID, feed.ID)
+	}
+
+	if feeds[0].Title != testFeedTitle {
+		t.Fatalf(`Invalid feed title, got "%v" instead of "%v"`, feeds[0].Title, testFeedTitle)
+	}
+
+	if feeds[0].SiteURL != testWebsiteURL {
+		t.Fatalf(`Invalid site URL, got "%v" instead of "%v"`, feeds[0].SiteURL, testWebsiteURL)
+	}
+
+	if feeds[0].FeedURL != testFeedURL {
+		t.Fatalf(`Invalid feed URL, got "%v" instead of "%v"`, feeds[0].FeedURL, testFeedURL)
+	}
+
+	if feeds[0].Category.ID != category.ID {
+		t.Fatalf(`Invalid feed category ID, got "%v" instead of "%v"`, feeds[0].Category.ID, category.ID)
+	}
+
+	if feeds[0].Category.UserID != category.UserID {
+		t.Fatalf(`Invalid feed category user ID, got "%v" instead of "%v"`, feeds[0].Category.UserID, category.UserID)
+	}
+
+	if feeds[0].Category.Title != category.Title {
+		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feeds[0].Category.Title, category.Title)
+	}
+}

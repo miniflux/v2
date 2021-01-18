@@ -136,6 +136,30 @@ func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
+func (h *handler) getCategoryFeeds(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	categoryID := request.RouteInt64Param(r, "categoryID")
+
+	category, err := h.store.Category(userID, categoryID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if category == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	feeds, err := h.store.FeedsByCategoryWithCounters(userID, categoryID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.OK(w, r, feeds)
+}
+
 func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
 	feeds, err := h.store.Feeds(request.UserID(r))
 	if err != nil {
