@@ -78,6 +78,8 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 			timezone,
 			entry_direction,
 			entries_per_page,
+			feed_sorted_by,
+			feed_direction,
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
@@ -108,6 +110,8 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 		&user.Timezone,
 		&user.EntryDirection,
 		&user.EntriesPerPage,
+		&user.FeedSortedBy,
+		&user.FeedDirection,
 		&user.KeyboardShortcuts,
 		&user.ShowReadingTime,
 		&user.EntrySwipe,
@@ -157,14 +161,16 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				timezone=$6,
 				entry_direction=$7,
 				entries_per_page=$8,
-				keyboard_shortcuts=$9,
-				show_reading_time=$10,
-				entry_swipe=$11,
-				stylesheet=$12,
-				google_id=$13,
-				openid_connect_id=$14
+				feed_sorted_by=$9,
+				feed_direction=$10,
+				keyboard_shortcuts=$11,
+				show_reading_time=$12,
+				entry_swipe=$13,
+				stylesheet=$14,
+				google_id=$15,
+				openid_connect_id=$16
 			WHERE
-				id=$15
+				id=$17
 		`
 
 		_, err = s.db.Exec(
@@ -177,6 +183,8 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.Timezone,
 			user.EntryDirection,
 			user.EntriesPerPage,
+			user.FeedSortedBy,
+			user.FeedDirection,
 			user.KeyboardShortcuts,
 			user.ShowReadingTime,
 			user.EntrySwipe,
@@ -198,14 +206,16 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				timezone=$5,
 				entry_direction=$6,
 				entries_per_page=$7,
-				keyboard_shortcuts=$8,
-				show_reading_time=$9,
-				entry_swipe=$10,
-				stylesheet=$11,
-				google_id=$12,
-				openid_connect_id=$13
+				feed_sorted_by=$8,
+				feed_direction=$9,
+				keyboard_shortcuts=$10,
+				show_reading_time=$11,
+				entry_swipe=$12,
+				stylesheet=$13,
+				google_id=$14,
+				openid_connect_id=$15
 			WHERE
-				id=$14
+				id=$16
 		`
 
 		_, err := s.db.Exec(
@@ -217,6 +227,8 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.Timezone,
 			user.EntryDirection,
 			user.EntriesPerPage,
+			user.FeedSortedBy,
+			user.FeedDirection,
 			user.KeyboardShortcuts,
 			user.ShowReadingTime,
 			user.EntrySwipe,
@@ -256,6 +268,8 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			timezone,
 			entry_direction,
 			entries_per_page,
+			feed_sorted_by,
+			feed_direction,
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
@@ -283,6 +297,8 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			timezone,
 			entry_direction,
 			entries_per_page,
+			feed_sorted_by,
+			feed_direction,
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
@@ -310,6 +326,8 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 			timezone,
 			entry_direction,
 			entries_per_page,
+			feed_sorted_by,
+			feed_direction,
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
@@ -344,6 +362,8 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.timezone,
 			u.entry_direction,
 			u.entries_per_page,
+			u.feed_sorted_by,
+			u.feed_direction,
 			u.keyboard_shortcuts,
 			u.show_reading_time,
 			u.entry_swipe,
@@ -372,6 +392,8 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.Timezone,
 		&user.EntryDirection,
 		&user.EntriesPerPage,
+		&user.FeedSortedBy,
+		&user.FeedDirection,
 		&user.KeyboardShortcuts,
 		&user.ShowReadingTime,
 		&user.EntrySwipe,
@@ -436,6 +458,8 @@ func (s *Storage) Users() (model.Users, error) {
 			timezone,
 			entry_direction,
 			entries_per_page,
+			feed_sorted_by,
+			feed_direction,
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
@@ -465,6 +489,8 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.Timezone,
 			&user.EntryDirection,
 			&user.EntriesPerPage,
+			&user.FeedSortedBy,
+			&user.FeedDirection,
 			&user.KeyboardShortcuts,
 			&user.ShowReadingTime,
 			&user.EntrySwipe,

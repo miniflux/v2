@@ -379,6 +379,36 @@ func TestUpdateUserEntryDirectionWithInvalidValue(t *testing.T) {
 	}
 }
 
+func TestUpdateUserFeedSortedByWithInvalidValue(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	invalidValue := "invalid"
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{FeedSortedBy: &invalidValue})
+	if err == nil {
+		t.Fatal(`Updating a user FeedSortedBy with an invalid value should raise an error`)
+	}
+}
+
+func TestUpdateUserFeedDirectionWithInvalidValue(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	invalidValue := "invalid"
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{FeedDirection: &invalidValue})
+	if err == nil {
+		t.Fatal(`Updating a user FeedDirection with an invalid value should raise an error`)
+	}
+}
+
 func TestUpdateUserPasswordWithInvalidValue(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)

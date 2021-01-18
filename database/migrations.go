@@ -514,4 +514,13 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TYPE feed_sorting AS enum('disabled', 'parsing_error_count', 'title', 'total_count', 'unread_count');
+			ALTER TABLE users ADD COLUMN feed_sorted_by feed_sorting default 'parsing_error_count';
+			ALTER TYPE entry_sorting_direction RENAME TO sorting_direction;
+			ALTER TABLE users ADD COLUMN feed_direction sorting_direction default 'desc';
+		`)
+		return err
+	},
 }

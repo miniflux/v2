@@ -52,6 +52,21 @@
     <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
     <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 
+    <label for="form-feed-sorted-by">{{ t "form.prefs.label.feed_sorted_by" }}</label>
+    <select id="form-feed-sorted-by" name="feed_sorted_by">
+        <option value="disabled" {{ if eq "disabled" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_disabled" }}</option>
+        <option value="parsing_error_count" {{ if eq "parsing_error_count" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_error" }}</option>
+        <option value="title" {{ if eq "title" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_title" }}</option>
+        <option value="total_count" {{ if eq "total_count" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_total_count" }}</option>
+        <option value="unread_count" {{ if eq "unread_count" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_unread_count" }}</option>
+    </select>
+
+    <label for="form-feed-direction">{{ t "form.prefs.label.feed_direction" }}</label>
+    <select id="form-feed-direction" name="feed_direction">
+        <option value="asc" {{ if eq "asc" $.form.FeedDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_direction_asc" }}</option>
+        <option value="desc" {{ if eq "desc" $.form.FeedDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_direction_desc" }}</option>
+    </select>
+
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
     <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>

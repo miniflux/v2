@@ -20,6 +20,8 @@ type User struct {
 	Language          string     `json:"language"`
 	Timezone          string     `json:"timezone"`
 	EntryDirection    string     `json:"entry_sorting_direction"`
+	FeedSortedBy      string     `json:"feed_sorted_by"`
+	FeedDirection     string     `json:"feed_sorting_direction"`
 	Stylesheet        string     `json:"stylesheet"`
 	GoogleID          string     `json:"google_id"`
 	OpenIDConnectID   string     `json:"openid_connect_id"`
@@ -47,6 +49,8 @@ type UserModificationRequest struct {
 	Language          *string `json:"language"`
 	Timezone          *string `json:"timezone"`
 	EntryDirection    *string `json:"entry_sorting_direction"`
+	FeedSortedBy      *string `json:"feed_sorted_by"`
+	FeedDirection     *string `json:"feed_sorting_direction"`
 	Stylesheet        *string `json:"stylesheet"`
 	GoogleID          *string `json:"google_id"`
 	OpenIDConnectID   *string `json:"openid_connect_id"`
@@ -85,6 +89,14 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.EntryDirection != nil {
 		user.EntryDirection = *u.EntryDirection
+	}
+
+	if u.FeedSortedBy != nil {
+		user.FeedSortedBy = *u.FeedSortedBy
+	}
+
+	if u.FeedDirection != nil {
+		user.FeedDirection = *u.FeedDirection
 	}
 
 	if u.Stylesheet != nil {

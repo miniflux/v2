@@ -1385,6 +1385,21 @@ var templateViewsMap = map[string]string{
     <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
     <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 
+    <label for="form-feed-sorted-by">{{ t "form.prefs.label.feed_sorted_by" }}</label>
+    <select id="form-feed-sorted-by" name="feed_sorted_by">
+        <option value="disabled" {{ if eq "disabled" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_disabled" }}</option>
+        <option value="parsing_error_count" {{ if eq "parsing_error_count" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_error" }}</option>
+        <option value="title" {{ if eq "title" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_title" }}</option>
+        <option value="total_count" {{ if eq "total_count" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_total_count" }}</option>
+        <option value="unread_count" {{ if eq "unread_count" $.form.FeedSortedBy }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_sorted_by_unread_count" }}</option>
+    </select>
+
+    <label for="form-feed-direction">{{ t "form.prefs.label.feed_direction" }}</label>
+    <select id="form-feed-direction" name="feed_direction">
+        <option value="asc" {{ if eq "asc" $.form.FeedDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_direction_asc" }}</option>
+        <option value="desc" {{ if eq "desc" $.form.FeedDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.feed_direction_desc" }}</option>
+    </select>
+
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
     <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
@@ -1636,7 +1651,7 @@ var templateViewsMapChecksums = map[string]string{
 	"login":               "9165434b2405e9332de4bebbb54a93dc5692276ea72e7c5e07f655a002dfd290",
 	"search_entries":      "6a3e5876cb7541a2f08f56e30ab46a2d7d64894ec5e170f627b2dd674d8aeefe",
 	"sessions":            "5d5c677bddbd027e0b0c9f7a0dd95b66d9d95b4e130959f31fb955b926c2201c",
-	"settings":            "8e90e9e48c62990c2aca217054cb4e122e4ed58c377e28d4c150e2d2d22ebe74",
+	"settings":            "f60bda3fb43548dbfd99ff7cdcc2693d35366246a14bf531b4d5c8c5371767b8",
 	"shared_entries":      "f87a42bf44dc3606c5a44b185263c1b9a612a8ae194f75061253d4dde7b095a2",
 	"unread_entries":      "21c584da7ca8192655c62f16a7ac92dbbfdf1307588ffe51eb4a8bbf3f9f7526",
 	"users":               "d7ff52efc582bbad10504f4a04fa3adcc12d15890e45dff51cac281e0c446e45",

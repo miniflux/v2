@@ -58,6 +58,8 @@ type UserModificationRequest struct {
 	Language          *string `json:"language"`
 	Timezone          *string `json:"timezone"`
 	EntryDirection    *string `json:"entry_sorting_direction"`
+	FeedSortedBy      *string `json:"feed_sorted_by"`
+	FeedDirection     *string `json:"feed_sorting_direction"`
 	Stylesheet        *string `json:"stylesheet"`
 	GoogleID          *string `json:"google_id"`
 	OpenIDConnectID   *string `json:"openid_connect_id"`

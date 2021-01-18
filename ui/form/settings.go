@@ -22,6 +22,8 @@ type SettingsForm struct {
 	Timezone          string
 	EntryDirection    string
 	EntriesPerPage    int
+	FeedSortedBy      string
+	FeedDirection     string
 	KeyboardShortcuts bool
 	ShowReadingTime   bool
 	CustomCSS         string
@@ -36,6 +38,8 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Timezone = s.Timezone
 	user.EntryDirection = s.EntryDirection
 	user.EntriesPerPage = s.EntriesPerPage
+	user.FeedSortedBy = s.FeedSortedBy
+	user.FeedDirection = s.FeedDirection
 	user.KeyboardShortcuts = s.KeyboardShortcuts
 	user.ShowReadingTime = s.ShowReadingTime
 	user.Stylesheet = s.CustomCSS
@@ -50,7 +54,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" {
+	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.FeedSortedBy == "" || s.FeedDirection == "" {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
@@ -83,6 +87,8 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		Timezone:          r.FormValue("timezone"),
 		EntryDirection:    r.FormValue("entry_direction"),
 		EntriesPerPage:    int(entriesPerPage),
+		FeedSortedBy:      r.FormValue("feed_sorted_by"),
+		FeedDirection:     r.FormValue("feed_direction"),
 		KeyboardShortcuts: r.FormValue("keyboard_shortcuts") == "1",
 		ShowReadingTime:   r.FormValue("show_reading_time") == "1",
 		CustomCSS:         r.FormValue("custom_css"),

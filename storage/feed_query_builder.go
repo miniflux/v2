@@ -27,6 +27,10 @@ type FeedQueryBuilder struct {
 	counterConditions []string
 }
 
+const (
+	orderByTitle = "LOWER(f.title)"
+)
+
 // NewFeedQueryBuilder returns a new FeedQueryBuilder.
 func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 	return &FeedQueryBuilder{
@@ -65,7 +69,12 @@ func (f *FeedQueryBuilder) WithCounters() *FeedQueryBuilder {
 
 // WithOrder set the sorting order.
 func (f *FeedQueryBuilder) WithOrder(order string) *FeedQueryBuilder {
-	f.order = order
+	switch order {
+	case "title":
+		f.order = orderByTitle
+	default:
+		f.order = order
+	}
 	return f
 }
 
@@ -106,13 +115,12 @@ func (f *FeedQueryBuilder) buildSorting() string {
 
 	if f.order != "" {
 		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, f.order))
+		if f.direction != "" {
+			parts = append(parts, fmt.Sprintf(`%s`, f.direction))
+		}
 	}
 
-	if f.direction != "" {
-		parts = append(parts, fmt.Sprintf(`%s`, f.direction))
-	}
-
-	if len(parts) > 0 {
+	if len(parts) > 0 && f.order != orderByTitle {
 		parts = append(parts, ", lower(f.title) ASC")
 	}
 

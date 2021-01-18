@@ -9,7 +9,6 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
-	"miniflux.app/model"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
 )
@@ -36,8 +35,8 @@ func (h *handler) showCategoryFeedsPage(w http.ResponseWriter, r *http.Request) 
 	builder := h.store.NewFeedQueryBuilder(user.ID)
 	builder.WithCategoryID(categoryID)
 	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithOrder(user.FeedSortedBy)
+	builder.WithDirection(user.FeedDirection)
 	feeds, err := builder.GetFeeds()
 	if err != nil {
 		html.ServerError(w, r, err)
