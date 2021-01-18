@@ -21,7 +21,10 @@ type Handler struct {
 
 // Export exports user feeds to OPML.
 func (h *Handler) Export(userID int64) (string, error) {
-	feeds, err := h.store.Feeds(userID)
+	builder := h.store.NewFeedQueryBuilder(userID)
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	feeds, err := builder.GetFeeds()
 	if err != nil {
 		return "", err
 	}

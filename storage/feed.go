@@ -122,31 +122,9 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 	return result
 }
 
-// Feeds returns all feeds that belongs to the given user.
-func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
-	return builder.GetFeeds()
-}
-
-// FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
-func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
-	return builder.GetFeeds()
-}
-
-// FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
-func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
-	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithCategoryID(categoryID)
-	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
-	return builder.GetFeeds()
+// NewFeedQueryBuilder returns a new FeedQueryBuilder
+func (s *Storage) NewFeedQueryBuilder(userID int64) *FeedQueryBuilder {
+	return NewFeedQueryBuilder(s, userID)
 }
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.

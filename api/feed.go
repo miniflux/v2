@@ -151,7 +151,12 @@ func (h *handler) getCategoryFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feeds, err := h.store.FeedsByCategoryWithCounters(userID, categoryID)
+	builder := h.store.NewFeedQueryBuilder(userID)
+	builder.WithCategoryID(categoryID)
+	builder.WithCounters()
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	feeds, err := builder.GetFeeds()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -161,7 +166,11 @@ func (h *handler) getCategoryFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
-	feeds, err := h.store.Feeds(request.UserID(r))
+	userID := request.UserID(r)
+	builder := h.store.NewFeedQueryBuilder(userID)
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	feeds, err := builder.GetFeeds()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

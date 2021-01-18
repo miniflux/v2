@@ -185,7 +185,7 @@ func generateBundle(bundleFile, pkg, mapName string, srcFiles []string) {
 
 func main() {
 	generateJSBundle("ui/static/js.go", map[string][]string{
-		"app": []string{
+		"app": {
 			"ui/static/js/dom_helper.js",
 			"ui/static/js/touch_handler.js",
 			"ui/static/js/keyboard_handler.js",
@@ -194,7 +194,7 @@ func main() {
 			"ui/static/js/app.js",
 			"ui/static/js/bootstrap.js",
 		},
-		"service-worker": []string{
+		"service-worker": {
 			"ui/static/js/service_worker.js",
 		},
 	}, map[string]string{
@@ -205,12 +205,12 @@ func main() {
 	})
 
 	generateCSSBundle("ui/static/css.go", map[string][]string{
-		"light_serif":       []string{"ui/static/css/light.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
-		"light_sans_serif":  []string{"ui/static/css/light.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
-		"dark_serif":        []string{"ui/static/css/dark.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
-		"dark_sans_serif":   []string{"ui/static/css/dark.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
-		"system_serif":      []string{"ui/static/css/system.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
-		"system_sans_serif": []string{"ui/static/css/system.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"light_serif":       {"ui/static/css/light.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"light_sans_serif":  {"ui/static/css/light.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"dark_serif":        {"ui/static/css/dark.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"dark_sans_serif":   {"ui/static/css/dark.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
+		"system_serif":      {"ui/static/css/system.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
+		"system_sans_serif": {"ui/static/css/system.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
 	})
 
 	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))

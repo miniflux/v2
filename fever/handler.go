@@ -88,7 +88,10 @@ func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feeds, err := h.store.Feeds(userID)
+	builder := h.store.NewFeedQueryBuilder(userID)
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	feeds, err := builder.GetFeeds()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -132,7 +135,10 @@ func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	logger.Debug("[Fever] Fetching feeds for userID=%d", userID)
 
-	feeds, err := h.store.Feeds(userID)
+	builder := h.store.NewFeedQueryBuilder(userID)
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	feeds, err := builder.GetFeeds()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
