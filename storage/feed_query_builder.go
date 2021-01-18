@@ -23,8 +23,7 @@ type FeedQueryBuilder struct {
 	limit              int
 	offset             int
 	withCounters       bool
-	counterJoinFeeds    bool
-	counterArgs        []interface{}
+	counterJoinFeeds   bool
 	counterConditions  []string
 }
 
@@ -34,18 +33,16 @@ func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 		store:             store,
 		args:              []interface{}{userID},
 		conditions:        []string{"f.user_id = $1"},
-		counterArgs:       []interface{}{userID, model.EntryStatusRead, model.EntryStatusUnread},
-		counterConditions: []string{"e.user_id = $1", "e.status IN ($2, $3)"},
+		counterConditions: []string{fmt.Sprintf("e.user_id = %v", userID)},
 	}
 }
 
 // WithCategoryID filter by category ID.
 func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 	if categoryID > 0 {
-		f.conditions = append(f.conditions, fmt.Sprintf("f.category_id = $%d", len(f.args)+1))
 		f.args = append(f.args, categoryID)
-		f.counterConditions = append(f.counterConditions, fmt.Sprintf("f.category_id = $%d", len(f.counterArgs)+1))
-		f.counterArgs = append(f.counterArgs, categoryID)
+		f.conditions = append(f.conditions, fmt.Sprintf("f.category_id = $%d", len(f.args)))
+		f.counterConditions = append(f.counterConditions, fmt.Sprintf("f.category_id = %v", categoryID))
 		f.counterJoinFeeds = true
 	}
 	return f
@@ -54,8 +51,8 @@ func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 // WithFeedID filter by feed ID.
 func (f *FeedQueryBuilder) WithFeedID(feedID int64) *FeedQueryBuilder {
 	if feedID > 0 {
-		f.conditions = append(f.conditions, fmt.Sprintf("f.id = $%d", len(f.args)+1))
 		f.args = append(f.args, feedID)
+		f.conditions = append(f.conditions, fmt.Sprintf("f.id = $%d", len(f.args)))
 	}
 	return f
 }
@@ -91,11 +88,17 @@ func (f *FeedQueryBuilder) WithOffset(offset int) *FeedQueryBuilder {
 }
 
 func (f *FeedQueryBuilder) buildCondition() string {
-	return strings.Join(f.conditions, " AND ")
+	if len(f.conditions)==0 {
+		return ""
+	}
+	return fmt.Sprintf("WHERE %s", strings.Join(f.conditions, " AND "))
 }
 
 func (f *FeedQueryBuilder) buildCounterCondition() string {
-	return strings.Join(f.counterConditions, " AND ")
+	if len(f.counterConditions)==0 {
+		return ""
+	}
+	return fmt.Sprintf("WHERE %s", strings.Join(f.counterConditions, " AND "))
 }
 
 func (f *FeedQueryBuilder) buildSorting() string {
@@ -139,6 +142,36 @@ func (f *FeedQueryBuilder) GetFeed() (*model.Feed, error) {
 	return feeds[0], nil
 }
 
+func (f *FeedQueryBuilder) countQuery() string {
+	if f.withCounters {
+		joins := ""
+		if f.counterJoinFeeds {
+			joins = "LEFT JOIN feeds f ON f.id=e.feed_id"
+		}
+		countQuery := `
+			SELECT
+				e.feed_id as feed_id,
+				count(*) filter (where e.status='%s') as read_count,
+				count(*) filter (where e.status='%s') as unread_count
+			FROM
+				entries e
+			%s 
+			%s 
+			GROUP BY
+				e.feed_id
+		`
+		return fmt.Sprintf(countQuery, model.EntryStatusRead, model.EntryStatusUnread, joins, f.buildCounterCondition())
+	}
+	return `
+		SELECT 
+			f.id as feed_id,
+			0 as read_count,
+			0 as unread_count
+		FROM
+			feeds f
+	`
+}
+
 // GetFeeds returns a list of feeds that match the condition.
 func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 	var query = `
@@ -166,6 +199,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.disabled,
 			f.category_id,
 			c.title as category_title,
+			COALESCE(entries_count.read_count, 0) as read_count,
+			COALESCE(entries_count.unread_count, 0) as unread_count,
 			fi.icon_id,
 			u.timezone
 		FROM
@@ -176,22 +211,19 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN
 			users u ON u.id=f.user_id
-		WHERE %s 
-		%s
+		LEFT JOIN 
+			(%s) entries_count on entries_count.feed_id=f.id
+		%s 
+		%s 
 	`
 
-	query = fmt.Sprintf(query, f.buildCondition(), f.buildSorting())
+	query = fmt.Sprintf(query, f.countQuery(), f.buildCondition(), f.buildSorting())
 
 	rows, err := f.store.db.Query(query, f.args...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch feeds: %w`, err)
 	}
 	defer rows.Close()
-
-	readCounters, unreadCounters, err := f.fetchFeedCounter()
-	if err != nil {
-		return nil, err
-	}
 
 	feeds := make(model.Feeds, 0)
 	for rows.Next() {
@@ -224,6 +256,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.Disabled,
 			&feed.Category.ID,
 			&feed.Category.Title,
+			&feed.ReadCount,
+			&feed.UnreadCount,
 			&iconID,
 			&tz,
 		)
@@ -238,70 +272,10 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: 0}
 		}
 
-		if readCounters != nil {
-			if count, found := readCounters[feed.ID]; found {
-				feed.ReadCount = count
-			}
-		}
-		if unreadCounters != nil {
-			if count, found := unreadCounters[feed.ID]; found {
-				feed.UnreadCount = count
-			}
-		}
-
 		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
 		feed.Category.UserID = feed.UserID
 		feeds = append(feeds, &feed)
 	}
 
 	return feeds, nil
-}
-
-func (f *FeedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, readCounters map[int64]int, err error) {
-	if !f.withCounters {
-		return nil, nil, nil
-	}
-	query := `
-		SELECT
-			e.feed_id,
-			e.status,
-			count(*)
-		FROM
-			entries e
-		%s 
-		WHERE
-			%s 
-		GROUP BY
-			e.feed_id, e.status
-	`
-	join := ""
-	if f.counterJoinFeeds {
-		join = "LEFT JOIN feeds f ON f.id=e.feed_id"
-	}
-	query = fmt.Sprintf(query, join, f.buildCounterCondition())
-
-	rows, err := f.store.db.Query(query, f.counterArgs...)
-	if err != nil {
-		return nil, nil, fmt.Errorf(`store: unable to fetch feed counts: %w`, err)
-	}
-	defer rows.Close()
-
-	readCounters = make(map[int64]int)
-	unreadCounters = make(map[int64]int)
-	for rows.Next() {
-		var feedID int64
-		var status string
-		var count int
-		if err := rows.Scan(&feedID, &status, &count); err != nil {
-			return nil, nil, fmt.Errorf(`store: unable to fetch feed counter row: %w`, err)
-		}
-
-		if status == model.EntryStatusRead {
-			readCounters[feedID] = count
-		} else if status == model.EntryStatusUnread {
-			unreadCounters[feedID] = count
-		}
-	}
-
-	return readCounters, unreadCounters, nil
 }
