@@ -10,49 +10,7 @@ import (
 	"fmt"
 
 	"miniflux.app/model"
-	"miniflux.app/timezone"
 )
-
-var feedListQuery = `
-	SELECT
-		f.id,
-		f.feed_url,
-		f.site_url,
-		f.title,
-		f.etag_header,
-		f.last_modified_header,
-		f.user_id,
-		f.checked_at at time zone u.timezone,
-		f.parsing_error_count,
-		f.parsing_error_msg,
-		f.scraper_rules,
-		f.rewrite_rules,
-		f.blocklist_rules,
-		f.keeplist_rules,
-		f.crawler,
-		f.user_agent,
-		f.username,
-		f.password,
-		f.ignore_http_cache,
-		f.fetch_via_proxy,
-		f.disabled,
-		f.category_id,
-		c.title as category_title,
-		fi.icon_id,
-		u.timezone
-	FROM
-		feeds f
-	LEFT JOIN
-		categories c ON c.id=f.category_id
-	LEFT JOIN
-		feed_icons fi ON fi.feed_id=f.id
-	LEFT JOIN
-		users u ON u.id=f.user_id
-	WHERE
-		f.user_id=$1
-	ORDER BY
-		f.parsing_error_count DESC, lower(f.title) ASC
-`
 
 // FeedExists checks if the given feed exists.
 func (s *Storage) FeedExists(userID, feedID int64) bool {
@@ -146,193 +104,29 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 
 // Feeds returns all feeds that belongs to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
-	return s.fetchFeeds(feedListQuery, "", userID)
+	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	return builder.GetFeeds()
 }
 
 // FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
-	counterQuery := `
-		SELECT
-			feed_id,
-			status,
-			count(*)
-		FROM
-			entries
-		WHERE
-			user_id=$1 AND status IN ('read', 'unread')
-		GROUP BY
-			feed_id, status
-	`
-	return s.fetchFeeds(feedListQuery, counterQuery, userID)
+	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithCounters()
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	return  builder.GetFeeds()
 }
 
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
 func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
-	feedQuery := `
-		SELECT
-			f.id,
-			f.feed_url,
-			f.site_url,
-			f.title,
-			f.etag_header,
-			f.last_modified_header,
-			f.user_id,
-			f.checked_at at time zone u.timezone,
-			f.parsing_error_count,
-			f.parsing_error_msg,
-			f.scraper_rules,
-			f.rewrite_rules,
-			f.blocklist_rules,
-			f.keeplist_rules,
-			f.crawler,
-			f.user_agent,
-			f.username,
-			f.password,
-			f.ignore_http_cache,
-			f.fetch_via_proxy,
-			f.disabled,
-			f.category_id,
-			c.title as category_title,
-			fi.icon_id,
-			u.timezone
-		FROM
-			feeds f
-		LEFT JOIN
-			categories c ON c.id=f.category_id
-		LEFT JOIN
-			feed_icons fi ON fi.feed_id=f.id
-		LEFT JOIN
-			users u ON u.id=f.user_id
-		WHERE
-			f.user_id=$1 AND f.category_id=$2
-		ORDER BY
-			f.parsing_error_count DESC, lower(f.title) ASC
-	`
-
-	counterQuery := `
-		SELECT
-			e.feed_id,
-			e.status,
-			count(*)
-		FROM
-			entries e
-		LEFT JOIN
-			feeds f ON f.id=e.feed_id
-		WHERE
-			e.user_id=$1 AND f.category_id=$2 AND e.status IN ('read', 'unread')
-		GROUP BY
-			e.feed_id, e.status
-	`
-
-	return s.fetchFeeds(feedQuery, counterQuery, userID, categoryID)
-}
-
-func (s *Storage) fetchFeedCounter(query string, args ...interface{}) (unreadCounters map[int64]int, readCounters map[int64]int, err error) {
-	rows, err := s.db.Query(query, args...)
-	if err != nil {
-		return nil, nil, fmt.Errorf(`store: unable to fetch feed counts: %v`, err)
-	}
-	defer rows.Close()
-
-	readCounters = make(map[int64]int)
-	unreadCounters = make(map[int64]int)
-	for rows.Next() {
-		var feedID int64
-		var status string
-		var count int
-		if err := rows.Scan(&feedID, &status, &count); err != nil {
-			return nil, nil, fmt.Errorf(`store: unable to fetch feed counter row: %v`, err)
-		}
-
-		if status == "read" {
-			readCounters[feedID] = count
-		} else if status == "unread" {
-			unreadCounters[feedID] = count
-		}
-	}
-
-	return readCounters, unreadCounters, nil
-}
-
-func (s *Storage) fetchFeeds(feedQuery, counterQuery string, args ...interface{}) (model.Feeds, error) {
-	var (
-		readCounters   map[int64]int
-		unreadCounters map[int64]int
-	)
-
-	if counterQuery != "" {
-		var err error
-		readCounters, unreadCounters, err = s.fetchFeedCounter(counterQuery, args...)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	feeds := make(model.Feeds, 0)
-	rows, err := s.db.Query(feedQuery, args...)
-	if err != nil {
-		return nil, fmt.Errorf(`store: unable to fetch feeds: %v`, err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var feed model.Feed
-		var iconID interface{}
-		var tz string
-		feed.Category = &model.Category{}
-
-		err := rows.Scan(
-			&feed.ID,
-			&feed.FeedURL,
-			&feed.SiteURL,
-			&feed.Title,
-			&feed.EtagHeader,
-			&feed.LastModifiedHeader,
-			&feed.UserID,
-			&feed.CheckedAt,
-			&feed.ParsingErrorCount,
-			&feed.ParsingErrorMsg,
-			&feed.ScraperRules,
-			&feed.RewriteRules,
-			&feed.BlocklistRules,
-			&feed.KeeplistRules,
-			&feed.Crawler,
-			&feed.UserAgent,
-			&feed.Username,
-			&feed.Password,
-			&feed.IgnoreHTTPCache,
-			&feed.FetchViaProxy,
-			&feed.Disabled,
-			&feed.Category.ID,
-			&feed.Category.Title,
-			&iconID,
-			&tz,
-		)
-
-		if err != nil {
-			return nil, fmt.Errorf(`store: unable to fetch feeds row: %v`, err)
-		}
-
-		if iconID != nil {
-			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
-		}
-
-		if counterQuery != "" {
-			if count, found := readCounters[feed.ID]; found {
-				feed.ReadCount = count
-			}
-
-			if count, found := unreadCounters[feed.ID]; found {
-				feed.UnreadCount = count
-			}
-		}
-
-		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
-		feed.Category.UserID = feed.UserID
-		feeds = append(feeds, &feed)
-	}
-
-	return feeds, nil
+	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithCategoryID(categoryID)
+	builder.WithCounters()
+	builder.WithOrder(model.DefaultFeedSorting)
+	builder.WithDirection(model.DefaultFeedSortingDirection)
+	return builder.GetFeeds()
 }
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.
@@ -352,7 +146,7 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 	err := s.db.QueryRow(query, userID, feedID).Scan(&weeklyCount)
 
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return 0, nil
 	case err != nil:
 		return 0, fmt.Errorf(`store: unable to fetch weekly count for feed #%d: %v`, feedID, err)
@@ -363,86 +157,18 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 
 // FeedByID returns a feed by the ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
-	var feed model.Feed
-	var iconID interface{}
-	var tz string
-	feed.Category = &model.Category{UserID: userID}
-
-	query := `
-		SELECT
-			f.id,
-			f.feed_url,
-			f.site_url,
-			f.title,
-			f.etag_header,
-			f.last_modified_header,
-			f.user_id, f.checked_at at time zone u.timezone,
-			f.parsing_error_count,
-			f.parsing_error_msg,
-			f.scraper_rules,
-			f.rewrite_rules,
-			f.blocklist_rules,
-			f.keeplist_rules,
-			f.crawler,
-			f.user_agent,
-			f.username,
-			f.password,
-			f.ignore_http_cache,
-			f.fetch_via_proxy,
-			f.disabled,
-			f.category_id,
-			c.title as category_title,
-			fi.icon_id,
-			u.timezone
-		FROM feeds f
-		LEFT JOIN categories c ON c.id=f.category_id
-		LEFT JOIN feed_icons fi ON fi.feed_id=f.id
-		LEFT JOIN users u ON u.id=f.user_id
-		WHERE
-			f.user_id=$1 AND f.id=$2
-	`
-
-	err := s.db.QueryRow(query, userID, feedID).Scan(
-		&feed.ID,
-		&feed.FeedURL,
-		&feed.SiteURL,
-		&feed.Title,
-		&feed.EtagHeader,
-		&feed.LastModifiedHeader,
-		&feed.UserID,
-		&feed.CheckedAt,
-		&feed.ParsingErrorCount,
-		&feed.ParsingErrorMsg,
-		&feed.ScraperRules,
-		&feed.RewriteRules,
-		&feed.BlocklistRules,
-		&feed.KeeplistRules,
-		&feed.Crawler,
-		&feed.UserAgent,
-		&feed.Username,
-		&feed.Password,
-		&feed.IgnoreHTTPCache,
-		&feed.FetchViaProxy,
-		&feed.Disabled,
-		&feed.Category.ID,
-		&feed.Category.Title,
-		&iconID,
-		&tz,
-	)
+	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithFeedID(feedID)
+	feed, err := builder.GetFeed()
 
 	switch {
-	case err == sql.ErrNoRows:
+	case errors.Is(err, sql.ErrNoRows):
 		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch feed #%d: %v`, feedID, err)
 	}
-
-	if iconID != nil {
-		feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.(int64)}
-	}
-
-	feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
-	return &feed, nil
+	
+	return feed, nil
 }
 
 // CreateFeed creates a new feed.
