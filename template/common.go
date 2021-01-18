@@ -26,7 +26,12 @@ var templateCommonMap = map[string]string{
 	"feed_list": `{{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
-        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
+        <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}" 
+                data-disabled="{{ .Disabled }}" 
+                data-errors="{{ .ParsingErrorCount }}"
+                data-title="{{ .Title }}" 
+                data-total="{{ .TotalCount }}" 
+                data-unread="{{ .UnreadCount }}" >
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if .Icon }}
@@ -101,6 +106,19 @@ var templateCommonMap = map[string]string{
     </li>
     <li>
         <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+    </li>
+    <li>
+        <a href="#" 
+            data-action="triggerSortFeeds"
+            data-default-sorted-by="{{ .user.FeedSortedBy }}"
+            data-default-sort-direction="{{ .user.FeedDirection }}"
+            data-sorted-by-disabled="{{ t "menu.sort_feeds_disabled" }}"
+            data-sorted-by-errors="{{ t "menu.sort_feeds_errors" }}"
+            data-sorted-by-title="{{ t "menu.sort_feeds_title" }}"
+            data-sorted-by-total="{{ t "menu.sort_feeds_total" }}"
+            data-sorted-by-unread="{{ t "menu.sort_feeds_unread" }}"
+            data-label-loading="{{ t "confirm.loading" }}"
+            >{{ t "menu.sort_feeds_sort" }}</a>
     </li>
 </ul>
 {{ end }}`,
@@ -538,8 +556,8 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "3071310eb9fbe7dbdacb5cd5cdb0636177d8954021620fac4bcb1f399f005f91",
-	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
+	"feed_list":        "61a28fc6fc016b94a1d60861e734e8ec995364d3ce63e4128721432303e2e00a",
+	"feed_menu":        "629ba59e5af78f14b7c6794b5586b0481b62b033a79db6406d75021cecc15435",
 	"icons":            "7161afa4cce46245a99cb1e49a605d3ff30e907c3f568ef9c17218718d20e042",
 	"item_meta":        "fefa219c8296f0370632336ed59a2c8b0c2146ee77f3b10de1d9b87982219dc5",
 	"layout":           "03c77ed0163b790c0622ecec173119537087c66f6a3925a931ae83a9a94d32cf",

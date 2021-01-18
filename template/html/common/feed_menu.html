@@ -15,5 +15,18 @@
     <li>
         <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
     </li>
+    <li>
+        <a href="#" 
+            data-action="triggerSortFeeds"
+            data-default-sorted-by="{{ .user.FeedSortedBy }}"
+            data-default-sort-direction="{{ .user.FeedDirection }}"
+            data-sorted-by-disabled="{{ t "menu.sort_feeds_disabled" }}"
+            data-sorted-by-errors="{{ t "menu.sort_feeds_errors" }}"
+            data-sorted-by-title="{{ t "menu.sort_feeds_title" }}"
+            data-sorted-by-total="{{ t "menu.sort_feeds_total" }}"
+            data-sorted-by-unread="{{ t "menu.sort_feeds_unread" }}"
+            data-label-loading="{{ t "confirm.loading" }}"
+            >{{ t "menu.sort_feeds_sort" }}</a>
+    </li>
 </ul>
 {{ end }}
