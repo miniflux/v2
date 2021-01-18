@@ -123,6 +123,8 @@
     "page.add_feed.choose_feed": "購読を選択",
     "page.edit_feed.title": "フィード(%s)を編集",
     "page.edit_feed.last_check": "最終チェック:",
+    "page.edit_feed.next_check": "次のチェック:",
+    "page.edit_feed.next_check_note": "グローバルオプションPOLLINGFREQUENCYおよびBATCH_SIZEに従います",
     "page.edit_feed.last_modified_header": "最後に更新されたヘッダー:",
     "page.edit_feed.etag_header": "ETag ヘッダー:",
     "page.edit_feed.no_header": " なし",

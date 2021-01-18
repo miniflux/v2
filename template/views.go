@@ -636,6 +636,7 @@ var templateViewsMap = map[string]string{
     <div class="panel">
         <ul>
             <li><strong>{{ t "page.edit_feed.last_check" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
+            <li><strong>{{ t "page.edit_feed.next_check" }} </strong><time datetime="{{ isodate .feed.NextCheckAt }}" title="{{ isodate .feed.NextCheckAt }}">{{ .feed.NextCheckAt }}</time><br />({{ t "page.edit_feed.next_check_note" }})</li>
             <li><strong>{{ t "page.edit_feed.etag_header" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
             <li><strong>{{ t "page.edit_feed.last_modified_header" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
         </ul>
@@ -1625,7 +1626,7 @@ var templateViewsMapChecksums = map[string]string{
 	"create_category":     "6b22b5ce51abf4e225e23a79f81be09a7fb90acb265e93a8faf9446dff74018d",
 	"create_user":         "cca0dbdbd846639d5295707de0674e5e75df987dd22b80d75f030f8daa503a85",
 	"edit_category":       "b1c0b38f1b714c5d884edcd61e5b5295a5f1c8b71c469b35391e4dcc97cc6d36",
-	"edit_feed":           "3da1edc78a464f33359663028f0b3fd11706b98e0c3851b090a20ccb2f780b02",
+	"edit_feed":           "730d24e8fed2eb64876a9a4391b0df5421ba7f58c176b5f6c8c97db1fd92c63c",
 	"edit_user":           "04423f5ea4249a97440ddd892f99ff96c646f6ce26313765ac5293abf257ef3c",
 	"entry":               "07ccdd5b9e99c63872bcab44b70b347cb59424fc8b69fd671b99b832c47277cc",
 	"feed_entries":        "89977ea86b8d43305d587b70e6d9c45c2c88249b3966f2d31051dc7a5f1c48b6",

@@ -123,6 +123,8 @@
     "page.add_feed.choose_feed": "Escolher uma fonte",
     "page.edit_feed.title": "Editar fonte: %s",
     "page.edit_feed.last_check": "Última verificação:",
+    "page.edit_feed.next_check": "Próxima verificação:",
+    "page.edit_feed.next_check_note": "Sujeito às opções globais POLLING FREQUENCY e BATCH_SIZE",
     "page.edit_feed.last_modified_header": "Cabeçalho 'LastModified':",
     "page.edit_feed.etag_header": "Cabeçalho 'ETag':",
     "page.edit_feed.no_header": "Sem cabeçalhos",

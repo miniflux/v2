@@ -125,6 +125,8 @@
     "page.add_feed.choose_feed": "Выбрать подписку",
     "page.edit_feed.title": "Изменить подписку: %s",
     "page.edit_feed.last_check": "Последняя проверка:",
+    "page.edit_feed.next_check": "Следующая проверка:",
+    "page.edit_feed.next_check_note": "В соответствии с глобальными параметрами POLLING FREQUENCY и BATCH_SIZE",
     "page.edit_feed.last_modified_header": "Заголовок LastModified:",
     "page.edit_feed.etag_header": "Заголовок ETag:",
     "page.edit_feed.no_header": "Отсутствует",

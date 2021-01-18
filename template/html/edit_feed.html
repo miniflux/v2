@@ -92,6 +92,7 @@
     <div class="panel">
         <ul>
             <li><strong>{{ t "page.edit_feed.last_check" }} </strong><time datetime="{{ isodate .feed.CheckedAt }}" title="{{ isodate .feed.CheckedAt }}">{{ elapsed $.user.Timezone .feed.CheckedAt }}</time></li>
+            <li><strong>{{ t "page.edit_feed.next_check" }} </strong><time datetime="{{ isodate .feed.NextCheckAt }}" title="{{ isodate .feed.NextCheckAt }}">{{ .feed.NextCheckAt }}</time><br />({{ t "page.edit_feed.next_check_note" }})</li>
             <li><strong>{{ t "page.edit_feed.etag_header" }} </strong>{{ if .feed.EtagHeader }}{{ .feed.EtagHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
             <li><strong>{{ t "page.edit_feed.last_modified_header" }} </strong>{{ if .feed.LastModifiedHeader }}{{ .feed.LastModifiedHeader }}{{ else }}{{ t "page.edit_feed.no_header" }}{{ end }}</li>
         </ul>

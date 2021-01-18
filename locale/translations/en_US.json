@@ -123,6 +123,8 @@
     "page.add_feed.choose_feed": "Choose a Subscription",
     "page.edit_feed.title": "Edit Feed: %s",
     "page.edit_feed.last_check": "Last check:",
+    "page.edit_feed.next_check": "Next check:",
+    "page.edit_feed.next_check_note": "Subject to global options POLLING_FREQUENCY and BATCH_SIZE",
     "page.edit_feed.last_modified_header": "LastModified header:",
     "page.edit_feed.etag_header": "ETag header:",
     "page.edit_feed.no_header": "None",

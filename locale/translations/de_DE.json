@@ -123,6 +123,8 @@
     "page.add_feed.choose_feed": "Abonnement auswählen",
     "page.edit_feed.title": "Abonnement bearbeiten: %s",
     "page.edit_feed.last_check": "Letzte Aktualisierung:",
+    "page.edit_feed.next_check": "Nächste Überprüfung:",
+    "page.edit_feed.next_check_note": "Vorbehaltlich globaler Optionen POLLING FREQUENCY und BATCH_SIZE",
     "page.edit_feed.last_modified_header": "Zuletzt geändert:",
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
     "page.edit_feed.no_header": "Nicht verfügbar",

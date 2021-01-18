@@ -125,6 +125,8 @@
     "page.add_feed.choose_feed": "Wybierz subskrypcję",
     "page.edit_feed.title": "Edytuj kanał: %s",
     "page.edit_feed.last_check": "Ostatnia aktualizacja:",
+    "page.edit_feed.next_check": "Następna kontrola:",
+    "page.edit_feed.next_check_note": "Z zastrzeżeniem opcji globalnych POLLING FREQUENCY i BATCH_SIZE",
     "page.edit_feed.last_modified_header": "Ostatnio zmienione:",
     "page.edit_feed.etag_header": "Nagłówek ETag:",
     "page.edit_feed.no_header": "Brak",
