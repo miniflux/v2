@@ -99,7 +99,7 @@
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Letzte Aktualisierung:",
     "page.feeds.unread_counter": "Anzahl der ungelesenen Artikel",
-    "page.feeds.read_counter": "Anzahl der gelesenen Artikel",
+    "page.feeds.total_counter": "Anzahl der Einträge insgesamt",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"

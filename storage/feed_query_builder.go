@@ -201,6 +201,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			c.title as category_title,
 			COALESCE(entries_count.read_count, 0) as read_count,
 			COALESCE(entries_count.unread_count, 0) as unread_count,
+			COALESCE(read_count + unread_count, 0) as total_count,
 			fi.icon_id,
 			u.timezone
 		FROM
@@ -258,6 +259,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.Category.Title,
 			&feed.ReadCount,
 			&feed.UnreadCount,
+			&feed.TotalCount,
 			&iconID,
 			&tz,
 		)

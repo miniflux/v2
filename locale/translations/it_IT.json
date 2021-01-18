@@ -99,7 +99,7 @@
     "page.feeds.title": "Feed",
     "page.feeds.last_check": "Ultimo controllo:",
     "page.feeds.unread_counter": "Numero di voci non lette",
-    "page.feeds.read_counter": "Numero di voci lette",
+    "page.feeds.total_counter": "Numero di voci totali",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"

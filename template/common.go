@@ -36,7 +36,7 @@ var templateCommonMap = map[string]string{
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
                 </span>
                 <span class="feed-entries-counter">
-                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.total_counter" }}">{{ .TotalCount }}</span>)
                 </span>
                 <span class="category">
                     <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
@@ -538,7 +538,7 @@ SOFTWARE.
 
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
-	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
+	"feed_list":        "3071310eb9fbe7dbdacb5cd5cdb0636177d8954021620fac4bcb1f399f005f91",
 	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
 	"icons":            "7161afa4cce46245a99cb1e49a605d3ff30e907c3f568ef9c17218718d20e042",
 	"item_meta":        "fefa219c8296f0370632336ed59a2c8b0c2146ee77f3b10de1d9b87982219dc5",

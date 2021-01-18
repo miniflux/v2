@@ -99,7 +99,7 @@
     "page.feeds.title": "フィード一覧",
     "page.feeds.last_check": "最終チェック:",
     "page.feeds.unread_counter": "未読記事の数",
-    "page.feeds.read_counter": "既読記事の数",
+    "page.feeds.total_counter": "総エントリ数",
     "page.feeds.error_count": [
         "%d 個のエラー",
         "%d 個のエラー"

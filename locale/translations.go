@@ -104,7 +104,7 @@ var translations = map[string]string{
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Letzte Aktualisierung:",
     "page.feeds.unread_counter": "Anzahl der ungelesenen Artikel",
-    "page.feeds.read_counter": "Anzahl der gelesenen Artikel",
+    "page.feeds.total_counter": "Anzahl der Einträge insgesamt",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"
@@ -468,7 +468,7 @@ var translations = map[string]string{
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Last check:",
     "page.feeds.unread_counter": "Number of unread entries",
-    "page.feeds.read_counter": "Number of read entries",
+    "page.feeds.total_counter": "Number of total entries",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -812,7 +812,7 @@ var translations = map[string]string{
     "page.feeds.title": "Fuentes",
     "page.feeds.last_check": "Última verificación:",
     "page.feeds.unread_counter": "Número de entradas no leídas",
-    "page.feeds.read_counter": "Número de entradas leídas",
+    "page.feeds.total_counter": "Número de entradas total",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"
@@ -1156,7 +1156,7 @@ var translations = map[string]string{
     "page.feeds.title": "Abonnements",
     "page.feeds.last_check": "Dernière vérification :",
     "page.feeds.unread_counter": "Nombre d'entrées non lues",
-    "page.feeds.read_counter": "Nombre d'entrées lues",
+    "page.feeds.total_counter": "Nombre total d'entrées",
     "page.feeds.error_count": [
         "%d erreur",
         "%d erreurs"
@@ -1520,7 +1520,7 @@ var translations = map[string]string{
     "page.feeds.title": "Feed",
     "page.feeds.last_check": "Ultimo controllo:",
     "page.feeds.unread_counter": "Numero di voci non lette",
-    "page.feeds.read_counter": "Numero di voci lette",
+    "page.feeds.total_counter": "Numero di voci totali",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"
@@ -1864,7 +1864,7 @@ var translations = map[string]string{
     "page.feeds.title": "フィード一覧",
     "page.feeds.last_check": "最終チェック:",
     "page.feeds.unread_counter": "未読記事の数",
-    "page.feeds.read_counter": "既読記事の数",
+    "page.feeds.total_counter": "総エントリ数",
     "page.feeds.error_count": [
         "%d 個のエラー",
         "%d 個のエラー"
@@ -2208,7 +2208,7 @@ var translations = map[string]string{
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Laatste update:",
     "page.feeds.unread_counter": "Aantal ongelezen vermeldingen",
-    "page.feeds.read_counter": "Aantal gelezen vermeldingen",
+    "page.feeds.total_counter": "Totaal aantal inzendingen",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
@@ -2571,7 +2571,7 @@ var translations = map[string]string{
     "page.feeds.title": "Kanały",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
     "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
-    "page.feeds.read_counter": "Liczba przeczytanych wpisów",
+    "page.feeds.total_counter": "Liczba wszystkich wpisów",
     "page.feeds.error_count": [
         "%d błąd",
         "%d błąd",
@@ -2940,7 +2940,7 @@ var translations = map[string]string{
     "page.feeds.title": "Fontes",
     "page.feeds.last_check": "Última verificação:",
     "page.feeds.unread_counter": "Numero de itens não lidos",
-    "page.feeds.read_counter": "Número de itens lidos",
+    "page.feeds.total_counter": "Número de entradas totais",
     "page.feeds.error_count": [
         "%d erro",
         "%d erros"
@@ -3285,7 +3285,7 @@ var translations = map[string]string{
     "page.feeds.title": "Подписки",
     "page.feeds.last_check": "Последняя проверка:",
     "page.feeds.unread_counter": "Количество непрочитанных записей",
-    "page.feeds.read_counter": "Количество прочитанных записей",
+    "page.feeds.total_counter": "Количество полных записей",
     "page.feeds.error_count": [
         "%d ошибка",
         "%d ошибки",
@@ -3635,7 +3635,7 @@ var translations = map[string]string{
     "page.feeds.title": "源",
     "page.feeds.last_check": "最后检查时间：",
     "page.feeds.unread_counter": "未读条目数",
-    "page.feeds.read_counter": "读取条目数",
+    "page.feeds.total_counter": "总条目数",
     "page.feeds.error_count": [
         "%d 错误"
     ],
@@ -3893,15 +3893,15 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "83df0b00c06a4a96a806456048cf61962aa1218acbd24d14b95bfedda8274797",
-	"en_US": "0f71c28287716454c8f1c191899e93adbe2410a109e06f17892ec9710389ac88",
-	"es_ES": "cfaf7d66f0ddf544492ae89c32b501bb687aaf3f65e08d09d1a6aa44bc0f55a6",
-	"fr_FR": "1d94f93c89c209ca0041f1c74a5e6ac0234fd8ddae900e41c312a326521f096b",
-	"it_IT": "6b33e802ac2bdf412c89a2de616fc162c1d98052bf92d2c81da0501809a223d3",
-	"ja_JP": "81e64953889c637a14695881cecafdef8fdcc9e0b5934281999ca23b0aee6037",
-	"nl_NL": "1532538d071ca8097a1e02c6a0f803598126f6d4bb3bb9409e20d9f8fc957a73",
-	"pl_PL": "2b4cb51082be142c6a5cf32d681348ff0224b60a052be318c99efe1d6fa269dc",
-	"pt_BR": "0dd731b01e2453453548818ba0539e54da7722d0c0cd931bf160cb32fd691fee",
-	"ru_RU": "8b482f58720668d325ce16c9e4399e01f22db5afe79558b10b2e782779678ec8",
-	"zh_CN": "193195d7609b7fb07386b0c56c4c85ecf370e6e17295a18c36a6e28289336a0e",
+	"de_DE": "cfc615af391cdf9b5a6bfcab8500825e86df0a587aa85a33c8c58f4a425262f5",
+	"en_US": "e834a576abed60f259c628f9d2a66652b54f541d3cd505d1059f34cd2eade9ee",
+	"es_ES": "b4bbd1689279efb07c90294a410001a94593f680077afba8f0633929ecd0a5cd",
+	"fr_FR": "e751458f0ea4b6bf91e8f3aa7d250295d6e1c10718b7bc23503a18dd78be9565",
+	"it_IT": "dd1a21140f41741a2002d0ca9da39a09efd4f2174117a29e5ea56d2f33224f63",
+	"ja_JP": "7e501f5b3b98c2ac4ed88fca0994f8e9f9864c03b9f3be3c647e408dd821ada5",
+	"nl_NL": "3021365e63e851a57c53f2484277a588ffff2efd4ca8c65cd85db7ea682bdd6e",
+	"pl_PL": "bd46491b7d3bd28b616b154f10ed7307eea5abdf2c9a32bbb80f90d588732a64",
+	"pt_BR": "4effc433057250bc2c509e7e82281abcee00d07d8e2983f7985c7d730d5f0e83",
+	"ru_RU": "c8b663850c4e7ee6ba67d8fa28055c2c7e5ead83913ae7ad6249f7d0f70b3cc6",
+	"zh_CN": "81ffba19c3f5cd5b8ee804e39ad3c232bf22bafd6ab9a649fee03195266ffd76",
 }

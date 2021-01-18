@@ -51,6 +51,7 @@ type Feed struct {
 	Icon               *FeedIcon `json:"icon"`
 	UnreadCount        int       `json:"-"`
 	ReadCount          int       `json:"-"`
+	TotalCount         int       `json:"-"`
 }
 
 func (f *Feed) String() string {

@@ -99,7 +99,7 @@
     "page.feeds.title": "Fontes",
     "page.feeds.last_check": "Última verificação:",
     "page.feeds.unread_counter": "Numero de itens não lidos",
-    "page.feeds.read_counter": "Número de itens lidos",
+    "page.feeds.total_counter": "Número de entradas totais",
     "page.feeds.error_count": [
         "%d erro",
         "%d erros"
