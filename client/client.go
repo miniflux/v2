@@ -223,6 +223,23 @@ func (c *Client) MarkCategoryAsRead(categoryID int64) error {
 	return err
 }
 
+// CategoryFeeds gets feeds of a cateogry.
+func (c *Client) CategoryFeeds(categoryID int64) (Feeds, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/categories/%d/feeds", categoryID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var feeds Feeds
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&feeds); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return feeds, nil
+}
+
 // DeleteCategory removes a category.
 func (c *Client) DeleteCategory(categoryID int64) error {
 	return c.request.Delete(fmt.Sprintf("/v1/categories/%d", categoryID))
@@ -378,6 +395,23 @@ func (c *Client) FeedEntry(feedID, entryID int64) (*Entry, error) {
 	return entry, nil
 }
 
+// CategoryEntry gets a single category entry.
+func (c *Client) CategoryEntry(categoryID, entryID int64) (*Entry, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/categories/%d/entries/%d", categoryID, entryID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var entry *Entry
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&entry); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return entry, nil
+}
+
 // Entry gets a single entry.
 func (c *Client) Entry(entryID int64) (*Entry, error) {
 	body, err := c.request.Get(fmt.Sprintf("/v1/entries/%d", entryID))
@@ -417,6 +451,25 @@ func (c *Client) Entries(filter *Filter) (*EntryResultSet, error) {
 // FeedEntries fetch feed entries.
 func (c *Client) FeedEntries(feedID int64, filter *Filter) (*EntryResultSet, error) {
 	path := buildFilterQueryString(fmt.Sprintf("/v1/feeds/%d/entries", feedID), filter)
+
+	body, err := c.request.Get(path)
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var result EntryResultSet
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&result); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return &result, nil
+}
+
+// CategoryEntries fetch entries of a category.
+func (c *Client) CategoryEntries(categoryID int64, filter *Filter) (*EntryResultSet, error) {
+	path := buildFilterQueryString(fmt.Sprintf("/v1/categories/%d/entries", categoryID), filter)
 
 	body, err := c.request.Get(path)
 	if err != nil {
