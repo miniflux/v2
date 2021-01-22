@@ -33,7 +33,6 @@ func Serve(store *storage.Storage, pool *worker.Pool) *http.Server {
 	certFile := config.Opts.CertFile()
 	keyFile := config.Opts.CertKeyFile()
 	certDomain := config.Opts.CertDomain()
-	certCache := config.Opts.CertCache()
 	listenAddr := config.Opts.ListenAddr()
 	server := &http.Server{
 		ReadTimeout:  300 * time.Second,
@@ -47,9 +46,9 @@ func Serve(store *storage.Storage, pool *worker.Pool) *http.Server {
 		startSystemdSocketServer(server)
 	case strings.HasPrefix(listenAddr, "/"):
 		startUnixSocketServer(server, listenAddr)
-	case certDomain != "" && certCache != "":
+	case certDomain != "":
 		config.Opts.HTTPS = true
-		startAutoCertTLSServer(server, certDomain, certCache)
+		startAutoCertTLSServer(server, certDomain, store)
 	case certFile != "" && keyFile != "":
 		config.Opts.HTTPS = true
 		server.Addr = listenAddr
@@ -119,10 +118,10 @@ func tlsConfig() *tls.Config {
 	}
 }
 
-func startAutoCertTLSServer(server *http.Server, certDomain, certCache string) {
+func startAutoCertTLSServer(server *http.Server, certDomain string, store *storage.Storage) {
 	server.Addr = ":https"
 	certManager := autocert.Manager{
-		Cache:      autocert.DirCache(certCache),
+		Cache:      storage.NewCache(store),
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist(certDomain),
 	}

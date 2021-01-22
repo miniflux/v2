@@ -496,4 +496,14 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TABLE acme_cache (
+				key varchar(400) not null primary key,
+				data bytea not null,
+				updated_at timestamptz not null
+			);
+		`)
+		return err
+	},
 }
