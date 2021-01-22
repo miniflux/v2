@@ -44,8 +44,9 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 
 	return &SubscriptionForm{
 		URL:            r.FormValue("url"),
-		Crawler:        r.FormValue("crawler") == "1",
 		CategoryID:     int64(categoryID),
+		Crawler:        r.FormValue("crawler") == "1",
+		FetchViaProxy:  r.FormValue("fetch_via_proxy") == "1",
 		UserAgent:      r.FormValue("user_agent"),
 		Username:       r.FormValue("feed_username"),
 		Password:       r.FormValue("feed_password"),
