@@ -47,7 +47,7 @@ ReadWritePaths=/run
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#AmbientCapabilities=
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 
-# Provide a private /tmp for CERT_CACHE (required when using Let's Encrypt)
+# Provide a private /tmp
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#PrivateTmp=
 PrivateTmp=true
 

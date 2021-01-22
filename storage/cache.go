@@ -1,6 +1,8 @@
-//
-// See https://godoc.org/golang.org/x/crypto/acme/autocert
-package storage
+// Copyright 2020 Dave Marquard. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
+package storage // import "miniflux.app/storage"
 
 import (
 	"context"

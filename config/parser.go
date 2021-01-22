@@ -112,8 +112,6 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.certKeyFile = parseString(value, defaultKeyFile)
 		case "CERT_DOMAIN":
 			p.opts.certDomain = parseString(value, defaultCertDomain)
-		case "CERT_CACHE":
-			p.opts.certCache = parseString(value, defaultCertCache)
 		case "CLEANUP_FREQUENCY_HOURS":
 			p.opts.cleanupFrequencyHours = parseInt(value, defaultCleanupFrequencyHours)
 		case "CLEANUP_ARCHIVE_READ_DAYS":

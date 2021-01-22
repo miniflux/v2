@@ -37,7 +37,6 @@ const (
 	defaultCertFile                           = ""
 	defaultKeyFile                            = ""
 	defaultCertDomain                         = ""
-	defaultCertCache                          = "/tmp/cert_cache"
 	defaultCleanupFrequencyHours              = 24
 	defaultCleanupArchiveReadDays             = 60
 	defaultCleanupArchiveUnreadDays           = 180
@@ -92,7 +91,6 @@ type Options struct {
 	listenAddr                         string
 	certFile                           string
 	certDomain                         string
-	certCache                          string
 	certKeyFile                        string
 	cleanupFrequencyHours              int
 	cleanupArchiveReadDays             int
@@ -148,7 +146,6 @@ func NewOptions() *Options {
 		listenAddr:                         defaultListenAddr,
 		certFile:                           defaultCertFile,
 		certDomain:                         defaultCertDomain,
-		certCache:                          defaultCertCache,
 		certKeyFile:                        defaultKeyFile,
 		cleanupFrequencyHours:              defaultCleanupFrequencyHours,
 		cleanupArchiveReadDays:             defaultCleanupArchiveReadDays,
@@ -261,11 +258,6 @@ func (o *Options) CertKeyFile() string {
 // CertDomain returns the domain to use for Let's Encrypt certificate.
 func (o *Options) CertDomain() string {
 	return o.certDomain
-}
-
-// CertCache returns the directory to use for Let's Encrypt session cache.
-func (o *Options) CertCache() string {
-	return o.certCache
 }
 
 // CleanupFrequencyHours returns the interval in hours for cleanup jobs.
@@ -458,7 +450,6 @@ func (o *Options) SortedOptions() []*Option {
 		"BASE_PATH":                              o.basePath,
 		"BASE_URL":                               o.baseURL,
 		"BATCH_SIZE":                             o.batchSize,
-		"CERT_CACHE":                             o.certCache,
 		"CERT_DOMAIN":                            o.certDomain,
 		"CERT_FILE":                              o.certFile,
 		"CLEANUP_ARCHIVE_READ_DAYS":              o.cleanupArchiveReadDays,
