@@ -97,36 +97,54 @@ Environment variables override the values defined in the config file.
 .TP
 .B DEBUG
 Set the value to 1 to enable debug logs\&.
+.br
+Disabled by default\&.
 .TP
 .B SERVER_TIMING_HEADER
 Set the value to 1 to enable server-timing headers\&.
+.br
+Disabled by default\&.
 .TP
 .B LOG_DATE_TIME
 Display the date and time in log messages\&.
+.br
+Disabled by default\&.
 .TP
 .B WORKER_POOL_SIZE
-Number of background workers (default is 5)\&.
+Number of background workers\&.
+.br
+Default is 5 workers\&.
 .TP
 .B POLLING_FREQUENCY
-Refresh interval in minutes for feeds (default is 60 minutes)\&.
+Refresh interval in minutes for feeds\&.
+.br
+Default is 60 minutes\&.
 .TP
 .B BATCH_SIZE
-Number of feeds to send to the queue for each interval (default is 10)\&.
+Number of feeds to send to the queue for each interval\&.
+.br
+Default is 10 feeds\&.
 .TP
 .B POLLING_SCHEDULER
-Scheduler used for polling feeds. Possible values are "round_robin" (default) or "entry_frequency"\&.
-.IP
+Scheduler used for polling feeds. Possible values are "round_robin" or "entry_frequency"\&.
+.br
 The maximum number of feeds polled for a given period is subject to POLLING_FREQUENCY and BATCH_SIZE\&.
-.IP
+.br
 When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&.
-.IP
+.br
 The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
+.br
+Default is "round_robin"\&.
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL
-Maximum interval in minutes for the entry frequency scheduler (default is 24 hours)\&.
+Maximum interval in minutes for the entry frequency scheduler\&.
+.br
+Default is 24 hours\&.
 .TP
 .B SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL
-Minimum interval in minutes for the entry frequency scheduler (default is 5 minutes)\&.
+Minimum interval in minutes for the entry frequency scheduler\&.
+.br
+Default is 5 minutes\&.
 .TP
 .B DATABASE_URL
 Postgresql connection parameters\&.
@@ -135,20 +153,28 @@ Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
 .TP
 .B DATABASE_URL_FILE
 Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
+.br
+Default is empty\&.
 .TP
 .B DATABASE_MAX_CONNS
-Maximum number of database connections (default is 20)\&.
+Maximum number of database connections\&.
+.br
+Default is 20\&.
 .TP
 .B DATABASE_MIN_CONNS
-Minimum number of database connections (default is 1)\&.
+Minimum number of database connections\&.
+.br
+Default is 20\&.
 .TP
 .B LISTEN_ADDR
-Address to listen on. Default is 127.0.0.1:8080\&.
+Address to listen on. Use absolute path to listen on Unix socket (/var/run/miniflux.sock)\&.
 .br
-Use absolute path to listen on Unix socket (/var/run/miniflux.sock)\&.
+Default is 127.0.0.1:8080\&.
 .TP
 .B PORT
 Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
+.br
+Default is empty\&.
 .TP
 .B BASE_URL
 Base URL to generate HTML links and base path for cookies\&.
@@ -181,27 +207,43 @@ Default is 30 days\&.
 .TP
 .B HTTPS
 Forces cookies to use secure flag and send HSTS header\&.
+.br
+Default is empty\&.
 .TP
 .B DISABLE_HSTS
 Disable HTTP Strict Transport Security header if \fBHTTPS\fR is set\&.
+.br
+Default is false (The HSTS is enabled)\&.
 .TP
 .B DISABLE_HTTP_SERVICE
 Set the value to 1 to disable the HTTP service\&.
+.br
+Default is false (The HTTP service is enabled)\&.
 .TP
 .B DISABLE_SCHEDULER_SERVICE
 Set the value to 1 to disable the internal scheduler service\&.
+.br
+Default is false (The internal scheduler service is enabled)\&.
 .TP
 .B CERT_FILE
 Path to SSL certificate\&.
+.br
+Default is empty\&.
 .TP
 .B KEY_FILE
 Path to SSL private key\&.
+.br
+Default is empty\&.
 .TP
 .B CERT_DOMAIN
 Use Let's Encrypt to get automatically a certificate for this domain\&.
+.br
+Default is empty\&.
 .TP
 .B CERT_CACHE
-Let's Encrypt cache directory (default is /tmp/cert_cache)\&.
+Let's Encrypt cache directory\&.
+.br
+Default is /tmp/cert_cache\&.
 .TP
 .B METRICS_COLLECTOR
 Set to 1 to enable metrics collector. Expose a /metrics endpoint for Prometheus.
@@ -209,7 +251,9 @@ Set to 1 to enable metrics collector. Expose a /metrics endpoint for Prometheus.
 Disabled by default\&.
 .TP
 .B METRICS_REFRESH_INTERVAL
-Refresh interval to collect database metrics\&. Default is 60 seconds\&.
+Refresh interval to collect database metrics\&.
+.br
+Default is 60 seconds\&.
 .TP
 .B METRICS_ALLOWED_NETWORKS
 List of networks allowed to access the metrics endpoint (comma-separated values)\&.
@@ -218,51 +262,85 @@ Default is 127.0.0.1/8\&.
 .TP
 .B OAUTH2_PROVIDER
 Possible values are "google" or "oidc"\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_CLIENT_ID
 OAuth2 client ID\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_CLIENT_ID_FILE
 Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_ID value\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_CLIENT_SECRET
 OAuth2 client secret\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_CLIENT_SECRET_FILE
 Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_SECRET value\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_REDIRECT_URL
 OAuth2 redirect URL\&.
+.br
+This URL must be registered with the provider and is something like https://miniflux.example.org/oauth2/oidc/callback\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_OIDC_DISCOVERY_ENDPOINT
 OpenID Connect discovery endpoint\&.
+.br
+Default is empty\&.
 .TP
 .B OAUTH2_USER_CREATION
 Set to 1 to authorize OAuth2 user creation\&.
+.br
+Disabled by default\&.
 .TP
 .B RUN_MIGRATIONS
 Set to 1 to run database migrations\&.
+.br
+Disabled by default\&.
 .TP
 .B CREATE_ADMIN
 Set to 1 to create an admin user from environment variables\&.
+.br
+Disabled by default\&.
 .TP
 .B ADMIN_USERNAME
 Admin user login, used only if $CREATE_ADMIN is enabled\&.
+.br
+Default is empty\&.
 .TP
 .B ADMIN_USERNAME_FILE
 Path to a secret key exposed as a file, it should contain $ADMIN_USERNAME value\&.
+.br
+Default is empty\&.
 .TP
 .B ADMIN_PASSWORD
 Admin user password, used only if $CREATE_ADMIN is enabled\&.
+.br
+Default is empty\&.
 .TP
 .B ADMIN_PASSWORD_FILE
 Path to a secret key exposed as a file, it should contain $ADMIN_PASSWORD value\&.
+.br
+Default is empty\&.
 .TP
 .B POCKET_CONSUMER_KEY
 Pocket consumer API key for all users\&.
+.br
+Default is empty\&.
 .TP
 .B POCKET_CONSUMER_KEY_FILE
 Path to a secret key exposed as a file, it should contain $POCKET_CONSUMER_KEY value\&.
+.br
+Default is empty\&.
 .TP
 .B PROXY_IMAGES
 Avoids mixed content warnings for external images: http-only, all, or none\&.
@@ -287,19 +365,29 @@ Default is empty\&.
 .B HTTP_CLIENT_USER_AGENT
 The default User-Agent header to use for the HTTP client. Can be overridden in per-feed settings\&.
 .br
-Default is empty. When empty, Miniflux uses a default User-Agent that includes the Miniflux version\&.
+When empty, Miniflux uses a default User-Agent that includes the Miniflux version\&.
+.br
+Default is empty.
 .TP
 .B AUTH_PROXY_HEADER
 Proxy authentication HTTP header\&.
+.br
+Default is empty.
 .TP
 .B AUTH_PROXY_USER_CREATION
 Set to 1 to create users based on proxy authentication information\&.
+.br
+Disabled by default\&.
 .TP
 .B MAINTENANCE_MODE
 Set to 1 to enable maintenance mode\&.
+.br
+Disabled by default\&.
 .TP
 .B MAINTENANCE_MESSAGE
 Define a custom maintenance message\&.
+.br
+Default is "Miniflux is currently under maintenance".
 
 .SH AUTHORS
 .P
