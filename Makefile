@@ -109,11 +109,17 @@ lint:
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
 	psql -U postgres -c 'create database miniflux_test;'
-	DATABASE_URL=$(DB_URL) go run main.go -migrate
-	DATABASE_URL=$(DB_URL) ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go -create-admin
 	go build -o miniflux-test main.go
-	DATABASE_URL=$(DB_URL) ./miniflux-test -debug >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
-	while ! echo exit | nc localhost 8080; do sleep 1; done >/dev/null
+
+	DATABASE_URL=$(DB_URL) \
+	ADMIN_USERNAME=admin \
+	ADMIN_PASSWORD=test123 \
+	CREATE_ADMIN=1 \
+	RUN_MIGRATIONS=1 \
+	DEBUG=1 \
+	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+	
+	while ! nc -z localhost 8080; do sleep 1; done
 	go test -v -tags=integration -count=1 miniflux.app/tests
 
 clean-integration-test:

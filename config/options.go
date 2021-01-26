@@ -29,6 +29,7 @@ const (
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
+	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
 	defaultDatabaseMaxConns                   = 20
@@ -101,6 +102,7 @@ type Options struct {
 	pollingScheduler                   string
 	schedulerEntryFrequencyMinInterval int
 	schedulerEntryFrequencyMaxInterval int
+	pollingParsingErrorLimit           int
 	workerPoolSize                     int
 	createAdmin                        bool
 	adminUsername                      string
@@ -156,6 +158,7 @@ func NewOptions() *Options {
 		pollingScheduler:                   defaultPollingScheduler,
 		schedulerEntryFrequencyMinInterval: defaultSchedulerEntryFrequencyMinInterval,
 		schedulerEntryFrequencyMaxInterval: defaultSchedulerEntryFrequencyMaxInterval,
+		pollingParsingErrorLimit:           defaultPollingParsingErrorLimit,
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
 		proxyImages:                        defaultProxyImages,
@@ -308,6 +311,11 @@ func (o *Options) SchedulerEntryFrequencyMaxInterval() int {
 // SchedulerEntryFrequencyMinInterval returns the minimum interval in minutes for the entry frequency scheduler.
 func (o *Options) SchedulerEntryFrequencyMinInterval() int {
 	return o.schedulerEntryFrequencyMinInterval
+}
+
+// PollingParsingErrorLimit returns the limit of errors when to stop polling.
+func (o *Options) PollingParsingErrorLimit() int {
+	return o.pollingParsingErrorLimit
 }
 
 // IsOAuth2UserCreationAllowed returns true if user creation is allowed for OAuth2 users.
@@ -484,6 +492,7 @@ func (o *Options) SortedOptions() []*Option {
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
 		"POCKET_CONSUMER_KEY":                    o.pocketConsumerKey,
 		"POLLING_FREQUENCY":                      o.pollingFrequency,
+		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
 		"PROXY_IMAGES":                           o.proxyImages,
 		"ROOT_URL":                               o.rootURL,

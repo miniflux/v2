@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"miniflux.app/config"
 	"miniflux.app/model"
 )
 
@@ -80,9 +81,13 @@ func (s *Storage) CountFeeds(userID int64) int {
 
 // CountUserFeedsWithErrors returns the number of feeds with parsing errors that belong to the given user.
 func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
+	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
+	if pollingParsingErrorLimit <= 0 {
+		pollingParsingErrorLimit = 1
+	}
 	query := `SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count >= $2`
 	var result int
-	err := s.db.QueryRow(query, userID, maxParsingError).Scan(&result)
+	err := s.db.QueryRow(query, userID, pollingParsingErrorLimit).Scan(&result)
 	if err != nil {
 		return 0
 	}
@@ -92,9 +97,13 @@ func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
 
 // CountAllFeedsWithErrors returns the number of feeds with parsing errors.
 func (s *Storage) CountAllFeedsWithErrors() int {
+	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
+	if pollingParsingErrorLimit <= 0 {
+		pollingParsingErrorLimit = 1
+	}
 	query := `SELECT count(*) FROM feeds WHERE parsing_error_count >= $1`
 	var result int
-	err := s.db.QueryRow(query, maxParsingError).Scan(&result)
+	err := s.db.QueryRow(query, pollingParsingErrorLimit).Scan(&result)
 	if err != nil {
 		return 0
 	}

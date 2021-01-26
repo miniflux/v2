@@ -1,7 +1,8 @@
 # Changing the systemd config can be done like this:
-# 1) Edit the config file: vim /usr/lib/systemd/system/miniflux.service
-# 2) Reload systemd: systemctl daemon-reload
-# 3) Restart the process: systemctl restart miniflux
+# 1) Edit the config file: systemctl edit --full miniflux
+# 2) Restart the process: systemctl restart miniflux
+# All your changes can be reverted with `systemctl revert miniflux.service`.
+# See https://wiki.archlinux.org/index.php/Systemd#Editing_provided_units.
 
 [Unit]
 Description=Miniflux Feed Reader

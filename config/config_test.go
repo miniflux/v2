@@ -726,6 +726,24 @@ func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
 	}
 }
 
+func TestPollingParsingErrorLimit(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("POLLING_PARSING_ERROR_LIMIT", "100")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 100
+	result := opts.PollingParsingErrorLimit()
+
+	if result != expected {
+		t.Fatalf(`Unexpected POLLING_SCHEDULER value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestOAuth2UserCreationWhenUnset(t *testing.T) {
 	os.Clearenv()
 
