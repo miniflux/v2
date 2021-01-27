@@ -72,6 +72,21 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
+func (h *handler) refreshAllFeedsWithErrors(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	jobs, err := h.store.NewUserBatchForErrorFeeds(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	go func() {
+		h.pool.Push(jobs)
+	}()
+
+	json.NoContent(w, r)
+}
+
 func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	var feedModificationRequest model.FeedModificationRequest
 	if err := json_parser.NewDecoder(r.Body).Decode(&feedModificationRequest); err != nil {

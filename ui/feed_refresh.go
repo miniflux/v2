@@ -37,3 +37,18 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 
 	html.Redirect(w, r, route.Path(h.router, "feeds"))
 }
+
+func (h *handler) refreshAllFeedsWithErrors(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	jobs, err := h.store.NewUserBatchForErrorFeeds(userID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	go func() {
+		h.pool.Push(jobs)
+	}()
+
+	html.Redirect(w, r, route.Path(h.router, "feeds"))
+}

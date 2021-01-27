@@ -45,6 +45,21 @@ func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList,
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID)
 }
 
+// NewUserBatchForErrorFeeds returns a serie of jobs for feeds with errors for a given user.
+func (s *Storage) NewUserBatchForErrorFeeds(userID int64) (jobs model.JobList, err error) {
+	query := `
+		SELECT
+			id,
+			user_id
+		FROM
+			feeds
+		WHERE
+			user_id=$1 AND disabled is false AND parsing_error_count > 0
+		ORDER BY next_check_at ASC
+	`
+	return s.fetchBatchRows(query, userID)
+}
+
 func (s *Storage) fetchBatchRows(query string, args ...interface{}) (jobs model.JobList, err error) {
 	rows, err := s.db.Query(query, args...)
 	if err != nil {

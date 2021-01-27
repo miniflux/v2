@@ -752,3 +752,23 @@ func TestGetFeedsByCategory(t *testing.T) {
 		t.Fatalf(`Invalid feed category title, got "%v" instead of "%v"`, feeds[0].Category.Title, category.Title)
 	}
 }
+
+func TestRefreshAllFeeds(t *testing.T) {
+	client := createClient(t)
+	createFeed(t, client)
+
+	err := client.RefreshAllFeeds()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRefreshAllFeedsWithErrors(t *testing.T) {
+	client := createClient(t)
+	createFeed(t, client)
+
+	err := client.RefreshAllFeedsWithErrors()
+	if err != nil {
+		t.Fatal(err)
+	}
+}

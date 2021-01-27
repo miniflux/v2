@@ -350,6 +350,12 @@ func (c *Client) RefreshAllFeeds() error {
 	return err
 }
 
+// RefreshAllFeedsWithErrors refreshes feeds with erros.
+func (c *Client) RefreshAllFeedsWithErrors() error {
+	_, err := c.request.Put(fmt.Sprintf("/v1/feeds/refresh/errors"), nil)
+	return err
+}
+
 // RefreshFeed refreshes a feed.
 func (c *Client) RefreshFeed(feedID int64) error {
 	_, err := c.request.Put(fmt.Sprintf("/v1/feeds/%d/refresh", feedID), nil)

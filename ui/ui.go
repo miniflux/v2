@@ -63,6 +63,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	// Feed listing pages.
 	uiRouter.HandleFunc("/feeds", handler.showFeedsPage).Name("feeds").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/feeds/refresh", handler.refreshAllFeeds).Name("refreshAllFeeds").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/feeds/refresh/errors", handler.refreshAllFeedsWithErrors).Name("refreshAllFeedsWithErrors").Methods(http.MethodGet)
 
 	// Individual feed pages.
 	uiRouter.HandleFunc("/feed/{feedID}/refresh", handler.refreshFeed).Name("refreshFeed").Methods(http.MethodGet)
