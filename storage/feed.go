@@ -125,7 +125,7 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	builder.WithCounters()
 	builder.WithOrder(model.DefaultFeedSorting)
 	builder.WithDirection(model.DefaultFeedSortingDirection)
-	return  builder.GetFeeds()
+	return builder.GetFeeds()
 }
 
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
@@ -176,7 +176,7 @@ func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	case err != nil:
 		return nil, fmt.Errorf(`store: unable to fetch feed #%d: %v`, feedID, err)
 	}
-	
+
 	return feed, nil
 }
 

@@ -6,6 +6,7 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"context"
+
 	"miniflux.app/config"
 	"miniflux.app/oauth2"
 )

@@ -5,8 +5,8 @@
 package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
-	"strings"
 	"regexp"
+	"strings"
 
 	"miniflux.app/logger"
 	"miniflux.app/url"
