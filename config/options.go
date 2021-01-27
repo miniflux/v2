@@ -43,6 +43,7 @@ const (
 	defaultCleanupArchiveUnreadDays           = 180
 	defaultCleanupRemoveSessionsDays          = 30
 	defaultProxyImages                        = "http-only"
+	defaultFetchYouTubeWatchTime              = false
 	defaultCreateAdmin                        = false
 	defaultAdminUsername                      = ""
 	defaultAdminPassword                      = ""
@@ -108,6 +109,7 @@ type Options struct {
 	adminUsername                      string
 	adminPassword                      string
 	proxyImages                        string
+	fetchYouTubeWatchTime              bool
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
 	oauth2ClientSecret                 string
@@ -162,6 +164,7 @@ func NewOptions() *Options {
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
 		proxyImages:                        defaultProxyImages,
+		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		oauth2UserCreationAllowed:          defaultOAuth2UserCreation,
 		oauth2ClientID:                     defaultOAuth2ClientID,
 		oauth2ClientSecret:                 defaultOAuth2ClientSecret,
@@ -373,6 +376,12 @@ func (o *Options) AdminPassword() string {
 	return o.adminPassword
 }
 
+// FetchYouTubeWatchTime returns true if the YouTube video duration
+// should be fetched and used as a reading time.
+func (o *Options) FetchYouTubeWatchTime() bool {
+	return o.fetchYouTubeWatchTime
+}
+
 // ProxyImages returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
 func (o *Options) ProxyImages() string {
 	return o.proxyImages
@@ -469,6 +478,7 @@ func (o *Options) SortedOptions() []*Option {
 		"DATABASE_MIN_CONNS":                     o.databaseMinConns,
 		"DATABASE_URL":                           o.databaseURL,
 		"DEBUG":                                  o.debug,
+		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
 		"HSTS":                                   o.hsts,
 		"HTTPS":                                  o.HTTPS,
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
