@@ -15,17 +15,17 @@ import (
 
 // FeedQueryBuilder builds a SQL query to fetch feeds.
 type FeedQueryBuilder struct {
-	store              *Storage
-	args               []interface{}
-	conditions         []string
-	order              string
-	direction          string
-	limit              int
-	offset             int
-	withCounters       bool
-	counterJoinFeeds    bool
-	counterArgs        []interface{}
-	counterConditions  []string
+	store             *Storage
+	args              []interface{}
+	conditions        []string
+	order             string
+	direction         string
+	limit             int
+	offset            int
+	withCounters      bool
+	counterJoinFeeds  bool
+	counterArgs       []interface{}
+	counterConditions []string
 }
 
 // NewFeedQueryBuilder returns a new FeedQueryBuilder.

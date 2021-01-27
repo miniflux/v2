@@ -15,8 +15,8 @@ import (
 
 // List of supported schedulers.
 const (
-	SchedulerRoundRobin         = "round_robin"
-	SchedulerEntryFrequency     = "entry_frequency"
+	SchedulerRoundRobin     = "round_robin"
+	SchedulerEntryFrequency = "entry_frequency"
 	// Default settings for the feed query builder
 	DefaultFeedSorting          = "parsing_error_count"
 	DefaultFeedSortingDirection = "desc"

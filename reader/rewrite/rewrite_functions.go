@@ -229,4 +229,3 @@ func replaceCustom(entryContent string, searchTerm string, replaceTerm string) s
 	}
 	return entryContent
 }
-
