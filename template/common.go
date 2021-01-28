@@ -100,8 +100,13 @@ var templateCommonMap = map[string]string{
         <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
     </li>
     <li>
-        <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+        <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_feeds_all" }}</a>
     </li>
+    {{ if gt .countErrorFeeds 0 }}
+    <li>
+        <a href="{{ route "refreshAllFeedsWithErrors" }}">{{ t "menu.refresh_feeds_errors" }}</a>
+    </li>
+    {{ end }}
 </ul>
 {{ end }}`,
 	"icons": `<!--
@@ -539,7 +544,7 @@ SOFTWARE.
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
 	"feed_list":        "931e43d328a116318c510de5658c688cd940b934c86b6ec82a472e1f81e020ae",
-	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
+	"feed_menu":        "ab6f88269b269a2948672a9f0d6c0af0d49ca88be950f2d8c2365382d11977cd",
 	"icons":            "7161afa4cce46245a99cb1e49a605d3ff30e907c3f568ef9c17218718d20e042",
 	"item_meta":        "fefa219c8296f0370632336ed59a2c8b0c2146ee77f3b10de1d9b87982219dc5",
 	"layout":           "03c77ed0163b790c0622ecec173119537087c66f6a3925a931ae83a9a94d32cf",

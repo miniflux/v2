@@ -3,7 +3,7 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.import.title" }}</h1>
-    {{ template "feed_menu" }}
+    {{ template "feed_menu" dict "countErrorFeeds" .countErrorFeeds }}
 </section>
 
 {{ if .errorMessage }}
