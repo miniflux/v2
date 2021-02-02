@@ -26,6 +26,7 @@ type SettingsForm struct {
 	ShowReadingTime   bool
 	CustomCSS         string
 	EntrySwipe        bool
+	DisplayMode       string
 }
 
 // Merge updates the fields of the given user.
@@ -40,6 +41,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.ShowReadingTime = s.ShowReadingTime
 	user.Stylesheet = s.CustomCSS
 	user.EntrySwipe = s.EntrySwipe
+	user.DisplayMode = s.DisplayMode
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -50,7 +52,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" {
+	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
@@ -87,5 +89,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		ShowReadingTime:   r.FormValue("show_reading_time") == "1",
 		CustomCSS:         r.FormValue("custom_css"),
 		EntrySwipe:        r.FormValue("entry_swipe") == "1",
+		DisplayMode:       r.FormValue("display_mode"),
 	}
 }

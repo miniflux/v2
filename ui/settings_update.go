@@ -60,6 +60,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		Timezone:       model.OptionalString(settingsForm.Timezone),
 		EntryDirection: model.OptionalString(settingsForm.EntryDirection),
 		EntriesPerPage: model.OptionalInt(settingsForm.EntriesPerPage),
+		DisplayMode:    model.OptionalString(settingsForm.DisplayMode),
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, loggedUser.ID, userModificationRequest); validationErr != nil {

@@ -82,6 +82,10 @@ func TestGetUsers(t *testing.T) {
 	if users[0].EntriesPerPage != 100 {
 		t.Fatalf(`Invalid entries per page, got "%v"`, users[0].EntriesPerPage)
 	}
+
+	if users[0].DisplayMode != "standalone" {
+		t.Fatalf(`Invalid web app display mode, got "%v"`, users[0].DisplayMode)
+	}
 }
 
 func TestCreateStandardUser(t *testing.T) {
@@ -126,6 +130,10 @@ func TestCreateStandardUser(t *testing.T) {
 
 	if user.EntriesPerPage != 100 {
 		t.Fatalf(`Invalid entries per page, got "%v"`, user.EntriesPerPage)
+	}
+
+	if user.DisplayMode != "standalone" {
+		t.Fatalf(`Invalid web app display mode, got "%v"`, user.DisplayMode)
 	}
 }
 
@@ -195,6 +203,10 @@ func TestGetUserByID(t *testing.T) {
 	if user.EntriesPerPage != 100 {
 		t.Fatalf(`Invalid entries per page, got "%v"`, user.EntriesPerPage)
 	}
+
+	if user.DisplayMode != "standalone" {
+		t.Fatalf(`Invalid web app display mode, got "%v"`, user.DisplayMode)
+	}
 }
 
 func TestGetUserByUsername(t *testing.T) {
@@ -250,6 +262,10 @@ func TestGetUserByUsername(t *testing.T) {
 	if user.EntriesPerPage != 100 {
 		t.Fatalf(`Invalid entries per page, got "%v"`, user.EntriesPerPage)
 	}
+
+	if user.DisplayMode != "standalone" {
+		t.Fatalf(`Invalid web app display mode, got "%v"`, user.DisplayMode)
+	}
 }
 
 func TestUpdateUserTheme(t *testing.T) {
@@ -282,10 +298,12 @@ func TestUpdateUserFields(t *testing.T) {
 	stylesheet := "body { color: red }"
 	swipe := false
 	entriesPerPage := 5
+	displayMode := "fullscreen"
 	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{
 		Stylesheet:     &stylesheet,
 		EntrySwipe:     &swipe,
 		EntriesPerPage: &entriesPerPage,
+		DisplayMode:    &displayMode,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -301,6 +319,10 @@ func TestUpdateUserFields(t *testing.T) {
 
 	if user.EntriesPerPage != entriesPerPage {
 		t.Fatalf(`Unable to update user EntriesPerPage: got %q instead of %q`, user.EntriesPerPage, entriesPerPage)
+	}
+
+	if user.DisplayMode != displayMode {
+		t.Fatalf(`Unable to update user DisplayMode: got %q instead of %q`, user.DisplayMode, displayMode)
 	}
 }
 
@@ -391,6 +413,21 @@ func TestUpdateUserPasswordWithInvalidValue(t *testing.T) {
 	_, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{Password: &password})
 	if err == nil {
 		t.Fatal(`Updating a user password with an invalid value should raise an error`)
+	}
+}
+
+func TestUpdateUserDisplayModeWithInvalidValue(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	displayMode := "invalid"
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{DisplayMode: &displayMode})
+	if err == nil {
+		t.Fatal(`Updating a user web app display mode with an invalid value should raise an error`)
 	}
 }
 
