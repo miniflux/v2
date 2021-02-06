@@ -89,7 +89,7 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 		UPDATE
 			entries
 		SET
-			document_vectors = setweight(to_tsvector(substring(coalesce(title, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce(content, '') for 1000000)), 'B')
+			document_vectors = setweight(to_tsvector(left(coalesce(title, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce(content, ''), 500000)), 'B')
 		WHERE
 			id=$1 AND user_id=$2
 	`
@@ -133,7 +133,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$9,
 				$10,
 				now(),
-				setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($6, '') for 1000000)), 'B')
+				setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($6, ''), 500000)), 'B')
 			)
 		RETURNING
 			id, status
@@ -182,7 +182,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			content=$4,
 			author=$5,
 			reading_time=$6,
-			document_vectors = setweight(to_tsvector(substring(coalesce($1, '') for 1000000)), 'A') || setweight(to_tsvector(substring(coalesce($4, '') for 1000000)), 'B')
+			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($4, ''), 500000)), 'B')
 		WHERE
 			user_id=$7 AND feed_id=$8 AND hash=$9
 		RETURNING
