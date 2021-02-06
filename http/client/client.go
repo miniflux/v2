@@ -115,7 +115,7 @@ func (c *Client) WithAuthorization(authorization string) *Client {
 
 // WithCacheHeaders defines caching headers.
 func (c *Client) WithCacheHeaders(etagHeader, lastModifiedHeader string) *Client {
-	c.requestLastModifiedHeader = etagHeader
+	c.requestEtagHeader = etagHeader
 	c.requestLastModifiedHeader = lastModifiedHeader
 	return c
 }
