@@ -111,7 +111,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 				} else {
 					continue
 				}
-			} else if tagName == "img" && attribute.Key == "src" && strings.HasPrefix(attribute.Val, "data:") {
+			} else if tagName == "img" && attribute.Key == "src" && isValidDataAttribute(attribute.Val) {
 				value = attribute.Val
 			} else {
 				value, err = url.AbsoluteURL(baseURL, value)
@@ -479,4 +479,25 @@ func isValidWidthOrDensityDescriptor(value string) bool {
 
 	_, err := strconv.ParseFloat(value[0:len(value)-1], 32)
 	return err == nil
+}
+
+func isValidDataAttribute(value string) bool {
+	var dataAttributeAllowList = []string{
+		"data:image/avif",
+		"data:image/apng",
+		"data:image/png",
+		"data:image/svg",
+		"data:image/svg+xml",
+		"data:image/jpg",
+		"data:image/jpeg",
+		"data:image/gif",
+		"data:image/webp",
+	}
+
+	for _, prefix := range dataAttributeAllowList {
+		if strings.HasPrefix(value, prefix) {
+			return true
+		}
+	}
+	return false
 }

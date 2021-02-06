@@ -15,6 +15,16 @@ func TestValidInput(t *testing.T) {
 	}
 }
 
+func TestImgWithTextDataURL(t *testing.T) {
+	input := `<img src="data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==" alt="Example">`
+	expected := ``
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
 func TestImgWithDataURL(t *testing.T) {
 	input := `<img src="data:image/gif;base64,test" alt="Example">`
 	expected := `<img src="data:image/gif;base64,test" alt="Example" loading="lazy">`
