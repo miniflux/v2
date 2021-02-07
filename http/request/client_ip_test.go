@@ -19,6 +19,21 @@ func TestFindClientIPWithoutHeaders(t *testing.T) {
 	if ip := FindClientIP(r); ip != "192.168.0.1" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
+
+	r = &http.Request{RemoteAddr: "fe80::14c2:f039:edc7:edc7"}
+	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+
+	r = &http.Request{RemoteAddr: "fe80::14c2:f039:edc7:edc7%eth0"}
+	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+
+	r = &http.Request{RemoteAddr: "[fe80::14c2:f039:edc7:edc7%eth0]:4242"}
+	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
 }
 
 func TestFindClientIPWithXFFHeader(t *testing.T) {
@@ -37,6 +52,15 @@ func TestFindClientIPWithXFFHeader(t *testing.T) {
 	r = &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
 
 	if ip := FindClientIP(r); ip != "2001:db8:85a3:8d3:1319:8a2e:370:7348" {
+		t.Fatalf(`Unexpected result, got: %q`, ip)
+	}
+
+	// Test with single IPv6 address with zone
+	headers = http.Header{}
+	headers.Set("X-Forwarded-For", "fe80::14c2:f039:edc7:edc7%eth0")
+	r = &http.Request{RemoteAddr: "192.168.0.1:4242", Header: headers}
+
+	if ip := FindClientIP(r); ip != "fe80::14c2:f039:edc7:edc7" {
 		t.Fatalf(`Unexpected result, got: %q`, ip)
 	}
 
