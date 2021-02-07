@@ -10,6 +10,14 @@ import (
 	"strings"
 )
 
+func dropIPv6zone(address string) string {
+	i := strings.IndexByte(address, '%')
+	if i != -1 {
+		address = address[:i]
+	}
+	return address
+}
+
 // FindClientIP returns client real IP address.
 func FindClientIP(r *http.Request) string {
 	headers := []string{"X-Forwarded-For", "X-Real-Ip"}
@@ -19,6 +27,7 @@ func FindClientIP(r *http.Request) string {
 		if value != "" {
 			addresses := strings.Split(value, ",")
 			address := strings.TrimSpace(addresses[0])
+			address = dropIPv6zone(address)
 
 			if net.ParseIP(address) != nil {
 				return address
@@ -27,12 +36,11 @@ func FindClientIP(r *http.Request) string {
 	}
 
 	// Fallback to TCP/IP source IP address.
-	var remoteIP string
-	if strings.ContainsRune(r.RemoteAddr, ':') {
-		remoteIP, _, _ = net.SplitHostPort(r.RemoteAddr)
-	} else {
+	remoteIP, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
 		remoteIP = r.RemoteAddr
 	}
+	remoteIP = dropIPv6zone(remoteIP)
 
 	// When listening on a Unix socket, RemoteAddr is empty.
 	if remoteIP == "" {
