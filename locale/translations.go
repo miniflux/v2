@@ -249,8 +249,8 @@ var translations = map[string]string{
     "error.site_url_not_empty": "Die Site-URL darf nicht leer sein.",
     "error.feed_title_not_empty": "Der Feed-Titel darf nicht leer sein.",
     "error.feed_category_not_found": "Diese Kategorie existiert nicht oder gehört nicht zu diesem Benutzer.",
-    "error.feed_invalid_blocklist_rule": "Die Sperrlistenregel ist ungültig.",
-    "error.feed_invalid_keeplist_rule": "Die Keep List-Regel ist ungültig.",
+    "error.feed_invalid_blocklist_rule": "Die Blockierregel ist ungültig.",
+    "error.feed_invalid_keeplist_rule": "Die Erlaubnisregel ist ungültig.",
     "error.user_mandatory_fields": "Der Benutzername ist obligatorisch.",
     "error.api_key_already_exists": "Dieser API-Schlüssel ist bereits vorhanden.",
     "error.unable_to_create_api_key": "Dieser API-Schlüssel kann nicht erstellt werden.",
@@ -268,8 +268,8 @@ var translations = map[string]string{
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.rewrite_rules": "Umschreiberegeln",
-    "form.feed.label.blocklist_rules": "Regeln blockieren",
-    "form.feed.label.keeplist_rules": "Regeln einhalten",
+    "form.feed.label.blocklist_rules": "Blockierregeln",
+    "form.feed.label.keeplist_rules": "Erlaubnisregeln",
     "form.feed.label.ignore_http_cache": "Ignoriere HTTP-cache",
     "form.feed.label.fetch_via_proxy": "Über Proxy abrufen",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
@@ -3893,7 +3893,7 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "204b8359228926129612defadb82b425ca6d76a60606572a5e66b4313753b6b8",
+	"de_DE": "f43983a46387e34c8039e8b86280f844fbbf6e8f7092865f452b7f24cf65c116",
 	"en_US": "836c34115c6e190e9b77e894ab998193bdc5dae204636084994a09b6274ff41f",
 	"es_ES": "b190315004d23bfeda4123e6f77613bdcb78335b0b6a2876dd0e1bc76c428eaa",
 	"fr_FR": "7be464741f4301dd3a6ace3fd66f471884dbbd1f9a2866a805502227382b94a7",
