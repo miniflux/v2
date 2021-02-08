@@ -244,6 +244,8 @@
     "error.site_url_not_empty": "L'URL del sito non può essere vuoto.",
     "error.feed_title_not_empty": "Il titolo del feed non può essere vuoto.",
     "error.feed_category_not_found": "Questa categoria non esiste o non appartiene a questo utente.",
+    "error.feed_invalid_blocklist_rule": "La regola dell'elenco di blocco non è valida.",
+    "error.feed_invalid_keeplist_rule": "La regola dell'elenco di conservazione non è valida.",
     "error.user_mandatory_fields": "Il nome utente è obbligatorio.",
     "error.api_key_already_exists": "Questa chiave API esiste già.",
     "error.unable_to_create_api_key": "Impossibile creare questa chiave API.",

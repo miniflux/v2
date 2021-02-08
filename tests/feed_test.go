@@ -202,6 +202,55 @@ func TestCreateFeedWithScraperRule(t *testing.T) {
 	}
 }
 
+func TestCreateFeedWithKeeplistRule(t *testing.T) {
+	client := createClient(t)
+
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:       testFeedURL,
+		CategoryID:    categories[0].ID,
+		KeeplistRules: "(?i)miniflux",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	feed, err := client.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.KeeplistRules != "(?i)miniflux" {
+		t.Error(`The feed should have the custom keep list rule saved`)
+	}
+}
+
+func TestCreateFeedWithInvalidBlocklistRule(t *testing.T) {
+	client := createClient(t)
+
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:        testFeedURL,
+		CategoryID:     categories[0].ID,
+		BlocklistRules: "[",
+	})
+	if err == nil {
+		t.Fatal(`Feed with invalid block list rule should not be created`)
+	}
+}
+
 func TestUpdateFeedURL(t *testing.T) {
 	client := createClient(t)
 	feed, _ := createFeed(t, client)

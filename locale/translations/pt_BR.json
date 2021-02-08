@@ -244,6 +244,8 @@
     "error.site_url_not_empty": "O URL do site não pode estar vazio.",
     "error.feed_title_not_empty": "O título do feed não pode estar vazio.",
     "error.feed_category_not_found": "Esta categoria não existe ou não pertence a este usuário.",
+    "error.feed_invalid_blocklist_rule": "A regra da lista de bloqueio é inválida.",
+    "error.feed_invalid_keeplist_rule": "A regra de manutenção da lista é inválida.",
     "error.user_mandatory_fields": "O nome de usuário é obrigatório.",
     "error.api_key_already_exists": "Essa chave de API já existe.",
     "error.unable_to_create_api_key": "Não foi possível criar uma chave de API.",

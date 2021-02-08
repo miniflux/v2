@@ -14,7 +14,7 @@ func TestIsValidURL(t *testing.T) {
 	}
 
 	for link, expected := range scenarios {
-		result := isValidURL(link)
+		result := IsValidURL(link)
 		if result != expected {
 			t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
 		}
@@ -44,5 +44,19 @@ func TestValidateDirection(t *testing.T) {
 
 	if err := ValidateDirection("invalid"); err == nil {
 		t.Error(`An invalid direction should generate a error`)
+	}
+}
+
+func TestIsValidRegex(t *testing.T) {
+	scenarios := map[string]bool{
+		"(?i)miniflux": true,
+		"[":            false,
+	}
+
+	for expr, expected := range scenarios {
+		result := IsValidRegex(expr)
+		if result != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+		}
 	}
 }

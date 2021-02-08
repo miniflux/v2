@@ -244,6 +244,8 @@
     "error.site_url_not_empty": "De site-URL mag niet leeg zijn.",
     "error.feed_title_not_empty": "De feedtitel mag niet leeg zijn.",
     "error.feed_category_not_found": "Deze categorie bestaat niet of behoort niet tot deze gebruiker.",
+    "error.feed_invalid_blocklist_rule": "De regel voor de blokkeerlijst is ongeldig.",
+    "error.feed_invalid_keeplist_rule": "De regel voor het bewaren van een lijst is ongeldig.",
     "error.user_mandatory_fields": "Gebruikersnaam is verplicht",
     "error.api_key_already_exists": "This API Key already exists.",
     "error.unable_to_create_api_key": "Kan deze API-sleutel niet maken.",
