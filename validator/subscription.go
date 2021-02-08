@@ -8,7 +8,7 @@ import "miniflux.app/model"
 
 // ValidateSubscriptionDiscovery validates subscription discovery requests.
 func ValidateSubscriptionDiscovery(request *model.SubscriptionDiscoveryRequest) *ValidationError {
-	if !isValidURL(request.URL) {
+	if !IsValidURL(request.URL) {
 		return NewValidationError("error.invalid_site_url")
 	}
 

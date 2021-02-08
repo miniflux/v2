@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 
 	"miniflux.app/locale"
 )
@@ -53,7 +54,14 @@ func ValidateDirection(direction string) error {
 	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
 }
 
-func isValidURL(absoluteURL string) bool {
+// IsValidRegex verifies if the regex can be compiled.
+func IsValidRegex(expr string) bool {
+	_, err := regexp.Compile(expr)
+	return err == nil
+}
+
+// IsValidURL verifies if the provided value is a valid absolute URL.
+func IsValidURL(absoluteURL string) bool {
 	_, err := url.ParseRequestURI(absoluteURL)
 	return err == nil
 }

@@ -246,6 +246,8 @@
     "error.site_url_not_empty": "URL сайта не может быть пустым.",
     "error.feed_title_not_empty": "Заголовок фида не может быть пустым.",
     "error.feed_category_not_found": "Эта категория не существует или не принадлежит этому пользователю.",
+    "error.feed_invalid_blocklist_rule": "Правило черного списка недействительно.",
+    "error.feed_invalid_keeplist_rule": "Правило списка хранения недействительно.",
     "error.user_mandatory_fields": "Имя пользователя обязательно.",
     "error.api_key_already_exists": "Этот ключ API уже существует.",
     "error.unable_to_create_api_key": "Невозможно создать этот ключ API.",

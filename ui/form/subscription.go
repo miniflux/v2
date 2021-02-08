@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"miniflux.app/errors"
+	"miniflux.app/validator"
 )
 
 // SubscriptionForm represents the subscription form.
@@ -30,6 +31,18 @@ type SubscriptionForm struct {
 func (s *SubscriptionForm) Validate() error {
 	if s.URL == "" || s.CategoryID == 0 {
 		return errors.NewLocalizedError("error.feed_mandatory_fields")
+	}
+
+	if !validator.IsValidURL(s.URL) {
+		return errors.NewLocalizedError("error.invalid_feed_url")
+	}
+
+	if !validator.IsValidRegex(s.BlocklistRules) {
+		return errors.NewLocalizedError("error.feed_invalid_blocklist_rule")
+	}
+
+	if !validator.IsValidRegex(s.KeeplistRules) {
+		return errors.NewLocalizedError("error.feed_invalid_keeplist_rule")
 	}
 
 	return nil

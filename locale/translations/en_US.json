@@ -248,6 +248,8 @@
     "error.site_url_not_empty": "The site URL cannot be empty.",
     "error.feed_title_not_empty": "The feed title cannot be empty.",
     "error.feed_category_not_found": "This category does not exist or does not belong to this user.",
+    "error.feed_invalid_blocklist_rule": "The block list rule is invalid.",
+    "error.feed_invalid_keeplist_rule": "The keep list rule is invalid.",
     "error.user_mandatory_fields": "The username is mandatory.",
     "error.api_key_already_exists": "This API Key already exists.",
     "error.unable_to_create_api_key": "Unable to create this API Key.",

@@ -15,7 +15,7 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 		return NewValidationError("error.feed_mandatory_fields")
 	}
 
-	if !isValidURL(request.FeedURL) {
+	if !IsValidURL(request.FeedURL) {
 		return NewValidationError("error.invalid_feed_url")
 	}
 
@@ -25,6 +25,14 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 
 	if !store.CategoryIDExists(userID, request.CategoryID) {
 		return NewValidationError("error.feed_category_not_found")
+	}
+
+	if !IsValidRegex(request.BlocklistRules) {
+		return NewValidationError("error.feed_invalid_blocklist_rule")
+	}
+
+	if !IsValidRegex(request.KeeplistRules) {
+		return NewValidationError("error.feed_invalid_keeplist_rule")
 	}
 
 	return nil
@@ -37,7 +45,7 @@ func ValidateFeedModification(store *storage.Storage, userID int64, request *mod
 			return NewValidationError("error.feed_url_not_empty")
 		}
 
-		if !isValidURL(*request.FeedURL) {
+		if !IsValidURL(*request.FeedURL) {
 			return NewValidationError("error.invalid_feed_url")
 		}
 	}
@@ -47,7 +55,7 @@ func ValidateFeedModification(store *storage.Storage, userID int64, request *mod
 			return NewValidationError("error.site_url_not_empty")
 		}
 
-		if !isValidURL(*request.SiteURL) {
+		if !IsValidURL(*request.SiteURL) {
 			return NewValidationError("error.invalid_site_url")
 		}
 	}
@@ -61,6 +69,18 @@ func ValidateFeedModification(store *storage.Storage, userID int64, request *mod
 	if request.CategoryID != nil {
 		if !store.CategoryIDExists(userID, *request.CategoryID) {
 			return NewValidationError("error.feed_category_not_found")
+		}
+	}
+
+	if request.BlocklistRules != nil {
+		if !IsValidRegex(*request.BlocklistRules) {
+			return NewValidationError("error.feed_invalid_blocklist_rule")
+		}
+	}
+
+	if request.KeeplistRules != nil {
+		if !IsValidRegex(*request.KeeplistRules) {
+			return NewValidationError("error.feed_invalid_keeplist_rule")
 		}
 	}
 
