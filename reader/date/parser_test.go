@@ -96,6 +96,34 @@ func TestParseRSSDatePST(t *testing.T) {
 	}
 }
 
+func TestParseRSSDateEST(t *testing.T) {
+	date, err := Parse("Wed, 10 Feb 2021 22:46:00 EST")
+	if err != nil {
+		t.Fatalf(`RSS dates with EST timezone should be parsed correctly: %v`, err)
+	}
+
+	expectedTS := int64(1613015160)
+	if date.Unix() != expectedTS {
+		t.Errorf(`The Unix timestamp should be %v instead of %v`, expectedTS, date.Unix())
+	}
+
+	expectedLocation := "America/New_York"
+	if date.Location().String() != expectedLocation {
+		t.Errorf(`The location should be %q instead of %q`, expectedLocation, date.Location())
+	}
+
+	name, offset := date.Zone()
+
+	expectedName := "EST"
+	if name != expectedName {
+		t.Errorf(`The zone name should be %q instead of %q`, expectedName, name)
+	}
+
+	expectedOffset := -18000
+	if offset != expectedOffset {
+		t.Errorf(`The offset should be %v instead of %v`, expectedOffset, offset)
+	}
+}
 func TestParseRSSDateOffset(t *testing.T) {
 	date, err := Parse("Sun, 28 Oct 2018 13:48:00 +0100")
 	if err != nil {
