@@ -22,7 +22,7 @@ import (
 
 // Serve handles Fever API calls.
 func Serve(router *mux.Router, store *storage.Storage) {
-	handler := &handler{store}
+	handler := &handler{store, router}
 
 	sr := router.PathPrefix("/fever").Subrouter()
 	sr.Use(newMiddleware(store).serve)
@@ -30,7 +30,8 @@ func Serve(router *mux.Router, store *storage.Storage) {
 }
 
 type handler struct {
-	store *storage.Storage
+	store  *storage.Storage
+	router *mux.Router
 }
 
 func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
@@ -434,7 +435,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go func() {
-			integration.SendEntry(entry, settings)
+			integration.SendEntry(entry, settings, h.router, h.store)
 		}()
 	case "unsaved":
 		logger.Debug("[Fever] Mark entry #%d as unsaved for user #%d", entryID, userID)

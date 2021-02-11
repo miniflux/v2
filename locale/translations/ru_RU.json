@@ -270,6 +270,7 @@
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP-кеш",
     "form.feed.label.fetch_via_proxy": "Получить через прокси",
     "form.feed.label.disabled": "Не обновлять этот канал",
+    "form.feed.label.share_to_save": "Save URLs shared by Miniflux",
     "form.category.label.title": "Название",
     "form.user.label.username": "Имя пользователя",
     "form.user.label.password": "Пароль",

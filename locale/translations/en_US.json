@@ -268,6 +268,7 @@
     "form.feed.label.ignore_http_cache": "Ignore HTTP cache",
     "form.feed.label.fetch_via_proxy": "Fetch via proxy",
     "form.feed.label.disabled": "Do not refresh this feed",
+    "form.feed.label.share_to_save": "Save URLs shared by Miniflux",
     "form.category.label.title": "Title",
     "form.user.label.username": "Username",
     "form.user.label.password": "Password",

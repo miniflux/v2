@@ -270,6 +270,7 @@
     "form.feed.label.ignore_http_cache": "Zignoruj ​​pamięć podręczną HTTP",
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
     "form.feed.label.disabled": "Не обновлять этот канал",
+    "form.feed.label.share_to_save": "Save URLs shared by Miniflux",
     "form.category.label.title": "Tytuł",
     "form.user.label.username": "Nazwa użytkownika",
     "form.user.label.password": "Hasło",

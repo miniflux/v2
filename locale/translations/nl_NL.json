@@ -268,6 +268,7 @@
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
+    "form.feed.label.share_to_save": "Save URLs shared by Miniflux",
     "form.category.label.title": "Naam",
     "form.user.label.username": "Gebruikersnaam",
     "form.user.label.password": "Wachtwoord",

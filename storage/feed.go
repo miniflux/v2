@@ -196,6 +196,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			username,
 			password,
 			disabled,
+			share_to_save,
 			scraper_rules,
 			rewrite_rules,
 			blocklist_rules,
@@ -222,6 +223,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.Username,
 		feed.Password,
 		feed.Disabled,
+		feed.ShareToSave,
 		feed.ScraperRules,
 		feed.RewriteRules,
 		feed.BlocklistRules,
@@ -283,9 +285,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			disabled=$18,
 			next_check_at=$19,
 			ignore_http_cache=$20,
-			fetch_via_proxy=$21
+			fetch_via_proxy=$21,
+		    share_to_save=$22
 		WHERE
-			id=$22 AND user_id=$23
+			id=$23 AND user_id=$24
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -309,6 +312,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.NextCheckAt,
 		feed.IgnoreHTTPCache,
 		feed.FetchViaProxy,
+		feed.ShareToSave,
 		feed.ID,
 		feed.UserID,
 	)

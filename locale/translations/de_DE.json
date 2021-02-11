@@ -267,6 +267,7 @@
     "form.feed.label.keeplist_rules": "Erlaubnisregeln",
     "form.feed.label.ignore_http_cache": "Ignoriere HTTP-cache",
     "form.feed.label.fetch_via_proxy": "Über Proxy abrufen",
+    "form.feed.label.share_to_save": "Save URLs shared by Miniflux",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.category.label.title": "Titel",
     "form.user.label.username": "Benutzername",

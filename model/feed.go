@@ -46,6 +46,7 @@ type Feed struct {
 	Disabled           bool      `json:"disabled"`
 	IgnoreHTTPCache    bool      `json:"ignore_http_cache"`
 	FetchViaProxy      bool      `json:"fetch_via_proxy"`
+	ShareToSave        bool      `json:"share_to_save"`
 	Category           *Category `json:"category,omitempty"`
 	Entries            Entries   `json:"entries,omitempty"`
 	Icon               *FeedIcon `json:"icon"`

@@ -28,6 +28,7 @@ type FeedForm struct {
 	IgnoreHTTPCache bool
 	FetchViaProxy   bool
 	Disabled        bool
+	ShareToSave     bool
 }
 
 // Merge updates the fields of the given feed.
@@ -49,6 +50,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.IgnoreHTTPCache = f.IgnoreHTTPCache
 	feed.FetchViaProxy = f.FetchViaProxy
 	feed.Disabled = f.Disabled
+	feed.ShareToSave = f.ShareToSave
 	return feed
 }
 
@@ -74,5 +76,6 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		IgnoreHTTPCache: r.FormValue("ignore_http_cache") == "1",
 		FetchViaProxy:   r.FormValue("fetch_via_proxy") == "1",
 		Disabled:        r.FormValue("disabled") == "1",
+		ShareToSave:     r.FormValue("share_to_save") == "1",
 	}
 }

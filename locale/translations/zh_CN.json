@@ -266,6 +266,7 @@
     "form.feed.label.ignore_http_cache": "忽略HTTP缓存",
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此Feed",
+    "form.feed.label.share_to_save": "Save URLs shared by Miniflux",
     "form.category.label.title": "标题",
     "form.user.label.username": "用户名",
     "form.user.label.password": "密码",
