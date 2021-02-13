@@ -989,7 +989,53 @@ func TestParseItemTitleWithHTMLEntity(t *testing.T) {
 	}
 
 	if feed.Entries[0].Title != "</example>" {
-		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithNumericCharacterReference(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>&#931; &#xDF;</title>
+				<link>http://www.example.org/article.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Σ ß" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithDoubleEncodedEntities(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>&amp;#39;Text&amp;#39;</title>
+				<link>http://www.example.org/article.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "'Text'" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
 	}
 }
 
