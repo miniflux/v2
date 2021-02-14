@@ -12,6 +12,7 @@
         <li><strong>{{ t "page.about.version" }}</strong> {{ .version }}</li>
         <li><strong>Git Commit</strong> {{ .commit }}</li>
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
+        {{ if .user.IsAdmin }}<li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>{{ end }}
     </ul>
 </div>
 

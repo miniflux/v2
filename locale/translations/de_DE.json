@@ -114,6 +114,7 @@
     "page.about.author": "Autor:",
     "page.about.license": "Lizenz:",
     "page.about.global_config_options": "Globale Konfigurationsoptionen",
+    "page.about.postgres_version": "Postgres version:",
     "page.add_feed.title": "Neues Abonnement",
     "page.add_feed.no_category": "Es ist keine Kategorie vorhanden. Wenigstens eine Kategorie muss angelegt sein.",
     "page.add_feed.label.url": "URL",

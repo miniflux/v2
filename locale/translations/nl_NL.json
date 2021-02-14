@@ -115,6 +115,7 @@
     "page.about.author": "Auteur:",
     "page.about.license": "Licentie:",
     "page.about.global_config_options": "globale configuratie-opties",
+    "page.about.postgres_version": "Postgres versie:",
     "page.add_feed.title": "Nieuwe feed",
     "page.add_feed.no_category": "Er zijn geen categorieën. Je moet op zijn minst één caterogie hebben.",
     "page.add_feed.label.url": "URL",

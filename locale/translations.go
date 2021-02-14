@@ -119,6 +119,7 @@ var translations = map[string]string{
     "page.about.author": "Autor:",
     "page.about.license": "Lizenz:",
     "page.about.global_config_options": "Globale Konfigurationsoptionen",
+    "page.about.postgres_version": "Postgres version:",
     "page.add_feed.title": "Neues Abonnement",
     "page.add_feed.no_category": "Es ist keine Kategorie vorhanden. Wenigstens eine Kategorie muss angelegt sein.",
     "page.add_feed.label.url": "URL",
@@ -365,8 +366,7 @@ var translations = map[string]string{
     "You are not authorized to access this resource (invalid username/password)": "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen (Benutzername/Passwort ungültig)",
     "Unable to fetch this resource (Status Code = %d)": "Ressource konnte nicht abgerufen werden (code=%d)",
     "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Ressource nicht gefunden (404), dieses Abonnement existiert nicht mehr, überprüfen Sie die Abonnement-URL"
-}
-`,
+}`,
 	"en_US": `{
     "confirm.question": "Are you sure?",
     "confirm.yes": "yes",
@@ -483,6 +483,7 @@ var translations = map[string]string{
     "page.about.author": "Author:",
     "page.about.license": "License:",
     "page.about.global_config_options": "Global configuration options",
+    "page.about.postgres_version": "Postgres version:",
     "page.add_feed.title": "New Subscription",
     "page.add_feed.no_category": "There is no category. You must have at least one category.",
     "page.add_feed.label.url": "URL",
@@ -709,8 +710,7 @@ var translations = map[string]string{
         "%d year ago",
         "%d years ago"
     ]
-}
-`,
+}`,
 	"es_ES": `{
     "confirm.question": "Estás seguro?",
     "confirm.yes": "sí",
@@ -827,6 +827,7 @@ var translations = map[string]string{
     "page.about.author": "Autor:",
     "page.about.license": "Licencia:",
     "page.about.global_config_options": "Opciones de configuración global",
+    "page.about.postgres_version": "Postgres versión:",
     "page.add_feed.title": "Nueva suscripción",
     "page.add_feed.no_category": "No hay categoría. Debe tener al menos una categoría.",
     "page.add_feed.label.url": "URL",
@@ -1053,8 +1054,7 @@ var translations = map[string]string{
         "hace %d año",
         "hace %d años"
     ]
-}
-`,
+}`,
 	"fr_FR": `{
     "confirm.question": "Êtes-vous sûr ?",
     "confirm.yes": "oui",
@@ -1171,6 +1171,7 @@ var translations = map[string]string{
     "page.about.author": "Auteur :",
     "page.about.license": "Licence :",
     "page.about.global_config_options": "Options de configuration globales",
+    "page.about.postgres_version": "Postgres version:",
     "page.add_feed.title": "Nouvel Abonnement",
     "page.add_feed.no_category": "Il n'y a aucune catégorie. Vous devez avoir au moins une catégorie.",
     "page.add_feed.label.url": "Lien",
@@ -1417,8 +1418,7 @@ var translations = map[string]string{
     "You are not authorized to access this resource (invalid username/password)": "Vous n'êtes pas autorisé à accéder à cette ressource (nom d'utilisateur / mot de passe incorrect)",
     "Unable to fetch this resource (Status Code = %d)": "Impossible de récupérer cette ressource (code=%d)",
     "Resource not found (404), this feed doesn't exists anymore, check the feed URL": "Page introuvable (404), cet abonnement n'existe plus, vérifiez l'adresse du flux"
-}
-`,
+}`,
 	"it_IT": `{
     "confirm.question": "Sei sicuro?",
     "confirm.yes": "sì",
@@ -1535,6 +1535,7 @@ var translations = map[string]string{
     "page.about.author": "Autore:",
     "page.about.license": "Licenza:",
     "page.about.global_config_options": "Opzioni di configurazione globali",
+    "page.about.postgres_version": "Postgres versione:",
     "page.add_feed.title": "Nuovo feed",
     "page.add_feed.no_category": "Nessuna categoria selezionata. Devi scegliere almeno una categoria.",
     "page.add_feed.label.url": "URL",
@@ -1761,8 +1762,7 @@ var translations = map[string]string{
         "%d anno fa",
         "%d anni fa"
     ]
-}
-`,
+}`,
 	"ja_JP": `{
     "confirm.question": "よろしいですか?",
     "confirm.yes": "はい",
@@ -1879,6 +1879,7 @@ var translations = map[string]string{
     "page.about.author": "作者:",
     "page.about.license": "ライセンス:",
     "page.about.global_config_options": "グローバル構成オプション",
+    "page.about.postgres_version": "Postgres バージョン:",
     "page.add_feed.title": "新規購読",
     "page.add_feed.no_category": "カテゴリが存在しません。 少なくとも1つのカテゴリが必要です。",
     "page.add_feed.label.url": "URL",
@@ -2105,8 +2106,7 @@ var translations = map[string]string{
         "%d 年前",
         "%d 年前"
     ]
-}
-`,
+}`,
 	"nl_NL": `{
     "confirm.question": "Weet je het zeker?",
     "confirm.yes": "ja",
@@ -2224,6 +2224,7 @@ var translations = map[string]string{
     "page.about.author": "Auteur:",
     "page.about.license": "Licentie:",
     "page.about.global_config_options": "globale configuratie-opties",
+    "page.about.postgres_version": "Postgres versie:",
     "page.add_feed.title": "Nieuwe feed",
     "page.add_feed.no_category": "Er zijn geen categorieën. Je moet op zijn minst één caterogie hebben.",
     "page.add_feed.label.url": "URL",
@@ -2467,8 +2468,7 @@ var translations = map[string]string{
     "This website is temporarily unreachable (original error: %q)": "Deze website is tijdelijk onbereikbaar (originele error: %q)",
     "This website is permanently unreachable (original error: %q)": "Deze website is permanent onbereikbaar (originele error: %q)",
     "Website unreachable, the request timed out after %d seconds": "Website onbereikbaar, de request gaf een timeout na %d seconden"
-}
-`,
+}`,
 	"pl_PL": `{
     "confirm.question": "Czy jesteś pewny?",
     "confirm.yes": "tak",
@@ -2586,6 +2586,7 @@ var translations = map[string]string{
     "page.about.build_date": "Data opracowania:",
     "page.about.author": "Autor:",
     "page.about.license": "Licencja:",
+    "page.about.postgres_version": "Postgres wersja:",
     "page.about.global_config_options": "globalne opcje konfiguracji",
     "page.add_feed.title": "Nowa subskrypcja",
     "page.add_feed.no_category": "Nie ma żadnej kategorii. Musisz mieć co najmniej jedną kategorię.",
@@ -2837,8 +2838,7 @@ var translations = map[string]string{
     "This website is temporarily unreachable (original error: %q)": "Ta strona jest tymczasowo niedostępna (błąd: %q)",
     "This website is permanently unreachable (original error: %q)": "Ta strona jest niedostępna (błąd: %q)",
     "Website unreachable, the request timed out after %d seconds": "Strona internetowa nieosiągalna, żądanie wygasło po %d sekundach"
-}
-`,
+}`,
 	"pt_BR": `{
     "confirm.question": "Tem certeza?",
     "confirm.yes": "Sim",
@@ -2955,6 +2955,7 @@ var translations = map[string]string{
     "page.about.author": "Autor:",
     "page.about.license": "Licença:",
     "page.about.global_config_options": "opções de configuração global",
+    "page.about.postgres_version": "Postgres versão:",
     "page.add_feed.title": "Nova inscrição",
     "page.add_feed.no_category": "Não existe uma categoria. Deve existir pelo menos uma categoria.",
     "page.add_feed.label.url": "URL",
@@ -3181,8 +3182,7 @@ var translations = map[string]string{
         "há %d ano",
         "há %d anos"
     ]
-}
-`,
+}`,
 	"ru_RU": `{
     "confirm.question": "Вы уверены?",
     "confirm.yes": "да",
@@ -3300,6 +3300,7 @@ var translations = map[string]string{
     "page.about.build_date": "Дата сборки:",
     "page.about.author": "Автор:",
     "page.about.license": "Лицензия:",
+    "page.about.postgres_version": "Postgres bерсия:",
     "page.about.global_config_options": "глобальные параметры конфигурации",
     "page.add_feed.title": "Новая подписка",
     "page.add_feed.no_category": "Категории отсутствуют. У вас должна быть хотя бы одна категория.",
@@ -3533,8 +3534,7 @@ var translations = map[string]string{
         "%d года назад",
         "%d лет назад"
     ]
-}
-`,
+}`,
 	"zh_CN": `{
     "confirm.question": "您确认吗？",
     "confirm.yes": "是",
@@ -3648,6 +3648,7 @@ var translations = map[string]string{
     "page.about.build_date": "构建日期：",
     "page.about.author": "作者：",
     "page.about.license": "协议：",
+    "page.about.postgres_version": "Postgres 版本号：",
     "page.about.global_config_options": "全局配置选项",
     "page.add_feed.title": "新增订阅",
     "page.add_feed.no_category": "没有类别，您必须至少有一个类别",
@@ -3888,20 +3889,19 @@ var translations = map[string]string{
     "This website is temporarily unreachable (original error: %q)": "该网站暂时不可达 (原始错误: %q)",
     "This website is permanently unreachable (original error: %q)": "该网站永久不可达 (原始错误: %q)",
     "Website unreachable, the request timed out after %d seconds": "网站不可达, 请求已在 %d 秒后超时"
-}
-`,
+}`,
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "f43983a46387e34c8039e8b86280f844fbbf6e8f7092865f452b7f24cf65c116",
-	"en_US": "836c34115c6e190e9b77e894ab998193bdc5dae204636084994a09b6274ff41f",
-	"es_ES": "b190315004d23bfeda4123e6f77613bdcb78335b0b6a2876dd0e1bc76c428eaa",
-	"fr_FR": "7be464741f4301dd3a6ace3fd66f471884dbbd1f9a2866a805502227382b94a7",
-	"it_IT": "e2027bf6c5ee384d0bf776c4fb04fd99b5c4e18c694db4d7ff09529b9fe96d17",
-	"ja_JP": "33ac3c96003b95222dc1318f6dc1e929c8b75e2415700e7b544abfbe57b6eb0a",
-	"nl_NL": "dbf1343301ed35161f8deebd25726bc39d6a1bfdeb198ac555b1a0c72e16d96d",
-	"pl_PL": "8c646402462d62235245229f3a9f0297cdf6ac2f53df1e25508075e43a1ccf4e",
-	"pt_BR": "2d613ce5fd8b00da9df5c9cf1f675839cdfc3e4c5646b0cc949f0bf18aca59d0",
-	"ru_RU": "e6c4d0467051235d28c0329404e9ec8a7d353563b789f69e6cada2099d816f5d",
-	"zh_CN": "51ec39c564c11373b1574ed35d798dab61036d8cbeb6c807116e5dbf7443f31c",
+	"de_DE": "e6c93276db49e29bddddbcb459d59d6b1d43ebbdb4c00acae21b3567b765b138",
+	"en_US": "0f71c28287716454c8f1c191899e93adbe2410a109e06f17892ec9710389ac88",
+	"es_ES": "cfaf7d66f0ddf544492ae89c32b501bb687aaf3f65e08d09d1a6aa44bc0f55a6",
+	"fr_FR": "5894e396d28ca6c137812bcf26a4c912c627f7cba127e88a3b740c3a1e833f7f",
+	"it_IT": "6b33e802ac2bdf412c89a2de616fc162c1d98052bf92d2c81da0501809a223d3",
+	"ja_JP": "81e64953889c637a14695881cecafdef8fdcc9e0b5934281999ca23b0aee6037",
+	"nl_NL": "1532538d071ca8097a1e02c6a0f803598126f6d4bb3bb9409e20d9f8fc957a73",
+	"pl_PL": "2b4cb51082be142c6a5cf32d681348ff0224b60a052be318c99efe1d6fa269dc",
+	"pt_BR": "0dd731b01e2453453548818ba0539e54da7722d0c0cd931bf160cb32fd691fee",
+	"ru_RU": "8b482f58720668d325ce16c9e4399e01f22db5afe79558b10b2e782779678ec8",
+	"zh_CN": "193195d7609b7fb07386b0c56c4c85ecf370e6e17295a18c36a6e28289336a0e",
 }
