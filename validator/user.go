@@ -74,13 +74,13 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 	}
 
 	if changes.FeedSortedBy != nil {
-		if err := validateFeedSortedBy(*changes.FeedSortedBy); err != nil {
+		if err := ValidateFeedSortedBy(*changes.FeedSortedBy); err != nil {
 			return err
 		}
 	}
 
 	if changes.FeedDirection != nil {
-		if err := validateFeedDirection(*changes.FeedDirection); err != nil {
+		if err := ValidateFeedDirection(*changes.FeedDirection); err != nil {
 			return err
 		}
 	}
@@ -137,7 +137,8 @@ func validateEntriesPerPage(entriesPerPage int) *ValidationError {
 	return nil
 }
 
-func validateFeedSortedBy(s string) *ValidationError {
+// ValidateFeedSortedBy checks whether feed_sorted_by is valid.
+func ValidateFeedSortedBy(s string) *ValidationError {
 	for _, value := range []string{"disabled", "parsing_error_count", "title", "total_count", "unread_count"} {
 		if s == value {
 			return nil
@@ -146,7 +147,8 @@ func validateFeedSortedBy(s string) *ValidationError {
 	return NewValidationError("error.invalid_feed_sorted_by")
 }
 
-func validateFeedDirection(direction string) *ValidationError {
+// ValidateFeedDirection checks whether feed_direction is valid.
+func ValidateFeedDirection(direction string) *ValidationError {
 	if direction != "asc" && direction != "desc" {
 		return NewValidationError("error.invalid_feed_direction")
 	}

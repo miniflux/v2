@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
     onClick("a[data-action=markPageAsRead]", () => handleConfirmationMessage(event.target, () => markPageAsRead()));
     onClick("a[data-toggle-status]", (event) => handleEntryStatus(event.target));
+    onClick("a[data-action=triggerSortFeeds]", (event) => triggerSortFeeds(event.target));
 
     onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);

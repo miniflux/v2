@@ -102,6 +102,25 @@ var templateCommonMap = map[string]string{
     <li>
         <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
     </li>
+    <li>
+        <a href="#" 
+            data-action="triggerSortFeeds"
+            data-current-sorted-by="{{ .feedSortedBy }}"
+            data-current-sort-direction="{{ .feedDirection }}"
+            data-sorted-base-url="{{ route "feeds" }}"
+            data-sorted-text-0="{{ t "menu.sort_feeds_disabled" }}"
+            data-sorted-by-0="disabled"
+            data-sorted-text-1="{{ t "menu.sort_feeds_errors" }}"
+            data-sorted-by-1="parsing_error_count"
+            data-sorted-text-2="{{ t "menu.sort_feeds_title" }}"
+            data-sorted-by-2="title"
+            data-sorted-text-3="{{ t "menu.sort_feeds_total" }}"
+            data-sorted-by-3="total_count"
+            data-sorted-text-4="{{ t "menu.sort_feeds_unread" }}"
+            data-sorted-by-4="unread_count"
+            data-label-loading="{{ t "confirm.loading" }}"
+            >{{ t "menu.sort_feeds_sort" }}</a>
+    </li>
 </ul>
 {{ end }}`,
 	"icons": `<!--
@@ -539,7 +558,7 @@ SOFTWARE.
 var templateCommonMapChecksums = map[string]string{
 	"entry_pagination": "cdca9cf12586e41e5355190b06d9168f57f77b85924d1e63b13524bc15abcbf6",
 	"feed_list":        "3071310eb9fbe7dbdacb5cd5cdb0636177d8954021620fac4bcb1f399f005f91",
-	"feed_menu":        "318d8662dda5ca9dfc75b909c8461e79c86fb5082df1428f67aaf856f19f4b50",
+	"feed_menu":        "542ddda595aa836c787a238f93a61b3130d86cb0b4dc1db5e824ccbace0a4b6c",
 	"icons":            "7161afa4cce46245a99cb1e49a605d3ff30e907c3f568ef9c17218718d20e042",
 	"item_meta":        "fefa219c8296f0370632336ed59a2c8b0c2146ee77f3b10de1d9b87982219dc5",
 	"layout":           "03c77ed0163b790c0622ecec173119537087c66f6a3925a931ae83a9a94d32cf",
