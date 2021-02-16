@@ -119,7 +119,7 @@ var translations = map[string]string{
     "page.about.author": "Autor:",
     "page.about.license": "Lizenz:",
     "page.about.global_config_options": "Globale Konfigurationsoptionen",
-    "page.about.postgres_version": "Postgres version:",
+    "page.about.postgres_version": "Postgres Version:",
     "page.add_feed.title": "Neues Abonnement",
     "page.add_feed.no_category": "Es ist keine Kategorie vorhanden. Wenigstens eine Kategorie muss angelegt sein.",
     "page.add_feed.label.url": "URL",
@@ -1171,7 +1171,7 @@ var translations = map[string]string{
     "page.about.author": "Auteur :",
     "page.about.license": "Licence :",
     "page.about.global_config_options": "Options de configuration globales",
-    "page.about.postgres_version": "Postgres version:",
+    "page.about.postgres_version": "Version de Postgresql :",
     "page.add_feed.title": "Nouvel Abonnement",
     "page.add_feed.no_category": "Il n'y a aucune catégorie. Vous devez avoir au moins une catégorie.",
     "page.add_feed.label.url": "Lien",
@@ -3893,10 +3893,10 @@ var translations = map[string]string{
 }
 
 var translationsChecksums = map[string]string{
-	"de_DE": "e6c93276db49e29bddddbcb459d59d6b1d43ebbdb4c00acae21b3567b765b138",
+	"de_DE": "83df0b00c06a4a96a806456048cf61962aa1218acbd24d14b95bfedda8274797",
 	"en_US": "0f71c28287716454c8f1c191899e93adbe2410a109e06f17892ec9710389ac88",
 	"es_ES": "cfaf7d66f0ddf544492ae89c32b501bb687aaf3f65e08d09d1a6aa44bc0f55a6",
-	"fr_FR": "5894e396d28ca6c137812bcf26a4c912c627f7cba127e88a3b740c3a1e833f7f",
+	"fr_FR": "1d94f93c89c209ca0041f1c74a5e6ac0234fd8ddae900e41c312a326521f096b",
 	"it_IT": "6b33e802ac2bdf412c89a2de616fc162c1d98052bf92d2c81da0501809a223d3",
 	"ja_JP": "81e64953889c637a14695881cecafdef8fdcc9e0b5934281999ca23b0aee6037",
 	"nl_NL": "1532538d071ca8097a1e02c6a0f803598126f6d4bb3bb9409e20d9f8fc957a73",
