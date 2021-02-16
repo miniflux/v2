@@ -1,3 +1,31 @@
+Version 2.0.28 (Feb 15, 2021)
+-----------------------------
+
+* Add HTTP header "Referrer-Policy: no-referrer"
+* Handle entry title with double encoded entities
+* Add Open Containers annotations to Docker image
+* Remove iframe inner HTML contents (iframe element never has fallback content)
+* Update date parser to fix another time zone issue
+* Update German translation for blocklist and keeplist
+* Validate Keep list and Block list rules syntax
+* Add support for IPv6 with zone index
+* Allow images with data URLs
+* Limit full-text search indexation to first 500K characters (tsvector has a size limit of 1MB)
+* Change PWA display mode to standalone
+* ETag value is not set correctly in HTTP client (regression)
+* Add database backed Let's Encrypt certificate cache
+* Add global option POLLING_PARSING_ERROR_LIMIT
+* Update systemd service file comments to use `systemctl edit` for editing
+* Update Go version to 1.15 in go.mod
+* Don't discard the "Fetch via Proxy" option
+* Update man page to show the default values
+* Add PostgreSQL indices
+* Add API endpoints to get feeds and entries of a category
+* Create feed query builder
+* Bump github.com/PuerkitoBio/goquery from 1.6.0 to 1.6.1
+* Show global options in the about page
+* Update man page to mention -1 can be used for CLEANUP_ARCHIVE_* options
+
 Version 2.0.27 (Jan 9, 2021)
 ----------------------------
 
