@@ -19,6 +19,7 @@ export PGPASSWORD := postgres
 	linux-armv5 \
 	linux-x86 \
 	darwin-amd64 \
+	darwin-arm64 \
 	freebsd-amd64 \
 	freebsd-x86 \
 	openbsd-amd64 \
@@ -64,6 +65,9 @@ linux-armv5: generate
 darwin-amd64: generate
 	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-darwin-amd64 main.go
 
+darwin-arm64: generate
+	@ GOOS=darwin GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-darwin-arm64 main.go
+
 freebsd-amd64: generate
 	@ GOOS=freebsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-amd64 main.go
 
@@ -73,7 +77,7 @@ openbsd-amd64: generate
 windows-amd64: generate
 	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
 
-build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 freebsd-amd64 openbsd-amd64 windows-amd64
+build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
 
 # NOTE: unsupported targets
 netbsd-amd64: generate

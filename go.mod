@@ -1,6 +1,6 @@
 module miniflux.app
 
-// +heroku goVersion go1.15
+// +heroku goVersion go1.16
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.1
@@ -24,4 +24,4 @@ require (
 	mvdan.cc/xurls/v2 v2.2.0
 )
 
-go 1.15
+go 1.16
