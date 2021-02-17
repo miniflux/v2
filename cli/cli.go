@@ -10,6 +10,7 @@ import (
 
 	"miniflux.app/config"
 	"miniflux.app/database"
+	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
 	"miniflux.app/version"
@@ -98,6 +99,11 @@ func Parse() {
 
 	if config.Opts.IsDefaultDatabaseURL() {
 		logger.Info("The default value for DATABASE_URL is used")
+	}
+
+	logger.Debug("Loading translations...")
+	if err := locale.LoadCatalogMessages(); err != nil {
+		logger.Fatal("Unable to load translations: %v", err)
 	}
 
 	db, err := database.NewConnectionPool(
