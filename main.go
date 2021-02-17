@@ -10,7 +10,6 @@ package main // import "miniflux.app"
 //go:generate gofmt -s -w ui/static/js.go
 //go:generate gofmt -s -w template/views.go
 //go:generate gofmt -s -w template/common.go
-//go:generate gofmt -s -w locale/translations.go
 
 import (
 	"miniflux.app/cli"
