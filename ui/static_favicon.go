@@ -5,7 +5,6 @@
 package ui // import "miniflux.app/ui"
 
 import (
-	"encoding/base64"
 	"net/http"
 	"time"
 
@@ -15,14 +14,14 @@ import (
 )
 
 func (h *handler) showFavicon(w http.ResponseWriter, r *http.Request) {
-	etag, found := static.BinariesChecksums["favicon.ico"]
-	if !found {
+	etag, err := static.GetBinaryFileChecksum("favicon.ico")
+	if err != nil {
 		html.NotFound(w, r)
 		return
 	}
 
 	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
-		blob, err := base64.StdEncoding.DecodeString(static.Binaries["favicon.ico"])
+		blob, err := static.LoadBinaryFile("favicon.ico")
 		if err != nil {
 			html.ServerError(w, r, err)
 			return
