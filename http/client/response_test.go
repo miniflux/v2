@@ -6,7 +6,7 @@ package client // import "miniflux.app/http/client"
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"unicode/utf8"
@@ -129,7 +129,7 @@ func TestEnsureUnicodeWithHTMLDocuments(t *testing.T) {
 	}
 
 	for _, tc := range unicodeTestCases {
-		content, err := ioutil.ReadFile("testdata/" + tc.filename)
+		content, err := os.ReadFile("testdata/" + tc.filename)
 		if err != nil {
 			t.Fatalf(`Unable to read file %q: %v`, tc.filename, err)
 		}

@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strings"
 
 	"miniflux.app/config"
@@ -104,7 +103,7 @@ func downloadIcon(iconURL string, fetchViaProxy bool) (*model.Icon, error) {
 		return nil, fmt.Errorf("unable to download icon: status=%d", response.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read downloaded icon: %v", err)
 	}
