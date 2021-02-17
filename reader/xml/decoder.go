@@ -9,7 +9,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strings"
 
 	"miniflux.app/reader/encoding"
@@ -18,7 +17,7 @@ import (
 // NewDecoder returns a XML decoder that filters illegal characters.
 func NewDecoder(data io.Reader) *xml.Decoder {
 	var decoder *xml.Decoder
-	buffer, _ := ioutil.ReadAll(data)
+	buffer, _ := io.ReadAll(data)
 	enc := procInst("encoding", string(buffer))
 	if enc != "" && enc != "utf-8" && enc != "UTF-8" && !strings.EqualFold(enc, "utf-8") {
 		// filter invalid chars later within decoder.CharsetReader
@@ -36,7 +35,7 @@ func NewDecoder(data io.Reader) *xml.Decoder {
 		if err != nil {
 			return nil, err
 		}
-		rawData, err := ioutil.ReadAll(utf8Reader)
+		rawData, err := io.ReadAll(utf8Reader)
 		if err != nil {
 			return nil, fmt.Errorf("Unable to read data: %q", err)
 		}

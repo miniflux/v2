@@ -6,7 +6,7 @@ package parser // import "miniflux.app/reader/parser"
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"miniflux.app/http/client"
@@ -329,7 +329,7 @@ func TestDifferentEncodingWithResponse(t *testing.T) {
 	}
 
 	for _, tc := range unicodeTestCases {
-		content, err := ioutil.ReadFile("testdata/" + tc.filename)
+		content, err := os.ReadFile("testdata/" + tc.filename)
 		if err != nil {
 			t.Fatalf(`Unable to read file %q: %v`, tc.filename, err)
 		}

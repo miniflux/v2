@@ -8,7 +8,7 @@ package tests
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"strings"
 	"testing"
 )
@@ -39,7 +39,7 @@ func TestImport(t *testing.T) {
 	</opml>`
 
 	b := bytes.NewReader([]byte(data))
-	err := client.Import(ioutil.NopCloser(b))
+	err := client.Import(io.NopCloser(b))
 	if err != nil {
 		t.Fatal(err)
 	}

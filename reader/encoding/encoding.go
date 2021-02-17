@@ -7,7 +7,6 @@ package encoding // import "miniflux.app/reader/encoding"
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"unicode/utf8"
 
 	"golang.org/x/net/html/charset"
@@ -25,7 +24,7 @@ import (
 // - Feeds with encoding specified only in XML document and not in HTTP header
 // - Feeds with wrong encoding defined and already in UTF-8
 func CharsetReader(label string, input io.Reader) (io.Reader, error) {
-	buffer, _ := ioutil.ReadAll(input)
+	buffer, _ := io.ReadAll(input)
 	r := bytes.NewReader(buffer)
 
 	// The document is already UTF-8, do not do anything (avoid double-encoding).
