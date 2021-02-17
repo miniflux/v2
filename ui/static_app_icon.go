@@ -5,7 +5,6 @@
 package ui // import "miniflux.app/ui"
 
 import (
-	"encoding/base64"
 	"net/http"
 	"time"
 
@@ -17,14 +16,14 @@ import (
 
 func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "filename")
-	etag, found := static.BinariesChecksums[filename]
-	if !found {
+	etag, err := static.GetBinaryFileChecksum(filename)
+	if err != nil {
 		html.NotFound(w, r)
 		return
 	}
 
 	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
-		blob, err := base64.StdEncoding.DecodeString(static.Binaries[filename])
+		blob, err := static.LoadBinaryFile(filename)
 		if err != nil {
 			html.ServerError(w, r, err)
 			return

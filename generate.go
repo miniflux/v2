@@ -8,7 +8,6 @@ package main
 
 import (
 	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	"os"
 	"path"
@@ -153,21 +152,6 @@ func generateCSSBundle(bundleFile string, themes map[string][]string) {
 	bundle.Write(bundleFile)
 }
 
-func generateBinaryBundle(bundleFile string, srcFiles []string) {
-	bundle := NewBundle("static", "Binaries", "ui/static")
-
-	for _, srcFile := range srcFiles {
-		data := readFile(srcFile)
-		filename := basename(srcFile)
-		encodedData := base64.StdEncoding.EncodeToString(data)
-
-		bundle.Files[filename] = string(encodedData)
-		bundle.Checksums[filename] = checksum(data)
-	}
-
-	bundle.Write(bundleFile)
-}
-
 func generateBundle(bundleFile, pkg, mapName string, srcFiles []string) {
 	bundle := NewBundle(pkg, mapName, pkg)
 
@@ -211,8 +195,6 @@ func main() {
 		"system_serif":      []string{"ui/static/css/system.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
 		"system_sans_serif": []string{"ui/static/css/system.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
 	})
-
-	generateBinaryBundle("ui/static/bin.go", glob("ui/static/bin/*"))
 
 	generateBundle("template/views.go", "template", "templateViewsMap", glob("template/html/*.html"))
 	generateBundle("template/common.go", "template", "templateCommonMap", glob("template/html/common/*.html"))
