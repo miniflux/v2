@@ -40,7 +40,7 @@ func New(tpl *template.Engine, r *http.Request, sess *session.Session) *View {
 	b.params["flashMessage"] = sess.FlashMessage(request.FlashMessage(r))
 	b.params["flashErrorMessage"] = sess.FlashErrorMessage(request.FlashErrorMessage(r))
 	b.params["theme"] = theme
-	b.params["theme_checksum"] = static.StylesheetsChecksums[theme]
+	b.params["theme_checksum"] = static.StylesheetBundleChecksums[theme]
 	b.params["app_js_checksum"] = static.JavascriptsChecksums["app"]
 	b.params["sw_js_checksum"] = static.JavascriptsChecksums["service-worker"]
 	return b
