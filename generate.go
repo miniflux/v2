@@ -16,7 +16,6 @@ import (
 	"text/template"
 
 	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/js"
 )
 
@@ -133,25 +132,6 @@ func generateJSBundle(bundleFile string, bundleFiles map[string][]string, prefix
 	bundle.Write(bundleFile)
 }
 
-func generateCSSBundle(bundleFile string, themes map[string][]string) {
-	bundle := NewBundle("static", "Stylesheets", "ui/static")
-	m := minify.New()
-	m.AddFunc("text/css", css.Minify)
-
-	for theme, srcFiles := range themes {
-		data := concat(srcFiles)
-		minifiedData, err := m.String("text/css", data)
-		if err != nil {
-			panic(err)
-		}
-
-		bundle.Files[theme] = minifiedData
-		bundle.Checksums[theme] = checksum([]byte(minifiedData))
-	}
-
-	bundle.Write(bundleFile)
-}
-
 func generateBundle(bundleFile, pkg, mapName string, srcFiles []string) {
 	bundle := NewBundle(pkg, mapName, pkg)
 
@@ -185,15 +165,6 @@ func main() {
 		"sw":  "'use strict';",
 	}, map[string]string{
 		"app": "})();",
-	})
-
-	generateCSSBundle("ui/static/css.go", map[string][]string{
-		"light_serif":       []string{"ui/static/css/light.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
-		"light_sans_serif":  []string{"ui/static/css/light.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
-		"dark_serif":        []string{"ui/static/css/dark.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
-		"dark_sans_serif":   []string{"ui/static/css/dark.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
-		"system_serif":      []string{"ui/static/css/system.css", "ui/static/css/serif.css", "ui/static/css/common.css"},
-		"system_sans_serif": []string{"ui/static/css/system.css", "ui/static/css/sans_serif.css", "ui/static/css/common.css"},
 	})
 
 	generateBundle("template/views.go", "template", "templateViewsMap", glob("template/html/*.html"))

@@ -13,6 +13,7 @@ import (
 	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
+	"miniflux.app/ui/static"
 	"miniflux.app/version"
 )
 
@@ -104,6 +105,15 @@ func Parse() {
 	logger.Debug("Loading translations...")
 	if err := locale.LoadCatalogMessages(); err != nil {
 		logger.Fatal("Unable to load translations: %v", err)
+	}
+
+	logger.Debug("Loading static assets...")
+	if err := static.CalculateBinaryFileChecksums(); err != nil {
+		logger.Fatal("Unable to calculate binary files checksum: %v", err)
+	}
+
+	if err := static.GenerateStylesheetsBundles(); err != nil {
+		logger.Fatal("Unable to generate stylesheet bundles: %v", err)
 	}
 
 	db, err := database.NewConnectionPool(

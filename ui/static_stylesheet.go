@@ -29,7 +29,7 @@ func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	etag, found := static.StylesheetsChecksums[filename]
+	etag, found := static.StylesheetBundleChecksums[filename]
 	if !found {
 		html.NotFound(w, r)
 		return
@@ -37,7 +37,7 @@ func (h *handler) showStylesheet(w http.ResponseWriter, r *http.Request) {
 
 	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/css; charset=utf-8")
-		b.WithBody(static.Stylesheets[filename])
+		b.WithBody(static.StylesheetBundles[filename])
 		b.Write()
 	})
 }
