@@ -16,7 +16,7 @@ import (
 
 func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 	filename := request.RouteStringParam(r, "name")
-	etag, found := static.JavascriptsChecksums[filename]
+	etag, found := static.JavascriptBundleChecksums[filename]
 	if !found {
 		html.NotFound(w, r)
 		return
@@ -24,7 +24,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 
 	response.New(w, r).WithCaching(etag, 48*time.Hour, func(b *response.Builder) {
 		b.WithHeader("Content-Type", "text/javascript; charset=utf-8")
-		b.WithBody(static.Javascripts[filename])
+		b.WithBody(static.JavascriptBundles[filename])
 		b.Write()
 	})
 }

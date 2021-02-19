@@ -113,7 +113,11 @@ func Parse() {
 	}
 
 	if err := static.GenerateStylesheetsBundles(); err != nil {
-		logger.Fatal("Unable to generate stylesheet bundles: %v", err)
+		logger.Fatal("Unable to generate Stylesheet bundles: %v", err)
+	}
+
+	if err := static.GenerateJavascriptBundles(); err != nil {
+		logger.Fatal("Unable to generate Javascript bundles: %v", err)
 	}
 
 	db, err := database.NewConnectionPool(

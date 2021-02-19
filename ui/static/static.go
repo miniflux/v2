@@ -12,12 +12,15 @@ import (
 
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
+	"github.com/tdewolff/minify/v2/js"
 )
 
 // Static assets.
 var (
 	StylesheetBundleChecksums map[string]string
 	StylesheetBundles         map[string][]byte
+	JavascriptBundleChecksums map[string]string
+	JavascriptBundles         map[string][]byte
 )
 
 //go:embed bin/*
@@ -25,6 +28,9 @@ var binaryFiles embed.FS
 
 //go:embed css/*.css
 var stylesheetFiles embed.FS
+
+//go:embed js/*.js
+var javascriptFiles embed.FS
 
 var binaryFileChecksums map[string]string
 
@@ -98,6 +104,70 @@ func GenerateStylesheetsBundles() error {
 
 		StylesheetBundles[bundle] = minifiedData
 		StylesheetBundleChecksums[bundle] = fmt.Sprintf("%x", sha256.Sum256(minifiedData))
+	}
+
+	return nil
+}
+
+// GenerateJavascriptBundles creates JS bundles.
+func GenerateJavascriptBundles() error {
+	var bundles = map[string][]string{
+		"app": {
+			"js/dom_helper.js",
+			"js/touch_handler.js",
+			"js/keyboard_handler.js",
+			"js/request_builder.js",
+			"js/modal_handler.js",
+			"js/app.js",
+			"js/bootstrap.js",
+		},
+		"service-worker": {
+			"js/service_worker.js",
+		},
+	}
+
+	var prefixes = map[string]string{
+		"app":            "(function(){'use strict';",
+		"service-worker": "'use strict';",
+	}
+
+	var suffixes = map[string]string{
+		"app": "})();",
+	}
+
+	JavascriptBundles = make(map[string][]byte)
+	JavascriptBundleChecksums = make(map[string]string)
+
+	minifier := minify.New()
+	minifier.AddFunc("text/javascript", js.Minify)
+
+	for bundle, srcFiles := range bundles {
+		var buffer bytes.Buffer
+
+		if prefix, found := prefixes[bundle]; found {
+			buffer.WriteString(prefix)
+		}
+
+		for _, srcFile := range srcFiles {
+			fileData, err := javascriptFiles.ReadFile(srcFile)
+			if err != nil {
+				return err
+			}
+
+			buffer.Write(fileData)
+		}
+
+		if suffix, found := suffixes[bundle]; found {
+			buffer.WriteString(suffix)
+		}
+
+		minifiedData, err := minifier.Bytes("text/javascript", buffer.Bytes())
+		if err != nil {
+			return err
+		}
+
+		JavascriptBundles[bundle] = minifiedData
+		JavascriptBundleChecksums[bundle] = fmt.Sprintf("%x", sha256.Sum256(minifiedData))
 	}
 
 	return nil
