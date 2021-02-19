@@ -28,7 +28,7 @@ func (v *View) Set(param string, value interface{}) *View {
 
 // Render executes the template with arguments.
 func (v *View) Render(template string) []byte {
-	return v.tpl.Render(template, request.UserLanguage(v.r), v.params)
+	return v.tpl.Render(template+".html", request.UserLanguage(v.r), v.params)
 }
 
 // New returns a new view with default parameters.
