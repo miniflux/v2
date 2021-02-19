@@ -6,7 +6,9 @@ package template // import "miniflux.app/template"
 
 import (
 	"bytes"
+	"embed"
 	"html/template"
+	"strings"
 	"time"
 
 	"miniflux.app/errors"
@@ -16,22 +18,64 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//go:embed templates/common/*.html
+var commonTemplateFiles embed.FS
+
+//go:embed templates/views/*.html
+var viewTemplateFiles embed.FS
+
 // Engine handles the templating system.
 type Engine struct {
 	templates map[string]*template.Template
 	funcMap   *funcMap
 }
 
-func (e *Engine) parseAll() {
-	commonTemplates := ""
-	for _, content := range templateCommonMap {
-		commonTemplates += content
+// NewEngine returns a new template engine.
+func NewEngine(router *mux.Router) *Engine {
+	return &Engine{
+		templates: make(map[string]*template.Template),
+		funcMap:   &funcMap{router},
+	}
+}
+
+// ParseTemplates parses template files embed into the application.
+func (e *Engine) ParseTemplates() error {
+	var commonTemplateContents strings.Builder
+
+	dirEntries, err := commonTemplateFiles.ReadDir("templates/common")
+	if err != nil {
+		return err
 	}
 
-	for name, content := range templateViewsMap {
-		logger.Debug("[Template] Parsing: %s", name)
-		e.templates[name] = template.Must(template.New("main").Funcs(e.funcMap.Map()).Parse(commonTemplates + content))
+	for _, dirEntry := range dirEntries {
+		fileData, err := commonTemplateFiles.ReadFile("templates/common/" + dirEntry.Name())
+		if err != nil {
+			return err
+		}
+		commonTemplateContents.Write(fileData)
 	}
+
+	dirEntries, err = viewTemplateFiles.ReadDir("templates/views")
+	if err != nil {
+		return err
+	}
+
+	for _, dirEntry := range dirEntries {
+		templateName := dirEntry.Name()
+		fileData, err := viewTemplateFiles.ReadFile("templates/views/" + dirEntry.Name())
+		if err != nil {
+			return err
+		}
+
+		var templateContents strings.Builder
+		templateContents.WriteString(commonTemplateContents.String())
+		templateContents.Write(fileData)
+
+		logger.Debug("[Template] Parsing: %s", templateName)
+		e.templates[templateName] = template.Must(template.New("main").Funcs(e.funcMap.Map()).Parse(templateContents.String()))
+	}
+
+	return nil
 }
 
 // Render process a template.
@@ -74,15 +118,4 @@ func (e *Engine) Render(name, language string, data interface{}) []byte {
 	}
 
 	return b.Bytes()
-}
-
-// NewEngine returns a new template engine.
-func NewEngine(router *mux.Router) *Engine {
-	tpl := &Engine{
-		templates: make(map[string]*template.Template),
-		funcMap:   &funcMap{router},
-	}
-
-	tpl.parseAll()
-	return tpl
 }
