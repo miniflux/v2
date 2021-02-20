@@ -126,16 +126,20 @@ func Parse() {
 		config.Opts.DatabaseMaxConns(),
 	)
 	if err != nil {
-		logger.Fatal("Unable to connect to the database: %v", err)
+		logger.Fatal("Unable to initialize database connection pool: %v", err)
 	}
 	defer db.Close()
+
+	store := storage.NewStorage(db)
+
+	if err := store.Ping(); err != nil {
+		logger.Fatal("Unable to connect to the database: %v", err)
+	}
 
 	if flagMigrate {
 		database.Migrate(db)
 		return
 	}
-
-	store := storage.NewStorage(db)
 
 	if flagResetFeedErrors {
 		store.ResetFeedErrors()
