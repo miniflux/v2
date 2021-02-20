@@ -184,6 +184,11 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	ui.Serve(router, store, pool)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		if err := store.Ping(); err != nil {
+			http.Error(w, "Database Connection Error", http.StatusInternalServerError)
+			return
+		}
+
 		w.Write([]byte("OK"))
 	}).Name("healthcheck")
 
