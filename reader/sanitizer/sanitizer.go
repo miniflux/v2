@@ -326,6 +326,7 @@ func isValidIframeSource(baseURL, src string) bool {
 		"http://bandcamp.com",
 		"https://bandcamp.com",
 		"https://cdn.embedly.com",
+		"https://player.bilibili.com",
 	}
 
 	// allow iframe from same origin
