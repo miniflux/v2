@@ -28,6 +28,7 @@ const (
 	flagDebugModeHelp       = "Show debug logs"
 	flagConfigFileHelp      = "Load configuration file"
 	flagConfigDumpHelp      = "Print parsed configuration values"
+	flagHealthCheckHelp     = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
 )
 
 // Parse parses command line arguments.
@@ -44,6 +45,7 @@ func Parse() {
 		flagDebugMode       bool
 		flagConfigFile      string
 		flagConfigDump      bool
+		flagHealthCheck     string
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -59,6 +61,7 @@ func Parse() {
 	flag.StringVar(&flagConfigFile, "config-file", "", flagConfigFileHelp)
 	flag.StringVar(&flagConfigFile, "c", "", flagConfigFileHelp)
 	flag.BoolVar(&flagConfigDump, "config-dump", false, flagConfigDumpHelp)
+	flag.StringVar(&flagHealthCheck, "healthcheck", "", flagHealthCheckHelp)
 	flag.Parse()
 
 	cfg := config.NewParser()
@@ -86,6 +89,11 @@ func Parse() {
 
 	if flagDebugMode || config.Opts.HasDebugMode() {
 		logger.EnableDebug()
+	}
+
+	if flagHealthCheck != "" {
+		doHealthCheck(flagHealthCheck)
+		return
 	}
 
 	if flagInfo {
