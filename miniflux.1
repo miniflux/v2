@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "September 28, 2020" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "February 20, 2021" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -41,6 +41,13 @@ Show debug logs\&.
 .B \-flush-sessions
 .RS 4
 Flush all sessions (disconnect users)\&.
+.RE
+.PP
+.B \-healthcheck
+.RS 4
+Perform a health check on the given endpoint\&.
+.br
+The value "auto" try to guess the health check endpoint\&.
 .RE
 .PP
 .B \-i

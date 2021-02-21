@@ -10,8 +10,10 @@ import (
 
 	"miniflux.app/config"
 	"miniflux.app/database"
+	"miniflux.app/locale"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
+	"miniflux.app/ui/static"
 	"miniflux.app/version"
 )
 
@@ -26,6 +28,7 @@ const (
 	flagDebugModeHelp       = "Show debug logs"
 	flagConfigFileHelp      = "Load configuration file"
 	flagConfigDumpHelp      = "Print parsed configuration values"
+	flagHealthCheckHelp     = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
 )
 
 // Parse parses command line arguments.
@@ -42,6 +45,7 @@ func Parse() {
 		flagDebugMode       bool
 		flagConfigFile      string
 		flagConfigDump      bool
+		flagHealthCheck     string
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -57,6 +61,7 @@ func Parse() {
 	flag.StringVar(&flagConfigFile, "config-file", "", flagConfigFileHelp)
 	flag.StringVar(&flagConfigFile, "c", "", flagConfigFileHelp)
 	flag.BoolVar(&flagConfigDump, "config-dump", false, flagConfigDumpHelp)
+	flag.StringVar(&flagHealthCheck, "healthcheck", "", flagHealthCheckHelp)
 	flag.Parse()
 
 	cfg := config.NewParser()
@@ -86,6 +91,11 @@ func Parse() {
 		logger.EnableDebug()
 	}
 
+	if flagHealthCheck != "" {
+		doHealthCheck(flagHealthCheck)
+		return
+	}
+
 	if flagInfo {
 		info()
 		return
@@ -100,22 +110,44 @@ func Parse() {
 		logger.Info("The default value for DATABASE_URL is used")
 	}
 
+	logger.Debug("Loading translations...")
+	if err := locale.LoadCatalogMessages(); err != nil {
+		logger.Fatal("Unable to load translations: %v", err)
+	}
+
+	logger.Debug("Loading static assets...")
+	if err := static.CalculateBinaryFileChecksums(); err != nil {
+		logger.Fatal("Unable to calculate binary files checksum: %v", err)
+	}
+
+	if err := static.GenerateStylesheetsBundles(); err != nil {
+		logger.Fatal("Unable to generate Stylesheet bundles: %v", err)
+	}
+
+	if err := static.GenerateJavascriptBundles(); err != nil {
+		logger.Fatal("Unable to generate Javascript bundles: %v", err)
+	}
+
 	db, err := database.NewConnectionPool(
 		config.Opts.DatabaseURL(),
 		config.Opts.DatabaseMinConns(),
 		config.Opts.DatabaseMaxConns(),
 	)
 	if err != nil {
-		logger.Fatal("Unable to connect to the database: %v", err)
+		logger.Fatal("Unable to initialize database connection pool: %v", err)
 	}
 	defer db.Close()
+
+	store := storage.NewStorage(db)
+
+	if err := store.Ping(); err != nil {
+		logger.Fatal("Unable to connect to the database: %v", err)
+	}
 
 	if flagMigrate {
 		database.Migrate(db)
 		return
 	}
-
-	store := storage.NewStorage(db)
 
 	if flagResetFeedErrors {
 		store.ResetFeedErrors()

@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"strconv"
 )
@@ -270,7 +269,7 @@ func (c *Client) Export() ([]byte, error) {
 	}
 	defer body.Close()
 
-	opml, err := ioutil.ReadAll(body)
+	opml, err := io.ReadAll(body)
 	if err != nil {
 		return nil, err
 	}

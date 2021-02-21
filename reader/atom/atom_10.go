@@ -6,6 +6,7 @@ package atom // import "miniflux.app/reader/atom"
 
 import (
 	"encoding/xml"
+	"html"
 	"strconv"
 	"strings"
 	"time"
@@ -235,5 +236,5 @@ func (a *atom10Text) String() string {
 		content = a.Data
 	}
 
-	return strings.TrimSpace(content)
+	return html.UnescapeString(strings.TrimSpace(content))
 }

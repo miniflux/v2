@@ -24,11 +24,12 @@ var (
 
 // Sanitize returns safe HTML.
 func Sanitize(baseURL, input string) string {
-	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
 	var buffer bytes.Buffer
 	var tagStack []string
+	var parentTag string
 	blacklistedTagDepth := 0
 
+	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
 	for {
 		if tokenizer.Next() == html.ErrorToken {
 			err := tokenizer.Err()
@@ -46,9 +47,16 @@ func Sanitize(baseURL, input string) string {
 				continue
 			}
 
+			// An iframe element never has fallback content.
+			// See https://www.w3.org/TR/2010/WD-html5-20101019/the-iframe-element.html#the-iframe-element
+			if parentTag == "iframe" {
+				continue
+			}
+
 			buffer.WriteString(html.EscapeString(token.Data))
 		case html.StartTagToken:
 			tagName := token.DataAtom.String()
+			parentTag = tagName
 
 			if !isPixelTracker(tagName, token.Attr) && isValidTag(tagName) {
 				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
@@ -318,6 +326,7 @@ func isValidIframeSource(baseURL, src string) bool {
 		"http://bandcamp.com",
 		"https://bandcamp.com",
 		"https://cdn.embedly.com",
+		"https://player.bilibili.com",
 	}
 
 	// allow iframe from same origin

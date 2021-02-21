@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -87,7 +86,7 @@ func (r *Response) IsModified(etag, lastModified string) bool {
 // - Feeds with encoding specified only in XML document and not in HTTP header
 // - Feeds with wrong encoding defined and already in UTF-8
 func (r *Response) EnsureUnicodeBody() (err error) {
-	buffer, err := ioutil.ReadAll(r.Body)
+	buffer, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
@@ -116,6 +115,6 @@ func (r *Response) EnsureUnicodeBody() (err error) {
 
 // BodyAsString returns the response body as string.
 func (r *Response) BodyAsString() string {
-	bytes, _ := ioutil.ReadAll(r.Body)
+	bytes, _ := io.ReadAll(r.Body)
 	return string(bytes)
 }

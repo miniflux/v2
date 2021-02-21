@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	url_parser "net/url"
 	"os"
 	"strconv"
@@ -269,7 +268,7 @@ func parseStringList(value string, fallback []string) []string {
 }
 
 func readSecretFile(filename, fallback string) string {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return fallback
 	}

@@ -6,7 +6,7 @@ package scraper // import "miniflux.app/reader/scraper"
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -54,7 +54,7 @@ func TestSelectorRules(t *testing.T) {
 	}
 
 	for filename, rule := range ruleTestCases {
-		html, err := ioutil.ReadFile("testdata/" + filename)
+		html, err := os.ReadFile("testdata/" + filename)
 		if err != nil {
 			t.Fatalf(`Unable to read file %q: %v`, filename, err)
 		}
@@ -64,7 +64,7 @@ func TestSelectorRules(t *testing.T) {
 			t.Fatalf(`Scraping error for %q - %q: %v`, filename, rule, err)
 		}
 
-		expectedResult, err := ioutil.ReadFile("testdata/" + filename + "-result")
+		expectedResult, err := os.ReadFile("testdata/" + filename + "-result")
 		if err != nil {
 			t.Fatalf(`Unable to read file %q: %v`, filename, err)
 		}
