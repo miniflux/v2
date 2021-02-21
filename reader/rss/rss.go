@@ -6,6 +6,7 @@ package rss // import "miniflux.app/reader/rss"
 
 import (
 	"encoding/xml"
+	"html"
 	"path"
 	"strconv"
 	"strings"
@@ -257,7 +258,7 @@ func (r *rssItem) entryTitle() string {
 		}
 	}
 
-	return strings.TrimSpace(title)
+	return html.UnescapeString(strings.TrimSpace(title))
 }
 
 func (r *rssItem) entryContent() string {

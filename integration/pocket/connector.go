@@ -7,7 +7,7 @@ package pocket // import "miniflux.app/integration/pocket"
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/url"
 
 	"miniflux.app/http/client"
@@ -35,7 +35,7 @@ func (c *Connector) RequestToken(redirectURL string) (string, error) {
 		return "", fmt.Errorf("pocket: unable to fetch request token, status=%d", response.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", fmt.Errorf("pocket: unable to read response body: %v", err)
 	}
@@ -70,7 +70,7 @@ func (c *Connector) AccessToken(requestToken string) (string, error) {
 		return "", fmt.Errorf("pocket: unable to fetch access token, status=%d", response.StatusCode)
 	}
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", fmt.Errorf("pocket: unable to read response body: %v", err)
 	}

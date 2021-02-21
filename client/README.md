@@ -20,7 +20,7 @@ package main
 
 import (
 	"fmt"
-    "io/ioutil"
+	"os"
 
 	miniflux "miniflux.app/client"
 )
@@ -47,7 +47,7 @@ func main() {
         return
     }
 
-    err = ioutil.WriteFile("opml.xml", opml, 0644)
+    err = os.WriteFile("opml.xml", opml, 0644)
     if err != nil {
         fmt.Println(err)
         return

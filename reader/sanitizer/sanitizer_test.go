@@ -173,6 +173,16 @@ func TestInvalidIFrame(t *testing.T) {
 	}
 }
 
+func TestIFrameWithChildElements(t *testing.T) {
+	input := `<iframe src="https://www.youtube.com/"><p>test</p></iframe>`
+	expected := `<iframe src="https://www.youtube.com/" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy"></iframe>`
+	output := Sanitize("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
 func TestInvalidURLScheme(t *testing.T) {
 	input := `<p>This link is <a src="file:///etc/passwd">not valid</a></p>`
 	expected := `<p>This link is not valid</p>`

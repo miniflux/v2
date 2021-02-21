@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -87,7 +86,7 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 		case io.ReadCloser:
 			request.Body = data.(io.ReadCloser)
 		default:
-			request.Body = ioutil.NopCloser(bytes.NewBuffer(r.toJSON(data)))
+			request.Body = io.NopCloser(bytes.NewBuffer(r.toJSON(data)))
 		}
 	}
 

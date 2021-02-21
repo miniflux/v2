@@ -4,14 +4,6 @@
 
 package main // import "miniflux.app"
 
-//go:generate go run generate.go
-//go:generate gofmt -s -w ui/static/css.go
-//go:generate gofmt -s -w ui/static/bin.go
-//go:generate gofmt -s -w ui/static/js.go
-//go:generate gofmt -s -w template/views.go
-//go:generate gofmt -s -w template/common.go
-//go:generate gofmt -s -w locale/translations.go
-
 import (
 	"miniflux.app/cli"
 )

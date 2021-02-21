@@ -8,12 +8,12 @@ import "testing"
 
 func TestPluralRules(t *testing.T) {
 	scenarios := map[string]map[int]int{
-		"default": map[int]int{
+		"default": {
 			1: 0,
 			2: 1,
 			5: 1,
 		},
-		"ar_AR": map[int]int{
+		"ar_AR": {
 			0:   0,
 			1:   1,
 			2:   2,
@@ -21,32 +21,32 @@ func TestPluralRules(t *testing.T) {
 			11:  4,
 			200: 5,
 		},
-		"cs_CZ": map[int]int{
+		"cs_CZ": {
 			1: 0,
 			2: 1,
 			5: 2,
 		},
-		"pl_PL": map[int]int{
+		"pl_PL": {
 			1: 0,
 			2: 1,
 			5: 2,
 		},
-		"pt_BR": map[int]int{
+		"pt_BR": {
 			1: 0,
 			2: 1,
 			5: 1,
 		},
-		"ru_RU": map[int]int{
+		"ru_RU": {
 			1: 0,
 			2: 1,
 			5: 2,
 		},
-		"sr_RS": map[int]int{
+		"sr_RS": {
 			1: 0,
 			2: 1,
 			5: 2,
 		},
-		"zh_CN": map[int]int{
+		"zh_CN": {
 			1: 0,
 			5: 0,
 		},

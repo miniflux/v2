@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"miniflux.app/config"
+	"miniflux.app/logger"
 	"miniflux.app/storage"
 	"miniflux.app/template"
 	"miniflux.app/worker"
@@ -19,7 +20,13 @@ import (
 // Serve declares all routes for the user interface.
 func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	middleware := newMiddleware(router, store)
-	handler := &handler{router, store, template.NewEngine(router), pool}
+
+	templateEngine := template.NewEngine(router)
+	if err := templateEngine.ParseTemplates(); err != nil {
+		logger.Fatal(`Unable to parse templates: %v`, err)
+	}
+
+	handler := &handler{router, store, templateEngine, pool}
 
 	uiRouter := router.NewRoute().Subrouter()
 	uiRouter.Use(middleware.handleUserSession)

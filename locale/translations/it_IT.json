@@ -114,6 +114,7 @@
     "page.about.author": "Autore:",
     "page.about.license": "Licenza:",
     "page.about.global_config_options": "Opzioni di configurazione globali",
+    "page.about.postgres_version": "Postgres versione:",
     "page.add_feed.title": "Nuovo feed",
     "page.add_feed.no_category": "Nessuna categoria selezionata. Devi scegliere almeno una categoria.",
     "page.add_feed.label.url": "URL",

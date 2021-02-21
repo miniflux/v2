@@ -121,7 +121,7 @@ func tlsConfig() *tls.Config {
 func startAutoCertTLSServer(server *http.Server, certDomain string, store *storage.Storage) {
 	server.Addr = ":https"
 	certManager := autocert.Manager{
-		Cache:      storage.NewCache(store),
+		Cache:      storage.NewCertificateCache(store),
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist(certDomain),
 	}
@@ -184,6 +184,11 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	ui.Serve(router, store, pool)
 
 	router.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		if err := store.Ping(); err != nil {
+			http.Error(w, "Database Connection Error", http.StatusInternalServerError)
+			return
+		}
+
 		w.Write([]byte("OK"))
 	}).Name("healthcheck")
 

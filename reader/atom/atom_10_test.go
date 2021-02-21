@@ -265,7 +265,7 @@ func TestParseEntryTitleWithHTMLAndCDATA(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != "Test &#8220;Test&#8221;" {
+	if feed.Entries[0].Title != "Test “Test”" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
@@ -318,6 +318,58 @@ func TestParseEntryTitleWithXHTML(t *testing.T) {
 	}
 
 	if feed.Entries[0].Title != "<code>Test</code> Test" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryTitleWithNumericCharacterReference(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title>&#931; &#xDF;</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Σ ß" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryTitleWithDoubleEncodedEntities(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title>&amp;#39;AT&amp;amp;T&amp;#39;</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != `'AT&T'` {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }

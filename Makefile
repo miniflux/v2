@@ -10,7 +10,7 @@ DEB_IMG_ARCH := amd64
 
 export PGPASSWORD := postgres
 
-.PHONY: generate \
+.PHONY: \
 	miniflux \
 	linux-amd64 \
 	linux-arm64 \
@@ -19,6 +19,7 @@ export PGPASSWORD := postgres
 	linux-armv5 \
 	linux-x86 \
 	darwin-amd64 \
+	darwin-arm64 \
 	freebsd-amd64 \
 	freebsd-x86 \
 	openbsd-amd64 \
@@ -40,61 +41,61 @@ export PGPASSWORD := postgres
 	debian \
 	debian-packages
 
-generate:
-	@ go generate
-
-miniflux: generate
+miniflux:
 	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
-linux-amd64: generate
+linux-amd64:
 	@ GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
 
-linux-arm64: generate
+linux-arm64:
 	@ GOOS=linux GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-arm64 main.go
 
-linux-armv7: generate
+linux-armv7:
 	@ GOOS=linux GOARCH=arm GOARM=7 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv7 main.go
 
-linux-armv6: generate
+linux-armv6:
 	@ GOOS=linux GOARCH=arm GOARM=6 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv6 main.go
 
-linux-armv5: generate
+linux-armv5:
 	@ GOOS=linux GOARCH=arm GOARM=5 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-armv5 main.go
 
-darwin-amd64: generate
+darwin-amd64:
 	@ GOOS=darwin GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-darwin-amd64 main.go
 
-freebsd-amd64: generate
+darwin-arm64:
+	@ GOOS=darwin GOARCH=arm64 go build -ldflags=$(LD_FLAGS) -o $(APP)-darwin-arm64 main.go
+
+freebsd-amd64:
 	@ GOOS=freebsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-amd64 main.go
 
-openbsd-amd64: generate
+openbsd-amd64:
 	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-openbsd-amd64 main.go
 
-windows-amd64: generate
+windows-amd64:
 	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
 
-build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 freebsd-amd64 openbsd-amd64 windows-amd64
+build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
 
 # NOTE: unsupported targets
-netbsd-amd64: generate
+netbsd-amd64:
 	@ GOOS=netbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-amd64 main.go
 
-linux-x86: generate
+linux-x86:
 	@ GOOS=linux GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-x86 main.go
 
-freebsd-x86: generate
+freebsd-x86:
 	@ GOOS=freebsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
 
-netbsd-x86: generate
+netbsd-x86:
 	@ GOOS=netbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-netbsd-x86 main.go
 
-openbsd-x86: generate
+openbsd-x86:
 	@ GOOS=openbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-freebsd-x86 main.go
 
-windows-x86: generate
+windows-x86:
 	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-x86 main.go
 
-run: generate
+run:
 	@ LOG_DATE_TIME=1 go run main.go -debug
 
 clean:
