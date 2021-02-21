@@ -50,7 +50,12 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 				logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
 
 				startTime := time.Now()
-				content, scraperErr := scraper.Fetch(entry.URL, feed.ScraperRules, feed.UserAgent)
+				content, scraperErr := scraper.Fetch(
+					entry.URL,
+					feed.ScraperRules,
+					feed.UserAgent,
+					feed.AllowSelfSignedCertificates,
+				)
 
 				if config.Opts.HasMetricsCollector() {
 					status := "success"
@@ -118,9 +123,15 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
-func ProcessEntryWebPage(entry *model.Entry) error {
+func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 	startTime := time.Now()
-	content, scraperErr := scraper.Fetch(entry.URL, entry.Feed.ScraperRules, entry.Feed.UserAgent)
+	content, scraperErr := scraper.Fetch(
+		entry.URL,
+		entry.Feed.ScraperRules,
+		entry.Feed.UserAgent,
+		feed.AllowSelfSignedCertificates,
+	)
+
 	if config.Opts.HasMetricsCollector() {
 		status := "success"
 		if scraperErr != nil {

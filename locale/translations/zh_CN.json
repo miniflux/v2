@@ -265,6 +265,7 @@
     "form.feed.label.blocklist_rules": "封锁规则",
     "form.feed.label.keeplist_rules": "许可规则",
     "form.feed.label.ignore_http_cache": "忽略HTTP缓存",
+    "form.feed.label.allow_self_signed_certificates": "允许自签名或无效的证书",
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此Feed",
     "form.category.label.title": "标题",

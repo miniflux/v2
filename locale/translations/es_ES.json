@@ -267,6 +267,7 @@
     "form.feed.label.blocklist_rules": "Reglas de Filtrado(Bloquear)",
     "form.feed.label.keeplist_rules": "Reglas de Filtrado(Permitir)",
     "form.feed.label.ignore_http_cache": "Ignorar caché HTTP",
+    "form.feed.label.allow_self_signed_certificates": "Permitir certificados autofirmados o no válidos",
     "form.feed.label.fetch_via_proxy": "Buscar a través de proxy",
     "form.feed.label.disabled": "No actualice este feed",
     "form.category.label.title": "Título",

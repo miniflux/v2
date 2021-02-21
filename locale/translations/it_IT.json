@@ -267,6 +267,7 @@
     "form.feed.label.blocklist_rules": "Regole di blocco",
     "form.feed.label.keeplist_rules": "Regole di autorizzazione",
     "form.feed.label.ignore_http_cache": "Ignora cache HTTP",
+    "form.feed.label.allow_self_signed_certificates": "Consenti certificati autofirmati o non validi",
     "form.feed.label.fetch_via_proxy": "Recuperare tramite proxy",
     "form.feed.label.disabled": "Non aggiornare questo feed",
     "form.category.label.title": "Titolo",

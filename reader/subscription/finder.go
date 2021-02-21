@@ -27,13 +27,14 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, username, password string, fetchViaProxy bool) (Subscriptions, *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, username, password string, fetchViaProxy, allowSelfSignedCertificates bool) (Subscriptions, *errors.LocalizedError) {
 	websiteURL = findYoutubeChannelFeed(websiteURL)
 	websiteURL = parseYoutubeVideoPage(websiteURL)
 
 	clt := client.NewClientWithConfig(websiteURL, config.Opts)
 	clt.WithCredentials(username, password)
 	clt.WithUserAgent(userAgent)
+	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
 
 	if fetchViaProxy {
 		clt.WithProxy()

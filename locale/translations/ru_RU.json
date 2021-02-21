@@ -269,6 +269,7 @@
     "form.feed.label.blocklist_rules": "Правила блокировки",
     "form.feed.label.keeplist_rules": "правила разрешений",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP-кеш",
+    "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
     "form.feed.label.fetch_via_proxy": "Получить через прокси",
     "form.feed.label.disabled": "Не обновлять этот канал",
     "form.category.label.title": "Название",
