@@ -23,7 +23,8 @@ type Client struct {
 }
 
 // AddEntry sends a link to Wallabag.
-func (c *Client) AddEntry(link, title string) error {
+// Pass an empty string in `content` to let Wallabag fetch the article content.
+func (c *Client) AddEntry(link, title, content string) error {
 	if c.baseURL == "" || c.clientID == "" || c.clientSecret == "" || c.username == "" || c.password == "" {
 		return fmt.Errorf("wallabag: missing credentials")
 	}
@@ -33,10 +34,10 @@ func (c *Client) AddEntry(link, title string) error {
 		return err
 	}
 
-	return c.createEntry(accessToken, link, title)
+	return c.createEntry(accessToken, link, title, content)
 }
 
-func (c *Client) createEntry(accessToken, link, title string) error {
+func (c *Client) createEntry(accessToken, link, title, content string) error {
 	endpoint, err := getAPIEndpoint(c.baseURL, "/api/entries.json")
 	if err != nil {
 		return fmt.Errorf("wallbag: unable to get entries endpoint: %v", err)
@@ -44,7 +45,7 @@ func (c *Client) createEntry(accessToken, link, title string) error {
 
 	clt := client.New(endpoint)
 	clt.WithAuthorization("Bearer " + accessToken)
-	response, err := clt.PostJSON(map[string]string{"url": link, "title": title})
+	response, err := clt.PostJSON(map[string]string{"url": link, "title": title, "content": content})
 	if err != nil {
 		return fmt.Errorf("wallabag: unable to post entry: %v", err)
 	}
