@@ -47,7 +47,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.WallabagPassword,
 		)
 
-		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
+		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
