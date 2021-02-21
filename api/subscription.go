@@ -32,6 +32,7 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		subscriptionDiscoveryRequest.Username,
 		subscriptionDiscoveryRequest.Password,
 		subscriptionDiscoveryRequest.FetchViaProxy,
+		subscriptionDiscoveryRequest.AllowSelfSignedCertificates,
 	)
 	if finderErr != nil {
 		json.ServerError(w, r, finderErr)

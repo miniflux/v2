@@ -58,6 +58,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.Username,
 		subscriptionForm.Password,
 		subscriptionForm.FetchViaProxy,
+		subscriptionForm.AllowSelfSignedCertificates,
 	)
 	if findErr != nil {
 		logger.Error("[UI:SubmitSubscription] %s", findErr)
@@ -77,17 +78,18 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
 		feed, err := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
-			CategoryID:     subscriptionForm.CategoryID,
-			FeedURL:        subscriptions[0].URL,
-			Crawler:        subscriptionForm.Crawler,
-			UserAgent:      subscriptionForm.UserAgent,
-			Username:       subscriptionForm.Username,
-			Password:       subscriptionForm.Password,
-			ScraperRules:   subscriptionForm.ScraperRules,
-			RewriteRules:   subscriptionForm.RewriteRules,
-			BlocklistRules: subscriptionForm.BlocklistRules,
-			KeeplistRules:  subscriptionForm.KeeplistRules,
-			FetchViaProxy:  subscriptionForm.FetchViaProxy,
+			CategoryID:                  subscriptionForm.CategoryID,
+			FeedURL:                     subscriptions[0].URL,
+			Crawler:                     subscriptionForm.Crawler,
+			AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,
+			UserAgent:                   subscriptionForm.UserAgent,
+			Username:                    subscriptionForm.Username,
+			Password:                    subscriptionForm.Password,
+			ScraperRules:                subscriptionForm.ScraperRules,
+			RewriteRules:                subscriptionForm.RewriteRules,
+			BlocklistRules:              subscriptionForm.BlocklistRules,
+			KeeplistRules:               subscriptionForm.KeeplistRules,
+			FetchViaProxy:               subscriptionForm.FetchViaProxy,
 		})
 		if err != nil {
 			v.Set("form", subscriptionForm)

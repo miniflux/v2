@@ -6,9 +6,10 @@ package model // import "miniflux.app/model"
 
 // SubscriptionDiscoveryRequest represents a request to discover subscriptions.
 type SubscriptionDiscoveryRequest struct {
-	URL           string `json:"url"`
-	UserAgent     string `json:"user_agent"`
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	FetchViaProxy bool   `json:"fetch_via_proxy"`
+	URL                         string `json:"url"`
+	UserAgent                   string `json:"user_agent"`
+	Username                    string `json:"username"`
+	Password                    string `json:"password"`
+	FetchViaProxy               bool   `json:"fetch_via_proxy"`
+	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
 }

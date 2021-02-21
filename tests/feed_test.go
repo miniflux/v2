@@ -171,6 +171,37 @@ func TestCreateFeedWithCrawlerEnabled(t *testing.T) {
 	}
 }
 
+func TestCreateFeedWithSelfSignedCertificatesAllowed(t *testing.T) {
+	client := createClient(t)
+
+	categories, err := client.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	feedID, err := client.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:                     testFeedURL,
+		CategoryID:                  categories[0].ID,
+		AllowSelfSignedCertificates: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedID == 0 {
+		t.Fatalf(`Invalid feed ID, got %q`, feedID)
+	}
+
+	feed, err := client.Feed(feedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !feed.AllowSelfSignedCertificates {
+		t.Error(`The feed should have self-signed certificates enabled`)
+	}
+}
+
 func TestCreateFeedWithScraperRule(t *testing.T) {
 	client := createClient(t)
 
@@ -372,6 +403,31 @@ func TestUpdateFeedCrawler(t *testing.T) {
 
 	if updatedFeed.Crawler != crawler {
 		t.Fatalf(`Wrong crawler value, got "%v" instead of "%v"`, updatedFeed.Crawler, crawler)
+	}
+}
+
+func TestUpdateFeedAllowSelfSignedCertificates(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	selfSigned := true
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModificationRequest{AllowSelfSignedCertificates: &selfSigned})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.AllowSelfSignedCertificates != selfSigned {
+		t.Fatalf(`Wrong AllowSelfSignedCertificates value, got "%v" instead of "%v"`, updatedFeed.AllowSelfSignedCertificates, selfSigned)
+	}
+
+	selfSigned = false
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModificationRequest{AllowSelfSignedCertificates: &selfSigned})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.AllowSelfSignedCertificates != selfSigned {
+		t.Fatalf(`Wrong AllowSelfSignedCertificates value, got "%v" instead of "%v"`, updatedFeed.AllowSelfSignedCertificates, selfSigned)
 	}
 }
 

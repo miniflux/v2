@@ -20,6 +20,9 @@
     {{ if .form.Crawler }}
         <input type="hidden" name="crawler" value="1">
     {{ end }}
+    {{ if .form.AllowSelfSignedCertificates }}
+        <input type="hidden" name="allow_self_signed_certificates" value="1">
+    {{ end }}
 
     <h3>{{ t "page.add_feed.choose_feed" }}</h3>
 

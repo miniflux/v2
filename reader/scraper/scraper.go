@@ -20,11 +20,10 @@ import (
 )
 
 // Fetch downloads a web page and returns relevant contents.
-func Fetch(websiteURL, rules, userAgent string) (string, error) {
+func Fetch(websiteURL, rules, userAgent string, allowSelfSignedCertificates bool) (string, error) {
 	clt := client.NewClientWithConfig(websiteURL, config.Opts)
-	if userAgent != "" {
-		clt.WithUserAgent(userAgent)
-	}
+	clt.WithUserAgent(userAgent)
+	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
 
 	response, err := clt.Get()
 	if err != nil {

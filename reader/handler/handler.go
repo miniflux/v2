@@ -39,6 +39,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	request := client.NewClientWithConfig(feedCreationRequest.FeedURL, config.Opts)
 	request.WithCredentials(feedCreationRequest.Username, feedCreationRequest.Password)
 	request.WithUserAgent(feedCreationRequest.UserAgent)
+	request.AllowSelfSignedCertificates = feedCreationRequest.AllowSelfSignedCertificates
 
 	if feedCreationRequest.FetchViaProxy {
 		request.WithProxy()
@@ -65,6 +66,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.Crawler = feedCreationRequest.Crawler
 	subscription.Disabled = feedCreationRequest.Disabled
 	subscription.IgnoreHTTPCache = feedCreationRequest.IgnoreHTTPCache
+	subscription.AllowSelfSignedCertificates = feedCreationRequest.AllowSelfSignedCertificates
 	subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
 	subscription.ScraperRules = feedCreationRequest.ScraperRules
 	subscription.RewriteRules = feedCreationRequest.RewriteRules
@@ -82,7 +84,13 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 
 	logger.Debug("[CreateFeed] Feed saved with ID: %d", subscription.ID)
 
-	checkFeedIcon(store, subscription.ID, subscription.SiteURL, feedCreationRequest.FetchViaProxy)
+	checkFeedIcon(
+		store,
+		subscription.ID,
+		subscription.SiteURL,
+		feedCreationRequest.FetchViaProxy,
+		feedCreationRequest.AllowSelfSignedCertificates,
+	)
 	return subscription, nil
 }
 
@@ -116,6 +124,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 	request := client.NewClientWithConfig(originalFeed.FeedURL, config.Opts)
 	request.WithCredentials(originalFeed.Username, originalFeed.Password)
 	request.WithUserAgent(originalFeed.UserAgent)
+	request.AllowSelfSignedCertificates = originalFeed.AllowSelfSignedCertificates
 
 	if !originalFeed.IgnoreHTTPCache {
 		request.WithCacheHeaders(originalFeed.EtagHeader, originalFeed.LastModifiedHeader)
@@ -162,7 +171,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 		// We update caching headers only if the feed has been modified,
 		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.WithClientResponse(response)
-		checkFeedIcon(store, originalFeed.ID, originalFeed.SiteURL, originalFeed.FetchViaProxy)
+		checkFeedIcon(
+			store,
+			originalFeed.ID,
+			originalFeed.SiteURL,
+			originalFeed.FetchViaProxy,
+			originalFeed.AllowSelfSignedCertificates,
+		)
 	} else {
 		logger.Debug("[RefreshFeed] Feed #%d not modified", feedID)
 	}
@@ -178,9 +193,9 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 	return nil
 }
 
-func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string, fetchViaProxy bool) {
+func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string, fetchViaProxy, allowSelfSignedCertificates bool) {
 	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, fetchViaProxy)
+		icon, err := icon.FindIcon(websiteURL, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {
 			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
 		} else if icon == nil {
