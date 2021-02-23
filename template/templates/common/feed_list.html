@@ -4,7 +4,7 @@
         <article class="item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
-                    {{ if .Icon }}
+                    {{ if and (.Icon) (gt .Icon.IconID 0) }}
                         <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
                     {{ end }}
                     {{ if .Disabled }} 🚫 {{ end }}
