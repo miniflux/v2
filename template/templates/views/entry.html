@@ -116,6 +116,10 @@
             {{ else }}
                 <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed "UTC" .entry.Date }}</time>
             {{ end }}
+            &centerdot;
+            <span>
+                {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
+            </span>
         </div>
     </header>
     {{ if gt (len .entry.Content) 120 }}
