@@ -20,7 +20,6 @@ LABEL org.opencontainers.image.documentation=https://miniflux.app/docs/
 
 EXPOSE 8080
 ENV LISTEN_ADDR 0.0.0.0:8080
-HEALTHCHECK --start-period=30s CMD ["/usr/bin/miniflux", "-healthcheck", "auto"]
 RUN apk --no-cache add ca-certificates tzdata
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 USER nobody

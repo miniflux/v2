@@ -16,6 +16,9 @@ services:
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=test123
       - DEBUG=1
+    # Optional health check:
+    # healthcheck:
+    #  test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
   db:
     image: postgres:latest
     container_name: postgres
