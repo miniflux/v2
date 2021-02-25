@@ -14,6 +14,7 @@ import (
 // StripTags removes all HTML/XML tags from the input string.
 func StripTags(input string) string {
 	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
+	tokenizer.AllowCDATA(true)
 	var buffer bytes.Buffer
 
 	for {
