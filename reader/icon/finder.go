@@ -47,7 +47,7 @@ func FindIcon(websiteURL string, fetchViaProxy, allowSelfSignedCertificates bool
 		return parseImageDataURL(iconURL)
 	}
 
-	logger.Debug("[FindIcon] Fetching icon => %s", iconURL)
+	logger.Debug("[FindIcon] Fetching icon => %s, for %s", iconURL, websiteURL)
 	icon, err := downloadIcon(iconURL, fetchViaProxy, allowSelfSignedCertificates)
 	if err != nil {
 		return nil, err
