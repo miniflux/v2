@@ -1,0 +1,9 @@
+dist/
+benchmarks/*
+!benchmarks/*.go
+!benchmarks/sample_*
+tests/*/fuzz-fuzz.zip
+tests/*/crashers
+tests/*/suppressions
+tests/*/corpus/*
+!tests/*/corpus/*.*

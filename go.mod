@@ -15,6 +15,7 @@ require (
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
 	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/tdewolff/minify/v2 v2.9.13
+	github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20201029221708-28c70e62bb1d
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
