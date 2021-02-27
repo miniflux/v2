@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/xiaonanln/keylock"
 	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
@@ -193,7 +194,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 	return nil
 }
 
+var iconFinderLock = keylock.NewKeyLock()
+
 func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string, fetchViaProxy, allowSelfSignedCertificates bool) {
+	iconFinderLock.Lock(websiteURL)
+	defer iconFinderLock.Unlock(websiteURL)
 	if !store.HasIcon(feedID) {
 		icon, err := icon.FindIcon(websiteURL, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {

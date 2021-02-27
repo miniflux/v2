@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"sync"
 
 	"miniflux.app/model"
 )
@@ -70,8 +71,12 @@ func (s *Storage) IconByHash(icon *model.Icon) error {
 	return nil
 }
 
+var iconCreationLock = &sync.Mutex{}
+
 // CreateIcon creates a new icon.
 func (s *Storage) CreateIcon(icon *model.Icon) error {
+	iconCreationLock.Lock()
+	defer iconCreationLock.Unlock()
 	query := `
 		INSERT INTO icons
 			(hash, mime_type, content)
