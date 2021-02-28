@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/xiaonanln/keylock"
 	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/metric"
 	"miniflux.app/model"
 	feedHandler "miniflux.app/reader/handler"
 	"miniflux.app/storage"
-	"miniflux.app/vendor/github.com/xiaonanln/keylock"
 )
 
 // Worker refreshes a feed in the background.
