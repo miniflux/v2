@@ -43,6 +43,14 @@
     {{ end }}
     </select>
 
+    <label for="form-display-mode">{{ t "form.prefs.label.display_mode" }}</label>
+    <select id="form-display-mode" name="display_mode">
+        <option value="fullscreen" {{ if eq "fullscreen" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.fullscreen" }}</option>
+        <option value="standalone" {{ if eq "standalone" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.standalone" }}</option>
+        <option value="minimal-ui" {{ if eq "minimal-ui" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.minimal_ui" }}</option>
+        <option value="browser" {{ if eq "browser" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.browser" }}</option>
+    </select>
+
     <label for="form-entry-direction">{{ t "form.prefs.label.entry_sorting" }}</label>
     <select id="form-entry-direction" name="entry_direction">
         <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.older_first" }}</option>

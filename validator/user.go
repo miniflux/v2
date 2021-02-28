@@ -73,6 +73,12 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.DisplayMode != nil {
+		if err := validateDisplayMode(*changes.DisplayMode); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -121,6 +127,13 @@ func validateEntryDirection(direction string) *ValidationError {
 func validateEntriesPerPage(entriesPerPage int) *ValidationError {
 	if entriesPerPage < 1 {
 		return NewValidationError("error.entries_per_page_invalid")
+	}
+	return nil
+}
+
+func validateDisplayMode(displayMode string) *ValidationError {
+	if displayMode != "fullscreen" && displayMode != "standalone" && displayMode != "minimal-ui" && displayMode != "browser" {
+		return NewValidationError("error.invalid_display_mode")
 	}
 	return nil
 }

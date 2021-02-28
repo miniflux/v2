@@ -44,12 +44,21 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		BackgroundColor string                 `json:"background_color"`
 	}
 
+	displayMode := "standalone"
+	if request.IsAuthenticated(r) {
+		user, err := h.store.UserByID(request.UserID(r))
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+		displayMode = user.DisplayMode
+	}
 	themeColor := model.ThemeColor(request.UserTheme(r))
 	manifest := &webManifest{
 		Name:            "Miniflux",
 		ShortName:       "Miniflux",
 		Description:     "Minimalist Feed Reader",
-		Display:         "standalone",
+		Display:         displayMode,
 		StartURL:        route.Path(h.router, "unread"),
 		ThemeColor:      themeColor,
 		BackgroundColor: themeColor,
