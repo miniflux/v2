@@ -5,6 +5,7 @@
 package worker // import "miniflux.app/worker"
 
 import (
+	"fmt"
 	"time"
 
 	"miniflux.app/config"
@@ -13,6 +14,7 @@ import (
 	"miniflux.app/model"
 	feedHandler "miniflux.app/reader/handler"
 	"miniflux.app/storage"
+	"miniflux.app/vendor/github.com/xiaonanln/keylock"
 )
 
 // Worker refreshes a feed in the background.
@@ -21,6 +23,8 @@ type Worker struct {
 	store *storage.Storage
 }
 
+var jobLock = keylock.NewKeyLock()
+
 // Run wait for a job and refresh the given feed.
 func (w *Worker) Run(c chan model.Job) {
 	logger.Debug("[Worker] #%d started", w.id)
@@ -28,9 +32,12 @@ func (w *Worker) Run(c chan model.Job) {
 	for {
 		job := <-c
 		logger.Debug("[Worker #%d] Received feed #%d for user #%d", w.id, job.FeedID, job.UserID)
+		sID := fmt.Sprintf("%v", job.FeedID)
 
+		jobLock.Lock(sID)
 		startTime := time.Now()
 		refreshErr := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID)
+		jobLock.Unlock(sID)
 
 		if config.Opts.HasMetricsCollector() {
 			status := "success"

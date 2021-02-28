@@ -2,3 +2,5 @@ miniflux-*
 miniflux
 *.rpm
 *.deb
+.env
+*debug*
