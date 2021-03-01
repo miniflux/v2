@@ -78,18 +78,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
 		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 
-		if entryIsNew && shouldFetchYouTubeWatchTime(entry) {
-			watchTime, err := fetchYouTubeWatchTime(entry.URL)
-			if err != nil {
-				logger.Error("[Processor] Unable to fetch YouTube watch time: %q => %v", entry.URL, err)
-			}
-			entry.ReadingTime = watchTime
-		}
-
-		if entry.ReadingTime == 0 {
-			entry.ReadingTime = calculateReadingTime(entry.Content)
-		}
-
+		updateEntryReadingTime(store, feed, entry, entryIsNew)
 		filteredEntries = append(filteredEntries, entry)
 	}
 
@@ -150,6 +139,25 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 	}
 
 	return nil
+}
+
+func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool) {
+	if shouldFetchYouTubeWatchTime(entry) {
+		if entryIsNew {
+			watchTime, err := fetchYouTubeWatchTime(entry.URL)
+			if err != nil {
+				logger.Error("[Processor] Unable to fetch YouTube watch time: %q => %v", entry.URL, err)
+			}
+			entry.ReadingTime = watchTime
+		} else {
+			entry.ReadingTime = store.GetReadTime(entry, feed)
+		}
+	}
+
+	// Handle YT error case and non-YT entries.
+	if entry.ReadingTime == 0 {
+		entry.ReadingTime = calculateReadingTime(entry.Content)
+	}
 }
 
 func shouldFetchYouTubeWatchTime(entry *model.Entry) bool {
