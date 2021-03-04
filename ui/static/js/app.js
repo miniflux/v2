@@ -106,7 +106,7 @@ function markPageAsRead() {
             }
 
             if (showOnlyUnread) {
-                window.location.reload();
+                window.location.href = window.location.href;
             } else {
                 goToPage("next", true);
             }
