@@ -109,4 +109,10 @@ Source: https://github.com/tabler/tabler-icons
         <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -5v5h5" />
         <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
     </symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <polyline points="5 12 3 12 12 3 21 12 19 12"></polyline>
+        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+    </symbol>
 </svg>
