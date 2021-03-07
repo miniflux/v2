@@ -24,6 +24,9 @@ var commonTemplateFiles embed.FS
 //go:embed templates/views/*.html
 var viewTemplateFiles embed.FS
 
+//go:embed templates/standalone/*.html
+var standaloneTemplateFiles embed.FS
+
 // Engine handles the templating system.
 type Engine struct {
 	templates map[string]*template.Template
@@ -73,6 +76,22 @@ func (e *Engine) ParseTemplates() error {
 
 		logger.Debug("[Template] Parsing: %s", templateName)
 		e.templates[templateName] = template.Must(template.New("main").Funcs(e.funcMap.Map()).Parse(templateContents.String()))
+	}
+
+	dirEntries, err = standaloneTemplateFiles.ReadDir("templates/standalone")
+	if err != nil {
+		return err
+	}
+
+	for _, dirEntry := range dirEntries {
+		templateName := dirEntry.Name()
+		fileData, err := standaloneTemplateFiles.ReadFile("templates/standalone/" + dirEntry.Name())
+		if err != nil {
+			return err
+		}
+
+		logger.Debug("[Template] Parsing: %s", templateName)
+		e.templates[templateName] = template.Must(template.New("base").Funcs(e.funcMap.Map()).Parse(string(fileData)))
 	}
 
 	return nil
