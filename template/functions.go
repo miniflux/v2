@@ -80,6 +80,13 @@ func (f *funcMap) Map() template.FuncMap {
 		"theme_color": func(theme string) string {
 			return model.ThemeColor(theme)
 		},
+		"icon": func(iconName string) template.HTML {
+			return template.HTML(fmt.Sprintf(
+				`<svg class="icon" aria-hidden="true"><use xlink:href="%s#icon-%s"></svg>`,
+				route.Path(f.router, "appIcon", "filename", "sprite.svg"),
+				iconName,
+			))
+		},
 
 		// These functions are overrided at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {

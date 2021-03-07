@@ -28,10 +28,10 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li>
-                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ template "icon_refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
                     <li>
-                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ template "icon_edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
+                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li>
                         <a href="#"
@@ -40,7 +40,7 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ if .UnreadCount }}
                       <li>
@@ -50,7 +50,7 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ template "icon_read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
                       </li>
                     {{ end }}
                 </ul>
