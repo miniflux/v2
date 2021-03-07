@@ -142,7 +142,8 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 		"webManifest",
 		"robots",
 		"sharedEntry",
-		"healthcheck":
+		"healthcheck",
+		"offline":
 		return true
 	default:
 		return false
