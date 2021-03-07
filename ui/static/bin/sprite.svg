@@ -22,6 +22,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+Source: https://github.com/tabler/tabler-icons
+
 -->
 <svg xmlns="http://www.w3.org/2000/svg">
     <symbol id="icon-read" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -43,10 +45,10 @@ SOFTWARE.
         <path fill="currentColor" d="M12 17.75l-6.172 3.245 1.179-6.873-4.993-4.867 6.9-1.002L12 2l3.086 6.253 6.9 1.002-4.993 4.867 1.179 6.873z" />
     </symbol>
     <symbol id="icon-save" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-        <polyline points="7 11 12 16 17 11" />
-        <line x1="12" y1="4" x2="12" y2="16" />
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
+        <circle cx="12" cy="14" r="2"></circle>
+        <polyline points="14 4 14 8 8 8 8 4"></polyline>
     </symbol>
     <symbol id="icon-scraper" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>
@@ -90,9 +92,10 @@ SOFTWARE.
         <line x1="16" y1="5" x2="19" y2="8" />
     </symbol>
     <symbol id="icon-feeds" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z"/>
-        <path d="M9 4h3l2 2h5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
-        <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <circle cx="5" cy="19" r="1"></circle>
+        <path d="M4 4a16 16 0 0 1 16 16"></path>
+        <path d="M4 11a9 9 0 0 1 9 9"></path>
     </symbol>
     <symbol id="icon-entries" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z"/>

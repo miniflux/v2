@@ -46,9 +46,7 @@
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     data-refresh-all-feeds-url="{{ route "refreshAllFeeds" }}"
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
-    <div class="toast-wrap">
-        <span class="toast-msg"></span>
-    </div>
+
     {{ if .user }}
     <header class="header">
         <nav>
@@ -157,10 +155,16 @@
             </div>
         </div>
     </template>
-    <template id="icon_read">{{ icon "read" }}</template>
-    <template id="icon_unread">{{ icon "unread" }}</template>
-    <template id="icon_star">{{ icon "star" }}</template>
-    <template id="icon_unstar">{{ icon "unstar" }}</template>
+
+    <template id="icon-read">{{ icon "read" }}</template>
+    <template id="icon-unread">{{ icon "unread" }}</template>
+    <template id="icon-star">{{ icon "star" }}</template>
+    <template id="icon-unstar">{{ icon "unstar" }}</template>
+    <template id="icon-save">{{ icon "save" }}</template>
+
+    <div id="toast-wrapper" role="alert" aria-live="assertive" aria-atomic="true">
+        <span id="toast-msg"></span>
+    </div>
 </body>
 </html>
 {{ end }}
