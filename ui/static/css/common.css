@@ -193,14 +193,14 @@ a:hover {
     color: #fff;
     width: 100%;
     text-align: center;
- }
+}
 
 .toast-msg {
     background-color: rgba(0,0,0,0.7);
     padding: 2px 5px;
     border-radius: 5px;
 }
- 
+
 .toastAnimate {
     animation: toastKeyFrames 2s;
 }
@@ -761,6 +761,7 @@ article.feed-parsing-error {
 .icon-label {
     vertical-align: middle;
     display: inline-block;
+    padding-right: 2px;
 }
 
 .icon {
