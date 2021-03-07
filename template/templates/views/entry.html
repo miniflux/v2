@@ -15,8 +15,8 @@
                         data-toggle-status="true"
                         data-label-unread="{{ t "entry.status.unread" }}"
                         data-label-read="{{ t "entry.status.read" }}"
-                        data-toast-unread="✘&nbsp;{{ t "entry.status.toast.unread" }}"
-                        data-toast-read="✔︎&nbsp;{{ t "entry.status.toast.read" }}"
+                        data-toast-unread="{{ t "entry.status.toast.unread" }}"
+                        data-toast-read="{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                         >{{ if eq .entry.Status "unread" }}{{ icon "read" }}{{ else }}{{ icon "unread" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></a>
                 </li>
@@ -27,8 +27,8 @@
                         data-label-loading="{{ t "entry.state.saving" }}"
                         data-label-star="{{ t "entry.bookmark.toggle.on" }}"
                         data-label-unstar="{{ t "entry.bookmark.toggle.off" }}"
-                        data-toast-star="★&nbsp;{{ t "entry.bookmark.toast.on" }}"
-                        data-toast-unstar="☆&nbsp;{{ t "entry.bookmark.toast.off" }}"
+                        data-toast-star="{{ t "entry.bookmark.toast.on" }}"
+                        data-toast-unstar="{{ t "entry.bookmark.toast.off" }}"
                         data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
                         >{{ if .entry.Starred }}{{ icon "unstar" }}{{ else }}{{ icon "star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
                 </li>
