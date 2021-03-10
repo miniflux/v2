@@ -44,6 +44,11 @@ func startDaemon(store *storage.Storage) {
 		go collector.GatherStorageMetrics()
 	}
 
+	// Notify systemd that we are ready.
+	if err := sdNotify(sdNotifyReady); err != nil {
+		logger.Error("Unable to send readiness notification to systemd: %v", err)
+	}
+
 	<-stop
 	logger.Info("Shutting down the process...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
