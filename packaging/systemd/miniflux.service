@@ -9,11 +9,12 @@ Description=Miniflux Feed Reader
 After=network.target postgresql.service
 
 [Service]
-Type=simple
-EnvironmentFile=/etc/miniflux.conf
-User=miniflux
+Type=notify
 ExecStart=/usr/bin/miniflux
 Restart=always
+
+EnvironmentFile=/etc/miniflux.conf
+User=miniflux
 
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#NoNewPrivileges=
 NoNewPrivileges=true
