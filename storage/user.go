@@ -428,11 +428,37 @@ func (s *Storage) RemoveUser(userID int64) error {
 // RemoveUserAsync deletes user data without locking the database.
 func (s *Storage) RemoveUserAsync(userID int64) {
 	go func() {
-		deleteUserFeeds(s.db, userID)
+		if err := s.deleteUserFeeds(userID); err != nil {
+			logger.Error(`%v`, err)
+			return
+		}
+
 		s.db.Exec(`DELETE FROM users WHERE id=$1`, userID)
 		s.db.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID)
+
 		logger.Debug(`[MASS DELETE] User #%d has been deleted (%d GoRoutines)`, userID, runtime.NumGoroutine())
 	}()
+}
+
+func (s *Storage) deleteUserFeeds(userID int64) error {
+	rows, err := s.db.Query(`SELECT id FROM feeds WHERE user_id=$1`, userID)
+	if err != nil {
+		return fmt.Errorf(`store: unable to get user feeds: %v`, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var feedID int64
+		rows.Scan(&feedID)
+
+		logger.Debug(`[USER DELETION] Deleting feed #%d for user #%d (%d GoRoutines)`, feedID, userID, runtime.NumGoroutine())
+
+		if err := s.RemoveFeed(userID, feedID); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Users returns all users.
@@ -537,66 +563,4 @@ func (s *Storage) HasPassword(userID int64) (bool, error) {
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
-}
-
-func deleteUserFeeds(db *sql.DB, userID int64) {
-	query := `SELECT id FROM feeds WHERE user_id=$1`
-	rows, err := db.Query(query, userID)
-	if err != nil {
-		logger.Error(`store: unable to get user feeds: %v`, err)
-		return
-	}
-	defer rows.Close()
-
-	var feedIDs []int64
-	for rows.Next() {
-		var feedID int64
-		rows.Scan(&feedID)
-		feedIDs = append(feedIDs, feedID)
-	}
-
-	worker := func(jobs <-chan int64, results chan<- bool) {
-		for feedID := range jobs {
-			logger.Debug(`[MASS DELETE] Deleting feed #%d for user #%d (%d GoRoutines)`, feedID, userID, runtime.NumGoroutine())
-			deleteUserEntries(db, userID, feedID)
-			db.Exec(`DELETE FROM feeds WHERE id=$1`, feedID)
-			results <- true
-		}
-	}
-
-	numJobs := len(feedIDs)
-	jobs := make(chan int64, numJobs)
-	results := make(chan bool, numJobs)
-
-	for w := 0; w < 2; w++ {
-		go worker(jobs, results)
-	}
-
-	for j := 0; j < numJobs; j++ {
-		jobs <- feedIDs[j]
-	}
-	close(jobs)
-
-	for a := 1; a <= numJobs; a++ {
-		<-results
-	}
-}
-
-func deleteUserEntries(db *sql.DB, userID int64, feedID int64) {
-	rows, err := db.Query(`SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`, userID, feedID)
-	if err != nil {
-		logger.Error(`store: unable to get user feed entries: %v`, err)
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var entryID int64
-		rows.Scan(&entryID)
-
-		logger.Debug(`[MASS DELETE] Deleting entry #%d for user #%d (%d GoRoutines)`, entryID, userID, runtime.NumGoroutine())
-
-		db.Exec(`DELETE FROM enclosures WHERE entry_id=$1 AND user_id=$2`, entryID, userID)
-		db.Exec(`DELETE FROM entries WHERE id=$1 AND user_id=$2`, entryID, userID)
-	}
 }

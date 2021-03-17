@@ -8,8 +8,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"runtime"
 
 	"miniflux.app/config"
+	"miniflux.app/logger"
 	"miniflux.app/model"
 )
 
@@ -353,21 +355,30 @@ func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 	return nil
 }
 
-// RemoveFeed removes a feed.
+// RemoveFeed removes a feed and all entries.
+// This operation can takes time if the feed has lot of entries.
 func (s *Storage) RemoveFeed(userID, feedID int64) error {
-	query := `DELETE FROM feeds WHERE id = $1 AND user_id = $2`
-	result, err := s.db.Exec(query, feedID, userID)
+	rows, err := s.db.Query(`SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`, userID, feedID)
 	if err != nil {
-		return fmt.Errorf(`store: unable to remove feed #%d: %v`, feedID, err)
+		return fmt.Errorf(`store: unable to get user feed entries: %v`, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var entryID int64
+		if err := rows.Scan(&entryID); err != nil {
+			return fmt.Errorf(`store: unable to read user feed entry ID: %v`, err)
+		}
+
+		logger.Debug(`[FEED DELETION] Deleting entry #%d of feed #%d for user #%d (%d GoRoutines)`, entryID, feedID, userID, runtime.NumGoroutine())
+
+		if _, err := s.db.Exec(`DELETE FROM entries WHERE id=$1 AND user_id=$2`, entryID, userID); err != nil {
+			return fmt.Errorf(`store: unable to delete user feed entries #%d: %v`, entryID, err)
+		}
 	}
 
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf(`store: unable to remove feed #%d: %v`, feedID, err)
-	}
-
-	if count == 0 {
-		return errors.New(`store: no feed has been removed`)
+	if _, err := s.db.Exec(`DELETE FROM feeds WHERE id=$1`, feedID); err != nil {
+		return fmt.Errorf(`store: unable to delete feed #%d: %v`, feedID, err)
 	}
 
 	return nil
