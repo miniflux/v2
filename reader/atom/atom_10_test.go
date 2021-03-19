@@ -244,7 +244,33 @@ func TestParseEntryTitleWithWhitespaces(t *testing.T) {
 	}
 }
 
-func TestParseEntryTitleWithHTMLAndCDATA(t *testing.T) {
+func TestParseEntryWithPlainTextTitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="text">AT&amp;T bought by SBC!</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != `AT&T bought by SBC!` {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryWithHTMLAndCDATATitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
@@ -270,7 +296,7 @@ func TestParseEntryTitleWithHTMLAndCDATA(t *testing.T) {
 	}
 }
 
-func TestParseEntryTitleWithHTML(t *testing.T) {
+func TestParseEntryWithHTMLTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
@@ -296,7 +322,7 @@ func TestParseEntryTitleWithHTML(t *testing.T) {
 	}
 }
 
-func TestParseEntryTitleWithXHTML(t *testing.T) {
+func TestParseEntryWithXHTMLTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
@@ -322,7 +348,7 @@ func TestParseEntryTitleWithXHTML(t *testing.T) {
 	}
 }
 
-func TestParseEntryTitleWithNumericCharacterReference(t *testing.T) {
+func TestParseEntryWithNumericCharacterReferenceTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
@@ -348,7 +374,7 @@ func TestParseEntryTitleWithNumericCharacterReference(t *testing.T) {
 	}
 }
 
-func TestParseEntryTitleWithDoubleEncodedEntities(t *testing.T) {
+func TestParseEntryWithDoubleEncodedEntitiesTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
@@ -374,14 +400,14 @@ func TestParseEntryTitleWithDoubleEncodedEntities(t *testing.T) {
 	}
 }
 
-func TestParseEntrySummaryWithXHTML(t *testing.T) {
+func TestParseEntryWithXHTMLSummary(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
 	  <link href="http://example.org/"/>
 
 	  <entry>
-		<title type="xhtml"><code>Test</code> Test</title>
+		<title type="xhtml">Example</title>
 		<link href="http://example.org/2003/12/13/atom03"/>
 		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
 		<updated>2003-12-13T18:30:02Z</updated>
@@ -400,14 +426,14 @@ func TestParseEntrySummaryWithXHTML(t *testing.T) {
 	}
 }
 
-func TestParseEntrySummaryWithHTML(t *testing.T) {
+func TestParseEntryWithHTMLAndCDATASummary(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
 	  <link href="http://example.org/"/>
 
 	  <entry>
-		<title type="html">&lt;code&gt;Test&lt;/code&gt; Test</title>
+		<title type="html">Example</title>
 		<link href="http://example.org/2003/12/13/atom03"/>
 		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
 		<updated>2003-12-13T18:30:02Z</updated>
@@ -426,14 +452,14 @@ func TestParseEntrySummaryWithHTML(t *testing.T) {
 	}
 }
 
-func TestParseEntrySummaryWithPlainText(t *testing.T) {
+func TestParseEntryWithPlainTextAndCDATASummary(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
 	  <link href="http://example.org/"/>
 
 	  <entry>
-		<title type="html">&lt;code&gt;Test&lt;/code&gt; Test</title>
+		<title type="html">Example</title>
 		<link href="http://example.org/2003/12/13/atom03"/>
 		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
 		<updated>2003-12-13T18:30:02Z</updated>
@@ -449,6 +475,112 @@ func TestParseEntrySummaryWithPlainText(t *testing.T) {
 
 	if feed.Entries[0].Content != "<Some text.>" {
 		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
+	}
+}
+
+func TestParseEntryWithTextAndCDATAContent(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="html">Example</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<content><![CDATA[AT&amp;T bought by SBC!]]></content>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != "AT&amp;T bought by SBC!" {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+func TestParseEntryWithTextContent(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="html">Example</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<content>AT&amp;T bought by SBC!</content>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != "AT&T bought by SBC!" {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+func TestParseEntryWithHTMLContent(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="html">Example</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<content type="html">AT&amp;amp;T bought &lt;b&gt;by SBC&lt;/b&gt;!</content>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != "AT&amp;T bought <b>by SBC</b>!" {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+func TestParseEntryWithXHTMLContent(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="html">Example</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">AT&amp;T bought <b>by SBC</b>!</div>
+		</content>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `<div xmlns="http://www.w3.org/1999/xhtml">AT&amp;T bought <b>by SBC</b>!</div>` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
 	}
 }
 

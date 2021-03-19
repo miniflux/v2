@@ -48,7 +48,7 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 		feed.SiteURL = siteURL
 	}
 
-	feed.Title = a.Title.String()
+	feed.Title = html.UnescapeString(a.Title.String())
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
@@ -100,7 +100,7 @@ func (a *atom10Entry) Transform() *model.Entry {
 }
 
 func (a *atom10Entry) entryTitle() string {
-	return a.Title.String()
+	return html.UnescapeString(a.Title.String())
 }
 
 func (a *atom10Entry) entryContent() string {
@@ -221,20 +221,19 @@ func (a *atom10Entry) entryCommentsURL() string {
 }
 
 type atom10Text struct {
-	Type string `xml:"type,attr"`
-	Data string `xml:",chardata"`
-	XML  string `xml:",innerxml"`
+	Type     string `xml:"type,attr"`
+	CharData string `xml:",chardata"`
+	InnerXML string `xml:",innerxml"`
 }
 
 func (a *atom10Text) String() string {
-	content := ""
+	var content string
 
-	switch {
-	case a.Type == "xhtml":
-		content = a.XML
-	default:
-		content = a.Data
+	if a.Type == "xhtml" {
+		content = a.InnerXML
+	} else {
+		content = a.CharData
 	}
 
-	return html.UnescapeString(strings.TrimSpace(content))
+	return strings.TrimSpace(content)
 }
