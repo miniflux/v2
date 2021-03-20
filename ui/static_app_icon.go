@@ -6,6 +6,7 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"miniflux.app/http/request"
@@ -29,7 +30,13 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		b.WithHeader("Content-Type", "image/png")
+		switch filepath.Ext(filename) {
+		case ".png":
+			b.WithHeader("Content-Type", "image/png")
+		case ".svg":
+			b.WithHeader("Content-Type", "image/svg+xml")
+		}
+
 		b.WithoutCompression()
 		b.WithBody(blob)
 		b.Write()

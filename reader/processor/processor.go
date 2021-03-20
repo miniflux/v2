@@ -45,32 +45,31 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 			continue
 		}
 
-		if feed.Crawler {
-			if !store.EntryURLExists(feed.ID, entry.URL) {
-				logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
+		entryIsNew := !store.EntryURLExists(feed.ID, entry.URL)
+		if feed.Crawler && entryIsNew {
+			logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
 
-				startTime := time.Now()
-				content, scraperErr := scraper.Fetch(
-					entry.URL,
-					feed.ScraperRules,
-					feed.UserAgent,
-					feed.AllowSelfSignedCertificates,
-				)
+			startTime := time.Now()
+			content, scraperErr := scraper.Fetch(
+				entry.URL,
+				feed.ScraperRules,
+				feed.UserAgent,
+				feed.AllowSelfSignedCertificates,
+			)
 
-				if config.Opts.HasMetricsCollector() {
-					status := "success"
-					if scraperErr != nil {
-						status = "error"
-					}
-					metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
-				}
-
+			if config.Opts.HasMetricsCollector() {
+				status := "success"
 				if scraperErr != nil {
-					logger.Error(`[Processor] Unable to crawl this entry: %q => %v`, entry.URL, scraperErr)
-				} else if content != "" {
-					// We replace the entry content only if the scraper doesn't return any error.
-					entry.Content = content
+					status = "error"
 				}
+				metric.ScraperRequestDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
+			}
+
+			if scraperErr != nil {
+				logger.Error(`[Processor] Unable to crawl this entry: %q => %v`, entry.URL, scraperErr)
+			} else if content != "" {
+				// We replace the entry content only if the scraper doesn't return any error.
+				entry.Content = content
 			}
 		}
 
@@ -79,20 +78,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
 		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
 
-		if config.Opts.FetchYouTubeWatchTime() {
-			if matches := youtubeRegex.FindStringSubmatch(entry.URL); len(matches) == 2 {
-				watchTime, err := fetchYouTubeWatchTime(entry.URL)
-				if err != nil {
-					logger.Error("[Processor] Unable to fetch YouTube watch time: %q => %v", entry.URL, err)
-				}
-				entry.ReadingTime = watchTime
-			}
-		}
-
-		if entry.ReadingTime == 0 {
-			entry.ReadingTime = calculateReadingTime(entry.Content)
-		}
-
+		updateEntryReadingTime(store, feed, entry, entryIsNew)
 		filteredEntries = append(filteredEntries, entry)
 	}
 
@@ -153,6 +139,34 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 	}
 
 	return nil
+}
+
+func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool) {
+	if shouldFetchYouTubeWatchTime(entry) {
+		if entryIsNew {
+			watchTime, err := fetchYouTubeWatchTime(entry.URL)
+			if err != nil {
+				logger.Error("[Processor] Unable to fetch YouTube watch time: %q => %v", entry.URL, err)
+			}
+			entry.ReadingTime = watchTime
+		} else {
+			entry.ReadingTime = store.GetReadTime(entry, feed)
+		}
+	}
+
+	// Handle YT error case and non-YT entries.
+	if entry.ReadingTime == 0 {
+		entry.ReadingTime = calculateReadingTime(entry.Content)
+	}
+}
+
+func shouldFetchYouTubeWatchTime(entry *model.Entry) bool {
+	if !config.Opts.FetchYouTubeWatchTime() {
+		return false
+	}
+	matches := youtubeRegex.FindStringSubmatch(entry.URL)
+	urlMatchesYouTubePattern := len(matches) == 2
+	return urlMatchesYouTubePattern
 }
 
 func fetchYouTubeWatchTime(url string) (int, error) {

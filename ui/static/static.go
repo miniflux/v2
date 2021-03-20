@@ -127,8 +127,7 @@ func GenerateJavascriptBundles() error {
 	}
 
 	var prefixes = map[string]string{
-		"app":            "(function(){'use strict';",
-		"service-worker": "'use strict';",
+		"app": "(function(){'use strict';",
 	}
 
 	var suffixes = map[string]string{

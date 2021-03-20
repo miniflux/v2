@@ -225,6 +225,20 @@ func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) bool {
 	return result
 }
 
+// GetReadTime fetches the read time of an entry based on its hash, and the feed id and user id from the feed.
+// It's intended to be used on entries objects created by parsing a feed as they don't contain much information.
+// The feed param helps to scope the search to a specific user and feed in order to avoid hash clashes.
+func (s *Storage) GetReadTime(entry *model.Entry, feed *model.Feed) int {
+	var result int
+	s.db.QueryRow(
+		`SELECT reading_time FROM entries WHERE user_id=$1 AND feed_id=$2 AND hash=$3`,
+		feed.UserID,
+		feed.ID,
+		entry.Hash,
+	).Scan(&result)
+	return result
+}
+
 // cleanupEntries deletes from the database entries marked as "removed" and not visible anymore in the feed.
 func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 	query := `

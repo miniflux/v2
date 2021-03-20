@@ -48,7 +48,7 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 		feed.SiteURL = siteURL
 	}
 
-	feed.Title = a.Title.String()
+	feed.Title = html.UnescapeString(a.Title.String())
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
@@ -100,7 +100,7 @@ func (a *atom10Entry) Transform() *model.Entry {
 }
 
 func (a *atom10Entry) entryTitle() string {
-	return a.Title.String()
+	return html.UnescapeString(a.Title.String())
 }
 
 func (a *atom10Entry) entryContent() string {
@@ -221,20 +221,33 @@ func (a *atom10Entry) entryCommentsURL() string {
 }
 
 type atom10Text struct {
-	Type string `xml:"type,attr"`
-	Data string `xml:",chardata"`
-	XML  string `xml:",innerxml"`
+	Type             string               `xml:"type,attr"`
+	CharData         string               `xml:",chardata"`
+	InnerXML         string               `xml:",innerxml"`
+	XHTMLRootElement atomXHTMLRootElement `xml:"http://www.w3.org/1999/xhtml div"`
 }
 
 func (a *atom10Text) String() string {
-	content := ""
+	var content string
 
 	switch {
+	case strings.HasPrefix(a.InnerXML, `<![CDATA[`):
+		content = a.CharData
+	case a.Type == "", a.Type == "text", a.Type == "text/plain":
+		content = a.InnerXML
 	case a.Type == "xhtml":
-		content = a.XML
+		if a.XHTMLRootElement.InnerXML != "" {
+			content = a.XHTMLRootElement.InnerXML
+		} else {
+			content = a.InnerXML
+		}
 	default:
-		content = a.Data
+		content = a.CharData
 	}
 
-	return html.UnescapeString(strings.TrimSpace(content))
+	return strings.TrimSpace(content)
+}
+
+type atomXHTMLRootElement struct {
+	InnerXML string `xml:",innerxml"`
 }

@@ -28,6 +28,7 @@ type User struct {
 	ShowReadingTime   bool       `json:"show_reading_time"`
 	EntrySwipe        bool       `json:"entry_swipe"`
 	LastLoginAt       *time.Time `json:"last_login_at"`
+	DisplayMode       string     `json:"display_mode"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -55,6 +56,7 @@ type UserModificationRequest struct {
 	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
 	ShowReadingTime   *bool   `json:"show_reading_time"`
 	EntrySwipe        *bool   `json:"entry_swipe"`
+	DisplayMode       *string  `json:"display_mode"`
 }
 
 // Patch updates the User object with the modification request.
@@ -113,6 +115,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.EntrySwipe != nil {
 		user.EntrySwipe = *u.EntrySwipe
+	}
+
+	if u.DisplayMode != nil {
+		user.DisplayMode = *u.DisplayMode
 	}
 }
 

@@ -521,4 +521,12 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			CREATE TYPE webapp_display_mode AS enum('fullscreen', 'standalone', 'minimal-ui', 'browser');
+			ALTER TABLE users ADD COLUMN display_mode webapp_display_mode default 'standalone';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

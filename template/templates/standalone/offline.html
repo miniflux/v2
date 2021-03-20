@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ t "page.offline.title" }} - Miniflux</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="dark light">
+        <meta name="theme-color" content="{{ theme_color .theme }}">
+    </head>
+    <body>
+        <p>{{ t "page.offline.message" }} ‐ <a href="{{ route "unread" }}">{{ t "page.offline.refresh_page" }}</a>.</p>
+    </body>
+</html>
