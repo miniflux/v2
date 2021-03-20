@@ -221,19 +221,33 @@ func (a *atom10Entry) entryCommentsURL() string {
 }
 
 type atom10Text struct {
-	Type     string `xml:"type,attr"`
-	CharData string `xml:",chardata"`
-	InnerXML string `xml:",innerxml"`
+	Type             string               `xml:"type,attr"`
+	CharData         string               `xml:",chardata"`
+	InnerXML         string               `xml:",innerxml"`
+	XHTMLRootElement atomXHTMLRootElement `xml:"http://www.w3.org/1999/xhtml div"`
 }
 
 func (a *atom10Text) String() string {
 	var content string
 
-	if a.Type == "xhtml" {
+	switch {
+	case strings.HasPrefix(a.InnerXML, `<![CDATA[`):
+		content = a.CharData
+	case a.Type == "", a.Type == "text", a.Type == "text/plain":
 		content = a.InnerXML
-	} else {
+	case a.Type == "xhtml":
+		if a.XHTMLRootElement.InnerXML != "" {
+			content = a.XHTMLRootElement.InnerXML
+		} else {
+			content = a.InnerXML
+		}
+	default:
 		content = a.CharData
 	}
 
 	return strings.TrimSpace(content)
+}
+
+type atomXHTMLRootElement struct {
+	InnerXML string `xml:",innerxml"`
 }
