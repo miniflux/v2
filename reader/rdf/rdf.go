@@ -6,6 +6,7 @@ package rdf // import "miniflux.app/reader/rdf"
 
 import (
 	"encoding/xml"
+	"html"
 	"strings"
 	"time"
 
@@ -75,7 +76,7 @@ func (r *rdfItem) Transform() *model.Entry {
 }
 
 func (r *rdfItem) entryTitle() string {
-	return strings.TrimSpace(r.Title)
+	return html.UnescapeString(strings.TrimSpace(r.Title))
 }
 
 func (r *rdfItem) entryContent() string {
