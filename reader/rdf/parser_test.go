@@ -377,6 +377,31 @@ func TestParseItemWithoutDate(t *testing.T) {
 	}
 }
 
+func TestParseItemWithEncodedHTMLTitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>AT&amp;amp;T</title>
+			<description>Test</description>
+			<link>http://example.org/test.html</link>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != `AT&T` {
+		t.Errorf("Incorrect entry title, got: %v", feed.Entries[0].Title)
+	}
+}
+
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
 	_, err := Parse("http://example.org", bytes.NewBufferString(data))
@@ -517,5 +542,38 @@ func TestParseRDFWithContentEncoded(t *testing.T) {
 	result := feed.Entries[0].Content
 	if result != expected {
 		t.Errorf(`Unexpected entry URL, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseRDFWithEncodedHTMLDescription(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/"
+		xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<title>Item Title</title>
+			<link>http://example.org/</link>
+			<description>AT&amp;amp;T &lt;img src="https://example.org/img.png"&gt;&lt;/a&gt;</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `AT&amp;T <img src="https://example.org/img.png"></a>`
+	result := feed.Entries[0].Content
+	if result != expected {
+		t.Errorf(`Unexpected entry URL, got %v instead of %v`, result, expected)
 	}
 }
