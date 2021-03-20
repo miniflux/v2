@@ -23,7 +23,7 @@
                 data-label-read="{{ t "entry.status.read" }}"
                 data-label-unread="{{ t "entry.status.unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                >{{ if eq .entry.Status "read" }}{{ template "icon_unread" }}{{ else }}{{ template "icon_read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
+                >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
         </li>
         <li>
             <a href="#"
@@ -33,13 +33,13 @@
                 data-label-star="{{ t "entry.bookmark.toggle.on" }}"
                 data-label-unstar="{{ t "entry.bookmark.toggle.off" }}"
                 data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
-                >{{ if .entry.Starred }}{{ template "icon_unstar" }}{{ else }}{{ template "icon_star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+                >{{ if .entry.Starred }}{{ icon "unstar" }}{{ else }}{{ icon "star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
         </li>
         {{ if .entry.ShareCode }}
             <li>
                 <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
                     title="{{ t "entry.shared_entry.title" }}"
-                    target="_blank">{{ template "icon_share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+                    target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
             </li>
         {{ end }}
         {{ if .hasSaveEntry }}
@@ -50,7 +50,7 @@
                     data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
                     data-label-loading="{{ t "entry.state.saving" }}"
                     data-label-done="{{ t "entry.save.completed" }}"
-                    >{{ template "icon_save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></a>
+                    >{{ icon "save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></a>
             </li>
         {{ end }}
         <li>
@@ -58,7 +58,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerpolicy="no-referrer"
-                data-original-link="true">{{ template "icon_external_link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
+                data-original-link="true">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
         </li>
         {{ if .entry.CommentsURL }}
             <li>
@@ -67,7 +67,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     referrerpolicy="no-referrer"
-                    data-comments-link="true">{{ template "icon_comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
+                    data-comments-link="true">{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
             </li>
         {{ end }}
     </ul>

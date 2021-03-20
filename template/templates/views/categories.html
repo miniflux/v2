@@ -30,13 +30,13 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li>
-                        <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ template "icon_entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
+                        <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ icon "entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
                     </li>
                     <li>
-                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ template "icon_feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
+                        <a href="{{ route "categoryFeeds" "categoryID" .ID }}">{{ icon "feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
                     </li>
                     <li>
-                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ template "icon_edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
+                        <a href="{{ route "editCategory" "categoryID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
                     </li>
                     {{ if eq .FeedCount 0 }}
                     <li>
@@ -46,7 +46,7 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ template "icon_delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
+                            data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ end }}
                 </ul>

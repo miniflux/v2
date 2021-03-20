@@ -36,7 +36,7 @@
                     {{ if .ShareCode }}
                         <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
                             title="{{ t "entry.shared_entry.title" }}"
-                            target="_blank">{{ template "icon_share" }}</a>
+                            target="_blank">{{ icon "share" }}</a>
                     {{ end }}
                 </span>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
@@ -52,7 +52,7 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li>
-                        {{ template "icon_delete" }}
+                        {{ icon "delete" }}
                         <a href="#"
                             data-confirm="true"
                             data-url="{{ route "unshareEntry" "entryID" .ID }}"

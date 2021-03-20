@@ -106,7 +106,7 @@ function markPageAsRead() {
             }
 
             if (showOnlyUnread) {
-                window.location.reload();
+                window.location.href = window.location.href;
             } else {
                 goToPage("next", true);
             }
@@ -136,23 +136,23 @@ function toggleEntryStatus(element, toasting) {
 
     updateEntriesStatus([entryID], newStatus);
 
-    let icon, label;
+    let iconElement, label;
 
     if (currentStatus === "read") {
-        icon = document.querySelector("template#icon_read");
+        iconElement = document.querySelector("template#icon-read");
         label = link.dataset.labelRead;
         if (toasting) {
-            toast(link.dataset.toastUnread);
+            showToast(link.dataset.toastUnread, iconElement);
         }
     } else {
-        icon = document.querySelector("template#icon_unread");
+        iconElement = document.querySelector("template#icon-unread");
         label = link.dataset.labelUnread;
         if (toasting) {
-            toast(link.dataset.toastRead);
+            showToast(link.dataset.toastRead, iconElement);
         }
     }
 
-    link.innerHTML = icon.innerHTML + '<span class="icon-label">' + label + '</span>';
+    link.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
     link.dataset.value = newStatus;
 
     if (element.classList.contains("item-status-" + currentStatus)) {
@@ -227,7 +227,8 @@ function saveEntry(element, toasting) {
         element.innerHTML = previousInnerHTML;
         element.dataset.completed = true;
         if (toasting) {
-            toast(element.dataset.toastDone);
+            let iconElement = document.querySelector("template#icon-save");
+            showToast(element.dataset.toastDone, iconElement);
         }
     });
     request.execute();
@@ -257,23 +258,23 @@ function toggleBookmark(parentElement, toasting) {
         let currentStarStatus = element.dataset.value;
         let newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
 
-        let icon, label;
+        let iconElement, label;
 
         if (currentStarStatus === "star") {
-            icon = document.querySelector("template#icon_star");
+            iconElement = document.querySelector("template#icon-star");
             label = element.dataset.labelStar;
             if (toasting) {
-                toast(element.dataset.toastUnstar);
+                showToast(element.dataset.toastUnstar, iconElement);
             }
         } else {
-            icon = document.querySelector("template#icon_unstar");
+            iconElement = document.querySelector("template#icon-unstar");
             label = element.dataset.labelUnstar;
             if (toasting) {
-                toast(element.dataset.toastStar);
+                showToast(element.dataset.toastStar, iconElement);
             }
         }
 
-        element.innerHTML = icon.innerHTML + '<span class="icon-label">' + label + '</span>';
+        element.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
         element.dataset.value = newStarStatus;
     });
     request.execute();
@@ -592,12 +593,21 @@ function handleConfirmationMessage(linkElement, callback) {
     containerElement.appendChild(questionElement);
 }
 
-function toast(msg) {
-    if (!msg) return;
-    document.querySelector('.toast-wrap .toast-msg').innerHTML = msg;
-    let toastWrapper = document.querySelector('.toast-wrap');
-    toastWrapper.classList.remove('toastAnimate');
-    setTimeout(function () {
-        toastWrapper.classList.add('toastAnimate');
-    }, 100);
+function showToast(label, iconElement) {
+    if (!label || !iconElement) {
+        return;
+    }
+
+    const toastMsgElement = document.getElementById("toast-msg");
+    if (toastMsgElement) {
+        toastMsgElement.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+
+        const toastElementWrapper = document.getElementById("toast-wrapper");
+        if (toastElementWrapper) {
+            toastElementWrapper.classList.remove('toast-animate');
+            setTimeout(function () {
+                toastElementWrapper.classList.add('toast-animate');
+            }, 100);
+        }
+    }
 }

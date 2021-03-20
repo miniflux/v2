@@ -217,6 +217,8 @@ func (r *rssItem) entryAuthor() string {
 		default:
 			if rssAuthor.Name != "" {
 				author = rssAuthor.Name
+			} else if strings.Contains(rssAuthor.Inner, "<![CDATA[") {
+				author = rssAuthor.Data
 			} else {
 				author = rssAuthor.Inner
 			}
