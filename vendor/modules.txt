@@ -25,7 +25,7 @@ github.com/golang/protobuf/ptypes/timestamp
 # github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux
-# github.com/lib/pq v1.9.0
+# github.com/lib/pq v1.10.0
 ## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
