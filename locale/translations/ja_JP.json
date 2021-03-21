@@ -266,6 +266,7 @@
     "form.feed.label.feed_username": "フィードのユーザー名",
     "form.feed.label.feed_password": "フィードのパスワード",
     "form.feed.label.user_agent": "ディフォルトの User Agent を上書きする",
+    "form.feed.label.cookie": "クッキーの設定",
     "form.feed.label.scraper_rules": "スクラップルール",
     "form.feed.label.rewrite_rules": "Rewrite ルール",
     "form.feed.label.blocklist_rules": "ブロックルール",

@@ -264,6 +264,7 @@
     "form.feed.label.feed_username": "源用户名",
     "form.feed.label.feed_password": "源密码",
     "form.feed.label.user_agent": "覆盖默认 User-Agent",
+    "form.feed.label.cookie": "设置 Cookies",
     "form.feed.label.scraper_rules": "Scraper 规则",
     "form.feed.label.rewrite_rules": "重写规则",
     "form.feed.label.blocklist_rules": "封锁规则",

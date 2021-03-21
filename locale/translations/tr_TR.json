@@ -266,6 +266,7 @@
     "form.feed.label.feed_username": "Besleme Kullanıcı Adı",
     "form.feed.label.feed_password": "Besleme Parolası",
     "form.feed.label.user_agent": "Varsayılan User Agent'i Geçersiz Kıl",
+    "form.feed.label.cookie": "Çerezleri Ayarla",
     "form.feed.label.scraper_rules": "Scrapper Kuralları",
     "form.feed.label.rewrite_rules": "Yeniden Yazma Kuralları",
     "form.feed.label.blocklist_rules": "Engelleme Kuralları",
