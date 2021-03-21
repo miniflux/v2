@@ -8,6 +8,7 @@ package model // import "miniflux.app/model"
 type SubscriptionDiscoveryRequest struct {
 	URL                         string `json:"url"`
 	UserAgent                   string `json:"user_agent"`
+	Cookie                      string `json:"cookie"`
 	Username                    string `json:"username"`
 	Password                    string `json:"password"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`

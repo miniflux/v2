@@ -122,6 +122,7 @@ type Feed struct {
 	KeeplistRules               string    `json:"keeplist_rules"`
 	Crawler                     bool      `json:"crawler"`
 	UserAgent                   string    `json:"user_agent"`
+	Cookie                      string    `json:"cookie"`
 	Username                    string    `json:"username"`
 	Password                    string    `json:"password"`
 	Category                    *Category `json:"category,omitempty"`
@@ -132,6 +133,7 @@ type FeedCreationRequest struct {
 	FeedURL                     string `json:"feed_url"`
 	CategoryID                  int64  `json:"category_id"`
 	UserAgent                   string `json:"user_agent"`
+	Cookie                      string `json:"cookie"`
 	Username                    string `json:"username"`
 	Password                    string `json:"password"`
 	Crawler                     bool   `json:"crawler"`
@@ -156,6 +158,7 @@ type FeedModificationRequest struct {
 	KeeplistRules               *string `json:"keeplist_rules"`
 	Crawler                     *bool   `json:"crawler"`
 	UserAgent                   *string `json:"user_agent"`
+	Cookie                      *string `json:"cookie"`
 	Username                    *string `json:"username"`
 	Password                    *string `json:"password"`
 	CategoryID                  *int64  `json:"category_id"`
