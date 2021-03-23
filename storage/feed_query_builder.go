@@ -106,7 +106,7 @@ func (f *FeedQueryBuilder) buildSorting() string {
 	}
 
 	if f.direction != "" {
-		parts = append(parts, fmt.Sprintf(`%s`, f.direction))
+		parts = append(parts, f.direction)
 	}
 
 	if len(parts) > 0 {

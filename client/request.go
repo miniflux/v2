@@ -82,9 +82,9 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 	}
 
 	if data != nil {
-		switch data.(type) {
+		switch data := data.(type) {
 		case io.ReadCloser:
-			request.Body = data.(io.ReadCloser)
+			request.Body = data
 		default:
 			request.Body = io.NopCloser(bytes.NewBuffer(r.toJSON(data)))
 		}

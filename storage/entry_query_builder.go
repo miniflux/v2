@@ -374,7 +374,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 	}
 
 	if e.direction != "" {
-		parts = append(parts, fmt.Sprintf(`%s`, e.direction))
+		parts = append(parts, e.direction)
 	}
 
 	if e.limit > 0 {

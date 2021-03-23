@@ -56,7 +56,7 @@ type UserModificationRequest struct {
 	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
 	ShowReadingTime   *bool   `json:"show_reading_time"`
 	EntrySwipe        *bool   `json:"entry_swipe"`
-	DisplayMode       *string  `json:"display_mode"`
+	DisplayMode       *string `json:"display_mode"`
 }
 
 // Patch updates the User object with the modification request.
