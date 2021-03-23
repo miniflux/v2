@@ -157,7 +157,7 @@ func (a *atom10Entry) entryHash() string {
 
 func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
-	duplicates := make(map[string]bool, 0)
+	duplicates := make(map[string]bool)
 
 	for _, mediaThumbnail := range a.AllMediaThumbnails() {
 		if _, found := duplicates[mediaThumbnail.URL]; !found {

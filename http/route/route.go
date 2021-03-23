@@ -19,13 +19,12 @@ func Path(router *mux.Router, name string, args ...interface{}) string {
 	}
 
 	var pairs []string
-	for _, param := range args {
-		switch param.(type) {
+	for _, arg := range args {
+		switch param := arg.(type) {
 		case string:
-			pairs = append(pairs, param.(string))
+			pairs = append(pairs, param)
 		case int64:
-			val := param.(int64)
-			pairs = append(pairs, strconv.FormatInt(val, 10))
+			pairs = append(pairs, strconv.FormatInt(param, 10))
 		}
 	}
 

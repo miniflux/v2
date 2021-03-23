@@ -136,10 +136,7 @@ func truncate(str string, max int) string {
 
 func isEmail(str string) bool {
 	_, err := mail.ParseAddress(str)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
