@@ -39,6 +39,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	request := client.NewClientWithConfig(feedCreationRequest.FeedURL, config.Opts)
 	request.WithCredentials(feedCreationRequest.Username, feedCreationRequest.Password)
 	request.WithUserAgent(feedCreationRequest.UserAgent)
+	request.WithCookie(feedCreationRequest.Cookie)
 	request.AllowSelfSignedCertificates = feedCreationRequest.AllowSelfSignedCertificates
 
 	if feedCreationRequest.FetchViaProxy {
@@ -61,6 +62,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 
 	subscription.UserID = userID
 	subscription.UserAgent = feedCreationRequest.UserAgent
+	subscription.Cookie = feedCreationRequest.Cookie
 	subscription.Username = feedCreationRequest.Username
 	subscription.Password = feedCreationRequest.Password
 	subscription.Crawler = feedCreationRequest.Crawler
@@ -124,6 +126,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 	request := client.NewClientWithConfig(originalFeed.FeedURL, config.Opts)
 	request.WithCredentials(originalFeed.Username, originalFeed.Password)
 	request.WithUserAgent(originalFeed.UserAgent)
+	request.WithCookie(originalFeed.Cookie)
 	request.AllowSelfSignedCertificates = originalFeed.AllowSelfSignedCertificates
 
 	if !originalFeed.IgnoreHTTPCache {

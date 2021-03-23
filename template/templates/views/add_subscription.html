@@ -31,13 +31,16 @@
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
                 <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
-                
+
                 {{ if .hasProxyConfigured }}
                 <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
                 {{ end }}
 
                 <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
                 <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}"  spellcheck="false" autocomplete="off">
+
+                <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
+                <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}"  spellcheck="false" autocomplete="off">
 
                 <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
                 <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}" spellcheck="false">

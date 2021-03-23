@@ -41,6 +41,7 @@ type Feed struct {
 	BlocklistRules              string    `json:"blocklist_rules"`
 	KeeplistRules               string    `json:"keeplist_rules"`
 	UserAgent                   string    `json:"user_agent"`
+	Cookie                      string    `json:"cookie"`
 	Username                    string    `json:"username"`
 	Password                    string    `json:"password"`
 	Disabled                    bool      `json:"disabled"`
@@ -121,6 +122,7 @@ type FeedCreationRequest struct {
 	FeedURL                     string `json:"feed_url"`
 	CategoryID                  int64  `json:"category_id"`
 	UserAgent                   string `json:"user_agent"`
+	Cookie                      string `json:"cookie"`
 	Username                    string `json:"username"`
 	Password                    string `json:"password"`
 	Crawler                     bool   `json:"crawler"`
@@ -145,6 +147,7 @@ type FeedModificationRequest struct {
 	KeeplistRules               *string `json:"keeplist_rules"`
 	Crawler                     *bool   `json:"crawler"`
 	UserAgent                   *string `json:"user_agent"`
+	Cookie                      *string `json:"cookie"`
 	Username                    *string `json:"username"`
 	Password                    *string `json:"password"`
 	CategoryID                  *int64  `json:"category_id"`
@@ -190,6 +193,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.UserAgent != nil {
 		feed.UserAgent = *f.UserAgent
+	}
+
+	if f.Cookie != nil {
+		feed.Cookie = *f.Cookie
 	}
 
 	if f.Username != nil {

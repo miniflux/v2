@@ -47,6 +47,7 @@ type Client struct {
 	requestUsername            string
 	requestPassword            string
 	requestUserAgent           string
+	requestCookie              string
 
 	useProxy             bool
 	doNotFollowRedirects bool
@@ -138,6 +139,14 @@ func (c *Client) WithoutRedirects() *Client {
 func (c *Client) WithUserAgent(userAgent string) *Client {
 	if userAgent != "" {
 		c.requestUserAgent = userAgent
+	}
+	return c
+}
+
+// WithCookie defines the Cookies to use for HTTP requests.
+func (c *Client) WithCookie(cookie string) *Client {
+	if cookie != "" {
+		c.requestCookie = cookie
 	}
 	return c
 }
@@ -334,6 +343,10 @@ func (c *Client) buildHeaders() http.Header {
 
 	if c.requestAuthorizationHeader != "" {
 		headers.Add("Authorization", c.requestAuthorizationHeader)
+	}
+
+	if c.requestCookie != "" {
+		headers.Add("Cookie", c.requestCookie)
 	}
 
 	headers.Add("Connection", "close")

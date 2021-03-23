@@ -268,6 +268,7 @@
     "form.feed.label.feed_username": "Имя пользователя подписки",
     "form.feed.label.feed_password": "Пароль подписки",
     "form.feed.label.user_agent": "Переопределить User Agent по умолчанию",
+    "form.feed.label.cookie": "Установить Ку́ки",
     "form.feed.label.scraper_rules": "Правила Scraper",
     "form.feed.label.rewrite_rules": "Правила Rewrite",
     "form.feed.label.blocklist_rules": "Правила блокировки",

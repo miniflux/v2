@@ -266,6 +266,7 @@
     "form.feed.label.feed_username": "Nome de usuário da fonte",
     "form.feed.label.feed_password": "Senha da fonte",
     "form.feed.label.user_agent": "Sobrescrever o agente de usuário (user-agent) padrão",
+    "form.feed.label.cookie": "Definir Cookies",
     "form.feed.label.scraper_rules": "Regras do scraper",
     "form.feed.label.rewrite_rules": "Regras para o Rewrite",
     "form.feed.label.blocklist_rules": "Regras de bloqueio",

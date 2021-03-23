@@ -268,6 +268,7 @@
     "form.feed.label.feed_username": "Subskrypcję nazwa użytkownika",
     "form.feed.label.feed_password": "Subskrypcję Hasło",
     "form.feed.label.user_agent": "Zastąp domyślny agent użytkownika",
+    "form.feed.label.cookie": "Ustawianie ciasteczek",
     "form.feed.label.scraper_rules": "Zasady ekstrakcji",
     "form.feed.label.rewrite_rules": "Reguły zapisu",
     "form.feed.label.blocklist_rules": "Zasady blokowania",
