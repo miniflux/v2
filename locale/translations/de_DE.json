@@ -266,7 +266,7 @@
     "form.feed.label.feed_username": "Benutzername des Abonnements",
     "form.feed.label.feed_password": "Passwort des Abonnements",
     "form.feed.label.user_agent": "Standardbenutzeragenten überschreiben",
-    "form.feed.label.cookie": "Cookies setzten",
+    "form.feed.label.cookie": "Cookies setzen",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.rewrite_rules": "Umschreiberegeln",
     "form.feed.label.blocklist_rules": "Blockierregeln",
