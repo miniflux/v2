@@ -5,11 +5,11 @@
 package ui // import "miniflux.app/ui"
 
 import (
-	"net/http"
-
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
+	"net/http"
+	"time"
 )
 
 func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +17,12 @@ func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
 	feed, err := h.store.FeedByID(userID, feedID)
+
+	before := feed.CheckedAt
+
+	if request.HasQueryParam(r, "before") {
+		before = time.Unix(request.QueryInt64Param(r, "before", 0), 0)
+	}
 
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -28,7 +34,7 @@ func (h *handler) markFeedAsRead(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = h.store.MarkFeedAsRead(userID, feedID, feed.CheckedAt); err != nil {
+	if err = h.store.MarkFeedAsRead(userID, feedID, before); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}

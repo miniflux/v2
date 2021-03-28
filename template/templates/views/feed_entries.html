@@ -26,6 +26,15 @@
                 data-label-loading="{{ t "confirm.loading" }}"
                 data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}">{{ t "menu.mark_all_as_read" }}</a>
         </li>
+        <li>
+            <a href="#"
+               data-confirm="true"
+               data-label-question="{{ t "confirm.question" }}"
+            data-label-yes="{{ t "confirm.yes" }}"
+            data-label-no="{{ t "confirm.no" }}"
+            data-label-loading="{{ t "confirm.loading" }}"
+            data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}?before={{ .before }}">{{ t "menu.mark_all_as_read_one_day" }}</a>
+        </li>
         {{ end }}
         {{ if .showOnlyUnreadEntries }}
         <li>

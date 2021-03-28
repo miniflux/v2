@@ -6,6 +6,7 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
+	"time"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -67,6 +68,7 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 	view.Set("showOnlyUnreadEntries", true)
+	view.Set("before", time.Now().Add(time.Duration(-24) * time.Hour).Unix())
 
 	html.OK(w, r, view.Render("feed_entries"))
 }
