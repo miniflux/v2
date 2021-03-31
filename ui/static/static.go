@@ -114,7 +114,6 @@ func GenerateJavascriptBundles() error {
 	var bundles = map[string][]string{
 		"app": {
 			"js/dom_helper.js",
-			"js/touch_handler.js",
 			"js/keyboard_handler.js",
 			"js/request_builder.js",
 			"js/modal_handler.js",
