@@ -2,6 +2,9 @@ name: Docker
 on:
   schedule:
     - cron: '0 1 * * *'
+  pull_request:
+    branches:
+      - 'master'
   push:
     branches:
       - '*'
@@ -30,7 +33,7 @@ jobs:
           fi
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=ver::${DOCKER_VERSION}
-          echo ::set-output name=images::${{ secrets.DOCKERHUB_USERNAME }}/miniflux,ghcr.io/${{ github.repository_owner }}/miniflux
+          echo ::set-output name=images::${DOCKER_IMAGE},ghcr.io/${DOCKER_IMAGE}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
