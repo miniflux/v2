@@ -1,9 +1,15 @@
-FROM golang:alpine AS build
+FROM --platform=$BUILDPLATFORM golang:alpine AS build
+COPY --from=tonistiigi/xx:golang / /
+
 RUN apk add --no-cache --update git
-ADD . /go/src/app
+
 WORKDIR /go/src/app
+ADD . .
+
 RUN go generate
-RUN go build \
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=target=/go/pkg/mod,type=cache \
+    go build \
     -o miniflux \
     -ldflags="-s -w -X 'miniflux.app/version.Version=`git describe --tags --abbrev=0`' -X 'miniflux.app/version.Commit=`git rev-parse --short HEAD`' -X 'miniflux.app/version.BuildDate=`date +%FT%T%z`'" \
     main.go

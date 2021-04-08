@@ -3,6 +3,8 @@ on:
   schedule:
     - cron: '0 1 * * *'
   push:
+    branches:
+      - '*'
     tags:
       - '*.*.*'
 jobs:
@@ -27,6 +29,8 @@ jobs:
           TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION},${DOCKER_IMAGE}:latest,ghcr.io/${DOCKER_IMAGE}:latest"
           fi
           echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=ver::${DOCKER_VERSION}
+          echo ::set-output name=images::${{ secrets.DOCKERHUB_USERNAME }}/miniflux,ghcr.io/${{ github.repository_owner }}/miniflux
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -35,23 +39,33 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1 
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      - name: Extract metadata
+        uses: crazy-max/ghaction-docker-meta@v2
+        id: meta
         with:
-          context: .
-          file: ./packaging/docker/Dockerfile
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
-          push: true
-          tags: ${{ steps.docker_tag.outputs.tags }}
+          images: ${{ steps.docker_tag.outputs.images }}
+          tags: |
+            type=raw,${{ steps.docker_tag.outputs.ver }}
+
+      - name: Build and push
+        uses: docker/bake-action@v1
+        with:
+          files: |
+            ./packaging/docker/docker-bake.hcl
+            ${{ steps.meta.outputs.bake-file }}
+          targets: build
+          push: ${{ github.event_name != 'pull_request' }}
