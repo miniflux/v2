@@ -24,7 +24,8 @@ jobs:
         run: |
           APP_NAME=miniflux
           DOCKER_VERSION=dev
-          DOCKER_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/${APP_NAME}
+          DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_IMAGE=${DOCKERHUB_USERNAME:-${APP_NAME}}/${APP_NAME}
           GHCR_IMAGE=ghcr.io/${{ github.repository_owner }}/${APP_NAME}
           if [ "${{ github.event_name }}" = "schedule" ]; then
           DOCKER_VERSION=nightly
