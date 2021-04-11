@@ -42,6 +42,12 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	}
 }
 
+func (s *Storage) UserByGoogleReaderToken(token string) (*model.User, error) {
+	var user model.User
+	//TODO Not implemented yet
+	return &user, nil
+}
+
 // Integration returns user integration settings.
 func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 	query := `
