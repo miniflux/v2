@@ -22,6 +22,9 @@ type IntegrationForm struct {
 	FeverEnabled         bool
 	FeverUsername        string
 	FeverPassword        string
+	GoogleReaderEnabled  bool
+	GoogleReaderUsername string
+	GoogleReaderPassword string
 	WallabagEnabled      bool
 	WallabagURL          string
 	WallabagClientID     string
@@ -47,6 +50,8 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.InstapaperPassword = i.InstapaperPassword
 	integration.FeverEnabled = i.FeverEnabled
 	integration.FeverUsername = i.FeverUsername
+	integration.GoogleReaderEnabled = i.GoogleReaderEnabled
+	integration.GoogleReaderUsername = i.GoogleReaderUsername
 	integration.WallabagEnabled = i.WallabagEnabled
 	integration.WallabagURL = i.WallabagURL
 	integration.WallabagClientID = i.WallabagClientID
@@ -74,6 +79,9 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		FeverEnabled:         r.FormValue("fever_enabled") == "1",
 		FeverUsername:        r.FormValue("fever_username"),
 		FeverPassword:        r.FormValue("fever_password"),
+		GoogleReaderEnabled:  r.FormValue("googlereader_enabled") == "1",
+		GoogleReaderUsername: r.FormValue("googlereader_username"),
+		GoogleReaderPassword: r.FormValue("googlereader_password"),
 		WallabagEnabled:      r.FormValue("wallabag_enabled") == "1",
 		WallabagURL:          r.FormValue("wallabag_url"),
 		WallabagClientID:     r.FormValue("wallabag_client_id"),
