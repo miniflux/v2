@@ -222,6 +222,7 @@
     "alert.prefs_saved": "Préférences sauvegardées !",
     "error.unlink_account_without_password": "Vous devez définir un mot de passe sinon vous ne pourrez plus vous connecter par la suite.",
     "error.duplicate_linked_account": "Il y a déjà quelqu'un d'associé avec ce provider !",
+    "error.duplicate_fever_username": "Il y a déjà quelqu'un d'autre avec le même nom d'utilisateur Fever !",
     "error.duplicate_googlereader_username": "Il y a déjà quelqu'un d'autre avec le même nom d'utilisateur Google Reader !",
     "error.pocket_request_token": "Impossible de récupérer le jeton d'accès depuis Pocket !",
     "error.pocket_access_token": "Impossible de récupérer le jeton d'accès depuis Pocket !",
