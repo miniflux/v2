@@ -19,6 +19,14 @@ func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) 
 	return result
 }
 
+// HasDuplicateGoogleReaderUsername checks if another user have the same fever username.
+func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUsername string) bool {
+	query := `SELECT true FROM integrations WHERE user_id != $1 AND googlereader_username=$2`
+	var result bool
+	s.db.QueryRow(query, userID, googleReaderUsername).Scan(&result)
+	return result
+}
+
 // UserByFeverToken returns a user by using the Fever API token.
 func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
@@ -63,6 +71,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			fever_enabled,
 			fever_username,
 			fever_token,
+			googlereader_enabled,
+			googlereader_username,
+			googlereader_token,
 			wallabag_enabled,
 			wallabag_url,
 			wallabag_client_id,
@@ -96,6 +107,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.FeverEnabled,
 		&integration.FeverUsername,
 		&integration.FeverToken,
+		&integration.GoogleReaderEnabled,
+		&integration.GoogleReaderUsername,
+		&integration.GoogleReaderToken,
 		&integration.WallabagEnabled,
 		&integration.WallabagURL,
 		&integration.WallabagClientID,
@@ -150,11 +164,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pocket_enabled=$20,
 			pocket_access_token=$21,
 			pocket_consumer_key=$22,
-			telegram_bot_enabled=$23,
-			telegram_bot_token=$24,
-			telegram_bot_chat_id=$25
+			googlereader_enabled=$23,
+			googlereader_username=$24,
+			googlereader_token=$25,
+			telegram_bot_enabled=$26,
+			telegram_bot_token=$27,
+			telegram_bot_chat_id=$28
 		WHERE
-			user_id=$26
+			user_id=$29
 	`
 	_, err := s.db.Exec(
 		query,
@@ -180,6 +197,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PocketEnabled,
 		integration.PocketAccessToken,
 		integration.PocketConsumerKey,
+		integration.GoogleReaderEnabled,
+		integration.GoogleReaderUsername,
+		integration.GoogleReaderToken,
 		integration.TelegramBotEnabled,
 		integration.TelegramBotToken,
 		integration.TelegramBotChatID,

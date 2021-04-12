@@ -49,6 +49,21 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.FeverToken = ""
 	}
 
+	if integration.GoogleReaderUsername != "" && h.store.HasDuplicateGoogleReaderUsername(user.ID, integration.GoogleReaderUsername) {
+		sess.NewFlashErrorMessage(printer.Printf("error.duplicate_googlereader_username"))
+		html.Redirect(w, r, route.Path(h.router, "integrations"))
+		return
+	}
+
+	if integration.GoogleReaderEnabled {
+		if integrationForm.GoogleReaderPassword != "" {
+			//TODO, I don't know how the token is build, yet. Have to do some research
+			//might be some md5/sha1 stuff i guess
+			integration.GoogleReaderToken = "TODO"
+		}
+	} else {
+		integration.GoogleReaderToken = ""
+	}
 	err = h.store.UpdateIntegration(integration)
 	if err != nil {
 		html.ServerError(w, r, err)

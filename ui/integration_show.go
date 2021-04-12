@@ -38,6 +38,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		InstapaperPassword:   integration.InstapaperPassword,
 		FeverEnabled:         integration.FeverEnabled,
 		FeverUsername:        integration.FeverUsername,
+		GoogleReaderEnabled:  integration.GoogleReaderEnabled,
+		GoogleReaderUsername: integration.GoogleReaderUsername,
 		WallabagEnabled:      integration.WallabagEnabled,
 		WallabagURL:          integration.WallabagURL,
 		WallabagClientID:     integration.WallabagClientID,

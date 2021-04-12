@@ -17,7 +17,7 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	handler := &handler{store}
 	sr := router.PathPrefix("/google-reader-api").Subrouter()
 	sr.Use(newMiddleware(store).serve)
-	sr.HandleFunc("/", handler.serve).Name("googleReaderApiEndpoint")
+	sr.HandleFunc("/", handler.serve).Name("googleReaderEndpoint")
 }
 
 func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
