@@ -8,9 +8,11 @@ require (
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/golang/gddo v0.0.0-20200831202555-721e228c7686 // indirect
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.4
 	github.com/mitchellh/go-server-timing v1.0.2-0.20201108055052-feb680ab92c2
+	github.com/muesli/cache2go v0.0.0-20201208071950-e3e970b4892f // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
