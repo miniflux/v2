@@ -72,7 +72,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.TelegramBotChatID = i.TelegramBotChatID
 }
 
-// NewIntegrationForm returns a new AuthForm.
+// NewIntegrationForm returns a new IntegrationForm.
 func NewIntegrationForm(r *http.Request) *IntegrationForm {
 	return &IntegrationForm{
 		PinboardEnabled:      r.FormValue("pinboard_enabled") == "1",

@@ -19,7 +19,7 @@ type Integration struct {
 	FeverToken           string
 	GoogleReaderEnabled  bool
 	GoogleReaderUsername string
-	GoogleReaderToken    string
+	GoogleReaderPassword string
 	WallabagEnabled      bool
 	WallabagURL          string
 	WallabagClientID     string

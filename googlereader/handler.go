@@ -19,14 +19,15 @@ type handler struct {
 func Serve(router *mux.Router, store *storage.Storage) {
 	handler := &handler{store}
 	middleware := newMiddleware(store)
-	router.HandleFunc("/accounts/ClientLogin", middleware.clientLogin).Methods(http.MethodPost, http.MethodGet).Name("ClientLogin")
+	router.HandleFunc("/accounts/ClientLogin", middleware.clientLogin).Methods(http.MethodPost).Name("ClientLogin")
 	sr := router.PathPrefix("/reader/api/0").Subrouter()
 	sr.Use(middleware.handleCORS)
 	sr.Use(middleware.apiKeyAuth)
 	sr.Methods(http.MethodOptions)
 	sr.HandleFunc("/token", middleware.token).Methods(http.MethodGet).Name("Token")
-	sr.HandleFunc("/user-info", handler.userInfo).Methods(http.MethodGet).Name("Token")
-	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("googleReaderApiEndpoint")
+	sr.HandleFunc("/user-info", handler.userInfo).Methods(http.MethodGet).Name("UserInfo")
+	sr.HandleFunc("/subscription/list", handler.subscriptionList).Methods(http.MethodGet).Name("SubscriptonList")
+	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
 
 func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +35,13 @@ func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 	logger.Error("Call to Google Reader API not implemented yet!!")
 	json.OK(w, r, []string{})
 	logger.Info("[Reader][Login] [ClientIP=%s] Sending", clientIP)
+}
+
+func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
+	clientIP := request.ClientIP(r)
+	logger.Error("Call to Google Reader API not implemented yet!!")
+	json.OK(w, r, []string{})
+	logger.Info("[Reader][SubscriptionList] [ClientIP=%s] Sending", clientIP)
 }
 
 func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {
@@ -51,6 +59,6 @@ func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
-	userInfo := userInfo{UserId: string(user.ID), UserName: user.Username, UserProfileId: string(user.ID), UserEmail: user.Username}
+	userInfo := userInfo{UserId: fmt.Sprint(user.ID), UserName: user.Username, UserProfileId: fmt.Sprint(user.ID), UserEmail: user.Username}
 	json.OK(w, r, userInfo)
 }

@@ -567,7 +567,7 @@ var migrations = []func(tx *sql.Tx) error{
 		sql := `
 			ALTER TABLE integrations ADD COLUMN googlereader_enabled bool default 'f';
 			ALTER TABLE integrations ADD COLUMN googlereader_username text default '';
-			ALTER TABLE integrations ADD COLUMN googlereader_token text default '';
+			ALTER TABLE integrations ADD COLUMN googlereader_password text default '';
 			`
 		_, err = tx.Exec(sql)
 		return err

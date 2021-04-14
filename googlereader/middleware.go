@@ -6,14 +6,12 @@ package googlereader // import "miniflux.app/googlereader"
 
 import (
 	"context"
-	"fmt"
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/hex"
 	"net/http"
-	"net/http/httputil"
 	"strings"
-	"time"
 
-	"github.com/google/uuid"
-	"github.com/muesli/cache2go"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response"
 	"miniflux.app/http/response/json"
@@ -24,34 +22,25 @@ import (
 
 type middleware struct {
 	store *storage.Storage
-	cache *cache2go.CacheTable
 }
 
 func newMiddleware(s *storage.Storage) *middleware {
-	c := cache2go.Cache("GoogleReader")
-	return &middleware{s, c}
+	return &middleware{s}
 }
 
 func (m *middleware) clientLogin(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	var username, password, output string
-	dump, _ := httputil.DumpRequest(r, false)
-	logger.Info("[Reader][Login] [ClientIP=%s] URL: %s", clientIP, dump)
-	if r.Method == http.MethodPost {
-		err := r.ParseForm()
-		if err != nil {
-			logger.Error("[Reader][Login] [ClientIP=%s] Could not parse form", clientIP)
-			json.Unauthorized(w, r)
-			return
-		}
-		username = r.Form.Get("Email")
-		password = r.Form.Get("Passwd")
-		output = r.Form.Get("output")
-	} else {
-		username = request.QueryStringParam(r, "Email", "")
-		password = request.QueryStringParam(r, "Passwd", "")
-		output = request.QueryStringParam(r, "output", "")
+	var integration *model.Integration
+	err := r.ParseForm()
+	if err != nil {
+		logger.Error("[Reader][Login] [ClientIP=%s] Could not parse form", clientIP)
+		json.Unauthorized(w, r)
+		return
 	}
+	username = r.Form.Get("Email")
+	password = r.Form.Get("Passwd")
+	output = r.Form.Get("output")
 
 	if username == "" || password == "" {
 		logger.Error("[Reader][Login] [ClientIP=%s] Empty username or password", clientIP)
@@ -59,37 +48,25 @@ func (m *middleware) clientLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := m.store.CheckPassword(username, password); err != nil {
+	if err = m.store.GoogleReaderUserCheckPassword(username, password); err != nil {
 		logger.Error("[Reader][Login] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
-		json.Unauthorized(w, r)
-		return
-	}
-
-	user, err := m.store.UserByUsername(username)
-	if err != nil {
-		logger.Error("[Reader][Login] %v", err)
-		json.ServerError(w, r, err)
-		return
-	}
-
-	if user == nil {
-		logger.Error("[Reader][Login] [ClientIP=%s] User not found: %s", clientIP, username)
 		json.Unauthorized(w, r)
 		return
 	}
 
 	logger.Info("[Reader][Login] [ClientIP=%s] User authenticated: %s", clientIP, username)
 
-	m.store.SetLastLogin(user.ID)
+	if integration, err = m.store.GoogleReaderUserGetIntegration(username); err != nil {
+		logger.Error("[Reader][Login] [ClientIP=%s] Could not load integration: %s", clientIP, username)
+		json.Unauthorized(w, r)
+		return
+	}
 
-	token := username + "/" + uuid.New().String()
-	// token := strings.ReplaceAll(uuid.New().String(), "-", "")
-	// token := username + "/" + strings.ReplaceAll(uuid.New().String(), "-", "")
-	token = fmt.Sprintf("%-57s", token)
-	token = strings.ReplaceAll(token, " ", "x")
+	m.store.SetLastLogin(integration.UserID)
+
+	token := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
 	logger.Info("[Reader][Login] [ClientIP=%s] Created token: %s", clientIP, token)
 	result := login{SID: token, LSID: token, Auth: token}
-	m.cache.Add(token, 7*24*time.Hour, user)
 	if output == "json" {
 		json.OK(w, r, result)
 		return
@@ -168,22 +145,33 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 		}
 
 		token := auths[1]
-		res, err := m.cache.Value(token)
-		if err != nil {
-			logger.Error("[Reader][Auth] [ClientIP=%s] No user found with the given API key", clientIP)
+		parts := strings.Split(token, "/")
+		if len(parts) != 2 {
+			logger.Error("[Reader][Auth] [ClientIP=%s] Auth token does not have the expected structure username/hash - '%s'", clientIP, token)
 			json.Unauthorized(w, r)
 			return
 		}
-		user, ok := (res.Data()).(*model.User)
-		if !ok {
-			err = fmt.Errorf("could not cast to user")
-			logger.Error("[API][BasicAuth] could not cast to user!")
-			json.ServerError(w, r, err)
+		var integration *model.Integration
+		var user *model.User
+		var err error
+		if integration, err = m.store.GoogleReaderUserGetIntegration(parts[0]); err != nil {
+			logger.Error("[Reader][Auth] [ClientIP=%s] No user found with the given google reader username: %s", clientIP, parts[0])
+			json.Unauthorized(w, r)
 			return
 		}
-		logger.Info("[Reader][Auth] [ClientIP=%s] User authenticated: %s", clientIP, user.Username)
-		m.store.SetLastLogin(user.ID)
-		m.store.SetAPIKeyUsedTimestamp(user.ID, authorization)
+		expectedToken := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
+		if expectedToken != token {
+			logger.Error("[Reader][Auth] [ClientIP=%s] Token does not match: %s", clientIP, token)
+			json.Unauthorized(w, r)
+			return
+		}
+		if user, err = m.store.UserByID(integration.UserID); err != nil {
+			logger.Error("[Reader][Auth] [ClientIP=%s] No user found with the userID: %d", clientIP, integration.UserID)
+			json.Unauthorized(w, r)
+			return
+		}
+
+		m.store.SetLastLogin(integration.UserID)
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
@@ -194,4 +182,10 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func getAuthToken(username, password string) string {
+	token := hex.EncodeToString(hmac.New(sha1.New, []byte(username+password)).Sum(nil))
+	token = username + "/" + token
+	return token
 }

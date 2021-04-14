@@ -44,7 +44,7 @@
         <label for="form-googlereader-password">{{ t "form.integration.googlereader_password" }}</label>
         <input type="password" name="googlereader_password" id="form-googlereader-password" value="{{ .form.GoogleReaderPassword }}" autocomplete="new-password">
 
-        <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ route "googleReaderEndpoint" }}</strong></p>
+        <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ route "login" }}</strong></p>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

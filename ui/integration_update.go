@@ -57,12 +57,10 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 
 	if integration.GoogleReaderEnabled {
 		if integrationForm.GoogleReaderPassword != "" {
-			//TODO, I don't know how the token is build, yet. Have to do some research
-			//might be some md5/sha1 stuff i guess
-			integration.GoogleReaderToken = "TODO"
+			integration.GoogleReaderPassword = integrationForm.GoogleReaderPassword
 		}
 	} else {
-		integration.GoogleReaderToken = ""
+		integration.GoogleReaderPassword = ""
 	}
 	err = h.store.UpdateIntegration(integration)
 	if err != nil {

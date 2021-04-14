@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"golang.org/x/crypto/bcrypt"
 	"miniflux.app/model"
 )
 
@@ -19,7 +20,7 @@ func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) 
 	return result
 }
 
-// HasDuplicateGoogleReaderUsername checks if another user have the same fever username.
+// HasDuplicateGoogleReaderUsername checks if another user have the same googlereader  username.
 func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUsername string) bool {
 	query := `SELECT true FROM integrations WHERE user_id != $1 AND googlereader_username=$2`
 	var result bool
@@ -50,10 +51,55 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	}
 }
 
-func (s *Storage) UserByGoogleReaderToken(token string) (*model.User, error) {
-	var user model.User
-	//TODO Not implemented yet
-	return &user, nil
+// GoogleReaderUserCheckPassword validates the hashed password.
+func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error {
+	var hash string
+
+	query := `
+		SELECT
+			googlereader_password
+		FROM integrations
+		WHERE
+			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
+	`
+
+	err := s.db.QueryRow(query, username).Scan(&hash)
+	if err == sql.ErrNoRows {
+		return fmt.Errorf(`store: unable to find this user: %s`, username)
+	} else if err != nil {
+		return fmt.Errorf(`store: unable to fetch user: %v`, err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		return fmt.Errorf(`store: invalid password for "%s" (%v)`, username, err)
+	}
+
+	return nil
+}
+
+// GoogleReaderUserGetIntegration returns part of the google reader parts of the integration struct.
+func (s *Storage) GoogleReaderUserGetIntegration(username string) (*model.Integration, error) {
+	var integration model.Integration
+
+	query := `
+		SELECT
+			user_id,
+			googlereader_enabled,
+			googlereader_username,
+			googlereader_password
+		FROM integrations
+		WHERE
+			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
+	`
+
+	err := s.db.QueryRow(query, username).Scan(&integration.UserID, &integration.GoogleReaderEnabled, &integration.GoogleReaderUsername, &integration.GoogleReaderPassword)
+	if err == sql.ErrNoRows {
+		return &integration, fmt.Errorf(`store: unable to find this user: %s`, username)
+	} else if err != nil {
+		return &integration, fmt.Errorf(`store: unable to fetch user: %v`, err)
+	}
+
+	return &integration, nil
 }
 
 // Integration returns user integration settings.
@@ -73,7 +119,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			fever_token,
 			googlereader_enabled,
 			googlereader_username,
-			googlereader_token,
+			googlereader_password,
 			wallabag_enabled,
 			wallabag_url,
 			wallabag_client_id,
@@ -109,7 +155,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.FeverToken,
 		&integration.GoogleReaderEnabled,
 		&integration.GoogleReaderUsername,
-		&integration.GoogleReaderToken,
+		&integration.GoogleReaderPassword,
 		&integration.WallabagEnabled,
 		&integration.WallabagURL,
 		&integration.WallabagClientID,
@@ -138,7 +184,13 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 
 // UpdateIntegration saves user integration settings.
 func (s *Storage) UpdateIntegration(integration *model.Integration) error {
-	query := `
+	var err error
+	if integration.GoogleReaderPassword != "" {
+		integration.GoogleReaderPassword, err = hashPassword(integration.GoogleReaderPassword)
+		if err != nil {
+			return err
+		}
+		query := `
 		UPDATE
 			integrations
 		SET
@@ -166,14 +218,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pocket_consumer_key=$22,
 			googlereader_enabled=$23,
 			googlereader_username=$24,
-			googlereader_token=$25,
+			googlereader_password=$25,
 			telegram_bot_enabled=$26,
 			telegram_bot_token=$27,
 			telegram_bot_chat_id=$28
 		WHERE
 			user_id=$29
 	`
-	_, err := s.db.Exec(
+	_, err = s.db.Exec(
 		query,
 		integration.PinboardEnabled,
 		integration.PinboardToken,
@@ -199,12 +251,81 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PocketConsumerKey,
 		integration.GoogleReaderEnabled,
 		integration.GoogleReaderUsername,
-		integration.GoogleReaderToken,
+		integration.GoogleReaderPassword,
 		integration.TelegramBotEnabled,
 		integration.TelegramBotToken,
 		integration.TelegramBotChatID,
 		integration.UserID,
 	)
+	} else {
+		query := `
+		UPDATE
+			integrations
+		SET
+			pinboard_enabled=$1,
+			pinboard_token=$2,
+			pinboard_tags=$3,
+			pinboard_mark_as_unread=$4,
+			instapaper_enabled=$5,
+			instapaper_username=$6,
+			instapaper_password=$7,
+			fever_enabled=$8,
+			fever_username=$9,
+			fever_token=$10,
+			wallabag_enabled=$11,
+			wallabag_url=$12,
+			wallabag_client_id=$13,
+			wallabag_client_secret=$14,
+			wallabag_username=$15,
+			wallabag_password=$16,
+			nunux_keeper_enabled=$17,
+			nunux_keeper_url=$18,
+			nunux_keeper_api_key=$19,
+			pocket_enabled=$20,
+			pocket_access_token=$21,
+			pocket_consumer_key=$22,
+			googlereader_enabled=$23,
+			googlereader_username=$24,
+		    googlereader_password=$25,
+			telegram_bot_enabled=$26,
+			telegram_bot_token=$27,
+			telegram_bot_chat_id=$28
+		WHERE
+			user_id=$29
+	`
+		_, err = s.db.Exec(
+			query,
+			integration.PinboardEnabled,
+			integration.PinboardToken,
+			integration.PinboardTags,
+			integration.PinboardMarkAsUnread,
+			integration.InstapaperEnabled,
+			integration.InstapaperUsername,
+			integration.InstapaperPassword,
+			integration.FeverEnabled,
+			integration.FeverUsername,
+			integration.FeverToken,
+			integration.WallabagEnabled,
+			integration.WallabagURL,
+			integration.WallabagClientID,
+			integration.WallabagClientSecret,
+			integration.WallabagUsername,
+			integration.WallabagPassword,
+			integration.NunuxKeeperEnabled,
+			integration.NunuxKeeperURL,
+			integration.NunuxKeeperAPIKey,
+			integration.PocketEnabled,
+			integration.PocketAccessToken,
+			integration.PocketConsumerKey,
+			integration.GoogleReaderEnabled,
+			integration.GoogleReaderUsername,
+			integration.TelegramBotEnabled,
+			integration.TelegramBotToken,
+			integration.TelegramBotChatID,
+			integration.UserID,
+		)
+
+	}
 
 	if err != nil {
 		return fmt.Errorf(`store: unable to update integration row: %v`, err)
