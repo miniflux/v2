@@ -3,6 +3,7 @@ package googlereader // import "miniflux.app/googlereader"
 import (
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 
 	"github.com/gorilla/mux"
 	"miniflux.app/http/request"
@@ -25,23 +26,48 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.Use(middleware.apiKeyAuth)
 	sr.Methods(http.MethodOptions)
 	sr.HandleFunc("/token", middleware.token).Methods(http.MethodGet).Name("Token")
+
 	sr.HandleFunc("/user-info", handler.userInfo).Methods(http.MethodGet).Name("UserInfo")
 	sr.HandleFunc("/subscription/list", handler.subscriptionList).Methods(http.MethodGet).Name("SubscriptonList")
 	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
+func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][subscription/list][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	var result subscriptionsResponse
+	feeds, err := h.store.Feeds(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	result.Subscriptions = make([]subscription, 0)
+	for _, feed := range feeds {
+		category, err := h.store.Category(userID, feed.Category.ID)
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+		result.Subscriptions = append(result.Subscriptions, subscription{
+			Id:         fmt.Sprint(feed.ID),
+			Title:      feed.Title,
+			Url:        feed.FeedURL,
+			Categories: []subscriptionCategory{{fmt.Sprint(category.ID), category.Title}},
+			HtmlUrl:    feed.SiteURL,
+			IconUrl:    "", //TODO Icons are only base64 encode in DB yet
+		})
+	}
+	json.OK(w, r, result)
+}
 
 func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
+	dump, _ := httputil.DumpRequest(r, false)
+	logger.Info("[Reader][UNKNOWN] [ClientIP=%s] URL: %s", clientIP, dump)
 	logger.Error("Call to Google Reader API not implemented yet!!")
 	json.OK(w, r, []string{})
-	logger.Info("[Reader][Login] [ClientIP=%s] Sending", clientIP)
-}
-
-func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
-	clientIP := request.ClientIP(r)
-	logger.Error("Call to Google Reader API not implemented yet!!")
-	json.OK(w, r, []string{})
-	logger.Info("[Reader][SubscriptionList] [ClientIP=%s] Sending", clientIP)
 }
 
 func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {

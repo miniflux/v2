@@ -22,3 +22,20 @@ type userInfo struct {
 	UserProfileId string `json:"userProfileId"`
 	UserEmail     string `json:"userEmail"`
 }
+
+type subscription struct {
+	Id         string                 `json:"id"`
+	Title      string                 `json:"title"`
+	Categories []subscriptionCategory `json:"categories"`
+	Url        string                 `json:"url"`
+	HtmlUrl    string                 `json:"htmlUrl"`
+	IconUrl    string                 `json:"iconUrl"`
+}
+
+type subscriptionCategory struct {
+	Id    string `json:"id"`
+	Label string `json:"label"`
+}
+type subscriptionsResponse struct {
+	Subscriptions []subscription `json:"subscriptions"`
+}
