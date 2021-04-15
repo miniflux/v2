@@ -51,12 +51,12 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		result.Subscriptions = append(result.Subscriptions, subscription{
-			Id:         fmt.Sprint(feed.ID),
+			ID:         fmt.Sprint(feed.ID),
 			Title:      feed.Title,
-			Url:        feed.FeedURL,
+			URL:        feed.FeedURL,
 			Categories: []subscriptionCategory{{fmt.Sprint(category.ID), category.Title}},
-			HtmlUrl:    feed.SiteURL,
-			IconUrl:    "", //TODO Icons are only base64 encode in DB yet
+			HTMLURL:    feed.SiteURL,
+			IconURL:    "", //TODO Icons are only base64 encode in DB yet
 		})
 	}
 	json.OK(w, r, result)
@@ -85,6 +85,6 @@ func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
-	userInfo := userInfo{UserId: fmt.Sprint(user.ID), UserName: user.Username, UserProfileId: fmt.Sprint(user.ID), UserEmail: user.Username}
+	userInfo := userInfo{UserID: fmt.Sprint(user.ID), UserName: user.Username, UserProfileID: fmt.Sprint(user.ID), UserEmail: user.Username}
 	json.OK(w, r, userInfo)
 }

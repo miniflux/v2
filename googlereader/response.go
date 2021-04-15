@@ -17,23 +17,23 @@ func (l login) String() string {
 }
 
 type userInfo struct {
-	UserId        string `json:"userId"`
+	UserID        string `json:"userId"`
 	UserName      string `json:"userName"`
-	UserProfileId string `json:"userProfileId"`
+	UserProfileID string `json:"userProfileId"`
 	UserEmail     string `json:"userEmail"`
 }
 
 type subscription struct {
-	Id         string                 `json:"id"`
+	ID         string                 `json:"id"`
 	Title      string                 `json:"title"`
 	Categories []subscriptionCategory `json:"categories"`
-	Url        string                 `json:"url"`
-	HtmlUrl    string                 `json:"htmlUrl"`
-	IconUrl    string                 `json:"iconUrl"`
+	URL        string                 `json:"url"`
+	HTMLURL    string                 `json:"htmlUrl"`
+	IconURL    string                 `json:"iconUrl"`
 }
 
 type subscriptionCategory struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Label string `json:"label"`
 }
 type subscriptionsResponse struct {

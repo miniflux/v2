@@ -95,7 +95,6 @@ func (m *middleware) token(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/plain; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(token))
-
 }
 
 func (m *middleware) handleCORS(next http.Handler) http.Handler {

@@ -4,7 +4,7 @@
 
 /*
 
-Package Googlereader implements Google Reader API endpoints.
+Package googlereader implements Google Reader API endpoints.
 
 */
 package googlereader // import "miniflux.app/googlereader"
