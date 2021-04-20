@@ -39,3 +39,13 @@ type subscriptionCategory struct {
 type subscriptionsResponse struct {
 	Subscriptions []subscription `json:"subscriptions"`
 }
+
+type itemRef struct {
+	ID              string `json:"id"`
+	DirectStreamIds string `json:"directStreamIds,omitempty"`
+	TimestampUsec   string `json:"timestampUsec,omitempty"`
+}
+
+type streamIDResponse struct {
+	ItemRefs []itemRef `json:"itemRefs"`
+}
