@@ -83,6 +83,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			FeedURL:                     subscriptions[0].URL,
 			Crawler:                     subscriptionForm.Crawler,
 			AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,
+			ApplyFilterToContent:        subscriptionForm.ApplyFilterToContent,
 			UserAgent:                   subscriptionForm.UserAgent,
 			Cookie:                      subscriptionForm.Cookie,
 			Username:                    subscriptionForm.Username,

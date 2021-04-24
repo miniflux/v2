@@ -47,6 +47,7 @@ type Feed struct {
 	Disabled                    bool      `json:"disabled"`
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
+	ApplyFilterToContent        bool      `json:"apply_filter_to_content"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	Category                    *Category `json:"category,omitempty"`
 	Entries                     Entries   `json:"entries,omitempty"`
@@ -129,6 +130,7 @@ type FeedCreationRequest struct {
 	Disabled                    bool   `json:"disabled"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	ApplyFilterToContent        bool   `json:"apply_filter_to_content"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
 	ScraperRules                string `json:"scraper_rules"`
 	RewriteRules                string `json:"rewrite_rules"`
@@ -154,6 +156,7 @@ type FeedModificationRequest struct {
 	Disabled                    *bool   `json:"disabled"`
 	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
+	ApplyFilterToContent        *bool   `json:"apply_filter_to_content"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 }
 

@@ -28,6 +28,7 @@ type FeedForm struct {
 	Password                    string
 	IgnoreHTTPCache             bool
 	AllowSelfSignedCertificates bool
+	ApplyFilterToContent        bool
 	FetchViaProxy               bool
 	Disabled                    bool
 }
@@ -51,6 +52,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.Password = f.Password
 	feed.IgnoreHTTPCache = f.IgnoreHTTPCache
 	feed.AllowSelfSignedCertificates = f.AllowSelfSignedCertificates
+	feed.ApplyFilterToContent = f.ApplyFilterToContent
 	feed.FetchViaProxy = f.FetchViaProxy
 	feed.Disabled = f.Disabled
 	return feed
@@ -78,6 +80,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		Password:                    r.FormValue("feed_password"),
 		IgnoreHTTPCache:             r.FormValue("ignore_http_cache") == "1",
 		AllowSelfSignedCertificates: r.FormValue("allow_self_signed_certificates") == "1",
+		ApplyFilterToContent:        r.FormValue("apply_filter_to_content") == "1",
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		Disabled:                    r.FormValue("disabled") == "1",
 	}

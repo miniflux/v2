@@ -69,6 +69,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.Disabled = feedCreationRequest.Disabled
 	subscription.IgnoreHTTPCache = feedCreationRequest.IgnoreHTTPCache
 	subscription.AllowSelfSignedCertificates = feedCreationRequest.AllowSelfSignedCertificates
+	subscription.ApplyFilterToContent = feedCreationRequest.ApplyFilterToContent
 	subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
 	subscription.ScraperRules = feedCreationRequest.ScraperRules
 	subscription.RewriteRules = feedCreationRequest.RewriteRules

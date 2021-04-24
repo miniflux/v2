@@ -19,6 +19,7 @@ type SubscriptionForm struct {
 	Crawler                     bool
 	FetchViaProxy               bool
 	AllowSelfSignedCertificates bool
+	ApplyFilterToContent        bool
 	UserAgent                   string
 	Cookie                      string
 	Username                    string
@@ -62,6 +63,7 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		CategoryID:                  int64(categoryID),
 		Crawler:                     r.FormValue("crawler") == "1",
 		AllowSelfSignedCertificates: r.FormValue("allow_self_signed_certificates") == "1",
+		ApplyFilterToContent:        r.FormValue("apply_filter_to_content") == "1",
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		UserAgent:                   r.FormValue("user_agent"),
 		Cookie:                      r.FormValue("cookie"),

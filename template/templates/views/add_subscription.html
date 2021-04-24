@@ -31,6 +31,7 @@
             <div class="details-content">
                 <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
                 <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
+                <label><input type="checkbox" name="apply_filter_to_content" value="1" {{ if .form.ApplyFilterToContent }}checked{{ end }}> {{ t "form.feed.label.apply_filter_to_content" }}</label>
 
                 {{ if .hasProxyConfigured }}
                 <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
