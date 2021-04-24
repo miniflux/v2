@@ -41,10 +41,6 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 	for _, entry := range feed.Entries {
 		logger.Debug("[Processor] Processing entry %q from feed %q", entry.URL, feed.FeedURL)
 
-		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) {
-			continue
-		}
-
 		entryIsNew := !store.EntryURLExists(feed.ID, entry.URL)
 		if feed.Crawler && entryIsNew {
 			logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
@@ -72,6 +68,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 				// We replace the entry content only if the scraper doesn't return any error.
 				entry.Content = content
 			}
+		}
+
+		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) {
+			continue
 		}
 
 		entry.Content = rewrite.Rewriter(entry.URL, entry.Content, feed.RewriteRules)
