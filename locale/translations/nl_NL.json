@@ -273,6 +273,7 @@
     "form.feed.label.keeplist_rules": "toestemmingsregels",
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.allow_self_signed_certificates": "Sta zelfondertekende of ongeldige certificaten toe",
+    "form.feed.label.apply_filter_to_content": "Pas blokkerings- / bewaarregels toe op inhoud",
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
     "form.category.label.title": "Naam",

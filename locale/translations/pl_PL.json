@@ -275,6 +275,7 @@
     "form.feed.label.keeplist_rules": "Zasady zezwoleń",
     "form.feed.label.ignore_http_cache": "Zignoruj ​​pamięć podręczną HTTP",
     "form.feed.label.allow_self_signed_certificates": "Zezwalaj na certyfikaty z podpisem własnym lub nieprawidłowe certyfikaty",
+    "form.feed.label.apply_filter_to_content": "Zastosuj zasady blokowania / zachowania do treści",
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
     "form.feed.label.disabled": "Не обновлять этот канал",
     "form.category.label.title": "Tytuł",

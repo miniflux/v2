@@ -273,6 +273,7 @@
     "form.feed.label.keeplist_rules": "Keep Rules",
     "form.feed.label.ignore_http_cache": "Ignore HTTP cache",
     "form.feed.label.allow_self_signed_certificates": "Allow self-signed or invalid certificates",
+    "form.feed.label.apply_filter_to_content": "Apply block/keep rules to content",
     "form.feed.label.fetch_via_proxy": "Fetch via proxy",
     "form.feed.label.disabled": "Do not refresh this feed",
     "form.category.label.title": "Title",

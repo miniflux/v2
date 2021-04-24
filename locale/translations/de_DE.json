@@ -273,6 +273,7 @@
     "form.feed.label.keeplist_rules": "Erlaubnisregeln",
     "form.feed.label.ignore_http_cache": "Ignoriere HTTP-cache",
     "form.feed.label.allow_self_signed_certificates": "Erlaube selbstsignierte oder ungültige Zertifikate",
+    "form.feed.label.apply_filter_to_content": "Wenden Sie Block / Keep-Regeln auf Inhalte an",
     "form.feed.label.fetch_via_proxy": "Über Proxy abrufen",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.category.label.title": "Titel",
