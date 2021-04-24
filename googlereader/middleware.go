@@ -9,6 +9,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -104,6 +105,19 @@ func (m *middleware) handleCORS(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Headers", "Authorization")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (m *middleware) checkOutputFormat(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		output := request.QueryStringParam(r, "output", "")
+		if output != "json" {
+			err := fmt.Errorf("output only as json supported")
+			logger.Error("[Reader][OutputFormat] %v", err)
+			json.ServerError(w, r, err)
 			return
 		}
 		next.ServeHTTP(w, r)

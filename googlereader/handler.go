@@ -38,9 +38,9 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr := router.PathPrefix("/reader/api/0").Subrouter()
 	sr.Use(middleware.handleCORS)
 	sr.Use(middleware.apiKeyAuth)
+	sr.Use(middleware.checkOutputFormat)
 	sr.Methods(http.MethodOptions)
 	sr.HandleFunc("/token", middleware.token).Methods(http.MethodGet).Name("Token")
-
 	sr.HandleFunc("/user-info", handler.userInfo).Methods(http.MethodGet).Name("UserInfo")
 	sr.HandleFunc("/subscription/list", handler.subscriptionList).Methods(http.MethodGet).Name("SubscriptonList")
 	sr.HandleFunc("/stream/items/ids", handler.streamItemIDs).Methods(http.MethodGet).Name("StreamItemIDs")
@@ -70,7 +70,7 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 			ID:         fmt.Sprint(feed.ID),
 			Title:      feed.Title,
 			URL:        feed.FeedURL,
-			Categories: []subscriptionCategory{{fmt.Sprint(category.ID), category.Title}},
+			Categories: []subscriptionCategory{{fmt.Sprint(category.ID), category.Title}}, // TODO: should be something like 'id' => 'user/-/label/' . htmlspecialchars_decode($cat->name(), ENT_QUOTES),
 			HTMLURL:    feed.SiteURL,
 			IconURL:    "", //TODO Icons are only base64 encode in DB yet
 		})
@@ -89,13 +89,6 @@ func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	logger.Info("[Reader][UserInfo] [ClientIP=%s] Sending", clientIP)
-	output := request.QueryStringParam(r, "output", "")
-	if output != "json" {
-		err := fmt.Errorf("output only as json supported")
-		logger.Error("[Reader][Login] %v", err)
-		json.ServerError(w, r, err)
-		return
-	}
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
