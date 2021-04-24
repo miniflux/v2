@@ -88,8 +88,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
-		if match {
+		matchTitle, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
+		matchContent, _ := regexp.MatchString(feed.BlocklistRules, entry.Content)
+		if matchTitle || matchContent {
 			logger.Debug("[Processor] Blocking entry %q from feed %q based on rule %q", entry.Title, feed.FeedURL, feed.BlocklistRules)
 			return true
 		}
@@ -99,8 +100,9 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
-		match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
-		if match {
+		matchTitle, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
+		matchContent, _ := regexp.MatchString(feed.KeeplistRules, entry.Content)
+		if matchTitle || matchContent {
 			logger.Debug("[Processor] Allow entry %q from feed %q based on rule %q", entry.Title, feed.FeedURL, feed.KeeplistRules)
 			return true
 		}
