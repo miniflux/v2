@@ -18,6 +18,7 @@ func TestBlockingEntries(t *testing.T) {
 		expected bool
 	}{
 		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different but with matched content", Content: "Any Example"}, true},
 		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, false},
 		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, false},
 	}
@@ -37,6 +38,7 @@ func TestAllowEntries(t *testing.T) {
 		expected bool
 	}{
 		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different but with matched content", Content: "Any Example"}, true},
 		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, false},
 		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, true},
 	}
