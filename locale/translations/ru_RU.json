@@ -93,6 +93,7 @@
         "Есть %d подписки.",
         "Есть %d подписок."
     ],
+    "page.categories.unread_counter": "Количество непрочитанных записей",
     "page.new_category.title": "Новая категория",
     "page.new_user.title": "Новый пользователь",
     "page.edit_category.title": "Изменить категорию: %s",

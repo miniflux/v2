@@ -92,6 +92,7 @@
         "There is %d feed.",
         "There are %d feeds."
     ],
+    "page.categories.unread_counter": "Number of unread entries",
     "page.new_category.title": "New Category",
     "page.new_user.title": "New User",
     "page.edit_category.title": "Edit Category: %s",

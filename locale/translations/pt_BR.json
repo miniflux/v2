@@ -92,6 +92,7 @@
         "Existe %d fonte.",
         "Existem %d fontes."
     ],
+    "page.categories.unread_counter": "Numero de itens não lidos",
     "page.new_category.title": "Nova categoria",
     "page.new_user.title": "Novo usuário",
     "page.edit_category.title": "Editar categoria: %s",

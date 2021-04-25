@@ -92,6 +92,7 @@
         "%d besleme var.",
         "%d besleme var."
     ],
+    "page.categories.unread_counter": "Okunmamış iletilerin sayısı",
     "page.new_category.title": "Yeni Kategori",
     "page.new_user.title": "Yeni Kullanıcı",
     "page.edit_category.title": "Kategoriyi Düzenle: %s",
