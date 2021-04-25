@@ -93,6 +93,7 @@
         "Są %d kanały.",
         "Jest %d kanałów."
     ],
+    "page.categories.unread_counter": "Liczba nieprzeczytanych wpisów",
     "page.new_category.title": "Nowa kategoria",
     "page.new_user.title": "Nowy użytkownik",
     "page.edit_category.title": "Edycja Kategorii: %s",

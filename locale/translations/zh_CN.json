@@ -91,6 +91,7 @@
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
+    "page.categories.unread_counter": "未读条目数",
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
     "page.edit_category.title": "编辑分类 : %s",

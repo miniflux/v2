@@ -8,10 +8,11 @@ import "fmt"
 
 // Category represents a feed category.
 type Category struct {
-	ID        int64  `json:"id"`
-	Title     string `json:"title"`
-	UserID    int64  `json:"user_id"`
-	FeedCount int    `json:"-"`
+	ID          int64  `json:"id"`
+	Title       string `json:"title"`
+	UserID      int64  `json:"user_id"`
+	FeedCount   int    `json:"-"`
+	TotalUnread int    `json:"-"`
 }
 
 func (c *Category) String() string {

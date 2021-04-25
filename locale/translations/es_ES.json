@@ -92,6 +92,7 @@
         "Hay %d fuente.",
         "Hay %d fuentes."
     ],
+    "page.categories.unread_counter": "Número de entradas no leídas",
     "page.new_category.title": "Nueva categoría",
     "page.new_user.title": "Nuevo usario",
     "page.edit_category.title": "Editar categoría: %s",
