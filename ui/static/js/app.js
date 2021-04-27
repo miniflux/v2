@@ -12,6 +12,19 @@ function onClick(selector, callback, noPreventDefault) {
     });
 }
 
+function onAuxClick(selector, callback, noPreventDefault) {
+    let elements = document.querySelectorAll(selector);
+    elements.forEach((element) => {
+        element.onauxclick = (event) => {
+            if (!noPreventDefault) {
+                event.preventDefault();
+            }
+
+            callback(event);
+        };
+    });
+}
+
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu() {
     let menu = document.querySelector(".header nav ul");
@@ -115,11 +128,13 @@ function markPageAsRead() {
 }
 
 // Handle entry status changes from the list view and entry view.
-function handleEntryStatus(element) {
+function handleEntryStatus(element, setToRead) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        toggleEntryStatus(currentEntry, toasting);
+        if (!setToRead || currentEntry.querySelector("a[data-toggle-status]").dataset.value == "unread") {
+            toggleEntryStatus(currentEntry, toasting);
+        }
         if (isListView() && currentEntry.classList.contains('current-item')) {
             goToNextListItem();
         }
