@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	netUrl "net/url"
+
 	"miniflux.app/config"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
@@ -35,6 +37,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasKey":         hasKey,
 		"truncate":       truncate,
 		"isEmail":        isEmail,
+		"buildQuery":     buildQuery,
 		"baseURL": func() string {
 			return config.Opts.BaseURL()
 		},
@@ -192,4 +195,31 @@ func formatFileSize(b int64) string {
 	}
 	return fmt.Sprintf("%.1f %ciB",
 		float64(b)/float64(div), "KMGTPE"[exp])
+}
+
+func buildQuery(args ...interface{}) string {
+	vals := netUrl.Values{}
+	for i := 0; i < len(args)-1; i += 2 {
+		key := args[i].(string)
+		switch v := args[i+1].(type) {
+		case int, int64:
+			if v != 0 {
+				vals.Set(key, fmt.Sprintf("%v", v))
+			}
+		case string:
+			if v != "" {
+				vals.Set(key, v)
+			}
+		case bool:
+			if v {
+				vals.Set(key, "t")
+			}
+		}
+	}
+
+	qs := vals.Encode()
+	if qs == "" {
+		return ""
+	}
+	return "?" + qs
 }

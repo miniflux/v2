@@ -144,3 +144,25 @@ func TestFormatFileSize(t *testing.T) {
 		}
 	}
 }
+
+func TestBuildQuery(t *testing.T) {
+	scenarios := []struct {
+		input    []interface{}
+		expected string
+	}{
+		{[]interface{}{"foo", "bar"}, "?foo=bar"},
+		{[]interface{}{"foo", "bar", "foo2", "bar2"}, "?foo=bar&foo2=bar2"},
+		{[]interface{}{"foo", ""}, ""},
+		{[]interface{}{"foo", nil}, ""},
+		{[]interface{}{"foo", 0}, ""},
+		{[]interface{}{"foo", false}, ""},
+		{[]interface{}{"foo", true}, "?foo=t"},
+	}
+
+	for _, scenario := range scenarios {
+		result := buildQuery(scenario.input...)
+		if result != scenario.expected {
+			t.Errorf(`Unexpected result, got %q instead of %q for %v`, result, scenario.expected, scenario.input)
+		}
+	}
+}
