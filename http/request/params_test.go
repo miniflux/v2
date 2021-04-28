@@ -195,6 +195,25 @@ func TestQueryInt64Param(t *testing.T) {
 	}
 }
 
+func TestQueryBooleanParam(t *testing.T) {
+	u, _ := url.Parse("http://example.org/?t=t")
+	r := &http.Request{URL: u}
+
+	result := QueryBooleanParam(r, "t")
+	expected := true
+
+	if result != expected {
+		t.Errorf(`Unexpected result, got %t instead of %t`, result, expected)
+	}
+
+	result = QueryBooleanParam(r, "f")
+	expected = false
+
+	if result != expected {
+		t.Errorf(`Unexpected result, got %t instead of %t`, result, expected)
+	}
+}
+
 func TestHasQueryParam(t *testing.T) {
 	u, _ := url.Parse("http://example.org/?key=42")
 	r := &http.Request{URL: u}
