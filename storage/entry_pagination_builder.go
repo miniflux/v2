@@ -112,6 +112,7 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 	`
 
 	subCondition := strings.Join(e.conditions, " AND ")
+	subCondition += fmt.Sprintf(" OR e.id = $%d", len(e.args)+1)
 	finalCondition := fmt.Sprintf("ep.id = $%d", len(e.args)+1)
 	query := fmt.Sprintf(cte, subCondition, finalCondition)
 	e.args = append(e.args, e.entryID)
