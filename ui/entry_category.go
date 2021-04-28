@@ -52,8 +52,14 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 		entry.Status = model.EntryStatusRead
 	}
 
+	showOnlyUnread := request.QueryBooleanParam(r, "unread")
+
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
 	entryPaginationBuilder.WithCategoryID(categoryID)
+	if showOnlyUnread {
+		entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
+	}
+
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
 		html.ServerError(w, r, err)
