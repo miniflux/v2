@@ -39,13 +39,14 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Make sure we always get the pagination in unread mode even if the page is refreshed.
-	if entry.Status == model.EntryStatusRead {
-		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
+	if entry.Status == model.EntryStatusUnread {
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
 			html.ServerError(w, r, err)
 			return
 		}
+
+		entry.Status = model.EntryStatusRead
 	}
 
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
@@ -65,14 +66,6 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 	if prevEntry != nil {
 		prevEntryRoute = route.Path(h.router, "unreadEntry", "entryID", prevEntry.ID)
 	}
-
-	// Always mark the entry as read after fetching the pagination.
-	err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
-	}
-	entry.Status = model.EntryStatusRead
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
