@@ -9,7 +9,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -111,53 +110,58 @@ func (m *middleware) handleCORS(next http.Handler) http.Handler {
 	})
 }
 
-func (m *middleware) checkOutputFormat(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		output := request.QueryStringParam(r, "output", "")
-		if output != "json" {
-			err := fmt.Errorf("output only as json supported")
-			logger.Error("[Reader][OutputFormat] %v", err)
-			json.ServerError(w, r, err)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
 func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := request.ClientIP(r)
-		authorization := r.Header.Get("Authorization")
 
-		if authorization == "" {
-			logger.Error("[Reader][Auth] [ClientIP=%s] No token provided", clientIP)
-			json.Unauthorized(w, r)
-			return
-		}
-		fields := strings.Fields(authorization)
-		if len(fields) != 2 {
-			logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
-			json.Unauthorized(w, r)
-			return
-		}
-		if fields[0] != "GoogleLogin" {
-			logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not begin with GoogleLogin - '%s'", clientIP, authorization)
-			json.Unauthorized(w, r)
-			return
-		}
-		auths := strings.Split(fields[1], "=")
-		if len(auths) != 2 {
-			logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
-			json.Unauthorized(w, r)
-			return
-		}
-		if auths[0] != "auth" {
-			logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
-			json.Unauthorized(w, r)
-			return
+		var token string
+		if r.Method == http.MethodPost {
+			err := r.ParseForm()
+			if err != nil {
+				logger.Error("[Reader][Login] [ClientIP=%s] Could not parse form", clientIP)
+				json.Unauthorized(w, r)
+				return
+			}
+			token = r.Form.Get("T")
+			if token == "" {
+				logger.Error("[Reader][Auth] [ClientIP=%s] Post-Form T field is empty", clientIP)
+				json.Unauthorized(w, r)
+				return
+
+			}
+		} else {
+			authorization := r.Header.Get("Authorization")
+
+			if authorization == "" {
+				logger.Error("[Reader][Auth] [ClientIP=%s] No token provided", clientIP)
+				json.Unauthorized(w, r)
+				return
+			}
+			fields := strings.Fields(authorization)
+			if len(fields) != 2 {
+				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
+				json.Unauthorized(w, r)
+				return
+			}
+			if fields[0] != "GoogleLogin" {
+				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not begin with GoogleLogin - '%s'", clientIP, authorization)
+				json.Unauthorized(w, r)
+				return
+			}
+			auths := strings.Split(fields[1], "=")
+			if len(auths) != 2 {
+				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
+				json.Unauthorized(w, r)
+				return
+			}
+			if auths[0] != "auth" {
+				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
+				json.Unauthorized(w, r)
+				return
+			}
+			token = auths[1]
 		}
 
-		token := auths[1]
 		parts := strings.Split(token, "/")
 		if len(parts) != 2 {
 			logger.Error("[Reader][Auth] [ClientIP=%s] Auth token does not have the expected structure username/hash - '%s'", clientIP, token)
