@@ -328,6 +328,10 @@ func (s *Storage) ArchiveEntries(status string, days int) (int64, error) {
 
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
+	if status == model.EntryStatusRead {
+		return s.markEntriesAsRead(userID, entryIDs)
+	}
+
 	query := `UPDATE entries SET status=$1, changed_at=now() WHERE user_id=$2 AND id=ANY($3)`
 	result, err := s.db.Exec(query, status, userID, pq.Array(entryIDs))
 	if err != nil {
@@ -342,6 +346,30 @@ func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string
 	if count == 0 {
 		return errors.New(`store: nothing has been updated`)
 	}
+
+	return nil
+}
+
+// markEntriesAsRead updates entries to the read status,
+// this function also updates read_at which SetEntriesStatus would not do.
+func (s *Storage) markEntriesAsRead(userID int64, entryIDs []int64) error {
+	query := `
+		UPDATE
+			entries
+		SET
+			status=$1,
+			changed_at=now(),
+			read_at=now()
+		WHERE
+			user_id=$2 AND id=ANY($3)
+	`
+	result, err := s.db.Exec(query, model.EntryStatusRead, userID, pq.Array(entryIDs))
+	if err != nil {
+		return fmt.Errorf(`store: unable to mark feed entries as read: %v`, err)
+	}
+
+	count, _ := result.RowsAffected()
+	logger.Debug("[Storage:MarkFeedAsRead] %d items marked as read", count)
 
 	return nil
 }
@@ -387,7 +415,7 @@ func (s *Storage) FlushHistory(userID int64) error {
 
 // MarkAllAsRead updates all user entries to the read status.
 func (s *Storage) MarkAllAsRead(userID int64) error {
-	query := `UPDATE entries SET status=$1, changed_at=now() WHERE user_id=$2 AND status=$3`
+	query := `UPDATE entries SET status=$1, changed_at=now(), read_at=now() WHERE user_id=$2 AND status=$3`
 	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread)
 	if err != nil {
 		return fmt.Errorf(`store: unable to mark all entries as read: %v`, err)
@@ -406,7 +434,8 @@ func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
 			entries
 		SET
 			status=$1,
-			changed_at=now()
+			changed_at=now(),
+			read_at=now()
 		WHERE
 			user_id=$2 AND feed_id=$3 AND status=$4 AND published_at < $5
 	`
@@ -428,7 +457,8 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 			entries
 		SET
 			status=$1,
-			changed_at=now()
+			changed_at=now(),
+			read_at=now()
 		WHERE
 			user_id=$2
 		AND
