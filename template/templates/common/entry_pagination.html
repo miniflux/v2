@@ -2,7 +2,7 @@
 <div class="pagination">
     <div class="pagination-prev">
         {{ if .prevEntry }}
-            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
+            <a href="{{ .prevEntryRoute }}{{ buildQuery "q" .searchQuery "unread" $.showOnlyUnreadEntries }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
         {{ else }}
             {{ t "pagination.previous" }}
         {{ end }}
@@ -10,7 +10,7 @@
 
     <div class="pagination-next">
         {{ if .nextEntry }}
-            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
+            <a href="{{ .nextEntryRoute }}{{ buildQuery "q" .searchQuery "unread" $.showOnlyUnreadEntries }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
         {{ else }}
             {{ t "pagination.next" }}
         {{ end }}
