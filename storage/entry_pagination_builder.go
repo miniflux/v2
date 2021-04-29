@@ -60,6 +60,13 @@ func (e *EntryPaginationBuilder) WithStatus(status string) {
 	}
 }
 
+// WithStatus adds (unread/unread before specific time) status to the condition.
+func (e *EntryPaginationBuilder) WithUnreadBefore(before time.Time) {
+	e.conditions = append(e.conditions, fmt.Sprintf("(e.status = $%d OR e.read_at > $%d)", len(e.args)+1, len(e.args)+2))
+	e.args = append(e.args, model.EntryStatusUnread)
+	e.args = append(e.args, before)
+}
+
 // Entries returns previous and next entries.
 func (e *EntryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 	tx, err := e.store.db.Begin()

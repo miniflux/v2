@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -107,6 +108,18 @@ func QueryBooleanParam(r *http.Request, param string) bool {
 	}
 
 	return val
+}
+
+// QueryTimestampParam returns a query string (unix seconds) parameter as timestamp.
+func QueryTimestampParam(r *http.Request, param string) *time.Time {
+	value, err := strconv.ParseInt(r.URL.Query().Get(param), 10, 64)
+	if err != nil {
+		return nil
+	}
+
+	t := time.Unix(value, 0)
+
+	return &t
 }
 
 // HasQueryParam checks if the query string contains the given parameter.

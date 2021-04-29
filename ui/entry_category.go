@@ -5,7 +5,9 @@
 package ui // import "miniflux.app/ui"
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -52,12 +54,18 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 		entry.Status = model.EntryStatusRead
 	}
 
+	var unreadBefore *time.Time
 	showOnlyUnread := request.QueryBooleanParam(r, "unread")
 
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
 	entryPaginationBuilder.WithCategoryID(categoryID)
 	if showOnlyUnread {
-		entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
+		unreadBefore = request.QueryTimestampParam(r, "unreadBefore")
+		if unreadBefore == nil {
+			html.RedirectWithQueries(w, r, "unreadBefore", fmt.Sprint(time.Now().Unix()))
+			return
+		}
+		entryPaginationBuilder.WithUnreadBefore(*unreadBefore)
 	}
 
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
@@ -89,6 +97,7 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 	view.Set("showOnlyUnreadEntries", showOnlyUnread)
+	view.Set("unreadBefore", unreadBefore)
 
 	html.OK(w, r, view.Render("entry"))
 }

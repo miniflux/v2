@@ -214,6 +214,10 @@ func buildQuery(args ...interface{}) string {
 			if v {
 				vals.Set(key, "t")
 			}
+		case *time.Time:
+			if v != nil {
+				vals.Set(key, fmt.Sprintf("%d", v.Unix()))
+			}
 		}
 	}
 

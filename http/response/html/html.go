@@ -72,3 +72,14 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 func Redirect(w http.ResponseWriter, r *http.Request, uri string) {
 	http.Redirect(w, r, uri, http.StatusFound)
 }
+
+// RedirectWithQueries redirects the user to current location with given query string pairs.
+func RedirectWithQueries(w http.ResponseWriter, r *http.Request, qs ...string) {
+	u := r.URL
+	query := u.Query()
+	for i := 0; i < len(qs)-1; i += 2 {
+		query.Set(qs[i], qs[i+1])
+	}
+	u.RawQuery = query.Encode()
+	http.Redirect(w, r, u.String(), http.StatusFound)
+}

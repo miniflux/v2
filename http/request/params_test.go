@@ -5,10 +5,12 @@
 package request // import "miniflux.app/http/request"
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -211,6 +213,24 @@ func TestQueryBooleanParam(t *testing.T) {
 
 	if result != expected {
 		t.Errorf(`Unexpected result, got %t instead of %t`, result, expected)
+	}
+}
+
+func TestQueryTimestampParam(t *testing.T) {
+	anyTime := time.Now()
+	u, _ := url.Parse(fmt.Sprintf("http://example.org/?t=%d&invalid=invalidformat", anyTime.Unix()))
+	r := &http.Request{URL: u}
+
+	result := QueryTimestampParam(r, "t")
+
+	if result.Unix() != anyTime.Unix() {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, anyTime)
+	}
+
+	result = QueryTimestampParam(r, "invalid")
+
+	if result != nil {
+		t.Errorf(`Unexpected result, got %v instead of %v`, result, nil)
 	}
 }
 

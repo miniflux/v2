@@ -5,6 +5,7 @@
 package template // import "miniflux.app/template"
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -146,6 +147,8 @@ func TestFormatFileSize(t *testing.T) {
 }
 
 func TestBuildQuery(t *testing.T) {
+	anyTime := time.Now()
+
 	scenarios := []struct {
 		input    []interface{}
 		expected string
@@ -157,6 +160,7 @@ func TestBuildQuery(t *testing.T) {
 		{[]interface{}{"foo", 0}, ""},
 		{[]interface{}{"foo", false}, ""},
 		{[]interface{}{"foo", true}, "?foo=t"},
+		{[]interface{}{"foo", &anyTime}, fmt.Sprintf("?foo=%d", anyTime.Unix())},
 	}
 
 	for _, scenario := range scenarios {
