@@ -25,7 +25,7 @@ const (
 	defaultBasePath                           = ""
 	defaultWorkerPoolSize                     = 5
 	defaultPollingFrequency                   = 60
-	defaultBatchSize                          = 10
+	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
