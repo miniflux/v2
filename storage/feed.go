@@ -381,7 +381,7 @@ func (s *Storage) RemoveFeed(userID, feedID int64) error {
 		}
 	}
 
-	if _, err := s.db.Exec(`DELETE FROM feeds WHERE id=$1`, feedID); err != nil {
+	if _, err := s.db.Exec(`DELETE FROM feeds WHERE id=$1 AND user_id=$2`, feedID, userID); err != nil {
 		return fmt.Errorf(`store: unable to delete feed #%d: %v`, feedID, err)
 	}
 
