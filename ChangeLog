@@ -1,3 +1,22 @@
+Version 2.0.30 (May 7, 2021)
+----------------------------
+
+* Security fix: any user can delete any feed (Regression introduced in commit 51fb949)
+* Fix password reset via CLI
+* Increase default batch size value
+* Handle RSS feed title with encoded Unicode entities
+* Show number of unread per category in category list instead of number of feeds
+* Bump github.com/lib/pq from 1.10.0 to 1.10.1
+* Filtering doesn't work when selecting from multiple found feeds
+* Bump github.com/tdewolff/minify/v2 from 2.9.15 to 2.9.16
+* Use an appropriate color for visited links on dark theme
+* Fix typo in reader/json/doc.go
+* Create SECURITY.md
+* Setup golangci-lint Github Action
+* Add per feed cookies option
+* Bump github.com/prometheus/client_golang from 1.9.0 to 1.10.0
+* Bump github.com/tdewolff/minify/v2 from 2.9.13 to 2.9.15
+
 Version 2.0.29 (Mar 21, 2021)
 -----------------------------
 
