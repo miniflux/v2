@@ -171,7 +171,7 @@ func Parse() {
 		return
 	}
 
-	// Run migrations and start the deamon.
+	// Run migrations and start the daemon.
 	if config.Opts.RunMigrations() {
 		if err := database.Migrate(db); err != nil {
 			logger.Fatal(`%v`, err)
@@ -182,7 +182,7 @@ func Parse() {
 		logger.Fatal(`You must run the SQL migrations, %v`, err)
 	}
 
-	// Create admin user and start the deamon.
+	// Create admin user and start the daemon.
 	if config.Opts.CreateAdmin() {
 		createAdmin(store)
 	}

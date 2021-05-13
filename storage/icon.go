@@ -116,7 +116,7 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 	return nil
 }
 
-// Icons returns all icons tht belongs to a user.
+// Icons returns all icons that belongs to a user.
 func (s *Storage) Icons(userID int64) (model.Icons, error) {
 	query := `
 		SELECT

@@ -222,7 +222,7 @@ func (c *Client) MarkCategoryAsRead(categoryID int64) error {
 	return err
 }
 
-// CategoryFeeds gets feeds of a cateogry.
+// CategoryFeeds gets feeds of a category.
 func (c *Client) CategoryFeeds(categoryID int64) (Feeds, error) {
 	body, err := c.request.Get(fmt.Sprintf("/v1/categories/%d/feeds", categoryID))
 	if err != nil {
