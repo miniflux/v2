@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -23,30 +24,73 @@ type handler struct {
 }
 
 const (
-	ReadingList     = "user/-/state/com.google/reading-list"
-	Read            = "user/-/state/com.google/read"
-	Starred         = "user/-/state/com.google/starred"
-	UserReadingList = "user/%d/state/com.google/reading-list"
-	UserRead        = "user/%d/state/com.google/read"
-	UserStarred     = "user/%d/state/com.google/starred"
-	EntryIDLong     = "tag:google.com,2005:reader/item/%016x"
+	StreamPrefix     = "user/-/state/com.google/"
+	UserStreamPrefix = "user/%d/state/com.google/"
+	LabelPrefix      = "user/-/label/"
+	UserLabelPrefix  = "user/%d/label/"
+	FeedPrefix       = "feed/"
+	Read             = "read"
+	Starred          = "starred"
+	ReadingList      = "reading-list"
+	KeptUnread       = "kept-unread"
+	Broadcast        = "broadcast"
+	BroadcastFriends = "broadcast-friends"
+	EntryIDLong      = "tag:google.com,2005:reader/item/%016x"
 )
+
+type StreamType int
 
 const (
-	StreamIdParam        = "s"
-	StreamExcludeIdParam = "xt"
-	StreamMaxItems       = "n"
-	StreamOrder          = "r"
+	NoStream StreamType = iota
+	ReadStream
+	StarredStream
+	ReadingListStream
+	KeptUnreadStream
+	BroadcastStream
+	BroadcastFriendsStream
+	LabelStream
+	FeedStream
 )
 
+type Stream struct {
+	Type StreamType
+	ID   string
+}
 type RequestModifiers struct {
-	ExcludeTargets    string
-	FilterTarget      string
+	ExcludeTargets    []Stream
+	FilterTargets     []Stream
+	Streams           []Stream
 	Count             int
 	SortDirection     string
-	StartTime         int
-	StopTime          int
+	StartTime         int64
+	StopTime          int64
 	ContinuationToken string
+	UserID            int64
+}
+
+func (r RequestModifiers) String() string {
+	result := fmt.Sprintf("UserID: %d\n", r.UserID)
+	result += fmt.Sprintf("Streams: %d\n", len(r.Streams))
+	for _, s := range r.Streams {
+		result += fmt.Sprintf("         %v - '%s'\n", s.Type, s.ID)
+	}
+
+	result += fmt.Sprintf("Exclusions: %d\n", len(r.ExcludeTargets))
+	for _, s := range r.ExcludeTargets {
+		result += fmt.Sprintf("            %v - '%s'\n", s.Type, s.ID)
+	}
+
+	result += fmt.Sprintf("Filter: %d\n", len(r.FilterTargets))
+	for _, s := range r.FilterTargets {
+		result += fmt.Sprintf("        %v - '%s'\n", s.Type, s.ID)
+	}
+	result += fmt.Sprintf("Count: %d\n", r.Count)
+	result += fmt.Sprintf("Sort Direction: %s\n", r.SortDirection)
+	result += fmt.Sprintf("Continuation Token: %s\n", r.ContinuationToken)
+	result += fmt.Sprintf("Start Time: %d\n", r.StartTime)
+	result += fmt.Sprintf("Stop Time: %d\n", r.StopTime)
+
+	return result
 }
 
 // Serve handles Google Reader API calls.
@@ -66,16 +110,95 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
 
-func getModifiers(w http.ResponseWriter, r *http.Request) RequestModifiers {
-	result := RequestModifiers{}
-	streamOrder := request.QueryStringParam(r, StreamOrder, "d")
+func getModifiers(r *http.Request) (RequestModifiers, error) {
+
+	userID := request.UserID(r)
+	const (
+		StreamIdParam       = "s"
+		StreamExcludesParam = "xt"
+		StreamFiltersParam  = "it"
+		StreamMaxItems      = "n"
+		StreamOrderParam    = "r"
+		StreamStartTime     = "ot"
+		StreamStopTime      = "nt"
+	)
+
+	result := RequestModifiers{
+		SortDirection: "desc",
+		UserID:        userID,
+	}
+	streamOrder := request.QueryStringParam(r, StreamOrderParam, "d")
 	if streamOrder == "o" {
 		result.SortDirection = "asc"
-	} else {
-		result.SortDirection = "desc"
 	}
-	return result
+	var err error
+	result.Streams, err = getStreams(request.QueryStringParamList(r, StreamIdParam), userID)
+	if err != nil {
+		return RequestModifiers{}, err
+	}
+	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, StreamExcludesParam), userID)
+	if err != nil {
+		return RequestModifiers{}, err
+	}
+
+	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, StreamFiltersParam), userID)
+	if err != nil {
+		return RequestModifiers{}, err
+	}
+
+	result.Count = request.QueryIntParam(r, StreamMaxItems, 0)
+	result.StartTime = int64(request.QueryIntParam(r, StreamStartTime, 0))
+	result.StopTime = int64(request.QueryIntParam(r, StreamStopTime, 0))
+	return result, nil
 }
+
+func getStream(streamID string, userID int64) (Stream, error) {
+	if strings.HasPrefix(streamID, FeedPrefix) {
+		return Stream{Type: FeedStream, ID: strings.TrimPrefix(streamID, FeedPrefix)}, nil
+	} else if strings.HasPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID)) || strings.HasPrefix(streamID, StreamPrefix) {
+		id := strings.TrimPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID))
+		id = strings.TrimPrefix(id, StreamPrefix)
+		switch id {
+		case Read:
+			return Stream{ReadStream, ""}, nil
+		case Starred:
+			return Stream{StarredStream, ""}, nil
+		case ReadingList:
+			return Stream{ReadingListStream, ""}, nil
+		case KeptUnread:
+			return Stream{KeptUnreadStream, ""}, nil
+		case Broadcast:
+			return Stream{BroadcastStream, ""}, nil
+		case BroadcastFriends:
+			return Stream{BroadcastFriendsStream, ""}, nil
+		default:
+			err := fmt.Errorf("uknown stream with id: %s", id)
+			return Stream{NoStream, ""}, err
+		}
+	} else if strings.HasPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID)) || strings.HasPrefix(streamID, LabelPrefix) {
+		id := strings.TrimPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID))
+		id = strings.TrimPrefix(id, LabelPrefix)
+		return Stream{LabelStream, id}, nil
+	} else if streamID == "" {
+		return Stream{NoStream, ""}, nil
+	}
+	err := fmt.Errorf("uknown stream type: %s", streamID)
+	return Stream{NoStream, ""}, err
+}
+
+func getStreams(streamIDs []string, userID int64) ([]Stream, error) {
+	streams := make([]Stream, 0)
+	for _, streamID := range streamIDs {
+		stream, err := getStream(streamID, userID)
+		if err != nil {
+			return []Stream{}, err
+		}
+		streams = append(streams, stream)
+
+	}
+	return streams, nil
+}
+
 func checkOutputFormat(w http.ResponseWriter, r *http.Request) error {
 	var output string
 	if r.Method == http.MethodPost {
@@ -107,6 +230,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
+		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 
@@ -118,12 +242,17 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userReadingList := fmt.Sprintf(UserReadingList, user.ID)
-	userRead := fmt.Sprintf(UserRead, user.ID)
-	userStarred := fmt.Sprintf(UserStarred, user.ID)
+	requestModifiers, err := getModifiers(r)
+	if err != nil {
+		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
 
-	requestModifiers := getModifiers(w, r)
+	}
 
+	userReadingList := fmt.Sprintf(UserStreamPrefix, userID) + ReadingList
+	userRead := fmt.Sprintf(UserStreamPrefix, userID) + Read
+	userStarred := fmt.Sprintf(UserStreamPrefix, userID) + Starred
 	items := r.Form["i"]
 	if len(items) == 0 {
 		err = fmt.Errorf("no items requested")
@@ -232,6 +361,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 			Enclosure: enclosures,
 		}
 	}
+	result.Items = contentItems
 	json.OK(w, r, result)
 }
 
@@ -309,26 +439,45 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 	}
 
-	streamID := request.QueryStringParam(r, StreamIdParam, "")
-	streamExcludeID := request.QueryStringParam(r, StreamExcludeIdParam, "")
-	streamMaxItem := request.QueryIntParam(r, StreamMaxItems, 1000)
+	rm, err := getModifiers(r)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	logger.Info("Request Modifiers: %v", rm)
+	if len(rm.Streams) != 1 {
+		err := fmt.Errorf("only one stream type expected")
+		logger.Error("[Reader][OutputFormat] %v", err)
+		json.ServerError(w, r, err)
 
-	if streamID == ReadingList && streamExcludeID == Read {
-		h.handleStreamUnreadList(w, r, streamMaxItem)
-	} else if streamID == Starred {
-		h.handleStreamStarred(w, r, streamMaxItem)
-	} else {
+	}
+	switch rm.Streams[0].Type {
+	case ReadingListStream:
+		h.handleReadingListStream(w, r, rm)
+	case StarredStream:
+		h.handleStarredStream(w, r, rm)
+	case ReadStream:
+		h.handleReadStream(w, r, rm)
+	default:
 		dump, _ := httputil.DumpRequest(r, true)
 		logger.Info("[Reader][stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
+
 	}
 }
 
-func (h *handler) handleStreamUnreadList(
-	w http.ResponseWriter, r *http.Request, maxItems int) {
-	userID := request.UserID(r)
-	builder := h.store.NewEntryQueryBuilder(userID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithLimit(maxItems)
+func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+	clientIP := request.ClientIP(r)
+
+	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	for _, s := range rm.ExcludeTargets {
+		switch s.Type {
+		case ReadStream:
+			builder.WithStatus(model.EntryStatusUnread)
+		default:
+			logger.Info("[Reader][ReadingListStreamIDs][ClientIP=%s] xt filter type: %#v", clientIP, s)
+		}
+	}
+	builder.WithLimit(rm.Count)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		json.ServerError(w, r, err)
@@ -342,12 +491,35 @@ func (h *handler) handleStreamUnreadList(
 	json.OK(w, r, streamIDResponse{itemRefs})
 }
 
-func (h *handler) handleStreamStarred(
-	w http.ResponseWriter, r *http.Request, maxItems int) {
+func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
 	userID := request.UserID(r)
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStarred()
-	builder.WithLimit(maxItems)
+	builder.WithLimit(rm.Count)
+	rawEntryIDs, err := builder.GetEntryIDs()
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	var itemRefs = make([]itemRef, 0)
+	for _, entryID := range rawEntryIDs {
+		formattedID := strconv.FormatInt(entryID, 10)
+		itemRefs = append(itemRefs, itemRef{ID: formattedID})
+	}
+	json.OK(w, r, streamIDResponse{itemRefs})
+}
+
+func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+	userID := request.UserID(r)
+	builder := h.store.NewEntryQueryBuilder(userID)
+	builder.WithStatus(model.EntryStatusRead)
+	if rm.StartTime > 0 {
+		builder.AfterDate(time.Unix(rm.StartTime, 0))
+	}
+	if rm.StopTime > 0 {
+		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+	}
+
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		json.ServerError(w, r, err)

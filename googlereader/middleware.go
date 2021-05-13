@@ -28,6 +28,18 @@ func newMiddleware(s *storage.Storage) *middleware {
 	return &middleware{s}
 }
 
+// Unauthorized sends a not authorized error to the client.
+func Unauthorized(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Unauthorized] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusUnauthorized)
+	builder.WithHeader("Content-Type", "text/plain")
+	builder.WithHeader("X-Reader-Google-Bad-Token", "true")
+	builder.WithBody("Unauthorized")
+	builder.Write()
+}
+
 func (m *middleware) clientLogin(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	var username, password, output string
@@ -119,13 +131,13 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 			err := r.ParseForm()
 			if err != nil {
 				logger.Error("[Reader][Login] [ClientIP=%s] Could not parse form", clientIP)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 			}
 			token = r.Form.Get("T")
 			if token == "" {
 				logger.Error("[Reader][Auth] [ClientIP=%s] Post-Form T field is empty", clientIP)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 
 			}
@@ -134,29 +146,29 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 
 			if authorization == "" {
 				logger.Error("[Reader][Auth] [ClientIP=%s] No token provided", clientIP)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 			}
 			fields := strings.Fields(authorization)
 			if len(fields) != 2 {
 				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 			}
 			if fields[0] != "GoogleLogin" {
 				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not begin with GoogleLogin - '%s'", clientIP, authorization)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 			}
 			auths := strings.Split(fields[1], "=")
 			if len(auths) != 2 {
 				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 			}
 			if auths[0] != "auth" {
 				logger.Error("[Reader][Auth] [ClientIP=%s] Authorization header does not have the expected structure GoogleLogin auth=xxxxxx - '%s'", clientIP, authorization)
-				json.Unauthorized(w, r)
+				Unauthorized(w, r)
 				return
 			}
 			token = auths[1]
@@ -165,26 +177,27 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 		parts := strings.Split(token, "/")
 		if len(parts) != 2 {
 			logger.Error("[Reader][Auth] [ClientIP=%s] Auth token does not have the expected structure username/hash - '%s'", clientIP, token)
-			json.Unauthorized(w, r)
+			Unauthorized(w, r)
 			return
 		}
 		var integration *model.Integration
 		var user *model.User
 		var err error
 		if integration, err = m.store.GoogleReaderUserGetIntegration(parts[0]); err != nil {
+			logger.Error("[Reader][Auth] [ClientIP=%s] token: %s", clientIP, token)
 			logger.Error("[Reader][Auth] [ClientIP=%s] No user found with the given google reader username: %s", clientIP, parts[0])
-			json.Unauthorized(w, r)
+			Unauthorized(w, r)
 			return
 		}
 		expectedToken := getAuthToken(integration.GoogleReaderUsername, integration.GoogleReaderPassword)
 		if expectedToken != token {
 			logger.Error("[Reader][Auth] [ClientIP=%s] Token does not match: %s", clientIP, token)
-			json.Unauthorized(w, r)
+			Unauthorized(w, r)
 			return
 		}
 		if user, err = m.store.UserByID(integration.UserID); err != nil {
 			logger.Error("[Reader][Auth] [ClientIP=%s] No user found with the userID: %d", clientIP, integration.UserID)
-			json.Unauthorized(w, r)
+			Unauthorized(w, r)
 			return
 		}
 
