@@ -88,7 +88,7 @@ func (f *funcMap) Map() template.FuncMap {
 			))
 		},
 
-		// These functions are overrided at runtime after the parsing.
+		// These functions are overrode at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {
 			return ""
 		},

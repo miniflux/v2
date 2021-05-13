@@ -11,7 +11,7 @@ import (
 	"miniflux.app/model"
 )
 
-// NewBatch returns a serie of jobs.
+// NewBatch returns a series of jobs.
 func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
 	query := `
@@ -28,7 +28,7 @@ func (s *Storage) NewBatch(batchSize int) (jobs model.JobList, err error) {
 	return s.fetchBatchRows(query, pollingParsingErrorLimit, batchSize)
 }
 
-// NewUserBatch returns a serie of jobs but only for a given user.
+// NewUserBatch returns a series of jobs but only for a given user.
 func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList, err error) {
 	// We do not take the error counter into consideration when the given
 	// user refresh manually all his feeds to force a refresh.

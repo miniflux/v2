@@ -461,7 +461,7 @@ Version 2.0.13 (Nov 25, 2018)
 
 * Add man page
 * Add support for Systemd Socket Activation (experimental)
-* Add the possiblity to listen on Unix sockets
+* Add the possibility to listen on Unix sockets
 * Add config options to disable HTTP and scheduler services
 * Archive more read entries in cleanup job
 * Change default database connection string (backward compatible)
