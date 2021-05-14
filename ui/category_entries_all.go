@@ -37,7 +37,7 @@ func (h *handler) showCategoryEntriesAllPage(w http.ResponseWriter, r *http.Requ
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(category.ID)
-	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithOrder(user.EntryOrder)
 	builder.WithDirection(user.EntryDirection)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithOffset(offset)
