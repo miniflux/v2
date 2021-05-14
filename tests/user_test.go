@@ -401,6 +401,21 @@ func TestUpdateUserEntryDirectionWithInvalidValue(t *testing.T) {
 	}
 }
 
+func TestUpdateUserEntryOrderWithInvalidValue(t *testing.T) {
+	username := getRandomUsername()
+	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
+	user, err := client.CreateUser(username, testStandardPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entryOrder := "invalid"
+	_, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{EntryOrder: &entryOrder})
+	if err == nil {
+		t.Fatal(`Updating a user EntryOrder with an invalid value should raise an error`)
+	}
+}
+
 func TestUpdateUserPasswordWithInvalidValue(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
