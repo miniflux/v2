@@ -68,21 +68,48 @@ type RequestModifiers struct {
 	UserID            int64
 }
 
+func (st StreamType) String() string {
+	switch st {
+	case NoStream:
+		return "NoStream"
+	case ReadStream:
+		return "ReadStream"
+	case StarredStream:
+		return "StarredStream"
+	case ReadingListStream:
+		return "ReadingListStream"
+	case KeptUnreadStream:
+		return "KeptUnreadStream"
+	case BroadcastStream:
+		return "BroadcastStream"
+	case BroadcastFriendsStream:
+		return "BroadcastFriendsStream"
+	case LabelStream:
+		return "LabelStream"
+	case FeedStream:
+		return "FeedStream"
+	default:
+		return st.String()
+	}
+}
+func (s Stream) String() string {
+	return fmt.Sprintf("%v - '%s'", s.Type, s.ID)
+}
 func (r RequestModifiers) String() string {
 	result := fmt.Sprintf("UserID: %d\n", r.UserID)
 	result += fmt.Sprintf("Streams: %d\n", len(r.Streams))
 	for _, s := range r.Streams {
-		result += fmt.Sprintf("         %v - '%s'\n", s.Type, s.ID)
+		result += fmt.Sprintf("         %v\n", s)
 	}
 
 	result += fmt.Sprintf("Exclusions: %d\n", len(r.ExcludeTargets))
 	for _, s := range r.ExcludeTargets {
-		result += fmt.Sprintf("            %v - '%s'\n", s.Type, s.ID)
+		result += fmt.Sprintf("            %v\n", s)
 	}
 
 	result += fmt.Sprintf("Filter: %d\n", len(r.FilterTargets))
 	for _, s := range r.FilterTargets {
-		result += fmt.Sprintf("        %v - '%s'\n", s.Type, s.ID)
+		result += fmt.Sprintf("        %v\n", s)
 	}
 	result += fmt.Sprintf("Count: %d\n", r.Count)
 	result += fmt.Sprintf("Sort Direction: %s\n", r.SortDirection)
@@ -314,9 +341,11 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		for _, enclosure := range entry.Enclosures {
 			enclosures = append(enclosures, contentItemEnclosure{URL: enclosure.URL, Type: enclosure.MimeType})
 		}
-		categories := make([]string, 1)
+		categories := make([]string, 0)
 		categories = append(categories, userReadingList)
-
+		if entry.Feed.Category.Title != "" {
+			categories = append(categories, fmt.Sprintf(UserLabelPrefix, userID)+entry.Feed.Category.Title)
+		}
 		if entry.Starred {
 			categories = append(categories, userRead)
 		}
@@ -384,16 +413,11 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 	}
 	result.Subscriptions = make([]subscription, 0)
 	for _, feed := range feeds {
-		category, err := h.store.Category(userID, feed.Category.ID)
-		if err != nil {
-			json.ServerError(w, r, err)
-			return
-		}
 		result.Subscriptions = append(result.Subscriptions, subscription{
-			ID:         fmt.Sprint(feed.ID),
+			ID:         fmt.Sprintf(FeedPrefix+"%d", feed.ID),
 			Title:      feed.Title,
 			URL:        feed.FeedURL,
-			Categories: []subscriptionCategory{{fmt.Sprint(category.ID), category.Title}}, // TODO: should be something like 'id' => 'user/-/label/' . htmlspecialchars_decode($cat->name(), ENT_QUOTES),
+			Categories: []subscriptionCategory{{fmt.Sprintf(UserLabelPrefix, userID) + feed.Category.Title, feed.Category.Title}},
 			HTMLURL:    feed.SiteURL,
 			IconURL:    "", //TODO Icons are only base64 encode in DB yet
 		})
