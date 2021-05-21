@@ -74,6 +74,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"contains": func(str, substr string) bool {
 			return strings.Contains(str, substr)
 		},
+		"replace": func(str, old string, new string) string {
+			return strings.Replace(str, old, new, 1)
+		},
 		"isodate": func(ts time.Time) string {
 			return ts.Format("2006-01-02 15:04:05")
 		},

@@ -1,6 +1,6 @@
 {{ define "base" }}
 <!DOCTYPE html>
-<html>
+<html lang="{{replace .user.Language "_" "-"}}">
 <head>
     <meta charset="utf-8">
     <title>{{template "title" .}} - Miniflux</title>
