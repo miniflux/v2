@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"miniflux.app/config"
+	"miniflux.app/crypto"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/model"
@@ -86,6 +87,9 @@ func (f *funcMap) Map() template.FuncMap {
 				route.Path(f.router, "appIcon", "filename", "sprite.svg"),
 				iconName,
 			))
+		},
+		"rand": func() string {
+			return crypto.GenerateRandomStringHex(10)
 		},
 
 		// These functions are overrode at runtime after the parsing.
