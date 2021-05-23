@@ -28,7 +28,7 @@ func (v *View) Set(param string, value interface{}) *View {
 
 // Render executes the template with arguments.
 func (v *View) Render(template string) []byte {
-	return v.tpl.Render(template+".html", request.UserLanguage(v.r), v.params)
+	return v.tpl.Render(template+".html", v.params)
 }
 
 // New returns a new view with default parameters.
@@ -40,6 +40,7 @@ func New(tpl *template.Engine, r *http.Request, sess *session.Session) *View {
 	b.params["flashMessage"] = sess.FlashMessage(request.FlashMessage(r))
 	b.params["flashErrorMessage"] = sess.FlashErrorMessage(request.FlashErrorMessage(r))
 	b.params["theme"] = theme
+	b.params["language"] = request.UserLanguage(r)
 	b.params["theme_checksum"] = static.StylesheetBundleChecksums[theme]
 	b.params["app_js_checksum"] = static.JavascriptBundleChecksums["app"]
 	b.params["sw_js_checksum"] = static.JavascriptBundleChecksums["service-worker"]
