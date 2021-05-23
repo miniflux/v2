@@ -31,6 +31,10 @@ func (s *Storage) DatabaseVersion() string {
 
 // Ping checks if the database connection works.
 func (s *Storage) Ping() error {
-	_, err := s.db.Exec(`SELECT true`)
-	return err
+	return s.db.Ping()
+}
+
+// DBStats returns database statistics.
+func (s *Storage) DBStats() sql.DBStats {
+	return s.db.Stats()
 }
