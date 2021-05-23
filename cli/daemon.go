@@ -70,7 +70,7 @@ func startDaemon(store *storage.Storage) {
 						systemd.SdNotify(systemd.SdNotifyWatchdog)
 					}
 
-					time.Sleep(interval / 2)
+					time.Sleep(interval / 3)
 				}
 			}()
 		}

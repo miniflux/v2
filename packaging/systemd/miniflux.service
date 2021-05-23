@@ -17,7 +17,7 @@ User=miniflux
 Type=notify
 
 # https://www.freedesktop.org/software/systemd/man/systemd.service.html#WatchdogSec=
-WatchdogSec=30s
+WatchdogSec=60s
 WatchdogSignal=SIGKILL
 
 # https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
