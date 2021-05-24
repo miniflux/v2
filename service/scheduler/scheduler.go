@@ -31,6 +31,7 @@ func Serve(store *storage.Storage, pool *worker.Pool) {
 		config.Opts.CleanupFrequencyHours(),
 		config.Opts.CleanupArchiveReadDays(),
 		config.Opts.CleanupArchiveUnreadDays(),
+		config.Opts.CleanupArchiveBatchSize(),
 		config.Opts.CleanupRemoveSessionsDays(),
 	)
 }
@@ -47,14 +48,14 @@ func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSi
 	}
 }
 
-func cleanupScheduler(store *storage.Storage, frequency, archiveReadDays, archiveUnreadDays, sessionsDays int) {
+func cleanupScheduler(store *storage.Storage, frequency, archiveReadDays, archiveUnreadDays, archiveBatchSize, sessionsDays int) {
 	for range time.Tick(time.Duration(frequency) * time.Hour) {
 		nbSessions := store.CleanOldSessions(sessionsDays)
 		nbUserSessions := store.CleanOldUserSessions(sessionsDays)
 		logger.Info("[Scheduler:Cleanup] Cleaned %d sessions and %d user sessions", nbSessions, nbUserSessions)
 
 		startTime := time.Now()
-		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusRead, archiveReadDays); err != nil {
+		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusRead, archiveReadDays, archiveBatchSize); err != nil {
 			logger.Error("[Scheduler:ArchiveReadEntries] %v", err)
 		} else {
 			logger.Info("[Scheduler:ArchiveReadEntries] %d entries changed", rowsAffected)
@@ -65,7 +66,7 @@ func cleanupScheduler(store *storage.Storage, frequency, archiveReadDays, archiv
 		}
 
 		startTime = time.Now()
-		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusUnread, archiveUnreadDays); err != nil {
+		if rowsAffected, err := store.ArchiveEntries(model.EntryStatusUnread, archiveUnreadDays, archiveBatchSize); err != nil {
 			logger.Error("[Scheduler:ArchiveUnreadEntries] %v", err)
 		} else {
 			logger.Info("[Scheduler:ArchiveUnreadEntries] %d entries changed", rowsAffected)

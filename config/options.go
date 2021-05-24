@@ -43,6 +43,7 @@ const (
 	defaultCleanupFrequencyHours              = 24
 	defaultCleanupArchiveReadDays             = 60
 	defaultCleanupArchiveUnreadDays           = 180
+	defaultCleanupArchiveBatchSize            = 10000
 	defaultCleanupRemoveSessionsDays          = 30
 	defaultProxyImages                        = "http-only"
 	defaultFetchYouTubeWatchTime              = false
@@ -101,6 +102,7 @@ type Options struct {
 	cleanupFrequencyHours              int
 	cleanupArchiveReadDays             int
 	cleanupArchiveUnreadDays           int
+	cleanupArchiveBatchSize            int
 	cleanupRemoveSessionsDays          int
 	pollingFrequency                   int
 	batchSize                          int
@@ -160,6 +162,7 @@ func NewOptions() *Options {
 		cleanupFrequencyHours:              defaultCleanupFrequencyHours,
 		cleanupArchiveReadDays:             defaultCleanupArchiveReadDays,
 		cleanupArchiveUnreadDays:           defaultCleanupArchiveUnreadDays,
+		cleanupArchiveBatchSize:            defaultCleanupArchiveBatchSize,
 		cleanupRemoveSessionsDays:          defaultCleanupRemoveSessionsDays,
 		pollingFrequency:                   defaultPollingFrequency,
 		batchSize:                          defaultBatchSize,
@@ -291,6 +294,11 @@ func (o *Options) CleanupArchiveReadDays() int {
 // CleanupArchiveUnreadDays returns the number of days after which marking unread items as removed.
 func (o *Options) CleanupArchiveUnreadDays() int {
 	return o.cleanupArchiveUnreadDays
+}
+
+// CleanupArchiveBatchSize returns the number of entries to archive for each interval.
+func (o *Options) CleanupArchiveBatchSize() int {
+	return o.cleanupArchiveBatchSize
 }
 
 // CleanupRemoveSessionsDays returns the number of days after which to remove sessions.
@@ -488,6 +496,7 @@ func (o *Options) SortedOptions() []*Option {
 		"CERT_FILE":                              o.certFile,
 		"CLEANUP_ARCHIVE_READ_DAYS":              o.cleanupArchiveReadDays,
 		"CLEANUP_ARCHIVE_UNREAD_DAYS":            o.cleanupArchiveUnreadDays,
+		"CLEANUP_ARCHIVE_BATCH_SIZE":             o.cleanupArchiveBatchSize,
 		"CLEANUP_FREQUENCY_HOURS":                o.cleanupFrequencyHours,
 		"CLEANUP_REMOVE_SESSIONS_DAYS":           o.cleanupRemoveSessionsDays,
 		"CREATE_ADMIN":                           o.createAdmin,
