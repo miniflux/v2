@@ -189,6 +189,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
 		case "FETCH_YOUTUBE_WATCH_TIME":
 			p.opts.fetchYouTubeWatchTime = parseBool(value, defaultFetchYouTubeWatchTime)
+		case "WATCHDOG":
+			p.opts.watchdog = parseBool(value, defaultWatchdog)
 		}
 	}
 
