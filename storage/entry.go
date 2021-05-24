@@ -299,8 +299,8 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 }
 
 // ArchiveEntries changes the status of entries to "removed" after the given number of days.
-func (s *Storage) ArchiveEntries(status string, days int) (int64, error) {
-	if days < 0 {
+func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) {
+	if days < 0 || limit <= 0 {
 		return 0, nil
 	}
 
@@ -310,10 +310,10 @@ func (s *Storage) ArchiveEntries(status string, days int) (int64, error) {
 		SET
 			status='removed'
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status=$1 AND starred is false AND share_code='' AND created_at < now () - '%d days'::interval ORDER BY created_at ASC LIMIT 5000)
+			id=ANY(SELECT id FROM entries WHERE status=$1 AND starred is false AND share_code='' AND created_at < now () - '%d days'::interval ORDER BY created_at ASC LIMIT %d)
 	`
 
-	result, err := s.db.Exec(fmt.Sprintf(query, days), status)
+	result, err := s.db.Exec(fmt.Sprintf(query, days, limit), status)
 	if err != nil {
 		return 0, fmt.Errorf(`store: unable to archive %s entries: %v`, status, err)
 	}
