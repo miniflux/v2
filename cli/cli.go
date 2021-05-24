@@ -132,6 +132,7 @@ func Parse() {
 		config.Opts.DatabaseURL(),
 		config.Opts.DatabaseMinConns(),
 		config.Opts.DatabaseMaxConns(),
+		config.Opts.DatabaseConnectionLifetime(),
 	)
 	if err != nil {
 		logger.Fatal("Unable to initialize database connection pool: %v", err)

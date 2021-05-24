@@ -7,13 +7,14 @@ package database // import "miniflux.app/database"
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	// Postgresql driver import
 	_ "github.com/lib/pq"
 )
 
 // NewConnectionPool configures the database connection pool.
-func NewConnectionPool(dsn string, minConnections, maxConnections int) (*sql.DB, error) {
+func NewConnectionPool(dsn string, minConnections, maxConnections int, connectionLifetime time.Duration) (*sql.DB, error) {
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
@@ -21,6 +22,7 @@ func NewConnectionPool(dsn string, minConnections, maxConnections int) (*sql.DB,
 
 	db.SetMaxOpenConns(maxConnections)
 	db.SetMaxIdleConns(minConnections)
+	db.SetConnMaxLifetime(connectionLifetime)
 
 	return db, nil
 }

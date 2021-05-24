@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"miniflux.app/version"
 )
@@ -34,6 +35,7 @@ const (
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
 	defaultDatabaseMaxConns                   = 20
 	defaultDatabaseMinConns                   = 1
+	defaultDatabaseConnectionLifetime         = 5
 	defaultListenAddr                         = "127.0.0.1:8080"
 	defaultCertFile                           = ""
 	defaultKeyFile                            = ""
@@ -90,6 +92,7 @@ type Options struct {
 	databaseURL                        string
 	databaseMaxConns                   int
 	databaseMinConns                   int
+	databaseConnectionLifetime         int
 	runMigrations                      bool
 	listenAddr                         string
 	certFile                           string
@@ -148,6 +151,7 @@ func NewOptions() *Options {
 		databaseURL:                        defaultDatabaseURL,
 		databaseMaxConns:                   defaultDatabaseMaxConns,
 		databaseMinConns:                   defaultDatabaseMinConns,
+		databaseConnectionLifetime:         defaultDatabaseConnectionLifetime,
 		runMigrations:                      defaultRunMigrations,
 		listenAddr:                         defaultListenAddr,
 		certFile:                           defaultCertFile,
@@ -247,6 +251,11 @@ func (o *Options) DatabaseMaxConns() int {
 // DatabaseMinConns returns the minimum number of database connections.
 func (o *Options) DatabaseMinConns() int {
 	return o.databaseMinConns
+}
+
+// DatabaseConnectionLifetime returns the maximum amount of time a connection may be reused.
+func (o *Options) DatabaseConnectionLifetime() time.Duration {
+	return time.Duration(o.databaseConnectionLifetime) * time.Minute
 }
 
 // ListenAddr returns the listen address for the HTTP server.
@@ -484,6 +493,7 @@ func (o *Options) SortedOptions() []*Option {
 		"CREATE_ADMIN":                           o.createAdmin,
 		"DATABASE_MAX_CONNS":                     o.databaseMaxConns,
 		"DATABASE_MIN_CONNS":                     o.databaseMinConns,
+		"DATABASE_CONNECTION_LIFETIME":           o.databaseConnectionLifetime,
 		"DATABASE_URL":                           o.databaseURL,
 		"DEBUG":                                  o.debug,
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,

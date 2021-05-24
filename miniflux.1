@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "April 30, 2021" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "May 23, 2021" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -173,6 +173,11 @@ Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
 Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
 .br
 Default is empty\&.
+.TP
+.B DATABASE_CONNECTION_LIFETIME
+Set the maximum amount of time a connection may be reused\&.
+.br
+Default is 5 minutes\&.
 .TP
 .B DATABASE_MAX_CONNS
 Maximum number of database connections\&.
@@ -400,7 +405,12 @@ Disabled by default\&.
 .B MAINTENANCE_MESSAGE
 Define a custom maintenance message\&.
 .br
-Default is "Miniflux is currently under maintenance".
+Default is "Miniflux is currently under maintenance"\&.
+.TP
+.B WATCHDOG
+Enable or disable Systemd watchdog\&.
+.br
+Enabled by default\&.
 
 .SH AUTHORS
 .P
