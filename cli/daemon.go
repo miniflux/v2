@@ -52,7 +52,7 @@ func startDaemon(store *storage.Storage) {
 			logger.Error("Unable to send readiness notification to systemd: %v", err)
 		}
 
-		if systemd.HasSystemdWatchdog() {
+		if config.Opts.HasWatchdog() && systemd.HasSystemdWatchdog() {
 			logger.Info("Activating Systemd watchdog")
 
 			go func() {

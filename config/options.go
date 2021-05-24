@@ -64,6 +64,7 @@ const (
 	defaultMetricsCollector                   = false
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
+	defaultWatchdog                           = true
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -128,6 +129,7 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
+	watchdog                           bool
 }
 
 // NewOptions returns Options with default values.
@@ -183,6 +185,7 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
+		watchdog:                           defaultWatchdog,
 	}
 }
 
@@ -457,6 +460,11 @@ func (o *Options) HTTPClientUserAgent() string {
 	return o.httpClientUserAgent
 }
 
+// HasWatchdog returns true if the systemd watchdog is enabled.
+func (o *Options) HasWatchdog() bool {
+	return o.watchdog
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions() []*Option {
 	var keyValues = map[string]interface{}{
@@ -512,6 +520,7 @@ func (o *Options) SortedOptions() []*Option {
 		"SCHEDULER_SERVICE":                      o.schedulerService,
 		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
+		"WATCHDOG":                               o.watchdog,
 	}
 
 	keys := make([]string, 0, len(keyValues))
