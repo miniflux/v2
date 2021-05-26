@@ -92,6 +92,7 @@
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
     ],
+    "page.categories.unread_counter": "Nombre d'entrées non lues",
     "page.new_category.title": "Nouvelle catégorie",
     "page.new_user.title": "Nouvel Utilisateur",
     "page.edit_category.title": "Modification de la catégorie : %s",
@@ -266,6 +267,7 @@
     "form.feed.label.feed_username": "Nom d'utilisateur du flux",
     "form.feed.label.feed_password": "Mot de passe du flux",
     "form.feed.label.user_agent": "Remplacer l'agent utilisateur par défaut",
+    "form.feed.label.cookie": "Définir les cookies",
     "form.feed.label.scraper_rules": "Règles pour récupérer le contenu original",
     "form.feed.label.rewrite_rules": "Règles de réécriture",
     "form.feed.label.blocklist_rules": "Règles de blocage",

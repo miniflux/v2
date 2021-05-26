@@ -54,6 +54,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 				entry.URL,
 				feed.ScraperRules,
 				feed.UserAgent,
+				feed.Cookie,
 				feed.AllowSelfSignedCertificates,
 			)
 
@@ -115,6 +116,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 		entry.URL,
 		entry.Feed.ScraperRules,
 		entry.Feed.UserAgent,
+		entry.Feed.Cookie,
 		feed.AllowSelfSignedCertificates,
 	)
 

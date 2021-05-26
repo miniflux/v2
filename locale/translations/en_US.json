@@ -92,6 +92,7 @@
         "There is %d feed.",
         "There are %d feeds."
     ],
+    "page.categories.unread_counter": "Number of unread entries",
     "page.new_category.title": "New Category",
     "page.new_user.title": "New User",
     "page.edit_category.title": "Edit Category: %s",
@@ -266,6 +267,7 @@
     "form.feed.label.feed_username": "Feed Username",
     "form.feed.label.feed_password": "Feed Password",
     "form.feed.label.user_agent": "Override Default User Agent",
+    "form.feed.label.cookie": "Set Cookies",
     "form.feed.label.scraper_rules": "Scraper Rules",
     "form.feed.label.rewrite_rules": "Rewrite Rules",
     "form.feed.label.blocklist_rules": "Block Rules",

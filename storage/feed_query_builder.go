@@ -106,7 +106,7 @@ func (f *FeedQueryBuilder) buildSorting() string {
 	}
 
 	if f.direction != "" {
-		parts = append(parts, fmt.Sprintf(`%s`, f.direction))
+		parts = append(parts, f.direction)
 	}
 
 	if len(parts) > 0 {
@@ -159,6 +159,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.keeplist_rules,
 			f.crawler,
 			f.user_agent,
+			f.cookie,
 			f.username,
 			f.password,
 			f.ignore_http_cache,
@@ -218,6 +219,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.KeeplistRules,
 			&feed.Crawler,
 			&feed.UserAgent,
+			&feed.Cookie,
 			&feed.Username,
 			&feed.Password,
 			&feed.IgnoreHTTPCache,

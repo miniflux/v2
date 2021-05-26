@@ -116,7 +116,11 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 			c.id,
 			c.user_id,
 			c.title,
-			(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count
+			(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count,
+			(SELECT count(*)
+			   FROM feeds
+			     JOIN entries ON (feeds.id = entries.feed_id)
+			   WHERE feeds.category_id = c.id AND entries.status = 'unread')
 		FROM categories c
 		WHERE
 			user_id=$1
@@ -132,7 +136,7 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 	categories := make(model.Categories, 0)
 	for rows.Next() {
 		var category model.Category
-		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.FeedCount); err != nil {
+		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.FeedCount, &category.TotalUnread); err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
 

@@ -92,6 +92,7 @@
         "C'è %d feed.",
         "Ci sono %d feed."
     ],
+    "page.categories.unread_counter": "Numero di voci non lette",
     "page.new_category.title": "Nuova categoria",
     "page.new_user.title": "Nuovo utente",
     "page.edit_category.title": "Modifica categoria: %s",
@@ -266,6 +267,7 @@
     "form.feed.label.feed_username": "Nome utente del feed",
     "form.feed.label.feed_password": "Password del feed",
     "form.feed.label.user_agent": "Usa user agent personalizzato",
+    "form.feed.label.cookie": "Installare i cookies",
     "form.feed.label.scraper_rules": "Regole di estrazione del contenuto",
     "form.feed.label.rewrite_rules": "Regole di impaginazione del contenuto",
     "form.feed.label.blocklist_rules": "Regole di blocco",

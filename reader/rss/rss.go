@@ -53,7 +53,7 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 		feed.FeedURL = feedURL
 	}
 
-	feed.Title = strings.TrimSpace(r.Title)
+	feed.Title = html.UnescapeString(strings.TrimSpace(r.Title))
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
@@ -292,7 +292,7 @@ func (r *rssItem) entryURL() string {
 
 func (r *rssItem) entryEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
-	duplicates := make(map[string]bool, 0)
+	duplicates := make(map[string]bool)
 
 	for _, mediaThumbnail := range r.AllMediaThumbnails() {
 		if _, found := duplicates[mediaThumbnail.URL]; !found {

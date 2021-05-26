@@ -96,7 +96,7 @@ func TestToString(t *testing.T) {
 	r := &Response{Body: strings.NewReader(input)}
 
 	if r.BodyAsString() != input {
-		t.Error(`Unexpected ouput`)
+		t.Error(`Unexpected output`)
 	}
 }
 

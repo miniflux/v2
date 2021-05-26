@@ -998,6 +998,25 @@ func TestParseFeedTitleWithHTMLEntity(t *testing.T) {
 	}
 }
 
+func TestParseFeedTitleWithUnicodeEntityAndCdata(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title><![CDATA[Jenny&#8217;s Newsletter]]></title>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != `Jenny’s Newsletter` {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+	}
+}
+
 func TestParseItemTitleWithHTMLEntity(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">

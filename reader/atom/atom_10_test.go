@@ -531,7 +531,7 @@ func TestParseEntryWithTextSummary(t *testing.T) {
 		<link href="http://example.org/d"/>
 		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
 		<updated>2003-12-13T18:30:02Z</updated>
-		<summary type="text"><![CDATA[AT&amp;T &lt;S&gt;]]></summary>
+		<summary type="text"><![CDATA[AT&T <S>]]></summary>
 	  </entry>
 	</feed>`
 
@@ -583,7 +583,7 @@ func TestParseEntryWithTextContent(t *testing.T) {
 		<link href="http://example.org/d"/>
 		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
 		<updated>2003-12-13T18:30:02Z</updated>
-		<content><![CDATA[AT&amp;T &lt;S&gt;]]></content>
+		<content><![CDATA[AT&T <S>]]></content>
 	  </entry>
 
 	</feed>`

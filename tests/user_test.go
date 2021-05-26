@@ -212,7 +212,7 @@ func TestGetUserByID(t *testing.T) {
 func TestGetUserByUsername(t *testing.T) {
 	username := getRandomUsername()
 	client := miniflux.New(testBaseURL, testAdminUsername, testAdminPassword)
-	user, err := client.CreateUser(username, testStandardPassword, false)
+	_, err := client.CreateUser(username, testStandardPassword, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -222,7 +222,7 @@ func TestGetUserByUsername(t *testing.T) {
 		t.Fatal(`Should returns a 404`)
 	}
 
-	user, err = client.UserByUsername(username)
+	user, err := client.UserByUsername(username)
 	if err != nil {
 		t.Fatal(err)
 	}

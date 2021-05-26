@@ -27,13 +27,14 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, username, password string, fetchViaProxy, allowSelfSignedCertificates bool) (Subscriptions, *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool) (Subscriptions, *errors.LocalizedError) {
 	websiteURL = findYoutubeChannelFeed(websiteURL)
 	websiteURL = parseYoutubeVideoPage(websiteURL)
 
 	clt := client.NewClientWithConfig(websiteURL, config.Opts)
 	clt.WithCredentials(username, password)
 	clt.WithUserAgent(userAgent)
+	clt.WithCookie(cookie)
 	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
 
 	if fetchViaProxy {
@@ -62,7 +63,7 @@ func FindSubscriptions(websiteURL, userAgent, username, password string, fetchVi
 		return subscriptions, err
 	}
 
-	return tryWellKnownUrls(websiteURL, userAgent, username, password)
+	return tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
 }
 
 func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
@@ -138,7 +139,7 @@ func parseYoutubeVideoPage(websiteURL string) string {
 	return websiteURL
 }
 
-func tryWellKnownUrls(websiteURL, userAgent, username, password string) (Subscriptions, *errors.LocalizedError) {
+func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) (Subscriptions, *errors.LocalizedError) {
 	var subscriptions Subscriptions
 	knownURLs := map[string]string{
 		"/atom.xml": "atom",
@@ -161,6 +162,7 @@ func tryWellKnownUrls(websiteURL, userAgent, username, password string) (Subscri
 		clt := client.NewClientWithConfig(fullURL, config.Opts)
 		clt.WithCredentials(username, password)
 		clt.WithUserAgent(userAgent)
+		clt.WithCookie(cookie)
 
 		// Some websites redirects unknown URLs to the home page.
 		// As result, the list of known URLs is returned to the subscription list.

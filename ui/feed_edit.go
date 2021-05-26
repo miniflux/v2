@@ -50,6 +50,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		KeeplistRules:               feed.KeeplistRules,
 		Crawler:                     feed.Crawler,
 		UserAgent:                   feed.UserAgent,
+		Cookie:                      feed.Cookie,
 		CategoryID:                  feed.Category.ID,
 		Username:                    feed.Username,
 		Password:                    feed.Password,

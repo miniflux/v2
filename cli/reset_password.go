@@ -34,6 +34,7 @@ func resetPassword(store *storage.Storage) {
 		os.Exit(1)
 	}
 
+	user.Password = password
 	if err := store.UpdateUser(user); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)

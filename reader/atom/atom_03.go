@@ -144,10 +144,10 @@ func (a *atom03Entry) entryHash() string {
 }
 
 type atom03Text struct {
-	Type string `xml:"type,attr"`
-	Mode string `xml:"mode,attr"`
-	Data string `xml:",chardata"`
-	XML  string `xml:",innerxml"`
+	Type     string `xml:"type,attr"`
+	Mode     string `xml:"mode,attr"`
+	CharData string `xml:",chardata"`
+	InnerXML string `xml:",innerxml"`
 }
 
 func (a *atom03Text) String() string {
@@ -155,16 +155,16 @@ func (a *atom03Text) String() string {
 
 	switch {
 	case a.Mode == "xml":
-		content = a.XML
+		content = a.InnerXML
 	case a.Mode == "escaped":
-		content = a.Data
+		content = a.CharData
 	case a.Mode == "base64":
-		b, err := base64.StdEncoding.DecodeString(a.Data)
+		b, err := base64.StdEncoding.DecodeString(a.CharData)
 		if err == nil {
 			content = string(b)
 		}
 	default:
-		content = a.Data
+		content = a.CharData
 	}
 
 	if a.Type != "text/html" {

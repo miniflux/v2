@@ -92,6 +92,7 @@
         "Er is %d feed.",
         "Er zijn %d feeds."
     ],
+    "page.categories.unread_counter": "Aantal ongelezen vermeldingen",
     "page.new_category.title": "Nieuwe categorie",
     "page.new_user.title": "Nieuwe gebruiker",
     "page.edit_category.title": "Bewerken van categorie: %s",
@@ -266,6 +267,7 @@
     "form.feed.label.feed_username": "Feed-gebruikersnaam",
     "form.feed.label.feed_password": "Feed wachtwoord",
     "form.feed.label.user_agent": "Standaard User Agent overschrijven",
+    "form.feed.label.cookie": "Cookies instellen",
     "form.feed.label.scraper_rules": "Scraper regels",
     "form.feed.label.rewrite_rules": "Rewrite regels",
     "form.feed.label.blocklist_rules": "Blokkeer regels",

@@ -78,6 +78,62 @@ var (
 		},
 		[]string{"status"},
 	)
+
+	dbOpenConnectionsGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_open_connections",
+			Help:      "The number of established connections both in use and idle",
+		},
+	)
+
+	dbConnectionsInUseGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_connections_in_use",
+			Help:      "The number of connections currently in use",
+		},
+	)
+
+	dbConnectionsIdleGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_connections_idle",
+			Help:      "The number of idle connections",
+		},
+	)
+
+	dbConnectionsWaitCountGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_connections_wait_count",
+			Help:      "The total number of connections waited for",
+		},
+	)
+
+	dbConnectionsMaxIdleClosedGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_connections_max_idle_closed",
+			Help:      "The total number of connections closed due to SetMaxIdleConns",
+		},
+	)
+
+	dbConnectionsMaxIdleTimeClosedGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_connections_max_idle_time_closed",
+			Help:      "The total number of connections closed due to SetConnMaxIdleTime",
+		},
+	)
+
+	dbConnectionsMaxLifetimeClosedGauge = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Namespace: "miniflux",
+			Name:      "db_connections_max_lifetime_closed",
+			Help:      "The total number of connections closed due to SetConnMaxLifetime",
+		},
+	)
 )
 
 // Collector represents a metric collector.
@@ -95,6 +151,13 @@ func NewCollector(store *storage.Storage, refreshInterval int) *Collector {
 	prometheus.MustRegister(feedsGauge)
 	prometheus.MustRegister(brokenFeedsGauge)
 	prometheus.MustRegister(entriesGauge)
+	prometheus.MustRegister(dbOpenConnectionsGauge)
+	prometheus.MustRegister(dbConnectionsInUseGauge)
+	prometheus.MustRegister(dbConnectionsIdleGauge)
+	prometheus.MustRegister(dbConnectionsWaitCountGauge)
+	prometheus.MustRegister(dbConnectionsMaxIdleClosedGauge)
+	prometheus.MustRegister(dbConnectionsMaxIdleTimeClosedGauge)
+	prometheus.MustRegister(dbConnectionsMaxLifetimeClosedGauge)
 
 	return &Collector{store, refreshInterval}
 }
@@ -116,5 +179,14 @@ func (c *Collector) GatherStorageMetrics() {
 		for status, count := range entriesCount {
 			entriesGauge.WithLabelValues(status).Set(float64(count))
 		}
+
+		dbStats := c.store.DBStats()
+		dbOpenConnectionsGauge.Set(float64(dbStats.OpenConnections))
+		dbConnectionsInUseGauge.Set(float64(dbStats.InUse))
+		dbConnectionsIdleGauge.Set(float64(dbStats.Idle))
+		dbConnectionsWaitCountGauge.Set(float64(dbStats.WaitCount))
+		dbConnectionsMaxIdleClosedGauge.Set(float64(dbStats.MaxIdleClosed))
+		dbConnectionsMaxIdleTimeClosedGauge.Set(float64(dbStats.MaxIdleTimeClosed))
+		dbConnectionsMaxLifetimeClosedGauge.Set(float64(dbStats.MaxLifetimeClosed))
 	}
 }

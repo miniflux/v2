@@ -18,6 +18,7 @@ import (
 	"miniflux.app/service/httpd"
 	"miniflux.app/service/scheduler"
 	"miniflux.app/storage"
+	"miniflux.app/systemd"
 	"miniflux.app/worker"
 )
 
@@ -44,9 +45,35 @@ func startDaemon(store *storage.Storage) {
 		go collector.GatherStorageMetrics()
 	}
 
-	// Notify systemd that we are ready.
-	if err := sdNotify(sdNotifyReady); err != nil {
-		logger.Error("Unable to send readiness notification to systemd: %v", err)
+	if systemd.HasNotifySocket() {
+		logger.Info("Sending readiness notification to Systemd")
+
+		if err := systemd.SdNotify(systemd.SdNotifyReady); err != nil {
+			logger.Error("Unable to send readiness notification to systemd: %v", err)
+		}
+
+		if config.Opts.HasWatchdog() && systemd.HasSystemdWatchdog() {
+			logger.Info("Activating Systemd watchdog")
+
+			go func() {
+				interval, err := systemd.WatchdogInterval()
+				if err != nil {
+					logger.Error("Unable to parse watchdog interval from systemd: %v", err)
+					return
+				}
+
+				for {
+					err := store.Ping()
+					if err != nil {
+						logger.Error(`Systemd Watchdog: %v`, err)
+					} else {
+						systemd.SdNotify(systemd.SdNotifyWatchdog)
+					}
+
+					time.Sleep(interval / 3)
+				}
+			}()
+		}
 	}
 
 	<-stop

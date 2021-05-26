@@ -76,7 +76,7 @@
     "entry.share.title": "分享这篇文章",
     "entry.unshare.label": "取消分享",
     "entry.shared_entry.title": "打开公共链接",
-    "entry.shared_entry.label": "分享分享",
+    "entry.shared_entry.label": "分享",
     "entry.estimated_reading_time": [
         "%d分钟阅读",
         "%d分钟阅读"
@@ -91,6 +91,7 @@
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
+    "page.categories.unread_counter": "未读条目数",
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
     "page.edit_category.title": "编辑分类 : %s",
@@ -264,6 +265,7 @@
     "form.feed.label.feed_username": "源用户名",
     "form.feed.label.feed_password": "源密码",
     "form.feed.label.user_agent": "覆盖默认 User-Agent",
+    "form.feed.label.cookie": "设置 Cookies",
     "form.feed.label.scraper_rules": "Scraper 规则",
     "form.feed.label.rewrite_rules": "重写规则",
     "form.feed.label.blocklist_rules": "封锁规则",

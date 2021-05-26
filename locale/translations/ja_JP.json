@@ -92,6 +92,7 @@
         "%d 個の記事があります。",
         "%d 個の記事があります。"
     ],
+    "page.categories.unread_counter": "未読記事の数",
     "page.new_category.title": "新規カテゴリ",
     "page.new_user.title": "新規ユーザー",
     "page.edit_category.title": "カテゴリーを編集: %s",
@@ -266,6 +267,7 @@
     "form.feed.label.feed_username": "フィードのユーザー名",
     "form.feed.label.feed_password": "フィードのパスワード",
     "form.feed.label.user_agent": "ディフォルトの User Agent を上書きする",
+    "form.feed.label.cookie": "クッキーの設定",
     "form.feed.label.scraper_rules": "スクラップルール",
     "form.feed.label.rewrite_rules": "Rewrite ルール",
     "form.feed.label.blocklist_rules": "ブロックルール",
