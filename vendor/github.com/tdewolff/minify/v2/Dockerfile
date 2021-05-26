@@ -1,5 +1,5 @@
 # Use this image to build the executable
-FROM golang:1.13-alpine AS compiler
+FROM golang:1.16-alpine AS compiler
 
 WORKDIR $GOPATH/src/minify
 COPY . .
@@ -12,5 +12,3 @@ RUN apk add --update --update-cache --no-cache git ca-certificates && \
 FROM alpine:3
 
 COPY --from=compiler /bin/minify /bin/minify
-
-ENTRYPOINT ["/bin/minify"]

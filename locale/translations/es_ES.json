@@ -92,6 +92,7 @@
         "Hay %d fuente.",
         "Hay %d fuentes."
     ],
+    "page.categories.unread_counter": "Número de entradas no leídas",
     "page.new_category.title": "Nueva categoría",
     "page.new_user.title": "Nuevo usario",
     "page.edit_category.title": "Editar categoría: %s",
@@ -266,6 +267,7 @@
     "form.feed.label.feed_username": "Nombre de usuario de fuente",
     "form.feed.label.feed_password": "Contraseña de fuente",
     "form.feed.label.user_agent": "Invalidar el agente de usuario predeterminado",
+    "form.feed.label.cookie": "Configurar las cookies",
     "form.feed.label.scraper_rules": "Reglas de raspador",
     "form.feed.label.rewrite_rules": "Reglas de reescribir",
     "form.feed.label.blocklist_rules": "Reglas de Filtrado(Bloquear)",

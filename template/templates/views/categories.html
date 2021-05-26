@@ -20,7 +20,7 @@
                 <span class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
                 </span>
-                (<span title="{{ if eq .FeedCount 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" .FeedCount .FeedCount }}{{ end }}">{{ .FeedCount }}</span>)
+                (<span title="{{ t "page.categories.unread_counter" }}">{{ .TotalUnread }}</span>)
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">

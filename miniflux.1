@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "February 20, 2021" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "May 23, 2021" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -136,7 +136,7 @@ Default is 60 minutes\&.
 .B BATCH_SIZE
 Number of feeds to send to the queue for each interval\&.
 .br
-Default is 10 feeds\&.
+Default is 100 feeds\&.
 .TP
 .B POLLING_SCHEDULER
 Scheduler used for polling feeds. Possible values are "round_robin" or "entry_frequency"\&.
@@ -173,6 +173,11 @@ Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
 Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
 .br
 Default is empty\&.
+.TP
+.B DATABASE_CONNECTION_LIFETIME
+Set the maximum amount of time a connection may be reused\&.
+.br
+Default is 5 minutes\&.
 .TP
 .B DATABASE_MAX_CONNS
 Maximum number of database connections\&.
@@ -217,6 +222,11 @@ Number of days after marking unread entries as removed\&.
 Set to -1 to keep all unread entries.
 .br
 Default is 180 days\&.
+.TP
+.B CLEANUP_ARCHIVE_BATCH_SIZE
+Number of entries to archive for each job interval\&.
+.br
+Default is 10000 entries\&.
 .TP
 .B CLEANUP_REMOVE_SESSIONS_DAYS
 Number of days after removing old sessions from the database\&.
@@ -400,7 +410,12 @@ Disabled by default\&.
 .B MAINTENANCE_MESSAGE
 Define a custom maintenance message\&.
 .br
-Default is "Miniflux is currently under maintenance".
+Default is "Miniflux is currently under maintenance"\&.
+.TP
+.B WATCHDOG
+Enable or disable Systemd watchdog\&.
+.br
+Enabled by default\&.
 
 .SH AUTHORS
 .P

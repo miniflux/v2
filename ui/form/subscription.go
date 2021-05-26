@@ -20,6 +20,7 @@ type SubscriptionForm struct {
 	FetchViaProxy               bool
 	AllowSelfSignedCertificates bool
 	UserAgent                   string
+	Cookie                      string
 	Username                    string
 	Password                    string
 	ScraperRules                string
@@ -63,6 +64,7 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		AllowSelfSignedCertificates: r.FormValue("allow_self_signed_certificates") == "1",
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		UserAgent:                   r.FormValue("user_agent"),
+		Cookie:                      r.FormValue("cookie"),
 		Username:                    r.FormValue("feed_username"),
 		Password:                    r.FormValue("feed_password"),
 		ScraperRules:                r.FormValue("scraper_rules"),

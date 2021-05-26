@@ -242,6 +242,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			f.rewrite_rules,
 			f.crawler,
 			f.user_agent,
+			f.cookie,
 			fi.icon_id,
 			u.timezone
 		FROM
@@ -303,6 +304,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.RewriteRules,
 			&entry.Feed.Crawler,
 			&entry.Feed.UserAgent,
+			&entry.Feed.Cookie,
 			&iconID,
 			&tz,
 		)
@@ -372,7 +374,7 @@ func (e *EntryQueryBuilder) buildSorting() string {
 	}
 
 	if e.direction != "" {
-		parts = append(parts, fmt.Sprintf(`%s`, e.direction))
+		parts = append(parts, e.direction)
 	}
 
 	if e.limit > 0 {

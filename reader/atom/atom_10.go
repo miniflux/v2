@@ -157,7 +157,7 @@ func (a *atom10Entry) entryHash() string {
 
 func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
-	duplicates := make(map[string]bool, 0)
+	duplicates := make(map[string]bool)
 
 	for _, mediaThumbnail := range a.AllMediaThumbnails() {
 		if _, found := duplicates[mediaThumbnail.URL]; !found {
@@ -231,10 +231,12 @@ func (a *atom10Text) String() string {
 	var content string
 
 	switch {
-	case strings.HasPrefix(a.InnerXML, `<![CDATA[`):
-		content = a.CharData
 	case a.Type == "", a.Type == "text", a.Type == "text/plain":
-		content = a.InnerXML
+		if strings.HasPrefix(a.InnerXML, `<![CDATA[`) {
+			content = html.EscapeString(a.CharData)
+		} else {
+			content = a.InnerXML
+		}
 	case a.Type == "xhtml":
 		if a.XHTMLRootElement.InnerXML != "" {
 			content = a.XHTMLRootElement.InnerXML

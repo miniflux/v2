@@ -5,7 +5,9 @@
 package storage // import "miniflux.app/storage"
 
 import (
+	"context"
 	"database/sql"
+	"time"
 )
 
 // Storage handles all operations related to the database.
@@ -31,6 +33,13 @@ func (s *Storage) DatabaseVersion() string {
 
 // Ping checks if the database connection works.
 func (s *Storage) Ping() error {
-	_, err := s.db.Exec(`SELECT true`)
-	return err
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return s.db.PingContext(ctx)
+}
+
+// DBStats returns database statistics.
+func (s *Storage) DBStats() sql.DBStats {
+	return s.db.Stats()
 }

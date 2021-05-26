@@ -531,6 +531,31 @@ func TestUpdateFeedUserAgent(t *testing.T) {
 	}
 }
 
+func TestUpdateFeedCookie(t *testing.T) {
+	client := createClient(t)
+	feed, _ := createFeed(t, client)
+
+	cookie := "test"
+	updatedFeed, err := client.UpdateFeed(feed.ID, &miniflux.FeedModificationRequest{Cookie: &cookie})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Cookie != cookie {
+		t.Fatalf(`Wrong Cookie value, got "%v" instead of "%v"`, updatedFeed.Cookie, cookie)
+	}
+
+	cookie = ""
+	updatedFeed, err = client.UpdateFeed(feed.ID, &miniflux.FeedModificationRequest{Cookie: &cookie})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedFeed.Cookie != cookie {
+		t.Fatalf(`Wrong Cookie value, got "%v" instead of "%v"`, updatedFeed.Cookie, cookie)
+	}
+}
+
 func TestUpdateFeedUsername(t *testing.T) {
 	client := createClient(t)
 	feed, _ := createFeed(t, client)

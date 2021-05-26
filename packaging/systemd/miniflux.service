@@ -5,16 +5,26 @@
 # See https://wiki.archlinux.org/index.php/Systemd#Editing_provided_units.
 
 [Unit]
-Description=Miniflux Feed Reader
+Description=Miniflux
 After=network.target postgresql.service
 
 [Service]
-Type=notify
 ExecStart=/usr/bin/miniflux
-Restart=always
-
 EnvironmentFile=/etc/miniflux.conf
 User=miniflux
+
+# https://www.freedesktop.org/software/systemd/man/systemd.service.html#Type=
+Type=notify
+
+# https://www.freedesktop.org/software/systemd/man/systemd.service.html#WatchdogSec=
+WatchdogSec=60s
+WatchdogSignal=SIGKILL
+
+# https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
+Restart=always
+
+# https://www.freedesktop.org/software/systemd/man/systemd.service.html#RestartSec=
+RestartSec=5
 
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#NoNewPrivileges=
 NoNewPrivileges=true
@@ -45,13 +55,9 @@ RestrictRealtime=true
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ReadWritePaths=
 ReadWritePaths=/run
 
-# Allow miniflux to bind to <1024 ports
+# Allow miniflux to bind to privileged ports
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#AmbientCapabilities=
 AmbientCapabilities=CAP_NET_BIND_SERVICE
-
-# Provide a private /tmp
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#PrivateTmp=
-PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target

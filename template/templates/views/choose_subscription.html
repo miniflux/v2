@@ -10,10 +10,13 @@
     <input type="hidden" name="csrf" value="{{ .csrf }}">
     <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">
     <input type="hidden" name="user_agent" value="{{ .form.UserAgent }}">
+    <input type="hidden" name="cookie" value="{{ .form.Cookie }}">
     <input type="hidden" name="feed_username" value="{{ .form.Username }}">
     <input type="hidden" name="feed_password" value="{{ .form.Password }}">
     <input type="hidden" name="scraper_rules" value="{{ .form.ScraperRules }}">
     <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
+    <input type="hidden" name="blocklist_rules" value="{{ .form.BlocklistRules }}">
+    <input type="hidden" name="keeplist_rules" value="{{ .form.KeeplistRules }}">
     {{ if .form.FetchViaProxy }}
     <input type="hidden" name="fetch_via_proxy" value="1">
     {{ end }}

@@ -29,6 +29,7 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 	subscriptions, finderErr := subscription.FindSubscriptions(
 		subscriptionDiscoveryRequest.URL,
 		subscriptionDiscoveryRequest.UserAgent,
+		subscriptionDiscoveryRequest.Cookie,
 		subscriptionDiscoveryRequest.Username,
 		subscriptionDiscoveryRequest.Password,
 		subscriptionDiscoveryRequest.FetchViaProxy,

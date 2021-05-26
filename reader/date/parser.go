@@ -293,6 +293,8 @@ var invalidLocalizedDateReplacer = strings.NewReplacer(
 	"mai ", "May ",
 	"jui ", "Jun ",
 	"juin ", "June ",
+	"Thurs,", "Thu,",
+	"Thur,", "Thu,",
 )
 
 // Parse parses a given date string using a large

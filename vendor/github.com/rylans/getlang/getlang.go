@@ -5,14 +5,13 @@
 package getlang
 
 import (
+	"golang.org/x/text/language"
+	"golang.org/x/text/language/display"
 	"io"
 	"io/ioutil"
 	"math"
 	"sort"
 	"unicode"
-
-	"golang.org/x/text/language"
-	"golang.org/x/text/language/display"
 )
 
 const undeterminedRate int = 41
@@ -38,11 +37,10 @@ var langs = map[string][]string{
 	"tl":      tl,
 	"uk":      uk,
 	"vi":      vi,
-	"fa":      fa,
-	"ar":      ar,
 }
 
 var scripts = map[string][]*unicode.RangeTable{
+	"ar": {unicode.Arabic},
 	"bn": {unicode.Bengali},
 	"el": {unicode.Greek},
 	"gu": {unicode.Gujarati},

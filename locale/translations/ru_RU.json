@@ -93,6 +93,7 @@
         "Есть %d подписки.",
         "Есть %d подписок."
     ],
+    "page.categories.unread_counter": "Количество непрочитанных записей",
     "page.new_category.title": "Новая категория",
     "page.new_user.title": "Новый пользователь",
     "page.edit_category.title": "Изменить категорию: %s",
@@ -268,6 +269,7 @@
     "form.feed.label.feed_username": "Имя пользователя подписки",
     "form.feed.label.feed_password": "Пароль подписки",
     "form.feed.label.user_agent": "Переопределить User Agent по умолчанию",
+    "form.feed.label.cookie": "Установить Ку́ки",
     "form.feed.label.scraper_rules": "Правила Scraper",
     "form.feed.label.rewrite_rules": "Правила Rewrite",
     "form.feed.label.blocklist_rules": "Правила блокировки",

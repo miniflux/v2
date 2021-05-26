@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"miniflux.app/config"
+	"miniflux.app/crypto"
 	"miniflux.app/http/route"
 	"miniflux.app/locale"
 	"miniflux.app/model"
@@ -87,8 +88,11 @@ func (f *funcMap) Map() template.FuncMap {
 				iconName,
 			))
 		},
+		"rand": func() string {
+			return crypto.GenerateRandomStringHex(10)
+		},
 
-		// These functions are overrided at runtime after the parsing.
+		// These functions are overrode at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {
 			return ""
 		},
@@ -136,10 +140,7 @@ func truncate(str string, max int) string {
 
 func isEmail(str string) bool {
 	_, err := mail.ParseAddress(str)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
