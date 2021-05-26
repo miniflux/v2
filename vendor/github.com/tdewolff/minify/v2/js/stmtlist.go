@@ -1,7 +1,7 @@
 package js
 
 import (
-	"github.com/tdewolff/parse/v2/js"
+	"github.com/tdewolff/minify/v2/parse/js"
 )
 
 func (m *jsMinifier) optimizeStmt(i js.IStmt) js.IStmt {
@@ -97,6 +97,7 @@ func (m *jsMinifier) optimizeStmt(i js.IStmt) js.IStmt {
 			if !isClassDecl && (!isVarDecl || varDecl.TokenType == js.VarToken) {
 				return m.optimizeStmt(blockStmt.List[0])
 			}
+			return &js.EmptyStmt{}
 		} else if len(blockStmt.List) == 0 {
 			return &js.EmptyStmt{}
 		}
@@ -115,6 +116,7 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 		if ifStmt, ok := list[i].(*js.IfStmt); ok && !m.isEmptyStmt(ifStmt.Else) && isFlowStmt(lastStmt(ifStmt.Body)) {
 			// if body ends in flow statement (return, throw, break, continue), so we can remove the else statement and put its body in the current scope
 			if blockStmt, ok := ifStmt.Else.(*js.BlockStmt); ok {
+				blockStmt.Scope.Unscope()
 				list = append(list[:i+1], append(blockStmt.List, list[i+1:]...)...)
 			} else {
 				list = append(list[:i+1], append([]js.IStmt{ifStmt.Else}, list[i+1:]...)...)
@@ -148,10 +150,11 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 					j--
 				} else if whileStmt, ok := list[i].(*js.WhileStmt); ok {
 					// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
-					var body js.BlockStmt
+					var body *js.BlockStmt
 					if blockStmt, ok := whileStmt.Body.(*js.BlockStmt); ok {
-						body = *blockStmt
+						body = blockStmt
 					} else {
+						body = &js.BlockStmt{}
 						body.List = []js.IStmt{whileStmt.Body}
 					}
 					list[i] = &js.ForStmt{Init: left.Value, Cond: whileStmt.Cond, Post: nil, Body: body}
@@ -207,10 +210,11 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 					}
 				} else if whileStmt, ok := list[i].(*js.WhileStmt); ok && left.TokenType == js.VarToken {
 					// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
-					var body js.BlockStmt
+					var body *js.BlockStmt
 					if blockStmt, ok := whileStmt.Body.(*js.BlockStmt); ok {
-						body = *blockStmt
+						body = blockStmt
 					} else {
+						body = &js.BlockStmt{}
 						body.List = []js.IStmt{whileStmt.Body}
 					}
 					list[i] = &js.ForStmt{Init: left, Cond: whileStmt.Cond, Post: nil, Body: body}

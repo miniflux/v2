@@ -1,15 +1,16 @@
 package minify
 
 import (
+	"bytes"
 	"encoding/base64"
 
-	"github.com/tdewolff/parse/v2"
-	"github.com/tdewolff/parse/v2/strconv"
+	"github.com/tdewolff/minify/v2/parse"
+	"github.com/tdewolff/minify/v2/parse/strconv"
 )
 
 var (
 	textMimeBytes     = []byte("text/plain")
-	charsetAsciiBytes = []byte("charset=us-ascii")
+	charsetASCIIBytes = []byte("charset=us-ascii")
 	dataBytes         = []byte("data:")
 	base64Bytes       = []byte(";base64")
 )
@@ -76,7 +77,7 @@ func DataURI(m *M, dataURI []byte) []byte {
 	}
 	for i := 0; i+len(";charset=us-ascii") <= len(mediatype); i++ {
 		// must start with semicolon and be followed by end of mediatype or semicolon
-		if mediatype[i] == ';' && parse.EqualFold(mediatype[i+1:i+len(";charset=us-ascii")], charsetAsciiBytes) && (i+len(";charset=us-ascii") >= len(mediatype) || mediatype[i+len(";charset=us-ascii")] == ';') {
+		if mediatype[i] == ';' && parse.EqualFold(mediatype[i+1:i+len(";charset=us-ascii")], charsetASCIIBytes) && (i+len(";charset=us-ascii") >= len(mediatype) || mediatype[i+len(";charset=us-ascii")] == ';') {
 			mediatype = append(mediatype[:i], mediatype[i+len(";charset=us-ascii"):]...)
 			break
 		}
@@ -500,4 +501,15 @@ func Number(num []byte, prec int) []byte {
 		num[start] = '-'
 	}
 	return num[start:end]
+}
+
+func UpdateErrorPosition(err error, input *parse.Input, offset int) error {
+	if perr, ok := err.(*parse.Error); ok {
+		r := bytes.NewBuffer(input.Bytes())
+		line, column, _ := parse.Position(r, offset)
+		perr.Line += line - 1
+		perr.Column += column - 1
+		return perr
+	}
+	return err
 }

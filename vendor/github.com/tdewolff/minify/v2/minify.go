@@ -18,8 +18,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/tdewolff/parse/v2"
-	"github.com/tdewolff/parse/v2/buffer"
+	"github.com/tdewolff/minify/v2/parse"
+	"github.com/tdewolff/minify/v2/parse/buffer"
 )
 
 // Warning is used to report usage warnings such as using a deprecated feature

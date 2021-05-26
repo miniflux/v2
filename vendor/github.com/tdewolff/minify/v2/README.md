@@ -1,10 +1,12 @@
-# Minify <a name="minify"></a> [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/minify/v2?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/tdewolff/minify)](https://goreportcard.com/report/github.com/tdewolff/minify) [![Coverage Status](https://coveralls.io/repos/github/tdewolff/minify/badge.svg?branch=master)](https://coveralls.io/github/tdewolff/minify?branch=master) [![Donate](https://img.shields.io/badge/patreon-donate-DFB317)](https://www.patreon.com/tdewolff)
+# Minify <a name="minify"></a> [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/minify/v2?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/tdewolff/minify)](https://goreportcard.com/report/github.com/tdewolff/minify) [![codecov](https://codecov.io/gh/tdewolff/minify/branch/master/graph/badge.svg?token=Cr7r2EKPj2)](https://codecov.io/gh/tdewolff/minify) [![Donate](https://img.shields.io/badge/patreon-donate-DFB317)](https://www.patreon.com/tdewolff)
 
 **[Online demo](https://go.tacodewolff.nl/minify) if you need to minify files *now*.**
 
 **[Command line tool](https://github.com/tdewolff/minify/tree/master/cmd/minify) that minifies concurrently and watches file changes.**
 
 **[Releases](https://github.com/tdewolff/minify/releases) of CLI for various platforms.** See [CLI](https://github.com/tdewolff/minify/tree/master/cmd/minify) for more installation instructions.
+
+**[Parse](https://github.com/tdewolff/minify/tree/master/parse) subpackage on which minify depends.**
  
 ---
 
@@ -257,6 +259,11 @@ The following features are implemented:
 - merge concatenated strings
 - rewrite numbers (binary, octal, decimal, hexadecimal) to shorter representations
 
+Options:
+
+- `KeepVarNames` keeps variable names as they are and omits shortening variable names
+- `Precision` number of significant digits to preserve for numbers, `0` means no trimming
+
 ### Comparison with other tools
 
 Performance is measured with `time [command]` ran 10 times and selecting the fastest one, on a Thinkpad T460 (i5-6300U quad-core 2.4GHz running Arch Linux) using Go 1.15.
@@ -298,6 +305,7 @@ The JSON minifier only removes whitespace, which is the only thing that can be l
 Options:
 
 - `Precision` number of significant digits to preserve for numbers, `0` means no trimming
+- `KeepNumbers` do not minify numbers if set to `true`, by default numbers will be minified
 
 ## SVG
 
