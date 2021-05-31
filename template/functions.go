@@ -51,6 +51,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"safeURL": func(url string) template.URL {
 			return template.URL(url)
 		},
+		"safeCSS": func(str string) template.CSS {
+			return template.CSS(str)
+		},
 		"noescape": func(str string) template.HTML {
 			return template.HTML(str)
 		},
@@ -91,8 +94,8 @@ func (f *funcMap) Map() template.FuncMap {
 				iconName,
 			))
 		},
-		"rand": func() string {
-			return crypto.GenerateRandomStringHex(10)
+		"nonce": func() string {
+			return crypto.GenerateRandomStringHex(16)
 		},
 
 		// These functions are overrode at runtime after the parsing.
