@@ -82,7 +82,8 @@ a:hover {
 
 .header .active a {
     color: var(--header-active-link-color);
-    font-weight: 500;
+    /* Note: Firefox on Windows does not show the link as bold if the value is under 600 */
+    font-weight: 600;
 }
 
 .header a:hover {
