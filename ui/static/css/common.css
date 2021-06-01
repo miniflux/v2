@@ -749,6 +749,12 @@ article.feed-parsing-error {
     border-color: #aaa;
 }
 
+article.feed-has-unread {
+    background-color: var(--feed-has-unread-background-color);
+    border-style: var(--feed-has-unread-border-style);
+    border-color: var(--feed-has-unread-border-color);
+}
+
 .parsing-error {
     font-size: 0.85em;
     margin-top: 2px;
