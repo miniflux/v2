@@ -34,7 +34,7 @@
 
     {{ if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'nonce-{{ $stylesheetNonce }}'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">
     <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
     {{ else }}
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *">
