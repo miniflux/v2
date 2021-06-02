@@ -100,6 +100,9 @@
 
     --parsing-error-color: #333;
     --feed-parsing-error-background-color: #fcf8e3;
+    --feed-has-unread-background-color: #dfd;
+    --feed-has-unread-border-style: dotted;
+    --feed-has-unread-border-color: var(--entry-header-border-color);
 
     --keyboard-shortcuts-li-color: #333;
 
@@ -208,6 +211,9 @@
 
         --parsing-error-color: #eee;
         --feed-parsing-error-background-color: #343434;
+        --feed-has-unread-background-color: #1b1a1a;
+        --feed-has-unread-border-style: solid;
+        --feed-has-unread-border-color: rgba(82, 168, 236, 0.6);
 
         --keyboard-shortcuts-li-color: #9b9b9b;
 

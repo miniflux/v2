@@ -101,6 +101,9 @@
 
     --parsing-error-color: #eee;
     --feed-parsing-error-background-color: #343434;
+    --feed-has-unread-background-color: #1b1a1a;
+    --feed-has-unread-border-style: solid;
+    --feed-has-unread-border-color: rgba(82, 168, 236, 0.6);
 
     --keyboard-shortcuts-li-color: #9b9b9b;
 
