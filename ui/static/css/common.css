@@ -746,7 +746,8 @@ a.button {
 /* Feeds list */
 article.feed-parsing-error {
     background-color: var(--feed-parsing-error-background-color);
-    border-color: #aaa;
+    border-style: var(--feed-parsing-error-border-style);
+    border-color: var(--feed-parsing-error-border-color);
 }
 
 article.feed-has-unread {
