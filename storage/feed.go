@@ -21,7 +21,11 @@ type byStateAndName struct{ f model.Feeds }
 func (l byStateAndName) Len() int      { return len(l.f) }
 func (l byStateAndName) Swap(i, j int) { l.f[i], l.f[j] = l.f[j], l.f[i] }
 func (l byStateAndName) Less(i, j int) bool {
-	if l.f[i].UnreadCount > 0 && l.f[j].UnreadCount == 0 {
+	if l.f[i].ParsingErrorCount > 0 && l.f[j].ParsingErrorCount == 0 {
+		return true
+	} else if l.f[i].ParsingErrorCount == 0 && l.f[j].ParsingErrorCount > 0 {
+		return false
+	} else if l.f[i].UnreadCount > 0 && l.f[j].UnreadCount == 0 {
 		return true
 	} else if l.f[i].UnreadCount == 0 && l.f[j].UnreadCount > 0 {
 		return false
