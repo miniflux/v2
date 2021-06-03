@@ -277,6 +277,7 @@
     "form.feed.label.fetch_via_proxy": "Récupérer via proxy",
     "form.feed.label.disabled": "Ne pas actualiser ce flux",
     "form.category.label.title": "Titre",
+    "form.category.hide_globally": "Masquer les entrées dans la liste globale non lue",
     "form.user.label.username": "Nom d'utilisateur",
     "form.user.label.password": "Mot de passe",
     "form.user.label.confirmation": "Confirmation du mot de passe",

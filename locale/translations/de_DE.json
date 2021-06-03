@@ -277,6 +277,7 @@
     "form.feed.label.fetch_via_proxy": "Über Proxy abrufen",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
     "form.category.label.title": "Titel",
+    "form.category.hide_globally": "Einträge in der globalen Ungelesen-Liste ausblenden",
     "form.user.label.username": "Benutzername",
     "form.user.label.password": "Passwort",
     "form.user.label.confirmation": "Passwort Bestätigung",

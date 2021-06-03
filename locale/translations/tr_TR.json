@@ -277,6 +277,7 @@
     "form.feed.label.fetch_via_proxy": "Proxy ile çek",
     "form.feed.label.disabled": "Bu beslemeyi yenileme",
     "form.category.label.title": "Başlık",
+    "form.category.hide_globally": "Genel okunmamış listesindeki girişleri gizle",
     "form.user.label.username": "Kullanıcı Adı",
     "form.user.label.password": "Parola",
     "form.user.label.confirmation": "Parola Doğrulama",
