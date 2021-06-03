@@ -37,7 +37,11 @@ func (h *handler) showEditCategoryPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	categoryForm := form.CategoryForm{
-		Title: category.Title,
+		Title:        category.Title,
+		HideGlobally: "",
+	}
+	if category.HideGlobally {
+		categoryForm.HideGlobally = "checked"
 	}
 
 	view.Set("form", categoryForm)

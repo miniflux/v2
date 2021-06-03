@@ -26,10 +26,11 @@ func (h *handler) updateEntriesStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.SetEntriesStatus(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status); err != nil {
+	count, err := h.store.SetEntriesStatusCount(request.UserID(r), entriesStatusUpdateRequest.EntryIDs, entriesStatusUpdateRequest.Status)
+	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	json.OK(w, r, "OK")
+	json.OK(w, r, count)
 }

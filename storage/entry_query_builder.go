@@ -181,9 +181,20 @@ func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 	return e
 }
 
+func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
+	e.conditions = append(e.conditions, "not c.hide_globally")
+	return e
+}
+
 // CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
-	query := `SELECT count(*) FROM entries e LEFT JOIN feeds f ON f.id=e.feed_id WHERE %s`
+	query := `
+		SELECT count(*)
+		FROM entries e
+			JOIN feeds f ON f.id = e.feed_id
+			JOIN categories c ON c.id = f.category_id
+		WHERE %s
+	`
 	condition := e.buildCondition()
 
 	err = e.store.db.QueryRow(fmt.Sprintf(query, condition), e.args...).Scan(&count)

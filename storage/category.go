@@ -40,8 +40,8 @@ func (s *Storage) CategoryIDExists(userID, categoryID int64) bool {
 func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
 	var category model.Category
 
-	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 AND id=$2`
-	err := s.db.QueryRow(query, userID, categoryID).Scan(&category.ID, &category.UserID, &category.Title)
+	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 AND id=$2`
+	err := s.db.QueryRow(query, userID, categoryID).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -55,10 +55,10 @@ func (s *Storage) Category(userID, categoryID int64) (*model.Category, error) {
 
 // FirstCategory returns the first category for the given user.
 func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
-	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC LIMIT 1`
+	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 ORDER BY title ASC LIMIT 1`
 
 	var category model.Category
-	err := s.db.QueryRow(query, userID).Scan(&category.ID, &category.UserID, &category.Title)
+	err := s.db.QueryRow(query, userID).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -74,8 +74,8 @@ func (s *Storage) FirstCategory(userID int64) (*model.Category, error) {
 func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, error) {
 	var category model.Category
 
-	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 AND title=$2`
-	err := s.db.QueryRow(query, userID, title).Scan(&category.ID, &category.UserID, &category.Title)
+	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 AND title=$2`
+	err := s.db.QueryRow(query, userID, title).Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -89,7 +89,7 @@ func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, 
 
 // Categories returns all categories that belongs to the given user.
 func (s *Storage) Categories(userID int64) (model.Categories, error) {
-	query := `SELECT id, user_id, title FROM categories WHERE user_id=$1 ORDER BY title ASC`
+	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 ORDER BY title ASC`
 	rows, err := s.db.Query(query, userID)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch categories: %v`, err)
@@ -99,7 +99,7 @@ func (s *Storage) Categories(userID int64) (model.Categories, error) {
 	categories := make(model.Categories, 0)
 	for rows.Next() {
 		var category model.Category
-		if err := rows.Scan(&category.ID, &category.UserID, &category.Title); err != nil {
+		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally); err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
 
@@ -116,6 +116,7 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 			c.id,
 			c.user_id,
 			c.title,
+			c.hide_globally,
 			(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count,
 			(SELECT count(*)
 			   FROM feeds
@@ -136,7 +137,7 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 	categories := make(model.Categories, 0)
 	for rows.Next() {
 		var category model.Category
-		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.FeedCount, &category.TotalUnread); err != nil {
+		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally, &category.FeedCount, &category.TotalUnread); err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
 
@@ -179,10 +180,11 @@ func (s *Storage) CreateCategory(userID int64, request *model.CategoryRequest) (
 
 // UpdateCategory updates an existing category.
 func (s *Storage) UpdateCategory(category *model.Category) error {
-	query := `UPDATE categories SET title=$1 WHERE id=$2 AND user_id=$3`
+	query := `UPDATE categories SET title=$1, hide_globally = $2 WHERE id=$3 AND user_id=$4`
 	_, err := s.db.Exec(
 		query,
 		category.Title,
+		category.HideGlobally,
 		category.ID,
 		category.UserID,
 	)

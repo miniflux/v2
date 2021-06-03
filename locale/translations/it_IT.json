@@ -277,6 +277,7 @@
     "form.feed.label.fetch_via_proxy": "Recuperare tramite proxy",
     "form.feed.label.disabled": "Non aggiornare questo feed",
     "form.category.label.title": "Titolo",
+    "form.category.hide_globally": "Nascondere le voci nella lista globale dei non letti",
     "form.user.label.username": "Nome utente",
     "form.user.label.password": "Password",
     "form.user.label.confirmation": "Conferma password",

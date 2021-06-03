@@ -205,14 +205,20 @@ function updateEntriesStatus(entryIDs, status, callback) {
     let url = document.body.dataset.entriesStatusUrl;
     let request = new RequestBuilder(url);
     request.withBody({entry_ids: entryIDs, status: status});
-    request.withCallback(callback);
-    request.execute();
+    request.withCallback((resp) => {
+        resp.json().then(count => {
+        if (callback) {
+            callback(resp);
+        }
 
-    if (status === "read") {
-        decrementUnreadCounter(1);
-    } else {
-        incrementUnreadCounter(1);
-    }
+            if (status === "read") {
+                decrementUnreadCounter(count);
+            } else {
+                incrementUnreadCounter(count);
+            }
+        });
+    });
+    request.execute();
 }
 
 // Handle save entry from list view and entry view.
