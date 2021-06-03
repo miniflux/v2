@@ -30,7 +30,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ route "appIcon" "filename" "icon-180.png" }}">
 
     <meta name="theme-color" content="{{ theme_color .theme }}">
-    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme }}?{{ .theme_checksum }}">
+    <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
 
     {{ if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
@@ -40,8 +40,8 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *">
     {{ end }}
 
-    <script src="{{ route "javascript" "name" "app" }}?{{ .app_js_checksum }}" defer></script>
-    <script src="{{ route "javascript" "name" "service-worker" }}?{{ .sw_js_checksum }}" defer id="service-worker-script"></script>
+    <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
+    <script src="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}" defer id="service-worker-script"></script>
 </head>
 <body
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
