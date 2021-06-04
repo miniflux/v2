@@ -187,6 +187,7 @@ type Entry struct {
 	Hash        string     `json:"hash"`
 	Title       string     `json:"title"`
 	URL         string     `json:"url"`
+	CommentsURL string     `json:"comments_url"`
 	Date        time.Time  `json:"published_at"`
 	CreatedAt   time.Time  `json:"created_at"`
 	ChangedAt   time.Time  `json:"changed_at"`
