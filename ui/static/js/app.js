@@ -149,31 +149,32 @@ function toggleEntryStatus(element, toasting) {
     let currentStatus = link.dataset.value;
     let newStatus = currentStatus === "read" ? "unread" : "read";
 
-    updateEntriesStatus([entryID], newStatus);
+    link.querySelector("span").innerHTML = link.dataset.labelLoading;
+    updateEntriesStatus([entryID], newStatus, () => {
+        let iconElement, label;
 
-    let iconElement, label;
-
-    if (currentStatus === "read") {
-        iconElement = document.querySelector("template#icon-read");
-        label = link.dataset.labelRead;
-        if (toasting) {
-            showToast(link.dataset.toastUnread, iconElement);
+        if (currentStatus === "read") {
+            iconElement = document.querySelector("template#icon-read");
+            label = link.dataset.labelRead;
+            if (toasting) {
+                showToast(link.dataset.toastUnread, iconElement);
+            }
+        } else {
+            iconElement = document.querySelector("template#icon-unread");
+            label = link.dataset.labelUnread;
+            if (toasting) {
+                showToast(link.dataset.toastRead, iconElement);
+            }
         }
-    } else {
-        iconElement = document.querySelector("template#icon-unread");
-        label = link.dataset.labelUnread;
-        if (toasting) {
-            showToast(link.dataset.toastRead, iconElement);
+
+        link.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+        link.dataset.value = newStatus;
+
+        if (element.classList.contains("item-status-" + currentStatus)) {
+            element.classList.remove("item-status-" + currentStatus);
+            element.classList.add("item-status-" + newStatus);
         }
-    }
-
-    link.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
-    link.dataset.value = newStatus;
-
-    if (element.classList.contains("item-status-" + currentStatus)) {
-        element.classList.remove("item-status-" + currentStatus);
-        element.classList.add("item-status-" + newStatus);
-    }
+    });
 }
 
 // Mark a single entry as read.
