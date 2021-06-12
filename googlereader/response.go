@@ -42,7 +42,7 @@ type subscriptionsResponse struct {
 
 type itemRef struct {
 	ID              string `json:"id"`
-	DirectStreamIds string `json:"directStreamIds,omitempty"`
+	DirectStreamIDs string `json:"directStreamIds,omitempty"`
 	TimestampUsec   string `json:"timestampUsec,omitempty"`
 }
 
@@ -97,7 +97,7 @@ type contentItemContent struct {
 }
 
 type contentItemOrigin struct {
-	StreamId string `json:"streamId"`
+	StreamID string `json:"streamId"`
 	Title    string `json:"title"`
 	HTMLUrl  string `json:"htmlUrl"`
 }

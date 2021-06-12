@@ -24,38 +24,63 @@ type handler struct {
 }
 
 const (
-	StreamPrefix     = "user/-/state/com.google/"
+	// StreamPrefix is the prefix for astreams (read/starred/reading list and so on)
+	StreamPrefix = "user/-/state/com.google/"
+	// UserStreamPrefix is the user specific prefix for streams (read/starred/reading list and so on)
 	UserStreamPrefix = "user/%d/state/com.google/"
-	LabelPrefix      = "user/-/label/"
-	UserLabelPrefix  = "user/%d/label/"
-	FeedPrefix       = "feed/"
-	Read             = "read"
-	Starred          = "starred"
-	ReadingList      = "reading-list"
-	KeptUnread       = "kept-unread"
-	Broadcast        = "broadcast"
+	// LabelPrefix is the prefix for a label stream
+	LabelPrefix = "user/-/label/"
+	// UserLabelPrefix is the user specific prefix prefix for a label stream
+	UserLabelPrefix = "user/%d/label/"
+	// FeedPrefix is the prefix for a feed stream
+	FeedPrefix = "feed/"
+	// Read is the suffix for read stream
+	Read = "read"
+	// Starred is the suffix for starred stream
+	Starred = "starred"
+	// ReadingList is the suffix for reading list stream
+	ReadingList = "reading-list"
+	// KeptUnread is the suffix for kept unread stream
+	KeptUnread = "kept-unread"
+	// Broadcast is the suffix for broadcast stream
+	Broadcast = "broadcast"
+	// BroadcastFriends is the suffix for broadcast friends stream
 	BroadcastFriends = "broadcast-friends"
-	EntryIDLong      = "tag:google.com,2005:reader/item/%016x"
+	// EntryIDLong is the long entry id representation
+	EntryIDLong = "tag:google.com,2005:reader/item/%016x"
 )
 
+// StreamType represents the possible stream types
 type StreamType int
 
 const (
+	// NoStream - no stream type
 	NoStream StreamType = iota
+	// ReadStream - read stream type
 	ReadStream
+	// StarredStream - starred stream type
 	StarredStream
+	// ReadingListStream - reading list stream type
 	ReadingListStream
+	// KeptUnreadStream - kept unread stream type
 	KeptUnreadStream
+	// BroadcastStream - broadcast stream type
 	BroadcastStream
+	// BroadcastFriendsStream - broadcast friends stream type
 	BroadcastFriendsStream
+	// LabelStream - label stream type
 	LabelStream
+	// FeedStream - feed stream type
 	FeedStream
 )
 
+// Stream defines a stream type and its id
 type Stream struct {
 	Type StreamType
 	ID   string
 }
+
+// RequestModifiers are the parsed request parameters
 type RequestModifiers struct {
 	ExcludeTargets    []Stream
 	FilterTargets     []Stream
@@ -141,7 +166,7 @@ func getModifiers(r *http.Request) (RequestModifiers, error) {
 
 	userID := request.UserID(r)
 	const (
-		StreamIdParam       = "s"
+		StreamIDParam       = "s"
 		StreamExcludesParam = "xt"
 		StreamFiltersParam  = "it"
 		StreamMaxItems      = "n"
@@ -159,7 +184,7 @@ func getModifiers(r *http.Request) (RequestModifiers, error) {
 		result.SortDirection = "asc"
 	}
 	var err error
-	result.Streams, err = getStreams(request.QueryStringParamList(r, StreamIdParam), userID)
+	result.Streams, err = getStreams(request.QueryStringParamList(r, StreamIDParam), userID)
 	if err != nil {
 		return RequestModifiers{}, err
 	}
@@ -383,7 +408,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 				Content:   entry.Content,
 			},
 			Origin: contentItemOrigin{
-				StreamId: fmt.Sprintf("feed/%x", entry.FeedID),
+				StreamID: fmt.Sprintf("feed/%x", entry.FeedID),
 				Title:    entry.Feed.Title,
 				HTMLUrl:  entry.Feed.SiteURL,
 			},
