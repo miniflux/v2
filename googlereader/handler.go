@@ -163,7 +163,6 @@ func Serve(router *mux.Router, store *storage.Storage) {
 }
 
 func getModifiers(r *http.Request) (RequestModifiers, error) {
-
 	userID := request.UserID(r)
 	const (
 		StreamIDParam       = "s"
@@ -246,7 +245,6 @@ func getStreams(streamIDs []string, userID int64) ([]Stream, error) {
 			return []Stream{}, err
 		}
 		streams = append(streams, stream)
-
 	}
 	return streams, nil
 }
@@ -285,7 +283,6 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
-
 	}
 	var user *model.User
 	if user, err = h.store.UserByID(userID); err != nil {
@@ -299,7 +296,6 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
-
 	}
 
 	userReadingList := fmt.Sprintf(UserStreamPrefix, userID) + ReadingList
@@ -498,7 +494,6 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		err := fmt.Errorf("only one stream type expected")
 		logger.Error("[Reader][OutputFormat] %v", err)
 		json.ServerError(w, r, err)
-
 	}
 	switch rm.Streams[0].Type {
 	case ReadingListStream:
@@ -510,7 +505,6 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 	default:
 		dump, _ := httputil.DumpRequest(r, true)
 		logger.Info("[Reader][stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
-
 	}
 }
 

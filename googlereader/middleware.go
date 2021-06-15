@@ -139,7 +139,6 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 				logger.Error("[Reader][Auth] [ClientIP=%s] Post-Form T field is empty", clientIP)
 				Unauthorized(w, r)
 				return
-
 			}
 		} else {
 			authorization := r.Header.Get("Authorization")
