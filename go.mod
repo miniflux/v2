@@ -3,7 +3,7 @@ module miniflux.app
 // +heroku goVersion go1.16
 
 require (
-	github.com/PuerkitoBio/goquery v1.6.1
+	github.com/PuerkitoBio/goquery v1.7.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/golang/gddo v0.0.0-20200831202555-721e228c7686 // indirect
