@@ -563,7 +563,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	}
 	result := streamContentItems{
 		Direction: "ltr",
-		ID:        fmt.Sprintf("feed/%x", entries[0].FeedID),
+		ID:        fmt.Sprintf("feed/%d", entries[0].FeedID),
 		Title:     entries[0].Feed.Title,
 		Alternate: []contentHREFType{
 			{
@@ -627,7 +627,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 				Content:   entry.Content,
 			},
 			Origin: contentItemOrigin{
-				StreamID: fmt.Sprintf("feed/%x", entry.FeedID),
+				StreamID: fmt.Sprintf("feed/%d", entry.FeedID),
 				Title:    entry.Feed.Title,
 				HTMLUrl:  entry.Feed.SiteURL,
 			},
