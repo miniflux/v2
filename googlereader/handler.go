@@ -13,6 +13,7 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/http/route"
+	"miniflux.app/integration"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/storage"
@@ -46,8 +47,33 @@ const (
 	Broadcast = "broadcast"
 	// BroadcastFriends is the suffix for broadcast friends stream
 	BroadcastFriends = "broadcast-friends"
+	// Like is the suffix for like stream
+	Like = "like"
 	// EntryIDLong is the long entry id representation
 	EntryIDLong = "tag:google.com,2005:reader/item/%016x"
+)
+
+const (
+	// ParamItemIDs - name of the parameter with the item ids
+	ParamItemIDs = "i"
+	// ParamStreamID - name of the parameter containing the stream to be included
+	ParamStreamID = "s"
+	// ParamStreamExcludes - name of the parameter containing streams to be excluded
+	ParamStreamExcludes = "xt"
+	// ParamStreamFilters - name of the parameter containing streams to be included
+	ParamStreamFilters = "it"
+	// ParamStreamMaxItems - name of the parameter containing number of items per page/max items returned
+	ParamStreamMaxItems = "n"
+	// ParamStreamOrder - name of the parameter containing the sort criteria
+	ParamStreamOrder = "r"
+	// ParamStreamStartTime - name of the parameter containing epoch timestamp, filtering items older than
+	ParamStreamStartTime = "ot"
+	// ParamStreamStopTime - name of the parameter containing epoch timestamp, filtering items newer than
+	ParamStreamStopTime = "nt"
+	// ParamTagsRemove - name of the parameter containing tags (streams) to be removed
+	ParamTagsRemove = "r"
+	// ParamTagsAdd - name of the parameter containing tags (streams) to be added
+	ParamTagsAdd = "a"
 )
 
 // StreamType represents the possible stream types
@@ -72,6 +98,8 @@ const (
 	LabelStream
 	// FeedStream - feed stream type
 	FeedStream
+	// LikeStream - like stream type
+	LikeStream
 )
 
 // Stream defines a stream type and its id
@@ -113,6 +141,8 @@ func (st StreamType) String() string {
 		return "LabelStream"
 	case FeedStream:
 		return "FeedStream"
+	case LikeStream:
+		return "LikeStream"
 	default:
 		return st.String()
 	}
@@ -155,6 +185,7 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.Use(middleware.apiKeyAuth)
 	sr.Methods(http.MethodOptions)
 	sr.HandleFunc("/token", middleware.token).Methods(http.MethodGet).Name("Token")
+	sr.HandleFunc("/edit-tag", handler.editTag).Methods(http.MethodPost).Name("EditTag")
 	sr.HandleFunc("/user-info", handler.userInfo).Methods(http.MethodGet).Name("UserInfo")
 	sr.HandleFunc("/subscription/list", handler.subscriptionList).Methods(http.MethodGet).Name("SubscriptonList")
 	sr.HandleFunc("/stream/items/ids", handler.streamItemIDs).Methods(http.MethodGet).Name("StreamItemIDs")
@@ -162,44 +193,35 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
 
-func getModifiers(r *http.Request) (RequestModifiers, error) {
+func getStreamFilterModifiers(r *http.Request) (RequestModifiers, error) {
 	userID := request.UserID(r)
-	const (
-		StreamIDParam       = "s"
-		StreamExcludesParam = "xt"
-		StreamFiltersParam  = "it"
-		StreamMaxItems      = "n"
-		StreamOrderParam    = "r"
-		StreamStartTime     = "ot"
-		StreamStopTime      = "nt"
-	)
 
 	result := RequestModifiers{
 		SortDirection: "desc",
 		UserID:        userID,
 	}
-	streamOrder := request.QueryStringParam(r, StreamOrderParam, "d")
+	streamOrder := request.QueryStringParam(r, ParamStreamOrder, "d")
 	if streamOrder == "o" {
 		result.SortDirection = "asc"
 	}
 	var err error
-	result.Streams, err = getStreams(request.QueryStringParamList(r, StreamIDParam), userID)
+	result.Streams, err = getStreams(request.QueryStringParamList(r, ParamStreamID), userID)
 	if err != nil {
 		return RequestModifiers{}, err
 	}
-	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, StreamExcludesParam), userID)
-	if err != nil {
-		return RequestModifiers{}, err
-	}
-
-	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, StreamFiltersParam), userID)
+	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, ParamStreamExcludes), userID)
 	if err != nil {
 		return RequestModifiers{}, err
 	}
 
-	result.Count = request.QueryIntParam(r, StreamMaxItems, 0)
-	result.StartTime = int64(request.QueryIntParam(r, StreamStartTime, 0))
-	result.StopTime = int64(request.QueryIntParam(r, StreamStopTime, 0))
+	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, ParamStreamFilters), userID)
+	if err != nil {
+		return RequestModifiers{}, err
+	}
+
+	result.Count = request.QueryIntParam(r, ParamStreamMaxItems, 0)
+	result.StartTime = int64(request.QueryIntParam(r, ParamStreamStartTime, 0))
+	result.StopTime = int64(request.QueryIntParam(r, ParamStreamStopTime, 0))
 	return result, nil
 }
 
@@ -222,6 +244,8 @@ func getStream(streamID string, userID int64) (Stream, error) {
 			return Stream{BroadcastStream, ""}, nil
 		case BroadcastFriends:
 			return Stream{BroadcastFriendsStream, ""}, nil
+		case Like:
+			return Stream{LikeStream, ""}, nil
 		default:
 			err := fmt.Errorf("uknown stream with id: %s", id)
 			return Stream{NoStream, ""}, err
@@ -249,6 +273,77 @@ func getStreams(streamIDs []string, userID int64) ([]Stream, error) {
 	return streams, nil
 }
 
+func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType]bool, error) {
+	tags := make(map[StreamType]bool)
+	for _, s := range addTags {
+		switch s.Type {
+		case ReadStream:
+			if _, ok := tags[ReadStream]; ok {
+				return nil, fmt.Errorf(KeptUnread + " and " + Read + " should not be supplied simultaneously")
+			}
+			tags[ReadStream] = true
+		case KeptUnreadStream:
+			if _, ok := tags[ReadStream]; ok {
+				return nil, fmt.Errorf(KeptUnread + " and " + Read + " should not be supplied simultaneously")
+			}
+			tags[ReadStream] = false
+		case StarredStream:
+			tags[StarredStream] = true
+		case BroadcastStream, LikeStream:
+			logger.Info("Broadcast & Like tags are not implemented!")
+		default:
+			return nil, fmt.Errorf("unsupported tag type: %s", s.Type)
+		}
+	}
+	for _, s := range removeTags {
+		switch s.Type {
+		case ReadStream:
+			if _, ok := tags[ReadStream]; ok {
+				return nil, fmt.Errorf(KeptUnread + " and " + Read + " should not be supplied simultaneously")
+			}
+			tags[ReadStream] = false
+		case KeptUnreadStream:
+			if _, ok := tags[ReadStream]; ok {
+				return nil, fmt.Errorf(KeptUnread + " and " + Read + " should not be supplied simultaneously")
+			}
+			tags[ReadStream] = true
+		case StarredStream:
+			if _, ok := tags[StarredStream]; ok {
+				return nil, fmt.Errorf(Starred + " should not be supplied for add and remove simultaneously")
+			}
+			tags[StarredStream] = false
+		case BroadcastStream, LikeStream:
+			logger.Info("Broadcast & Like tags are not implemented!")
+		default:
+			return nil, fmt.Errorf("unsupported tag type: %s", s.Type)
+		}
+	}
+
+	return tags, nil
+}
+
+func getItemIDs(r *http.Request) ([]int64, error) {
+
+	items := r.Form[ParamItemIDs]
+	if len(items) == 0 {
+		return nil, fmt.Errorf("no items requested")
+	}
+
+	itemIDs := make([]int64, len(items))
+
+	for i, item := range items {
+		var itemID int64
+		_, err := fmt.Sscanf(item, EntryIDLong, &itemID)
+		if err != nil {
+			itemID, err = strconv.ParseInt(item, 16, 64)
+			if err != nil {
+				return nil, fmt.Errorf("could not parse item: %v", item)
+			}
+		}
+		itemIDs[i] = itemID
+	}
+	return itemIDs, nil
+}
 func checkOutputFormat(w http.ResponseWriter, r *http.Request) error {
 	var output string
 	if r.Method == http.MethodPost {
@@ -265,6 +360,145 @@ func checkOutputFormat(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	return nil
+}
+
+func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][/edit-tag][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	err := r.ParseForm()
+	if err != nil {
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+
+	addTags, err := getStreams(r.PostForm[ParamTagsAdd], userID)
+	if err != nil {
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	removeTags, err := getStreams(r.PostForm[ParamTagsRemove], userID)
+	if err != nil {
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	if len(addTags) == 0 && len(removeTags) == 0 {
+		err = fmt.Errorf("add or/and remove tags should be supllied")
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] ", clientIP, err)
+		json.ServerError(w, r, err)
+	}
+	tags, err := checkAndSimplifyTags(addTags, removeTags)
+	if err != nil {
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+
+	itemIDs, err := getItemIDs(r)
+	if err != nil {
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+
+	logger.Debug("[Reader][/edit-tag] [ClientIP=%s] itemIDs: %v", clientIP, itemIDs)
+	logger.Debug("[Reader][/edit-tag] [ClientIP=%s] tags: %v", clientIP, tags)
+	builder := h.store.NewEntryQueryBuilder(userID)
+	builder.WithEntryIDs(itemIDs)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+
+	n := 0
+	readEntryIDs := make([]int64, 0, 0)
+	unreadEntryIDs := make([]int64, 0, 0)
+	starredEntryIDs := make([]int64, 0, 0)
+	unstarredEntryIDs := make([]int64, 0, 0)
+	for _, entry := range entries {
+		if read, exists := tags[ReadStream]; exists {
+			if read && entry.Status == model.EntryStatusUnread {
+				readEntryIDs = append(readEntryIDs, entry.ID)
+			} else if entry.Status == model.EntryStatusRead {
+				unreadEntryIDs = append(unreadEntryIDs, entry.ID)
+			}
+		}
+		if starred, exists := tags[StarredStream]; exists {
+			if starred && !entry.Starred {
+				starredEntryIDs = append(starredEntryIDs, entry.ID)
+				// filter the original array
+				entries[n] = entry
+				n++
+			} else if entry.Starred {
+				unstarredEntryIDs = append(unstarredEntryIDs, entry.ID)
+			}
+		}
+	}
+	entries = entries[:n]
+	if len(readEntryIDs) > 0 {
+		err = h.store.SetEntriesStatus(userID, readEntryIDs, model.EntryStatusRead)
+		if err != nil {
+			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			json.ServerError(w, r, err)
+			return
+		}
+
+	}
+
+	if len(unreadEntryIDs) > 0 {
+		err = h.store.SetEntriesStatus(userID, unreadEntryIDs, model.EntryStatusUnread)
+		if err != nil {
+			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			json.ServerError(w, r, err)
+			return
+		}
+	}
+
+	if len(unstarredEntryIDs) > 0 {
+		err = h.store.SetEntriesBookmarkedState(userID, unstarredEntryIDs, true)
+		if err != nil {
+			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			json.ServerError(w, r, err)
+			return
+		}
+	}
+
+	if len(starredEntryIDs) > 0 {
+		err = h.store.SetEntriesBookmarkedState(userID, starredEntryIDs, true)
+		if err != nil {
+			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			json.ServerError(w, r, err)
+			return
+		}
+
+	}
+
+	if len(entries) > 0 {
+		settings, err := h.store.Integration(userID)
+		if err != nil {
+			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			json.ServerError(w, r, err)
+			return
+		}
+
+		for _, entry := range entries {
+			e := entry
+			go func() {
+				integration.SendEntry(e, settings)
+			}()
+		}
+	}
+
+	OK(w, r)
 }
 
 func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
@@ -291,7 +525,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	requestModifiers, err := getModifiers(r)
+	requestModifiers, err := getStreamFilterModifiers(r)
 	if err != nil {
 		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
@@ -301,25 +535,14 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	userReadingList := fmt.Sprintf(UserStreamPrefix, userID) + ReadingList
 	userRead := fmt.Sprintf(UserStreamPrefix, userID) + Read
 	userStarred := fmt.Sprintf(UserStreamPrefix, userID) + Starred
-	items := r.Form["i"]
-	if len(items) == 0 {
-		err = fmt.Errorf("no items requested")
+
+	itemIDs, err := getItemIDs(r)
+	if err != nil {
 		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
-
-	itemIDs := make([]int64, len(items))
-
-	for i, item := range items {
-		itemID, err := strconv.ParseInt(item, 16, 64)
-		if err != nil {
-			logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
-			json.ServerError(w, r, err)
-			return
-		}
-		itemIDs[i] = itemID
-	}
+	logger.Debug("[Reader][/stream/items/contents] [ClientIP=%s] itemIDs: %v", clientIP, itemIDs)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -484,7 +707,7 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 	}
 
-	rm, err := getModifiers(r)
+	rm, err := getStreamFilterModifiers(r)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

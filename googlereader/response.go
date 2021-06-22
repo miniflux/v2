@@ -4,7 +4,13 @@
 
 package googlereader // import "miniflux.app/googlereader"
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"miniflux.app/http/response"
+	"miniflux.app/logger"
+)
 
 type login struct {
 	SID  string `json:"SID,omitempty"`
@@ -100,4 +106,27 @@ type contentItemOrigin struct {
 	StreamID string `json:"streamId"`
 	Title    string `json:"title"`
 	HTMLUrl  string `json:"htmlUrl"`
+}
+
+// Unauthorized sends a not authorized error to the client.
+func Unauthorized(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:Unauthorized] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusUnauthorized)
+	builder.WithHeader("Content-Type", "text/plain")
+	builder.WithHeader("X-Reader-Google-Bad-Token", "true")
+	builder.WithBody("Unauthorized")
+	builder.Write()
+}
+
+// OK sends a ok response to the client.
+func OK(w http.ResponseWriter, r *http.Request) {
+	logger.Error("[HTTP:OK] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusOK)
+	builder.WithHeader("Content-Type", "text/plain")
+	builder.WithBody("OK")
+	builder.Write()
 }

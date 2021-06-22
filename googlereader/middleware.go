@@ -28,18 +28,6 @@ func newMiddleware(s *storage.Storage) *middleware {
 	return &middleware{s}
 }
 
-// Unauthorized sends a not authorized error to the client.
-func Unauthorized(w http.ResponseWriter, r *http.Request) {
-	logger.Error("[HTTP:Unauthorized] %s", r.URL)
-
-	builder := response.New(w, r)
-	builder.WithStatus(http.StatusUnauthorized)
-	builder.WithHeader("Content-Type", "text/plain")
-	builder.WithHeader("X-Reader-Google-Bad-Token", "true")
-	builder.WithBody("Unauthorized")
-	builder.Write()
-}
-
 func (m *middleware) clientLogin(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	var username, password, output string
