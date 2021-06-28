@@ -323,7 +323,6 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 }
 
 func getItemIDs(r *http.Request) ([]int64, error) {
-
 	items := r.Form[ParamItemIDs]
 	if len(items) == 0 {
 		return nil, fmt.Errorf("no items requested")
@@ -420,10 +419,10 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	}
 
 	n := 0
-	readEntryIDs := make([]int64, 0, 0)
-	unreadEntryIDs := make([]int64, 0, 0)
-	starredEntryIDs := make([]int64, 0, 0)
-	unstarredEntryIDs := make([]int64, 0, 0)
+	readEntryIDs := make([]int64, 0)
+	unreadEntryIDs := make([]int64, 0)
+	starredEntryIDs := make([]int64, 0)
+	unstarredEntryIDs := make([]int64, 0)
 	for _, entry := range entries {
 		if read, exists := tags[ReadStream]; exists {
 			if read && entry.Status == model.EntryStatusUnread {
@@ -451,7 +450,6 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 			json.ServerError(w, r, err)
 			return
 		}
-
 	}
 
 	if len(unreadEntryIDs) > 0 {
@@ -479,7 +477,6 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 			json.ServerError(w, r, err)
 			return
 		}
-
 	}
 
 	if len(entries) > 0 {
