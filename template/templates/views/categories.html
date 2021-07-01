@@ -49,6 +49,17 @@
                             data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ end }}
+                    {{ if gt .TotalUnread 0 }}
+                      <li>
+                        <a href="#"
+                            data-confirm="true"
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}"
+                            data-url="{{ route "markCategoryAsRead" "categoryID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                      </li>
+                    {{ end }}
                 </ul>
             </div>
         </article>
