@@ -181,9 +181,20 @@ func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 	return e
 }
 
+func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
+	e.conditions = append(e.conditions, "not c.hide_globally")
+	return e
+}
+
 // CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
-	query := `SELECT count(*) FROM entries e LEFT JOIN feeds f ON f.id=e.feed_id WHERE %s`
+	query := `
+		SELECT count(*)
+		FROM entries e
+			JOIN feeds f ON f.id = e.feed_id
+			JOIN categories c ON c.id = f.category_id
+		WHERE %s
+	`
 	condition := e.buildCondition()
 
 	err = e.store.db.QueryRow(fmt.Sprintf(query, condition), e.args...).Scan(&count)
@@ -233,6 +244,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.starred,
 			e.reading_time,
 			e.created_at,
+			e.changed_at,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
@@ -294,6 +306,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Starred,
 			&entry.ReadingTime,
 			&entry.CreatedAt,
+			&entry.ChangedAt,
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,
@@ -322,6 +335,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		// Make sure that timestamp fields contains timezone information (API)
 		entry.Date = timezone.Convert(tz, entry.Date)
 		entry.CreatedAt = timezone.Convert(tz, entry.CreatedAt)
+		entry.ChangedAt = timezone.Convert(tz, entry.ChangedAt)
 		entry.Feed.CheckedAt = timezone.Convert(tz, entry.Feed.CheckedAt)
 
 		entry.Feed.ID = entry.FeedID

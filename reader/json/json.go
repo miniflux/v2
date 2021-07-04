@@ -182,8 +182,11 @@ func getAuthor(author jsonAuthor) string {
 func truncate(str string) string {
 	max := 100
 	str = strings.TrimSpace(str)
-	if len(str) > max {
-		return str[:max] + "..."
+
+	// Convert to runes to be safe with unicode
+	runes := []rune(str)
+	if len(runes) > max {
+		return string(runes[:max]) + "…"
 	}
 
 	return str

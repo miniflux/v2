@@ -12,6 +12,19 @@ function onClick(selector, callback, noPreventDefault) {
     });
 }
 
+function onAuxClick(selector, callback, noPreventDefault) {
+    let elements = document.querySelectorAll(selector);
+    elements.forEach((element) => {
+        element.onauxclick = (event) => {
+            if (!noPreventDefault) {
+                event.preventDefault();
+            }
+
+            callback(event);
+        };
+    });
+}
+
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu() {
     let menu = document.querySelector(".header nav ul");
@@ -115,11 +128,13 @@ function markPageAsRead() {
 }
 
 // Handle entry status changes from the list view and entry view.
-function handleEntryStatus(element) {
+function handleEntryStatus(element, setToRead) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        toggleEntryStatus(currentEntry, toasting);
+        if (!setToRead || currentEntry.querySelector("a[data-toggle-status]").dataset.value == "unread") {
+            toggleEntryStatus(currentEntry, toasting);
+        }
         if (isListView() && currentEntry.classList.contains('current-item')) {
             goToNextListItem();
         }
@@ -134,31 +149,32 @@ function toggleEntryStatus(element, toasting) {
     let currentStatus = link.dataset.value;
     let newStatus = currentStatus === "read" ? "unread" : "read";
 
-    updateEntriesStatus([entryID], newStatus);
+    link.querySelector("span").innerHTML = link.dataset.labelLoading;
+    updateEntriesStatus([entryID], newStatus, () => {
+        let iconElement, label;
 
-    let iconElement, label;
-
-    if (currentStatus === "read") {
-        iconElement = document.querySelector("template#icon-read");
-        label = link.dataset.labelRead;
-        if (toasting) {
-            showToast(link.dataset.toastUnread, iconElement);
+        if (currentStatus === "read") {
+            iconElement = document.querySelector("template#icon-read");
+            label = link.dataset.labelRead;
+            if (toasting) {
+                showToast(link.dataset.toastUnread, iconElement);
+            }
+        } else {
+            iconElement = document.querySelector("template#icon-unread");
+            label = link.dataset.labelUnread;
+            if (toasting) {
+                showToast(link.dataset.toastRead, iconElement);
+            }
         }
-    } else {
-        iconElement = document.querySelector("template#icon-unread");
-        label = link.dataset.labelUnread;
-        if (toasting) {
-            showToast(link.dataset.toastRead, iconElement);
+
+        link.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+        link.dataset.value = newStatus;
+
+        if (element.classList.contains("item-status-" + currentStatus)) {
+            element.classList.remove("item-status-" + currentStatus);
+            element.classList.add("item-status-" + newStatus);
         }
-    }
-
-    link.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
-    link.dataset.value = newStatus;
-
-    if (element.classList.contains("item-status-" + currentStatus)) {
-        element.classList.remove("item-status-" + currentStatus);
-        element.classList.add("item-status-" + newStatus);
-    }
+    });
 }
 
 // Mark a single entry as read.
@@ -190,14 +206,20 @@ function updateEntriesStatus(entryIDs, status, callback) {
     let url = document.body.dataset.entriesStatusUrl;
     let request = new RequestBuilder(url);
     request.withBody({entry_ids: entryIDs, status: status});
-    request.withCallback(callback);
-    request.execute();
+    request.withCallback((resp) => {
+        resp.json().then(count => {
+        if (callback) {
+            callback(resp);
+        }
 
-    if (status === "read") {
-        decrementUnreadCounter(1);
-    } else {
-        incrementUnreadCounter(1);
-    }
+            if (status === "read") {
+                decrementUnreadCounter(count);
+            } else {
+                incrementUnreadCounter(count);
+            }
+        });
+    });
+    request.execute();
 }
 
 // Handle save entry from list view and entry view.

@@ -9,11 +9,30 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
+	"sort"
 
 	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 )
+
+type byStateAndName struct{ f model.Feeds }
+
+func (l byStateAndName) Len() int      { return len(l.f) }
+func (l byStateAndName) Swap(i, j int) { l.f[i], l.f[j] = l.f[j], l.f[i] }
+func (l byStateAndName) Less(i, j int) bool {
+	if l.f[i].ParsingErrorCount > 0 && l.f[j].ParsingErrorCount == 0 {
+		return true
+	} else if l.f[i].ParsingErrorCount == 0 && l.f[j].ParsingErrorCount > 0 {
+		return false
+	} else if l.f[i].UnreadCount > 0 && l.f[j].UnreadCount == 0 {
+		return true
+	} else if l.f[i].UnreadCount == 0 && l.f[j].UnreadCount > 0 {
+		return false
+	} else {
+		return l.f[i].Title < l.f[j].Title
+	}
+}
 
 // FeedExists checks if the given feed exists.
 func (s *Storage) FeedExists(userID, feedID int64) bool {
@@ -121,13 +140,22 @@ func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	return builder.GetFeeds()
 }
 
+func getFeedsSorted(builder *FeedQueryBuilder) (model.Feeds, error) {
+	result, err := builder.GetFeeds()
+	if err == nil {
+		sort.Sort(byStateAndName{result})
+		return result, nil
+	}
+	return result, err
+}
+
 // FeedsWithCounters returns all feeds of the given user with counters of read and unread entries.
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
 	builder.WithOrder(model.DefaultFeedSorting)
 	builder.WithDirection(model.DefaultFeedSortingDirection)
-	return builder.GetFeeds()
+	return getFeedsSorted(builder)
 }
 
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
@@ -137,7 +165,7 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 	builder.WithCounters()
 	builder.WithOrder(model.DefaultFeedSorting)
 	builder.WithDirection(model.DefaultFeedSortingDirection)
-	return builder.GetFeeds()
+	return getFeedsSorted(builder)
 }
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.

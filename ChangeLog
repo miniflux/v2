@@ -1,3 +1,25 @@
+Version 2.0.31 (June 6, 2021)
+-----------------------------
+
+* Expose comments_url entry field in Golang API client
+* Use unique file names for cache busting instead of query string
+* Highlight and sort feeds with unread entries in feeds list
+* Mark items as read on click/middle click of external links
+* Fix: Firefox on Windows does not show the active link as bold
+* Avoid extra HTTP request for fetching custom stylesheet
+* Remove invalid CSRF HTML meta tag
+* Add lang attribute to root HTML tag
+* Use runes instead of bytes to truncate JSON feed titles (avoid breaking Unicode strings)
+* Expose changed_at time through the API
+* Add new config option CLEANUP_ARCHIVE_BATCH_SIZE
+* Add new option DATABASE_CONNECTION_LIFETIME
+* Add database stats to Prometheus exporter
+* Add Systemd watchdog
+* Avoid custom stylesheet to be cached by third-party CDN
+* Update a shared entry label translation in zh_CN
+* Bump github.com/tdewolff/minify/v2 from 2.9.16 to 2.9.17
+* Bump github.com/lib/pq from 1.10.1 to 1.10.2
+
 Version 2.0.30 (May 7, 2021)
 ----------------------------
 

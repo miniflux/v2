@@ -100,7 +100,13 @@
     --entry-enclosure-border-color: #333;
 
     --parsing-error-color: #eee;
-    --feed-parsing-error-background-color: #343434;
+    --feed-parsing-error-background-color: #3a1515;
+    --feed-parsing-error-border-style: solid;
+    --feed-parsing-error-border-color: #562222;
+
+    --feed-has-unread-background-color: #1b1a1a;
+    --feed-has-unread-border-style: solid;
+    --feed-has-unread-border-color: rgb(33 57 76);
 
     --keyboard-shortcuts-li-color: #9b9b9b;
 

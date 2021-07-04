@@ -61,6 +61,15 @@ document.addEventListener("DOMContentLoaded", function () {
         request.execute();
     }));
 
+    onClick("a[data-original-link]", (event) => {
+        handleEntryStatus(event.target, true);
+    }, true);
+    onAuxClick("a[data-original-link]", (event) => {
+        if (event.button == 1) {
+            handleEntryStatus(event.target, true);
+        }
+    }, true);
+
     if (document.documentElement.clientWidth < 600) {
         onClick(".logo", () => toggleMainMenu());
         onClick(".header nav li", (event) => onClickMainMenuListItem(event));

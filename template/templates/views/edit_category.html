@@ -26,6 +26,11 @@
     <label for="form-title">{{ t "form.category.label.title" }}</label>
     <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
+    <label>
+        <input type="checkbox" name="hide_globally" {{ if .form.HideGlobally }}checked{{ end }}>
+        {{ t "form.category.hide_globally" }}
+    </label>
+
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>
