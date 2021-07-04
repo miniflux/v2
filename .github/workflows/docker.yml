@@ -1,57 +1,50 @@
-name: Docker
+name: docker-release
+
 on:
-  schedule:
-    - cron: '0 1 * * *'
   push:
     tags:
-      - '*.*.*'
+      - "v*"
+
 jobs:
-  docker-images:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
+
+      # https://github.com/booxmedialtd/ws-action-parse-semver
+      - name: Parse version
+        id: semver-version
+        uses: booxmedialtd/ws-action-parse-semver@v1.3.1
         with:
-          fetch-depth: 0
+          input_string: ${{ github.ref }}
+          version_extractor_regex: '\/v(.*)$'
 
-      - name: Generate Docker tag
-        id: docker_tag
-        run: |
-          DOCKER_IMAGE=miniflux/miniflux
-          DOCKER_VERSION=dev
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-          DOCKER_VERSION=nightly
-          TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION}"
-          elif [[ $GITHUB_REF == refs/tags/* ]]; then
-          DOCKER_VERSION=${GITHUB_REF#refs/tags/}
-          TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION},${DOCKER_IMAGE}:latest,ghcr.io/${DOCKER_IMAGE}:latest"
-          fi
-          echo ::set-output name=tags::${TAGS}
-
+      # https://github.com/docker/setup-qemu-action#usage
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v1.2.0
 
+      # https://github.com/marketplace/actions/docker-setup-buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1 
+      # https://github.com/docker/login-action#docker-hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1.10.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1 
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      # https://github.com/docker/build-push-action#multi-platform-image
+      - name: Build and push to Docker Hub
+        uses: docker/build-push-action@v2.5.0
         with:
           context: .
           file: ./packaging/docker/Dockerfile
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
-          tags: ${{ steps.docker_tag.outputs.tags }}
+          tags: |
+            ${{ secrets.DOCKERHUB_ORG }}/${{ secrets.DOCKERHUB_REPOSITORY }}:latest
+            ${{ secrets.DOCKERHUB_ORG }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ steps.semver-version.outputs.major }}
+            ${{ secrets.DOCKERHUB_ORG }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ steps.semver-version.outputs.major }}.${{ steps.semver-version.outputs.minor }}
+            ${{ secrets.DOCKERHUB_ORG }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ steps.semver-version.outputs.fullversion }}
