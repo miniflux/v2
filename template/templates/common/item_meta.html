@@ -20,6 +20,7 @@
             <a href="#"
                 title="{{ t "entry.status.title" }}"
                 data-toggle-status="true"
+                data-label-loading="{{ t "entry.state.saving" }}"
                 data-label-read="{{ t "entry.status.read" }}"
                 data-label-unread="{{ t "entry.status.unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"

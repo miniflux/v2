@@ -275,6 +275,7 @@
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此Feed",
     "form.category.label.title": "标题",
+    "form.category.hide_globally": "隐藏全局未读列表中的条目",
     "form.user.label.username": "用户名",
     "form.user.label.password": "密码",
     "form.user.label.confirmation": "确认",

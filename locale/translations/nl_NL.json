@@ -277,6 +277,7 @@
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
     "form.category.label.title": "Naam",
+    "form.category.hide_globally": "Verberg items in de globale ongelezen lijst",
     "form.user.label.username": "Gebruikersnaam",
     "form.user.label.password": "Wachtwoord",
     "form.user.label.confirmation": "Bevestig wachtwoord",

@@ -1,4 +1,4 @@
-# Parse [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/minify/v2/parse?tab=doc)
+# Parse [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/parse/v2?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/tdewolff/parse)](https://goreportcard.com/report/github.com/tdewolff/parse) [![Coverage Status](https://coveralls.io/repos/github/tdewolff/parse/badge.svg?branch=master)](https://coveralls.io/github/tdewolff/parse?branch=master) [![Donate](https://img.shields.io/badge/patreon-donate-DFB317)](https://www.patreon.com/tdewolff)
 
 This package contains several lexers and parsers written in [Go][1]. All subpackages are built to be streaming, high performance and to be in accordance with the official (latest) specifications.
 
@@ -33,22 +33,22 @@ For example, the floating-point to string conversion function is approximately t
 ## CSS
 This package is a CSS3 lexer and parser. Both follow the specification at [CSS Syntax Module Level 3](http://www.w3.org/TR/css-syntax-3/). The lexer takes an io.Reader and converts it into tokens until the EOF. The parser returns a parse tree of the full io.Reader input stream, but the low-level `Next` function can be used for stream parsing to returns grammar units until the EOF.
 
-[See README here](https://github.com/tdewolff/minify/tree/master/parse/css).
+[See README here](https://github.com/tdewolff/parse/tree/master/css).
 
 ## HTML
 This package is an HTML5 lexer. It follows the specification at [The HTML syntax](http://www.w3.org/TR/html5/syntax.html). The lexer takes an io.Reader and converts it into tokens until the EOF.
 
-[See README here](https://github.com/tdewolff/minify/tree/master/parse/html).
+[See README here](https://github.com/tdewolff/parse/tree/master/html).
 
 ## JS
 This package is a JS lexer (ECMA-262, edition 6.0). It follows the specification at [ECMAScript Language Specification](http://www.ecma-international.org/ecma-262/6.0/). The lexer takes an io.Reader and converts it into tokens until the EOF.
 
-[See README here](https://github.com/tdewolff/minify/tree/master/parse/js).
+[See README here](https://github.com/tdewolff/parse/tree/master/js).
 
 ## JSON
 This package is a JSON parser (ECMA-404). It follows the specification at [JSON](http://json.org/). The parser takes an io.Reader and converts it into tokens until the EOF.
 
-[See README here](https://github.com/tdewolff/minify/tree/master/parse/json).
+[See README here](https://github.com/tdewolff/parse/tree/master/json).
 
 ## SVG
 This package contains common hashes for SVG1.1 tags and attributes.
@@ -56,7 +56,7 @@ This package contains common hashes for SVG1.1 tags and attributes.
 ## XML
 This package is an XML1.0 lexer. It follows the specification at [Extensible Markup Language (XML) 1.0 (Fifth Edition)](http://www.w3.org/TR/xml/). The lexer takes an io.Reader and converts it into tokens until the EOF.
 
-[See README here](https://github.com/tdewolff/minify/tree/master/parse/xml).
+[See README here](https://github.com/tdewolff/parse/tree/master/xml).
 
 ## License
 Released under the [MIT license](LICENSE.md).

@@ -48,7 +48,10 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(loggedUser.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
 
-	categoryRequest := &model.CategoryRequest{Title: categoryForm.Title}
+	categoryRequest := &model.CategoryRequest{
+		Title:        categoryForm.Title,
+		HideGlobally: categoryForm.HideGlobally,
+	}
 
 	if validationErr := validator.ValidateCategoryModification(h.store, loggedUser.ID, category.ID, categoryRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.TranslationKey)

@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 
 	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/parse/js"
-	"github.com/tdewolff/minify/v2/parse/strconv"
+	"github.com/tdewolff/parse/v2/js"
+	"github.com/tdewolff/parse/v2/strconv"
 )
 
 var (

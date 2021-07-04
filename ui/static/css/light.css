@@ -101,6 +101,12 @@
 
     --parsing-error-color: #333;
     --feed-parsing-error-background-color: #fcf8e3;
+    --feed-parsing-error-border-style: solid;
+    --feed-parsing-error-border-color: #f9e883;
+
+    --feed-has-unread-background-color: #dfd;
+    --feed-has-unread-border-style: solid;
+    --feed-has-unread-border-color: #bee6bc;
 
     --keyboard-shortcuts-li-color: #333;
 

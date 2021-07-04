@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tdewolff/minify/v2/parse"
-	"github.com/tdewolff/minify/v2/parse/buffer"
+	"github.com/tdewolff/parse/v2"
+	"github.com/tdewolff/parse/v2/buffer"
 )
-
-var evalBytes = []byte("eval")
 
 // Parser is the state for the parser.
 type Parser struct {
@@ -2194,7 +2192,9 @@ func (p *Parser) exprToBinding(expr IExpr) (binding IBinding) {
 			}
 			var bindingElement BindingElement
 			bindingElement.Binding = p.exprToBinding(item.Value)
-			if item.Init != nil {
+			if bindingElement.Binding == nil {
+				bindingElement = p.exprToBindingElement(item.Value)
+			} else if item.Init != nil {
 				bindingElement.Default = item.Init
 			}
 			bindingObject.List = append(bindingObject.List, BindingObjectItem{Key: item.Name, Value: bindingElement})

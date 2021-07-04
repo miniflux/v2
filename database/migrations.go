@@ -534,4 +534,10 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE categories ADD COLUMN hide_globally boolean not null default false
+		`)
+		return err
+	},
 }

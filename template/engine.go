@@ -98,13 +98,13 @@ func (e *Engine) ParseTemplates() error {
 }
 
 // Render process a template.
-func (e *Engine) Render(name, language string, data interface{}) []byte {
+func (e *Engine) Render(name string, data map[string]interface{}) []byte {
 	tpl, ok := e.templates[name]
 	if !ok {
 		logger.Fatal("[Template] The template %s does not exists", name)
 	}
 
-	printer := locale.NewPrinter(language)
+	printer := locale.NewPrinter(data["language"].(string))
 
 	// Functions that need to be declared at runtime.
 	tpl.Funcs(template.FuncMap{

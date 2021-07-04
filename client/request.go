@@ -104,8 +104,15 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 		response.Body.Close()
 		return nil, ErrForbidden
 	case http.StatusInternalServerError:
-		response.Body.Close()
-		return nil, ErrServerError
+		defer response.Body.Close()
+
+		var resp errorResponse
+		decoder := json.NewDecoder(response.Body)
+		// If we failed to decode, just return a generic ErrServerError
+		if err := decoder.Decode(&resp); err != nil {
+			return nil, ErrServerError
+		}
+		return nil, errors.New("miniflux: internal server error: " + resp.ErrorMessage)
 	case http.StatusNotFound:
 		response.Body.Close()
 		return nil, ErrNotFound

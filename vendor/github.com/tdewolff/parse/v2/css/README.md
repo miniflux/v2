@@ -1,15 +1,15 @@
-# CSS [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/minify/v2/parse/css?tab=doc)
+# CSS [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/parse/v2/css?tab=doc)
 
 This package is a CSS3 lexer and parser written in [Go][1]. Both follow the specification at [CSS Syntax Module Level 3](http://www.w3.org/TR/css-syntax-3/). The lexer takes an io.Reader and converts it into tokens until the EOF. The parser returns a parse tree of the full io.Reader input stream, but the low-level `Next` function can be used for stream parsing to returns grammar units until the EOF.
 
 ## Installation
 Run the following command
 
-	go get -u github.com/tdewolff/minify/v2/parse/css
+	go get -u github.com/tdewolff/parse/v2/css
 
 or add the following import and run project with `go get`
 
-	import "github.com/tdewolff/minify/v2/parse/css"
+	import "github.com/tdewolff/parse/v2/css"
 
 ## Lexer
 ### Usage
@@ -70,7 +70,7 @@ package main
 import (
 	"os"
 
-	"github.com/tdewolff/minify/v2/parse/css"
+	"github.com/tdewolff/parse/v2/css"
 )
 
 // Tokenize CSS3 from stdin.
@@ -132,7 +132,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/tdewolff/minify/v2/parse/css"
+	"github.com/tdewolff/parse/v2/css"
 )
 
 func main() {

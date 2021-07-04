@@ -1,7 +1,7 @@
 package js
 
 import (
-	"github.com/tdewolff/minify/v2/parse/js"
+	"github.com/tdewolff/parse/v2/js"
 )
 
 func (m *jsMinifier) optimizeStmt(i js.IStmt) js.IStmt {
