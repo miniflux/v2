@@ -1,20 +1,17 @@
 name: Linters
-on:
-  pull_request:
-    branches:
-    - master
+on: [push, pull_request]
 
 jobs:
   jshint:
     name: Javascript Linter
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Install jshint
-      run: |
-        sudo npm install -g jshint
-    - name: Run jshint
-      run: jshint ui/static/js/*.js
+      - uses: actions/checkout@v2
+      - name: Install jshint
+        run: |
+          sudo npm install -g jshint
+      - name: Run jshint
+        run: jshint ui/static/js/*.js
 
   golangci:
     name: Golang Linter
