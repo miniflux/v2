@@ -5,11 +5,11 @@ This package is a JS lexer (ECMAScript 2020) written in [Go][1]. It follows the 
 ## Installation
 Run the following command
 
-	go get -u github.com/tdewolff/minify/v2/parse/js
+	go get -u github.com/tdewolff/parse/v2/js
 
 or add the following import and run project with `go get`
 
-	import "github.com/tdewolff/minify/v2/parse/js"
+	import "github.com/tdewolff/parse/v2/js"
 
 ## Lexer
 ### Usage
@@ -41,7 +41,7 @@ package main
 import (
 	"os"
 
-	"github.com/tdewolff/minify/v2/parse/js"
+	"github.com/tdewolff/parse/v2/js"
 )
 
 // Tokenize JS from stdin.

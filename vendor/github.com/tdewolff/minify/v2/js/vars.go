@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"sort"
 
-	"github.com/tdewolff/minify/v2/parse"
-	"github.com/tdewolff/minify/v2/parse/js"
+	"github.com/tdewolff/parse/v2"
+	"github.com/tdewolff/parse/v2/js"
 )
 
 type renamer struct {

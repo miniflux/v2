@@ -11,9 +11,9 @@ import (
 	"strings"
 
 	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/parse"
-	"github.com/tdewolff/minify/v2/parse/css"
-	strconvParse "github.com/tdewolff/minify/v2/parse/strconv"
+	"github.com/tdewolff/parse/v2"
+	"github.com/tdewolff/parse/v2/css"
+	strconvParse "github.com/tdewolff/parse/v2/strconv"
 )
 
 var (
