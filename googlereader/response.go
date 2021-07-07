@@ -40,7 +40,8 @@ type subscription struct {
 
 type subscriptionCategory struct {
 	ID    string `json:"id"`
-	Label string `json:"label"`
+	Label string `json:"label,omitempty"`
+	Type  string `json:"type,omitempty"`
 }
 type subscriptionsResponse struct {
 	Subscriptions []subscription `json:"subscriptions"`
@@ -54,6 +55,10 @@ type itemRef struct {
 
 type streamIDResponse struct {
 	ItemRefs []itemRef `json:"itemRefs"`
+}
+
+type tagsResponse struct {
+	Tags []subscriptionCategory `json:"tags"`
 }
 
 type streamContentItems struct {

@@ -190,6 +190,7 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.HandleFunc("/subscription/list", handler.subscriptionList).Methods(http.MethodGet).Name("SubscriptonList")
 	sr.HandleFunc("/stream/items/ids", handler.streamItemIDs).Methods(http.MethodGet).Name("StreamItemIDs")
 	sr.HandleFunc("/stream/items/contents", handler.streamItemContents).Methods(http.MethodPost).Name("StreamItemsContents")
+	sr.HandleFunc("/tag/list", handler.tagList).Methods(http.MethodGet).Name("TagList")
 	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
 
@@ -638,6 +639,37 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, result)
 }
 
+func (h *handler) tagList(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][tags/list][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	if err := checkOutputFormat(w, r); err != nil {
+		logger.Error("[Reader][OutputFormat] %v", err)
+		json.ServerError(w, r, err)
+	}
+
+	var result tagsResponse
+	categories, err := h.store.Categories(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	result.Tags = make([]subscriptionCategory, 0)
+	result.Tags = append(result.Tags, subscriptionCategory{
+		ID: fmt.Sprintf("user/%d/state/com.google/starred", userID),
+	})
+	for _, category := range categories {
+		result.Tags = append(result.Tags, subscriptionCategory{
+			ID:    fmt.Sprintf(UserLabelPrefix, userID) + category.Title,
+			Label: category.Title,
+			Type:  "folder",
+		})
+	}
+	json.OK(w, r, result)
+}
+
 func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
@@ -662,7 +694,7 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 			ID:         fmt.Sprintf(FeedPrefix+"%d", feed.ID),
 			Title:      feed.Title,
 			URL:        feed.FeedURL,
-			Categories: []subscriptionCategory{{fmt.Sprintf(UserLabelPrefix, userID) + feed.Category.Title, feed.Category.Title}},
+			Categories: []subscriptionCategory{{fmt.Sprintf(UserLabelPrefix, userID) + feed.Category.Title, feed.Category.Title, "folder"}},
 			HTMLURL:    feed.SiteURL,
 			IconURL:    "", //TODO Icons are only base64 encode in DB yet
 		})
