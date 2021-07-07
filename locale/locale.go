@@ -19,5 +19,6 @@ func AvailableLanguages() map[string]string {
 		"it_IT": "Italiano",
 		"ja_JP": "日本語",
 		"tr_TR": "Türkçe",
+		"el_EL": "Ελληνικά",
 	}
 }
