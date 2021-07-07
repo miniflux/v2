@@ -658,7 +658,7 @@ func (h *handler) tagList(w http.ResponseWriter, r *http.Request) {
 	}
 	result.Tags = make([]subscriptionCategory, 0)
 	result.Tags = append(result.Tags, subscriptionCategory{
-		ID: fmt.Sprintf("user/%d/state/com.google/starred", userID),
+		ID: fmt.Sprintf(UserStreamPrefix, userID) + Starred,
 	})
 	for _, category := range categories {
 		result.Tags = append(result.Tags, subscriptionCategory{
