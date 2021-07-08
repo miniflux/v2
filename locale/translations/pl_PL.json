@@ -277,6 +277,7 @@
     "form.feed.label.rewrite_rules": "Reguły zapisu",
     "form.feed.label.blocklist_rules": "Zasady blokowania",
     "form.feed.label.keeplist_rules": "Zasady zezwoleń",
+    "form.feed.label.urlrewrite_rules": "URL Rewrite Rules",
     "form.feed.label.ignore_http_cache": "Zignoruj ​​pamięć podręczną HTTP",
     "form.feed.label.allow_self_signed_certificates": "Zezwalaj na certyfikaty z podpisem własnym lub nieprawidłowe certyfikaty",
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",

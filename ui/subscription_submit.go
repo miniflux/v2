@@ -91,6 +91,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			RewriteRules:                subscriptionForm.RewriteRules,
 			BlocklistRules:              subscriptionForm.BlocklistRules,
 			KeeplistRules:               subscriptionForm.KeeplistRules,
+			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
 		})
 		if err != nil {

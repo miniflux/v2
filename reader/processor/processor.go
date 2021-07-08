@@ -127,8 +127,18 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
 func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 	startTime := time.Now()
+	var url = entry.URL
+	if feed.UrlRewriteRules != "" {
+		parts := strings.Split(feed.UrlRewriteRules, "@@@")
+		if len(parts) == 2 {
+			re := regexp.MustCompile(parts[0])
+			url = re.ReplaceAllString(entry.URL, parts[1])
+			logger.Debug(`[Scrape] Downloading URL %s instead of %s)`, url, entry.URL)
+		}
+	}
+
 	content, scraperErr := scraper.Fetch(
-		entry.URL,
+		url,
 		entry.Feed.ScraperRules,
 		entry.Feed.UserAgent,
 		entry.Feed.Cookie,
@@ -148,8 +158,8 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 		return scraperErr
 	}
 
-	content = rewrite.Rewriter(entry.URL, content, entry.Feed.RewriteRules)
-	content = sanitizer.Sanitize(entry.URL, content)
+	content = rewrite.Rewriter(url, content, entry.Feed.RewriteRules)
+	content = sanitizer.Sanitize(url, content)
 
 	if content != "" {
 		entry.Content = content

@@ -275,6 +275,7 @@
     "form.feed.label.rewrite_rules": "Regras para o Rewrite",
     "form.feed.label.blocklist_rules": "Regras de bloqueio",
     "form.feed.label.keeplist_rules": "Regras de permissão",
+    "form.feed.label.urlrewrite_rules": "URL Rewrite Rules",
     "form.feed.label.ignore_http_cache": "Ignorar cache HTTP",
     "form.feed.label.allow_self_signed_certificates": "Permitir certificados autoassinados ou inválidos",
     "form.feed.label.disabled": "Não atualizar esta fonte",
