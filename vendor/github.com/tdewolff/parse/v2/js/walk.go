@@ -46,16 +46,25 @@ func Walk(v IVisitor, n INode) {
 		Walk(v, n.Body)
 		Walk(v, n.Cond)
 	case *ForStmt:
-		Walk(v, n.Body)
+		if n.Body != nil {
+			Walk(v, n.Body)
+		}
+
 		Walk(v, n.Init)
 		Walk(v, n.Cond)
 		Walk(v, n.Post)
 	case *ForInStmt:
-		Walk(v, n.Body)
+		if n.Body != nil {
+			Walk(v, n.Body)
+		}
+
 		Walk(v, n.Init)
 		Walk(v, n.Value)
 	case *ForOfStmt:
-		Walk(v, n.Body)
+		if n.Body != nil {
+			Walk(v, n.Body)
+		}
+
 		Walk(v, n.Init)
 		Walk(v, n.Value)
 	case *CaseClause:
@@ -86,9 +95,18 @@ func Walk(v IVisitor, n INode) {
 	case *ThrowStmt:
 		Walk(v, n.Value)
 	case *TryStmt:
-		Walk(v, n.Body)
-		Walk(v, n.Catch)
-		Walk(v, n.Finally)
+		if n.Body != nil {
+			Walk(v, n.Body)
+		}
+
+		if n.Catch != nil {
+			Walk(v, n.Catch)
+		}
+
+		if n.Finally != nil {
+			Walk(v, n.Finally)
+		}
+
 		Walk(v, n.Binding)
 	case *DebuggerStmt:
 		return
@@ -122,7 +140,10 @@ func Walk(v IVisitor, n INode) {
 
 		Walk(v, n.Rest)
 	case *BindingObjectItem:
-		Walk(v, n.Key)
+		if n.Key != nil {
+			Walk(v, n.Key)
+		}
+
 		Walk(v, &n.Value)
 	case *BindingObject:
 		if n.List != nil {
@@ -131,7 +152,9 @@ func Walk(v IVisitor, n INode) {
 			}
 		}
 
-		Walk(v, n.Rest)
+		if n.Rest != nil {
+			Walk(v, n.Rest)
+		}
 	case *BindingElement:
 		Walk(v, n.Binding)
 		Walk(v, n.Default)
@@ -152,7 +175,10 @@ func Walk(v IVisitor, n INode) {
 	case *FuncDecl:
 		Walk(v, &n.Body)
 		Walk(v, &n.Params)
-		Walk(v, n.Name)
+
+		if n.Name != nil {
+			Walk(v, n.Name)
+		}
 	case *MethodDecl:
 		Walk(v, &n.Body)
 		Walk(v, &n.Params)
@@ -161,7 +187,10 @@ func Walk(v IVisitor, n INode) {
 		Walk(v, &n.Name)
 		Walk(v, n.Init)
 	case *ClassDecl:
-		Walk(v, n.Name)
+		if n.Name != nil {
+			Walk(v, n.Name)
+		}
+
 		Walk(v, n.Extends)
 
 		if n.Definitions != nil {
@@ -186,7 +215,10 @@ func Walk(v IVisitor, n INode) {
 			}
 		}
 	case *Property:
-		Walk(v, n.Name)
+		if n.Name != nil {
+			Walk(v, n.Name)
+		}
+
 		Walk(v, n.Value)
 		Walk(v, n.Init)
 	case *ObjectExpr:
@@ -226,7 +258,10 @@ func Walk(v IVisitor, n INode) {
 			}
 		}
 	case *NewExpr:
-		Walk(v, n.Args)
+		if n.Args != nil {
+			Walk(v, n.Args)
+		}
+
 		Walk(v, n.X)
 	case *CallExpr:
 		Walk(v, &n.Args)

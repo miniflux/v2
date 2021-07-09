@@ -788,10 +788,6 @@ func (alias Alias) JS() string {
 	return alias.String()
 }
 
-func (alias *Alias) isNil() bool {
-	return alias == nil
-}
-
 // ImportStmt is an import statement.
 type ImportStmt struct {
 	List    []Alias

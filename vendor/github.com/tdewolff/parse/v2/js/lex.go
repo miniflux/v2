@@ -456,7 +456,7 @@ func (l *Lexer) consumeOperatorToken() TokenType {
 		return opEqTokens[c]
 	} else if l.r.Peek(0) == c && (c == '+' || c == '-' || c == '*' || c == '&' || c == '|' || c == '?' || c == '<') {
 		l.r.Move(1)
-		if l.r.Peek(0) == '=' {
+		if l.r.Peek(0) == '=' && c != '+' && c != '-' {
 			l.r.Move(1)
 			return opOpEqTokens[c]
 		}
