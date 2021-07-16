@@ -551,17 +551,16 @@ func (h *handler) quickAdd(w http.ResponseWriter, r *http.Request) {
 
 	toSubscribe := Stream{FeedStream, subscriptions[0].URL}
 	category := Stream{NoStream, ""}
-	title := subscriptions[0].Title
-	newFeed, err := subscribe(toSubscribe, category, title, h.store, userID)
+	newFeed, err := subscribe(toSubscribe, category, "", h.store, userID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 	json.OK(w, r, quickAddResponse{
 		NumResults: 1,
-		Query:      toSubscribe.ID,
-		StreamID:   fmt.Sprintf(FeedPrefix+"%s", newFeed.ID),
-		StreamName: title,
+		Query:      newFeed.FeedURL,
+		StreamID:   fmt.Sprintf(FeedPrefix+"%d", newFeed.ID),
+		StreamName: newFeed.Title,
 	})
 }
 
@@ -586,10 +585,10 @@ func getOrCreateCategory(category Stream, store *storage.Storage, userID int64) 
 	}
 }
 
-func subscribe(newFeed Stream, category Stream, title string, store *storage.Storage, userID int64) (Stream, error) {
+func subscribe(newFeed Stream, category Stream, title string, store *storage.Storage, userID int64) (*model.Feed, error) {
 	destCategory, err := getOrCreateCategory(category, store, userID)
 	if err != nil {
-		return Stream{NoStream, ""}, err
+		return nil, err
 	}
 
 	feedRequest := model.FeedCreationRequest{
@@ -598,12 +597,12 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 	}
 	verr := validator.ValidateFeedCreation(store, userID, &feedRequest)
 	if verr != nil {
-		return Stream{NoStream, ""}, verr.Error()
+		return nil, verr.Error()
 	}
 
 	created, err := mff.CreateFeed(store, userID, &feedRequest)
 	if err != nil {
-		return Stream{NoStream, ""}, err
+		return nil, err
 	}
 
 	if title != "" {
@@ -612,11 +611,11 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 		}
 		feedModification.Patch(created)
 		if err := store.UpdateFeed(created); err != nil {
-			return Stream{NoStream, ""}, err
+			return nil, err
 		}
 	}
 
-	return Stream{FeedStream, fmt.Sprintf("%d", created.ID)}, nil
+	return created, nil
 }
 
 func unsubscribe(streams []Stream, store *storage.Storage, userID int64) error {
