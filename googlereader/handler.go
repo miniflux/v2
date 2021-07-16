@@ -1,6 +1,7 @@
 package googlereader // import "miniflux.app/googlereader"
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
@@ -16,7 +17,10 @@ import (
 	"miniflux.app/integration"
 	"miniflux.app/logger"
 	"miniflux.app/model"
+	mff "miniflux.app/reader/handler"
+	mfs "miniflux.app/reader/subscription"
 	"miniflux.app/storage"
+	"miniflux.app/validator"
 )
 
 type handler struct {
@@ -74,6 +78,14 @@ const (
 	ParamTagsRemove = "r"
 	// ParamTagsAdd - name of the parameter containing tags (streams) to be added
 	ParamTagsAdd = "a"
+	// ParamSubscribeAction - name of the parameter indicating the action to take for subscription/edit
+	ParamSubscribeAction = "ac"
+	// ParamTitle - name of the parameter for the title of the subscription
+	ParamTitle = "t"
+	// ParamQuickAdd - name of the parameter for a URL being quick subscribed to
+	ParamQuickAdd = "quickadd"
+	// ParamDestination - name fo the parameter for the new name of a tag
+	ParamDestination = "dest"
 )
 
 // StreamType represents the possible stream types
@@ -186,11 +198,15 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.Methods(http.MethodOptions)
 	sr.HandleFunc("/token", middleware.token).Methods(http.MethodGet).Name("Token")
 	sr.HandleFunc("/edit-tag", handler.editTag).Methods(http.MethodPost).Name("EditTag")
+	sr.HandleFunc("/rename-tag", handler.renameTag).Methods(http.MethodPost).Name("Rename Tag")
+	sr.HandleFunc("/disable-tag", handler.disableTag).Methods(http.MethodPost).Name("Disable Tag")
+	sr.HandleFunc("/tag/list", handler.tagList).Methods(http.MethodGet).Name("TagList")
 	sr.HandleFunc("/user-info", handler.userInfo).Methods(http.MethodGet).Name("UserInfo")
 	sr.HandleFunc("/subscription/list", handler.subscriptionList).Methods(http.MethodGet).Name("SubscriptonList")
+	sr.HandleFunc("/subscription/edit", handler.editSubscription).Methods(http.MethodPost).Name("SubscriptionEdit")
+	sr.HandleFunc("/subscription/quickadd", handler.quickAdd).Methods(http.MethodPost).Name("QuickAdd")
 	sr.HandleFunc("/stream/items/ids", handler.streamItemIDs).Methods(http.MethodGet).Name("StreamItemIDs")
 	sr.HandleFunc("/stream/items/contents", handler.streamItemContents).Methods(http.MethodPost).Name("StreamItemsContents")
-	sr.HandleFunc("/tag/list", handler.tagList).Methods(http.MethodGet).Name("TagList")
 	sr.PathPrefix("/").HandlerFunc(handler.serve).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
 
@@ -501,6 +517,220 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	OK(w, r)
 }
 
+func (h *handler) quickAdd(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][/subscription/quickadd][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	err := r.ParseForm()
+	if err != nil {
+		logger.Error("[Reader][/subscription/quickadd] [ClientIP=%s] %v", clientIP, err)
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	url := r.Form.Get(ParamQuickAdd)
+	if !validator.IsValidURL(url) {
+		json.BadRequest(w, r, fmt.Errorf("invalid URL: %s", url))
+		return
+	}
+
+	subscriptions, s_err := mfs.FindSubscriptions(url, "", "", "", "", false, false)
+	if s_err != nil {
+		json.ServerError(w, r, s_err)
+		return
+	}
+
+	if len(subscriptions) == 0 {
+		json.OK(w, r, quickAddResponse{
+			NumResults: 0,
+		})
+		return
+	}
+
+	toSubscribe := Stream{FeedStream, subscriptions[0].URL}
+	category := Stream{NoStream, ""}
+	title := subscriptions[0].Title
+	newFeed, err := subscribe(toSubscribe, category, title, h.store, userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	json.OK(w, r, quickAddResponse{
+		NumResults: 1,
+		Query:      toSubscribe.ID,
+		StreamID:   fmt.Sprintf(FeedPrefix+"%s", newFeed.ID),
+		StreamName: title,
+	})
+}
+
+func getFeed(stream Stream, store *storage.Storage, userID int64) (*model.Feed, error) {
+	feedID, err := strconv.ParseInt(stream.ID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	return store.FeedByID(userID, feedID)
+}
+
+func getOrCreateCategory(category Stream, store *storage.Storage, userID int64) (*model.Category, error) {
+	if category.ID == "" {
+		return store.FirstCategory(userID)
+	} else if store.CategoryTitleExists(userID, category.ID) {
+		return store.CategoryByTitle(userID, category.ID)
+	} else {
+		catRequest := model.CategoryRequest{
+			Title: category.ID,
+		}
+		return store.CreateCategory(userID, &catRequest)
+	}
+}
+
+func subscribe(newFeed Stream, category Stream, title string, store *storage.Storage, userID int64) (Stream, error) {
+	destCategory, err := getOrCreateCategory(category, store, userID)
+	if err != nil {
+		return Stream{NoStream, ""}, err
+	}
+
+	feedRequest := model.FeedCreationRequest{
+		FeedURL:    newFeed.ID,
+		CategoryID: destCategory.ID,
+	}
+	verr := validator.ValidateFeedCreation(store, userID, &feedRequest)
+	if verr != nil {
+		return Stream{NoStream, ""}, verr.Error()
+	}
+
+	created, err := mff.CreateFeed(store, userID, &feedRequest)
+	if err != nil {
+		return Stream{NoStream, ""}, err
+	}
+
+	if title != "" {
+		feedModification := model.FeedModificationRequest{
+			Title: &title,
+		}
+		feedModification.Patch(created)
+		if err := store.UpdateFeed(created); err != nil {
+			return Stream{NoStream, ""}, err
+		}
+	}
+
+	return Stream{FeedStream, fmt.Sprintf("%d", created.ID)}, nil
+}
+
+func unsubscribe(streams []Stream, store *storage.Storage, userID int64) error {
+	for _, stream := range streams {
+		feedID, err := strconv.ParseInt(stream.ID, 10, 64)
+		if err != nil {
+			return err
+		}
+		err = store.RemoveFeed(userID, feedID)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func rename(stream Stream, title string, store *storage.Storage, userID int64) error {
+	if title == "" {
+		return errors.New("empty title")
+	}
+	feed, err := getFeed(stream, store, userID)
+	if err != nil {
+		return err
+	}
+	feedModification := model.FeedModificationRequest{
+		Title: &title,
+	}
+	feedModification.Patch(feed)
+	return store.UpdateFeed(feed)
+}
+
+func move(stream Stream, destination Stream, store *storage.Storage, userID int64) error {
+	feed, err := getFeed(stream, store, userID)
+	if err != nil {
+		return err
+	}
+	category, err := getOrCreateCategory(destination, store, userID)
+	if err != nil {
+		return err
+	}
+	feedModification := model.FeedModificationRequest{
+		CategoryID: &category.ID,
+	}
+	feedModification.Patch(feed)
+	return store.UpdateFeed(feed)
+}
+
+func (h *handler) editSubscription(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][/subscription/edit][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	err := r.ParseForm()
+	if err != nil {
+		logger.Error("[Reader][/subscription/edit] [ClientIP=%s] %v", clientIP, err)
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	streamIds, err := getStreams(r.Form[ParamStreamID], userID)
+	if err != nil || len(streamIds) == 0 {
+		json.BadRequest(w, r, errors.New("no valid stream IDs provided"))
+		return
+	}
+
+	newLabel, err := getStream(r.Form.Get(ParamTagsAdd), userID)
+	if err != nil {
+		json.BadRequest(w, r, fmt.Errorf("invalid data in %s", ParamTagsAdd))
+		return
+	}
+
+	title := r.Form.Get(ParamTitle)
+
+	action := r.Form.Get(ParamSubscribeAction)
+	switch action {
+	case "subscribe":
+		_, err := subscribe(streamIds[0], newLabel, title, h.store, userID)
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	case "unsubscribe":
+		err := unsubscribe(streamIds, h.store, userID)
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	case "edit":
+		if title != "" {
+			err := rename(streamIds[0], title, h.store, userID)
+			if err != nil {
+				json.ServerError(w, r, err)
+				return
+			}
+		} else {
+			if newLabel.Type != LabelStream {
+				json.BadRequest(w, r, errors.New("destination must be a label"))
+				return
+			}
+			err := move(streamIds[0], newLabel, h.store, userID)
+			if err != nil {
+				json.ServerError(w, r, err)
+				return
+			}
+		}
+	default:
+		json.ServerError(w, r, fmt.Errorf("unrecognized action %s", action))
+		return
+	}
+
+	OK(w, r)
+}
+
 func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
@@ -639,6 +869,104 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, result)
 }
 
+func (h *handler) disableTag(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][/disable-tag][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	err := r.ParseForm()
+	if err != nil {
+		logger.Error("[Reader][/disable-tag] [ClientIP=%s] %v", clientIP, err)
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	streams, err := getStreams(r.Form[ParamStreamID], userID)
+	if err != nil {
+		json.BadRequest(w, r, fmt.Errorf("invalid data in %s", ParamStreamID))
+		return
+	}
+
+	titles := make([]string, len(streams))
+	for i, stream := range streams {
+		if stream.Type != LabelStream {
+			json.BadRequest(w, r, errors.New("only labels are supported"))
+			return
+		}
+		titles[i] = stream.ID
+	}
+
+	err = h.store.RemoveAndReplaceCategoriesByName(userID, titles)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	OK(w, r)
+}
+
+func (h *handler) renameTag(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	logger.Info("[Reader][/rename-tag][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+
+	err := r.ParseForm()
+	if err != nil {
+		logger.Error("[Reader][/rename-tag] [ClientIP=%s] %v", clientIP, err)
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	source, err := getStream(r.Form.Get(ParamStreamID), userID)
+	if err != nil {
+		json.BadRequest(w, r, fmt.Errorf("invalid data in %s", ParamStreamID))
+		return
+	}
+
+	destination, err := getStream(r.Form.Get(ParamDestination), userID)
+	if err != nil {
+		json.BadRequest(w, r, fmt.Errorf("invalid data in %s", ParamDestination))
+		return
+	}
+
+	if source.Type != LabelStream || destination.Type != LabelStream {
+		json.BadRequest(w, r, errors.New("only labels supported"))
+		return
+	}
+
+	if destination.ID == "" {
+		json.BadRequest(w, r, errors.New("empty destination name"))
+		return
+	}
+
+	category, err := h.store.CategoryByTitle(userID, source.ID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	if category == nil {
+		json.NotFound(w, r)
+		return
+	}
+	categoryRequest := model.CategoryRequest{
+		Title: destination.ID,
+	}
+	verr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryRequest)
+	if verr != nil {
+		json.BadRequest(w, r, verr.Error())
+		return
+	}
+	categoryRequest.Patch(category)
+	err = h.store.UpdateCategory(category)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+	OK(w, r)
+}
+
 func (h *handler) tagList(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
@@ -647,7 +975,8 @@ func (h *handler) tagList(w http.ResponseWriter, r *http.Request) {
 
 	if err := checkOutputFormat(w, r); err != nil {
 		logger.Error("[Reader][OutputFormat] %v", err)
-		json.ServerError(w, r, err)
+		json.BadRequest(w, r, err)
+		return
 	}
 
 	var result tagsResponse

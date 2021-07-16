@@ -38,6 +38,13 @@ type subscription struct {
 	IconURL    string                 `json:"iconUrl"`
 }
 
+type quickAddResponse struct {
+	NumResults int64  `json:"numResults"`
+	Query      string `json:"query,omitempty"`
+	StreamID   string `json:"streamId,omitempty"`
+	StreamName string `json:"streamName,omitempty"`
+}
+
 type subscriptionCategory struct {
 	ID    string `json:"id"`
 	Label string `json:"label,omitempty"`
@@ -127,7 +134,7 @@ func Unauthorized(w http.ResponseWriter, r *http.Request) {
 
 // OK sends a ok response to the client.
 func OK(w http.ResponseWriter, r *http.Request) {
-	logger.Error("[HTTP:OK] %s", r.URL)
+	logger.Info("[HTTP:OK] %s", r.URL)
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusOK)
