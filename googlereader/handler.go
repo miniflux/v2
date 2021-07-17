@@ -343,6 +343,7 @@ func getItemIDs(r *http.Request) ([]int64, error) {
 	}
 	return itemIDs, nil
 }
+
 func checkOutputFormat(w http.ResponseWriter, r *http.Request) error {
 	var output string
 	if r.Method == http.MethodPost {
@@ -390,6 +391,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 		err = fmt.Errorf("add or/and remove tags should be supllied")
 		logger.Error("[Reader][/edit-tag] [ClientIP=%s] ", clientIP, err)
 		json.ServerError(w, r, err)
+		return
 	}
 	tags, err := checkAndSimplifyTags(addTags, removeTags)
 	if err != nil {
@@ -507,6 +509,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	if err := checkOutputFormat(w, r); err != nil {
 		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
+		return
 	}
 
 	err := r.ParseForm()
@@ -639,11 +642,12 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][subscription/list][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[Reader][/subscription/list][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		logger.Error("[Reader][OutputFormat] %v", err)
+		logger.Error("[Reader][/subscription/list] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
+		return
 	}
 
 	var result subscriptionsResponse
@@ -679,12 +683,14 @@ func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[Reader][UserInfo] [ClientIP=%s] Sending", clientIP)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		logger.Error("[Reader][OutputFormat] %v", err)
+		logger.Error("[Reader][/user-info] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
+		return
 	}
 
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
+		logger.Error("[Reader][/user-info] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -696,12 +702,13 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Debug("[Reader][stream/items/ids][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Debug("[Reader][/stream/items/ids][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
 
 	if err := checkOutputFormat(w, r); err != nil {
 		err := fmt.Errorf("output only as json supported")
-		logger.Error("[Reader][OutputFormat] %v", err)
+		logger.Error("[Reader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
+		return
 	}
 
 	rm, err := getStreamFilterModifiers(r)
@@ -712,8 +719,9 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Request Modifiers: %v", rm)
 	if len(rm.Streams) != 1 {
 		err := fmt.Errorf("only one stream type expected")
-		logger.Error("[Reader][OutputFormat] %v", err)
+		logger.Error("[Reader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
+		return
 	}
 	switch rm.Streams[0].Type {
 	case ReadingListStream:
@@ -724,7 +732,11 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		h.handleReadStream(w, r, rm)
 	default:
 		dump, _ := httputil.DumpRequest(r, true)
-		logger.Info("[Reader][stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
+		logger.Info("[Reader][/stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
+		err := fmt.Errorf("unknown stream type")
+		logger.Error("[Reader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
 	}
 }
 
@@ -743,6 +755,7 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 	builder.WithLimit(rm.Count)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
+		logger.Error("[Reader][/stream/items/ids#reading-list] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -755,12 +768,14 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 }
 
 func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
-	userID := request.UserID(r)
-	builder := h.store.NewEntryQueryBuilder(userID)
+	clientIP := request.ClientIP(r)
+
+	builder := h.store.NewEntryQueryBuilder(rm.UserID)
 	builder.WithStarred()
 	builder.WithLimit(rm.Count)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
+		logger.Error("[Reader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -773,8 +788,9 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 }
 
 func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
-	userID := request.UserID(r)
-	builder := h.store.NewEntryQueryBuilder(userID)
+	clientIP := request.ClientIP(r)
+
+	builder := h.store.NewEntryQueryBuilder(rm.UserID)
 	builder.WithStatus(model.EntryStatusRead)
 	if rm.StartTime > 0 {
 		builder.AfterDate(time.Unix(rm.StartTime, 0))
@@ -785,6 +801,7 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
+		logger.Error("[Reader][/stream/items/ids#read] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
