@@ -32,8 +32,9 @@ import (
 )
 
 var (
-	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-	iso8601Regex = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
+	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
+	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
@@ -165,11 +166,14 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
 	var url = entry.URL
 	if feed.UrlRewriteRules != "" {
-		parts := strings.Split(feed.UrlRewriteRules, "@@@")
-		if len(parts) == 2 {
-			re := regexp.MustCompile(parts[0])
-			url = re.ReplaceAllString(entry.URL, parts[1])
-			logger.Debug(`[Processor] Rewriting entry URL %s to %s)`, entry.URL, url)
+		parts := customReplaceRuleRegex.FindStringSubmatch(feed.UrlRewriteRules)
+
+		if len(parts) >= 3 {
+			re := regexp.MustCompile(parts[1])
+			url = re.ReplaceAllString(entry.URL, parts[2])
+			logger.Debug(`[Processor] Rewriting entry URL %s to %s`, entry.URL, url)
+		} else {
+			logger.Debug("[Processor] Cannot find search and replace terms for replace rule %s", feed.UrlRewriteRules)
 		}
 	}
 	return url
