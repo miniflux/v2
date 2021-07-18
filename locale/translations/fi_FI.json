@@ -259,6 +259,7 @@
     "error.feed_category_not_found": "Tätä kategoriaa ei ole olemassa tai se ei kuulu tälle käyttäjälle.",
     "error.feed_invalid_blocklist_rule": "The block list rule is invalid.",
     "error.feed_invalid_keeplist_rule": "The keep list rule is invalid.",
+    "form.feed.label.urlrewrite_rules": "URL-osoitteen uudelleenkirjoitussäännöt",
     "error.user_mandatory_fields": "Käyttäjätunnus on pakollinen.",
     "error.api_key_already_exists": "API-avain on jo olemassa.",
     "error.unable_to_create_api_key": "API-avainta ei voi luoda.",

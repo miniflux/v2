@@ -259,6 +259,7 @@
     "error.feed_category_not_found": "Αυτή η κατηγορία δεν υπάρχει ή δεν ανήκει σε αυτόν τον χρήστη.",
     "error.feed_invalid_blocklist_rule": "Ο κανόνας λίστας μπλοκ δεν είναι έγκυρος.",
     "error.feed_invalid_keeplist_rule": "Ο κανόνας keep list δεν είναι έγκυρος.",
+    "form.feed.label.urlrewrite_rules": "επανεγγραφή κανόνων για τη διεύθυνση URL.",
     "error.user_mandatory_fields": "Το όνομα χρήστη είναι υποχρεωτικό.",
     "error.api_key_already_exists": "Αυτό το κλειδί API υπάρχει ήδη.",
     "error.unable_to_create_api_key": "Δεν είναι δυνατή η δημιουργία αυτού του κλειδιού API.",
