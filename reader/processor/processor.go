@@ -47,13 +47,14 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 			continue
 		}
 
+		url := getUrlFromEntry(feed, entry)
 		entryIsNew := !store.EntryURLExists(feed.ID, entry.URL)
 		if feed.Crawler && entryIsNew {
-			logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
+			logger.Debug("[Processor] Crawling entry %q from feed %q", url, feed.FeedURL)
 
 			startTime := time.Now()
 			content, scraperErr := scraper.Fetch(
-				entry.URL,
+				url,
 				feed.ScraperRules,
 				feed.UserAgent,
 				feed.Cookie,
@@ -77,10 +78,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 			}
 		}
 
-		entry.Content = rewrite.Rewriter(entry.URL, entry.Content, feed.RewriteRules)
+		entry.Content = rewrite.Rewriter(url, entry.Content, feed.RewriteRules)
 
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
-		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
+		entry.Content = sanitizer.Sanitize(url, entry.Content)
 
 		if entryIsNew {
 			intg, err := store.Integration(feed.UserID)
@@ -127,15 +128,7 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
 func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 	startTime := time.Now()
-	var url = entry.URL
-	if feed.UrlRewriteRules != "" {
-		parts := strings.Split(feed.UrlRewriteRules, "@@@")
-		if len(parts) == 2 {
-			re := regexp.MustCompile(parts[0])
-			url = re.ReplaceAllString(entry.URL, parts[1])
-			logger.Debug(`[Scrape] Downloading URL %s instead of %s)`, url, entry.URL)
-		}
-	}
+	url := getUrlFromEntry(feed, entry)
 
 	content, scraperErr := scraper.Fetch(
 		url,
@@ -167,6 +160,19 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 	}
 
 	return nil
+}
+
+func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
+	var url = entry.URL
+	if feed.UrlRewriteRules != "" {
+		parts := strings.Split(feed.UrlRewriteRules, "@@@")
+		if len(parts) == 2 {
+			re := regexp.MustCompile(parts[0])
+			url = re.ReplaceAllString(entry.URL, parts[1])
+			logger.Debug(`[Processor] Rewriting entry URL %s to %s)`, entry.URL, url)
+		}
+	}
+	return url
 }
 
 func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool) {
