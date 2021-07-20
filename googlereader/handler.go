@@ -1113,6 +1113,8 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 		}
 	}
 	builder.WithLimit(rm.Count)
+	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithDirection(rm.SortDirection)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		logger.Error("[Reader][/stream/items/ids#reading-list] [ClientIP=%s] %v", clientIP, err)
@@ -1133,6 +1135,8 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
 	builder.WithStarred()
 	builder.WithLimit(rm.Count)
+	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithDirection(rm.SortDirection)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		logger.Error("[Reader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
@@ -1152,6 +1156,8 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
 	builder.WithStatus(model.EntryStatusRead)
+	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithDirection(rm.SortDirection)
 	if rm.StartTime > 0 {
 		builder.AfterDate(time.Unix(rm.StartTime, 0))
 	}
