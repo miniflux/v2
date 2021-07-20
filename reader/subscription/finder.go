@@ -146,6 +146,7 @@ func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) 
 		"/feed.xml": "atom",
 		"/feed/":    "atom",
 		"/rss.xml":  "rss",
+		"/rss/":     "rss",
 	}
 
 	lastCharacter := websiteURL[len(websiteURL)-1:]
