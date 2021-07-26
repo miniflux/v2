@@ -20,7 +20,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	google.golang.org/appengine v1.6.6 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.0 // indirect
-	mvdan.cc/xurls/v2 v2.2.0
+	mvdan.cc/xurls/v2 v2.3.0
 )
 
 go 1.16
