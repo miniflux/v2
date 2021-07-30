@@ -189,7 +189,7 @@ func (c *cssMinifier) minifyGrammar() {
 		case css.AtRuleGrammar:
 			c.w.Write(data)
 			values := c.p.Values()
-			if ToHash(data[1:]) == Import && len(values) == 2 && values[1].TokenType == css.URLToken && 4 < len(values[1].Data) {
+			if ToHash(data[1:]) == Import && len(values) == 2 && values[1].TokenType == css.URLToken && 4 < len(values[1].Data) && values[1].Data[len(values[1].Data)-1] == ')' {
 				url := values[1].Data
 				if url[4] != '"' && url[4] != '\'' {
 					a := 4
@@ -197,10 +197,14 @@ func (c *cssMinifier) minifyGrammar() {
 						a++
 					}
 					b := len(url) - 2
-					for parse.IsWhitespace(url[b]) || parse.IsNewline(url[b]) {
+					for a < b && (parse.IsWhitespace(url[b]) || parse.IsNewline(url[b])) {
 						b--
 					}
-					url = url[a-1 : b+2]
+					if a == b {
+						url = url[:2]
+					} else {
+						url = url[a-1 : b+2]
+					}
 					url[0] = '"'
 					url[len(url)-1] = '"'
 				} else {

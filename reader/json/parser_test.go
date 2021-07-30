@@ -272,6 +272,49 @@ func TestParseAuthor(t *testing.T) {
 	}
 }
 
+func TestParseAuthors(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1.1",
+		"user_comment": "This is a microblog feed. You can add this to your feed reader using the following URL: https://example.org/feed.json",
+		"title": "Brent Simmons’s Microblog",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"author": {
+			"name": "This field is deprecated, use authors",
+			"url": "http://example.org/",
+			"avatar": "https://example.org/avatar.png"
+		},
+		"authors": [ 
+			{
+				"name": "Brent Simmons",
+				"url": "http://example.org/",
+				"avatar": "https://example.org/avatar.png"
+			}
+		],
+		"items": [
+			{
+				"id": "2347259",
+				"url": "https://example.org/2347259",
+				"content_text": "Cats are neat. \n\nhttps://example.org/cats",
+				"date_published": "2016-02-09T14:22:00-07:00"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Author != "Brent Simmons" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
 func TestParseFeedWithoutTitle(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
