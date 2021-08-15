@@ -276,6 +276,7 @@
     "form.feed.label.allow_self_signed_certificates": "Erlaube selbstsignierte oder ungültige Zertifikate",
     "form.feed.label.fetch_via_proxy": "Über Proxy abrufen",
     "form.feed.label.disabled": "Dieses Abonnement nicht aktualisieren",
+    "form.feed.label.hide_globally": "Einträge in der globalen Ungelesen-Liste ausblenden",
     "form.category.label.title": "Titel",
     "form.category.hide_globally": "Einträge in der globalen Ungelesen-Liste ausblenden",
     "form.user.label.username": "Benutzername",

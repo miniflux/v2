@@ -357,7 +357,10 @@ func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status s
 		FROM entries e
 		    JOIN feeds f ON (f.id = e.feed_id)
 		    JOIN categories c ON (c.id = f.category_id)
-		WHERE e.user_id = $1 AND e.id = ANY($2) AND NOT c.hide_globally
+		WHERE e.user_id = $1
+			AND e.id = ANY($2)
+			AND NOT f.hide_globally
+			AND NOT c.hide_globally
 	`
 	row := s.db.QueryRow(query, userID, pq.Array(entryIDs))
 	visible := 0

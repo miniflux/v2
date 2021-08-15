@@ -274,6 +274,7 @@
     "form.feed.label.allow_self_signed_certificates": "允许自签名或无效的证书",
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此Feed",
+    "form.feed.label.hide_globally": "隐藏全局未读列表中的条目",
     "form.category.label.title": "标题",
     "form.category.hide_globally": "隐藏全局未读列表中的条目",
     "form.user.label.username": "用户名",
