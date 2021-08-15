@@ -60,6 +60,12 @@ func (e *EntryPaginationBuilder) WithStatus(status string) {
 	}
 }
 
+// WithGloballyVisible adds global visibility to the condition.
+func (e *EntryPaginationBuilder) WithGloballyVisible() {
+	e.conditions = append(e.conditions, "not c.hide_globally")
+	e.conditions = append(e.conditions, "not f.hide_globally")
+}
+
 // Entries returns previous and next entries.
 func (e *EntryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 	tx, err := e.store.db.Begin()
@@ -104,7 +110,8 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 				lag(e.id) over (order by e.published_at asc, e.id desc) as prev_id,
 				lead(e.id) over (order by e.published_at asc, e.id desc) as next_id
 			FROM entries AS e
-			LEFT JOIN feeds AS f ON f.id=e.feed_id
+			JOIN feeds AS f ON f.id=e.feed_id
+			JOIN categories c ON c.id = f.category_id
 			WHERE %s
 			ORDER BY e.published_at asc, e.id desc
 		)
