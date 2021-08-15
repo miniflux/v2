@@ -58,6 +58,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		AllowSelfSignedCertificates: feed.AllowSelfSignedCertificates,
 		FetchViaProxy:               feed.FetchViaProxy,
 		Disabled:                    feed.Disabled,
+		HideGlobally:                feed.HideGlobally,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

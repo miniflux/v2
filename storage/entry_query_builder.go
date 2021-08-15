@@ -183,6 +183,7 @@ func (e *EntryQueryBuilder) WithOffset(offset int) *EntryQueryBuilder {
 
 func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
 	e.conditions = append(e.conditions, "not c.hide_globally")
+	e.conditions = append(e.conditions, "not f.hide_globally")
 	return e
 }
 
