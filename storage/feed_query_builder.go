@@ -169,6 +169,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.hide_globally,
 			f.category_id,
 			c.title as category_title,
+			c.hide_globally as category_hidden,
 			fi.icon_id,
 			u.timezone
 		FROM
@@ -230,6 +231,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.HideGlobally,
 			&feed.Category.ID,
 			&feed.Category.Title,
+			&feed.Category.HideGlobally,
 			&iconID,
 			&tz,
 		)

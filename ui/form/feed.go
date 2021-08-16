@@ -31,6 +31,7 @@ type FeedForm struct {
 	FetchViaProxy               bool
 	Disabled                    bool
 	HideGlobally                bool
+	CategoryHidden              bool // Category has "hide_globally"
 }
 
 // Merge updates the fields of the given feed.
