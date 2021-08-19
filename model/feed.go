@@ -123,7 +123,7 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, pollingInterval int) {
 	}
 	// The compensationSeconds compensates the time different between job starts and NextCheckAt is set.
 	// For example, the scheduler is round robin and polling interval is 5 minutes.
-	// Without the compensationSeconds, the following may happend:
+	// Without the compensationSeconds, the following may happen:
 	// (1) The first job starts at 0s; (2) The job sql query runs at 5s, selects a feed, subject to NextCheckAt < now;
 	// (3) The NextCheckAt is set at 10s, the value is 5m10s;
 	// (4) The next job starts at 5m; (5) The job sql query runs at 5m5s, but it won't get the feed because
