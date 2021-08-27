@@ -166,8 +166,10 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.allow_self_signed_certificates,
 			f.fetch_via_proxy,
 			f.disabled,
+			f.hide_globally,
 			f.category_id,
 			c.title as category_title,
+			c.hide_globally as category_hidden,
 			fi.icon_id,
 			u.timezone
 		FROM
@@ -226,8 +228,10 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.AllowSelfSignedCertificates,
 			&feed.FetchViaProxy,
 			&feed.Disabled,
+			&feed.HideGlobally,
 			&feed.Category.ID,
 			&feed.Category.Title,
+			&feed.Category.HideGlobally,
 			&iconID,
 			&tz,
 		)

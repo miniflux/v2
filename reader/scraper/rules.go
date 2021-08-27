@@ -36,7 +36,7 @@ var predefinedRules = map[string]string{
 	"slate.fr":             ".field-items",
 	"techcrunch.com":       "div.article-entry",
 	"theoatmeal.com":       "div#comic",
-	"theregister.co.uk":    "#body",
+	"theregister.com":      "#top-col-story h2, #body",
 	"turnoff.us":           "article.post-content",
 	"universfreebox.com":   "#corps_corps",
 	"version2.dk":          "section.body",
