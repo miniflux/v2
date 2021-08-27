@@ -276,6 +276,7 @@
     "form.feed.label.allow_self_signed_certificates": "Να επιτρέπονται αυτο-υπογεγραμμένα ή μη έγκυρα πιστοποιητικά",
     "form.feed.label.fetch_via_proxy": "Λήψη μέσω διακομιστή μεσολάβησης",
     "form.feed.label.disabled": "Μη ανανέωση αυτής της ροής",
+    "form.feed.label.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.category.label.title": "Τίτλος",
     "form.category.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.user.label.username": "Χρήστης",
