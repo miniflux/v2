@@ -69,9 +69,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			pocket_enabled,
 			pocket_access_token,
 			pocket_consumer_key,
-		    telegram_bot_enabled,
-		    telegram_bot_token,
-		    telegram_bot_chat_id
+			telegram_bot_enabled,
+			telegram_bot_token,
+			telegram_bot_chat_id
 		FROM
 			integrations
 		WHERE
@@ -144,9 +144,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pocket_enabled=$20,
 			pocket_access_token=$21,
 			pocket_consumer_key=$22,
-		    telegram_bot_enabled=$23,
-		    telegram_bot_token=$24,
-		    telegram_bot_chat_id=$25
+			telegram_bot_enabled=$23,
+			telegram_bot_token=$24,
+			telegram_bot_chat_id=$25
 		WHERE
 			user_id=$26
 	`
