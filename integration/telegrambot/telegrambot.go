@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// PushEntry pushes entry to telegram chat using integration settings provided
 func PushEntry(entry *model.Entry, integration *model.Integration) error {
 	if !integration.TelegramBotEnabled {
 		return nil
