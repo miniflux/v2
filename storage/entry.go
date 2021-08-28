@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"miniflux.app/integration/telegrambot"
 	"time"
 
 	"miniflux.app/crypto"
@@ -261,6 +262,8 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
 	var entryHashes []string
 
+	integration, _ := s.Integration(userID)
+
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
@@ -276,6 +279,14 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			}
 		} else {
 			err = s.createEntry(tx, entry)
+			if integration != nil && integration.TelegramBotEnabled {
+				localEntry := entry
+				go func() {
+					if err := telegrambot.PushEntry(localEntry, integration); err != nil {
+						logger.Error("integration: push entry failed: %v", err)
+					}
+				}()
+			}
 		}
 
 		if err != nil {
