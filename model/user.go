@@ -12,24 +12,26 @@ import (
 
 // User represents a user in the system.
 type User struct {
-	ID                int64      `json:"id"`
-	Username          string     `json:"username"`
-	Password          string     `json:"-"`
-	IsAdmin           bool       `json:"is_admin"`
-	Theme             string     `json:"theme"`
-	Language          string     `json:"language"`
-	Timezone          string     `json:"timezone"`
-	EntryDirection    string     `json:"entry_sorting_direction"`
-	EntryOrder        string     `json:"entry_sorting_order"`
-	Stylesheet        string     `json:"stylesheet"`
-	GoogleID          string     `json:"google_id"`
-	OpenIDConnectID   string     `json:"openid_connect_id"`
-	EntriesPerPage    int        `json:"entries_per_page"`
-	KeyboardShortcuts bool       `json:"keyboard_shortcuts"`
-	ShowReadingTime   bool       `json:"show_reading_time"`
-	EntrySwipe        bool       `json:"entry_swipe"`
-	LastLoginAt       *time.Time `json:"last_login_at"`
-	DisplayMode       string     `json:"display_mode"`
+	ID                  int64      `json:"id"`
+	Username            string     `json:"username"`
+	Password            string     `json:"-"`
+	IsAdmin             bool       `json:"is_admin"`
+	Theme               string     `json:"theme"`
+	Language            string     `json:"language"`
+	Timezone            string     `json:"timezone"`
+	EntryDirection      string     `json:"entry_sorting_direction"`
+	EntryOrder          string     `json:"entry_sorting_order"`
+	Stylesheet          string     `json:"stylesheet"`
+	GoogleID            string     `json:"google_id"`
+	OpenIDConnectID     string     `json:"openid_connect_id"`
+	EntriesPerPage      int        `json:"entries_per_page"`
+	KeyboardShortcuts   bool       `json:"keyboard_shortcuts"`
+	ShowReadingTime     bool       `json:"show_reading_time"`
+	EntrySwipe          bool       `json:"entry_swipe"`
+	LastLoginAt         *time.Time `json:"last_login_at"`
+	DisplayMode         string     `json:"display_mode"`
+	DefaultReadingSpeed int        `json:"default_reading_speed"`
+	CJKReadingSpeed     int        `json:"cjk_reading_speed"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -43,22 +45,24 @@ type UserCreationRequest struct {
 
 // UserModificationRequest represents the request to update a user.
 type UserModificationRequest struct {
-	Username          *string `json:"username"`
-	Password          *string `json:"password"`
-	Theme             *string `json:"theme"`
-	Language          *string `json:"language"`
-	Timezone          *string `json:"timezone"`
-	EntryDirection    *string `json:"entry_sorting_direction"`
-	EntryOrder        *string `json:"entry_sorting_order"`
-	Stylesheet        *string `json:"stylesheet"`
-	GoogleID          *string `json:"google_id"`
-	OpenIDConnectID   *string `json:"openid_connect_id"`
-	EntriesPerPage    *int    `json:"entries_per_page"`
-	IsAdmin           *bool   `json:"is_admin"`
-	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
-	ShowReadingTime   *bool   `json:"show_reading_time"`
-	EntrySwipe        *bool   `json:"entry_swipe"`
-	DisplayMode       *string `json:"display_mode"`
+	Username            *string `json:"username"`
+	Password            *string `json:"password"`
+	Theme               *string `json:"theme"`
+	Language            *string `json:"language"`
+	Timezone            *string `json:"timezone"`
+	EntryDirection      *string `json:"entry_sorting_direction"`
+	EntryOrder          *string `json:"entry_sorting_order"`
+	Stylesheet          *string `json:"stylesheet"`
+	GoogleID            *string `json:"google_id"`
+	OpenIDConnectID     *string `json:"openid_connect_id"`
+	EntriesPerPage      *int    `json:"entries_per_page"`
+	IsAdmin             *bool   `json:"is_admin"`
+	KeyboardShortcuts   *bool   `json:"keyboard_shortcuts"`
+	ShowReadingTime     *bool   `json:"show_reading_time"`
+	EntrySwipe          *bool   `json:"entry_swipe"`
+	DisplayMode         *string `json:"display_mode"`
+	DefaultReadingSpeed *int    `json:"default_reading_speed"`
+	CJKReadingSpeed     *int    `json:"cjk_reading_speed"`
 }
 
 // Patch updates the User object with the modification request.
@@ -125,6 +129,14 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.DisplayMode != nil {
 		user.DisplayMode = *u.DisplayMode
+	}
+
+	if u.DefaultReadingSpeed != nil {
+		user.DefaultReadingSpeed = *u.DefaultReadingSpeed
+	}
+
+	if u.CJKReadingSpeed != nil {
+		user.CJKReadingSpeed = *u.CJKReadingSpeed
 	}
 }
 

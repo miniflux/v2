@@ -27,18 +27,20 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	settingsForm := form.SettingsForm{
-		Username:          user.Username,
-		Theme:             user.Theme,
-		Language:          user.Language,
-		Timezone:          user.Timezone,
-		EntryDirection:    user.EntryDirection,
-		EntryOrder:        user.EntryOrder,
-		EntriesPerPage:    user.EntriesPerPage,
-		KeyboardShortcuts: user.KeyboardShortcuts,
-		ShowReadingTime:   user.ShowReadingTime,
-		CustomCSS:         user.Stylesheet,
-		EntrySwipe:        user.EntrySwipe,
-		DisplayMode:       user.DisplayMode,
+		Username:            user.Username,
+		Theme:               user.Theme,
+		Language:            user.Language,
+		Timezone:            user.Timezone,
+		EntryDirection:      user.EntryDirection,
+		EntryOrder:          user.EntryOrder,
+		EntriesPerPage:      user.EntriesPerPage,
+		KeyboardShortcuts:   user.KeyboardShortcuts,
+		ShowReadingTime:     user.ShowReadingTime,
+		CustomCSS:           user.Stylesheet,
+		EntrySwipe:          user.EntrySwipe,
+		DisplayMode:         user.DisplayMode,
+		DefaultReadingSpeed: user.DefaultReadingSpeed,
+		CJKReadingSpeed:     user.CJKReadingSpeed,
 	}
 
 	timezones, err := h.store.Timezones()

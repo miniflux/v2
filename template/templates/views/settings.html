@@ -72,6 +72,12 @@
 
     <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
 
+    <label for="form-cjk-reading-speed">{{ t "form.prefs.label.cjk_reading_speed" }}</label>
+    <input type="number" name="cjk_reading_speed" id="form-cjk-reading-speed" value="{{ .form.CJKReadingSpeed }}" min="1">
+
+    <label for="form-default-reading-speed">{{ t "form.prefs.label.default_reading_speed" }}</label>
+    <input type="number" name="default_reading_speed" id="form-default-reading-speed" value="{{ .form.DefaultReadingSpeed }}" min="1">
+
     <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="8" spellcheck="false">{{ .form.CustomCSS }}</textarea>
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

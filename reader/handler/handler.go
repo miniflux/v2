@@ -32,6 +32,11 @@ var (
 func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequest) (*model.Feed, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[CreateFeed] FeedURL=%s", feedCreationRequest.FeedURL))
 
+	user, storeErr := store.UserByID(userID)
+	if storeErr != nil {
+		return nil, storeErr
+	}
+
 	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
 		return nil, errors.NewLocalizedError(errCategoryNotFound)
 	}
@@ -79,7 +84,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
-	processor.ProcessFeedEntries(store, subscription)
+	processor.ProcessFeedEntries(store, subscription, user)
 
 	if storeErr := store.CreateFeed(subscription); storeErr != nil {
 		return nil, storeErr
@@ -101,8 +106,12 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 // RefreshFeed refreshes a feed.
 func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[RefreshFeed] feedID=%d", feedID))
-	userLanguage := store.UserLanguage(userID)
-	printer := locale.NewPrinter(userLanguage)
+	user, storeErr := store.UserByID(userID)
+	if storeErr != nil {
+		return storeErr
+	}
+
+	printer := locale.NewPrinter(user.Language)
 
 	originalFeed, storeErr := store.FeedByID(userID, feedID)
 	if storeErr != nil {
@@ -164,7 +173,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
-		processor.ProcessFeedEntries(store, originalFeed)
+		processor.ProcessFeedEntries(store, originalFeed, user)
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
 		if storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
