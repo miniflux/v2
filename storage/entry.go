@@ -8,8 +8,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"miniflux.app/integration/telegrambot"
 	"time"
+
+	"miniflux.app/integration/telegrambot"
 
 	"miniflux.app/crypto"
 	"miniflux.app/logger"

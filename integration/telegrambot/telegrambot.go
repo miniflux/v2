@@ -3,10 +3,11 @@ package telegrambot
 import (
 	"bytes"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"html/template"
-	"miniflux.app/model"
 	"strconv"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"miniflux.app/model"
 )
 
 // PushEntry pushes entry to telegram chat using integration settings provided
