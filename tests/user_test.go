@@ -2,6 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
@@ -86,6 +87,14 @@ func TestGetUsers(t *testing.T) {
 	if users[0].DisplayMode != "standalone" {
 		t.Fatalf(`Invalid web app display mode, got "%v"`, users[0].DisplayMode)
 	}
+
+	if users[0].DefaultReadingSpeed != 265 {
+		t.Fatalf(`Invalid default reading speed, got "%v"`, users[0].DefaultReadingSpeed)
+	}
+
+	if users[0].CJKReadingSpeed != 500 {
+		t.Fatalf(`Invalid cjk reading speed, got "%v"`, users[0].CJKReadingSpeed)
+	}
 }
 
 func TestCreateStandardUser(t *testing.T) {
@@ -134,6 +143,14 @@ func TestCreateStandardUser(t *testing.T) {
 
 	if user.DisplayMode != "standalone" {
 		t.Fatalf(`Invalid web app display mode, got "%v"`, user.DisplayMode)
+	}
+
+	if user.DefaultReadingSpeed != 265 {
+		t.Fatalf(`Invalid default reading speed, got "%v"`, user.DefaultReadingSpeed)
+	}
+
+	if user.CJKReadingSpeed != 500 {
+		t.Fatalf(`Invalid cjk reading speed, got "%v"`, user.CJKReadingSpeed)
 	}
 }
 
@@ -207,6 +224,14 @@ func TestGetUserByID(t *testing.T) {
 	if user.DisplayMode != "standalone" {
 		t.Fatalf(`Invalid web app display mode, got "%v"`, user.DisplayMode)
 	}
+
+	if user.DefaultReadingSpeed != 265 {
+		t.Fatalf(`Invalid default reading speed, got "%v"`, user.DefaultReadingSpeed)
+	}
+
+	if user.CJKReadingSpeed != 500 {
+		t.Fatalf(`Invalid cjk reading speed, got "%v"`, user.CJKReadingSpeed)
+	}
 }
 
 func TestGetUserByUsername(t *testing.T) {
@@ -266,6 +291,14 @@ func TestGetUserByUsername(t *testing.T) {
 	if user.DisplayMode != "standalone" {
 		t.Fatalf(`Invalid web app display mode, got "%v"`, user.DisplayMode)
 	}
+
+	if user.DefaultReadingSpeed != 265 {
+		t.Fatalf(`Invalid default reading speed, got "%v"`, user.DefaultReadingSpeed)
+	}
+
+	if user.CJKReadingSpeed != 500 {
+		t.Fatalf(`Invalid cjk reading speed, got "%v"`, user.CJKReadingSpeed)
+	}
 }
 
 func TestUpdateUserTheme(t *testing.T) {
@@ -299,11 +332,15 @@ func TestUpdateUserFields(t *testing.T) {
 	swipe := false
 	entriesPerPage := 5
 	displayMode := "fullscreen"
+	defaultReadingSpeed := 380
+	cjkReadingSpeed := 200
 	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{
-		Stylesheet:     &stylesheet,
-		EntrySwipe:     &swipe,
-		EntriesPerPage: &entriesPerPage,
-		DisplayMode:    &displayMode,
+		Stylesheet:          &stylesheet,
+		EntrySwipe:          &swipe,
+		EntriesPerPage:      &entriesPerPage,
+		DisplayMode:         &displayMode,
+		DefaultReadingSpeed: &defaultReadingSpeed,
+		CJKReadingSpeed:     &cjkReadingSpeed,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -323,6 +360,14 @@ func TestUpdateUserFields(t *testing.T) {
 
 	if user.DisplayMode != displayMode {
 		t.Fatalf(`Unable to update user DisplayMode: got %q instead of %q`, user.DisplayMode, displayMode)
+	}
+
+	if user.DefaultReadingSpeed != defaultReadingSpeed {
+		t.Fatalf(`Invalid default reading speed, got %v instead of %v`, user.DefaultReadingSpeed, defaultReadingSpeed)
+	}
+
+	if user.CJKReadingSpeed != cjkReadingSpeed {
+		t.Fatalf(`Invalid cjk reading speed, got %v instead of %v`, user.CJKReadingSpeed, cjkReadingSpeed)
 	}
 }
 
