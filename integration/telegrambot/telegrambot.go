@@ -12,10 +12,6 @@ import (
 
 // PushEntry pushes entry to telegram chat using integration settings provided
 func PushEntry(entry *model.Entry, integration *model.Integration) error {
-	if !integration.TelegramBotEnabled {
-		return nil
-	}
-
 	bot, err := tgbotapi.NewBotAPI(integration.TelegramBotToken)
 	if err != nil {
 		return fmt.Errorf("create bot failed: %w", err)
