@@ -1,8 +1,4 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
-
-package logger // import "miniflux.app/logger"
+package logger
 
 import (
 	"fmt"
@@ -11,7 +7,6 @@ import (
 )
 
 var requestedLevel = InfoLevel
-var displayDateTime = false
 
 // LogLevel type.
 type LogLevel uint32
@@ -43,11 +38,6 @@ func (level LogLevel) String() string {
 	default:
 		return "UNKNOWN"
 	}
-}
-
-// EnableDateTime enables date time in log messages.
-func EnableDateTime() {
-	displayDateTime = true
 }
 
 // EnableDebug increases logging, more verbose (debug)
@@ -86,13 +76,7 @@ func Fatal(format string, v ...interface{}) {
 }
 
 func formatMessage(level LogLevel, format string, v ...interface{}) {
-	var prefix string
-
-	if displayDateTime {
-		prefix = fmt.Sprintf("[%s] [%s] ", time.Now().Format("2006-01-02T15:04:05"), level)
-	} else {
-		prefix = fmt.Sprintf("[%s] ", level)
-	}
+	var prefix = fmt.Sprintf("%s [%s] ", time.Now().Format("2006-01-02 15:04:05"), level)
 
 	fmt.Fprintf(os.Stderr, prefix+format+"\n", v...)
 }
