@@ -1,57 +1,34 @@
-name: Docker
+name: docker
+
 on:
-  schedule:
-    - cron: '0 1 * * *'
   push:
-    tags:
-      - '*.*.*'
+    branches:
+      - 'develop'
+
 jobs:
-  docker-images:
+  docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      -
+        name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Generate Docker tag
-        id: docker_tag
-        run: |
-          DOCKER_IMAGE=miniflux/miniflux
-          DOCKER_VERSION=dev
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-          DOCKER_VERSION=nightly
-          TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION}"
-          elif [[ $GITHUB_REF == refs/tags/* ]]; then
-          DOCKER_VERSION=${GITHUB_REF#refs/tags/}
-          TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION},${DOCKER_IMAGE}:latest,ghcr.io/${DOCKER_IMAGE}:latest"
-          fi
-          echo ::set-output name=tags::${TAGS}
-
-      - name: Set up QEMU
+      -
+        name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
+      -
+        name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1 
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1 
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
-
-      - name: Build and push
+      -
+        name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./packaging/docker/Dockerfile
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+          file: ./build/Dockerfile
           push: true
-          tags: ${{ steps.docker_tag.outputs.tags }}
+          tags: impossible98/miniflux:latest
