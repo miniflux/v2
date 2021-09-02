@@ -41,8 +41,8 @@ export PGPASSWORD := postgres
 	debian \
 	debian-packages
 
-miniflux:
-	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
+build:
+	go build -ldflags=$(LD_FLAGS) -o dist/$(APP) main.go
 
 linux-amd64:
 	@ GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-linux-amd64 main.go
@@ -74,7 +74,7 @@ openbsd-amd64:
 windows-amd64:
 	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-amd64 main.go
 
-build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
+build2: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
 
 # NOTE: unsupported targets
 netbsd-amd64:
@@ -161,3 +161,6 @@ debian-packages: clean
 	$(MAKE) debian DEB_IMG_ARCH=amd64
 	$(MAKE) debian DEB_IMG_ARCH=arm64v8
 	$(MAKE) debian DEB_IMG_ARCH=arm32v7
+
+start:
+	./dist/miniflux --version

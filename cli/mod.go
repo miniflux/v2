@@ -1,8 +1,4 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
-
-package cli // import "miniflux.app/cli"
+package cli
 
 import (
 	"flag"
@@ -14,7 +10,7 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/storage"
 	"miniflux.app/ui/static"
-	"miniflux.app/version"
+	"miniflux.app/constant"
 )
 
 const (
@@ -48,20 +44,17 @@ func Parse() {
 		flagHealthCheck     string
 	)
 
-	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
-	flag.BoolVar(&flagInfo, "i", false, flagInfoHelp)
-	flag.BoolVar(&flagVersion, "version", false, flagVersionHelp)
-	flag.BoolVar(&flagVersion, "v", false, flagVersionHelp)
-	flag.BoolVar(&flagMigrate, "migrate", false, flagMigrateHelp)
-	flag.BoolVar(&flagFlushSessions, "flush-sessions", false, flagFlushSessionsHelp)
-	flag.BoolVar(&flagCreateAdmin, "create-admin", false, flagCreateAdminHelp)
-	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
-	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)
-	flag.BoolVar(&flagDebugMode, "debug", false, flagDebugModeHelp)
-	flag.StringVar(&flagConfigFile, "config-file", "", flagConfigFileHelp)
-	flag.StringVar(&flagConfigFile, "c", "", flagConfigFileHelp)
 	flag.BoolVar(&flagConfigDump, "config-dump", false, flagConfigDumpHelp)
+	flag.StringVar(&flagConfigFile, "config-file", "", flagConfigFileHelp)
+	flag.BoolVar(&flagCreateAdmin, "create-admin", false, flagCreateAdminHelp)
+	flag.BoolVar(&flagDebugMode, "debug", false, flagDebugModeHelp)
+	flag.BoolVar(&flagFlushSessions, "flush-sessions", false, flagFlushSessionsHelp)
 	flag.StringVar(&flagHealthCheck, "healthcheck", "", flagHealthCheckHelp)
+	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
+	flag.BoolVar(&flagMigrate, "migrate", false, flagMigrateHelp)
+	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)
+	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
+	flag.BoolVar(&flagVersion, "version", false, flagVersionHelp)
 	flag.Parse()
 
 	cfg := config.NewParser()
@@ -102,7 +95,7 @@ func Parse() {
 	}
 
 	if flagVersion {
-		fmt.Println(version.Version)
+		fmt.Println(constant.Version)
 		return
 	}
 
