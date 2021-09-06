@@ -56,6 +56,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 				feed.UserAgent,
 				feed.Cookie,
 				feed.AllowSelfSignedCertificates,
+				feed.FetchViaProxy,
 			)
 
 			if config.Opts.HasMetricsCollector() {
@@ -118,6 +119,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 		entry.Feed.UserAgent,
 		entry.Feed.Cookie,
 		feed.AllowSelfSignedCertificates,
+		feed.FetchViaProxy,
 	)
 
 	if config.Opts.HasMetricsCollector() {
