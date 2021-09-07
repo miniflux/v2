@@ -326,7 +326,7 @@
     "form.integration.nunux_keeper_endpoint": "URL de l'API de Nunux Keeper",
     "form.integration.nunux_keeper_api_key": "Clé d'API de Nunux Keeper",
     "form.integration.telegram_bot_activate": "Envoyer de nouveaux articles au chat Telegram",
-    "form.integration.telegram_bot_token": "Jeton de bot",
+    "form.integration.telegram_bot_token": "Jeton de sécurité de l'API du Bot Telegram",
     "form.integration.telegram_chat_id": "Identifiant de discussion",
     "form.api_key.label.description": "Libellé de la clé d'API",
     "form.submit.loading": "Chargement...",
