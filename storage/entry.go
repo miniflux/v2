@@ -10,8 +10,6 @@ import (
 	"fmt"
 	"time"
 
-	"miniflux.app/integration"
-
 	"miniflux.app/crypto"
 	"miniflux.app/logger"
 	"miniflux.app/model"
@@ -263,11 +261,6 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
 	var entryHashes []string
 
-	intg, err := s.Integration(userID)
-	if err != nil {
-		logger.Error("store: get integrations for user %d failed: %v; the refresh process will go on, but no integrations will run this time.", userID, err)
-	}
-
 	for _, entry := range entries {
 		entry.UserID = userID
 		entry.FeedID = feedID
@@ -283,10 +276,6 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			}
 		} else {
 			err = s.createEntry(tx, entry)
-			if intg != nil && err == nil {
-				localEntry := entry
-				integration.PushEntry(localEntry, intg)
-			}
 		}
 
 		if err != nil {
