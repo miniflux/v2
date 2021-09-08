@@ -68,7 +68,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			nunux_keeper_api_key,
 			pocket_enabled,
 			pocket_access_token,
-			pocket_consumer_key
+			pocket_consumer_key,
+			telegram_bot_enabled,
+			telegram_bot_token,
+			telegram_bot_chat_id
 		FROM
 			integrations
 		WHERE
@@ -99,6 +102,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.PocketEnabled,
 		&integration.PocketAccessToken,
 		&integration.PocketConsumerKey,
+		&integration.TelegramBotEnabled,
+		&integration.TelegramBotToken,
+		&integration.TelegramBotChatID,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -137,9 +143,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			nunux_keeper_api_key=$19,
 			pocket_enabled=$20,
 			pocket_access_token=$21,
-			pocket_consumer_key=$22
+			pocket_consumer_key=$22,
+			telegram_bot_enabled=$23,
+			telegram_bot_token=$24,
+			telegram_bot_chat_id=$25
 		WHERE
-			user_id=$23
+			user_id=$26
 	`
 	_, err := s.db.Exec(
 		query,
@@ -165,6 +174,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PocketEnabled,
 		integration.PocketAccessToken,
 		integration.PocketConsumerKey,
+		integration.TelegramBotEnabled,
+		integration.TelegramBotToken,
+		integration.TelegramBotChatID,
 		integration.UserID,
 	)
 

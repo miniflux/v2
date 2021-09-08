@@ -10,6 +10,7 @@ import (
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
+	"miniflux.app/integration/telegrambot"
 	"miniflux.app/integration/wallabag"
 	"miniflux.app/logger"
 	"miniflux.app/model"
@@ -67,6 +68,18 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		client := pocket.NewClient(config.Opts.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+}
+
+// PushEntry pushes new entry to the activated providers.
+// This function should be wrapped in a goroutine to avoid block of program execution.
+func PushEntry(entry *model.Entry, integration *model.Integration) {
+	if integration.TelegramBotEnabled {
+		logger.Debug("[Integration] Sending Entry #%d for User #%d to telegram", entry.ID, integration.UserID)
+		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID)
+		if err != nil {
+			logger.Error("[Integration] push entry to telegram bot failed: %v", err)
 		}
 	}
 }
