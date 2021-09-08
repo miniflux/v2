@@ -17,6 +17,11 @@ type Client struct {
 	password string
 }
 
+// NewClient returns a new Instapaper client.
+func NewClient(username, password string) *Client {
+	return &Client{username: username, password: password}
+}
+
 // AddURL sends a link to Instapaper.
 func (c *Client) AddURL(link, title string) error {
 	if c.username == "" || c.password == "" {
@@ -40,9 +45,4 @@ func (c *Client) AddURL(link, title string) error {
 	}
 
 	return nil
-}
-
-// NewClient returns a new Instapaper client.
-func NewClient(username, password string) *Client {
-	return &Client{username: username, password: password}
 }
