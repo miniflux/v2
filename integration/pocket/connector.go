@@ -18,6 +18,11 @@ type Connector struct {
 	consumerKey string
 }
 
+// NewConnector returns a new Pocket Connector.
+func NewConnector(consumerKey string) *Connector {
+	return &Connector{consumerKey}
+}
+
 // RequestToken fetches a new request token from Pocket API.
 func (c *Connector) RequestToken(redirectURL string) (string, error) {
 	type req struct {
@@ -95,9 +100,4 @@ func (c *Connector) AuthorizationURL(requestToken, redirectURL string) string {
 		requestToken,
 		redirectURL,
 	)
-}
-
-// NewConnector returns a new Pocket Connector.
-func NewConnector(consumerKey string) *Connector {
-	return &Connector{consumerKey}
 }

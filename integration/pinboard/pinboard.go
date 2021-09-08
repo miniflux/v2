@@ -16,6 +16,11 @@ type Client struct {
 	authToken string
 }
 
+// NewClient returns a new Pinboard client.
+func NewClient(authToken string) *Client {
+	return &Client{authToken: authToken}
+}
+
 // AddBookmark sends a link to Pinboard.
 func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error {
 	if c.authToken == "" {
@@ -45,9 +50,4 @@ func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error 
 	}
 
 	return nil
-}
-
-// NewClient returns a new Pinboard client.
-func NewClient(authToken string) *Client {
-	return &Client{authToken: authToken}
 }
