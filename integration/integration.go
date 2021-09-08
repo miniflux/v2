@@ -76,7 +76,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 // This function should be wrapped in a goroutine to avoid block of program execution.
 func PushEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.TelegramBotEnabled {
-		err := telegrambot.PushEntry(entry, integration)
+		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID)
 		if err != nil {
 			logger.Error("[Integration] push entry to telegram bot failed: %v", err)
 		}

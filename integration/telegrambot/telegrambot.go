@@ -11,8 +11,8 @@ import (
 )
 
 // PushEntry pushes entry to telegram chat using integration settings provided
-func PushEntry(entry *model.Entry, integration *model.Integration) error {
-	bot, err := tgbotapi.NewBotAPI(integration.TelegramBotToken)
+func PushEntry(entry *model.Entry, botToken, chatID string) error {
+	bot, err := tgbotapi.NewBotAPI(botToken)
 	if err != nil {
 		return fmt.Errorf("telegrambot: create bot failed: %w", err)
 	}
@@ -29,7 +29,7 @@ func PushEntry(entry *model.Entry, integration *model.Integration) error {
 		return fmt.Errorf("telegrambot: execute template failed: %w", err)
 	}
 
-	chatId, _ := strconv.ParseInt(integration.TelegramBotChatID, 10, 64)
+	chatId, _ := strconv.ParseInt(chatID, 10, 64)
 	msg := tgbotapi.NewMessage(chatId, result.String())
 	msg.ParseMode = tgbotapi.ModeHTML
 	msg.DisableWebPagePreview = false
