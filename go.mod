@@ -15,7 +15,7 @@ require (
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
 	github.com/stretchr/testify v1.6.1 // indirect
-	github.com/tdewolff/minify/v2 v2.9.21
+	github.com/tdewolff/minify/v2 v2.9.22
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
