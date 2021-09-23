@@ -544,6 +544,10 @@ a.button {
 }
 
 /* Modals */
+template {
+    display: none;
+}
+
 #modal-left {
     position: fixed;
     top: 0;
