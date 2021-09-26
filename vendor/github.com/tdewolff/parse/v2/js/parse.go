@@ -1316,7 +1316,12 @@ func (p *Parser) parseObjectLiteral() (object ObjectExpr) {
 				method.Name.Literal.Data = parse.Copy(method.Name.Literal.Data) // copy so that renaming doesn't rename the key
 				property.Name = &method.Name                                    // set key explicitly so after renaming the original is still known
 				if p.assumeArrowFunc {
-					property.Value, _ = p.scope.Declare(ArgumentDecl, name) // cannot fail
+					var ok bool
+					property.Value, ok = p.scope.Declare(ArgumentDecl, name)
+					if !ok {
+						property.Value = p.scope.Use(name)
+						p.assumeArrowFunc = false
+					}
 				} else {
 					property.Value = p.scope.Use(name)
 				}

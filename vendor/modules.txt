@@ -1,7 +1,8 @@
 # github.com/PuerkitoBio/goquery v1.7.1
 ## explicit
 github.com/PuerkitoBio/goquery
-# github.com/andybalholm/cascadia v1.2.0
+# github.com/andybalholm/cascadia v1.3.1
+## explicit
 github.com/andybalholm/cascadia
 # github.com/beorn7/perks v1.0.1
 github.com/beorn7/perks/quantile
@@ -14,6 +15,9 @@ github.com/coreos/go-oidc
 # github.com/felixge/httpsnoop v1.0.2
 ## explicit
 github.com/felixge/httpsnoop
+# github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+## explicit
+github.com/go-telegram-bot-api/telegram-bot-api
 # github.com/golang/gddo v0.0.0-20210115222349-20d68f94ee1f
 ## explicit
 github.com/golang/gddo/httputil/header
@@ -27,7 +31,7 @@ github.com/golang/protobuf/ptypes/timestamp
 # github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux
-# github.com/lib/pq v1.10.2
+# github.com/lib/pq v1.10.3
 ## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
@@ -61,21 +65,24 @@ github.com/prometheus/procfs/internal/util
 # github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 ## explicit
 github.com/rylans/getlang
-# github.com/tdewolff/minify/v2 v2.9.21
+# github.com/tdewolff/minify/v2 v2.9.22
 ## explicit
 github.com/tdewolff/minify/v2
 github.com/tdewolff/minify/v2/css
 github.com/tdewolff/minify/v2/js
-# github.com/tdewolff/parse/v2 v2.5.19
+# github.com/tdewolff/parse/v2 v2.5.21
 github.com/tdewolff/parse/v2
 github.com/tdewolff/parse/v2/buffer
 github.com/tdewolff/parse/v2/css
 github.com/tdewolff/parse/v2/js
 github.com/tdewolff/parse/v2/strconv
+# github.com/technoweenie/multipartstreamer v1.0.1
+## explicit
+github.com/technoweenie/multipartstreamer
 # github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 ## explicit
 github.com/xiaonanln/keylock
-# golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+# golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 ## explicit
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
@@ -84,7 +91,7 @@ golang.org/x/crypto/blowfish
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/pbkdf2
-# golang.org/x/net v0.0.0-20210825183410-e898025ed96a
+# golang.org/x/net v0.0.0-20210924151903-3ad01bbaa167
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -96,13 +103,13 @@ golang.org/x/net/idna
 ## explicit
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf
+# golang.org/x/sys v0.0.0-20210925032602-92d5a993a665
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
+# golang.org/x/term v0.0.0-20210916214954-140adaaadfaf
 ## explicit
 golang.org/x/term
 # golang.org/x/text v0.3.7

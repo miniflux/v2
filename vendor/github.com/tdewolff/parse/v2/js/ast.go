@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+var ErrInvalidJSON = fmt.Errorf("invalid JSON")
+
 // AST is the full ECMAScript abstract syntax tree.
 type AST struct {
 	Comments  [][]byte // first comments in file
@@ -82,6 +84,11 @@ func (v Var) String() string {
 // JS converts the node back to valid JavaScript
 func (v Var) JS() string {
 	return v.String()
+}
+
+// JSON converts the node back to valid JSON
+func (n Var) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // VarsByUses is sortable by uses in descending order.
@@ -329,6 +336,7 @@ func (s *Scope) Unscope() {
 type INode interface {
 	String() string
 	JS() string
+	JSON() (string, error)
 }
 
 // IStmt is a dummy interface for statements.
@@ -380,6 +388,14 @@ func (n BlockStmt) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n BlockStmt) JSON() (string, error) {
+	if len(n.List) != 1 {
+		return "", ErrInvalidJSON
+	}
+	return n.List[0].JSON()
+}
+
 // EmptyStmt is an empty statement.
 type EmptyStmt struct {
 }
@@ -391,6 +407,11 @@ func (n EmptyStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n EmptyStmt) JS() string {
 	return ";"
+}
+
+// JSON converts the node back to valid JSON
+func (n EmptyStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // ExprStmt is an expression statement.
@@ -409,6 +430,11 @@ func (n ExprStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n ExprStmt) JS() string {
 	return n.Value.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n ExprStmt) JSON() (string, error) {
+	return n.Value.JSON()
 }
 
 // IfStmt is an if statement.
@@ -446,6 +472,11 @@ func (n IfStmt) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n IfStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // DoWhileStmt is a do-while iteration statement.
 type DoWhileStmt struct {
 	Cond IExpr
@@ -468,6 +499,11 @@ func (n DoWhileStmt) JS() string {
 	return s + " while (" + n.Cond.JS() + ")"
 }
 
+// JSON converts the node back to valid JSON
+func (n DoWhileStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // WhileStmt is a while iteration statement.
 type WhileStmt struct {
 	Cond IExpr
@@ -485,6 +521,11 @@ func (n WhileStmt) JS() string {
 		s += n.Body.JS()
 	}
 	return s
+}
+
+// JSON converts the node back to valid JSON
+func (n WhileStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // ForStmt is a regular for iteration statement.
@@ -530,6 +571,11 @@ func (n ForStmt) JS() string {
 	return s + ") " + n.Body.JS()
 }
 
+// JSON converts the node back to valid JSON
+func (n ForStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // ForInStmt is a for-in iteration statement.
 type ForInStmt struct {
 	Init  IExpr
@@ -544,6 +590,11 @@ func (n ForInStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n ForInStmt) JS() string {
 	return "for (" + n.Init.JS() + " in " + n.Value.JS() + ") " + n.Body.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n ForInStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // ForOfStmt is a for-of iteration statement.
@@ -569,6 +620,11 @@ func (n ForOfStmt) JS() string {
 		s += " await"
 	}
 	return s + " (" + n.Init.JS() + " of " + n.Value.JS() + ") " + n.Body.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n ForOfStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // CaseClause is a case clause or default clause for a switch statement.
@@ -604,6 +660,11 @@ func (n CaseClause) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n CaseClause) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // SwitchStmt is a switch statement.
 type SwitchStmt struct {
 	Init IExpr
@@ -626,6 +687,11 @@ func (n SwitchStmt) JS() string {
 		s += clause.JS()
 	}
 	return s + " }"
+}
+
+// JSON converts the node back to valid JSON
+func (n SwitchStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // BranchStmt is a continue or break statement.
@@ -651,6 +717,11 @@ func (n BranchStmt) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n BranchStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // ReturnStmt is a return statement.
 type ReturnStmt struct {
 	Value IExpr // can be nil
@@ -673,6 +744,11 @@ func (n ReturnStmt) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n ReturnStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // WithStmt is a with statement.
 type WithStmt struct {
 	Cond IExpr
@@ -686,6 +762,11 @@ func (n WithStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n WithStmt) JS() string {
 	return "with (" + n.Cond.JS() + ") " + n.Body.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n WithStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // LabelledStmt is a labelled statement.
@@ -703,6 +784,11 @@ func (n LabelledStmt) JS() string {
 	return string(n.Label) + ": " + n.Value.JS()
 }
 
+// JSON converts the node back to valid JSON
+func (n LabelledStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // ThrowStmt is a throw statement.
 type ThrowStmt struct {
 	Value IExpr
@@ -715,6 +801,11 @@ func (n ThrowStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n ThrowStmt) JS() string {
 	return "throw " + n.Value.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n ThrowStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // TryStmt is a try statement.
@@ -756,6 +847,11 @@ func (n TryStmt) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n TryStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // DebuggerStmt is a debugger statement.
 type DebuggerStmt struct {
 }
@@ -767,6 +863,11 @@ func (n DebuggerStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n DebuggerStmt) JS() string {
 	return "debugger"
+}
+
+// JSON converts the node back to valid JSON
+func (n DebuggerStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // Alias is a name space import or import/export specifier for import/export statements.
@@ -786,6 +887,11 @@ func (alias Alias) String() string {
 // JS converts the node back to valid JavaScript
 func (alias Alias) JS() string {
 	return alias.String()
+}
+
+// JSON converts the node back to valid JSON
+func (n Alias) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // ImportStmt is an import statement.
@@ -852,6 +958,11 @@ func (n ImportStmt) JS() string {
 	return s + " " + string(n.Module)
 }
 
+// JSON converts the node back to valid JSON
+func (n ImportStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // ExportStmt is an export statement.
 type ExportStmt struct {
 	List    []Alias
@@ -915,6 +1026,11 @@ func (n ExportStmt) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n ExportStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // DirectivePrologueStmt is a string literal at the beginning of a function or module (usually "use strict").
 type DirectivePrologueStmt struct {
 	Value []byte
@@ -927,6 +1043,11 @@ func (n DirectivePrologueStmt) String() string {
 // JS converts the node back to valid JavaScript
 func (n DirectivePrologueStmt) JS() string {
 	return string(n.Value)
+}
+
+// JSON converts the node back to valid JSON
+func (n DirectivePrologueStmt) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 func (n BlockStmt) stmtNode()             {}
@@ -989,6 +1110,11 @@ func (n PropertyName) JS() string {
 	return n.String()
 }
 
+// JSON converts the node back to valid JSON
+func (n PropertyName) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // BindingArray is an array binding pattern.
 type BindingArray struct {
 	List []BindingElement
@@ -1030,6 +1156,11 @@ func (n BindingArray) JS() string {
 	return s + "]"
 }
 
+// JSON converts the node back to valid JSON
+func (n BindingArray) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // BindingObjectItem is a binding property.
 type BindingObjectItem struct {
 	Key   *PropertyName // can be nil
@@ -1055,6 +1186,11 @@ func (n BindingObjectItem) JS() string {
 		}
 	}
 	return " " + n.Value.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n BindingObjectItem) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // BindingObject is an object binding pattern.
@@ -1108,6 +1244,11 @@ func (n BindingObject) JS() string {
 	return s + " }"
 }
 
+// JSON converts the node back to valid JSON
+func (n BindingObject) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // BindingElement is a binding element.
 type BindingElement struct {
 	Binding IBinding // can be nil (in case of ellision)
@@ -1135,6 +1276,11 @@ func (n BindingElement) JS() string {
 		s += " = " + n.Default.JS()
 	}
 	return s
+}
+
+// JSON converts the node back to valid JSON
+func (n BindingElement) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 func (v *Var) bindingNode()          {}
@@ -1167,6 +1313,11 @@ func (n VarDecl) JS() string {
 		s += " " + item.JS()
 	}
 	return s
+}
+
+// JSON converts the node back to valid JSON
+func (n VarDecl) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // Params is a list of parameters for functions, methods, and arrow function.
@@ -1210,6 +1361,11 @@ func (n Params) JS() string {
 	return s + ")"
 }
 
+// JSON converts the node back to valid JSON
+func (n Params) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // FuncDecl is an (async) (generator) function declaration or expression.
 type FuncDecl struct {
 	Async     bool
@@ -1250,6 +1406,11 @@ func (n FuncDecl) JS() string {
 		s += " " + string(n.Name.Data)
 	}
 	return s + " " + n.Params.JS() + " " + n.Body.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n FuncDecl) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // MethodDecl is a method definition in a class declaration.
@@ -1307,6 +1468,11 @@ func (n MethodDecl) JS() string {
 	return s[1:]
 }
 
+// JSON converts the node back to valid JSON
+func (n MethodDecl) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // FieldDefinition is a field definition in a class declaration.
 type FieldDefinition struct {
 	Name PropertyName
@@ -1328,6 +1494,11 @@ func (n FieldDefinition) JS() string {
 		s += " = " + n.Init.JS()
 	}
 	return s
+}
+
+// JSON converts the node back to valid JSON
+func (n FieldDefinition) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // ClassDecl is a class declaration.
@@ -1374,6 +1545,11 @@ func (n ClassDecl) JS() string {
 	return s + "}"
 }
 
+// JSON converts the node back to valid JSON
+func (n ClassDecl) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 func (n VarDecl) stmtNode()   {}
 func (n FuncDecl) stmtNode()  {}
 func (n ClassDecl) stmtNode() {}
@@ -1398,6 +1574,20 @@ func (n LiteralExpr) String() string {
 // JS converts the node back to valid JavaScript
 func (n LiteralExpr) JS() string {
 	return string(n.Data)
+}
+
+// JSON converts the node back to valid JSON
+func (n LiteralExpr) JSON() (string, error) {
+	if n.TokenType == TrueToken || n.TokenType == FalseToken || n.TokenType == NullToken || n.TokenType == DecimalToken {
+		return string(n.Data), nil
+	} else if n.TokenType == StringToken {
+		if n.Data[0] == '\'' {
+			n.Data[0] = '"'
+			n.Data[len(n.Data)-1] = '"'
+		}
+		return string(n.Data), nil
+	}
+	return "", ErrInvalidJSON
 }
 
 // Element is an array literal element.
@@ -1427,6 +1617,11 @@ func (n Element) JS() string {
 		s += n.Value.JS()
 	}
 	return s
+}
+
+// JSON converts the node back to valid JSON
+func (n Element) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // ArrayExpr is an array literal.
@@ -1473,6 +1668,30 @@ func (n ArrayExpr) JS() string {
 	return s + "]"
 }
 
+// JSON converts the node back to valid JSON
+func (n ArrayExpr) JSON() (string, error) {
+	s := "["
+	for i, item := range n.List {
+		if i != 0 {
+			s += ", "
+		}
+		if item.Value != nil {
+			if item.Spread {
+				return "", ErrInvalidJSON
+			}
+			ss, err := item.Value.JSON()
+			if err != nil {
+				return "", err
+			}
+			s += ss
+		}
+	}
+	if 0 < len(n.List) && n.List[len(n.List)-1].Value == nil {
+		return "", ErrInvalidJSON
+	}
+	return s + "]", nil
+}
+
 // Property is a property definition in an object literal.
 type Property struct {
 	// either Name or Spread are set. When Spread is set then Value is AssignmentExpression
@@ -1516,6 +1735,29 @@ func (n Property) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n Property) JSON() (string, error) {
+	s := ""
+	if n.Name == nil || n.Name.Literal.TokenType != StringToken && n.Name.Literal.TokenType != IdentifierToken || n.Spread || n.Init != nil {
+		return "", ErrInvalidJSON
+	} else if n.Name.Literal.TokenType == IdentifierToken {
+		n.Name.Literal.TokenType = StringToken
+		n.Name.Literal.Data = append(append([]byte{'"'}, n.Name.Literal.Data...), '"')
+	}
+
+	ss, _ := n.Name.Literal.JSON()
+	s += ss + ": "
+
+	var err error
+	ss, err = n.Value.JSON()
+	if err != nil {
+		fmt.Println("b")
+		return "", err
+	}
+	s += ss
+	return s, nil
+}
+
 // ObjectExpr is an object literal.
 type ObjectExpr struct {
 	List []Property
@@ -1544,6 +1786,22 @@ func (n ObjectExpr) JS() string {
 	return s + "}"
 }
 
+// JSON converts the node back to valid JSON
+func (n ObjectExpr) JSON() (string, error) {
+	s := "{"
+	for i, item := range n.List {
+		if i != 0 {
+			s += ", "
+		}
+		ss, err := item.JSON()
+		if err != nil {
+			return "", err
+		}
+		s += ss
+	}
+	return s + "}", nil
+}
+
 // TemplatePart is a template head or middle.
 type TemplatePart struct {
 	Value []byte
@@ -1557,6 +1815,11 @@ func (n TemplatePart) String() string {
 // JS converts the node back to valid JavaScript
 func (n TemplatePart) JS() string {
 	return string(n.Value) + n.Expr.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n TemplatePart) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // TemplateExpr is a template literal or member/call expression, super property, or optional chain with template literal.
@@ -1590,6 +1853,11 @@ func (n TemplateExpr) JS() string {
 	return s + string(n.Tail)
 }
 
+// JSON converts the node back to valid JSON
+func (n TemplateExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // GroupExpr is a parenthesized expression.
 type GroupExpr struct {
 	X IExpr
@@ -1602,6 +1870,11 @@ func (n GroupExpr) String() string {
 // JS converts the node back to valid JavaScript
 func (n GroupExpr) JS() string {
 	return "(" + n.X.JS() + ")"
+}
+
+// JSON converts the node back to valid JSON
+func (n GroupExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // IndexExpr is a member/call expression, super property, or optional chain with an index expression.
@@ -1620,6 +1893,11 @@ func (n IndexExpr) JS() string {
 	return n.X.JS() + "[" + n.Y.JS() + "]"
 }
 
+// JSON converts the node back to valid JSON
+func (n IndexExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // DotExpr is a member/call expression, super property, or optional chain with a dot expression.
 type DotExpr struct {
 	X    IExpr
@@ -1636,6 +1914,11 @@ func (n DotExpr) JS() string {
 	return n.X.JS() + "." + n.Y.JS()
 }
 
+// JSON converts the node back to valid JSON
+func (n DotExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // NewTargetExpr is a new target meta property.
 type NewTargetExpr struct {
 }
@@ -1649,6 +1932,11 @@ func (n NewTargetExpr) JS() string {
 	return "new.target"
 }
 
+// JSON converts the node back to valid JSON
+func (n NewTargetExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // ImportMetaExpr is a import meta meta property.
 type ImportMetaExpr struct {
 }
@@ -1660,6 +1948,11 @@ func (n ImportMetaExpr) String() string {
 // JS converts the node back to valid JavaScript
 func (n ImportMetaExpr) JS() string {
 	return "import.meta"
+}
+
+// JSON converts the node back to valid JSON
+func (n ImportMetaExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 type Arg struct {
@@ -1682,6 +1975,11 @@ func (n Arg) JS() string {
 		s += "..."
 	}
 	return s + n.Value.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n Arg) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // Args is a list of arguments as used by new and call expressions.
@@ -1712,6 +2010,11 @@ func (n Args) JS() string {
 	return s
 }
 
+// JSON converts the node back to valid JSON
+func (n Args) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // NewExpr is a new expression or new member expression.
 type NewExpr struct {
 	X    IExpr
@@ -1735,6 +2038,11 @@ func (n NewExpr) JS() string {
 	return "new " + n.X.JS() + "()"
 }
 
+// JSON converts the node back to valid JSON
+func (n NewExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // CallExpr is a call expression.
 type CallExpr struct {
 	X    IExpr
@@ -1748,6 +2056,11 @@ func (n CallExpr) String() string {
 // JS converts the node back to valid JavaScript
 func (n CallExpr) JS() string {
 	return n.X.JS() + "(" + n.Args.JS() + ")"
+}
+
+// JSON converts the node back to valid JSON
+func (n CallExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // OptChainExpr is an optional chain.
@@ -1781,6 +2094,11 @@ func (n OptChainExpr) JS() string {
 	}
 }
 
+// JSON converts the node back to valid JSON
+func (n OptChainExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // UnaryExpr is an update or unary expression.
 type UnaryExpr struct {
 	Op TokenType
@@ -1806,6 +2124,11 @@ func (n UnaryExpr) JS() string {
 	return n.Op.String() + n.X.JS()
 }
 
+// JSON converts the node back to valid JSON
+func (n UnaryExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // BinaryExpr is a binary expression.
 type BinaryExpr struct {
 	Op   TokenType
@@ -1824,6 +2147,11 @@ func (n BinaryExpr) JS() string {
 	return n.X.JS() + " " + n.Op.String() + " " + n.Y.JS()
 }
 
+// JSON converts the node back to valid JSON
+func (n BinaryExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // CondExpr is a conditional expression.
 type CondExpr struct {
 	Cond, X, Y IExpr
@@ -1836,6 +2164,11 @@ func (n CondExpr) String() string {
 // JS converts the node back to valid JavaScript
 func (n CondExpr) JS() string {
 	return n.Cond.JS() + " ? " + n.X.JS() + " : " + n.Y.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n CondExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 // YieldExpr is a yield expression.
@@ -1867,6 +2200,11 @@ func (n YieldExpr) JS() string {
 	return s + " " + n.X.JS()
 }
 
+// JSON converts the node back to valid JSON
+func (n YieldExpr) JSON() (string, error) {
+	return "", ErrInvalidJSON
+}
+
 // ArrowFunc is an (async) arrow function.
 type ArrowFunc struct {
 	Async  bool
@@ -1889,6 +2227,11 @@ func (n ArrowFunc) JS() string {
 		s += "async "
 	}
 	return s + n.Params.JS() + " => " + n.Body.JS()
+}
+
+// JSON converts the node back to valid JSON
+func (n ArrowFunc) JSON() (string, error) {
+	return "", ErrInvalidJSON
 }
 
 func (v *Var) exprNode()           {}
