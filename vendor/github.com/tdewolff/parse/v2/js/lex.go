@@ -611,7 +611,7 @@ func (l *Lexer) consumeStringToken() bool {
 				}
 			}
 			continue
-		} else if l.consumeLineTerminator() || c == 0 && l.r.Err() != nil {
+		} else if c == '\n' || c == '\r' || c == 0 && l.r.Err() != nil {
 			l.r.Rewind(mark)
 			return false
 		}

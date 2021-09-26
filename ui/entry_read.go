@@ -39,7 +39,7 @@ func (h *handler) showReadEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryDirection)
+	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, "changed_at", "desc")
 	entryPaginationBuilder.WithStatus(model.EntryStatusRead)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {

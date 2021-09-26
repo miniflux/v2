@@ -1,11 +1,7 @@
 FROM golang:1 AS build
 ADD . /go/src/app
 WORKDIR /go/src/app
-RUN go generate
-RUN go build \
-    -o miniflux \
-    -ldflags="-s -w -X 'miniflux.app/version.Version=`git describe --tags --abbrev=0`' -X 'miniflux.app/version.Commit=`git rev-parse --short HEAD`' -X 'miniflux.app/version.BuildDate=`date +%FT%T%z`'" \
-    main.go
+RUN make miniflux
 
 FROM centos:latest
 RUN dnf install -y rpm-build

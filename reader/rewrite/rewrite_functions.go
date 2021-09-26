@@ -229,3 +229,15 @@ func replaceCustom(entryContent string, searchTerm string, replaceTerm string) s
 	}
 	return entryContent
 }
+
+func removeCustom(entryContent string, selector string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	doc.Find(selector).Remove()
+
+	output, _ := doc.Find("body").First().Html()
+	return output
+}

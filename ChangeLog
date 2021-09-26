@@ -1,3 +1,23 @@
+Version 2.0.33 (September 25, 2021)
+-----------------------------------
+
+* Build RPM and Debian package with PIE mode enabled
+* Add CSS rule to hide `<template>` tag in old browsers
+* Bump `github.com/tdewolff/minify/v2 from 2.9.21 to 2.9.22`
+* Bump `github.com/lib/pq from 1.10.2 to 1.10.3`
+* Remove `RequestURI()` hack
+* Improve `zh_CN` translation
+* Add ability to change entry sort order in the UI
+* Add minor improvements in integration package
+* Add Telegram integration
+* Add rewrite rule to remove DOM elements
+* Add proxy argument to `scraper.Fetch()`
+* Add mime type `application/feed+json` to discover JSON Feed v1.1
+* Update scraper rule for `theregister.com`
+* Add Go 1.17 to GitHub Actions
+* Display option to hide feed only when category is not already hidden
+* Add option to hide feeds from the global Unread list
+
 Version 2.0.32 (August 14, 2021)
 --------------------------------
 

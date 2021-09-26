@@ -9,7 +9,6 @@ import (
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
-	"miniflux.app/model"
 	"miniflux.app/ui/session"
 	"miniflux.app/ui/view"
 )
@@ -23,7 +22,7 @@ func (h *handler) sharedEntries(w http.ResponseWriter, r *http.Request) {
 
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithShareCodeNotEmpty()
-	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithOrder(user.EntryOrder)
 	builder.WithDirection(user.EntryDirection)
 
 	entries, err := builder.GetEntries()

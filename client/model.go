@@ -26,6 +26,7 @@ type User struct {
 	Language          string     `json:"language"`
 	Timezone          string     `json:"timezone"`
 	EntryDirection    string     `json:"entry_sorting_direction"`
+	EntryOrder        string     `json:"entry_sorting_order"`
 	Stylesheet        string     `json:"stylesheet"`
 	GoogleID          string     `json:"google_id"`
 	OpenIDConnectID   string     `json:"openid_connect_id"`
@@ -59,6 +60,7 @@ type UserModificationRequest struct {
 	Language          *string `json:"language"`
 	Timezone          *string `json:"timezone"`
 	EntryDirection    *string `json:"entry_sorting_direction"`
+	EntryOrder        *string `json:"entry_sorting_order"`
 	Stylesheet        *string `json:"stylesheet"`
 	GoogleID          *string `json:"google_id"`
 	OpenIDConnectID   *string `json:"openid_connect_id"`

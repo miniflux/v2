@@ -21,7 +21,6 @@ import (
 	"miniflux.app/errors"
 	"miniflux.app/logger"
 	"miniflux.app/timer"
-	url_helper "miniflux.app/url"
 )
 
 const (
@@ -40,7 +39,6 @@ var (
 type Client struct {
 	inputURL string
 
-	requestURL                 string
 	requestEtagHeader          string
 	requestLastModifiedHeader  string
 	requestAuthorizationHeader string
@@ -90,9 +88,8 @@ func (c *Client) String() string {
 	}
 
 	return fmt.Sprintf(
-		`InputURL=%q RequestURL=%q ETag=%s LastMod=%s Auth=%v UserAgent=%q Verify=%v`,
+		`InputURL=%q ETag=%s LastMod=%s Auth=%v UserAgent=%q Verify=%v`,
 		c.inputURL,
-		c.requestURL,
 		etagHeader,
 		lastModifiedHeader,
 		c.requestAuthorizationHeader != "" || (c.requestUsername != "" && c.requestPassword != ""),
@@ -263,8 +260,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 }
 
 func (c *Client) buildRequest(method string, body io.Reader) (*http.Request, error) {
-	c.requestURL = url_helper.RequestURI(c.inputURL)
-	request, err := http.NewRequest(method, c.requestURL, body)
+	request, err := http.NewRequest(method, c.inputURL, body)
 	if err != nil {
 		return nil, err
 	}
