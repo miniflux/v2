@@ -559,7 +559,7 @@ func (o *Options) String() string {
 	var builder strings.Builder
 
 	for _, option := range o.SortedOptions() {
-		builder.WriteString(fmt.Sprintf("%s: %v\n", option.Key, option.Value))
+		fmt.Fprintf(&builder, "%s=%v\n", option.Key, option.Value)
 	}
 
 	return builder.String()
