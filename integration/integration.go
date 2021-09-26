@@ -10,14 +10,17 @@ import (
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
+	"miniflux.app/integration/telegrambot"
 	"miniflux.app/integration/wallabag"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 )
 
-// SendEntry send the entry to the activated providers.
+// SendEntry sends the entry to third-party providers when the user click on "Save".
 func SendEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.PinboardEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Pinboard", entry.ID, entry.URL, integration.UserID)
+
 		client := pinboard.NewClient(integration.PinboardToken)
 		err := client.AddBookmark(
 			entry.URL,
@@ -32,6 +35,8 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.InstapaperEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Instapaper", entry.ID, entry.URL, integration.UserID)
+
 		client := instapaper.NewClient(integration.InstapaperUsername, integration.InstapaperPassword)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
@@ -39,6 +44,8 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.WallabagEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Wallabag", entry.ID, entry.URL, integration.UserID)
+
 		client := wallabag.NewClient(
 			integration.WallabagURL,
 			integration.WallabagClientID,
@@ -53,6 +60,8 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.NunuxKeeperEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to NunuxKeeper", entry.ID, entry.URL, integration.UserID)
+
 		client := nunuxkeeper.NewClient(
 			integration.NunuxKeeperURL,
 			integration.NunuxKeeperAPIKey,
@@ -64,9 +73,23 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.PocketEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Pocket", entry.ID, entry.URL, integration.UserID)
+
 		client := pocket.NewClient(config.Opts.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+}
+
+// PushEntry pushes an entry to third-party providers during feed refreshes.
+func PushEntry(entry *model.Entry, integration *model.Integration) {
+	if integration.TelegramBotEnabled {
+		logger.Debug("[Integration] Sending Entry %q for User #%d to Telegram", entry.URL, integration.UserID)
+
+		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID)
+		if err != nil {
+			logger.Error("[Integration] push entry to telegram bot failed: %v", err)
 		}
 	}
 }

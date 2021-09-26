@@ -17,7 +17,7 @@ var migrations = []func(tx *sql.Tx) error{
 			CREATE TABLE schema_version (
 				version text not null
 			);
-			
+
 			CREATE TABLE users (
 				id serial not null,
 				username text not null unique,
@@ -29,7 +29,7 @@ var migrations = []func(tx *sql.Tx) error{
 				last_login_at timestamp with time zone,
 				primary key (id)
 			);
-			
+
 			CREATE TABLE sessions (
 				id serial not null,
 				user_id int not null,
@@ -41,7 +41,7 @@ var migrations = []func(tx *sql.Tx) error{
 				unique (user_id, token),
 				foreign key (user_id) references users(id) on delete cascade
 			);
-			
+
 			CREATE TABLE categories (
 				id serial not null,
 				user_id int not null,
@@ -50,7 +50,7 @@ var migrations = []func(tx *sql.Tx) error{
 				unique (user_id, title),
 				foreign key (user_id) references users(id) on delete cascade
 			);
-			
+
 			CREATE TABLE feeds (
 				id bigserial not null,
 				user_id int not null,
@@ -68,9 +68,9 @@ var migrations = []func(tx *sql.Tx) error{
 				foreign key (user_id) references users(id) on delete cascade,
 				foreign key (category_id) references categories(id) on delete cascade
 			);
-			
+
 			CREATE TYPE entry_status as enum('unread', 'read', 'removed');
-			
+
 			CREATE TABLE entries (
 				id bigserial not null,
 				user_id int not null,
@@ -87,9 +87,9 @@ var migrations = []func(tx *sql.Tx) error{
 				foreign key (user_id) references users(id) on delete cascade,
 				foreign key (feed_id) references feeds(id) on delete cascade
 			);
-			
+
 			CREATE INDEX entries_feed_idx on entries using btree(feed_id);
-			
+
 			CREATE TABLE enclosures (
 				id bigserial not null,
 				user_id int not null,
@@ -101,7 +101,7 @@ var migrations = []func(tx *sql.Tx) error{
 				foreign key (user_id) references users(id) on delete cascade,
 				foreign key (entry_id) references entries(id) on delete cascade
 			);
-			
+
 			CREATE TABLE icons (
 				id bigserial not null,
 				hash text not null unique,
@@ -109,14 +109,14 @@ var migrations = []func(tx *sql.Tx) error{
 				content bytea not null,
 				primary key (id)
 			);
-			
+
 			CREATE TABLE feed_icons (
 				feed_id bigint not null,
 				icon_id bigint not null,
 				primary key(feed_id, icon_id),
 				foreign key (feed_id) references feeds(id) on delete cascade,
 				foreign key (icon_id) references icons(id) on delete cascade
-			);		
+			);
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -410,7 +410,7 @@ var migrations = []func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
-			ALTER TABLE feeds 
+			ALTER TABLE feeds
 				ADD COLUMN blocklist_rules text not null default '',
 				ADD COLUMN keeplist_rules text not null default ''
 		`
@@ -544,6 +544,23 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(`
 			ALTER TABLE feeds ADD COLUMN hide_globally boolean not null default false
 		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN telegram_bot_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN telegram_bot_token text default '';
+			ALTER TABLE integrations ADD COLUMN telegram_bot_chat_id text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			CREATE TYPE entry_sorting_order AS enum('published_at', 'created_at');
+			ALTER TABLE users ADD COLUMN entry_order entry_sorting_order default 'published_at';
+		`
+		_, err = tx.Exec(sql)
 		return err
 	},
 }

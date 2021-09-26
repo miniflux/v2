@@ -136,6 +136,23 @@
         </div>
     </div>
 
+    <h3>Telegram Bot</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="telegram_bot_enabled" value="1" {{ if .form.TelegramBotEnabled }}checked{{ end }}> {{ t "form.integration.telegram_bot_activate" }}
+        </label>
+
+        <label for="form-telegram-bot-token">{{ t "form.integration.telegram_bot_token" }}</label>
+        <input type="text" name="telegram_bot_token" id="form-telegram-bot-token" value="{{ .form.TelegramBotToken }}" placeholder="bot123456:Abcdefg" spellcheck="false">
+
+        <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
+        <input type="text" name="telegram_bot_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramBotChatID }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
 </form>
 
 <h3>{{ t "page.integration.bookmarklet" }}</h3>

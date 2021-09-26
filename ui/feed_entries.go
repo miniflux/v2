@@ -38,7 +38,7 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feed.ID)
 	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithOrder(user.EntryOrder)
 	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)

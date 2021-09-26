@@ -16,6 +16,11 @@ type Client struct {
 	accessToken string
 }
 
+// NewClient returns a new Pocket client.
+func NewClient(consumerKey, accessToken string) *Client {
+	return &Client{consumerKey, accessToken}
+}
+
 // AddURL sends a single link to Pocket.
 func (c *Client) AddURL(link, title string) error {
 	if c.consumerKey == "" || c.accessToken == "" {
@@ -47,9 +52,4 @@ func (c *Client) AddURL(link, title string) error {
 	}
 
 	return nil
-}
-
-// NewClient returns a new Pocket client.
-func NewClient(consumerKey, accessToken string) *Client {
-	return &Client{consumerKey, accessToken}
 }

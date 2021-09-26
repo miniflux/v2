@@ -84,7 +84,8 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 			stylesheet,
 			google_id,
 			openid_connect_id,
-			display_mode
+			display_mode,
+			entry_order
 	`
 
 	tx, err := s.db.Begin()
@@ -116,6 +117,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 		&user.GoogleID,
 		&user.OpenIDConnectID,
 		&user.DisplayMode,
+		&user.EntryOrder,
 	)
 	if err != nil {
 		tx.Rollback()
@@ -165,9 +167,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				stylesheet=$12,
 				google_id=$13,
 				openid_connect_id=$14,
-				display_mode=$15
+				display_mode=$15,
+				entry_order=$16
 			WHERE
-				id=$16
+				id=$17
 		`
 
 		_, err = s.db.Exec(
@@ -187,6 +190,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.GoogleID,
 			user.OpenIDConnectID,
 			user.DisplayMode,
+			user.EntryOrder,
 			user.ID,
 		)
 		if err != nil {
@@ -208,9 +212,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				stylesheet=$11,
 				google_id=$12,
 				openid_connect_id=$13,
-				display_mode=$14
+				display_mode=$14,
+				entry_order=$15
 			WHERE
-				id=$15
+				id=$16
 		`
 
 		_, err := s.db.Exec(
@@ -229,6 +234,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.GoogleID,
 			user.OpenIDConnectID,
 			user.DisplayMode,
+			user.EntryOrder,
 			user.ID,
 		)
 
@@ -269,7 +275,8 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			stylesheet,
 			google_id,
 			openid_connect_id,
-			display_mode
+			display_mode,
+			entry_order
 		FROM
 			users
 		WHERE
@@ -297,7 +304,8 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			stylesheet,
 			google_id,
 			openid_connect_id,
-			display_mode
+			display_mode,
+			entry_order
 		FROM
 			users
 		WHERE
@@ -325,7 +333,8 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 			stylesheet,
 			google_id,
 			openid_connect_id,
-			display_mode
+			display_mode,
+			entry_order
 		FROM
 			users
 		WHERE
@@ -360,7 +369,8 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.stylesheet,
 			u.google_id,
 			u.openid_connect_id,
-			u.display_mode
+			u.display_mode,
+			u.entry_order
 		FROM
 			users u
 		LEFT JOIN
@@ -390,6 +400,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.GoogleID,
 		&user.OpenIDConnectID,
 		&user.DisplayMode,
+		&user.EntryOrder,
 	)
 
 	if err == sql.ErrNoRows {
@@ -480,7 +491,8 @@ func (s *Storage) Users() (model.Users, error) {
 			stylesheet,
 			google_id,
 			openid_connect_id,
-			display_mode
+			display_mode,
+			entry_order
 		FROM
 			users
 		ORDER BY username ASC
@@ -511,6 +523,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.GoogleID,
 			&user.OpenIDConnectID,
 			&user.DisplayMode,
+			&user.EntryOrder,
 		)
 
 		if err != nil {

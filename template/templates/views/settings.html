@@ -57,6 +57,12 @@
         <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
     </select>
 
+    <label for="form-entry-order">{{ t "form.prefs.label.entry_order" }}</label>
+    <select id="form-entry-order" name="entry_order">
+        <option value="published_at" {{ if eq "published_at" $.form.EntryOrder }}selected="selected"{{ end }}>{{ t "form.prefs.select.publish_time" }}</option>
+        <option value="created_at" {{ if eq "created_at" $.form.EntryOrder }}selected="selected"{{ end }}>{{ t "form.prefs.select.created_time" }}</option>
+    </select>
+
     <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
     <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 

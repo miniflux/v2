@@ -22,6 +22,11 @@ type Client struct {
 	password     string
 }
 
+// NewClient returns a new Wallabag client.
+func NewClient(baseURL, clientID, clientSecret, username, password string) *Client {
+	return &Client{baseURL, clientID, clientSecret, username, password}
+}
+
 // AddEntry sends a link to Wallabag.
 // Pass an empty string in `content` to let Wallabag fetch the article content.
 func (c *Client) AddEntry(link, title, content string) error {
@@ -86,11 +91,6 @@ func (c *Client) getAccessToken() (string, error) {
 	}
 
 	return token.AccessToken, nil
-}
-
-// NewClient returns a new Wallabag client.
-func NewClient(baseURL, clientID, clientSecret, username, password string) *Client {
-	return &Client{baseURL, clientID, clientSecret, username, password}
 }
 
 func getAPIEndpoint(baseURL, path string) (string, error) {

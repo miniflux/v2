@@ -26,6 +26,11 @@ type Client struct {
 	apiKey  string
 }
 
+// NewClient returns a new Nunux Keeepr client.
+func NewClient(baseURL, apiKey string) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey}
+}
+
 // AddEntry sends an entry to Nunux Keeper.
 func (c *Client) AddEntry(link, title, content string) error {
 	if c.baseURL == "" || c.apiKey == "" {
@@ -56,11 +61,6 @@ func (c *Client) AddEntry(link, title, content string) error {
 	}
 
 	return nil
-}
-
-// NewClient returns a new Nunux Keeepr client.
-func NewClient(baseURL, apiKey string) *Client {
-	return &Client{baseURL: baseURL, apiKey: apiKey}
 }
 
 func getAPIEndpoint(baseURL, pathURL string) (string, error) {

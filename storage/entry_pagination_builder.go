@@ -20,6 +20,7 @@ type EntryPaginationBuilder struct {
 	conditions []string
 	args       []interface{}
 	entryID    int64
+	order      string
 	direction  string
 }
 
@@ -107,20 +108,20 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 		WITH entry_pagination AS (
 			SELECT
 				e.id,
-				lag(e.id) over (order by e.published_at asc, e.id desc) as prev_id,
-				lead(e.id) over (order by e.published_at asc, e.id desc) as next_id
+				lag(e.id) over (order by e.%[1]s asc, e.id desc) as prev_id,
+				lead(e.id) over (order by e.%[1]s asc, e.id desc) as next_id
 			FROM entries AS e
 			JOIN feeds AS f ON f.id=e.feed_id
 			JOIN categories c ON c.id = f.category_id
-			WHERE %s
-			ORDER BY e.published_at asc, e.id desc
+			WHERE %[2]s
+			ORDER BY e.%[1]s asc, e.id desc
 		)
-		SELECT prev_id, next_id FROM entry_pagination AS ep WHERE %s;
+		SELECT prev_id, next_id FROM entry_pagination AS ep WHERE %[3]s;
 	`
 
 	subCondition := strings.Join(e.conditions, " AND ")
 	finalCondition := fmt.Sprintf("ep.id = $%d", len(e.args)+1)
-	query := fmt.Sprintf(cte, subCondition, finalCondition)
+	query := fmt.Sprintf(cte, e.order, subCondition, finalCondition)
 	e.args = append(e.args, e.entryID)
 
 	var pID, nID sql.NullInt64
@@ -162,12 +163,13 @@ func (e *EntryPaginationBuilder) getEntry(tx *sql.Tx, entryID int64) (*model.Ent
 }
 
 // NewEntryPaginationBuilder returns a new EntryPaginationBuilder.
-func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, direction string) *EntryPaginationBuilder {
+func NewEntryPaginationBuilder(store *Storage, userID, entryID int64, order, direction string) *EntryPaginationBuilder {
 	return &EntryPaginationBuilder{
 		store:      store,
 		args:       []interface{}{userID, "removed"},
 		conditions: []string{"e.user_id = $1", "e.status <> $2"},
 		entryID:    entryID,
+		order:      order,
 		direction:  direction,
 	}
 }
