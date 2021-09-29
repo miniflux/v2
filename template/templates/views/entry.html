@@ -131,7 +131,7 @@
     </div>
     {{ end }}
     {{ end }}
-    <article class="entry-content" dir="auto">
+    <article role="article" class="entry-content" dir="auto">
         {{ if .user }}
             {{ noescape (proxyFilter .entry.Content) }}
         {{ else }}
