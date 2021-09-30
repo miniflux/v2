@@ -715,7 +715,7 @@ template {
 }
 
 .pagination a {
-    color: var(--pagination-color);
+    color: var(--pagination-link-color);
 }
 
 .pagination a:hover,

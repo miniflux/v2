@@ -1431,3 +1431,38 @@ func TestFetchYouTubeWatchTime(t *testing.T) {
 		t.Fatalf(`Unexpected FETCH_YOUTUBE_WATCH_TIME value, got %v instead of %v`, result, expected)
 	}
 }
+
+func TestParseConfigDumpOutput(t *testing.T) {
+	os.Clearenv()
+
+	wantOpts := NewOptions()
+	wantOpts.adminUsername = "my-username"
+
+	serialized := wantOpts.String()
+	tmpfile, err := os.CreateTemp(".", "miniflux.*.unit_test.conf")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := tmpfile.Write([]byte(serialized)); err != nil {
+		t.Fatal(err)
+	}
+
+	parser := NewParser()
+	parsedOpts, err := parser.ParseFile(tmpfile.Name())
+	if err != nil {
+		t.Errorf(`Parsing failure: %v`, err)
+	}
+
+	if parsedOpts.AdminUsername() != wantOpts.AdminUsername() {
+		t.Fatalf(`Unexpected ADMIN_USERNAME value, got %q instead of %q`, parsedOpts.AdminUsername(), wantOpts.AdminUsername())
+	}
+
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Remove(tmpfile.Name()); err != nil {
+		t.Fatal(err)
+	}
+}
