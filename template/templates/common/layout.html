@@ -82,9 +82,11 @@
                 <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
                     <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
                 </li>
-                <li>
-                    <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
-                </li>
+                {{ if not hasAuthProxy }}
+                    <li>
+                        <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
+                    </li>
+                {{ end }}
             </ul>
             <div class="search">
                 <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
