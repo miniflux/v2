@@ -299,6 +299,7 @@
     "form.prefs.select.created_time": "Hora de creación de la entrada",
     "form.prefs.label.keyboard_shortcuts": "Habilitar atajos de teclado",
     "form.prefs.label.entry_swipe": "Habilitar el gesto de deslizar el dedo en las entradas en el móvil",
+    "form.prefs.label.toggle_status_wait": "Delay removing items from lists until server responds",
     "form.prefs.label.show_reading_time": "Mostrar el tiempo estimado de lectura de los artículos",
     "form.prefs.label.custom_css": "CSS personalizado",
     "form.prefs.label.entry_order": "Columna de clasificación de entradas",

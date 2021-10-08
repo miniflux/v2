@@ -299,6 +299,7 @@
     "form.prefs.select.created_time": "Tempo di creazione dell'entrata",
     "form.prefs.label.keyboard_shortcuts": "Abilita le scorciatoie da tastiera",
     "form.prefs.label.entry_swipe": "Abilita il gesto di scorrimento sulle voci sul cellulare",
+    "form.prefs.label.toggle_status_wait": "Delay removing items from lists until server responds",
     "form.prefs.label.show_reading_time": "Mostra il tempo di lettura stimato per gli articoli",
     "form.prefs.label.custom_css": "CSS personalizzati",
     "form.prefs.label.entry_order": "Colonna di ordinamento delle voci",
