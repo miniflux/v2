@@ -45,6 +45,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasOAuth2Provider": func(provider string) bool {
 			return config.Opts.OAuth2Provider() == provider
 		},
+		"hasAuthProxy": func() bool {
+			return config.Opts.AuthProxyHeader() != ""
+		},
 		"route": func(name string, args ...interface{}) string {
 			return route.Path(f.router, name, args...)
 		},
