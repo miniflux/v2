@@ -178,7 +178,7 @@ function toggleEntryStatus(element, toasting) {
     }
 
     if (document.body.dataset.toggleStatusWait) {
-        updateEntriesStatus([entryID], newStatus, callback)
+        updateEntriesStatus([entryID], newStatus, callback);
     } else {
         updateEntriesStatus([entryID], newStatus);
         callback();
