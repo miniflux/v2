@@ -2,6 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
@@ -301,11 +302,11 @@ func TestUpdateUserFields(t *testing.T) {
 	entriesPerPage := 5
 	displayMode := "fullscreen"
 	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{
-		Stylesheet:     &stylesheet,
-		EntrySwipe:     &swipe,
-		ToggleStatusWait:      &toggleStatusWait,
-		EntriesPerPage: &entriesPerPage,
-		DisplayMode:    &displayMode,
+		Stylesheet:       &stylesheet,
+		EntrySwipe:       &swipe,
+		ToggleStatusWait: &toggleStatusWait,
+		EntriesPerPage:   &entriesPerPage,
+		DisplayMode:      &displayMode,
 	})
 	if err != nil {
 		t.Fatal(err)
