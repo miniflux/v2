@@ -297,11 +297,13 @@ func TestUpdateUserFields(t *testing.T) {
 
 	stylesheet := "body { color: red }"
 	swipe := false
+	toggleStatusWait := false
 	entriesPerPage := 5
 	displayMode := "fullscreen"
 	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{
 		Stylesheet:     &stylesheet,
 		EntrySwipe:     &swipe,
+		ToggleStatusWait:      &toggleStatusWait,
 		EntriesPerPage: &entriesPerPage,
 		DisplayMode:    &displayMode,
 	})
@@ -315,6 +317,10 @@ func TestUpdateUserFields(t *testing.T) {
 
 	if user.EntrySwipe != swipe {
 		t.Fatalf(`Unable to update user EntrySwipe: got %v instead of %v`, user.EntrySwipe, swipe)
+	}
+
+	if user.ToggleStatusWait != toggleStatusWait {
+		t.Fatalf(`Unable to update user ToggleStatusWait: got %v instead of %v`, user.ToggleStatusWait, toggleStatusWait)
 	}
 
 	if user.EntriesPerPage != entriesPerPage {

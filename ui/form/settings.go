@@ -27,6 +27,7 @@ type SettingsForm struct {
 	ShowReadingTime   bool
 	CustomCSS         string
 	EntrySwipe        bool
+	ToggleStatusWait  bool
 	DisplayMode       string
 }
 
@@ -43,6 +44,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.ShowReadingTime = s.ShowReadingTime
 	user.Stylesheet = s.CustomCSS
 	user.EntrySwipe = s.EntrySwipe
+	user.ToggleStatusWait = s.ToggleStatusWait
 	user.DisplayMode = s.DisplayMode
 
 	if s.Password != "" {
@@ -92,6 +94,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		ShowReadingTime:   r.FormValue("show_reading_time") == "1",
 		CustomCSS:         r.FormValue("custom_css"),
 		EntrySwipe:        r.FormValue("entry_swipe") == "1",
+		ToggleStatusWait:         r.FormValue("toggle_status_wait") == "1",
 		DisplayMode:       r.FormValue("display_mode"),
 	}
 }

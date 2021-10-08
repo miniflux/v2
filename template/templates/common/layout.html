@@ -47,7 +47,8 @@
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     data-refresh-all-feeds-url="{{ route "refreshAllFeeds" }}"
-    {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
+    {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}
+    {{ if .user }}{{ if .user.ToggleStatusWait }}data-toggle-status-wait="true"{{ end }}{{ end }}>
 
     {{ if .user }}
     <header class="header">

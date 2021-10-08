@@ -150,7 +150,8 @@ function toggleEntryStatus(element, toasting) {
     let newStatus = currentStatus === "read" ? "unread" : "read";
 
     link.querySelector("span").innerHTML = link.dataset.labelLoading;
-    updateEntriesStatus([entryID], newStatus, () => {
+
+    function callback() {
         let iconElement, label;
 
         if (currentStatus === "read") {
@@ -174,7 +175,14 @@ function toggleEntryStatus(element, toasting) {
             element.classList.remove("item-status-" + currentStatus);
             element.classList.add("item-status-" + newStatus);
         }
-    });
+    }
+
+    if (document.body.dataset.toggleStatusWait) {
+        updateEntriesStatus([entryID], newStatus, callback)
+    } else {
+        updateEntriesStatus([entryID], newStatus);
+        callback();
+    }
 }
 
 // Mark a single entry as read.
