@@ -45,16 +45,6 @@ func TestImgWithSrcset(t *testing.T) {
 	}
 }
 
-func TestImgWithSrcsetAndDataURL(t *testing.T) {
-	input := `<img srcset="data:image/gif;base64,test" src="http://example.org/example-320w.jpg" alt="Example">`
-	expected := `<img srcset="data:image/gif;base64,test" src="http://example.org/example-320w.jpg" alt="Example" loading="lazy">`
-	output := Sanitize("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
 func TestSourceWithSrcsetAndMedia(t *testing.T) {
 	input := `<picture><source media="(min-width: 800px)" srcset="elva-800w.jpg"></picture>`
 	expected := `<picture><source media="(min-width: 800px)" srcset="http://example.org/elva-800w.jpg"></picture>`
@@ -68,6 +58,16 @@ func TestSourceWithSrcsetAndMedia(t *testing.T) {
 func TestMediumImgWithSrcset(t *testing.T) {
 	input := `<img alt="Image for post" class="t u v ef aj" src="https://miro.medium.com/max/5460/1*aJ9JibWDqO81qMfNtqgqrw.jpeg" srcset="https://miro.medium.com/max/552/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 276w, https://miro.medium.com/max/1000/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 500w" sizes="500px" width="2730" height="3407">`
 	expected := `<img alt="Image for post" src="https://miro.medium.com/max/5460/1*aJ9JibWDqO81qMfNtqgqrw.jpeg" srcset="https://miro.medium.com/max/552/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 276w, https://miro.medium.com/max/1000/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 500w" sizes="500px" loading="lazy">`
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestEconomistImgWithSrcset(t *testing.T) {
+	input := `<img loading="lazy" src="https://www.economist.com/img/b/608/634/90/sites/default/files/images/print-edition/20211009_WWC585.png" srcSet="https://www.economist.com/img/b/200/209/90/sites/default/files/images/print-edition/20211009_WWC585.png 200w,https://www.economist.com/img/b/300/313/90/sites/default/files/images/print-edition/20211009_WWC585.png 300w,https://www.economist.com/img/b/400/417/90/sites/default/files/images/print-edition/20211009_WWC585.png 400w,https://www.economist.com/img/b/600/626/90/sites/default/files/images/print-edition/20211009_WWC585.png 600w,https://www.economist.com/img/b/640/667/90/sites/default/files/images/print-edition/20211009_WWC585.png 640w,https://www.economist.com/img/b/800/834/90/sites/default/files/images/print-edition/20211009_WWC585.png 800w,https://www.economist.com/img/b/1000/1043/90/sites/default/files/images/print-edition/20211009_WWC585.png 1000w,https://www.economist.com/img/b/1280/1335/90/sites/default/files/images/print-edition/20211009_WWC585.png 1280w" sizes="300px" alt=""/>`
+	expected := `<img src="https://www.economist.com/img/b/608/634/90/sites/default/files/images/print-edition/20211009_WWC585.png" srcset="https://www.economist.com/img/b/200/209/90/sites/default/files/images/print-edition/20211009_WWC585.png 200w, https://www.economist.com/img/b/300/313/90/sites/default/files/images/print-edition/20211009_WWC585.png 300w, https://www.economist.com/img/b/400/417/90/sites/default/files/images/print-edition/20211009_WWC585.png 400w, https://www.economist.com/img/b/600/626/90/sites/default/files/images/print-edition/20211009_WWC585.png 600w, https://www.economist.com/img/b/640/667/90/sites/default/files/images/print-edition/20211009_WWC585.png 640w, https://www.economist.com/img/b/800/834/90/sites/default/files/images/print-edition/20211009_WWC585.png 800w, https://www.economist.com/img/b/1000/1043/90/sites/default/files/images/print-edition/20211009_WWC585.png 1000w, https://www.economist.com/img/b/1280/1335/90/sites/default/files/images/print-edition/20211009_WWC585.png 1280w" sizes="300px" alt="" loading="lazy"/>`
 	output := Sanitize("http://example.org/", input)
 
 	if output != expected {
