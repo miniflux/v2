@@ -215,12 +215,12 @@ func parseBaseURL(value string) (string, string, string, error) {
 
 	url, err := url_parser.Parse(value)
 	if err != nil {
-		return "", "", "", fmt.Errorf("Invalid BASE_URL: %v", err)
+		return "", "", "", fmt.Errorf("config: invalid BASE_URL: %w", err)
 	}
 
 	scheme := strings.ToLower(url.Scheme)
 	if scheme != "https" && scheme != "http" {
-		return "", "", "", errors.New("Invalid BASE_URL: scheme must be http or https")
+		return "", "", "", errors.New("config: invalid BASE_URL: scheme must be http or https")
 	}
 
 	basePath := url.Path
