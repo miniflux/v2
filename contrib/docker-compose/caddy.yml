@@ -16,8 +16,7 @@ services:
     image: ${MINIFLUX_IMAGE:-miniflux/miniflux:latest}
     container_name: miniflux
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     environment:
       - DATABASE_URL=postgres://miniflux:secret@db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
