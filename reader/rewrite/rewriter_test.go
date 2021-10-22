@@ -176,6 +176,26 @@ func TestRewriteWithUnknownLazyNoScriptImage(t *testing.T) {
 	}
 }
 
+func TestRewriteWithLazySrcset(t *testing.T) {
+	description := `<img srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`
+	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
+	expected := `<img srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteWithImageAndLazySrcset(t *testing.T) {
+	description := `<img src="meow" srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`
+	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
+	expected := `<img src="meow" srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
 func TestNewLineRewriteRule(t *testing.T) {
 	description := "A\nB\nC"
 	output := Rewriter("https://example.org/article", description, "nl2br")
