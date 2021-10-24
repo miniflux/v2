@@ -22,10 +22,10 @@ func (i *Icon) DataURL() string {
 	return fmt.Sprintf("%s;base64,%s", i.MimeType, base64.StdEncoding.EncodeToString(i.Content))
 }
 
-// Icons represents a list of icon.
+// Icons represents a list of icons.
 type Icons []*Icon
 
-// FeedIcon is a jonction table between feeds and icons
+// FeedIcon is a junction table between feeds and icons.
 type FeedIcon struct {
 	FeedID int64 `json:"feed_id"`
 	IconID int64 `json:"icon_id"`
