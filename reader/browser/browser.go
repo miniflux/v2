@@ -14,7 +14,7 @@ var (
 	errServerFailure    = "Unable to fetch this resource (Status Code = %d)"
 	errEncoding         = "Unable to normalize encoding: %q"
 	errEmptyFeed        = "This feed is empty"
-	errResourceNotFound = "Resource not found (404), this feed doesn't exists anymore, check the feed URL"
+	errResourceNotFound = "Resource not found (404), this feed doesn't exist anymore, check the feed URL"
 	errNotAuthorized    = "You are not authorized to access this resource (invalid username/password)"
 )
 

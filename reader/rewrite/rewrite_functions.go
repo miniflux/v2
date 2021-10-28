@@ -100,9 +100,14 @@ func addDynamicImage(entryURL, entryContent string) string {
 		"data-380src",
 	}
 
+	candidateSrcsetAttrs := []string{
+		"data-srcset",
+	}
+
 	changed := false
 
 	doc.Find("img,div").Each(func(i int, img *goquery.Selection) {
+		// Src-linked candidates
 		for _, candidateAttr := range candidateAttrs {
 			if srcAttr, found := img.Attr(candidateAttr); found {
 				changed = true
@@ -112,6 +117,22 @@ func addDynamicImage(entryURL, entryContent string) string {
 				} else {
 					altAttr := img.AttrOr("alt", "")
 					img.ReplaceWithHtml(`<img src="` + srcAttr + `" alt="` + altAttr + `"/>`)
+				}
+
+				break
+			}
+		}
+
+		// Srcset-linked candidates
+		for _, candidateAttr := range candidateSrcsetAttrs {
+			if srcAttr, found := img.Attr(candidateAttr); found {
+				changed = true
+
+				if img.Is("img") {
+					img.SetAttr("srcset", srcAttr)
+				} else {
+					altAttr := img.AttrOr("alt", "")
+					img.ReplaceWithHtml(`<img srcset="` + srcAttr + `" alt="` + altAttr + `"/>`)
 				}
 
 				break

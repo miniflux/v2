@@ -42,7 +42,7 @@ func (r *Response) String() string {
 	)
 }
 
-// IsNotFound returns true if the resource doesn't exists anymore.
+// IsNotFound returns true if the resource doesn't exist anymore.
 func (r *Response) IsNotFound() bool {
 	return r.StatusCode == 404 || r.StatusCode == 410
 }
