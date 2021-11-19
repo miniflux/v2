@@ -55,7 +55,7 @@ func UserTimezone(r *http.Request) string {
 func UserLanguage(r *http.Request) string {
 	language := getContextStringValue(r, UserLanguageContextKey)
 	if language == "" {
-		language = "en_US"
+		language = "zh_CN"
 	}
 	return language
 }
@@ -64,7 +64,7 @@ func UserLanguage(r *http.Request) string {
 func UserTheme(r *http.Request) string {
 	theme := getContextStringValue(r, UserThemeContextKey)
 	if theme == "" {
-		theme = "system_serif"
+		theme = "dark_sans_serif"
 	}
 	return theme
 }

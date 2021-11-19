@@ -82,7 +82,7 @@ github.com/technoweenie/multipartstreamer
 # github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 ## explicit
 github.com/xiaonanln/keylock
-# golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
+# golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
 ## explicit
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
@@ -91,7 +91,7 @@ golang.org/x/crypto/blowfish
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/pbkdf2
-# golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
+# golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -103,7 +103,7 @@ golang.org/x/net/idna
 ## explicit
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02
+# golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9

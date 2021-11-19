@@ -37,8 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.listen();
     }
 
-    let touchHandler = new TouchHandler();
-    touchHandler.listen();
+    if (window.PullToRefresh !== undefined) {
+        PullToRefresh.init({
+            mainElement: 'main div.items'
+        });
+    }
+
+    // let touchHandler = new TouchHandler();
+    // touchHandler.listen();
 
     onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
     onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));

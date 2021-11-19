@@ -585,6 +585,9 @@ a.button {
     margin-left: 30px;
 }
 
+.panel ul li {
+    word-break: break-all;
+}
 
 /* Modals */
 template {
