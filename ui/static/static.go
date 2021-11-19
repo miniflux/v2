@@ -113,7 +113,6 @@ func GenerateStylesheetsBundles() error {
 func GenerateJavascriptBundles() error {
 	var bundles = map[string][]string{
 		"app": {
-			"js/pull_to_refresh.js",
 			"js/dom_helper.js",
 			"js/touch_handler.js",
 			"js/keyboard_handler.js",

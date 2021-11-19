@@ -37,12 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.listen();
     }
 
-    if (window.PullToRefresh !== undefined) {
-        PullToRefresh.init({
-            mainElement: 'main div.items'
-        });
-    }
-
     // let touchHandler = new TouchHandler();
     // touchHandler.listen();
 
@@ -52,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
     onClick("a[data-action=markPageAsRead]", () => handleConfirmationMessage(event.target, () => markPageAsRead()));
     onClick("a[data-toggle-status]", (event) => handleEntryStatus(event.target));
+    onClick("main section h1", () => window.location.reload());
 
     onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
