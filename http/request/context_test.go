@@ -219,7 +219,7 @@ func TestUserLanguage(t *testing.T) {
 	r, _ := http.NewRequest("GET", "http://example.org", nil)
 
 	result := UserLanguage(r)
-	expected := "en_US"
+	expected := "zh_CN"
 
 	if result != expected {
 		t.Errorf(`Unexpected context value, got %q instead of %q`, result, expected)
@@ -241,7 +241,7 @@ func TestUserTheme(t *testing.T) {
 	r, _ := http.NewRequest("GET", "http://example.org", nil)
 
 	result := UserTheme(r)
-	expected := "system_serif"
+	expected := "dark_sans_serif"
 
 	if result != expected {
 		t.Errorf(`Unexpected context value, got %q instead of %q`, result, expected)
