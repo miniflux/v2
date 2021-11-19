@@ -3,6 +3,7 @@
  * (c) Rafael Soto
  * Released under the MIT License.
  */
+/* jshint ignore:start */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
@@ -37,7 +38,7 @@
 
   function setupDOM(handler) {
     if (handler.mainElement === null) {
-      return
+      return;
     }
     if (!handler.ptrElement) {
       var ptr = document.createElement('div');
