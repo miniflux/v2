@@ -19,10 +19,17 @@ func Themes() map[string]string {
 // ThemeColor returns the color for the address bar or/and the browser color.
 // https://developer.mozilla.org/en-US/docs/Web/Manifest#theme_color
 // https://developers.google.com/web/tools/lighthouse/audits/address-bar
-func ThemeColor(theme string) string {
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta/name/theme-color
+func ThemeColor(theme, colorScheme string) string {
 	switch theme {
 	case "dark_serif", "dark_sans_serif":
 		return "#222"
+	case "system_serif", "system_sans_serif":
+		if colorScheme == "dark" {
+			return "#222"
+		}
+
+		return "#fff"
 	default:
 		return "#fff"
 	}
