@@ -53,7 +53,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		}
 		displayMode = user.DisplayMode
 	}
-	themeColor := model.ThemeColor(request.UserTheme(r))
+	themeColor := model.ThemeColor(request.UserTheme(r), "light")
 	manifest := &webManifest{
 		Name:            "Miniflux",
 		ShortName:       "Miniflux",

@@ -87,8 +87,8 @@ func (f *funcMap) Map() template.FuncMap {
 		"isodate": func(ts time.Time) string {
 			return ts.Format("2006-01-02 15:04:05")
 		},
-		"theme_color": func(theme string) string {
-			return model.ThemeColor(theme)
+		"theme_color": func(theme, colorScheme string) string {
+			return model.ThemeColor(theme, colorScheme)
 		},
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
