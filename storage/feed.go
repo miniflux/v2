@@ -21,12 +21,9 @@ type byStateAndName struct{ f model.Feeds }
 func (l byStateAndName) Len() int      { return len(l.f) }
 func (l byStateAndName) Swap(i, j int) { l.f[i], l.f[j] = l.f[j], l.f[i] }
 func (l byStateAndName) Less(i, j int) bool {
-	// Disabled test first, since if disabled, we don't care the errors
+	// disabled test first, since we don't care about errors if disabled
 	if l.f[i].Disabled != l.f[j].Disabled {
-		if l.f[i].Disabled {
-			return false
-		}
-		return true
+		return l.f[j].Disabled
 	}
 	if l.f[i].ParsingErrorCount != l.f[j].ParsingErrorCount {
 		return l.f[i].ParsingErrorCount > l.f[j].ParsingErrorCount
