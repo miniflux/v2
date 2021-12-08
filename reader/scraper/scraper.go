@@ -21,6 +21,14 @@ import (
 
 // Fetch downloads a web page and returns relevant contents.
 func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCertificates, useProxy bool) (string, error) {
+	content, err := fetchURL(websiteURL, rules, userAgent, cookie, allowSelfSignedCertificates, useProxy)
+	if err != nil {
+		return "", err
+	}
+	return followTheOnlyLink(websiteURL, content, rules, userAgent, cookie, allowSelfSignedCertificates, useProxy)
+}
+
+func fetchURL(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCertificates, useProxy bool) (string, error) {
 	clt := client.NewClientWithConfig(websiteURL, config.Opts)
 	clt.WithUserAgent(userAgent)
 	clt.WithCookie(cookie)
@@ -46,6 +54,7 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 		return "", err
 	}
 
+	sameSite := url.Domain(websiteURL) == url.Domain(response.EffectiveURL)
 	// The entry URL could redirect somewhere else.
 	websiteURL = response.EffectiveURL
 
@@ -54,7 +63,7 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 	}
 
 	var content string
-	if rules != "" {
+	if sameSite && rules != "" {
 		logger.Debug(`[Scraper] Using rules %q for %q`, rules, websiteURL)
 		content, err = scrapContent(response.Body, rules)
 	} else {
@@ -102,4 +111,36 @@ func isAllowedContentType(contentType string) bool {
 	contentType = strings.ToLower(contentType)
 	return strings.HasPrefix(contentType, "text/html") ||
 		strings.HasPrefix(contentType, "application/xhtml+xml")
+}
+
+func followTheOnlyLink(websiteURL, content string, rules, userAgent string, cookie string, allowSelfSignedCertificates, useProxy bool) (string, error) {
+	document, err := goquery.NewDocumentFromReader(strings.NewReader(content))
+	if err != nil {
+		return "", err
+	}
+	body := document.Find("body").Nodes[0]
+	if body.FirstChild.NextSibling != nil ||
+		body.FirstChild.Data != "a" {
+		return content, nil
+	}
+	// the body has only one child of <a>
+	var href string
+	for _, attr := range body.FirstChild.Attr {
+		if attr.Key == "href" {
+			href = attr.Val
+			break
+		}
+	}
+	if href == "" {
+		return content, nil
+	}
+	href, err = url.AbsoluteURL(websiteURL, href)
+	if err != nil {
+		return "", err
+	}
+	sameSite := url.Domain(websiteURL) == url.Domain(href)
+	if sameSite {
+		return fetchURL(href, rules, userAgent, cookie, allowSelfSignedCertificates, useProxy)
+	}
+	return fetchURL(href, rules, userAgent, "", false, false)
 }
