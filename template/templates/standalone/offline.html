@@ -5,9 +5,10 @@
         <title>{{ t "page.offline.title" }} - Miniflux</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="dark light">
-        <meta name="theme-color" content="{{ theme_color .theme }}">
+        <meta name="theme-color" content="{{ theme_color .theme "light" }}" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="{{ theme_color .theme "dark" }}" media="(prefers-color-scheme: dark)">
     </head>
     <body>
-        <p>{{ t "page.offline.message" }} ‐ <a href="{{ route "unread" }}">{{ t "page.offline.refresh_page" }}</a>.</p>
+        <p>{{ t "page.offline.message" }} - <a href="{{ route "unread" }}">{{ t "page.offline.refresh_page" }}</a>.</p>
     </body>
 </html>
