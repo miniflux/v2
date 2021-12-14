@@ -21,17 +21,17 @@ type byStateAndName struct{ f model.Feeds }
 func (l byStateAndName) Len() int      { return len(l.f) }
 func (l byStateAndName) Swap(i, j int) { l.f[i], l.f[j] = l.f[j], l.f[i] }
 func (l byStateAndName) Less(i, j int) bool {
-	if l.f[i].ParsingErrorCount > 0 && l.f[j].ParsingErrorCount == 0 {
-		return true
-	} else if l.f[i].ParsingErrorCount == 0 && l.f[j].ParsingErrorCount > 0 {
-		return false
-	} else if l.f[i].UnreadCount > 0 && l.f[j].UnreadCount == 0 {
-		return true
-	} else if l.f[i].UnreadCount == 0 && l.f[j].UnreadCount > 0 {
-		return false
-	} else {
-		return l.f[i].Title < l.f[j].Title
+	// disabled test first, since we don't care about errors if disabled
+	if l.f[i].Disabled != l.f[j].Disabled {
+		return l.f[j].Disabled
 	}
+	if l.f[i].ParsingErrorCount != l.f[j].ParsingErrorCount {
+		return l.f[i].ParsingErrorCount > l.f[j].ParsingErrorCount
+	}
+	if l.f[i].UnreadCount != l.f[j].UnreadCount {
+		return l.f[i].UnreadCount > l.f[j].UnreadCount
+	}
+	return l.f[i].Title < l.f[j].Title
 }
 
 // FeedExists checks if the given feed exists.
