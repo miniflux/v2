@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"sort"
+	"time"
 
 	"miniflux.app/logger"
 )
@@ -19,15 +20,45 @@ func Serialize(subscriptions SubcriptionList) string {
 	writer := bufio.NewWriter(&b)
 	writer.WriteString(xml.Header)
 
-	feeds := normalizeFeeds(subscriptions)
+	opmlDocument := convertSubscriptionsToOPML(subscriptions)
 	encoder := xml.NewEncoder(writer)
-	encoder.Indent("    ", "    ")
-	if err := encoder.Encode(feeds); err != nil {
+	encoder.Indent("", "    ")
+	if err := encoder.Encode(opmlDocument); err != nil {
 		logger.Error("[OPML:Serialize] %v", err)
 		return ""
 	}
 
 	return b.String()
+}
+
+func convertSubscriptionsToOPML(subscriptions SubcriptionList) *opmlDocument {
+	opmlDocument := NewOPMLDocument()
+	opmlDocument.Version = "2.0"
+	opmlDocument.Header.Title = "Miniflux"
+	opmlDocument.Header.DateCreated = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")
+
+	groupedSubs := groupSubscriptionsByFeed(subscriptions)
+	var categories []string
+	for k := range groupedSubs {
+		categories = append(categories, k)
+	}
+	sort.Strings(categories)
+
+	for _, categoryName := range categories {
+		category := opmlOutline{Text: categoryName}
+		for _, subscription := range groupedSubs[categoryName] {
+			category.Outlines = append(category.Outlines, opmlOutline{
+				Title:   subscription.Title,
+				Text:    subscription.Title,
+				FeedURL: subscription.FeedURL,
+				SiteURL: subscription.SiteURL,
+			})
+		}
+
+		opmlDocument.Outlines = append(opmlDocument.Outlines, category)
+	}
+
+	return opmlDocument
 }
 
 func groupSubscriptionsByFeed(subscriptions SubcriptionList) map[string]SubcriptionList {
@@ -38,32 +69,4 @@ func groupSubscriptionsByFeed(subscriptions SubcriptionList) map[string]Subcript
 	}
 
 	return groups
-}
-
-func normalizeFeeds(subscriptions SubcriptionList) *opml {
-	feeds := new(opml)
-	feeds.Version = "2.0"
-
-	groupedSubs := groupSubscriptionsByFeed(subscriptions)
-	var categories []string
-	for k := range groupedSubs {
-		categories = append(categories, k)
-	}
-	sort.Strings(categories)
-
-	for _, categoryName := range categories {
-		category := outline{Text: categoryName}
-		for _, subscription := range groupedSubs[categoryName] {
-			category.Outlines = append(category.Outlines, outline{
-				Title:   subscription.Title,
-				Text:    subscription.Title,
-				FeedURL: subscription.FeedURL,
-				SiteURL: subscription.SiteURL,
-			})
-		}
-
-		feeds.Outlines = append(feeds.Outlines, category)
-	}
-
-	return feeds
 }

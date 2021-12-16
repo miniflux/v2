@@ -8,21 +8,49 @@ import (
 	"encoding/xml"
 )
 
-type opml struct {
-	XMLName  xml.Name  `xml:"opml"`
-	Version  string    `xml:"version,attr"`
-	Outlines []outline `xml:"body>outline"`
+// Specs: http://opml.org/spec2.opml
+type opmlDocument struct {
+	XMLName  xml.Name      `xml:"opml"`
+	Version  string        `xml:"version,attr"`
+	Header   opmlHeader    `xml:"head"`
+	Outlines []opmlOutline `xml:"body>outline"`
 }
 
-type outline struct {
-	Title    string    `xml:"title,attr,omitempty"`
-	Text     string    `xml:"text,attr"`
-	FeedURL  string    `xml:"xmlUrl,attr,omitempty"`
-	SiteURL  string    `xml:"htmlUrl,attr,omitempty"`
-	Outlines []outline `xml:"outline,omitempty"`
+func NewOPMLDocument() *opmlDocument {
+	return &opmlDocument{}
 }
 
-func (o *outline) GetTitle() string {
+func (o *opmlDocument) GetSubscriptionList() SubcriptionList {
+	var subscriptions SubcriptionList
+	for _, outline := range o.Outlines {
+		if len(outline.Outlines) > 0 {
+			for _, element := range outline.Outlines {
+				// outline.Text is only available in OPML v2.
+				subscriptions = element.Append(subscriptions, outline.Text)
+			}
+		} else {
+			subscriptions = outline.Append(subscriptions, "")
+		}
+	}
+
+	return subscriptions
+}
+
+type opmlHeader struct {
+	Title       string `xml:"title,omitempty"`
+	DateCreated string `xml:"dateCreated,omitempty"`
+	OwnerName   string `xml:"ownerName,omitempty"`
+}
+
+type opmlOutline struct {
+	Title    string        `xml:"title,attr,omitempty"`
+	Text     string        `xml:"text,attr"`
+	FeedURL  string        `xml:"xmlUrl,attr,omitempty"`
+	SiteURL  string        `xml:"htmlUrl,attr,omitempty"`
+	Outlines []opmlOutline `xml:"outline,omitempty"`
+}
+
+func (o *opmlOutline) GetTitle() string {
 	if o.Title != "" {
 		return o.Title
 	}
@@ -42,7 +70,7 @@ func (o *outline) GetTitle() string {
 	return ""
 }
 
-func (o *outline) GetSiteURL() string {
+func (o *opmlOutline) GetSiteURL() string {
 	if o.SiteURL != "" {
 		return o.SiteURL
 	}
@@ -50,7 +78,7 @@ func (o *outline) GetSiteURL() string {
 	return o.FeedURL
 }
 
-func (o *outline) Append(subscriptions SubcriptionList, category string) SubcriptionList {
+func (o *opmlOutline) Append(subscriptions SubcriptionList, category string) SubcriptionList {
 	if o.FeedURL != "" {
 		subscriptions = append(subscriptions, &Subcription{
 			Title:        o.GetTitle(),
@@ -58,22 +86,6 @@ func (o *outline) Append(subscriptions SubcriptionList, category string) Subcrip
 			SiteURL:      o.GetSiteURL(),
 			CategoryName: category,
 		})
-	}
-
-	return subscriptions
-}
-
-func (o *opml) Transform() SubcriptionList {
-	var subscriptions SubcriptionList
-	for _, outline := range o.Outlines {
-		if len(outline.Outlines) > 0 {
-			for _, element := range outline.Outlines {
-				// outline.Text is only available in OPML v2.
-				subscriptions = element.Append(subscriptions, outline.Text)
-			}
-		} else {
-			subscriptions = outline.Append(subscriptions, "")
-		}
 	}
 
 	return subscriptions

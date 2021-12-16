@@ -6,7 +6,6 @@ package opml // import "miniflux.app/reader/opml"
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 )
 
@@ -17,7 +16,6 @@ func TestSerialize(t *testing.T) {
 	subscriptions = append(subscriptions, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: "Category 2"})
 
 	output := Serialize(subscriptions)
-	fmt.Println(output)
 	feeds, err := Parse(bytes.NewBufferString(output))
 	if err != nil {
 		t.Error(err)
@@ -56,7 +54,7 @@ func TestNormalizedCategoriesOrder(t *testing.T) {
 	subscriptions = append(subscriptions, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed/2", SiteURL: "http://example.org/2", CategoryName: orderTests[1].naturalOrderName})
 	subscriptions = append(subscriptions, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed/3", SiteURL: "http://example.org/3", CategoryName: orderTests[2].naturalOrderName})
 
-	feeds := normalizeFeeds(subscriptions)
+	feeds := convertSubscriptionsToOPML(subscriptions)
 
 	for i, o := range orderTests {
 		if feeds.Outlines[i].Text != o.correctOrderName {
