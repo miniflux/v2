@@ -20,6 +20,7 @@ var predefinedRules = map[string]string{
 	"lukesurl.com":           "add_image_title",
 	"medium.com":             "fix_medium_images",
 	"mercworks.net":          "add_image_title",
+	"monkeyuser.com":         "add_image_title",
 	"mrlovenstein.com":       "add_image_title",
 	"nedroid.com":            "add_image_title",
 	"oglaf.com":              "add_image_title",
