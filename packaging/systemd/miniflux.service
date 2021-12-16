@@ -55,6 +55,10 @@ RestrictRealtime=true
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ReadWritePaths=
 ReadWritePaths=/run
 
+# Create /run/miniflux as 0755, for the Unix socket.
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
+RuntimeDirectory=miniflux
+
 # Allow miniflux to bind to privileged ports
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#AmbientCapabilities=
 AmbientCapabilities=CAP_NET_BIND_SERVICE
