@@ -1,3 +1,24 @@
+Version 2.0.34 (December 16, 2021)
+----------------------------------
+
+* Add rewrite rule for comics website http://monkeyuser.com
+* Add `<head>` tag to OPML export
+* Tighten Systemd sandboxing and update comments in `miniflux.service`
+* Add `RuntimeDirectory` to Systemd service
+* Order disabled feeds at the end of the list
+* Add support for theme color based on preferred color scheme of OS
+* Bump `github.com/lib/pq` from 1.10.3 to 1.10.4
+* Bump `github.com/PuerkitoBio/goquery` from 1.7.1 to 1.8.0
+* Fix typos in `model/icon.go`
+* Add `data-srcset` support to `add_dynamic_image rewrite` rewrite rule
+* Fix Docker Compose example files compatibility to v3
+* Added the `role="article"` to `<article>` elements for better accessibility with screen readers
+* Redact secrets shown on the about page
+* Handle `srcset` images with no space after comma
+* Hide the logout link when using auth proxy
+* Fix wrong CSS variable
+* Change `-config-dump` command to use `KEY=VALUE` format
+
 Version 2.0.33 (September 25, 2021)
 -----------------------------------
 
