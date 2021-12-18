@@ -1,0 +1,27 @@
+language: go
+go:
+  - 1.6
+before_install:
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+script:
+  - go build ./...
+  - go test ./...
+  #- $GOPATH/bin/goveralls -service=travis-ci
+notifications:
+  recipients:
+    - i@yanyiwu.com
+  email:
+    on_success: change
+    on_failure: always
+deploy:
+  provider: releases
+  api_key: ${GH_TOKEN}
+  file_glob: true
+  file:
+    - releases/*
+  skip_cleanup: true
+  on:
+    branch: master
+    tags: true

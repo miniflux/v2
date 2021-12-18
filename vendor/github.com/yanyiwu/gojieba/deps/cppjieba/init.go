@@ -1,0 +1,5 @@
+package cppjieba
+
+func Init() {
+
+}

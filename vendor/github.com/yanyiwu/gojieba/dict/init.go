@@ -1,0 +1,5 @@
+package dict
+
+func Init() {
+
+}

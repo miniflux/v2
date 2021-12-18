@@ -7,10 +7,11 @@ package metric // import "miniflux.app/metric"
 import (
 	"time"
 
+	"github.com/jaytaylor/html2text"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/yanyiwu/gojieba"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
-
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 // Prometheus Metrics.
@@ -134,6 +135,17 @@ var (
 			Help:      "The total number of connections closed due to SetConnMaxLifetime",
 		},
 	)
+
+	keywordsCount = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "miniflux",
+			Name:      "feed_keyword_count",
+			Help:      "The count of each keyword in recent feeds",
+		},
+		[]string{"keyword"},
+	)
+
+	jieba = gojieba.NewJieba()
 )
 
 // Collector represents a metric collector.
@@ -158,7 +170,7 @@ func NewCollector(store *storage.Storage, refreshInterval int) *Collector {
 	prometheus.MustRegister(dbConnectionsMaxIdleClosedGauge)
 	prometheus.MustRegister(dbConnectionsMaxIdleTimeClosedGauge)
 	prometheus.MustRegister(dbConnectionsMaxLifetimeClosedGauge)
-
+	prometheus.MustRegister(keywordsCount)
 	return &Collector{store, refreshInterval}
 }
 
@@ -189,4 +201,22 @@ func (c *Collector) GatherStorageMetrics() {
 		dbConnectionsMaxIdleTimeClosedGauge.Set(float64(dbStats.MaxIdleTimeClosed))
 		dbConnectionsMaxLifetimeClosedGauge.Set(float64(dbStats.MaxLifetimeClosed))
 	}
+}
+
+// LogKeywordForContent
+func LogKeywordForContent(content string) {
+	plainText := content
+
+	plainText, _ = html2text.FromString(plainText, html2text.Options{
+		TextOnly: true,
+	})
+
+	keywords := jieba.Cut(plainText, true)
+
+	for _, keyword := range keywords {
+		if c, err := keywordsCount.GetMetricWithLabelValues(keyword); err == nil {
+			c.Inc()
+		}
+	}
+
 }

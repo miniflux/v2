@@ -1,0 +1,5 @@
+package limonp
+
+func Init() {
+
+}
