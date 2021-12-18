@@ -23,8 +23,8 @@ require (
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/tdewolff/minify/v2 v2.9.24
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	github.com/wangbin/jiebago v0.3.2
 	github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
-	github.com/yanyiwu/gojieba v1.1.2
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
@@ -34,7 +34,6 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
-	jaytaylor.com/html2text v0.0.0-20211105163654-bc68cce691ba // indirect
 	mvdan.cc/xurls/v2 v2.3.0
 )
 

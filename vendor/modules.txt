@@ -89,15 +89,15 @@ github.com/tdewolff/parse/v2/strconv
 # github.com/technoweenie/multipartstreamer v1.0.1
 ## explicit
 github.com/technoweenie/multipartstreamer
+# github.com/wangbin/jiebago v0.3.2
+## explicit
+github.com/wangbin/jiebago
+github.com/wangbin/jiebago/dictionary
+github.com/wangbin/jiebago/finalseg
+github.com/wangbin/jiebago/util
 # github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 ## explicit
 github.com/xiaonanln/keylock
-# github.com/yanyiwu/gojieba v1.1.2
-## explicit
-github.com/yanyiwu/gojieba
-github.com/yanyiwu/gojieba/deps/cppjieba
-github.com/yanyiwu/gojieba/deps/limonp
-github.com/yanyiwu/gojieba/dict
 # golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 ## explicit
 golang.org/x/crypto/acme
@@ -198,8 +198,6 @@ google.golang.org/protobuf/types/known/timestamppb
 gopkg.in/square/go-jose.v2
 gopkg.in/square/go-jose.v2/cipher
 gopkg.in/square/go-jose.v2/json
-# jaytaylor.com/html2text v0.0.0-20211105163654-bc68cce691ba
-## explicit
 # mvdan.cc/xurls/v2 v2.3.0
 ## explicit
 mvdan.cc/xurls/v2

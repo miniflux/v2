@@ -11,20 +11,21 @@ import (
 
 	"github.com/jaytaylor/html2text"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/yanyiwu/gojieba"
+	"github.com/wangbin/jiebago"
 )
-
-var jieba = gojieba.NewJieba()
 
 // Storage handles all operations related to the database.
 type Storage struct {
 	db              *sql.DB
 	keywordsCounter *prometheus.CounterVec
+	seg             *jiebago.Segmenter
 }
 
 // NewStorage returns a new Storage.
 func NewStorage(db *sql.DB) *Storage {
-	return &Storage{db, nil}
+	var seg jiebago.Segmenter
+	seg.LoadDictionary("dict.txt")
+	return &Storage{db, nil, &seg}
 }
 
 func (s *Storage) SetKeyWordsCounter(counter *prometheus.CounterVec) {
@@ -43,9 +44,7 @@ func (s *Storage) LogKeywordForContent(content string) {
 		TextOnly: true,
 	})
 
-	keywords := jieba.Cut(plainText, true)
-
-	for _, keyword := range keywords {
+	for keyword := range s.seg.Cut(plainText, true) {
 		if c, err := s.keywordsCounter.GetMetricWithLabelValues(keyword); err == nil {
 			c.Inc()
 		}
