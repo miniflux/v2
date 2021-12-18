@@ -7,7 +7,7 @@ package storage // import "miniflux.app/storage"
 import (
 	"context"
 	"database/sql"
-	"strings"
+	"regexp"
 	"time"
 
 	"github.com/jaytaylor/html2text"
@@ -33,6 +33,11 @@ func (s *Storage) SetKeyWordsCounter(counter *prometheus.CounterVec) {
 	s.keywordsCounter = counter
 }
 
+// ReplacePunctuation from giving string
+func ReplacePunctuation(s string) string {
+	return regexp.MustCompile("[【】、；‘，。/！@#￥%……&*（）——《》？：“” ]").ReplaceAllString(s, "")
+}
+
 // LogKeywordForContent, if counter is not set, skip process
 func (s *Storage) LogKeywordForContent(content string) {
 	if s.keywordsCounter == nil {
@@ -46,7 +51,7 @@ func (s *Storage) LogKeywordForContent(content string) {
 	})
 
 	for keyword := range s.seg.Cut(plainText, true) {
-		keyword = strings.TrimSpace(keyword)
+		keyword = ReplacePunctuation(keyword)
 		if len(keyword) > 0 {
 			if c, err := s.keywordsCounter.GetMetricWithLabelValues(keyword); err == nil {
 				c.Inc()
