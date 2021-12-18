@@ -137,6 +137,11 @@ func (p *Parser) Next() (GrammarType, TokenType, []byte) {
 	return gt, p.tt, p.data
 }
 
+// Offset return offset for current Grammar
+func (p *Parser) Offset() int {
+	return p.l.r.Offset()
+}
+
 // Values returns a slice of Tokens for the last Grammar. Only AtRuleGrammar, BeginAtRuleGrammar, BeginRulesetGrammar and Declaration will return the at-rule components, ruleset selector and declaration values respectively.
 func (p *Parser) Values() []Token {
 	return p.buf

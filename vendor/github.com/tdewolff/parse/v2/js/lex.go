@@ -508,7 +508,7 @@ func (l *Lexer) consumeIdentifierToken() bool {
 			} else {
 				break
 			}
-		} else {
+		} else if !l.consumeUnicodeEscape() {
 			break
 		}
 	}

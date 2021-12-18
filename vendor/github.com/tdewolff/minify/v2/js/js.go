@@ -23,8 +23,9 @@ var DefaultMinifier = &Minifier{}
 
 // Minifier is a JS minifier.
 type Minifier struct {
-	Precision    int // number of significant digits
-	KeepVarNames bool
+	Precision         int // number of significant digits
+	KeepVarNames      bool
+	NoNullishOperator bool
 }
 
 // Minify minifies JS data, it reads from r and writes to w.
@@ -35,7 +36,7 @@ func Minify(m *minify.M, w io.Writer, r io.Reader, params map[string]string) err
 // Minify minifies JS data, it reads from r and writes to w.
 func (o *Minifier) Minify(_ *minify.M, w io.Writer, r io.Reader, _ map[string]string) error {
 	z := parse.NewInput(r)
-	ast, err := js.Parse(z)
+	ast, err := js.Parse(z, js.Options{WhileToFor: true})
 	if err != nil {
 		return err
 	}
@@ -89,7 +90,6 @@ type jsMinifier struct {
 	groupedStmt    bool       // avoid ambiguous syntax by grouping the expression statement
 	inFor          bool
 	spaceBefore    byte
-	varsHoisted    *js.VarDecl // set when variables are hoisted to this declaration
 
 	renamer *renamer
 }
@@ -219,7 +219,7 @@ func (m *jsMinifier) minifyStmt(i js.IStmt) {
 		m.write(forOpenBytes)
 		m.inFor = true
 		if decl, ok := stmt.Init.(*js.VarDecl); ok {
-			m.minifyVarDecl(decl, false)
+			m.minifyVarDecl(decl, true)
 		} else {
 			m.minifyExpr(stmt.Init, js.OpLHS)
 		}
@@ -411,7 +411,6 @@ func (m *jsMinifier) minifyBlockStmt(stmt *js.BlockStmt) {
 		m.writeSemicolon()
 		m.minifyStmt(item)
 	}
-
 	m.write(closeBraceBytes)
 	m.needsSemicolon = false
 }
@@ -420,7 +419,7 @@ func (m *jsMinifier) minifyBlockAsStmt(blockStmt *js.BlockStmt, blockType blockT
 	// minify block when statement is expected, i.e. semicolon if empty or remove braces for single statement
 	// assume we already renamed the scope
 	hasLexicalVars := false
-	for _, v := range blockStmt.Scope.Declared[blockStmt.Scope.NumForInit:] {
+	for _, v := range blockStmt.Scope.Declared[blockStmt.Scope.NumForDeclared:] {
 		if v.Decl == js.LexicalDecl {
 			hasLexicalVars = true
 			break
@@ -470,8 +469,18 @@ func (m *jsMinifier) minifyAlias(alias js.Alias) {
 }
 
 func (m *jsMinifier) minifyParams(params js.Params) {
+	// remove unused parameters from the end
+	j := len(params.List)
+	if params.Rest == nil {
+		for ; 0 < j; j-- {
+			if v, ok := params.List[j-1].Binding.(*js.Var); !ok || ok && 1 < v.Uses {
+				break
+			}
+		}
+	}
+
 	m.write(openParenBytes)
-	for i, item := range params.List {
+	for i, item := range params.List[:j] {
 		if i != 0 {
 			m.write(commaBytes)
 		}
@@ -502,7 +511,9 @@ func (m *jsMinifier) minifyArguments(args js.Args) {
 }
 
 func (m *jsMinifier) minifyVarDecl(decl *js.VarDecl, onlyDefines bool) {
-	if decl.TokenType == js.VarToken && m.varsHoisted != nil && decl != m.varsHoisted {
+	if len(decl.List) == 0 {
+		return
+	} else if decl.TokenType == js.ErrorToken {
 		// remove 'var' when hoisting variables
 		first := true
 		for _, item := range decl.List {
@@ -529,8 +540,7 @@ func (m *jsMinifier) minifyVarDecl(decl *js.VarDecl, onlyDefines bool) {
 func (m *jsMinifier) minifyFuncDecl(decl *js.FuncDecl, inExpr bool) {
 	parentRename := m.renamer.rename
 	m.renamer.rename = !decl.Body.Scope.HasWith && !m.o.KeepVarNames
-	parentVarsHoisted := m.hoistVars(&decl.Body)
-
+	m.hoistVars(&decl.Body)
 	decl.Body.List = m.optimizeStmtList(decl.Body.List, functionBlock)
 
 	if decl.Async {
@@ -552,18 +562,16 @@ func (m *jsMinifier) minifyFuncDecl(decl *js.FuncDecl, inExpr bool) {
 	if !inExpr {
 		m.renamer.renameScope(decl.Body.Scope)
 	}
+
 	m.minifyParams(decl.Params)
 	m.minifyBlockStmt(&decl.Body)
-
-	m.varsHoisted = parentVarsHoisted
 	m.renamer.rename = parentRename
 }
 
 func (m *jsMinifier) minifyMethodDecl(decl *js.MethodDecl) {
 	parentRename := m.renamer.rename
 	m.renamer.rename = !decl.Body.Scope.HasWith && !m.o.KeepVarNames
-	parentVarsHoisted := m.hoistVars(&decl.Body)
-
+	m.hoistVars(&decl.Body)
 	decl.Body.List = m.optimizeStmtList(decl.Body.List, functionBlock)
 
 	if decl.Static {
@@ -590,16 +598,13 @@ func (m *jsMinifier) minifyMethodDecl(decl *js.MethodDecl) {
 	m.renamer.renameScope(decl.Body.Scope)
 	m.minifyParams(decl.Params)
 	m.minifyBlockStmt(&decl.Body)
-
-	m.varsHoisted = parentVarsHoisted
 	m.renamer.rename = parentRename
 }
 
 func (m *jsMinifier) minifyArrowFunc(decl *js.ArrowFunc) {
 	parentRename := m.renamer.rename
 	m.renamer.rename = !decl.Body.Scope.HasWith && !m.o.KeepVarNames
-	parentVarsHoisted := m.hoistVars(&decl.Body)
-
+	m.hoistVars(&decl.Body)
 	decl.Body.List = m.optimizeStmtList(decl.Body.List, functionBlock)
 
 	m.renamer.renameScope(decl.Body.Scope)
@@ -666,8 +671,6 @@ func (m *jsMinifier) minifyArrowFunc(decl *js.ArrowFunc) {
 	if !removeBraces {
 		m.minifyBlockStmt(&decl.Body)
 	}
-
-	m.varsHoisted = parentVarsHoisted
 	m.renamer.rename = parentRename
 }
 
@@ -879,7 +882,7 @@ func (m *jsMinifier) minifyExpr(i js.IExpr, prec js.OpPrec) {
 			if 0 < len(m.prev) && m.prev[len(m.prev)-1] == '<' && bytes.HasPrefix(expr.Data, regExpScriptBytes) {
 				m.write(spaceBytes)
 			}
-			m.write(expr.Data)
+			m.write(minifyRegExp(expr.Data))
 		} else {
 			m.write(expr.Data)
 		}
@@ -1203,11 +1206,11 @@ func (m *jsMinifier) minifyExpr(i js.IExpr, prec js.OpPrec) {
 				m.minifyExpr(expr.X, binaryRightPrecMap[js.CommaToken])
 				m.write(closeParenBytes)
 			}
-			//} else if left, right, ok := m.toNullishExpr(expr); ok {
-			//	// no need to check whether left/right need to add groups, as the space saving is always more
-			//	m.minifyExpr(groupExpr(left, binaryLeftPrecMap[js.NullishToken]), binaryLeftPrecMap[js.NullishToken])
-			//	m.write(nullishBytes)
-			//	m.minifyExpr(groupExpr(right, binaryRightPrecMap[js.NullishToken]), binaryRightPrecMap[js.NullishToken])
+		} else if left, right, ok := m.toNullishExpr(expr); ok && !m.o.NoNullishOperator {
+			// no need to check whether left/right need to add groups, as the space saving is always more
+			m.minifyExpr(groupExpr(left, binaryLeftPrecMap[js.NullishToken]), binaryLeftPrecMap[js.NullishToken])
+			m.write(nullishBytes)
+			m.minifyExpr(groupExpr(right, binaryRightPrecMap[js.NullishToken]), binaryRightPrecMap[js.NullishToken])
 		} else {
 			// shorten when true and false bodies are true and false
 			trueX, falseX := m.isTrue(expr.X), m.isFalse(expr.X)

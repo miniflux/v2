@@ -33,6 +33,7 @@ var (
 	andBytes                   = []byte("&&")
 	orBytes                    = []byte("||")
 	optChainBytes              = []byte("?.")
+	nullishBytes               = []byte("??")
 	arrowBytes                 = []byte("=>")
 	zeroBytes                  = []byte("0")
 	oneBytes                   = []byte("1")
@@ -300,7 +301,7 @@ func (m *jsMinifier) isEmptyStmt(stmt js.IStmt) bool {
 		return true
 	} else if _, ok := stmt.(*js.EmptyStmt); ok {
 		return true
-	} else if decl, ok := stmt.(*js.VarDecl); ok && m.varsHoisted != nil && decl != m.varsHoisted {
+	} else if decl, ok := stmt.(*js.VarDecl); ok && decl.TokenType == js.ErrorToken {
 		for _, item := range decl.List {
 			if item.Default != nil {
 				return false
@@ -675,6 +676,138 @@ func minifyString(b []byte) []byte {
 	if start != 0 {
 		j += copy(b[j:], b[start:])
 		return b[:j]
+	}
+	return b
+}
+
+var regexpEscapeTable = [256]bool{
+	// ASCII
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, true, false, false, false, // $
+	true, true, true, true, false, false, true, true, // (, ), *, +, ., /
+	true, true, true, true, true, true, true, true, // 0, 1, 2, 3, 4, 5, 6, 7
+	true, true, false, false, false, false, false, true, // 8, 9, ?
+
+	false, false, true, false, true, false, false, false, // B, D
+	false, false, false, false, false, false, false, false,
+	true, false, false, true, false, false, false, true, // P, S, W
+	false, false, false, true, true, true, true, false, // [, \, ], ^
+
+	false, false, true, true, true, false, true, false, // b, c, d, f
+	false, false, false, true, false, false, true, false, // k, n
+	true, false, true, true, true, true, true, true, // p, r, s, t, u, v, w
+	true, false, false, true, true, true, false, false, // x, {, |, }
+
+	// non-ASCII
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+}
+
+var regexpClassEscapeTable = [256]bool{
+	// ASCII
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	true, true, true, true, true, true, true, true, // 0, 1, 2, 3, 4, 5, 6, 7
+	true, true, false, false, false, false, false, false, // 8, 9
+
+	false, false, false, false, true, false, false, false, // D
+	false, false, false, false, false, false, false, false,
+	true, false, false, true, false, false, false, true, // P, S, W
+	false, false, false, false, true, true, false, false, // \, ]
+
+	false, false, true, true, true, false, true, false, // b, c, d, f
+	false, false, false, false, false, false, true, false, // n
+	true, false, true, true, true, true, true, true, // p, r, s, t, u, v, w
+	true, false, false, false, false, false, false, false, // x
+
+	// non-ASCII
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+	false, false, false, false, false, false, false, false,
+}
+
+func minifyRegExp(b []byte) []byte {
+	inClass := false
+	afterDash := 0
+	iClass := 0
+	for i := 1; i < len(b)-1; i++ {
+		if inClass {
+			afterDash++
+		}
+		if b[i] == '\\' {
+			c := b[i+1]
+			escape := true
+			if inClass {
+				escape = regexpClassEscapeTable[c] || c == '-' && 2 < afterDash && i+2 < len(b) && b[i+2] != ']' || c == '^' && i == iClass+1
+			} else {
+				escape = regexpEscapeTable[c]
+			}
+			if !escape {
+				b = append(b[:i], b[i+1:]...)
+				if inClass && 2 < afterDash && c == '-' {
+					afterDash = 0
+				} else if inClass && c == '^' {
+					afterDash = 1
+				}
+			} else {
+				i++
+			}
+		} else if b[i] == '[' {
+			if b[i+1] == '^' {
+				i++
+			}
+			afterDash = 1
+			inClass = true
+			iClass = i
+		} else if inClass && b[i] == ']' {
+			inClass = false
+		} else if b[i] == '/' {
+			break
+		} else if inClass && 2 < afterDash && b[i] == '-' {
+			afterDash = 0
+		}
 	}
 	return b
 }

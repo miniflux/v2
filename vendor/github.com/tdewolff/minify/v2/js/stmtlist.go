@@ -68,7 +68,7 @@ func (m *jsMinifier) optimizeStmt(i js.IStmt) js.IStmt {
 			}
 		}
 	} else if decl, ok := i.(*js.VarDecl); ok {
-		if decl.TokenType == js.VarToken && m.varsHoisted != nil && decl != m.varsHoisted {
+		if decl.TokenType == js.ErrorToken {
 			// convert hoisted var declaration to expression or empty (if there are no defines) statement
 			for _, item := range decl.List {
 				if item.Default != nil {
@@ -127,7 +127,13 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 		list[i] = m.optimizeStmt(list[i])
 
 		if _, ok := list[i].(*js.EmptyStmt); ok {
-			list = append(list[:i], list[i+1:]...)
+			k := i + 1
+			for ; k < len(list); k++ {
+				if _, ok := list[k].(*js.EmptyStmt); !ok {
+					break
+				}
+			}
+			list = append(list[:i], list[k:]...)
 			i--
 			continue
 		}
@@ -144,10 +150,12 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 				} else if throwStmt, ok := list[i].(*js.ThrowStmt); ok {
 					throwStmt.Value = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: throwStmt.Value}
 					j--
-				} else if forStmt, ok := list[i].(*js.ForStmt); ok && forStmt.Init == nil {
-					// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
-					forStmt.Init = left.Value
-					j--
+				} else if forStmt, ok := list[i].(*js.ForStmt); ok {
+					if varDecl, ok := forStmt.Init.(*js.VarDecl); ok && len(varDecl.List) == 0 || forStmt.Init == nil {
+						// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
+						forStmt.Init = left.Value
+						j--
+					}
 				} else if whileStmt, ok := list[i].(*js.WhileStmt); ok {
 					// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
 					var body *js.BlockStmt
@@ -174,51 +182,43 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 					// merge const and let declarations
 					right.List = append(left.List, right.List...)
 					j--
-				} else if forStmt, ok := list[i].(*js.ForStmt); ok && left.TokenType == js.VarToken {
-					// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
-					if forStmt.Init == nil {
-						forStmt.Init = left
-						j--
-					} else if decl, ok := forStmt.Init.(*js.VarDecl); ok && decl.TokenType == js.VarToken {
-						// this is the second VarDecl, so we are hoisting var declarations, which means the forInit variables are already in 'left'
-						iDefines := len(left.List)
-						for i, item := range left.List {
-							if item.Default == nil {
-								iDefines = i
-								break
-							}
-						}
-						merge := true
-						for j := 0; j < len(decl.List); j++ {
-							if decl.List[j].Default != nil {
-								if addDefinition(left, iDefines, decl.List[j].Binding, decl.List[j].Default) {
-									iDefines++
-									decl.List = append(decl.List[:j], decl.List[j+1:]...)
-									j--
-								} else {
-									merge = false
-								}
-							} else {
-								decl.List = append(decl.List[:j], decl.List[j+1:]...)
+				} else if left.TokenType == js.VarToken {
+					if forStmt, ok := list[i].(*js.ForStmt); ok {
+						// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
+						if forStmt.Init == nil {
+							forStmt.Init = left
+							j--
+						} else if decl, ok := forStmt.Init.(*js.VarDecl); ok && decl.TokenType == js.ErrorToken && !hasDefines(decl) {
+							forStmt.Init = left
+							j--
+						} else if ok && (decl.TokenType == js.VarToken || decl.TokenType == js.ErrorToken) {
+							// this is the second VarDecl, so we are hoisting var declarations, which means the forInit variables are already in 'left'
+							merge := mergeVarDecls(left, decl)
+							if merge {
+								decl.TokenType = js.VarToken
+								forStmt.Init = left
 								j--
 							}
 						}
+					} else if whileStmt, ok := list[i].(*js.WhileStmt); ok {
+						// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
+						var body *js.BlockStmt
+						if blockStmt, ok := whileStmt.Body.(*js.BlockStmt); ok {
+							body = blockStmt
+						} else {
+							body = &js.BlockStmt{}
+							body.List = []js.IStmt{whileStmt.Body}
+						}
+						list[i] = &js.ForStmt{Init: left, Cond: whileStmt.Cond, Post: nil, Body: body}
+						j--
+					} else if exprStmt, ok := list[i].(*js.ExprStmt); ok {
+						// pull in assignments to variables into the declaration, e.g. var a;a=5  =>  var a=5
+						merge := mergeVarDeclExprStmt(left, exprStmt)
 						if merge {
-							forStmt.Init = left
+							list[i] = list[i-1]
 							j--
 						}
 					}
-				} else if whileStmt, ok := list[i].(*js.WhileStmt); ok && left.TokenType == js.VarToken {
-					// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
-					var body *js.BlockStmt
-					if blockStmt, ok := whileStmt.Body.(*js.BlockStmt); ok {
-						body = blockStmt
-					} else {
-						body = &js.BlockStmt{}
-						body.List = []js.IStmt{whileStmt.Body}
-					}
-					list[i] = &js.ForStmt{Init: left, Cond: whileStmt.Cond, Post: nil, Body: body}
-					j--
 				}
 			}
 		}
