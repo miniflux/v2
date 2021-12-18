@@ -121,6 +121,7 @@ integration-test:
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	
 	while ! nc -z localhost 8080; do sleep 1; done
+	sleep 3
 	go test -v -tags=integration -count=1 miniflux.app/tests
 
 clean-integration-test:
