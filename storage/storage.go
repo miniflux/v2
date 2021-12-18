@@ -7,6 +7,7 @@ package storage // import "miniflux.app/storage"
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"time"
 
 	"github.com/jaytaylor/html2text"
@@ -45,8 +46,11 @@ func (s *Storage) LogKeywordForContent(content string) {
 	})
 
 	for keyword := range s.seg.Cut(plainText, true) {
-		if c, err := s.keywordsCounter.GetMetricWithLabelValues(keyword); err == nil {
-			c.Inc()
+		keyword = strings.TrimSpace(keyword)
+		if len(keyword) > 0 {
+			if c, err := s.keywordsCounter.GetMetricWithLabelValues(keyword); err == nil {
+				c.Inc()
+			}
 		}
 	}
 }
