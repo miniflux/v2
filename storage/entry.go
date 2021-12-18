@@ -105,7 +105,6 @@ func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
 
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
-
 	// when create a new entry, log the content keyword
 	s.LogKeywordForContent(entry.Content)
 
