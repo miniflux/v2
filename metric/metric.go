@@ -218,5 +218,4 @@ func LogKeywordForContent(content string) {
 			c.Inc()
 		}
 	}
-
 }
