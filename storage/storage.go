@@ -8,16 +8,48 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/jaytaylor/html2text"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/yanyiwu/gojieba"
 )
+
+var jieba = gojieba.NewJieba()
 
 // Storage handles all operations related to the database.
 type Storage struct {
-	db *sql.DB
+	db              *sql.DB
+	keywordsCounter *prometheus.CounterVec
 }
 
 // NewStorage returns a new Storage.
 func NewStorage(db *sql.DB) *Storage {
-	return &Storage{db}
+	return &Storage{db, nil}
+}
+
+func (s *Storage) SetKeyWordsCounter(counter *prometheus.CounterVec) {
+	s.keywordsCounter = counter
+}
+
+// LogKeywordForContent, if counter is not set, skip process
+func (s *Storage) LogKeywordForContent(content string) {
+	if s.keywordsCounter == nil {
+		return
+	}
+
+	plainText := content
+
+	plainText, _ = html2text.FromString(plainText, html2text.Options{
+		TextOnly: true,
+	})
+
+	keywords := jieba.Cut(plainText, true)
+
+	for _, keyword := range keywords {
+		if c, err := s.keywordsCounter.GetMetricWithLabelValues(keyword); err == nil {
+			c.Inc()
+		}
+	}
 }
 
 // DatabaseVersion returns the version of the database which is in use.
