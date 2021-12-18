@@ -9,7 +9,7 @@ import (
 )
 
 func TestClientWithDelay(t *testing.T) {
-	clt := New("http://httpbin.org/delay/5")
+	clt := New("https://httpbin.eu-central.fornever.org/delay/5")
 	clt.ClientTimeout = 1
 	_, err := clt.Get()
 	if err == nil {
@@ -18,7 +18,7 @@ func TestClientWithDelay(t *testing.T) {
 }
 
 func TestClientWithError(t *testing.T) {
-	clt := New("http://httpbin.org/status/502")
+	clt := New("https://httpbin.eu-central.fornever.org/status/502")
 	clt.ClientTimeout = 1
 	response, err := clt.Get()
 	if err != nil {
@@ -35,7 +35,7 @@ func TestClientWithError(t *testing.T) {
 }
 
 func TestClientWithResponseTooLarge(t *testing.T) {
-	clt := New("http://httpbin.org/bytes/100")
+	clt := New("https://httpbin.eu-central.fornever.org/bytes/100")
 	clt.ClientMaxBodySize = 10
 	_, err := clt.Get()
 	if err == nil {
@@ -44,7 +44,7 @@ func TestClientWithResponseTooLarge(t *testing.T) {
 }
 
 func TestClientWithBasicAuth(t *testing.T) {
-	clt := New("http://httpbin.org/basic-auth/testuser/testpassword")
+	clt := New("https://httpbin.eu-central.fornever.org/basic-auth/testuser/testpassword")
 	clt.WithCredentials("testuser", "testpassword")
 	_, err := clt.Get()
 	if err != nil {
