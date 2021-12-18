@@ -19,7 +19,7 @@ func TestClientWithDelay(t *testing.T) {
 
 func TestClientWithError(t *testing.T) {
 	clt := New("https://httpbin.eu-central.fornever.org/status/502")
-	clt.ClientTimeout = 1
+	clt.ClientTimeout = 10
 	response, err := clt.Get()
 	if err != nil {
 		t.Fatal(err)
