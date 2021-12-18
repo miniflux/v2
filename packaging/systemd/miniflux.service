@@ -3,6 +3,8 @@
 # 2) Restart the process: systemctl restart miniflux
 # All your changes can be reverted with `systemctl revert miniflux.service`.
 # See https://wiki.archlinux.org/index.php/Systemd#Editing_provided_units.
+# Also see https://www.freedesktop.org/software/systemd/man/systemd.service.html
+# for available configuration options in this file.
 
 [Unit]
 Description=Miniflux
@@ -10,58 +12,81 @@ After=network.target postgresql.service
 
 [Service]
 ExecStart=/usr/bin/miniflux
-EnvironmentFile=/etc/miniflux.conf
 User=miniflux
 
-# https://www.freedesktop.org/software/systemd/man/systemd.service.html#Type=
+# Load environment variables from /etc/miniflux.conf.
+EnvironmentFile=/etc/miniflux.conf
+
+# Miniflux uses sd-notify protocol to notify about it's readiness.
 Type=notify
 
-# https://www.freedesktop.org/software/systemd/man/systemd.service.html#WatchdogSec=
+# Enable watchdog.
 WatchdogSec=60s
 WatchdogSignal=SIGKILL
 
-# https://www.freedesktop.org/software/systemd/man/systemd.service.html#Restart=
+# Automatically restart Miniflux if it crashes.
 Restart=always
-
-# https://www.freedesktop.org/software/systemd/man/systemd.service.html#RestartSec=
 RestartSec=5
 
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#NoNewPrivileges=
-NoNewPrivileges=true
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#PrivateDevices=
-PrivateDevices=true
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectControlGroups=
-ProtectControlGroups=true
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectHome=
-ProtectHome=true
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectKernelModules=
-ProtectKernelModules=true
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectKernelTunables=
-ProtectKernelTunables=true
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ProtectSystem=
-ProtectSystem=strict
-
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RestrictRealtime=
-RestrictRealtime=true
-
-# Keep at least the /run folder writeable if Miniflux is configured to use a Unix socket.
-# For example, the socket could be LISTEN_ADDR=/run/miniflux/miniflux.sock
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#ReadWritePaths=
-ReadWritePaths=/run
-
-# Create /run/miniflux as 0755, for the Unix socket.
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
+# Allocate a directory at /run/miniflux for Unix sockets.
 RuntimeDirectory=miniflux
 
-# Allow miniflux to bind to privileged ports
-# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#AmbientCapabilities=
+# Allow Miniflux to bind to privileged ports.
 AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+# Make the system tree read-only.
+ProtectSystem=strict
+
+# Allocate a separate /tmp.
+PrivateTmp=yes
+
+# Ensure the service can never gain new privileges.
+NoNewPrivileges=yes
+
+# Prohibit access to any kind of namespacing.
+RestrictNamespaces=yes
+
+# Make home directories inaccessible.
+ProtectHome=yes
+
+# Make device nodes except for /dev/null, /dev/zero, /dev/full,
+# /dev/random and /dev/urandom inaccessible.
+PrivateDevices=yes
+
+# Make cgroup file system hierarchy inaccessible.
+ProtectControlGroups=yes
+
+# Deny kernel module loading.
+ProtectKernelModules=yes
+
+# Make kernel variables (e.g. /proc/sys) read-only.
+ProtectKernelTunables=yes
+
+# Deny hostname changing.
+ProtectHostname=yes
+
+# Deny realtime scheduling.
+RestrictRealtime=yes
+
+# Deny access to the kernel log ring buffer.
+ProtectKernelLogs=yes
+
+# Deny setting the hardware or system clock.
+ProtectClock=yes
+
+# Filter dangerous system calls. The following is listed as safe basic
+# choice in systemd.exec(5).
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged
+SystemCallFilter=~@resources
+SystemCallErrorNumber=EPERM
+
+# Deny kernel execution domain changing.
+LockPersonality=yes
+
+# Deny memory mappings that are writable and executable.
+MemoryDenyWriteExecute=yes
 
 [Install]
 WantedBy=multi-user.target
