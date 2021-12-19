@@ -35,7 +35,7 @@ func (s *Storage) SetKeyWordsCounter(counter *prometheus.CounterVec) {
 
 // ReplacePunctuation from giving string
 func ReplacePunctuation(s string) string {
-	return regexp.MustCompile("[【】、；‘，。/！@#￥%……&*（）——《》？：“” ]").ReplaceAllString(s, "")
+	return regexp.MustCompile("[^\u4e00-\u9fa5a-zA-Z]").ReplaceAllString(s, "")
 }
 
 // LogKeywordForContent, if counter is not set, skip process
