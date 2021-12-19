@@ -23,9 +23,7 @@ type Storage struct {
 }
 
 // NewStorage returns a new Storage.
-func NewStorage(db *sql.DB) *Storage {
-	var seg jiebago.Segmenter
-	seg.LoadDictionary("dict.txt")
+func NewStorage(db *sql.DB, seg jiebago.Segmenter) *Storage {
 	return &Storage{db, nil, &seg}
 }
 

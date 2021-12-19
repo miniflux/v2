@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/Soontao/jiebago"
 	"miniflux.app/config"
 	"miniflux.app/database"
 	"miniflux.app/locale"
@@ -139,7 +140,17 @@ func Parse() {
 	}
 	defer db.Close()
 
-	store := storage.NewStorage(db)
+	var seg jiebago.Segmenter
+	seg.LoadDictionary("dict.txt")
+	customDict := config.Opts.CustomKeywordsDict()
+
+	if len(customDict) > 0 {
+		logger.Info("loading custom dict '%s'", customDict)
+		seg.LoadUserDictionary(customDict)
+		logger.Info("custom dict '%s' loaded", customDict)
+	}
+
+	store := storage.NewStorage(db, seg)
 
 	if err := store.Ping(); err != nil {
 		logger.Fatal("Unable to connect to the database: %v", err)
