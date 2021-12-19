@@ -8,6 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/Soontao/jiebago"
@@ -51,8 +52,10 @@ func (s *Storage) LogKeywordForContent(content string) {
 	uniqWord := map[string]bool{}
 
 	for word := range s.seg.Cut(plainText, false) {
+		word = strings.TrimSpace(word)
+		word = ReplacePunctuation(word)
 		if len(word) > 0 {
-			uniqWord[ReplacePunctuation(word)] = true
+			uniqWord[word] = true
 		}
 	}
 
