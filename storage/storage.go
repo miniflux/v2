@@ -51,7 +51,7 @@ func (s *Storage) LogKeywordForContent(content string) {
 
 	uniqWord := map[string]bool{}
 
-	for word := range s.seg.Cut(plainText, false) {
+	for word := range s.seg.Cut(plainText, true) {
 		word = strings.TrimSpace(word)
 		word = ReplacePunctuation(word)
 		if len(word) > 0 {
