@@ -50,12 +50,17 @@ func (s *Storage) LogKeywordForContent(content string) {
 		TextOnly: true,
 	})
 
-	for keyword := range s.seg.Cut(plainText, true) {
-		keyword = ReplacePunctuation(keyword)
-		if len(keyword) > 0 {
-			if c, err := s.keywordsCounter.GetMetricWithLabelValues(keyword); err == nil {
-				c.Inc()
-			}
+	uniqWord := map[string]bool{}
+
+	for word := range s.seg.Cut(plainText, true) {
+		if len(word) > 0 {
+			uniqWord[ReplacePunctuation(word)] = true
+		}
+	}
+
+	for word := range uniqWord {
+		if c, err := s.keywordsCounter.GetMetricWithLabelValues(word); err == nil {
+			c.Inc()
 		}
 	}
 }
