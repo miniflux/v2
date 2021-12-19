@@ -10,9 +10,9 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/Soontao/jiebago"
 	"github.com/jaytaylor/html2text"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/wangbin/jiebago"
 )
 
 // Storage handles all operations related to the database.

@@ -1,6 +1,12 @@
 # github.com/PuerkitoBio/goquery v1.8.0
 ## explicit
 github.com/PuerkitoBio/goquery
+# github.com/Soontao/jiebago v1.0.0
+## explicit
+github.com/Soontao/jiebago
+github.com/Soontao/jiebago/dictionary
+github.com/Soontao/jiebago/finalseg
+github.com/Soontao/jiebago/util
 # github.com/andybalholm/cascadia v1.3.1
 github.com/andybalholm/cascadia
 # github.com/beorn7/perks v1.0.1
@@ -27,6 +33,8 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/google/uuid v1.3.0
+github.com/google/uuid
 # github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux
@@ -91,10 +99,6 @@ github.com/tdewolff/parse/v2/strconv
 github.com/technoweenie/multipartstreamer
 # github.com/wangbin/jiebago v0.3.2
 ## explicit
-github.com/wangbin/jiebago
-github.com/wangbin/jiebago/dictionary
-github.com/wangbin/jiebago/finalseg
-github.com/wangbin/jiebago/util
 # github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 ## explicit
 github.com/xiaonanln/keylock

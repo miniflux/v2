@@ -2,9 +2,10 @@ package jiebago
 
 import (
 	"math"
+	"strings"
 	"sync"
 
-	"github.com/wangbin/jiebago/dictionary"
+	"github.com/Soontao/jiebago/dictionary"
 )
 
 // A Dictionary represents a thread-safe dictionary used for word segmentation.
@@ -57,6 +58,9 @@ func (d *Dictionary) Frequency(key string) (float64, bool) {
 	return freq, ok
 }
 
-func (d *Dictionary) loadDictionary(fileName string) error {
-	return dictionary.LoadDictionary(d, fileName)
+func (d *Dictionary) loadDictionary(resource string) error {
+	if strings.HasPrefix(resource, "http://") || strings.HasPrefix(resource, "https://") {
+		return dictionary.LoadDictionaryRemote(d, resource)
+	}
+	return dictionary.LoadDictionary(d, resource)
 }

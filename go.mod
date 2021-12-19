@@ -4,6 +4,7 @@ module miniflux.app
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
+	github.com/Soontao/jiebago v1.0.0
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/felixge/httpsnoop v1.0.2 // indirect
@@ -23,7 +24,7 @@ require (
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/tdewolff/minify/v2 v2.9.24
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	github.com/wangbin/jiebago v0.3.2
+	github.com/wangbin/jiebago v0.3.2 // indirect
 	github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f

@@ -6,9 +6,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/wangbin/jiebago/dictionary"
-	"github.com/wangbin/jiebago/finalseg"
-	"github.com/wangbin/jiebago/util"
+	"github.com/Soontao/jiebago/dictionary"
+	"github.com/Soontao/jiebago/finalseg"
+	"github.com/Soontao/jiebago/util"
 )
 
 var (
@@ -93,16 +93,16 @@ func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
 
 // LoadDictionary loads dictionary from given file name. Everytime
 // LoadDictionary is called, previously loaded dictionary will be cleard.
-func (seg *Segmenter) LoadDictionary(fileName string) error {
+func (seg *Segmenter) LoadDictionary(resource string) error {
 	seg.dict = &Dictionary{freqMap: make(map[string]float64)}
-	return seg.dict.loadDictionary(fileName)
+	return seg.dict.loadDictionary(resource)
 }
 
 // LoadUserDictionary loads a user specified dictionary, it must be called
 // after LoadDictionary, and it will not clear any previous loaded dictionary,
 // instead it will override exist entries.
-func (seg *Segmenter) LoadUserDictionary(fileName string) error {
-	return seg.dict.loadDictionary(fileName)
+func (seg *Segmenter) LoadUserDictionary(resource string) error {
+	return seg.dict.loadDictionary(resource)
 }
 
 func (seg *Segmenter) dag(runes []rune) map[int][]int {

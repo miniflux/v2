@@ -67,6 +67,7 @@ const (
 	defaultMetricsCollector                   = false
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
+	defaultCustomKeywordsDict                 = ""
 	defaultWatchdog                           = true
 )
 
@@ -134,6 +135,7 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
+	customKeywordsDict                 string
 	watchdog                           bool
 }
 
@@ -192,6 +194,7 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
+		customKeywordsDict:                 defaultCustomKeywordsDict,
 		watchdog:                           defaultWatchdog,
 	}
 }
@@ -472,6 +475,11 @@ func (o *Options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
 }
 
+// CustomKeywordsDict
+func (o *Options) CustomKeywordsDict() string {
+	return o.customKeywordsDict
+}
+
 // HTTPClientUserAgent returns the global User-Agent header for miniflux.
 func (o *Options) HTTPClientUserAgent() string {
 	return o.httpClientUserAgent
@@ -523,6 +531,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"METRICS_ALLOWED_NETWORKS":               strings.Join(o.metricsAllowedNetworks, ","),
 		"METRICS_COLLECTOR":                      o.metricsCollector,
 		"METRICS_REFRESH_INTERVAL":               o.metricsRefreshInterval,
+		"CUSTOM_KEYWORDS_DICT":                   o.customKeywordsDict,
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),
 		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,
