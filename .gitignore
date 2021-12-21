@@ -2,3 +2,4 @@ miniflux-*
 miniflux
 *.rpm
 *.deb
+.idea
