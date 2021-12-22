@@ -77,10 +77,6 @@ ProtectClock=yes
 # Filter dangerous system calls. The following is listed as safe basic
 # choice in systemd.exec(5).
 SystemCallArchitectures=native
-SystemCallFilter=@system-service
-SystemCallFilter=~@privileged
-SystemCallFilter=~@resources
-SystemCallErrorNumber=EPERM
 
 # Deny kernel execution domain changing.
 LockPersonality=yes
