@@ -68,6 +68,7 @@ const (
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
 	defaultCustomKeywordsDict                 = ""
+	defaultMetricsKeyword                     = false
 	defaultWatchdog                           = true
 )
 
@@ -135,6 +136,7 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
+	metricsKeyword                     bool
 	customKeywordsDict                 string
 	watchdog                           bool
 }
@@ -195,6 +197,7 @@ func NewOptions() *Options {
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
 		customKeywordsDict:                 defaultCustomKeywordsDict,
+		metricsKeyword:                     defaultMetricsKeyword,
 		watchdog:                           defaultWatchdog,
 	}
 }
@@ -475,6 +478,10 @@ func (o *Options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
 }
 
+func (o *Options) EnableMetricsKeyword() bool {
+	return o.metricsKeyword
+}
+
 // CustomKeywordsDict
 func (o *Options) CustomKeywordsDict() string {
 	return o.customKeywordsDict
@@ -532,6 +539,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"METRICS_COLLECTOR":                      o.metricsCollector,
 		"METRICS_REFRESH_INTERVAL":               o.metricsRefreshInterval,
 		"CUSTOM_KEYWORDS_DICT":                   o.customKeywordsDict,
+		"METRICS_KEYWORD":                        o.metricsKeyword,
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),
 		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,

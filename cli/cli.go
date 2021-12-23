@@ -140,17 +140,23 @@ func Parse() {
 	}
 	defer db.Close()
 
-	var seg jiebago.Segmenter
-	seg.LoadDictionary("dict.txt")
-	customDict := config.Opts.CustomKeywordsDict()
+	var store *storage.Storage
 
-	if len(customDict) > 0 {
-		logger.Info("loading custom dict '%s'", customDict)
-		seg.LoadUserDictionary(customDict)
-		logger.Info("custom dict '%s' loaded", customDict)
+	if config.Opts.EnableMetricsKeyword() {
+		var seg jiebago.Segmenter
+		seg.LoadDictionary("dict.txt")
+		customDict := config.Opts.CustomKeywordsDict()
+
+		if len(customDict) > 0 {
+			logger.Info("loading custom dict '%s'", customDict)
+			seg.LoadUserDictionary(customDict)
+			logger.Info("custom dict '%s' loaded", customDict)
+		}
+
+		store = storage.NewStorage(db, &seg)
+	} else {
+		store = storage.NewStorage(db, nil)
 	}
-
-	store := storage.NewStorage(db, seg)
 
 	if err := store.Ping(); err != nil {
 		logger.Fatal("Unable to connect to the database: %v", err)

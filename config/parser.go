@@ -191,6 +191,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.metricsRefreshInterval = parseInt(value, defaultMetricsRefreshInterval)
 		case "METRICS_ALLOWED_NETWORKS":
 			p.opts.metricsAllowedNetworks = parseStringList(value, []string{defaultMetricsAllowedNetworks})
+		case "METRICS_KEYWORD":
+			p.opts.metricsKeyword = parseBool(value, defaultMetricsKeyword)
 		case "CUSTOM_KEYWORDS_DICT":
 			p.opts.customKeywordsDict = parseString(value, defaultCustomKeywordsDict)
 		case "FETCH_YOUTUBE_WATCH_TIME":

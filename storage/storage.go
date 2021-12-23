@@ -24,8 +24,8 @@ type Storage struct {
 }
 
 // NewStorage returns a new Storage.
-func NewStorage(db *sql.DB, seg jiebago.Segmenter) *Storage {
-	return &Storage{db, nil, &seg}
+func NewStorage(db *sql.DB, seg *jiebago.Segmenter) *Storage {
+	return &Storage{db, nil, seg}
 }
 
 func (s *Storage) SetKeyWordsCounter(counter *prometheus.CounterVec) {
@@ -39,6 +39,10 @@ func ReplacePunctuation(s string) string {
 
 // LogKeywordForContent, if counter is not set, skip process
 func (s *Storage) LogKeywordForContent(content string) {
+	if s.seg == nil {
+		return
+	}
+
 	if s.keywordsCounter == nil {
 		return
 	}
