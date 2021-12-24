@@ -325,7 +325,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.TelegramBotChatID,
 			integration.UserID,
 		)
-
 	}
 
 	if err != nil {
