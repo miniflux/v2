@@ -17,6 +17,7 @@ var predefinedRules = map[string]string{
 	"github.com":           "article.entry-content",
 	"heise.de":             "header .article-content__lead, header .article-image, div.article-layout__content.article-content",
 	"igen.fr":              "section.corps",
+	"ikiwiki.iki.fi":       ".page.group",
 	"ing.dk":               "section.body",
 	"lapresse.ca":          ".amorce, .entry",
 	"lemonde.fr":           "article",
