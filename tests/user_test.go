@@ -2,6 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
@@ -297,13 +298,15 @@ func TestUpdateUserFields(t *testing.T) {
 
 	stylesheet := "body { color: red }"
 	swipe := false
+	toggleStatusWait := false
 	entriesPerPage := 5
 	displayMode := "fullscreen"
 	user, err = client.UpdateUser(user.ID, &miniflux.UserModificationRequest{
-		Stylesheet:     &stylesheet,
-		EntrySwipe:     &swipe,
-		EntriesPerPage: &entriesPerPage,
-		DisplayMode:    &displayMode,
+		Stylesheet:       &stylesheet,
+		EntrySwipe:       &swipe,
+		ToggleStatusWait: &toggleStatusWait,
+		EntriesPerPage:   &entriesPerPage,
+		DisplayMode:      &displayMode,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -315,6 +318,10 @@ func TestUpdateUserFields(t *testing.T) {
 
 	if user.EntrySwipe != swipe {
 		t.Fatalf(`Unable to update user EntrySwipe: got %v instead of %v`, user.EntrySwipe, swipe)
+	}
+
+	if user.ToggleStatusWait != toggleStatusWait {
+		t.Fatalf(`Unable to update user ToggleStatusWait: got %v instead of %v`, user.ToggleStatusWait, toggleStatusWait)
 	}
 
 	if user.EntriesPerPage != entriesPerPage {

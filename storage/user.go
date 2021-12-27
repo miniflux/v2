@@ -81,6 +81,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			toggle_status_wait,
 			stylesheet,
 			google_id,
 			openid_connect_id,
@@ -113,6 +114,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 		&user.KeyboardShortcuts,
 		&user.ShowReadingTime,
 		&user.EntrySwipe,
+		&user.ToggleStatusWait,
 		&user.Stylesheet,
 		&user.GoogleID,
 		&user.OpenIDConnectID,
@@ -164,13 +166,14 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				keyboard_shortcuts=$9,
 				show_reading_time=$10,
 				entry_swipe=$11,
-				stylesheet=$12,
-				google_id=$13,
-				openid_connect_id=$14,
-				display_mode=$15,
-				entry_order=$16
+                                toggle_status_wait=$12,
+				stylesheet=$13,
+				google_id=$14,
+				openid_connect_id=$15,
+				display_mode=$16,
+				entry_order=$17
 			WHERE
-				id=$17
+				id=$18
 		`
 
 		_, err = s.db.Exec(
@@ -186,6 +189,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.KeyboardShortcuts,
 			user.ShowReadingTime,
 			user.EntrySwipe,
+			user.ToggleStatusWait,
 			user.Stylesheet,
 			user.GoogleID,
 			user.OpenIDConnectID,
@@ -209,13 +213,14 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				keyboard_shortcuts=$8,
 				show_reading_time=$9,
 				entry_swipe=$10,
-				stylesheet=$11,
-				google_id=$12,
-				openid_connect_id=$13,
-				display_mode=$14,
-				entry_order=$15
+				toggle_status_wait=$11,
+				stylesheet=$12,
+				google_id=$13,
+				openid_connect_id=$14,
+				display_mode=$15,
+				entry_order=$16
 			WHERE
-				id=$16
+				id=$17
 		`
 
 		_, err := s.db.Exec(
@@ -230,6 +235,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.KeyboardShortcuts,
 			user.ShowReadingTime,
 			user.EntrySwipe,
+			user.ToggleStatusWait,
 			user.Stylesheet,
 			user.GoogleID,
 			user.OpenIDConnectID,
@@ -271,6 +277,7 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			toggle_status_wait,
 			last_login_at,
 			stylesheet,
 			google_id,
@@ -300,6 +307,7 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			toggle_status_wait,
 			last_login_at,
 			stylesheet,
 			google_id,
@@ -329,6 +337,7 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			toggle_status_wait,
 			last_login_at,
 			stylesheet,
 			google_id,
@@ -365,6 +374,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.keyboard_shortcuts,
 			u.show_reading_time,
 			u.entry_swipe,
+			u.toggle_status_wait,
 			u.last_login_at,
 			u.stylesheet,
 			u.google_id,
@@ -395,6 +405,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.KeyboardShortcuts,
 		&user.ShowReadingTime,
 		&user.EntrySwipe,
+		&user.ToggleStatusWait,
 		&user.LastLoginAt,
 		&user.Stylesheet,
 		&user.GoogleID,
@@ -487,6 +498,7 @@ func (s *Storage) Users() (model.Users, error) {
 			keyboard_shortcuts,
 			show_reading_time,
 			entry_swipe,
+			toggle_status_wait,
 			last_login_at,
 			stylesheet,
 			google_id,
@@ -518,6 +530,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.KeyboardShortcuts,
 			&user.ShowReadingTime,
 			&user.EntrySwipe,
+			&user.ToggleStatusWait,
 			&user.LastLoginAt,
 			&user.Stylesheet,
 			&user.GoogleID,

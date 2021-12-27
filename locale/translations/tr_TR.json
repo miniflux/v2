@@ -299,6 +299,7 @@
     "form.prefs.select.created_time": "Girişin oluşturulma zamanı",
     "form.prefs.label.keyboard_shortcuts": "Klavye kısayollarını etkinleştir",
     "form.prefs.label.entry_swipe": "Mobil cihazlarda iletiler için kaydırma hareketlerini etkinleştir",
+    "form.prefs.label.toggle_status_wait": "Delay removing items from lists until server responds",
     "form.prefs.label.show_reading_time": "Makaleler için tahmini okuma süresini göster",
     "form.prefs.label.custom_css": "Özel CSS",
     "form.prefs.label.entry_order": "Giriş Sıralama Sütunu",

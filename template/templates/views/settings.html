@@ -72,6 +72,8 @@
 
     <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
 
+    <label><input type="checkbox" name="toggle_status_wait" value="1" {{ if .form.ToggleStatusWait }}checked{{ end }}> {{ t "form.prefs.label.toggle_status_wait" }}</label>
+
     <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="8" spellcheck="false">{{ .form.CustomCSS }}</textarea>
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

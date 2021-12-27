@@ -34,6 +34,7 @@ type User struct {
 	KeyboardShortcuts bool       `json:"keyboard_shortcuts"`
 	ShowReadingTime   bool       `json:"show_reading_time"`
 	EntrySwipe        bool       `json:"entry_swipe"`
+	ToggleStatusWait  bool       `json:"toggle_status_wait"`
 	LastLoginAt       *time.Time `json:"last_login_at"`
 	DisplayMode       string     `json:"display_mode"`
 }
@@ -68,6 +69,7 @@ type UserModificationRequest struct {
 	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
 	ShowReadingTime   *bool   `json:"show_reading_time"`
 	EntrySwipe        *bool   `json:"entry_swipe"`
+	ToggleStatusWait  *bool   `json:"toggle_status_wait"`
 	DisplayMode       *string `json:"display_mode"`
 }
 

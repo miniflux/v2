@@ -301,6 +301,7 @@
     "form.prefs.select.created_time": "Время создания записи",
     "form.prefs.label.keyboard_shortcuts": "Включить сочетания клавиш",
     "form.prefs.label.entry_swipe": "Включить жест смахивания для записей на мобильном устройстве",
+    "form.prefs.label.toggle_status_wait": "Delay removing items from lists until server responds",
     "form.prefs.label.show_reading_time": "Показать примерное время чтения статей",
     "form.prefs.label.custom_css": "Пользовательские CSS",
     "form.prefs.label.entry_order": "Колонка сортировки ввода",
