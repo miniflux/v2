@@ -11,6 +11,8 @@ import (
 	"regexp"
 	"strings"
 
+	"miniflux.app/config"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -213,7 +215,7 @@ func addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent string) string {
 	matches := youtubeRegex.FindStringSubmatch(entryURL)
 
 	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="https://invidio.us/embed/` + matches[1] + `" allowfullscreen></iframe>`
+		video := `<iframe width="650" height="350" frameborder="0" src="https://` + config.Opts.InvidiousInstance() + `/embed/` + matches[1] + `" allowfullscreen></iframe>`
 		return video + `<br>` + entryContent
 	}
 	return entryContent
