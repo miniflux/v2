@@ -33,7 +33,7 @@ var predefinedRules = map[string]string{
 	"osnews.com":           "div.newscontent1",
 	"phoronix.com":         "div.content",
 	"pseudo-sciences.org":  "#art_main",
-	"quantamagazine.org":   ".outer--content, figure",
+	"quantamagazine.org":   ".outer--content, figure, script",
 	"raywenderlich.com":    "article",
 	"slate.fr":             ".field-items",
 	"techcrunch.com":       "div.article-entry",
