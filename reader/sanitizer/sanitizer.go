@@ -335,7 +335,7 @@ func isValidIframeSource(baseURL, src string) bool {
 	}
 
 	// allow iframe from custom invidious instance
-	if config.Opts.InvidiousInstance() == url.Domain(src) {
+	if config.Opts != nil && config.Opts.InvidiousInstance() == url.Domain(src) {
 		return true
 	}
 
