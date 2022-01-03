@@ -42,6 +42,15 @@
                     title="{{ t "entry.shared_entry.title" }}"
                     target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
             </li>
+            <li>
+                <a href="#"
+                    data-confirm="true"
+                    data-url="{{ route "unshareEntry" "entryID" .entry.ID }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}<span class="icon-label">{{ t "entry.unshare.label" }}</span></a>
+            </li>
         {{ end }}
         {{ if .hasSaveEntry }}
             <li>
