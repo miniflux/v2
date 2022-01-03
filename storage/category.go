@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/lib/pq"
 	"miniflux.app/model"
 )
 
@@ -213,5 +214,53 @@ func (s *Storage) RemoveCategory(userID, categoryID int64) error {
 		return errors.New(`store: no category has been removed`)
 	}
 
+	return nil
+}
+
+// delete the given categories, replacing those categories with the user's first
+// category on affected feeds
+func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return errors.New("unable to begin transaction")
+	}
+
+	titleParam := pq.Array(titles)
+	var count int
+	query := "SELECT count(*) FROM categories WHERE user_id = $1 and title != ANY($2)"
+	err = tx.QueryRow(query, userid, titleParam).Scan(&count)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("unable to retrieve category count")
+	}
+	if count < 1 {
+		tx.Rollback()
+		return errors.New("at least 1 category must remain after deletion")
+	}
+
+	query = `
+		WITH d_cats AS (SELECT id FROM categories WHERE user_id = $1 AND title = ANY($2)) 
+		UPDATE feeds 
+		 SET category_id = 
+		  (SELECT id 
+			FROM categories 
+			WHERE user_id = $1 AND id NOT IN (SELECT id FROM d_cats) 
+			ORDER BY title ASC 
+			LIMIT 1) 
+		WHERE user_id = $1 AND category_id IN (SELECT id FROM d_cats)
+	`
+	_, err = tx.Exec(query, userid, titleParam)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("unable to replace categories: %v", err)
+	}
+
+	query = "DELETE FROM categories WHERE user_id = $1 AND title = ANY($2)"
+	_, err = tx.Exec(query, userid, titleParam)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("unable to delete categories: %v", err)
+	}
+	tx.Commit()
 	return nil
 }

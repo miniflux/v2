@@ -16,6 +16,7 @@ import (
 	"miniflux.app/api"
 	"miniflux.app/config"
 	"miniflux.app/fever"
+	"miniflux.app/googlereader"
 	"miniflux.app/http/request"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
@@ -180,6 +181,7 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 	router.Use(middleware)
 
 	fever.Serve(router, store)
+	googlereader.Serve(router, store)
 	api.Serve(router, store, pool)
 	ui.Serve(router, store, pool)
 
