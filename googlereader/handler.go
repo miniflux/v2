@@ -1,3 +1,7 @@
+// Copyright 2022 Frédéric Guillot. All rights reserved.
+// Use of this source code is governed by the Apache 2.0
+// license that can be found in the LICENSE file.
+
 package googlereader // import "miniflux.app/googlereader"
 
 import (
@@ -159,9 +163,11 @@ func (st StreamType) String() string {
 		return st.String()
 	}
 }
+
 func (s Stream) String() string {
 	return fmt.Sprintf("%v - '%s'", s.Type, s.ID)
 }
+
 func (r RequestModifiers) String() string {
 	result := fmt.Sprintf("UserID: %d\n", r.UserID)
 	result += fmt.Sprintf("Streams: %d\n", len(r.Streams))
@@ -383,56 +389,56 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/edit-tag][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/edit-tag][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	err := r.ParseForm()
 	if err != nil {
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 
 	addTags, err := getStreams(r.PostForm[ParamTagsAdd], userID)
 	if err != nil {
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 	removeTags, err := getStreams(r.PostForm[ParamTagsRemove], userID)
 	if err != nil {
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 	if len(addTags) == 0 && len(removeTags) == 0 {
 		err = fmt.Errorf("add or/and remove tags should be supllied")
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] ", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] ", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 	tags, err := checkAndSimplifyTags(addTags, removeTags)
 	if err != nil {
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 
 	itemIDs, err := getItemIDs(r)
 	if err != nil {
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 
-	logger.Debug("[Reader][/edit-tag] [ClientIP=%s] itemIDs: %v", clientIP, itemIDs)
-	logger.Debug("[Reader][/edit-tag] [ClientIP=%s] tags: %v", clientIP, tags)
+	logger.Debug("[GoogleReader][/edit-tag] [ClientIP=%s] itemIDs: %v", clientIP, itemIDs)
+	logger.Debug("[GoogleReader][/edit-tag] [ClientIP=%s] tags: %v", clientIP, tags)
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithEntryIDs(itemIDs)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
-		logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -465,7 +471,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	if len(readEntryIDs) > 0 {
 		err = h.store.SetEntriesStatus(userID, readEntryIDs, model.EntryStatusRead)
 		if err != nil {
-			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 			json.ServerError(w, r, err)
 			return
 		}
@@ -474,7 +480,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	if len(unreadEntryIDs) > 0 {
 		err = h.store.SetEntriesStatus(userID, unreadEntryIDs, model.EntryStatusUnread)
 		if err != nil {
-			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 			json.ServerError(w, r, err)
 			return
 		}
@@ -483,7 +489,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	if len(unstarredEntryIDs) > 0 {
 		err = h.store.SetEntriesBookmarkedState(userID, unstarredEntryIDs, true)
 		if err != nil {
-			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 			json.ServerError(w, r, err)
 			return
 		}
@@ -492,7 +498,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	if len(starredEntryIDs) > 0 {
 		err = h.store.SetEntriesBookmarkedState(userID, starredEntryIDs, true)
 		if err != nil {
-			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 			json.ServerError(w, r, err)
 			return
 		}
@@ -501,7 +507,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	if len(entries) > 0 {
 		settings, err := h.store.Integration(userID)
 		if err != nil {
-			logger.Error("[Reader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
+			logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 			json.ServerError(w, r, err)
 			return
 		}
@@ -521,11 +527,11 @@ func (h *handler) quickAdd(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/subscription/quickadd][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/subscription/quickadd][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
 
 	err := r.ParseForm()
 	if err != nil {
-		logger.Error("[Reader][/subscription/quickadd] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/subscription/quickadd] [ClientIP=%s] %v", clientIP, err)
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -667,11 +673,11 @@ func (h *handler) editSubscription(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/subscription/edit][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/subscription/edit][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	err := r.ParseForm()
 	if err != nil {
-		logger.Error("[Reader][/subscription/edit] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/subscription/edit] [ClientIP=%s] %v", clientIP, err)
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -734,30 +740,30 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/stream/items/contents][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/stream/items/contents][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
-		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 	var user *model.User
 	if user, err = h.store.UserByID(userID); err != nil {
-		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 
 	requestModifiers, err := getStreamFilterModifiers(r)
 	if err != nil {
-		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -768,11 +774,11 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 
 	itemIDs, err := getItemIDs(r)
 	if err != nil {
-		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
-	logger.Debug("[Reader][/stream/items/contents] [ClientIP=%s] itemIDs: %v", clientIP, itemIDs)
+	logger.Debug("[GoogleReader][/stream/items/contents] [ClientIP=%s] itemIDs: %v", clientIP, itemIDs)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
@@ -787,7 +793,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(entries) == 0 {
 		err = fmt.Errorf("no items returned from the database")
-		logger.Error("[Reader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/contents] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -872,11 +878,11 @@ func (h *handler) disableTag(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/disable-tag][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/disable-tag][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	err := r.ParseForm()
 	if err != nil {
-		logger.Error("[Reader][/disable-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/disable-tag] [ClientIP=%s] %v", clientIP, err)
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -909,11 +915,11 @@ func (h *handler) renameTag(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/rename-tag][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/rename-tag][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	err := r.ParseForm()
 	if err != nil {
-		logger.Error("[Reader][/rename-tag] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/rename-tag] [ClientIP=%s] %v", clientIP, err)
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -970,10 +976,10 @@ func (h *handler) tagList(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][tags/list][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][tags/list][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		logger.Error("[Reader][OutputFormat] %v", err)
+		logger.Error("[GoogleReader][OutputFormat] %v", err)
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -1002,10 +1008,10 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Info("[Reader][/subscription/list][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/subscription/list][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		logger.Error("[Reader][/subscription/list] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/subscription/list] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1033,24 +1039,24 @@ func (h *handler) subscriptionList(w http.ResponseWriter, r *http.Request) {
 func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	dump, _ := httputil.DumpRequest(r, true)
-	logger.Info("[Reader][UNKNOWN] [ClientIP=%s] URL: %s", clientIP, dump)
+	logger.Info("[GoogleReader][UNKNOWN] [ClientIP=%s] URL: %s", clientIP, dump)
 	logger.Error("Call to Google Reader API not implemented yet!!")
 	json.OK(w, r, []string{})
 }
 
 func (h *handler) userInfo(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
-	logger.Info("[Reader][UserInfo] [ClientIP=%s] Sending", clientIP)
+	logger.Info("[GoogleReader][UserInfo] [ClientIP=%s] Sending", clientIP)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		logger.Error("[Reader][/user-info] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/user-info] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
 
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
-		logger.Error("[Reader][/user-info] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/user-info] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1062,11 +1068,11 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	clientIP := request.ClientIP(r)
 
-	logger.Debug("[Reader][/stream/items/ids][ClientIP=%s] Incoming Request for userID  #%d", clientIP, userID)
+	logger.Info("[GoogleReader][/stream/items/ids][ClientIP=%s] Incoming Request for userID #%d", clientIP, userID)
 
 	if err := checkOutputFormat(w, r); err != nil {
 		err := fmt.Errorf("output only as json supported")
-		logger.Error("[Reader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1076,10 +1082,10 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
-	logger.Info("Request Modifiers: %v", rm)
+	logger.Debug("Request Modifiers: %v", rm)
 	if len(rm.Streams) != 1 {
 		err := fmt.Errorf("only one stream type expected")
-		logger.Error("[Reader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1092,9 +1098,9 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		h.handleReadStream(w, r, rm)
 	default:
 		dump, _ := httputil.DumpRequest(r, true)
-		logger.Info("[Reader][/stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
+		logger.Info("[GoogleReader][/stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
 		err := fmt.Errorf("unknown stream type")
-		logger.Error("[Reader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1109,7 +1115,7 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 		case ReadStream:
 			builder.WithStatus(model.EntryStatusUnread)
 		default:
-			logger.Info("[Reader][ReadingListStreamIDs][ClientIP=%s] xt filter type: %#v", clientIP, s)
+			logger.Info("[GoogleReader][ReadingListStreamIDs][ClientIP=%s] xt filter type: %#v", clientIP, s)
 		}
 	}
 	builder.WithLimit(rm.Count)
@@ -1117,7 +1123,7 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 	builder.WithDirection(rm.SortDirection)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		logger.Error("[Reader][/stream/items/ids#reading-list] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids#reading-list] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1139,7 +1145,7 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 	builder.WithDirection(rm.SortDirection)
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		logger.Error("[Reader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1167,7 +1173,7 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		logger.Error("[Reader][/stream/items/ids#read] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids#read] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}

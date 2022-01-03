@@ -12,7 +12,7 @@ import (
 	"miniflux.app/model"
 )
 
-// HasDuplicateFeverUsername checks if another user have the same fever username.
+// HasDuplicateFeverUsername checks if another user have the same Fever username.
 func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) bool {
 	query := `SELECT true FROM integrations WHERE user_id != $1 AND fever_username=$2`
 	var result bool
@@ -20,7 +20,7 @@ func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) 
 	return result
 }
 
-// HasDuplicateGoogleReaderUsername checks if another user have the same googlereader  username.
+// HasDuplicateGoogleReaderUsername checks if another user have the same Google Reader username.
 func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUsername string) bool {
 	query := `SELECT true FROM integrations WHERE user_id != $1 AND googlereader_username=$2`
 	var result bool
@@ -33,8 +33,10 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
 		SELECT
 			users.id, users.is_admin, users.timezone
-		FROM users
-		LEFT JOIN integrations ON integrations.user_id=users.id
+		FROM
+			users
+		LEFT JOIN
+			integrations ON integrations.user_id=users.id
 		WHERE
 			integrations.fever_enabled='t' AND lower(integrations.fever_token)=lower($1)
 	`
@@ -45,20 +47,21 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("unable to fetch user: %v", err)
+		return nil, fmt.Errorf("store: unable to fetch user: %v", err)
 	default:
 		return &user, nil
 	}
 }
 
-// GoogleReaderUserCheckPassword validates the hashed password.
+// GoogleReaderUserCheckPassword validates the Google Reader hashed password.
 func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error {
 	var hash string
 
 	query := `
 		SELECT
 			googlereader_password
-		FROM integrations
+		FROM
+			integrations
 		WHERE
 			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
 	`
@@ -77,7 +80,7 @@ func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error
 	return nil
 }
 
-// GoogleReaderUserGetIntegration returns part of the google reader parts of the integration struct.
+// GoogleReaderUserGetIntegration returns part of the Google Reader parts of the integration struct.
 func (s *Storage) GoogleReaderUserGetIntegration(username string) (*model.Integration, error) {
 	var integration model.Integration
 
@@ -87,7 +90,8 @@ func (s *Storage) GoogleReaderUserGetIntegration(username string) (*model.Integr
 			googlereader_enabled,
 			googlereader_username,
 			googlereader_password
-		FROM integrations
+		FROM
+			integrations
 		WHERE
 			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
 	`
