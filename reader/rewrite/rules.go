@@ -26,6 +26,7 @@ var predefinedRules = map[string]string{
 	"oglaf.com":              "add_image_title",
 	"optipess.com":           "add_image_title",
 	"peebleslab.com":         "add_image_title",
+	"quantamagazine.org":     `remove("h6:not(.byline,.post__title__kicker), #comments, .next-post__content, .footer__section, figure .outer--content")`,
 	"sentfromthemoon.com":    "add_image_title",
 	"thedoghousediaries.com": "add_image_title",
 	"treelobsters.com":       "add_image_title",
