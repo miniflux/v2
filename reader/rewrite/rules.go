@@ -16,7 +16,6 @@ var predefinedRules = map[string]string{
 	"framatube.org":          "nl2br,convert_text_link",
 	"happletea.com":          "add_image_title",
 	"imogenquest.net":        "add_image_title",
-	"invidio.us":             "add_invidious_video",
 	"lukesurl.com":           "add_image_title",
 	"medium.com":             "fix_medium_images",
 	"mercworks.net":          "add_image_title",
