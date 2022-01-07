@@ -32,6 +32,13 @@
         {{ if .errorMessage }}
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
+        
+        <label for="form-category">{{ t "form.feed.label.category" }}</label>
+        <select id="form-category" name="category_id">
+        {{ range .categories }}
+            <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
+        {{ end }}
+        </select>
 
         <label for="form-title">{{ t "form.feed.label.title" }}</label>
         <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required autofocus>
@@ -72,13 +79,6 @@
 
         <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
         <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
-
-        <label for="form-category">{{ t "form.feed.label.category" }}</label>
-        <select id="form-category" name="category_id">
-        {{ range .categories }}
-            <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
-        {{ end }}
-        </select>
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
