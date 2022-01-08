@@ -60,6 +60,7 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		logger.Error(`[Proxy] code=%d url=%q`, resp.StatusCode, imageURL)
 		html.NotFound(w, r)
 		return
 	}
