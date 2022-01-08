@@ -21,21 +21,25 @@ import (
 )
 
 // FindIcon try to find the website's icon.
-func FindIcon(websiteURL string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
+func FindIcon(websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
 	rootURL := url.RootURL(websiteURL)
+	logger.Debug("[FindIcon] Trying to find an icon: rootURL=%q websiteURL=%q userAgent=%q", rootURL, websiteURL, userAgent)
+
 	clt := client.NewClientWithConfig(rootURL, config.Opts)
+	clt.WithUserAgent(userAgent)
 	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
+
 	if fetchViaProxy {
 		clt.WithProxy()
 	}
 
 	response, err := clt.Get()
 	if err != nil {
-		return nil, fmt.Errorf("unable to download website index page: %v", err)
+		return nil, fmt.Errorf("icon: unable to download website index page: %v", err)
 	}
 
 	if response.HasServerFailure() {
-		return nil, fmt.Errorf("unable to download website index page: status=%d", response.StatusCode)
+		return nil, fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
 	}
 
 	iconURL, err := parseDocument(rootURL, response.Body)
@@ -48,7 +52,7 @@ func FindIcon(websiteURL string, fetchViaProxy, allowSelfSignedCertificates bool
 	}
 
 	logger.Debug("[FindIcon] Fetching icon => %s", iconURL)
-	icon, err := downloadIcon(iconURL, fetchViaProxy, allowSelfSignedCertificates)
+	icon, err := downloadIcon(iconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +70,7 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 
 	doc, err := goquery.NewDocumentFromReader(data)
 	if err != nil {
-		return "", fmt.Errorf("unable to read document: %v", err)
+		return "", fmt.Errorf("icon: unable to read document: %v", err)
 	}
 
 	var iconURL string
@@ -91,28 +95,30 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 	return iconURL, nil
 }
 
-func downloadIcon(iconURL string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
+func downloadIcon(iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
 	clt := client.NewClientWithConfig(iconURL, config.Opts)
+	clt.WithUserAgent(userAgent)
 	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
 	if fetchViaProxy {
 		clt.WithProxy()
 	}
+
 	response, err := clt.Get()
 	if err != nil {
-		return nil, fmt.Errorf("unable to download iconURL: %v", err)
+		return nil, fmt.Errorf("icon: unable to download iconURL: %v", err)
 	}
 
 	if response.HasServerFailure() {
-		return nil, fmt.Errorf("unable to download icon: status=%d", response.StatusCode)
+		return nil, fmt.Errorf("icon: unable to download icon: status=%d", response.StatusCode)
 	}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read downloaded icon: %v", err)
+		return nil, fmt.Errorf("icon: unable to read downloaded icon: %v", err)
 	}
 
 	if len(body) == 0 {
-		return nil, fmt.Errorf("downloaded icon is empty, iconURL=%s", iconURL)
+		return nil, fmt.Errorf("icon: downloaded icon is empty, iconURL=%s", iconURL)
 	}
 
 	icon := &model.Icon{
