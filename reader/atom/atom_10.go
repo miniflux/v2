@@ -229,10 +229,9 @@ type atom10Text struct {
 
 func (a *atom10Text) String() string {
 	var content string
-
 	switch {
 	case a.Type == "", a.Type == "text", a.Type == "text/plain":
-		if strings.HasPrefix(a.InnerXML, `<![CDATA[`) {
+		if strings.HasPrefix(strings.TrimSpace(a.InnerXML), `<![CDATA[`) {
 			content = html.EscapeString(a.CharData)
 		} else {
 			content = a.InnerXML

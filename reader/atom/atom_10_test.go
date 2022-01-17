@@ -303,6 +303,16 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 		<summary>Some text.</summary>
 	  </entry>
 
+	  <entry>
+		<title>
+			<![CDATA[Entry title with space around CDATA]]>
+		</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
 	</feed>`
 
 	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
@@ -316,6 +326,10 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 
 	if feed.Entries[1].Title != "Test “Test”" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[1].Title)
+	}
+
+	if feed.Entries[2].Title != "Entry title with space around CDATA" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[2].Title)
 	}
 }
 
