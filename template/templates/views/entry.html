@@ -137,7 +137,7 @@
     </header>
     {{ if gt (len .entry.Content) 120 }}
     {{ if .user }}
-    <div class="pagination-top">
+    <div class="pagination-entry-top">
         {{ template "entry_pagination" . }}
     </div>
     {{ end }}
@@ -189,7 +189,7 @@
 </section>
 
 {{ if .user }}
-<div class="pagination-bottom">
+<div class="pagination-entry-bottom">
     {{ template "entry_pagination" . }}
 </div>
 {{ end }}
