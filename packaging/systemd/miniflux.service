@@ -8,6 +8,7 @@
 
 [Unit]
 Description=Miniflux
+Documentation=man:miniflux(1) https://miniflux.app/docs/index.html
 After=network.target postgresql.service
 
 [Service]
