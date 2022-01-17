@@ -30,6 +30,9 @@
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_history" }}</p>
 {{ else }}
+    <div class="pagination-top">
+        {{ template "pagination" .pagination }}
+    </div>
     <div class="items">
         {{ range .entries }}
         <article class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -46,7 +49,9 @@
         </article>
         {{ end }}
     </div>
-    {{ template "pagination" .pagination }}
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
+    </div>
 {{ end }}
 
 {{ end }}

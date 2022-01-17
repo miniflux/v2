@@ -42,6 +42,9 @@
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_category_entry" }}</p>
 {{ else }}
+    <div class="pagination-top">
+        {{ template "pagination" .pagination }}
+    </div>
     <div class="items">
         {{ range .entries }}
         <article role="article" class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -73,7 +76,9 @@
         </ul>
         {{ end }}
     </section>
-    {{ template "pagination" .pagination }}
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
+    </div>
 {{ end }}
 
 {{ end }}

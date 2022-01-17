@@ -636,13 +636,25 @@ template {
     font-size: 1.1em;
     display: flex;
     align-items: center;
-    padding-top: 8px;
+}
+
+.pagination-top {
+    padding-bottom: 8px;
 }
 
 .pagination-bottom {
+    padding-top: 8px;
+}
+
+.pagination-entry-top {
+    padding-top: 8px;
+}
+
+.pagination-entry-bottom {
     border-top: 1px dotted var(--pagination-border-color);
     margin-bottom: 15px;
     margin-top: 50px;
+    padding-top: 8px;
 }
 
 .pagination > div {
