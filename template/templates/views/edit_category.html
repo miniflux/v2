@@ -5,13 +5,13 @@
     <h1>{{ t "page.edit_category.title" .category.Title }}</h1>
     <ul>
         <li>
-            <a href="{{ route "categories" }}">{{ t "menu.categories" }}</a>
+            <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
         </li>
         <li>
-            <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ t "menu.feeds" }}</a>
+            <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "createCategory" }}">{{ t "menu.create_category" }}</a>
+            <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
         </li>
     </ul>
 </section>

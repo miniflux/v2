@@ -28,7 +28,7 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ route "removeSession" "sessionID" .ID }}">{{ t "action.remove" }}</a>
+                    data-url="{{ route "removeSession" "sessionID" .ID }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
             {{ end }}
         </td>
     </tr>
