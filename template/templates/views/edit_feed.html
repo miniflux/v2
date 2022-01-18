@@ -5,13 +5,13 @@
     <h1 dir="auto">{{ .feed.Title }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.feed_entries" }}</a>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ icon "entries" }}{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
-            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</a>
         </li>
     </ul>
 </section>
