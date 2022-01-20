@@ -1,4 +1,6 @@
 name: CI Workflow
+permissions: read-all
+
 on:
   pull_request:
     branches:
