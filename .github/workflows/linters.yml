@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install jshint
       run: |
-        sudo npm install -g jshint
+        sudo npm install -g jshint@2.13.3
     - name: Run jshint
       run: jshint ui/static/js/*.js
 
