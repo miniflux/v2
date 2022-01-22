@@ -1,4 +1,5 @@
 name: Docker
+permissions: read-all
 on:
   schedule:
     - cron: '0 1 * * *'
