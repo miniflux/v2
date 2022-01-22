@@ -117,6 +117,7 @@
     "page.about.author": "Autor:",
     "page.about.license": "Licencja:",
     "page.about.postgres_version": "Postgres wersja:",
+    "page.about.go_version": "Go wersja:",
     "page.about.global_config_options": "globalne opcje konfiguracji",
     "page.add_feed.title": "Nowa subskrypcja",
     "page.add_feed.no_category": "Nie ma żadnej kategorii. Musisz mieć co najmniej jedną kategorię.",
