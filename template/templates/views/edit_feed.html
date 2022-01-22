@@ -34,14 +34,14 @@
         {{ end }}
         
         <label for="form-category">{{ t "form.feed.label.category" }}</label>
-        <select id="form-category" name="category_id">
+        <select id="form-category" name="category_id" autofocus>
         {{ range .categories }}
             <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
         {{ end }}
         </select>
 
         <label for="form-title">{{ t "form.feed.label.title" }}</label>
-        <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required autofocus>
+        <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required>
 
         <label for="form-site-url">{{ t "form.feed.label.site_url" }}</label>
         <input type="url" name="site_url" id="form-site-url" placeholder="https://domain.tld/" value="{{ .form.SiteURL }}" spellcheck="false" required>
