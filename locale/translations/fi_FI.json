@@ -116,6 +116,7 @@
     "page.about.license": "Lisenssi:",
     "page.about.global_config_options": "Yleiset asetukset",
     "page.about.postgres_version": "Postgres-versio:",
+    "page.about.go_version": "Go-versio:",
     "page.add_feed.title": "Uusi tilaus",
     "page.add_feed.no_category": "Ei ole ketegoriaa. Sinulla on oltava vähintään yksi ketegoria.",
     "page.add_feed.label.url": "URL-osoite",

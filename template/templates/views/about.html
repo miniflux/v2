@@ -13,6 +13,7 @@
         <li><strong>Git Commit</strong> {{ .commit }}</li>
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
         {{ if .user.IsAdmin }}<li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>{{ end }}
+	<li><strong>{{t "page.about.go_version" }}</strong> {{ .go_version }}</li>
     </ul>
 </div>
 

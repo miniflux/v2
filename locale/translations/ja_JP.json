@@ -116,6 +116,7 @@
     "page.about.license": "ライセンス:",
     "page.about.global_config_options": "グローバル構成オプション",
     "page.about.postgres_version": "Postgres バージョン:",
+    "page.about.go_version": "Go バージョン:",
     "page.add_feed.title": "新規購読",
     "page.add_feed.no_category": "カテゴリが存在しません。 少なくとも1つのカテゴリが必要です。",
     "page.add_feed.label.url": "URL",

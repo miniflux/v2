@@ -117,6 +117,7 @@
     "page.about.author": "Автор:",
     "page.about.license": "Лицензия:",
     "page.about.postgres_version": "Postgres bерсия:",
+    "page.about.go_version": "Go bерсия:",
     "page.about.global_config_options": "глобальные параметры конфигурации",
     "page.add_feed.title": "Новая подписка",
     "page.add_feed.no_category": "Категории отсутствуют. У вас должна быть хотя бы одна категория.",

@@ -116,6 +116,7 @@
     "page.about.license": "Licencia:",
     "page.about.global_config_options": "Opciones de configuración global",
     "page.about.postgres_version": "Postgres versión:",
+    "page.about.go_version": "Go versión:",
     "page.add_feed.title": "Nueva suscripción",
     "page.add_feed.no_category": "No hay categoría. Debe tener al menos una categoría.",
     "page.add_feed.label.url": "URL",
