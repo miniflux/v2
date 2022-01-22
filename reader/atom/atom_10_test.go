@@ -303,6 +303,16 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 		<summary>Some text.</summary>
 	  </entry>
 
+	  <entry>
+		<title>
+			<![CDATA[Entry title with space around CDATA]]>
+		</title>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
 	</feed>`
 
 	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
@@ -316,6 +326,10 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 
 	if feed.Entries[1].Title != "Test “Test”" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[1].Title)
+	}
+
+	if feed.Entries[2].Title != "Entry title with space around CDATA" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[2].Title)
 	}
 }
 
@@ -729,6 +743,121 @@ func TestParseEntryWithoutAuthorName(t *testing.T) {
 
 	if feed.Entries[0].Author != "me@localhost" {
 		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
+func TestParseEntryWithMultipleAuthors(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+		<author>
+			<name>Alice</name>
+		</author>
+		<author>
+			<name>Bob</name>
+		</author>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Author != "Alice, Bob" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
+func TestParseEntryWithoutAuthor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+	  <author>
+		<name>John Doe</name>
+	  </author>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Author != "John Doe" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
+func TestParseFeedWithMultipleAuthors(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+	  <author>
+		<name>Alice</name>
+	  </author>
+	  <author>
+		<name>Bob</name>
+	  </author>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Author != "Alice, Bob" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
+func TestParseFeedWithoutAuthor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Author != "" {
+		t.Errorf("Incorrect entry author, got: %q", feed.Entries[0].Author)
 	}
 }
 
