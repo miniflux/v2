@@ -113,6 +113,7 @@
     "page.about.author": "作者：",
     "page.about.license": "协议：",
     "page.about.postgres_version": "Postgres 版本号：",
+    "page.about.go_version": "Go 版本号：",
     "page.about.global_config_options": "全局配置选项",
     "page.add_feed.title": "新增源",
     "page.add_feed.no_category": "没有类别，至少需要有一个类别",

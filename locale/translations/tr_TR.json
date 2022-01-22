@@ -116,6 +116,7 @@
     "page.about.license": "Lisans:",
     "page.about.global_config_options": "Global yapılandırma seçenekleri",
     "page.about.postgres_version": "Postgres sürümü:",
+    "page.about.go_version": "Go sürümü:",
     "page.add_feed.title": "Yeni Abonelik",
     "page.add_feed.no_category": "Kategori yok. En az bir kategoriye sahip olmalısınız.",
     "page.add_feed.label.url": "URL",

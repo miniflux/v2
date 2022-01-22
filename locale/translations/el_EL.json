@@ -116,6 +116,7 @@
     "page.about.license": "Άδεια:",
     "page.about.global_config_options": "Γενικές ρυθμίσεις",
     "page.about.postgres_version": "Έκδοση Postgres:",
+    "page.about.go_version": "Έκδοση Go:",
     "page.add_feed.title": "Νέα Συνδρομή",
     "page.add_feed.no_category": "Δεν υπάρχει κατηγορία. Πρέπει να έχετε τουλάχιστον μία κατηγορία.",
     "page.add_feed.label.url": "URL",
