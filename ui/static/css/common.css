@@ -1064,3 +1064,7 @@ details.entry-enclosures {
     text-decoration: none;
     font-size: 1.2em;
 }
+
+.rules-entry {
+    display: flex;
+}
