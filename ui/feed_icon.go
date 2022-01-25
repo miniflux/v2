@@ -27,6 +27,7 @@ func (h *handler) showIcon(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.New(w, r).WithCaching(icon.Hash, 72*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Security-Policy", `default-src 'self'`)
 		b.WithHeader("Content-Type", icon.MimeType)
 		b.WithBody(icon.Content)
 		b.WithoutCompression()

@@ -74,7 +74,7 @@ func (s *SettingsForm) Validate() error {
 
 // NewSettingsForm returns a new SettingsForm.
 func NewSettingsForm(r *http.Request) *SettingsForm {
-	entriesPerPage, err := strconv.ParseInt(r.FormValue("entries_per_page"), 10, 64)
+	entriesPerPage, err := strconv.ParseInt(r.FormValue("entries_per_page"), 10, 0)
 	if err != nil {
 		entriesPerPage = 0
 	}

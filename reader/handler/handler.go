@@ -91,6 +91,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		store,
 		subscription.ID,
 		subscription.SiteURL,
+		feedCreationRequest.UserAgent,
 		feedCreationRequest.FetchViaProxy,
 		feedCreationRequest.AllowSelfSignedCertificates,
 	)
@@ -179,6 +180,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 			store,
 			originalFeed.ID,
 			originalFeed.SiteURL,
+			originalFeed.UserAgent,
 			originalFeed.FetchViaProxy,
 			originalFeed.AllowSelfSignedCertificates,
 		)
@@ -199,11 +201,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 
 var iconFinderLock = keylock.NewKeyLock()
 
-func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL string, fetchViaProxy, allowSelfSignedCertificates bool) {
+func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
 	iconFinderLock.Lock(websiteURL)
 	defer iconFinderLock.Unlock(websiteURL)
 	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, fetchViaProxy, allowSelfSignedCertificates)
+		icon, err := icon.FindIcon(websiteURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {
 			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
 		} else if icon == nil {
