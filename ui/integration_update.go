@@ -49,6 +49,19 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.FeverToken = ""
 	}
 
+	if integration.GoogleReaderUsername != "" && h.store.HasDuplicateGoogleReaderUsername(user.ID, integration.GoogleReaderUsername) {
+		sess.NewFlashErrorMessage(printer.Printf("error.duplicate_googlereader_username"))
+		html.Redirect(w, r, route.Path(h.router, "integrations"))
+		return
+	}
+
+	if integration.GoogleReaderEnabled {
+		if integrationForm.GoogleReaderPassword != "" {
+			integration.GoogleReaderPassword = integrationForm.GoogleReaderPassword
+		}
+	} else {
+		integration.GoogleReaderPassword = ""
+	}
 	err = h.store.UpdateIntegration(integration)
 	if err != nil {
 		html.ServerError(w, r, err)

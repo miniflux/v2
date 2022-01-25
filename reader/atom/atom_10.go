@@ -26,7 +26,7 @@ type atom10Feed struct {
 	XMLName xml.Name      `xml:"http://www.w3.org/2005/Atom feed"`
 	ID      string        `xml:"id"`
 	Title   atom10Text    `xml:"title"`
-	Author  atomPerson    `xml:"author"`
+	Authors atomAuthors   `xml:"author"`
 	Links   atomLinks     `xml:"link"`
 	Entries []atom10Entry `xml:"entry"`
 }
@@ -61,7 +61,7 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 		}
 
 		if item.Author == "" {
-			item.Author = a.Author.String()
+			item.Author = a.Authors.String()
 		}
 
 		if item.Title == "" {
@@ -75,14 +75,14 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 }
 
 type atom10Entry struct {
-	ID        string     `xml:"id"`
-	Title     atom10Text `xml:"title"`
-	Published string     `xml:"published"`
-	Updated   string     `xml:"updated"`
-	Links     atomLinks  `xml:"link"`
-	Summary   atom10Text `xml:"summary"`
-	Content   atom10Text `xml:"http://www.w3.org/2005/Atom content"`
-	Author    atomPerson `xml:"author"`
+	ID        string      `xml:"id"`
+	Title     atom10Text  `xml:"title"`
+	Published string      `xml:"published"`
+	Updated   string      `xml:"updated"`
+	Links     atomLinks   `xml:"link"`
+	Summary   atom10Text  `xml:"summary"`
+	Content   atom10Text  `xml:"http://www.w3.org/2005/Atom content"`
+	Authors   atomAuthors `xml:"author"`
 	media.Element
 }
 
@@ -90,7 +90,7 @@ func (a *atom10Entry) Transform() *model.Entry {
 	entry := new(model.Entry)
 	entry.URL = a.Links.originalLink()
 	entry.Date = a.entryDate()
-	entry.Author = a.Author.String()
+	entry.Author = a.Authors.String()
 	entry.Hash = a.entryHash()
 	entry.Content = a.entryContent()
 	entry.Title = a.entryTitle()
@@ -229,10 +229,9 @@ type atom10Text struct {
 
 func (a *atom10Text) String() string {
 	var content string
-
 	switch {
 	case a.Type == "", a.Type == "text", a.Type == "text/plain":
-		if strings.HasPrefix(a.InnerXML, `<![CDATA[`) {
+		if strings.HasPrefix(strings.TrimSpace(a.InnerXML), `<![CDATA[`) {
 			content = html.EscapeString(a.CharData)
 		} else {
 			content = a.InnerXML

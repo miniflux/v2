@@ -11,14 +11,17 @@ import (
 	"regexp"
 	"strings"
 
+	"miniflux.app/config"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
 var (
-	youtubeRegex  = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-	invidioRegex  = regexp.MustCompile(`https?:\/\/(.*)\/watch\?v=(.*)`)
-	imgRegex      = regexp.MustCompile(`<img [^>]+>`)
-	textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
+	youtubeRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
+	invidioRegex   = regexp.MustCompile(`https?:\/\/(.*)\/watch\?v=(.*)`)
+	imgRegex       = regexp.MustCompile(`<img [^>]+>`)
+	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
 func addImageTitle(entryURL, entryContent string) string {
@@ -213,10 +216,27 @@ func addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent string) string {
 	matches := youtubeRegex.FindStringSubmatch(entryURL)
 
 	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="https://invidio.us/embed/` + matches[1] + `" allowfullscreen></iframe>`
+		video := `<iframe width="650" height="350" frameborder="0" src="https://` + config.Opts.InvidiousInstance() + `/embed/` + matches[1] + `" allowfullscreen></iframe>`
 		return video + `<br>` + entryContent
 	}
 	return entryContent
+}
+
+func addYoutubeVideoFromId(entryContent string) string {
+	matches := youtubeIdRegex.FindAllStringSubmatch(entryContent, -1)
+	if matches == nil {
+		return entryContent
+	}
+	sb := strings.Builder{}
+	for _, match := range matches {
+		if len(match) == 2 {
+			sb.WriteString(`<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/`)
+			sb.WriteString(match[1])
+			sb.WriteString(`" allowfullscreen></iframe><br>`)
+		}
+	}
+	sb.WriteString(entryContent)
+	return sb.String()
 }
 
 func addInvidiousVideo(entryURL, entryContent string) string {

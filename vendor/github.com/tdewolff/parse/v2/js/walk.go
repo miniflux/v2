@@ -283,6 +283,10 @@ func Walk(v IVisitor, n INode) {
 	case *ArrowFunc:
 		Walk(v, &n.Body)
 		Walk(v, &n.Params)
+	case *CommaExpr:
+		for _, item := range n.List {
+			Walk(v, item)
+		}
 	default:
 		return
 	}

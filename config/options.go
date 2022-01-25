@@ -70,6 +70,7 @@ const (
 	defaultCustomKeywordsDict                 = ""
 	defaultMetricsKeyword                     = false
 	defaultWatchdog                           = true
+	defaultInvidiousInstance                  = "yewtu.be"
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -139,6 +140,7 @@ type Options struct {
 	metricsKeyword                     bool
 	customKeywordsDict                 string
 	watchdog                           bool
+	invidiousInstance                  string
 }
 
 // NewOptions returns Options with default values.
@@ -199,6 +201,7 @@ func NewOptions() *Options {
 		customKeywordsDict:                 defaultCustomKeywordsDict,
 		metricsKeyword:                     defaultMetricsKeyword,
 		watchdog:                           defaultWatchdog,
+		invidiousInstance:                  defaultInvidiousInstance,
 	}
 }
 
@@ -497,6 +500,11 @@ func (o *Options) HasWatchdog() bool {
 	return o.watchdog
 }
 
+// InvidiousInstance returns the invidious instance used by miniflux
+func (o *Options) InvidiousInstance() string {
+	return o.invidiousInstance
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	var keyValues = map[string]interface{}{
@@ -531,6 +539,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
 		"HTTP_SERVICE":                           o.httpService,
 		"KEY_FILE":                               o.certKeyFile,
+		"INVIDIOUS_INSTANCE":                     o.invidiousInstance,
 		"LISTEN_ADDR":                            o.listenAddr,
 		"LOG_DATE_TIME":                          o.logDateTime,
 		"MAINTENANCE_MESSAGE":                    o.maintenanceMessage,

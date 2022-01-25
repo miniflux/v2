@@ -6,6 +6,7 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
+	"runtime"
 
 	"miniflux.app/config"
 	"miniflux.app/http/request"
@@ -33,6 +34,7 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("globalConfigOptions", config.Opts.SortedOptions(true))
 	view.Set("postgres_version", h.store.DatabaseVersion())
+	view.Set("go_version", runtime.Version())
 
 	html.OK(w, r, view.Render("about"))
 }

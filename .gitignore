@@ -4,3 +4,4 @@ miniflux*
 *.deb
 .env
 *debug*
+.idea

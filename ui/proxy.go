@@ -45,7 +45,8 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 		html.ServerError(w, r, err)
 		return
 	}
-	req.Header.Add("User-Agent", config.Opts.HTTPClientUserAgent())
+
+	// Note: User-Agent HTTP header is omitted to avoid being blocked by bot protection mechanisms.
 	req.Header.Add("Connection", "close")
 
 	clt := &http.Client{
@@ -60,6 +61,7 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		logger.Error(`[Proxy] Status Code is %d for URL %q`, resp.StatusCode, imageURL)
 		html.NotFound(w, r)
 		return
 	}
@@ -67,6 +69,7 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 	etag := crypto.HashFromBytes(decodedURL)
 
 	response.New(w, r).WithCaching(etag, 72*time.Hour, func(b *response.Builder) {
+		b.WithHeader("Content-Security-Policy", `default-src 'self'`)
 		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
 		b.WithBody(resp.Body)
 		b.WithoutCompression()

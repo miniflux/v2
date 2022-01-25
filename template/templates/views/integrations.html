@@ -31,7 +31,27 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
     </div>
+    
+    <h3>Google Reader</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="googlereader_enabled" value="1" {{ if .form.GoogleReaderEnabled }}checked{{ end }}> {{ t "form.integration.googlereader_activate" }}
+        </label>
 
+        <label for="form-googlereader-username">{{ t "form.integration.googlereader_username" }}</label>
+        <input type="text" name="googlereader_username" id="form-googlereader-username" value="{{ .form.GoogleReaderUsername }}" autocomplete="username" spellcheck="false">
+
+        <label for="form-googlereader-password">{{ t "form.integration.googlereader_password" }}</label>
+        <input type="password" name="googlereader_password" id="form-googlereader-password" value="{{ .form.GoogleReaderPassword }}" autocomplete="new-password">
+
+        <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ route "login" }}</strong></p>
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
+    <!-- -->
     <h3>Pinboard</h3>
     <div class="form-section">
         <label>

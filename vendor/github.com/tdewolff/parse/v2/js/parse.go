@@ -2050,7 +2050,12 @@ func (p *Parser) parseExpressionSuffix(left IExpr, prec, precLeft OpPrec) IExpr 
 				return left
 			}
 			p.next()
-			left = &BinaryExpr{tt, left, p.parseExpression(OpAssign)}
+			if commaExpr, ok := left.(*CommaExpr); ok {
+				commaExpr.List = append(commaExpr.List, p.parseExpression(OpAssign))
+				i-- // adjust expression nesting limit
+			} else {
+				left = &CommaExpr{[]IExpr{left, p.parseExpression(OpAssign)}}
+			}
 			precLeft = OpExpr
 		case ArrowToken:
 			// handle identifier => ..., where identifier could also be yield or await
@@ -2197,11 +2202,11 @@ func (p *Parser) parseParenthesizedExpressionOrArrowFunc(prec OpPrec, async []by
 			precLeft = OpCall
 		} else {
 			// parenthesized expression
-			left = list[0]
-			for _, item := range list[1:] {
-				left = &BinaryExpr{CommaToken, left, item}
+			if 1 < len(list) {
+				left = &GroupExpr{&CommaExpr{list}}
+			} else {
+				left = &GroupExpr{list[0]}
 			}
-			left = &GroupExpr{left}
 		}
 	}
 	return p.parseExpressionSuffix(left, prec, precLeft)

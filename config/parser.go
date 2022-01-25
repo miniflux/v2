@@ -199,6 +199,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.fetchYouTubeWatchTime = parseBool(value, defaultFetchYouTubeWatchTime)
 		case "WATCHDOG":
 			p.opts.watchdog = parseBool(value, defaultWatchdog)
+		case "INVIDIOUS_INSTANCE":
+			p.opts.invidiousInstance = parseString(value, defaultInvidiousInstance)
 		}
 	}
 
