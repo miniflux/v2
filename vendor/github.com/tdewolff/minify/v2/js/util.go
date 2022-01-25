@@ -296,6 +296,19 @@ func condExpr(cond, x, y js.IExpr) js.IExpr {
 	}
 }
 
+func commaExpr(x, y js.IExpr) js.IExpr {
+	comma, ok := x.(*js.CommaExpr)
+	if !ok {
+		comma = &js.CommaExpr{List: []js.IExpr{x}}
+	}
+	if comma2, ok := y.(*js.CommaExpr); ok {
+		comma.List = append(comma.List, comma2.List...)
+	} else {
+		comma.List = append(comma.List, y)
+	}
+	return comma
+}
+
 func (m *jsMinifier) isEmptyStmt(stmt js.IStmt) bool {
 	if stmt == nil {
 		return true
@@ -323,11 +336,11 @@ func finalExpr(expr js.IExpr) js.IExpr {
 	if group, ok := expr.(*js.GroupExpr); ok {
 		expr = group.X
 	}
-	if binary, ok := expr.(*js.BinaryExpr); ok && binary.Op == js.CommaToken {
-		expr = binary.Y
+	if comma, ok := expr.(*js.CommaExpr); ok {
+		expr = comma.List[len(comma.List)-1]
 	}
 	if binary, ok := expr.(*js.BinaryExpr); ok && binary.Op == js.EqToken {
-		expr = binary.X
+		expr = binary.X // return first
 	}
 	return expr
 }

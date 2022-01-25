@@ -4,25 +4,33 @@ import (
 	"bytes"
 	"sort"
 
-	"github.com/tdewolff/parse/v2"
 	"github.com/tdewolff/parse/v2/js"
 )
 
 type renamer struct {
-	ast      *js.AST
-	reserved map[string]struct{}
-	rename   bool
+	identStart    []byte
+	identContinue []byte
+	reserved      map[string]struct{}
+	rename        bool
 }
 
-func newRenamer(ast *js.AST, undeclared js.VarArray, rename bool) *renamer {
+func newRenamer(rename, useCharFreq bool) *renamer {
 	reserved := make(map[string]struct{}, len(js.Keywords))
 	for name := range js.Keywords {
 		reserved[name] = struct{}{}
 	}
+	identStart := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$")
+	identContinue := []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$0123456789")
+	if useCharFreq {
+		// sorted based on character frequency of a collection of JS samples (incl. the var names!)
+		identStart = []byte("etnsoiarclduhmfpgvbjy_wOxCEkASMFTzDNLRPHIBV$WUKqYGXQZJ")
+		identContinue = []byte("etnsoiarcldu14023hm8f6pg57v9bjy_wOxCEkASMFTzDNLRPHIBV$WUKqYGXQZJ")
+	}
 	return &renamer{
-		ast:      ast,
-		reserved: reserved,
-		rename:   rename,
+		identStart:    identStart,
+		identContinue: identContinue,
+		reserved:      reserved,
+		rename:        rename,
 	}
 }
 
@@ -31,14 +39,15 @@ func (r *renamer) renameScope(scope js.Scope) {
 		return
 	}
 
-	rename := []byte("`") // so that the next is 'a'
+	i := 0
 	sort.Sort(js.VarsByUses(scope.Declared))
 	for _, v := range scope.Declared {
-		rename = r.next(rename)
-		for r.isReserved(rename, scope.Undeclared) {
-			rename = r.next(rename)
+		v.Data = r.getName(v.Data, i)
+		i++
+		for r.isReserved(v.Data, scope.Undeclared) {
+			v.Data = r.getName(v.Data, i)
+			i++
 		}
-		v.Data = parse.Copy(rename)
 	}
 }
 
@@ -59,37 +68,68 @@ func (r *renamer) isReserved(name []byte, undeclared js.VarArray) bool {
 	return false
 }
 
-func (r *renamer) next(name []byte) []byte {
+func (r *renamer) getIndex(name []byte) int {
+	index := 0
+NameLoop:
+	for i, b := range name {
+		chars := r.identContinue
+		if i == 0 {
+			chars = r.identStart
+		} else {
+			index *= len(r.identContinue)
+		}
+		for j, c := range chars {
+			if b == c {
+				index += j
+				continue NameLoop
+			}
+		}
+		return -1
+	}
+	for n := 0; n < len(name)-1; n++ {
+		offset := len(r.identStart)
+		for i := 0; i < n; i++ {
+			offset *= len(r.identContinue)
+		}
+		index += offset
+	}
+	return index
+}
+
+func (r *renamer) getName(name []byte, index int) []byte {
 	// Generate new names for variables where the last character is (a-zA-Z$_) and others are (a-zA-Z).
 	// Thus we can have 54 one-character names and 52*54=2808 two-character names for every branch leaf.
 	// That is sufficient for virtually all input.
-	if name[len(name)-1] == 'z' {
-		name[len(name)-1] = 'A'
-	} else if name[len(name)-1] == 'Z' {
-		name[len(name)-1] = '_'
-	} else if name[len(name)-1] == '_' {
-		name[len(name)-1] = '$'
-	} else if name[len(name)-1] == '$' {
-		i := len(name) - 2
-		for ; 0 <= i; i-- {
-			if name[i] == 'Z' {
-				continue // happens after 52*54=2808 variables
-			} else if name[i] == 'z' {
-				name[i] = 'A' // happens after 26*54=1404 variables
-			} else {
-				name[i]++
-				break
-			}
-		}
-		for j := i + 1; j < len(name); j++ {
-			name[j] = 'a'
-		}
-		if i < 0 {
-			name = append(name, 'a')
-		}
-	} else {
-		name[len(name)-1]++
+
+	if index < len(r.identStart) {
+		name[0] = r.identStart[index]
+		return name[:1]
 	}
+
+	index -= len(r.identStart)
+	n := 2
+	for {
+		offset := len(r.identStart)
+		for i := 0; i < n-1; i++ {
+			offset *= len(r.identContinue)
+		}
+		if index < offset {
+			break
+		}
+		index -= offset
+		n++
+	}
+
+	if cap(name) < n {
+		name = make([]byte, n)
+	} else {
+		name = name[:n]
+	}
+	for j := n - 1; 0 < j; j-- {
+		name[j] = r.identContinue[index%len(r.identContinue)]
+		index /= len(r.identContinue)
+	}
+	name[0] = r.identStart[index]
 	return name
 }
 
@@ -210,6 +250,22 @@ func mergeVarDeclExprStmt(decl *js.VarDecl, exprStmt *js.ExprStmt) bool {
 	if src, ok := exprStmt.Value.(*js.VarDecl); ok {
 		// this happens when a variable declarations is converted to an expression
 		return mergeVarDecls(decl, src)
+	} else if commaExpr, ok := exprStmt.Value.(*js.CommaExpr); ok {
+		n := 0
+		for _, item := range commaExpr.List {
+			if binaryExpr, ok := item.(*js.BinaryExpr); ok && binaryExpr.Op == js.EqToken {
+				if v, ok := binaryExpr.X.(*js.Var); ok && v.Decl == js.VariableDecl {
+					if addDefinition(decl, v, binaryExpr.Y, false) {
+						n++
+						continue
+					}
+				}
+			}
+			break
+		}
+		merge := n == len(commaExpr.List)
+		commaExpr.List = commaExpr.List[n:]
+		return merge
 	} else if binaryExpr, ok := exprStmt.Value.(*js.BinaryExpr); ok && binaryExpr.Op == js.EqToken {
 		if v, ok := binaryExpr.X.(*js.Var); ok && v.Decl == js.VariableDecl {
 			if addDefinition(decl, v, binaryExpr.Y, false) {

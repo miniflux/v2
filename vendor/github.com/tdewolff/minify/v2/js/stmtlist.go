@@ -47,15 +47,10 @@ func (m *jsMinifier) optimizeStmt(i js.IStmt) js.IStmt {
 			YReturn, isReturnElse := ifStmt.Else.(*js.ReturnStmt)
 			if isReturnBody && isReturnElse {
 				if XReturn.Value == nil && YReturn.Value == nil {
-					return &js.ReturnStmt{Value: &js.BinaryExpr{
-						Op: js.CommaToken,
-						X:  ifStmt.Cond,
-						Y: &js.UnaryExpr{
-							Op: js.VoidToken,
-							X:  &js.LiteralExpr{TokenType: js.NumericToken, Data: zeroBytes},
-						},
-					}}
-
+					return &js.ReturnStmt{Value: commaExpr(ifStmt.Cond, &js.UnaryExpr{
+						Op: js.VoidToken,
+						X:  &js.LiteralExpr{TokenType: js.NumericToken, Data: zeroBytes},
+					})}
 				} else if XReturn.Value != nil && YReturn.Value != nil {
 					return &js.ReturnStmt{Value: condExpr(ifStmt.Cond, XReturn.Value, YReturn.Value)}
 				}
@@ -142,13 +137,13 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 			// merge expression statements with expression, return, and throw statements
 			if left, ok := list[i-1].(*js.ExprStmt); ok {
 				if right, ok := list[i].(*js.ExprStmt); ok {
-					right.Value = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: right.Value}
+					right.Value = commaExpr(left.Value, right.Value)
 					j--
 				} else if returnStmt, ok := list[i].(*js.ReturnStmt); ok && returnStmt.Value != nil {
-					returnStmt.Value = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: returnStmt.Value}
+					returnStmt.Value = commaExpr(left.Value, returnStmt.Value)
 					j--
 				} else if throwStmt, ok := list[i].(*js.ThrowStmt); ok {
-					throwStmt.Value = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: throwStmt.Value}
+					throwStmt.Value = commaExpr(left.Value, throwStmt.Value)
 					j--
 				} else if forStmt, ok := list[i].(*js.ForStmt); ok {
 					if varDecl, ok := forStmt.Init.(*js.VarDecl); ok && len(varDecl.List) == 0 || forStmt.Init == nil {
@@ -168,13 +163,13 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 					list[i] = &js.ForStmt{Init: left.Value, Cond: whileStmt.Cond, Post: nil, Body: body}
 					j--
 				} else if switchStmt, ok := list[i].(*js.SwitchStmt); ok {
-					switchStmt.Init = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: switchStmt.Init}
+					switchStmt.Init = commaExpr(left.Value, switchStmt.Init)
 					j--
 				} else if withStmt, ok := list[i].(*js.WithStmt); ok {
-					withStmt.Cond = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: withStmt.Cond}
+					withStmt.Cond = commaExpr(left.Value, withStmt.Cond)
 					j--
 				} else if ifStmt, ok := list[i].(*js.IfStmt); ok {
-					ifStmt.Cond = &js.BinaryExpr{Op: js.CommaToken, X: left.Value, Y: ifStmt.Cond}
+					ifStmt.Cond = commaExpr(left.Value, ifStmt.Cond)
 					j--
 				}
 			} else if left, ok := list[i-1].(*js.VarDecl); ok {
@@ -274,9 +269,13 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 			if returnStmt, ok := list[j-1].(*js.ReturnStmt); ok {
 				if returnStmt.Value == nil || m.isUndefined(returnStmt.Value) {
 					j--
-				} else if binaryExpr, ok := returnStmt.Value.(*js.BinaryExpr); ok && binaryExpr.Op == js.CommaToken && m.isUndefined(binaryExpr.Y) {
+				} else if commaExpr, ok := returnStmt.Value.(*js.CommaExpr); ok && m.isUndefined(commaExpr.List[len(commaExpr.List)-1]) {
 					// rewrite function f(){return a,void 0} => function f(){a}
-					list[j-1] = &js.ExprStmt{Value: binaryExpr.X}
+					if len(commaExpr.List) == 2 {
+						list[j-1] = &js.ExprStmt{Value: commaExpr.List[0]}
+					} else {
+						commaExpr.List = commaExpr.List[:len(commaExpr.List)-1]
+					}
 				}
 			}
 		} else if blockType == iterationBlock {

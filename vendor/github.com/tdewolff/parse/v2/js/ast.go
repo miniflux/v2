@@ -93,6 +93,7 @@ func (v Var) JS() string {
 }
 
 // VarsByUses is sortable by uses in descending order.
+// TODO: write custom sorter for varsbyuses
 type VarsByUses VarArray
 
 func (vs VarsByUses) Len() int {
@@ -1989,6 +1990,34 @@ func (n ArrowFunc) JS() string {
 	return s + n.Params.JS() + " => " + n.Body.JS()
 }
 
+// CommaExpr is a series of comma expressions.
+type CommaExpr struct {
+	List []IExpr
+}
+
+func (n CommaExpr) String() string {
+	s := "("
+	for i, item := range n.List {
+		if i != 0 {
+			s += ","
+		}
+		s += item.String()
+	}
+	return s + ")"
+}
+
+// JS converts the node back to valid JavaScript
+func (n CommaExpr) JS() string {
+	s := ""
+	for i, item := range n.List {
+		if i != 0 {
+			s += ","
+		}
+		s += item.JS()
+	}
+	return s
+}
+
 func (v *Var) exprNode()           {}
 func (n LiteralExpr) exprNode()    {}
 func (n ArrayExpr) exprNode()      {}
@@ -2007,3 +2036,4 @@ func (n BinaryExpr) exprNode()     {}
 func (n CondExpr) exprNode()       {}
 func (n YieldExpr) exprNode()      {}
 func (n ArrowFunc) exprNode()      {}
+func (n CommaExpr) exprNode()      {}
