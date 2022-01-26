@@ -13,9 +13,9 @@ import (
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
+	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
 	"miniflux.app/validator"
-	"miniflux.app/reader/processor"
 )
 
 func getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b *storage.EntryQueryBuilder) {
