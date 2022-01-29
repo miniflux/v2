@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("c", () => openCommentLink());
         keyboardHandler.on("C", () => openCommentLink(true));
         keyboardHandler.on("m", () => handleEntryStatus());
+        keyboardHandler.on("M", () => handleEntryStatusNext());
         keyboardHandler.on("A", () => markPageAsRead());
         keyboardHandler.on("s", () => handleSaveEntry());
         keyboardHandler.on("d", () => handleFetchOriginalContent());

@@ -128,6 +128,7 @@ function markPageAsRead() {
 }
 
 // Handle entry status changes from the list view and entry view.
+// Focus the previous entry if it exists.
 function handleEntryStatus(element, setToRead) {
     let toasting = !element;
     let currentEntry = findEntry(element);
@@ -137,6 +138,21 @@ function handleEntryStatus(element, setToRead) {
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
             goToNextListItem();
+        }
+    }
+}
+
+// Handle entry status changes from the list view and entry view.
+// Focus the next entry if it exists.
+function handleEntryStatusNext(element, setToRead) {
+    let toasting = !element;
+    let currentEntry = findEntry(element);
+    if (currentEntry) {
+        if (!setToRead || currentEntry.querySelector("a[data-toggle-status]").dataset.value == "unread") {
+            toggleEntryStatus(currentEntry, toasting);
+        }
+        if (isListView() && currentEntry.classList.contains('current-item')) {
+            goToPrevListItem();
         }
     }
 }
@@ -506,6 +522,38 @@ function goToNextListItem() {
             nextItem.classList.add("current-item");
             DomHelper.scrollPageTo(nextItem);
             nextItem.querySelector('.item-header a').focus();
+
+            break;
+        }
+    }
+}
+
+function goToPrevListItem() {
+    let items = DomHelper.getVisibleElements(".items .item");
+    if (items.length === 0) {
+        return;
+    }
+
+    if (document.querySelector(".current-item") === null) {
+        items[0].classList.add("current-item");
+        items[0].querySelector('.item-header a').focus();
+        return;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+        if (items[i].classList.contains("current-item")) {
+            items[i].classList.remove("current-item");
+
+            let prevItem;
+            if (i - 1 >= 0) {
+                prevItem = items[i - 1];
+            } else {
+                prevItem = items[items.length - 1];
+            }
+
+            prevItem.classList.add("current-item");
+            DomHelper.scrollPageTo(prevItem);
+            prevItem.querySelector('.item-header a').focus();
 
             break;
         }
