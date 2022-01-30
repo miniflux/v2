@@ -100,6 +100,8 @@ func applyRule(entryURL, entryContent string, rule rule) string {
 		} else {
 			logger.Debug("[Rewrite] Cannot find selector for remove rule %s", rule)
 		}
+	case "add_castopod_episode":
+		entryContent = addCastopodEpisode(entryURL, entryContent)
 	}
 
 	return entryContent

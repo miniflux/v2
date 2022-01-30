@@ -282,3 +282,9 @@ func removeCustom(entryContent string, selector string) string {
 	output, _ := doc.Find("body").First().Html()
 	return output
 }
+
+func addCastopodEpisode(entryURL, entryContent string) string {
+	player := `<iframe width="650" frameborder="0" src="` + entryURL + `/embed/light"></iframe>`
+
+	return player + `<br>` + entryContent
+}

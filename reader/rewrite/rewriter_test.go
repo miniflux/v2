@@ -286,3 +286,12 @@ func TestRewriteRemoveCustom(t *testing.T) {
 		t.Errorf(`Not expected output: %s`, output)
 	}
 }
+
+func TestRewriteAddCastopodEpisode(t *testing.T) {
+	output := Rewriter("https://podcast.demo/@demo/episodes/test", "Episode Description", `add_castopod_episode`)
+	expected := `<iframe width="650" frameborder="0" src="https://podcast.demo/@demo/episodes/test/embed/light"></iframe><br>Episode Description`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
