@@ -308,8 +308,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd0=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/tdewolff/minify/v2 v2.9.29 h1:QMVJaCJzWL0mXS33cX792YD074xz4lOhkyBS8hAzYAY=
-github.com/tdewolff/minify/v2 v2.9.29/go.mod h1:6XAjcHM46pFcRE0eztigFPm0Q+Cxsw8YhEWT+rDkcZM=
+github.com/tdewolff/minify/v2 v2.10.0 h1:ovVAHUcjfGrBDf1EIvsodRUVJiZK/28mMose08B7k14=
+github.com/tdewolff/minify/v2 v2.10.0/go.mod h1:6XAjcHM46pFcRE0eztigFPm0Q+Cxsw8YhEWT+rDkcZM=
 github.com/tdewolff/parse/v2 v2.5.27 h1:PL3LzzXaOpmdrknnOlIeO2muIBHAwiKp6TxN1RbU5gI=
 github.com/tdewolff/parse/v2 v2.5.27/go.mod h1:WzaJpRSbwq++EIQHYIRTpbYKNA3gn9it1Ik++q4zyho=
 github.com/tdewolff/test v1.0.6 h1:76mzYJQ83Op284kMT+63iCNCI7NEERsIN8dLM+RiKr4=
