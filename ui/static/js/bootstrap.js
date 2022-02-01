@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("V", () => openOriginalLink(true));
         keyboardHandler.on("c", () => openCommentLink());
         keyboardHandler.on("C", () => openCommentLink(true));
-        keyboardHandler.on("m", () => handleEntryStatus());
-        keyboardHandler.on("M", () => handleEntryStatusNext());
+        keyboardHandler.on("m", () => handleEntryStatus("next"));
+        keyboardHandler.on("M", () => handleEntryStatus("previous"));
         keyboardHandler.on("A", () => markPageAsRead());
         keyboardHandler.on("s", () => handleSaveEntry());
         keyboardHandler.on("d", () => handleFetchOriginalContent());
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
     onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
     onClick("a[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
-    onClick("a[data-toggle-status]", (event) => handleEntryStatus(event.target));
+    onClick("a[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
 
     onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
@@ -63,11 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }));
 
     onClick("a[data-original-link]", (event) => {
-        handleEntryStatus(event.target, true);
+        handleEntryStatus("next", event.target, true);
     }, true);
     onAuxClick("a[data-original-link]", (event) => {
         if (event.button == 1) {
-            handleEntryStatus(event.target, true);
+            handleEntryStatus("next", event.target, true);
         }
     }, true);
 
