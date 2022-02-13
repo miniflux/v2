@@ -118,14 +118,9 @@ a:hover {
     color: #666;
 }
 
-.page-header ul,
-.page-footer ul {
-    margin-left: 25px;
-}
-
 .page-header li,
 .page-footer li {
-    list-style-type: circle;
+    list-style-type: none;
     line-height: 1.8em;
 }
 
@@ -248,11 +243,6 @@ a:hover {
         line-height: normal;
         border: none;
         font-size: 1.0em;
-    }
-
-    .page-header ul,
-    .page-footer ul {
-        margin-left: 0;
     }
 
     .page-header li,
