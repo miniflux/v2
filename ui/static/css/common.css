@@ -129,6 +129,10 @@ a:hover {
     line-height: 1.8em;
 }
 
+.page-header ul a .icon {
+    padding-bottom: 2px;
+}
+
 /* Logo */
 .logo {
     cursor: pointer;

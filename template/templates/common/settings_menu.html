@@ -1,24 +1,24 @@
 {{ define "settings_menu" }}
 <ul>
     <li>
-        <a href="{{ route "settings" }}">{{ t "menu.settings" }}</a>
+        <a href="{{ route "settings" }}">{{ icon "settings" }}{{ t "menu.settings" }}</a>
     </li>
     <li>
-        <a href="{{ route "integrations" }}">{{ t "menu.integrations" }}</a>
+        <a href="{{ route "integrations" }}">{{ icon "third-party-services" }}{{ t "menu.integrations" }}</a>
     </li>
     <li>
-        <a href="{{ route "apiKeys" }}">{{ t "menu.api_keys" }}</a>
+        <a href="{{ route "apiKeys" }}">{{ icon "api" }}{{ t "menu.api_keys" }}</a>
     </li>
     <li>
-        <a href="{{ route "sessions" }}">{{ t "menu.sessions" }}</a>
+        <a href="{{ route "sessions" }}">{{ icon "sessions" }}{{ t "menu.sessions" }}</a>
     </li>
     {{ if .user.IsAdmin }}
         <li>
-            <a href="{{ route "users" }}">{{ t "menu.users" }}</a>
+            <a href="{{ route "users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
         </li>
     {{ end }}
     <li>
-        <a href="{{ route "about" }}">{{ t "menu.about" }}</a>
+        <a href="{{ route "about" }}">{{ icon "about" }}{{ t "menu.about" }}</a>
     </li>
 </ul>
 {{ end }}
