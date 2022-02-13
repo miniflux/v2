@@ -161,4 +161,43 @@ Source: https://github.com/tabler/tabler-icons
         <path d="M9 4h3l2 2h5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2"></path>
         <path d="M17 17v2a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2"></path>
     </symbol>
+    <symbol id="icon-about" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <circle cx="12" cy="12" r="9"></circle>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        <polyline points="11 12 12 12 12 16 13 16"></polyline>
+    </symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
+    </symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+    </symbol>
+    <symbol id="icon-sessions" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <polyline points="12 8 12 12 14 14" />
+        <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+    </symbol>
+    <symbol id="icon-api" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M12 15h-6.5a2.5 2.5 0 1 1 0 -5h.5"></path>
+        <path d="M15 12v6.5a2.5 2.5 0 1 1 -5 0v-.5"></path>
+        <path d="M12 9h6.5a2.5 2.5 0 1 1 0 5h-.5"></path>
+        <path d="M9 12v-6.5a2.5 2.5 0 0 1 5 0v.5"></path>
+    </symbol>
+    <symbol id="icon-third-party-services" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M5.931 6.936l1.275 4.249m5.607 5.609l4.251 1.275"></path>
+        <path d="M11.683 12.317l5.759 -5.759"></path>
+        <circle cx="5.5" cy="5.5" r="1.5"></circle>
+        <circle cx="18.5" cy="5.5" r="1.5"></circle>
+        <circle cx="18.5" cy="18.5" r="1.5"></circle>
+        <circle cx="8.5" cy="15.5" r="4.5"></circle>
+    </symbol>
 </svg>

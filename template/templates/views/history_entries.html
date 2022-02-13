@@ -3,8 +3,8 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.history.title" }} ({{ .total }})</h1>
-    {{ if .entries }}
     <ul>
+        {{ if .entries }}
         <li>
             <a href="#"
                 data-confirm="true"
@@ -12,19 +12,13 @@
                 data-label-question="{{ t "confirm.question" }}"
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ t "menu.flush_history" }}</a>
+                data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</a>
         </li>
+        {{ end }}
         <li>
-            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
+            <a href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
         </li>
     </ul>
-    {{ else }}
-    <ul>
-        <li>
-            <a href="{{ route "sharedEntries" }}">{{ t "menu.shared_entries" }}</a>
-        </li>
-    </ul>
-    {{ end }}
 </section>
 
 {{ if not .entries }}
