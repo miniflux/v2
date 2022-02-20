@@ -125,6 +125,34 @@ func TestParseAtom03WithoutEntryTitle(t *testing.T) {
 	}
 }
 
+func TestParseAtom03WithoutEntryTitleButSummary(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+		<title>dive into mark</title>
+		<link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+		<modified>2003-12-13T18:30:02Z</modified>
+		<author><name>Mark Pilgrim</name></author>
+		<entry>
+			<link rel="alternate" type="text/html" href="http://diveintomark.org/2003/12/13/atom03"/>
+			<id>tag:diveintomark.org,2003:3.2397</id>
+			<summary type="text/plain">Test</summary>
+		</entry>
+	</feed>`
+
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "Test" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Content)
+	}
+}
+
 func TestParseAtom03WithSummaryOnly(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed version="0.3" xmlns="http://purl.org/atom/ns#">

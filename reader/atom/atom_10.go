@@ -16,6 +16,7 @@ import (
 	"miniflux.app/model"
 	"miniflux.app/reader/date"
 	"miniflux.app/reader/media"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 )
 
@@ -100,7 +101,22 @@ func (a *atom10Entry) Transform() *model.Entry {
 }
 
 func (a *atom10Entry) entryTitle() string {
-	return html.UnescapeString(a.Title.String())
+	title := a.Title.String()
+
+	if title == "" {
+		title = sanitizer.StripTags(a.entryContent())
+	}
+
+	// Unescape HTML
+	title = html.UnescapeString(title)
+	// Trim spaces
+	title = strings.TrimSpace(title)
+	// Replace newlines with spaces
+	title = strings.ReplaceAll(title, "\n", " ")
+	// Truncate to max length
+	title = truncate(title)
+
+	return title
 }
 
 func (a *atom10Entry) entryContent() string {
@@ -251,4 +267,17 @@ func (a *atom10Text) String() string {
 
 type atomXHTMLRootElement struct {
 	InnerXML string `xml:",innerxml"`
+}
+
+func truncate(str string) string {
+	max := 100
+	str = strings.TrimSpace(str)
+
+	// Convert to runes to be safe with unicode
+	runes := []rune(str)
+	if len(runes) > max {
+		return string(runes[:max]) + "…"
+	}
+
+	return str
 }

@@ -260,7 +260,21 @@ func (r *rssItem) entryTitle() string {
 		}
 	}
 
-	return html.UnescapeString(strings.TrimSpace(title))
+	if title == "" {
+		// Use content and strip HTML/XML tags
+		title = sanitizer.StripTags(r.entryContent())
+	}
+
+	// Unescape HTML
+	title = html.UnescapeString(title)
+	// Trim spaces
+	title = strings.TrimSpace(title)
+	// Replace newlines with spaces
+	title = strings.ReplaceAll(title, "\n", " ")
+	// Truncate to max length
+	title = truncate(title)
+
+	return title
 }
 
 func (r *rssItem) entryContent() string {
@@ -380,4 +394,17 @@ func isValidLinkRelation(rel string) bool {
 		}
 		return false
 	}
+}
+
+func truncate(str string) string {
+	max := 100
+	str = strings.TrimSpace(str)
+
+	// Convert to runes to be safe with unicode
+	runes := []rune(str)
+	if len(runes) > max {
+		return string(runes[:max]) + "…"
+	}
+
+	return str
 }

@@ -6,6 +6,7 @@ package rss // import "miniflux.app/reader/rss"
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 	"time"
 )
@@ -132,6 +133,28 @@ func TestParseEntryWithoutTitle(t *testing.T) {
 	}
 
 	if feed.Entries[0].Title != "https://example.org/item" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryWithoutTitleButDescription(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<link>https://example.org/item</link>
+				<description><![CDATA[Compared to earlier spacecraft, <br>the International Space Station has many luxuries, but laundry facilities are not one of them. Instead, astronauts have other options.]]></description>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Compared to earlier spacecraft, the International Space Station has many luxuries, but laundry facil…" {
 		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
 	}
 }
@@ -1083,6 +1106,60 @@ func TestParseItemTitleWithDoubleEncodedEntities(t *testing.T) {
 
 	if feed.Entries[0].Title != "'Text'" {
 		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
+	}
+}
+
+func TestParseTruncateItemTitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>"` + strings.Repeat("a", 200) + `"</title>
+				<link>http://www.example.org/article.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if title := feed.Entries[0].Title; len(title) != 103 {
+		t.Errorf("Incorrect entry title, got: %s, len: %d", title, len(title))
+	}
+
+	if title := feed.Entries[0].Title; len([]rune(title)) != 101 {
+		t.Errorf("Incorrect entry title, got: %s, len: %d", feed.Entries[0].Title, len([]rune(title)))
+	}
+}
+
+func TestParseTruncateItemTitleUnicode(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>I’m riding my electric bike and came across this castle. It’s called “Schloss Richmond”. 🚴‍♂️</title>
+				<link>http://www.example.org/article.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if title := feed.Entries[0].Title; len(title) != 110 {
+		t.Errorf("Incorrect entry title, got: %s, len: %d", title, len(title))
+	}
+
+	if title := feed.Entries[0].Title; len([]rune(title)) != 93 {
+		t.Errorf("Incorrect entry title, got: %s, len: %d", feed.Entries[0].Title, len([]rune(title)))
 	}
 }
 

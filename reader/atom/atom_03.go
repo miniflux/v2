@@ -94,7 +94,22 @@ func (a *atom03Entry) Transform() *model.Entry {
 }
 
 func (a *atom03Entry) entryTitle() string {
-	return sanitizer.StripTags(a.Title.String())
+	title := a.Title.String()
+
+	if title == "" {
+		title = a.entryContent()
+	}
+
+	// Strip HTML/XML tags
+	title = sanitizer.StripTags(title)
+	// Trim spaces
+	title = strings.TrimSpace(title)
+	// Replace newlines with spaces
+	title = strings.ReplaceAll(title, "\n", " ")
+	// Truncate to max length
+	title = truncate(title)
+
+	return title
 }
 
 func (a *atom03Entry) entryContent() string {
