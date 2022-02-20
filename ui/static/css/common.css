@@ -68,7 +68,7 @@ a:hover {
     border-bottom: 1px dotted var(--header-list-border-color);
 }
 
-.header li:hover a {
+.header li a:hover {
     color: #888;
 }
 
