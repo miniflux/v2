@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("F", () => goToFeed());
         keyboardHandler.on("R", () => handleRefreshAllFeeds());
         keyboardHandler.on("?", () => showKeyboardShortcuts());
+        keyboardHandler.on("+", () => goToAddSubscription());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
         keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
         keyboardHandler.on("Escape", () => ModalHandler.close());

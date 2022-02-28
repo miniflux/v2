@@ -612,3 +612,8 @@ function showToast(label, iconElement) {
         }
     }
 }
+
+/** Navigate to the new subscription page. */
+function goToAddSubscription() {
+    window.location.href = document.body.dataset.addSubscriptionUrl;
+}
