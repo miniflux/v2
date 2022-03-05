@@ -12,6 +12,7 @@ import (
 	"miniflux.app/logger"
 	"miniflux.app/model"
 	"miniflux.app/reader/date"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 )
 
@@ -130,9 +131,13 @@ func (j *jsonItem) GetHash() string {
 }
 
 func (j *jsonItem) GetTitle() string {
-	for _, value := range []string{j.Title, j.Summary, j.Text, j.URL} {
+	if j.Title != "" {
+		return j.Title
+	}
+
+	for _, value := range []string{j.Summary, j.Text, j.HTML} {
 		if value != "" {
-			return truncate(value)
+			return sanitizer.TruncateHTML(value, 100)
 		}
 	}
 
@@ -185,17 +190,4 @@ func getAuthor(author jsonAuthor) string {
 	}
 
 	return ""
-}
-
-func truncate(str string) string {
-	max := 100
-	str = strings.TrimSpace(str)
-
-	// Convert to runes to be safe with unicode
-	runes := []rune(str)
-	if len(runes) > max {
-		return string(runes[:max]) + "…"
-	}
-
-	return str
 }

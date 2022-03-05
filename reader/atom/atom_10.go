@@ -16,6 +16,7 @@ import (
 	"miniflux.app/model"
 	"miniflux.app/reader/date"
 	"miniflux.app/reader/media"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 )
 
@@ -62,6 +63,10 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 
 		if item.Author == "" {
 			item.Author = a.Authors.String()
+		}
+
+		if item.Title == "" {
+			item.Title = sanitizer.TruncateHTML(item.Content, 100)
 		}
 
 		if item.Title == "" {
