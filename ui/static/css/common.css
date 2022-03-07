@@ -1065,3 +1065,7 @@ details.entry-enclosures {
 .rules-entry {
     display: flex;
 }
+
+.disabled {
+    opacity: 20%;
+}
