@@ -15,7 +15,7 @@
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
-                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
         </li>
         <li>
             <a href="#"
@@ -24,23 +24,23 @@
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
-                data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}">{{ t "menu.mark_all_as_read" }}</a>
+                data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
         </li>
         {{ end }}
         {{ if .showOnlyUnreadEntries }}
         <li>
-            <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ t "menu.show_all_entries" }}</a>
+            <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
         </li>
         {{ else }}
         <li>
-            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.show_only_unread_entries" }}</a>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</a>
         </li>
         <li>
-            <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ t "menu.edit_feed" }}</a>
+            <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ icon "edit" }}{{ t "menu.edit_feed" }}</a>
         </li>
         <li>
             <a href="#"
@@ -51,7 +51,7 @@
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
                 data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-                data-redirect-url="{{ route "feeds" }}">{{ t "action.remove_feed" }}</a>
+                data-redirect-url="{{ route "feeds" }}">{{ icon "delete" }}{{ t "action.remove_feed" }}</a>
         </li>
     </ul>
 </section>
@@ -70,6 +70,9 @@
         <p class="alert">{{ t "alert.no_feed_entry" }}</p>
     {{ end }}
 {{ else }}
+    <div class="pagination-top">
+        {{ template "pagination" .pagination }}
+    </div>
     <div class="items">
         {{ range .entries }}
         <article role="article" class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
@@ -96,12 +99,14 @@
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ t "menu.mark_page_as_read" }}</a>
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
             </li>
         </ul>
         {{ end }}
     </section>
-    {{ template "pagination" .pagination }}
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
+    </div>
 {{ end }}
 
 {{ end }}

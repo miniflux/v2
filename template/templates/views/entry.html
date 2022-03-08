@@ -13,6 +13,7 @@
                     <a href="#"
                         title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
+                        data-label-loading="{{ t "entry.state.saving" }}"
                         data-label-unread="{{ t "entry.status.unread" }}"
                         data-label-read="{{ t "entry.status.read" }}"
                         data-toast-unread="{{ t "entry.status.toast.unread" }}"
@@ -137,7 +138,7 @@
     </header>
     {{ if gt (len .entry.Content) 120 }}
     {{ if .user }}
-    <div class="pagination-top">
+    <div class="pagination-entry-top">
         {{ template "entry_pagination" . }}
     </div>
     {{ end }}
@@ -189,7 +190,7 @@
 </section>
 
 {{ if .user }}
-<div class="pagination-bottom">
+<div class="pagination-entry-bottom">
     {{ template "entry_pagination" . }}
 </div>
 {{ end }}

@@ -74,6 +74,10 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 		}
 
 		if entry.Title == "" {
+			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
+		}
+
+		if entry.Title == "" {
 			entry.Title = entry.URL
 		}
 

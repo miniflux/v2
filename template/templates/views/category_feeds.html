@@ -5,10 +5,10 @@
     <h1 dir="auto">{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }})</h1>
     <ul>
         <li>
-            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ t "menu.feed_entries" }}</a>
+            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "entries" }}{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
-            <a href="{{ route "editCategory" "categoryID" .category.ID }}">{{ t "menu.edit_category" }}</a>
+            <a href="{{ route "editCategory" "categoryID" .category.ID }}">{{ icon "edit" }}{{ t "menu.edit_category" }}</a>
         </li>
         {{ if eq .total 0 }}
         <li>
@@ -19,7 +19,7 @@
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
                 data-redirect-url="{{ route "categories" }}"
-                data-url="{{ route "removeCategory" "categoryID" .category.ID }}">{{ t "action.remove" }}</a>
+                data-url="{{ route "removeCategory" "categoryID" .category.ID }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
         </li>
         {{ end }}
     </ul>

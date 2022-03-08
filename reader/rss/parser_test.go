@@ -115,7 +115,7 @@ func TestParseFeedWithoutTitle(t *testing.T) {
 	}
 }
 
-func TestParseEntryWithoutTitle(t *testing.T) {
+func TestParseEntryWithoutTitleAndDescription(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">
 		<channel>
@@ -132,6 +132,30 @@ func TestParseEntryWithoutTitle(t *testing.T) {
 	}
 
 	if feed.Entries[0].Title != "https://example.org/item" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryWithoutTitleButWithDescription(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<link>https://example.org/item</link>
+				<description>
+					This is the description
+				</description>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "This is the description" {
 		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
 	}
 }

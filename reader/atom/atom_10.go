@@ -16,6 +16,7 @@ import (
 	"miniflux.app/model"
 	"miniflux.app/reader/date"
 	"miniflux.app/reader/media"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 )
 
@@ -62,6 +63,10 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 
 		if item.Author == "" {
 			item.Author = a.Authors.String()
+		}
+
+		if item.Title == "" {
+			item.Title = sanitizer.TruncateHTML(item.Content, 100)
 		}
 
 		if item.Title == "" {
@@ -227,6 +232,9 @@ type atom10Text struct {
 	XHTMLRootElement atomXHTMLRootElement `xml:"http://www.w3.org/1999/xhtml div"`
 }
 
+// Text: https://datatracker.ietf.org/doc/html/rfc4287#section-3.1.1.1
+// HTML: https://datatracker.ietf.org/doc/html/rfc4287#section-3.1.1.2
+// XHTML: https://datatracker.ietf.org/doc/html/rfc4287#section-3.1.1.3
 func (a *atom10Text) String() string {
 	var content string
 	switch {
@@ -237,11 +245,7 @@ func (a *atom10Text) String() string {
 			content = a.InnerXML
 		}
 	case a.Type == "xhtml":
-		if a.XHTMLRootElement.InnerXML != "" {
-			content = a.XHTMLRootElement.InnerXML
-		} else {
-			content = a.InnerXML
-		}
+		content = a.XHTMLRootElement.InnerXML
 	default:
 		content = a.CharData
 	}

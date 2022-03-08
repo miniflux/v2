@@ -61,6 +61,10 @@ func (a *atom03Feed) Transform(baseURL string) *model.Feed {
 		}
 
 		if item.Title == "" {
+			item.Title = sanitizer.TruncateHTML(item.Content, 100)
+		}
+
+		if item.Title == "" {
 			item.Title = item.URL
 		}
 

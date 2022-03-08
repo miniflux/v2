@@ -76,7 +76,7 @@ func TestParseJsonFeed(t *testing.T) {
 		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[1].URL)
 	}
 
-	if feed.Entries[1].Title != "https://example.org/initial-post" {
+	if feed.Entries[1].Title != "Hello, world!" {
 		t.Errorf(`Incorrect entry title, got: "%s"`, feed.Entries[1].Title)
 	}
 
@@ -398,7 +398,7 @@ func TestParseFeedItemWithoutID(t *testing.T) {
 	}
 }
 
-func TestParseFeedItemWithoutTitle(t *testing.T) {
+func TestParseFeedItemWithoutTitleButWithURL(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
 		"title": "My Example Feed",
@@ -425,7 +425,7 @@ func TestParseFeedItemWithoutTitle(t *testing.T) {
 	}
 }
 
-func TestParseTruncateItemTitle(t *testing.T) {
+func TestParseFeedItemWithoutTitleButWithSummary(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
 		"title": "My Example Feed",
@@ -433,7 +433,61 @@ func TestParseTruncateItemTitle(t *testing.T) {
 		"feed_url": "https://example.org/feed.json",
 		"items": [
 			{
-				"title": "` + strings.Repeat("a", 200) + `"
+				"summary": "This is some text content."
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "This is some text content." {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseFeedItemWithoutTitleButWithHTMLContent(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"content_html": "This is <strong>HTML</strong>."
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "This is HTML." {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseFeedItemWithoutTitleButWithTextContent(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"content_text": "` + strings.Repeat("a", 200) + `"
 			}
 		]
 	}`
@@ -448,7 +502,7 @@ func TestParseTruncateItemTitle(t *testing.T) {
 	}
 
 	if len(feed.Entries[0].Title) != 103 {
-		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+		t.Errorf("Incorrect entry title, got: %d", len(feed.Entries[0].Title))
 	}
 
 	if len([]rune(feed.Entries[0].Title)) != 101 {

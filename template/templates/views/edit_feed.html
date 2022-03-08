@@ -5,13 +5,13 @@
     <h1 dir="auto">{{ .feed.Title }}</h1>
     <ul>
         <li>
-            <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
+            <a href="{{ route "feeds" }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
         </li>
         <li>
-            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ t "menu.feed_entries" }}</a>
+            <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ icon "entries" }}{{ t "menu.feed_entries" }}</a>
         </li>
         <li>
-            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ t "menu.refresh_feed" }}</a>
+            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</a>
         </li>
     </ul>
 </section>
@@ -32,9 +32,16 @@
         {{ if .errorMessage }}
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
+        
+        <label for="form-category">{{ t "form.feed.label.category" }}</label>
+        <select id="form-category" name="category_id" autofocus>
+        {{ range .categories }}
+            <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
+        {{ end }}
+        </select>
 
         <label for="form-title">{{ t "form.feed.label.title" }}</label>
-        <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required autofocus>
+        <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required>
 
         <label for="form-site-url">{{ t "form.feed.label.site_url" }}</label>
         <input type="url" name="site_url" id="form-site-url" placeholder="https://domain.tld/" value="{{ .form.SiteURL }}" spellcheck="false" required>
@@ -61,24 +68,48 @@
         <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
         <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
 
-        <label for="form-scraper-rules">{{ t "form.feed.label.scraper_rules" }}</label>
+        <div class="rules-entry">
+            <label for="form-scraper-rules">
+                {{ t "form.feed.label.scraper_rules" }}
+            </label>
+            &nbsp;
+            <a href="https://miniflux.app/docs/rules.html#scraper-rules" target="_blank">
+                {{ icon "external-link" }}
+            </a>
+        </div>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}" spellcheck="false">
 
-        <label for="form-rewrite-rules">{{ t "form.feed.label.rewrite_rules" }}</label>
+        <div class="rules-entry">
+            <label for="form-rewrite-rules">
+                {{ t "form.feed.label.rewrite_rules" }}
+            </label>
+            &nbsp;
+            <a href="https://miniflux.app/docs/rules.html#rewrite-rules" target="_blank">
+                {{ icon "external-link" }}
+            </a>
+        </div>
         <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}" spellcheck="false">
-
-        <label for="form-blocklist-rules">{{ t "form.feed.label.blocklist_rules" }}</label>
+        <div class="rules-entry">
+            <label for="form-blocklist-rules">
+                {{ t "form.feed.label.blocklist_rules" }}
+            </label>
+            &nbsp;
+            <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
+                {{ icon "external-link" }}
+            </a>
+        </div>
         <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}" spellcheck="false">
 
-        <label for="form-keeplist-rules">{{ t "form.feed.label.keeplist_rules" }}</label>
+        <div class="rules-entry">
+            <label for="form-keeplist-rules">
+                {{ t "form.feed.label.keeplist_rules" }}
+            </label>
+            &nbsp;
+            <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
+                {{ icon "external-link" }}
+            </a>
+        </div>
         <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
-
-        <label for="form-category">{{ t "form.feed.label.category" }}</label>
-        <select id="form-category" name="category_id">
-        {{ range .categories }}
-            <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
-        {{ end }}
-        </select>
 
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
