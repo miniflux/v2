@@ -98,7 +98,7 @@ func TestParseAtom03WithoutFeedTitle(t *testing.T) {
 	}
 }
 
-func TestParseAtom03WithoutEntryTitle(t *testing.T) {
+func TestParseAtom03WithoutEntryTitleButWithLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed version="0.3" xmlns="http://purl.org/atom/ns#">
 		<title>dive into mark</title>
@@ -121,6 +121,62 @@ func TestParseAtom03WithoutEntryTitle(t *testing.T) {
 	}
 
 	if feed.Entries[0].Title != "http://diveintomark.org/2003/12/13/atom03" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseAtom03WithoutEntryTitleButWithSummary(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+		<title>dive into mark</title>
+		<link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+		<modified>2003-12-13T18:30:02Z</modified>
+		<author><name>Mark Pilgrim</name></author>
+		<entry>
+			<link rel="alternate" type="text/html" href="http://diveintomark.org/2003/12/13/atom03"/>
+			<id>tag:diveintomark.org,2003:3.2397</id>
+			<summary type="text/plain">It&apos;s a test</summary>
+		</entry>
+	</feed>`
+
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "It's a test" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseAtom03WithoutEntryTitleButWithXMLContent(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+		<title>dive into mark</title>
+		<link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+		<modified>2003-12-13T18:30:02Z</modified>
+		<author><name>Mark Pilgrim</name></author>
+		<entry>
+			<link rel="alternate" type="text/html" href="http://diveintomark.org/2003/12/13/atom03"/>
+			<id>tag:diveintomark.org,2003:3.2397</id>
+			<content mode="xml" type="text/html"><p>Some text.</p></content>
+		</entry>
+	</feed>`
+
+	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "Some text." {
 		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
 	}
 }

@@ -127,8 +127,14 @@ function markPageAsRead() {
     }
 }
 
-// Handle entry status changes from the list view and entry view.
-function handleEntryStatus(element, setToRead) {
+/**
+ * Handle entry status changes from the list view and entry view.
+ * Focus the next or the previous entry if it exists.
+ * @param {string} item Item to focus: "previous" or "next".
+ * @param {Element} element
+ * @param {boolean} setToRead
+ */
+function handleEntryStatus(item, element, setToRead) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
@@ -136,7 +142,14 @@ function handleEntryStatus(element, setToRead) {
             toggleEntryStatus(currentEntry, toasting);
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
-            goToNextListItem();
+            switch (item) {
+                case "previous":
+                    goToListItem(-1);
+                    break;
+                case "next":
+                    goToListItem(1);
+                    break;
+            }
         }
     }
 }
@@ -347,7 +360,7 @@ function openOriginalLink(openLinkInCurrentTab) {
         let currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
         if (document.location.href != document.querySelector('a[data-page=starred]').href) {
-            goToNextListItem();
+            goToListItem(1);
         }
         markEntryAsRead(currentItem);
     }
@@ -412,7 +425,7 @@ function goToPage(page, fallbackSelf) {
 
 function goToPrevious() {
     if (isListView()) {
-        goToPreviousListItem();
+        goToListItem(-1);
     } else {
         goToPage("previous");
     }
@@ -420,7 +433,7 @@ function goToPrevious() {
 
 function goToNext() {
     if (isListView()) {
-        goToNextListItem();
+        goToListItem(1);
     } else {
         goToPage("next");
     }
@@ -448,7 +461,10 @@ function goToFeed() {
     }
 }
 
-function goToPreviousListItem() {
+/**
+ * @param {number} offset How many items to jump for focus.
+ */
+function goToListItem(offset) {
     let items = DomHelper.getVisibleElements(".items .item");
     if (items.length === 0) {
         return;
@@ -464,48 +480,11 @@ function goToPreviousListItem() {
         if (items[i].classList.contains("current-item")) {
             items[i].classList.remove("current-item");
 
-            let nextItem;
-            if (i - 1 >= 0) {
-                nextItem = items[i - 1];
-            } else {
-                nextItem = items[items.length - 1];
-            }
+            let item = items[(i + offset + items.length) % items.length];
 
-            nextItem.classList.add("current-item");
-            DomHelper.scrollPageTo(nextItem);
-            nextItem.querySelector('.item-header a').focus();
-
-            break;
-        }
-    }
-}
-
-function goToNextListItem() {
-    let items = DomHelper.getVisibleElements(".items .item");
-    if (items.length === 0) {
-        return;
-    }
-
-    if (document.querySelector(".current-item") === null) {
-        items[0].classList.add("current-item");
-        items[0].querySelector('.item-header a').focus();
-        return;
-    }
-
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].classList.contains("current-item")) {
-            items[i].classList.remove("current-item");
-
-            let nextItem;
-            if (i + 1 < items.length) {
-                nextItem = items[i + 1];
-            } else {
-                nextItem = items[0];
-            }
-
-            nextItem.classList.add("current-item");
-            DomHelper.scrollPageTo(nextItem);
-            nextItem.querySelector('.item-header a').focus();
+            item.classList.add("current-item");
+            DomHelper.scrollPageTo(item);
+            item.querySelector('.item-header a').focus();
 
             break;
         }
@@ -632,4 +611,9 @@ function showToast(label, iconElement) {
             }, 100);
         }
     }
+}
+
+/** Navigate to the new subscription page. */
+function goToAddSubscription() {
+    window.location.href = document.body.dataset.addSubscriptionUrl;
 }

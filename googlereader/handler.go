@@ -487,7 +487,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(unstarredEntryIDs) > 0 {
-		err = h.store.SetEntriesBookmarkedState(userID, unstarredEntryIDs, true)
+		err = h.store.SetEntriesBookmarkedState(userID, unstarredEntryIDs, false)
 		if err != nil {
 			logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] %v", clientIP, err)
 			json.ServerError(w, r, err)

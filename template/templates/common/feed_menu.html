@@ -1,19 +1,19 @@
 {{ define "feed_menu" }}
 <ul>
     <li>
-        <a href="{{ route "feeds" }}">{{ t "menu.feeds" }}</a>
+        <a href="{{ route "feeds" }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
     </li>
     <li>
-        <a href="{{ route "addSubscription" }}">{{ t "menu.add_feed" }}</a>
+        <a href="{{ route "addSubscription" }}">{{ icon "add-feed" }}{{ t "menu.add_feed" }}</a>
     </li>
     <li>
-        <a href="{{ route "export" }}">{{ t "menu.export" }}</a>
+        <a href="{{ route "export" }}">{{ icon "feed-export" }}{{ t "menu.export" }}</a>
     </li>
     <li>
-        <a href="{{ route "import" }}">{{ t "menu.import" }}</a>
+        <a href="{{ route "import" }}">{{ icon "feed-import" }}{{ t "menu.import" }}</a>
     </li>
     <li>
-        <a href="{{ route "refreshAllFeeds" }}">{{ t "menu.refresh_all_feeds" }}</a>
+        <a href="{{ route "refreshAllFeeds" }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
     </li>
 </ul>
 {{ end }}

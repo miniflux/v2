@@ -73,7 +73,7 @@ a:hover {
     border-bottom: 1px dotted var(--header-list-border-color);
 }
 
-.header li:hover a {
+.header li a:hover {
     color: #888;
 }
 
@@ -125,17 +125,15 @@ a:hover {
     color: #666;
 }
 
-.page-header ul,
-.page-footer ul {
-    margin-left: 25px;
-}
-
 .page-header li,
 .page-footer li {
-    list-style-type: circle;
+    list-style-type: none;
     line-height: 1.8em;
 }
 
+.page-header ul a .icon {
+    padding-bottom: 2px;
+}
 
 /* Logo */
 
@@ -280,10 +278,6 @@ a:hover {
         line-height: normal;
         border: none;
         font-size: 1.0em;
-    }
-    .page-header ul,
-    .page-footer ul {
-        margin-left: 0;
     }
     .page-header li,
     .page-footer li {
@@ -493,10 +487,13 @@ a.button {
     color: var(--button-primary-color);
 }
 
+a.button-primary:hover,
+a.button-primary:focus,
 .button-primary:hover,
 .button-primary:focus {
     border-color: var(--button-primary-focus-border-color);
     background: var(--button-primary-focus-background);
+    color: var(--button-primary-color);
 }
 
 .button-danger {
@@ -692,13 +689,25 @@ template {
     font-size: 1.1em;
     display: flex;
     align-items: center;
-    padding-top: 8px;
+}
+
+.pagination-top {
+    padding-bottom: 8px;
 }
 
 .pagination-bottom {
+    padding-top: 8px;
+}
+
+.pagination-entry-top {
+    padding-top: 8px;
+}
+
+.pagination-entry-bottom {
     border-top: 1px dotted var(--pagination-border-color);
     margin-bottom: 15px;
     margin-top: 50px;
+    padding-top: 8px;
 }
 
 .pagination>div {
@@ -1124,4 +1133,12 @@ details.entry-enclosures {
     font-weight: 600;
     text-decoration: none;
     font-size: 1.2em;
+}
+
+.rules-entry {
+    display: flex;
+}
+
+.disabled {
+    opacity: 20%;
 }
