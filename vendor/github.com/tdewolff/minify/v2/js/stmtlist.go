@@ -171,6 +171,10 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 				} else if ifStmt, ok := list[i].(*js.IfStmt); ok {
 					ifStmt.Cond = commaExpr(left.Value, ifStmt.Cond)
 					j--
+				} else if varDecl, ok := list[i].(*js.VarDecl); ok {
+					if merge := mergeVarDeclExprStmt(varDecl, left, true); merge {
+						j--
+					}
 				}
 			} else if left, ok := list[i-1].(*js.VarDecl); ok {
 				if right, ok := list[i].(*js.VarDecl); ok && left.TokenType == right.TokenType {
@@ -178,7 +182,13 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 					right.List = append(left.List, right.List...)
 					j--
 				} else if left.TokenType == js.VarToken {
-					if forStmt, ok := list[i].(*js.ForStmt); ok {
+					if exprStmt, ok := list[i].(*js.ExprStmt); ok {
+						// pull in assignments to variables into the declaration, e.g. var a;a=5  =>  var a=5
+						if merge := mergeVarDeclExprStmt(left, exprStmt, false); merge {
+							list[i] = list[i-1]
+							j--
+						}
+					} else if forStmt, ok := list[i].(*js.ForStmt); ok {
 						// TODO: only merge statements that don't have 'in' or 'of' keywords (slow to check?)
 						if forStmt.Init == nil {
 							forStmt.Init = left
@@ -206,13 +216,6 @@ func (m *jsMinifier) optimizeStmtList(list []js.IStmt, blockType blockType) []js
 						}
 						list[i] = &js.ForStmt{Init: left, Cond: whileStmt.Cond, Post: nil, Body: body}
 						j--
-					} else if exprStmt, ok := list[i].(*js.ExprStmt); ok {
-						// pull in assignments to variables into the declaration, e.g. var a;a=5  =>  var a=5
-						merge := mergeVarDeclExprStmt(left, exprStmt)
-						if merge {
-							list[i] = list[i-1]
-							j--
-						}
 					}
 				}
 			}

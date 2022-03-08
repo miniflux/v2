@@ -358,7 +358,7 @@ func (m *jsMinifier) minifyStmt(i js.IStmt) {
 		if stmt.Default != nil || len(stmt.List) != 0 {
 			m.write(fromBytes)
 		}
-		m.write(stmt.Module)
+		m.write(minifyString(stmt.Module))
 		m.requireSemicolon()
 	case *js.ExportStmt:
 		m.write(exportBytes)
@@ -395,7 +395,7 @@ func (m *jsMinifier) minifyStmt(i js.IStmt) {
 			}
 			if stmt.Module != nil {
 				m.write(fromBytes)
-				m.write(stmt.Module)
+				m.write(minifyString(stmt.Module))
 			}
 			m.requireSemicolon()
 		}
@@ -458,14 +458,22 @@ func (m *jsMinifier) minifyStmtOrBlock(i js.IStmt, blockType blockType) {
 
 func (m *jsMinifier) minifyAlias(alias js.Alias) {
 	if alias.Name != nil {
-		m.write(alias.Name)
+		if alias.Name[0] == '"' || alias.Name[0] == '\'' {
+			m.write(minifyString(alias.Name))
+		} else {
+			m.write(alias.Name)
+		}
 		if !bytes.Equal(alias.Name, starBytes) {
 			m.write(spaceBytes)
 		}
 		m.write(asSpaceBytes)
 	}
 	if alias.Binding != nil {
-		m.write(alias.Binding)
+		if alias.Binding[0] == '"' || alias.Binding[0] == '\'' {
+			m.write(minifyString(alias.Binding))
+		} else {
+			m.write(alias.Binding)
+		}
 	}
 }
 
@@ -916,14 +924,12 @@ func (m *jsMinifier) minifyExpr(i js.IExpr, prec js.OpPrec) {
 				m.write(closeParenBytes)
 			}
 		} else {
-			// switch < and <= for > and >=
-			if expr.Op == js.LtToken {
-				expr.Op = js.GtToken
-				expr.X, expr.Y = expr.Y, expr.X
-			} else if expr.Op == js.LtEqToken {
-				expr.Op = js.GtEqToken
-				expr.X, expr.Y = expr.Y, expr.X
-			}
+			//if expr.Op == js.EqEqToken || expr.Op == js.NotEqToken || expr.Op == js.EqEqEqToken || expr.Op == js.NotEqEqToken {
+			//	// switch a==const for const==a, such as typeof a=="undefined" for "undefined"==typeof a (GZIP improvement)
+			//	if _, ok := expr.Y.(*js.LiteralExpr); ok {
+			//		expr.X, expr.Y = expr.Y, expr.X
+			//	}
+			//}
 
 			m.minifyExpr(expr.X, precLeft)
 			// 0 < len(m.prev) always

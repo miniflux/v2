@@ -1,3 +1,4 @@
+release.sh
 dist/
 benchmarks/*
 !benchmarks/*.go

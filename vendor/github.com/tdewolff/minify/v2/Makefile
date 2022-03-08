@@ -17,8 +17,9 @@ release:
 	if [ "${.SHELLSTATUS}" -eq 0 ]; then \
 		echo "Releasing ${VERSION}"; \
 	else \
-		echo "WARNING: commit is not tagged with a version"; \
+		echo "ERROR: commit is not tagged with a version"; \
 		echo ""; \
+		exit 1; \
 	fi
 	rm -rf dist
 	mkdir -p dist
