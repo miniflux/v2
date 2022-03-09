@@ -1,3 +1,29 @@
+Version 2.0.36 (March 8, 2022)
+------------------------------
+
+* Gray out pagination buttons when they are not applicable
+* Use truncated entry description as title if unavailable
+* Do not fallback to InnerXML if XHTML title is empty
+* Add `+` keyboard shortcut for new subscription page
+* Add `(+)` action next to Feeds to quickly add new feeds
+* Fix unstar not working via Google Reader API
+* Remove circles in front of page header list items
+* Fix CSS hover style for links styled as buttons
+* Avoid showing `undefined` when clicking on read/unread
+* Add new keyboard shortcut `M` to toggle read/unread, and go to previous item
+* Add several icons to menus according to their roles
+* Add missing event argument to `onClick()` function call
+* Add links to scraper/rewrite/filtering docs when editing feeds
+* Add a rewrite rule for Castopod episodes
+* Fix regression: reset touch-item if not in `/unread` page
+* Add API endpoint to fetch original article
+* Show the category first in feed settings
+* Add pagination on top of all entries
+* Display Go version in "About" page
+* Bump `mvdan.cc/xurls/v2` from 2.3.0 to 2.4.0
+* Bump `github.com/prometheus/client_golang` from 1.11.0 to 1.12.1
+* Bump `github.com/tdewolff/minify/v2` from 2.9.28 to 2.10.0
+
 Version 2.0.35 (January 21, 2022)
 ---------------------------------
 
