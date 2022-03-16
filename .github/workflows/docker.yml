@@ -15,8 +15,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate Docker tag
-        id: docker_tag
+      - name: Generate Alpine Docker tag
+        id: docker_alpine_tag
         run: |
           DOCKER_IMAGE=miniflux/miniflux
           DOCKER_VERSION=dev
@@ -26,6 +26,20 @@ jobs:
           elif [[ $GITHUB_REF == refs/tags/* ]]; then
           DOCKER_VERSION=${GITHUB_REF#refs/tags/}
           TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION},${DOCKER_IMAGE}:latest,ghcr.io/${DOCKER_IMAGE}:latest"
+          fi
+          echo ::set-output name=tags::${TAGS}
+
+      - name: Generate Distroless Docker tag
+        id: docker_distroless_tag
+        run: |
+          DOCKER_IMAGE=miniflux/miniflux
+          DOCKER_VERSION=dev-distroless
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+          DOCKER_VERSION=nightly-distroless
+          TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION}"
+          elif [[ $GITHUB_REF == refs/tags/* ]]; then
+          DOCKER_VERSION=${GITHUB_REF#refs/tags/}-distroless
+          TAGS="${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION},${DOCKER_IMAGE}:latest-distroless,ghcr.io/${DOCKER_IMAGE}:latest-distroless"
           fi
           echo ::set-output name=tags::${TAGS}
 
@@ -48,11 +62,20 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
 
-      - name: Build and push
+      - name: Build and Push Alpine images
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./packaging/docker/Dockerfile
+          file: ./packaging/docker/alpine/Dockerfile
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
           push: true
-          tags: ${{ steps.docker_tag.outputs.tags }}
+          tags: ${{ steps.docker_alpine_tag.outputs.tags }}
+
+      - name: Build and Push Distroless images
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./packaging/docker/distroless/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.docker_distroless_tag.outputs.tags }}
