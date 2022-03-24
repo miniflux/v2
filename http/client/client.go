@@ -21,6 +21,8 @@ import (
 	"miniflux.app/errors"
 	"miniflux.app/logger"
 	"miniflux.app/timer"
+
+	"github.com/andybalholm/brotli"
 )
 
 const (
@@ -185,6 +187,25 @@ func (c *Client) PostJSON(data interface{}) (*Response, error) {
 	return c.executeRequest(request)
 }
 
+func isBodyBrotliEncoded(resp *http.Response) bool {
+	for _, encoding := range resp.Header["Content-Encoding"] {
+		if encoding == "br" {
+			return true
+		}
+	}
+
+	return false
+}
+
+func decodeBody(resp *http.Response) ([]byte, error) {
+	if isBodyBrotliEncoded(resp) {
+		reader := brotli.NewReader(resp.Body)
+		return io.ReadAll(reader)
+	}
+
+	return io.ReadAll(resp.Body)
+}
+
 func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] inputURL=%s", c.inputURL))
 
@@ -227,7 +248,7 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		return nil, fmt.Errorf("client: response too large (%d bytes)", resp.ContentLength)
 	}
 
-	buf, err := io.ReadAll(resp.Body)
+	buf, err := decodeBody(resp)
 	if err != nil {
 		return nil, fmt.Errorf("client: error while reading body %v", err)
 	}

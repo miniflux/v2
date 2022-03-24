@@ -5,7 +5,9 @@
 package client // import "miniflux.app/http/client"
 
 import (
+	"io"
 	"testing"
+	"unicode/utf8"
 )
 
 func TestClientWithDelay(t *testing.T) {
@@ -40,6 +42,28 @@ func TestClientWithResponseTooLarge(t *testing.T) {
 	_, err := clt.Get()
 	if err == nil {
 		t.Fatal(`The client should fails when reading a response too large`)
+	}
+}
+
+func TestClientWithBrotliResponse(t *testing.T) {
+	clt := New("http://httpbin.org/brotli")
+	response, err := clt.Get()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.StatusCode != 200 {
+		t.Fatalf(`Unexpected response status code: %d`, response.StatusCode)
+	}
+
+	buf, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !utf8.Valid(buf) {
+		t.Fatal("Expected to decode brotli response")
 	}
 }
 
