@@ -25,6 +25,34 @@ func TestParseImageDataURL(t *testing.T) {
 	}
 }
 
+func TestParseImageDataURLWithNoEncoding(t *testing.T) {
+	iconURL := `data:image/webp,%3Ch1%3EHello%2C%20World%21%3C%2Fh1%3E`
+	icon, err := parseImageDataURL(iconURL)
+	if err != nil {
+		t.Fatalf(`We should be able to parse valid data URL: %v`, err)
+	}
+
+	if icon.MimeType != "image/webp" {
+		t.Fatal(`Invalid mime type parsed`)
+	}
+
+	if string(icon.Content) == "Hello, World!" {
+		t.Fatal(`Value should be URL-decoded`)
+	}
+
+	if icon.Hash == "" {
+		t.Fatal(`Image hash should be computed`)
+	}
+}
+
+func TestParseImageDataURLWithNoMediaTypeAndNoEncoding(t *testing.T) {
+	iconURL := `data:,Hello%2C%20World%21`
+	_, err := parseImageDataURL(iconURL)
+	if err == nil {
+		t.Fatal(`We should detect invalid mime type`)
+	}
+}
+
 func TestParseInvalidImageDataURLWithBadMimeType(t *testing.T) {
 	_, err := parseImageDataURL("data:text/plain;base64,blob")
 	if err == nil {
@@ -39,7 +67,7 @@ func TestParseInvalidImageDataURLWithUnsupportedEncoding(t *testing.T) {
 	}
 }
 
-func TestParseInvalidImageDataURLWithInvalidEncodedData(t *testing.T) {
+func TestParseInvalidImageDataURLWithNoData(t *testing.T) {
 	_, err := parseImageDataURL("data:image/png;base64,")
 	if err == nil {
 		t.Fatal(`We should detect invalid encoded data`)
@@ -48,6 +76,13 @@ func TestParseInvalidImageDataURLWithInvalidEncodedData(t *testing.T) {
 
 func TestParseInvalidImageDataURL(t *testing.T) {
 	_, err := parseImageDataURL("data:image/jpeg")
+	if err == nil {
+		t.Fatal(`We should detect malformed image data URL`)
+	}
+}
+
+func TestParseInvalidImageDataURLWithWrongPrefix(t *testing.T) {
+	_, err := parseImageDataURL("data,test")
 	if err == nil {
 		t.Fatal(`We should detect malformed image data URL`)
 	}
