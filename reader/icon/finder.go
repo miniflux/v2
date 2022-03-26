@@ -10,6 +10,8 @@ import (
 	"io"
 	"strings"
 
+	stdlib_url "net/url"
+
 	"miniflux.app/config"
 	"miniflux.app/crypto"
 	"miniflux.app/http/client"
@@ -130,40 +132,63 @@ func downloadIcon(iconURL, userAgent string, fetchViaProxy, allowSelfSignedCerti
 	return icon, nil
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs#syntax
+// data:[<mediatype>][;base64],<data>
 func parseImageDataURL(value string) (*model.Icon, error) {
-	colon := strings.Index(value, ":")
-	semicolon := strings.Index(value, ";")
+	var mediaType string
+	var encoding string
+
+	if !strings.HasPrefix(value, "data:") {
+		return nil, fmt.Errorf(`icon: invalid data URL (missing data:) %q`, value)
+	}
+
+	value = value[5:]
+
 	comma := strings.Index(value, ",")
-
-	if colon <= 0 || semicolon <= 0 || comma <= 0 {
-		return nil, fmt.Errorf(`icon: invalid data url "%s"`, value)
+	if comma < 0 {
+		return nil, fmt.Errorf(`icon: invalid data URL (no comma) %q`, value)
 	}
 
-	mimeType := value[colon+1 : semicolon]
-	encoding := value[semicolon+1 : comma]
 	data := value[comma+1:]
+	semicolon := strings.Index(value[0:comma], ";")
 
-	if encoding != "base64" {
-		return nil, fmt.Errorf(`icon: unsupported data url encoding "%s"`, value)
+	if semicolon > 0 {
+		mediaType = value[0:semicolon]
+		encoding = value[semicolon+1 : comma]
+	} else {
+		mediaType = value[0:comma]
 	}
 
-	if !strings.HasPrefix(mimeType, "image/") {
-		return nil, fmt.Errorf(`icon: invalid mime type "%s"`, mimeType)
+	if !strings.HasPrefix(mediaType, "image/") {
+		return nil, fmt.Errorf(`icon: invalid media type %q`, mediaType)
 	}
 
-	blob, err := base64.StdEncoding.DecodeString(data)
-	if err != nil {
-		return nil, fmt.Errorf(`icon: invalid data "%s" (%v)`, value, err)
+	var blob []byte
+	switch encoding {
+	case "base64":
+		var err error
+		blob, err = base64.StdEncoding.DecodeString(data)
+		if err != nil {
+			return nil, fmt.Errorf(`icon: invalid data %q (%v)`, value, err)
+		}
+	case "":
+		decodedData, err := stdlib_url.QueryUnescape(data)
+		if err != nil {
+			return nil, fmt.Errorf(`icon: unable to decode data URL %q`, value)
+		}
+		blob = []byte(decodedData)
+	default:
+		return nil, fmt.Errorf(`icon: unsupported data URL encoding %q`, value)
 	}
 
 	if len(blob) == 0 {
-		return nil, fmt.Errorf(`icon: empty data "%s"`, value)
+		return nil, fmt.Errorf(`icon: empty data URL %q`, value)
 	}
 
 	icon := &model.Icon{
 		Hash:     crypto.HashFromBytes(blob),
 		Content:  blob,
-		MimeType: mimeType,
+		MimeType: mediaType,
 	}
 
 	return icon, nil
