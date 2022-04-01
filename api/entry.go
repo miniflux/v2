@@ -8,6 +8,7 @@ import (
 	json_parser "encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"time"
 
 	"miniflux.app/http/request"
@@ -240,7 +241,10 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	}
 
 	if request.HasQueryParam(r, "starred") {
-		builder.WithStarred()
+		starred, err := strconv.ParseBool(r.URL.Query().Get("starred"))
+		if err == nil {
+			builder.WithStarred(starred)
+		}
 	}
 
 	searchQuery := request.QueryStringParam(r, "search", "")
