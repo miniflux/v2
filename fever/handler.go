@@ -365,7 +365,7 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	logger.Debug("[Fever] Fetching saved items for user #%d", userID)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
-	builder.WithStarred()
+	builder.WithStarred(true)
 
 	entryIDs, err := builder.GetEntryIDs()
 	if err != nil {

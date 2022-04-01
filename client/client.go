@@ -542,8 +542,8 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("before_entry_id", strconv.FormatInt(filter.BeforeEntryID, 10))
 		}
 
-		if filter.Starred {
-			values.Set("starred", "1")
+		if filter.Starred != "" {
+			values.Set("starred", filter.Starred)
 		}
 
 		if filter.Search != "" {

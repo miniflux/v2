@@ -2,6 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
@@ -123,7 +124,7 @@ func TestGetAllEntries(t *testing.T) {
 		t.Fatalf(`The items should be sorted differently "%v" vs "%v"`, resultWithDifferentSorting.Entries[0].Title, resultWithoutSorting.Entries[0].Title)
 	}
 
-	resultWithStarredEntries, err := client.Entries(&miniflux.Filter{Starred: true})
+	resultWithStarredEntries, err := client.Entries(&miniflux.Filter{Starred: miniflux.FilterOnlyStarred})
 	if err != nil {
 		t.Fatal(err)
 	}

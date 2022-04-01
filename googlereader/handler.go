@@ -1139,7 +1139,7 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 	clientIP := request.ClientIP(r)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
-	builder.WithStarred()
+	builder.WithStarred(true)
 	builder.WithLimit(rm.Count)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(rm.SortDirection)
