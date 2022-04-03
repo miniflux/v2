@@ -756,6 +756,12 @@ template {
     display: none;
 }
 
+.touch-item {
+    transition-property: transform;
+    transition-duration: 0s;
+    transition-timing-function: ease-out;
+}
+
 /* Feeds list */
 article.feed-parsing-error {
     background-color: var(--feed-parsing-error-background-color);
