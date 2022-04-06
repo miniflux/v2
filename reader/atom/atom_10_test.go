@@ -449,7 +449,34 @@ func TestParseEntryWithEmptyXHTMLTitle(t *testing.T) {
 	}
 
 	if feed.Entries[0].Title != `http://example.org/entry` {
-		t.Errorf("Incorrect entry title, got: %q", feed.Entries[1].Title)
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
+	}
+}
+
+func TestParseEntryWithXHTMLTitleWithoutDiv(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+
+	  <entry>
+		<title type="xhtml">
+		  test
+		</title>
+		<link href="http://example.org/entry"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != `test` {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
 
