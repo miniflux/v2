@@ -245,7 +245,12 @@ func (a *atom10Text) String() string {
 			content = a.InnerXML
 		}
 	case a.Type == "xhtml":
-		content = a.XHTMLRootElement.InnerXML
+		var root = a.XHTMLRootElement
+		if root.XMLName.Local == "div" {
+			content = root.InnerXML
+		} else {
+			content = a.InnerXML
+		}
 	default:
 		content = a.CharData
 	}
@@ -254,5 +259,6 @@ func (a *atom10Text) String() string {
 }
 
 type atomXHTMLRootElement struct {
-	InnerXML string `xml:",innerxml"`
+	XMLName  xml.Name `xml:"div"`
+	InnerXML string   `xml:",innerxml"`
 }
