@@ -42,8 +42,12 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 }
 
 // WithStarred adds starred filter.
-func (e *EntryQueryBuilder) WithStarred() *EntryQueryBuilder {
-	e.conditions = append(e.conditions, "e.starred is true")
+func (e *EntryQueryBuilder) WithStarred(starred bool) *EntryQueryBuilder {
+	if starred {
+		e.conditions = append(e.conditions, "e.starred is true")
+	} else {
+		e.conditions = append(e.conditions, "e.starred is false")
+	}
 	return e
 }
 
