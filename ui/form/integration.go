@@ -34,6 +34,10 @@ type IntegrationForm struct {
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
+	EspialEnabled        bool
+	EspialURL            string
+	EspialAPIKey         string
+	EspialTags           string
 	PocketEnabled        bool
 	PocketAccessToken    string
 	PocketConsumerKey    string
@@ -64,6 +68,10 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.NunuxKeeperEnabled = i.NunuxKeeperEnabled
 	integration.NunuxKeeperURL = i.NunuxKeeperURL
 	integration.NunuxKeeperAPIKey = i.NunuxKeeperAPIKey
+	integration.EspialEnabled = i.EspialEnabled
+	integration.EspialURL = i.EspialURL
+	integration.EspialAPIKey = i.EspialAPIKey
+	integration.EspialTags = i.EspialTags
 	integration.PocketEnabled = i.PocketEnabled
 	integration.PocketAccessToken = i.PocketAccessToken
 	integration.PocketConsumerKey = i.PocketConsumerKey
@@ -97,6 +105,10 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		NunuxKeeperEnabled:   r.FormValue("nunux_keeper_enabled") == "1",
 		NunuxKeeperURL:       r.FormValue("nunux_keeper_url"),
 		NunuxKeeperAPIKey:    r.FormValue("nunux_keeper_api_key"),
+		EspialEnabled:        r.FormValue("espial_enabled") == "1",
+		EspialURL:            r.FormValue("espial_url"),
+		EspialAPIKey:         r.FormValue("espial_api_key"),
+		EspialTags:           r.FormValue("espial_tags"),
 		PocketEnabled:        r.FormValue("pocket_enabled") == "1",
 		PocketAccessToken:    r.FormValue("pocket_access_token"),
 		PocketConsumerKey:    r.FormValue("pocket_consumer_key"),

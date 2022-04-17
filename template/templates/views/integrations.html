@@ -156,6 +156,26 @@
         </div>
     </div>
 
+    <h3>Espial</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="espial_enabled" value="1" {{ if .form.EspialEnabled }}checked{{ end }}> {{ t "form.integration.espial_activate" }}
+        </label>
+
+        <label for="form-espial-url">{{ t "form.integration.espial_endpoint" }}</label>
+        <input type="url" name="espial_url" id="form-espial-url" value="{{ .form.EspialURL }}" placeholder="https://esp.ae8.org" spellcheck="false">
+
+        <label for="form-espial-api-key">{{ t "form.integration.espial_api_key" }}</label>
+        <input type="text" name="espial_api_key" id="form-espial-api-key" value="{{ .form.EspialAPIKey }}" spellcheck="false">
+
+        <label for="form-espial-tags">{{ t "form.integration.espial_tags" }}</label>
+        <input type="text" name="espial_tags" id="form-espial-tags" value="{{ .form.EspialTags }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
     <h3>Telegram Bot</h3>
     <div class="form-section">
         <label>
