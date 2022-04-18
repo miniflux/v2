@@ -34,10 +34,10 @@ func (c *Client) AddEntry(link, title, content, tags string) error {
 	}
 
 	doc := &Document{
-		Title:       title,
-		Url:         link,
-		ToRead:      true,
-		Tags:        tags,
+		Title:  title,
+		Url:    link,
+		ToRead: true,
+		Tags:   tags,
 	}
 
 	apiURL, err := getAPIEndpoint(c.baseURL, "/api/add")

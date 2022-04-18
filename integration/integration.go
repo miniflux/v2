@@ -6,9 +6,9 @@ package integration // import "miniflux.app/integration"
 
 import (
 	"miniflux.app/config"
+	"miniflux.app/integration/espial"
 	"miniflux.app/integration/instapaper"
 	"miniflux.app/integration/nunuxkeeper"
-	"miniflux.app/integration/espial"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
 	"miniflux.app/integration/telegrambot"
