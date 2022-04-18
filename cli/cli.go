@@ -79,7 +79,9 @@ func Parse() {
 	}
 
 	if flagConfigDump {
-		fmt.Print(config.Opts)
+		for _, v := range config.Opts.SortedOptions(true) {
+			fmt.Printf("%v=%v\n", v.Key, v.Value)
+		}
 		return
 	}
 
