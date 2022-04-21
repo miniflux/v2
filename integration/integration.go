@@ -6,6 +6,7 @@ package integration // import "miniflux.app/integration"
 
 import (
 	"miniflux.app/config"
+	"miniflux.app/integration/espial"
 	"miniflux.app/integration/instapaper"
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
@@ -68,6 +69,19 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.EspialEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Espial", entry.ID, entry.URL, integration.UserID)
+
+		client := espial.NewClient(
+			integration.EspialURL,
+			integration.EspialAPIKey,
+		)
+
+		if err := client.AddEntry(entry.URL, entry.Title, entry.Content, integration.EspialTags); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}

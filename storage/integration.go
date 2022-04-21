@@ -133,6 +133,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			nunux_keeper_enabled,
 			nunux_keeper_url,
 			nunux_keeper_api_key,
+			espial_enabled,
+			espial_url,
+			espial_api_key,
+			espial_tags,
 			pocket_enabled,
 			pocket_access_token,
 			pocket_consumer_key,
@@ -169,6 +173,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.NunuxKeeperEnabled,
 		&integration.NunuxKeeperURL,
 		&integration.NunuxKeeperAPIKey,
+		&integration.EspialEnabled,
+		&integration.EspialURL,
+		&integration.EspialAPIKey,
+		&integration.EspialTags,
 		&integration.PocketEnabled,
 		&integration.PocketAccessToken,
 		&integration.PocketConsumerKey,
@@ -225,9 +233,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			googlereader_password=$25,
 			telegram_bot_enabled=$26,
 			telegram_bot_token=$27,
-			telegram_bot_chat_id=$28
+			telegram_bot_chat_id=$28,
+			espial_enabled=$29,
+			espial_url=$30,
+			espial_api_key=$31,
+			espial_tags=$32,
 		WHERE
-			user_id=$29
+			user_id=$33
 	`
 		_, err = s.db.Exec(
 			query,
@@ -259,6 +271,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.TelegramBotEnabled,
 			integration.TelegramBotToken,
 			integration.TelegramBotChatID,
+			integration.EspialEnabled,
+			integration.EspialURL,
+			integration.EspialAPIKey,
+			integration.EspialTags,
 			integration.UserID,
 		)
 	} else {
@@ -293,9 +309,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		    googlereader_password=$25,
 			telegram_bot_enabled=$26,
 			telegram_bot_token=$27,
-			telegram_bot_chat_id=$28
+			telegram_bot_chat_id=$28,
+			espial_enabled=$29,
+			espial_url=$30,
+			espial_api_key=$31,
+			espial_tags=$32
 		WHERE
-			user_id=$29
+			user_id=$33
 	`
 		_, err = s.db.Exec(
 			query,
@@ -327,6 +347,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.TelegramBotEnabled,
 			integration.TelegramBotToken,
 			integration.TelegramBotChatID,
+			integration.EspialEnabled,
+			integration.EspialURL,
+			integration.EspialAPIKey,
+			integration.EspialTags,
 			integration.UserID,
 		)
 	}
@@ -348,7 +372,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 		WHERE
 			user_id=$1
 		AND
-			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR pocket_enabled='t')
+			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t')
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
 		result = false

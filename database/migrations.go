@@ -572,4 +572,14 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN espial_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN espial_url text default '';
+			ALTER TABLE integrations ADD COLUMN espial_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN espial_tags text default 'miniflux';
+			`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }
