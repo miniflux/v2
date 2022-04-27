@@ -4,6 +4,11 @@
         <li>
             <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}" data-feed-link="true">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
+        {{ if .entry.Author }}
+        <li>
+            <em>{{ truncate .entry.Author 35 }}</em>
+        </li>
+        {{ end }}
         <li>
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
