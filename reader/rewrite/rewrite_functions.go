@@ -5,6 +5,7 @@
 package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
+	"encoding/base64"
 	"fmt"
 	"html"
 	"net/url"
@@ -308,4 +309,12 @@ func applyFuncOnTextContent(entryContent string, selector string, repl func(stri
 
 	output, _ := doc.Find("body").First().Html()
 	return output
+}
+
+func decodeBase64Content(entryContent string) string {
+	if ret, err := base64.StdEncoding.DecodeString(strings.TrimSpace(entryContent)); err != nil {
+		return entryContent
+	} else {
+		return html.EscapeString(string(ret))
+	}
 }

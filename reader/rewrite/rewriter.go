@@ -102,6 +102,12 @@ func applyRule(entryURL, entryContent string, rule rule) string {
 		}
 	case "add_castopod_episode":
 		entryContent = addCastopodEpisode(entryURL, entryContent)
+	case "base64_decode":
+		if len(rule.args) >= 1 {
+			entryContent = applyFuncOnTextContent(entryContent, rule.args[0], decodeBase64Content)
+		} else {
+			entryContent = applyFuncOnTextContent(entryContent, "body", decodeBase64Content)
+		}
 	}
 
 	return entryContent
