@@ -288,3 +288,24 @@ func addCastopodEpisode(entryURL, entryContent string) string {
 
 	return player + `<br>` + entryContent
 }
+
+func applyFuncOnTextContent(entryContent string, selector string, repl func(string) string) string {
+	var treatChildren func(i int, s *goquery.Selection)
+	treatChildren = func(i int, s *goquery.Selection) {
+		if s.Nodes[0].Type == 1 {
+			s.ReplaceWithHtml(repl(s.Nodes[0].Data))
+		} else {
+			s.Contents().Each(treatChildren)
+		}
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	doc.Find(selector).Each(treatChildren)
+
+	output, _ := doc.Find("body").First().Html()
+	return output
+}
