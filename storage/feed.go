@@ -158,6 +158,13 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	return getFeedsSorted(builder)
 }
 
+// Return only read and unread count.
+func (s *Storage) FetchCounters(userID int64) (readCounters map[int64]int, unreadCounters map[int64]int, err error) {
+	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithCounters()
+	return builder.fetchFeedCounter()
+}
+
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
 func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
