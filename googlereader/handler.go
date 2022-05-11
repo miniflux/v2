@@ -301,7 +301,7 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 	for _, s := range addTags {
 		switch s.Type {
 		case ReadStream:
-			if _, ok := tags[ReadStream]; ok {
+			if _, ok := tags[KeptUnreadStream]; ok {
 				return nil, fmt.Errorf(KeptUnread + " and " + Read + " should not be supplied simultaneously")
 			}
 			tags[ReadStream] = true
