@@ -411,7 +411,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(addTags) == 0 && len(removeTags) == 0 {
-		err = fmt.Errorf("add or/and remove tags should be supllied")
+		err = fmt.Errorf("add or/and remove tags should be supplied")
 		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] ", clientIP, err)
 		json.ServerError(w, r, err)
 		return
