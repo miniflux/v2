@@ -6,7 +6,7 @@
         </li>
         {{ if .entry.Author }}
         <li>
-            <em>{{ truncate .entry.Author 35 }}</em>
+            <em title="{{ .entry.Author }}">{{ truncate .entry.Author 35 }}</em>
         </li>
         {{ end }}
         <li>
