@@ -35,6 +35,14 @@ func PushEntry(entry *model.Entry, botToken, chatID string) error {
 	msg := tgbotapi.NewMessage(chatIDInt, result.String())
 	msg.ParseMode = tgbotapi.ModeHTML
 	msg.DisableWebPagePreview = false
+
+	if entry.CommentsURL != "" {
+		msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonURL("Comments", entry.CommentsURL),
+			))
+	}
+
 	if _, err := bot.Send(msg); err != nil {
 		return fmt.Errorf("telegrambot: sending message failed: %w", err)
 	}
