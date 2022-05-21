@@ -687,11 +687,11 @@ func TestFetchCounters(t *testing.T) {
 		t.Fatalf(`Failed to get entries: %v`, err)
 	}
 
-	unreadCounters, err := client.FetchCounters()
+	counters, err := client.FetchCounters()
 	if err != nil {
 		t.Fatalf(`Failed to fetch unread count: %v`, err)
 	}
-	unreadCounter, exists := (*unreadCounters)[feed.ID]
+	unreadCounter, exists := counters.UnreadCounters[feed.ID]
 	if !exists {
 		unreadCounter = 0
 	}

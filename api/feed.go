@@ -171,14 +171,13 @@ func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) fetchCounters(w http.ResponseWriter, r *http.Request) {
-	_, unreadCounters, err := h.store.FetchCounters(request.UserID(r))
-
+	counters, err := h.store.FetchCounters(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	json.OK(w, r, unreadCounters)
+	json.OK(w, r, counters)
 }
 
 func (h *handler) getFeed(w http.ResponseWriter, r *http.Request) {

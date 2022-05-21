@@ -56,6 +56,11 @@ type Feed struct {
 	ReadCount                   int       `json:"-"`
 }
 
+type FeedCounters struct {
+	ReadCounters   map[int64]int `json:"reads"`
+	UnreadCounters map[int64]int `json:"unreads"`
+}
+
 func (f *Feed) String() string {
 	return fmt.Sprintf("ID=%d, UserID=%d, FeedURL=%s, SiteURL=%s, Title=%s, Category={%s}",
 		f.ID,
