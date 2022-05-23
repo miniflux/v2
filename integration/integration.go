@@ -8,6 +8,7 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/integration/espial"
 	"miniflux.app/integration/instapaper"
+	"miniflux.app/integration/linkding"
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
@@ -91,6 +92,18 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 
 		client := pocket.NewClient(config.Opts.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.LinkdingEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Linkding", entry.ID, entry.URL, integration.UserID)
+
+		client := linkding.NewClient(
+			integration.LinkdingURL,
+			integration.LinkdingAPIKey,
+		)
+		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}

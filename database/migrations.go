@@ -582,4 +582,13 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN linkding_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN linkding_url text default '';
+			ALTER TABLE integrations ADD COLUMN linkding_api_key text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }
