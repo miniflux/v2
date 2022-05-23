@@ -59,6 +59,9 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		TelegramBotEnabled:   integration.TelegramBotEnabled,
 		TelegramBotToken:     integration.TelegramBotToken,
 		TelegramBotChatID:    integration.TelegramBotChatID,
+		LinkdingEnabled:      integration.LinkdingEnabled,
+		LinkdingURL:          integration.LinkdingURL,
+		LinkdingAPIKey:       integration.LinkdingAPIKey,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

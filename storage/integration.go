@@ -142,7 +142,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			pocket_consumer_key,
 			telegram_bot_enabled,
 			telegram_bot_token,
-			telegram_bot_chat_id
+			telegram_bot_chat_id,
+			linkding_enabled,
+			linkding_url,
+			linkding_api_key
 		FROM
 			integrations
 		WHERE
@@ -183,6 +186,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.TelegramBotEnabled,
 		&integration.TelegramBotToken,
 		&integration.TelegramBotChatID,
+		&integration.LinkdingEnabled,
+		&integration.LinkdingURL,
+		&integration.LinkdingAPIKey,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -238,8 +244,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			espial_url=$30,
 			espial_api_key=$31,
 			espial_tags=$32,
+			linkding_enabled=$33,
+			linkding_url=$34,
+			linkding_api_key=$35
 		WHERE
-			user_id=$33
+			user_id=$36
 	`
 		_, err = s.db.Exec(
 			query,
@@ -275,6 +284,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.EspialURL,
 			integration.EspialAPIKey,
 			integration.EspialTags,
+			integration.LinkdingEnabled,
+			integration.LinkdingURL,
+			integration.LinkdingAPIKey,
 			integration.UserID,
 		)
 	} else {
@@ -313,9 +325,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			espial_enabled=$29,
 			espial_url=$30,
 			espial_api_key=$31,
-			espial_tags=$32
+			espial_tags=$32,
+			linkding_enabled=$33,
+			linkding_url=$34,
+			linkding_api_key=$35
 		WHERE
-			user_id=$33
+			user_id=$36
 	`
 		_, err = s.db.Exec(
 			query,
@@ -351,6 +366,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.EspialURL,
 			integration.EspialAPIKey,
 			integration.EspialTags,
+			integration.LinkdingEnabled,
+			integration.LinkdingURL,
+			integration.LinkdingAPIKey,
 			integration.UserID,
 		)
 	}
@@ -372,7 +390,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 		WHERE
 			user_id=$1
 		AND
-			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t')
+			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t' OR linkding_enabled='t')
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
 		result = false

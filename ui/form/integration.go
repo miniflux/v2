@@ -44,6 +44,9 @@ type IntegrationForm struct {
 	TelegramBotEnabled   bool
 	TelegramBotToken     string
 	TelegramBotChatID    string
+	LinkdingEnabled      bool
+	LinkdingURL          string
+	LinkdingAPIKey       string
 }
 
 // Merge copy form values to the model.
@@ -78,6 +81,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.TelegramBotEnabled = i.TelegramBotEnabled
 	integration.TelegramBotToken = i.TelegramBotToken
 	integration.TelegramBotChatID = i.TelegramBotChatID
+	integration.LinkdingEnabled = i.LinkdingEnabled
+	integration.LinkdingURL = i.LinkdingURL
+	integration.LinkdingAPIKey = i.LinkdingAPIKey
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -115,5 +121,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		TelegramBotEnabled:   r.FormValue("telegram_bot_enabled") == "1",
 		TelegramBotToken:     r.FormValue("telegram_bot_token"),
 		TelegramBotChatID:    r.FormValue("telegram_bot_chat_id"),
+		LinkdingEnabled:      r.FormValue("linkding_enabled") == "1",
+		LinkdingURL:          r.FormValue("linkding_url"),
+		LinkdingAPIKey:       r.FormValue("linkding_api_key"),
 	}
 }

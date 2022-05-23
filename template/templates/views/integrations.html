@@ -31,7 +31,7 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
     </div>
-    
+
     <h3>Google Reader</h3>
     <div class="form-section">
         <label>
@@ -150,7 +150,7 @@
 
         <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
         <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}" spellcheck="false">
-        
+
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
@@ -170,6 +170,23 @@
 
         <label for="form-espial-tags">{{ t "form.integration.espial_tags" }}</label>
         <input type="text" name="espial_tags" id="form-espial-tags" value="{{ .form.EspialTags }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
+    <h3>Linkding</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="linkding_enabled" value="1" {{ if .form.LinkdingEnabled }}checked{{ end }}> {{ t "form.integration.linkding_activate" }}
+        </label>
+
+        <label for="form-linkding-url">{{ t "form.integration.linkding_endpoint" }}</label>
+        <input type="url" name="linkding_url" id="form-linkding-url" value="{{ .form.LinkdingURL }}" placeholder="https://linkding.com" spellcheck="false">
+
+        <label for="form-linkding-api-key">{{ t "form.integration.linkding_api_key" }}</label>
+        <input type="text" name="linkding_api_key" id="form-linkding-api-key" value="{{ .form.LinkdingAPIKey }}" spellcheck="false">
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
