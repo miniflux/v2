@@ -5,6 +5,7 @@
 package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
+	"encoding/base64"
 	"fmt"
 	"html"
 	"net/url"
@@ -287,4 +288,33 @@ func addCastopodEpisode(entryURL, entryContent string) string {
 	player := `<iframe width="650" frameborder="0" src="` + entryURL + `/embed/light"></iframe>`
 
 	return player + `<br>` + entryContent
+}
+
+func applyFuncOnTextContent(entryContent string, selector string, repl func(string) string) string {
+	var treatChildren func(i int, s *goquery.Selection)
+	treatChildren = func(i int, s *goquery.Selection) {
+		if s.Nodes[0].Type == 1 {
+			s.ReplaceWithHtml(repl(s.Nodes[0].Data))
+		} else {
+			s.Contents().Each(treatChildren)
+		}
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	doc.Find(selector).Each(treatChildren)
+
+	output, _ := doc.Find("body").First().Html()
+	return output
+}
+
+func decodeBase64Content(entryContent string) string {
+	if ret, err := base64.StdEncoding.DecodeString(strings.TrimSpace(entryContent)); err != nil {
+		return entryContent
+	} else {
+		return html.EscapeString(string(ret))
+	}
 }
