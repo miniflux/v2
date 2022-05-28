@@ -21,7 +21,7 @@ Version 2.0.37 (May 27, 2022)
 * Add distroless Docker image variant
 * Add Go 1.18 to GitHub Action
 * Bump `github.com/tdewolff/minify/v2` from `2.10.0` to `2.11`
-* Bump `github.com/prometheus/client_golan` from `1.12.1` to `1.12.2`
+* Bump `github.com/prometheus/client_golang` from `1.12.1` to `1.12.2`
 * Bump `github.com/lib/pq` from `1.10.4` to `1.10.6`
 
 Version 2.0.36 (March 8, 2022)
