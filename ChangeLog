@@ -1,3 +1,29 @@
+Version 2.0.37 (May 27, 2022)
+-----------------------------
+
+* Add rewrite rule to decode base64 content
+* Add Linkding integration
+* Add comment button to Telegram message
+* Add API endpoint to fetch unread and read counters
+* Fixes logic bug in Google Reader API sanity check
+* Reduce number of CORS preflight check to save network brandwidth
+* Add Espial integration
+* Allow API search for entries which are not starred
+* Try to use outermost element text when title is empty
+* Make swipe gestures feel more natural
+    - Removes opacity transition when swiping an article read/unread
+    - Adds "resistance" to the swiped entry when the 75px threshold is
+    reached
+    - Fixes an issue in which a swiped article couldn't be moved <15px
+* Add support for feed streams to Google Reader API IDs API
+* Fix invalid parsing of icon data URL
+* Add Traditional Chinese translation
+* Add distroless Docker image variant
+* Add Go 1.18 to GitHub Action
+* Bump `github.com/tdewolff/minify/v2` from `2.10.0` to `2.11`
+* Bump `github.com/prometheus/client_golang` from `1.12.1` to `1.12.2`
+* Bump `github.com/lib/pq` from `1.10.4` to `1.10.6`
+
 Version 2.0.36 (March 8, 2022)
 ------------------------------
 

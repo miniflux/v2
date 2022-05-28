@@ -180,6 +180,11 @@ type FeedIcon struct {
 	Data     string `json:"data"`
 }
 
+type FeedCounters struct {
+	ReadCounters   map[int64]int `json:"reads"`
+	UnreadCounters map[int64]int `json:"unreads"`
+}
+
 // Feeds represents a list of feeds.
 type Feeds []*Feed
 

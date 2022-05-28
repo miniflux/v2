@@ -170,6 +170,16 @@ func (h *handler) getFeeds(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, feeds)
 }
 
+func (h *handler) fetchCounters(w http.ResponseWriter, r *http.Request) {
+	counters, err := h.store.FetchCounters(request.UserID(r))
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.OK(w, r, counters)
+}
+
 func (h *handler) getFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	feed, err := h.store.FeedByID(request.UserID(r), feedID)

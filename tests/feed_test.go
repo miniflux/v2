@@ -677,6 +677,37 @@ func TestMarkFeedAsRead(t *testing.T) {
 	}
 }
 
+func TestFetchCounters(t *testing.T) {
+	client := createClient(t)
+
+	feed, _ := createFeed(t, client)
+
+	results, err := client.FeedEntries(feed.ID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	counters, err := client.FetchCounters()
+	if err != nil {
+		t.Fatalf(`Failed to fetch unread count: %v`, err)
+	}
+	unreadCounter, exists := counters.UnreadCounters[feed.ID]
+	if !exists {
+		unreadCounter = 0
+	}
+
+	unreadExpected := 0
+	for _, entry := range results.Entries {
+		if entry.Status == miniflux.EntryStatusUnread {
+			unreadExpected++
+		}
+	}
+
+	if unreadExpected != unreadCounter {
+		t.Errorf(`Expected %d unread entries but %d instead`, unreadExpected, unreadCounter)
+	}
+}
+
 func TestDeleteFeed(t *testing.T) {
 	client := createClient(t)
 	feed, _ := createFeed(t, client)
