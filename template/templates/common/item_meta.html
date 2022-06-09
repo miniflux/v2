@@ -15,6 +15,16 @@
         </li>
         {{ end }}
     </ul>
+    <article role="article" class="item-meta-desc" dir="auto">
+        <p>
+            {{ findImages .entry.Content (t .entry.Title) }}
+            {{ if .user }}
+                {{  stripHTML (proxyFilter .entry.Content) }}
+            {{ else }}
+                {{ stripHTML (.entry.Content) }}
+            {{ end }}
+        </p>
+    </article>
     <ul class="item-meta-icons">
         <li>
             <a href="#"

@@ -1,3 +1,5 @@
+:root {--itemmetadescsize: 8}
+
 /* Layout */
 * {
     margin: 0;
@@ -723,6 +725,22 @@ template {
 
 .item-meta li {
     display: inline-block;
+}
+
+.item-meta-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--itemmetadescsize);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 0.5em;
+}
+
+.item-meta-desc img:first-child {
+    float: right;
+    box-shadow: 0 0.1em 0.25em 0 rgba(0, 0, 0, 0.2), 0 0.1em 0.25em 0 rgba(0, 0, 0, 0.2);
+    border-radius: 0.5em;
+    margin: 0.25em 0.5em 0 0.5em;
+    max-height: calc(var(--itemmetadescsize) * 1em);
 }
 
 .item-meta-info {

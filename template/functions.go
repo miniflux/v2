@@ -11,6 +11,7 @@ import (
 	"net/mail"
 	"strings"
 	"time"
+	"regexp"
 
 	"miniflux.app/config"
 	"miniflux.app/crypto"
@@ -22,11 +23,15 @@ import (
 	"miniflux.app/url"
 
 	"github.com/gorilla/mux"
+	"github.com/microcosm-cc/bluemonday"
 )
 
 type funcMap struct {
 	router *mux.Router
 }
+
+var imgRE = regexp.MustCompile(`<img[^>]+\bsrc=["']([^"']+)\.jpg["']`)
+var bmpolicy = bluemonday.StripTagsPolicy()
 
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
@@ -36,6 +41,20 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasKey":         hasKey,
 		"truncate":       truncate,
 		"isEmail":        isEmail,
+		"stripHTML": func(htm string) template.HTML {
+			stripped := bmpolicy.Sanitize(string(htm))
+			return template.HTML(fmt.Sprintf("%s", stripped))
+		},
+		"findImages": func (htm, title string) template.HTML {
+			matches := imgRE.FindStringSubmatch(fmt.Sprintf("%s", template.HTML(htm)))
+			if matches != nil {
+				return template.HTML(fmt.Sprintf(
+					`<p><img aria-hidden="true" src="%s.jpg" loading="lazy" alt="%s" /></p>`,
+					matches[1], title,
+				))
+			}
+			return template.HTML("")
+		},
 		"baseURL": func() string {
 			return config.Opts.BaseURL()
 		},
