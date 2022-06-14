@@ -1,0 +1,6 @@
+# sourced by /etc/init.d/miniflux
+# see cluster port in pg_lsclusters and ls -Al /var/run/postgresql/
+export DATABASE_URL='host=/var/run/postgresql/ port=5433 user=miniflux password=<my secrect db password> dbname=miniflux sslmode=disable'
+export LISTEN_ADDR='127.0.0.1:8081'
+export BASE_URL='https://<my miniflux domain> and path/'
+
