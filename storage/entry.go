@@ -119,7 +119,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				feed_id,
 				reading_time,
 				changed_at,
-				document_vectors
+				document_vectors,
+				category
 			)
 		VALUES
 			(
@@ -134,7 +135,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$9,
 				$10,
 				now(),
-				setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($6, ''), 500000)), 'B')
+				setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($6, ''), 500000)), 'B'),
+				$11
 			)
 		RETURNING
 			id, status
@@ -151,6 +153,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
+		entry.Category,
 	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {
