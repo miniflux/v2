@@ -234,8 +234,31 @@ func TestProxyFilterWithPictureSource(t *testing.T) {
 	r := mux.NewRouter()
 	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
-	input := `<picture><source srcset="http://website/folder/image2.png 656w,   http://website/folder/image3.png 360w"></picture>`
-	expected := `<picture><source srcset="/proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, /proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMy5wbmc= 360w"/></picture>`
+	input := `<picture><source srcset="http://website/folder/image2.png 656w,   http://website/folder/image3.png 360w, https://website/some,image.png 2x"></picture>`
+	expected := `<picture><source srcset="/proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, /proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMy5wbmc= 360w, /proxy/aHR0cHM6Ly93ZWJzaXRlL3NvbWUsaW1hZ2UucG5n 2x"/></picture>`
+	output := ImageProxyRewriter(r, input)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %s`, output)
+	}
+}
+
+func TestProxyFilterOnlyNonHTTPWithPictureSource(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "https")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<picture><source srcset="http://website/folder/image2.png 656w, https://website/some,image.png 2x"></picture>`
+	expected := `<picture><source srcset="/proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlMi5wbmc= 656w, https://website/some,image.png 2x"/></picture>`
 	output := ImageProxyRewriter(r, input)
 
 	if expected != output {

@@ -85,16 +85,6 @@ func TestMediumImgWithSrcset(t *testing.T) {
 	}
 }
 
-func TestEconomistImgWithSrcset(t *testing.T) {
-	input := `<img loading="lazy" src="https://www.economist.com/img/b/608/634/90/sites/default/files/images/print-edition/20211009_WWC585.png" srcSet="https://www.economist.com/img/b/200/209/90/sites/default/files/images/print-edition/20211009_WWC585.png 200w,https://www.economist.com/img/b/300/313/90/sites/default/files/images/print-edition/20211009_WWC585.png 300w,https://www.economist.com/img/b/400/417/90/sites/default/files/images/print-edition/20211009_WWC585.png 400w,https://www.economist.com/img/b/600/626/90/sites/default/files/images/print-edition/20211009_WWC585.png 600w,https://www.economist.com/img/b/640/667/90/sites/default/files/images/print-edition/20211009_WWC585.png 640w,https://www.economist.com/img/b/800/834/90/sites/default/files/images/print-edition/20211009_WWC585.png 800w,https://www.economist.com/img/b/1000/1043/90/sites/default/files/images/print-edition/20211009_WWC585.png 1000w,https://www.economist.com/img/b/1280/1335/90/sites/default/files/images/print-edition/20211009_WWC585.png 1280w" sizes="300px" alt=""/>`
-	expected := `<img src="https://www.economist.com/img/b/608/634/90/sites/default/files/images/print-edition/20211009_WWC585.png" srcset="https://www.economist.com/img/b/200/209/90/sites/default/files/images/print-edition/20211009_WWC585.png 200w, https://www.economist.com/img/b/300/313/90/sites/default/files/images/print-edition/20211009_WWC585.png 300w, https://www.economist.com/img/b/400/417/90/sites/default/files/images/print-edition/20211009_WWC585.png 400w, https://www.economist.com/img/b/600/626/90/sites/default/files/images/print-edition/20211009_WWC585.png 600w, https://www.economist.com/img/b/640/667/90/sites/default/files/images/print-edition/20211009_WWC585.png 640w, https://www.economist.com/img/b/800/834/90/sites/default/files/images/print-edition/20211009_WWC585.png 800w, https://www.economist.com/img/b/1000/1043/90/sites/default/files/images/print-edition/20211009_WWC585.png 1000w, https://www.economist.com/img/b/1280/1335/90/sites/default/files/images/print-edition/20211009_WWC585.png 1280w" sizes="300px" alt="" loading="lazy"/>`
-	output := Sanitize("http://example.org/", input)
-
-	if output != expected {
-		t.Errorf(`Wrong output: %s`, output)
-	}
-}
-
 func TestSelfClosingTags(t *testing.T) {
 	input := `<p>This <br> is a <strong>text</strong> <br/>with an image: <img src="http://example.org/" alt="Test" loading="lazy"/>.</p>`
 	output := Sanitize("http://example.org/", input)
