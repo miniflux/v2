@@ -313,7 +313,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.ReadingTime,
 			&entry.CreatedAt,
 			&entry.ChangedAt,
-			&entry.Category,
+			pq.Array(&entry.Category),
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,

@@ -153,7 +153,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
-		entry.Category,
+		pq.Array(entry.Category),
 	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {

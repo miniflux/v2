@@ -181,7 +181,6 @@ type rssItem struct {
 }
 
 func (r *rssItem) Transform() *model.Entry {
-	logger.Debug("[RSSItem] Parsing %q", r)
 	entry := new(model.Entry)
 	entry.URL = r.entryURL()
 	entry.CommentsURL = r.entryCommentsURL()
@@ -193,7 +192,6 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Enclosures = r.entryEnclosures()
 	entry.Category = r.entryCategories()
 
-	logger.Debug("[RSSItem] Parsed %q", entry.Category)
 	return entry
 }
 
@@ -370,7 +368,7 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 	return enclosures
 }
 
-func (r *rssItem) entryCategories() string {
+func (r *rssItem) entryCategories() []string {
 	var categoryList []string
 
 	for _, rssCategory := range r.Categorys {
@@ -381,7 +379,7 @@ func (r *rssItem) entryCategories() string {
 		}
 	}
 
-	return strings.Join(categoryList[:], ",")
+	return categoryList
 }
 
 func (r *rssItem) entryCommentsURL() string {
