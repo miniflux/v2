@@ -15,6 +15,26 @@ func TestValidInput(t *testing.T) {
 	}
 }
 
+func TestImgWithWidthAndHeightAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="10" height="20">`
+	expected := `<img src="https://example.org/image.png" width="10" height="20" loading="lazy">`
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithIncorrectWidthAndHeightAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="10px" height="20px">`
+	expected := `<img src="https://example.org/image.png" loading="lazy">`
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
 func TestImgWithTextDataURL(t *testing.T) {
 	input := `<img src="data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==" alt="Example">`
 	expected := ``
@@ -57,7 +77,7 @@ func TestSourceWithSrcsetAndMedia(t *testing.T) {
 
 func TestMediumImgWithSrcset(t *testing.T) {
 	input := `<img alt="Image for post" class="t u v ef aj" src="https://miro.medium.com/max/5460/1*aJ9JibWDqO81qMfNtqgqrw.jpeg" srcset="https://miro.medium.com/max/552/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 276w, https://miro.medium.com/max/1000/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 500w" sizes="500px" width="2730" height="3407">`
-	expected := `<img alt="Image for post" src="https://miro.medium.com/max/5460/1*aJ9JibWDqO81qMfNtqgqrw.jpeg" srcset="https://miro.medium.com/max/552/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 276w, https://miro.medium.com/max/1000/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 500w" sizes="500px" loading="lazy">`
+	expected := `<img alt="Image for post" src="https://miro.medium.com/max/5460/1*aJ9JibWDqO81qMfNtqgqrw.jpeg" srcset="https://miro.medium.com/max/552/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 276w, https://miro.medium.com/max/1000/1*aJ9JibWDqO81qMfNtqgqrw.jpeg 500w" sizes="500px" width="2730" height="3407" loading="lazy">`
 	output := Sanitize("http://example.org/", input)
 
 	if output != expected {

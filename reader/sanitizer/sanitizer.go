@@ -113,6 +113,10 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 			value = sanitizeSrcsetAttr(baseURL, value)
 		}
 
+		if tagName == "img" && (attribute.Key == "width" || attribute.Key == "height") && !isPositiveInteger(value) {
+			continue
+		}
+
 		if isExternalResourceAttribute(attribute.Key) {
 			if tagName == "iframe" {
 				if isValidIframeSource(baseURL, attribute.Val) {
@@ -350,7 +354,7 @@ func isValidIframeSource(baseURL, src string) bool {
 
 func getTagAllowList() map[string][]string {
 	whitelist := make(map[string][]string)
-	whitelist["img"] = []string{"alt", "title", "src", "srcset", "sizes"}
+	whitelist["img"] = []string{"alt", "title", "src", "srcset", "sizes", "width", "height"}
 	whitelist["picture"] = []string{}
 	whitelist["audio"] = []string{"src"}
 	whitelist["video"] = []string{"poster", "height", "width", "src"}
@@ -508,6 +512,13 @@ func isValidDataAttribute(value string) bool {
 		if strings.HasPrefix(value, prefix) {
 			return true
 		}
+	}
+	return false
+}
+
+func isPositiveInteger(value string) bool {
+	if number, err := strconv.Atoi(value); err == nil {
+		return number > 0
 	}
 	return false
 }
