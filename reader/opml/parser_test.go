@@ -38,15 +38,15 @@ func TestParseOpmlWithoutCategories(t *testing.T) {
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(subscriptions) != 13 {
-		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 13)
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 13)
 	}
 
 	if !subscriptions[0].Equals(expected[0]) {
-		t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[0], expected[0])
+		t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[0], expected[0])
 	}
 }
 
@@ -75,16 +75,16 @@ func TestParseOpmlWithCategories(t *testing.T) {
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(subscriptions) != 3 {
-		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 3)
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 3)
 	}
 
 	for i := 0; i < len(subscriptions); i++ {
 		if !subscriptions[i].Equals(expected[i]) {
-			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
 }
@@ -108,16 +108,16 @@ func TestParseOpmlWithEmptyTitleAndEmptySiteURL(t *testing.T) {
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(subscriptions) != 2 {
-		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
 	}
 
 	for i := 0; i < len(subscriptions); i++ {
 		if !subscriptions[i].Equals(expected[i]) {
-			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
 }
@@ -146,16 +146,16 @@ func TestParseOpmlVersion1(t *testing.T) {
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(subscriptions) != 2 {
-		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
 	}
 
 	for i := 0; i < len(subscriptions); i++ {
 		if !subscriptions[i].Equals(expected[i]) {
-			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
 }
@@ -180,16 +180,58 @@ func TestParseOpmlVersion1WithoutOuterOutline(t *testing.T) {
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(subscriptions) != 2 {
-		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
 	}
 
 	for i := 0; i < len(subscriptions); i++ {
 		if !subscriptions[i].Equals(expected[i]) {
-			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
+		}
+	}
+}
+
+func TestParseOpmlVersion1WithSeveralNestedOutlines(t *testing.T) {
+	data := `<?xml version="1.0"?>
+	<opml xmlns:rssowl="http://www.rssowl.org" version="1.1">
+		<head>
+			<title>RSSOwl Subscriptions</title>
+			<dateCreated>星期二, 26 四月 2022 00:12:04 CST</dateCreated>
+		</head>
+		<body>
+			<outline text="My Feeds" rssowl:isSet="true" rssowl:id="7">
+				<outline text="Some Category" rssowl:isSet="false" rssowl:id="55">
+					<outline type="rss" title="Feed 1" xmlUrl="http://example.org/feed1/" htmlUrl="http://example.org/1"></outline>
+					<outline type="rss" title="Feed 2" xmlUrl="http://example.org/feed2/" htmlUrl="http://example.org/2"></outline>
+				</outline>
+				<outline text="Another Category" rssowl:isSet="false" rssowl:id="87">
+					<outline type="rss" title="Feed 3" xmlUrl="http://example.org/feed3/" htmlUrl="http://example.org/3"></outline>
+				</outline>
+			</outline>
+		</body>
+	</opml>
+	`
+
+	var expected SubcriptionList
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: "Some Category"})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: "Some Category"})
+	expected = append(expected, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed3/", SiteURL: "http://example.org/3", CategoryName: "Another Category"})
+
+	subscriptions, err := Parse(bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(subscriptions) != 3 {
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 3)
+	}
+
+	for i := 0; i < len(subscriptions); i++ {
+		if !subscriptions[i].Equals(expected[i]) {
+			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
 }
@@ -213,16 +255,16 @@ func TestParseOpmlWithInvalidCharacterEntity(t *testing.T) {
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if len(subscriptions) != 1 {
-		t.Errorf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 1)
+		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 1)
 	}
 
 	for i := 0; i < len(subscriptions); i++ {
 		if !subscriptions[i].Equals(expected[i]) {
-			t.Errorf(`Subscription are different: "%v" vs "%v"`, subscriptions[i], expected[i])
+			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
 	}
 }
