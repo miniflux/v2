@@ -5,17 +5,15 @@
 package proxy // import "miniflux.app/proxy"
 
 import (
-	"regexp"
 	"strings"
 
 	"miniflux.app/config"
+	"miniflux.app/reader/sanitizer"
 	"miniflux.app/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"
 )
-
-var regexSplitSrcset = regexp.MustCompile(`,\s+`)
 
 // ImageProxyRewriter replaces image URLs with internal proxy URLs.
 func ImageProxyRewriter(router *mux.Router, data string) string {
@@ -30,24 +28,20 @@ func ImageProxyRewriter(router *mux.Router, data string) string {
 	}
 
 	doc.Find("img").Each(func(i int, img *goquery.Selection) {
-		if srcAttr, ok := img.Attr("src"); ok {
-			if !isDataURL(srcAttr) && (proxyImages == "all" || !url.IsHTTPS(srcAttr)) {
-				img.SetAttr("src", ProxifyURL(router, srcAttr))
+		if srcAttrValue, ok := img.Attr("src"); ok {
+			if !isDataURL(srcAttrValue) && (proxyImages == "all" || !url.IsHTTPS(srcAttrValue)) {
+				img.SetAttr("src", ProxifyURL(router, srcAttrValue))
 			}
 		}
 
-		if srcsetAttr, ok := img.Attr("srcset"); ok {
-			if proxyImages == "all" || !url.IsHTTPS(srcsetAttr) {
-				proxifySourceSet(img, router, srcsetAttr)
-			}
+		if srcsetAttrValue, ok := img.Attr("srcset"); ok {
+			proxifySourceSet(img, router, proxyImages, srcsetAttrValue)
 		}
 	})
 
 	doc.Find("picture source").Each(func(i int, sourceElement *goquery.Selection) {
-		if srcsetAttr, ok := sourceElement.Attr("srcset"); ok {
-			if proxyImages == "all" || !url.IsHTTPS(srcsetAttr) {
-				proxifySourceSet(sourceElement, router, srcsetAttr)
-			}
+		if srcsetAttrValue, ok := sourceElement.Attr("srcset"); ok {
+			proxifySourceSet(sourceElement, router, proxyImages, srcsetAttrValue)
 		}
 	})
 
@@ -59,30 +53,16 @@ func ImageProxyRewriter(router *mux.Router, data string) string {
 	return output
 }
 
-func proxifySourceSet(element *goquery.Selection, router *mux.Router, attributeValue string) {
-	var proxifiedSources []string
+func proxifySourceSet(element *goquery.Selection, router *mux.Router, proxyImages, srcsetAttrValue string) {
+	imageCandidates := sanitizer.ParseSrcSetAttribute(srcsetAttrValue)
 
-	for _, source := range regexSplitSrcset.Split(attributeValue, -1) {
-		parts := strings.Split(strings.TrimSpace(source), " ")
-		nbParts := len(parts)
-
-		if nbParts > 0 {
-			rewrittenSource := parts[0]
-			if !isDataURL(rewrittenSource) {
-				rewrittenSource = ProxifyURL(router, rewrittenSource)
-			}
-
-			if nbParts > 1 {
-				rewrittenSource += " " + parts[1]
-			}
-
-			proxifiedSources = append(proxifiedSources, rewrittenSource)
+	for _, imageCandidate := range imageCandidates {
+		if !isDataURL(imageCandidate.ImageURL) && (proxyImages == "all" || !url.IsHTTPS(imageCandidate.ImageURL)) {
+			imageCandidate.ImageURL = ProxifyURL(router, imageCandidate.ImageURL)
 		}
 	}
 
-	if len(proxifiedSources) > 0 {
-		element.SetAttr("srcset", strings.Join(proxifiedSources, ", "))
-	}
+	element.SetAttr("srcset", imageCandidates.String())
 }
 
 func isDataURL(s string) bool {

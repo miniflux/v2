@@ -20,7 +20,6 @@ import (
 
 var (
 	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)`)
-	splitSrcsetRegex  = regexp.MustCompile(`,\s?`)
 )
 
 // Sanitize returns safe HTML.
@@ -447,52 +446,17 @@ func isBlockedTag(tagName string) bool {
 	return false
 }
 
-/*
-
-One or more strings separated by commas, indicating possible image sources for the user agent to use.
-
-Each string is composed of:
-- A URL to an image
-- Optionally, whitespace followed by one of:
-- A width descriptor (a positive integer directly followed by w). The width descriptor is divided by the source size given in the sizes attribute to calculate the effective pixel density.
-- A pixel density descriptor (a positive floating point number directly followed by x).
-
-*/
 func sanitizeSrcsetAttr(baseURL, value string) string {
-	var sanitizedSources []string
-	rawSources := splitSrcsetRegex.Split(value, -1)
-	for _, rawSource := range rawSources {
-		parts := strings.Split(strings.TrimSpace(rawSource), " ")
-		nbParts := len(parts)
+	imageCandidates := ParseSrcSetAttribute(value)
 
-		if nbParts > 0 {
-			sanitizedSource, err := url.AbsoluteURL(baseURL, parts[0])
-			if err != nil {
-				continue
-			}
-
-			if nbParts == 2 && isValidWidthOrDensityDescriptor(parts[1]) {
-				sanitizedSource += " " + parts[1]
-			}
-
-			sanitizedSources = append(sanitizedSources, sanitizedSource)
+	for _, imageCandidate := range imageCandidates {
+		absoluteURL, err := url.AbsoluteURL(baseURL, imageCandidate.ImageURL)
+		if err == nil {
+			imageCandidate.ImageURL = absoluteURL
 		}
 	}
-	return strings.Join(sanitizedSources, ", ")
-}
 
-func isValidWidthOrDensityDescriptor(value string) bool {
-	if value == "" {
-		return false
-	}
-
-	lastChar := value[len(value)-1:]
-	if lastChar != "w" && lastChar != "x" {
-		return false
-	}
-
-	_, err := strconv.ParseFloat(value[0:len(value)-1], 32)
-	return err == nil
+	return imageCandidates.String()
 }
 
 func isValidDataAttribute(value string) bool {
