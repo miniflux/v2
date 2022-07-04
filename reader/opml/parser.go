@@ -25,5 +25,21 @@ func Parse(data io.Reader) (SubcriptionList, *errors.LocalizedError) {
 		return nil, errors.NewLocalizedError("Unable to parse OPML file: %q", err)
 	}
 
-	return opmlDocument.GetSubscriptionList(), nil
+	return getSubscriptionsFromOutlines(opmlDocument.Outlines, ""), nil
+}
+
+func getSubscriptionsFromOutlines(outlines opmlOutlineCollection, category string) (subscriptions SubcriptionList) {
+	for _, outline := range outlines {
+		if outline.IsSubscription() {
+			subscriptions = append(subscriptions, &Subcription{
+				Title:        outline.GetTitle(),
+				FeedURL:      outline.FeedURL,
+				SiteURL:      outline.GetSiteURL(),
+				CategoryName: category,
+			})
+		} else if outline.Outlines.HasChildren() {
+			subscriptions = append(subscriptions, getSubscriptionsFromOutlines(outline.Outlines, outline.Text)...)
+		}
+	}
+	return subscriptions
 }
