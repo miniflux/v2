@@ -100,6 +100,12 @@ func Sanitize(baseURL, input string) string {
 func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([]string, string) {
 	var htmlAttrs, attrNames []string
 	var err error
+	var isImageLargerThanLayout bool
+
+	if tagName == "img" {
+		imgWidth := getIntegerAttributeValue("width", attributes)
+		isImageLargerThanLayout = imgWidth > 750
+	}
 
 	for _, attribute := range attributes {
 		value := attribute.Val
@@ -112,8 +118,14 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 			value = sanitizeSrcsetAttr(baseURL, value)
 		}
 
-		if tagName == "img" && (attribute.Key == "width" || attribute.Key == "height") && !isPositiveInteger(value) {
-			continue
+		if tagName == "img" && (attribute.Key == "width" || attribute.Key == "height") {
+			if !isPositiveInteger(value) {
+				continue
+			}
+
+			if isImageLargerThanLayout {
+				continue
+			}
 		}
 
 		if isExternalResourceAttribute(attribute.Key) {
@@ -485,4 +497,18 @@ func isPositiveInteger(value string) bool {
 		return number > 0
 	}
 	return false
+}
+
+func getAttributeValue(name string, attributes []html.Attribute) string {
+	for _, attribute := range attributes {
+		if attribute.Key == name {
+			return attribute.Val
+		}
+	}
+	return ""
+}
+
+func getIntegerAttributeValue(name string, attributes []html.Attribute) int {
+	number, _ := strconv.Atoi(getAttributeValue(name, attributes))
+	return number
 }
