@@ -220,6 +220,29 @@ func TestProxyFilterWithSrcset(t *testing.T) {
 	}
 }
 
+func TestProxyFilterWithEmptySrcset(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "all")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="http://website/folder/image.png" srcset="" alt="test"></p>`
+	expected := `<p><img src="/proxy/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" srcset="" alt="test"/></p>`
+	output := ImageProxyRewriter(r, input)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %s`, output)
+	}
+}
+
 func TestProxyFilterWithPictureSource(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("PROXY_IMAGES", "all")
