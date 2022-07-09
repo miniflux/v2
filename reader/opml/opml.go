@@ -6,34 +6,19 @@ package opml // import "miniflux.app/reader/opml"
 
 import (
 	"encoding/xml"
+	"strings"
 )
 
 // Specs: http://opml.org/spec2.opml
 type opmlDocument struct {
-	XMLName  xml.Name      `xml:"opml"`
-	Version  string        `xml:"version,attr"`
-	Header   opmlHeader    `xml:"head"`
-	Outlines []opmlOutline `xml:"body>outline"`
+	XMLName  xml.Name              `xml:"opml"`
+	Version  string                `xml:"version,attr"`
+	Header   opmlHeader            `xml:"head"`
+	Outlines opmlOutlineCollection `xml:"body>outline"`
 }
 
 func NewOPMLDocument() *opmlDocument {
 	return &opmlDocument{}
-}
-
-func (o *opmlDocument) GetSubscriptionList() SubcriptionList {
-	var subscriptions SubcriptionList
-	for _, outline := range o.Outlines {
-		if len(outline.Outlines) > 0 {
-			for _, element := range outline.Outlines {
-				// outline.Text is only available in OPML v2.
-				subscriptions = element.Append(subscriptions, outline.Text)
-			}
-		} else {
-			subscriptions = outline.Append(subscriptions, "")
-		}
-	}
-
-	return subscriptions
 }
 
 type opmlHeader struct {
@@ -43,11 +28,15 @@ type opmlHeader struct {
 }
 
 type opmlOutline struct {
-	Title    string        `xml:"title,attr,omitempty"`
-	Text     string        `xml:"text,attr"`
-	FeedURL  string        `xml:"xmlUrl,attr,omitempty"`
-	SiteURL  string        `xml:"htmlUrl,attr,omitempty"`
-	Outlines []opmlOutline `xml:"outline,omitempty"`
+	Title    string                `xml:"title,attr,omitempty"`
+	Text     string                `xml:"text,attr"`
+	FeedURL  string                `xml:"xmlUrl,attr,omitempty"`
+	SiteURL  string                `xml:"htmlUrl,attr,omitempty"`
+	Outlines opmlOutlineCollection `xml:"outline,omitempty"`
+}
+
+func (o *opmlOutline) IsSubscription() bool {
+	return strings.TrimSpace(o.FeedURL) != ""
 }
 
 func (o *opmlOutline) GetTitle() string {
@@ -78,15 +67,8 @@ func (o *opmlOutline) GetSiteURL() string {
 	return o.FeedURL
 }
 
-func (o *opmlOutline) Append(subscriptions SubcriptionList, category string) SubcriptionList {
-	if o.FeedURL != "" {
-		subscriptions = append(subscriptions, &Subcription{
-			Title:        o.GetTitle(),
-			FeedURL:      o.FeedURL,
-			SiteURL:      o.GetSiteURL(),
-			CategoryName: category,
-		})
-	}
+type opmlOutlineCollection []opmlOutline
 
-	return subscriptions
+func (o opmlOutlineCollection) HasChildren() bool {
+	return len(o) > 0
 }
