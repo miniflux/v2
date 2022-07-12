@@ -17,6 +17,7 @@
     <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
     <input type="hidden" name="blocklist_rules" value="{{ .form.BlocklistRules }}">
     <input type="hidden" name="keeplist_rules" value="{{ .form.KeeplistRules }}">
+    <input type="hidden" name="urlrewrite_rules" value="{{ .form.UrlRewriteRules }}">
     {{ if .form.FetchViaProxy }}
     <input type="hidden" name="fetch_via_proxy" value="1">
     {{ end }}
