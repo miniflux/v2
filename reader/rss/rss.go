@@ -150,6 +150,12 @@ type rssEnclosure struct {
 	Length string `xml:"length,attr"`
 }
 
+type rssCategory struct {
+	XMLName xml.Name
+	Data    string `xml:",chardata"`
+	Inner   string `xml:",innerxml"`
+}
+
 func (enclosure *rssEnclosure) Size() int64 {
 	if enclosure.Length == "" {
 		return 0
@@ -167,6 +173,7 @@ type rssItem struct {
 	Authors        []rssAuthor      `xml:"author"`
 	CommentLinks   []rssCommentLink `xml:"comments"`
 	EnclosureLinks []rssEnclosure   `xml:"enclosure"`
+	Categorys      []rssCategory    `xml:"category"`
 	DublinCoreElement
 	FeedBurnerElement
 	PodcastEntryElement
@@ -183,6 +190,8 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Content = r.entryContent()
 	entry.Title = r.entryTitle()
 	entry.Enclosures = r.entryEnclosures()
+	entry.Category = r.entryCategories()
+
 	return entry
 }
 
@@ -357,6 +366,20 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 	}
 
 	return enclosures
+}
+
+func (r *rssItem) entryCategories() []string {
+	var categoryList []string
+
+	for _, rssCategory := range r.Categorys {
+		if strings.Contains(rssCategory.Inner, "<![CDATA[") {
+			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Data))
+		} else {
+			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Inner))
+		}
+	}
+
+	return categoryList
 }
 
 func (r *rssItem) entryCommentsURL() string {
