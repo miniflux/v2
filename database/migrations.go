@@ -591,4 +591,10 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN url_rewrite_rules text not null default ''
+		`)
+		return err
+	},
 }

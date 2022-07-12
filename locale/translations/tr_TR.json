@@ -275,6 +275,7 @@
     "form.feed.label.rewrite_rules": "Yeniden Yazma Kuralları",
     "form.feed.label.blocklist_rules": "Engelleme Kuralları",
     "form.feed.label.keeplist_rules": "Saklama Kuralları",
+    "form.feed.label.urlrewrite_rules": "URL Yeniden Yazma Kuralları",
     "form.feed.label.ignore_http_cache": "HTTP önbelleğini yoksay",
     "form.feed.label.allow_self_signed_certificates": "Kendinden imzalı veya geçersiz sertifikalara izin ver",
     "form.feed.label.fetch_via_proxy": "Proxy ile çek",

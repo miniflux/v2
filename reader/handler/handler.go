@@ -74,6 +74,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.RewriteRules = feedCreationRequest.RewriteRules
 	subscription.BlocklistRules = feedCreationRequest.BlocklistRules
 	subscription.KeeplistRules = feedCreationRequest.KeeplistRules
+	subscription.UrlRewriteRules = feedCreationRequest.UrlRewriteRules
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()

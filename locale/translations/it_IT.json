@@ -275,6 +275,7 @@
     "form.feed.label.rewrite_rules": "Regole di impaginazione del contenuto",
     "form.feed.label.blocklist_rules": "Regole di blocco",
     "form.feed.label.keeplist_rules": "Regole di autorizzazione",
+    "form.feed.label.urlrewrite_rules": "Regole di riscrittura URL",
     "form.feed.label.ignore_http_cache": "Ignora cache HTTP",
     "form.feed.label.allow_self_signed_certificates": "Consenti certificati autofirmati o non validi",
     "form.feed.label.fetch_via_proxy": "Recuperare tramite proxy",
