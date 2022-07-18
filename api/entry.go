@@ -132,6 +132,8 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 		return
 	}
 
+	category := request.QueryStringParamList(r, "category")
+
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithFeedID(feedID)
 	builder.WithCategoryID(categoryID)
@@ -140,6 +142,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder.WithDirection(direction)
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
+	builder.WithCategory(category)
 	configureFilters(builder, r)
 
 	entries, err := builder.GetEntries()

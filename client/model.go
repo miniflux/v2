@@ -218,6 +218,7 @@ type Entry struct {
 	ReadingTime int        `json:"reading_time"`
 	Enclosures  Enclosures `json:"enclosures,omitempty"`
 	Feed        *Feed      `json:"feed,omitempty"`
+	Category    []string   `json:"category"`
 }
 
 // Entries represents a list of entries.

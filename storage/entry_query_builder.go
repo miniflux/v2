@@ -135,6 +135,17 @@ func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
 	return e
 }
 
+// WithStatuses filter by a list of entry statuses.
+func (e *EntryQueryBuilder) WithCategory(category []string) *EntryQueryBuilder {
+	if len(category) > 0 {
+		for _, cat := range category {
+			e.conditions = append(e.conditions, fmt.Sprintf("$%d = ANY(e.category)", len(e.args)+1))
+			e.args = append(e.args, cat)
+		}
+	}
+	return e
+}
+
 // WithoutStatus set the entry status that should not be returned.
 func (e *EntryQueryBuilder) WithoutStatus(status string) *EntryQueryBuilder {
 	if status != "" {
@@ -250,6 +261,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.reading_time,
 			e.created_at,
 			e.changed_at,
+			e.category,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
@@ -312,6 +324,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.ReadingTime,
 			&entry.CreatedAt,
 			&entry.ChangedAt,
+			pq.Array(&entry.Category),
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,
