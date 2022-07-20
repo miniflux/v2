@@ -15,7 +15,7 @@
 {{ else }}
     <div class="items">
         {{ range .categories }}
-        <article role="article" class="item">
+        <article role="article" class="item{{if gt .TotalUnread 0 }} category-has-unread{{end}}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>

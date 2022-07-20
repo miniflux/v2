@@ -108,6 +108,10 @@
     --feed-has-unread-border-style: solid;
     --feed-has-unread-border-color: #bee6bc;
 
+    --category-has-unread-background-color: #dfd;
+    --category-has-unread-border-style: solid;
+    --category-has-unread-border-color: #bee6bc;
+
     --keyboard-shortcuts-li-color: #333;
 
     --counter-color: #666;
