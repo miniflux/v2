@@ -18,24 +18,26 @@ const (
 
 // User represents a user in the system.
 type User struct {
-	ID                int64      `json:"id"`
-	Username          string     `json:"username"`
-	Password          string     `json:"password,omitempty"`
-	IsAdmin           bool       `json:"is_admin"`
-	Theme             string     `json:"theme"`
-	Language          string     `json:"language"`
-	Timezone          string     `json:"timezone"`
-	EntryDirection    string     `json:"entry_sorting_direction"`
-	EntryOrder        string     `json:"entry_sorting_order"`
-	Stylesheet        string     `json:"stylesheet"`
-	GoogleID          string     `json:"google_id"`
-	OpenIDConnectID   string     `json:"openid_connect_id"`
-	EntriesPerPage    int        `json:"entries_per_page"`
-	KeyboardShortcuts bool       `json:"keyboard_shortcuts"`
-	ShowReadingTime   bool       `json:"show_reading_time"`
-	EntrySwipe        bool       `json:"entry_swipe"`
-	LastLoginAt       *time.Time `json:"last_login_at"`
-	DisplayMode       string     `json:"display_mode"`
+	ID                  int64      `json:"id"`
+	Username            string     `json:"username"`
+	Password            string     `json:"password,omitempty"`
+	IsAdmin             bool       `json:"is_admin"`
+	Theme               string     `json:"theme"`
+	Language            string     `json:"language"`
+	Timezone            string     `json:"timezone"`
+	EntryDirection      string     `json:"entry_sorting_direction"`
+	EntryOrder          string     `json:"entry_sorting_order"`
+	Stylesheet          string     `json:"stylesheet"`
+	GoogleID            string     `json:"google_id"`
+	OpenIDConnectID     string     `json:"openid_connect_id"`
+	EntriesPerPage      int        `json:"entries_per_page"`
+	KeyboardShortcuts   bool       `json:"keyboard_shortcuts"`
+	ShowReadingTime     bool       `json:"show_reading_time"`
+	EntrySwipe          bool       `json:"entry_swipe"`
+	LastLoginAt         *time.Time `json:"last_login_at"`
+	DisplayMode         string     `json:"display_mode"`
+	DefaultReadingSpeed int        `json:"default_reading_speed"`
+	CJKReadingSpeed     int        `json:"cjk_reading_speed"`
 }
 
 func (u User) String() string {
@@ -53,22 +55,24 @@ type UserCreationRequest struct {
 
 // UserModificationRequest represents the request to update a user.
 type UserModificationRequest struct {
-	Username          *string `json:"username"`
-	Password          *string `json:"password"`
-	IsAdmin           *bool   `json:"is_admin"`
-	Theme             *string `json:"theme"`
-	Language          *string `json:"language"`
-	Timezone          *string `json:"timezone"`
-	EntryDirection    *string `json:"entry_sorting_direction"`
-	EntryOrder        *string `json:"entry_sorting_order"`
-	Stylesheet        *string `json:"stylesheet"`
-	GoogleID          *string `json:"google_id"`
-	OpenIDConnectID   *string `json:"openid_connect_id"`
-	EntriesPerPage    *int    `json:"entries_per_page"`
-	KeyboardShortcuts *bool   `json:"keyboard_shortcuts"`
-	ShowReadingTime   *bool   `json:"show_reading_time"`
-	EntrySwipe        *bool   `json:"entry_swipe"`
-	DisplayMode       *string `json:"display_mode"`
+	Username            *string `json:"username"`
+	Password            *string `json:"password"`
+	IsAdmin             *bool   `json:"is_admin"`
+	Theme               *string `json:"theme"`
+	Language            *string `json:"language"`
+	Timezone            *string `json:"timezone"`
+	EntryDirection      *string `json:"entry_sorting_direction"`
+	EntryOrder          *string `json:"entry_sorting_order"`
+	Stylesheet          *string `json:"stylesheet"`
+	GoogleID            *string `json:"google_id"`
+	OpenIDConnectID     *string `json:"openid_connect_id"`
+	EntriesPerPage      *int    `json:"entries_per_page"`
+	KeyboardShortcuts   *bool   `json:"keyboard_shortcuts"`
+	ShowReadingTime     *bool   `json:"show_reading_time"`
+	EntrySwipe          *bool   `json:"entry_swipe"`
+	DisplayMode         *string `json:"display_mode"`
+	DefaultReadingSpeed *int    `json:"default_reading_speed"`
+	CJKReadingSpeed     *int    `json:"cjk_reading_speed"`
 }
 
 // Users represents a list of users.

@@ -6,15 +6,17 @@ import (
 
 func TestValid(t *testing.T) {
 	settings := &SettingsForm{
-		Username:       "user",
-		Password:       "hunter2",
-		Confirmation:   "hunter2",
-		Theme:          "default",
-		Language:       "en_US",
-		Timezone:       "UTC",
-		EntryDirection: "asc",
-		EntriesPerPage: 50,
-		DisplayMode:    "standalone",
+		Username:            "user",
+		Password:            "hunter2",
+		Confirmation:        "hunter2",
+		Theme:               "default",
+		Language:            "en_US",
+		Timezone:            "UTC",
+		EntryDirection:      "asc",
+		EntriesPerPage:      50,
+		DisplayMode:         "standalone",
+		DefaultReadingSpeed: 35,
+		CJKReadingSpeed:     25,
 	}
 
 	err := settings.Validate()
@@ -25,15 +27,17 @@ func TestValid(t *testing.T) {
 
 func TestConfirmationEmpty(t *testing.T) {
 	settings := &SettingsForm{
-		Username:       "user",
-		Password:       "hunter2",
-		Confirmation:   "",
-		Theme:          "default",
-		Language:       "en_US",
-		Timezone:       "UTC",
-		EntryDirection: "asc",
-		EntriesPerPage: 50,
-		DisplayMode:    "standalone",
+		Username:            "user",
+		Password:            "hunter2",
+		Confirmation:        "",
+		Theme:               "default",
+		Language:            "en_US",
+		Timezone:            "UTC",
+		EntryDirection:      "asc",
+		EntriesPerPage:      50,
+		DisplayMode:         "standalone",
+		DefaultReadingSpeed: 35,
+		CJKReadingSpeed:     25,
 	}
 
 	err := settings.Validate()
@@ -48,15 +52,17 @@ func TestConfirmationEmpty(t *testing.T) {
 
 func TestConfirmationIncorrect(t *testing.T) {
 	settings := &SettingsForm{
-		Username:       "user",
-		Password:       "hunter2",
-		Confirmation:   "unter2",
-		Theme:          "default",
-		Language:       "en_US",
-		Timezone:       "UTC",
-		EntryDirection: "asc",
-		EntriesPerPage: 50,
-		DisplayMode:    "standalone",
+		Username:            "user",
+		Password:            "hunter2",
+		Confirmation:        "unter2",
+		Theme:               "default",
+		Language:            "en_US",
+		Timezone:            "UTC",
+		EntryDirection:      "asc",
+		EntriesPerPage:      50,
+		DisplayMode:         "standalone",
+		DefaultReadingSpeed: 35,
+		CJKReadingSpeed:     25,
 	}
 
 	err := settings.Validate()

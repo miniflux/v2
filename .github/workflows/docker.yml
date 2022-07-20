@@ -18,7 +18,7 @@ jobs:
       - name: Generate Alpine Docker tag
         id: docker_alpine_tag
         run: |
-          DOCKER_IMAGE=miniflux/miniflux
+          DOCKER_IMAGE=${{ github.repository_owner }}/miniflux
           DOCKER_VERSION=dev
           if [ "${{ github.event_name }}" = "schedule" ]; then
           DOCKER_VERSION=nightly
@@ -32,7 +32,7 @@ jobs:
       - name: Generate Distroless Docker tag
         id: docker_distroless_tag
         run: |
-          DOCKER_IMAGE=miniflux/miniflux
+          DOCKER_IMAGE=${{ github.repository_owner }}/miniflux
           DOCKER_VERSION=dev-distroless
           if [ "${{ github.event_name }}" = "schedule" ]; then
           DOCKER_VERSION=nightly-distroless

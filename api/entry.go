@@ -193,6 +193,17 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := h.store.UserByID(entry.UserID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if user == nil {
+		json.NotFound(w, r)
+		return
+	}
+
 	feedBuilder := storage.NewFeedQueryBuilder(h.store, loggedUserID)
 	feedBuilder.WithFeedID(entry.FeedID)
 	feed, err := feedBuilder.GetFeed()
@@ -206,7 +217,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := processor.ProcessEntryWebPage(feed, entry); err != nil {
+	if err := processor.ProcessEntryWebPage(feed, entry, user); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}

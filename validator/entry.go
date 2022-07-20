@@ -32,9 +32,9 @@ func ValidateEntryStatus(status string) error {
 // ValidateEntryOrder makes sure the sorting order is valid.
 func ValidateEntryOrder(order string) error {
 	switch order {
-	case "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id":
+	case "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id", "title", "author":
 		return nil
 	}
 
-	return fmt.Errorf(`Invalid entry order, valid order values are: "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id"`)
+	return fmt.Errorf(`Invalid entry order, valid order values are: "id", "status", "changed_at", "published_at", "created_at", "category_title", "category_id", "title", "author"`)
 }

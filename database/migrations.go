@@ -591,4 +591,17 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN url_rewrite_rules text not null default ''
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN default_reading_speed int default 265;
+			ALTER TABLE users ADD COLUMN cjk_reading_speed int default 500;
+		`)
+		return
+	},
 }
