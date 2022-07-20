@@ -604,4 +604,10 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN default_home_page text default 'unread';
+		`)
+		return
+	},
 }

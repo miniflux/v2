@@ -56,7 +56,7 @@
     <header class="header">
         <nav>
             <div class="logo">
-                <a href="{{ route "unread" }}">Mini<span>flux</span></a>
+                <a href="{{ route .user.DefaultHomePage }}">Mini<span>flux</span></a>
             </div>
             <ul>
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
