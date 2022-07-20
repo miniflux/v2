@@ -693,6 +693,16 @@ template {
     box-shadow: var(--current-item-box-shadow);
 }
 
+.item-header {
+    display: flex;
+}
+
+.item-title {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .item-title a {
     text-decoration: none;
     font-weight: var(--item-title-link-font-weight);
