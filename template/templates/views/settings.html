@@ -63,6 +63,13 @@
         <option value="created_at" {{ if eq "created_at" $.form.EntryOrder }}selected="selected"{{ end }}>{{ t "form.prefs.select.created_time" }}</option>
     </select>
 
+    <label for="form-default-home-page">{{ t "form.prefs.label.default_home_page" }}</label>
+    <select id="form-default-home-page" name="default_home_page">
+    {{ range $key, $value := .default_home_pages }}
+        <option value="{{ $key }}" {{ if eq $key $.form.DefaultHomePage }}selected="selected"{{ end }}>{{ t $value }}</option>
+    {{ end }}
+    </select>
+
     <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
     <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 

@@ -30,6 +30,7 @@ type SettingsForm struct {
 	DisplayMode         string
 	DefaultReadingSpeed int
 	CJKReadingSpeed     int
+	DefaultHomePage     string
 }
 
 // Merge updates the fields of the given user.
@@ -48,6 +49,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.DisplayMode = s.DisplayMode
 	user.CJKReadingSpeed = s.CJKReadingSpeed
 	user.DefaultReadingSpeed = s.DefaultReadingSpeed
+	user.DefaultHomePage = s.DefaultHomePage
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -58,7 +60,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" {
+	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
@@ -111,5 +113,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		DisplayMode:         r.FormValue("display_mode"),
 		DefaultReadingSpeed: int(defaultReadingSpeed),
 		CJKReadingSpeed:     int(cjkReadingSpeed),
+		DefaultHomePage:     r.FormValue("default_home_page"),
 	}
 }

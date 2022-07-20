@@ -41,6 +41,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		DisplayMode:         user.DisplayMode,
 		DefaultReadingSpeed: user.DefaultReadingSpeed,
 		CJKReadingSpeed:     user.CJKReadingSpeed,
+		DefaultHomePage:     user.DefaultHomePage,
 	}
 
 	timezones, err := h.store.Timezones()
@@ -57,6 +58,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", user)
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+	view.Set("default_home_pages", model.HomePages())
 
 	html.OK(w, r, view.Render("settings"))
 }

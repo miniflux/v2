@@ -17,6 +17,7 @@ func TestValid(t *testing.T) {
 		DisplayMode:         "standalone",
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
+		DefaultHomePage:     "unread",
 	}
 
 	err := settings.Validate()
@@ -38,6 +39,7 @@ func TestConfirmationEmpty(t *testing.T) {
 		DisplayMode:         "standalone",
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
+		DefaultHomePage:     "unread",
 	}
 
 	err := settings.Validate()
@@ -63,6 +65,7 @@ func TestConfirmationIncorrect(t *testing.T) {
 		DisplayMode:         "standalone",
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
+		DefaultHomePage:     "unread",
 	}
 
 	err := settings.Validate()

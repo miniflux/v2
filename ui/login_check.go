@@ -60,5 +60,5 @@ func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 		config.Opts.BasePath(),
 	))
 
-	html.Redirect(w, r, route.Path(h.router, "unread"))
+	html.Redirect(w, r, route.Path(h.router, user.DefaultHomePage))
 }
