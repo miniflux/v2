@@ -15,6 +15,8 @@ import (
 	"miniflux.app/config"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/yuin/goldmark"
+	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
 )
 
 var (
@@ -317,4 +319,19 @@ func decodeBase64Content(entryContent string) string {
 	} else {
 		return html.EscapeString(string(ret))
 	}
+}
+
+func parseMarkdown(entryContent string) string {
+	var sb strings.Builder
+	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			goldmarkhtml.WithUnsafe(),
+		),
+	)
+
+	if err := md.Convert([]byte(entryContent), &sb); err != nil {
+		return entryContent
+	}
+
+	return sb.String()
 }
