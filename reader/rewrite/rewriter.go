@@ -108,6 +108,8 @@ func applyRule(entryURL, entryContent string, rule rule) string {
 		} else {
 			entryContent = applyFuncOnTextContent(entryContent, "body", decodeBase64Content)
 		}
+	case "parse_markdown":
+		entryContent = parseMarkdown(entryContent)
 	}
 
 	return entryContent
