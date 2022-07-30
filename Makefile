@@ -153,7 +153,7 @@ rpm: clean
 		rpmbuild -bb --define "_miniflux_version $(VERSION)" /root/rpmbuild/SPECS/miniflux.spec
 
 debian:
-	@ docker build \
+	@ docker build --load \
 		--build-arg BASE_IMAGE_ARCH=$(DEB_IMG_ARCH) \
 		-t $(DEB_IMG_ARCH)/miniflux-deb-builder \
 		-f packaging/debian/Dockerfile \
