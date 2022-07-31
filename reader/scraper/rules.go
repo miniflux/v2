@@ -12,6 +12,7 @@ var predefinedRules = map[string]string{
 	"darkreading.com":      "#article-main:not(header)",
 	"developpez.com":       "div[itemprop=articleBody]",
 	"dilbert.com":          "span.comic-title-name, img.img-comic",
+	"explosm.net":          "div#comic",
 	"financialsamurai.com": "article",
 	"francetvinfo.fr":      ".text",
 	"github.com":           "article.entry-content",
