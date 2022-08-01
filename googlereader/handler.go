@@ -357,7 +357,7 @@ func getItemIDs(r *http.Request) ([]int64, error) {
 		var itemID int64
 		_, err := fmt.Sscanf(item, EntryIDLong, &itemID)
 		if err != nil {
-			itemID, err = strconv.ParseInt(item, 16, 64)
+			itemID, err = strconv.ParseInt(item, 10, 64)
 			if err != nil {
 				return nil, fmt.Errorf("could not parse item: %v", item)
 			}
