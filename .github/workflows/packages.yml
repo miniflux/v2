@@ -9,7 +9,7 @@ jobs:
     name: Build Debian Packages
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
           fetch-depth: 0
     - name: Set up QEMU
@@ -33,7 +33,7 @@ jobs:
     name: Build RPM Package
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
           fetch-depth: 0
     - name: Build RPM Package
