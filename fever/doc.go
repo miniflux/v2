@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package fever implements Fever API endpoints.
-
 */
 package fever // import "miniflux.app/fever"

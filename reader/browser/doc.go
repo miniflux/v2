@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package browser handles website crawling.
-
 */
 package browser // import "miniflux.app/reader/browser"

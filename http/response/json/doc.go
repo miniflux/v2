@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package json contains JSON response functions.
-
 */
 package json // import "miniflux.app/http/response/json"

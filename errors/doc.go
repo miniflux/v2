@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package errors handles localized errors.
-
 */
 package errors // import "miniflux.app/errors"

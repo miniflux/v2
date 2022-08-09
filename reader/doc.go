@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package reader implements everything related to feed parsing.
-
 */
 package reader // import "miniflux.app/reader"

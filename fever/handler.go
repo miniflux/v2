@@ -61,13 +61,13 @@ func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
 /*
 A request with the groups argument will return two additional members:
 
-    groups contains an array of group objects
-    feeds_groups contains an array of feeds_group objects
+	groups contains an array of group objects
+	feeds_groups contains an array of feeds_group objects
 
 A group object has the following members:
 
-    id (positive integer)
-    title (utf-8 string)
+	id (positive integer)
+	title (utf-8 string)
 
 The feeds_group object is documented under “Feeds/Groups Relationships.”
 
@@ -76,7 +76,6 @@ an is_spark equal to 0.
 
 The “Sparks” super group is not included in this response and is composed of all feeds with an
 is_spark equal to 1.
-
 */
 func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
@@ -107,18 +106,18 @@ func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 /*
 A request with the feeds argument will return two additional members:
 
-    feeds contains an array of group objects
-    feeds_groups contains an array of feeds_group objects
+	feeds contains an array of group objects
+	feeds_groups contains an array of feeds_group objects
 
 A feed object has the following members:
 
-    id (positive integer)
-    favicon_id (positive integer)
-    title (utf-8 string)
-    url (utf-8 string)
-    site_url (utf-8 string)
-    is_spark (boolean integer)
-    last_updated_on_time (Unix timestamp/integer)
+	id (positive integer)
+	favicon_id (positive integer)
+	title (utf-8 string)
+	url (utf-8 string)
+	site_url (utf-8 string)
+	is_spark (boolean integer)
+	last_updated_on_time (Unix timestamp/integer)
 
 The feeds_group object is documented under “Feeds/Groups Relationships.”
 
@@ -165,12 +164,12 @@ func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 /*
 A request with the favicons argument will return one additional member:
 
-    favicons contains an array of favicon objects
+	favicons contains an array of favicon objects
 
 A favicon object has the following members:
 
-    id (positive integer)
-    data (base64 encoded image data; prefixed by image type)
+	id (positive integer)
+	data (base64 encoded image data; prefixed by image type)
 
 An example data value:
 
@@ -206,20 +205,20 @@ func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 /*
 A request with the items argument will return two additional members:
 
-    items contains an array of item objects
-    total_items contains the total number of items stored in the database (added in API version 2)
+	items contains an array of item objects
+	total_items contains the total number of items stored in the database (added in API version 2)
 
 An item object has the following members:
 
-    id (positive integer)
-    feed_id (positive integer)
-    title (utf-8 string)
-    author (utf-8 string)
-    html (utf-8 string)
-    url (utf-8 string)
-    is_saved (boolean integer)
-    is_read (boolean integer)
-    created_on_time (Unix timestamp/integer)
+	id (positive integer)
+	feed_id (positive integer)
+	title (utf-8 string)
+	author (utf-8 string)
+	html (utf-8 string)
+	url (utf-8 string)
+	is_saved (boolean integer)
+	is_read (boolean integer)
+	created_on_time (Unix timestamp/integer)
 
 Most servers won’t have enough memory allocated to PHP to dump all items at once.
 Three optional arguments control determine the items included in the response.
@@ -232,7 +231,6 @@ Three optional arguments control determine the items included in the response.
 
 	Use the with_ids argument with a comma-separated list of item ids to request (a maximum of 50) specific items.
 	(added in API version 2)
-
 */
 func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	var result itemsResponse
@@ -327,7 +325,8 @@ The unread_item_ids and saved_item_ids arguments can be used to keep your local 
 with the remote Fever installation.
 
 A request with the unread_item_ids argument will return one additional member:
-    unread_item_ids (string/comma-separated list of positive integers)
+
+	unread_item_ids (string/comma-separated list of positive integers)
 */
 func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
@@ -384,9 +383,9 @@ func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	mark=item
-	as=? where ? is replaced with read, saved or unsaved
-	id=? where ? is replaced with the id of the item to modify
+mark=item
+as=? where ? is replaced with read, saved or unsaved
+id=? where ? is replaced with the id of the item to modify
 */
 func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
@@ -448,10 +447,10 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	mark=feed
-	as=read
-	id=? where ? is replaced with the id of the feed or group to modify
-	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
+mark=feed
+as=read
+id=? where ? is replaced with the id of the feed or group to modify
+before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
 func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
@@ -474,10 +473,10 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	mark=group
-	as=read
-	id=? where ? is replaced with the id of the feed or group to modify
-	before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
+mark=group
+as=read
+id=? where ? is replaced with the id of the feed or group to modify
+before=? where ? is replaced with the Unix timestamp of the the local client’s most recent items API request
 */
 func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
@@ -510,9 +509,8 @@ func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 /*
 A feeds_group object has the following members:
 
-    group_id (positive integer)
-    feed_ids (string/comma-separated list of positive integers)
-
+	group_id (positive integer)
+	feed_ids (string/comma-separated list of positive integers)
 */
 func (h *handler) buildFeedGroups(feeds model.Feeds) []feedsGroups {
 	feedsGroupedByCategory := make(map[int64][]string)

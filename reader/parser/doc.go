@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package parser provides a generic feed parser that abstract all different formats.
-
 */
 package parser // import "miniflux.app/reader/parser"

@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package logger handles application log messages with different levels.
-
 */
 package logger // import "miniflux.app/logger"

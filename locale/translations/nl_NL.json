@@ -396,7 +396,6 @@
     "Category not found for this user": "Categorie niet gevonden voor deze gebruiker",
     "This web page is empty": "Deze webpagina is leeg",
     "Invalid SSL certificate (original error: %q)": "Ongeldig SSL-certificaat (originele error: %q)",
-    "This website is temporarily unreachable (original error: %q)": "Deze website is tijdelijk onbereikbaar (originele error: %q)",
-    "This website is permanently unreachable (original error: %q)": "Deze website is permanent onbereikbaar (originele error: %q)",
+    "This website is unreachable (original error: %q)": "Deze website is onbereikbaar (originele error: %q)",
     "Website unreachable, the request timed out after %d seconds": "Website onbereikbaar, de request gaf een timeout na %d seconden"
 }

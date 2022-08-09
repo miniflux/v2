@@ -17,3 +17,12 @@ updates:
       - "fguillot"
     assignees:
       - "fguillot"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "fguillot"
+    assignees:
+      - "fguillot"
