@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package client provides an HTTP client builder.
-
 */
 package client // import "miniflux.app/http/client"

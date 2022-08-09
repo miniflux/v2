@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package config handles configuration management for the application.
-
 */
 package config // import "miniflux.app/config"

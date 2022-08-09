@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package crypto implements helpers related to cryptography.
-
 */
 package crypto // import "miniflux.app/crypto"

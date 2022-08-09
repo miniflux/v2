@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package date provides a feed date parser.
-
 */
 package date // import "miniflux.app/reader/date"

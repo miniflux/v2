@@ -397,7 +397,6 @@
     "This feed is empty": "該Feed是空的",
     "This web page is empty": "該網頁是空的",
     "Invalid SSL certificate (original error: %q)": "無效的 SSL 憑證 (錯誤: %q)",
-    "This website is temporarily unreachable (original error: %q)": "該網站暫時無法訪問 (原始錯誤: %q)",
-    "This website is permanently unreachable (original error: %q)": "該網站永久無法訪問(原始錯誤: %q)",
+    "This website is unreachable (original error: %q)": "該網站永久無法訪問(原始錯誤: %q)",
     "Website unreachable, the request timed out after %d seconds": "網站無法訪問, 請求已在 %d 秒後超時"
 }

@@ -404,7 +404,6 @@
     "This feed is empty": "Ten kanał jest pusty",
     "This web page is empty": "Ta strona jest pusta",
     "Invalid SSL certificate (original error: %q)": "Certyfikat SSL jest nieprawidłowy (błąd: %q)",
-    "This website is temporarily unreachable (original error: %q)": "Ta strona jest tymczasowo niedostępna (błąd: %q)",
-    "This website is permanently unreachable (original error: %q)": "Ta strona jest niedostępna (błąd: %q)",
+    "This website is unreachable (original error: %q)": "Ta strona jest niedostępna (błąd: %q)",
     "Website unreachable, the request timed out after %d seconds": "Strona internetowa nieosiągalna, żądanie wygasło po %d sekundach"
 }

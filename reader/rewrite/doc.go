@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package rewrite provides functions to manipulate feed contents.
-
 */
 package rewrite // import "miniflux.app/reader/rewrite"

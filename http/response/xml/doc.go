@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package xml contains XML response functions.
-
 */
 package xml // import "miniflux.app/http/response/xml"

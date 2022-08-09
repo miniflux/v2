@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package googlereader implements Google Reader API endpoints.
-
 */
 package googlereader // import "miniflux.app/googlereader"

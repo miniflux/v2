@@ -389,7 +389,6 @@
     "This feed is empty": "该源是空的",
     "This web page is empty": "该网页是空的",
     "Invalid SSL certificate (original error: %q)": "无效的 SSL 证书 (原始错误: %q)",
-    "This website is temporarily unreachable (original error: %q)": "该网站暂时不可达 (原始错误: %q)",
-    "This website is permanently unreachable (original error: %q)": "该网站永久不可达 (原始错误: %q)",
+    "This website is unreachable (original error: %q)": "该网站永久不可达 (原始错误: %q)",
     "Website unreachable, the request timed out after %d seconds": "网站不可达, 请求已在 %d 秒后超时"
 }

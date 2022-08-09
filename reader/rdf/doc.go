@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package rdf provides a RDF feed parser.
-
 */
 package rdf // import "miniflux.app/reader/rdf"

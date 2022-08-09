@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Miniflux is a feed reader application.
-
 */
 package main // import "miniflux.app"

@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package processor applies rules and sanitize content for feed entries.
-
 */
 package processor // import "miniflux.app/reader/processor"

@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package cli implements command line arguments for Miniflux application.
-
 */
 package cli // import "miniflux.app/cli"

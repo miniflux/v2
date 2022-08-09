@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package tests contains API integration tests.
-
 */
 package tests // import "miniflux.app/tests"

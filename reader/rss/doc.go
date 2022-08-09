@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package rss provides a RSS feed parser.
-
 */
 package rss // import "miniflux.app/reader/rss"

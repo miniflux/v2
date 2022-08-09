@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package subscription implements the logic to find subscriptions on a website.
-
 */
 package subscription // import "miniflux.app/reader/subscription"

@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package cookie provides functions to build cookies.
-
 */
 package cookie // import "miniflux.app/http/cookie"
