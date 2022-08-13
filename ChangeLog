@@ -1,3 +1,33 @@
+Version 2.0.38 (August 13, 2022)
+--------------------------------
+
+* Rename default branch from master to main
+* Update GitHub Actions
+* Bump `github.com/prometheus/client_golang` from `1.12.2` to `1.13.0`
+* Fix some linter issues
+* Handle Atom links with a text/html type defined
+* Add `parse_markdown` rewrite function
+* Build RPM and Debian packages automatically using GitHub Actions
+* Add `explosm.net` scraper rule
+* Make default home page configurable
+* Add title attribute to entry links because text could be truncated
+* Highlight categories with unread entries
+* Allow option to order by title and author in API entry endpoint
+* Update Russian translation
+* Make reading speed user-configurable
+* Added translation for Hindi language used in India
+* Add rewrite rules for article URL before fetching content
+* Bump `github.com/tdewolff/minify/v2` from `2.11.7` to `2.12.0`
+* Support other repo owners in GitHub Docker Action
+* Proxify empty URL should not crash
+* Avoid stretched image if specified width is larger than Miniflux's layout
+* Add support for OPML files with several nested outlines
+* sanitizer: handle image URLs in `srcset` attribute with comma
+* Allow `width` and `height` attributes for `img` tags
+* Document that `-config-dump` command line argument shows sensitive info
+* Add System-V init service in contrib folder
+* Fix syntax error in `RequestBuilder.getCsrfToken()` method
+
 Version 2.0.37 (May 27, 2022)
 -----------------------------
 
