@@ -29,4 +29,3 @@ jobs:
       - uses: golangci/golangci-lint-action@v3
         with:
           args: --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
-          skip-go-installation: true
