@@ -90,9 +90,9 @@
   "page.categories.entries": "Статті",
   "page.categories.feeds": "Підписки",
   "page.categories.feed_count": [
-    "Є %d стрічка.",
-    "Є %d стрічки.",
-    "Є %d стрічок."
+    "Містить %d стрічку.",
+    "Містить %d стрічки.",
+    "Містить %d стрічок."
   ],
   "page.categories.unread_counter": "Кількість непрочитаних записів",
   "page.new_category.title": "Нова категорія",
