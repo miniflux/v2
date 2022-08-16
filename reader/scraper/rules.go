@@ -39,6 +39,7 @@ var predefinedRules = map[string]string{
 	"raywenderlich.com":    "article",
 	"slate.fr":             ".field-items",
 	"smbc-comics.com":      "div#cc-comicbody, div#aftercomic",
+	"swordscomic.com":      "img#comic-image, div#info-frame.tab-content-area",
 	"techcrunch.com":       "div.article-entry",
 	"theoatmeal.com":       "div#comic",
 	"theregister.com":      "#top-col-story h2, #body",
