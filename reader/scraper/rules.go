@@ -31,6 +31,7 @@ var predefinedRules = map[string]string{
 	"npr.org":              "#storytext",
 	"oneindia.com":         ".io-article-body",
 	"opensource.com":       "div[property]",
+	"openingsource.org":    "article.suxing-popup-gallery",
 	"osnews.com":           "div.newscontent1",
 	"phoronix.com":         "div.content",
 	"pseudo-sciences.org":  "#art_main",
@@ -47,5 +48,4 @@ var predefinedRules = map[string]string{
 	"wired.com":            "main figure, article",
 	"zeit.de":              ".summary, .article-body",
 	"zdnet.com":            "div.storyBody",
-	"openingsource.org":    "article.suxing-popup-gallery",
 }
