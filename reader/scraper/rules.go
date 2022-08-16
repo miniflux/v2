@@ -38,6 +38,7 @@ var predefinedRules = map[string]string{
 	"quantamagazine.org":   ".outer--content, figure, script",
 	"raywenderlich.com":    "article",
 	"slate.fr":             ".field-items",
+	"smbc-comics.com":      "div#cc-comicbody, div#aftercomic",
 	"techcrunch.com":       "div.article-entry",
 	"theoatmeal.com":       "div#comic",
 	"theregister.com":      "#top-col-story h2, #body",
