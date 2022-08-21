@@ -23,7 +23,6 @@ import (
 	"miniflux.app/url"
 
 	"github.com/gorilla/mux"
-	"github.com/microcosm-cc/bluemonday"
 )
 
 type funcMap struct {
@@ -31,7 +30,6 @@ type funcMap struct {
 }
 
 var imgRE = regexp.MustCompile(`<img[^>]+\bsrc=["']([^"']+)\.jpg["']`)
-var bmpolicy = bluemonday.StripTagsPolicy()
 
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
@@ -42,7 +40,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"truncate":       truncate,
 		"isEmail":        isEmail,
 		"stripHTML": func(htm string) template.HTML {
-			stripped := bmpolicy.Sanitize(string(htm))
+			stripped := sanitizer.StripTags(string(htm))
 			return template.HTML(fmt.Sprintf("%s", stripped))
 		},
 		"findImages": func (htm, title string) template.HTML {
