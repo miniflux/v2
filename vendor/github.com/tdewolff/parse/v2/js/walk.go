@@ -183,7 +183,7 @@ func Walk(v IVisitor, n INode) {
 		Walk(v, &n.Body)
 		Walk(v, &n.Params)
 		Walk(v, &n.Name)
-	case *FieldDefinition:
+	case *Field:
 		Walk(v, &n.Name)
 		Walk(v, n.Init)
 	case *ClassDecl:
@@ -193,15 +193,13 @@ func Walk(v IVisitor, n INode) {
 
 		Walk(v, n.Extends)
 
-		if n.Definitions != nil {
-			for i := 0; i < len(n.Definitions); i++ {
-				Walk(v, &n.Definitions[i])
-			}
-		}
-
-		if n.Methods != nil {
-			for i := 0; i < len(n.Definitions); i++ {
-				Walk(v, &n.Definitions[i])
+		for _, item := range n.List {
+			if item.StaticBlock != nil {
+				Walk(v, item.StaticBlock)
+			} else if item.Method != nil {
+				Walk(v, item.Method)
+			} else {
+				Walk(v, &item.Field)
 			}
 		}
 	case *LiteralExpr:
@@ -266,9 +264,6 @@ func Walk(v IVisitor, n INode) {
 	case *CallExpr:
 		Walk(v, &n.Args)
 		Walk(v, n.X)
-	case *OptChainExpr:
-		Walk(v, n.X)
-		Walk(v, n.Y)
 	case *UnaryExpr:
 		Walk(v, n.X)
 	case *BinaryExpr:

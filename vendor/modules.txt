@@ -27,9 +27,6 @@ github.com/go-telegram-bot-api/telegram-bot-api
 github.com/golang/gddo/httputil/header
 # github.com/golang/protobuf v1.5.2
 github.com/golang/protobuf/proto
-github.com/golang/protobuf/ptypes
-github.com/golang/protobuf/ptypes/any
-github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/google/uuid v1.3.0
 github.com/google/uuid
@@ -44,8 +41,7 @@ github.com/jaytaylor/html2text
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
-# github.com/mattn/go-runewidth v0.0.13
-## explicit
+# github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
@@ -55,39 +51,39 @@ github.com/mitchellh/go-server-timing
 # github.com/olekukonko/tablewriter v0.0.5
 ## explicit
 github.com/olekukonko/tablewriter
-# github.com/pquerna/cachecontrol v0.1.0
+# github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35
 ## explicit
 github.com/pquerna/cachecontrol
 github.com/pquerna/cachecontrol/cacheobject
-# github.com/prometheus/client_golang v1.12.1
+# github.com/prometheus/client_golang v1.13.0
 ## explicit
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
 github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.2.0
 github.com/prometheus/client_model/go
-# github.com/prometheus/common v0.32.1
+# github.com/prometheus/common v0.37.0
 github.com/prometheus/common/expfmt
 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
 github.com/prometheus/common/model
-# github.com/prometheus/procfs v0.7.3
+# github.com/prometheus/procfs v0.8.0
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/rivo/uniseg v0.2.0
-github.com/rivo/uniseg
-# github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
+# github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
 ## explicit
 github.com/rylans/getlang
 # github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf
 ## explicit
 github.com/ssor/bom
-# github.com/tdewolff/minify/v2 v2.10.0
+# github.com/stretchr/testify v1.6.1
+## explicit
+# github.com/tdewolff/minify/v2 v2.12.0
 ## explicit
 github.com/tdewolff/minify/v2
 github.com/tdewolff/minify/v2/css
 github.com/tdewolff/minify/v2/js
-# github.com/tdewolff/parse/v2 v2.5.27
+# github.com/tdewolff/parse/v2 v2.6.1
 github.com/tdewolff/parse/v2
 github.com/tdewolff/parse/v2/buffer
 github.com/tdewolff/parse/v2/css
@@ -99,13 +95,23 @@ github.com/technoweenie/multipartstreamer
 # github.com/xiaonanln/keylock v0.0.0-20170708032727-d8acd162c477
 ## explicit
 github.com/xiaonanln/keylock
-# golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70
+# github.com/yuin/goldmark v1.1.32
+## explicit
+github.com/yuin/goldmark
+github.com/yuin/goldmark/ast
+github.com/yuin/goldmark/parser
+github.com/yuin/goldmark/renderer
+github.com/yuin/goldmark/renderer/html
+github.com/yuin/goldmark/text
+github.com/yuin/goldmark/util
+# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 ## explicit
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/pbkdf2
 # golang.org/x/net v0.0.0-20220225172249-27dd8689420f
 ## explicit
@@ -119,8 +125,7 @@ golang.org/x/net/idna
 ## explicit
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.0.0-20220307203707-22a9840ba4d7
-## explicit
+# golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
@@ -151,8 +156,7 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# google.golang.org/appengine v1.6.7
-## explicit
+# google.golang.org/appengine v1.6.6
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore
@@ -160,8 +164,7 @@ google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
-# google.golang.org/protobuf v1.27.1
-## explicit
+# google.golang.org/protobuf v1.28.1
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
@@ -189,10 +192,8 @@ google.golang.org/protobuf/reflect/protoregistry
 google.golang.org/protobuf/runtime/protoiface
 google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/descriptorpb
-google.golang.org/protobuf/types/known/anypb
-google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/timestamppb
-# gopkg.in/square/go-jose.v2 v2.6.0
+# gopkg.in/square/go-jose.v2 v2.5.0
 ## explicit
 gopkg.in/square/go-jose.v2
 gopkg.in/square/go-jose.v2/cipher

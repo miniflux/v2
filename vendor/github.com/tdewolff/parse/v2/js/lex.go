@@ -167,9 +167,7 @@ func (l *Lexer) Next() (TokenType, []byte) {
 		l.r.Move(1)
 		return ColonToken, l.r.Shift()
 	case '\'', '"':
-		if l.consumeStringToken() {
-			return StringToken, l.r.Shift()
-		}
+		return l.consumeStringToken(), l.r.Shift()
 	case ']':
 		l.r.Move(1)
 		return CloseBracketToken, l.r.Shift()
@@ -515,6 +513,18 @@ func (l *Lexer) consumeIdentifierToken() bool {
 	return true
 }
 
+func (l *Lexer) consumeNumericSeparator(f func() bool) bool {
+	if l.r.Peek(0) != '_' {
+		return false
+	}
+	l.r.Move(1)
+	if !f() {
+		l.r.Move(-1)
+		return false
+	}
+	return true
+}
+
 func (l *Lexer) consumeNumericToken() TokenType {
 	// assume to be on 0 1 2 3 4 5 6 7 8 9 .
 	first := l.r.Peek(0)
@@ -523,7 +533,7 @@ func (l *Lexer) consumeNumericToken() TokenType {
 		if l.r.Peek(0) == 'x' || l.r.Peek(0) == 'X' {
 			l.r.Move(1)
 			if l.consumeHexDigit() {
-				for l.consumeHexDigit() {
+				for l.consumeHexDigit() || l.consumeNumericSeparator(l.consumeHexDigit) {
 				}
 				return HexadecimalToken
 			}
@@ -532,7 +542,7 @@ func (l *Lexer) consumeNumericToken() TokenType {
 		} else if l.r.Peek(0) == 'b' || l.r.Peek(0) == 'B' {
 			l.r.Move(1)
 			if l.consumeBinaryDigit() {
-				for l.consumeBinaryDigit() {
+				for l.consumeBinaryDigit() || l.consumeNumericSeparator(l.consumeBinaryDigit) {
 				}
 				return BinaryToken
 			}
@@ -541,7 +551,7 @@ func (l *Lexer) consumeNumericToken() TokenType {
 		} else if l.r.Peek(0) == 'o' || l.r.Peek(0) == 'O' {
 			l.r.Move(1)
 			if l.consumeOctalDigit() {
-				for l.consumeOctalDigit() {
+				for l.consumeOctalDigit() || l.consumeNumericSeparator(l.consumeOctalDigit) {
 				}
 				return OctalToken
 			}
@@ -555,7 +565,7 @@ func (l *Lexer) consumeNumericToken() TokenType {
 			return ErrorToken
 		}
 	} else if first != '.' {
-		for l.consumeDigit() {
+		for l.consumeDigit() || l.consumeNumericSeparator(l.consumeDigit) {
 		}
 	}
 	// we have parsed a 0 or an integer number
@@ -563,7 +573,7 @@ func (l *Lexer) consumeNumericToken() TokenType {
 	if c == '.' {
 		l.r.Move(1)
 		if l.consumeDigit() {
-			for l.consumeDigit() {
+			for l.consumeDigit() || l.consumeNumericSeparator(l.consumeDigit) {
 			}
 			c = l.r.Peek(0)
 		} else if first == '.' {
@@ -587,15 +597,14 @@ func (l *Lexer) consumeNumericToken() TokenType {
 			l.err = parse.NewErrorLexer(l.r, "invalid number")
 			return ErrorToken
 		}
-		for l.consumeDigit() {
+		for l.consumeDigit() || l.consumeNumericSeparator(l.consumeDigit) {
 		}
 	}
 	return DecimalToken
 }
 
-func (l *Lexer) consumeStringToken() bool {
+func (l *Lexer) consumeStringToken() TokenType {
 	// assume to be on ' or "
-	mark := l.r.Pos()
 	delim := l.r.Peek(0)
 	l.r.Move(1)
 	for {
@@ -612,12 +621,12 @@ func (l *Lexer) consumeStringToken() bool {
 			}
 			continue
 		} else if c == '\n' || c == '\r' || c == 0 && l.r.Err() != nil {
-			l.r.Rewind(mark)
-			return false
+			l.err = parse.NewErrorLexer(l.r, "unterminated string literal")
+			return ErrorToken
 		}
 		l.r.Move(1)
 	}
-	return true
+	return StringToken
 }
 
 func (l *Lexer) consumeRegExpToken() bool {
@@ -688,10 +697,8 @@ func (l *Lexer) consumeTemplateToken() TokenType {
 			}
 			continue
 		} else if c == 0 && l.r.Err() != nil {
-			if continuation {
-				return TemplateEndToken
-			}
-			return TemplateToken
+			l.err = parse.NewErrorLexer(l.r, "unterminated template literal")
+			return ErrorToken
 		}
 		l.r.Move(1)
 	}

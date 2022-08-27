@@ -28,6 +28,9 @@ var Warning = log.New(os.Stderr, "WARNING: ", 0)
 // ErrNotExist is returned when no minifier exists for a given mimetype.
 var ErrNotExist = errors.New("minifier does not exist for mimetype")
 
+// ErrClosedWriter is returned when writing to a closed writer.
+var ErrClosedWriter = errors.New("write on closed writer")
+
 ////////////////////////////////////////////////////////////////
 
 // MinifierFunc is a function that implements Minifer.
@@ -248,37 +251,47 @@ func (m *M) Reader(mediatype string, r io.Reader) io.Reader {
 	return pr
 }
 
-// minifyWriter makes sure that errors from the minifier are passed down through Close (can be blocking).
-type minifyWriter struct {
-	pw  *io.PipeWriter
-	wg  sync.WaitGroup
-	err error
+// writer makes sure that errors from the minifier are passed down through Close (can be blocking).
+type writer struct {
+	pw     *io.PipeWriter
+	wg     sync.WaitGroup
+	err    error
+	closed bool
 }
 
 // Write intercepts any writes to the writer.
-func (w *minifyWriter) Write(b []byte) (int, error) {
-	return w.pw.Write(b)
+func (w *writer) Write(b []byte) (int, error) {
+	if w.closed {
+		return 0, ErrClosedWriter
+	}
+	n, err := w.pw.Write(b)
+	if w.err != nil {
+		err = w.err
+	}
+	return n, err
 }
 
 // Close must be called when writing has finished. It returns the error from the minifier.
-func (w *minifyWriter) Close() error {
-	w.pw.Close()
-	w.wg.Wait()
+func (w *writer) Close() error {
+	if !w.closed {
+		w.pw.Close()
+		w.wg.Wait()
+		w.closed = true
+	}
 	return w.err
 }
 
 // Writer wraps a Writer interface and minifies the stream.
 // Errors from the minifier are returned by Close on the writer.
 // The writer must be closed explicitly.
-func (m *M) Writer(mediatype string, w io.Writer) *minifyWriter {
+func (m *M) Writer(mediatype string, w io.Writer) *writer {
 	pr, pw := io.Pipe()
-	mw := &minifyWriter{pw, sync.WaitGroup{}, nil}
+	mw := &writer{pw, sync.WaitGroup{}, nil, false}
 	mw.wg.Add(1)
 	go func() {
 		defer mw.wg.Done()
 
 		if err := m.Minify(mediatype, w, pr); err != nil {
-			io.Copy(w, pr)
 			mw.err = err
 		}
 		pr.Close()
@@ -286,26 +299,26 @@ func (m *M) Writer(mediatype string, w io.Writer) *minifyWriter {
 	return mw
 }
 
-// minifyResponseWriter wraps an http.ResponseWriter and makes sure that errors from the minifier are passed down through Close (can be blocking).
+// responseWriter wraps an http.ResponseWriter and makes sure that errors from the minifier are passed down through Close (can be blocking).
 // All writes to the response writer are intercepted and minified on the fly.
 // http.ResponseWriter loses all functionality such as Pusher, Hijacker, Flusher, ...
-type minifyResponseWriter struct {
+type responseWriter struct {
 	http.ResponseWriter
 
-	writer    *minifyWriter
+	writer    *writer
 	m         *M
 	mediatype string
 }
 
 // WriteHeader intercepts any header writes and removes the Content-Length header.
-func (w *minifyResponseWriter) WriteHeader(status int) {
+func (w *responseWriter) WriteHeader(status int) {
 	w.ResponseWriter.Header().Del("Content-Length")
 	w.ResponseWriter.WriteHeader(status)
 }
 
 // Write intercepts any writes to the response writer.
 // The first write will extract the Content-Type as the mediatype. Otherwise it falls back to the RequestURI extension.
-func (w *minifyResponseWriter) Write(b []byte) (int, error) {
+func (w *responseWriter) Write(b []byte) (int, error) {
 	if w.writer == nil {
 		// first write
 		if mediatype := w.ResponseWriter.Header().Get("Content-Type"); mediatype != "" {
@@ -317,7 +330,7 @@ func (w *minifyResponseWriter) Write(b []byte) (int, error) {
 }
 
 // Close must be called when writing has finished. It returns the error from the minifier.
-func (w *minifyResponseWriter) Close() error {
+func (w *responseWriter) Close() error {
 	if w.writer != nil {
 		return w.writer.Close()
 	}
@@ -327,9 +340,9 @@ func (w *minifyResponseWriter) Close() error {
 // ResponseWriter minifies any writes to the http.ResponseWriter.
 // http.ResponseWriter loses all functionality such as Pusher, Hijacker, Flusher, ...
 // Minification might be slower than just sending the original file! Caching is advised.
-func (m *M) ResponseWriter(w http.ResponseWriter, r *http.Request) *minifyResponseWriter {
+func (m *M) ResponseWriter(w http.ResponseWriter, r *http.Request) *responseWriter {
 	mediatype := mime.TypeByExtension(path.Ext(r.RequestURI))
-	return &minifyResponseWriter{w, nil, m, mediatype}
+	return &responseWriter{w, nil, m, mediatype}
 }
 
 // Middleware provides a middleware function that minifies content on the fly by intercepting writes to http.ResponseWriter.
@@ -338,8 +351,21 @@ func (m *M) ResponseWriter(w http.ResponseWriter, r *http.Request) *minifyRespon
 func (m *M) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mw := m.ResponseWriter(w, r)
-		defer mw.Close()
-
 		next.ServeHTTP(mw, r)
+		mw.Close()
+	})
+}
+
+// MiddlewareWithError provides a middleware function that minifies content on the fly by intercepting writes to http.ResponseWriter. The error function allows handling minification errors.
+// http.ResponseWriter loses all functionality such as Pusher, Hijacker, Flusher, ...
+// Minification might be slower than just sending the original file! Caching is advised.
+func (m *M) MiddlewareWithError(next http.Handler, errorFunc func(w http.ResponseWriter, r *http.Request, err error)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mw := m.ResponseWriter(w, r)
+		next.ServeHTTP(mw, r)
+		if err := mw.Close(); err != nil {
+			errorFunc(w, r, err)
+			return
+		}
 	})
 }

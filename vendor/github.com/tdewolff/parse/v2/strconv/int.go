@@ -38,6 +38,26 @@ func ParseInt(b []byte) (int64, int) {
 	return int64(n), i
 }
 
+// ParseUint parses a byte-slice and returns the integer it represents.
+// If an invalid character is encountered, it will stop there.
+func ParseUint(b []byte) (uint64, int) {
+	i := 0
+	n := uint64(0)
+	for i < len(b) {
+		c := b[i]
+		if n > math.MaxUint64/10 {
+			return 0, 0
+		} else if c >= '0' && c <= '9' {
+			n *= 10
+			n += uint64(c - '0')
+		} else {
+			break
+		}
+		i++
+	}
+	return n, i
+}
+
 // LenInt returns the written length of an integer.
 func LenInt(i int64) int {
 	if i < 0 {

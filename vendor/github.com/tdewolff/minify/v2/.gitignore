@@ -13,3 +13,15 @@ parse/tests/*/crashers
 parse/tests/*/suppressions
 parse/tests/*/corpus/*
 !parse/tests/*/corpus/*.*
+bindings/js/build
+bindings/js/prebuilds
+bindings/js/minify.h
+bindings/js/minify.a
+bindings/js/node_modules
+bindings/js/example/package-lock.json
+bindings/js/example/node_modules
+bindings/js/example/test.min.html
+bindings/py/minify.h
+bindings/py/minify.so
+bindings/py/tdewolff_minify.egg-info
+bindings/py/example/example.min.html

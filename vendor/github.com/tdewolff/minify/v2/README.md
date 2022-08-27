@@ -1,13 +1,13 @@
 # Minify <a name="minify"></a> [![API reference](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/tdewolff/minify/v2?tab=doc) [![Go Report Card](https://goreportcard.com/badge/github.com/tdewolff/minify)](https://goreportcard.com/report/github.com/tdewolff/minify) [![codecov](https://codecov.io/gh/tdewolff/minify/branch/master/graph/badge.svg?token=Cr7r2EKPj2)](https://codecov.io/gh/tdewolff/minify) [![Donate](https://img.shields.io/badge/patreon-donate-DFB317)](https://www.patreon.com/tdewolff)
 
-**[Online demo](https://go.tacodewolff.nl/minify) if you need to minify files *now*.**
+**[Online demo](https://go.tacodewolff.nl/minify)** if you need to minify files *now*.
 
-**[Command line tool](https://github.com/tdewolff/minify/tree/master/cmd/minify) that minifies concurrently and watches file changes.**
+**[Binaries](https://github.com/tdewolff/minify/releases) of CLI for various platforms.** See [CLI](https://github.com/tdewolff/minify/tree/master/cmd/minify) for more installation instructions.
 
-**[Releases](https://github.com/tdewolff/minify/releases) of CLI for various platforms.** See [CLI](https://github.com/tdewolff/minify/tree/master/cmd/minify) for more installation instructions.
+**[Python bindings](https://pypi.org/project/tdewolff-minify/)** install with `pip install tdewolff-minify`
 
-**[Parse](https://github.com/tdewolff/minify/tree/master/parse) subpackage on which minify depends.**
- 
+**[JavaScript bindings](https://www.npmjs.com/package/@tdewolff/minify)** install with `npm i @tdewolff/minify`
+
 ---
 
 *Did you know that the shortest valid piece of HTML5 is `<!doctype html><title>x</title>`? See for yourself at the [W3C Validator](http://validator.w3.org/)!*
@@ -106,8 +106,7 @@ See [CLI tool](https://github.com/tdewolff/minify/tree/master/cmd/minify) for in
 If you want to use Docker, please see https://hub.docker.com/r/tdewolff/minify.
 
 ```bash
-$ docker run -it tdewolff/minify
-/ # minify --version
+$ docker run -it tdewolff/minify --help
 ```
 
 ## API stability
@@ -600,7 +599,33 @@ func main() {
 	m.AddFuncRegexp(regexp.MustCompile("[/+]xml$"), xml.Minify)
 
 	fs := http.FileServer(http.Dir("www/"))
-	http.Handle("/", m.Middleware(fs))
+	http.Handle("/", m.MiddlewareWithError(fs))
+}
+
+func handleError(w http.ResponseWriter, r *http.Request, err error) {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+```
+
+In order to properly handle minify errors, it is necessary to close the response writer since all writes are concurrently handled. There is no need to check errors on writes since they will be returned on closing.
+
+```go
+func main() {
+	m := minify.New()
+	m.AddFunc("text/html", html.Minify)
+	m.AddFuncRegexp(regexp.MustCompile("^(application|text)/(x-)?(java|ecma)script$"), js.Minify)
+
+	input := `<script>const i = 1_000_</script>` // Faulty JS
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	m.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		_, _ = w.Write([]byte(input))
+
+		if err = w.(io.Closer).Close(); err != nil {
+			panic(err)
+		}
+	})).ServeHTTP(rec, req)
 }
 ```
 
