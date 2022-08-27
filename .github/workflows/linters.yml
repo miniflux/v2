@@ -2,10 +2,12 @@ name: Linters
 permissions: read-all
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
-    - master
-    - main
+      - main
 
 jobs:
   jshint:
