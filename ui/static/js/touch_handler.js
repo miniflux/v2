@@ -7,6 +7,7 @@ class TouchHandler {
         this.touch = {
             start: { x: -1, y: -1 },
             move: { x: -1, y: -1 },
+            moved: false,
             element: null
         };
     }
@@ -16,7 +17,7 @@ class TouchHandler {
             let horizontalDistance = Math.abs(this.touch.move.x - this.touch.start.x);
             let verticalDistance = Math.abs(this.touch.move.y - this.touch.start.y);
 
-            if (horizontalDistance > 30 && verticalDistance < 70) {
+            if (horizontalDistance > 30 && verticalDistance < 70 || this.touch.moved) {
                 return this.touch.move.x - this.touch.start.x;
             }
         }
@@ -41,6 +42,7 @@ class TouchHandler {
         this.touch.start.x = event.touches[0].clientX;
         this.touch.start.y = event.touches[0].clientY;
         this.touch.element = this.findElement(event.touches[0].target);
+        this.touch.element.style.transitionDuration = "0s";
     }
 
     onTouchMove(event) {
@@ -55,10 +57,14 @@ class TouchHandler {
         let absDistance = Math.abs(distance);
 
         if (absDistance > 0) {
-            let opacity = 1 - (absDistance > 75 ? 0.9 : absDistance / 75 * 0.9);
-            let tx = distance > 75 ? 75 : (distance < -75 ? -75 : distance);
+            this.touch.moved = true;
 
-            this.touch.element.style.opacity = opacity;
+            let tx = absDistance > 75 ? Math.pow(absDistance - 75, 0.5) + 75 : absDistance;
+
+            if (distance < 0) {
+                tx = -tx;
+            }
+
             this.touch.element.style.transform = "translateX(" + tx + "px)";
 
             event.preventDefault();
@@ -75,11 +81,10 @@ class TouchHandler {
 
             if (distance > 75) {
                 toggleEntryStatus(this.touch.element);
-            } 
+            }
 
-            // If not on the unread page, undo transform of the dragged element.
-            if (document.URL.split("/").indexOf("unread") == -1 || distance <= 75) {
-                this.touch.element.style.opacity = 1;
+            if (this.touch.moved) {
+                this.touch.element.style.transitionDuration = "0.15s";
                 this.touch.element.style.transform = "none";
             }
         }

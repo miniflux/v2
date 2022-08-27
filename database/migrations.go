@@ -572,4 +572,42 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN espial_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN espial_url text default '';
+			ALTER TABLE integrations ADD COLUMN espial_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN espial_tags text default 'miniflux';
+			`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN linkding_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN linkding_url text default '';
+			ALTER TABLE integrations ADD COLUMN linkding_api_key text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN url_rewrite_rules text not null default ''
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN default_reading_speed int default 265;
+			ALTER TABLE users ADD COLUMN cjk_reading_speed int default 500;
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE users ADD COLUMN default_home_page text default 'unread';
+		`)
+		return
+	},
 }

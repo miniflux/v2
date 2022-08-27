@@ -2,7 +2,6 @@ FROM golang:alpine AS build
 RUN apk add --no-cache --update git
 ADD . /go/src/app
 WORKDIR /go/src/app
-RUN go generate
 RUN go build \
     --mod=vendor \
     -o miniflux \

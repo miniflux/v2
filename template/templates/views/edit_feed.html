@@ -32,7 +32,7 @@
         {{ if .errorMessage }}
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
-        
+
         <label for="form-category">{{ t "form.feed.label.category" }}</label>
         <select id="form-category" name="category_id" autofocus>
         {{ range .categories }}
@@ -111,6 +111,9 @@
         </div>
         <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
 
+        <label for="form-urlrewrite-rules">{{ t "form.feed.label.urlrewrite_rules" }}</label>
+        <input type="text" name="urlrewrite_rules" id="form-urlrewrite-rules" value="{{ .form.UrlRewriteRules }}" spellcheck="false">
+
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
         <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
@@ -118,7 +121,7 @@
         <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
         {{ end }}
         <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
-        
+
         {{ if not .form.CategoryHidden }}
         <label><input type="checkbox" name="hide_globally" value="1"{{ if .form.HideGlobally }} checked{{ end }}> {{ t "form.feed.label.hide_globally" }}</label>
         {{ end }}

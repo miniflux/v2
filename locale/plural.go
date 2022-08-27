@@ -72,32 +72,24 @@ var pluralForms = map[string]pluralFormFunc{
 		}
 		return 0
 	},
-	// nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
-	"ru_RU": func(n int) int {
-		if n%10 == 1 && n%100 != 11 {
-			return 0
-		}
-
-		if n%10 >= 2 && n%10 <= 4 && (n%100 < 10 || n%100 >= 20) {
-			return 1
-		}
-
-		return 2
-	},
-	// nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
-	"sr_RS": func(n int) int {
-		if n%10 == 1 && n%100 != 11 {
-			return 0
-		}
-
-		if n%10 >= 2 && n%10 <= 4 && (n%100 < 10 || n%100 >= 20) {
-			return 1
-		}
-
-		return 2
-	},
+	"ru_RU": pluralFormRuSrUa,
+	"uk_UA": pluralFormRuSrUa,
+	"sr_RS": pluralFormRuSrUa,
 	// nplurals=1; plural=0;
 	"zh_CN": func(n int) int {
 		return 0
 	},
+}
+
+// nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
+func pluralFormRuSrUa(n int) int {
+	if n%10 == 1 && n%100 != 11 {
+		return 0
+	}
+
+	if n%10 >= 2 && n%10 <= 4 && (n%100 < 10 || n%100 >= 20) {
+		return 1
+	}
+
+	return 2
 }

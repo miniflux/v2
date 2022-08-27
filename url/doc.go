@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package url implements a set of utility functions to parse URL.
-
 */
 package url // import "miniflux.app/url"

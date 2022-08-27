@@ -36,6 +36,7 @@ export PGPASSWORD := postgres
 	integration-test \
 	clean-integration-test \
 	docker-image \
+	docker-image-distroless \
 	docker-images \
 	rpm \
 	debian \
@@ -131,12 +132,15 @@ clean-integration-test:
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-image:
-	docker build -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/Dockerfile .
+	docker build -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/alpine/Dockerfile .
+
+docker-image-distroless:
+	docker build -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/distroless/Dockerfile .
 
 docker-images:
 	docker buildx build \
 		--platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 \
-		--file packaging/docker/Dockerfile \
+		--file packaging/docker/alpine/Dockerfile \
 		--tag $(DOCKER_IMAGE):$(VERSION) \
 		--push .
 
@@ -150,7 +154,7 @@ rpm: clean
 		rpmbuild -bb --define "_miniflux_version $(VERSION)" /root/rpmbuild/SPECS/miniflux.spec
 
 debian:
-	@ docker build \
+	@ docker build --load \
 		--build-arg BASE_IMAGE_ARCH=$(DEB_IMG_ARCH) \
 		-t $(DEB_IMG_ARCH)/miniflux-deb-builder \
 		-f packaging/debian/Dockerfile \

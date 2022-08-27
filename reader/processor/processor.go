@@ -32,12 +32,13 @@ import (
 )
 
 var (
-	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
-	iso8601Regex = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
+	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
+	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
-func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
+func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.User) {
 	var filteredEntries model.Entries
 
 	for _, entry := range feed.Entries {
@@ -47,13 +48,14 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 			continue
 		}
 
+		url := getUrlFromEntry(feed, entry)
 		entryIsNew := !store.EntryURLExists(feed.ID, entry.URL)
 		if feed.Crawler && entryIsNew {
-			logger.Debug("[Processor] Crawling entry %q from feed %q", entry.URL, feed.FeedURL)
+			logger.Debug("[Processor] Crawling entry %q from feed %q", url, feed.FeedURL)
 
 			startTime := time.Now()
 			content, scraperErr := scraper.Fetch(
-				entry.URL,
+				url,
 				feed.ScraperRules,
 				feed.UserAgent,
 				feed.Cookie,
@@ -77,10 +79,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 			}
 		}
 
-		entry.Content = rewrite.Rewriter(entry.URL, entry.Content, feed.RewriteRules)
+		entry.Content = rewrite.Rewriter(url, entry.Content, feed.RewriteRules)
 
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
-		entry.Content = sanitizer.Sanitize(entry.URL, entry.Content)
+		entry.Content = sanitizer.Sanitize(url, entry.Content)
 
 		if entryIsNew {
 			intg, err := store.Integration(feed.UserID)
@@ -94,7 +96,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed) {
 			}
 		}
 
-		updateEntryReadingTime(store, feed, entry, entryIsNew)
+		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 		filteredEntries = append(filteredEntries, entry)
 	}
 
@@ -125,10 +127,12 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
-func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
+func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User) error {
 	startTime := time.Now()
+	url := getUrlFromEntry(feed, entry)
+
 	content, scraperErr := scraper.Fetch(
-		entry.URL,
+		url,
 		entry.Feed.ScraperRules,
 		entry.Feed.UserAgent,
 		entry.Feed.Cookie,
@@ -148,18 +152,34 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry) error {
 		return scraperErr
 	}
 
-	content = rewrite.Rewriter(entry.URL, content, entry.Feed.RewriteRules)
-	content = sanitizer.Sanitize(entry.URL, content)
+	content = rewrite.Rewriter(url, content, entry.Feed.RewriteRules)
+	content = sanitizer.Sanitize(url, content)
 
 	if content != "" {
 		entry.Content = content
-		entry.ReadingTime = calculateReadingTime(content)
+		entry.ReadingTime = calculateReadingTime(content, user)
 	}
 
 	return nil
 }
 
-func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool) {
+func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
+	var url = entry.URL
+	if feed.UrlRewriteRules != "" {
+		parts := customReplaceRuleRegex.FindStringSubmatch(feed.UrlRewriteRules)
+
+		if len(parts) >= 3 {
+			re := regexp.MustCompile(parts[1])
+			url = re.ReplaceAllString(entry.URL, parts[2])
+			logger.Debug(`[Processor] Rewriting entry URL %s to %s`, entry.URL, url)
+		} else {
+			logger.Debug("[Processor] Cannot find search and replace terms for replace rule %s", feed.UrlRewriteRules)
+		}
+	}
+	return url
+}
+
+func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool, user *model.User) {
 	if shouldFetchYouTubeWatchTime(entry) {
 		if entryIsNew {
 			watchTime, err := fetchYouTubeWatchTime(entry.URL)
@@ -174,7 +194,7 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
-		entry.ReadingTime = calculateReadingTime(entry.Content)
+		entry.ReadingTime = calculateReadingTime(entry.Content, user)
 	}
 }
 
@@ -249,16 +269,16 @@ func parseISO8601(from string) (time.Duration, error) {
 	return d, nil
 }
 
-func calculateReadingTime(content string) int {
+func calculateReadingTime(content string, user *model.User) int {
 	sanitizedContent := sanitizer.StripTags(content)
 	languageInfo := getlang.FromString(sanitizedContent)
 
 	var timeToReadInt int
 	if languageInfo.LanguageCode() == "ko" || languageInfo.LanguageCode() == "zh" || languageInfo.LanguageCode() == "jp" {
-		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / 500))
+		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / float64(user.CJKReadingSpeed)))
 	} else {
 		nbOfWords := len(strings.Fields(sanitizedContent))
-		timeToReadInt = int(math.Ceil(float64(nbOfWords) / 265))
+		timeToReadInt = int(math.Ceil(float64(nbOfWords) / float64(user.DefaultReadingSpeed)))
 	}
 
 	return timeToReadInt

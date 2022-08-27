@@ -53,14 +53,17 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userModificationRequest := &model.UserModificationRequest{
-		Username:       model.OptionalString(settingsForm.Username),
-		Password:       model.OptionalString(settingsForm.Password),
-		Theme:          model.OptionalString(settingsForm.Theme),
-		Language:       model.OptionalString(settingsForm.Language),
-		Timezone:       model.OptionalString(settingsForm.Timezone),
-		EntryDirection: model.OptionalString(settingsForm.EntryDirection),
-		EntriesPerPage: model.OptionalInt(settingsForm.EntriesPerPage),
-		DisplayMode:    model.OptionalString(settingsForm.DisplayMode),
+		Username:            model.OptionalString(settingsForm.Username),
+		Password:            model.OptionalString(settingsForm.Password),
+		Theme:               model.OptionalString(settingsForm.Theme),
+		Language:            model.OptionalString(settingsForm.Language),
+		Timezone:            model.OptionalString(settingsForm.Timezone),
+		EntryDirection:      model.OptionalString(settingsForm.EntryDirection),
+		EntriesPerPage:      model.OptionalInt(settingsForm.EntriesPerPage),
+		DisplayMode:         model.OptionalString(settingsForm.DisplayMode),
+		DefaultReadingSpeed: model.OptionalInt(settingsForm.DefaultReadingSpeed),
+		CJKReadingSpeed:     model.OptionalInt(settingsForm.CJKReadingSpeed),
+		DefaultHomePage:     model.OptionalString(settingsForm.DefaultHomePage),
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, loggedUser.ID, userModificationRequest); validationErr != nil {

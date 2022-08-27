@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package scheduler implements the scheduler service.
-
 */
 package scheduler // import "miniflux.app/service/scheduler"

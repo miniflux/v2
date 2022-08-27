@@ -107,6 +107,10 @@
     --feed-has-unread-border-style: solid;
     --feed-has-unread-border-color: #bee6bc;
 
+    --category-has-unread-background-color: #dfd;
+    --category-has-unread-border-style: solid;
+    --category-has-unread-border-color: #bee6bc;
+
     --keyboard-shortcuts-li-color: #333;
 
     --counter-color: #666;
@@ -220,6 +224,10 @@
         --feed-has-unread-background-color: #1b1a1a;
         --feed-has-unread-border-style: solid;
         --feed-has-unread-border-color: rgb(33 57 76);
+
+        --category-has-unread-background-color: #1b1a1a;
+        --category-has-unread-border-style: solid;
+        --category-has-unread-border-color: rgb(33 57 76);
 
         --keyboard-shortcuts-li-color: #9b9b9b;
 

@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package session provides helper functions to work with the user session.
-
 */
 package session // import "miniflux.app/ui/session"

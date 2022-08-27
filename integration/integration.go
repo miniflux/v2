@@ -6,7 +6,9 @@ package integration // import "miniflux.app/integration"
 
 import (
 	"miniflux.app/config"
+	"miniflux.app/integration/espial"
 	"miniflux.app/integration/instapaper"
+	"miniflux.app/integration/linkding"
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
@@ -72,11 +74,36 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		}
 	}
 
+	if integration.EspialEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Espial", entry.ID, entry.URL, integration.UserID)
+
+		client := espial.NewClient(
+			integration.EspialURL,
+			integration.EspialAPIKey,
+		)
+
+		if err := client.AddEntry(entry.URL, entry.Title, entry.Content, integration.EspialTags); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
 	if integration.PocketEnabled {
 		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Pocket", entry.ID, entry.URL, integration.UserID)
 
 		client := pocket.NewClient(config.Opts.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.LinkdingEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Linkding", entry.ID, entry.URL, integration.UserID)
+
+		client := linkding.NewClient(
+			integration.LinkdingURL,
+			integration.LinkdingAPIKey,
+		)
+		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}

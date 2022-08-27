@@ -79,6 +79,31 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.DefaultReadingSpeed != nil {
+		if err := validateReadingSpeed(*changes.DefaultReadingSpeed); err != nil {
+			return err
+		}
+	}
+
+	if changes.CJKReadingSpeed != nil {
+		if err := validateReadingSpeed(*changes.CJKReadingSpeed); err != nil {
+			return err
+		}
+	}
+
+	if changes.DefaultHomePage != nil {
+		if err := validateDefaultHomePage(*changes.DefaultHomePage); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func validateReadingSpeed(readingSpeed int) *ValidationError {
+	if readingSpeed <= 0 {
+		return NewValidationError("error.settings_reading_speed_is_positive")
+	}
 	return nil
 }
 
@@ -134,6 +159,14 @@ func validateEntriesPerPage(entriesPerPage int) *ValidationError {
 func validateDisplayMode(displayMode string) *ValidationError {
 	if displayMode != "fullscreen" && displayMode != "standalone" && displayMode != "minimal-ui" && displayMode != "browser" {
 		return NewValidationError("error.invalid_display_mode")
+	}
+	return nil
+}
+
+func validateDefaultHomePage(defaultHomePage string) *ValidationError {
+	defaultHomePages := model.HomePages()
+	if _, found := defaultHomePages[defaultHomePage]; !found {
+		return NewValidationError("error.invalid_default_home_page")
 	}
 	return nil
 }

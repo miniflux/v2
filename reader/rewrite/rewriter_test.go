@@ -295,3 +295,33 @@ func TestRewriteAddCastopodEpisode(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
+func TestRewriteBase64Decode(t *testing.T) {
+	content := `VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=`
+	expected := `This is some base64 encoded content`
+	output := Rewriter("https://example.org/article", content, `base64_decode`)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteBase64DecodeInHTML(t *testing.T) {
+	content := `<div>Lorem Ipsum not valid base64<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`
+	expected := `<div>Lorem Ipsum not valid base64<span class="base64">This is some base64 encoded content</span></div>`
+	output := Rewriter("https://example.org/article", content, `base64_decode`)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestRewriteBase64DecodeArgs(t *testing.T) {
+	content := `<div>Lorem Ipsum<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`
+	expected := `<div>Lorem Ipsum<span class="base64">This is some base64 encoded content</span></div>`
+	output := Rewriter("https://example.org/article", content, `base64_decode(".base64")`)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}

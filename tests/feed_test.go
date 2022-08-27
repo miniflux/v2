@@ -2,6 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
@@ -674,6 +675,37 @@ func TestMarkFeedAsRead(t *testing.T) {
 		if entry.Status != miniflux.EntryStatusRead {
 			t.Errorf(`Status for entry %d was %q instead of %q`, entry.ID, entry.Status, miniflux.EntryStatusRead)
 		}
+	}
+}
+
+func TestFetchCounters(t *testing.T) {
+	client := createClient(t)
+
+	feed, _ := createFeed(t, client)
+
+	results, err := client.FeedEntries(feed.ID, nil)
+	if err != nil {
+		t.Fatalf(`Failed to get entries: %v`, err)
+	}
+
+	counters, err := client.FetchCounters()
+	if err != nil {
+		t.Fatalf(`Failed to fetch unread count: %v`, err)
+	}
+	unreadCounter, exists := counters.UnreadCounters[feed.ID]
+	if !exists {
+		unreadCounter = 0
+	}
+
+	unreadExpected := 0
+	for _, entry := range results.Entries {
+		if entry.Status == miniflux.EntryStatusUnread {
+			unreadExpected++
+		}
+	}
+
+	if unreadExpected != unreadCounter {
+		t.Errorf(`Expected %d unread entries but %d instead`, unreadExpected, unreadCounter)
 	}
 }
 

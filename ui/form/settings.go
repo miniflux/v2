@@ -14,20 +14,23 @@ import (
 
 // SettingsForm represents the settings form.
 type SettingsForm struct {
-	Username          string
-	Password          string
-	Confirmation      string
-	Theme             string
-	Language          string
-	Timezone          string
-	EntryDirection    string
-	EntryOrder        string
-	EntriesPerPage    int
-	KeyboardShortcuts bool
-	ShowReadingTime   bool
-	CustomCSS         string
-	EntrySwipe        bool
-	DisplayMode       string
+	Username            string
+	Password            string
+	Confirmation        string
+	Theme               string
+	Language            string
+	Timezone            string
+	EntryDirection      string
+	EntryOrder          string
+	EntriesPerPage      int
+	KeyboardShortcuts   bool
+	ShowReadingTime     bool
+	CustomCSS           string
+	EntrySwipe          bool
+	DisplayMode         string
+	DefaultReadingSpeed int
+	CJKReadingSpeed     int
+	DefaultHomePage     string
 }
 
 // Merge updates the fields of the given user.
@@ -44,6 +47,9 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.Stylesheet = s.CustomCSS
 	user.EntrySwipe = s.EntrySwipe
 	user.DisplayMode = s.DisplayMode
+	user.CJKReadingSpeed = s.CJKReadingSpeed
+	user.DefaultReadingSpeed = s.DefaultReadingSpeed
+	user.DefaultHomePage = s.DefaultHomePage
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -54,8 +60,12 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" {
+	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
+	}
+
+	if s.CJKReadingSpeed <= 0 || s.DefaultReadingSpeed <= 0 {
+		return errors.NewLocalizedError("error.settings_reading_speed_is_positive")
 	}
 
 	if s.Confirmation == "" {
@@ -78,20 +88,31 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 	if err != nil {
 		entriesPerPage = 0
 	}
+	defaultReadingSpeed, err := strconv.ParseInt(r.FormValue("default_reading_speed"), 10, 0)
+	if err != nil {
+		defaultReadingSpeed = 0
+	}
+	cjkReadingSpeed, err := strconv.ParseInt(r.FormValue("cjk_reading_speed"), 10, 0)
+	if err != nil {
+		cjkReadingSpeed = 0
+	}
 	return &SettingsForm{
-		Username:          r.FormValue("username"),
-		Password:          r.FormValue("password"),
-		Confirmation:      r.FormValue("confirmation"),
-		Theme:             r.FormValue("theme"),
-		Language:          r.FormValue("language"),
-		Timezone:          r.FormValue("timezone"),
-		EntryDirection:    r.FormValue("entry_direction"),
-		EntryOrder:        r.FormValue("entry_order"),
-		EntriesPerPage:    int(entriesPerPage),
-		KeyboardShortcuts: r.FormValue("keyboard_shortcuts") == "1",
-		ShowReadingTime:   r.FormValue("show_reading_time") == "1",
-		CustomCSS:         r.FormValue("custom_css"),
-		EntrySwipe:        r.FormValue("entry_swipe") == "1",
-		DisplayMode:       r.FormValue("display_mode"),
+		Username:            r.FormValue("username"),
+		Password:            r.FormValue("password"),
+		Confirmation:        r.FormValue("confirmation"),
+		Theme:               r.FormValue("theme"),
+		Language:            r.FormValue("language"),
+		Timezone:            r.FormValue("timezone"),
+		EntryDirection:      r.FormValue("entry_direction"),
+		EntryOrder:          r.FormValue("entry_order"),
+		EntriesPerPage:      int(entriesPerPage),
+		KeyboardShortcuts:   r.FormValue("keyboard_shortcuts") == "1",
+		ShowReadingTime:     r.FormValue("show_reading_time") == "1",
+		CustomCSS:           r.FormValue("custom_css"),
+		EntrySwipe:          r.FormValue("entry_swipe") == "1",
+		DisplayMode:         r.FormValue("display_mode"),
+		DefaultReadingSpeed: int(defaultReadingSpeed),
+		CJKReadingSpeed:     int(cjkReadingSpeed),
+		DefaultHomePage:     r.FormValue("default_home_page"),
 	}
 }

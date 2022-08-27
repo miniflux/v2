@@ -34,12 +34,19 @@ type IntegrationForm struct {
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
+	EspialEnabled        bool
+	EspialURL            string
+	EspialAPIKey         string
+	EspialTags           string
 	PocketEnabled        bool
 	PocketAccessToken    string
 	PocketConsumerKey    string
 	TelegramBotEnabled   bool
 	TelegramBotToken     string
 	TelegramBotChatID    string
+	LinkdingEnabled      bool
+	LinkdingURL          string
+	LinkdingAPIKey       string
 }
 
 // Merge copy form values to the model.
@@ -64,12 +71,19 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.NunuxKeeperEnabled = i.NunuxKeeperEnabled
 	integration.NunuxKeeperURL = i.NunuxKeeperURL
 	integration.NunuxKeeperAPIKey = i.NunuxKeeperAPIKey
+	integration.EspialEnabled = i.EspialEnabled
+	integration.EspialURL = i.EspialURL
+	integration.EspialAPIKey = i.EspialAPIKey
+	integration.EspialTags = i.EspialTags
 	integration.PocketEnabled = i.PocketEnabled
 	integration.PocketAccessToken = i.PocketAccessToken
 	integration.PocketConsumerKey = i.PocketConsumerKey
 	integration.TelegramBotEnabled = i.TelegramBotEnabled
 	integration.TelegramBotToken = i.TelegramBotToken
 	integration.TelegramBotChatID = i.TelegramBotChatID
+	integration.LinkdingEnabled = i.LinkdingEnabled
+	integration.LinkdingURL = i.LinkdingURL
+	integration.LinkdingAPIKey = i.LinkdingAPIKey
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -97,11 +111,18 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		NunuxKeeperEnabled:   r.FormValue("nunux_keeper_enabled") == "1",
 		NunuxKeeperURL:       r.FormValue("nunux_keeper_url"),
 		NunuxKeeperAPIKey:    r.FormValue("nunux_keeper_api_key"),
+		EspialEnabled:        r.FormValue("espial_enabled") == "1",
+		EspialURL:            r.FormValue("espial_url"),
+		EspialAPIKey:         r.FormValue("espial_api_key"),
+		EspialTags:           r.FormValue("espial_tags"),
 		PocketEnabled:        r.FormValue("pocket_enabled") == "1",
 		PocketAccessToken:    r.FormValue("pocket_access_token"),
 		PocketConsumerKey:    r.FormValue("pocket_consumer_key"),
 		TelegramBotEnabled:   r.FormValue("telegram_bot_enabled") == "1",
 		TelegramBotToken:     r.FormValue("telegram_bot_token"),
 		TelegramBotChatID:    r.FormValue("telegram_bot_chat_id"),
+		LinkdingEnabled:      r.FormValue("linkding_enabled") == "1",
+		LinkdingURL:          r.FormValue("linkding_url"),
+		LinkdingAPIKey:       r.FormValue("linkding_api_key"),
 	}
 }

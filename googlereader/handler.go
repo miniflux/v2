@@ -301,7 +301,7 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 	for _, s := range addTags {
 		switch s.Type {
 		case ReadStream:
-			if _, ok := tags[ReadStream]; ok {
+			if _, ok := tags[KeptUnreadStream]; ok {
 				return nil, fmt.Errorf(KeptUnread + " and " + Read + " should not be supplied simultaneously")
 			}
 			tags[ReadStream] = true
@@ -411,7 +411,7 @@ func (h *handler) editTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(addTags) == 0 && len(removeTags) == 0 {
-		err = fmt.Errorf("add or/and remove tags should be supllied")
+		err = fmt.Errorf("add or/and remove tags should be supplied")
 		logger.Error("[GoogleReader][/edit-tag] [ClientIP=%s] ", clientIP, err)
 		json.ServerError(w, r, err)
 		return
@@ -1096,6 +1096,8 @@ func (h *handler) streamItemIDs(w http.ResponseWriter, r *http.Request) {
 		h.handleStarredStream(w, r, rm)
 	case ReadStream:
 		h.handleReadStream(w, r, rm)
+	case FeedStream:
+		h.handleFeedStream(w, r, rm)
 	default:
 		dump, _ := httputil.DumpRequest(r, true)
 		logger.Info("[GoogleReader][/stream/items/ids] [ClientIP=%s] Unknown Stream: %s", clientIP, dump)
@@ -1139,7 +1141,7 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 	clientIP := request.ClientIP(r)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
-	builder.WithStarred()
+	builder.WithStarred(true)
 	builder.WithLimit(rm.Count)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(rm.SortDirection)
@@ -1174,6 +1176,41 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		logger.Error("[GoogleReader][/stream/items/ids#read] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	var itemRefs = make([]itemRef, 0)
+	for _, entryID := range rawEntryIDs {
+		formattedID := strconv.FormatInt(entryID, 10)
+		itemRefs = append(itemRefs, itemRef{ID: formattedID})
+	}
+	json.OK(w, r, streamIDResponse{itemRefs})
+}
+
+func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
+	clientIP := request.ClientIP(r)
+	feedID, err := strconv.ParseInt(rm.Streams[0].ID, 10, 64)
+	if err != nil {
+		logger.Error("[GoogleReader][/stream/items/ids#feed] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+
+	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithFeedID(feedID)
+	builder.WithLimit(rm.Count)
+	builder.WithOrder(model.DefaultSortingOrder)
+	builder.WithDirection(rm.SortDirection)
+	if rm.StartTime > 0 {
+		builder.AfterDate(time.Unix(rm.StartTime, 0))
+	}
+	if rm.StopTime > 0 {
+		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+	}
+
+	rawEntryIDs, err := builder.GetEntryIDs()
+	if err != nil {
+		logger.Error("[GoogleReader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}

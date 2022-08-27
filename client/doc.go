@@ -3,10 +3,9 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package client implements a client library for the Miniflux REST API.
 
-Examples
+# Examples
 
 This code snippet fetch the list of users:
 
@@ -30,6 +29,5 @@ This one discover subscriptions on a website:
 		return
 	}
 	fmt.Println(subscriptions)
-
 */
 package client // import "miniflux.app/client"

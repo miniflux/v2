@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package view handles template parameters.
-
 */
 package view // import "miniflux.app/ui/view"

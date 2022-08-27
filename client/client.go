@@ -502,6 +502,23 @@ func (c *Client) ToggleBookmark(entryID int64) error {
 	return err
 }
 
+// FetchCounters
+func (c *Client) FetchCounters() (*FeedCounters, error) {
+	body, err := c.request.Get("/v1/feeds/counters")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var result FeedCounters
+	decoder := json.NewDecoder(body)
+	if err := decoder.Decode(&result); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return &result, nil
+}
+
 func buildFilterQueryString(path string, filter *Filter) string {
 	if filter != nil {
 		values := url.Values{}
@@ -542,8 +559,8 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("before_entry_id", strconv.FormatInt(filter.BeforeEntryID, 10))
 		}
 
-		if filter.Starred {
-			values.Set("starred", "1")
+		if filter.Starred != "" {
+			values.Set("starred", filter.Starred)
 		}
 
 		if filter.Search != "" {

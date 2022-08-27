@@ -1,3 +1,85 @@
+Version 2.0.38 (August 13, 2022)
+--------------------------------
+
+* Rename default branch from master to main
+* Update GitHub Actions
+* Bump `github.com/prometheus/client_golang` from `1.12.2` to `1.13.0`
+* Fix some linter issues
+* Handle Atom links with a text/html type defined
+* Add `parse_markdown` rewrite function
+* Build RPM and Debian packages automatically using GitHub Actions
+* Add `explosm.net` scraper rule
+* Make default home page configurable
+* Add title attribute to entry links because text could be truncated
+* Highlight categories with unread entries
+* Allow option to order by title and author in API entry endpoint
+* Update Russian translation
+* Make reading speed user-configurable
+* Added translation for Hindi language used in India
+* Add rewrite rules for article URL before fetching content
+* Bump `github.com/tdewolff/minify/v2` from `2.11.7` to `2.12.0`
+* Support other repo owners in GitHub Docker Action
+* Proxify empty URL should not crash
+* Avoid stretched image if specified width is larger than Miniflux's layout
+* Add support for OPML files with several nested outlines
+* sanitizer: handle image URLs in `srcset` attribute with comma
+* Allow `width` and `height` attributes for `img` tags
+* Document that `-config-dump` command line argument shows sensitive info
+* Add System-V init service in contrib folder
+* Fix syntax error in `RequestBuilder.getCsrfToken()` method
+
+Version 2.0.37 (May 27, 2022)
+-----------------------------
+
+* Add rewrite rule to decode base64 content
+* Add Linkding integration
+* Add comment button to Telegram message
+* Add API endpoint to fetch unread and read counters
+* Fixes logic bug in Google Reader API sanity check
+* Reduce number of CORS preflight check to save network brandwidth
+* Add Espial integration
+* Allow API search for entries which are not starred
+* Try to use outermost element text when title is empty
+* Make swipe gestures feel more natural
+    - Removes opacity transition when swiping an article read/unread
+    - Adds "resistance" to the swiped entry when the 75px threshold is
+    reached
+    - Fixes an issue in which a swiped article couldn't be moved <15px
+* Add support for feed streams to Google Reader API IDs API
+* Fix invalid parsing of icon data URL
+* Add Traditional Chinese translation
+* Add distroless Docker image variant
+* Add Go 1.18 to GitHub Action
+* Bump `github.com/tdewolff/minify/v2` from `2.10.0` to `2.11`
+* Bump `github.com/prometheus/client_golang` from `1.12.1` to `1.12.2`
+* Bump `github.com/lib/pq` from `1.10.4` to `1.10.6`
+
+Version 2.0.36 (March 8, 2022)
+------------------------------
+
+* Gray out pagination buttons when they are not applicable
+* Use truncated entry description as title if unavailable
+* Do not fallback to InnerXML if XHTML title is empty
+* Add `+` keyboard shortcut for new subscription page
+* Add `(+)` action next to Feeds to quickly add new feeds
+* Fix unstar not working via Google Reader API
+* Remove circles in front of page header list items
+* Fix CSS hover style for links styled as buttons
+* Avoid showing `undefined` when clicking on read/unread
+* Add new keyboard shortcut `M` to toggle read/unread, and go to previous item
+* Add several icons to menus according to their roles
+* Add missing event argument to `onClick()` function call
+* Add links to scraper/rewrite/filtering docs when editing feeds
+* Add a rewrite rule for Castopod episodes
+* Fix regression: reset touch-item if not in `/unread` page
+* Add API endpoint to fetch original article
+* Show the category first in feed settings
+* Add pagination on top of all entries
+* Display Go version in "About" page
+* Bump `mvdan.cc/xurls/v2` from 2.3.0 to 2.4.0
+* Bump `github.com/prometheus/client_golang` from 1.11.0 to 1.12.1
+* Bump `github.com/tdewolff/minify/v2` from 2.9.28 to 2.10.0
+
 Version 2.0.35 (January 21, 2022)
 ---------------------------------
 

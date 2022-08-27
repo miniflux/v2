@@ -49,12 +49,19 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		NunuxKeeperEnabled:   integration.NunuxKeeperEnabled,
 		NunuxKeeperURL:       integration.NunuxKeeperURL,
 		NunuxKeeperAPIKey:    integration.NunuxKeeperAPIKey,
+		EspialEnabled:        integration.EspialEnabled,
+		EspialURL:            integration.EspialURL,
+		EspialAPIKey:         integration.EspialAPIKey,
+		EspialTags:           integration.EspialTags,
 		PocketEnabled:        integration.PocketEnabled,
 		PocketAccessToken:    integration.PocketAccessToken,
 		PocketConsumerKey:    integration.PocketConsumerKey,
 		TelegramBotEnabled:   integration.TelegramBotEnabled,
 		TelegramBotToken:     integration.TelegramBotToken,
 		TelegramBotChatID:    integration.TelegramBotChatID,
+		LinkdingEnabled:      integration.LinkdingEnabled,
+		LinkdingURL:          integration.LinkdingURL,
+		LinkdingAPIKey:       integration.LinkdingAPIKey,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

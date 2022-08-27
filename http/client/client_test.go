@@ -18,8 +18,8 @@ func TestClientWithDelay(t *testing.T) {
 }
 
 func TestClientWithError(t *testing.T) {
-	clt := New("https://httpbin.eu-central.fornever.org/status/502")
-	clt.ClientTimeout = 10
+	clt := New("http://httpbin.org/status/502")
+	clt.ClientTimeout = 5
 	response, err := clt.Get()
 	if err != nil {
 		t.Fatal(err)
@@ -30,7 +30,7 @@ func TestClientWithError(t *testing.T) {
 	}
 
 	if !response.HasServerFailure() {
-		t.Fatal(`A 500 error is considered as server failure`)
+		t.Fatal(`A 502 error is considered as server failure`)
 	}
 }
 

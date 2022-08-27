@@ -58,12 +58,13 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 
 	feedModificationRequest := &model.FeedModificationRequest{
-		FeedURL:        model.OptionalString(feedForm.FeedURL),
-		SiteURL:        model.OptionalString(feedForm.SiteURL),
-		Title:          model.OptionalString(feedForm.Title),
-		CategoryID:     model.OptionalInt64(feedForm.CategoryID),
-		BlocklistRules: model.OptionalString(feedForm.BlocklistRules),
-		KeeplistRules:  model.OptionalString(feedForm.KeeplistRules),
+		FeedURL:         model.OptionalString(feedForm.FeedURL),
+		SiteURL:         model.OptionalString(feedForm.SiteURL),
+		Title:           model.OptionalString(feedForm.Title),
+		CategoryID:      model.OptionalInt64(feedForm.CategoryID),
+		BlocklistRules:  model.OptionalString(feedForm.BlocklistRules),
+		KeeplistRules:   model.OptionalString(feedForm.KeeplistRules),
+		UrlRewriteRules: model.OptionalString(feedForm.UrlRewriteRules),
 	}
 
 	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feedModificationRequest); validationErr != nil {

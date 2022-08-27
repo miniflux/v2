@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package form handles HTML form validation and serialization.
-
 */
 package form // import "miniflux.app/ui/form"

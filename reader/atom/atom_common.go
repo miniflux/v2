@@ -51,7 +51,7 @@ func (a atomLinks) originalLink() string {
 			return strings.TrimSpace(link.URL)
 		}
 
-		if link.Rel == "" && link.Type == "" {
+		if link.Rel == "" && (link.Type == "" || link.Type == "text/html") {
 			return strings.TrimSpace(link.URL)
 		}
 	}

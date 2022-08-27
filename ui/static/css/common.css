@@ -814,6 +814,11 @@ template {
     display: none;
 }
 
+.touch-item {
+    transition-property: transform;
+    transition-duration: 0s;
+    transition-timing-function: ease-out;
+}
 
 /* Feeds list */
 
@@ -838,7 +843,6 @@ article.feed-has-unread {
 .parsing-error-count {
     cursor: pointer;
 }
-
 
 /* Icons */
 

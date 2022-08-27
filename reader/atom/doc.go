@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package atom provides an Atom feed parser.
-
 */
 package atom // import "miniflux.app/reader/atom"

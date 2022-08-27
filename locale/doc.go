@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package locale handles the internationalization of the application.
-
 */
 package locale // import "miniflux.app/locale"

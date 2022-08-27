@@ -25,7 +25,7 @@ func (h *handler) showStarredPage(w http.ResponseWriter, r *http.Request) {
 	offset := request.QueryIntParam(r, "offset", 0)
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
-	builder.WithStarred()
+	builder.WithStarred(true)
 	builder.WithOrder(user.EntryOrder)
 	builder.WithDirection(user.EntryDirection)
 	builder.WithOffset(offset)

@@ -10,6 +10,24 @@ updates:
       - "fguillot"
 
   - package-ecosystem: "docker"
+    directory: "/packaging/docker/alpine"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "fguillot"
+    assignees:
+      - "fguillot"
+
+  - package-ecosystem: "docker"
+    directory: "/packaging/docker/distroless"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "fguillot"
+    assignees:
+      - "fguillot"
+
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"

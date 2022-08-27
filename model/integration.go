@@ -29,10 +29,17 @@ type Integration struct {
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
+	EspialEnabled        bool
+	EspialURL            string
+	EspialAPIKey         string
+	EspialTags           string
 	PocketEnabled        bool
 	PocketAccessToken    string
 	PocketConsumerKey    string
 	TelegramBotEnabled   bool
 	TelegramBotToken     string
 	TelegramBotChatID    string
+	LinkdingEnabled      bool
+	LinkdingURL          string
+	LinkdingAPIKey       string
 }
