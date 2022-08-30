@@ -151,6 +151,30 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 	}
 }
 
+func TestProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "all")
+	os.Setenv("PROXY_IMAGE_URL", "https://proxy-example/proxy")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := ImageProxyRewriter(r, input)
+	expected := `<p><img src="https://proxy-example/proxy/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
 func TestProxyFilterWithHttpInvalid(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("PROXY_IMAGES", "invalid")

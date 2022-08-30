@@ -46,6 +46,7 @@ const (
 	defaultCleanupArchiveBatchSize            = 10000
 	defaultCleanupRemoveSessionsDays          = 30
 	defaultProxyImages                        = "http-only"
+	defaultProxyImageUrl                      = ""
 	defaultFetchYouTubeWatchTime              = false
 	defaultCreateAdmin                        = false
 	defaultAdminUsername                      = ""
@@ -116,6 +117,7 @@ type Options struct {
 	adminUsername                      string
 	adminPassword                      string
 	proxyImages                        string
+	proxyImageUrl                      string
 	fetchYouTubeWatchTime              bool
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
@@ -175,6 +177,7 @@ func NewOptions() *Options {
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
 		proxyImages:                        defaultProxyImages,
+		proxyImageUrl:                      defaultProxyImageUrl,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		oauth2UserCreationAllowed:          defaultOAuth2UserCreation,
 		oauth2ClientID:                     defaultOAuth2ClientID,
@@ -410,6 +413,11 @@ func (o *Options) ProxyImages() string {
 	return o.proxyImages
 }
 
+// ProxyImageUrl returns a string of a URL to use to proxy image requests
+func (o *Options) ProxyImageUrl() string {
+	return o.proxyImageUrl
+}
+
 // HasHTTPService returns true if the HTTP service is enabled.
 func (o *Options) HasHTTPService() bool {
 	return o.httpService
@@ -543,6 +551,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
 		"PROXY_IMAGES":                           o.proxyImages,
+		"PROXY_IMAGE_URL":                        o.proxyImageUrl,
 		"ROOT_URL":                               o.rootURL,
 		"RUN_MIGRATIONS":                         o.runMigrations,
 		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
