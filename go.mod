@@ -16,7 +16,7 @@ require (
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
 	github.com/tdewolff/minify/v2 v2.12.1
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	github.com/yuin/goldmark v1.4.13
+	github.com/yuin/goldmark v1.4.14
 	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d
 	golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b
