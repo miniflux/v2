@@ -203,6 +203,16 @@ func TestIFrameWithChildElements(t *testing.T) {
 	}
 }
 
+func TestAnchorLink(t *testing.T) {
+	input := `<p>This link is <a href="#some-anchor">an anchor</a></p>`
+	expected := `<p>This link is <a href="#some-anchor">an anchor</a></p>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
 func TestInvalidURLScheme(t *testing.T) {
 	input := `<p>This link is <a src="file:///etc/passwd">not valid</a></p>`
 	expected := `<p>This link is not valid</p>`
