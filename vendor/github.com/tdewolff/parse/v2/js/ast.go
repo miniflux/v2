@@ -164,8 +164,8 @@ func (s *Scope) Declare(decl DeclType, name []byte) (*Var, bool) {
 
 	if v := s.findDeclared(name, true); v != nil {
 		// variable already declared, might be an error or a duplicate declaration
-		if (LexicalDecl <= v.Decl || LexicalDecl <= decl) && v.Decl != ExprDecl {
-			// redeclaration of let, const, class on an already declared name is an error, except if the declared name is a function expression name
+		if (decl != VariableDecl && decl != FunctionDecl || v.Decl != decl && v.Decl != ArgumentDecl) && v.Decl != ExprDecl {
+			// only allow (v.Decl,decl) of: (var|argument,var), (function|argument,function), (expr,*), any other combination is a syntax error
 			return nil, false
 		}
 		if v.Decl == ExprDecl {
@@ -384,7 +384,9 @@ func (n BlockStmt) JS() string {
 		s += "{ "
 	}
 	for _, item := range n.List {
-		s += item.JS() + "; "
+		if _, isEmpty := item.(*EmptyStmt); !isEmpty {
+			s += item.JS() + "; "
+		}
 	}
 	if n.Scope.Parent != nil {
 		s += "}"

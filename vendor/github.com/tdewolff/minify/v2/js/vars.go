@@ -358,6 +358,9 @@ func (m *jsMinifier) hoistVars(body *js.BlockStmt) {
 		}
 
 		decl := body.Scope.VarDecls[best]
+		if 10000 < len(decl.List) {
+			return
+		}
 		hoist[best] = false
 
 		// get original declarations

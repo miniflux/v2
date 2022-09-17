@@ -538,7 +538,7 @@ func (m *jsMinifier) minifyVarDecl(decl *js.VarDecl, onlyDefines bool) {
 			}
 		}
 	} else {
-		if decl.TokenType == js.VarToken {
+		if decl.TokenType == js.VarToken && len(decl.List) <= 10000 {
 			// move single var decls forward and order for GZIP optimization
 			start := 0
 			if _, ok := decl.List[0].Binding.(*js.Var); !ok {
