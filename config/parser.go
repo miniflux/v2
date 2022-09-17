@@ -139,6 +139,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		case "PROXY_IMAGES":
 			p.opts.proxyImages = parseString(value, defaultProxyImages)
+		case "PROXY_IMAGE_URL":
+			p.opts.proxyImageUrl = parseString(value, defaultProxyImageUrl)
 		case "CREATE_ADMIN":
 			p.opts.createAdmin = parseBool(value, defaultCreateAdmin)
 		case "ADMIN_USERNAME":

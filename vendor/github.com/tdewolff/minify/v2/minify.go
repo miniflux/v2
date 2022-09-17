@@ -284,7 +284,7 @@ func (w *writer) Close() error {
 // Writer wraps a Writer interface and minifies the stream.
 // Errors from the minifier are returned by Close on the writer.
 // The writer must be closed explicitly.
-func (m *M) Writer(mediatype string, w io.Writer) *writer {
+func (m *M) Writer(mediatype string, w io.Writer) io.WriteCloser {
 	pr, pw := io.Pipe()
 	mw := &writer{pw, sync.WaitGroup{}, nil, false}
 	mw.wg.Add(1)
@@ -324,7 +324,7 @@ func (w *responseWriter) Write(b []byte) (int, error) {
 		if mediatype := w.ResponseWriter.Header().Get("Content-Type"); mediatype != "" {
 			w.mediatype = mediatype
 		}
-		w.writer = w.m.Writer(w.mediatype, w.ResponseWriter)
+		w.writer = w.m.Writer(w.mediatype, w.ResponseWriter).(*writer)
 	}
 	return w.writer.Write(b)
 }

@@ -6,16 +6,32 @@ package proxy // import "miniflux.app/proxy"
 
 import (
 	"encoding/base64"
+	"net/url"
+	"path"
 
 	"miniflux.app/http/route"
 
 	"github.com/gorilla/mux"
+
+	"miniflux.app/config"
 )
 
 // ProxifyURL generates an URL for a proxified resource.
 func ProxifyURL(router *mux.Router, link string) string {
 	if link != "" {
-		return route.Path(router, "proxy", "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
+		proxyImageUrl := config.Opts.ProxyImageUrl()
+
+		if proxyImageUrl == "" {
+			return route.Path(router, "proxy", "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
+		}
+
+		proxyUrl, err := url.Parse(proxyImageUrl)
+		if err != nil {
+			return ""
+		}
+
+		proxyUrl.Path = path.Join(proxyUrl.Path, base64.URLEncoding.EncodeToString([]byte(link)))
+		return proxyUrl.String()
 	}
 	return ""
 }

@@ -771,18 +771,18 @@ func (p *Parser) parseExportStmt() (exportStmt ExportStmt) {
 		exportStmt.Default = true
 		p.next()
 		if p.tt == FunctionToken {
-			exportStmt.Decl = p.parseFuncExpr()
+			exportStmt.Decl = p.parseFuncDeclDefault()
 		} else if p.tt == AsyncToken { // async function or async arrow function
 			async := p.data
 			p.next()
 			if p.tt == FunctionToken && !p.prevLT {
-				exportStmt.Decl = p.parseAsyncFuncExpr()
+				exportStmt.Decl = p.parseAsyncFuncDeclDefault()
 			} else {
 				// expression
 				exportStmt.Decl = p.parseAsyncExpression(OpExpr, async)
 			}
 		} else if p.tt == ClassToken {
-			exportStmt.Decl = p.parseClassExpr()
+			exportStmt.Decl = p.parseClassDeclDefault()
 		} else {
 			exportStmt.Decl = p.parseExpression(OpAssign)
 		}
@@ -867,22 +867,30 @@ func (p *Parser) parseFuncParams(in string) (params Params) {
 }
 
 func (p *Parser) parseFuncDecl() (funcDecl *FuncDecl) {
-	return p.parseAnyFunc(false, false)
+	return p.parseAnyFunc(false, false, false)
+}
+
+func (p *Parser) parseFuncDeclDefault() (funcDecl *FuncDecl) {
+	return p.parseAnyFunc(false, true, false)
 }
 
 func (p *Parser) parseAsyncFuncDecl() (funcDecl *FuncDecl) {
-	return p.parseAnyFunc(true, false)
+	return p.parseAnyFunc(true, false, false)
+}
+
+func (p *Parser) parseAsyncFuncDeclDefault() (funcDecl *FuncDecl) {
+	return p.parseAnyFunc(true, true, false)
 }
 
 func (p *Parser) parseFuncExpr() (funcDecl *FuncDecl) {
-	return p.parseAnyFunc(false, true)
+	return p.parseAnyFunc(false, false, true)
 }
 
 func (p *Parser) parseAsyncFuncExpr() (funcDecl *FuncDecl) {
-	return p.parseAnyFunc(true, true)
+	return p.parseAnyFunc(true, false, true)
 }
 
-func (p *Parser) parseAnyFunc(async, inExpr bool) (funcDecl *FuncDecl) {
+func (p *Parser) parseAnyFunc(async, exportDefault, expr bool) (funcDecl *FuncDecl) {
 	// assume we're at function
 	p.next()
 	funcDecl = &FuncDecl{}
@@ -893,9 +901,9 @@ func (p *Parser) parseAnyFunc(async, inExpr bool) (funcDecl *FuncDecl) {
 	}
 	var ok bool
 	var name []byte
-	if inExpr && (IsIdentifier(p.tt) || p.tt == YieldToken || p.tt == AwaitToken) || !inExpr && p.isIdentifierReference(p.tt) {
+	if expr && (IsIdentifier(p.tt) || p.tt == YieldToken || p.tt == AwaitToken) || !expr && p.isIdentifierReference(p.tt) {
 		name = p.data
-		if !inExpr {
+		if !expr {
 			funcDecl.Name, ok = p.scope.Declare(FunctionDecl, p.data)
 			if !ok {
 				p.failMessage("identifier %s has already been declared", string(p.data))
@@ -903,7 +911,7 @@ func (p *Parser) parseAnyFunc(async, inExpr bool) (funcDecl *FuncDecl) {
 			}
 		}
 		p.next()
-	} else if !inExpr {
+	} else if !expr && !exportDefault {
 		p.fail("function declaration", IdentifierToken)
 		return
 	} else if p.tt != OpenParenToken {
@@ -914,7 +922,7 @@ func (p *Parser) parseAnyFunc(async, inExpr bool) (funcDecl *FuncDecl) {
 	parentAwait, parentYield := p.await, p.yield
 	p.await, p.yield = funcDecl.Async, funcDecl.Generator
 
-	if inExpr && name != nil {
+	if expr && name != nil {
 		funcDecl.Name, _ = p.scope.Declare(ExprDecl, name) // cannot fail
 	}
 	funcDecl.Params = p.parseFuncParams("function declaration")
@@ -927,19 +935,23 @@ func (p *Parser) parseAnyFunc(async, inExpr bool) (funcDecl *FuncDecl) {
 }
 
 func (p *Parser) parseClassDecl() (classDecl *ClassDecl) {
-	return p.parseAnyClass(false)
+	return p.parseAnyClass(false, false)
+}
+
+func (p *Parser) parseClassDeclDefault() (classDecl *ClassDecl) {
+	return p.parseAnyClass(true, false)
 }
 
 func (p *Parser) parseClassExpr() (classDecl *ClassDecl) {
-	return p.parseAnyClass(true)
+	return p.parseAnyClass(false, true)
 }
 
-func (p *Parser) parseAnyClass(inExpr bool) (classDecl *ClassDecl) {
+func (p *Parser) parseAnyClass(exportDefault, expr bool) (classDecl *ClassDecl) {
 	// assume we're at class
 	p.next()
 	classDecl = &ClassDecl{}
 	if IsIdentifier(p.tt) || p.tt == YieldToken || p.tt == AwaitToken {
-		if !inExpr {
+		if !expr {
 			var ok bool
 			classDecl.Name, ok = p.scope.Declare(LexicalDecl, p.data)
 			if !ok {
@@ -951,7 +963,7 @@ func (p *Parser) parseAnyClass(inExpr bool) (classDecl *ClassDecl) {
 			classDecl.Name = &Var{p.data, nil, 1, ExprDecl}
 		}
 		p.next()
-	} else if !inExpr {
+	} else if !expr && !exportDefault {
 		p.fail("class declaration", IdentifierToken)
 		return
 	}
@@ -1435,7 +1447,7 @@ func (p *Parser) parseAsyncArrowFunc() (arrowFunc *ArrowFunc) {
 	p.await, p.yield = true, false
 
 	if IsIdentifier(p.tt) || !p.yield && p.tt == YieldToken {
-		ref, _ := p.scope.Declare(ArgumentDecl, p.data)
+		ref, _ := p.scope.Declare(ArgumentDecl, p.data) // cannot fail
 		p.next()
 		arrowFunc.Params.List = []BindingElement{{Binding: ref}}
 	} else {
@@ -2092,12 +2104,15 @@ func (p *Parser) parseAssignmentExpression() IExpr {
 		data := p.data
 		p.next()
 		if p.tt == EqToken || p.tt == CommaToken || p.tt == CloseParenToken || p.tt == CloseBraceToken || p.tt == CloseBracketToken {
+			var ok bool
 			var left IExpr
-			left, _ = p.scope.Declare(ArgumentDecl, data) // cannot fail
-			p.assumeArrowFunc = false
-			left = p.parseExpressionSuffix(left, OpAssign, OpPrimary)
-			p.assumeArrowFunc = true
-			return left
+			left, ok = p.scope.Declare(ArgumentDecl, data)
+			if ok {
+				p.assumeArrowFunc = false
+				left = p.parseExpressionSuffix(left, OpAssign, OpPrimary)
+				p.assumeArrowFunc = true
+				return left
+			}
 		}
 		p.assumeArrowFunc = false
 		if tt == AsyncToken {
@@ -2136,7 +2151,12 @@ func (p *Parser) parseParenthesizedExpressionOrArrowFunc(prec OpPrec, async []by
 					p.next()
 				}
 			} else if p.isIdentifierReference(p.tt) {
-				rest, _ = p.scope.Declare(ArgumentDecl, p.data) // cannot fail
+				var ok bool
+				rest, ok = p.scope.Declare(ArgumentDecl, p.data)
+				if !ok {
+					p.failMessage("identifier %s has already been declared", string(p.data))
+					return nil
+				}
 				p.next()
 			} else if p.tt == OpenBracketToken {
 				array := p.parseArrayLiteral()

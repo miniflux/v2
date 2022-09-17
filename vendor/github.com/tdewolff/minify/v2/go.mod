@@ -9,6 +9,6 @@ require (
 	github.com/fsnotify/fsnotify v1.5.4
 	github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2
 	github.com/spf13/pflag v1.0.5
-	github.com/tdewolff/parse/v2 v2.6.1
+	github.com/tdewolff/parse/v2 v2.6.3
 	github.com/tdewolff/test v1.0.7
 )
