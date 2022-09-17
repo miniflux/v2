@@ -41,6 +41,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		GoogleReaderEnabled:  integration.GoogleReaderEnabled,
 		GoogleReaderUsername: integration.GoogleReaderUsername,
 		WallabagEnabled:      integration.WallabagEnabled,
+		WallabagOnlyURL:      integration.WallabagOnlyURL,
 		WallabagURL:          integration.WallabagURL,
 		WallabagClientID:     integration.WallabagClientID,
 		WallabagClientSecret: integration.WallabagClientSecret,

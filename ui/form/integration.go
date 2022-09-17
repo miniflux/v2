@@ -26,6 +26,7 @@ type IntegrationForm struct {
 	GoogleReaderUsername string
 	GoogleReaderPassword string
 	WallabagEnabled      bool
+	WallabagOnlyURL      bool
 	WallabagURL          string
 	WallabagClientID     string
 	WallabagClientSecret string
@@ -63,6 +64,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.GoogleReaderEnabled = i.GoogleReaderEnabled
 	integration.GoogleReaderUsername = i.GoogleReaderUsername
 	integration.WallabagEnabled = i.WallabagEnabled
+	integration.WallabagOnlyURL = i.WallabagOnlyURL
 	integration.WallabagURL = i.WallabagURL
 	integration.WallabagClientID = i.WallabagClientID
 	integration.WallabagClientSecret = i.WallabagClientSecret
@@ -103,6 +105,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		GoogleReaderUsername: r.FormValue("googlereader_username"),
 		GoogleReaderPassword: r.FormValue("googlereader_password"),
 		WallabagEnabled:      r.FormValue("wallabag_enabled") == "1",
+		WallabagOnlyURL:      r.FormValue("wallabag_only_url") == "1",
 		WallabagURL:          r.FormValue("wallabag_url"),
 		WallabagClientID:     r.FormValue("wallabag_client_id"),
 		WallabagClientSecret: r.FormValue("wallabag_client_secret"),

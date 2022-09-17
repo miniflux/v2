@@ -21,6 +21,7 @@ type Integration struct {
 	GoogleReaderUsername string
 	GoogleReaderPassword string
 	WallabagEnabled      bool
+	WallabagOnlyURL      bool
 	WallabagURL          string
 	WallabagClientID     string
 	WallabagClientSecret string
