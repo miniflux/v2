@@ -97,7 +97,7 @@ windows-x86:
 	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-windows-x86 main.go
 
 run:
-	@ LOG_DATE_TIME=1 go run main.go -debug
+	@ LOG_DATE_TIME=1 DEBUG=1 RUN_MIGRATIONS=1 go run main.go
 
 clean:
 	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb
