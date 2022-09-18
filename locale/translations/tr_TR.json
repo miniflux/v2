@@ -333,6 +333,7 @@
     "form.integration.pocket_access_token": "Pocket Access Token",
     "form.integration.pocket_connect_link": "Pocket hesabını bağla",
     "form.integration.wallabag_activate": "Makaleleri Wallabag'e kaydet",
+    "form.integration.wallabag_only_url": "Yalnızca URL gönder (tam içerik yerine)",
     "form.integration.wallabag_endpoint": "Wallabag API Uç Noktası",
     "form.integration.wallabag_client_id": "Wallabag Client ID",
     "form.integration.wallabag_client_secret": "Wallabag Client Secret",
