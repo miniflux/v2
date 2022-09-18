@@ -333,6 +333,7 @@
     "form.integration.pocket_access_token": "Pocket-käyttöoikeustunnus",
     "form.integration.pocket_connect_link": "Yhdistä Pocket-tilisi",
     "form.integration.wallabag_activate": "Tallenna artikkelit Wallabagiin",
+    "form.integration.wallabag_only_url": "Lähetä vain URL-osoite (koko sisällön sijaan)",
     "form.integration.wallabag_endpoint": "Wallabag API -päätepiste",
     "form.integration.wallabag_client_id": "Wallabag Client ID",
     "form.integration.wallabag_client_secret": "Wallabag Client Secret",

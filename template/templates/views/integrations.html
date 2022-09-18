@@ -119,6 +119,10 @@
             <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "form.integration.wallabag_activate" }}
         </label>
 
+        <label>
+            <input type="checkbox" name="wallabag_only_url" value="1" {{ if .form.WallabagOnlyURL }}checked{{ end }}> {{ t "form.integration.wallabag_only_url" }}
+        </label>
+
         <label for="form-wallabag-url">{{ t "form.integration.wallabag_endpoint" }}</label>
         <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/" spellcheck="false">
 

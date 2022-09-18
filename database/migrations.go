@@ -610,4 +610,10 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE integrations ADD COLUMN wallabag_only_url bool default 'f';
+		`)
+		return
+	},
 }

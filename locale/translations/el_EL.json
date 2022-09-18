@@ -333,6 +333,7 @@
     "form.integration.pocket_access_token": "Pocket Access Token",
     "form.integration.pocket_connect_link": "Συνδέστε τον λογαριασμό Pocket σας",
     "form.integration.wallabag_activate": "Αποθήκευση άρθρων στο Wallabag",
+    "form.integration.wallabag_only_url": "Αποστολή μόνο URL (αντί για πλήρες περιεχόμενο)",
     "form.integration.wallabag_endpoint": "Τελικό σημείο Wallabag API ",
     "form.integration.wallabag_client_id": "Ταυτότητα πελάτη Wallabag",
     "form.integration.wallabag_client_secret": "Wallabag Μυστικό Πελάτη",

@@ -333,6 +333,7 @@
     "form.integration.pocket_access_token": "Token de acesso do Pocket",
     "form.integration.pocket_connect_link": "Conectar a conta do Pocket",
     "form.integration.wallabag_activate": "Salvar itens no Wallabag",
+    "form.integration.wallabag_only_url": "Enviar apenas URL (em vez de conteúdo completo)",
     "form.integration.wallabag_endpoint": "Endpoint da API do Wallabag",
     "form.integration.wallabag_client_id": "ID de cliente (Client ID) do Wallabag",
     "form.integration.wallabag_client_secret": "Segredo do cliente (Client Secret) do Wallabag",
