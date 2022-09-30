@@ -882,6 +882,7 @@ article.category-has-unread {
     color: var(--entry-content-color);
     line-height: 1.4em;
     overflow-wrap: break-word;
+    touch-action: pan-y pinch-zoom;
 }
 
 .entry-content h1, h2, h3, h4, h5, h6 {
