@@ -90,7 +90,12 @@
 
     <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
 
-    <label><input type="checkbox" name="double_tap" value="1" {{ if .form.DoubleTap }}checked{{ end }}> {{ t "form.prefs.label.double_tap" }}</label>
+    <label for="form-gesture-nav">{{ t "form.prefs.label.gesture_nav" }}</label>
+    <select id="form-gesture-nav" name="gesture_nav">
+        <option value="none" {{ if eq "none" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.none" }}</option>
+        <option value="tap" {{ if eq "tap" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.tap" }}</option>
+        <option value="swipe" {{ if eq "swipe" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.swipe" }}</option>
+    </select>
 
     <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 

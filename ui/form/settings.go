@@ -27,7 +27,7 @@ type SettingsForm struct {
 	ShowReadingTime        bool
 	CustomCSS              string
 	EntrySwipe             bool
-	DoubleTap              bool
+	GestureNav             string
 	DisplayMode            string
 	DefaultReadingSpeed    int
 	CJKReadingSpeed        int
@@ -48,7 +48,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.ShowReadingTime = s.ShowReadingTime
 	user.Stylesheet = s.CustomCSS
 	user.EntrySwipe = s.EntrySwipe
-	user.DoubleTap = s.DoubleTap
+	user.GestureNav = s.GestureNav
 	user.DisplayMode = s.DisplayMode
 	user.CJKReadingSpeed = s.CJKReadingSpeed
 	user.DefaultReadingSpeed = s.DefaultReadingSpeed
@@ -114,7 +114,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		ShowReadingTime:        r.FormValue("show_reading_time") == "1",
 		CustomCSS:              r.FormValue("custom_css"),
 		EntrySwipe:             r.FormValue("entry_swipe") == "1",
-		DoubleTap:              r.FormValue("double_tap") == "1",
+		GestureNav:             r.FormValue("gesture_nav"),
 		DisplayMode:            r.FormValue("display_mode"),
 		DefaultReadingSpeed:    int(defaultReadingSpeed),
 		CJKReadingSpeed:        int(cjkReadingSpeed),
