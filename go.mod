@@ -14,7 +14,7 @@ require (
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
-	github.com/tdewolff/minify/v2 v2.12.2
+	github.com/tdewolff/minify/v2 v2.12.4
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/yuin/goldmark v1.5.2
 	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d
