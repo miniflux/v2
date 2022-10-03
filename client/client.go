@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 // Client holds API procedure calls.
@@ -19,6 +20,11 @@ type Client struct {
 
 // New returns a new Miniflux client.
 func New(endpoint string, credentials ...string) *Client {
+	// Web gives "API Endpoint = https://miniflux.app/v1/", it doesn't work (/v1/v1/me)
+	endpoint = strings.TrimSuffix(endpoint, "/")
+	endpoint = strings.TrimSuffix(endpoint, "/v1")
+	// trim to https://miniflux.app
+
 	if len(credentials) == 2 {
 		return &Client{request: &request{endpoint: endpoint, username: credentials[0], password: credentials[1]}}
 	}
@@ -181,7 +187,6 @@ func (c *Client) CreateCategory(title string) (*Category, error) {
 	body, err := c.request.Post("/v1/categories", map[string]interface{}{
 		"title": title,
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +206,6 @@ func (c *Client) UpdateCategory(categoryID int64, title string) (*Category, erro
 	body, err := c.request.Put(fmt.Sprintf("/v1/categories/%d", categoryID), map[string]interface{}{
 		"title": title,
 	})
-
 	if err != nil {
 		return nil, err
 	}
