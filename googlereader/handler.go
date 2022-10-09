@@ -1155,8 +1155,8 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 		return
 	}
 	continuation := 0
-	if len(itemRefs) < totalEntries {
-		continuation = rm.Offset + len(itemRefs)
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
 	}
 
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
@@ -1197,8 +1197,8 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 		return
 	}
 	continuation := 0
-	if len(itemRefs) < totalEntries {
-		continuation = rm.Offset + len(itemRefs)
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
 	}
 
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
@@ -1239,8 +1239,8 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 		return
 	}
 	continuation := 0
-	if len(itemRefs) < totalEntries {
-		continuation = rm.Offset + len(itemRefs)
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
 	}
 
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
@@ -1287,8 +1287,8 @@ func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm Re
 		return
 	}
 	continuation := 0
-	if len(itemRefs) < totalEntries {
-		continuation = rm.Offset + len(itemRefs)
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
 	}
 
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
