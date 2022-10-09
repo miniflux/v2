@@ -1125,6 +1125,7 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 			logger.Info("[GoogleReader][ReadingListStreamIDs][ClientIP=%s] xt filter type: %#v", clientIP, s)
 		}
 	}
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
 	builder.WithOrder(model.DefaultSortingOrder)
@@ -1166,6 +1167,7 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 	clientIP := request.ClientIP(r)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred(true)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
@@ -1208,6 +1210,7 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 	clientIP := request.ClientIP(r)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
@@ -1256,6 +1259,7 @@ func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm Re
 	}
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithFeedID(feedID)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
