@@ -95,6 +95,10 @@ func TestParseRss2Sample(t *testing.T) {
 	if feed.Entries[0].Content != `How do Americans get ready to work with Russians aboard the International Space Station? They take a crash course in culture, language and protocol at Russia's <a href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm">Star City</a>.` {
 		t.Errorf("Incorrect entry content, got: %s", feed.Entries[0].Content)
 	}
+
+	if feed.Entries[1].URL != "http://liftoff.msfc.nasa.gov/2003/05/30.html#item572" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[1].URL)
+	}
 }
 
 func TestParseFeedWithoutTitle(t *testing.T) {
@@ -227,6 +231,34 @@ func TestParseEntryWithoutLink(t *testing.T) {
 
 	if feed.Entries[0].Hash != "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4" {
 		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
+	}
+}
+
+func TestParseEntryWithOnlyGuidPermalink(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<guid isPermaLink="true">https://example.org/some-article.html</guid>
+			</item>
+			<item>
+				<guid>https://example.org/another-article.html</guid>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].URL != "https://example.org/some-article.html" {
+		t.Errorf("Incorrect entry link, got: %s", feed.Entries[0].URL)
+	}
+
+	if feed.Entries[1].URL != "https://example.org/another-article.html" {
+		t.Errorf("Incorrect entry link, got: %s", feed.Entries[1].URL)
 	}
 }
 
