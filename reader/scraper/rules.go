@@ -44,6 +44,7 @@ var predefinedRules = map[string]string{
 	"techcrunch.com":       "div.article-entry",
 	"theoatmeal.com":       "div#comic",
 	"theregister.com":      "#top-col-story h2, #body",
+	"theverge.com":         "h2.inline:nth-child(2),h2.duet--article--dangerously-set-cms-markup,figure.w-full,div.duet--article--article-body-component",
 	"turnoff.us":           "article.post-content",
 	"universfreebox.com":   "#corps_corps",
 	"version2.dk":          "section.body",
