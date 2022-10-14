@@ -7,14 +7,12 @@ package ui // import "miniflux.app/ui"
 import (
 	"net/http"
 
-	"miniflux.app/config"
 	"miniflux.app/logger"
 	"miniflux.app/storage"
 	"miniflux.app/template"
 	"miniflux.app/worker"
 
 	"github.com/gorilla/mux"
-	servertiming "github.com/mitchellh/go-server-timing"
 )
 
 // Serve declares all routes for the user interface.
@@ -31,9 +29,6 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter := router.NewRoute().Subrouter()
 	uiRouter.Use(middleware.handleUserSession)
 	uiRouter.Use(middleware.handleAppSession)
-	uiRouter.Use(func(h http.Handler) http.Handler {
-		return servertiming.Middleware(h, &servertiming.MiddlewareOpts{DisableHeaders: !config.Opts.HasServerTimingHeader()})
-	})
 	uiRouter.StrictSlash(true)
 
 	// Static assets.
