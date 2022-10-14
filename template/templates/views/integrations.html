@@ -214,6 +214,29 @@
         </div>
     </div>
 
+    <h3>Matrix Bot</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="matrix_bot_enabled" value="1" {{ if .form.MatrixBotEnabled }}checked{{ end }}> {{ t "form.integration.matrix_bot_activate" }}
+        </label>
+
+        <label for="form-matrix-bot-user">{{ t "form.integration.matrix_bot_user" }}</label>
+        <input type="text" name="matrix_bot_user" id="form-matrix-bot-user" value="{{ .form.MatrixBotUser }}" spellcheck="false">
+
+        <label for="form-matrix-chat-password">{{ t "form.integration.matrix_bot_password" }}</label>
+        <input type="password" name="matrix_bot_password" id="form-matrix-password" value="{{ .form.MatrixBotPassword }}" spellcheck="false">
+
+        <label for="form-matrix-url">{{ t "form.integration.matrix_bot_url" }}</label>
+        <input type="text" name="matrix_bot_url" id="form-matrix-url" value="{{ .form.MatrixBotURL }}" spellcheck="false">
+
+        <label for="form-matrix-chat-id">{{ t "form.integration.matrix_bot_chat_id" }}</label>
+        <input type="text" name="matrix_bot_chat_id" id="form-matrix-chat-id" value="{{ .form.MatrixBotChatID }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
 </form>
 
 <h3>{{ t "page.integration.bookmarklet" }}</h3>

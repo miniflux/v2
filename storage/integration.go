@@ -146,7 +146,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			telegram_bot_chat_id,
 			linkding_enabled,
 			linkding_url,
-			linkding_api_key
+			linkding_api_key,
+			matrix_bot_enabled,
+			matrix_bot_user,
+			matrix_bot_password,
+			matrix_bot_url,
+			matrix_bot_chat_id
 		FROM
 			integrations
 		WHERE
@@ -191,6 +196,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkdingEnabled,
 		&integration.LinkdingURL,
 		&integration.LinkdingAPIKey,
+		&integration.MatrixBotEnabled,
+		&integration.MatrixBotUser,
+		&integration.MatrixBotPassword,
+		&integration.MatrixBotURL,
+		&integration.MatrixBotChatID,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -249,9 +259,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			espial_tags=$33,
 			linkding_enabled=$34,
 			linkding_url=$35,
-			linkding_api_key=$36
+			linkding_api_key=$36,
+			matrix_bot_enabled=$37,
+			matrix_bot_user=$38,
+			matrix_bot_password=$39,
+			matrix_bot_url=$40,
+			matrix_bot_chat_id=$41
 		WHERE
-			user_id=$37
+			user_id=$42
 	`
 		_, err = s.db.Exec(
 			query,
@@ -291,6 +306,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.LinkdingEnabled,
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
+			integration.MatrixBotEnabled,
+			integration.MatrixBotUser,
+			integration.MatrixBotPassword,
+			integration.MatrixBotURL,
+			integration.MatrixBotChatID,
 			integration.UserID,
 		)
 	} else {
@@ -333,9 +353,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		espial_tags=$33,
 		linkding_enabled=$34,
 		linkding_url=$35,
-		linkding_api_key=$36
+		linkding_api_key=$36,
+		matrix_bot_enabled=$37,
+		matrix_bot_user=$38,
+		matrix_bot_password=$39,
+		matrix_bot_url=$40,
+		matrix_bot_chat_id=$41
 	WHERE
-		user_id=$37
+		user_id=$42
 	`
 		_, err = s.db.Exec(
 			query,
@@ -375,6 +400,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.LinkdingEnabled,
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
+			integration.MatrixBotEnabled,
+			integration.MatrixBotUser,
+			integration.MatrixBotPassword,
+			integration.MatrixBotURL,
+			integration.MatrixBotChatID,
 			integration.UserID,
 		)
 	}
