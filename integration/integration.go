@@ -9,6 +9,7 @@ import (
 	"miniflux.app/integration/espial"
 	"miniflux.app/integration/instapaper"
 	"miniflux.app/integration/linkding"
+	"miniflux.app/integration/matrixbot"
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
@@ -106,6 +107,18 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+}
+
+// PushEntries pushes an entry array to third-party providers during feed refreshes.
+func PushEntries(entries model.Entries, integration *model.Integration) {
+	if integration.MatrixBotEnabled {
+		logger.Debug("[Integration] Sending %d entries for User #%d to Matrix", len(entries), integration.UserID)
+
+		err := matrixbot.PushEntries(entries, integration.MatrixBotURL, integration.MatrixBotUser, integration.MatrixBotPassword, integration.MatrixBotChatID)
+		if err != nil {
+			logger.Error("[Integration] push entries to matrix bot failed: %v", err)
 		}
 	}
 }

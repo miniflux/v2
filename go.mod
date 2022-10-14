@@ -5,6 +5,7 @@ module miniflux.app
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/coreos/go-oidc v2.2.1+incompatible
+	github.com/matrix-org/gomatrix v0.0.0-20220926102614-ceba4d9f7530
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.7
