@@ -15,6 +15,7 @@ import (
 	"miniflux.app/integration"
 	"miniflux.app/logger"
 	"miniflux.app/model"
+	"miniflux.app/proxy"
 	"miniflux.app/storage"
 
 	"github.com/gorilla/mux"
@@ -22,7 +23,7 @@ import (
 
 // Serve handles Fever API calls.
 func Serve(router *mux.Router, store *storage.Storage) {
-	handler := &handler{store}
+	handler := &handler{store, router}
 
 	sr := router.PathPrefix("/fever").Subrouter()
 	sr.Use(newMiddleware(store).serve)
@@ -30,7 +31,8 @@ func Serve(router *mux.Router, store *storage.Storage) {
 }
 
 type handler struct {
-	store *storage.Storage
+	store  *storage.Storage
+	router *mux.Router
 }
 
 func (h *handler) serve(w http.ResponseWriter, r *http.Request) {
@@ -308,7 +310,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 			FeedID:    entry.FeedID,
 			Title:     entry.Title,
 			Author:    entry.Author,
-			HTML:      entry.Content,
+			HTML:      proxy.AbsoluteImageProxyRewriter(h.router, r.Host, entry.Content),
 			URL:       entry.URL,
 			IsSaved:   isSaved,
 			IsRead:    isRead,
