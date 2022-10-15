@@ -5,6 +5,7 @@
 package config // import "miniflux.app/config"
 
 import (
+	"crypto/rand"
 	"fmt"
 	"sort"
 	"strings"
@@ -139,10 +140,14 @@ type Options struct {
 	metricsAllowedNetworks             []string
 	watchdog                           bool
 	invidiousInstance                  string
+	proxyPrivateKey                    []byte
 }
 
 // NewOptions returns Options with default values.
 func NewOptions() *Options {
+	randomKey := make([]byte, 16)
+	rand.Read(randomKey)
+
 	return &Options{
 		HTTPS:                              defaultHTTPS,
 		logDateTime:                        defaultLogDateTime,
@@ -199,6 +204,7 @@ func NewOptions() *Options {
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
 		watchdog:                           defaultWatchdog,
 		invidiousInstance:                  defaultInvidiousInstance,
+		proxyPrivateKey:                    randomKey,
 	}
 }
 
@@ -498,6 +504,11 @@ func (o *Options) InvidiousInstance() string {
 	return o.invidiousInstance
 }
 
+// ProxyPrivateKey returns the private key used by the media proxy
+func (o *Options) ProxyPrivateKey() []byte {
+	return o.proxyPrivateKey
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	var keyValues = map[string]interface{}{
@@ -552,6 +563,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
 		"PROXY_IMAGES":                           o.proxyImages,
 		"PROXY_IMAGE_URL":                        o.proxyImageUrl,
+		"PROXY_PRIVATE_KEY":                      redactSecretValue(string(o.proxyPrivateKey), redactSecret),
 		"ROOT_URL":                               o.rootURL,
 		"RUN_MIGRATIONS":                         o.runMigrations,
 		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,

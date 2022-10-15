@@ -9,17 +9,21 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
+	"miniflux.app/config"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
+	"miniflux.app/proxy"
 	"miniflux.app/reader/processor"
 	"miniflux.app/storage"
+	"miniflux.app/url"
 	"miniflux.app/validator"
 )
 
-func getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b *storage.EntryQueryBuilder) {
+func (h *handler) getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b *storage.EntryQueryBuilder) {
 	entry, err := b.GetEntry()
 	if err != nil {
 		json.ServerError(w, r, err)
@@ -29,6 +33,15 @@ func getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b *storage.Entr
 	if entry == nil {
 		json.NotFound(w, r)
 		return
+	}
+
+	entry.Content = proxy.AbsoluteImageProxyRewriter(h.router, r.Host, entry.Content)
+	proxyImage := config.Opts.ProxyImages()
+
+	for i := range entry.Enclosures {
+		if strings.HasPrefix(entry.Enclosures[i].MimeType, "image/") && (proxyImage == "all" || proxyImage != "none" && !url.IsHTTPS(entry.Enclosures[i].URL)) {
+			entry.Enclosures[i].URL = proxy.AbsoluteProxifyURL(h.router, r.Host, entry.Enclosures[i].URL)
+		}
 	}
 
 	json.OK(w, r, entry)
@@ -42,7 +55,7 @@ func (h *handler) getFeedEntry(w http.ResponseWriter, r *http.Request) {
 	builder.WithFeedID(feedID)
 	builder.WithEntryID(entryID)
 
-	getEntryFromBuilder(w, r, builder)
+	h.getEntryFromBuilder(w, r, builder)
 }
 
 func (h *handler) getCategoryEntry(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +66,7 @@ func (h *handler) getCategoryEntry(w http.ResponseWriter, r *http.Request) {
 	builder.WithCategoryID(categoryID)
 	builder.WithEntryID(entryID)
 
-	getEntryFromBuilder(w, r, builder)
+	h.getEntryFromBuilder(w, r, builder)
 }
 
 func (h *handler) getEntry(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +74,7 @@ func (h *handler) getEntry(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 
-	getEntryFromBuilder(w, r, builder)
+	h.getEntryFromBuilder(w, r, builder)
 }
 
 func (h *handler) getFeedEntries(w http.ResponseWriter, r *http.Request) {
@@ -139,6 +152,10 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
+	}
+
+	for i := range entries {
+		entries[i].Content = proxy.AbsoluteImageProxyRewriter(h.router, r.Host, entries[i].Content)
 	}
 
 	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})
