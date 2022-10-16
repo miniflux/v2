@@ -33,6 +33,7 @@ type User struct {
 	DefaultReadingSpeed int        `json:"default_reading_speed"`
 	CJKReadingSpeed     int        `json:"cjk_reading_speed"`
 	DefaultHomePage     string     `json:"default_home_page"`
+	CategoriesSortOrder string     `json:"categories_sort_order"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -65,6 +66,7 @@ type UserModificationRequest struct {
 	DefaultReadingSpeed *int    `json:"default_reading_speed"`
 	CJKReadingSpeed     *int    `json:"cjk_reading_speed"`
 	DefaultHomePage     *string `json:"default_home_page"`
+	CategoriesSortOrder *string `json:"categories_sort_order"`
 }
 
 // Patch updates the User object with the modification request.
@@ -143,6 +145,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.DefaultHomePage != nil {
 		user.DefaultHomePage = *u.DefaultHomePage
+	}
+
+	if u.CategoriesSortOrder != nil {
+		user.CategoriesSortOrder = *u.CategoriesSortOrder
 	}
 }
 
