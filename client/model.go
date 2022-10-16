@@ -39,6 +39,7 @@ type User struct {
 	DefaultReadingSpeed int        `json:"default_reading_speed"`
 	CJKReadingSpeed     int        `json:"cjk_reading_speed"`
 	DefaultHomePage     string     `json:"default_home_page"`
+	CategoriesSortOrder string     `json:"categories_sort_order"`
 }
 
 func (u User) String() string {
@@ -75,6 +76,7 @@ type UserModificationRequest struct {
 	DefaultReadingSpeed *int    `json:"default_reading_speed"`
 	CJKReadingSpeed     *int    `json:"cjk_reading_speed"`
 	DefaultHomePage     *string `json:"default_home_page"`
+	CategoriesSortOrder *string `json:"categories_sort_order"`
 }
 
 // Users represents a list of users.
