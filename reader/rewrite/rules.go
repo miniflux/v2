@@ -32,6 +32,7 @@ var predefinedRules = map[string]string{
 	"theverge.com":           "add_dynamic_image",
 	"treelobsters.com":       "add_image_title",
 	"www.qwantz.com":         "add_image_title,add_mailto_subject",
+	"www.recalbox.com":       "parse_markdown",
 	"xkcd.com":               "add_image_title",
 	"youtube.com":            "add_youtube_video",
 }
