@@ -315,7 +315,7 @@
     "form.prefs.label.custom_css": "Пользовательские CSS",
     "form.prefs.label.entry_order": "Колонка сортировки ввода",
     "form.prefs.label.default_home_page": "Домашняя страница по умолчанию",
-    "form.prefs.label.categories_sort_order": "Сортировка категорий",
+    "form.prefs.label.categories_sorting_order": "Сортировка категорий",
     "form.import.label.file": "OPML файл",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Активировать Fever API",

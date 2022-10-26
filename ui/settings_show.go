@@ -27,22 +27,22 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	settingsForm := form.SettingsForm{
-		Username:            user.Username,
-		Theme:               user.Theme,
-		Language:            user.Language,
-		Timezone:            user.Timezone,
-		EntryDirection:      user.EntryDirection,
-		EntryOrder:          user.EntryOrder,
-		EntriesPerPage:      user.EntriesPerPage,
-		KeyboardShortcuts:   user.KeyboardShortcuts,
-		ShowReadingTime:     user.ShowReadingTime,
-		CustomCSS:           user.Stylesheet,
-		EntrySwipe:          user.EntrySwipe,
-		DisplayMode:         user.DisplayMode,
-		DefaultReadingSpeed: user.DefaultReadingSpeed,
-		CJKReadingSpeed:     user.CJKReadingSpeed,
-		DefaultHomePage:     user.DefaultHomePage,
-		CategoriesSortOrder: user.CategoriesSortOrder,
+		Username:               user.Username,
+		Theme:                  user.Theme,
+		Language:               user.Language,
+		Timezone:               user.Timezone,
+		EntryDirection:         user.EntryDirection,
+		EntryOrder:             user.EntryOrder,
+		EntriesPerPage:         user.EntriesPerPage,
+		KeyboardShortcuts:      user.KeyboardShortcuts,
+		ShowReadingTime:        user.ShowReadingTime,
+		CustomCSS:              user.Stylesheet,
+		EntrySwipe:             user.EntrySwipe,
+		DisplayMode:            user.DisplayMode,
+		DefaultReadingSpeed:    user.DefaultReadingSpeed,
+		CJKReadingSpeed:        user.CJKReadingSpeed,
+		DefaultHomePage:        user.DefaultHomePage,
+		CategoriesSortingOrder: user.CategoriesSortingOrder,
 	}
 
 	timezones, err := h.store.Timezones()
@@ -60,7 +60,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("default_home_pages", model.HomePages())
-	view.Set("categories_sort_options", model.CategoriesSortOptions())
+	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
 
 	html.OK(w, r, view.Render("settings"))
 }

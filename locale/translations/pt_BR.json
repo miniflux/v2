@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "CSS customizado",
     "form.prefs.label.entry_order": "Coluna de Ordenação de Entrada",
     "form.prefs.label.default_home_page": "Página inicial predefinida",
-    "form.prefs.label.categories_sort_order": "Classificação das categorias",
+    "form.prefs.label.categories_sorting_order": "Classificação das categorias",
     "form.import.label.file": "Arquivo OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Ativar API do Fever",

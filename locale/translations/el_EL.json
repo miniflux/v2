@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "Προσαρμοσμένο CSS",
     "form.prefs.label.entry_order": "Στήλη ταξινόμησης εισόδου",
     "form.prefs.label.default_home_page": "Προεπιλεγμένη αρχική σελίδα",
-    "form.prefs.label.categories_sort_order": "Ταξινόμηση κατηγοριών",
+    "form.prefs.label.categories_sorting_order": "Ταξινόμηση κατηγοριών",
     "form.import.label.file": "Αρχείο OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Ενεργοποιήστε το Fever API",

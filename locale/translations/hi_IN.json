@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "कस्टम सीएसएस",
     "form.prefs.label.entry_order": "प्रवेश छँटाई कॉलम",
     "form.prefs.label.default_home_page": "डिफ़ॉल्ट होमपेज़",
-    "form.prefs.label.categories_sort_order": "श्रेणियाँ छँटाई",
+    "form.prefs.label.categories_sorting_order": "श्रेणियाँ छँटाई",
     "form.import.label.file": "ओपीएमएल फ़ाइल",
     "form.import.label.url": "यूआरएल",
     "form.integration.fever_activate": "फीवर एपीआई सक्रिय करें",
