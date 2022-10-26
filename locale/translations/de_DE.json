@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "Benutzerdefiniertes CSS",
     "form.prefs.label.entry_order": "Eintrag Sortierspalte",
     "form.prefs.label.default_home_page": "Standard Startseite",
-    "form.prefs.label.categories_sort_order": "Kategorien sortieren",
+    "form.prefs.label.categories_sorting_order": "Kategorien sortieren",
     "form.import.label.file": "OPML Datei",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API aktivieren",

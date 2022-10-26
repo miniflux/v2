@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "Özel CSS",
     "form.prefs.label.entry_order": "Giriş Sıralama Sütunu",
     "form.prefs.label.default_home_page": "Varsayılan ana sayfa",
-    "form.prefs.label.categories_sort_order": "Kategoriler sıralama",
+    "form.prefs.label.categories_sorting_order": "Kategoriler sıralama",
     "form.import.label.file": "OPML dosyası",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API'yi Etkinleştir",

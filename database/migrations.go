@@ -618,7 +618,7 @@ var migrations = []func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		_, err = tx.Exec(`
-			ALTER TABLE users ADD COLUMN categories_sort_order text not null default 'unread_count';
+			ALTER TABLE users ADD COLUMN categories_sorting_order text not null default 'unread_count';
 		`)
 		return
 	},

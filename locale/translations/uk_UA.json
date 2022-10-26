@@ -312,7 +312,7 @@
   "form.prefs.label.custom_css": "Спеціальний CSS",
   "form.prefs.label.entry_order": "Стовпець сортування записів",
   "form.prefs.label.default_home_page": "Домашня сторінка за умовчанням",
-    "form.prefs.label.categories_sort_order": "Сортування за категоріями",
+    "form.prefs.label.categories_sorting_order": "Сортування за категоріями",
   "form.import.label.file": "Файл OPML",
   "form.import.label.url": "URL-адреса",
   "form.integration.fever_activate": "Увімкнути API Fever",

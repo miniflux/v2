@@ -70,10 +70,10 @@
     {{ end }}
     </select>
 
-    <label for="form-categories-sort-order">{{ t "form.prefs.label.categories_sort_order" }}</label>
-    <select id="form-categories-sort-order" name="categories_sort_order">
-    {{ range $key, $value := .categories_sort_options }}
-        <option value="{{ $key }}" {{ if eq $key $.form.CategoriesSortOrder }}selected="selected"{{ end }}>{{ t $value }}</option>
+    <label for="form-categories-sorting-order">{{ t "form.prefs.label.categories_sorting_order" }}</label>
+    <select id="form-categories-sorting-order" name="categories_sorting_order">
+    {{ range $key, $value := .categories_sorting_options }}
+        <option value="{{ $key }}" {{ if eq $key $.form.CategoriesSortingOrder }}selected="selected"{{ end }}>{{ t $value }}</option>
     {{ end }}
     </select>
 

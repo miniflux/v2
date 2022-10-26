@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "Aangepaste CSS",
     "form.prefs.label.entry_order": "Ingang Sorteerkolom",
     "form.prefs.label.default_home_page": "Standaard startpagina",
-    "form.prefs.label.categories_sort_order": "Categorieën sorteren",
+    "form.prefs.label.categories_sorting_order": "Categorieën sorteren",
     "form.import.label.file": "OPML-bestand",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activeer Fever API",

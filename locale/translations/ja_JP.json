@@ -313,7 +313,7 @@
     "form.prefs.label.custom_css": "カスタムCSS",
     "form.prefs.label.entry_order": "エントリーソートカラム",
     "form.prefs.label.default_home_page": "デフォルトのトップページ",
-    "form.prefs.label.categories_sort_order": "カテゴリの並べ替え",
+    "form.prefs.label.categories_sorting_order": "カテゴリの並べ替え",
     "form.import.label.file": "OPML ファイル",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API を有効にする",

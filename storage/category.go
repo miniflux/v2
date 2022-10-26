@@ -133,7 +133,7 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 			user_id=$1
 	`
 
-	if user.CategoriesSortOrder == "alphabetical" {
+	if user.CategoriesSortingOrder == "alphabetical" {
 		query = query + `
 			ORDER BY
 				c.title ASC
