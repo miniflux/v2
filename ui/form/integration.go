@@ -26,6 +26,7 @@ type IntegrationForm struct {
 	GoogleReaderUsername string
 	GoogleReaderPassword string
 	WallabagEnabled      bool
+	WallabagOnlyURL      bool
 	WallabagURL          string
 	WallabagClientID     string
 	WallabagClientSecret string
@@ -47,6 +48,11 @@ type IntegrationForm struct {
 	LinkdingEnabled      bool
 	LinkdingURL          string
 	LinkdingAPIKey       string
+	MatrixBotEnabled     bool
+	MatrixBotUser        string
+	MatrixBotPassword    string
+	MatrixBotURL         string
+	MatrixBotChatID      string
 }
 
 // Merge copy form values to the model.
@@ -63,6 +69,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.GoogleReaderEnabled = i.GoogleReaderEnabled
 	integration.GoogleReaderUsername = i.GoogleReaderUsername
 	integration.WallabagEnabled = i.WallabagEnabled
+	integration.WallabagOnlyURL = i.WallabagOnlyURL
 	integration.WallabagURL = i.WallabagURL
 	integration.WallabagClientID = i.WallabagClientID
 	integration.WallabagClientSecret = i.WallabagClientSecret
@@ -84,6 +91,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.LinkdingEnabled = i.LinkdingEnabled
 	integration.LinkdingURL = i.LinkdingURL
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
+	integration.MatrixBotEnabled = i.MatrixBotEnabled
+	integration.MatrixBotUser = i.MatrixBotUser
+	integration.MatrixBotPassword = i.MatrixBotPassword
+	integration.MatrixBotURL = i.MatrixBotURL
+	integration.MatrixBotChatID = i.MatrixBotChatID
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -103,6 +115,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		GoogleReaderUsername: r.FormValue("googlereader_username"),
 		GoogleReaderPassword: r.FormValue("googlereader_password"),
 		WallabagEnabled:      r.FormValue("wallabag_enabled") == "1",
+		WallabagOnlyURL:      r.FormValue("wallabag_only_url") == "1",
 		WallabagURL:          r.FormValue("wallabag_url"),
 		WallabagClientID:     r.FormValue("wallabag_client_id"),
 		WallabagClientSecret: r.FormValue("wallabag_client_secret"),
@@ -124,5 +137,10 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		LinkdingEnabled:      r.FormValue("linkding_enabled") == "1",
 		LinkdingURL:          r.FormValue("linkding_url"),
 		LinkdingAPIKey:       r.FormValue("linkding_api_key"),
+		MatrixBotEnabled:     r.FormValue("matrix_bot_enabled") == "1",
+		MatrixBotUser:        r.FormValue("matrix_bot_user"),
+		MatrixBotPassword:    r.FormValue("matrix_bot_password"),
+		MatrixBotURL:         r.FormValue("matrix_bot_url"),
+		MatrixBotChatID:      r.FormValue("matrix_bot_chat_id"),
 	}
 }

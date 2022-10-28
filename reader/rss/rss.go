@@ -118,6 +118,12 @@ func (r rssFeed) feedAuthor() string {
 	return sanitizer.StripTags(strings.TrimSpace(author))
 }
 
+type rssGUID struct {
+	XMLName     xml.Name
+	Data        string `xml:",chardata"`
+	IsPermaLink string `xml:"isPermaLink,attr"`
+}
+
 type rssLink struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
@@ -159,7 +165,7 @@ func (enclosure *rssEnclosure) Size() int64 {
 }
 
 type rssItem struct {
-	GUID           string           `xml:"guid"`
+	GUID           rssGUID          `xml:"guid"`
 	Title          []rssTitle       `xml:"title"`
 	Links          []rssLink        `xml:"link"`
 	Description    string           `xml:"description"`
@@ -237,7 +243,7 @@ func (r *rssItem) entryAuthor() string {
 }
 
 func (r *rssItem) entryHash() string {
-	for _, value := range []string{r.GUID, r.entryURL()} {
+	for _, value := range []string{r.GUID.Data, r.entryURL()} {
 		if value != "" {
 			return crypto.Hash(value)
 		}
@@ -289,6 +295,13 @@ func (r *rssItem) entryURL() string {
 		if link.Data != "" {
 			return strings.TrimSpace(link.Data)
 		}
+	}
+
+	// Specs: https://cyber.harvard.edu/rss/rss.html#ltguidgtSubelementOfLtitemgt
+	// isPermaLink is optional, its default value is true.
+	// If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.
+	if r.GUID.IsPermaLink == "true" || r.GUID.IsPermaLink == "" {
+		return strings.TrimSpace(r.GUID.Data)
 	}
 
 	return ""

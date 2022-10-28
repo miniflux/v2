@@ -1,3 +1,23 @@
+Version 2.0.39 (October 16, 2022)
+---------------------------------
+
+* Add support for date filtering in Google Reader API item ID calls
+* Handle RSS entries with only a GUID permalink
+* Go API Client: Accept endpoint URLs ending with `/v1/`
+* CORS API headers: Allow `Basic` authorization header
+* Log feed URL when submitting a subscription that returns an error
+* Update `make run` command to execute migrations automatically
+* Add option to send only the URL to Wallabag
+* Do not convert anchors to absolute links
+* Add config option to use a custom image proxy URL
+* Allow zoom on mobile devices
+* Add scraping rules for `theverge.com`, `royalroad.com`, `swordscomic.com`, and `smbc-comics.com`
+* Add Ukrainian translation
+* Update `golang.org/x/*` dependencies
+* Bump `github.com/tdewolff/minify/v2` from `2.12.0` to `2.12.4`
+* Bump `github.com/yuin/goldmark` from `1.4.13` to `1.5.2`
+* Bump `github.com/lib/pq` from `1.10.6` to `1.10.7`
+
 Version 2.0.38 (August 13, 2022)
 --------------------------------
 

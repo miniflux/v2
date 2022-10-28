@@ -88,7 +88,8 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 			entry_order,
 		    default_reading_speed,
 		    cjk_reading_speed,
-		    default_home_page
+		    default_home_page,
+		    categories_sorting_order
 	`
 
 	tx, err := s.db.Begin()
@@ -124,6 +125,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 		&user.DefaultReadingSpeed,
 		&user.CJKReadingSpeed,
 		&user.DefaultHomePage,
+		&user.CategoriesSortingOrder,
 	)
 	if err != nil {
 		tx.Rollback()
@@ -177,9 +179,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				entry_order=$16,
 				default_reading_speed=$17,
 				cjk_reading_speed=$18,
-				default_home_page=$19
+				default_home_page=$19,
+				categories_sorting_order=$20
 			WHERE
-				id=$20
+				id=$21
 		`
 
 		_, err = s.db.Exec(
@@ -203,6 +206,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.DefaultReadingSpeed,
 			user.CJKReadingSpeed,
 			user.DefaultHomePage,
+			user.CategoriesSortingOrder,
 			user.ID,
 		)
 		if err != nil {
@@ -228,9 +232,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				entry_order=$15,
 				default_reading_speed=$16,
 				cjk_reading_speed=$17,
-				default_home_page=$18
+				default_home_page=$18,
+				categories_sorting_order=$19
 			WHERE
-				id=$19
+				id=$20
 		`
 
 		_, err := s.db.Exec(
@@ -253,6 +258,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.DefaultReadingSpeed,
 			user.CJKReadingSpeed,
 			user.DefaultHomePage,
+			user.CategoriesSortingOrder,
 			user.ID,
 		)
 
@@ -297,7 +303,8 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			entry_order,
 			default_reading_speed,
 			cjk_reading_speed,
-			default_home_page
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		WHERE
@@ -329,7 +336,8 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			entry_order,
 			default_reading_speed,
 			cjk_reading_speed,
-			default_home_page
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		WHERE
@@ -361,7 +369,8 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 			entry_order,
 			default_reading_speed,
 			cjk_reading_speed,
-			default_home_page
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		WHERE
@@ -400,7 +409,8 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.entry_order,
 			u.default_reading_speed,
 			u.cjk_reading_speed,
-			u.default_home_page
+			u.default_home_page,
+			u.categories_sorting_order
 		FROM
 			users u
 		LEFT JOIN
@@ -434,6 +444,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.DefaultReadingSpeed,
 		&user.CJKReadingSpeed,
 		&user.DefaultHomePage,
+		&user.CategoriesSortingOrder,
 	)
 
 	if err == sql.ErrNoRows {
@@ -528,7 +539,8 @@ func (s *Storage) Users() (model.Users, error) {
 			entry_order,
 			default_reading_speed,
 			cjk_reading_speed,
-			default_home_page
+			default_home_page,
+			categories_sorting_order
 		FROM
 			users
 		ORDER BY username ASC
@@ -563,6 +575,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.DefaultReadingSpeed,
 			&user.CJKReadingSpeed,
 			&user.DefaultHomePage,
+			&user.CategoriesSortingOrder,
 		)
 
 		if err != nil {

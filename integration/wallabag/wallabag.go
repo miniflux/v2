@@ -20,11 +20,12 @@ type Client struct {
 	clientSecret string
 	username     string
 	password     string
+	onlyURL      bool
 }
 
 // NewClient returns a new Wallabag client.
-func NewClient(baseURL, clientID, clientSecret, username, password string) *Client {
-	return &Client{baseURL, clientID, clientSecret, username, password}
+func NewClient(baseURL, clientID, clientSecret, username, password string, onlyURL bool) *Client {
+	return &Client{baseURL, clientID, clientSecret, username, password, onlyURL}
 }
 
 // AddEntry sends a link to Wallabag.
@@ -48,9 +49,14 @@ func (c *Client) createEntry(accessToken, link, title, content string) error {
 		return fmt.Errorf("wallbag: unable to get entries endpoint: %v", err)
 	}
 
+	data := map[string]string{"url": link, "title": title}
+	if !c.onlyURL {
+		data["content"] = content
+	}
+
 	clt := client.New(endpoint)
 	clt.WithAuthorization("Bearer " + accessToken)
-	response, err := clt.PostJSON(map[string]string{"url": link, "title": title, "content": content})
+	response, err := clt.PostJSON(data)
 	if err != nil {
 		return fmt.Errorf("wallabag: unable to post entry: %v", err)
 	}

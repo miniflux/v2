@@ -70,6 +70,13 @@
     {{ end }}
     </select>
 
+    <label for="form-categories-sorting-order">{{ t "form.prefs.label.categories_sorting_order" }}</label>
+    <select id="form-categories-sorting-order" name="categories_sorting_order">
+    {{ range $key, $value := .categories_sorting_options }}
+        <option value="{{ $key }}" {{ if eq $key $.form.CategoriesSortingOrder }}selected="selected"{{ end }}>{{ t $value }}</option>
+    {{ end }}
+    </select>
+
     <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
     <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
 

@@ -112,6 +112,11 @@ func (s *Storage) Categories(userID int64) (model.Categories, error) {
 
 // CategoriesWithFeedCount returns all categories with the number of feeds.
 func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error) {
+	user, err := s.UserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
 	query := `
 		SELECT
 			c.id,
@@ -126,10 +131,20 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 		FROM categories c
 		WHERE
 			user_id=$1
-		ORDER BY
-			count_unread DESC,
-			c.title ASC
 	`
+
+	if user.CategoriesSortingOrder == "alphabetical" {
+		query = query + `
+			ORDER BY
+				c.title ASC
+		`
+	} else {
+		query = query + `
+			ORDER BY
+				count_unread DESC,
+				c.title ASC
+		`
+	}
 
 	rows, err := s.db.Query(query, userID)
 	if err != nil {

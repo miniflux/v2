@@ -7,6 +7,7 @@ package config // import "miniflux.app/config"
 import (
 	"bufio"
 	"bytes"
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"io"
@@ -203,6 +204,10 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.watchdog = parseBool(value, defaultWatchdog)
 		case "INVIDIOUS_INSTANCE":
 			p.opts.invidiousInstance = parseString(value, defaultInvidiousInstance)
+		case "PROXY_PRIVATE_KEY":
+			randomKey := make([]byte, 16)
+			rand.Read(randomKey)
+			p.opts.proxyPrivateKey = parseBytes(value, randomKey)
 		}
 	}
 
@@ -281,6 +286,14 @@ func parseStringList(value string, fallback []string) []string {
 	}
 
 	return strList
+}
+
+func parseBytes(value string, fallback []byte) []byte {
+	if value == "" {
+		return fallback
+	}
+
+	return []byte(value)
 }
 
 func readSecretFile(filename, fallback string) string {
