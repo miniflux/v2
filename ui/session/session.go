@@ -6,6 +6,7 @@ package session // import "miniflux.app/ui/session"
 
 import (
 	"miniflux.app/crypto"
+	"miniflux.app/model"
 	"miniflux.app/storage"
 )
 
@@ -61,6 +62,10 @@ func (s *Session) SetTheme(theme string) {
 // SetPocketRequestToken updates Pocket Request Token.
 func (s *Session) SetPocketRequestToken(requestToken string) {
 	s.store.UpdateAppSessionField(s.sessionID, "pocket_request_token", requestToken)
+}
+
+func (s *Session) SetWebAuthnSessionData(sessionData *model.WebAuthnSession) {
+	s.store.UpdateAppSessionObjectField(s.sessionID, "webauthn_session_data", sessionData)
 }
 
 // New returns a new session handler.

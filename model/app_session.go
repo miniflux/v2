@@ -13,18 +13,19 @@ import (
 
 // SessionData represents the data attached to the session.
 type SessionData struct {
-	CSRF               string `json:"csrf"`
-	OAuth2State        string `json:"oauth2_state"`
-	FlashMessage       string `json:"flash_message"`
-	FlashErrorMessage  string `json:"flash_error_message"`
-	Language           string `json:"language"`
-	Theme              string `json:"theme"`
-	PocketRequestToken string `json:"pocket_request_token"`
+	CSRF                string          `json:"csrf"`
+	OAuth2State         string          `json:"oauth2_state"`
+	FlashMessage        string          `json:"flash_message"`
+	FlashErrorMessage   string          `json:"flash_error_message"`
+	Language            string          `json:"language"`
+	Theme               string          `json:"theme"`
+	PocketRequestToken  string          `json:"pocket_request_token"`
+	WebAuthnSessionData WebAuthnSession `json:"webauthn_session_data"`
 }
 
 func (s SessionData) String() string {
-	return fmt.Sprintf(`CSRF=%q, OAuth2State=%q, FlashMsg=%q, FlashErrMsg=%q, Lang=%q, Theme=%q, PocketTkn=%q`,
-		s.CSRF, s.OAuth2State, s.FlashMessage, s.FlashErrorMessage, s.Language, s.Theme, s.PocketRequestToken)
+	return fmt.Sprintf(`CSRF=%q, OAuth2State=%q, FlashMsg=%q, FlashErrMsg=%q, Lang=%q, Theme=%q, PocketTkn=%q, WebAuthnSession=%q`,
+		s.CSRF, s.OAuth2State, s.FlashMessage, s.FlashErrorMessage, s.Language, s.Theme, s.PocketRequestToken, s.WebAuthnSessionData)
 }
 
 // Value converts the session data to JSON.

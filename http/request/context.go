@@ -4,7 +4,11 @@
 
 package request // import "miniflux.app/http/request"
 
-import "net/http"
+import (
+	"net/http"
+
+	"miniflux.app/model"
+)
 
 // ContextKey represents a context key.
 type ContextKey int
@@ -26,7 +30,21 @@ const (
 	PocketRequestTokenContextKey
 	ClientIPContextKey
 	GoogleReaderToken
+	WebAuthnDataContextKey
 )
+
+func WebAuthnSessionData(r *http.Request) *model.WebAuthnSession {
+	if v := r.Context().Value(WebAuthnDataContextKey); v != nil {
+		value, valid := v.(model.WebAuthnSession)
+		if !valid {
+			return nil
+		}
+
+		return &value
+	}
+
+	return nil
+}
 
 // GoolgeReaderToken returns the google reader token if it exists.
 func GoolgeReaderToken(r *http.Request) string {

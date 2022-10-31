@@ -116,4 +116,20 @@
 </div>
 {{ end }}
 
+{{ if .webAuthnEnabled }}
+<div class="alert alert-error hidden" id="webauthn-error">
+    {{ t "webauthn.register.error" }}
+</div>
+<div class="buttons">
+    <button class="button" id="webauthn-register" disabled>
+        {{ t "webauthn.register" }}
+    </button>
+    {{ if gt $.countWebAuthnCerts 0}}
+    <button class="button" id="webauthn-delete">
+        {{ plural "webauthn.delete" $.countWebAuthnCerts }}
+    </button>
+    {{ end }}
+</div>
+{{ end }}
+
 {{ end }}

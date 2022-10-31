@@ -124,6 +124,9 @@ func GenerateJavascriptBundles() error {
 		"service-worker": {
 			"js/service_worker.js",
 		},
+		"webauthn": {
+			"js/webauthn.js",
+		},
 	}
 
 	var prefixes = map[string]string{

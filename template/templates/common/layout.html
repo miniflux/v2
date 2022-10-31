@@ -44,12 +44,22 @@
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
     <script src="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}" defer id="service-worker-script"></script>
+    {{ if .webAuthnEnabled }}
+    <script src="{{ route "javascript" "name" "webauthn" "checksum" .webauthn_js_checksum }}" defer></script>
+    {{ end }}
 </head>
 <body
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
     data-add-subscription-url="{{ route "addSubscription" }}"
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     data-refresh-all-feeds-url="{{ route "refreshAllFeeds" }}"
+    {{ if .webAuthnEnabled }}
+    data-webauthn-register-begin-url="{{ route "webauthnRegisterBegin" }}"
+    data-webauthn-register-finish-url="{{ route "webauthnRegisterFinish" }}"
+    data-webauthn-login-begin-url="{{ route "webauthnLoginBegin" }}"
+    data-webauthn-login-finish-url="{{ route "webauthnLoginFinish" }}"
+    data-webauthn-delete-all-url="{{ route "webauthnDeleteAll" }}"
+    {{ end }}
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
 
     {{ if .user }}

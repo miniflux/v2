@@ -204,6 +204,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			randomKey := make([]byte, 16)
 			rand.Read(randomKey)
 			p.opts.proxyPrivateKey = parseBytes(value, randomKey)
+		case "WEBAUTHN":
+			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
 		}
 	}
 
