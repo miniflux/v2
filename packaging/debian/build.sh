@@ -1,8 +1,8 @@
 #!/bin/sh
 
-PKG_ARCH=`dpkg --print-architecture`
-PKG_DATE=`date -R`
-PKG_VERSION=`cd /src && git describe --tags --abbrev=0`
+PKG_ARCH=$(dpkg --print-architecture)
+PKG_DATE=$(date -R)
+PKG_VERSION=$(cd /src && git describe --tags --abbrev=0)
 
 echo "PKG_VERSION=$PKG_VERSION"
 echo "PKG_ARCH=$PKG_ARCH"
