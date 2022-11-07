@@ -93,7 +93,7 @@ async function login(username) {
         publicKey: {
             challenge: bufferDecode(c.publicKey.challenge)
         },
-    }
+    };
     if (!username) {
         credOptions.signal = abortController.signal;
         credOptions.mediation = "conditional";
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         conditionalLogin().catch(err => {
             // ignore aborted conditional login requests
-            if (!err instanceof DOMException) {
+            if (!(err instanceof DOMException)) {
                 showError(err);
             }
         });
