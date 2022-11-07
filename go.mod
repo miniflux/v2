@@ -10,7 +10,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/matrix-org/gomatrix v0.0.0-20220926102614-ceba4d9f7530
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/prometheus/client_golang v1.13.0
+	github.com/prometheus/client_golang v1.13.1
 	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
 	github.com/tdewolff/minify/v2 v2.12.4
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
@@ -19,7 +19,6 @@ require (
 	golang.org/x/net v0.1.0
 	golang.org/x/oauth2 v0.1.0
 	golang.org/x/term v0.1.0
-	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	mvdan.cc/xurls/v2 v2.4.0
 )
