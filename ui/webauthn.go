@@ -147,12 +147,16 @@ func (h *handler) beginLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		assertion, sessionData, err = web.BeginLogin(WebAuthnUser{user, nil, creds})
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
 	} else {
 		assertion, sessionData, err = web.BeginDiscoverableLogin()
-	}
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
 	}
 
 	s := session.New(h.store, request.SessionID(r))
