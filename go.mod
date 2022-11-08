@@ -18,7 +18,7 @@ require (
 	golang.org/x/crypto v0.1.0
 	golang.org/x/net v0.1.0
 	golang.org/x/oauth2 v0.1.0
-	golang.org/x/term v0.1.0
+	golang.org/x/term v0.2.0
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	mvdan.cc/xurls/v2 v2.4.0
 )
