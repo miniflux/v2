@@ -45,6 +45,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	displayMode := "standalone"
+	defaultHomePage := "unread"
 	if request.IsAuthenticated(r) {
 		user, err := h.store.UserByID(request.UserID(r))
 		if err != nil {
@@ -52,6 +53,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		displayMode = user.DisplayMode
+		defaultHomePage = user.DefaultHomePage
 	}
 	themeColor := model.ThemeColor(request.UserTheme(r), "light")
 	manifest := &webManifest{
@@ -59,7 +61,7 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		ShortName:       "Miniflux",
 		Description:     "Minimalist Feed Reader",
 		Display:         displayMode,
-		StartURL:        route.Path(h.router, "unread"),
+		StartURL:        route.Path(h.router, defaultHomePage),
 		ThemeColor:      themeColor,
 		BackgroundColor: themeColor,
 		Icons: []webManifestIcon{
