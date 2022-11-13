@@ -1,3 +1,25 @@
+Version 2.0.40 (November 13, 2022)
+----------------------------------
+
+* Update dependencies
+* Pin Postgres image version in Docker Compose examples to avoid unexpected upgrades
+* Make English and Spanish translation more consistent:
+    - Use "Feed" everywhere instead of "Subscription"
+    - Use "Entry" instead of "Article"
+* Allow Content-Type and Accept headers in CORS policy
+* Use dirs file for Debian package
+* Use custom home page in PWA manifest
+* Fix scraper rule that could be incorrect when there is a redirect
+* Improve web scraper to fetch the only link present as workaround to some landing pages
+* Add Matrix bot integration
+* Proxify images in API responses
+* Add new options in user preferences to configure sorting of entries in the category page
+* Remove dependency on `github.com/mitchellh/go-server-timing`
+* Add support for the `continuation` parameter and result for Google Reader API ID calls
+* Use automatic variable for build target file names
+* Add rewrite rule for `recalbox.com`
+* Improve Dutch translation
+
 Version 2.0.39 (October 16, 2022)
 ---------------------------------
 
