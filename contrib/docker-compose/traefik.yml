@@ -37,7 +37,7 @@ services:
       - "traefik.http.routers.miniflux.entrypoints=websecure"
       - "traefik.http.routers.miniflux.tls.certresolver=myresolver"
   db:
-    image: postgres:latest
+    image: postgres:15
     container_name: postgres
     environment:
       - POSTGRES_USER=miniflux
