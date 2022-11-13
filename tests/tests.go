@@ -25,7 +25,7 @@ const (
 	testFeedURL           = "https://miniflux.app/feed.xml"
 	testFeedTitle         = "Miniflux"
 	testSubscriptionTitle = "Miniflux Releases"
-	testWebsiteURL        = "https://miniflux.app/"
+	testWebsiteURL        = "https://miniflux.app"
 )
 
 func getRandomUsername() string {
