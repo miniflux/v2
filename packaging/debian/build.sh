@@ -1,8 +1,8 @@
 #!/bin/sh
 
-PKG_ARCH=`dpkg --print-architecture`
-PKG_DATE=`date -R`
-PKG_VERSION=`cd /src && git describe --tags --abbrev=0`
+PKG_ARCH=$(dpkg --print-architecture)
+PKG_DATE=$(date -R)
+PKG_VERSION=$(cd /src && git describe --tags --abbrev=0)
 
 echo "PKG_VERSION=$PKG_VERSION"
 echo "PKG_ARCH=$PKG_ARCH"
@@ -22,6 +22,7 @@ cd /src && \
     cp /src/packaging/debian/miniflux.manpages /build/debian/miniflux.manpages && \
     cp /src/packaging/debian/miniflux.postinst /build/debian/miniflux.postinst && \
     cp /src/packaging/debian/rules /build/debian/rules && \
+    cp /src/packaging/debian/miniflux.dirs /build/debian/miniflux.dirs && \
     echo "miniflux ($PKG_VERSION) experimental; urgency=low" > /build/debian/changelog && \
     echo "  * Miniflux version $PKG_VERSION" >> /build/debian/changelog && \
     echo " -- Frédéric Guillot <f@miniflux.net>  $PKG_DATE" >> /build/debian/changelog && \

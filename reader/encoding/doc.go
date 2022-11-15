@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package encoding handles workarounds to deal with encoding edge cases found into feeds.
-
 */
 package encoding // import "miniflux.app/reader/encoding"

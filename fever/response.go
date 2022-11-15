@@ -23,8 +23,8 @@ func (b *baseResponse) SetCommonValues() {
 /*
 The default response is a JSON object containing two members:
 
-    api_version contains the version of the API responding (positive integer)
-    auth whether the request was successfully authenticated (boolean integer)
+	api_version contains the version of the API responding (positive integer)
+	auth whether the request was successfully authenticated (boolean integer)
 
 The API can also return XML by passing xml as the optional value of the api argument like so:
 
@@ -37,7 +37,6 @@ at least one additional member:
 
 	last_refreshed_on_time contains the time of the most recently refreshed (not updated)
 	feed (Unix timestamp/integer)
-
 */
 func newBaseResponse() baseResponse {
 	r := baseResponse{}

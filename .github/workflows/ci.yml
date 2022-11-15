@@ -4,7 +4,7 @@ permissions: read-all
 on:
   pull_request:
     branches:
-    - master
+    - main
 
 jobs:
   unit-tests:
@@ -14,14 +14,14 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        go-version: [1.16, 1.17, 1.18]
+        go-version: [1.18, 1.19]
     steps:
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go-version }}
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Run unit tests
       run: make test
 
@@ -40,13 +40,13 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v3
       with:
-        go-version: 1.16
+        go-version: 1.19
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install Postgres client
-      run: sudo apt-get install -y postgresql-client
+      run: sudo apt update && sudo apt install -y postgresql-client
     - name: Run integration tests
       run: make integration-test
       env:

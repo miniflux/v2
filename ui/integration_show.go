@@ -41,6 +41,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		GoogleReaderEnabled:  integration.GoogleReaderEnabled,
 		GoogleReaderUsername: integration.GoogleReaderUsername,
 		WallabagEnabled:      integration.WallabagEnabled,
+		WallabagOnlyURL:      integration.WallabagOnlyURL,
 		WallabagURL:          integration.WallabagURL,
 		WallabagClientID:     integration.WallabagClientID,
 		WallabagClientSecret: integration.WallabagClientSecret,
@@ -62,6 +63,11 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		LinkdingEnabled:      integration.LinkdingEnabled,
 		LinkdingURL:          integration.LinkdingURL,
 		LinkdingAPIKey:       integration.LinkdingAPIKey,
+		MatrixBotEnabled:     integration.MatrixBotEnabled,
+		MatrixBotUser:        integration.MatrixBotUser,
+		MatrixBotPassword:    integration.MatrixBotPassword,
+		MatrixBotURL:         integration.MatrixBotURL,
+		MatrixBotChatID:      integration.MatrixBotChatID,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

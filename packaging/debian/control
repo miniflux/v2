@@ -1,5 +1,5 @@
 Source: miniflux
-Maintainer: Frédéric Guillot <f@miniflux.net>
+Maintainer: Frederic Guillot <f@miniflux.net>
 Build-Depends: debhelper (>= 9), dh-systemd
 
 Package: miniflux

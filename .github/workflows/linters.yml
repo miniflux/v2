@@ -4,14 +4,14 @@ permissions: read-all
 on:
   pull_request:
     branches:
-    - master
+    - main
 
 jobs:
   jshint:
     name: Javascript Linter
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install jshint
       run: |
         sudo npm install -g jshint@2.13.3
@@ -22,11 +22,10 @@ jobs:
     name: Golang Linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
-          go-version: 1.17
-      - uses: golangci/golangci-lint-action@v2
+          go-version: 1.19
+      - uses: golangci/golangci-lint-action@v3
         with:
           args: --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
-          skip-go-installation: true

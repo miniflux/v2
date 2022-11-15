@@ -5,6 +5,8 @@
 package ui // import "miniflux.app/ui"
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"net/http"
@@ -25,15 +27,31 @@ func (h *handler) imageProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	encodedDigest := request.RouteStringParam(r, "encodedDigest")
 	encodedURL := request.RouteStringParam(r, "encodedURL")
 	if encodedURL == "" {
 		html.BadRequest(w, r, errors.New("No URL provided"))
 		return
 	}
 
+	decodedDigest, err := base64.URLEncoding.DecodeString(encodedDigest)
+	if err != nil {
+		html.BadRequest(w, r, errors.New("Unable to decode this Digest"))
+		return
+	}
+
 	decodedURL, err := base64.URLEncoding.DecodeString(encodedURL)
 	if err != nil {
 		html.BadRequest(w, r, errors.New("Unable to decode this URL"))
+		return
+	}
+
+	mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
+	mac.Write(decodedURL)
+	expectedMAC := mac.Sum(nil)
+
+	if !hmac.Equal(decodedDigest, expectedMAC) {
+		html.Forbidden(w, r)
 		return
 	}
 

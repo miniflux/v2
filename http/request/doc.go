@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package request contains helper functions to work with the HTTP request.
-
 */
 package request // import "miniflux.app/http/request"

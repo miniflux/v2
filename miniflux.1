@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "January 5, 2022" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "August 29, 2022" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -370,6 +370,11 @@ Avoids mixed content warnings for external images: http-only, all, or none\&.
 .br
 Default is http-only\&.
 .TP
+.B PROXY_IMAGE_URL
+Sets a server to proxy images through\&.
+.br
+Default is empty, miniflux does the proxying\&.
+.TP
 .B HTTP_CLIENT_TIMEOUT
 Time limit in seconds before the HTTP client cancel the request\&.
 .br
@@ -421,6 +426,11 @@ Enabled by default\&.
 Set a custom invidious instance to use\&.
 .br
 Default is yewtu.be\&.
+.TP
+.B PROXY_PRIVATE_KEY
+Set a custom custom private key used to sign proxified media url\&.
+.br
+Default is randomly generated at startup\&.
 
 .SH AUTHORS
 .P

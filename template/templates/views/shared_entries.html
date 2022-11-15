@@ -32,7 +32,7 @@
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                     {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    <a href="{{ route "readEntry" "entryID" .ID }}" title="{{ .Title }}">{{ .Title }}</a>
                     {{ if .ShareCode }}
                         <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
                             title="{{ t "entry.shared_entry.title" }}"

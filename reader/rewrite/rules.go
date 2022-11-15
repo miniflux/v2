@@ -10,6 +10,7 @@ package rewrite // import "miniflux.app/reader/rewrite"
 var predefinedRules = map[string]string{
 	"abstrusegoose.com":      "add_image_title",
 	"amazingsuperpowers.com": "add_image_title",
+	"blog.laravel.com":       "parse_markdown",
 	"cowbirdsinlove.com":     "add_image_title",
 	"drawingboardcomic.com":  "add_image_title",
 	"exocomics.com":          "add_image_title",
@@ -28,8 +29,10 @@ var predefinedRules = map[string]string{
 	"quantamagazine.org":     `add_youtube_video_from_id, remove("h6:not(.byline,.post__title__kicker), #comments, .next-post__content, .footer__section, figure .outer--content, script")`,
 	"sentfromthemoon.com":    "add_image_title",
 	"thedoghousediaries.com": "add_image_title",
+	"theverge.com":           "add_dynamic_image",
 	"treelobsters.com":       "add_image_title",
 	"www.qwantz.com":         "add_image_title,add_mailto_subject",
+	"www.recalbox.com":       "parse_markdown",
 	"xkcd.com":               "add_image_title",
 	"youtube.com":            "add_youtube_video",
 }

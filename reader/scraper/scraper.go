@@ -47,6 +47,7 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 	}
 
 	// The entry URL could redirect somewhere else.
+	sameSite := url.Domain(websiteURL) == url.Domain(response.EffectiveURL)
 	websiteURL = response.EffectiveURL
 
 	if rules == "" {
@@ -54,7 +55,7 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 	}
 
 	var content string
-	if rules != "" {
+	if sameSite && rules != "" {
 		logger.Debug(`[Scraper] Using rules %q for %q`, rules, websiteURL)
 		content, err = scrapContent(response.Body, rules)
 	} else {

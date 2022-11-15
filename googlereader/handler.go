@@ -21,9 +21,11 @@ import (
 	"miniflux.app/integration"
 	"miniflux.app/logger"
 	"miniflux.app/model"
+	"miniflux.app/proxy"
 	mff "miniflux.app/reader/handler"
 	mfs "miniflux.app/reader/subscription"
 	"miniflux.app/storage"
+	"miniflux.app/url"
 	"miniflux.app/validator"
 )
 
@@ -88,8 +90,10 @@ const (
 	ParamTitle = "t"
 	// ParamQuickAdd - name of the parameter for a URL being quick subscribed to
 	ParamQuickAdd = "quickadd"
-	// ParamDestination - name fo the parameter for the new name of a tag
+	// ParamDestination - name of the parameter for the new name of a tag
 	ParamDestination = "dest"
+	// ParamContinuation -  name of the parameter for callers to pass to receive the next page of results
+	ParamContinuation = "c"
 )
 
 // StreamType represents the possible stream types
@@ -130,6 +134,7 @@ type RequestModifiers struct {
 	FilterTargets     []Stream
 	Streams           []Stream
 	Count             int
+	Offset            int
 	SortDirection     string
 	StartTime         int64
 	StopTime          int64
@@ -185,6 +190,7 @@ func (r RequestModifiers) String() string {
 		result += fmt.Sprintf("        %v\n", s)
 	}
 	result += fmt.Sprintf("Count: %d\n", r.Count)
+	result += fmt.Sprintf("Offset: %d\n", r.Offset)
 	result += fmt.Sprintf("Sort Direction: %s\n", r.SortDirection)
 	result += fmt.Sprintf("Continuation Token: %s\n", r.ContinuationToken)
 	result += fmt.Sprintf("Start Time: %d\n", r.StartTime)
@@ -243,8 +249,9 @@ func getStreamFilterModifiers(r *http.Request) (RequestModifiers, error) {
 	}
 
 	result.Count = request.QueryIntParam(r, ParamStreamMaxItems, 0)
-	result.StartTime = int64(request.QueryIntParam(r, ParamStreamStartTime, 0))
-	result.StopTime = int64(request.QueryIntParam(r, ParamStreamStopTime, 0))
+	result.Offset = request.QueryIntParam(r, ParamContinuation, 0)
+	result.StartTime = request.QueryInt64Param(r, ParamStreamStartTime, int64(0))
+	result.StopTime = request.QueryInt64Param(r, ParamStreamStopTime, int64(0))
 	return result, nil
 }
 
@@ -834,6 +841,15 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 			categories = append(categories, userStarred)
 		}
 
+		entry.Content = proxy.AbsoluteImageProxyRewriter(h.router, r.Host, entry.Content)
+		proxyImage := config.Opts.ProxyImages()
+
+		for i := range entry.Enclosures {
+			if strings.HasPrefix(entry.Enclosures[i].MimeType, "image/") && (proxyImage == "all" || proxyImage != "none" && !url.IsHTTPS(entry.Enclosures[i].URL)) {
+				entry.Enclosures[i].URL = proxy.AbsoluteProxifyURL(h.router, r.Host, entry.Enclosures[i].URL)
+			}
+		}
+
 		contentItems[i] = contentItem{
 			ID:            fmt.Sprintf(EntryIDLong, entry.ID),
 			Title:         entry.Title,
@@ -1120,9 +1136,18 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 			logger.Info("[GoogleReader][ReadingListStreamIDs][ClientIP=%s] xt filter type: %#v", clientIP, s)
 		}
 	}
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(rm.Count)
+	builder.WithOffset(rm.Offset)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(rm.SortDirection)
+	if rm.StartTime > 0 {
+		builder.AfterDate(time.Unix(rm.StartTime, 0))
+	}
+	if rm.StopTime > 0 {
+		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+	}
+
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		logger.Error("[GoogleReader][/stream/items/ids#reading-list] [ClientIP=%s] %v", clientIP, err)
@@ -1134,17 +1159,38 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 		formattedID := strconv.FormatInt(entryID, 10)
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
-	json.OK(w, r, streamIDResponse{itemRefs})
+
+	totalEntries, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("[GoogleReader][/stream/items/ids#reading-list] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	continuation := 0
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
+	}
+
+	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
 	clientIP := request.ClientIP(r)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred(true)
 	builder.WithLimit(rm.Count)
+	builder.WithOffset(rm.Offset)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(rm.SortDirection)
+	if rm.StartTime > 0 {
+		builder.AfterDate(time.Unix(rm.StartTime, 0))
+	}
+	if rm.StopTime > 0 {
+		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+	}
+
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
 		logger.Error("[GoogleReader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
@@ -1156,14 +1202,29 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 		formattedID := strconv.FormatInt(entryID, 10)
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
-	json.OK(w, r, streamIDResponse{itemRefs})
+
+	totalEntries, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("[GoogleReader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	continuation := 0
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
+	}
+
+	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
 	clientIP := request.ClientIP(r)
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStatus(model.EntryStatusRead)
+	builder.WithLimit(rm.Count)
+	builder.WithOffset(rm.Offset)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(rm.SortDirection)
 	if rm.StartTime > 0 {
@@ -1184,7 +1245,19 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 		formattedID := strconv.FormatInt(entryID, 10)
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
-	json.OK(w, r, streamIDResponse{itemRefs})
+
+	totalEntries, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("[GoogleReader][/stream/items/ids#read] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	continuation := 0
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
+	}
+
+	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }
 
 func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm RequestModifiers) {
@@ -1197,8 +1270,10 @@ func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm Re
 	}
 
 	builder := h.store.NewEntryQueryBuilder(rm.UserID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithFeedID(feedID)
 	builder.WithLimit(rm.Count)
+	builder.WithOffset(rm.Offset)
 	builder.WithOrder(model.DefaultSortingOrder)
 	builder.WithDirection(rm.SortDirection)
 	if rm.StartTime > 0 {
@@ -1210,7 +1285,7 @@ func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm Re
 
 	rawEntryIDs, err := builder.GetEntryIDs()
 	if err != nil {
-		logger.Error("[GoogleReader][/stream/items/ids#starred] [ClientIP=%s] %v", clientIP, err)
+		logger.Error("[GoogleReader][/stream/items/ids#feed] [ClientIP=%s] %v", clientIP, err)
 		json.ServerError(w, r, err)
 		return
 	}
@@ -1219,5 +1294,17 @@ func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm Re
 		formattedID := strconv.FormatInt(entryID, 10)
 		itemRefs = append(itemRefs, itemRef{ID: formattedID})
 	}
-	json.OK(w, r, streamIDResponse{itemRefs})
+
+	totalEntries, err := builder.CountEntries()
+	if err != nil {
+		logger.Error("[GoogleReader][/stream/items/ids#feed] [ClientIP=%s] %v", clientIP, err)
+		json.ServerError(w, r, err)
+		return
+	}
+	continuation := 0
+	if len(itemRefs)+rm.Offset < totalEntries {
+		continuation = len(itemRefs) + rm.Offset
+	}
+
+	json.OK(w, r, streamIDResponse{itemRefs, continuation})
 }

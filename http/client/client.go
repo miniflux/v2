@@ -29,10 +29,9 @@ const (
 )
 
 var (
-	errInvalidCertificate        = "Invalid SSL certificate (original error: %q)"
-	errTemporaryNetworkOperation = "This website is temporarily unreachable (original error: %q)"
-	errPermanentNetworkOperation = "This website is permanently unreachable (original error: %q)"
-	errRequestTimeout            = "Website unreachable, the request timed out after %d seconds"
+	errInvalidCertificate = "Invalid SSL certificate (original error: %q)"
+	errNetworkOperation   = "This website is unreachable (original error: %q)"
+	errRequestTimeout     = "Website unreachable, the request timed out after %d seconds"
 )
 
 // Client builds and executes HTTP requests.
@@ -205,17 +204,11 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 			case x509.CertificateInvalidError, x509.HostnameError:
 				err = errors.NewLocalizedError(errInvalidCertificate, uerr.Err)
 			case *net.OpError:
-				if uerr.Err.(*net.OpError).Temporary() {
-					err = errors.NewLocalizedError(errTemporaryNetworkOperation, uerr.Err)
-				} else {
-					err = errors.NewLocalizedError(errPermanentNetworkOperation, uerr.Err)
-				}
+				err = errors.NewLocalizedError(errNetworkOperation, uerr.Err)
 			case net.Error:
 				nerr := uerr.Err.(net.Error)
 				if nerr.Timeout() {
 					err = errors.NewLocalizedError(errRequestTimeout, c.ClientTimeout)
-				} else if nerr.Temporary() {
-					err = errors.NewLocalizedError(errTemporaryNetworkOperation, nerr)
 				}
 			}
 		}

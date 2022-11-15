@@ -25,7 +25,7 @@ services:
       - ADMIN_PASSWORD=test123
       - BASE_URL=https://miniflux.example.org
   db:
-    image: postgres:latest
+    image: postgres:15
     container_name: postgres
     environment:
       - POSTGRES_USER=miniflux

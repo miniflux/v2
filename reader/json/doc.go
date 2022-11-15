@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package json provides a JSON feed parser.
-
 */
 package json // import "miniflux.app/reader/json"

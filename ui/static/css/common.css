@@ -785,6 +785,13 @@ article.feed-has-unread {
     cursor: pointer;
 }
 
+/* Categories list */
+article.category-has-unread {
+    background-color: var(--category-has-unread-background-color);
+    border-style: var(--category-has-unread-border-style);
+    border-color: var(--category-has-unread-border-color);
+}
+
 /* Icons */
 .icon,
 .icon-label {
