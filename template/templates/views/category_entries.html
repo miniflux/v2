@@ -50,7 +50,11 @@
     </div>
     <div class="items">
         {{ range .entries }}
+<<<<<<< HEAD
         <article role="article" class="item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+=======
+        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+>>>>>>> 94426dbf (Add CSS Class to differentiate between category/feed/entry view; add CSS classess to acion icons; #1636)
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
