@@ -1,6 +1,6 @@
 module miniflux.app
 
-// +heroku goVersion go1.18
+// +heroku goVersion go1.19
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
@@ -10,14 +10,14 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.7
 	github.com/matrix-org/gomatrix v0.0.0-20220926102614-ceba4d9f7530
-	github.com/prometheus/client_golang v1.13.0
-	github.com/rylans/getlang v0.0.0-20200505200108-4c3188ff8a2d
+	github.com/prometheus/client_golang v1.14.0
+	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/tdewolff/minify/v2 v2.12.4
-	github.com/yuin/goldmark v1.5.2
-	golang.org/x/crypto v0.1.0
-	golang.org/x/net v0.1.0
-	golang.org/x/oauth2 v0.1.0
-	golang.org/x/term v0.1.0
+	github.com/yuin/goldmark v1.5.3
+	golang.org/x/crypto v0.3.0
+	golang.org/x/net v0.2.0
+	golang.org/x/oauth2 v0.2.0
+	golang.org/x/term v0.2.0
 	mvdan.cc/xurls/v2 v2.4.0
 )
 
@@ -57,13 +57,13 @@ require (
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mattn/go-runewidth v0.0.12 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/prometheus/client_model v0.2.0 // indirect
+	github.com/pquerna/cachecontrol v0.1.0 // indirect
+	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
@@ -92,7 +92,7 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.16.0 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/tools v0.1.12 // indirect
@@ -106,4 +106,4 @@ require (
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
-go 1.18
+go 1.19

@@ -26,6 +26,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -128,6 +129,7 @@ func startAutoCertTLSServer(server *http.Server, certDomain string, store *stora
 	}
 	server.TLSConfig = tlsConfig()
 	server.TLSConfig.GetCertificate = certManager.GetCertificate
+	server.TLSConfig.NextProtos = []string{"h2", "http/1.1", acme.ALPNProto}
 
 	// Handle http-01 challenge.
 	s := &http.Server{
