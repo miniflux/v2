@@ -389,5 +389,13 @@
     "time_elapsed.years": [
         "há %d ano",
         "há %d anos"
+    ],
+    "webauthn.login": "Entrar com senha",
+    "webauthn.login.error": "Não é possível fazer login com senha",
+    "webauthn.register": "Registrar senha",
+    "webauthn.register.error": "Não foi possível registrar a senha",
+    "webauthn.delete" : [
+        "Remover senha",
+        "Remover %d senhas"
     ]
 }

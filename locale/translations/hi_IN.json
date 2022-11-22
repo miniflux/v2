@@ -389,5 +389,13 @@
     "time_elapsed.years": [
         "%d साल पहले",
         "%d वर्षों पहले"
+    ],
+    "webauthn.login": "पासकी से लॉगिन करें",
+    "webauthn.login.error": "पासकी से लॉगिन करने में असमर्थ",
+    "webauthn.register": "रजिस्टर पासकी",
+    "webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
+    "webauthn.delete" : [
+        "पासकी हटाएं",
+        "%d पासकी हटाएं"
     ]
 }

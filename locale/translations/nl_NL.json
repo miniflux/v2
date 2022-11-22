@@ -406,5 +406,13 @@
     "This web page is empty": "Deze webpagina is leeg",
     "Invalid SSL certificate (original error: %q)": "Ongeldig SSL-certificaat (originele error: %q)",
     "This website is unreachable (original error: %q)": "Deze website is onbereikbaar (originele error: %q)",
-    "Website unreachable, the request timed out after %d seconds": "Website onbereikbaar, de request gaf een timeout na %d seconden"
+    "Website unreachable, the request timed out after %d seconds": "Website onbereikbaar, de request gaf een timeout na %d seconden",
+    "webauthn.login": "Inloggen met wachtwoord",
+    "webauthn.login.error": "Kan niet inloggen met wachtwoord",
+    "webauthn.register": "Wachtwoord registreren",
+    "webauthn.register.error": "Kan wachtwoord niet registreren",
+    "webauthn.delete" : [
+        "Wachtwoord verwijderen",
+        "Verwijder %d wachtwoordsleutels"
+    ]
 }

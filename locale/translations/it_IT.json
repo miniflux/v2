@@ -389,5 +389,13 @@
     "time_elapsed.years": [
         "%d anno fa",
         "%d anni fa"
+    ],
+    "webauthn.login": "Accedi con passkey",
+    "webauthn.login.error": "Impossibile accedere con passkey",
+    "webauthn.register": "Registra la chiave di accesso",
+    "webauthn.register.error": "Impossibile registrare la passkey",
+    "webauthn.delete" : [
+        "Rimuovi passkey",
+        "Rimuovi %d passkey"
     ]
 }

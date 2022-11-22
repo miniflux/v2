@@ -389,5 +389,13 @@
     "time_elapsed.years": [
         "%d yıl önce",
         "%d yıl önce"
+    ],
+    "webauthn.login": "şifre ile giriş yap",
+    "webauthn.login.error": "şifre ile giriş yapılamıyor",
+    "webauthn.register": "şifreyi kaydet",
+    "webauthn.register.error": "Geçiş anahtarı kaydedilemiyor",
+    "webauthn.delete" : [
+        "Geçiş anahtarını kaldır",
+        "%d geçiş anahtarını kaldır"
     ]
 }

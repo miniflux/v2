@@ -389,5 +389,13 @@
     "time_elapsed.years": [
         "%d vuosi sitten",
         "%d vuotta sitten"
+    ],
+    "webauthn.login": "Kirjaudu sisään salasanalla",
+    "webauthn.login.error": "Ei voida kirjautua sisään salasanalla",
+    "webauthn.register": "Rekisteröi salasana",
+    "webauthn.register.error": "Salasanaa ei voi rekisteröidä",
+    "webauthn.delete" : [
+        "Poista salasana",
+        "Poista %d salasanaa"
     ]
 }

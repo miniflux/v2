@@ -414,5 +414,13 @@
     "This web page is empty": "Ta strona jest pusta",
     "Invalid SSL certificate (original error: %q)": "Certyfikat SSL jest nieprawidłowy (błąd: %q)",
     "This website is unreachable (original error: %q)": "Ta strona jest niedostępna (błąd: %q)",
-    "Website unreachable, the request timed out after %d seconds": "Strona internetowa nieosiągalna, żądanie wygasło po %d sekundach"
+    "Website unreachable, the request timed out after %d seconds": "Strona internetowa nieosiągalna, żądanie wygasło po %d sekundach",
+    "webauthn.login": "Zaloguj się za pomocą hasła",
+    "webauthn.login.error": "Nie można zalogować się za pomocą klucza dostępu",
+    "webauthn.register": "Zarejestruj klucz dostępu",
+    "webauthn.register.error": "Nie można zarejestrować klucza dostępu",
+    "webauthn.delete" : [
+        "Usuń klucz dostępu",
+        "Usuń %d kluczy dostępu"
+    ]
 }
