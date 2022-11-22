@@ -461,5 +461,13 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "webauthn.login": "Είσοδος με κωδικό πρόσβασης",
+    "webauthn.login.error": "Δεν είναι δυνατή η σύνδεση με κωδικό πρόσβασης",
+    "webauthn.register": "Εγγραφή κωδικού πρόσβασης",
+    "webauthn.register.error": "Δεν είναι δυνατή η εγγραφή του κωδικού πρόσβασης",
+    "webauthn.delete" : [
+        "Αφαιρέστε τον κωδικό πρόσβασης",
+        "Καταργήστε %d κωδικούς πρόσβασης"
+    ]
 }

@@ -461,5 +461,13 @@
     "error.unable_to_parse_feed": "Impossible d'analyser ce flux : %v.",
     "error.feed_not_found": "Impossible de trouver ce flux.",
     "error.unable_to_detect_rssbridge": "Impossible de détecter un flux RSS en utilisant RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Impossible de détecter le format du flux : %v."
+    "error.feed_format_not_detected": "Impossible de détecter le format du flux : %v.",
+    "webauthn.login": "Connectez-vous avec un mot de passe",
+    "webauthn.login.error": "Impossible de se connecter avec le mot de passe",
+    "webauthn.register": "Enregistrer le mot de passe",
+    "webauthn.register.error": "Impossible d'enregistrer le mot de passe",
+    "webauthn.delete" : [
+        "Supprimer le mot de passe",
+        "Supprimer %d mots de passe"
+    ]
 }
