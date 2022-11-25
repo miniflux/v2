@@ -104,7 +104,7 @@ class TouchHandler {
         });
 
         let entryContentElement = document.querySelector(".entry-content");
-        if (entryContentElement) {
+        if (entryContentElement && entryContentElement.classList.contains('double-tap')) {
             let doubleTapTimers = {
                 previous: null,
                 next: null
