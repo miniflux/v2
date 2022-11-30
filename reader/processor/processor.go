@@ -107,7 +107,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 	intg, err := store.Integration(feed.UserID)
 	if err != nil {
 		logger.Error("[Processor] Get integrations for user %d failed: %v; the refresh process will go on, but no integrations will run this time.", feed.UserID, err)
-	} else if intg != nil {
+	} else if intg != nil && len(entriesToPush) > 0 {
 		go func() {
 			integration.PushEntries(entriesToPush, intg)
 		}()
