@@ -467,7 +467,7 @@
     "webauthn.register": "註冊密鑰",
     "webauthn.register.error": "無法註冊密鑰",
     "webauthn.delete" : [
-        "刪除密鑰",
+        "刪除 %d 個密碼",
         "刪除 %d 個密鑰"
     ]
 }

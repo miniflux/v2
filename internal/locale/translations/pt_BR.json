@@ -467,7 +467,7 @@
     "webauthn.register": "Registrar senha",
     "webauthn.register.error": "Não foi possível registrar a senha",
     "webauthn.delete" : [
-        "Remover senha",
+        "Remover %d senha",
         "Remover %d senhas"
     ]
 }

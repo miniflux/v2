@@ -467,7 +467,7 @@
     "webauthn.register": "Enregistrer le mot de passe",
     "webauthn.register.error": "Impossible d'enregistrer le mot de passe",
     "webauthn.delete" : [
-        "Supprimer le mot de passe",
-        "Supprimer %d mots de passe"
+        "Supprimer %d clé d'accès",
+        "Supprimer %d mots de passe"
     ]
 }

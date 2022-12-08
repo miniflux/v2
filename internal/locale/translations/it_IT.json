@@ -467,7 +467,7 @@
     "webauthn.register": "Registra la chiave di accesso",
     "webauthn.register.error": "Impossibile registrare la passkey",
     "webauthn.delete" : [
-        "Rimuovi passkey",
+        "Rimuovi %d passkey",
         "Rimuovi %d passkey"
     ]
 }

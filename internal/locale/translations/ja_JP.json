@@ -467,7 +467,7 @@
     "webauthn.register": "パスキーを登録する",
     "webauthn.register.error": "パスキーを登録できません",
     "webauthn.delete" : [
-        "パスキーを削除",
+        "%d 個のパスキーを削除",
         "%d 個のパスキーを削除"
     ]
 }

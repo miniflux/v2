@@ -467,7 +467,7 @@
     "webauthn.register": "şifreyi kaydet",
     "webauthn.register.error": "Geçiş anahtarı kaydedilemiyor",
     "webauthn.delete" : [
-        "Geçiş anahtarını kaldır",
+        "%d geçiş anahtarını kaldır",
         "%d geçiş anahtarını kaldır"
     ]
 }

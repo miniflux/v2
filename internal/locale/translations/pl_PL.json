@@ -475,7 +475,8 @@
     "webauthn.register": "Zarejestruj klucz dostępu",
     "webauthn.register.error": "Nie można zarejestrować klucza dostępu",
     "webauthn.delete" : [
-        "Usuń klucz dostępu",
-        "Usuń %d kluczy dostępu"
+        "Usuń %d klucz dostępu",
+        "Usuń %d klucze dostępu",
+        "Usuń %d klucze dostępu"
     ]
 }

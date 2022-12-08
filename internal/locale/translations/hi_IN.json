@@ -467,7 +467,7 @@
     "webauthn.register": "रजिस्टर पासकी",
     "webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
     "webauthn.delete" : [
-        "पासकी हटाएं",
+        "%d पासकुंजी निकालें",
         "%d पासकी हटाएं"
     ]
 }

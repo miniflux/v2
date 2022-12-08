@@ -467,7 +467,7 @@
     "webauthn.register": "Wachtwoord registreren",
     "webauthn.register.error": "Kan wachtwoord niet registreren",
     "webauthn.delete" : [
-        "Wachtwoord verwijderen",
+        "Verwijder %d wachtwoord",
         "Verwijder %d wachtwoordsleutels"
     ]
 }
