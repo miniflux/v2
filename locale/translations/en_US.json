@@ -395,7 +395,7 @@
     "webauthn.register": "Register passkey",
     "webauthn.register.error": "Unable to register passkey",
     "webauthn.delete" : [
-        "Remove passkey",
+        "Remove %d passkey",
         "Remove %d passkeys"
     ]
 }

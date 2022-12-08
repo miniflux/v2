@@ -395,7 +395,7 @@
     "webauthn.register": "Rekisteröi salasana",
     "webauthn.register.error": "Salasanaa ei voi rekisteröidä",
     "webauthn.delete" : [
-        "Poista salasana",
+        "Poista %d salasana",
         "Poista %d salasanaa"
     ]
 }

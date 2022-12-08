@@ -126,7 +126,7 @@
     </button>
     {{ if gt $.countWebAuthnCerts 0}}
     <button class="button" id="webauthn-delete">
-        {{ plural "webauthn.delete" $.countWebAuthnCerts }}
+        {{ plural "webauthn.delete" $.countWebAuthnCerts $.countWebAuthnCerts }}
     </button>
     {{ end }}
 </div>

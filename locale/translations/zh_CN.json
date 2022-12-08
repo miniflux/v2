@@ -405,7 +405,7 @@
     "webauthn.register": "注册密码",
     "webauthn.register.error": "无法注册密钥",
     "webauthn.delete" : [
-        "删除密钥",
+        "删除 %d 个密钥",
         "删除 %d 个密钥"
     ]
 }
