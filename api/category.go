@@ -123,3 +123,20 @@ func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
 
 	json.NoContent(w, r)
 }
+
+func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	categoryID := request.RouteInt64Param(r, "categoryID")
+
+	jobs, err := h.store.NewCategoryBatch(userID, categoryID, h.store.CountFeeds(userID))
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	go func() {
+		h.pool.Push(jobs)
+	}()
+
+	json.NoContent(w, r)
+}
