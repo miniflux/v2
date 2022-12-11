@@ -45,6 +45,23 @@ func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList,
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID)
 }
 
+// NewCategoryBatch returns a series of jobs but only for a given category.
+func (s *Storage) NewCategoryBatch(userID int64, categoryID int64, batchSize int) (jobs model.JobList, err error) {
+	// We do not take the error counter into consideration when the given
+	// user refresh manually all his feeds to force a refresh.
+	query := `
+		SELECT
+			id,
+			user_id
+		FROM
+			feeds
+		WHERE
+			user_id=$1 AND category_id=$2 AND disabled is false
+		ORDER BY next_check_at ASC LIMIT %d
+	`
+	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID, categoryID)
+}
+
 func (s *Storage) fetchBatchRows(query string, args ...interface{}) (jobs model.JobList, err error) {
 	rows, err := s.db.Query(query, args...)
 	if err != nil {
