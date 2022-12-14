@@ -36,6 +36,9 @@
         <li>
             <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
         </li>
+        <li>
+            <a href="{{ route "refreshCategoryEntriesPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+        </li>
     </ul>
 </section>
 

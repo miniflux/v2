@@ -1,3 +1,16 @@
+Version 2.0.41 (December 10, 2022)
+----------------------------------
+
+* Reverted PR #1290 (follow the only link) because it leads to several panics/segfaults that prevent feed updates
+* Disable double-tap mobile gesture if swipe gesture is disabled
+* Skip integrations if there are no entries to push
+* Enable TLS-ALPN-01 challenge for ACME
+    - This type of challenge works purely at the TLS layer and is compatible
+    with SNI proxies. The existing HTTP-01 challenge support has been left
+    as-is.
+* Preconfigure Miniflux for GitHub Codespaces
+* Updated `golang.org/x/net/*` dependencies
+
 Version 2.0.40 (November 13, 2022)
 ----------------------------------
 
