@@ -85,7 +85,7 @@ async function register() {
     window.location.reload();
 }
 
-async function login(username) {
+async function login(username, conditional) {
     let beginLoginURL = "webauthnLoginBeginUrl";
     let r = await get(beginLoginURL, username);
     let c = await r.json();
@@ -94,12 +94,23 @@ async function login(username) {
             challenge: bufferDecode(c.publicKey.challenge)
         },
     };
-    if (!username) {
+    if (conditional) {
         credOptions.signal = abortController.signal;
         credOptions.mediation = "conditional";
     }
     
-    let assertion = await navigator.credentials.get(credOptions);
+    var assertion;
+    try {
+        assertion = await navigator.credentials.get(credOptions);
+    }
+    catch (err) {
+        // swallow aborted conditional logins
+        if (err instanceof DOMException && err.name == "AbortError") {
+            return;
+        }
+        throw err;
+    }
+    
     if (!assertion) {
         return;
     }
@@ -125,8 +136,8 @@ async function login(username) {
 }
 
 async function conditionalLogin() {
-    if (isConditionalLoginSupported()) {
-        login();
+    if (await isConditionalLoginSupported()) {
+        login("", true);
     }
 }
 
@@ -173,11 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
             login(usernameField.value).catch(err => showError(err));
         });
         
-        conditionalLogin().catch(err => {
-            // ignore aborted conditional login requests
-            if (!(err instanceof DOMException)) {
-                showError(err);
-            }
-        });
+        conditionalLogin().catch(err => showError(err));
     }
 });
