@@ -130,7 +130,7 @@
             {{ end }}
             {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) }}
             &centerdot;
-            <span>
+            <span class="entry-reading-time">
                 {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
             </span>
             {{ end }}
