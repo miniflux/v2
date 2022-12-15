@@ -19,6 +19,7 @@ var predefinedRules = map[string]string{
 	"heise.de":             "header .article-content__lead, header .article-image, div.article-layout__content.article-content",
 	"igen.fr":              "section.corps",
 	"ikiwiki.iki.fi":       ".page.group",
+	"ilpost.it":            "#singleBody",
 	"ing.dk":               "section.body",
 	"lapresse.ca":          ".amorce, .entry",
 	"lemonde.fr":           "article",
