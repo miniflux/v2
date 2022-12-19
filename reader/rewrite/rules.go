@@ -16,6 +16,7 @@ var predefinedRules = map[string]string{
 	"exocomics.com":          "add_image_title",
 	"framatube.org":          "nl2br,convert_text_link",
 	"happletea.com":          "add_image_title",
+	"ilpost.it":              `remove(".art_tag, #audioPlayerArticle, .author-container, .caption, .ilpostShare, .lastRecents, #mc_embed_signup, p:has(.leggi-anche)")`,
 	"imogenquest.net":        "add_image_title",
 	"lukesurl.com":           "add_image_title",
 	"medium.com":             "fix_medium_images",
