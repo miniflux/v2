@@ -283,7 +283,7 @@
     "form.feed.label.ignore_http_cache": "Zignoruj ​​pamięć podręczną HTTP",
     "form.feed.label.allow_self_signed_certificates": "Zezwalaj na certyfikaty z podpisem własnym lub nieprawidłowe certyfikaty",
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
-    "form.feed.label.disabled": "Не обновлять этот канал",
+    "form.feed.label.disabled": "Nie odświeżaj tego kanału",
     "form.feed.label.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
     "form.category.label.title": "Tytuł",
     "form.category.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
