@@ -15,7 +15,7 @@ require (
 	github.com/yuin/goldmark v1.5.3
 	golang.org/x/crypto v0.5.0
 	golang.org/x/net v0.5.0
-	golang.org/x/oauth2 v0.3.0
+	golang.org/x/oauth2 v0.4.0
 	golang.org/x/term v0.4.0
 	mvdan.cc/xurls/v2 v2.4.0
 )
