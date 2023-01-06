@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("+", () => goToAddSubscription());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
         keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
+        keyboardHandler.on("a", () => document.querySelector('.entry-enclosures').toggleAttribute('open'));
         keyboardHandler.on("Escape", () => ModalHandler.close());
         keyboardHandler.listen();
     }

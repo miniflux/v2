@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Scroll item to top",
     "page.keyboard_shortcuts.remove_feed": "Remove this feed",
     "page.keyboard_shortcuts.go_to_search": "Set focus on search form",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "Close modal dialog",
     "page.users.title": "Users",
     "page.users.username": "Username",
