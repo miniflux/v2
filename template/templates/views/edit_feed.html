@@ -68,7 +68,7 @@
         <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
         <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
 
-        <div class="rules-entry">
+        <div class="form-label-row">
             <label for="form-scraper-rules">
                 {{ t "form.feed.label.scraper_rules" }}
             </label>
@@ -79,7 +79,7 @@
         </div>
         <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}" spellcheck="false">
 
-        <div class="rules-entry">
+        <div class="form-label-row">
             <label for="form-rewrite-rules">
                 {{ t "form.feed.label.rewrite_rules" }}
             </label>
@@ -89,7 +89,7 @@
             </a>
         </div>
         <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}" spellcheck="false">
-        <div class="rules-entry">
+        <div class="form-label-row">
             <label for="form-blocklist-rules">
                 {{ t "form.feed.label.blocklist_rules" }}
             </label>
@@ -100,7 +100,7 @@
         </div>
         <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}" spellcheck="false">
 
-        <div class="rules-entry">
+        <div class="form-label-row">
             <label for="form-keeplist-rules">
                 {{ t "form.feed.label.keeplist_rules" }}
             </label>

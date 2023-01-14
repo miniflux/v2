@@ -298,7 +298,7 @@
     "form.prefs.label.entries_per_page": "Записи на странице",
     "form.prefs.label.default_reading_speed": "Скорость чтения на других языках (слов в минуту)",
     "form.prefs.label.cjk_reading_speed": "Скорость чтения на китайском, корейском и японском языках (знаков в минуту)",
-    "form.prefs.label.display_mode": "Режим отображения веб-приложения (требуется переустановка)",
+    "form.prefs.label.display_mode": "Режим отображения Progressive Web App (PWA)",
     "form.prefs.select.older_first": "Сначала старые записи",
     "form.prefs.select.recent_first": "Сначала последние записи",
     "form.prefs.select.fullscreen": "Полноэкранный",

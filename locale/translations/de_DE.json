@@ -262,7 +262,7 @@
     "error.invalid_language": "Ungültige Sprache.",
     "error.invalid_timezone": "Ungültige Zeitzone.",
     "error.invalid_entry_direction": "Ungültige Sortierreihenfolge.",
-    "error.invalid_display_mode": "Ungültiger Web-App-Anzeigemodus.",
+    "error.invalid_display_mode": "Progressive Web App (PWA) Anzeigemodus",
     "error.invalid_default_home_page": "Ungültige Standard-Startseite!",
     "form.feed.label.title": "Titel",
     "form.feed.label.site_url": "Webseite-URL",

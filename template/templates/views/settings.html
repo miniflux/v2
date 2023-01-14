@@ -43,7 +43,13 @@
     {{ end }}
     </select>
 
-    <label for="form-display-mode">{{ t "form.prefs.label.display_mode" }}</label>
+    <div class="form-label-row">
+        <label for="form-display-mode">{{ t "form.prefs.label.display_mode" }}</label>
+        &nbsp;
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display" target="_blank">
+            {{ icon "external-link" }}
+        </a>
+    </div>
     <select id="form-display-mode" name="display_mode">
         <option value="fullscreen" {{ if eq "fullscreen" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.fullscreen" }}</option>
         <option value="standalone" {{ if eq "standalone" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.standalone" }}</option>

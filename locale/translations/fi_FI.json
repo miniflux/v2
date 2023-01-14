@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "Artikkelia sivulla",
     "form.prefs.label.default_reading_speed": "Muiden kielten lukunopeus (sanaa minuutissa)",
     "form.prefs.label.cjk_reading_speed": "Kiinan, Korean ja Japanin lukunopeus (merkkejä minuutissa)",
-    "form.prefs.label.display_mode": "Verkkosovelluksen näyttötila (vaatii uudelleenasennuksen)",
+    "form.prefs.label.display_mode": "Progressive Web App (PWA) -näyttötila",
     "form.prefs.select.older_first": "Vanhin ensin",
     "form.prefs.select.recent_first": "Uusin ensin",
     "form.prefs.select.fullscreen": "Kokoruututila",
