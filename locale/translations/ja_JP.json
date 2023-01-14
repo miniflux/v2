@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "ページあたりのエントリ",
     "form.prefs.label.default_reading_speed": "他言語の読解速度（単語/分）",
     "form.prefs.label.cjk_reading_speed": "中国語、韓国語、日本語の読書速度（1分間あたりの文字数）",
-    "form.prefs.label.display_mode": "Webアプリの表示モード （再インストールが必要）",
+    "form.prefs.label.display_mode": "プログレッシブ Web アプリ (PWA) 表示モード",
     "form.prefs.select.older_first": "古い記事を最初に",
     "form.prefs.select.recent_first": "新しい記事を最初に",
     "form.prefs.select.fullscreen": "全画面表示",

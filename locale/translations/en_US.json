@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "Entries per page",
     "form.prefs.label.default_reading_speed": "Reading speed for other languages (words per minute)",
     "form.prefs.label.cjk_reading_speed": "Reading speed for Chinese, Korean and Japanese (characters per minute)",
-    "form.prefs.label.display_mode": "Web app display mode (needs reinstalling)",
+    "form.prefs.label.display_mode": "Progressive Web App (PWA) display mode",
     "form.prefs.select.older_first": "Older entries first",
     "form.prefs.select.recent_first": "Recent entries first",
     "form.prefs.select.fullscreen": "Fullscreen",

@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "Articoli per pagina",
     "form.prefs.label.default_reading_speed": "Velocità di lettura di altre lingue (parole al minuto)",
     "form.prefs.label.cjk_reading_speed": "Velocità di lettura per cinese, coreano e giapponese (caratteri al minuto)",
-    "form.prefs.label.display_mode": "Modalità di visualizzazione web app (necessita la reinstallazione)",
+    "form.prefs.label.display_mode": "Modalità di visualizzazione dell'app Web progressiva (PWA).",
     "form.prefs.select.older_first": "Prima i più vecchi",
     "form.prefs.select.recent_first": "Prima i più recenti",
     "form.prefs.select.fullscreen": "Schermo intero",

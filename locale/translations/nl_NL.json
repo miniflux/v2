@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "Inzendingen per pagina",
     "form.prefs.label.default_reading_speed": "Leessnelheid voor andere talen (woorden per minuut)",
     "form.prefs.label.cjk_reading_speed": "Leessnelheid voor Chinees, Koreaans en Japans (tekens per minuut)",
-    "form.prefs.label.display_mode": "Weergavemodus voor webapp (moet opnieuw worden geïnstalleerd)",
+    "form.prefs.label.display_mode": "Weergavemodus Progressive Web App (PWA).",
     "form.prefs.select.older_first": "Oudere items eerst",
     "form.prefs.select.recent_first": "Recente items eerst",
     "form.prefs.select.fullscreen": "Volledig scherm",

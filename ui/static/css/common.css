@@ -406,6 +406,10 @@ input::placeholder {
     padding-top: 2px;
 }
 
+.form-label-row {
+    display: flex;
+}
+
 .form-help {
     font-size: 0.9em;
     color: brown;
@@ -1073,10 +1077,6 @@ details.entry-enclosures {
     font-weight: 600;
     text-decoration: none;
     font-size: 1.2em;
-}
-
-.rules-entry {
-    display: flex;
 }
 
 .disabled {

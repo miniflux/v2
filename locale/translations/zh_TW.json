@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "每頁文章數",
     "form.prefs.label.default_reading_speed": "Reading speed for other languages (words per minute)",
     "form.prefs.label.cjk_reading_speed": "Reading speed for Chinese, Korean and Japanese (characters per minute)",
-    "form.prefs.label.display_mode": "漸進式網頁應用顯示模式（需要重新新增）",
+    "form.prefs.label.display_mode": "漸進式網絡應用程序 (PWA) 顯示模式",
     "form.prefs.select.older_first": "舊->新",
     "form.prefs.select.recent_first": "新->舊",
     "form.prefs.select.fullscreen": "全屏",

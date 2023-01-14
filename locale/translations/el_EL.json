@@ -296,7 +296,7 @@
     "form.prefs.label.entries_per_page": "Καταχωρήσεις ανά σελίδα",
     "form.prefs.label.default_reading_speed": "Ταχύτητα ανάγνωσης άλλων γλωσσών (λέξεις ανά λεπτό)",
     "form.prefs.label.cjk_reading_speed": "Ταχύτητα ανάγνωσης για κινέζικα, κορεάτικα και ιαπωνικά (χαρακτήρες ανά λεπτό)",
-    "form.prefs.label.display_mode": "Λειτουργία προβολής εφαρμογών ιστού (χρειάζεται επανεγκατάσταση)",
+    "form.prefs.label.display_mode": "Λειτουργία προβολής προοδευτικής εφαρμογής Ιστού (PWA)",
     "form.prefs.select.older_first": "Παλαιότερες καταχωρήσεις πρώτα",
     "form.prefs.select.recent_first": "Πρόσφατες καταχωρήσεις πρώτα",
     "form.prefs.select.fullscreen": "Πλήρης οθόνη",
