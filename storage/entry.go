@@ -120,7 +120,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				reading_time,
 				changed_at,
 				document_vectors,
-				category
+				tags
 			)
 		VALUES
 			(
@@ -153,7 +153,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
-		pq.Array(entry.Category),
+		pq.Array(removeDuplicates(entry.Tags)),
 	).Scan(&entry.ID, &entry.Status)
 
 	if err != nil {
@@ -537,4 +537,17 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 		err = fmt.Errorf(`store: unable to remove share code for entry #%d: %v`, entryID, err)
 	}
 	return
+}
+
+// removeDuplicate removes duplicate entries from a slice
+func removeDuplicates[T string | int](sliceList []T) []T {
+	allKeys := make(map[T]bool)
+	list := []T{}
+	for _, item := range sliceList {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }

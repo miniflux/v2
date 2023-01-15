@@ -640,7 +640,7 @@ var migrations = []func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		_, err = tx.Exec(`
-			ALTER TABLE entries ADD COLUMN category text[] default '{}';
+			ALTER TABLE entries ADD COLUMN tags text[] default '{}';
 		`)
 		return
 	},

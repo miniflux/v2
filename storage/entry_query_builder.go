@@ -135,11 +135,11 @@ func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
 	return e
 }
 
-// WithStatuses filter by a list of entry statuses.
-func (e *EntryQueryBuilder) WithCategory(category []string) *EntryQueryBuilder {
-	if len(category) > 0 {
-		for _, cat := range category {
-			e.conditions = append(e.conditions, fmt.Sprintf("$%d = ANY(e.category)", len(e.args)+1))
+// WithTags filter by a list of entry tags.
+func (e *EntryQueryBuilder) WithTags(tags []string) *EntryQueryBuilder {
+	if len(tags) > 0 {
+		for _, cat := range tags {
+			e.conditions = append(e.conditions, fmt.Sprintf("$%d = ANY(e.tags)", len(e.args)+1))
 			e.args = append(e.args, cat)
 		}
 	}
@@ -261,7 +261,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.reading_time,
 			e.created_at,
 			e.changed_at,
-			e.category,
+			e.tags,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
@@ -324,7 +324,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.ReadingTime,
 			&entry.CreatedAt,
 			&entry.ChangedAt,
-			pq.Array(&entry.Category),
+			pq.Array(&entry.Tags),
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,

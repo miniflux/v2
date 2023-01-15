@@ -80,15 +80,15 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 }
 
 type atom10Entry struct {
-	ID        string           `xml:"id"`
-	Title     atom10Text       `xml:"title"`
-	Published string           `xml:"published"`
-	Updated   string           `xml:"updated"`
-	Links     atomLinks        `xml:"link"`
-	Summary   atom10Text       `xml:"summary"`
-	Content   atom10Text       `xml:"http://www.w3.org/2005/Atom content"`
-	Authors   atomAuthors      `xml:"author"`
-	Categorys []atom10Category `xml:"category"`
+	ID         string           `xml:"id"`
+	Title      atom10Text       `xml:"title"`
+	Published  string           `xml:"published"`
+	Updated    string           `xml:"updated"`
+	Links      atomLinks        `xml:"link"`
+	Summary    atom10Text       `xml:"summary"`
+	Content    atom10Text       `xml:"http://www.w3.org/2005/Atom content"`
+	Authors    atomAuthors      `xml:"author"`
+	Categories []atom10Category `xml:"category"`
 	media.Element
 }
 
@@ -102,7 +102,7 @@ func (a *atom10Entry) Transform() *model.Entry {
 	entry.Title = a.entryTitle()
 	entry.Enclosures = a.entryEnclosures()
 	entry.CommentsURL = a.entryCommentsURL()
-	entry.Category = a.entryCategories()
+	entry.Tags = a.entryCategories()
 	return entry
 }
 
@@ -219,7 +219,7 @@ func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 func (r *atom10Entry) entryCategories() []string {
 	var categoryList []string
 
-	for _, atomCategory := range r.Categorys {
+	for _, atomCategory := range r.Categories {
 		if strings.TrimSpace(atomCategory.Term) != "" {
 			categoryList = append(categoryList, strings.TrimSpace(atomCategory.Term))
 		} else {
