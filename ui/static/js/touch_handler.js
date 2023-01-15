@@ -26,11 +26,11 @@ class TouchHandler {
     }
 
     findElement(element) {
-        if (element.classList.contains("touch-item")) {
+        if (element.classList.contains("entry-swipe")) {
             return element;
         }
 
-        return DomHelper.findParent(element, "touch-item");
+        return DomHelper.findParent(element, "entry-swipe");
     }
 
     onTouchStart(event) {
@@ -93,7 +93,7 @@ class TouchHandler {
     }
 
     listen() {
-        let elements = document.querySelectorAll(".touch-item");
+        let elements = document.querySelectorAll(".entry-swipe");
         let hasPassiveOption = DomHelper.hasPassiveEventListenerOption();
 
         elements.forEach((element) => {
