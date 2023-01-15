@@ -36,7 +36,7 @@
     </div>
     <div class="items hide-read-items">
         {{ range .entries }}
-        <article role="article" class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article role="article" class="item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}

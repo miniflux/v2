@@ -88,9 +88,11 @@
 
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
-    <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
-
     <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
+
+    <label><input type="checkbox" name="double_tap" value="1" {{ if .form.DoubleTap }}checked{{ end }}> {{ t "form.prefs.label.double_tap" }}</label>
+
+    <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
     <label for="form-cjk-reading-speed">{{ t "form.prefs.label.cjk_reading_speed" }}</label>
     <input type="number" name="cjk_reading_speed" id="form-cjk-reading-speed" value="{{ .form.CJKReadingSpeed }}" min="1">

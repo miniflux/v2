@@ -760,7 +760,7 @@ template {
     display: none;
 }
 
-.touch-item {
+.entry-swipe {
     transition-property: transform;
     transition-duration: 0s;
     transition-timing-function: ease-out;

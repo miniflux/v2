@@ -143,7 +143,7 @@
     </div>
     {{ end }}
     {{ end }}
-    <article role="article" class="entry-content {{ if $.user.EntrySwipe }}double-tap{{ end }}" dir="auto">
+    <article role="article" class="entry-content {{ if $.user.DoubleTap }}double-tap{{ end }}" dir="auto">
         {{ if .user }}
             {{ noescape (proxyFilter .entry.Content) }}
         {{ else }}
