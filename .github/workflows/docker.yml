@@ -63,7 +63,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Build and Push Alpine images
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./packaging/docker/alpine/Dockerfile
@@ -72,7 +72,7 @@ jobs:
           tags: ${{ steps.docker_alpine_tag.outputs.tags }}
 
       - name: Build and Push Distroless images
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./packaging/docker/distroless/Dockerfile
