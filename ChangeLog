@@ -1,3 +1,15 @@
+Version 2.0.42 (January 29, 2023)
+---------------------------------
+
+* Fix header items wrapping
+* Add option to enable or disable double tap
+* Improve PWA display mode label in settings page
+* Bump `golang.org/x/*` dependencies
+* Update translations
+* Add scraping rule for `ilpost.it`
+* Update reading time HTML element after fetching the original web page
+* Add category feeds refresh feature
+
 Version 2.0.41 (December 10, 2022)
 ----------------------------------
 
