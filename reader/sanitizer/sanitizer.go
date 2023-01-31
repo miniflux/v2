@@ -414,7 +414,7 @@ func getTagAllowList() map[string][]string {
 	whitelist["wbr"] = []string{}
 	whitelist["dfn"] = []string{}
 	whitelist["sub"] = []string{}
-	whitelist["sup"] = []string{}
+	whitelist["sup"] = []string{"id"}
 	whitelist["var"] = []string{}
 	whitelist["samp"] = []string{}
 	whitelist["s"] = []string{}
