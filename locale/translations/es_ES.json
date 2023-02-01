@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Desplazar elemento hacia arriba",
     "page.keyboard_shortcuts.remove_feed": "Quitar esta fuente",
     "page.keyboard_shortcuts.go_to_search": "Centrarse en el cuadro de búsqueda",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "Cerrar el cuadro de diálogo modal",
     "page.users.title": "Usuarios",
     "page.users.username": "Nombre de usuario",

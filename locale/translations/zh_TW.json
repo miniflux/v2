@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "滾動到頂部",
     "page.keyboard_shortcuts.remove_feed": "刪除此Feed",
     "page.keyboard_shortcuts.go_to_search": "將焦點放在搜尋表單上",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "關閉對話視窗",
     "page.users.title": "使用者",
     "page.users.username": "使用者名稱",

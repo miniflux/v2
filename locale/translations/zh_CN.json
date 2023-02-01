@@ -160,6 +160,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "滚动到顶部",
     "page.keyboard_shortcuts.remove_feed": "删除此源",
     "page.keyboard_shortcuts.go_to_search": "将焦点放在搜索表单上",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "关闭对话窗口",
     "page.users.title": "用户",
     "page.users.username": "用户名",

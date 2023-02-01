@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Role o item para cima",
     "page.keyboard_shortcuts.remove_feed": "Remover essa fonte",
     "page.keyboard_shortcuts.go_to_search": "Ir para o campo de busca",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "Fechar janela",
     "page.users.title": "Usuários",
     "page.users.username": "Nome de usuário",
