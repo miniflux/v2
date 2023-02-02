@@ -116,7 +116,7 @@
     --counter-color: #666;
 }
 
-body {
+html {
     color-scheme: light;
 }
 
@@ -238,7 +238,7 @@ body {
         --counter-color: #bbb;
     }
 
-    body {
+    html {
         color-scheme: dark;
     }
 }
