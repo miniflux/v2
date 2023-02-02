@@ -19,21 +19,21 @@
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">
-                    <li class="site-url" dir="auto">
+                    <li class="item-meta-info-site-url" dir="auto">
                         <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ domain .SiteURL }}</a>
                     </li>
-                    <li class="checked-at">
+                    <li class="item-meta-info-checked-at">
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
                 </ul>
                 <ul class="item-meta-icons">
-                    <li class="refresh">
+                    <li class="item-meta-icons-refresh">
                         <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
-                    <li class="edit">
+                    <li class="item-meta-icons-edit">
                         <a href="{{ route "editFeed" "feedID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
-                    <li class="remove">
+                    <li class="item-meta-icons-remove">
                         <a href="#"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
@@ -43,7 +43,7 @@
                             data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ if .UnreadCount }}
-                      <li class="mark-as-read">
+                      <li class="item-meta-icons-mark-as-read">
                         <a href="#"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"

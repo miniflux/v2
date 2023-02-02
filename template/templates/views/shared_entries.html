@@ -44,15 +44,15 @@
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">
-                    <li class="site-url">
+                    <li class="item-meta-info-site-url">
                         <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
                     </li>
-                    <li class="timestamp">
+                    <li class="item-meta-info-timestamp">
                         <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed $.user.Timezone .Date }}</time>
                     </li>
                 </ul>
                 <ul class="item-meta-icons">
-                    <li class="delete">
+                    <li class="item-meta-icons-delete">
                         {{ icon "delete" }}
                         <a href="#"
                             data-confirm="true"
