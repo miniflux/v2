@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Μετακινηση στοιχείου στην κορυφή",
     "page.keyboard_shortcuts.remove_feed": "Κατάργηση αυτής της ροής",
     "page.keyboard_shortcuts.go_to_search": "Ορίστε εστίαση στη φόρμα αναζήτησης",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "Κλείσιμο παραθύρου διαλόγου",
     "page.users.title": "Χρήστες",
     "page.users.username": "Χρήστης",

@@ -164,6 +164,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Прокрутите элемент вверх",
     "page.keyboard_shortcuts.remove_feed": "Удалить эту подписку",
     "page.keyboard_shortcuts.go_to_search": "Установить фокус в поисковой форме",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "Закрыть модальный диалог",
     "page.users.title": "Пользователи",
     "page.users.username": "Имя пользователя",

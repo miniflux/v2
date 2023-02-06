@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "आइटम को ऊपर तक स्क्रॉल करें",
     "page.keyboard_shortcuts.remove_feed": "यह फ़ीड हटाएं",
     "page.keyboard_shortcuts.go_to_search": "सर्च फॉर्म पर फोकस सेट करें",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "मोडल डायलॉग बंद करें",
     "page.users.title": "उपभोक्ता",
     "page.users.username": "यूसर्नेम",

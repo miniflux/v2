@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Öğeyi en üste kaydır",
     "page.keyboard_shortcuts.remove_feed": "Bu beslemeyi kaldır",
     "page.keyboard_shortcuts.go_to_search": "Arama formuna odakla",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "İletişim kutusunu kapat",
     "page.users.title": "Kullanıcılar",
     "page.users.username": "Kullanıcı adı",

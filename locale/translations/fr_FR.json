@@ -162,6 +162,7 @@
     "page.keyboard_shortcuts.scroll_item_to_top": "Faire défiler l'élément vers le haut",
     "page.keyboard_shortcuts.remove_feed": "Supprimer ce flux",
     "page.keyboard_shortcuts.go_to_search": "Mettre le focus sur le champ de recherche",
+    "page.keyboard_shortcuts.toggle_entry_attachments": "Toggle open/close entry attachments",
     "page.keyboard_shortcuts.close_modal": "Fermer la boite de dialogue",
     "page.users.title": "Utilisateurs",
     "page.users.username": "Nom d'utilisateur",
