@@ -116,3 +116,7 @@
 
     --counter-color: #666;
 }
+
+html {
+    color-scheme: light;
+}

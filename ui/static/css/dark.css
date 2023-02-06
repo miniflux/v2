@@ -116,3 +116,7 @@
 
     --counter-color: #bbb;
 }
+
+html {
+    color-scheme: dark;
+}
