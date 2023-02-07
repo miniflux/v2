@@ -1,10 +1,10 @@
 {{ define "item_meta" }}
 <div class="item-meta">
     <ul class="item-meta-info">
-        <li>
+        <li class="item-meta-info-title">
             <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}" title="{{ .entry.Feed.SiteURL }}" data-feed-link="true">{{ truncate .entry.Feed.Title 35 }}</a>
         </li>
-        <li>
+        <li class="item-meta-info-timestamp">
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed .user.Timezone .entry.Date }}</time>
         </li>
         {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) }}
@@ -16,7 +16,7 @@
         {{ end }}
     </ul>
     <ul class="item-meta-icons">
-        <li>
+        <li class="item-meta-icons-read">
             <a href="#"
                 title="{{ t "entry.status.title" }}"
                 data-toggle-status="true"
@@ -26,7 +26,7 @@
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                 >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
         </li>
-        <li>
+        <li class="item-meta-icons-star">
             <a href="#"
                 data-toggle-bookmark="true"
                 data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
@@ -37,12 +37,12 @@
                 >{{ if .entry.Starred }}{{ icon "unstar" }}{{ else }}{{ icon "star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
         </li>
         {{ if .entry.ShareCode }}
-            <li>
+            <li class="item-meta-icons-share">
                 <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
                     title="{{ t "entry.shared_entry.title" }}"
                     target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
             </li>
-            <li>
+            <li class="item-meta-icons-delete">
                 <a href="#"
                     data-confirm="true"
                     data-url="{{ route "unshareEntry" "entryID" .entry.ID }}"
@@ -63,7 +63,7 @@
                     >{{ icon "save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></a>
             </li>
         {{ end }}
-        <li>
+        <li class="item-meta-icons-external-url">
             <a href="{{ .entry.URL | safeURL  }}"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -71,7 +71,7 @@
                 data-original-link="true">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
         </li>
         {{ if .entry.CommentsURL }}
-            <li>
+            <li class="item-meta-icons-comments">
                 <a href="{{ .entry.CommentsURL | safeURL  }}"
                     title="{{ t "entry.comments.title" }}"
                     target="_blank"
