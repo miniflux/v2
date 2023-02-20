@@ -3,7 +3,7 @@ module miniflux.app
 // +heroku goVersion go1.19
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.0
+	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/gorilla/mux v1.8.0
