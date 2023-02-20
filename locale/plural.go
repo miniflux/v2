@@ -53,6 +53,10 @@ var pluralForms = map[string]pluralFormFunc{
 
 		return 2
 	},
+	// nplurals=1; plural=0;
+	"id_ID": func(n int) int {
+		return 0
+	},
 	// nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
 	"pl_PL": func(n int) int {
 		if n == 1 {
