@@ -1604,3 +1604,48 @@ func TestAbsoluteCommentsURL(t *testing.T) {
 		t.Errorf("Incorrect entry comments URL, got: %s", feed.Entries[0].CommentsURL)
 	}
 }
+
+func TestParseFeedWithCategories(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link href="http://example.org/"/>
+	  <author>
+		<name>Alice</name>
+	  </author>
+	  <author>
+		<name>Bob</name>
+	  </author>
+
+	  <entry>
+		<link href="http://example.org/2003/12/13/atom03"/>
+		<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+		<updated>2003-12-13T18:30:02Z</updated>
+		<summary>Some text.</summary>
+		<category term='Tech' />
+		<category term='Technology' label='Science' />
+	  </entry>
+
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 2 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := "Tech"
+	result := feed.Entries[0].Tags[0]
+	if result != expected {
+		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	}
+
+	expected = "Science"
+	result = feed.Entries[0].Tags[1]
+	if result != expected {
+		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	}
+}
