@@ -220,10 +220,10 @@ func (r *atom10Entry) entryCategories() []string {
 	var categoryList []string
 
 	for _, atomCategory := range r.Categories {
-		if strings.TrimSpace(atomCategory.Term) != "" {
-			categoryList = append(categoryList, strings.TrimSpace(atomCategory.Term))
-		} else {
+		if strings.TrimSpace(atomCategory.Label) != "" {
 			categoryList = append(categoryList, strings.TrimSpace(atomCategory.Label))
+		} else {
+			categoryList = append(categoryList, strings.TrimSpace(atomCategory.Term))
 		}
 	}
 
