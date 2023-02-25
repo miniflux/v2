@@ -72,3 +72,16 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 func Redirect(w http.ResponseWriter, r *http.Request, uri string) {
 	http.Redirect(w, r, uri, http.StatusFound)
 }
+
+// RequestedRangeNotSatisfiable sends a range not satisfiable error to the client.
+func RequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, contentRange string) {
+	logger.Error("[HTTP:Range Not Satisfiable] %s", r.URL)
+
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusRequestedRangeNotSatisfiable)
+	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
+	builder.WithHeader("Content-Range", contentRange)
+	builder.WithBody("Range Not Satisfiable")
+	builder.Write()
+}
