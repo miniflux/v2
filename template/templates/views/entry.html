@@ -159,18 +159,26 @@
                 {{ if hasPrefix .MimeType "audio/" }}
                     <div class="enclosure-audio">
                         <audio controls preload="metadata">
-                            <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
+				{{ if (and $.user (mustBeProxyfied "audio")) }}
+				    <source src="{{ proxyURL .URL }}" type="{{ .MimeType }}">
+				{{ else }}
+				    <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
+				{{ end }}
                         </audio>
                     </div>
                 {{ else if hasPrefix .MimeType "video/" }}
                     <div class="enclosure-video">
                         <video controls preload="metadata">
-                            <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
+				{{ if (and $.user (mustBeProxyfied "video")) }}
+				    <source src="{{ proxyURL .URL }}" type="{{ .MimeType }}">
+				{{ else }}
+				    <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
+				{{ end }}
                         </video>
                     </div>
                 {{ else if hasPrefix .MimeType "image/" }}
                     <div class="enclosure-image">
-                        {{ if $.user }}
+                        {{ if (and $.user (mustBeProxyfied "image")) }}
                             <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
                         {{ else }}
                             <img src="{{ .URL | safeURL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
