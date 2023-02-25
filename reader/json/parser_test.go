@@ -575,3 +575,45 @@ func TestParseInvalidJSON(t *testing.T) {
 		t.Error("Parse should returns an error")
 	}
 }
+
+func TestParseTags(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"user_comment": "This is a microblog feed. You can add this to your feed reader using the following URL: https://example.org/feed.json",
+		"title": "Brent Simmons’s Microblog",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"author": {
+			"name": "Brent Simmons",
+			"url": "http://example.org/",
+			"avatar": "https://example.org/avatar.png"
+		},
+		"items": [
+			{
+				"id": "2347259",
+				"url": "https://example.org/2347259",
+				"content_text": "Cats are neat. \n\nhttps://example.org/cats",
+				"date_published": "2016-02-09T14:22:00-07:00",
+				"tags": [
+					"tag 1",
+					"tag 2"
+				]
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 2 {
+		t.Errorf("Incorrect number of Tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := "tag 2"
+	result := feed.Entries[0].Tags[1]
+	if result != expected {
+		t.Errorf("Incorrect entry tag, got %q instead of %q", result, expected)
+	}
+}
