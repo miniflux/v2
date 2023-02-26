@@ -850,6 +850,10 @@ article.category-has-unread {
     overflow-wrap: break-word;
 }
 
+.entry-tags strong {
+    font-weight: 600;
+}
+
 .entry-website img {
     vertical-align: top;
 }
