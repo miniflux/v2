@@ -87,12 +87,12 @@ func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.Loc
 
 			if title, exists := s.Attr("title"); exists {
 				subscription.Title = title
-			} else {
-				subscription.Title = "Feed"
 			}
 
 			if feedURL, exists := s.Attr("href"); exists {
-				subscription.URL, _ = url.AbsoluteURL(websiteURL, feedURL)
+				if feedURL != "" {
+					subscription.URL, _ = url.AbsoluteURL(websiteURL, feedURL)
+				}
 			}
 
 			if subscription.Title == "" {
