@@ -81,6 +81,7 @@
         "%d минута чтения",
         "%d минут чтения"
     ],
+    "entry.tags.label": "Теги",
     "page.shared_entries.title": "Общедоступные записи",
     "page.unread.title": "Непрочитанное",
     "page.starred.title": "Избранное",

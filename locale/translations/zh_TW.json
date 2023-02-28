@@ -81,6 +81,7 @@
         "需要 %d 分鐘閱讀",
         "需要 %d 分鐘閱讀"
     ],
+    "entry.tags.label": "標籤",
     "page.shared_entries.title": "分享文章",
     "page.unread.title": "未讀",
     "page.starred.title": "收藏",

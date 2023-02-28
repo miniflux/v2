@@ -81,6 +81,7 @@
         "%d dakikalık okuma",
         "%d dakikalık okuma"
     ],
+    "entry.tags.label": "Etiketleri",
     "page.shared_entries.title": "Paylaşılan iletiler",
     "page.unread.title": "Okunmadı",
     "page.starred.title": "Yıldızlı",

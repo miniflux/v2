@@ -81,6 +81,7 @@
         "%d minute read",
         "%d minutes read"
     ],
+    "entry.tags.label": "Tags",
     "page.shared_entries.title": "Shared entries",
     "page.unread.title": "Unread",
     "page.starred.title": "Starred",

@@ -80,7 +80,8 @@
     "entry.estimated_reading_time": [
         "%d minuto di lettura",
         "%d minuti di lettura"
-    ],
+    ],    
+    "entry.tags.label": "Tag",
     "page.shared_entries.title": "Voci condivise",
     "page.unread.title": "Da leggere",
     "page.starred.title": "Preferiti",
