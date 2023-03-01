@@ -43,7 +43,7 @@ func TestGetAllFeedEntries(t *testing.T) {
 		t.Fatal(`Filtered entries should be different than previous results`)
 	}
 
-	filteredResultsByEntryID, err := client.FeedEntries(feed.ID, &miniflux.Filter{BeforeEntryID: allResults.Entries[0].ID})
+	filteredResultsByEntryID, err := client.FeedEntries(feed.ID, &miniflux.Filter{AfterEntryID: allResults.Entries[0].ID})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +83,7 @@ func TestGetAllCategoryEntries(t *testing.T) {
 		t.Fatal(`Filtered entries should be different than previous results`)
 	}
 
-	filteredResultsByEntryID, err := client.CategoryEntries(category.ID, &miniflux.Filter{BeforeEntryID: allResults.Entries[0].ID})
+	filteredResultsByEntryID, err := client.CategoryEntries(category.ID, &miniflux.Filter{AfterEntryID: allResults.Entries[0].ID})
 	if err != nil {
 		t.Fatal(err)
 	}
