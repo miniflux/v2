@@ -44,7 +44,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 	// array used for bulk push
 	entriesToPush := model.Entries{}
 
-	for _, entry := range feed.Entries {
+	// Process older entries first
+	for i := len(feed.Entries) - 1; i >= 0; i-- {
+		entry := feed.Entries[i]
+
 		logger.Debug("[Processor] Processing entry %q from feed %q", entry.URL, feed.FeedURL)
 
 		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) {
