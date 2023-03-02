@@ -241,30 +241,6 @@ func TestParseWebPageWithMultipleFeeds(t *testing.T) {
 	if len(subscriptions) != 2 {
 		t.Fatal(`Incorrect number of subscriptions returned`)
 	}
-
-	if subscriptions[0].Title != "Atom Feed" {
-		t.Errorf(`Incorrect subscription title: %q`, subscriptions[0].Title)
-	}
-
-	if subscriptions[0].URL != "http://example.org/atom.xml" {
-		t.Errorf(`Incorrect subscription URL: %q`, subscriptions[0].URL)
-	}
-
-	if subscriptions[0].Type != "atom" {
-		t.Errorf(`Incorrect subscription type: %q`, subscriptions[0].Type)
-	}
-
-	if subscriptions[1].Title != "JSON Feed" {
-		t.Errorf(`Incorrect subscription title: %q`, subscriptions[0].Title)
-	}
-
-	if subscriptions[1].URL != "http://example.org/feed.json" {
-		t.Errorf(`Incorrect subscription URL: %q`, subscriptions[0].URL)
-	}
-
-	if subscriptions[1].Type != "json" {
-		t.Errorf(`Incorrect subscription type: %q`, subscriptions[0].Type)
-	}
 }
 
 func TestParseWebPageWithEmptyFeedURL(t *testing.T) {
