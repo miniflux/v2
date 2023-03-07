@@ -13,7 +13,7 @@ require (
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/tdewolff/minify/v2 v2.12.4
 	github.com/yuin/goldmark v1.5.4
-	golang.org/x/crypto v0.6.0
+	golang.org/x/crypto v0.7.0
 	golang.org/x/net v0.8.0
 	golang.org/x/oauth2 v0.6.0
 	golang.org/x/term v0.6.0
