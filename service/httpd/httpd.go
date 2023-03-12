@@ -222,7 +222,25 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 }
 
 func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
-	clientIP := net.ParseIP(request.ClientIP(r))
+	clientIP := request.ClientIP(r)
+
+	if config.Opts.MetricsUsername() != "" && config.Opts.MetricsPassword() != "" {
+		username, password, authOK := r.BasicAuth()
+		if !authOK {
+			logger.Info("[Metrics] [ClientIP=%s] No authentication header sent", clientIP)
+			return false
+		}
+
+		if username == "" || password == "" {
+			logger.Info("[Metrics] [ClientIP=%s] Empty username or password", clientIP)
+			return false
+		}
+
+		if username != config.Opts.MetricsUsername() || password != config.Opts.MetricsPassword() {
+			logger.Error("[Metrics] [ClientIP=%s] Invalid username or password", clientIP)
+			return false
+		}
+	}
 
 	for _, cidr := range config.Opts.MetricsAllowedNetworks() {
 		_, network, err := net.ParseCIDR(cidr)
@@ -230,7 +248,7 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 			logger.Fatal(`[Metrics] Unable to parse CIDR %v`, err)
 		}
 
-		if network.Contains(clientIP) {
+		if network.Contains(net.ParseIP(clientIP)) {
 			return true
 		}
 	}

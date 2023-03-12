@@ -72,6 +72,8 @@ const (
 	defaultMetricsCollector                   = false
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
+	defaultMetricsUsername                    = ""
+	defaultMetricsPassword                    = ""
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 )
@@ -144,6 +146,8 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
+	metricsUsername                    string
+	metricsPassword                    string
 	watchdog                           bool
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
@@ -211,6 +215,8 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
+		metricsUsername:                    defaultMetricsUsername,
+		metricsPassword:                    defaultMetricsPassword,
 		watchdog:                           defaultWatchdog,
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    randomKey,
@@ -513,6 +519,14 @@ func (o *Options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
 }
 
+func (o *Options) MetricsUsername() string {
+	return o.metricsUsername
+}
+
+func (o *Options) MetricsPassword() string {
+	return o.metricsPassword
+}
+
 // HTTPClientUserAgent returns the global User-Agent header for miniflux.
 func (o *Options) HTTPClientUserAgent() string {
 	return o.httpClientUserAgent
@@ -576,6 +590,8 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"METRICS_ALLOWED_NETWORKS":               strings.Join(o.metricsAllowedNetworks, ","),
 		"METRICS_COLLECTOR":                      o.metricsCollector,
 		"METRICS_REFRESH_INTERVAL":               o.metricsRefreshInterval,
+		"METRICS_USERNAME":                       o.metricsUsername,
+		"METRICS_PASSWORD":                       redactSecretValue(o.metricsPassword, redactSecret),
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),
 		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,
@@ -626,7 +642,7 @@ func (o *Options) String() string {
 
 func redactSecretValue(value string, redactSecret bool) string {
 	if redactSecret && value != "" {
-		return "******"
+		return "<secret>"
 	}
 	return value
 }
