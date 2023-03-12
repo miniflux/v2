@@ -208,7 +208,7 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 
 				// Returns a 404 if the client is not authorized to access the metrics endpoint.
 				if route.GetName() == "metrics" && !isAllowedToAccessMetricsEndpoint(r) {
-					logger.Error(`[Metrics] Client not allowed: %s`, request.ClientIP(r))
+					logger.Error(`[Metrics] [ClientIP=%s] Client not allowed (%s)`, request.ClientIP(r), r.RemoteAddr)
 					http.NotFound(w, r)
 					return
 				}
@@ -222,9 +222,8 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 }
 
 func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
-	clientIP := request.ClientIP(r)
-
 	if config.Opts.MetricsUsername() != "" && config.Opts.MetricsPassword() != "" {
+		clientIP := request.ClientIP(r)
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
 			logger.Info("[Metrics] [ClientIP=%s] No authentication header sent", clientIP)
@@ -248,7 +247,9 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 			logger.Fatal(`[Metrics] Unable to parse CIDR %v`, err)
 		}
 
-		if network.Contains(net.ParseIP(clientIP)) {
+		// We use r.RemoteAddr in this case because HTTP headers like X-Forwarded-For can be easily spoofed.
+		// The recommendation is to use HTTP Basic authentication.
+		if network.Contains(net.ParseIP(request.FindRemoteIP(r))) {
 			return true
 		}
 	}
