@@ -83,7 +83,8 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := clt.Do(req)
 	if err != nil {
-		html.ServerError(w, r, err)
+		logger.Error(`[Proxy] Unable to initialize HTTP client: %v`, err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
