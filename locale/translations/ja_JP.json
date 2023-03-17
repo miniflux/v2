@@ -322,6 +322,7 @@
     "form.prefs.label.entry_order": "記事の表示順の基準",
     "form.prefs.label.default_home_page": "デフォルトのトップページ",
     "form.prefs.label.categories_sorting_order": "カテゴリの表示順",
+    "form.prefs.label.mark_read_on_view": "表示時にエントリを自動的に既読としてマークします",
     "form.import.label.file": "OPML ファイル",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API を有効にする",

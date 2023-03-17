@@ -41,7 +41,7 @@ func (h *handler) showFeedEntryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if entry.Status == model.EntryStatusUnread {
+	if user.MarkReadOnView && entry.Status == model.EntryStatusUnread {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
 			html.ServerError(w, r, err)

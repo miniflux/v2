@@ -319,6 +319,7 @@
     "form.prefs.label.entry_order": "Pengurutan Kolom Entri",
     "form.prefs.label.default_home_page": "Beranda Baku",
     "form.prefs.label.categories_sorting_order": "Pengurutan Kategori",
+    "form.prefs.label.mark_read_on_view": "Secara otomatis menandai entri sebagai telah dibaca saat dilihat",
     "form.import.label.file": "Berkas OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Aktifkan API Fever",

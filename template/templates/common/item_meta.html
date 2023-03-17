@@ -68,7 +68,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerpolicy="no-referrer"
-                data-original-link="true">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
+                data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
         </li>
         {{ if .entry.CommentsURL }}
             <li class="item-meta-icons-comments">
