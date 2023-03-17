@@ -324,6 +324,7 @@
     "form.prefs.label.entry_order": "Столбец сортировки статей",
     "form.prefs.label.default_home_page": "Домашняя страница по умолчанию",
     "form.prefs.label.categories_sorting_order": "Сортировка категорий",
+    "form.prefs.label.mark_read_on_view": "Автоматически отмечать записи как прочитанные при просмотре",
     "form.import.label.file": "OPML файл",
     "form.import.label.url": "Ссылка",
     "form.integration.fever_activate": "Активировать Fever API",

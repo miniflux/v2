@@ -322,6 +322,7 @@
     "form.prefs.label.entry_order": "Στήλη ταξινόμησης εισόδου",
     "form.prefs.label.default_home_page": "Προεπιλεγμένη αρχική σελίδα",
     "form.prefs.label.categories_sorting_order": "Ταξινόμηση κατηγοριών",
+    "form.prefs.label.mark_read_on_view": "Αυτόματη επισήμανση καταχωρήσεων ως αναγνωσμένων κατά την προβολή",
     "form.import.label.file": "Αρχείο OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Ενεργοποιήστε το Fever API",

@@ -3,7 +3,7 @@
 {{ define "content"}}
 <section class="page-header">
     <h1 dir="auto">
-        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="true">{{ .feed.Title }}</a>
+        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="{{ .user.MarkReadOnView }}">{{ .feed.Title }}</a>
         ({{ .total }})
     </h1>
     <ul>

@@ -702,4 +702,9 @@ var migrations = []func(tx *sql.Tx) error{
 
 		return nil
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN mark_read_on_view boolean default 't'`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

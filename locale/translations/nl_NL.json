@@ -322,6 +322,7 @@
     "form.prefs.label.entry_order": "Ingang Sorteerkolom",
     "form.prefs.label.default_home_page": "Standaard startpagina",
     "form.prefs.label.categories_sorting_order": "Categorieën sorteren",
+    "form.prefs.label.mark_read_on_view": "Items automatisch markeren als gelezen wanneer ze worden bekeken",
     "form.import.label.file": "OPML-bestand",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activeer Fever API",

@@ -322,6 +322,7 @@
     "form.prefs.label.entry_order": "प्रवेश छँटाई कॉलम",
     "form.prefs.label.default_home_page": "डिफ़ॉल्ट होमपेज़",
     "form.prefs.label.categories_sorting_order": "श्रेणियाँ छँटाई",
+    "form.prefs.label.mark_read_on_view": "देखे जाने पर स्वचालित रूप से प्रविष्टियों को पढ़ने के रूप में चिह्नित करें",
     "form.import.label.file": "ओपीएमएल फ़ाइल",
     "form.import.label.url": "यूआरएल",
     "form.integration.fever_activate": "फीवर एपीआई सक्रिय करें",

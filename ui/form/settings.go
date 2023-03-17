@@ -32,6 +32,7 @@ type SettingsForm struct {
 	CJKReadingSpeed        int
 	DefaultHomePage        string
 	CategoriesSortingOrder string
+	MarkReadOnView         bool
 }
 
 // Merge updates the fields of the given user.
@@ -53,6 +54,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.DefaultReadingSpeed = s.DefaultReadingSpeed
 	user.DefaultHomePage = s.DefaultHomePage
 	user.CategoriesSortingOrder = s.CategoriesSortingOrder
+	user.MarkReadOnView = s.MarkReadOnView
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -119,5 +121,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		CJKReadingSpeed:        int(cjkReadingSpeed),
 		DefaultHomePage:        r.FormValue("default_home_page"),
 		CategoriesSortingOrder: r.FormValue("categories_sorting_order"),
+		MarkReadOnView:         r.FormValue("mark_read_on_view") == "1",
 	}
 }

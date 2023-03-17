@@ -324,6 +324,7 @@
     "form.prefs.label.entry_order": "Kolumna sortowania wpisów",
     "form.prefs.label.default_home_page": "Domyślna strona główna",
     "form.prefs.label.categories_sorting_order": "Sortowanie kategorii",
+    "form.prefs.label.mark_read_on_view": "Automatycznie oznaczaj wpisy jako przeczytane podczas przeglądania",
     "form.import.label.file": "Plik OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Aktywuj Fever API",
