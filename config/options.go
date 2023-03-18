@@ -49,6 +49,7 @@ const (
 	defaultProxyOption                        = "http-only"
 	defaultProxyMediaTypes                    = "image"
 	defaultProxyUrl                           = ""
+	defaultFetchOdyseeWatchTime               = false
 	defaultFetchYouTubeWatchTime              = false
 	defaultYouTubeEmbedUrlOverride            = "https://www.youtube-nocookie.com/embed/"
 	defaultCreateAdmin                        = false
@@ -126,6 +127,7 @@ type Options struct {
 	proxyOption                        string
 	proxyMediaTypes                    []string
 	proxyUrl                           string
+	fetchOdyseeWatchTime               bool
 	fetchYouTubeWatchTime              bool
 	youTubeEmbedUrlOverride            string
 	oauth2UserCreationAllowed          bool
@@ -196,6 +198,7 @@ func NewOptions() *Options {
 		proxyOption:                        defaultProxyOption,
 		proxyMediaTypes:                    []string{defaultProxyMediaTypes},
 		proxyUrl:                           defaultProxyUrl,
+		fetchOdyseeWatchTime:               defaultFetchOdyseeWatchTime,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		youTubeEmbedUrlOverride:            defaultYouTubeEmbedUrlOverride,
 		oauth2UserCreationAllowed:          defaultOAuth2UserCreation,
@@ -436,6 +439,12 @@ func (o *Options) YouTubeEmbedUrlOverride() string {
 	return o.youTubeEmbedUrlOverride
 }
 
+// FetchOdyseeWatchTime returns true if the Odysee video duration
+// should be fetched and used as a reading time.
+func (o *Options) FetchOdyseeWatchTime() bool {
+	return o.fetchOdyseeWatchTime
+}
+
 // ProxyOption returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
 func (o *Options) ProxyOption() string {
 	return o.proxyOption
@@ -581,6 +590,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DISABLE_HTTP_SERVICE":                   !o.httpService,
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
+		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
 		"HTTPS":                                  o.HTTPS,
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
 		"HTTP_CLIENT_PROXY":                      o.httpClientProxy,
