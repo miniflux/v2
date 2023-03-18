@@ -32,6 +32,7 @@ import (
 
 var (
 	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
@@ -207,6 +208,17 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 		}
 	}
 
+	if shouldFetchOdyseeWatchTime(entry) {
+		if entryIsNew {
+			watchTime, err := fetchOdyseeWatchTime(entry.URL)
+			if err != nil {
+				logger.Error("[Processor] Unable to fetch Odysee watch time: %q => %v", entry.URL, err)
+			}
+			entry.ReadingTime = watchTime
+		} else {
+			entry.ReadingTime = store.GetReadTime(entry, feed)
+		}
+	}
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
 		entry.ReadingTime = calculateReadingTime(entry.Content, user)
@@ -220,6 +232,14 @@ func shouldFetchYouTubeWatchTime(entry *model.Entry) bool {
 	matches := youtubeRegex.FindStringSubmatch(entry.URL)
 	urlMatchesYouTubePattern := len(matches) == 2
 	return urlMatchesYouTubePattern
+}
+
+func shouldFetchOdyseeWatchTime(entry *model.Entry) bool {
+	if !config.Opts.FetchOdyseeWatchTime() {
+		return false
+	}
+	matches := odyseeRegex.FindStringSubmatch(entry.URL)
+	return matches != nil
 }
 
 func fetchYouTubeWatchTime(url string) (int, error) {
@@ -245,6 +265,32 @@ func fetchYouTubeWatchTime(url string) (int, error) {
 	}
 
 	return int(dur.Minutes()), nil
+}
+
+func fetchOdyseeWatchTime(url string) (int, error) {
+	clt := client.NewClientWithConfig(url, config.Opts)
+	response, browserErr := browser.Exec(clt)
+	if browserErr != nil {
+		return 0, browserErr
+	}
+
+	doc, docErr := goquery.NewDocumentFromReader(response.Body)
+	if docErr != nil {
+		return 0, docErr
+	}
+
+	durs, exists := doc.Find(`meta[property="og:video:duration"]`).First().Attr("content")
+	// durs contains video watch time in seconds
+	if !exists {
+		return 0, errors.New("duration has not found")
+	}
+
+	dur, err := strconv.ParseInt(durs, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("unable to parse duration %s: %v", durs, err)
+	}
+
+	return int(dur / 60), nil
 }
 
 // parseISO8601 parses an ISO 8601 duration string.
