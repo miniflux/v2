@@ -20,7 +20,7 @@
     "panels": [
       {
         "collapsed": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "gridPos": {
           "h": 1,
           "w": 24,
@@ -104,7 +104,7 @@
         "type": "bargauge"
       },
       {
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -289,7 +289,7 @@
         }
       },
       {
-        "datasource": null,
+        "datasource": "Prometheus",
         "description": "",
         "fieldConfig": {
           "defaults": {
@@ -348,7 +348,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {}
@@ -440,7 +440,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {}
@@ -529,7 +529,7 @@
       },
       {
         "collapsed": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "gridPos": {
           "h": 1,
           "w": 24,
@@ -546,7 +546,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -748,7 +748,7 @@
       },
       {
         "collapsed": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "gridPos": {
           "h": 1,
           "w": 24,
@@ -904,7 +904,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {}
@@ -1003,7 +1003,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -1108,7 +1108,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -1339,7 +1339,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
