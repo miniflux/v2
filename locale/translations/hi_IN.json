@@ -354,6 +354,7 @@
     "form.integration.telegram_bot_activate": "टेलीग्राम चैट के लिए नई विषय-कविता पुश करें",
     "form.integration.telegram_bot_token": "बॉट टोकन",
     "form.integration.telegram_chat_id": "चैट आईडी",
+    "form.integration.telegram_topic_id": "विषय आईडी",
     "form.integration.linkding_activate": "लिंक्डिन में विषयवस्तु सहेजें",
     "form.integration.linkding_endpoint": "लिंकिंग एपीआई समापन बिंदु",
     "form.integration.linkding_api_key": "लिंकिंग एपीआई कुंजी",

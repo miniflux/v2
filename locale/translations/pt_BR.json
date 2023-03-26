@@ -354,6 +354,7 @@
     "form.integration.telegram_bot_activate": "Envie novos artigos para o chat do Telegram",
     "form.integration.telegram_bot_token": "Token de bot",
     "form.integration.telegram_chat_id": "ID de bate-papo",
+    "form.integration.telegram_topic_id": "ID de tópico",
     "form.integration.linkding_activate": "Salvar itens no Linkding",
     "form.integration.linkding_endpoint": "Endpoint de API do Linkding",
     "form.integration.linkding_api_key": "Chave de API do Linkding",

@@ -144,6 +144,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			telegram_bot_enabled,
 			telegram_bot_token,
 			telegram_bot_chat_id,
+			telegram_bot_topic_id,
 			linkding_enabled,
 			linkding_url,
 			linkding_api_key,
@@ -193,6 +194,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.TelegramBotEnabled,
 		&integration.TelegramBotToken,
 		&integration.TelegramBotChatID,
+		&integration.TelegramBotTopicID,
 		&integration.LinkdingEnabled,
 		&integration.LinkdingURL,
 		&integration.LinkdingAPIKey,
@@ -253,20 +255,21 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			telegram_bot_enabled=$27,
 			telegram_bot_token=$28,
 			telegram_bot_chat_id=$29,
-			espial_enabled=$30,
-			espial_url=$31,
-			espial_api_key=$32,
-			espial_tags=$33,
-			linkding_enabled=$34,
-			linkding_url=$35,
-			linkding_api_key=$36,
-			matrix_bot_enabled=$37,
-			matrix_bot_user=$38,
-			matrix_bot_password=$39,
-			matrix_bot_url=$40,
-			matrix_bot_chat_id=$41
+			telegram_bot_topic_id=$30,
+			espial_enabled=$31,
+			espial_url=$32,
+			espial_api_key=$33,
+			espial_tags=$34,
+			linkding_enabled=$35,
+			linkding_url=$36,
+			linkding_api_key=$37,
+			matrix_bot_enabled=$38,
+			matrix_bot_user=$39,
+			matrix_bot_password=$40,
+			matrix_bot_url=$41,
+			matrix_bot_chat_id=$42
 		WHERE
-			user_id=$42
+			user_id=$43
 	`
 		_, err = s.db.Exec(
 			query,
@@ -299,6 +302,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.TelegramBotEnabled,
 			integration.TelegramBotToken,
 			integration.TelegramBotChatID,
+			integration.TelegramBotTopicID,
 			integration.EspialEnabled,
 			integration.EspialURL,
 			integration.EspialAPIKey,
@@ -347,20 +351,21 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		telegram_bot_enabled=$27,
 		telegram_bot_token=$28,
 		telegram_bot_chat_id=$29,
-		espial_enabled=$30,
-		espial_url=$31,
-		espial_api_key=$32,
-		espial_tags=$33,
-		linkding_enabled=$34,
-		linkding_url=$35,
-		linkding_api_key=$36,
-		matrix_bot_enabled=$37,
-		matrix_bot_user=$38,
-		matrix_bot_password=$39,
-		matrix_bot_url=$40,
-		matrix_bot_chat_id=$41
+		telegram_bot_topic_id=$30,
+		espial_enabled=$31,
+		espial_url=$32,
+		espial_api_key=$33,
+		espial_tags=$34,
+		linkding_enabled=$35,
+		linkding_url=$36,
+		linkding_api_key=$37,
+		matrix_bot_enabled=$38,
+		matrix_bot_user=$39,
+		matrix_bot_password=$40,
+		matrix_bot_url=$41,
+		matrix_bot_chat_id=$42
 	WHERE
-		user_id=$42
+		user_id=$43
 	`
 		_, err = s.db.Exec(
 			query,
@@ -393,6 +398,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.TelegramBotEnabled,
 			integration.TelegramBotToken,
 			integration.TelegramBotChatID,
+			integration.TelegramBotTopicID,
 			integration.EspialEnabled,
 			integration.EspialURL,
 			integration.EspialAPIKey,

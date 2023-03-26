@@ -209,6 +209,9 @@
         <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
         <input type="text" name="telegram_bot_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramBotChatID }}" spellcheck="false">
 
+        <label for="form-telegram-topic-id">{{ t "form.integration.telegram_topic_id" }}</label>
+        <input type="text" name="telegram_bot_topic_id" id="form-telegram-topic-id" value="{{ .form.TelegramBotTopicID }}" spellcheck="false">
+
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>

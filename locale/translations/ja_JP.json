@@ -354,6 +354,7 @@
     "form.integration.telegram_bot_activate": "新しい記事を Telegram チャットにプッシュする",
     "form.integration.telegram_bot_token": "ボットトークン",
     "form.integration.telegram_chat_id": "チャット ID",
+    "form.integration.telegram_topic_id": "話題 ID",
     "form.integration.linkding_activate": "Linkding に記事を保存する",
     "form.integration.linkding_endpoint": "Linkding の API Endpoint",
     "form.integration.linkding_api_key": "Linkding の API key",

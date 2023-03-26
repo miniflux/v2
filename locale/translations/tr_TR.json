@@ -354,6 +354,7 @@
     "form.integration.telegram_bot_activate": "Yeni makaleleri Telegram sohbetine gönderin",
     "form.integration.telegram_bot_token": "Bot jetonu",
     "form.integration.telegram_chat_id": "Sohbet kimliği",
+    "form.integration.telegram_topic_id": "Konular Kimliği",
     "form.integration.linkding_activate": "Makaleleri Linkding'e kaydet",
     "form.integration.linkding_endpoint": "Linkding API Uç Noktası",
     "form.integration.linkding_api_key": "Linkding API Anahtarı",

@@ -354,6 +354,7 @@
     "form.integration.telegram_bot_activate": "Envoyer les nouveaux articles vers Telegram",
     "form.integration.telegram_bot_token": "Jeton de sécurité de l'API du Bot Telegram",
     "form.integration.telegram_chat_id": "Identifiant de discussion",
+    "form.integration.telegram_topic_id": "identifiant de sujet",
     "form.integration.linkding_activate": "Sauvegarder les articles vers Linkding",
     "form.integration.linkding_endpoint": "URL de l'API de Linkding",
     "form.integration.linkding_api_key": "Clé d'API de Linkding",

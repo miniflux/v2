@@ -353,6 +353,7 @@
   "form.integration.telegram_bot_activate": "Відправляти нові статті до чату Telegram",
   "form.integration.telegram_bot_token": "Токен боту",
   "form.integration.telegram_chat_id": "ID чату",
+  "form.integration.telegram_topic_id": "ID теми",
   "form.integration.linkding_activate": "Зберігати статті до Linkding",
   "form.integration.linkding_endpoint": "Linkding API Endpoint",
   "form.integration.linkding_api_key": "Ключ API Linkding",

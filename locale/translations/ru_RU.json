@@ -356,6 +356,7 @@
     "form.integration.telegram_bot_activate": "Публикуйте новые статьи в Telegram-чате",
     "form.integration.telegram_bot_token": "Токен бота",
     "form.integration.telegram_chat_id": "ID чата",
+    "form.integration.telegram_topic_id": "ID темы",
     "form.integration.linkding_activate": "Сохранять статьи в Linkding",
     "form.integration.linkding_endpoint": "Конечная точка Linkding API",
     "form.integration.linkding_api_key": "Linkding API key",

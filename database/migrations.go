@@ -551,6 +551,7 @@ var migrations = []func(tx *sql.Tx) error{
 			ALTER TABLE integrations ADD COLUMN telegram_bot_enabled bool default 'f';
 			ALTER TABLE integrations ADD COLUMN telegram_bot_token text default '';
 			ALTER TABLE integrations ADD COLUMN telegram_bot_chat_id text default '';
+			ALTER TABLE integrations ADD COLUMN telegram_bot_topic_id text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err

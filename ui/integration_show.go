@@ -60,6 +60,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		TelegramBotEnabled:   integration.TelegramBotEnabled,
 		TelegramBotToken:     integration.TelegramBotToken,
 		TelegramBotChatID:    integration.TelegramBotChatID,
+		TelegramBotTopicID:   integration.TelegramBotTopicID,
 		LinkdingEnabled:      integration.LinkdingEnabled,
 		LinkdingURL:          integration.LinkdingURL,
 		LinkdingAPIKey:       integration.LinkdingAPIKey,

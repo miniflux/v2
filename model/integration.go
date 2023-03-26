@@ -40,6 +40,7 @@ type Integration struct {
 	TelegramBotEnabled   bool
 	TelegramBotToken     string
 	TelegramBotChatID    string
+	TelegramBotTopicID   string
 	LinkdingEnabled      bool
 	LinkdingURL          string
 	LinkdingAPIKey       string

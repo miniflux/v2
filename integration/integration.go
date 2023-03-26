@@ -128,7 +128,7 @@ func PushEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.TelegramBotEnabled {
 		logger.Debug("[Integration] Sending Entry %q for User #%d to Telegram", entry.URL, integration.UserID)
 
-		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID)
+		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID, integration.TelegramBotTopicID)
 		if err != nil {
 			logger.Error("[Integration] push entry to telegram bot failed: %v", err)
 		}

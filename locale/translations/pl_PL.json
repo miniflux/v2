@@ -356,6 +356,7 @@
     "form.integration.telegram_bot_activate": "Przesyłaj nowe artykuły do czatu Telegram",
     "form.integration.telegram_bot_token": "Token bota",
     "form.integration.telegram_chat_id": "Identyfikator czatu",
+    "form.integration.telegram_topic_id": "identyfikatora temat",
     "form.integration.linkding_activate": "Zapisz artykuły do Linkding",
     "form.integration.linkding_endpoint": "Linkding URL",
     "form.integration.linkding_api_key": "Linkding API key",

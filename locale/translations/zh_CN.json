@@ -352,6 +352,7 @@
     "form.integration.telegram_bot_activate": "将新文章推送到 Telegram",
     "form.integration.telegram_bot_token": "机器人令牌",
     "form.integration.telegram_chat_id": "聊天ID",
+    "form.integration.telegram_topic_id": "话题ID",
     "form.integration.linkding_activate": "保存文章到 Linkding",
     "form.integration.linkding_endpoint": "Linkding API 端点",
     "form.integration.linkding_api_key": "Linkding API 密钥",
