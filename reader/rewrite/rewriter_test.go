@@ -325,3 +325,13 @@ func TestRewriteBase64DecodeArgs(t *testing.T) {
 		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
 	}
 }
+
+func TestRewriteRemoveTables(t *testing.T) {
+	content := `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td>Hello World!</td></tr></tbody></table></td></tr></tbody></table>`
+	expected := `<p>Test</p>Hello World!`
+	output := Rewriter("https://example.org/article", content, `remove_tables`)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
