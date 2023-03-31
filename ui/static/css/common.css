@@ -820,6 +820,7 @@ article.category-has-unread {
     font-size: 2.0em;
     line-height: 1.25em;
     margin: 5px 0 30px 0;
+    overflow-wrap: break-word;
 }
 
 .entry header h1 a {
