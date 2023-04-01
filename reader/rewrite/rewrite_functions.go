@@ -342,25 +342,26 @@ func removeTables(entryContent string) string {
 		return entryContent
 	}
 
-	var table *goquery.Selection
+	selectors := []string{"table", "tbody", "thead", "td", "th", "td"}
 
-	for {
-		table = doc.Find("table").First()
+	var loopElement *goquery.Selection
 
-		if table.Length() == 0 {
-			break
+	for _, selector := range selectors {
+		for {
+			loopElement = doc.Find(selector).First()
+
+			if loopElement.Length() == 0 {
+				break
+			}
+
+			innerHtml, err := loopElement.Html()
+			if err != nil {
+				break
+			}
+
+			loopElement.Parent().AppendHtml(innerHtml)
+			loopElement.Remove()
 		}
-
-		td := table.Find("td").First()
-
-		if td.Length() == 0 {
-			break
-		}
-
-		tdHtml, _ := td.Html()
-
-		table.Parent().AppendHtml(tdHtml)
-		table.Remove()
 	}
 
 	output, _ := doc.Find("body").First().Html()

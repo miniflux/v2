@@ -327,8 +327,8 @@ func TestRewriteBase64DecodeArgs(t *testing.T) {
 }
 
 func TestRewriteRemoveTables(t *testing.T) {
-	content := `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td>Hello World!</td></tr></tbody></table></td></tr></tbody></table>`
-	expected := `<p>Test</p>Hello World!`
+	content := `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td><p>Hello World!</p></td><td><p>Test</p></td></tr></tbody></table></td></tr></tbody></table>`
+	expected := `<p>Test</p><p>Hello World!</p><p>Test</p>`
 	output := Rewriter("https://example.org/article", content, `remove_tables`)
 
 	if expected != output {
