@@ -1226,6 +1226,66 @@ func TestProxyMediaTypes(t *testing.T) {
 	}
 }
 
+func TestProxyMediaTypesWithDuplicatedValues(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_MEDIA_TYPES", "image,audio, image")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := []string{"audio", "image"}
+	if len(expected) != len(opts.ProxyMediaTypes()) {
+		t.Fatalf(`Unexpected PROXY_MEDIA_TYPES value, got %v instead of %v`, opts.ProxyMediaTypes(), expected)
+	}
+
+	resultMap := make(map[string]bool)
+	for _, mediaType := range opts.ProxyMediaTypes() {
+		resultMap[mediaType] = true
+	}
+
+	for _, mediaType := range expected {
+		if !resultMap[mediaType] {
+			t.Fatalf(`Unexpected PROXY_MEDIA_TYPES value, got %v instead of %v`, opts.ProxyMediaTypes(), expected)
+		}
+	}
+}
+
+func TestProxyImagesOptionBackwardCompatibility(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_IMAGES", "all")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := []string{"image"}
+	if len(expected) != len(opts.ProxyMediaTypes()) {
+		t.Fatalf(`Unexpected PROXY_MEDIA_TYPES value, got %v instead of %v`, opts.ProxyMediaTypes(), expected)
+	}
+
+	resultMap := make(map[string]bool)
+	for _, mediaType := range opts.ProxyMediaTypes() {
+		resultMap[mediaType] = true
+	}
+
+	for _, mediaType := range expected {
+		if !resultMap[mediaType] {
+			t.Fatalf(`Unexpected PROXY_MEDIA_TYPES value, got %v instead of %v`, opts.ProxyMediaTypes(), expected)
+		}
+	}
+
+	expectedProxyOption := "all"
+	result := opts.ProxyOption()
+	if result != expectedProxyOption {
+		t.Fatalf(`Unexpected PROXY_OPTION value, got %q instead of %q`, result, expectedProxyOption)
+	}
+}
+
 func TestDefaultProxyMediaTypes(t *testing.T) {
 	os.Clearenv()
 
