@@ -141,7 +141,6 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		// kept for compatibility purpose
 		case "PROXY_IMAGES":
 			p.opts.proxyOption = parseString(value, defaultProxyOption)
-			p.opts.proxyMediaTypes = append(p.opts.proxyMediaTypes, "image")
 		case "PROXY_HTTP_CLIENT_TIMEOUT":
 			p.opts.proxyHTTPClientTimeout = parseInt(value, defaultProxyHTTPClientTimeout)
 		case "PROXY_OPTION":
@@ -297,9 +296,16 @@ func parseStringList(value string, fallback []string) []string {
 	}
 
 	var strList []string
+	strMap := make(map[string]bool)
+
 	items := strings.Split(value, ",")
 	for _, item := range items {
-		strList = append(strList, strings.TrimSpace(item))
+		itemValue := strings.TrimSpace(item)
+
+		if _, found := strMap[itemValue]; !found {
+			strMap[itemValue] = true
+			strList = append(strList, itemValue)
+		}
 	}
 
 	return strList
