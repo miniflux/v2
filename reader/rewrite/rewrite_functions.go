@@ -367,3 +367,17 @@ func removeTables(entryContent string) string {
 	output, _ := doc.Find("body").First().Html()
 	return output
 }
+
+func removeClickbait(entryTitle string) string {
+	titleWords := []string{}
+	for _, word := range strings.Fields(entryTitle) {
+		runes := []rune(word)
+		if len(runes) > 1 {
+			// keep first rune as is to keep the first capital letter
+			titleWords = append(titleWords, string([]rune{runes[0]})+strings.ToLower(string(runes[1:])))
+		} else {
+			titleWords = append(titleWords, word)
+		}
+	}
+	return strings.Join(titleWords, " ")
+}

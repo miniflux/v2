@@ -10,6 +10,7 @@ import (
 	"text/scanner"
 
 	"miniflux.app/logger"
+	"miniflux.app/model"
 	"miniflux.app/url"
 )
 
@@ -19,7 +20,7 @@ type rule struct {
 }
 
 // Rewriter modify item contents with a set of rewriting rules.
-func Rewriter(entryURL, entryContent, customRewriteRules string) string {
+func Rewriter(entryURL string, entry *model.Entry, customRewriteRules string) {
 	rulesList := getPredefinedRewriteRules(entryURL)
 	if customRewriteRules != "" {
 		rulesList = customRewriteRules
@@ -31,10 +32,8 @@ func Rewriter(entryURL, entryContent, customRewriteRules string) string {
 	logger.Debug(`[Rewrite] Applying rules %v for %q`, rules, entryURL)
 
 	for _, rule := range rules {
-		entryContent = applyRule(entryURL, entryContent, rule)
+		applyRule(entryURL, entry, rule)
 	}
-
-	return entryContent
 }
 
 func parseRules(rulesText string) (rules []rule) {
@@ -60,61 +59,61 @@ func parseRules(rulesText string) (rules []rule) {
 	}
 }
 
-func applyRule(entryURL, entryContent string, rule rule) string {
+func applyRule(entryURL string, entry *model.Entry, rule rule) {
 	switch rule.name {
 	case "add_image_title":
-		entryContent = addImageTitle(entryURL, entryContent)
+		entry.Content = addImageTitle(entryURL, entry.Content)
 	case "add_mailto_subject":
-		entryContent = addMailtoSubject(entryURL, entryContent)
+		entry.Content = addMailtoSubject(entryURL, entry.Content)
 	case "add_dynamic_image":
-		entryContent = addDynamicImage(entryURL, entryContent)
+		entry.Content = addDynamicImage(entryURL, entry.Content)
 	case "add_youtube_video":
-		entryContent = addYoutubeVideo(entryURL, entryContent)
+		entry.Content = addYoutubeVideo(entryURL, entry.Content)
 	case "add_invidious_video":
-		entryContent = addInvidiousVideo(entryURL, entryContent)
+		entry.Content = addInvidiousVideo(entryURL, entry.Content)
 	case "add_youtube_video_using_invidious_player":
-		entryContent = addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent)
+		entry.Content = addYoutubeVideoUsingInvidiousPlayer(entryURL, entry.Content)
 	case "add_youtube_video_from_id":
-		entryContent = addYoutubeVideoFromId(entryContent)
+		entry.Content = addYoutubeVideoFromId(entry.Content)
 	case "add_pdf_download_link":
-		entryContent = addPDFLink(entryURL, entryContent)
+		entry.Content = addPDFLink(entryURL, entry.Content)
 	case "nl2br":
-		entryContent = replaceLineFeeds(entryContent)
+		entry.Content = replaceLineFeeds(entry.Content)
 	case "convert_text_link", "convert_text_links":
-		entryContent = replaceTextLinks(entryContent)
+		entry.Content = replaceTextLinks(entry.Content)
 	case "fix_medium_images":
-		entryContent = fixMediumImages(entryURL, entryContent)
+		entry.Content = fixMediumImages(entryURL, entry.Content)
 	case "use_noscript_figure_images":
-		entryContent = useNoScriptImages(entryURL, entryContent)
+		entry.Content = useNoScriptImages(entryURL, entry.Content)
 	case "replace":
 		// Format: replace("search-term"|"replace-term")
 		if len(rule.args) >= 2 {
-			entryContent = replaceCustom(entryContent, rule.args[0], rule.args[1])
+			entry.Content = replaceCustom(entry.Content, rule.args[0], rule.args[1])
 		} else {
 			logger.Debug("[Rewrite] Cannot find search and replace terms for replace rule %s", rule)
 		}
 	case "remove":
 		// Format: remove("#selector > .element, .another")
 		if len(rule.args) >= 1 {
-			entryContent = removeCustom(entryContent, rule.args[0])
+			entry.Content = removeCustom(entry.Content, rule.args[0])
 		} else {
 			logger.Debug("[Rewrite] Cannot find selector for remove rule %s", rule)
 		}
 	case "add_castopod_episode":
-		entryContent = addCastopodEpisode(entryURL, entryContent)
+		entry.Content = addCastopodEpisode(entryURL, entry.Content)
 	case "base64_decode":
 		if len(rule.args) >= 1 {
-			entryContent = applyFuncOnTextContent(entryContent, rule.args[0], decodeBase64Content)
+			entry.Content = applyFuncOnTextContent(entry.Content, rule.args[0], decodeBase64Content)
 		} else {
-			entryContent = applyFuncOnTextContent(entryContent, "body", decodeBase64Content)
+			entry.Content = applyFuncOnTextContent(entry.Content, "body", decodeBase64Content)
 		}
 	case "parse_markdown":
-		entryContent = parseMarkdown(entryContent)
+		entry.Content = parseMarkdown(entry.Content)
 	case "remove_tables":
-		entryContent = removeTables(entryContent)
+		entry.Content = removeTables(entry.Content)
+	case "remove_clickbait":
+		entry.Title = removeClickbait(entry.Title)
 	}
-
-	return entryContent
 }
 
 func getPredefinedRewriteRules(entryURL string) string {
