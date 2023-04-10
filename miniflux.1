@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "January 5, 2022" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "August 29, 2022" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -283,6 +283,26 @@ List of networks allowed to access the metrics endpoint (comma-separated values)
 .br
 Default is 127.0.0.1/8\&.
 .TP
+.B METRICS_USERNAME
+Metrics endpoint username for basic HTTP authentication\&.
+.br
+Default is emtpty\&.
+.TP
+.B METRICS_USERNAME_FILE
+Path to a file that contains the username for the metrics endpoint HTTP authentication\&.
+.br
+Default is emtpty\&.
+.TP
+.B METRICS_PASSWORD
+Metrics endpoint password for basic HTTP authentication\&.
+.br
+Default is emtpty\&.
+.TP
+.B METRICS_PASSWORD_FILE
+Path to a file that contains the password for the metrics endpoint HTTP authentication\&.
+.br
+Default is emtpty\&.
+.TP
 .B OAUTH2_PROVIDER
 Possible values are "google" or "oidc"\&.
 .br
@@ -365,10 +385,25 @@ Path to a secret key exposed as a file, it should contain $POCKET_CONSUMER_KEY v
 .br
 Default is empty\&.
 .TP
-.B PROXY_IMAGES
-Avoids mixed content warnings for external images: http-only, all, or none\&.
+.B PROXY_OPTION
+Avoids mixed content warnings for external media: http-only, all, or none\&.
 .br
 Default is http-only\&.
+.TP
+.B PROXY_MEDIA_TYPES
+A list of media types to proxify (comma-separated values): image, audio, video\&.
+.br
+Default is image only\&.
+.TP
+.B PROXY_HTTP_CLIENT_TIMEOUT
+Time limit in seconds before the proxy HTTP client cancel the request\&.
+.br
+Default is 120 seconds\&.
+.TP
+.B PROXY_URL
+Sets a server to proxy media through\&.
+.br
+Default is empty, miniflux does the proxying\&.
 .TP
 .B HTTP_CLIENT_TIMEOUT
 Time limit in seconds before the HTTP client cancel the request\&.
@@ -391,6 +426,11 @@ The default User-Agent header to use for the HTTP client. Can be overridden in p
 When empty, Miniflux uses a default User-Agent that includes the Miniflux version\&.
 .br
 Default is empty.
+.TP
+.B HTTP_SERVER_TIMEOUT
+Time limit in seconds before the HTTP client cancel the request\&.
+.br
+Default is 300 seconds\&.
 .TP
 .B AUTH_PROXY_HEADER
 Proxy authentication HTTP header\&.
@@ -421,6 +461,11 @@ Enabled by default\&.
 Set a custom invidious instance to use\&.
 .br
 Default is yewtu.be\&.
+.TP
+.B PROXY_PRIVATE_KEY
+Set a custom custom private key used to sign proxified media url\&.
+.br
+Default is randomly generated at startup\&.
 
 .SH AUTHORS
 .P

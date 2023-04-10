@@ -14,22 +14,25 @@ import (
 
 // SettingsForm represents the settings form.
 type SettingsForm struct {
-	Username            string
-	Password            string
-	Confirmation        string
-	Theme               string
-	Language            string
-	Timezone            string
-	EntryDirection      string
-	EntryOrder          string
-	EntriesPerPage      int
-	KeyboardShortcuts   bool
-	ShowReadingTime     bool
-	CustomCSS           string
-	EntrySwipe          bool
-	DisplayMode         string
-	DefaultReadingSpeed int
-	CJKReadingSpeed     int
+	Username               string
+	Password               string
+	Confirmation           string
+	Theme                  string
+	Language               string
+	Timezone               string
+	EntryDirection         string
+	EntryOrder             string
+	EntriesPerPage         int
+	KeyboardShortcuts      bool
+	ShowReadingTime        bool
+	CustomCSS              string
+	EntrySwipe             bool
+	GestureNav             string
+	DisplayMode            string
+	DefaultReadingSpeed    int
+	CJKReadingSpeed        int
+	DefaultHomePage        string
+	CategoriesSortingOrder string
 }
 
 // Merge updates the fields of the given user.
@@ -45,9 +48,12 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.ShowReadingTime = s.ShowReadingTime
 	user.Stylesheet = s.CustomCSS
 	user.EntrySwipe = s.EntrySwipe
+	user.GestureNav = s.GestureNav
 	user.DisplayMode = s.DisplayMode
 	user.CJKReadingSpeed = s.CJKReadingSpeed
 	user.DefaultReadingSpeed = s.DefaultReadingSpeed
+	user.DefaultHomePage = s.DefaultHomePage
+	user.CategoriesSortingOrder = s.CategoriesSortingOrder
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -58,7 +64,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() error {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" {
+	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
 		return errors.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
@@ -95,21 +101,24 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		cjkReadingSpeed = 0
 	}
 	return &SettingsForm{
-		Username:            r.FormValue("username"),
-		Password:            r.FormValue("password"),
-		Confirmation:        r.FormValue("confirmation"),
-		Theme:               r.FormValue("theme"),
-		Language:            r.FormValue("language"),
-		Timezone:            r.FormValue("timezone"),
-		EntryDirection:      r.FormValue("entry_direction"),
-		EntryOrder:          r.FormValue("entry_order"),
-		EntriesPerPage:      int(entriesPerPage),
-		KeyboardShortcuts:   r.FormValue("keyboard_shortcuts") == "1",
-		ShowReadingTime:     r.FormValue("show_reading_time") == "1",
-		CustomCSS:           r.FormValue("custom_css"),
-		EntrySwipe:          r.FormValue("entry_swipe") == "1",
-		DisplayMode:         r.FormValue("display_mode"),
-		DefaultReadingSpeed: int(defaultReadingSpeed),
-		CJKReadingSpeed:     int(cjkReadingSpeed),
+		Username:               r.FormValue("username"),
+		Password:               r.FormValue("password"),
+		Confirmation:           r.FormValue("confirmation"),
+		Theme:                  r.FormValue("theme"),
+		Language:               r.FormValue("language"),
+		Timezone:               r.FormValue("timezone"),
+		EntryDirection:         r.FormValue("entry_direction"),
+		EntryOrder:             r.FormValue("entry_order"),
+		EntriesPerPage:         int(entriesPerPage),
+		KeyboardShortcuts:      r.FormValue("keyboard_shortcuts") == "1",
+		ShowReadingTime:        r.FormValue("show_reading_time") == "1",
+		CustomCSS:              r.FormValue("custom_css"),
+		EntrySwipe:             r.FormValue("entry_swipe") == "1",
+		GestureNav:             r.FormValue("gesture_nav"),
+		DisplayMode:            r.FormValue("display_mode"),
+		DefaultReadingSpeed:    int(defaultReadingSpeed),
+		CJKReadingSpeed:        int(cjkReadingSpeed),
+		DefaultHomePage:        r.FormValue("default_home_page"),
+		CategoriesSortingOrder: r.FormValue("categories_sorting_order"),
 	}
 }

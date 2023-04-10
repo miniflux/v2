@@ -10,13 +10,13 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 func askCredentials() (string, string) {
 	fd := int(os.Stdin.Fd())
 
-	if !terminal.IsTerminal(fd) {
+	if !term.IsTerminal(fd) {
 		fmt.Fprintf(os.Stderr, "This is not a terminal, exiting.\n")
 		os.Exit(1)
 	}
@@ -28,9 +28,9 @@ func askCredentials() (string, string) {
 
 	fmt.Print("Enter Password: ")
 
-	state, _ := terminal.GetState(fd)
-	defer terminal.Restore(fd, state)
-	bytePassword, _ := terminal.ReadPassword(fd)
+	state, _ := term.GetState(fd)
+	defer term.Restore(fd, state)
+	bytePassword, _ := term.ReadPassword(fd)
 
 	fmt.Printf("\n")
 	return strings.TrimSpace(username), strings.TrimSpace(string(bytePassword))

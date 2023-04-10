@@ -87,12 +87,12 @@ func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.Loc
 
 			if title, exists := s.Attr("title"); exists {
 				subscription.Title = title
-			} else {
-				subscription.Title = "Feed"
 			}
 
 			if feedURL, exists := s.Attr("href"); exists {
-				subscription.URL, _ = url.AbsoluteURL(websiteURL, feedURL)
+				if feedURL != "" {
+					subscription.URL, _ = url.AbsoluteURL(websiteURL, feedURL)
+				}
 			}
 
 			if subscription.Title == "" {
@@ -143,46 +143,53 @@ func parseYoutubeVideoPage(websiteURL string) string {
 func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) (Subscriptions, *errors.LocalizedError) {
 	var subscriptions Subscriptions
 	knownURLs := map[string]string{
-		"/atom.xml": "atom",
-		"/feed.xml": "atom",
-		"/feed/":    "atom",
-		"/rss.xml":  "rss",
-		"/rss/":     "rss",
+		"atom.xml": "atom",
+		"feed.xml": "atom",
+		"feed/":    "atom",
+		"rss.xml":  "rss",
+		"rss/":     "rss",
 	}
 
-	lastCharacter := websiteURL[len(websiteURL)-1:]
-	if lastCharacter == "/" {
-		websiteURL = websiteURL[:len(websiteURL)-1]
+	websiteURLRoot := url.RootURL(websiteURL)
+	baseURLs := []string{
+		// Look for knownURLs in the root.
+		websiteURLRoot,
+	}
+	// Look for knownURLs in current subdirectory, such as 'example.com/blog/'.
+	websiteURL, _ = url.AbsoluteURL(websiteURL, "./")
+	if websiteURL != websiteURLRoot {
+		baseURLs = append(baseURLs, websiteURL)
 	}
 
-	for knownURL, kind := range knownURLs {
-		fullURL, err := url.AbsoluteURL(websiteURL, knownURL)
-		if err != nil {
-			continue
-		}
+	for _, baseURL := range baseURLs {
+		for knownURL, kind := range knownURLs {
+			fullURL, err := url.AbsoluteURL(baseURL, knownURL)
+			if err != nil {
+				continue
+			}
+			clt := client.NewClientWithConfig(fullURL, config.Opts)
+			clt.WithCredentials(username, password)
+			clt.WithUserAgent(userAgent)
+			clt.WithCookie(cookie)
 
-		clt := client.NewClientWithConfig(fullURL, config.Opts)
-		clt.WithCredentials(username, password)
-		clt.WithUserAgent(userAgent)
-		clt.WithCookie(cookie)
+			// Some websites redirects unknown URLs to the home page.
+			// As result, the list of known URLs is returned to the subscription list.
+			// We don't want the user to choose between invalid feed URLs.
+			clt.WithoutRedirects()
 
-		// Some websites redirects unknown URLs to the home page.
-		// As result, the list of known URLs is returned to the subscription list.
-		// We don't want the user to choose between invalid feed URLs.
-		clt.WithoutRedirects()
+			response, err := clt.Get()
+			if err != nil {
+				continue
+			}
 
-		response, err := clt.Get()
-		if err != nil {
-			continue
-		}
-
-		if response != nil && response.StatusCode == 200 {
-			subscription := new(Subscription)
-			subscription.Type = kind
-			subscription.Title = fullURL
-			subscription.URL = fullURL
-			if subscription.URL != "" {
-				subscriptions = append(subscriptions, subscription)
+			if response != nil && response.StatusCode == 200 {
+				subscription := new(Subscription)
+				subscription.Type = kind
+				subscription.Title = fullURL
+				subscription.URL = fullURL
+				if subscription.URL != "" {
+					subscriptions = append(subscriptions, subscription)
+				}
 			}
 		}
 	}

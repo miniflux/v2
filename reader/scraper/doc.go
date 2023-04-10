@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package scraper implements a web page crawler.
-
 */
 package scraper // import "miniflux.app/reader/scraper"

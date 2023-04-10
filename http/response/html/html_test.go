@@ -210,3 +210,32 @@ func TestRedirectResponse(t *testing.T) {
 		t.Fatalf(`Unexpected redirect location, got %q instead of %q`, actualResult, expectedResult)
 	}
 }
+
+func TestRequestedRangeNotSatisfiable(t *testing.T) {
+	r, err := http.NewRequest("GET", "/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		RequestedRangeNotSatisfiable(w, r, "bytes */12777")
+	})
+
+	handler.ServeHTTP(w, r)
+
+	resp := w.Result()
+	defer resp.Body.Close()
+
+	expectedStatusCode := http.StatusRequestedRangeNotSatisfiable
+	if resp.StatusCode != expectedStatusCode {
+		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
+	}
+
+	expectedContentRangeHeader := "bytes */12777"
+	actualContentRangeHeader := resp.Header.Get("Content-Range")
+	if actualContentRangeHeader != expectedContentRangeHeader {
+		t.Fatalf(`Unexpected content range header, got %q instead of %q`, actualContentRangeHeader, expectedContentRangeHeader)
+	}
+}

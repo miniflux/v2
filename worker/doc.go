@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package worker implements the background workers.
-
 */
 package worker // import "miniflux.app/worker"

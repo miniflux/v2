@@ -16,7 +16,13 @@ import (
 
 func (h *handler) showLoginPage(w http.ResponseWriter, r *http.Request) {
 	if request.IsAuthenticated(r) {
-		html.Redirect(w, r, route.Path(h.router, "unread"))
+		user, err := h.store.UserByID(request.UserID(r))
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		html.Redirect(w, r, route.Path(h.router, user.DefaultHomePage))
 		return
 	}
 

@@ -118,6 +118,12 @@ func (r rssFeed) feedAuthor() string {
 	return sanitizer.StripTags(strings.TrimSpace(author))
 }
 
+type rssGUID struct {
+	XMLName     xml.Name
+	Data        string `xml:",chardata"`
+	IsPermaLink string `xml:"isPermaLink,attr"`
+}
+
 type rssLink struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
@@ -150,6 +156,12 @@ type rssEnclosure struct {
 	Length string `xml:"length,attr"`
 }
 
+type rssCategory struct {
+	XMLName xml.Name
+	Data    string `xml:",chardata"`
+	Inner   string `xml:",innerxml"`
+}
+
 func (enclosure *rssEnclosure) Size() int64 {
 	if enclosure.Length == "" {
 		return 0
@@ -159,7 +171,7 @@ func (enclosure *rssEnclosure) Size() int64 {
 }
 
 type rssItem struct {
-	GUID           string           `xml:"guid"`
+	GUID           rssGUID          `xml:"guid"`
 	Title          []rssTitle       `xml:"title"`
 	Links          []rssLink        `xml:"link"`
 	Description    string           `xml:"description"`
@@ -167,6 +179,7 @@ type rssItem struct {
 	Authors        []rssAuthor      `xml:"author"`
 	CommentLinks   []rssCommentLink `xml:"comments"`
 	EnclosureLinks []rssEnclosure   `xml:"enclosure"`
+	Categories     []rssCategory    `xml:"category"`
 	DublinCoreElement
 	FeedBurnerElement
 	PodcastEntryElement
@@ -183,6 +196,8 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Content = r.entryContent()
 	entry.Title = r.entryTitle()
 	entry.Enclosures = r.entryEnclosures()
+	entry.Tags = r.entryCategories()
+
 	return entry
 }
 
@@ -237,7 +252,7 @@ func (r *rssItem) entryAuthor() string {
 }
 
 func (r *rssItem) entryHash() string {
-	for _, value := range []string{r.GUID, r.entryURL()} {
+	for _, value := range []string{r.GUID.Data, r.entryURL()} {
 		if value != "" {
 			return crypto.Hash(value)
 		}
@@ -289,6 +304,13 @@ func (r *rssItem) entryURL() string {
 		if link.Data != "" {
 			return strings.TrimSpace(link.Data)
 		}
+	}
+
+	// Specs: https://cyber.harvard.edu/rss/rss.html#ltguidgtSubelementOfLtitemgt
+	// isPermaLink is optional, its default value is true.
+	// If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.
+	if r.GUID.IsPermaLink == "true" || r.GUID.IsPermaLink == "" {
+		return strings.TrimSpace(r.GUID.Data)
 	}
 
 	return ""
@@ -357,6 +379,20 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 	}
 
 	return enclosures
+}
+
+func (r *rssItem) entryCategories() []string {
+	var categoryList []string
+
+	for _, rssCategory := range r.Categories {
+		if strings.Contains(rssCategory.Inner, "<![CDATA[") {
+			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Data))
+		} else {
+			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Inner))
+		}
+	}
+
+	return categoryList
 }
 
 func (r *rssItem) entryCommentsURL() string {

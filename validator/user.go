@@ -79,6 +79,12 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.GestureNav != nil {
+		if err := validateGestureNav(*changes.GestureNav); err != nil {
+			return err
+		}
+	}
+
 	if changes.DefaultReadingSpeed != nil {
 		if err := validateReadingSpeed(*changes.DefaultReadingSpeed); err != nil {
 			return err
@@ -87,6 +93,12 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 
 	if changes.CJKReadingSpeed != nil {
 		if err := validateReadingSpeed(*changes.CJKReadingSpeed); err != nil {
+			return err
+		}
+	}
+
+	if changes.DefaultHomePage != nil {
+		if err := validateDefaultHomePage(*changes.DefaultHomePage); err != nil {
 			return err
 		}
 	}
@@ -153,6 +165,21 @@ func validateEntriesPerPage(entriesPerPage int) *ValidationError {
 func validateDisplayMode(displayMode string) *ValidationError {
 	if displayMode != "fullscreen" && displayMode != "standalone" && displayMode != "minimal-ui" && displayMode != "browser" {
 		return NewValidationError("error.invalid_display_mode")
+	}
+	return nil
+}
+
+func validateGestureNav(gestureNav string) *ValidationError {
+	if gestureNav != "none" && gestureNav != "tap" && gestureNav != "swipe" {
+		return NewValidationError("error.invalid_gesture_nav")
+	}
+	return nil
+}
+
+func validateDefaultHomePage(defaultHomePage string) *ValidationError {
+	defaultHomePages := model.HomePages()
+	if _, found := defaultHomePages[defaultHomePage]; !found {
+		return NewValidationError("error.invalid_default_home_page")
 	}
 	return nil
 }

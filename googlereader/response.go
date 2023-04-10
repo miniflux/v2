@@ -61,7 +61,8 @@ type itemRef struct {
 }
 
 type streamIDResponse struct {
-	ItemRefs []itemRef `json:"itemRefs"`
+	ItemRefs     []itemRef `json:"itemRefs"`
+	Continuation int       `json:"continuation,omitempty,string"`
 }
 
 type tagsResponse struct {

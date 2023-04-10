@@ -15,8 +15,10 @@ func TestValid(t *testing.T) {
 		EntryDirection:      "asc",
 		EntriesPerPage:      50,
 		DisplayMode:         "standalone",
+		GestureNav:          "tap",
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
+		DefaultHomePage:     "unread",
 	}
 
 	err := settings.Validate()
@@ -36,8 +38,10 @@ func TestConfirmationEmpty(t *testing.T) {
 		EntryDirection:      "asc",
 		EntriesPerPage:      50,
 		DisplayMode:         "standalone",
+		GestureNav:          "tap",
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
+		DefaultHomePage:     "unread",
 	}
 
 	err := settings.Validate()
@@ -61,8 +65,10 @@ func TestConfirmationIncorrect(t *testing.T) {
 		EntryDirection:      "asc",
 		EntriesPerPage:      50,
 		DisplayMode:         "standalone",
+		GestureNav:          "tap",
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
+		DefaultHomePage:     "unread",
 	}
 
 	err := settings.Validate()

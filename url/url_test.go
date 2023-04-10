@@ -25,6 +25,8 @@ func TestAbsoluteURL(t *testing.T) {
 	scenarios := [][]string{
 		{"https://example.org/path/file.ext", "https://example.org/folder/", "/path/file.ext"},
 		{"https://example.org/folder/path/file.ext", "https://example.org/folder/", "path/file.ext"},
+		{"https://example.org/", "https://example.org/path", "./"},
+		{"https://example.org/folder/", "https://example.org/folder/", "./"},
 		{"https://example.org/path/file.ext", "https://example.org/folder", "path/file.ext"},
 		{"https://example.org/path/file.ext", "https://example.org/folder/", "https://example.org/path/file.ext"},
 		{"https://static.example.org/path/file.ext", "https://www.example.org/", "//static.example.org/path/file.ext"},

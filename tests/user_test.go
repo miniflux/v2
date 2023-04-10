@@ -88,6 +88,10 @@ func TestGetUsers(t *testing.T) {
 		t.Fatalf(`Invalid web app display mode, got "%v"`, users[0].DisplayMode)
 	}
 
+	if users[0].GestureNav != "tap" {
+		t.Fatalf(`Invalid gesture navigation, got "%v"`, users[0].GestureNav)
+	}
+
 	if users[0].DefaultReadingSpeed != 265 {
 		t.Fatalf(`Invalid default reading speed, got "%v"`, users[0].DefaultReadingSpeed)
 	}

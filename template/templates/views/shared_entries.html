@@ -26,13 +26,13 @@
 {{ else }}
     <div class="items">
         {{ range .entries }}
-        <article role="article" class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
                     {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                    <a href="{{ route "readEntry" "entryID" .ID }}" title="{{ .Title }}">{{ .Title }}</a>
                     {{ if .ShareCode }}
                         <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
                             title="{{ t "entry.shared_entry.title" }}"
@@ -43,15 +43,15 @@
             </div>
             <div class="item-meta">
                 <ul class="item-meta-info">
-                    <li>
+                    <li class="item-meta-info-site-url">
                         <a href="{{ route "feedEntries" "feedID" .Feed.ID }}" title="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
                     </li>
-                    <li>
+                    <li class="item-meta-info-timestamp">
                         <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed $.user.Timezone .Date }}</time>
                     </li>
                 </ul>
                 <ul class="item-meta-icons">
-                    <li>
+                    <li class="item-meta-icons-delete">
                         {{ icon "delete" }}
                         <a href="#"
                             data-confirm="true"

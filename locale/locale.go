@@ -23,5 +23,7 @@ func AvailableLanguages() map[string]string {
 		"el_EL": "Ελληνικά",
 		"fi_FI": "Suomi",
 		"hi_IN": "हिन्दी",
+		"uk_UA": "Українська",
+		"id_ID": "Bahasa Indonesia",
 	}
 }

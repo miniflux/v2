@@ -2,6 +2,7 @@
 // Use of this source code is governed by the Apache 2.0
 // license that can be found in the LICENSE file.
 
+//go:build integration
 // +build integration
 
 package tests
@@ -24,7 +25,7 @@ const (
 	testFeedURL           = "https://miniflux.app/feed.xml"
 	testFeedTitle         = "Miniflux"
 	testSubscriptionTitle = "Miniflux Releases"
-	testWebsiteURL        = "https://miniflux.app/"
+	testWebsiteURL        = "https://miniflux.app"
 )
 
 func getRandomUsername() string {

@@ -22,6 +22,9 @@
                 data-url="{{ route "removeCategory" "categoryID" .category.ID }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
         </li>
         {{ end }}
+        <li>
+            <a href="{{ route "refreshCategoryFeedsPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+        </li>
     </ul>
 </section>
 

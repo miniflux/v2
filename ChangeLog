@@ -1,3 +1,143 @@
+Version 2.0.43 (March 16, 2023)
+-------------------------------
+
+* Avoid XSS when opening a broken image due to unescaped ServerError in proxy handler (CVE-2023-27592)
+    
+    Creating an RSS feed item with the inline description containing an `<img>` tag
+    with a `srcset` attribute pointing to an invalid URL like
+    `http:a<script>alert(1)</script>`, we can coerce the proxy handler into an error
+    condition where the invalid URL is returned unescaped and in full.
+    
+    This results in JavaScript execution on the Miniflux instance as soon as the
+    user is convinced to open the broken image.
+
+* Use `r.RemoteAddr` to check `/metrics` endpoint network access (CVE-2023-27591)
+    
+    HTTP headers like `X-Forwarded-For` or `X-Real-Ip` can be easily spoofed. As
+    such, it cannot be used to test if the client IP is allowed.
+    
+    The recommendation is to use HTTP Basic authentication to protect the
+    metrics endpoint, or run Miniflux behind a trusted reverse-proxy.
+
+* Add HTTP Basic authentication for `/metrics` endpoint
+* Add proxy support for several media types
+* Parse feed categories from RSS, Atom and JSON feeds
+* Ignore empty link when discovering feeds
+* Disable CGO explicitly to make sure the binary is statically linked
+* Add CSS classes to differentiate between category/feed/entry view and icons
+* Add rewrite and scraper rules for `blog.cloudflare.com`
+* Add `color-scheme` to themes
+* Add new keyboard shortcut to toggle open/close entry attachments section
+* Sanitizer: allow `id` attribute in `<sup>` element
+* Add Indonesian Language
+* Update translations
+* Update Docker Compose examples:
+    - Run the application in one command
+    - Bring back the health check condition to `depends_on`
+    - Remove deprecated `version` element
+* Update scraping rules for `ilpost.it`
+* Bump `github.com/PuerkitoBio/goquery` from `1.8.0` to `1.8.1`
+* Bump `github.com/tdewolff/minify/v2` from `2.12.4` to `2.12.5`
+* Bump `github.com/yuin/goldmark` from `1.5.3` to `1.5.4`
+* Bump `golang.org/x/*` dependencies
+
+Version 2.0.42 (January 29, 2023)
+---------------------------------
+
+* Fix header items wrapping
+* Add option to enable or disable double tap
+* Improve PWA display mode label in settings page
+* Bump `golang.org/x/*` dependencies
+* Update translations
+* Add scraping rule for `ilpost.it`
+* Update reading time HTML element after fetching the original web page
+* Add category feeds refresh feature
+
+Version 2.0.41 (December 10, 2022)
+----------------------------------
+
+* Reverted PR #1290 (follow the only link) because it leads to several panics/segfaults that prevent feed updates
+* Disable double-tap mobile gesture if swipe gesture is disabled
+* Skip integrations if there are no entries to push
+* Enable TLS-ALPN-01 challenge for ACME
+    - This type of challenge works purely at the TLS layer and is compatible
+    with SNI proxies. The existing HTTP-01 challenge support has been left
+    as-is.
+* Preconfigure Miniflux for GitHub Codespaces
+* Updated `golang.org/x/net/*` dependencies
+
+Version 2.0.40 (November 13, 2022)
+----------------------------------
+
+* Update dependencies
+* Pin Postgres image version in Docker Compose examples to avoid unexpected upgrades
+* Make English and Spanish translation more consistent:
+    - Use "Feed" everywhere instead of "Subscription"
+    - Use "Entry" instead of "Article"
+* Allow Content-Type and Accept headers in CORS policy
+* Use dirs file for Debian package
+* Use custom home page in PWA manifest
+* Fix scraper rule that could be incorrect when there is a redirect
+* Improve web scraper to fetch the only link present as workaround to some landing pages
+* Add Matrix bot integration
+* Proxify images in API responses
+* Add new options in user preferences to configure sorting of entries in the category page
+* Remove dependency on `github.com/mitchellh/go-server-timing`
+* Add support for the `continuation` parameter and result for Google Reader API ID calls
+* Use automatic variable for build target file names
+* Add rewrite rule for `recalbox.com`
+* Improve Dutch translation
+
+Version 2.0.39 (October 16, 2022)
+---------------------------------
+
+* Add support for date filtering in Google Reader API item ID calls
+* Handle RSS entries with only a GUID permalink
+* Go API Client: Accept endpoint URLs ending with `/v1/`
+* CORS API headers: Allow `Basic` authorization header
+* Log feed URL when submitting a subscription that returns an error
+* Update `make run` command to execute migrations automatically
+* Add option to send only the URL to Wallabag
+* Do not convert anchors to absolute links
+* Add config option to use a custom image proxy URL
+* Allow zoom on mobile devices
+* Add scraping rules for `theverge.com`, `royalroad.com`, `swordscomic.com`, and `smbc-comics.com`
+* Add Ukrainian translation
+* Update `golang.org/x/*` dependencies
+* Bump `github.com/tdewolff/minify/v2` from `2.12.0` to `2.12.4`
+* Bump `github.com/yuin/goldmark` from `1.4.13` to `1.5.2`
+* Bump `github.com/lib/pq` from `1.10.6` to `1.10.7`
+
+Version 2.0.38 (August 13, 2022)
+--------------------------------
+
+* Rename default branch from master to main
+* Update GitHub Actions
+* Bump `github.com/prometheus/client_golang` from `1.12.2` to `1.13.0`
+* Fix some linter issues
+* Handle Atom links with a text/html type defined
+* Add `parse_markdown` rewrite function
+* Build RPM and Debian packages automatically using GitHub Actions
+* Add `explosm.net` scraper rule
+* Make default home page configurable
+* Add title attribute to entry links because text could be truncated
+* Highlight categories with unread entries
+* Allow option to order by title and author in API entry endpoint
+* Update Russian translation
+* Make reading speed user-configurable
+* Added translation for Hindi language used in India
+* Add rewrite rules for article URL before fetching content
+* Bump `github.com/tdewolff/minify/v2` from `2.11.7` to `2.12.0`
+* Support other repo owners in GitHub Docker Action
+* Proxify empty URL should not crash
+* Avoid stretched image if specified width is larger than Miniflux's layout
+* Add support for OPML files with several nested outlines
+* sanitizer: handle image URLs in `srcset` attribute with comma
+* Allow `width` and `height` attributes for `img` tags
+* Document that `-config-dump` command line argument shows sensitive info
+* Add System-V init service in contrib folder
+* Fix syntax error in `RequestBuilder.getCsrfToken()` method
+
 Version 2.0.37 (May 27, 2022)
 -----------------------------
 

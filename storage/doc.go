@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package storage implements a set of functions to interact with the database.
-
 */
 package storage // import "miniflux.app/storage"

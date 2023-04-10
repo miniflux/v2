@@ -8,6 +8,7 @@ class TouchHandler {
             start: { x: -1, y: -1 },
             move: { x: -1, y: -1 },
             moved: false,
+            time: 0,
             element: null
         };
     }
@@ -26,14 +27,14 @@ class TouchHandler {
     }
 
     findElement(element) {
-        if (element.classList.contains("touch-item")) {
+        if (element.classList.contains("entry-swipe")) {
             return element;
         }
 
-        return DomHelper.findParent(element, "touch-item");
+        return DomHelper.findParent(element, "entry-swipe");
     }
 
-    onTouchStart(event) {
+    onItemTouchStart(event) {
         if (event.touches === undefined || event.touches.length !== 1) {
             return;
         }
@@ -45,7 +46,7 @@ class TouchHandler {
         this.touch.element.style.transitionDuration = "0s";
     }
 
-    onTouchMove(event) {
+    onItemTouchMove(event) {
         if (event.touches === undefined || event.touches.length !== 1 || this.element === null) {
             return;
         }
@@ -71,15 +72,15 @@ class TouchHandler {
         }
     }
 
-    onTouchEnd(event) {
+    onItemTouchEnd(event) {
         if (event.touches === undefined) {
             return;
         }
 
         if (this.touch.element !== null) {
-            let distance = Math.abs(this.calculateDistance());
+            let absDistance = Math.abs(this.calculateDistance());
 
-            if (distance > 75) {
+            if (absDistance > 75) {
                 toggleEntryStatus(this.touch.element);
             }
 
@@ -92,47 +93,95 @@ class TouchHandler {
         this.reset();
     }
 
+    onContentTouchStart(event) {
+        if (event.touches === undefined || event.touches.length !== 1) {
+            return;
+        }
+
+        this.reset();
+        this.touch.start.x = event.touches[0].clientX;
+        this.touch.start.y = event.touches[0].clientY;
+        this.touch.time = Date.now();
+    }
+
+    onContentTouchMove(event) {
+        if (event.touches === undefined || event.touches.length !== 1 || this.element === null) {
+            return;
+        }
+
+        this.touch.move.x = event.touches[0].clientX;
+        this.touch.move.y = event.touches[0].clientY;
+    }
+
+    onContentTouchEnd(event) {
+        if (event.touches === undefined) {
+            return;
+        }
+
+        let distance = this.calculateDistance();
+        let absDistance = Math.abs(distance);
+        let now = Date.now();
+
+        if (now - this.touch.time <= 1000 && absDistance > 75) {
+            if (distance > 0) {
+                goToPage("previous");
+            } else {
+                goToPage("next");
+            }
+        }
+
+        this.reset();
+    }
+
+    onTapEnd(event) {
+        if (event.touches === undefined) {
+            return;
+        }
+
+        let now = Date.now();
+
+        if (this.touch.start.x !== -1 && now - this.touch.time <= 200) {
+            let innerWidthHalf = window.innerWidth / 2;
+
+            if (this.touch.start.x >= innerWidthHalf && event.changedTouches[0].clientX >= innerWidthHalf) {
+                goToPage("next");
+            } else if (this.touch.start.x < innerWidthHalf && event.changedTouches[0].clientX < innerWidthHalf) {
+                goToPage("previous");
+            }
+
+            this.reset();
+        } else {
+            this.reset();
+            this.touch.start.x = event.changedTouches[0].clientX;
+            this.touch.time = now;
+        }
+    }
+
     listen() {
-        let elements = document.querySelectorAll(".touch-item");
         let hasPassiveOption = DomHelper.hasPassiveEventListenerOption();
 
+        let elements = document.querySelectorAll(".entry-swipe");
+
         elements.forEach((element) => {
-            element.addEventListener("touchstart", (e) => this.onTouchStart(e), hasPassiveOption ? { passive: true } : false);
-            element.addEventListener("touchmove", (e) => this.onTouchMove(e), hasPassiveOption ? { passive: false } : false);
-            element.addEventListener("touchend", (e) => this.onTouchEnd(e), hasPassiveOption ? { passive: true } : false);
+            element.addEventListener("touchstart", (e) => this.onItemTouchStart(e), hasPassiveOption ? { passive: true } : false);
+            element.addEventListener("touchmove", (e) => this.onItemTouchMove(e), hasPassiveOption ? { passive: false } : false);
+            element.addEventListener("touchend", (e) => this.onItemTouchEnd(e), hasPassiveOption ? { passive: true } : false);
             element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
         });
 
-        let entryContentElement = document.querySelector(".entry-content");
-        if (entryContentElement) {
-            let doubleTapTimers = {
-                previous: null,
-                next: null
-            };
+        let element = document.querySelector(".entry-content");
 
-            const detectDoubleTap = (doubleTapTimer, event) => {
-                const timer = doubleTapTimers[doubleTapTimer];
-                if (timer === null) {
-                    doubleTapTimers[doubleTapTimer] = setTimeout(() => {
-                        doubleTapTimers[doubleTapTimer] = null;
-                    }, 200);
-                } else {
-                    event.preventDefault();
-                    goToPage(doubleTapTimer);
-                }
-            };
-
-            entryContentElement.addEventListener("touchend", (e) => {
-                if (e.changedTouches[0].clientX >= (entryContentElement.offsetWidth / 2)) {
-                    detectDoubleTap("next", e);
-                } else {
-                    detectDoubleTap("previous", e);
-                }
-            }, hasPassiveOption ? { passive: false } : false);
-
-            entryContentElement.addEventListener("touchmove", (e) => {
-                Object.keys(doubleTapTimers).forEach(timer => doubleTapTimers[timer] = null);
-            });
+        if (element) {
+            if (element.classList.contains("gesture-nav-tap")) {
+                element.addEventListener("touchend", (e) => this.onTapEnd(e), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchmove", () => this.reset(), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
+            } else if (element.classList.contains("gesture-nav-swipe")) {
+                element.addEventListener("touchstart", (e) => this.onContentTouchStart(e), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchmove", (e) => this.onContentTouchMove(e), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchend", (e) => this.onContentTouchEnd(e), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
+            }
         }
     }
 }

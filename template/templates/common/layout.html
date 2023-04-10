@@ -6,7 +6,7 @@
     <title>{{template "title" .}} - Miniflux</title>
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
     <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials"/>
@@ -56,7 +56,7 @@
     <header class="header">
         <nav>
             <div class="logo">
-                <a href="{{ route "unread" }}">Mini<span>flux</span></a>
+                <a href="{{ route .user.DefaultHomePage }}">Mini<span>flux</span></a>
             </div>
             <ul>
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
@@ -158,6 +158,7 @@
                     <li>{{ t "page.keyboard_shortcuts.download_content" }} = <strong>d</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.toggle_bookmark_status" }} = <strong>f</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.save_article" }} = <strong>s</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.toggle_entry_attachments" }} = <strong>a</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.scroll_item_to_top" }} = <strong>z + t</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.refresh_all_feeds" }} = <strong>R</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.remove_feed" }} = <strong>#</strong></li>

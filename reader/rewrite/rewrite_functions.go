@@ -15,6 +15,8 @@ import (
 	"miniflux.app/config"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/yuin/goldmark"
+	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
 )
 
 var (
@@ -317,4 +319,51 @@ func decodeBase64Content(entryContent string) string {
 	} else {
 		return html.EscapeString(string(ret))
 	}
+}
+
+func parseMarkdown(entryContent string) string {
+	var sb strings.Builder
+	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			goldmarkhtml.WithUnsafe(),
+		),
+	)
+
+	if err := md.Convert([]byte(entryContent), &sb); err != nil {
+		return entryContent
+	}
+
+	return sb.String()
+}
+
+func removeTables(entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	selectors := []string{"table", "tbody", "thead", "td", "th", "td"}
+
+	var loopElement *goquery.Selection
+
+	for _, selector := range selectors {
+		for {
+			loopElement = doc.Find(selector).First()
+
+			if loopElement.Length() == 0 {
+				break
+			}
+
+			innerHtml, err := loopElement.Html()
+			if err != nil {
+				break
+			}
+
+			loopElement.Parent().AppendHtml(innerHtml)
+			loopElement.Remove()
+		}
+	}
+
+	output, _ := doc.Find("body").First().Html()
+	return output
 }

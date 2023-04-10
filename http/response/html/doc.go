@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 /*
-
 Package html contains HTML response functions.
-
 */
 package html // import "miniflux.app/http/response/html"
