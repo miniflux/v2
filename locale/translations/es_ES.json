@@ -284,6 +284,7 @@
     "form.feed.label.allow_self_signed_certificates": "Permitir certificados autofirmados o no válidos",
     "form.feed.label.fetch_via_proxy": "Buscar a través de proxy",
     "form.feed.label.disabled": "No actualice este feed",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Ocultar artículos en la lista global de no leídos",
     "form.category.label.title": "Título",
     "form.category.hide_globally": "Ocultar artículos en la lista global de no leídos",

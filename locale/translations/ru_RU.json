@@ -286,6 +286,7 @@
     "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
     "form.feed.label.fetch_via_proxy": "Получить через прокси",
     "form.feed.label.disabled": "Не обновлять этот канал",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Скрыть записи в глобальном списке непрочитанных",
     "form.category.label.title": "Название",
     "form.category.hide_globally": "Скрыть записи в глобальном списке непрочитанных",

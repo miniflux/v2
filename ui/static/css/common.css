@@ -1081,3 +1081,7 @@ details.entry-enclosures {
 .disabled {
     opacity: 20%;
 }
+
+audio,video {
+    width: 100%;
+}

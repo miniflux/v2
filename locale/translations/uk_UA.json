@@ -283,6 +283,7 @@
   "form.feed.label.allow_self_signed_certificates": "Дозволити сертифікати з власним підписом або недійсні",
   "form.feed.label.fetch_via_proxy": "Використати проксі-сервер",
   "form.feed.label.disabled": "Не оновлювати цю стрічку",
+  "form.feed.label.no_media_player": "No media player (audio/video)",
   "form.feed.label.hide_globally": "Приховати записи в глобальному списку непрочитаного",
   "form.category.label.title": "Назва",
   "form.category.hide_globally": "Приховати записи в глобальному списку непрочитаного",

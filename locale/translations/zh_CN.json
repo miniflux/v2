@@ -282,6 +282,7 @@
     "form.feed.label.allow_self_signed_certificates": "允许自签名证书或无效证书",
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此源",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "隐藏全局未读列表中的文章",
     "form.category.label.title": "标题",
     "form.category.hide_globally": "隐藏全局未读列表中的文章",

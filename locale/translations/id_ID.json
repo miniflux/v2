@@ -281,6 +281,7 @@
     "form.feed.label.allow_self_signed_certificates": "Perbolehkan sertifikat web tidak valid atau sertifikasi sendiri",
     "form.feed.label.fetch_via_proxy": "Ambil via Proksi",
     "form.feed.label.disabled": "Jangan perbarui umpan ini",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Sembunyikan entri di daftar belum dibaca global",
     "form.category.label.title": "Judul",
     "form.category.hide_globally": "Sembunyikan entri di daftar belum dibaca global",
