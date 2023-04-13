@@ -284,6 +284,7 @@
     "form.feed.label.allow_self_signed_certificates": "允許自簽章憑證或無效憑證",
     "form.feed.label.fetch_via_proxy": "透過代理獲取",
     "form.feed.label.disabled": "請勿重新整理此Feed",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "隱藏全域性未讀列表中的文章",
     "form.category.label.title": "標題",
     "form.category.hide_globally": "隱藏全域性未讀列表中的文章",

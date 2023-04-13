@@ -144,6 +144,39 @@
     {{ end }}
     {{ end }}
     <article role="article" class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
+        {{ if (and .entry.Enclosures (not .entry.Feed.NoMediaPlayer)) }}
+            {{ range .entry.Enclosures }}
+                {{ if ne .URL "" }}
+                    {{ if hasPrefix .MimeType "audio/" }}
+                    <div class="enclosure-audio" >
+                        <audio controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
+                            {{ if (and $.user (mustBeProxyfied "audio")) }}
+                            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+                            {{ else }}
+                            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+                            {{ end }}
+                        </audio>
+                    </div>
+                    {{ else if hasPrefix .MimeType "video/" }}
+                    <div class="enclosure-video">
+                        <video controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
+                            {{ if (and $.user (mustBeProxyfied "video")) }}
+                            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+                            {{ else }}
+                            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+                            {{ end }}
+                        </video>
+                    </div>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        {{end}}
         {{ if .user }}
             {{ noescape (proxyFilter .entry.Content) }}
         {{ else }}
@@ -158,21 +191,27 @@
             <div class="entry-enclosure">
                 {{ if hasPrefix .MimeType "audio/" }}
                     <div class="enclosure-audio">
-                        <audio controls preload="metadata">
+                        <audio controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
 				{{ if (and $.user (mustBeProxyfied "audio")) }}
-				    <source src="{{ proxyURL .URL }}" type="{{ .MimeType }}">
+				    <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
 				{{ else }}
-				    <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
+				    <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
 				{{ end }}
                         </audio>
                     </div>
                 {{ else if hasPrefix .MimeType "video/" }}
                     <div class="enclosure-video">
-                        <video controls preload="metadata">
+                        <video controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
 				{{ if (and $.user (mustBeProxyfied "video")) }}
-				    <source src="{{ proxyURL .URL }}" type="{{ .MimeType }}">
+				    <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
 				{{ else }}
-				    <source src="{{ .URL | safeURL }}" type="{{ .MimeType }}">
+				    <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
 				{{ end }}
                         </video>
                     </div>

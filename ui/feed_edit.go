@@ -59,6 +59,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		AllowSelfSignedCertificates: feed.AllowSelfSignedCertificates,
 		FetchViaProxy:               feed.FetchViaProxy,
 		Disabled:                    feed.Disabled,
+		NoMediaPlayer:               feed.NoMediaPlayer,
 		HideGlobally:                feed.HideGlobally,
 		CategoryHidden:              feed.Category.HideGlobally,
 	}

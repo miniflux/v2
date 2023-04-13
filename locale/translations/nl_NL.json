@@ -284,6 +284,7 @@
     "form.feed.label.allow_self_signed_certificates": "Sta zelfondertekende of ongeldige certificaten toe",
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Verberg items in de globale ongelezen lijst",
     "form.category.label.title": "Naam",
     "form.category.hide_globally": "Verberg items in de globale ongelezen lijst",

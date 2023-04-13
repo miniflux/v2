@@ -286,6 +286,7 @@
     "form.feed.label.allow_self_signed_certificates": "Zezwalaj na certyfikaty z podpisem własnym lub nieprawidłowe certyfikaty",
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
     "form.feed.label.disabled": "Nie odświeżaj tego kanału",
+    "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
     "form.category.label.title": "Tytuł",
     "form.category.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
