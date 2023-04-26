@@ -92,6 +92,13 @@ func applyRule(entryURL string, entry *model.Entry, rule rule) {
 		} else {
 			logger.Debug("[Rewrite] Cannot find search and replace terms for replace rule %s", rule)
 		}
+	case "delete":
+		// Format: delete("delete")
+		if len(rule.args) >= 1 {
+			entry.Content = replaceCustom(entry.Content, rule.args[0], "")
+		} else {
+			logger.Debug("[Rewrite] Cannot find selector for delete rule %s", rule)
+		}
 	case "remove":
 		// Format: remove("#selector > .element, .another")
 		if len(rule.args) >= 1 {
