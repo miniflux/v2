@@ -452,6 +452,22 @@ func TestRewriteAddCastopodEpisode(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `, world`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `hello, world`,
+	}
+	Rewriter("https://example.org/article", testEntry, `delete("hello")`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
 func TestRewriteBase64Decode(t *testing.T) {
 	controlEntry := &model.Entry{
 		Title:   `A title`,
