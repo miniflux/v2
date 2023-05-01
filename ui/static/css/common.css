@@ -850,6 +850,10 @@ article.category-has-unread {
     overflow-wrap: break-word;
 }
 
+.entry-tags {
+    margin-top: 10px;
+}
+
 .entry-tags strong {
     font-weight: 600;
 }
