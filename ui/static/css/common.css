@@ -734,13 +734,9 @@ template {
     font-size: 0.85em;
 }
 
-.item-meta-info li:after {
+.item-meta-info li:not(:last-child):after {
     content: "|";
     color: var(--item-meta-li-color);
-}
-
-.item-meta-info li:last-child:after {
-    content: "";
 }
 
 .item-meta-icons li {
