@@ -361,6 +361,7 @@
     "form.integration.linkding_activate": "Makaleleri Linkding'e kaydet",
     "form.integration.linkding_endpoint": "Linkding API Uç Noktası",
     "form.integration.linkding_api_key": "Linkding API Anahtarı",
+    "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.matrix_bot_activate": "Yeni makaleleri Matrix'e aktarın",
     "form.integration.matrix_bot_user": "Matrix için Kullanıcı Adı",
     "form.integration.matrix_bot_password": "Matrix kullanıcısı için şifre",

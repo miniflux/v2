@@ -63,6 +63,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		LinkdingEnabled:      integration.LinkdingEnabled,
 		LinkdingURL:          integration.LinkdingURL,
 		LinkdingAPIKey:       integration.LinkdingAPIKey,
+		LinkdingTags:         integration.LinkdingTags,
 		MatrixBotEnabled:     integration.MatrixBotEnabled,
 		MatrixBotUser:        integration.MatrixBotUser,
 		MatrixBotPassword:    integration.MatrixBotPassword,

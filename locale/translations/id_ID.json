@@ -358,6 +358,7 @@
     "form.integration.linkding_activate": "Simpan artikel ke Linkding",
     "form.integration.linkding_endpoint": "Titik URL API Linkding",
     "form.integration.linkding_api_key": "Kunci API Linkding",
+    "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.matrix_bot_activate": "Kirim entri baru ke Matrix",
     "form.integration.matrix_bot_user": "Nama Pengguna Matrix",
     "form.integration.matrix_bot_password": "Kata Sandi Matrix",

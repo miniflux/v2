@@ -147,6 +147,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linkding_enabled,
 			linkding_url,
 			linkding_api_key,
+			linkding_tags,
 			matrix_bot_enabled,
 			matrix_bot_user,
 			matrix_bot_password,
@@ -196,6 +197,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkdingEnabled,
 		&integration.LinkdingURL,
 		&integration.LinkdingAPIKey,
+		&integration.LinkdingTags,
 		&integration.MatrixBotEnabled,
 		&integration.MatrixBotUser,
 		&integration.MatrixBotPassword,
@@ -260,13 +262,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linkding_enabled=$34,
 			linkding_url=$35,
 			linkding_api_key=$36,
-			matrix_bot_enabled=$37,
-			matrix_bot_user=$38,
-			matrix_bot_password=$39,
-			matrix_bot_url=$40,
-			matrix_bot_chat_id=$41
+			linkding_tags=$37,
+			matrix_bot_enabled=$38,
+			matrix_bot_user=$39,
+			matrix_bot_password=$40,
+			matrix_bot_url=$41,
+			matrix_bot_chat_id=$42
 		WHERE
-			user_id=$42
+			user_id=$43
 	`
 		_, err = s.db.Exec(
 			query,
@@ -306,6 +309,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.LinkdingEnabled,
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
+			integration.LinkdingTags,
 			integration.MatrixBotEnabled,
 			integration.MatrixBotUser,
 			integration.MatrixBotPassword,
@@ -354,13 +358,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		linkding_enabled=$34,
 		linkding_url=$35,
 		linkding_api_key=$36,
-		matrix_bot_enabled=$37,
-		matrix_bot_user=$38,
-		matrix_bot_password=$39,
-		matrix_bot_url=$40,
-		matrix_bot_chat_id=$41
+		linkding_tags=$37,
+		matrix_bot_enabled=$38,
+		matrix_bot_user=$39,
+		matrix_bot_password=$40,
+		matrix_bot_url=$41,
+		matrix_bot_chat_id=$42
 	WHERE
-		user_id=$42
+		user_id=$43
 	`
 		_, err = s.db.Exec(
 			query,
@@ -400,6 +405,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.LinkdingEnabled,
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
+			integration.LinkdingTags,
 			integration.MatrixBotEnabled,
 			integration.MatrixBotUser,
 			integration.MatrixBotPassword,
