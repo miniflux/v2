@@ -361,6 +361,7 @@
     "form.integration.linkding_activate": "लिंक्डिन में विषयवस्तु सहेजें",
     "form.integration.linkding_endpoint": "लिंकिंग एपीआई समापन बिंदु",
     "form.integration.linkding_api_key": "लिंकिंग एपीआई कुंजी",
+    "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.matrix_bot_activate": "नए लेखों को मैट्रिक्स में स्थानांतरित करें",
     "form.integration.matrix_bot_user": "मैट्रिक्स के लिए उपयोगकर्ता नाम",
     "form.integration.matrix_bot_password": "मैट्रिक्स उपयोगकर्ता के लिए पासवर्ड",
