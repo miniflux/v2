@@ -17,13 +17,15 @@ import (
 )
 
 type jsonFeed struct {
-	Version string       `json:"version"`
-	Title   string       `json:"title"`
-	SiteURL string       `json:"home_page_url"`
-	FeedURL string       `json:"feed_url"`
-	Authors []jsonAuthor `json:"authors"`
-	Author  jsonAuthor   `json:"author"`
-	Items   []jsonItem   `json:"items"`
+	Version    string       `json:"version"`
+	Title      string       `json:"title"`
+	SiteURL    string       `json:"home_page_url"`
+	IconURL    string       `json:"icon"`
+	FaviconURL string       `json:"favicon"`
+	FeedURL    string       `json:"feed_url"`
+	Authors    []jsonAuthor `json:"authors"`
+	Author     jsonAuthor   `json:"author"`
+	Items      []jsonItem   `json:"items"`
 }
 
 type jsonAuthor struct {
@@ -74,6 +76,12 @@ func (j *jsonFeed) Transform(baseURL string) *model.Feed {
 	feed.SiteURL, err = url.AbsoluteURL(baseURL, j.SiteURL)
 	if err != nil {
 		feed.SiteURL = j.SiteURL
+	}
+
+	feed.IconURL = strings.TrimSpace(j.IconURL)
+
+	if feed.IconURL == "" {
+		feed.IconURL = strings.TrimSpace(j.FaviconURL)
 	}
 
 	feed.Title = strings.TrimSpace(j.Title)

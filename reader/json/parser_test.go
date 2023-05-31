@@ -15,6 +15,8 @@ func TestParseJsonFeed(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
 		"title": "My Example Feed",
+		"icon": "https://micro.blog/jsonfeed/avatar.jpg",
+		"favicon": "https://micro.blog/jsonfeed/favicon.png",
 		"home_page_url": "https://example.org/",
 		"feed_url": "https://example.org/feed.json",
 		"items": [
@@ -46,6 +48,10 @@ func TestParseJsonFeed(t *testing.T) {
 
 	if feed.SiteURL != "https://example.org/" {
 		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+
+	if feed.IconURL != "https://micro.blog/jsonfeed/avatar.jpg" {
+		t.Errorf("Incorrect icon URL, got: %s", feed.IconURL)
 	}
 
 	if len(feed.Entries) != 2 {
@@ -615,5 +621,35 @@ func TestParseTags(t *testing.T) {
 	result := feed.Entries[0].Tags[1]
 	if result != expected {
 		t.Errorf("Incorrect entry tag, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseFavicon(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"favicon": "https://micro.blog/jsonfeed/favicon.png",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"id": "2",
+				"content_text": "This is a second item.",
+				"url": "https://example.org/second-item"
+			},
+			{
+				"id": "1",
+				"content_html": "<p>Hello, world!</p>",
+				"url": "https://example.org/initial-post"
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if feed.IconURL != "https://micro.blog/jsonfeed/favicon.png" {
+		t.Errorf("Incorrect icon URL, got: %s", feed.IconURL)
 	}
 }
