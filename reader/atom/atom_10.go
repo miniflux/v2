@@ -28,6 +28,7 @@ type atom10Feed struct {
 	ID      string        `xml:"id"`
 	Title   atom10Text    `xml:"title"`
 	Authors atomAuthors   `xml:"author"`
+	Icon    string        `xml:"icon"`
 	Links   atomLinks     `xml:"link"`
 	Entries []atom10Entry `xml:"entry"`
 }
@@ -53,6 +54,8 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
+
+	feed.IconURL = strings.TrimSpace(a.Icon)
 
 	for _, entry := range a.Entries {
 		item := entry.Transform()

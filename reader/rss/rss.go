@@ -27,6 +27,7 @@ type rssFeed struct {
 	Version        string    `xml:"version,attr"`
 	Title          string    `xml:"channel>title"`
 	Links          []rssLink `xml:"channel>link"`
+	ImageURL       string    `xml:"channel>image>url"`
 	Language       string    `xml:"channel>language"`
 	Description    string    `xml:"channel>description"`
 	PubDate        string    `xml:"channel>pubDate"`
@@ -57,6 +58,8 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
+
+	feed.IconURL = strings.TrimSpace(r.ImageURL)
 
 	for _, item := range r.Items {
 		entry := item.Transform()
