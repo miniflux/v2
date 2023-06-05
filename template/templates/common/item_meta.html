@@ -6,7 +6,7 @@
         </li>
         {{ if .entry.Author }}
         <li class="item-meta-info-author">
-            <em title="{{ .entry.Author }}">{{ truncate .entry.Author 35 }}</em>
+            <span title="{{ .entry.Author }}">{{ truncate .entry.Author 35 }}</span>
         </li>
         {{ end }}
         <li class="item-meta-info-timestamp">
