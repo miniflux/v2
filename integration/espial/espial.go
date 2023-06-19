@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package espial // import "miniflux.app/integration/espial"
 
 import (
