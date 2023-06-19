@@ -108,6 +108,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"nonce": func() string {
 			return crypto.GenerateRandomStringHex(16)
 		},
+		"deRef": func(i *int) int { return *i },
 
 		// These functions are overrode at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {
