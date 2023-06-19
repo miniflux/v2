@@ -18,13 +18,12 @@ import (
 
 // EntryQueryBuilder builds a SQL query to fetch entries.
 type EntryQueryBuilder struct {
-	store      *Storage
-	args       []interface{}
-	conditions []string
-	order      string
-	direction  string
-	limit      int
-	offset     int
+	store           *Storage
+	args            []interface{}
+	conditions      []string
+	sortExpressions []string
+	limit           int
+	offset          int
 }
 
 // WithSearchQuery adds full-text search query to the condition.
@@ -35,8 +34,10 @@ func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
 		e.args = append(e.args, query)
 
 		// 0.0000001 = 0.1 / (seconds_in_a_day)
-		e.WithOrder(fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs))
-		e.WithDirection("DESC")
+		e.WithSorting(
+			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
+			"DESC",
+		)
 	}
 	return e
 }
@@ -168,15 +169,9 @@ func (e *EntryQueryBuilder) WithShareCodeNotEmpty() *EntryQueryBuilder {
 	return e
 }
 
-// WithOrder set the sorting order.
-func (e *EntryQueryBuilder) WithOrder(order string) *EntryQueryBuilder {
-	e.order = order
-	return e
-}
-
-// WithDirection set the sorting direction.
-func (e *EntryQueryBuilder) WithDirection(direction string) *EntryQueryBuilder {
-	e.direction = direction
+// WithSorting add a sort expression.
+func (e *EntryQueryBuilder) WithSorting(column, direction string) *EntryQueryBuilder {
+	e.sortExpressions = append(e.sortExpressions, fmt.Sprintf("%s %s", column, direction))
 	return e
 }
 
@@ -403,12 +398,8 @@ func (e *EntryQueryBuilder) buildCondition() string {
 func (e *EntryQueryBuilder) buildSorting() string {
 	var parts []string
 
-	if e.order != "" {
-		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, e.order))
-	}
-
-	if e.direction != "" {
-		parts = append(parts, e.direction)
+	if len(e.sortExpressions) > 0 {
+		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, strings.Join(e.sortExpressions, ", ")))
 	}
 
 	if e.limit > 0 {

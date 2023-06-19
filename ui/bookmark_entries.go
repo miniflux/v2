@@ -26,8 +26,7 @@ func (h *handler) showStarredPage(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithStarred(true)
-	builder.WithOrder(user.EntryOrder)
-	builder.WithDirection(user.EntryDirection)
+	builder.WithSorting(user.EntryOrder, user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 
