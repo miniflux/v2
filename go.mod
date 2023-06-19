@@ -11,7 +11,7 @@ require (
 	github.com/matrix-org/gomatrix v0.0.0-20220926102614-ceba4d9f7530
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
-	github.com/tdewolff/minify/v2 v2.12.6
+	github.com/tdewolff/minify/v2 v2.12.7
 	github.com/yuin/goldmark v1.5.4
 	golang.org/x/crypto v0.10.0
 	golang.org/x/net v0.11.0
