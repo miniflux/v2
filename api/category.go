@@ -97,12 +97,20 @@ func (h *handler) markCategoryAsRead(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) getCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := h.store.Categories(request.UserID(r))
+	var categories model.Categories
+	var err error
+	includeCounts := request.QueryStringParam(r, "counts", "false")
+
+	if includeCounts == "true" {
+		categories, err = h.store.CategoriesWithFeedCount(request.UserID(r))
+	} else {
+		categories, err = h.store.Categories(request.UserID(r))
+	}
+
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
-
 	json.OK(w, r, categories)
 }
 

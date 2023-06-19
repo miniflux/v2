@@ -15,7 +15,7 @@
 {{ else }}
     <div class="items">
         {{ range .categories }}
-        <article role="article" class="item category-item {{if gt .TotalUnread 0 }} category-has-unread{{end}}">
+        <article role="article" class="item category-item {{if gt (deRef .TotalUnread) 0 }} category-has-unread{{end}}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
@@ -25,7 +25,7 @@
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-feed-count">
-                        {{ if eq .FeedCount 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" .FeedCount .FeedCount }}{{ end }}
+                        {{ if eq (deRef .FeedCount) 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" (deRef .FeedCount) (deRef .FeedCount) }}{{ end }}
                     </li>
                 </ul>
                 <ul class="item-meta-icons">
@@ -38,7 +38,7 @@
                     <li class="item-meta-icons-edit">
                         <a href="{{ route "editCategory" "categoryID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_category" }}</span></a>
                     </li>
-                    {{ if eq .FeedCount 0 }}
+                    {{ if eq (deRef .FeedCount) 0 }}
                     <li class="item-meta-icons-delete">
                         <a href="#"
                             data-confirm="true"
@@ -49,7 +49,7 @@
                             data-url="{{ route "removeCategory" "categoryID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
                     </li>
                     {{ end }}
-                    {{ if gt .TotalUnread 0 }}
+                    {{ if gt (deRef .TotalUnread) 0 }}
                       <li class="item-meta-icons-mark-as-read">
                         <a href="#"
                             data-confirm="true"

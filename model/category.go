@@ -11,8 +11,8 @@ type Category struct {
 	Title        string `json:"title"`
 	UserID       int64  `json:"user_id"`
 	HideGlobally bool   `json:"hide_globally"`
-	FeedCount    int    `json:"-"`
-	TotalUnread  int    `json:"-"`
+	FeedCount    *int   `json:"feed_count,omitempty"`
+	TotalUnread  *int   `json:"total_unread,omitempty"`
 }
 
 func (c *Category) String() string {
