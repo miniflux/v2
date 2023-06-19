@@ -48,6 +48,10 @@ func TestParseAtomSample(t *testing.T) {
 		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
 	}
 
+	if feed.IconURL != "" {
+		t.Errorf("Incorrect icon URL, got: %s", feed.IconURL)
+	}
+
 	if len(feed.Entries) != 1 {
 		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
@@ -1646,5 +1650,23 @@ func TestParseFeedWithCategories(t *testing.T) {
 	result = feed.Entries[0].Tags[1]
 	if result != expected {
 		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseFeedWithIconURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+		<title>Example Feed</title>
+		<link href="http://example.org/"/>
+		<icon>http://example.org/icon.png</icon>
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.IconURL != "http://example.org/icon.png" {
+		t.Errorf("Incorrect icon URL, got: %s", feed.IconURL)
 	}
 }
