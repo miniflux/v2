@@ -18,8 +18,7 @@ type FeedQueryBuilder struct {
 	store             *Storage
 	args              []interface{}
 	conditions        []string
-	order             string
-	direction         string
+	sortExpressions   []string
 	limit             int
 	offset            int
 	withCounters      bool
@@ -66,15 +65,9 @@ func (f *FeedQueryBuilder) WithCounters() *FeedQueryBuilder {
 	return f
 }
 
-// WithOrder set the sorting order.
-func (f *FeedQueryBuilder) WithOrder(order string) *FeedQueryBuilder {
-	f.order = order
-	return f
-}
-
-// WithDirection set the sorting direction.
-func (f *FeedQueryBuilder) WithDirection(direction string) *FeedQueryBuilder {
-	f.direction = direction
+// WithSorting add a sort expression.
+func (f *FeedQueryBuilder) WithSorting(column, direction string) *FeedQueryBuilder {
+	f.sortExpressions = append(f.sortExpressions, fmt.Sprintf("%s %s", column, direction))
 	return f
 }
 
@@ -101,12 +94,8 @@ func (f *FeedQueryBuilder) buildCounterCondition() string {
 func (f *FeedQueryBuilder) buildSorting() string {
 	var parts []string
 
-	if f.order != "" {
-		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, f.order))
-	}
-
-	if f.direction != "" {
-		parts = append(parts, f.direction)
+	if len(f.sortExpressions) > 0 {
+		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, strings.Join(f.sortExpressions, ", ")))
 	}
 
 	if len(parts) > 0 {

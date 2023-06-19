@@ -22,8 +22,7 @@ func (h *handler) sharedEntries(w http.ResponseWriter, r *http.Request) {
 
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithShareCodeNotEmpty()
-	builder.WithOrder(user.EntryOrder)
-	builder.WithDirection(user.EntryDirection)
+	builder.WithSorting(user.EntryOrder, user.EntryDirection)
 
 	entries, err := builder.GetEntries()
 	if err != nil {

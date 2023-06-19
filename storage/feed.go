@@ -135,8 +135,7 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 // Feeds returns all feeds that belongs to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
 	return builder.GetFeeds()
 }
 
@@ -153,8 +152,7 @@ func getFeedsSorted(builder *FeedQueryBuilder) (model.Feeds, error) {
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
 	return getFeedsSorted(builder)
 }
 
@@ -171,8 +169,7 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCategoryID(categoryID)
 	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
 	return getFeedsSorted(builder)
 }
 
