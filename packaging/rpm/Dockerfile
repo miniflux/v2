@@ -1,4 +1,5 @@
 FROM golang:1 AS build
+ENV CGO_ENABLED=0
 ADD . /go/src/app
 WORKDIR /go/src/app
 RUN make miniflux
