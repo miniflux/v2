@@ -43,6 +43,7 @@ type Integration struct {
 	LinkdingURL          string
 	LinkdingAPIKey       string
 	LinkdingTags         string
+	LinkdingMarkAsUnread bool
 	MatrixBotEnabled     bool
 	MatrixBotUser        string
 	MatrixBotPassword    string

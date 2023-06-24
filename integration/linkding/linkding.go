@@ -16,6 +16,7 @@ type Document struct {
 	Url      string   `json:"url,omitempty"`
 	Title    string   `json:"title,omitempty"`
 	TagNames []string `json:"tag_names,omitempty"`
+	Unread   bool     `json:"unread,omitempty"`
 }
 
 // Client represents an Linkding client.
@@ -23,11 +24,12 @@ type Client struct {
 	baseURL string
 	apiKey  string
 	tags    string
+	unread  bool
 }
 
 // NewClient returns a new Linkding client.
-func NewClient(baseURL, apiKey, tags string) *Client {
-	return &Client{baseURL: baseURL, apiKey: apiKey, tags: tags}
+func NewClient(baseURL, apiKey, tags string, unread bool) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey, tags: tags, unread: unread}
 }
 
 // AddEntry sends an entry to Linkding.
@@ -44,6 +46,7 @@ func (c *Client) AddEntry(title, url string) error {
 		Url:      url,
 		Title:    title,
 		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
+		Unread:   c.unread,
 	}
 
 	apiURL, err := getAPIEndpoint(c.baseURL, "/api/bookmarks/")
