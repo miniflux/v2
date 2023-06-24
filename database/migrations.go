@@ -674,4 +674,32 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// Delete duplicated rows
+		sql := `
+			DELETE FROM enclosures a USING enclosures b
+			WHERE a.id < b.id
+				AND a.user_id = b.user_id
+				AND a.entry_id = b.entry_id
+				AND a.url = b.url;
+		`
+		_, err = tx.Exec(sql)
+		if err != nil {
+			return err
+		}
+
+		// Remove previous index
+		_, err = tx.Exec(`DROP INDEX enclosures_user_entry_url_idx`)
+		if err != nil {
+			return err
+		}
+
+		// Create unique index
+		_, err = tx.Exec(`CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx ON enclosures(user_id, entry_id, md5(url))`)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	},
 }
