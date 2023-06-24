@@ -363,6 +363,7 @@
     "form.integration.linkding_endpoint": "Linkding API 端點",
     "form.integration.linkding_api_key": "Linkding API 金鑰",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "標記為未讀",
     "form.integration.matrix_bot_activate": "將新文章轉移到 Matrix",
     "form.integration.matrix_bot_user": "矩陣的用戶名",
     "form.integration.matrix_bot_password": "矩陣用戶密碼",
