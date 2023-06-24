@@ -187,3 +187,16 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		}
 	}
 }
+
+func TestParseDateWithTimezoneOutOfRange(t *testing.T) {
+	date, err := Parse("2023-05-29 00:00:00-23:00")
+
+	if err != nil {
+		t.Errorf(`Unable to parse date: %v`, err)
+	}
+
+	_, offset := date.Zone()
+	if offset != 0 {
+		t.Errorf(`The offset should be reinitialized to 0 instead of %v because it's out of range`, offset)
+	}
+}

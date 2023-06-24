@@ -6,6 +6,7 @@ package date // import "miniflux.app/reader/date"
 import (
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -315,11 +316,13 @@ func Parse(rawInput string) (t time.Time, err error) {
 		switch layout {
 		case time.RFC822, time.RFC850, time.RFC1123:
 			if t, err = parseLocalTimeDates(layout, processedInput); err == nil {
+				t = checkTimezoneRange(t)
 				return
 			}
 		}
 
 		if t, err = time.Parse(layout, processedInput); err == nil {
+			t = checkTimezoneRange(t)
 			return
 		}
 	}
@@ -346,4 +349,15 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 	}
 
 	return time.ParseInLocation(layout, ds, loc)
+}
+
+// https://en.wikipedia.org/wiki/List_of_UTC_offsets
+// Offset range: westernmost (−12:00) to the easternmost (+14:00)
+// Avoid "pq: time zone displacement out of range" errors
+func checkTimezoneRange(t time.Time) time.Time {
+	_, offset := t.Zone()
+	if math.Abs(float64(offset)) > 14*60*60 {
+		t = t.UTC()
+	}
+	return t
 }
