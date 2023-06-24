@@ -4,9 +4,7 @@ ADD . /go/src/app
 WORKDIR /go/src/app
 RUN make miniflux
 
-FROM centos:8
-RUN dnf --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos -y
-RUN dnf distro-sync -y
+FROM rockylinux:8
 RUN dnf install -y rpm-build
 RUN mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 RUN echo "%_topdir /root/rpmbuild" >> .rpmmacros
