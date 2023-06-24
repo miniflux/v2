@@ -363,6 +363,7 @@
     "form.integration.linkding_endpoint": "Acceso API de Linkding",
     "form.integration.linkding_api_key": "Clave de API de Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Marcar marcador como no leído",
     "form.integration.matrix_bot_activate": "Transferir nuevos artículos a Matrix",
     "form.integration.matrix_bot_user": "Nombre de usuario para Matrix",
     "form.integration.matrix_bot_password": "Contraseña para el usuario de Matrix",

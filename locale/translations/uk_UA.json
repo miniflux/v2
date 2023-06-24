@@ -362,6 +362,7 @@
   "form.integration.linkding_endpoint": "Linkding API Endpoint",
   "form.integration.linkding_api_key": "Ключ API Linkding",
   "form.integration.linkding_tags": "Linkding Tags",
+  "form.integration.linkding_bookmark": "Відмічати закладку як непрочитану",
   "form.integration.matrix_bot_activate": "Перенесення нових статей в Матрицю",
   "form.integration.matrix_bot_user": "Ім'я користувача для Matrix",
   "form.integration.matrix_bot_password": "Пароль для користувача Matrix",

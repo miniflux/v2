@@ -363,6 +363,7 @@
     "form.integration.linkding_endpoint": "Linkding URL",
     "form.integration.linkding_api_key": "Linkding API-sleutel",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Markeer bookmark als gelezen",
     "form.integration.matrix_bot_activate": "Nieuwe artikelen overbrengen naar Matrix",
     "form.integration.matrix_bot_user": "Gebruikersnaam voor Matrix",
     "form.integration.matrix_bot_password": "Wachtwoord voor Matrix-gebruiker",

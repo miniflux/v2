@@ -363,6 +363,7 @@
     "form.integration.linkding_endpoint": "Τελικό σημείο Linkding API",
     "form.integration.linkding_api_key": "Κλειδί API Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Σημείωση του σελιδοδείκτη ως μη αναγνωσμένου",
     "form.integration.matrix_bot_activate": "Μεταφορά νέων άρθρων στο Matrix",
     "form.integration.matrix_bot_user": "Όνομα χρήστη για το Matrix",
     "form.integration.matrix_bot_password": "Κωδικός πρόσβασης για τον χρήστη Matrix",
