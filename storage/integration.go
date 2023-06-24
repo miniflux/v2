@@ -147,6 +147,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linkding_url,
 			linkding_api_key,
 			linkding_tags,
+			linkding_mark_as_unread,
 			matrix_bot_enabled,
 			matrix_bot_user,
 			matrix_bot_password,
@@ -197,6 +198,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkdingURL,
 		&integration.LinkdingAPIKey,
 		&integration.LinkdingTags,
+		&integration.LinkdingMarkAsUnread,
 		&integration.MatrixBotEnabled,
 		&integration.MatrixBotUser,
 		&integration.MatrixBotPassword,
@@ -262,13 +264,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linkding_url=$35,
 			linkding_api_key=$36,
 			linkding_tags=$37,
-			matrix_bot_enabled=$38,
-			matrix_bot_user=$39,
-			matrix_bot_password=$40,
-			matrix_bot_url=$41,
-			matrix_bot_chat_id=$42
+			linkding_mark_as_unread=$38,
+			matrix_bot_enabled=$39,
+			matrix_bot_user=$40,
+			matrix_bot_password=$41,
+			matrix_bot_url=$42,
+			matrix_bot_chat_id=$43
 		WHERE
-			user_id=$43
+			user_id=$44
 	`
 		_, err = s.db.Exec(
 			query,
@@ -309,6 +312,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
 			integration.LinkdingTags,
+			integration.LinkdingMarkAsUnread,
 			integration.MatrixBotEnabled,
 			integration.MatrixBotUser,
 			integration.MatrixBotPassword,
@@ -358,13 +362,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		linkding_url=$35,
 		linkding_api_key=$36,
 		linkding_tags=$37,
-		matrix_bot_enabled=$38,
-		matrix_bot_user=$39,
-		matrix_bot_password=$40,
-		matrix_bot_url=$41,
-		matrix_bot_chat_id=$42
+		linkding_mark_as_unread=$38,
+		matrix_bot_enabled=$39,
+		matrix_bot_user=$40,
+		matrix_bot_password=$41,
+		matrix_bot_url=$42,
+		matrix_bot_chat_id=$43
 	WHERE
-		user_id=$43
+		user_id=$44
 	`
 		_, err = s.db.Exec(
 			query,
@@ -405,6 +410,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
 			integration.LinkdingTags,
+			integration.LinkdingMarkAsUnread,
 			integration.MatrixBotEnabled,
 			integration.MatrixBotUser,
 			integration.MatrixBotPassword,

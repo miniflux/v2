@@ -104,6 +104,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
 			integration.LinkdingTags,
+			integration.LinkdingMarkAsUnread,
 		)
 		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
