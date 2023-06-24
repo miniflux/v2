@@ -43,7 +43,7 @@ func (c *Client) AddEntry(link, title, content string) error {
 }
 
 func (c *Client) createEntry(accessToken, link, title, content string) error {
-	endpoint, err := getAPIEndpoint(c.baseURL, "/api/entries.json")
+	endpoint, err := url.JoinPath(c.baseURL, "/api/entries.json")
 	if err != nil {
 		return fmt.Errorf("wallbag: unable to get entries endpoint: %v", err)
 	}
@@ -75,7 +75,7 @@ func (c *Client) getAccessToken() (string, error) {
 	values.Add("username", c.username)
 	values.Add("password", c.password)
 
-	endpoint, err := getAPIEndpoint(c.baseURL, "/oauth/v2/token")
+	endpoint, err := url.JoinPath(c.baseURL, "/oauth/v2/token")
 	if err != nil {
 		return "", fmt.Errorf("wallbag: unable to get token endpoint: %v", err)
 	}
@@ -96,15 +96,6 @@ func (c *Client) getAccessToken() (string, error) {
 	}
 
 	return token.AccessToken, nil
-}
-
-func getAPIEndpoint(baseURL, path string) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("wallabag: invalid API endpoint: %v", err)
-	}
-	u.Path = path
-	return u.String(), nil
 }
 
 type tokenResponse struct {
