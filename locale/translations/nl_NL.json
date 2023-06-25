@@ -81,7 +81,7 @@
         "%d minuut leestijd",
         "%d minuten leestijd"
     ],
-    "entry.tags.label": "Tags",
+    "entry.tags.label": "Labels:",
     "page.shared_entries.title": "Gedeelde vermeldingen",
     "page.unread.title": "Ongelezen",
     "page.starred.title": "Favorieten",

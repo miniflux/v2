@@ -851,7 +851,8 @@ article.category-has-unread {
 }
 
 .entry-tags {
-    margin-top: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .entry-tags strong {

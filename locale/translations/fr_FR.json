@@ -81,7 +81,7 @@
         "%d minute de lecture",
         "%d minutes de lecture"
     ],    
-    "entry.tags.label": "Libellés",
+    "entry.tags.label": "Libellés :",
     "page.shared_entries.title": "Articles partagés",
     "page.unread.title": "Non lus",
     "page.starred.title": "Favoris",
