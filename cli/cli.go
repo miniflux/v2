@@ -11,7 +11,6 @@ import (
 	"miniflux.app/database"
 	"miniflux.app/locale"
 	"miniflux.app/logger"
-	feedHandler "miniflux.app/reader/handler"
 	"miniflux.app/storage"
 	"miniflux.app/ui/static"
 	"miniflux.app/version"
@@ -192,18 +191,7 @@ func Parse() {
 	}
 
 	if flagCronjob {
-		jobs, err := store.NewBatch(config.Opts.BatchSize())
-		if err != nil {
-			logger.Error("[Cronjob] %v", err)
-		}
-
-		logger.Info("[Cronjob]] Processing %d jobs", len(jobs))
-
-		for _, job := range jobs {
-			if err := feedHandler.RefreshFeed(store, job.UserID, job.FeedID); err != nil {
-				logger.Error("[Cronjob] Refreshing the feed #%d returned this error: %v", job.FeedID, err)
-			}
-		}
+		runCronjob(store)
 		return
 	}
 
