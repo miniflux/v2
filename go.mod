@@ -4,7 +4,6 @@ module miniflux.app
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.9
@@ -25,6 +24,8 @@ require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/coreos/go-oidc/v3 v3.6.0 // indirect
+	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/pquerna/cachecontrol v0.1.0 // indirect
