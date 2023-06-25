@@ -81,6 +81,7 @@
         "%d minuutin lukuaika",
         "%d minuutin lukuaika"
     ],
+    "entry.tags.label": "Tags:",
     "page.shared_entries.title": "Jaetut artikkelit",
     "page.unread.title": "Lukemattomat",
     "page.starred.title": "Suosikit",

@@ -81,6 +81,7 @@
         "%d 分で読めます",
         "%d 分で読めます"
     ],
+    "entry.tags.label": "タグ:",
     "page.shared_entries.title": "共有エントリ",
     "page.unread.title": "未読",
     "page.starred.title": "星付き",

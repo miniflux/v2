@@ -81,6 +81,7 @@
         "Leitura de %d minuto",
         "Leitura de %d minutos"
     ],
+    "entry.tags.label": "Etiquetas:",
     "page.shared_entries.title": "Itens compartilhados",
     "page.unread.title": "Não lidos",
     "page.starred.title": "Favoritos",

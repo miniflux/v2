@@ -81,6 +81,7 @@
         "%d λεπτό ανάγνωση",
         "%d λεπτά ανάγνωση"
     ],
+    "entry.tags.label": "Ετικέτες:",
     "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
     "page.unread.title": "Μη αναγνωσμένα",
     "page.starred.title": "Αγαπημένo",

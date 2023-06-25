@@ -122,6 +122,12 @@
                 </span>
             {{ end }}
         </div>
+        {{ if .entry.Tags }}
+            <div class="entry-tags">
+                {{ t "entry.tags.label" }}
+                {{range $i, $e := .entry.Tags}}{{if $i}}, {{end}}<strong>{{ $e }}</strong>{{end}}
+            </div>
+        {{ end }}
         <div class="entry-date">
             {{ if .user }}
                 <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
