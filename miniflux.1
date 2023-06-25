@@ -6,12 +6,18 @@ miniflux \- Minimalist and opinionated feed reader
 
 .SH SYNOPSIS
 \fBminiflux\fR [-vic] [-create-admin] [-debug] [-flush-sessions] [-info] [-migrate]
-         [-reset-feed-errors] [-reset-password] [-version] [-config-file] [-config-dump]
+         [-reset-feed-errors] [-reset-password] [-version] [-config-file]
+         [-config-dump] [-cronjob] [-healthcheck]
 
 .SH DESCRIPTION
 \fBminiflux\fR is a minimalist and opinionated feed reader.
 
 .SH OPTIONS
+.PP
+.B \-cronjob
+.RS 4
+Run Miniflux as a cronjob to refresh a batch of feeds and exit\&.
+.RE
 .PP
 .B \-c
 .RS 4
