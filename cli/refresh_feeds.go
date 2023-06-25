@@ -14,7 +14,7 @@ import (
 	"miniflux.app/storage"
 )
 
-func runCronjob(store *storage.Storage) {
+func refreshFeeds(store *storage.Storage) {
 	var wg sync.WaitGroup
 
 	startTime := time.Now()
