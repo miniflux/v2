@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package httpd // import "miniflux.app/service/httpd"
+package httpd // import "miniflux.app/http/server"
 
 import (
 	"crypto/tls"
@@ -29,8 +29,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-// Serve starts a new HTTP server.
-func Serve(store *storage.Storage, pool *worker.Pool) *http.Server {
+func StartWebServer(store *storage.Storage, pool *worker.Pool) *http.Server {
 	certFile := config.Opts.CertFile()
 	keyFile := config.Opts.CertKeyFile()
 	certDomain := config.Opts.CertDomain()

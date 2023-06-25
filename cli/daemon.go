@@ -12,17 +12,16 @@ import (
 	"time"
 
 	"miniflux.app/config"
+	httpd "miniflux.app/http/server"
 	"miniflux.app/logger"
 	"miniflux.app/metric"
-	"miniflux.app/service/httpd"
-	"miniflux.app/service/scheduler"
 	"miniflux.app/storage"
 	"miniflux.app/systemd"
 	"miniflux.app/worker"
 )
 
 func startDaemon(store *storage.Storage) {
-	logger.Info("Starting Miniflux...")
+	logger.Info("Starting daemon...")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -31,12 +30,12 @@ func startDaemon(store *storage.Storage) {
 	pool := worker.NewPool(store, config.Opts.WorkerPoolSize())
 
 	if config.Opts.HasSchedulerService() && !config.Opts.HasMaintenanceMode() {
-		scheduler.Serve(store, pool)
+		runScheduler(store, pool)
 	}
 
 	var httpServer *http.Server
 	if config.Opts.HasHTTPService() {
-		httpServer = httpd.Serve(store, pool)
+		httpServer = httpd.StartWebServer(store, pool)
 	}
 
 	if config.Opts.HasMetricsCollector() {
