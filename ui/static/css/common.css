@@ -216,7 +216,7 @@ a:hover {
     100% {visibility: hidden; opacity: 0; z-index: 0}
 }
 
-@media (min-width: 600px) {
+@media (min-width: 620px) {
     body {
         margin: auto;
         max-width: 750px;
