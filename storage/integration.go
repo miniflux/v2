@@ -384,7 +384,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		matrix_bot_password=$41,
 		matrix_bot_url=$42,
 		matrix_bot_chat_id=$43,
-		notion_enable=$45,
+		notion_enabled=$45,
 		notion_token=$46,
 		notion_page_id=$47,
 		notion_url=$48
