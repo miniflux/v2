@@ -82,6 +82,7 @@
     "читати %d хвилини",
     "читати %d хвилин"
   ],
+  "entry.tags.label": "Теги:",
   "page.shared_entries.title": "Спильні записи",
   "page.unread.title": "Непрочитане",
   "page.starred.title": "З зірочкою",
@@ -320,6 +321,7 @@
   "form.prefs.label.entry_order": "Стовпець сортування записів",
   "form.prefs.label.default_home_page": "Домашня сторінка за умовчанням",
   "form.prefs.label.categories_sorting_order": "Сортування за категоріями",
+  "form.prefs.label.mark_read_on_view": "Автоматично позначати записи як прочитані під час перегляду",
   "form.import.label.file": "Файл OPML",
   "form.import.label.url": "URL-адреса",
   "form.integration.fever_activate": "Увімкнути API Fever",
@@ -362,6 +364,7 @@
   "form.integration.linkding_endpoint": "Linkding API Endpoint",
   "form.integration.linkding_api_key": "Ключ API Linkding",
   "form.integration.linkding_tags": "Linkding Tags",
+  "form.integration.linkding_bookmark": "Відмічати закладку як непрочитану",
   "form.integration.matrix_bot_activate": "Перенесення нових статей в Матрицю",
   "form.integration.matrix_bot_user": "Ім'я користувача для Matrix",
   "form.integration.matrix_bot_password": "Пароль для користувача Matrix",

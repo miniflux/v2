@@ -1,4 +1,5 @@
 FROM golang:latest AS build
+ENV CGO_ENABLED=0
 ADD . /go/src/app
 WORKDIR /go/src/app
 RUN go build \

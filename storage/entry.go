@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package storage // import "miniflux.app/storage"
 
@@ -220,15 +219,17 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 }
 
 // entryExists checks if an entry already exists based on its hash when refreshing a feed.
-func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) bool {
+func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
 	var result bool
-	tx.QueryRow(
-		`SELECT true FROM entries WHERE user_id=$1 AND feed_id=$2 AND hash=$3`,
-		entry.UserID,
-		entry.FeedID,
-		entry.Hash,
-	).Scan(&result)
-	return result
+
+	// Note: This query uses entries_feed_id_hash_key index (filtering on user_id is not necessary).
+	err := tx.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2`, entry.FeedID, entry.Hash).Scan(&result)
+
+	if err != nil && err != sql.ErrNoRows {
+		return result, fmt.Errorf(`store: unable to check if entry exists: %v`, err)
+	}
+
+	return result, nil
 }
 
 // GetReadTime fetches the read time of an entry based on its hash, and the feed id and user id from the feed.
@@ -275,7 +276,15 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			return fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
-		if s.entryExists(tx, entry) {
+		entryExists, err := s.entryExists(tx, entry)
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+			}
+			return err
+		}
+
+		if entryExists {
 			if updateExistingEntries {
 				err = s.updateEntry(tx, entry)
 			}
@@ -284,7 +293,9 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 		}
 
 		if err != nil {
-			tx.Rollback()
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+			}
 			return err
 		}
 

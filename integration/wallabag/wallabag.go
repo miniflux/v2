@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package wallabag // import "miniflux.app/integration/wallabag"
 
@@ -44,7 +43,7 @@ func (c *Client) AddEntry(link, title, content string) error {
 }
 
 func (c *Client) createEntry(accessToken, link, title, content string) error {
-	endpoint, err := getAPIEndpoint(c.baseURL, "/api/entries.json")
+	endpoint, err := url.JoinPath(c.baseURL, "/api/entries.json")
 	if err != nil {
 		return fmt.Errorf("wallbag: unable to get entries endpoint: %v", err)
 	}
@@ -76,7 +75,7 @@ func (c *Client) getAccessToken() (string, error) {
 	values.Add("username", c.username)
 	values.Add("password", c.password)
 
-	endpoint, err := getAPIEndpoint(c.baseURL, "/oauth/v2/token")
+	endpoint, err := url.JoinPath(c.baseURL, "/oauth/v2/token")
 	if err != nil {
 		return "", fmt.Errorf("wallbag: unable to get token endpoint: %v", err)
 	}
@@ -97,15 +96,6 @@ func (c *Client) getAccessToken() (string, error) {
 	}
 
 	return token.AccessToken, nil
-}
-
-func getAPIEndpoint(baseURL, path string) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("wallabag: invalid API endpoint: %v", err)
-	}
-	u.Path = path
-	return u.String(), nil
 }
 
 type tokenResponse struct {

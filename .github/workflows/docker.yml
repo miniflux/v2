@@ -5,8 +5,36 @@ on:
   push:
     tags:
       - '*.*.*'
+  pull_request:
+    branches: [ main ]
 jobs:
-  docker-images:
+  test-docker-images:
+    if: github.event.pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Alpine image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./packaging/docker/alpine/Dockerfile
+          push: false
+          tags: ${{ github.repository_owner }}/miniflux:alpine-dev
+      - name: Test Alpine Docker image
+        run: docker run --rm ${{ github.repository_owner }}/miniflux:alpine-dev miniflux -i
+      - name: Build Distroless image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./packaging/docker/distroless/Dockerfile
+          push: false
+          tags: ${{ github.repository_owner }}/miniflux:distroless-dev
+      - name: Test Distroless Docker image
+        run: docker run --rm ${{ github.repository_owner }}/miniflux:distroless-dev miniflux -i
+
+  publish-docker-images:
+    if: ${{ ! github.event.pull_request }}
     permissions:
       packages: write
     runs-on: ubuntu-latest

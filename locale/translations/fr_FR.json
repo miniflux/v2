@@ -80,7 +80,8 @@
     "entry.estimated_reading_time": [
         "%d minute de lecture",
         "%d minutes de lecture"
-    ],
+    ],    
+    "entry.tags.label": "Libellés :",
     "page.shared_entries.title": "Articles partagés",
     "page.unread.title": "Non lus",
     "page.starred.title": "Favoris",
@@ -321,6 +322,7 @@
     "form.prefs.label.entry_order": "Colonne de tri des entrées",
     "form.prefs.label.default_home_page": "Page d'accueil par défaut",
     "form.prefs.label.categories_sorting_order": "Colonne de tri des catégories",
+    "form.prefs.label.mark_read_on_view": "Marquer automatiquement les entrées comme lues lorsqu'elles sont consultées",
     "form.import.label.file": "Fichier OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Activer l'API de Fever",
@@ -363,6 +365,7 @@
     "form.integration.linkding_endpoint": "URL de l'API de Linkding",
     "form.integration.linkding_api_key": "Clé d'API de Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Marquer le lien comme non lu",
     "form.integration.matrix_bot_activate": "Envoyer les nouveaux articles vers Matrix",
     "form.integration.matrix_bot_user": "Nom de l'utilisateur Matrix",
     "form.integration.matrix_bot_password": "Mot de passe de l'utilisateur Matrix",

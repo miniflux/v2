@@ -1,4 +1,5 @@
 FROM golang:alpine AS build
+ENV CGO_ENABLED=0
 RUN apk add --no-cache --update git
 ADD . /go/src/app
 WORKDIR /go/src/app

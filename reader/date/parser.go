@@ -1,12 +1,12 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package date // import "miniflux.app/reader/date"
 
 import (
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -211,6 +211,14 @@ var dateFormats = []string{
 	"Jan. 2, 2006, 03:04 p.m.",
 	"2006-01-02 15:04:05 -07:00",
 	"2 January, 2006",
+	"2 Jan 2006 MST",
+	"Mon, January 2, 2006 at 03:04 PM MST",
+	"Jan 2, 2006 15:04 MST",
+	"01/02/2006 3:04 pm MST",
+	"Mon, 2th Jan 2006 15:04:05 MST",
+	"Mon, 2rd Jan 2006 15:04:05 MST",
+	"Mon, 2nd Jan 2006 15:04:05 MST",
+	"Mon, 2st Jan 2006 15:04:05 MST",
 }
 
 var invalidTimezoneReplacer = strings.NewReplacer(
@@ -316,11 +324,13 @@ func Parse(rawInput string) (t time.Time, err error) {
 		switch layout {
 		case time.RFC822, time.RFC850, time.RFC1123:
 			if t, err = parseLocalTimeDates(layout, processedInput); err == nil {
+				t = checkTimezoneRange(t)
 				return
 			}
 		}
 
 		if t, err = time.Parse(layout, processedInput); err == nil {
+			t = checkTimezoneRange(t)
 			return
 		}
 	}
@@ -347,4 +357,15 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 	}
 
 	return time.ParseInLocation(layout, ds, loc)
+}
+
+// https://en.wikipedia.org/wiki/List_of_UTC_offsets
+// Offset range: westernmost (−12:00) to the easternmost (+14:00)
+// Avoid "pq: time zone displacement out of range" errors
+func checkTimezoneRange(t time.Time) time.Time {
+	_, offset := t.Zone()
+	if math.Abs(float64(offset)) > 14*60*60 {
+		t = t.UTC()
+	}
+	return t
 }

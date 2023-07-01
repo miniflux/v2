@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package form // import "miniflux.app/ui/form"
 
@@ -33,6 +32,7 @@ type SettingsForm struct {
 	CJKReadingSpeed        int
 	DefaultHomePage        string
 	CategoriesSortingOrder string
+	MarkReadOnView         bool
 }
 
 // Merge updates the fields of the given user.
@@ -54,6 +54,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.DefaultReadingSpeed = s.DefaultReadingSpeed
 	user.DefaultHomePage = s.DefaultHomePage
 	user.CategoriesSortingOrder = s.CategoriesSortingOrder
+	user.MarkReadOnView = s.MarkReadOnView
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -120,5 +121,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		CJKReadingSpeed:        int(cjkReadingSpeed),
 		DefaultHomePage:        r.FormValue("default_home_page"),
 		CategoriesSortingOrder: r.FormValue("categories_sorting_order"),
+		MarkReadOnView:         r.FormValue("mark_read_on_view") == "1",
 	}
 }

@@ -80,7 +80,8 @@
     "entry.estimated_reading_time": [
         "%d Minute zu lesen",
         "%d Minuten zu lesen"
-    ],
+    ],    
+    "entry.tags.label": "Stichworte:",
     "page.shared_entries.title": "Geteilte Artikel",
     "page.unread.title": "Ungelesen",
     "page.starred.title": "Lesezeichen",
@@ -321,6 +322,7 @@
     "form.prefs.label.entry_order": "Eintrag Sortierspalte",
     "form.prefs.label.default_home_page": "Standard Startseite",
     "form.prefs.label.categories_sorting_order": "Kategorien sortieren",
+    "form.prefs.label.mark_read_on_view": "Einträge automatisch als gelesen markieren, wenn sie angezeigt werden",
     "form.import.label.file": "OPML Datei",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API aktivieren",
@@ -363,6 +365,7 @@
     "form.integration.linkding_endpoint": "Linkding API-Endpunkt",
     "form.integration.linkding_api_key": "Linkding API-Schlüssel",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Lesezeichen als ungelesen markieren",
     "form.integration.matrix_bot_activate": "Neue Artikel in die Matrix übertragen",
     "form.integration.matrix_bot_user": "Benutzername für Matrix",
     "form.integration.matrix_bot_password": "Passwort für Matrix-Benutzer",

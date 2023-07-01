@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package date // import "miniflux.app/reader/date"
 
@@ -180,11 +179,30 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"mar., 01 déc. 2020 16:11:02 +0000",
 		"Thurs, 15 Oct 2020 00:00:39 +0000",
 		"Thur, 19 Nov 2020 00:00:39 +0000",
+		"26 Sep 2022 GMT",
+		"Thu, June 22, 2023 at 01:11 PM EDT",
+		"Apr 16, 2023 08:01 GMT",
+		"Jun 23, 2023 19:00 GMT",
+		"09/15/2014 4:20 pm PST",
+		"Fri, 23rd Jun 2023 09:32:20 GMT",
 	}
 
 	for _, date := range dates {
 		if _, err := Parse(date); err != nil {
 			t.Errorf(`Unable to parse date: %q`, date)
 		}
+	}
+}
+
+func TestParseDateWithTimezoneOutOfRange(t *testing.T) {
+	date, err := Parse("2023-05-29 00:00:00-23:00")
+
+	if err != nil {
+		t.Errorf(`Unable to parse date: %v`, err)
+	}
+
+	_, offset := date.Zone()
+	if offset != 0 {
+		t.Errorf(`The offset should be reinitialized to 0 instead of %v because it's out of range`, offset)
 	}
 }

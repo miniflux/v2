@@ -81,6 +81,7 @@
         "%d λεπτό ανάγνωση",
         "%d λεπτά ανάγνωση"
     ],
+    "entry.tags.label": "Ετικέτες:",
     "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
     "page.unread.title": "Μη αναγνωσμένα",
     "page.starred.title": "Αγαπημένo",
@@ -321,6 +322,7 @@
     "form.prefs.label.entry_order": "Στήλη ταξινόμησης εισόδου",
     "form.prefs.label.default_home_page": "Προεπιλεγμένη αρχική σελίδα",
     "form.prefs.label.categories_sorting_order": "Ταξινόμηση κατηγοριών",
+    "form.prefs.label.mark_read_on_view": "Αυτόματη επισήμανση καταχωρήσεων ως αναγνωσμένων κατά την προβολή",
     "form.import.label.file": "Αρχείο OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Ενεργοποιήστε το Fever API",
@@ -363,6 +365,7 @@
     "form.integration.linkding_endpoint": "Τελικό σημείο Linkding API",
     "form.integration.linkding_api_key": "Κλειδί API Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Σημείωση του σελιδοδείκτη ως μη αναγνωσμένου",
     "form.integration.matrix_bot_activate": "Μεταφορά νέων άρθρων στο Matrix",
     "form.integration.matrix_bot_user": "Όνομα χρήστη για το Matrix",
     "form.integration.matrix_bot_password": "Κωδικός πρόσβασης για τον χρήστη Matrix",
