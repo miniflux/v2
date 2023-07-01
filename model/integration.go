@@ -30,6 +30,10 @@ type Integration struct {
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
+	NotionEnabled        bool
+	NotionURL            string
+	NotionToken          string
+	NotionPageID         string
 	EspialEnabled        bool
 	EspialURL            string
 	EspialAPIKey         string

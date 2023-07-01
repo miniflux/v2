@@ -10,6 +10,7 @@ import (
 	"miniflux.app/integration/instapaper"
 	"miniflux.app/integration/linkding"
 	"miniflux.app/integration/matrixbot"
+	"miniflux.app/integration/notion"
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
@@ -59,6 +60,19 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		)
 
 		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.NotionEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Notion", entry.ID, entry.URL, integration.UserID)
+
+		client := notion.NewClient(
+			integration.NotionURL,
+			integration.NotionToken,
+			integration.NotionPageID,
+		)
+		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}

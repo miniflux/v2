@@ -32,6 +32,10 @@ type IntegrationForm struct {
 	WallabagClientSecret string
 	WallabagUsername     string
 	WallabagPassword     string
+	NotionEnabled        bool
+	NotionURL            string
+	NotionPageID         string
+	NotionToken          string
 	NunuxKeeperEnabled   bool
 	NunuxKeeperURL       string
 	NunuxKeeperAPIKey    string
@@ -76,6 +80,10 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.WallabagClientSecret = i.WallabagClientSecret
 	integration.WallabagUsername = i.WallabagUsername
 	integration.WallabagPassword = i.WallabagPassword
+	integration.NotionEnabled = i.NotionEnabled
+	integration.NotionPageID = i.NotionPageID
+	integration.NotionToken = i.NotionToken
+	integration.NotionURL = i.NotionURL
 	integration.NunuxKeeperEnabled = i.NunuxKeeperEnabled
 	integration.NunuxKeeperURL = i.NunuxKeeperURL
 	integration.NunuxKeeperAPIKey = i.NunuxKeeperAPIKey
@@ -123,6 +131,10 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		WallabagClientSecret: r.FormValue("wallabag_client_secret"),
 		WallabagUsername:     r.FormValue("wallabag_username"),
 		WallabagPassword:     r.FormValue("wallabag_password"),
+		NotionEnabled:        r.FormValue("notion_enabled") == "1",
+		NotionPageID:         r.FormValue("notion_page_id"),
+		NotionToken:          r.FormValue("notion_token"),
+		NotionURL:            r.FormValue("notion_url"),
 		NunuxKeeperEnabled:   r.FormValue("nunux_keeper_enabled") == "1",
 		NunuxKeeperURL:       r.FormValue("nunux_keeper_url"),
 		NunuxKeeperAPIKey:    r.FormValue("nunux_keeper_api_key"),
