@@ -4,20 +4,14 @@ class ModalHandler {
     }
 
     static getModalContainer() {
-        let container = document.getElementById("modal-container");
-
-        if (container === undefined) {
-            return;
-        }
-
-        return container;
+        return document.getElementById("modal-container");
     }
 
     static getFocusableElements() {
         let container = this.getModalContainer();
 
-        if (container === undefined) {
-            return;
+        if (container === null) {
+            return null;
         }
 
         return container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
@@ -26,7 +20,7 @@ class ModalHandler {
     static setupFocusTrap() {
         let focusableElements = this.getFocusableElements();
 
-        if (focusableElements === undefined) {
+        if (focusableElements === null) {
             return;
         }
 
@@ -81,10 +75,15 @@ class ModalHandler {
         if (initialFocusElementId !== undefined) {
             initialFocusElement = document.getElementById(initialFocusElementId);
         } else {
-            initialFocusElement = this.getFocusableElements()[0];
+            let focusableElements = this.getFocusableElements();
+            if (focusableElements !== null) {
+                initialFocusElement = focusableElements[0];
+            }
         }
 
-        initialFocusElement.focus();
+        if (initialFocusElement !== undefined) {
+            initialFocusElement.focus();
+        }
 
         this.setupFocusTrap();
     }
@@ -95,7 +94,7 @@ class ModalHandler {
             container.parentNode.removeChild(container);
         }
 
-        if (this.activeElement !== undefined) {
+        if (this.activeElement !== undefined && this.activeElement !== null) {
             this.activeElement.focus();
         }
     }
