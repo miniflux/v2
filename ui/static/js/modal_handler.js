@@ -53,7 +53,7 @@ class ModalHandler {
                 firstFocusableElement.focus();
                 e.preventDefault();
             }
-        }
+        };
     }
 
     static open(fragment, initialFocusElementId) {
