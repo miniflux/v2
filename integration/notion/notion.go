@@ -24,7 +24,7 @@ func (c *Client) AddEntry(entryURL string, entryTitle string) error {
 	if c.token == "" || c.pageID == "" {
 		return fmt.Errorf("notion: missing credentials")
 	}
-	clt := client.New("https://api.notion.com" + "/v1/blocks/" + c.pageID + "/children")
+	clt := client.New("https://api.notion.com/v1/blocks/" + c.pageID + "/children")
 	block := &Data{
 		Children: []Block{
 			{
