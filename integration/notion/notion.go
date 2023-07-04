@@ -16,8 +16,8 @@ type Client struct {
 }
 
 // NewClient returns a new Notion client.
-func NewClient(baseURL, token string) *Client {
-	return &Client{baseURL, token}
+func NewClient(token, pageID string) *Client {
+	return &Client{token, pageID}
 }
 
 func (c *Client) AddEntry(entryURL string, entryTitle string) error {
