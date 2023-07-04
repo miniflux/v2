@@ -352,7 +352,6 @@
     "form.integration.wallabag_username": "Nom d'utilisateur de Wallabag",
     "form.integration.wallabag_password": "Mot de passe de Wallabag",
     "form.integration.notion_activate": "Sauvegarder les articles vers Notion",
-    "form.integration.notion_endpoint": "URL de l'API de Notion",
     "form.integration.notion_page_id": "l'identifiant de la page Notion",
     "form.integration.notion_token": "Jeton d'accès de l'API de Notion",
     "form.integration.nunux_keeper_activate": "Sauvegarder les articles vers Nunux Keeper",

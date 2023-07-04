@@ -358,10 +358,9 @@ func (c *Client) buildHeaders() http.Header {
 	if c.requestCookie != "" {
 		headers.Add("Cookie", c.requestCookie)
 	}
-	if len(c.customHeaders) != 0 {
-		for key, value := range c.customHeaders {
-			headers.Add(key, value)
-		}
+
+	for key, value := range c.customHeaders {
+		headers.Add(key, value)
 	}
 
 	headers.Add("Connection", "close")

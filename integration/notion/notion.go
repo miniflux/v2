@@ -1,34 +1,30 @@
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package notion
 
 import (
 	"fmt"
-	"net/url"
 
 	"miniflux.app/http/client"
 )
 
 // Client represents a Notion client.
 type Client struct {
-	baseURL string
-	token   string
-	pageID  string
+	token  string
+	pageID string
 }
 
 // NewClient returns a new Notion client.
-func NewClient(baseURL, token string, pageID string) *Client {
-	return &Client{baseURL, token, pageID}
+func NewClient(baseURL, token string) *Client {
+	return &Client{baseURL, token}
 }
 
 func (c *Client) AddEntry(entryURL string, entryTitle string) error {
-	if c.baseURL == "" || c.token == "" || c.pageID == "" {
+	if c.token == "" || c.pageID == "" {
 		return fmt.Errorf("notion: missing credentials")
 	}
-	endpoint, err := getAPIEndpoint(c.baseURL, "/v1/blocks/"+c.pageID+"/children")
-	if err != nil {
-		return fmt.Errorf("notion: unable to get token endpoint: %v", err)
-	}
-
-	clt := client.New(endpoint)
+	clt := client.New("https://api.notion.com" + "/v1/blocks/" + c.pageID + "/children")
 	block := &Data{
 		Children: []Block{
 			{
@@ -48,7 +44,7 @@ func (c *Client) AddEntry(entryURL string, entryTitle string) error {
 	clt.WithCustomHeaders(customHeaders)
 	response, error := clt.PatchJSON(block)
 	if error != nil {
-		return fmt.Errorf("notion: unable to post entry: %v", err)
+		return fmt.Errorf("notion: unable to patch entry: %v", error)
 	}
 
 	if response.HasServerFailure() {
@@ -56,13 +52,4 @@ func (c *Client) AddEntry(entryURL string, entryTitle string) error {
 	}
 	return nil
 
-}
-
-func getAPIEndpoint(baseURL, path string) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("notion: invalid API endpoint: %v", err)
-	}
-	u.Path = path
-	return u.String(), nil
 }

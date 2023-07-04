@@ -352,7 +352,6 @@
     "form.integration.wallabag_username": "Wallabag Username",
     "form.integration.wallabag_password": "Wallabag Password",
     "form.integration.notion_activate": "Save entries to Notion",
-    "form.integration.notion_endpoint": "Notion API Endpoint",
     "form.integration.notion_page_id": "Notion Page ID",
     "form.integration.notion_token": "Notion Secret Token",
     "form.integration.nunux_keeper_activate": "Save entries to Nunux Keeper",

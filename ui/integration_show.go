@@ -49,7 +49,6 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		NotionEnabled:        integration.NotionEnabled,
 		NotionPageID:         integration.NotionPageID,
 		NotionToken:          integration.NotionToken,
-		NotionURL:            integration.NotionURL,
 		NunuxKeeperEnabled:   integration.NunuxKeeperEnabled,
 		NunuxKeeperURL:       integration.NunuxKeeperURL,
 		NunuxKeeperAPIKey:    integration.NunuxKeeperAPIKey,

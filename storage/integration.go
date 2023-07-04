@@ -133,7 +133,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			notion_enabled,
 			notion_token,
 			notion_page_id,
-			notion_url,
 			nunux_keeper_enabled,
 			nunux_keeper_url,
 			nunux_keeper_api_key,
@@ -188,7 +187,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.NotionEnabled,
 		&integration.NotionToken,
 		&integration.NotionPageID,
-		&integration.NotionURL,
 		&integration.NunuxKeeperEnabled,
 		&integration.NunuxKeeperURL,
 		&integration.NunuxKeeperAPIKey,
@@ -280,8 +278,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			matrix_bot_chat_id=$43,
 			notion_enabled=$45,
 			notion_token=$46,
-			notion_page_id=$47,
-			notion_url=$48
+			notion_page_id=$47
 		WHERE
 			user_id=$44
 	`
@@ -333,7 +330,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.NotionEnabled,
 			integration.NotionToken,
 			integration.NotionPageID,
-			integration.NotionURL,
 			integration.UserID,
 		)
 	} else {
@@ -386,8 +382,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		matrix_bot_chat_id=$43,
 		notion_enabled=$45,
 		notion_token=$46,
-		notion_page_id=$47,
-		notion_url=$48
+		notion_page_id=$47
 	WHERE
 		user_id=$44
 	`
@@ -440,7 +435,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.NotionEnabled,
 			integration.NotionToken,
 			integration.NotionPageID,
-			integration.NotionURL,
 		)
 	}
 

@@ -148,9 +148,6 @@
             <input type="checkbox" name="notion_enabled" value="1" {{ if .form.NotionEnabled }}checked{{ end }}> {{ t "form.integration.notion_activate" }}
         </label>
 
-        <label for="form-notion-url">{{ t "form.integration.notion_endpoint" }}</label>
-        <input type="url" name="notion_url" id="form-notion-url" value="{{ .form.NotionURL }}" placeholder="https://api.notion.com/" spellcheck="false">
-
         <label for="form-notion-token">{{ t "form.integration.notion_token" }}</label>
         <input type="password" name="notion_token" id="form-notion-token" value="{{ .form.NotionToken }}" spellcheck="false">
 

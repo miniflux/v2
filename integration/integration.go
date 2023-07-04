@@ -67,7 +67,6 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Notion", entry.ID, entry.URL, integration.UserID)
 
 		client := notion.NewClient(
-			integration.NotionURL,
 			integration.NotionToken,
 			integration.NotionPageID,
 		)
