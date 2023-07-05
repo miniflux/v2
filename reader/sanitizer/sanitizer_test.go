@@ -3,7 +3,18 @@
 
 package sanitizer // import "miniflux.app/reader/sanitizer"
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"miniflux.app/config"
+)
+
+func TestMain(m *testing.M) {
+	config.Opts = config.NewOptions()
+	exitCode := m.Run()
+	os.Exit(exitCode)
+}
 
 func TestValidInput(t *testing.T) {
 	input := `<p>This is a <strong>text</strong> with an image: <img src="http://example.org/" alt="Test" loading="lazy">.</p>`
@@ -533,6 +544,27 @@ func TestReplaceYoutubeURLAlreadyReplaced(t *testing.T) {
 func TestReplaceProtocolRelativeYoutubeURL(t *testing.T) {
 	input := `<iframe src="//www.youtube.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen"></iframe>`
 	expected := `<iframe src="https://www.youtube-nocookie.com/embed/Bf2W84jrGqs" width="560" height="314" allowfullscreen="allowfullscreen" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy"></iframe>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
+func TestReplaceYoutubeURLWithCustomURL(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	input := `<iframe src="https://www.youtube.com/embed/test123?version=3&#038;rel=1&#038;fs=1&#038;autohide=2&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;wmode=transparent"></iframe>`
+	expected := `<iframe src="https://invidious.custom/embed/test123?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {

@@ -215,6 +215,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.metricsPassword = readSecretFile(value, defaultMetricsPassword)
 		case "FETCH_YOUTUBE_WATCH_TIME":
 			p.opts.fetchYouTubeWatchTime = parseBool(value, defaultFetchYouTubeWatchTime)
+		case "YOUTUBE_EMBED_URL_OVERRIDE":
+			p.opts.youTubeEmbedUrlOverride = parseString(value, defaultYouTubeEmbedUrlOverride)
 		case "WATCHDOG":
 			p.opts.watchdog = parseBool(value, defaultWatchdog)
 		case "INVIDIOUS_INSTANCE":

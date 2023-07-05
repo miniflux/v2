@@ -4,10 +4,12 @@
 package rewrite // import "miniflux.app/reader/rewrite"
 
 import (
+	"os"
 	"reflect"
 	"strings"
 	"testing"
 
+	"miniflux.app/config"
 	"miniflux.app/model"
 )
 
@@ -63,9 +65,38 @@ func TestRewriteWithNoMatchingRule(t *testing.T) {
 }
 
 func TestRewriteWithYoutubeLink(t *testing.T) {
+	config.Opts = config.NewOptions()
+
 	controlEntry := &model.Entry{
 		Title:   `A title`,
 		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><br>Video Description`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	Rewriter("https://www.youtube.com/watch?v=1234", testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteWithYoutubeLinkAndCustomEmbedURL(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/1234" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
 		Title:   `A title`,
