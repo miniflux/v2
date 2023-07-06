@@ -1,0 +1,23 @@
+{
+  "name": "Miniflux",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "vscode",
+  "forwardPorts": [
+    8080
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "go.toolsManagement.checkForUpdates": "local",
+        "go.useLanguageServer": true,
+        "go.gopath": "/go"
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "golang.go"
+      ]
+    }
+  }
+}

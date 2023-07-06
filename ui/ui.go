@@ -83,7 +83,9 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/category/create", handler.showCreateCategoryPage).Name("createCategory").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/category/save", handler.saveCategory).Name("saveCategory").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/category/{categoryID}/feeds", handler.showCategoryFeedsPage).Name("categoryFeeds").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/category/{categoryID}/feeds/refresh", handler.refreshCategoryFeedsPage).Name("refreshCategoryFeedsPage").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/category/{categoryID}/entries", handler.showCategoryEntriesPage).Name("categoryEntries").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/category/{categoryID}/entries/refresh", handler.refreshCategoryEntriesPage).Name("refreshCategoryEntriesPage").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/category/{categoryID}/entries/all", handler.showCategoryEntriesAllPage).Name("categoryEntriesAll").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/category/{categoryID}/edit", handler.showEditCategoryPage).Name("editCategory").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/category/{categoryID}/update", handler.updateCategory).Name("updateCategory").Methods(http.MethodPost)
@@ -94,7 +96,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/entry/status", handler.updateEntriesStatus).Name("updateEntriesStatus").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/entry/save/{entryID}", handler.saveEntry).Name("saveEntry").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/entry/download/{entryID}", handler.fetchContent).Name("fetchContent").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", handler.imageProxy).Name("proxy").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", handler.mediaProxy).Name("proxy").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/entry/bookmark/{entryID}", handler.toggleBookmark).Name("toggleBookmark").Methods(http.MethodPost)
 
 	// Share pages.

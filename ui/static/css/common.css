@@ -122,6 +122,7 @@ a:hover {
 .page-footer li {
     list-style-type: none;
     line-height: 1.8em;
+    white-space: nowrap;
 }
 
 .page-header ul a .icon {
@@ -404,6 +405,10 @@ textarea:focus {
 input::placeholder {
     color: var(--input-placeholder-color);
     padding-top: 2px;
+}
+
+.form-label-row {
+    display: flex;
 }
 
 .form-help {
@@ -756,7 +761,7 @@ template {
     display: none;
 }
 
-.touch-item {
+.entry-swipe {
     transition-property: transform;
     transition-duration: 0s;
     transition-timing-function: ease-out;
@@ -815,6 +820,7 @@ article.category-has-unread {
     font-size: 2.0em;
     line-height: 1.25em;
     margin: 5px 0 30px 0;
+    overflow-wrap: break-word;
 }
 
 .entry header h1 a {
@@ -877,6 +883,7 @@ article.category-has-unread {
     color: var(--entry-content-color);
     line-height: 1.4em;
     overflow-wrap: break-word;
+    touch-action: pan-y pinch-zoom;
 }
 
 .entry-content h1, h2, h3, h4, h5, h6 {
@@ -1073,10 +1080,6 @@ details.entry-enclosures {
     font-weight: 600;
     text-decoration: none;
     font-size: 1.2em;
-}
-
-.rules-entry {
-    display: flex;
 }
 
 .disabled {

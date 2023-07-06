@@ -633,4 +633,24 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN double_tap boolean default 't'`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE entries ADD COLUMN tags text[] default '{}';
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE users RENAME double_tap TO gesture_nav;
+			ALTER TABLE users ALTER COLUMN gesture_nav SET DATA TYPE text using case when gesture_nav = true then 'tap' when gesture_nav = false then 'none' end;
+			ALTER TABLE users ALTER COLUMN gesture_nav SET default 'tap';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

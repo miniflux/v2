@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   traefik:
     image: "traefik:v2.3"
@@ -21,7 +20,8 @@ services:
     image: ${MINIFLUX_IMAGE:-miniflux/miniflux:latest}
     container_name: miniflux
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     expose:
       - "8080"
     environment:

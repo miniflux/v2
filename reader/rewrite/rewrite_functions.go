@@ -335,3 +335,35 @@ func parseMarkdown(entryContent string) string {
 
 	return sb.String()
 }
+
+func removeTables(entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	selectors := []string{"table", "tbody", "thead", "td", "th", "td"}
+
+	var loopElement *goquery.Selection
+
+	for _, selector := range selectors {
+		for {
+			loopElement = doc.Find(selector).First()
+
+			if loopElement.Length() == 0 {
+				break
+			}
+
+			innerHtml, err := loopElement.Html()
+			if err != nil {
+				break
+			}
+
+			loopElement.Parent().AppendHtml(innerHtml)
+			loopElement.Remove()
+		}
+	}
+
+	output, _ := doc.Find("body").First().Html()
+	return output
+}

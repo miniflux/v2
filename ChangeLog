@@ -1,3 +1,71 @@
+Version 2.0.43 (March 16, 2023)
+-------------------------------
+
+* Avoid XSS when opening a broken image due to unescaped ServerError in proxy handler (CVE-2023-27592)
+    
+    Creating an RSS feed item with the inline description containing an `<img>` tag
+    with a `srcset` attribute pointing to an invalid URL like
+    `http:a<script>alert(1)</script>`, we can coerce the proxy handler into an error
+    condition where the invalid URL is returned unescaped and in full.
+    
+    This results in JavaScript execution on the Miniflux instance as soon as the
+    user is convinced to open the broken image.
+
+* Use `r.RemoteAddr` to check `/metrics` endpoint network access (CVE-2023-27591)
+    
+    HTTP headers like `X-Forwarded-For` or `X-Real-Ip` can be easily spoofed. As
+    such, it cannot be used to test if the client IP is allowed.
+    
+    The recommendation is to use HTTP Basic authentication to protect the
+    metrics endpoint, or run Miniflux behind a trusted reverse-proxy.
+
+* Add HTTP Basic authentication for `/metrics` endpoint
+* Add proxy support for several media types
+* Parse feed categories from RSS, Atom and JSON feeds
+* Ignore empty link when discovering feeds
+* Disable CGO explicitly to make sure the binary is statically linked
+* Add CSS classes to differentiate between category/feed/entry view and icons
+* Add rewrite and scraper rules for `blog.cloudflare.com`
+* Add `color-scheme` to themes
+* Add new keyboard shortcut to toggle open/close entry attachments section
+* Sanitizer: allow `id` attribute in `<sup>` element
+* Add Indonesian Language
+* Update translations
+* Update Docker Compose examples:
+    - Run the application in one command
+    - Bring back the health check condition to `depends_on`
+    - Remove deprecated `version` element
+* Update scraping rules for `ilpost.it`
+* Bump `github.com/PuerkitoBio/goquery` from `1.8.0` to `1.8.1`
+* Bump `github.com/tdewolff/minify/v2` from `2.12.4` to `2.12.5`
+* Bump `github.com/yuin/goldmark` from `1.5.3` to `1.5.4`
+* Bump `golang.org/x/*` dependencies
+
+Version 2.0.42 (January 29, 2023)
+---------------------------------
+
+* Fix header items wrapping
+* Add option to enable or disable double tap
+* Improve PWA display mode label in settings page
+* Bump `golang.org/x/*` dependencies
+* Update translations
+* Add scraping rule for `ilpost.it`
+* Update reading time HTML element after fetching the original web page
+* Add category feeds refresh feature
+
+Version 2.0.41 (December 10, 2022)
+----------------------------------
+
+* Reverted PR #1290 (follow the only link) because it leads to several panics/segfaults that prevent feed updates
+* Disable double-tap mobile gesture if swipe gesture is disabled
+* Skip integrations if there are no entries to push
+* Enable TLS-ALPN-01 challenge for ACME
+    - This type of challenge works purely at the TLS layer and is compatible
+    with SNI proxies. The existing HTTP-01 challenge support has been left
+    as-is.
+* Preconfigure Miniflux for GitHub Codespaces
+* Updated `golang.org/x/net/*` dependencies
+
 Version 2.0.40 (November 13, 2022)
 ----------------------------------
 

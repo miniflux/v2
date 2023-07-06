@@ -36,6 +36,9 @@
         <li>
             <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
         </li>
+        <li>
+            <a href="{{ route "refreshCategoryEntriesPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+        </li>
     </ul>
 </section>
 
@@ -47,7 +50,7 @@
     </div>
     <div class="items">
         {{ range .entries }}
-        <article role="article" class="item {{ if $.user.EntrySwipe }}touch-item{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
             <div class="item-header" dir="auto">
                 <span class="item-title">
                     {{ if ne .Feed.Icon.IconID 0 }}

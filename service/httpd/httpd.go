@@ -26,6 +26,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -36,9 +37,9 @@ func Serve(store *storage.Storage, pool *worker.Pool) *http.Server {
 	certDomain := config.Opts.CertDomain()
 	listenAddr := config.Opts.ListenAddr()
 	server := &http.Server{
-		ReadTimeout:  300 * time.Second,
-		WriteTimeout: 300 * time.Second,
-		IdleTimeout:  300 * time.Second,
+		ReadTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
+		WriteTimeout: time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
+		IdleTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
 		Handler:      setupHandler(store, pool),
 	}
 
@@ -128,6 +129,7 @@ func startAutoCertTLSServer(server *http.Server, certDomain string, store *stora
 	}
 	server.TLSConfig = tlsConfig()
 	server.TLSConfig.GetCertificate = certManager.GetCertificate
+	server.TLSConfig.NextProtos = []string{"h2", "http/1.1", acme.ALPNProto}
 
 	// Handle http-01 challenge.
 	s := &http.Server{
@@ -206,7 +208,7 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 
 				// Returns a 404 if the client is not authorized to access the metrics endpoint.
 				if route.GetName() == "metrics" && !isAllowedToAccessMetricsEndpoint(r) {
-					logger.Error(`[Metrics] Client not allowed: %s`, request.ClientIP(r))
+					logger.Error(`[Metrics] [ClientIP=%s] Client not allowed (%s)`, request.ClientIP(r), r.RemoteAddr)
 					http.NotFound(w, r)
 					return
 				}
@@ -220,7 +222,24 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 }
 
 func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
-	clientIP := net.ParseIP(request.ClientIP(r))
+	if config.Opts.MetricsUsername() != "" && config.Opts.MetricsPassword() != "" {
+		clientIP := request.ClientIP(r)
+		username, password, authOK := r.BasicAuth()
+		if !authOK {
+			logger.Info("[Metrics] [ClientIP=%s] No authentication header sent", clientIP)
+			return false
+		}
+
+		if username == "" || password == "" {
+			logger.Info("[Metrics] [ClientIP=%s] Empty username or password", clientIP)
+			return false
+		}
+
+		if username != config.Opts.MetricsUsername() || password != config.Opts.MetricsPassword() {
+			logger.Error("[Metrics] [ClientIP=%s] Invalid username or password", clientIP)
+			return false
+		}
+	}
 
 	for _, cidr := range config.Opts.MetricsAllowedNetworks() {
 		_, network, err := net.ParseCIDR(cidr)
@@ -228,7 +247,9 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 			logger.Fatal(`[Metrics] Unable to parse CIDR %v`, err)
 		}
 
-		if network.Contains(clientIP) {
+		// We use r.RemoteAddr in this case because HTTP headers like X-Forwarded-For can be easily spoofed.
+		// The recommendation is to use HTTP Basic authentication.
+		if network.Contains(net.ParseIP(request.FindRemoteIP(r))) {
 			return true
 		}
 	}

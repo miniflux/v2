@@ -1426,3 +1426,69 @@ func TestEntryDescriptionFromGooglePlayDescription(t *testing.T) {
 		t.Errorf(`Unexpected podcast content, got %q instead of %q`, result, expected)
 	}
 }
+
+func TestParseEntryWithCategoryAndInnerHTML(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<category>Category 1</category>
+				<category>Category 2</category>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 2 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := "Category 2"
+	result := feed.Entries[0].Tags[1]
+	if result != expected {
+		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	}
+}
+
+func TestParseEntryWithCategoryAndCDATA(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<author>
+					by <![CDATA[Foo Bar]]>
+				</author>
+				<category>Sample Category</category>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 1 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := "Sample Category"
+	result := feed.Entries[0].Tags[0]
+	if result != expected {
+		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	}
+}

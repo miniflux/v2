@@ -46,8 +46,10 @@ const (
 	defaultCleanupArchiveUnreadDays           = 180
 	defaultCleanupArchiveBatchSize            = 10000
 	defaultCleanupRemoveSessionsDays          = 30
-	defaultProxyImages                        = "http-only"
-	defaultProxyImageUrl                      = ""
+	defaultProxyHTTPClientTimeout             = 120
+	defaultProxyOption                        = "http-only"
+	defaultProxyMediaTypes                    = "image"
+	defaultProxyUrl                           = ""
 	defaultFetchYouTubeWatchTime              = false
 	defaultCreateAdmin                        = false
 	defaultAdminUsername                      = ""
@@ -62,6 +64,7 @@ const (
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
 	defaultHTTPClientProxy                    = ""
+	defaultHTTPServerTimeout                  = 300
 	defaultAuthProxyHeader                    = ""
 	defaultAuthProxyUserCreation              = false
 	defaultMaintenanceMode                    = false
@@ -69,6 +72,8 @@ const (
 	defaultMetricsCollector                   = false
 	defaultMetricsRefreshInterval             = 60
 	defaultMetricsAllowedNetworks             = "127.0.0.1/8"
+	defaultMetricsUsername                    = ""
+	defaultMetricsPassword                    = ""
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 )
@@ -117,8 +122,10 @@ type Options struct {
 	createAdmin                        bool
 	adminUsername                      string
 	adminPassword                      string
-	proxyImages                        string
-	proxyImageUrl                      string
+	proxyHTTPClientTimeout             int
+	proxyOption                        string
+	proxyMediaTypes                    []string
+	proxyUrl                           string
 	fetchYouTubeWatchTime              bool
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
@@ -131,6 +138,7 @@ type Options struct {
 	httpClientMaxBodySize              int64
 	httpClientProxy                    string
 	httpClientUserAgent                string
+	httpServerTimeout                  int
 	authProxyHeader                    string
 	authProxyUserCreation              bool
 	maintenanceMode                    bool
@@ -138,6 +146,8 @@ type Options struct {
 	metricsCollector                   bool
 	metricsRefreshInterval             int
 	metricsAllowedNetworks             []string
+	metricsUsername                    string
+	metricsPassword                    string
 	watchdog                           bool
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
@@ -181,8 +191,10 @@ func NewOptions() *Options {
 		pollingParsingErrorLimit:           defaultPollingParsingErrorLimit,
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
-		proxyImages:                        defaultProxyImages,
-		proxyImageUrl:                      defaultProxyImageUrl,
+		proxyHTTPClientTimeout:             defaultProxyHTTPClientTimeout,
+		proxyOption:                        defaultProxyOption,
+		proxyMediaTypes:                    []string{defaultProxyMediaTypes},
+		proxyUrl:                           defaultProxyUrl,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		oauth2UserCreationAllowed:          defaultOAuth2UserCreation,
 		oauth2ClientID:                     defaultOAuth2ClientID,
@@ -195,6 +207,7 @@ func NewOptions() *Options {
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
 		httpClientProxy:                    defaultHTTPClientProxy,
 		httpClientUserAgent:                defaultHTTPClientUserAgent,
+		httpServerTimeout:                  defaultHTTPServerTimeout,
 		authProxyHeader:                    defaultAuthProxyHeader,
 		authProxyUserCreation:              defaultAuthProxyUserCreation,
 		maintenanceMode:                    defaultMaintenanceMode,
@@ -202,6 +215,8 @@ func NewOptions() *Options {
 		metricsCollector:                   defaultMetricsCollector,
 		metricsRefreshInterval:             defaultMetricsRefreshInterval,
 		metricsAllowedNetworks:             []string{defaultMetricsAllowedNetworks},
+		metricsUsername:                    defaultMetricsUsername,
+		metricsPassword:                    defaultMetricsPassword,
 		watchdog:                           defaultWatchdog,
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    randomKey,
@@ -414,14 +429,24 @@ func (o *Options) FetchYouTubeWatchTime() bool {
 	return o.fetchYouTubeWatchTime
 }
 
-// ProxyImages returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
-func (o *Options) ProxyImages() string {
-	return o.proxyImages
+// ProxyOption returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
+func (o *Options) ProxyOption() string {
+	return o.proxyOption
 }
 
-// ProxyImageUrl returns a string of a URL to use to proxy image requests
-func (o *Options) ProxyImageUrl() string {
-	return o.proxyImageUrl
+// ProxyMediaTypes returns a slice of media types to proxy.
+func (o *Options) ProxyMediaTypes() []string {
+	return o.proxyMediaTypes
+}
+
+// ProxyUrl returns a string of a URL to use to proxy image requests
+func (o *Options) ProxyUrl() string {
+	return o.proxyUrl
+}
+
+// ProxyHTTPClientTimeout returns the time limit in seconds before the proxy HTTP client cancel the request.
+func (o *Options) ProxyHTTPClientTimeout() int {
+	return o.proxyHTTPClientTimeout
 }
 
 // HasHTTPService returns true if the HTTP service is enabled.
@@ -457,6 +482,11 @@ func (o *Options) HTTPClientProxy() string {
 	return o.httpClientProxy
 }
 
+// HTTPServerTimeout returns the time limit in seconds before the HTTP server cancel the request.
+func (o *Options) HTTPServerTimeout() int {
+	return o.httpServerTimeout
+}
+
 // HasHTTPClientProxyConfigured returns true if the HTTP proxy is configured.
 func (o *Options) HasHTTPClientProxyConfigured() bool {
 	return o.httpClientProxy != ""
@@ -487,6 +517,14 @@ func (o *Options) MetricsRefreshInterval() int {
 // MetricsAllowedNetworks returns the list of networks allowed to connect to the metrics endpoint.
 func (o *Options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
+}
+
+func (o *Options) MetricsUsername() string {
+	return o.metricsUsername
+}
+
+func (o *Options) MetricsPassword() string {
+	return o.metricsPassword
 }
 
 // HTTPClientUserAgent returns the global User-Agent header for miniflux.
@@ -541,6 +579,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"HTTP_CLIENT_PROXY":                      o.httpClientProxy,
 		"HTTP_CLIENT_TIMEOUT":                    o.httpClientTimeout,
 		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
+		"HTTP_SERVER_TIMEOUT":                    o.httpServerTimeout,
 		"HTTP_SERVICE":                           o.httpService,
 		"KEY_FILE":                               o.certKeyFile,
 		"INVIDIOUS_INSTANCE":                     o.invidiousInstance,
@@ -551,6 +590,8 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"METRICS_ALLOWED_NETWORKS":               strings.Join(o.metricsAllowedNetworks, ","),
 		"METRICS_COLLECTOR":                      o.metricsCollector,
 		"METRICS_REFRESH_INTERVAL":               o.metricsRefreshInterval,
+		"METRICS_USERNAME":                       o.metricsUsername,
+		"METRICS_PASSWORD":                       redactSecretValue(o.metricsPassword, redactSecret),
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),
 		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,
@@ -561,9 +602,11 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"POLLING_FREQUENCY":                      o.pollingFrequency,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
-		"PROXY_IMAGES":                           o.proxyImages,
-		"PROXY_IMAGE_URL":                        o.proxyImageUrl,
+		"PROXY_HTTP_CLIENT_TIMEOUT":              o.proxyHTTPClientTimeout,
 		"PROXY_PRIVATE_KEY":                      redactSecretValue(string(o.proxyPrivateKey), redactSecret),
+		"PROXY_MEDIA_TYPES":                      o.proxyMediaTypes,
+		"PROXY_OPTION":                           o.proxyOption,
+		"PROXY_URL":                              o.proxyUrl,
 		"ROOT_URL":                               o.rootURL,
 		"RUN_MIGRATIONS":                         o.runMigrations,
 		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
@@ -599,7 +642,7 @@ func (o *Options) String() string {
 
 func redactSecretValue(value string, redactSecret bool) string {
 	if redactSecret && value != "" {
-		return "******"
+		return "<secret>"
 	}
 	return value
 }

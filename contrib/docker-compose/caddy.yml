@@ -1,4 +1,3 @@
-version: '3.4'
 services:
   caddy:
     image: caddy:2
@@ -16,7 +15,8 @@ services:
     image: ${MINIFLUX_IMAGE:-miniflux/miniflux:latest}
     container_name: miniflux
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgres://miniflux:secret@db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1

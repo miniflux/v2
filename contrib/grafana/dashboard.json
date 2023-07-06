@@ -20,7 +20,7 @@
     "panels": [
       {
         "collapsed": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "gridPos": {
           "h": 1,
           "w": 24,
@@ -104,7 +104,7 @@
         "type": "bargauge"
       },
       {
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -289,7 +289,7 @@
         }
       },
       {
-        "datasource": null,
+        "datasource": "Prometheus",
         "description": "",
         "fieldConfig": {
           "defaults": {
@@ -332,7 +332,7 @@
         "pluginVersion": "7.1.5",
         "targets": [
           {
-            "expr": "go_memstats_sys_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_sys_bytes{job=\"miniflux\"}",
             "interval": "",
             "legendFormat": "{{ instance }} - Memory Used",
             "refId": "A"
@@ -348,7 +348,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {}
@@ -440,7 +440,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {}
@@ -529,7 +529,7 @@
       },
       {
         "collapsed": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "gridPos": {
           "h": 1,
           "w": 24,
@@ -546,7 +546,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -590,7 +590,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_memstats_sys_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_sys_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -699,7 +699,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "process_open_fds{app=\"miniflux\"}",
+            "expr": "process_open_fds{job=\"miniflux\"}",
             "interval": "",
             "legendFormat": "{{instance }} - Open File Descriptors",
             "refId": "A"
@@ -748,7 +748,7 @@
       },
       {
         "collapsed": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "gridPos": {
           "h": 1,
           "w": 24,
@@ -816,7 +816,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_memstats_alloc_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_alloc_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -826,7 +826,7 @@
             "step": 4
           },
           {
-            "expr": "rate(go_memstats_alloc_bytes_total{app=\"miniflux\"}[30s])",
+            "expr": "rate(go_memstats_alloc_bytes_total{job=\"miniflux\"}[30s])",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -836,7 +836,7 @@
             "step": 4
           },
           {
-            "expr": "go_memstats_stack_inuse_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_stack_inuse_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -846,7 +846,7 @@
             "step": 4
           },
           {
-            "expr": "go_memstats_heap_inuse_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_heap_inuse_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "hide": false,
             "interval": "",
@@ -904,7 +904,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {}
@@ -945,13 +945,13 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_goroutines{app=\"miniflux\"}",
+            "expr": "go_goroutines{job=\"miniflux\"}",
             "interval": "",
             "legendFormat": "{{ instance }} - Goroutines",
             "refId": "A"
           },
           {
-            "expr": "go_threads{app=\"miniflux\"}",
+            "expr": "go_threads{job=\"miniflux\"}",
             "interval": "",
             "legendFormat": "{{ instance }} - OS threads",
             "refId": "B"
@@ -1003,7 +1003,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -1046,7 +1046,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_memstats_stack_inuse_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_stack_inuse_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1054,7 +1054,7 @@
             "refId": "A"
           },
           {
-            "expr": "go_memstats_stack_sys_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_stack_sys_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1108,7 +1108,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -1150,7 +1150,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_memstats_heap_alloc_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_heap_alloc_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1158,7 +1158,7 @@
             "refId": "B"
           },
           {
-            "expr": "go_memstats_heap_sys_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_heap_sys_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1166,7 +1166,7 @@
             "refId": "A"
           },
           {
-            "expr": "go_memstats_heap_idle_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_heap_idle_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1174,7 +1174,7 @@
             "refId": "C"
           },
           {
-            "expr": "go_memstats_heap_inuse_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_heap_inuse_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1182,7 +1182,7 @@
             "refId": "D"
           },
           {
-            "expr": "go_memstats_heap_released_bytes{app=\"miniflux\"}",
+            "expr": "go_memstats_heap_released_bytes{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,
@@ -1282,7 +1282,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_gc_duration_seconds{app=\"miniflux\"}",
+            "expr": "go_gc_duration_seconds{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1339,7 +1339,7 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": null,
+        "datasource": "Prometheus",
         "fieldConfig": {
           "defaults": {
             "custom": {},
@@ -1383,7 +1383,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "go_memstats_mallocs_total{app=\"miniflux\"} - go_memstats_frees_total{app=\"miniflux\"}",
+            "expr": "go_memstats_mallocs_total{job=\"miniflux\"} - go_memstats_frees_total{job=\"miniflux\"}",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 1,

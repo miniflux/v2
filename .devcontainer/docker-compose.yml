@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/go
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    network_mode: service:db
+    environment:
+      - CREATE_ADMIN=1
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=test123
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    hostname: postgres
+    environment:
+      POSTGRES_DB: miniflux2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 5432:5432
+volumes:
+  postgres-data: null

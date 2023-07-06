@@ -44,7 +44,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 	// array used for bulk push
 	entriesToPush := model.Entries{}
 
-	for _, entry := range feed.Entries {
+	// Process older entries first
+	for i := len(feed.Entries) - 1; i >= 0; i-- {
+		entry := feed.Entries[i]
+
 		logger.Debug("[Processor] Processing entry %q from feed %q", entry.URL, feed.FeedURL)
 
 		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) {
@@ -107,7 +110,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 	intg, err := store.Integration(feed.UserID)
 	if err != nil {
 		logger.Error("[Processor] Get integrations for user %d failed: %v; the refresh process will go on, but no integrations will run this time.", feed.UserID, err)
-	} else if intg != nil {
+	} else if intg != nil && len(entriesToPush) > 0 {
 		go func() {
 			integration.PushEntries(entriesToPush, intg)
 		}()

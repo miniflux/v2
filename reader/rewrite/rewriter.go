@@ -110,6 +110,8 @@ func applyRule(entryURL, entryContent string, rule rule) string {
 		}
 	case "parse_markdown":
 		entryContent = parseMarkdown(entryContent)
+	case "remove_tables":
+		entryContent = removeTables(entryContent)
 	}
 
 	return entryContent

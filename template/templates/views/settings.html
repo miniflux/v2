@@ -43,7 +43,13 @@
     {{ end }}
     </select>
 
-    <label for="form-display-mode">{{ t "form.prefs.label.display_mode" }}</label>
+    <div class="form-label-row">
+        <label for="form-display-mode">{{ t "form.prefs.label.display_mode" }}</label>
+        &nbsp;
+        <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display" target="_blank">
+            {{ icon "external-link" }}
+        </a>
+    </div>
     <select id="form-display-mode" name="display_mode">
         <option value="fullscreen" {{ if eq "fullscreen" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.fullscreen" }}</option>
         <option value="standalone" {{ if eq "standalone" $.form.DisplayMode }}selected="selected"{{ end }}>{{ t "form.prefs.select.standalone" }}</option>
@@ -82,9 +88,16 @@
 
     <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
 
-    <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
-
     <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
+
+    <label for="form-gesture-nav">{{ t "form.prefs.label.gesture_nav" }}</label>
+    <select id="form-gesture-nav" name="gesture_nav">
+        <option value="none" {{ if eq "none" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.none" }}</option>
+        <option value="tap" {{ if eq "tap" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.tap" }}</option>
+        <option value="swipe" {{ if eq "swipe" $.form.GestureNav }}selected="selected"{{ end }}>{{ t "form.prefs.select.swipe" }}</option>
+    </select>
+
+    <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
     <label for="form-cjk-reading-speed">{{ t "form.prefs.label.cjk_reading_speed" }}</label>
     <input type="number" name="cjk_reading_speed" id="form-cjk-reading-speed" value="{{ .form.CJKReadingSpeed }}" min="1">

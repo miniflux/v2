@@ -35,6 +35,12 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboardHandler.on("+", () => goToAddSubscription());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
         keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
+        keyboardHandler.on("a", () => {
+            let enclosureElement = document.querySelector('.entry-enclosures');
+            if (enclosureElement) {
+                enclosureElement.toggleAttribute('open');
+            }
+        });
         keyboardHandler.on("Escape", () => ModalHandler.close());
         keyboardHandler.listen();
     }

@@ -28,6 +28,7 @@ type User struct {
 	KeyboardShortcuts      bool       `json:"keyboard_shortcuts"`
 	ShowReadingTime        bool       `json:"show_reading_time"`
 	EntrySwipe             bool       `json:"entry_swipe"`
+	GestureNav             string     `json:"gesture_nav"`
 	LastLoginAt            *time.Time `json:"last_login_at"`
 	DisplayMode            string     `json:"display_mode"`
 	DefaultReadingSpeed    int        `json:"default_reading_speed"`
@@ -62,6 +63,7 @@ type UserModificationRequest struct {
 	KeyboardShortcuts      *bool   `json:"keyboard_shortcuts"`
 	ShowReadingTime        *bool   `json:"show_reading_time"`
 	EntrySwipe             *bool   `json:"entry_swipe"`
+	GestureNav             *string `json:"gesture_nav"`
 	DisplayMode            *string `json:"display_mode"`
 	DefaultReadingSpeed    *int    `json:"default_reading_speed"`
 	CJKReadingSpeed        *int    `json:"cjk_reading_speed"`
@@ -129,6 +131,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.EntrySwipe != nil {
 		user.EntrySwipe = *u.EntrySwipe
+	}
+
+	if u.GestureNav != nil {
+		user.GestureNav = *u.GestureNav
 	}
 
 	if u.DisplayMode != nil {
