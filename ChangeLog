@@ -1,21 +1,61 @@
+Version 2.0.45 (June 21, 2023)
+------------------------------
+
+* Add media player to listen to audio and video podcasts with the possiblity to resume to last playback position
+* Add default tag names for Linkding integration
+* Mark only globally visible entries when marking all entries from UI
+* Use image included in feed as feed icon when available
+* Order history by `changed_at` and `published_at`
+* Remove title attribute from entry title links
+* Fix reading time that is not aligned correctly with the latest version of Safari
+* Use glyphs of the same size on keyboard shortcuts page
+* Add maskable versions of the PWA icon
+* Replace copyright header with SPDX identifier
+* Remove the "í" letter from the Portuguese "lido" word
+* Increase golangci-lint timeout value
+* Bump `github.com/tdewolff/minify/v2`, `github.com/prometheus/client_golang`, `golang.org/x/*` dependencies
+
+Version 2.0.44 (May 6, 2023)
+----------------------------
+
+* Add link to the URL rewrite rules documentation
+* Update scraping rules for `ilpost.it`
+* Update rewrite rules for `theverge.com`
+* Add a rewrite rule to remove clickbait titles
+* Make sure `PROXY_IMAGES` option is backward compatible with `PROXY_OPTION` and `PROXY_MEDIA_TYPES`
+* Add new rule to remove tables
+* Add support for searching well-known URLs in subdirectory
+* Add CSS `word-wrap` rule to break very long entry title into multiple lines
+* Add swipe as option for gesture navigation between entries. There are now 3 possible choices: `none`, `double-tap`, and `swipe`.
+* Prefer typographic punctuation in English translation
+* Process older entries first:
+    - Feed entries are usually ordered from most to least recent.
+    - Processing older entries first ensures that their creation timestamp
+    is lower than that of newer entries.
+    - This is useful when we order by creation, because then we get a
+    consistent timeline.
+* Fix Grafana dashboard
+* Push Docker images to `Quay.io` (RedHat)
+* Bump `golang.org/x/*`, `github.com/lib/pq`, `mvdan.cc/xurls/v2` and `github.com/prometheus/client_golang` dependencies
+
 Version 2.0.43 (March 16, 2023)
 -------------------------------
 
 * Avoid XSS when opening a broken image due to unescaped ServerError in proxy handler (CVE-2023-27592)
-    
+
     Creating an RSS feed item with the inline description containing an `<img>` tag
     with a `srcset` attribute pointing to an invalid URL like
     `http:a<script>alert(1)</script>`, we can coerce the proxy handler into an error
     condition where the invalid URL is returned unescaped and in full.
-    
+
     This results in JavaScript execution on the Miniflux instance as soon as the
     user is convinced to open the broken image.
 
 * Use `r.RemoteAddr` to check `/metrics` endpoint network access (CVE-2023-27591)
-    
+
     HTTP headers like `X-Forwarded-For` or `X-Real-Ip` can be easily spoofed. As
     such, it cannot be used to test if the client IP is allowed.
-    
+
     The recommendation is to use HTTP Basic authentication to protect the
     metrics endpoint, or run Miniflux behind a trusted reverse-proxy.
 

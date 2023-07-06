@@ -1,6 +1,5 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package ui // import "miniflux.app/ui"
 
@@ -27,9 +26,10 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type webManifestIcon struct {
-		Source string `json:"src"`
-		Sizes  string `json:"sizes"`
-		Type   string `json:"type"`
+		Source  string `json:"src"`
+		Sizes   string `json:"sizes"`
+		Type    string `json:"type"`
+		Purpose string `json:"purpose"`
 	}
 
 	type webManifest struct {
@@ -63,9 +63,12 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		ThemeColor:      themeColor,
 		BackgroundColor: themeColor,
 		Icons: []webManifestIcon{
-			{Source: route.Path(h.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png"},
-			{Source: route.Path(h.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png"},
-			{Source: route.Path(h.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png"},
+			{Source: route.Path(h.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "any"},
+			{Source: route.Path(h.router, "appIcon", "filename", "icon-192.png"), Sizes: "192x192", Type: "image/png", Purpose: "any"},
+			{Source: route.Path(h.router, "appIcon", "filename", "icon-512.png"), Sizes: "512x512", Type: "image/png", Purpose: "any"},
+			{Source: route.Path(h.router, "appIcon", "filename", "maskable-icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "maskable"},
+			{Source: route.Path(h.router, "appIcon", "filename", "maskable-icon-192.png"), Sizes: "192x192", Type: "image/png", Purpose: "maskable"},
+			{Source: route.Path(h.router, "appIcon", "filename", "maskable-icon-512.png"), Sizes: "512x512", Type: "image/png", Purpose: "maskable"},
 		},
 		ShareTarget: webManifestShareTarget{
 			Action:  route.Path(h.router, "bookmarklet"),

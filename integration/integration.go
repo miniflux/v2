@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package integration // import "miniflux.app/integration"
 
@@ -104,6 +103,8 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		client := linkding.NewClient(
 			integration.LinkdingURL,
 			integration.LinkdingAPIKey,
+			integration.LinkdingTags,
+			integration.LinkdingMarkAsUnread,
 		)
 		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)

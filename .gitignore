@@ -3,3 +3,4 @@ miniflux
 *.rpm
 *.deb
 .idea
+.vscode

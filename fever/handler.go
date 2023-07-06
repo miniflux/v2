@@ -1,6 +1,5 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package fever // import "miniflux.app/fever"
 
@@ -242,8 +241,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(50)
-	builder.WithOrder("id")
-	builder.WithDirection(model.DefaultSortingDirection)
+	builder.WithSorting("id", model.DefaultSortingDirection)
 
 	switch {
 	case request.HasQueryParam(r, "since_id"):
@@ -256,11 +254,11 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 		maxID := request.QueryInt64Param(r, "max_id", 0)
 		if maxID == 0 {
 			logger.Debug("[Fever] Fetching most recent items for user #%d", userID)
-			builder.WithDirection("desc")
+			builder.WithSorting("id", "DESC")
 		} else if maxID > 0 {
 			logger.Debug("[Fever] Fetching items before #%d for user #%d", maxID, userID)
 			builder.BeforeEntryID(maxID)
-			builder.WithDirection("desc")
+			builder.WithSorting("id", "DESC")
 		}
 	case request.HasQueryParam(r, "with_ids"):
 		csvItemIDs := request.QueryStringParam(r, "with_ids", "")

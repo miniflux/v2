@@ -1,6 +1,5 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package ui // import "miniflux.app/ui"
 
@@ -95,6 +94,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	// Entry pages.
 	uiRouter.HandleFunc("/entry/status", handler.updateEntriesStatus).Name("updateEntriesStatus").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/entry/save/{entryID}", handler.saveEntry).Name("saveEntry").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/entry/enclosure/{enclosureID}/save-progression", handler.saveEnclosureProgression).Name("saveEnclosureProgression").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/entry/download/{entryID}", handler.fetchContent).Name("fetchContent").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", handler.mediaProxy).Name("proxy").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/entry/bookmark/{entryID}", handler.toggleBookmark).Name("toggleBookmark").Methods(http.MethodPost)

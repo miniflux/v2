@@ -1,6 +1,5 @@
-// Copyright 2020 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package database // import "miniflux.app/database"
 
@@ -650,6 +649,61 @@ var migrations = []func(tx *sql.Tx) error{
 			ALTER TABLE users ALTER COLUMN gesture_nav SET DATA TYPE text using case when gesture_nav = true then 'tap' when gesture_nav = false then 'none' end;
 			ALTER TABLE users ALTER COLUMN gesture_nav SET default 'tap';
 		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN linkding_tags text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE feeds ADD COLUMN no_media_player boolean default 'f';
+			ALTER TABLE enclosures ADD COLUMN media_progression int default 0;
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN linkding_mark_as_unread bool default 'f';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// Delete duplicated rows
+		sql := `
+			DELETE FROM enclosures a USING enclosures b
+			WHERE a.id < b.id
+				AND a.user_id = b.user_id
+				AND a.entry_id = b.entry_id
+				AND a.url = b.url;
+		`
+		_, err = tx.Exec(sql)
+		if err != nil {
+			return err
+		}
+
+		// Remove previous index
+		_, err = tx.Exec(`DROP INDEX enclosures_user_entry_url_idx`)
+		if err != nil {
+			return err
+		}
+
+		// Create unique index
+		_, err = tx.Exec(`CREATE UNIQUE INDEX enclosures_user_entry_url_unique_idx ON enclosures(user_id, entry_id, md5(url))`)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN mark_read_on_view boolean default 't'`
 		_, err = tx.Exec(sql)
 		return err
 	},

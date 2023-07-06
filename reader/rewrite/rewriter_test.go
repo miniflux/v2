@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package rewrite // import "miniflux.app/reader/rewrite"
 
@@ -8,6 +7,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"miniflux.app/model"
 )
 
 func TestParseRules(t *testing.T) {
@@ -46,178 +47,301 @@ func TestReplaceTextLinks(t *testing.T) {
 }
 
 func TestRewriteWithNoMatchingRule(t *testing.T) {
-	output := Rewriter("https://example.org/article", `Some text.`, ``)
-	expected := `Some text.`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Some text.`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Some text.`,
+	}
+	Rewriter("https://example.org/article", testEntry, ``)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithYoutubeLink(t *testing.T) {
-	output := Rewriter("https://www.youtube.com/watch?v=1234", "Video Description", ``)
-	expected := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><br>Video Description`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><br>Video Description`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	Rewriter("https://www.youtube.com/watch?v=1234", testEntry, ``)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithInexistingCustomRule(t *testing.T) {
-	output := Rewriter("https://www.youtube.com/watch?v=1234", `Video Description`, `some rule`)
-	expected := `Video Description`
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	Rewriter("https://www.youtube.com/watch?v=1234", testEntry, `some rule`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithXkcdLink(t *testing.T) {
-	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`
-	output := Rewriter("https://xkcd.com/1912/", description, ``)
-	expected := `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you."/><figcaption><p>Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you.</p></figcaption></figure>`
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you."/><figcaption><p>Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you.</p></figcaption></figure>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
+	}
+	Rewriter("https://xkcd.com/1912/", testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithXkcdLinkHtmlInjection(t *testing.T) {
-	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="<foo>" alt="<foo>" />`
-	output := Rewriter("https://xkcd.com/1912/", description, ``)
-	expected := `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="&lt;foo&gt;"/><figcaption><p>&lt;foo&gt;</p></figcaption></figure>`
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="&lt;foo&gt;"/><figcaption><p>&lt;foo&gt;</p></figcaption></figure>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="<foo>" alt="<foo>" />`,
+	}
+	Rewriter("https://xkcd.com/1912/", testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
-	description := `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`
-	output := Rewriter("https://xkcd.com/1912/", description, ``)
-	expected := description
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
+	}
+	Rewriter("https://xkcd.com/1912/", testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithXkcdLinkAndNoImage(t *testing.T) {
-	description := "test"
-	output := Rewriter("https://xkcd.com/1912/", description, ``)
-	expected := description
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `test`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `test`,
+	}
+	Rewriter("https://xkcd.com/1912/", testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithXkcdAndNoImage(t *testing.T) {
-	description := "test"
-	output := Rewriter("https://xkcd.com/1912/", description, ``)
-	expected := description
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `test`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `test`,
+	}
+	Rewriter("https://xkcd.com/1912/", testEntry, ``)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteMailtoLink(t *testing.T) {
-	description := `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact</a>`
-	output := Rewriter("https://www.qwantz.com/", description, ``)
-	expected := `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact [blah blah]</a>`
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact [blah blah]</a>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact</a>`,
+	}
+	Rewriter("https://www.qwantz.com/", testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithPDFLink(t *testing.T) {
-	description := "test"
-	output := Rewriter("https://example.org/document.pdf", description, ``)
-	expected := `<a href="https://example.org/document.pdf">PDF</a><br>test`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="https://example.org/document.pdf">PDF</a><br>test`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `test`,
+	}
+	Rewriter("https://example.org/document.pdf", testEntry, ``)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithNoLazyImage(t *testing.T) {
-	description := `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`
-	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
-	expected := description
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithLazyImage(t *testing.T) {
-	description := `<img src="" data-url="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
-	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
-	expected := `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="" data-url="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithLazyDivImage(t *testing.T) {
-	description := `<div data-url="https://example.org/image.jpg" alt="Image"></div><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
-	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
-	expected := `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div data-url="https://example.org/image.jpg" alt="Image"></div><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithUnknownLazyNoScriptImage(t *testing.T) {
-	description := `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`
-	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
-	expected := `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"/><img src="https://example.org/fallback.jpg" alt="Fallback"/>`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"/><img src="https://example.org/fallback.jpg" alt="Fallback"/>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithLazySrcset(t *testing.T) {
-	description := `<img srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`
-	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
-	expected := `<img srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteWithImageAndLazySrcset(t *testing.T) {
-	description := `<img src="meow" srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`
-	output := Rewriter("https://example.org/article", description, "add_dynamic_image")
-	expected := `<img src="meow" srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="meow" srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="meow" srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestNewLineRewriteRule(t *testing.T) {
-	description := "A\nB\nC"
-	output := Rewriter("https://example.org/article", description, "nl2br")
-	expected := `A<br>B<br>C`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `A<br>B<br>C`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: "A\nB\nC",
+	}
+	Rewriter("https://example.org/article", testEntry, "nl2br")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestConvertTextLinkRewriteRule(t *testing.T) {
-	description := "Test: http://example.org/a/b"
-	output := Rewriter("https://example.org/article", description, "convert_text_link")
-	expected := `Test: <a href="http://example.org/a/b">http://example.org/a/b</a>`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Test: <a href="http://example.org/a/b">http://example.org/a/b</a>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Test: http://example.org/a/b`,
+	}
+	Rewriter("https://example.org/article", testEntry, "convert_text_link")
 
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestMediumImage(t *testing.T) {
-	content := `
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img alt="Image for post" class="t u v if aj" src="https://miro.medium.com/max/2560/1*ephLSqSzQYLvb7faDwzRbw.jpeg" width="1280" height="720" srcset="https://miro.medium.com/max/552/1*ephLSqSzQYLvb7faDwzRbw.jpeg 276w, https://miro.medium.com/max/1104/1*ephLSqSzQYLvb7faDwzRbw.jpeg 552w, https://miro.medium.com/max/1280/1*ephLSqSzQYLvb7faDwzRbw.jpeg 640w, https://miro.medium.com/max/1400/1*ephLSqSzQYLvb7faDwzRbw.jpeg 700w" sizes="700px"/>`,
+	}
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `
 		<figure class="ht hu hv hw hx hy cy cz paragraph-image">
 			<div class="hz ia ib ic aj">
 				<div class="cy cz hs">
@@ -235,103 +359,174 @@ func TestMediumImage(t *testing.T) {
 				</div>
 			</div>
 		</figure>
-	`
-	expected := `<img alt="Image for post" class="t u v if aj" src="https://miro.medium.com/max/2560/1*ephLSqSzQYLvb7faDwzRbw.jpeg" width="1280" height="720" srcset="https://miro.medium.com/max/552/1*ephLSqSzQYLvb7faDwzRbw.jpeg 276w, https://miro.medium.com/max/1104/1*ephLSqSzQYLvb7faDwzRbw.jpeg 552w, https://miro.medium.com/max/1280/1*ephLSqSzQYLvb7faDwzRbw.jpeg 640w, https://miro.medium.com/max/1400/1*ephLSqSzQYLvb7faDwzRbw.jpeg 700w" sizes="700px"/>`
-	output := Rewriter("https://example.org/article", content, "fix_medium_images")
-	output = strings.TrimSpace(output)
+		`,
+	}
+	Rewriter("https://example.org/article", testEntry, "fix_medium_images")
+	testEntry.Content = strings.TrimSpace(testEntry.Content)
 
-	if expected != output {
-		t.Errorf(`Not expected output: %s`, output)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteNoScriptImageWithoutNoScriptTag(t *testing.T) {
-	content := `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><figcaption>MDN Logo</figcaption></figure>`
-	expected := `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."/><figcaption>MDN Logo</figcaption></figure>`
-	output := Rewriter("https://example.org/article", content, "use_noscript_figure_images")
-	output = strings.TrimSpace(output)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."/><figcaption>MDN Logo</figcaption></figure>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><figcaption>MDN Logo</figcaption></figure>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "use_noscript_figure_images")
+	testEntry.Content = strings.TrimSpace(testEntry.Content)
 
-	if expected != output {
-		t.Errorf(`Not expected output: %s`, output)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteNoScriptImageWithNoScriptTag(t *testing.T) {
-	content := `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><noscript><img src="http://example.org/logo.svg"></noscript><figcaption>MDN Logo</figcaption></figure>`
-	expected := `<figure><img src="http://example.org/logo.svg"/><figcaption>MDN Logo</figcaption></figure>`
-	output := Rewriter("https://example.org/article", content, "use_noscript_figure_images")
-	output = strings.TrimSpace(output)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<figure><img src="http://example.org/logo.svg"/><figcaption>MDN Logo</figcaption></figure>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><noscript><img src="http://example.org/logo.svg"></noscript><figcaption>MDN Logo</figcaption></figure>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "use_noscript_figure_images")
+	testEntry.Content = strings.TrimSpace(testEntry.Content)
 
-	if expected != output {
-		t.Errorf(`Not expected output: %s`, output)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteReplaceCustom(t *testing.T) {
-	content := `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.svg">`
-	expected := `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.png">`
-	output := Rewriter("https://example.org/article", content, `replace("article/(.*).svg"|"article/$1.png")`)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.png">`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.svg">`,
+	}
+	Rewriter("https://example.org/article", testEntry, `replace("article/(.*).svg"|"article/$1.png")`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: %s`, output)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteRemoveCustom(t *testing.T) {
-	content := `<div>Lorem Ipsum <span class="spam">I dont want to see this</span><span class="ads keep">Super important info</span></div>`
-	expected := `<div>Lorem Ipsum <span class="ads keep">Super important info</span></div>`
-	output := Rewriter("https://example.org/article", content, `remove(".spam, .ads:not(.keep)")`)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum <span class="ads keep">Super important info</span></div>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum <span class="spam">I dont want to see this</span><span class="ads keep">Super important info</span></div>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `remove(".spam, .ads:not(.keep)")`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: %s`, output)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteAddCastopodEpisode(t *testing.T) {
-	output := Rewriter("https://podcast.demo/@demo/episodes/test", "Episode Description", `add_castopod_episode`)
-	expected := `<iframe width="650" frameborder="0" src="https://podcast.demo/@demo/episodes/test/embed/light"></iframe><br>Episode Description`
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe width="650" frameborder="0" src="https://podcast.demo/@demo/episodes/test/embed/light"></iframe><br>Episode Description`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `Episode Description`,
+	}
+	Rewriter("https://podcast.demo/@demo/episodes/test", testEntry, `add_castopod_episode`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteBase64Decode(t *testing.T) {
-	content := `VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=`
-	expected := `This is some base64 encoded content`
-	output := Rewriter("https://example.org/article", content, `base64_decode`)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `This is some base64 encoded content`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=`,
+	}
+	Rewriter("https://example.org/article", testEntry, `base64_decode`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteBase64DecodeInHTML(t *testing.T) {
-	content := `<div>Lorem Ipsum not valid base64<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`
-	expected := `<div>Lorem Ipsum not valid base64<span class="base64">This is some base64 encoded content</span></div>`
-	output := Rewriter("https://example.org/article", content, `base64_decode`)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum not valid base64<span class="base64">This is some base64 encoded content</span></div>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum not valid base64<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `base64_decode`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteBase64DecodeArgs(t *testing.T) {
-	content := `<div>Lorem Ipsum<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`
-	expected := `<div>Lorem Ipsum<span class="base64">This is some base64 encoded content</span></div>`
-	output := Rewriter("https://example.org/article", content, `base64_decode(".base64")`)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum<span class="base64">This is some base64 encoded content</span></div>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `base64_decode(".base64")`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
 
 func TestRewriteRemoveTables(t *testing.T) {
-	content := `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td><p>Hello World!</p></td><td><p>Test</p></td></tr></tbody></table></td></tr></tbody></table>`
-	expected := `<p>Test</p><p>Hello World!</p><p>Test</p>`
-	output := Rewriter("https://example.org/article", content, `remove_tables`)
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<p>Test</p><p>Hello World!</p><p>Test</p>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td><p>Hello World!</p></td><td><p>Test</p></td></tr></tbody></table></td></tr></tbody></table>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `remove_tables`)
 
-	if expected != output {
-		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRemoveClickbait(t *testing.T) {
+	controlEntry := &model.Entry{
+		Title:   `This Is Amazing`,
+		Content: `Some description`,
+	}
+	testEntry := &model.Entry{
+		Title:   `THIS IS AMAZING`,
+		Content: `Some description`,
+	}
+	Rewriter("https://example.org/article", testEntry, `remove_clickbait`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }

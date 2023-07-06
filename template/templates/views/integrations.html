@@ -192,6 +192,13 @@
         <label for="form-linkding-api-key">{{ t "form.integration.linkding_api_key" }}</label>
         <input type="text" name="linkding_api_key" id="form-linkding-api-key" value="{{ .form.LinkdingAPIKey }}" spellcheck="false">
 
+        <label for="form-linkding-tags">{{ t "form.integration.linkding_tags" }}</label>
+        <input type="text" name="linkding_tags" id="form-linkding-tags" value="{{ .form.LinkdingTags }}" spellcheck="false">
+
+        <label>
+            <input type="checkbox" name="linkding_mark_as_unread" value="1" {{ if .form.LinkdingMarkAsUnread }}checked{{ end }}> {{ t "form.integration.linkding_bookmark" }}
+        </label>
+
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>

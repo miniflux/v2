@@ -1,6 +1,5 @@
-// Copyright 2019 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package atom // import "miniflux.app/reader/atom"
 
@@ -28,6 +27,7 @@ type atom10Feed struct {
 	ID      string        `xml:"id"`
 	Title   atom10Text    `xml:"title"`
 	Authors atomAuthors   `xml:"author"`
+	Icon    string        `xml:"icon"`
 	Links   atomLinks     `xml:"link"`
 	Entries []atom10Entry `xml:"entry"`
 }
@@ -53,6 +53,8 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
+
+	feed.IconURL = strings.TrimSpace(a.Icon)
 
 	for _, entry := range a.Entries {
 		item := entry.Transform()

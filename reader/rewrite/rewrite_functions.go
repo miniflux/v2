@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package rewrite // import "miniflux.app/reader/rewrite"
 
@@ -366,4 +365,18 @@ func removeTables(entryContent string) string {
 
 	output, _ := doc.Find("body").First().Html()
 	return output
+}
+
+func removeClickbait(entryTitle string) string {
+	titleWords := []string{}
+	for _, word := range strings.Fields(entryTitle) {
+		runes := []rune(word)
+		if len(runes) > 1 {
+			// keep first rune as is to keep the first capital letter
+			titleWords = append(titleWords, string([]rune{runes[0]})+strings.ToLower(string(runes[1:])))
+		} else {
+			titleWords = append(titleWords, word)
+		}
+	}
+	return strings.Join(titleWords, " ")
 }

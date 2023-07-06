@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package rss // import "miniflux.app/reader/rss"
 
@@ -27,6 +26,7 @@ type rssFeed struct {
 	Version        string    `xml:"version,attr"`
 	Title          string    `xml:"channel>title"`
 	Links          []rssLink `xml:"channel>link"`
+	ImageURL       string    `xml:"channel>image>url"`
 	Language       string    `xml:"channel>language"`
 	Description    string    `xml:"channel>description"`
 	PubDate        string    `xml:"channel>pubDate"`
@@ -57,6 +57,8 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
+
+	feed.IconURL = strings.TrimSpace(r.ImageURL)
 
 	for _, item := range r.Items {
 		entry := item.Transform()

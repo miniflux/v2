@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package rss // import "miniflux.app/reader/rss"
 
@@ -18,6 +17,11 @@ func TestParseRss2Sample(t *testing.T) {
 			<title>Liftoff News</title>
 			<link>http://liftoff.msfc.nasa.gov/</link>
 			<description>Liftoff to Space Exploration.</description>
+			<image>
+				<url>http://liftoff.msfc.nasa.gov/HomePageXtra/MeatBall.gif</url>
+				<title>NASA</title>
+				<link>http://liftoff.msfc.nasa.gov/</link>
+			</image>
 			<language>en-us</language>
 			<pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
 			<lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
@@ -69,6 +73,10 @@ func TestParseRss2Sample(t *testing.T) {
 
 	if feed.SiteURL != "http://liftoff.msfc.nasa.gov/" {
 		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+
+	if feed.IconURL != "http://liftoff.msfc.nasa.gov/HomePageXtra/MeatBall.gif" {
+		t.Errorf("Incorrect image URL, got: %s", feed.IconURL)
 	}
 
 	if len(feed.Entries) != 4 {
