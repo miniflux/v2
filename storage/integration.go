@@ -130,6 +130,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			wallabag_client_secret,
 			wallabag_username,
 			wallabag_password,
+			notion_enabled,
+			notion_token,
+			notion_page_id,
 			nunux_keeper_enabled,
 			nunux_keeper_url,
 			nunux_keeper_api_key,
@@ -181,6 +184,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WallabagClientSecret,
 		&integration.WallabagUsername,
 		&integration.WallabagPassword,
+		&integration.NotionEnabled,
+		&integration.NotionToken,
+		&integration.NotionPageID,
 		&integration.NunuxKeeperEnabled,
 		&integration.NunuxKeeperURL,
 		&integration.NunuxKeeperAPIKey,
@@ -269,7 +275,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			matrix_bot_user=$40,
 			matrix_bot_password=$41,
 			matrix_bot_url=$42,
-			matrix_bot_chat_id=$43
+			matrix_bot_chat_id=$43,
+			notion_enabled=$45,
+			notion_token=$46,
+			notion_page_id=$47
 		WHERE
 			user_id=$44
 	`
@@ -318,6 +327,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.MatrixBotPassword,
 			integration.MatrixBotURL,
 			integration.MatrixBotChatID,
+			integration.NotionEnabled,
+			integration.NotionToken,
+			integration.NotionPageID,
 			integration.UserID,
 		)
 	} else {
@@ -367,7 +379,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		matrix_bot_user=$40,
 		matrix_bot_password=$41,
 		matrix_bot_url=$42,
-		matrix_bot_chat_id=$43
+		matrix_bot_chat_id=$43,
+		notion_enabled=$45,
+		notion_token=$46,
+		notion_page_id=$47
 	WHERE
 		user_id=$44
 	`
@@ -417,6 +432,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.MatrixBotURL,
 			integration.MatrixBotChatID,
 			integration.UserID,
+			integration.NotionEnabled,
+			integration.NotionToken,
+			integration.NotionPageID,
 		)
 	}
 
@@ -437,7 +455,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 		WHERE
 			user_id=$1
 		AND
-			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t' OR linkding_enabled='t')
+			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR notion_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t' OR linkding_enabled='t')
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
 		result = false

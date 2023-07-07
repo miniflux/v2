@@ -142,7 +142,22 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
     </div>
+    <h3>Notion</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="notion_enabled" value="1" {{ if .form.NotionEnabled }}checked{{ end }}> {{ t "form.integration.notion_activate" }}
+        </label>
 
+        <label for="form-notion-token">{{ t "form.integration.notion_token" }}</label>
+        <input type="password" name="notion_token" id="form-notion-token" value="{{ .form.NotionToken }}" spellcheck="false">
+
+        <label for="form-notion-page-id">{{ t "form.integration.notion_page_id" }}</label>
+        <input type="text" name="notion_page_id" id="form-notion-page-id" value="{{ .form.NotionPageID }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
     <h3>Nunux Keeper</h3>
     <div class="form-section">
         <label>

@@ -707,4 +707,13 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+		ALTER TABLE integrations ADD COLUMN notion_enabled bool default 'f';
+		ALTER TABLE integrations ADD COLUMN notion_token text default '';
+		ALTER TABLE integrations ADD COLUMN notion_page_id text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

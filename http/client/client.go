@@ -44,9 +44,9 @@ type Client struct {
 	requestPassword            string
 	requestUserAgent           string
 	requestCookie              string
-
-	useProxy             bool
-	doNotFollowRedirects bool
+	customHeaders              map[string]string
+	useProxy                   bool
+	doNotFollowRedirects       bool
 
 	ClientTimeout               int
 	ClientMaxBodySize           int64
@@ -108,6 +108,12 @@ func (c *Client) WithCredentials(username, password string) *Client {
 // WithAuthorization defines the authorization HTTP header value.
 func (c *Client) WithAuthorization(authorization string) *Client {
 	c.requestAuthorizationHeader = authorization
+	return c
+}
+
+// WithCustomHeaders defines custom HTTP headers.
+func (c *Client) WithCustomHeaders(customHeaders map[string]string) *Client {
+	c.customHeaders = customHeaders
 	return c
 }
 
@@ -175,6 +181,22 @@ func (c *Client) PostJSON(data interface{}) (*Response, error) {
 	}
 
 	request, err := c.buildRequest(http.MethodPost, bytes.NewReader(b))
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+	return c.executeRequest(request)
+}
+
+// PatchJSON performs a Patch HTTP request with a JSON payload.
+func (c *Client) PatchJSON(data interface{}) (*Response, error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+
+	request, err := c.buildRequest(http.MethodPatch, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}
@@ -335,6 +357,10 @@ func (c *Client) buildHeaders() http.Header {
 
 	if c.requestCookie != "" {
 		headers.Add("Cookie", c.requestCookie)
+	}
+
+	for key, value := range c.customHeaders {
+		headers.Add(key, value)
 	}
 
 	headers.Add("Connection", "close")
