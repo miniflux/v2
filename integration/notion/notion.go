@@ -51,5 +51,4 @@ func (c *Client) AddEntry(entryURL string, entryTitle string) error {
 		return fmt.Errorf("notion: request failed, status=%d", response.StatusCode)
 	}
 	return nil
-
 }
