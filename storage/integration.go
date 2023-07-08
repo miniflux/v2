@@ -155,7 +155,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			matrix_bot_user,
 			matrix_bot_password,
 			matrix_bot_url,
-			matrix_bot_chat_id
+			matrix_bot_chat_id,
+			apprise_enabled,
+			apprise_url,
+			apprise_services_url
 		FROM
 			integrations
 		WHERE
@@ -210,6 +213,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.MatrixBotPassword,
 		&integration.MatrixBotURL,
 		&integration.MatrixBotChatID,
+		&integration.AppriseEnabled,
+		&integration.AppriseURL,
+		&integration.AppriseServicesURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -278,7 +284,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			matrix_bot_chat_id=$43,
 			notion_enabled=$45,
 			notion_token=$46,
-			notion_page_id=$47
+			notion_page_id=$47,
+			apprise_enabled=$48,
+			apprise_url=$49,
+			apprise_services_url=$50
 		WHERE
 			user_id=$44
 	`
@@ -330,6 +339,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.NotionEnabled,
 			integration.NotionToken,
 			integration.NotionPageID,
+			integration.AppriseEnabled,
+			integration.AppriseURL,
+			integration.AppriseServicesURL,
 			integration.UserID,
 		)
 	} else {
@@ -382,7 +394,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		matrix_bot_chat_id=$43,
 		notion_enabled=$45,
 		notion_token=$46,
-		notion_page_id=$47
+		notion_page_id=$47,
+		apprise_enabled=$48,
+		apprise_url=$49,
+		apprise_services_url=$50
 	WHERE
 		user_id=$44
 	`
@@ -435,6 +450,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.NotionEnabled,
 			integration.NotionToken,
 			integration.NotionPageID,
+			integration.AppriseEnabled,
+			integration.AppriseURL,
+			integration.AppriseServicesURL,
 		)
 	}
 
@@ -455,7 +473,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 		WHERE
 			user_id=$1
 		AND
-			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR notion_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t' OR linkding_enabled='t')
+			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR notion_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR pocket_enabled='t' OR linkding_enabled='t' OR apprise_enabled='t')
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
 		result = false

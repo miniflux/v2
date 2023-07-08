@@ -218,7 +218,22 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
     </div>
+    <h3>Apprise</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="apprise_enabled" value="1" {{ if .form.AppriseEnabled }}checked{{ end }}> {{ t "form.integration.apprise_activate" }}
+        </label>
 
+        <label for="form-apprise-url">{{ t "form.integration.apprise_url" }}</label>
+        <input type="text" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" spellcheck="false">
+
+        <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}</label>
+        <input type="text" name="apprise_services_url" id="form-apprise-services-urls" value="{{ .form.AppriseServicesURL }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
     <h3>Telegram Bot</h3>
     <div class="form-section">
         <label>
