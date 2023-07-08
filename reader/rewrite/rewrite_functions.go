@@ -208,7 +208,7 @@ func addYoutubeVideo(entryURL, entryContent string) string {
 	matches := youtubeRegex.FindStringSubmatch(entryURL)
 
 	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/` + matches[1] + `" allowfullscreen></iframe>`
+		video := `<iframe width="650" height="350" frameborder="0" src="` + config.Opts.YouTubeEmbedUrlOverride() + matches[1] + `" allowfullscreen></iframe>`
 		return video + `<br>` + entryContent
 	}
 	return entryContent
@@ -232,7 +232,8 @@ func addYoutubeVideoFromId(entryContent string) string {
 	sb := strings.Builder{}
 	for _, match := range matches {
 		if len(match) == 2 {
-			sb.WriteString(`<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/`)
+			sb.WriteString(`<iframe width="650" height="350" frameborder="0" src="`)
+			sb.WriteString(config.Opts.YouTubeEmbedUrlOverride())
 			sb.WriteString(match[1])
 			sb.WriteString(`" allowfullscreen></iframe><br>`)
 		}

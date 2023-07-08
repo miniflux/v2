@@ -284,10 +284,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			matrix_bot_chat_id=$43,
 			notion_enabled=$45,
 			notion_token=$46,
+<<<<<<< HEAD
 			notion_page_id=$47,
 			apprise_enabled=$48,
 			apprise_url=$49,
 			apprise_services_url=$50
+=======
+			notion_page_id=$47
+>>>>>>> origin
 		WHERE
 			user_id=$44
 	`
@@ -339,9 +343,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.NotionEnabled,
 			integration.NotionToken,
 			integration.NotionPageID,
+<<<<<<< HEAD
 			integration.AppriseEnabled,
 			integration.AppriseURL,
 			integration.AppriseServicesURL,
+=======
+>>>>>>> origin
 			integration.UserID,
 		)
 	} else {

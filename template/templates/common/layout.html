@@ -116,8 +116,8 @@
     </main>
     <template id="keyboard-shortcuts">
         <div id="modal-left">
-            <a href="#" class="btn-close-modal">x</a>
-            <h3>{{ t "page.keyboard_shortcuts.title" }}</h3>
+            <button class="btn-close-modal" aria-label="Close">x</button>
+            <h3 tabindex="-1" id="dialog-title">{{ t "page.keyboard_shortcuts.title" }}</h3>
 
             <div class="keyboard-shortcuts">
                 <p>{{ t "page.keyboard_shortcuts.subtitle.sections" }}</p>

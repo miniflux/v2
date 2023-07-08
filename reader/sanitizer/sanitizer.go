@@ -441,7 +441,7 @@ func inList(needle string, haystack []string) bool {
 func rewriteIframeURL(link string) string {
 	matches := youtubeEmbedRegex.FindStringSubmatch(link)
 	if len(matches) == 2 {
-		return `https://www.youtube-nocookie.com/embed/` + matches[1]
+		return config.Opts.YouTubeEmbedUrlOverride() + matches[1]
 	}
 
 	return link

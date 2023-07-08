@@ -94,7 +94,7 @@ function setFocusToSearchInput(event) {
 function showKeyboardShortcuts() {
     let template = document.getElementById("keyboard-shortcuts");
     if (template !== null) {
-        ModalHandler.open(template.content);
+        ModalHandler.open(template.content, "dialog-title");
     }
 }
 
