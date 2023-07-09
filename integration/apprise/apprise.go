@@ -35,7 +35,7 @@ func (c *Client) PushEntries(entries model.Entries) error {
 		clt := client.New(c.baseURL + "/notify")
 		message := ""
 		for _, entry := range entries {
-			message = message + entry.Title + "-" + entry.URL + "\n"
+			message = message + "[" + entry.Title + "]" + "(" + entry.URL + ")" + "\n\n"
 		}
 		data := &Data{
 			Urls: c.servicesURL,
@@ -65,7 +65,7 @@ func (c *Client) PushEntry(entry *model.Entry) error {
 	_, err := net.DialTimeout("tcp", c.baseURL, timeout)
 	if err != nil {
 		clt := client.New(c.baseURL + "/notify")
-		message := entry.Title + "-" + entry.URL + "\n"
+		message := "[" + entry.Title + "]" + "(" + entry.URL + ")" + "\n\n"
 		data := &Data{
 			Urls: c.servicesURL,
 			Body: message,
