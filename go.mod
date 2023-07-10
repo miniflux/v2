@@ -9,7 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.9
 	github.com/matrix-org/gomatrix v0.0.0-20220926102614-ceba4d9f7530
-	github.com/mccutchen/go-httpbin/v2 v2.9.2
+	github.com/mccutchen/go-httpbin/v2 v2.10.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/tdewolff/minify/v2 v2.12.7
