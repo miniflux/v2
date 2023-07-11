@@ -9,6 +9,8 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // HashFromBytes returns a SHA-256 checksum of the input.
@@ -40,4 +42,9 @@ func GenerateRandomString(size int) string {
 // GenerateRandomStringHex returns a random hexadecimal string.
 func GenerateRandomStringHex(size int) string {
 	return hex.EncodeToString(GenerateRandomBytes(size))
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
 }
