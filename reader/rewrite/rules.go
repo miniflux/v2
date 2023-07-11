@@ -32,6 +32,7 @@ var predefinedRules = map[string]string{
 	"thedoghousediaries.com": "add_image_title",
 	"theverge.com":           `add_dynamic_image, remove("div.duet--recirculation--related-list")`,
 	"treelobsters.com":       "add_image_title",
+	"webtoons.com":           `add_dynamic_image,replace("webtoon"|"swebtoon")`,
 	"www.qwantz.com":         "add_image_title,add_mailto_subject",
 	"www.recalbox.com":       "parse_markdown",
 	"xkcd.com":               "add_image_title",
