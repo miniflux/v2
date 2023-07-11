@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"miniflux.app/crypto"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
 	"miniflux.app/http/route"
@@ -56,11 +57,16 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 
 	if integration.GoogleReaderEnabled {
 		if integrationForm.GoogleReaderPassword != "" {
-			integration.GoogleReaderPassword = integrationForm.GoogleReaderPassword
+			integration.GoogleReaderPassword, err = crypto.HashPassword(integrationForm.GoogleReaderPassword)
+			if err != nil {
+				html.ServerError(w, r, err)
+				return
+			}
 		}
 	} else {
 		integration.GoogleReaderPassword = ""
 	}
+
 	err = h.store.UpdateIntegration(integration)
 	if err != nil {
 		html.ServerError(w, r, err)

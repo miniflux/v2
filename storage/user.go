@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strings"
 
+	"miniflux.app/crypto"
 	"miniflux.app/logger"
 	"miniflux.app/model"
 
@@ -57,7 +58,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 	var hashedPassword string
 	if userCreationRequest.Password != "" {
 		var err error
-		hashedPassword, err = hashPassword(userCreationRequest.Password)
+		hashedPassword, err = crypto.HashPassword(userCreationRequest.Password)
 		if err != nil {
 			return nil, err
 		}
@@ -157,7 +158,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 // UpdateUser updates a user.
 func (s *Storage) UpdateUser(user *model.User) error {
 	if user.Password != "" {
-		hashedPassword, err := hashPassword(user.Password)
+		hashedPassword, err := crypto.HashPassword(user.Password)
 		if err != nil {
 			return err
 		}
@@ -648,9 +649,4 @@ func (s *Storage) HasPassword(userID int64) (bool, error) {
 		return true, nil
 	}
 	return false, nil
-}
-
-func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
 }
