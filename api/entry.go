@@ -14,6 +14,7 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
+	"miniflux.app/integration"
 	"miniflux.app/model"
 	"miniflux.app/proxy"
 	"miniflux.app/reader/processor"
@@ -195,6 +196,42 @@ func (h *handler) toggleBookmark(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NoContent(w, r)
+}
+
+func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
+	entryID := request.RouteInt64Param(r, "entryID")
+	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
+	builder.WithEntryID(entryID)
+	builder.WithoutStatus(model.EntryStatusRemoved)
+	// check if user has save entry enabled
+	if h.store.HasSaveEntry(request.UserID(r)) {
+		entry, err := builder.GetEntry()
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+
+		if entry == nil {
+			json.NotFound(w, r)
+			return
+		}
+
+		settings, err := h.store.Integration(request.UserID(r))
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+
+		go func() {
+			integration.SendEntry(entry, settings)
+		}()
+
+		json.NoContent(w, r)
+		return
+	} else {
+		json.BadRequest(w, r, errors.New("user need at least one enabled save entires"))
+		return
+	}
 }
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {

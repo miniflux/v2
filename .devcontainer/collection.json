@@ -1,0 +1,645 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "v1",
+    "dateExported": "2023-07-13T20:57:25.581Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "13a7489c-1f25-4574-8dc7-c24ff428d159",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Discover Subscriptions",
+            "url": "/v1/discover",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-07-13T19:58:25.996Z",
+            "modified": "2023-07-13T20:15:29.612Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "\n{\n    \"url\": \"https://medium.com/the-node-js-collection?source=rss----c80fd9f96957---4\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "50428a21-fde3-4761-b071-2aded5b85765",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Feeds",
+            "url": "/v1/feeds",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2023-07-13T20:02:06.400Z",
+            "modified": "2023-07-13T20:15:45.710Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "b79c2ea4-a7a1-481c-8d09-00ae3b2589e8",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Category Feeds",
+            "url": "/v1/categories/1/feeds",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2023-07-13T20:02:18.690Z",
+            "modified": "2023-07-13T20:26:32.652Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "e4926b94-f241-49e8-9de9-475fbab42674",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Feed",
+            "url": "/v1/feeds/{feedID}",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2023-07-13T20:02:34.514Z",
+            "modified": "2023-07-13T20:45:47.579Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "feedID",
+                    "value": "9",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "b4e2579f-68c2-4010-86f3-c256a6766f53",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Feed Icon ",
+            "url": "/v1/feeds/{feedID}/icon",
+            "method": "GET",
+            "sortNum": 80000,
+            "created": "2023-07-13T20:02:52.263Z",
+            "modified": "2023-07-13T20:46:00.957Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "feedID",
+                    "value": "9",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "6cb12736-0f29-4579-a170-15068c862911",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Create Feed ",
+            "url": "/v1/feeds",
+            "method": "POST",
+            "sortNum": 90000,
+            "created": "2023-07-13T20:03:00.288Z",
+            "modified": "2023-07-13T20:34:58.793Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"feed_url\": \"https://miniflux.app/feed.xml\",\n    \"category_id\": 4\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "66458952-8912-4646-858c-0d371b654280",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Update Feed",
+            "url": "/v1/feeds/{feedID}",
+            "method": "PUT",
+            "sortNum": 100000,
+            "created": "2023-07-13T20:03:08.088Z",
+            "modified": "2023-07-13T20:46:34.052Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "feedID",
+                    "value": "9",
+                    "isPath": true
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"title\": \"Updated - New Feed Title\",\n    \"category_id\": 1\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "ed460a11-135f-49a4-a975-17022246206a",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Refresh Feed",
+            "url": "/v1/feeds/{feedID}/refresh",
+            "method": "PUT",
+            "sortNum": 110000,
+            "created": "2023-07-13T20:03:16.444Z",
+            "modified": "2023-07-13T20:46:44.021Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "feedID",
+                    "value": "9",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "c81da1ce-60b5-438a-b931-9af262fb2390",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Refresh All Feeds",
+            "url": "/v1/feeds/refresh",
+            "method": "PUT",
+            "sortNum": 115000,
+            "created": "2023-07-13T20:36:59.363Z",
+            "modified": "2023-07-13T20:37:34.197Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "ef3be4f9-0673-4119-91e7-2c4d0e7e7374",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Remove Feed",
+            "url": "/v1/feeds/{feedID}",
+            "method": "DELETE",
+            "sortNum": 120000,
+            "created": "2023-07-13T20:03:24.716Z",
+            "modified": "2023-07-13T20:47:05.653Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "feedID",
+                    "value": "9",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "1e9b4b98-ad86-4679-8fc6-d49cf8d3da66",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Feed Entry",
+            "url": "/v1/feeds/{feedID}/entries",
+            "method": "GET",
+            "sortNum": 130000,
+            "created": "2023-07-13T20:03:35.916Z",
+            "modified": "2023-07-13T20:47:53.285Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "feedID",
+                    "value": "7",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "4b6c5fa8-d86e-46fd-821d-99629defcb91",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Entry",
+            "url": "/v1/entries/{entryID}",
+            "method": "GET",
+            "sortNum": 140000,
+            "created": "2023-07-13T20:03:46.247Z",
+            "modified": "2023-07-13T20:48:05.139Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "entryID",
+                    "value": "101",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "3dfe4f29-8a9a-4263-9586-135cfc7a181d",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Fetch original article",
+            "url": "/v1/entries/{entryID}/fetch-content",
+            "method": "GET",
+            "sortNum": 150000,
+            "created": "2023-07-13T20:03:55.251Z",
+            "modified": "2023-07-13T20:48:13.702Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "entryID",
+                    "value": "101",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "ab3c80c4-57d6-458e-a215-bdd5b347e80a",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Category Entries",
+            "url": "/v1/categories/{categoryID}/entries",
+            "method": "GET",
+            "sortNum": 160000,
+            "created": "2023-07-13T20:04:04.963Z",
+            "modified": "2023-07-13T20:48:46.900Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "categoryID",
+                    "value": "1",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "e881a806-ae4d-46f2-b46e-023aae5d134d",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Feed Entries ",
+            "url": "/v1/feeds/7/entries",
+            "method": "GET",
+            "sortNum": 170000,
+            "created": "2023-07-13T20:04:15.608Z",
+            "modified": "2023-07-13T20:49:57.241Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "55dfde9e-52b6-48ad-9121-14cdd471d943",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Mark Feed Entries as Read",
+            "url": "",
+            "method": "GET",
+            "sortNum": 180000,
+            "created": "2023-07-13T20:04:27.605Z",
+            "modified": "2023-07-13T20:04:27.605Z",
+            "headers": []
+        },
+        {
+            "_id": "07e1caac-4d07-47e1-a110-c5d5109eee18",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Entries",
+            "url": "/v1/entries",
+            "method": "GET",
+            "sortNum": 190000,
+            "created": "2023-07-13T20:04:47.119Z",
+            "modified": "2023-07-13T20:40:13.594Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "8c64ebf7-53be-4e57-aeb8-7166fa840bd7",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Update Entries",
+            "url": "/v1/entries",
+            "method": "PUT",
+            "sortNum": 200000,
+            "created": "2023-07-13T20:04:56.925Z",
+            "modified": "2023-07-13T20:42:57.870Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"entry_ids\": [184],\n    \"status\": \"read\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "df4cf36a-30f6-45fe-98bd-7716dcb13e48",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Toggle Entry Bookmark",
+            "url": "/v1/entries/184/bookmark",
+            "method": "PUT",
+            "sortNum": 210000,
+            "created": "2023-07-13T20:06:35.495Z",
+            "modified": "2023-07-13T20:42:23.966Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "5ab1831b-ce3b-4f30-a713-cc7a7948ff7f",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Toggle Entry Save",
+            "url": "/v1/entries/101/save",
+            "method": "PUT",
+            "sortNum": 215000,
+            "created": "2023-07-13T20:41:41.234Z",
+            "modified": "2023-07-13T20:50:55.001Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "cc24f030-934a-4ab7-b4dd-3d1ec611cbdb",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Categories",
+            "url": "/v1/categories",
+            "method": "GET",
+            "sortNum": 220000,
+            "created": "2023-07-13T20:06:43.457Z",
+            "modified": "2023-07-13T20:24:03.603Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "fc2188fb-06e5-4c51-8bda-6b74b88ee374",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Create Category ",
+            "url": "/v1/categories",
+            "method": "POST",
+            "sortNum": 230000,
+            "created": "2023-07-13T20:06:51.394Z",
+            "modified": "2023-07-13T20:23:49.243Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"title\": \"My category\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "d48e1d75-7a60-421e-b7cd-510e322e1b52",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Update Category",
+            "url": "/v1/categories/3",
+            "method": "PUT",
+            "sortNum": 240000,
+            "created": "2023-07-13T20:06:57.686Z",
+            "modified": "2023-07-13T20:24:54.935Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "\n{\n    \"title\": \"My new title\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "638c13a8-3761-4b2c-93b4-581edb2268b1",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Refresh Category Feeds",
+            "url": "/v1/categories/3/refresh",
+            "method": "PUT",
+            "sortNum": 250000,
+            "created": "2023-07-13T20:07:04.246Z",
+            "modified": "2023-07-13T20:25:15.679Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "5a806dba-cce7-4092-976f-e867e35acb09",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Delete Category",
+            "url": "/v1/categories/3",
+            "method": "DELETE",
+            "sortNum": 260000,
+            "created": "2023-07-13T20:07:11.380Z",
+            "modified": "2023-07-13T20:25:37.067Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "ad6fbc34-24ef-457a-a4d5-aced473325d5",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Mark Category Entries as Read",
+            "url": "/v1/categories/4/mark-all-as-read",
+            "method": "PUT",
+            "sortNum": 270000,
+            "created": "2023-07-13T20:07:59.762Z",
+            "modified": "2023-07-13T20:26:04.282Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "042b06f0-89d9-4ec9-b8be-77b45ebb394c",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "OPML Export",
+            "url": "/v1/export",
+            "method": "GET",
+            "sortNum": 280000,
+            "created": "2023-07-13T20:08:15.300Z",
+            "modified": "2023-07-13T20:21:25.993Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "26361a86-9a91-43bd-ace8-16ff47893796",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "OPML Import",
+            "url": "/v1/import",
+            "method": "POST",
+            "sortNum": 290000,
+            "created": "2023-07-13T20:08:26.924Z",
+            "modified": "2023-07-13T20:22:44.084Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "xml",
+                "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<opml version=\"2.0\">\r\n    <head>\r\n        <title>Miniflux</title>\r\n        <dateCreated>Thu, 13 Jul 2023 20:21:25 UTC</dateCreated>\r\n    </head>\r\n    <body>\r\n        <outline text=\"All\">\r\n            <outline title=\"Node.js Collection - Medium\" text=\"Node.js Collection - Medium\" xmlUrl=\"https://medium.com/feed/the-node-js-collection\" htmlUrl=\"https://medium.com/the-node-js-collection?source=rss----c80fd9f96957---4\"></outline>\r\n        </outline>\r\n    </body>\r\n</opml>",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "e8dcb639-45eb-4974-861e-0807abb09ee4",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Create User",
+            "url": "/v1/users",
+            "method": "POST",
+            "sortNum": 300000,
+            "created": "2023-07-13T20:08:38.772Z",
+            "modified": "2023-07-13T20:20:52.548Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"username\": \"bob\",\n    \"password\": \"test123\",\n    \"is_admin\": false\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "4d0a52f1-d333-4185-b668-b09582f71aa3",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Update User",
+            "url": "/v1/users/1",
+            "method": "PUT",
+            "sortNum": 310000,
+            "created": "2023-07-13T20:08:49.322Z",
+            "modified": "2023-07-13T20:20:14.840Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"username\": \"joe\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "69d5eecd-7899-49bb-86b5-6e19b1c35017",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Current User",
+            "url": "/v1/me",
+            "method": "GET",
+            "sortNum": 320000,
+            "created": "2023-07-13T20:08:57.866Z",
+            "modified": "2023-07-13T20:19:36.880Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "6475a8be-598f-449e-8f60-008e419749d6",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get User",
+            "url": "/v1/users/admin",
+            "method": "GET",
+            "sortNum": 330000,
+            "created": "2023-07-13T20:09:04.543Z",
+            "modified": "2023-07-13T20:19:23.898Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "e6e867f3-6daf-4c97-987f-56154fa20087",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Get Users",
+            "url": "/v1/users",
+            "method": "GET",
+            "sortNum": 340000,
+            "created": "2023-07-13T20:09:13.035Z",
+            "modified": "2023-07-13T20:18:37.740Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "a7b276da-f45e-4b19-b3ae-5df347722612",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Delete User",
+            "url": "",
+            "method": "GET",
+            "sortNum": 350000,
+            "created": "2023-07-13T20:09:20.001Z",
+            "modified": "2023-07-13T20:09:20.001Z",
+            "headers": []
+        },
+        {
+            "_id": "32cb608b-787d-4119-9da0-b22e0c5d518e",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Mark User Entries as Read",
+            "url": "",
+            "method": "GET",
+            "sortNum": 360000,
+            "created": "2023-07-13T20:09:28.638Z",
+            "modified": "2023-07-13T20:09:28.638Z",
+            "headers": []
+        },
+        {
+            "_id": "7e6a025b-3e6a-4847-8c62-65cd415d1c45",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Fetch Read/Unread Counters",
+            "url": "/v1/feeds/counters",
+            "method": "GET",
+            "sortNum": 370000,
+            "created": "2023-07-13T20:09:35.001Z",
+            "modified": "2023-07-13T20:18:17.473Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "8ccff897-d206-42e7-ac5b-436c17da5cea",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Healthcheck",
+            "url": "/healthcheck",
+            "method": "GET",
+            "sortNum": 380000,
+            "created": "2023-07-13T20:09:45.003Z",
+            "modified": "2023-07-13T20:18:09.635Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "7241fce0-0496-44a0-8f94-53bbe0498ce9",
+            "colId": "99c8ee49-0c9a-4243-9f35-07de6bf2df68",
+            "containerId": "",
+            "name": "Version",
+            "url": "/version",
+            "method": "GET",
+            "sortNum": 390000,
+            "created": "2023-07-13T20:09:53.633Z",
+            "modified": "2023-07-13T20:17:59.749Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ],
+    "settings": {
+        "headers": [
+            {
+                "name": "X-Auth-Token",
+                "value": "W9QztpZfQYe0fPfrfZO-34fGWZ5DRInK5INBmmI2ENU="
+            }
+        ],
+        "options": {
+            "baseUrl": "http://localhost:8080"
+        }
+    }
+}
