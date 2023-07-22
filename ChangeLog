@@ -1,3 +1,37 @@
+Version 2.0.46 (July 21, 2023)
+------------------------------
+
+* Add scraper and rewrite rules for Webtoons
+* Fix regression in integration page and simplify SQL query
+* Wallabag integration: add more information in log messages
+* Add support for custom Youtube embed URL
+* Fix accessibility issues in modal component
+    * Fix modal aria role
+    * Trap focusing with tab / shift+tab inside the modal
+    * Restore keyboard focus when closing modal
+    * Automatically move keyboard focus to first focusable element unless specified otherwise
+    * Keyboard shortcut help modal: move keyboard focus to modal title
+    * Keyboard shortcut help modal: change close control from link to button
+* Add Notion integration
+* Update `golang.org/x/*` dependencies and `go-oidc` to v3.6.0
+* Improve responsive design
+* Add user setting for marking entry as read on view
+* Improve Russian translation
+* Add the possibility to run cleanup tasks from the command line
+* Add the possibility to run Miniflux as a cronjob
+* Use `go-httpbin` to run tests locally and avoid remote calls to `httpbin.org`
+* Display tags when viewing entries
+* Update categories API endpoint to return `total_unread` and `feed_count`
+* Improve date parser to handle various broken date formats
+* Avoid `pq: time zone displacement out of range` errors
+* Improve entry existance check to make better use of index
+* Add unique index `enclosures_user_entry_url_idx`
+* Add mark as unread for Linkding integration
+* Add sub-folder support for Wallabag integration
+* Use RockyLinux to build RPM package
+* Disable CGO when building RPM package
+* Disable CGO when building Docker images
+
 Version 2.0.45 (June 21, 2023)
 ------------------------------
 
