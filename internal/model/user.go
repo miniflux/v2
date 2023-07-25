@@ -35,6 +35,7 @@ type User struct {
 	DefaultHomePage        string     `json:"default_home_page"`
 	CategoriesSortingOrder string     `json:"categories_sorting_order"`
 	MarkReadOnView         bool       `json:"mark_read_on_view"`
+	ContentSecurityPolicy  string     `json:"content_security_policy"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -70,6 +71,7 @@ type UserModificationRequest struct {
 	DefaultHomePage        *string `json:"default_home_page"`
 	CategoriesSortingOrder *string `json:"categories_sorting_order"`
 	MarkReadOnView         *bool   `json:"mark_read_on_view"`
+	ContentSecurityPolicy  *string `json:"content_security_policy"`
 }
 
 // Patch updates the User object with the modification request.
@@ -160,6 +162,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.MarkReadOnView != nil {
 		user.MarkReadOnView = *u.MarkReadOnView
+	}
+
+	if u.ContentSecurityPolicy != nil {
+		user.ContentSecurityPolicy = *u.ContentSecurityPolicy
 	}
 }
 

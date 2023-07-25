@@ -34,7 +34,12 @@
 
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
 
-    {{ if and .user .user.Stylesheet }}
+    {{ if and .user .user.ContentSecurityPolicy }}
+    <meta http-equiv="Content-Security-Policy" content="{{ .user.ContentSecurityPolicy }}">
+    {{ if .user.Stylesheet }}
+    <style>{{ .user.Stylesheet | safeCSS }}</style>
+    {{ end }}
+    {{ else if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">
     <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>

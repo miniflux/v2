@@ -344,6 +344,7 @@
     "form.prefs.label.default_home_page": "डिफ़ॉल्ट होमपेज़",
     "form.prefs.label.categories_sorting_order": "श्रेणियाँ छँटाई",
     "form.prefs.label.mark_read_on_view": "देखे जाने पर स्वचालित रूप से प्रविष्टियों को पढ़ने के रूप में चिह्नित करें",
+    "form.prefs.label.content_security_policy": "Content Security Policy",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

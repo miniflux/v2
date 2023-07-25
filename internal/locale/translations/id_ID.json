@@ -341,6 +341,7 @@
     "form.prefs.label.default_home_page": "Beranda Baku",
     "form.prefs.label.categories_sorting_order": "Pengurutan Kategori",
     "form.prefs.label.mark_read_on_view": "Secara otomatis menandai entri sebagai telah dibaca saat dilihat",
+    "form.prefs.label.content_security_policy": "Content Security Policy",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

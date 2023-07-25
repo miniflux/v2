@@ -347,6 +347,7 @@
     "form.prefs.fieldset.application_settings": "Anwendungseinstellungen",
     "form.prefs.fieldset.authentication_settings": "Authentifizierungseinstellungen",
     "form.prefs.fieldset.reader_settings": "Reader-Einstellungen",
+    "form.prefs.label.content_security_policy": "Content Security Policy",
     "form.import.label.file": "OPML Datei",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API aktivieren",

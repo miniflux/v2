@@ -344,6 +344,7 @@
     "form.prefs.label.default_home_page": "Προεπιλεγμένη αρχική σελίδα",
     "form.prefs.label.categories_sorting_order": "Ταξινόμηση κατηγοριών",
     "form.prefs.label.mark_read_on_view": "Αυτόματη επισήμανση καταχωρήσεων ως αναγνωσμένων κατά την προβολή",
+    "form.prefs.label.content_security_policy": "Content Security Policy",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

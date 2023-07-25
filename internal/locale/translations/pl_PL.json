@@ -347,6 +347,7 @@
     "form.prefs.label.default_home_page": "Domyślna strona główna",
     "form.prefs.label.categories_sorting_order": "Sortowanie kategorii",
     "form.prefs.label.mark_read_on_view": "Automatycznie oznaczaj wpisy jako przeczytane podczas przeglądania",
+    "form.prefs.label.content_security_policy": "Content Security Policy",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

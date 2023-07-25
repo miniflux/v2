@@ -347,6 +347,7 @@
     "form.prefs.fieldset.application_settings": "應用程式設定",
     "form.prefs.fieldset.authentication_settings": "使用者認證設定",
     "form.prefs.fieldset.reader_settings": "閱讀器設定",
+    "form.prefs.label.content_security_policy": "Content Security Policy",
     "form.import.label.file": "OPML 檔案",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "啟用 Fever API",
