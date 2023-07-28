@@ -204,34 +204,32 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	// check if user has save entry enabled
-	if h.store.HasSaveEntry(request.UserID(r)) {
-		entry, err := builder.GetEntry()
-		if err != nil {
-			json.ServerError(w, r, err)
-			return
-		}
-
-		if entry == nil {
-			json.NotFound(w, r)
-			return
-		}
-
-		settings, err := h.store.Integration(request.UserID(r))
-		if err != nil {
-			json.ServerError(w, r, err)
-			return
-		}
-
-		go func() {
-			integration.SendEntry(entry, settings)
-		}()
-
-		json.NoContent(w, r)
-		return
-	} else {
-		json.BadRequest(w, r, errors.New("user need at least one enabled save entires"))
+	if !h.store.HasSaveEntry(request.UserID(r)) {
+		json.BadRequest(w, r, errors.New("at least one enabled integration is required"))
 		return
 	}
+	entry, err := builder.GetEntry()
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if entry == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	settings, err := h.store.Integration(request.UserID(r))
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	go func() {
+		integration.SendEntry(entry, settings)
+	}()
+
+	json.NoContent(w, r)
 }
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
