@@ -195,6 +195,22 @@
         </div>
     </div>
 
+    <h3>Readwise Reader</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="readwise_enabled" value="1" {{ if .form.ReadwiseEnabled }}checked{{ end }}> {{ t "form.integration.readwise_activate" }}
+        </label>
+
+        <label for="form-readwise-api-key">{{ t "form.integration.readwise_api_key" }}</label>
+        <input type="text" name="readwise_api_key" id="form-readwise-api-key" value="{{ .form.ReadwiseAPIKey }}" spellcheck="false">
+
+        <p><a href="https://readwise.io/access_token" target="_blank">{{ t "form.integration.readwise_api_key_link" }}</a></p>
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
     <h3>Linkding</h3>
     <div class="form-section">
         <label>

@@ -36,6 +36,8 @@ type Integration struct {
 	EspialURL            string
 	EspialAPIKey         string
 	EspialTags           string
+	ReadwiseEnabled      bool
+	ReadwiseAPIKey       string
 	PocketEnabled        bool
 	PocketAccessToken    string
 	PocketConsumerKey    string
