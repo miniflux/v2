@@ -248,7 +248,7 @@
                 {{ icon "external-link" }}
             </a>
         </label>
-        <input type="text" name="apprise_services_url" id="form-apprise-services-urls" value="{{ .form.AppriseServicesURL }}" spellcheck="false">
+        <input type="text" name="apprise_services_url" id="form-apprise-services-urls" value="{{ .form.AppriseServicesURL }}" placeholder="tgram://<token>/<chat_id>/,matrix://" spellcheck="false">
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
