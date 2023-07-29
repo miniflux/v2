@@ -56,6 +56,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		EspialURL:            integration.EspialURL,
 		EspialAPIKey:         integration.EspialAPIKey,
 		EspialTags:           integration.EspialTags,
+		ReadwiseEnabled:      integration.ReadwiseEnabled,
+		ReadwiseAPIKey:       integration.ReadwiseAPIKey,
 		PocketEnabled:        integration.PocketEnabled,
 		PocketAccessToken:    integration.PocketAccessToken,
 		PocketConsumerKey:    integration.PocketConsumerKey,

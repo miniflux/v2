@@ -41,6 +41,8 @@ type IntegrationForm struct {
 	EspialURL            string
 	EspialAPIKey         string
 	EspialTags           string
+	ReadwiseEnabled      bool
+	ReadwiseAPIKey       string
 	PocketEnabled        bool
 	PocketAccessToken    string
 	PocketConsumerKey    string
@@ -92,6 +94,8 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.EspialURL = i.EspialURL
 	integration.EspialAPIKey = i.EspialAPIKey
 	integration.EspialTags = i.EspialTags
+	integration.ReadwiseEnabled = i.ReadwiseEnabled
+	integration.ReadwiseAPIKey = i.ReadwiseAPIKey
 	integration.PocketEnabled = i.PocketEnabled
 	integration.PocketAccessToken = i.PocketAccessToken
 	integration.PocketConsumerKey = i.PocketConsumerKey
@@ -146,6 +150,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		EspialURL:            r.FormValue("espial_url"),
 		EspialAPIKey:         r.FormValue("espial_api_key"),
 		EspialTags:           r.FormValue("espial_tags"),
+		ReadwiseEnabled:      r.FormValue("readwise_enabled") == "1",
+		ReadwiseAPIKey:       r.FormValue("readwise_api_key"),
 		PocketEnabled:        r.FormValue("pocket_enabled") == "1",
 		PocketAccessToken:    r.FormValue("pocket_access_token"),
 		PocketConsumerKey:    r.FormValue("pocket_consumer_key"),

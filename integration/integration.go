@@ -14,6 +14,7 @@ import (
 	"miniflux.app/integration/nunuxkeeper"
 	"miniflux.app/integration/pinboard"
 	"miniflux.app/integration/pocket"
+	"miniflux.app/integration/readwise"
 	"miniflux.app/integration/telegrambot"
 	"miniflux.app/integration/wallabag"
 	"miniflux.app/logger"
@@ -121,6 +122,18 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.LinkdingMarkAsUnread,
 		)
 		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.ReadwiseEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Readwise Reader", entry.ID, entry.URL, integration.UserID)
+
+		client := readwise.NewClient(
+			integration.ReadwiseAPIKey,
+		)
+
+		if err := client.AddEntry(entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
