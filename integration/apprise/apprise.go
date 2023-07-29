@@ -20,8 +20,8 @@ type Client struct {
 }
 
 // NewClient returns a new Apprise client.
-func NewClient(servicesURL, baseURL string) *Client {
-	return &Client{servicesURL, baseURL}
+func NewClient(serviceURL, baseURL string) *Client {
+	return &Client{serviceURL, baseURL}
 }
 
 // PushEntry pushes entries to apprise
