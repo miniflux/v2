@@ -644,11 +644,11 @@ function handlePlayerProgressionSave(playerElement) {
  */
 
 function handleShare() {
-    let link = document.querySelector('a[data-share-entry]')
-    let title = document.querySelector("body > main > section > header > h1 > a")
+    let link = document.querySelector('a[data-share-entry]');
+    let title = document.querySelector("body > main > section > header > h1 > a");
      if (!navigator.canShare) {
-       console.error("Your browser doesn't support the Web Share API.")
-       window.location = link.href
+       console.error("Your browser doesn't support the Web Share API.");
+       window.location = link.href;
        return;
      }
      try {
