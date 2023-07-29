@@ -341,7 +341,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.NotionPageID,
 		integration.ReadwiseEnabled,
 		integration.ReadwiseAPIKey,
-    integration.AppriseEnabled,
+		integration.AppriseEnabled,
 		integration.AppriseURL,
 		integration.AppriseServicesURL,
 		integration.UserID,
