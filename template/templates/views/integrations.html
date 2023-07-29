@@ -243,7 +243,11 @@
         <label for="form-apprise-url">{{ t "form.integration.apprise_url" }}</label>
         <input type="text" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
 
-        <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}</label>
+        <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}
+            <a href="https://github.com/caronc/apprise/wiki" target="_blank">
+                {{ icon "external-link" }}
+            </a>
+        </label>
         <input type="text" name="apprise_services_url" id="form-apprise-services-urls" value="{{ .form.AppriseServicesURL }}" spellcheck="false">
 
         <div class="buttons">
