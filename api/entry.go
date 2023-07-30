@@ -127,13 +127,13 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	userID := request.UserID(r)
 	categoryID = request.QueryInt64Param(r, "category_id", categoryID)
 	if categoryID > 0 && !h.store.CategoryIDExists(userID, categoryID) {
-		json.BadRequest(w, r, errors.New("Invalid category ID"))
+		json.BadRequest(w, r, errors.New("invalid category ID"))
 		return
 	}
 
 	feedID = request.QueryInt64Param(r, "feed_id", feedID)
 	if feedID > 0 && !h.store.FeedExists(userID, feedID) {
-		json.BadRequest(w, r, errors.New("Invalid feed ID"))
+		json.BadRequest(w, r, errors.New("invalid feed ID"))
 		return
 	}
 
@@ -203,11 +203,12 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(request.UserID(r))
 	builder.WithEntryID(entryID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
-	// check if user has save entry enabled
+
 	if !h.store.HasSaveEntry(request.UserID(r)) {
-		json.BadRequest(w, r, errors.New("at least one enabled integration is required"))
+		json.BadRequest(w, r, errors.New("no third-party integration enabled"))
 		return
 	}
+
 	entry, err := builder.GetEntry()
 	if err != nil {
 		json.ServerError(w, r, err)
@@ -225,11 +226,9 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		integration.SendEntry(entry, settings)
-	}()
+	go integration.SendEntry(entry, settings)
 
-	json.NoContent(w, r)
+	json.Accepted(w, r)
 }
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {

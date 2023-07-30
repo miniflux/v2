@@ -39,6 +39,13 @@ func NoContent(w http.ResponseWriter, r *http.Request) {
 	builder.Write()
 }
 
+func Accepted(w http.ResponseWriter, r *http.Request) {
+	builder := response.New(w, r)
+	builder.WithStatus(http.StatusAccepted)
+	builder.WithHeader("Content-Type", contentTypeHeader)
+	builder.Write()
+}
+
 // ServerError sends an internal error to the client.
 func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 	logger.Error("[HTTP:Internal Server Error] %s => %v", r.URL, err)
@@ -68,7 +75,7 @@ func Unauthorized(w http.ResponseWriter, r *http.Request) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusUnauthorized)
 	builder.WithHeader("Content-Type", contentTypeHeader)
-	builder.WithBody(toJSONError(errors.New("Access Unauthorized")))
+	builder.WithBody(toJSONError(errors.New("access unauthorized")))
 	builder.Write()
 }
 
@@ -79,7 +86,7 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusForbidden)
 	builder.WithHeader("Content-Type", contentTypeHeader)
-	builder.WithBody(toJSONError(errors.New("Access Forbidden")))
+	builder.WithBody(toJSONError(errors.New("access forbidden")))
 	builder.Write()
 }
 
@@ -90,7 +97,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusNotFound)
 	builder.WithHeader("Content-Type", contentTypeHeader)
-	builder.WithBody(toJSONError(errors.New("Resource Not Found")))
+	builder.WithBody(toJSONError(errors.New("resource not found")))
 	builder.Write()
 }
 

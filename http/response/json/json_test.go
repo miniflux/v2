@@ -199,7 +199,7 @@ func TestUnauthorizedResponse(t *testing.T) {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
 	}
 
-	expectedBody := `{"error_message":"Access Unauthorized"}`
+	expectedBody := `{"error_message":"access unauthorized"}`
 	actualBody := w.Body.String()
 	if actualBody != expectedBody {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
@@ -232,7 +232,7 @@ func TestForbiddenResponse(t *testing.T) {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
 	}
 
-	expectedBody := `{"error_message":"Access Forbidden"}`
+	expectedBody := `{"error_message":"access forbidden"}`
 	actualBody := w.Body.String()
 	if actualBody != expectedBody {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
@@ -265,7 +265,7 @@ func TestNotFoundResponse(t *testing.T) {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
 	}
 
-	expectedBody := `{"error_message":"Resource Not Found"}`
+	expectedBody := `{"error_message":"resource not found"}`
 	actualBody := w.Body.String()
 	if actualBody != expectedBody {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
