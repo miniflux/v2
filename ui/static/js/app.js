@@ -640,24 +640,41 @@ function handlePlayerProgressionSave(playerElement) {
 }
 
 /**
- * handle share using browser native Web Share API
+ * handle new share entires and already shared entries
  */
-
 function handleShare() {
-    let link = document.querySelector('a[data-share-entry]');
+    let link = document.querySelector('a[data-share-status]');
     let title = document.querySelector("body > main > section > header > h1 > a");
-     if (!navigator.canShare) {
-       console.error("Your browser doesn't support the Web Share API.");
-       window.location = link.href;
-       return;
-     }
-     try {
-       const shareData = {
-           title: title,
-           url: link.href,
-       };
-       navigator.share(shareData);
-     } catch (err) {
-       console.error(err);
-     }
-   }
+    if(link.dataset.shareStatus === "shared"){
+       checkShareAPI(title, link.href);
+    }
+    if(link.dataset.shareStatus === "share"){
+       let request = new RequestBuilder(link.href);
+       request.withCallback((r) => {
+          checkShareAPI(title, r.url);
+       });
+       request.withHttpMethod("GET");
+       request.execute();
+    }
+}
+   
+/**
+* wrapper for Web Share API
+*/ 
+function checkShareAPI(title, url){
+    if (!navigator.canShare) {
+    console.error("Your browser doesn't support the Web Share API.");
+    window.location = url;
+    return;
+    }
+    try {
+    navigator.share({
+        title: title,
+        url: url
+    });
+    window.location.reload();
+    } catch (err) {
+    console.error(err);
+    window.location.reload();
+    }
+}
