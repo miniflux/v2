@@ -37,6 +37,35 @@ func TestParseAtomDate(t *testing.T) {
 	}
 }
 
+func TestParseRSSDateTimezone(t *testing.T) {
+	date, err := Parse("Fri, 31 Mar 2023 20:19:00 America/Los_Angeles")
+	if err != nil {
+		t.Fatalf(`RSS dates should be parsed correctly`)
+	}
+
+	expectedTS := int64(1680319140)
+	if date.Unix() != expectedTS {
+		t.Errorf(`The Unix timestamp should be %v instead of %v`, expectedTS, date.Unix())
+	}
+
+	expectedLocation := "America/Los_Angeles"
+	if date.Location().String() != expectedLocation {
+		t.Errorf(`The location should be %q instead of %q`, expectedLocation, date.Location())
+	}
+
+	name, offset := date.Zone()
+
+	expectedName := "PDT"
+	if name != expectedName {
+		t.Errorf(`The zone name should be %q instead of %q`, expectedName, name)
+	}
+
+	expectedOffset := -25200
+	if offset != expectedOffset {
+		t.Errorf(`The offset should be %v instead of %v`, expectedOffset, offset)
+	}
+}
+
 func TestParseRSSDateGMT(t *testing.T) {
 	date, err := Parse("Tue, 03 Jun 2003 09:39:21 GMT")
 	if err != nil {
