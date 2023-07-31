@@ -149,18 +149,6 @@ func PushEntries(entries model.Entries, integration *model.Integration) {
 			logger.Error("[Integration] push entries to matrix bot failed: %v", err)
 		}
 	}
-	if integration.AppriseEnabled {
-		logger.Debug("[Integration] Sending %d entries for User #%d to apprise", len(entries), integration.UserID)
-
-		client := apprise.NewClient(
-			integration.AppriseServicesURL,
-			integration.AppriseURL,
-		)
-		err := client.PushEntries(entries)
-		if err != nil {
-			logger.Error("[Integration] push entry to apprise failed: %v", err)
-		}
-	}
 }
 
 // PushEntry pushes an entry to third-party providers during feed refreshes.
