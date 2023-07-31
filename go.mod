@@ -12,7 +12,7 @@ require (
 	github.com/mccutchen/go-httpbin/v2 v2.11.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
-	github.com/tdewolff/minify/v2 v2.12.7
+	github.com/tdewolff/minify/v2 v2.12.8
 	github.com/yuin/goldmark v1.5.5
 	golang.org/x/crypto v0.11.0
 	golang.org/x/net v0.12.0
@@ -31,7 +31,7 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.10.1 // indirect
-	github.com/tdewolff/parse/v2 v2.6.6 // indirect
+	github.com/tdewolff/parse/v2 v2.6.7 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
