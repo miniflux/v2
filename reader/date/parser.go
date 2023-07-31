@@ -223,6 +223,7 @@ var dateFormats = []string{
 
 var invalidTimezoneReplacer = strings.NewReplacer(
 	"Europe/Brussels", "CET",
+	"America/Los_Angeles", "PDT",
 	"GMT+0000 (Coordinated Universal Time)", "GMT",
 	"GMT-", "GMT -",
 )
