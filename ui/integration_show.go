@@ -74,6 +74,9 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		MatrixBotPassword:    integration.MatrixBotPassword,
 		MatrixBotURL:         integration.MatrixBotURL,
 		MatrixBotChatID:      integration.MatrixBotChatID,
+		AppriseEnabled:       integration.AppriseEnabled,
+		AppriseURL:           integration.AppriseURL,
+		AppriseServicesURL:   integration.AppriseServicesURL,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

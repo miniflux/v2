@@ -54,4 +54,7 @@ type Integration struct {
 	MatrixBotPassword    string
 	MatrixBotURL         string
 	MatrixBotChatID      string
+	AppriseEnabled       bool
+	AppriseURL           string
+	AppriseServicesURL   string
 }

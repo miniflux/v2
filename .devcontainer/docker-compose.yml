@@ -23,5 +23,9 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - 5432:5432
+  apprise:
+    image: caronc/apprise:latest
+    restart: unless-stopped
+    hostname: apprise
 volumes:
   postgres-data: null

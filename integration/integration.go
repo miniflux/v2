@@ -5,6 +5,7 @@ package integration // import "miniflux.app/integration"
 
 import (
 	"miniflux.app/config"
+	"miniflux.app/integration/apprise"
 	"miniflux.app/integration/espial"
 	"miniflux.app/integration/instapaper"
 	"miniflux.app/integration/linkding"
@@ -158,6 +159,18 @@ func PushEntry(entry *model.Entry, integration *model.Integration) {
 		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID)
 		if err != nil {
 			logger.Error("[Integration] push entry to telegram bot failed: %v", err)
+		}
+	}
+	if integration.AppriseEnabled {
+		logger.Debug("[Integration] Sending Entry %q for User #%d to apprise", entry.URL, integration.UserID)
+
+		client := apprise.NewClient(
+			integration.AppriseServicesURL,
+			integration.AppriseURL,
+		)
+		err := client.PushEntry(entry)
+		if err != nil {
+			logger.Error("[Integration] push entry to apprise failed: %v", err)
 		}
 	}
 }

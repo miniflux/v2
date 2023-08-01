@@ -59,6 +59,9 @@ type IntegrationForm struct {
 	MatrixBotPassword    string
 	MatrixBotURL         string
 	MatrixBotChatID      string
+	AppriseEnabled       bool
+	AppriseURL           string
+	AppriseServicesURL   string
 }
 
 // Merge copy form values to the model.
@@ -109,6 +112,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.MatrixBotPassword = i.MatrixBotPassword
 	integration.MatrixBotURL = i.MatrixBotURL
 	integration.MatrixBotChatID = i.MatrixBotChatID
+	integration.AppriseEnabled = i.AppriseEnabled
+	integration.AppriseServicesURL = i.AppriseServicesURL
+	integration.AppriseURL = i.AppriseURL
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -162,5 +168,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		MatrixBotPassword:    r.FormValue("matrix_bot_password"),
 		MatrixBotURL:         r.FormValue("matrix_bot_url"),
 		MatrixBotChatID:      r.FormValue("matrix_bot_chat_id"),
+		AppriseEnabled:       r.FormValue("apprise_enabled") == "1",
+		AppriseURL:           r.FormValue("apprise_url"),
+		AppriseServicesURL:   r.FormValue("apprise_services_url"),
 	}
 }
