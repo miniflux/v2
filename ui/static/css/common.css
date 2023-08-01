@@ -1093,6 +1093,18 @@ details.entry-enclosures {
     opacity: 20%;
 }
 
-audio,video {
+audio, video {
     width: 100%;
+}
+
+.integration-form summary {
+    font-weight: 700;
+}
+
+.integration-form details {
+    margin-bottom: 15px;
+}
+
+.integration-form details .form-section {
+    margin-top: 15px;
 }
