@@ -1,5 +1,6 @@
 {
     "confirm.question": "Are you sure?",
+    "confirm.question.refresh": "Are you want to force refresh?",
     "confirm.yes": "yes",
     "confirm.no": "no",
     "confirm.loading": "In progress…",

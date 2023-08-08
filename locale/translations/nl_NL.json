@@ -1,5 +1,6 @@
 {
     "confirm.question": "Weet je het zeker?",
+    "confirm.question.refresh": "Wil je een gedwongen vernieuwing uitvoeren?",
     "confirm.yes": "ja",
     "confirm.no": "nee",
     "confirm.loading": "Bezig...",

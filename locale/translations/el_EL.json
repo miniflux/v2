@@ -1,5 +1,6 @@
 {
     "confirm.question": "Είστε σίγουροι;",
+    "confirm.question.refresh": "Θέλετε να επιτελέσετε μια υποχρεωτική ανανέωση;",
     "confirm.yes": "ναι",
     "confirm.no": "όχι",
     "confirm.loading": "Σε εξέλιξη...",

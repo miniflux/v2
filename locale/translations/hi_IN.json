@@ -1,5 +1,6 @@
 {
     "confirm.question": "मंजूर है?",
+    "confirm.question.refresh": "क्या आप बल द्वारा ताज़ा करना चाहते हैं?",
     "confirm.yes": "हाँ",
     "confirm.no": " नहीं",
     "confirm.loading": " प्रगति में है ...",

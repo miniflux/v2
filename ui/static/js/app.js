@@ -561,18 +561,22 @@ function handleConfirmationMessage(linkElement, callback) {
     let containerElement = linkElement.parentNode;
     let questionElement = document.createElement("span");
 
-    let yesElement = document.createElement("a");
-    yesElement.href = "#";
-    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
-    yesElement.onclick = (event) => {
-        event.preventDefault();
-
+    function createLoadingElement() {
         let loadingElement = document.createElement("span");
         loadingElement.className = "loading";
         loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
 
         questionElement.remove();
         containerElement.appendChild(loadingElement);
+    }
+
+    let yesElement = document.createElement("a");
+    yesElement.href = "#";
+    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
+    yesElement.onclick = (event) => {
+        event.preventDefault();
+
+        createLoadingElement();
 
         callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
     };
@@ -582,8 +586,16 @@ function handleConfirmationMessage(linkElement, callback) {
     noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
     noElement.onclick = (event) => {
         event.preventDefault();
-        linkElement.style.display = "inline";
-        questionElement.remove();
+
+        const noActionUrl = linkElement.dataset.noActionUrl;
+        if (noActionUrl) {
+            createLoadingElement();
+
+            callback(noActionUrl, linkElement.dataset.redirectUrl);
+        } else {
+            linkElement.style.display = "inline";
+            questionElement.remove();
+        }
     };
 
     questionElement.className = "confirm";

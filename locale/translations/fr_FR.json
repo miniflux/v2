@@ -1,5 +1,6 @@
 {
     "confirm.question": "Êtes-vous sûr ?",
+    "confirm.question.refresh": "Voulez-vous forcer le rafraîchissement ?",
     "confirm.yes": "oui",
     "confirm.no": "non",
     "confirm.loading": "En cours...",

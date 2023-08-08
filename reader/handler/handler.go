@@ -83,7 +83,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.WithClientResponse(response)
 	subscription.CheckedNow()
 
-	processor.ProcessFeedEntries(store, subscription, user)
+	processor.ProcessFeedEntries(store, subscription, user, true)
 
 	if storeErr := store.CreateFeed(subscription); storeErr != nil {
 		return nil, storeErr
@@ -104,7 +104,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 }
 
 // RefreshFeed refreshes a feed.
-func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
+func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool) error {
 	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[RefreshFeed] feedID=%d", feedID))
 	user, storeErr := store.UserByID(userID)
 	if storeErr != nil {
@@ -173,10 +173,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
-		processor.ProcessFeedEntries(store, originalFeed, user)
+		processor.ProcessFeedEntries(store, originalFeed, user, forceRefresh)
 
-		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries).
-		if storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, !originalFeed.Crawler); storeErr != nil {
+		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries). Unless it is forced to refresh
+		updateExistingEntries := forceRefresh || !originalFeed.Crawler
+		if storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries); storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
 			store.UpdateFeedError(originalFeed)
 			return storeErr

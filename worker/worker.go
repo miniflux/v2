@@ -29,7 +29,7 @@ func (w *Worker) Run(c chan model.Job) {
 		logger.Debug("[Worker #%d] Received feed #%d for user #%d", w.id, job.FeedID, job.UserID)
 
 		startTime := time.Now()
-		refreshErr := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID)
+		refreshErr := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID, false)
 
 		if config.Opts.HasMetricsCollector() {
 			status := "success"

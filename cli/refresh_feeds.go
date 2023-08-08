@@ -34,7 +34,7 @@ func refreshFeeds(store *storage.Storage) {
 			defer wg.Done()
 			for job := range jobQueue {
 				logger.Info("[Cronjob] Refreshing feed #%d for user #%d in worker #%d", job.FeedID, job.UserID, workerID)
-				if err := feedHandler.RefreshFeed(store, job.UserID, job.FeedID); err != nil {
+				if err := feedHandler.RefreshFeed(store, job.UserID, job.FeedID, false); err != nil {
 					logger.Error("[Cronjob] Refreshing the feed #%d returned this error: %v", job.FeedID, err)
 				}
 			}

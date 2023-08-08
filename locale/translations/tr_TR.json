@@ -1,5 +1,6 @@
 {
     "confirm.question": "Emin misiniz?",
+    "confirm.question.refresh": "Zorla yenilemek istiyor musunuz?",
     "confirm.yes": "evet",
     "confirm.no": "hayır",
     "confirm.loading": "Devam ediyor...",
