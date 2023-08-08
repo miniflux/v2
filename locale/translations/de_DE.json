@@ -1,5 +1,6 @@
 {
     "confirm.question": "Sind Sie sicher?",
+    "confirm.question.refresh": "Möchten Sie eine erzwungene Aktualisierung durchführen?",
     "confirm.yes": "ja",
     "confirm.no": "nein",
     "confirm.loading": "In Arbeit...",

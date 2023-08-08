@@ -37,7 +37,14 @@
         </li>
         {{ end }}
         <li>
-            <a href="{{ route "refreshFeed" "feedID" .feed.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</a>
+            <a href="#"
+                data-confirm="true"
+                data-label-question="{{ t "confirm.question.refresh" }}"
+                data-label-yes="{{ t "confirm.yes" }}"
+                data-label-no="{{ t "confirm.no" }}"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=true"
+                data-no-action-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=false">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</a>
         </li>
         <li>
             <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ icon "edit" }}{{ t "menu.edit_feed" }}</a>

@@ -1,5 +1,6 @@
 {
   "confirm.question": "Ви впевнені?",
+  "confirm.question.refresh": "Ви хочете змусити оновити?",
   "confirm.yes": "так",
   "confirm.no": "ні",
   "confirm.loading": "В процесі...",

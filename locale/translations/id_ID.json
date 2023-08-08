@@ -1,5 +1,6 @@
 {
     "confirm.question": "Apakah Anda yakin?",
+    "confirm.question.refresh": "Apakah Anda ingin memaksa penyegaran?",
     "confirm.yes": "ya",
     "confirm.no": "tidak",
     "confirm.loading": "Sedang progres...",

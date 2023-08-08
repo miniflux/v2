@@ -1,5 +1,6 @@
 {
     "confirm.question": "よろしいですか?",
+    "confirm.question.refresh": "強制的に更新しますか？",
     "confirm.yes": "はい",
     "confirm.no": "いいえ",
     "confirm.loading": "実行中…",

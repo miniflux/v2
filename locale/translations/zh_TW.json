@@ -1,5 +1,6 @@
 {
     "confirm.question": "您確認嗎？",
+    "confirm.question.refresh": "您想要強制刷新嗎？",
     "confirm.yes": "是",
     "confirm.no": "否",
     "confirm.loading": "執行中…",

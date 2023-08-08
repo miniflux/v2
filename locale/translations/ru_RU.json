@@ -1,5 +1,6 @@
 {
     "confirm.question": "Вы уверены?",
+    "confirm.question.refresh": "Вы хотите выполнить принудительное обновление?",
     "confirm.yes": "да",
     "confirm.no": "нет",
     "confirm.loading": "В процессе…",

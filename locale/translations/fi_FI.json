@@ -1,5 +1,6 @@
 {
     "confirm.question": "Oletko varma?",
+    "confirm.question.refresh": "Haluatko pakottaa päivityksen?",
     "confirm.yes": "kyllä",
     "confirm.no": "ei",
     "confirm.loading": "Käynnissä...",

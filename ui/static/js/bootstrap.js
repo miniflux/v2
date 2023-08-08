@@ -58,9 +58,11 @@ document.addEventListener("DOMContentLoaded", function () {
     onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
 
-        request.withCallback(() => {
+        request.withCallback((response) => {
             if (redirectURL) {
                 window.location.href = redirectURL;
+            } else if (response && response.redirected && response.url) {
+                window.location.href = response.url;
             } else {
                 window.location.reload();
             }
