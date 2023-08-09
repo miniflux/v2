@@ -19,6 +19,11 @@ Requires(pre): shadow-utils
 %{?systemd_requires}
 BuildRequires: systemd
 
+AutoReqProv: no
+
+%define __strip /bin/true
+%define __os_install_post %{nil}
+
 %description
 %{summary}
 

@@ -1,6 +1,6 @@
 Source: miniflux
 Maintainer: Frederic Guillot <f@miniflux.net>
-Build-Depends: debhelper (>= 9), dh-systemd
+Build-Depends: debhelper (>= 9.20160709) | dh-systemd
 
 Package: miniflux
 Architecture: __PKG_ARCH__

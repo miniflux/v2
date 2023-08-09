@@ -27,6 +27,24 @@ updates:
     assignees:
       - "fguillot"
 
+  - package-ecosystem: "docker"
+    directory: "packaging/debian"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "fguillot"
+    assignees:
+      - "fguillot"
+
+  - package-ecosystem: "docker"
+    directory: "packaging/rpm"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "fguillot"
+    assignees:
+      - "fguillot"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
