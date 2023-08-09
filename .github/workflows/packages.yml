@@ -4,9 +4,33 @@ on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+    branches: [ main ]
 jobs:
-  debian-package-builder:
-    name: Build Debian Packages
+  test-debian-packages:
+    if: github.event.pull_request
+    name: Test Debian Packages
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+          fetch-depth: 0
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      id: buildx
+      with:
+          install: true
+    - name: Available Docker Platforms
+      run: echo ${{ steps.buildx.outputs.platforms }}
+    - name: Build Debian Packages
+      run: make debian-packages
+    - name: List generated files
+      run: ls -l *.deb
+  publish-debian-packages:
+    if: ${{ ! github.event.pull_request }}
+    name: Publish Debian Packages
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -29,8 +53,21 @@ jobs:
       env:
         FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
       run: for f in *.deb; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/miniflux/; done
-  rpm-package-builder:
-    name: Build RPM Package
+  test-rpm-package:
+    if: github.event.pull_request
+    name: Test RPM Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+          fetch-depth: 0
+    - name: Build RPM Package
+      run: make rpm
+    - name: List generated files
+      run: ls -l *.rpm
+  publish-rpm-package:
+    if: ${{ ! github.event.pull_request }}
+    name: Publish RPM Package
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
