@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rdf // import "miniflux.app/reader/rdf"
+package rdf // import "miniflux.app/v2/reader/rdf"
 
 import (
 	"bytes"

@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/json"
-	"miniflux.app/locale"
-	"miniflux.app/model"
-	"miniflux.app/proxy"
-	"miniflux.app/reader/processor"
-	"miniflux.app/storage"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/json"
+	"miniflux.app/v2/locale"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/proxy"
+	"miniflux.app/v2/reader/processor"
+	"miniflux.app/v2/storage"
 )
 
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {

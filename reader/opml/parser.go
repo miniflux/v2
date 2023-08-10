@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package opml // import "miniflux.app/reader/opml"
+package opml // import "miniflux.app/v2/reader/opml"
 
 import (
 	"encoding/xml"
 	"io"
 
-	"miniflux.app/errors"
-	"miniflux.app/reader/encoding"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/reader/encoding"
 )
 
 // Parse reads an OPML file and returns a SubcriptionList.

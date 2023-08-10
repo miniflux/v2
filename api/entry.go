@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api // import "miniflux.app/api"
+package api // import "miniflux.app/v2/api"
 
 import (
 	json_parser "encoding/json"
@@ -11,16 +11,16 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/json"
-	"miniflux.app/integration"
-	"miniflux.app/model"
-	"miniflux.app/proxy"
-	"miniflux.app/reader/processor"
-	"miniflux.app/storage"
-	"miniflux.app/url"
-	"miniflux.app/validator"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/json"
+	"miniflux.app/v2/integration"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/proxy"
+	"miniflux.app/v2/reader/processor"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/url"
+	"miniflux.app/v2/validator"
 )
 
 func (h *handler) getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b *storage.EntryQueryBuilder) {

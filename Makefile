@@ -3,7 +3,7 @@ DOCKER_IMAGE := miniflux/miniflux
 VERSION      := $(shell git describe --tags --abbrev=0)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
-LD_FLAGS     := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.Commit=$(COMMIT)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'"
+LD_FLAGS     := "-s -w -X 'miniflux.app/v2/version.Version=$(VERSION)' -X 'miniflux.app/v2/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/version.BuildDate=$(BUILD_DATE)'"
 PKG_LIST     := $(shell go list ./... | grep -v /vendor/)
 DB_URL       := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 DEB_IMG_ARCH := amd64
@@ -122,7 +122,7 @@ integration-test:
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	
 	while ! nc -z localhost 8080; do sleep 1; done
-	go test -v -tags=integration -count=1 miniflux.app/tests
+	go test -v -tags=integration -count=1 miniflux.app/v2/tests
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`

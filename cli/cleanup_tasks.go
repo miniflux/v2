@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/logger"
-	"miniflux.app/metric"
-	"miniflux.app/model"
-	"miniflux.app/storage"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/metric"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/storage"
 )
 
 func runCleanupTasks(store *storage.Storage) {

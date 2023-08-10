@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	miniflux "miniflux.app/client"
+	miniflux "miniflux.app/v2/client"
 )
 
 const (

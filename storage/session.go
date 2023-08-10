@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/storage"
+package storage // import "miniflux.app/v2/storage"
 
 import (
 	"database/sql"
 	"fmt"
 
-	"miniflux.app/crypto"
-	"miniflux.app/model"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/model"
 )
 
 // CreateAppSessionWithUserPrefs creates a new application session with the given user preferences.

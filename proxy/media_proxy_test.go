@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package proxy // import "miniflux.app/proxy"
+package proxy // import "miniflux.app/v2/proxy"
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"miniflux.app/config"
+	"miniflux.app/v2/config"
 )
 
 func TestProxyFilterWithHttpDefault(t *testing.T) {

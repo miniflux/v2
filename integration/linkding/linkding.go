@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package linkding // import "miniflux.app/integration/linkding"
+package linkding // import "miniflux.app/v2/integration/linkding"
 
 import (
 	"fmt"
 	"net/url"
 	"strings"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Document structure of a Linkding document

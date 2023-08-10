@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package response // import "miniflux.app/http/response"
+package response // import "miniflux.app/v2/http/response"
 
 import (
 	"errors"

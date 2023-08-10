@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package googlereader // import "miniflux.app/googlereader"
+package googlereader // import "miniflux.app/v2/googlereader"
 
 import (
 	"errors"
@@ -13,19 +13,19 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"miniflux.app/config"
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/json"
-	"miniflux.app/http/route"
-	"miniflux.app/integration"
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	"miniflux.app/proxy"
-	mff "miniflux.app/reader/handler"
-	mfs "miniflux.app/reader/subscription"
-	"miniflux.app/storage"
-	"miniflux.app/url"
-	"miniflux.app/validator"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/json"
+	"miniflux.app/v2/http/route"
+	"miniflux.app/v2/integration"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/proxy"
+	mff "miniflux.app/v2/reader/handler"
+	mfs "miniflux.app/v2/reader/subscription"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/url"
+	"miniflux.app/v2/validator"
 )
 
 type handler struct {

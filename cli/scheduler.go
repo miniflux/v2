@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/logger"
-	"miniflux.app/storage"
-	"miniflux.app/worker"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/worker"
 )
 
 func runScheduler(store *storage.Storage, pool *worker.Pool) {

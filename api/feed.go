@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api // import "miniflux.app/api"
+package api // import "miniflux.app/v2/api"
 
 import (
 	json_parser "encoding/json"
 	"net/http"
 	"time"
 
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/json"
-	"miniflux.app/model"
-	feedHandler "miniflux.app/reader/handler"
-	"miniflux.app/validator"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/json"
+	"miniflux.app/v2/model"
+	feedHandler "miniflux.app/v2/reader/handler"
+	"miniflux.app/v2/validator"
 )
 
 func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {

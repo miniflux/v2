@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package validator // import "miniflux.app/validator"
+package validator // import "miniflux.app/v2/validator"
 
 import (
-	"miniflux.app/locale"
-	"miniflux.app/model"
-	"miniflux.app/storage"
+	"miniflux.app/v2/locale"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/storage"
 )
 
 // ValidateUserCreationWithPassword validates user creation with a password.

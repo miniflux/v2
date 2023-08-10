@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package googlereader // import "miniflux.app/googlereader"
+package googlereader // import "miniflux.app/v2/googlereader"
 
 import (
 	"fmt"
 	"net/http"
 
-	"miniflux.app/http/response"
-	"miniflux.app/logger"
+	"miniflux.app/v2/http/response"
+	"miniflux.app/v2/logger"
 )
 
 type login struct {

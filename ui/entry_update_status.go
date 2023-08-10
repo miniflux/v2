@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	json_parser "encoding/json"
 	"net/http"
 
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/json"
-	"miniflux.app/model"
-	"miniflux.app/validator"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/json"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/validator"
 )
 
 func (h *handler) updateEntriesStatus(w http.ResponseWriter, r *http.Request) {

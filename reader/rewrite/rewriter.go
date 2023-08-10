@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rewrite // import "miniflux.app/reader/rewrite"
+package rewrite // import "miniflux.app/v2/reader/rewrite"
 
 import (
 	"strconv"
 	"strings"
 	"text/scanner"
 
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	"miniflux.app/url"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/url"
 )
 
 type rule struct {

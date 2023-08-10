@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	"crypto/hmac"
@@ -11,12 +11,12 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/crypto"
-	"miniflux.app/http/request"
-	"miniflux.app/http/response"
-	"miniflux.app/http/response/html"
-	"miniflux.app/logger"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response"
+	"miniflux.app/v2/http/response/html"
+	"miniflux.app/v2/logger"
 )
 
 func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {

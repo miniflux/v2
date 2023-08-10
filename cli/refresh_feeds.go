@@ -1,17 +1,17 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"sync"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	feedHandler "miniflux.app/reader/handler"
-	"miniflux.app/storage"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	feedHandler "miniflux.app/v2/reader/handler"
+	"miniflux.app/v2/storage"
 )
 
 func refreshFeeds(store *storage.Storage) {

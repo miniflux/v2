@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package oauth2 // import "miniflux.app/oauth2"
+package oauth2 // import "miniflux.app/v2/oauth2"
 
 import (
 	"context"
 	"errors"
 
-	"miniflux.app/logger"
+	"miniflux.app/v2/logger"
 )
 
 // Manager handles OAuth2 providers.

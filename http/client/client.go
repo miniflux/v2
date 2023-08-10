@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package client // import "miniflux.app/http/client"
+package client // import "miniflux.app/v2/http/client"
 
 import (
 	"bytes"
@@ -16,10 +16,10 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/errors"
-	"miniflux.app/logger"
-	"miniflux.app/timer"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/timer"
 )
 
 const (

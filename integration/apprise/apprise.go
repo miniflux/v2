@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/http/client"
-	"miniflux.app/model"
+	"miniflux.app/v2/http/client"
+	"miniflux.app/v2/model"
 )
 
 // Client represents a Apprise client.

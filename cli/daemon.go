@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"context"
@@ -11,13 +11,13 @@ import (
 	"syscall"
 	"time"
 
-	"miniflux.app/config"
-	httpd "miniflux.app/http/server"
-	"miniflux.app/logger"
-	"miniflux.app/metric"
-	"miniflux.app/storage"
-	"miniflux.app/systemd"
-	"miniflux.app/worker"
+	"miniflux.app/v2/config"
+	httpd "miniflux.app/v2/http/server"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/metric"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/systemd"
+	"miniflux.app/v2/worker"
 )
 
 func startDaemon(store *storage.Storage) {

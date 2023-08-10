@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package atom // import "miniflux.app/reader/atom"
+package atom // import "miniflux.app/v2/reader/atom"
 
 import (
 	"bytes"
 	"encoding/xml"
 	"io"
 
-	"miniflux.app/errors"
-	"miniflux.app/model"
-	xml_decoder "miniflux.app/reader/xml"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/model"
+	xml_decoder "miniflux.app/v2/reader/xml"
 )
 
 type atomFeed interface {

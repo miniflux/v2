@@ -4,7 +4,7 @@ ADD . /go/src/app
 WORKDIR /go/src/app
 RUN go build \
     -o miniflux \
-    -ldflags="-s -w -X 'miniflux.app/version.Version=`git describe --tags --abbrev=0`' -X 'miniflux.app/version.Commit=`git rev-parse --short HEAD`' -X 'miniflux.app/version.BuildDate=`date +%FT%T%z`'" \
+    -ldflags="-s -w -X 'miniflux.app/v2/version.Version=`git describe --tags --abbrev=0`' -X 'miniflux.app/v2/version.Commit=`git rev-parse --short HEAD`' -X 'miniflux.app/v2/version.BuildDate=`date +%FT%T%z`'" \
     main.go
 
 FROM gcr.io/distroless/base

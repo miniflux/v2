@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package proxy // import "miniflux.app/proxy"
+package proxy // import "miniflux.app/v2/proxy"
 
 import (
 	"strings"
 
-	"miniflux.app/config"
-	"miniflux.app/reader/sanitizer"
-	"miniflux.app/url"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/reader/sanitizer"
+	"miniflux.app/v2/url"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/mux"

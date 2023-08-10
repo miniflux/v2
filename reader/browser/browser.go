@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package browser // import "miniflux.app/reader/browser"
+package browser // import "miniflux.app/v2/reader/browser"
 
 import (
-	"miniflux.app/errors"
-	"miniflux.app/http/client"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/http/client"
 )
 
 var (

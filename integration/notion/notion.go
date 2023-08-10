@@ -6,7 +6,7 @@ package notion
 import (
 	"fmt"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Client represents a Notion client.

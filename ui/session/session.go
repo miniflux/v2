@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package session // import "miniflux.app/ui/session"
+package session // import "miniflux.app/v2/ui/session"
 
 import (
-	"miniflux.app/crypto"
-	"miniflux.app/storage"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/storage"
 )
 
 // Session handles session data.

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package proxy // import "miniflux.app/proxy"
+package proxy // import "miniflux.app/v2/proxy"
 
 import (
 	"crypto/hmac"
@@ -10,11 +10,11 @@ import (
 	"net/url"
 	"path"
 
-	"miniflux.app/http/route"
+	"miniflux.app/v2/http/route"
 
 	"github.com/gorilla/mux"
 
-	"miniflux.app/config"
+	"miniflux.app/v2/config"
 )
 
 // ProxifyURL generates a relative URL for a proxified resource.

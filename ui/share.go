@@ -1,19 +1,19 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	"net/http"
 	"time"
 
-	"miniflux.app/http/request"
-	"miniflux.app/http/response"
-	"miniflux.app/http/response/html"
-	"miniflux.app/http/route"
-	"miniflux.app/storage"
-	"miniflux.app/ui/session"
-	"miniflux.app/ui/view"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response"
+	"miniflux.app/v2/http/response/html"
+	"miniflux.app/v2/http/route"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/ui/session"
+	"miniflux.app/v2/ui/view"
 )
 
 func (h *handler) createSharedEntry(w http.ResponseWriter, r *http.Request) {

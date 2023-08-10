@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package subscription // import "miniflux.app/reader/subscription"
+package subscription // import "miniflux.app/v2/reader/subscription"
 
 import (
 	"fmt"
@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strings"
 
-	"miniflux.app/config"
-	"miniflux.app/errors"
-	"miniflux.app/http/client"
-	"miniflux.app/reader/browser"
-	"miniflux.app/reader/parser"
-	"miniflux.app/url"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/http/client"
+	"miniflux.app/v2/reader/browser"
+	"miniflux.app/v2/reader/parser"
+	"miniflux.app/v2/url"
 
 	"github.com/PuerkitoBio/goquery"
 )

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package logger // import "miniflux.app/logger"
+package logger // import "miniflux.app/v2/logger"
 
 import (
 	"fmt"

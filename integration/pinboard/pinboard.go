@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package pinboard // import "miniflux.app/integration/pinboard"
+package pinboard // import "miniflux.app/v2/integration/pinboard"
 
 import (
 	"fmt"
 	"net/url"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Client represents a Pinboard client.

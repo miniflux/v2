@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package template // import "miniflux.app/template"
+package template // import "miniflux.app/v2/template"
 
 import (
 	"bytes"
@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/errors"
-	"miniflux.app/locale"
-	"miniflux.app/logger"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/locale"
+	"miniflux.app/v2/logger"
 
 	"github.com/gorilla/mux"
 )

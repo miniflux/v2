@@ -9,7 +9,7 @@ Package client implements a client library for the Miniflux REST API.
 This code snippet fetch the list of users:
 
 	import (
-		miniflux "miniflux.app/client"
+		miniflux "miniflux.app/v2/client"
 	)
 
 	client := miniflux.New("https://api.example.org", "admin", "secret")
@@ -29,4 +29,4 @@ This one discover subscriptions on a website:
 	}
 	fmt.Println(subscriptions)
 */
-package client // import "miniflux.app/client"
+package client // import "miniflux.app/v2/client"

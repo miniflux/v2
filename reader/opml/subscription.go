@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package opml // import "miniflux.app/reader/opml"
+package opml // import "miniflux.app/v2/reader/opml"
 
 // Subcription represents a feed that will be imported or exported.
 type Subcription struct {

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package model // import "miniflux.app/model"
+package model // import "miniflux.app/v2/model"
 
 // HomePages returns the list of available home pages.
 func HomePages() map[string]string {

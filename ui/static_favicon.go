@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	"net/http"
 	"time"
 
-	"miniflux.app/http/response"
-	"miniflux.app/http/response/html"
-	"miniflux.app/ui/static"
+	"miniflux.app/v2/http/response"
+	"miniflux.app/v2/http/response/html"
+	"miniflux.app/v2/ui/static"
 )
 
 func (h *handler) showFavicon(w http.ResponseWriter, r *http.Request) {

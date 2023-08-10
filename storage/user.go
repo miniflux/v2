@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/storage"
+package storage // import "miniflux.app/v2/storage"
 
 import (
 	"database/sql"
@@ -9,9 +9,9 @@ import (
 	"runtime"
 	"strings"
 
-	"miniflux.app/crypto"
-	"miniflux.app/logger"
-	"miniflux.app/model"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
 
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"

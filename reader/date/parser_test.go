@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package date // import "miniflux.app/reader/date"
+package date // import "miniflux.app/v2/reader/date"
 
 import (
 	"testing"

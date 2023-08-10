@@ -1,4 +1,4 @@
-module miniflux.app
+module miniflux.app/v2
 
 // +heroku goVersion go1.21
 

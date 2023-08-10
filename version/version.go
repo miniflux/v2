@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package version // import "miniflux.app/version"
+package version // import "miniflux.app/v2/version"
 
 // Variables populated at build time.
 var (

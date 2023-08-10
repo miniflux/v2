@@ -1,17 +1,17 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package parser // import "miniflux.app/reader/parser"
+package parser // import "miniflux.app/v2/reader/parser"
 
 import (
 	"strings"
 
-	"miniflux.app/errors"
-	"miniflux.app/model"
-	"miniflux.app/reader/atom"
-	"miniflux.app/reader/json"
-	"miniflux.app/reader/rdf"
-	"miniflux.app/reader/rss"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/reader/atom"
+	"miniflux.app/v2/reader/json"
+	"miniflux.app/v2/reader/rdf"
+	"miniflux.app/v2/reader/rss"
 )
 
 // ParseFeed analyzes the input data and returns a normalized feed object.

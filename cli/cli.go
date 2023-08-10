@@ -1,19 +1,19 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"flag"
 	"fmt"
 
-	"miniflux.app/config"
-	"miniflux.app/database"
-	"miniflux.app/locale"
-	"miniflux.app/logger"
-	"miniflux.app/storage"
-	"miniflux.app/ui/static"
-	"miniflux.app/version"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/database"
+	"miniflux.app/v2/locale"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/ui/static"
+	"miniflux.app/v2/version"
 )
 
 const (

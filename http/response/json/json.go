@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package json // import "miniflux.app/http/response/json"
+package json // import "miniflux.app/v2/http/response/json"
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
 
-	"miniflux.app/http/response"
-	"miniflux.app/logger"
+	"miniflux.app/v2/http/response"
+	"miniflux.app/v2/logger"
 )
 
 const contentTypeHeader = `application/json`
