@@ -4,7 +4,7 @@ ADD . /go/src/app
 WORKDIR /go/src/app
 RUN make miniflux
 
-FROM rockylinux:8
+FROM rockylinux:9
 RUN dnf install -y rpm-build
 RUN mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 RUN echo "%_topdir /root/rpmbuild" >> .rpmmacros
