@@ -1,4 +1,4 @@
-name: CI Workflow
+name: Tests
 permissions: read-all
 
 on:

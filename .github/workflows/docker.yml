@@ -10,6 +10,7 @@ on:
 jobs:
   test-docker-images:
     if: github.event.pull_request
+    name: Test Images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,6 +36,7 @@ jobs:
 
   publish-docker-images:
     if: ${{ ! github.event.pull_request }}
+    name: Publish Images
     permissions:
       packages: write
     runs-on: ubuntu-latest
