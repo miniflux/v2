@@ -1,4 +1,4 @@
-name: Debian and RPM Package Builders
+name: Debian Packages
 permissions: read-all
 on:
   push:
@@ -7,9 +7,9 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  test-debian-packages:
+  test-packages:
     if: github.event.pull_request
-    name: Test Debian Packages
+    name: Test Packages
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -28,9 +28,9 @@ jobs:
       run: make debian-packages
     - name: List generated files
       run: ls -l *.deb
-  publish-debian-packages:
+  publish-packages:
     if: ${{ ! github.event.pull_request }}
-    name: Publish Debian Packages
+    name: Publish Packages
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -53,31 +53,3 @@ jobs:
       env:
         FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
       run: for f in *.deb; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/miniflux/; done
-  test-rpm-package:
-    if: github.event.pull_request
-    name: Test RPM Package
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-          fetch-depth: 0
-    - name: Build RPM Package
-      run: make rpm
-    - name: List generated files
-      run: ls -l *.rpm
-  publish-rpm-package:
-    if: ${{ ! github.event.pull_request }}
-    name: Publish RPM Package
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-          fetch-depth: 0
-    - name: Build RPM Package
-      run: make rpm
-    - name: List generated files
-      run: ls -l *.rpm
-    - name: Upload package to repository
-      env:
-        FURY_TOKEN: ${{ secrets.FURY_TOKEN }}
-      run: for f in *.rpm; do curl -F package=@$f https://$FURY_TOKEN@push.fury.io/miniflux/; done
