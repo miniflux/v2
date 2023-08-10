@@ -1,22 +1,22 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	"context"
 	"errors"
 	"net/http"
 
-	"miniflux.app/config"
-	"miniflux.app/http/cookie"
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/html"
-	"miniflux.app/http/route"
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	"miniflux.app/storage"
-	"miniflux.app/ui/session"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/http/cookie"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/html"
+	"miniflux.app/v2/http/route"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/ui/session"
 
 	"github.com/gorilla/mux"
 )

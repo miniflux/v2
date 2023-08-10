@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package route // import "miniflux.app/http/route"
+package route // import "miniflux.app/v2/http/route"
 
 import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"miniflux.app/logger"
+	"miniflux.app/v2/logger"
 )
 
 // Path returns the defined route based on given arguments.

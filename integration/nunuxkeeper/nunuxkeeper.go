@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package nunuxkeeper // import "miniflux.app/integration/nunuxkeeper"
+package nunuxkeeper // import "miniflux.app/v2/integration/nunuxkeeper"
 
 import (
 	"fmt"
 	"net/url"
 	"path"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Document structure of a Nununx Keeper document

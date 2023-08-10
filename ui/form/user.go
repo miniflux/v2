@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package form // import "miniflux.app/ui/form"
+package form // import "miniflux.app/v2/ui/form"
 
 import (
 	"net/http"
 
-	"miniflux.app/errors"
-	"miniflux.app/model"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/model"
 )
 
 // UserForm represents the user form.

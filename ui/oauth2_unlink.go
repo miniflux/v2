@@ -1,17 +1,17 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/ui"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/html"
-	"miniflux.app/http/route"
-	"miniflux.app/locale"
-	"miniflux.app/logger"
-	"miniflux.app/ui/session"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/html"
+	"miniflux.app/v2/http/route"
+	"miniflux.app/v2/locale"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/ui/session"
 )
 
 func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {

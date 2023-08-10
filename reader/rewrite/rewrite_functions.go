@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rewrite // import "miniflux.app/reader/rewrite"
+package rewrite // import "miniflux.app/v2/reader/rewrite"
 
 import (
 	"encoding/base64"
@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"miniflux.app/config"
+	"miniflux.app/v2/config"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/yuin/goldmark"

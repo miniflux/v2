@@ -3,13 +3,13 @@
 
 // Readwise Reader API documentation: https://readwise.io/reader_api
 
-package readwise // import "miniflux.app/integration/readwise"
+package readwise // import "miniflux.app/v2/integration/readwise"
 
 import (
 	"fmt"
 	"net/url"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Document structure of a Readwise Reader document

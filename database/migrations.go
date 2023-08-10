@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package database // import "miniflux.app/database"
+package database // import "miniflux.app/v2/database"
 
 import (
 	"database/sql"

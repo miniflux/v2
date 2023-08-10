@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package json // import "miniflux.app/reader/json"
+package json // import "miniflux.app/v2/reader/json"
 
 import (
 	"encoding/json"
 	"io"
 
-	"miniflux.app/errors"
-	"miniflux.app/model"
+	"miniflux.app/v2/errors"
+	"miniflux.app/v2/model"
 )
 
 // Parse returns a normalized feed struct from a JSON feed.

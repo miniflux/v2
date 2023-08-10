@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package static // import "miniflux.app/ui/static"
+package static // import "miniflux.app/v2/ui/static"
 
 import (
 	"bytes"

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package sanitizer // import "miniflux.app/reader/sanitizer"
+package sanitizer // import "miniflux.app/v2/reader/sanitizer"
 
 import (
 	"bytes"

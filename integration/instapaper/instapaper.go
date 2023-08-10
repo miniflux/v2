@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package instapaper // import "miniflux.app/integration/instapaper"
+package instapaper // import "miniflux.app/v2/integration/instapaper"
 
 import (
 	"fmt"
 	"net/url"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Client represents an Instapaper client.

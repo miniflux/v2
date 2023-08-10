@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package wallabag // import "miniflux.app/integration/wallabag"
+package wallabag // import "miniflux.app/v2/integration/wallabag"
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"io"
 	"net/url"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Client represents a Wallabag client.

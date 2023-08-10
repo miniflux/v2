@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package telegrambot // import "miniflux.app/integration/telegrambot"
+package telegrambot // import "miniflux.app/v2/integration/telegrambot"
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"miniflux.app/model"
+	"miniflux.app/v2/model"
 )
 
 // PushEntry pushes entry to telegram chat using integration settings provided

@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"net/http"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/logger"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/logger"
 )
 
 func doHealthCheck(healthCheckEndpoint string) {

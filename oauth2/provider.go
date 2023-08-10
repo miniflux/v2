@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package oauth2 // import "miniflux.app/oauth2"
+package oauth2 // import "miniflux.app/v2/oauth2"
 
 import (
 	"context"
 
-	"miniflux.app/model"
+	"miniflux.app/v2/model"
 )
 
 // Provider is an interface for OAuth2 providers.

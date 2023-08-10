@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/storage"
+package storage // import "miniflux.app/v2/storage"
 
 import (
 	"fmt"
 
-	"miniflux.app/model"
+	"miniflux.app/v2/model"
 )
 
 // APIKeyExists checks if an API Key with the same description exists.

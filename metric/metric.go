@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package metric // import "miniflux.app/metric"
+package metric // import "miniflux.app/v2/metric"
 
 import (
 	"time"
 
-	"miniflux.app/logger"
-	"miniflux.app/storage"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/storage"
 
 	"github.com/prometheus/client_golang/prometheus"
 )

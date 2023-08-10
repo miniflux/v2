@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rss // import "miniflux.app/reader/rss"
+package rss // import "miniflux.app/v2/reader/rss"
 
 // DublinCoreElement represents Dublin Core XML elements.
 type DublinCoreElement struct {

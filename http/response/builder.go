@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package response // import "miniflux.app/http/response"
+package response // import "miniflux.app/v2/http/response"
 
 import (
 	"compress/flate"
@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/logger"
+	"miniflux.app/v2/logger"
 )
 
 const compressionThreshold = 1024

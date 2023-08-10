@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/storage"
+package storage // import "miniflux.app/v2/storage"
 
 import (
 	"database/sql"
@@ -11,8 +11,8 @@ import (
 
 	"github.com/lib/pq"
 
-	"miniflux.app/model"
-	"miniflux.app/timezone"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/timezone"
 )
 
 // EntryQueryBuilder builds a SQL query to fetch entries.

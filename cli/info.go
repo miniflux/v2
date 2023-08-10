@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package cli // import "miniflux.app/cli"
+package cli // import "miniflux.app/v2/cli"
 
 import (
 	"fmt"
 	"runtime"
 
-	"miniflux.app/version"
+	"miniflux.app/v2/version"
 )
 
 func info() {

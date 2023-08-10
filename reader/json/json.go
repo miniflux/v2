@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package json // import "miniflux.app/reader/json"
+package json // import "miniflux.app/v2/reader/json"
 
 import (
 	"strings"
 	"time"
 
-	"miniflux.app/crypto"
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	"miniflux.app/reader/date"
-	"miniflux.app/reader/sanitizer"
-	"miniflux.app/url"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/reader/date"
+	"miniflux.app/v2/reader/sanitizer"
+	"miniflux.app/v2/url"
 )
 
 type jsonFeed struct {

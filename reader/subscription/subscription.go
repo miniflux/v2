@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package subscription // import "miniflux.app/reader/subscription"
+package subscription // import "miniflux.app/v2/reader/subscription"
 
 import "fmt"
 

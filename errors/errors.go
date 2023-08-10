@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package errors // import "miniflux.app/errors"
+package errors // import "miniflux.app/v2/errors"
 
 import (
 	"fmt"
 
-	"miniflux.app/locale"
+	"miniflux.app/v2/locale"
 )
 
 // LocalizedError represents an error than could be translated to another language.

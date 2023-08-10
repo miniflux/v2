@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package fever // import "miniflux.app/fever"
+package fever // import "miniflux.app/v2/fever"
 
 import (
 	"net/http"
@@ -9,13 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/http/request"
-	"miniflux.app/http/response/json"
-	"miniflux.app/integration"
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	"miniflux.app/proxy"
-	"miniflux.app/storage"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/http/response/json"
+	"miniflux.app/v2/integration"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/proxy"
+	"miniflux.app/v2/storage"
 
 	"github.com/gorilla/mux"
 )

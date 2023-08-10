@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package model // import "miniflux.app/model"
+package model // import "miniflux.app/v2/model"
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/http/client"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/http/client"
 )
 
 func TestFeedWithResponse(t *testing.T) {

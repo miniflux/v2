@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package template // import "miniflux.app/template"
+package template // import "miniflux.app/v2/template"
 
 import (
 	"fmt"
@@ -11,14 +11,14 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/config"
-	"miniflux.app/crypto"
-	"miniflux.app/http/route"
-	"miniflux.app/locale"
-	"miniflux.app/model"
-	"miniflux.app/proxy"
-	"miniflux.app/timezone"
-	"miniflux.app/url"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/http/route"
+	"miniflux.app/v2/locale"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/proxy"
+	"miniflux.app/v2/timezone"
+	"miniflux.app/v2/url"
 
 	"github.com/gorilla/mux"
 )

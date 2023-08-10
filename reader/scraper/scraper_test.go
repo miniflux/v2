@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package scraper // import "miniflux.app/reader/scraper"
+package scraper // import "miniflux.app/v2/reader/scraper"
 
 import (
 	"bytes"

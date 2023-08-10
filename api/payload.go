@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package api // import "miniflux.app/api"
+package api // import "miniflux.app/v2/api"
 
 import (
-	"miniflux.app/model"
+	"miniflux.app/v2/model"
 )
 
 type feedIconResponse struct {

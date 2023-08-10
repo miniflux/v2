@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package icon // import "miniflux.app/reader/icon"
+package icon // import "miniflux.app/v2/reader/icon"
 
 import (
 	"strings"

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package httpd // import "miniflux.app/http/server"
+package httpd // import "miniflux.app/v2/http/server"
 
 import (
 	"crypto/tls"
@@ -12,16 +12,16 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/api"
-	"miniflux.app/config"
-	"miniflux.app/fever"
-	"miniflux.app/googlereader"
-	"miniflux.app/http/request"
-	"miniflux.app/logger"
-	"miniflux.app/storage"
-	"miniflux.app/ui"
-	"miniflux.app/version"
-	"miniflux.app/worker"
+	"miniflux.app/v2/api"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/fever"
+	"miniflux.app/v2/googlereader"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/storage"
+	"miniflux.app/v2/ui"
+	"miniflux.app/v2/version"
+	"miniflux.app/v2/worker"
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"

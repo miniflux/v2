@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package atom // import "miniflux.app/reader/atom"
+package atom // import "miniflux.app/v2/reader/atom"
 
 import (
 	"encoding/base64"
@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/crypto"
-	"miniflux.app/logger"
-	"miniflux.app/model"
-	"miniflux.app/reader/date"
-	"miniflux.app/reader/sanitizer"
-	"miniflux.app/url"
+	"miniflux.app/v2/crypto"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
+	"miniflux.app/v2/reader/date"
+	"miniflux.app/v2/reader/sanitizer"
+	"miniflux.app/v2/url"
 )
 
 // Specs: http://web.archive.org/web/20060811235523/http://www.mnot.net/drafts/draft-nottingham-atom-format-02.html

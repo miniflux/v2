@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package timer // import "miniflux.app/timer"
+package timer // import "miniflux.app/v2/timer"
 
 import (
 	"time"
 
-	"miniflux.app/logger"
+	"miniflux.app/v2/logger"
 )
 
 // ExecutionTime returns the elapsed time of a block of code.

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	miniflux "miniflux.app/client"
+	miniflux "miniflux.app/v2/client"
 )
 
 func TestCreateFeed(t *testing.T) {

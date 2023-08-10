@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storage // import "miniflux.app/storage"
+package storage // import "miniflux.app/v2/storage"
 
 import (
 	"database/sql"
 	"fmt"
 	"strings"
 
-	"miniflux.app/model"
+	"miniflux.app/v2/model"
 )
 
 // GetEnclosures returns all attachments for the given entry.

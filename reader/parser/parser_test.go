@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package parser // import "miniflux.app/reader/parser"
+package parser // import "miniflux.app/v2/reader/parser"
 
 import (
 	"bytes"
 	"os"
 	"testing"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 func TestParseAtom(t *testing.T) {

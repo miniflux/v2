@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package model // import "miniflux.app/model"
+package model // import "miniflux.app/v2/model"
 
 import (
 	"fmt"
 	"time"
 
-	"miniflux.app/timezone"
+	"miniflux.app/v2/timezone"
 )
 
 // UserSession represents a user session in the system.

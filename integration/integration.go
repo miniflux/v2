@@ -1,24 +1,24 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package integration // import "miniflux.app/integration"
+package integration // import "miniflux.app/v2/integration"
 
 import (
-	"miniflux.app/config"
-	"miniflux.app/integration/apprise"
-	"miniflux.app/integration/espial"
-	"miniflux.app/integration/instapaper"
-	"miniflux.app/integration/linkding"
-	"miniflux.app/integration/matrixbot"
-	"miniflux.app/integration/notion"
-	"miniflux.app/integration/nunuxkeeper"
-	"miniflux.app/integration/pinboard"
-	"miniflux.app/integration/pocket"
-	"miniflux.app/integration/readwise"
-	"miniflux.app/integration/telegrambot"
-	"miniflux.app/integration/wallabag"
-	"miniflux.app/logger"
-	"miniflux.app/model"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/integration/apprise"
+	"miniflux.app/v2/integration/espial"
+	"miniflux.app/v2/integration/instapaper"
+	"miniflux.app/v2/integration/linkding"
+	"miniflux.app/v2/integration/matrixbot"
+	"miniflux.app/v2/integration/notion"
+	"miniflux.app/v2/integration/nunuxkeeper"
+	"miniflux.app/v2/integration/pinboard"
+	"miniflux.app/v2/integration/pocket"
+	"miniflux.app/v2/integration/readwise"
+	"miniflux.app/v2/integration/telegrambot"
+	"miniflux.app/v2/integration/wallabag"
+	"miniflux.app/v2/logger"
+	"miniflux.app/v2/model"
 )
 
 // SendEntry sends the entry to third-party providers when the user click on "Save".

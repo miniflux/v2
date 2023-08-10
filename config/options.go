@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package config // import "miniflux.app/config"
+package config // import "miniflux.app/v2/config"
 
 import (
 	"crypto/rand"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/version"
+	"miniflux.app/v2/version"
 )
 
 const (

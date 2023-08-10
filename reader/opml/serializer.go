@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package opml // import "miniflux.app/reader/opml"
+package opml // import "miniflux.app/v2/reader/opml"
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"sort"
 	"time"
 
-	"miniflux.app/logger"
+	"miniflux.app/v2/logger"
 )
 
 // Serialize returns a SubcriptionList in OPML format.

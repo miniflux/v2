@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package view // import "miniflux.app/ui/view"
+package view // import "miniflux.app/v2/ui/view"
 
 import (
 	"net/http"
 
-	"miniflux.app/http/request"
-	"miniflux.app/template"
-	"miniflux.app/ui/session"
-	"miniflux.app/ui/static"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/template"
+	"miniflux.app/v2/ui/session"
+	"miniflux.app/v2/ui/static"
 )
 
 // View wraps template argument building.

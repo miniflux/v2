@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package pocket // import "miniflux.app/integration/pocket"
+package pocket // import "miniflux.app/v2/integration/pocket"
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"io"
 	"net/url"
 
-	"miniflux.app/http/client"
+	"miniflux.app/v2/http/client"
 )
 
 // Connector manages the authorization flow with Pocket to get a personal access token.

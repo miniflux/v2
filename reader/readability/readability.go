@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package readability // import "miniflux.app/reader/readability"
+package readability // import "miniflux.app/v2/reader/readability"
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"miniflux.app/logger"
+	"miniflux.app/v2/logger"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"

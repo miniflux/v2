@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package validator // import "miniflux.app/validator"
+package validator // import "miniflux.app/v2/validator"
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"regexp"
 
-	"miniflux.app/locale"
+	"miniflux.app/v2/locale"
 )
 
 // ValidationError represents a validation error.

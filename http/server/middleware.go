@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package httpd // import "miniflux.app/http/server"
+package httpd // import "miniflux.app/v2/http/server"
 
 import (
 	"context"
 	"net/http"
 
-	"miniflux.app/config"
-	"miniflux.app/http/request"
-	"miniflux.app/logger"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/http/request"
+	"miniflux.app/v2/logger"
 )
 
 func middleware(next http.Handler) http.Handler {

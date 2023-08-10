@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package rewrite // import "miniflux.app/reader/rewrite"
+package rewrite // import "miniflux.app/v2/reader/rewrite"
 
 import (
 	"os"
@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"miniflux.app/config"
-	"miniflux.app/model"
+	"miniflux.app/v2/config"
+	"miniflux.app/v2/model"
 )
 
 func TestParseRules(t *testing.T) {

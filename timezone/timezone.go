@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package timezone // import "miniflux.app/timezone"
+package timezone // import "miniflux.app/v2/timezone"
 
 import (
 	"time"
