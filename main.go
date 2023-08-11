@@ -4,7 +4,7 @@
 package main // import "miniflux.app/v2"
 
 import (
-	"miniflux.app/v2/cli"
+	"miniflux.app/v2/internal/cli"
 )
 
 func main() {
