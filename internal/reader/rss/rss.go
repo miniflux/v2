@@ -199,6 +199,9 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Title = r.entryTitle()
 	entry.Enclosures = r.entryEnclosures()
 	entry.Tags = r.entryCategories()
+	if duration, err := normalizeDuration(r.Duration); err == nil {
+		entry.ReadingTime = duration
+	}
 
 	return entry
 }
