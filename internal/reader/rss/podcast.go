@@ -3,7 +3,12 @@
 
 package rss // import "miniflux.app/v2/internal/reader/rss"
 
-import "strings"
+import (
+	"fmt"
+	"math"
+	"strconv"
+	"strings"
+)
 
 // PodcastFeedElement represents iTunes and GooglePlay feed XML elements.
 // Specs:
@@ -21,6 +26,7 @@ type PodcastFeedElement struct {
 type PodcastEntryElement struct {
 	Subtitle              string `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd subtitle"`
 	Summary               string `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd summary"`
+	Duration              string `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd duration"`
 	GooglePlayDescription string `xml:"http://www.google.com/schemas/play-podcasts/1.0 description"`
 }
 
@@ -66,4 +72,27 @@ func (e *PodcastEntryElement) PodcastDescription() string {
 		description = e.Subtitle
 	}
 	return strings.TrimSpace(description)
+}
+
+var invalidDurationFormatErr = fmt.Errorf("rss: invalid duration format")
+
+// normalizeDuration returns the duration tag value as a number of minutes
+func normalizeDuration(rawDuration string) (int, error) {
+	var sumSeconds int
+
+	durationParts := strings.Split(rawDuration, ":")
+	if len(durationParts) > 3 {
+		return 0, invalidDurationFormatErr
+	}
+
+	for i, durationPart := range durationParts {
+		durationPartValue, err := strconv.Atoi(durationPart)
+		if err != nil {
+			return 0, invalidDurationFormatErr
+		}
+
+		sumSeconds += int(math.Pow(60, float64(len(durationParts)-i-1))) * durationPartValue
+	}
+
+	return sumSeconds / 60, nil
 }
