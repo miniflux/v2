@@ -160,7 +160,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			matrix_bot_chat_id,
 			apprise_enabled,
 			apprise_url,
-			apprise_services_url
+			apprise_services_url,
+			shiori_enabled,
+			shiori_url,
+			shiori_username,
+			shiori_password
 		FROM
 			integrations
 		WHERE
@@ -220,6 +224,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.AppriseEnabled,
 		&integration.AppriseURL,
 		&integration.AppriseServicesURL,
+		&integration.ShioriEnabled,
+		&integration.ShioriURL,
+		&integration.ShioriUsername,
+		&integration.ShioriPassword,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -287,9 +295,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			readwise_api_key=$48,
 			apprise_enabled=$49,
 			apprise_url=$50,
-			apprise_services_url=$51
+			apprise_services_url=$51,
+			shiori_enabled=$52,
+			shiori_url=$53,
+			shiori_username=$54,
+			shiori_password=$55
 		WHERE
-			user_id=$52
+			user_id=$56
 	`
 	_, err := s.db.Exec(
 		query,
@@ -344,11 +356,15 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.AppriseEnabled,
 		integration.AppriseURL,
 		integration.AppriseServicesURL,
+		integration.ShioriEnabled,
+		integration.ShioriURL,
+		integration.ShioriUsername,
+		integration.ShioriPassword,
 		integration.UserID,
 	)
 
 	if err != nil {
-		return fmt.Errorf(`store: unable to update integration row: %v`, err)
+		return fmt.Errorf(`store: unable to update integration record: %v`, err)
 	}
 
 	return nil
@@ -364,7 +380,19 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 		WHERE
 			user_id=$1
 		AND
-			(pinboard_enabled='t' OR instapaper_enabled='t' OR wallabag_enabled='t' OR notion_enabled='t' OR nunux_keeper_enabled='t' OR espial_enabled='t' OR readwise_enabled='t' OR pocket_enabled='t' OR linkding_enabled='t' OR apprise_enabled='t')
+			(
+				pinboard_enabled='t' OR
+				instapaper_enabled='t' OR
+				wallabag_enabled='t' OR
+				notion_enabled='t' OR
+				nunux_keeper_enabled='t' OR
+				espial_enabled='t' OR
+				readwise_enabled='t' OR
+				pocket_enabled='t' OR
+				linkding_enabled='t' OR
+				apprise_enabled='t' OR
+				shiori_enabled='t'
+			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
 		result = false

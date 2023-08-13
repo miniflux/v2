@@ -77,6 +77,10 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		AppriseEnabled:       integration.AppriseEnabled,
 		AppriseURL:           integration.AppriseURL,
 		AppriseServicesURL:   integration.AppriseServicesURL,
+		ShioriEnabled:        integration.ShioriEnabled,
+		ShioriURL:            integration.ShioriURL,
+		ShioriUsername:       integration.ShioriUsername,
+		ShioriPassword:       integration.ShioriPassword,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

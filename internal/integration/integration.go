@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/integration/pinboard"
 	"miniflux.app/v2/internal/integration/pocket"
 	"miniflux.app/v2/internal/integration/readwise"
+	"miniflux.app/v2/internal/integration/shiori"
 	"miniflux.app/v2/internal/integration/telegrambot"
 	"miniflux.app/v2/internal/integration/wallabag"
 	"miniflux.app/v2/internal/logger"
@@ -135,6 +136,20 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 
 		if err := client.AddEntry(entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
+
+	if integration.ShioriEnabled {
+		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Shiori", entry.ID, entry.URL, integration.UserID)
+
+		client := shiori.NewClient(
+			integration.ShioriURL,
+			integration.ShioriUsername,
+			integration.ShioriPassword,
+		)
+
+		if err := client.AddBookmark(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] Unable to send entry #%d to Shiori for user #%d: %v", entry.ID, integration.UserID, err)
 		}
 	}
 }

@@ -57,4 +57,8 @@ type Integration struct {
 	AppriseEnabled       bool
 	AppriseURL           string
 	AppriseServicesURL   string
+	ShioriEnabled        bool
+	ShioriURL            string
+	ShioriUsername       string
+	ShioriPassword       string
 }

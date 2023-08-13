@@ -709,26 +709,36 @@ var migrations = []func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
-		ALTER TABLE integrations ADD COLUMN notion_enabled bool default 'f';
-		ALTER TABLE integrations ADD COLUMN notion_token text default '';
-		ALTER TABLE integrations ADD COLUMN notion_page_id text default '';
+			ALTER TABLE integrations ADD COLUMN notion_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN notion_token text default '';
+			ALTER TABLE integrations ADD COLUMN notion_page_id text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
-		ALTER TABLE integrations ADD COLUMN readwise_enabled bool default 'f';
-		ALTER TABLE integrations ADD COLUMN readwise_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN readwise_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN readwise_api_key text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
-		ALTER TABLE integrations ADD COLUMN apprise_enabled bool default 'f';
-		ALTER TABLE integrations ADD COLUMN apprise_url text default '';
-		ALTER TABLE integrations ADD COLUMN apprise_services_url text default '';
+			ALTER TABLE integrations ADD COLUMN apprise_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN apprise_url text default '';
+			ALTER TABLE integrations ADD COLUMN apprise_services_url text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN shiori_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN shiori_url text default '';
+			ALTER TABLE integrations ADD COLUMN shiori_username text default '';
+			ALTER TABLE integrations ADD COLUMN shiori_password text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
