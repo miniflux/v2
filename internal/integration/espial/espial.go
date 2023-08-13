@@ -5,10 +5,9 @@ package espial // import "miniflux.app/v2/internal/integration/espial"
 
 import (
 	"fmt"
-	"net/url"
-	"path"
 
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/url"
 )
 
 // Document structure of an Espial document
@@ -33,7 +32,7 @@ func NewClient(baseURL, apiKey string) *Client {
 // AddEntry sends an entry to Espial.
 func (c *Client) AddEntry(link, title, content, tags string) error {
 	if c.baseURL == "" || c.apiKey == "" {
-		return fmt.Errorf("espial: missing credentials")
+		return fmt.Errorf("espial: missing base URL or API key")
 	}
 
 	doc := &Document{
@@ -43,12 +42,12 @@ func (c *Client) AddEntry(link, title, content, tags string) error {
 		Tags:   tags,
 	}
 
-	apiURL, err := getAPIEndpoint(c.baseURL, "/api/add")
+	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/add")
 	if err != nil {
-		return err
+		return fmt.Errorf(`espial: invalid API endpoint: %v`, err)
 	}
 
-	clt := client.New(apiURL)
+	clt := client.New(apiEndpoint)
 	clt.WithAuthorization("ApiKey " + c.apiKey)
 	response, err := clt.PostJSON(doc)
 	if err != nil {
@@ -60,13 +59,4 @@ func (c *Client) AddEntry(link, title, content, tags string) error {
 	}
 
 	return nil
-}
-
-func getAPIEndpoint(baseURL, pathURL string) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("espial: invalid API endpoint: %v", err)
-	}
-	u.Path = path.Join(u.Path, pathURL)
-	return u.String(), nil
 }

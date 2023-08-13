@@ -89,3 +89,34 @@ func TestDomain(t *testing.T) {
 		}
 	}
 }
+
+func TestJoinBaseURLAndPath(t *testing.T) {
+	type args struct {
+		baseURL string
+		path    string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{"empty base url", args{"", "/api/bookmarks/"}, "", true},
+		{"empty path", args{"https://example.com", ""}, "", true},
+		{"invalid base url", args{"incorrect url", ""}, "", true},
+		{"valid", args{"https://example.com", "/api/bookmarks/"}, "https://example.com/api/bookmarks/", false},
+		{"valid", args{"https://example.com/subfolder", "/api/bookmarks/"}, "https://example.com/subfolder/api/bookmarks/", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := JoinBaseURLAndPath(tt.args.baseURL, tt.args.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("JoinBaseURLAndPath error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("JoinBaseURLAndPath = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

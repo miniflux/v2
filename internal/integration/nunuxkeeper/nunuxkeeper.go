@@ -5,10 +5,9 @@ package nunuxkeeper // import "miniflux.app/v2/internal/integration/nunuxkeeper"
 
 import (
 	"fmt"
-	"net/url"
-	"path"
 
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/url"
 )
 
 // Document structure of a Nununx Keeper document
@@ -43,12 +42,12 @@ func (c *Client) AddEntry(link, title, content string) error {
 		ContentType: "text/html",
 	}
 
-	apiURL, err := getAPIEndpoint(c.baseURL, "/v2/documents")
+	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/v2/documents")
 	if err != nil {
-		return err
+		return fmt.Errorf(`nunux-keeper: invalid API endpoint: %v`, err)
 	}
 
-	clt := client.New(apiURL)
+	clt := client.New(apiEndpoint)
 	clt.WithCredentials("api", c.apiKey)
 	response, err := clt.PostJSON(doc)
 	if err != nil {
@@ -60,13 +59,4 @@ func (c *Client) AddEntry(link, title, content string) error {
 	}
 
 	return nil
-}
-
-func getAPIEndpoint(baseURL, pathURL string) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("nunux-keeper: invalid API endpoint: %v", err)
-	}
-	u.Path = path.Join(u.Path, pathURL)
-	return u.String(), nil
 }
