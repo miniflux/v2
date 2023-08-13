@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/integration/pinboard"
 	"miniflux.app/v2/internal/integration/pocket"
 	"miniflux.app/v2/internal/integration/readwise"
+	"miniflux.app/v2/internal/integration/shaarli"
 	"miniflux.app/v2/internal/integration/shiori"
 	"miniflux.app/v2/internal/integration/telegrambot"
 	"miniflux.app/v2/internal/integration/wallabag"
@@ -25,7 +26,7 @@ import (
 // SendEntry sends the entry to third-party providers when the user click on "Save".
 func SendEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.PinboardEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Pinboard", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Pinboard", entry.ID, entry.URL, integration.UserID)
 
 		client := pinboard.NewClient(integration.PinboardToken)
 		err := client.AddBookmark(
@@ -41,7 +42,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.InstapaperEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Instapaper", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Instapaper", entry.ID, entry.URL, integration.UserID)
 
 		client := instapaper.NewClient(integration.InstapaperUsername, integration.InstapaperPassword)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
@@ -50,7 +51,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.WallabagEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Wallabag", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Wallabag", entry.ID, entry.URL, integration.UserID)
 
 		client := wallabag.NewClient(
 			integration.WallabagURL,
@@ -67,7 +68,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.NotionEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Notion", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Notion", entry.ID, entry.URL, integration.UserID)
 
 		client := notion.NewClient(
 			integration.NotionToken,
@@ -79,7 +80,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.NunuxKeeperEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to NunuxKeeper", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to NunuxKeeper", entry.ID, entry.URL, integration.UserID)
 
 		client := nunuxkeeper.NewClient(
 			integration.NunuxKeeperURL,
@@ -92,7 +93,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.EspialEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Espial", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Espial", entry.ID, entry.URL, integration.UserID)
 
 		client := espial.NewClient(
 			integration.EspialURL,
@@ -105,7 +106,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.PocketEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Pocket", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Pocket", entry.ID, entry.URL, integration.UserID)
 
 		client := pocket.NewClient(config.Opts.PocketConsumerKey(integration.PocketConsumerKey), integration.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
@@ -114,7 +115,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.LinkdingEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Linkding", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Linkding", entry.ID, entry.URL, integration.UserID)
 
 		client := linkding.NewClient(
 			integration.LinkdingURL,
@@ -128,7 +129,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.ReadwiseEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Readwise Reader", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Readwise Reader", entry.ID, entry.URL, integration.UserID)
 
 		client := readwise.NewClient(
 			integration.ReadwiseAPIKey,
@@ -140,7 +141,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 
 	if integration.ShioriEnabled {
-		logger.Debug("[Integration] Sending Entry #%d %q for User #%d to Shiori", entry.ID, entry.URL, integration.UserID)
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Shiori", entry.ID, entry.URL, integration.UserID)
 
 		client := shiori.NewClient(
 			integration.ShioriURL,
@@ -150,6 +151,19 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 
 		if err := client.AddBookmark(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] Unable to send entry #%d to Shiori for user #%d: %v", entry.ID, integration.UserID, err)
+		}
+	}
+
+	if integration.ShaarliEnabled {
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Shaarli", entry.ID, entry.URL, integration.UserID)
+
+		client := shaarli.NewClient(
+			integration.ShaarliURL,
+			integration.ShaarliAPISecret,
+		)
+
+		if err := client.AddLink(entry.URL, entry.Title); err != nil {
+			logger.Error("[Integration] Unable to send entry #%d to Shaarli for user #%d: %v", entry.ID, integration.UserID, err)
 		}
 	}
 }

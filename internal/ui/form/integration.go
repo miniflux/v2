@@ -66,6 +66,9 @@ type IntegrationForm struct {
 	ShioriURL            string
 	ShioriUsername       string
 	ShioriPassword       string
+	ShaarliEnabled       bool
+	ShaarliURL           string
+	ShaarliAPISecret     string
 }
 
 // Merge copy form values to the model.
@@ -123,6 +126,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.ShioriURL = i.ShioriURL
 	integration.ShioriUsername = i.ShioriUsername
 	integration.ShioriPassword = i.ShioriPassword
+	integration.ShaarliEnabled = i.ShaarliEnabled
+	integration.ShaarliURL = i.ShaarliURL
+	integration.ShaarliAPISecret = i.ShaarliAPISecret
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -183,5 +189,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		ShioriURL:            r.FormValue("shiori_url"),
 		ShioriUsername:       r.FormValue("shiori_username"),
 		ShioriPassword:       r.FormValue("shiori_password"),
+		ShaarliEnabled:       r.FormValue("shaarli_enabled") == "1",
+		ShaarliURL:           r.FormValue("shaarli_url"),
+		ShaarliAPISecret:     r.FormValue("shaarli_api_secret"),
 	}
 }
