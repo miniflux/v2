@@ -77,13 +77,14 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 		SET
 			title=$1,
 			content=$2,
-			reading_time=$3,
-			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($2, ''), 500000)), 'B')
+			web_content=$3,
+			reading_time=$4,
+			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($2, ''), 500000)), 'B') || setweight(to_tsvector(left(coalesce($3, ''), 500000)), 'C')
 		WHERE
-			id=$4 AND user_id=$5
+			id=$5 AND user_id=$6
 	`
 
-	if _, err := s.db.Exec(query, entry.Title, entry.Content, entry.ReadingTime, entry.ID, entry.UserID); err != nil {
+	if _, err := s.db.Exec(query, entry.Title, entry.Content, entry.WebContent, entry.ReadingTime, entry.ID, entry.UserID); err != nil {
 		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
 	}
 
@@ -101,6 +102,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				comments_url,
 				published_at,
 				content,
+				web_content,
 				author,
 				user_id,
 				feed_id,
@@ -121,9 +123,10 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$8,
 				$9,
 				$10,
+				$11,
 				now(),
-				setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($6, ''), 500000)), 'B'),
-				$11
+				setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($6, ''), 500000)), 'B') || setweight(to_tsvector(left(coalesce($7, ''), 500000)), 'C'),
+				$12
 			)
 		RETURNING
 			id, status, created_at, changed_at
@@ -136,6 +139,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.CommentsURL,
 		entry.Date,
 		entry.Content,
+		entry.WebContent,
 		entry.Author,
 		entry.UserID,
 		entry.FeedID,
@@ -176,12 +180,13 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			url=$2,
 			comments_url=$3,
 			content=$4,
-			author=$5,
-			reading_time=$6,
-			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($4, ''), 500000)), 'B'),
-			tags=$10
+			web_content=$5,
+			author=$6,
+			reading_time=$7,
+			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($4, ''), 500000)), 'B') || setweight(to_tsvector(left(coalesce($5, ''), 500000)), 'C'),
+			tags=$11
 		WHERE
-			user_id=$7 AND feed_id=$8 AND hash=$9
+			user_id=$8 AND feed_id=$9 AND hash=$10
 		RETURNING
 			id
 	`
@@ -191,6 +196,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.URL,
 		entry.CommentsURL,
 		entry.Content,
+		entry.WebContent,
 		entry.Author,
 		entry.ReadingTime,
 		entry.UserID,

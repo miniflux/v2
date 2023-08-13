@@ -339,16 +339,32 @@ function handleFetchOriginalContent() {
     if (!buttonElement) {
         return;
     }
-
-    const previousElement = buttonElement.cloneNode(true);
-
-    buttonElement.textContent = "";
+    let labelElement = buttonElement.querySelector("span.icon-label");
+    buttonElement.removeChild(labelElement);
+    labelElement = labelElement.cloneNode(true);
     appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
 
-    const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
+    let reqUrl = buttonElement.dataset.fetchContentUrl
+    let switchTo = "rss";
+    let label = buttonElement.dataset.labelRss;
+    let title = buttonElement.dataset.titleRss;
+
+    if (buttonElement.dataset.switchTo === "rss") {
+        reqUrl = buttonElement.dataset.fetchOriginalContentUrl
+        switchTo = "web";
+        label = buttonElement.dataset.label;
+        title = buttonElement.dataset.title;
+    }
+
+    const request = new RequestBuilder(reqUrl);
+
     request.withCallback((response) => {
-        buttonElement.textContent = '';
-        buttonElement.appendChild(previousElement);
+
+        buttonElement.removeChild(buttonElement.querySelector("span.icon-label"))
+        labelElement.textContent = label
+        buttonElement.title = title
+        buttonElement.dataset.switchTo = switchTo
+        buttonElement.appendChild(labelElement)
 
         response.json().then((data) => {
             if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {

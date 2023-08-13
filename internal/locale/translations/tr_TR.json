@@ -72,6 +72,8 @@
     "entry.save.title": "Bu makaleyi kaydet",
     "entry.save.completed": "Bitti!",
     "entry.save.toast.completed": "Makale kaydedildi",
+    "entry.scraper.label.rss": "RSS İçeriğini Göster",
+    "entry.scraper.title.rss": "RSS İçeriğini Al",
     "entry.scraper.label": "İndir",
     "entry.scraper.title": "Orijinal içeriği çek",
     "entry.scraper.completed": "Bitti!",

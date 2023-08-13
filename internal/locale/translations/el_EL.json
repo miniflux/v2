@@ -72,6 +72,8 @@
     "entry.save.title": "Αποθηκεύστε αυτό το άρθρο",
     "entry.save.completed": "Έγινε!",
     "entry.save.toast.completed": "Το άρθρο αποθηκεύτηκε",
+    "entry.scraper.label.rss": "Εμφάνιση περιεχομένου RSS",
+    "entry.scraper.title.rss": "Λήψη περιεχομένου RSS",
     "entry.scraper.label": "Λήψη",
     "entry.scraper.title": "Λήψη αρχικού περιεχομένου",
     "entry.scraper.completed": "Έγινε!",

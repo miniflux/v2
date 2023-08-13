@@ -30,6 +30,7 @@ type Entry struct {
 	CreatedAt   time.Time     `json:"created_at"`
 	ChangedAt   time.Time     `json:"changed_at"`
 	Content     string        `json:"content"`
+	WebContent  string        `json:"web_content,omitempty"`
 	Author      string        `json:"author"`
 	ShareCode   string        `json:"share_code"`
 	Starred     bool          `json:"starred"`

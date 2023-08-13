@@ -72,6 +72,8 @@
     "entry.save.title": "Tallenna tämä artikkeli",
     "entry.save.completed": "Valmis!",
     "entry.save.toast.completed": "Artikkeli tallennettu",
+    "entry.scraper.label.rss": "Näytä RSS-sisältö",
+    "entry.scraper.title.rss": "Hae RSS-sisältöä",
     "entry.scraper.label": "Lataa",
     "entry.scraper.title": "Nouda alkuperäinen sisältö",
     "entry.scraper.completed": "Valmis!",

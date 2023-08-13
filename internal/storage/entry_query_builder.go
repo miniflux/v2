@@ -271,6 +271,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.author,
 			e.share_code,
 			e.content,
+			e.web_content,
 			e.status,
 			e.starred,
 			e.reading_time,
@@ -337,6 +338,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Author,
 			&entry.ShareCode,
 			&entry.Content,
+			&entry.WebContent,
 			&entry.Status,
 			&entry.Starred,
 			&entry.ReadingTime,
@@ -361,7 +363,6 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&iconID,
 			&tz,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}

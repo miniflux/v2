@@ -24,35 +24,35 @@ type rule struct {
 func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	switch rule.name {
 	case "add_image_title":
-		entry.Content = addImageTitle(entryURL, entry.Content)
+		entry.WebContent = addImageTitle(entryURL, entry.WebContent)
 	case "add_mailto_subject":
-		entry.Content = addMailtoSubject(entryURL, entry.Content)
+		entry.WebContent = addMailtoSubject(entryURL, entry.WebContent)
 	case "add_dynamic_image":
-		entry.Content = addDynamicImage(entryURL, entry.Content)
+		entry.WebContent = addDynamicImage(entryURL, entry.WebContent)
 	case "add_dynamic_iframe":
-		entry.Content = addDynamicIframe(entryURL, entry.Content)
+		entry.WebContent = addDynamicIframe(entryURL, entry.WebContent)
 	case "add_youtube_video":
-		entry.Content = addYoutubeVideo(entryURL, entry.Content)
+		entry.WebContent = addYoutubeVideo(entryURL, entry.WebContent)
 	case "add_invidious_video":
-		entry.Content = addInvidiousVideo(entryURL, entry.Content)
+		entry.WebContent = addInvidiousVideo(entryURL, entry.WebContent)
 	case "add_youtube_video_using_invidious_player":
-		entry.Content = addYoutubeVideoUsingInvidiousPlayer(entryURL, entry.Content)
+		entry.WebContent = addYoutubeVideoUsingInvidiousPlayer(entryURL, entry.WebContent)
 	case "add_youtube_video_from_id":
-		entry.Content = addYoutubeVideoFromId(entry.Content)
+		entry.WebContent = addYoutubeVideoFromId(entry.WebContent)
 	case "add_pdf_download_link":
-		entry.Content = addPDFLink(entryURL, entry.Content)
+		entry.WebContent = addPDFLink(entryURL, entry.WebContent)
 	case "nl2br":
-		entry.Content = strings.ReplaceAll(entry.Content, "\n", "<br>")
+		entry.WebContent = strings.ReplaceAll(entry.WebContent, "\n", "<br>")
 	case "convert_text_link", "convert_text_links":
-		entry.Content = replaceTextLinks(entry.Content)
+		entry.WebContent = replaceTextLinks(entry.WebContent)
 	case "fix_medium_images":
-		entry.Content = fixMediumImages(entryURL, entry.Content)
+		entry.WebContent = fixMediumImages(entryURL, entry.WebContent)
 	case "use_noscript_figure_images":
-		entry.Content = useNoScriptImages(entryURL, entry.Content)
+		entry.WebContent = useNoScriptImages(entryURL, entry.WebContent)
 	case "replace":
 		// Format: replace("search-term"|"replace-term")
 		if len(rule.args) >= 2 {
-			entry.Content = replaceCustom(entry.Content, rule.args[0], rule.args[1])
+			entry.WebContent = replaceCustom(entry.WebContent, rule.args[0], rule.args[1])
 		} else {
 			slog.Warn("Cannot find search and replace terms for replace rule",
 				slog.Any("rule", rule),
@@ -72,7 +72,7 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	case "remove":
 		// Format: remove("#selector > .element, .another")
 		if len(rule.args) >= 1 {
-			entry.Content = removeCustom(entry.Content, rule.args[0])
+			entry.WebContent = removeCustom(entry.WebContent, rule.args[0])
 		} else {
 			slog.Warn("Cannot find selector for remove rule",
 				slog.Any("rule", rule),
@@ -80,21 +80,21 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 			)
 		}
 	case "add_castopod_episode":
-		entry.Content = addCastopodEpisode(entryURL, entry.Content)
+		entry.WebContent = addCastopodEpisode(entryURL, entry.WebContent)
 	case "base64_decode":
 		selector := "body"
 		if len(rule.args) >= 1 {
 			selector = rule.args[0]
 		}
-		entry.Content = applyFuncOnTextContent(entry.Content, selector, decodeBase64Content)
+		entry.WebContent = applyFuncOnTextContent(entry.WebContent, selector, decodeBase64Content)
 	case "add_hn_links_using_hack":
-		entry.Content = addHackerNewsLinksUsing(entry.Content, "hack")
+		entry.WebContent = addHackerNewsLinksUsing(entry.WebContent, "hack")
 	case "add_hn_links_using_opener":
-		entry.Content = addHackerNewsLinksUsing(entry.Content, "opener")
+		entry.WebContent = addHackerNewsLinksUsing(entry.WebContent, "opener")
 	case "parse_markdown":
-		entry.Content = parseMarkdown(entry.Content)
+		entry.WebContent = parseMarkdown(entry.WebContent)
 	case "remove_tables":
-		entry.Content = removeTables(entry.Content)
+		entry.WebContent = removeTables(entry.WebContent)
 	case "remove_clickbait":
 		entry.Title = cases.Title(language.English).String(strings.ToLower(entry.Title))
 	}

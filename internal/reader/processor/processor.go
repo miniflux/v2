@@ -98,14 +98,14 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 				)
 			} else if content != "" {
 				// We replace the entry content only if the scraper doesn't return any error.
-				entry.Content = content
+				entry.WebContent = content
 			}
 		}
 
 		rewrite.Rewriter(websiteURL, entry, feed.RewriteRules)
 
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
-		entry.Content = sanitizer.Sanitize(websiteURL, entry.Content)
+		entry.WebContent = sanitizer.Sanitize(websiteURL, entry.Content)
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 		filteredEntries = append(filteredEntries, entry)
@@ -209,14 +209,14 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	}
 
 	if content != "" {
-		entry.Content = content
+		entry.WebContent = content
 		if user.ShowReadingTime {
-			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+			entry.ReadingTime = readingtime.EstimateReadingTime(entry.WebContent, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 		}
 	}
 
 	rewrite.Rewriter(websiteURL, entry, entry.Feed.RewriteRules)
-	entry.Content = sanitizer.Sanitize(websiteURL, entry.Content)
+	entry.WebContent = sanitizer.Sanitize(websiteURL, entry.WebContent)
 
 	return nil
 }

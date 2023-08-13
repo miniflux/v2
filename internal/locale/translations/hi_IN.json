@@ -72,6 +72,8 @@
     "entry.save.title": "एस लेख को सहेजे",
     "entry.save.completed": "कार्य समाप्त हुआ!",
     "entry.save.toast.completed": "लेख को सहेज लिया",
+    "entry.scraper.label.rss": "RSS सामग्री दिखाएँ",
+    "entry.scraper.title.rss": "RSS सामग्री प्राप्त करें",
     "entry.scraper.label": "डाउनलोड",
     "entry.scraper.title": "मूल विषयवस्तु लाए",
     "entry.scraper.completed": "कार्य समाप्त हुआ!",

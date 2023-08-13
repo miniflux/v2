@@ -882,4 +882,11 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+		ALTER TABLE entries ADD COLUMN web_content text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

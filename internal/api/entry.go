@@ -335,7 +335,13 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, r, map[string]string{"content": entry.Content})
+	if request.QueryBoolParam(r, "save", false) {
+		if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
+			json.ServerError(w, r, err)
+		}
+	}
+
+	json.OK(w, r, map[string]string{"content": entry.Content, "web_content": entry.WebContent})
 }
 
 func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
