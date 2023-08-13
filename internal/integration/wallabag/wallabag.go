@@ -10,6 +10,7 @@ import (
 	"net/url"
 
 	"miniflux.app/v2/internal/http/client"
+	internal_url "miniflux.app/v2/internal/url"
 )
 
 // Client represents a Wallabag client.
@@ -43,9 +44,9 @@ func (c *Client) AddEntry(link, title, content string) error {
 }
 
 func (c *Client) createEntry(accessToken, link, title, content string) error {
-	endpoint, err := url.JoinPath(c.baseURL, "/api/entries.json")
+	endpoint, err := internal_url.JoinBaseURLAndPath(c.baseURL, "/api/entries.json")
 	if err != nil {
-		return fmt.Errorf("wallbag: unable to generate entries endpoint using %q: %v", c.baseURL, err)
+		return fmt.Errorf("wallbag: unable to generate entries endpoint: %v", err)
 	}
 
 	data := map[string]string{"url": link, "title": title}
@@ -75,9 +76,9 @@ func (c *Client) getAccessToken() (string, error) {
 	values.Add("username", c.username)
 	values.Add("password", c.password)
 
-	endpoint, err := url.JoinPath(c.baseURL, "/oauth/v2/token")
+	endpoint, err := internal_url.JoinBaseURLAndPath(c.baseURL, "/oauth/v2/token")
 	if err != nil {
-		return "", fmt.Errorf("wallbag: unable to generate token endpoint using %q: %v", c.baseURL, err)
+		return "", fmt.Errorf("wallbag: unable to generate token endpoint: %v", err)
 	}
 
 	clt := client.New(endpoint)

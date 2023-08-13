@@ -31,7 +31,7 @@ func NewClient(apiKey string) *Client {
 // AddEntry sends an entry to Readwise Reader.
 func (c *Client) AddEntry(link string) error {
 	if c.apiKey == "" {
-		return fmt.Errorf("readwise: missing credentials")
+		return fmt.Errorf("readwise: missing API key")
 	}
 
 	doc := &Document{

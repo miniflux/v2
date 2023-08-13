@@ -5,10 +5,10 @@ package linkding // import "miniflux.app/v2/internal/integration/linkding"
 
 import (
 	"fmt"
-	"net/url"
 	"strings"
 
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/url"
 )
 
 // Document structure of a Linkding document
@@ -33,7 +33,7 @@ func NewClient(baseURL, apiKey, tags string, unread bool) *Client {
 }
 
 // AddEntry sends an entry to Linkding.
-func (c *Client) AddEntry(title, url string) error {
+func (c *Client) AddEntry(title, entryURL string) error {
 	if c.baseURL == "" || c.apiKey == "" {
 		return fmt.Errorf("linkding: missing credentials")
 	}
@@ -43,18 +43,18 @@ func (c *Client) AddEntry(title, url string) error {
 	}
 
 	doc := &Document{
-		Url:      url,
+		Url:      entryURL,
 		Title:    title,
 		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
 		Unread:   c.unread,
 	}
 
-	apiURL, err := getAPIEndpoint(c.baseURL, "/api/bookmarks/")
+	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks/")
 	if err != nil {
-		return err
+		return fmt.Errorf(`linkding: invalid API endpoint: %v`, err)
 	}
 
-	clt := client.New(apiURL)
+	clt := client.New(apiEndpoint)
 	clt.WithAuthorization("Token " + c.apiKey)
 	response, err := clt.PostJSON(doc)
 	if err != nil {
@@ -66,19 +66,4 @@ func (c *Client) AddEntry(title, url string) error {
 	}
 
 	return nil
-}
-
-func getAPIEndpoint(baseURL, pathURL string) (string, error) {
-	u, err := url.Parse(baseURL)
-	if err != nil {
-		return "", fmt.Errorf("linkding: invalid API endpoint: %v", err)
-	}
-
-	relative, err := url.Parse(pathURL)
-	if err != nil {
-		return "", fmt.Errorf("linkding: invalid API endpoint: %v", err)
-	}
-
-	u = u.ResolveReference(relative)
-	return u.String(), nil
 }

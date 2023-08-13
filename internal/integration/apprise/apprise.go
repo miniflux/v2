@@ -11,7 +11,10 @@ import (
 
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/url"
 )
+
+const defaultClientTimeout = 1 * time.Second
 
 // Client represents a Apprise client.
 type Client struct {
@@ -27,12 +30,16 @@ func NewClient(serviceURL, baseURL string) *Client {
 // PushEntry pushes entry to apprise
 func (c *Client) PushEntry(entry *model.Entry) error {
 	if c.baseURL == "" || c.servicesURL == "" {
-		return fmt.Errorf("apprise: missing credentials")
+		return fmt.Errorf("apprise: missing base URL or service URL")
 	}
-	timeout := time.Duration(1 * time.Second)
-	_, err := net.DialTimeout("tcp", c.baseURL, timeout)
+	_, err := net.DialTimeout("tcp", c.baseURL, defaultClientTimeout)
 	if err != nil {
-		clt := client.New(c.baseURL + "/notify")
+		apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/notify")
+		if err != nil {
+			return fmt.Errorf(`apprise: invalid API endpoint: %v`, err)
+		}
+
+		clt := client.New(apiEndpoint)
 		message := "[" + entry.Title + "]" + "(" + entry.URL + ")" + "\n\n"
 		data := &Data{
 			Urls: c.servicesURL,
