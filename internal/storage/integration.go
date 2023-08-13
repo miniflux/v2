@@ -164,7 +164,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shiori_enabled,
 			shiori_url,
 			shiori_username,
-			shiori_password
+			shiori_password,
+			shaarli_enabled,
+			shaarli_url,
+			shaarli_api_secret
 		FROM
 			integrations
 		WHERE
@@ -228,6 +231,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.ShioriURL,
 		&integration.ShioriUsername,
 		&integration.ShioriPassword,
+		&integration.ShaarliEnabled,
+		&integration.ShaarliURL,
+		&integration.ShaarliAPISecret,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -299,9 +305,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			shiori_enabled=$52,
 			shiori_url=$53,
 			shiori_username=$54,
-			shiori_password=$55
+			shiori_password=$55,
+			shaarli_enabled=$56,
+			shaarli_url=$57,
+			shaarli_api_secret=$58
 		WHERE
-			user_id=$56
+			user_id=$59
 	`
 	_, err := s.db.Exec(
 		query,
@@ -360,6 +369,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.ShioriURL,
 		integration.ShioriUsername,
 		integration.ShioriPassword,
+		integration.ShaarliEnabled,
+		integration.ShaarliURL,
+		integration.ShaarliAPISecret,
 		integration.UserID,
 	)
 
@@ -391,7 +403,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				pocket_enabled='t' OR
 				linkding_enabled='t' OR
 				apprise_enabled='t' OR
-				shiori_enabled='t'
+				shiori_enabled='t' OR
+				shaarli_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

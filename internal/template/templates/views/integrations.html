@@ -325,6 +325,25 @@
         </div>
     </details>
 
+    <details {{ if .form.ShaarliEnabled }}open{{ end }}>
+        <summary>Shaarli</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="shaarli_enabled" value="1" {{ if .form.ShaarliEnabled }}checked{{ end }}> {{ t "form.integration.shaarli_activate" }}
+            </label>
+
+            <label for="form-shaarli-url">{{ t "form.integration.shaarli_endpoint" }}</label>
+            <input type="url" name="shaarli_url" id="form-shaarli-url" value="{{ .form.ShaarliURL }}" placeholder="https://shaarli.example.org" spellcheck="false">
+
+            <label for="form-shaarli-api-secret">{{ t "form.integration.shaarli_api_secret" }}</label>
+            <input type="password" name="shaarli_api_secret" id="form-shaarli-api-secret" value="{{ .form.ShaarliAPISecret }}" autocomplete="new-password">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.ShioriEnabled }}open{{ end }}>
         <summary>Shiori</summary>
         <div class="form-section">
@@ -339,7 +358,7 @@
             <input type="text" name="shiori_username" id="form-shiori-username" value="{{ .form.ShioriUsername }}" spellcheck="false">
 
             <label for="form-shiori-password">{{ t "form.integration.shiori_password" }}</label>
-            <input type="password" name="shiori_password" id="form-shiori-password" value="{{ .form.ShioriPassword }}" spellcheck="false">
+            <input type="password" name="shiori_password" id="form-shiori-password" value="{{ .form.ShioriPassword }}" autocomplete="new-password">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

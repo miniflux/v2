@@ -61,4 +61,7 @@ type Integration struct {
 	ShioriURL            string
 	ShioriUsername       string
 	ShioriPassword       string
+	ShaarliEnabled       bool
+	ShaarliURL           string
+	ShaarliAPISecret     string
 }

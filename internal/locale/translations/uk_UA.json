@@ -105,7 +105,11 @@
   "page.feeds.last_check": "Остання перевірка:",
   "page.feeds.unread_counter": "Кількість непрочитаних записів",
   "page.feeds.read_counter": "Кількість прочитаних записів",
-  "page.feeds.error_count": ["%d помилка", "%d помилки", "%d помилок"],
+  "page.feeds.error_count": [
+    "%d помилка",
+    "%d помилки",
+    "%d помилок"
+  ],
   "page.history.title": "Історія",
   "page.import.title": "Імпорт",
   "page.search.title": "Результати пошуку",
@@ -384,6 +388,9 @@
   "form.integration.shiori_endpoint": "Shiori API Endpoint",
   "form.integration.shiori_username": "Shiori Username",
   "form.integration.shiori_password": "Shiori Password",
+  "form.integration.shaarli_activate": "Save articles to Shaarli",
+  "form.integration.shaarli_endpoint": "Shaarli URL",
+  "form.integration.shaarli_api_secret": "Shaarli API Secret",
   "form.api_key.label.description": "Назва ключа API",
   "form.submit.loading": "Завантаження...",
   "form.submit.saving": "Зберігаю...",
@@ -395,13 +402,29 @@
     "%d хвилини тому",
     "%d хвилин тому"
   ],
-  "time_elapsed.hours": ["%d годину тому", "%d години тому", "%d годин тому"],
-  "time_elapsed.days": ["%d день тому", "%d дні тому", "%d днів тому"],
-  "time_elapsed.weeks": ["%d тиждень тому", "%d тижня тому", "%d тижнів тому"],
+  "time_elapsed.hours": [
+    "%d годину тому",
+    "%d години тому",
+    "%d годин тому"
+  ],
+  "time_elapsed.days": [
+    "%d день тому",
+    "%d дні тому",
+    "%d днів тому"
+  ],
+  "time_elapsed.weeks": [
+    "%d тиждень тому",
+    "%d тижня тому",
+    "%d тижнів тому"
+  ],
   "time_elapsed.months": [
     "%d місяць тому",
     "%d місяця тому",
     "%d місяців  тому"
   ],
-  "time_elapsed.years": ["%d рік тому", "%d роки тому", "%d років тому"]
+  "time_elapsed.years": [
+    "%d рік тому",
+    "%d роки тому",
+    "%d років тому"
+  ]
 }
