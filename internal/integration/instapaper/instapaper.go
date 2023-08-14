@@ -5,42 +5,52 @@ package instapaper // import "miniflux.app/v2/internal/integration/instapaper"
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
+	"time"
 
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/version"
 )
 
-// Client represents an Instapaper client.
+const defaultClientTimeout = 10 * time.Second
+
 type Client struct {
 	username string
 	password string
 }
 
-// NewClient returns a new Instapaper client.
 func NewClient(username, password string) *Client {
 	return &Client{username: username, password: password}
 }
 
-// AddURL sends a link to Instapaper.
-func (c *Client) AddURL(link, title string) error {
+func (c *Client) AddURL(entryURL, entryTitle string) error {
 	if c.username == "" || c.password == "" {
-		return fmt.Errorf("instapaper: missing credentials")
+		return fmt.Errorf("instapaper: missing username or password")
 	}
 
 	values := url.Values{}
-	values.Add("url", link)
-	values.Add("title", title)
+	values.Add("url", entryURL)
+	values.Add("title", entryTitle)
 
-	apiURL := "https://www.instapaper.com/api/add?" + values.Encode()
-	clt := client.New(apiURL)
-	clt.WithCredentials(c.username, c.password)
-	response, err := clt.Get()
+	apiEndpoint := "https://www.instapaper.com/api/add?" + values.Encode()
+	request, err := http.NewRequest(http.MethodGet, apiEndpoint, nil)
 	if err != nil {
-		return fmt.Errorf("instapaper: unable to send url: %v", err)
+		return fmt.Errorf("instapaper: unable to create request: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return fmt.Errorf("instapaper: unable to send url, status=%d", response.StatusCode)
+	request.SetBasicAuth(c.username, c.password)
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("instapaper: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusCreated {
+		return fmt.Errorf("instapaper: unable to add URL: url=%s status=%d", apiEndpoint, response.StatusCode)
 	}
 
 	return nil

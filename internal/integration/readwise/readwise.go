@@ -6,61 +6,64 @@
 package readwise // import "miniflux.app/v2/internal/integration/readwise"
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"net/url"
+	"net/http"
+	"time"
 
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/version"
 )
 
-// Document structure of a Readwise Reader document
-// This initial version accepts only the one required field, the URL
-type Document struct {
-	Url string `json:"url"`
-}
+const (
+	readwiseApiEndpoint  = "https://readwise.io/api/v3/save/"
+	defaultClientTimeout = 10 * time.Second
+)
 
-// Client represents a Readwise Reader client.
 type Client struct {
 	apiKey string
 }
 
-// NewClient returns a new Readwise Reader client.
 func NewClient(apiKey string) *Client {
 	return &Client{apiKey: apiKey}
 }
 
-// AddEntry sends an entry to Readwise Reader.
-func (c *Client) AddEntry(link string) error {
+func (c *Client) CreateDocument(entryURL string) error {
 	if c.apiKey == "" {
 		return fmt.Errorf("readwise: missing API key")
 	}
 
-	doc := &Document{
-		Url: link,
-	}
+	requestBody, err := json.Marshal(&readwiseDocument{
+		URL: entryURL,
+	})
 
-	apiURL, err := getAPIEndpoint("https://readwise.io/api/v3/save/")
 	if err != nil {
-		return err
+		return fmt.Errorf("readwise: unable to encode request body: %v", err)
 	}
 
-	clt := client.New(apiURL)
-	clt.WithAuthorization("Token " + c.apiKey)
-	response, err := clt.PostJSON(doc)
+	request, err := http.NewRequest(http.MethodPost, readwiseApiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
-		return fmt.Errorf("readwise: unable to send entry: %v", err)
+		return fmt.Errorf("readwise: unable to create request: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return fmt.Errorf("readwise: unable to send entry, status=%d", response.StatusCode)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+	request.Header.Set("Authorization", "Token "+c.apiKey)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("readwise: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return fmt.Errorf("readwise: unable to create document: url=%s status=%d", readwiseApiEndpoint, response.StatusCode)
 	}
 
 	return nil
 }
 
-func getAPIEndpoint(pathURL string) (string, error) {
-	u, err := url.Parse(pathURL)
-	if err != nil {
-		return "", fmt.Errorf("readwise: invalid API endpoint: %v", err)
-	}
-	return u.String(), nil
+type readwiseDocument struct {
+	URL string `json:"url"`
 }

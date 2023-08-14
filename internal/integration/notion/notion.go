@@ -4,51 +4,83 @@
 package notion
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
 
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/version"
 )
 
-// Client represents a Notion client.
+const defaultClientTimeout = 10 * time.Second
+
 type Client struct {
-	token  string
-	pageID string
+	apiToken string
+	pageID   string
 }
 
-// NewClient returns a new Notion client.
-func NewClient(token, pageID string) *Client {
-	return &Client{token, pageID}
+func NewClient(apiToken, pageID string) *Client {
+	return &Client{apiToken, pageID}
 }
 
-func (c *Client) AddEntry(entryURL string, entryTitle string) error {
-	if c.token == "" || c.pageID == "" {
-		return fmt.Errorf("notion: missing credentials")
+func (c *Client) UpdateDocument(entryURL string, entryTitle string) error {
+	if c.apiToken == "" || c.pageID == "" {
+		return fmt.Errorf("notion: missing API token or page ID")
 	}
-	clt := client.New("https://api.notion.com/v1/blocks/" + c.pageID + "/children")
-	block := &Data{
-		Children: []Block{
+
+	apiEndpoint := "https://api.notion.com/v1/blocks/" + c.pageID + "/children"
+	requestBody, err := json.Marshal(&notionDocument{
+		Children: []block{
 			{
 				Object: "block",
 				Type:   "bookmark",
-				Bookmark: Bookmark{
-					Caption: []interface{}{},
+				Bookmark: bookmarkObject{
+					Caption: []any{},
 					URL:     entryURL,
 				},
 			},
 		},
-	}
-	clt.WithAuthorization("Bearer " + c.token)
-	customHeaders := map[string]string{
-		"Notion-Version": "2022-06-28",
-	}
-	clt.WithCustomHeaders(customHeaders)
-	response, error := clt.PatchJSON(block)
-	if error != nil {
-		return fmt.Errorf("notion: unable to patch entry: %v", error)
+	})
+	if err != nil {
+		return fmt.Errorf("notion: unable to encode request body: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return fmt.Errorf("notion: request failed, status=%d", response.StatusCode)
+	request, err := http.NewRequest(http.MethodPatch, apiEndpoint, bytes.NewReader(requestBody))
+	if err != nil {
+		return fmt.Errorf("notion: unable to create request: %v", err)
 	}
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+	request.Header.Set("Notion-Version", "2022-06-28")
+	request.Header.Set("Authorization", "Bearer "+c.apiToken)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("notion: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("notion: unable to update document: url=%s status=%d", apiEndpoint, response.StatusCode)
+	}
+
 	return nil
+}
+
+type notionDocument struct {
+	Children []block `json:"children"`
+}
+
+type block struct {
+	Object   string         `json:"object"`
+	Type     string         `json:"type"`
+	Bookmark bookmarkObject `json:"bookmark"`
+}
+
+type bookmarkObject struct {
+	Caption []any  `json:"caption"`
+	URL     string `json:"url"`
 }

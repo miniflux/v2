@@ -29,7 +29,7 @@ func NewClient(baseURL, apiSecret string) *Client {
 	return &Client{baseURL: baseURL, apiSecret: apiSecret}
 }
 
-func (c *Client) AddLink(entryURL, entryTitle string) error {
+func (c *Client) CreateLink(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.apiSecret == "" {
 		return fmt.Errorf("shaarli: missing base URL or API secret")
 	}
@@ -49,7 +49,7 @@ func (c *Client) AddLink(entryURL, entryTitle string) error {
 		return fmt.Errorf("shaarli: unable to encode request body: %v", err)
 	}
 
-	request, err := http.NewRequest("POST", apiEndpoint, bytes.NewReader(requestBody))
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
 		return fmt.Errorf("shaarli: unable to create request: %v", err)
 	}

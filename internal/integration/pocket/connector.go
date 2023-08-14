@@ -4,12 +4,13 @@
 package pocket // import "miniflux.app/v2/internal/integration/pocket"
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/url"
+	"net/http"
 
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/version"
 )
 
 // Connector manages the authorization flow with Pocket to get a personal access token.
@@ -24,72 +25,82 @@ func NewConnector(consumerKey string) *Connector {
 
 // RequestToken fetches a new request token from Pocket API.
 func (c *Connector) RequestToken(redirectURL string) (string, error) {
-	type req struct {
-		ConsumerKey string `json:"consumer_key"`
-		RedirectURI string `json:"redirect_uri"`
-	}
-
-	clt := client.New("https://getpocket.com/v3/oauth/request")
-	response, err := clt.PostJSON(&req{ConsumerKey: c.consumerKey, RedirectURI: redirectURL})
+	apiEndpoint := "https://getpocket.com/v3/oauth/request"
+	requestBody, err := json.Marshal(&createTokenRequest{ConsumerKey: c.consumerKey, RedirectURI: redirectURL})
 	if err != nil {
-		return "", fmt.Errorf("pocket: unable to fetch request token: %v", err)
+		return "", fmt.Errorf("pocket: unable to encode request body: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return "", fmt.Errorf("pocket: unable to fetch request token, status=%d", response.StatusCode)
-	}
-
-	body, err := io.ReadAll(response.Body)
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
-		return "", fmt.Errorf("pocket: unable to read response body: %v", err)
+		return "", fmt.Errorf("pocket: unable to create request: %v", err)
 	}
 
-	values, err := url.ParseQuery(string(body))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("X-Accept", "application/json")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
 	if err != nil {
-		return "", fmt.Errorf("pocket: unable to parse response: %v", err)
+		return "", fmt.Errorf("pocket: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return "", fmt.Errorf("pocket: unable get request token: url=%s status=%d", apiEndpoint, response.StatusCode)
 	}
 
-	code := values.Get("code")
-	if code == "" {
-		return "", errors.New("pocket: code is empty")
+	var result createTokenResponse
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("pocket: unable to decode response: %v", err)
 	}
 
-	return code, nil
+	if result.Code == "" {
+		return "", errors.New("pocket: request token is empty")
+	}
+
+	return result.Code, nil
 }
 
 // AccessToken fetches a new access token once the end-user authorized the application.
 func (c *Connector) AccessToken(requestToken string) (string, error) {
-	type req struct {
-		ConsumerKey string `json:"consumer_key"`
-		Code        string `json:"code"`
-	}
-
-	clt := client.New("https://getpocket.com/v3/oauth/authorize")
-	response, err := clt.PostJSON(&req{ConsumerKey: c.consumerKey, Code: requestToken})
+	apiEndpoint := "https://getpocket.com/v3/oauth/authorize"
+	requestBody, err := json.Marshal(&authorizeRequest{ConsumerKey: c.consumerKey, Code: requestToken})
 	if err != nil {
-		return "", fmt.Errorf("pocket: unable to fetch access token: %v", err)
+		return "", fmt.Errorf("pocket: unable to encode request body: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return "", fmt.Errorf("pocket: unable to fetch access token, status=%d", response.StatusCode)
-	}
-
-	body, err := io.ReadAll(response.Body)
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
-		return "", fmt.Errorf("pocket: unable to read response body: %v", err)
+		return "", fmt.Errorf("pocket: unable to create request: %v", err)
 	}
 
-	values, err := url.ParseQuery(string(body))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("X-Accept", "application/json")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
 	if err != nil {
-		return "", fmt.Errorf("pocket: unable to parse response: %v", err)
+		return "", fmt.Errorf("pocket: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return "", fmt.Errorf("pocket: unable get access token: url=%s status=%d", apiEndpoint, response.StatusCode)
 	}
 
-	token := values.Get("access_token")
-	if token == "" {
-		return "", errors.New("pocket: access_token is empty")
+	var result authorizeReponse
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("pocket: unable to decode response: %v", err)
 	}
 
-	return token, nil
+	if result.AccessToken == "" {
+		return "", errors.New("pocket: access token is empty")
+	}
+
+	return result.AccessToken, nil
 }
 
 // AuthorizationURL returns the authorization URL for the end-user.
@@ -99,4 +110,23 @@ func (c *Connector) AuthorizationURL(requestToken, redirectURL string) string {
 		requestToken,
 		redirectURL,
 	)
+}
+
+type createTokenRequest struct {
+	ConsumerKey string `json:"consumer_key"`
+	RedirectURI string `json:"redirect_uri"`
+}
+
+type createTokenResponse struct {
+	Code string `json:"code"`
+}
+
+type authorizeRequest struct {
+	ConsumerKey string `json:"consumer_key"`
+	Code        string `json:"code"`
+}
+
+type authorizeReponse struct {
+	AccessToken string `json:"access_token"`
+	Username    string `json:"username"`
 }

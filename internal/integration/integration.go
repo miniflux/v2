@@ -29,7 +29,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Pinboard", entry.ID, entry.URL, integration.UserID)
 
 		client := pinboard.NewClient(integration.PinboardToken)
-		err := client.AddBookmark(
+		err := client.CreateBookmark(
 			entry.URL,
 			entry.Title,
 			integration.PinboardTags,
@@ -62,7 +62,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.WallabagOnlyURL,
 		)
 
-		if err := client.AddEntry(entry.URL, entry.Title, entry.Content); err != nil {
+		if err := client.CreateEntry(entry.URL, entry.Title, entry.Content); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
@@ -74,7 +74,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.NotionToken,
 			integration.NotionPageID,
 		)
-		if err := client.AddEntry(entry.URL, entry.Title); err != nil {
+		if err := client.UpdateDocument(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
@@ -100,8 +100,8 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.EspialAPIKey,
 		)
 
-		if err := client.AddEntry(entry.URL, entry.Title, entry.Content, integration.EspialTags); err != nil {
-			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		if err := client.CreateLink(entry.URL, entry.Title, integration.EspialTags); err != nil {
+			logger.Error("[Integration] Unable to send entry #%d to Espial for user #%d: %v", entry.ID, integration.UserID, err)
 		}
 	}
 
@@ -123,7 +123,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.LinkdingTags,
 			integration.LinkdingMarkAsUnread,
 		)
-		if err := client.AddEntry(entry.Title, entry.URL); err != nil {
+		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
@@ -135,7 +135,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.ReadwiseAPIKey,
 		)
 
-		if err := client.AddEntry(entry.URL); err != nil {
+		if err := client.CreateDocument(entry.URL); err != nil {
 			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
@@ -149,7 +149,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.ShioriPassword,
 		)
 
-		if err := client.AddBookmark(entry.URL, entry.Title); err != nil {
+		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] Unable to send entry #%d to Shiori for user #%d: %v", entry.ID, integration.UserID, err)
 		}
 	}
@@ -162,7 +162,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			integration.ShaarliAPISecret,
 		)
 
-		if err := client.AddLink(entry.URL, entry.Title); err != nil {
+		if err := client.CreateLink(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] Unable to send entry #%d to Shaarli for user #%d: %v", entry.ID, integration.UserID, err)
 		}
 	}
@@ -197,8 +197,8 @@ func PushEntry(entry *model.Entry, integration *model.Integration) {
 			integration.AppriseServicesURL,
 			integration.AppriseURL,
 		)
-		err := client.PushEntry(entry)
-		if err != nil {
+
+		if err := client.SendNotification(entry); err != nil {
 			logger.Error("[Integration] push entry to apprise failed: %v", err)
 		}
 	}
