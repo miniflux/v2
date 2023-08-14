@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 
 	"golang.org/x/net/html"
 )
@@ -141,7 +141,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 				value = attribute.Val
 				isAnchorLink = true
 			} else {
-				value, err = url.AbsoluteURL(baseURL, value)
+				value, err = urllib.AbsoluteURL(baseURL, value)
 				if err != nil {
 					continue
 				}
@@ -350,12 +350,12 @@ func isValidIframeSource(baseURL, src string) bool {
 	}
 
 	// allow iframe from same origin
-	if url.Domain(baseURL) == url.Domain(src) {
+	if urllib.Domain(baseURL) == urllib.Domain(src) {
 		return true
 	}
 
 	// allow iframe from custom invidious instance
-	if config.Opts != nil && config.Opts.InvidiousInstance() == url.Domain(src) {
+	if config.Opts != nil && config.Opts.InvidiousInstance() == urllib.Domain(src) {
 		return true
 	}
 
@@ -467,7 +467,7 @@ func sanitizeSrcsetAttr(baseURL, value string) string {
 	imageCandidates := ParseSrcSetAttribute(value)
 
 	for _, imageCandidate := range imageCandidates {
-		absoluteURL, err := url.AbsoluteURL(baseURL, imageCandidate.ImageURL)
+		absoluteURL, err := urllib.AbsoluteURL(baseURL, imageCandidate.ImageURL)
 		if err == nil {
 			imageCandidate.ImageURL = absoluteURL
 		}

@@ -14,7 +14,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type rdfFeed struct {
@@ -30,7 +30,7 @@ func (r *rdfFeed) Transform(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 	feed.Title = sanitizer.StripTags(r.Title)
 	feed.FeedURL = baseURL
-	feed.SiteURL, err = url.AbsoluteURL(baseURL, r.Link)
+	feed.SiteURL, err = urllib.AbsoluteURL(baseURL, r.Link)
 	if err != nil {
 		feed.SiteURL = r.Link
 	}
@@ -44,7 +44,7 @@ func (r *rdfFeed) Transform(baseURL string) *model.Feed {
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
 		} else {
-			entryURL, err := url.AbsoluteURL(feed.SiteURL, entry.URL)
+			entryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL)
 			if err == nil {
 				entry.URL = entryURL
 			}

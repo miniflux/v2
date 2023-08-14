@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package url // import "miniflux.app/v2/internal/url"
+package urllib // import "miniflux.app/v2/internal/urllib"
 
 import "testing"
 

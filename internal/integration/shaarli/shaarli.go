@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -34,7 +34,7 @@ func (c *Client) AddLink(entryURL, entryTitle string) error {
 		return fmt.Errorf("shaarli: missing base URL or API secret")
 	}
 
-	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/v1/links")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/v1/links")
 	if err != nil {
 		return fmt.Errorf("shaarli: invalid API endpoint: %v", err)
 	}

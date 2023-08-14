@@ -12,7 +12,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type jsonFeed struct {
@@ -67,12 +67,12 @@ func (j *jsonFeed) Transform(baseURL string) *model.Feed {
 
 	feed := new(model.Feed)
 
-	feed.FeedURL, err = url.AbsoluteURL(baseURL, j.FeedURL)
+	feed.FeedURL, err = urllib.AbsoluteURL(baseURL, j.FeedURL)
 	if err != nil {
 		feed.FeedURL = j.FeedURL
 	}
 
-	feed.SiteURL, err = url.AbsoluteURL(baseURL, j.SiteURL)
+	feed.SiteURL, err = urllib.AbsoluteURL(baseURL, j.SiteURL)
 	if err != nil {
 		feed.SiteURL = j.SiteURL
 	}
@@ -90,7 +90,7 @@ func (j *jsonFeed) Transform(baseURL string) *model.Feed {
 
 	for _, item := range j.Items {
 		entry := item.Transform()
-		entryURL, err := url.AbsoluteURL(feed.SiteURL, entry.URL)
+		entryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL)
 		if err == nil {
 			entry.URL = entryURL
 		}

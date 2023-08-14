@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // Document structure of an Espial document
@@ -42,7 +42,7 @@ func (c *Client) AddEntry(link, title, content, tags string) error {
 		Tags:   tags,
 	}
 
-	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/add")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/add")
 	if err != nil {
 		return fmt.Errorf(`espial: invalid API endpoint: %v`, err)
 	}

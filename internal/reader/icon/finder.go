@@ -7,16 +7,15 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
-
-	stdlib_url "net/url"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -24,7 +23,7 @@ import (
 // FindIcon try to find the website's icon.
 func FindIcon(websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
 	if iconURL == "" {
-		rootURL := url.RootURL(websiteURL)
+		rootURL := urllib.RootURL(websiteURL)
 		logger.Debug("[FindIcon] Trying to find an icon: rootURL=%q websiteURL=%q userAgent=%q", rootURL, websiteURL, userAgent)
 
 		clt := client.NewClientWithConfig(rootURL, config.Opts)
@@ -90,9 +89,9 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 	}
 
 	if iconURL == "" {
-		iconURL = url.RootURL(websiteURL) + "favicon.ico"
+		iconURL = urllib.RootURL(websiteURL) + "favicon.ico"
 	} else {
-		iconURL, _ = url.AbsoluteURL(websiteURL, iconURL)
+		iconURL, _ = urllib.AbsoluteURL(websiteURL, iconURL)
 	}
 
 	return iconURL, nil
@@ -173,7 +172,7 @@ func parseImageDataURL(value string) (*model.Icon, error) {
 			return nil, fmt.Errorf(`icon: invalid data %q (%v)`, value, err)
 		}
 	case "":
-		decodedData, err := stdlib_url.QueryUnescape(data)
+		decodedData, err := url.QueryUnescape(data)
 		if err != nil {
 			return nil, fmt.Errorf(`icon: unable to decode data URL %q`, value)
 		}

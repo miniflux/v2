@@ -13,7 +13,7 @@ import (
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/reader/readability"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -46,7 +46,7 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 	}
 
 	// The entry URL could redirect somewhere else.
-	sameSite := url.Domain(websiteURL) == url.Domain(response.EffectiveURL)
+	sameSite := urllib.Domain(websiteURL) == urllib.Domain(response.EffectiveURL)
 	websiteURL = response.EffectiveURL
 
 	if rules == "" {
@@ -87,7 +87,7 @@ func scrapContent(page io.Reader, rules string) (string, error) {
 }
 
 func getPredefinedScraperRules(websiteURL string) string {
-	urlDomain := url.Domain(websiteURL)
+	urlDomain := urllib.Domain(websiteURL)
 
 	for domain, rules := range predefinedRules {
 		if strings.Contains(urlDomain, domain) {

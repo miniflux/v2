@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -36,7 +36,7 @@ func (c *Client) AddBookmark(entryURL, entryTitle string) error {
 		return fmt.Errorf("shiori: unable to authenticate: %v", err)
 	}
 
-	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks")
 	if err != nil {
 		return fmt.Errorf("shiori: invalid API endpoint: %v", err)
 	}
@@ -77,7 +77,7 @@ func (c *Client) AddBookmark(entryURL, entryTitle string) error {
 }
 
 func (c *Client) authenticate() (sessionID string, err error) {
-	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/login")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/login")
 	if err != nil {
 		return "", fmt.Errorf("shiori: invalid API endpoint: %v", err)
 	}

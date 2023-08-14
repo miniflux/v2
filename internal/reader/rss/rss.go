@@ -17,7 +17,7 @@ import (
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // Specs: https://cyber.harvard.edu/rss/rss.html
@@ -42,13 +42,13 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 
 	siteURL := r.siteURL()
-	feed.SiteURL, err = url.AbsoluteURL(baseURL, siteURL)
+	feed.SiteURL, err = urllib.AbsoluteURL(baseURL, siteURL)
 	if err != nil {
 		feed.SiteURL = siteURL
 	}
 
 	feedURL := r.feedURL()
-	feed.FeedURL, err = url.AbsoluteURL(baseURL, feedURL)
+	feed.FeedURL, err = urllib.AbsoluteURL(baseURL, feedURL)
 	if err != nil {
 		feed.FeedURL = feedURL
 	}
@@ -69,7 +69,7 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 		if entry.URL == "" {
 			entry.URL = feed.SiteURL
 		} else {
-			entryURL, err := url.AbsoluteURL(feed.SiteURL, entry.URL)
+			entryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL)
 			if err == nil {
 				entry.URL = entryURL
 			}
@@ -406,7 +406,7 @@ func (r *rssItem) entryCommentsURL() string {
 			commentsURL := strings.TrimSpace(commentLink.Data)
 			// The comments URL is supposed to be absolute (some feeds publishes incorrect comments URL)
 			// See https://cyber.harvard.edu/rss/rss.html#ltcommentsgtSubelementOfLtitemgt
-			if url.IsAbsoluteURL(commentsURL) {
+			if urllib.IsAbsoluteURL(commentsURL) {
 				return commentsURL
 			}
 		}

@@ -18,7 +18,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/proxy"
 	"miniflux.app/v2/internal/timezone"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 
 	"github.com/gorilla/mux"
 )
@@ -65,7 +65,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"proxyURL": func(link string) string {
 			proxyOption := config.Opts.ProxyOption()
 
-			if proxyOption == "all" || (proxyOption != "none" && !url.IsHTTPS(link)) {
+			if proxyOption == "all" || (proxyOption != "none" && !urllib.IsHTTPS(link)) {
 				return proxy.ProxifyURL(f.router, link)
 			}
 
@@ -80,7 +80,7 @@ func (f *funcMap) Map() template.FuncMap {
 			return false
 		},
 		"domain": func(websiteURL string) string {
-			return url.Domain(websiteURL)
+			return urllib.Domain(websiteURL)
 		},
 		"hasPrefix": func(str, prefix string) bool {
 			return strings.HasPrefix(str, prefix)
