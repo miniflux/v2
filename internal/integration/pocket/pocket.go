@@ -4,51 +4,67 @@
 package pocket // import "miniflux.app/v2/internal/integration/pocket"
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
 
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/version"
 )
 
-// Client represents a Pocket client.
+const defaultClientTimeout = 10 * time.Second
+
 type Client struct {
 	consumerKey string
 	accessToken string
 }
 
-// NewClient returns a new Pocket client.
 func NewClient(consumerKey, accessToken string) *Client {
 	return &Client{consumerKey, accessToken}
 }
 
-// AddURL sends a single link to Pocket.
-func (c *Client) AddURL(link, title string) error {
+func (c *Client) AddURL(entryURL, entryTitle string) error {
 	if c.consumerKey == "" || c.accessToken == "" {
-		return fmt.Errorf("pocket: missing credentials")
+		return fmt.Errorf("pocket: missing consumer key or access token")
 	}
 
-	type body struct {
-		AccessToken string `json:"access_token"`
-		ConsumerKey string `json:"consumer_key"`
-		Title       string `json:"title,omitempty"`
-		URL         string `json:"url"`
-	}
-
-	data := &body{
+	apiEndpoint := "https://getpocket.com/v3/add"
+	requestBody, err := json.Marshal(&createItemRequest{
 		AccessToken: c.accessToken,
 		ConsumerKey: c.consumerKey,
-		Title:       title,
-		URL:         link,
-	}
-
-	clt := client.New("https://getpocket.com/v3/add")
-	response, err := clt.PostJSON(data)
+		Title:       entryTitle,
+		URL:         entryURL,
+	})
 	if err != nil {
-		return fmt.Errorf("pocket: unable to send url: %v", err)
+		return fmt.Errorf("pocket: unable to encode request body: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return fmt.Errorf("pocket: unable to send url, status=%d", response.StatusCode)
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
+	if err != nil {
+		return fmt.Errorf("pocket: unable to create request: %v", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("pocket: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return fmt.Errorf("pocket: unable to create item: url=%s status=%d", apiEndpoint, response.StatusCode)
 	}
 
 	return nil
+}
+
+type createItemRequest struct {
+	AccessToken string `json:"access_token"`
+	ConsumerKey string `json:"consumer_key"`
+	Title       string `json:"title,omitempty"`
+	URL         string `json:"url"`
 }

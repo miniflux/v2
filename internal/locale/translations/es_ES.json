@@ -357,7 +357,7 @@
     "form.integration.notion_token": "Notion Secret Token",
     "form.integration.apprise_activate": "Push entries to Apprise",
     "form.integration.apprise_url": "Apprise API URL",
-    "form.integration.apprise_services_url": "Apprise services urls seperated by comma",
+    "form.integration.apprise_services_url": "Comma separated list of Apprise service URLs",
     "form.integration.nunux_keeper_activate": "Enviar artículos a Nunux Keeper",
     "form.integration.nunux_keeper_endpoint": "Acceso API de Nunux Keeper",
     "form.integration.nunux_keeper_api_key": "Clave de API de Nunux Keeper",

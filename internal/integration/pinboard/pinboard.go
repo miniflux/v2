@@ -5,23 +5,24 @@ package pinboard // import "miniflux.app/v2/internal/integration/pinboard"
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
+	"time"
 
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/version"
 )
 
-// Client represents a Pinboard client.
+const defaultClientTimeout = 10 * time.Second
+
 type Client struct {
 	authToken string
 }
 
-// NewClient returns a new Pinboard client.
 func NewClient(authToken string) *Client {
 	return &Client{authToken: authToken}
 }
 
-// AddBookmark sends a link to Pinboard.
-func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error {
+func (c *Client) CreateBookmark(entryURL, entryTitle, pinboardTags string, markAsUnread bool) error {
 	if c.authToken == "" {
 		return fmt.Errorf("pinboard: missing auth token")
 	}
@@ -33,19 +34,29 @@ func (c *Client) AddBookmark(link, title, tags string, markAsUnread bool) error 
 
 	values := url.Values{}
 	values.Add("auth_token", c.authToken)
-	values.Add("url", link)
-	values.Add("description", title)
-	values.Add("tags", tags)
+	values.Add("url", entryURL)
+	values.Add("description", entryTitle)
+	values.Add("tags", pinboardTags)
 	values.Add("toread", toRead)
 
-	clt := client.New("https://api.pinboard.in/v1/posts/add?" + values.Encode())
-	response, err := clt.Get()
+	apiEndpoint := "https://api.pinboard.in/v1/posts/add?" + values.Encode()
+	request, err := http.NewRequest(http.MethodGet, apiEndpoint, nil)
 	if err != nil {
-		return fmt.Errorf("pinboard: unable to send bookmark: %v", err)
+		return fmt.Errorf("pinboard: unable to create request: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return fmt.Errorf("pinboard: unable to send bookmark, status=%d", response.StatusCode)
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("pinboard: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return fmt.Errorf("pinboard: unable to create a bookmark: url=%s status=%d", apiEndpoint, response.StatusCode)
 	}
 
 	return nil

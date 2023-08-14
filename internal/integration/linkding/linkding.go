@@ -4,22 +4,19 @@
 package linkding // import "miniflux.app/v2/internal/integration/linkding"
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 
-	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/urllib"
+	"miniflux.app/v2/internal/version"
 )
 
-// Document structure of a Linkding document
-type Document struct {
-	Url      string   `json:"url,omitempty"`
-	Title    string   `json:"title,omitempty"`
-	TagNames []string `json:"tag_names,omitempty"`
-	Unread   bool     `json:"unread,omitempty"`
-}
+const defaultClientTimeout = 10 * time.Second
 
-// Client represents an Linkding client.
 type Client struct {
 	baseURL string
 	apiKey  string
@@ -27,26 +24,17 @@ type Client struct {
 	unread  bool
 }
 
-// NewClient returns a new Linkding client.
 func NewClient(baseURL, apiKey, tags string, unread bool) *Client {
 	return &Client{baseURL: baseURL, apiKey: apiKey, tags: tags, unread: unread}
 }
 
-// AddEntry sends an entry to Linkding.
-func (c *Client) AddEntry(title, entryURL string) error {
+func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.apiKey == "" {
-		return fmt.Errorf("linkding: missing credentials")
+		return fmt.Errorf("linkding: missing base URL or API key")
 	}
 
 	tagsSplitFn := func(c rune) bool {
 		return c == ',' || c == ' '
-	}
-
-	doc := &Document{
-		Url:      entryURL,
-		Title:    title,
-		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
-		Unread:   c.unread,
 	}
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks/")
@@ -54,16 +42,43 @@ func (c *Client) AddEntry(title, entryURL string) error {
 		return fmt.Errorf(`linkding: invalid API endpoint: %v`, err)
 	}
 
-	clt := client.New(apiEndpoint)
-	clt.WithAuthorization("Token " + c.apiKey)
-	response, err := clt.PostJSON(doc)
+	requestBody, err := json.Marshal(&linkdingBookmark{
+		Url:      entryURL,
+		Title:    entryTitle,
+		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
+		Unread:   c.unread,
+	})
+
 	if err != nil {
-		return fmt.Errorf("linkding: unable to send entry: %v", err)
+		return fmt.Errorf("linkding: unable to encode request body: %v", err)
 	}
 
-	if response.HasServerFailure() {
-		return fmt.Errorf("linkding: unable to send entry, status=%d", response.StatusCode)
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
+	if err != nil {
+		return fmt.Errorf("linkding: unable to create request: %v", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
+	request.Header.Set("Authorization", "Token "+c.apiKey)
+
+	httpClient := &http.Client{Timeout: defaultClientTimeout}
+	response, err := httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("linkding: unable to send request: %v", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		return fmt.Errorf("linkding: unable to create bookmark: url=%s status=%d", apiEndpoint, response.StatusCode)
 	}
 
 	return nil
+}
+
+type linkdingBookmark struct {
+	Url      string   `json:"url,omitempty"`
+	Title    string   `json:"title,omitempty"`
+	TagNames []string `json:"tag_names,omitempty"`
+	Unread   bool     `json:"unread,omitempty"`
 }

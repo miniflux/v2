@@ -26,7 +26,7 @@ func NewClient(baseURL, username, password string) *Client {
 	return &Client{baseURL: baseURL, username: username, password: password}
 }
 
-func (c *Client) AddBookmark(entryURL, entryTitle string) error {
+func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	if c.baseURL == "" || c.username == "" || c.password == "" {
 		return fmt.Errorf("shiori: missing base URL, username or password")
 	}
@@ -51,13 +51,12 @@ func (c *Client) AddBookmark(entryURL, entryTitle string) error {
 		return fmt.Errorf("shiori: unable to encode request body: %v", err)
 	}
 
-	request, err := http.NewRequest("POST", apiEndpoint, bytes.NewReader(requestBody))
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
 		return fmt.Errorf("shiori: unable to create request: %v", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Accept", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.Header.Set("X-Session-Id", sessionID)
 
@@ -87,7 +86,7 @@ func (c *Client) authenticate() (sessionID string, err error) {
 		return "", fmt.Errorf("shiori: unable to encode request body: %v", err)
 	}
 
-	request, err := http.NewRequest("POST", apiEndpoint, bytes.NewReader(requestBody))
+	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
 		return "", fmt.Errorf("shiori: unable to create request: %v", err)
 	}
