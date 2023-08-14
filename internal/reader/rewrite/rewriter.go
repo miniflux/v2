@@ -10,7 +10,7 @@ import (
 
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 type rule struct {
@@ -116,7 +116,7 @@ func applyRule(entryURL string, entry *model.Entry, rule rule) {
 }
 
 func getPredefinedRewriteRules(entryURL string) string {
-	urlDomain := url.Domain(entryURL)
+	urlDomain := urllib.Domain(entryURL)
 	for domain, rules := range predefinedRules {
 		if strings.Contains(urlDomain, domain) {
 			return rules

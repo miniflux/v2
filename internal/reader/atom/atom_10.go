@@ -16,7 +16,7 @@ import (
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // Specs:
@@ -38,13 +38,13 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 
 	feedURL := a.Links.firstLinkWithRelation("self")
-	feed.FeedURL, err = url.AbsoluteURL(baseURL, feedURL)
+	feed.FeedURL, err = urllib.AbsoluteURL(baseURL, feedURL)
 	if err != nil {
 		feed.FeedURL = feedURL
 	}
 
 	siteURL := a.Links.originalLink()
-	feed.SiteURL, err = url.AbsoluteURL(baseURL, siteURL)
+	feed.SiteURL, err = urllib.AbsoluteURL(baseURL, siteURL)
 	if err != nil {
 		feed.SiteURL = siteURL
 	}
@@ -58,7 +58,7 @@ func (a *atom10Feed) Transform(baseURL string) *model.Feed {
 
 	for _, entry := range a.Entries {
 		item := entry.Transform()
-		entryURL, err := url.AbsoluteURL(feed.SiteURL, item.URL)
+		entryURL, err := urllib.AbsoluteURL(feed.SiteURL, item.URL)
 		if err == nil {
 			item.URL = entryURL
 		}
@@ -237,7 +237,7 @@ func (r *atom10Entry) entryCategories() []string {
 // We accept only HTML or XHTML documents for now since the intention is to have the same behavior as RSS.
 func (a *atom10Entry) entryCommentsURL() string {
 	commentsURL := a.Links.firstLinkWithRelationAndType("replies", "text/html", "application/xhtml+xml")
-	if url.IsAbsoluteURL(commentsURL) {
+	if urllib.IsAbsoluteURL(commentsURL) {
 		return commentsURL
 	}
 	return ""

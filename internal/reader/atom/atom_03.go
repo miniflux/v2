@@ -14,7 +14,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // Specs: http://web.archive.org/web/20060811235523/http://www.mnot.net/drafts/draft-nottingham-atom-format-02.html
@@ -32,13 +32,13 @@ func (a *atom03Feed) Transform(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 
 	feedURL := a.Links.firstLinkWithRelation("self")
-	feed.FeedURL, err = url.AbsoluteURL(baseURL, feedURL)
+	feed.FeedURL, err = urllib.AbsoluteURL(baseURL, feedURL)
 	if err != nil {
 		feed.FeedURL = feedURL
 	}
 
 	siteURL := a.Links.originalLink()
-	feed.SiteURL, err = url.AbsoluteURL(baseURL, siteURL)
+	feed.SiteURL, err = urllib.AbsoluteURL(baseURL, siteURL)
 	if err != nil {
 		feed.SiteURL = siteURL
 	}
@@ -50,7 +50,7 @@ func (a *atom03Feed) Transform(baseURL string) *model.Feed {
 
 	for _, entry := range a.Entries {
 		item := entry.Transform()
-		entryURL, err := url.AbsoluteURL(feed.SiteURL, item.URL)
+		entryURL, err := urllib.AbsoluteURL(feed.SiteURL, item.URL)
 		if err == nil {
 			item.URL = entryURL
 		}

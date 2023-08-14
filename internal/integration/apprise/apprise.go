@@ -11,7 +11,7 @@ import (
 
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 const defaultClientTimeout = 1 * time.Second
@@ -34,7 +34,7 @@ func (c *Client) PushEntry(entry *model.Entry) error {
 	}
 	_, err := net.DialTimeout("tcp", c.baseURL, defaultClientTimeout)
 	if err != nil {
-		apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/notify")
+		apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/notify")
 		if err != nil {
 			return fmt.Errorf(`apprise: invalid API endpoint: %v`, err)
 		}

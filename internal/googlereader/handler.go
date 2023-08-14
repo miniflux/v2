@@ -24,7 +24,7 @@ import (
 	mff "miniflux.app/v2/internal/reader/handler"
 	mfs "miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/validator"
 )
 
@@ -843,7 +843,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		proxyOption := config.Opts.ProxyOption()
 
 		for i := range entry.Enclosures {
-			if proxyOption == "all" || proxyOption != "none" && !url.IsHTTPS(entry.Enclosures[i].URL) {
+			if proxyOption == "all" || proxyOption != "none" && !urllib.IsHTTPS(entry.Enclosures[i].URL) {
 				for _, mediaType := range config.Opts.ProxyMediaTypes() {
 					if strings.HasPrefix(entry.Enclosures[i].MimeType, mediaType+"/") {
 						entry.Enclosures[i].URL = proxy.AbsoluteProxifyURL(h.router, r.Host, entry.Enclosures[i].URL)

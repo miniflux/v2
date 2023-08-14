@@ -14,7 +14,7 @@ import (
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/reader/browser"
 	"miniflux.app/v2/internal/reader/parser"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -90,7 +90,7 @@ func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.Loc
 
 			if feedURL, exists := s.Attr("href"); exists {
 				if feedURL != "" {
-					subscription.URL, _ = url.AbsoluteURL(websiteURL, feedURL)
+					subscription.URL, _ = urllib.AbsoluteURL(websiteURL, feedURL)
 				}
 			}
 
@@ -149,20 +149,20 @@ func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) 
 		"rss/":     "rss",
 	}
 
-	websiteURLRoot := url.RootURL(websiteURL)
+	websiteURLRoot := urllib.RootURL(websiteURL)
 	baseURLs := []string{
 		// Look for knownURLs in the root.
 		websiteURLRoot,
 	}
 	// Look for knownURLs in current subdirectory, such as 'example.com/blog/'.
-	websiteURL, _ = url.AbsoluteURL(websiteURL, "./")
+	websiteURL, _ = urllib.AbsoluteURL(websiteURL, "./")
 	if websiteURL != websiteURLRoot {
 		baseURLs = append(baseURLs, websiteURL)
 	}
 
 	for _, baseURL := range baseURLs {
 		for knownURL, kind := range knownURLs {
-			fullURL, err := url.AbsoluteURL(baseURL, knownURL)
+			fullURL, err := urllib.AbsoluteURL(baseURL, knownURL)
 			if err != nil {
 				continue
 			}

@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // Document structure of a Nununx Keeper document
@@ -42,7 +42,7 @@ func (c *Client) AddEntry(link, title, content string) error {
 		ContentType: "text/html",
 	}
 
-	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/v2/documents")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/v2/documents")
 	if err != nil {
 		return fmt.Errorf(`nunux-keeper: invalid API endpoint: %v`, err)
 	}

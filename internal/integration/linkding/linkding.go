@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/url"
+	"miniflux.app/v2/internal/urllib"
 )
 
 // Document structure of a Linkding document
@@ -49,7 +49,7 @@ func (c *Client) AddEntry(title, entryURL string) error {
 		Unread:   c.unread,
 	}
 
-	apiEndpoint, err := url.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks/")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks/")
 	if err != nil {
 		return fmt.Errorf(`linkding: invalid API endpoint: %v`, err)
 	}
