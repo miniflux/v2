@@ -50,7 +50,7 @@ var predefinedRules = map[string]string{
 	"universfreebox.com":   "#corps_corps",
 	"version2.dk":          "section.body",
 	"wdwnt.com":            "div.entry-content",
-	"webtoons.com":         ".viewer_img",
+	"webtoons.com":         ".viewer_img,p.author_text",
 	"wired.com":            "main figure, article",
 	"zeit.de":              ".summary, .article-body",
 	"zdnet.com":            "div.storyBody",
