@@ -96,6 +96,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		store,
 		subscription.ID,
 		subscription.SiteURL,
+		subscription.IconURL,
 		feedCreationRequest.UserAgent,
 		feedCreationRequest.FetchViaProxy,
 		feedCreationRequest.AllowSelfSignedCertificates,
@@ -189,6 +190,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 			store,
 			originalFeed.ID,
 			originalFeed.SiteURL,
+			updatedFeed.IconURL,
 			originalFeed.UserAgent,
 			originalFeed.FetchViaProxy,
 			originalFeed.AllowSelfSignedCertificates,
@@ -208,9 +210,9 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 	return nil
 }
 
-func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
+func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
 	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
+		icon, err := icon.FindIcon(websiteURL, iconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {
 			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
 		} else if icon == nil {

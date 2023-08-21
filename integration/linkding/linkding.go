@@ -7,25 +7,28 @@ package linkding // import "miniflux.app/integration/linkding"
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"miniflux.app/http/client"
 )
 
 // Document structure of a Linkding document
 type Document struct {
-	Url   string `json:"url,omitempty"`
-	Title string `json:"title,omitempty"`
+	Url      string   `json:"url,omitempty"`
+	Title    string   `json:"title,omitempty"`
+	TagNames []string `json:"tag_names,omitempty"`
 }
 
 // Client represents an Linkding client.
 type Client struct {
 	baseURL string
 	apiKey  string
+	tags    string
 }
 
 // NewClient returns a new Linkding client.
-func NewClient(baseURL, apiKey string) *Client {
-	return &Client{baseURL: baseURL, apiKey: apiKey}
+func NewClient(baseURL, apiKey, tags string) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey, tags: tags}
 }
 
 // AddEntry sends an entry to Linkding.
@@ -34,9 +37,14 @@ func (c *Client) AddEntry(title, url string) error {
 		return fmt.Errorf("linkding: missing credentials")
 	}
 
+	tagsSplitFn := func(c rune) bool {
+		return c == ',' || c == ' '
+	}
+
 	doc := &Document{
-		Url:   url,
-		Title: title,
+		Url:      url,
+		Title:    title,
+		TagNames: strings.FieldsFunc(c.tags, tagsSplitFn),
 	}
 
 	apiURL, err := getAPIEndpoint(c.baseURL, "/api/bookmarks/")

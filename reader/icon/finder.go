@@ -23,30 +23,32 @@ import (
 )
 
 // FindIcon try to find the website's icon.
-func FindIcon(websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
-	rootURL := url.RootURL(websiteURL)
-	logger.Debug("[FindIcon] Trying to find an icon: rootURL=%q websiteURL=%q userAgent=%q", rootURL, websiteURL, userAgent)
+func FindIcon(websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
+	if iconURL == "" {
+		rootURL := url.RootURL(websiteURL)
+		logger.Debug("[FindIcon] Trying to find an icon: rootURL=%q websiteURL=%q userAgent=%q", rootURL, websiteURL, userAgent)
 
-	clt := client.NewClientWithConfig(rootURL, config.Opts)
-	clt.WithUserAgent(userAgent)
-	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
+		clt := client.NewClientWithConfig(rootURL, config.Opts)
+		clt.WithUserAgent(userAgent)
+		clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
 
-	if fetchViaProxy {
-		clt.WithProxy()
-	}
+		if fetchViaProxy {
+			clt.WithProxy()
+		}
 
-	response, err := clt.Get()
-	if err != nil {
-		return nil, fmt.Errorf("icon: unable to download website index page: %v", err)
-	}
+		response, err := clt.Get()
+		if err != nil {
+			return nil, fmt.Errorf("icon: unable to download website index page: %v", err)
+		}
 
-	if response.HasServerFailure() {
-		return nil, fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
-	}
+		if response.HasServerFailure() {
+			return nil, fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
+		}
 
-	iconURL, err := parseDocument(rootURL, response.Body)
-	if err != nil {
-		return nil, err
+		iconURL, err = parseDocument(rootURL, response.Body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if strings.HasPrefix(iconURL, "data:") {

@@ -31,6 +31,7 @@ type FeedForm struct {
 	AllowSelfSignedCertificates bool
 	FetchViaProxy               bool
 	Disabled                    bool
+	NoMediaPlayer               bool
 	HideGlobally                bool
 	CategoryHidden              bool // Category has "hide_globally"
 }
@@ -57,6 +58,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.AllowSelfSignedCertificates = f.AllowSelfSignedCertificates
 	feed.FetchViaProxy = f.FetchViaProxy
 	feed.Disabled = f.Disabled
+	feed.NoMediaPlayer = f.NoMediaPlayer
 	feed.HideGlobally = f.HideGlobally
 	return feed
 }
@@ -86,6 +88,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		AllowSelfSignedCertificates: r.FormValue("allow_self_signed_certificates") == "1",
 		FetchViaProxy:               r.FormValue("fetch_via_proxy") == "1",
 		Disabled:                    r.FormValue("disabled") == "1",
+		NoMediaPlayer:               r.FormValue("no_media_player") == "1",
 		HideGlobally:                r.FormValue("hide_globally") == "1",
 	}
 }

@@ -46,11 +46,13 @@ type Feed struct {
 	Username                    string    `json:"username"`
 	Password                    string    `json:"password"`
 	Disabled                    bool      `json:"disabled"`
+	NoMediaPlayer               bool      `json:"no_media_player"`
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	Category                    *Category `json:"category,omitempty"`
 	Entries                     Entries   `json:"entries,omitempty"`
+	IconURL                     string    `json:"icon_url"`
 	Icon                        *FeedIcon `json:"icon"`
 	HideGlobally                bool      `json:"hide_globally"`
 	UnreadCount                 int       `json:"-"`
@@ -134,6 +136,7 @@ type FeedCreationRequest struct {
 	Password                    string `json:"password"`
 	Crawler                     bool   `json:"crawler"`
 	Disabled                    bool   `json:"disabled"`
+	NoMediaPlayer               bool   `json:"no_media_player"`
 	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
@@ -162,6 +165,7 @@ type FeedModificationRequest struct {
 	Password                    *string `json:"password"`
 	CategoryID                  *int64  `json:"category_id"`
 	Disabled                    *bool   `json:"disabled"`
+	NoMediaPlayer               *bool   `json:"no_media_player"`
 	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
@@ -228,6 +232,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.Disabled != nil {
 		feed.Disabled = *f.Disabled
+	}
+
+	if f.NoMediaPlayer != nil {
+		feed.NoMediaPlayer = *f.NoMediaPlayer
 	}
 
 	if f.IgnoreHTTPCache != nil {

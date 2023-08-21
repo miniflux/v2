@@ -12,7 +12,7 @@ import (
 )
 
 func (h *handler) markAllAsRead(w http.ResponseWriter, r *http.Request) {
-	if err := h.store.MarkAllAsRead(request.UserID(r)); err != nil {
+	if err := h.store.MarkGloballyVisibleFeedsAsRead(request.UserID(r)); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
