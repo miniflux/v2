@@ -80,7 +80,8 @@
     "entry.estimated_reading_time": [
         "%d minuto di lettura",
         "%d minuti di lettura"
-    ],
+    ],    
+    "entry.tags.label": "Tag:",
     "page.shared_entries.title": "Voci condivise",
     "page.unread.title": "Da leggere",
     "page.starred.title": "Preferiti",
@@ -321,6 +322,7 @@
     "form.prefs.label.entry_order": "Colonna di ordinamento delle voci",
     "form.prefs.label.default_home_page": "Pagina iniziale predefinita",
     "form.prefs.label.categories_sorting_order": "Ordinamento delle categorie",
+    "form.prefs.label.mark_read_on_view": "Contrassegna automaticamente le voci come lette quando visualizzate",
     "form.import.label.file": "File OPML",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Abilita l'API di Fever",
@@ -363,6 +365,7 @@
     "form.integration.linkding_endpoint": "Endpoint dell'API di Linkding",
     "form.integration.linkding_api_key": "API key dell'account Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Segna i preferiti come non letti",
     "form.integration.matrix_bot_activate": "Trasferimento di nuovi articoli a Matrix",
     "form.integration.matrix_bot_user": "Nome utente per Matrix",
     "form.integration.matrix_bot_password": "Password per l'utente Matrix",

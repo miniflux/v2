@@ -81,6 +81,7 @@
         "%d dakikalık okuma",
         "%d dakikalık okuma"
     ],
+    "entry.tags.label": "Etiketleri:",
     "page.shared_entries.title": "Paylaşılan iletiler",
     "page.unread.title": "Okunmadı",
     "page.starred.title": "Yıldızlı",
@@ -321,6 +322,7 @@
     "form.prefs.label.entry_order": "Giriş Sıralama Sütunu",
     "form.prefs.label.default_home_page": "Varsayılan ana sayfa",
     "form.prefs.label.categories_sorting_order": "Kategoriler sıralama",
+    "form.prefs.label.mark_read_on_view": "Girişleri görüntülendiğinde otomatik olarak okundu olarak işaretle",
     "form.import.label.file": "OPML dosyası",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Fever API'yi Etkinleştir",
@@ -363,6 +365,7 @@
     "form.integration.linkding_endpoint": "Linkding API Uç Noktası",
     "form.integration.linkding_api_key": "Linkding API Anahtarı",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Yer imini okunmadı olarak işaretle",
     "form.integration.matrix_bot_activate": "Yeni makaleleri Matrix'e aktarın",
     "form.integration.matrix_bot_user": "Matrix için Kullanıcı Adı",
     "form.integration.matrix_bot_password": "Matrix kullanıcısı için şifre",

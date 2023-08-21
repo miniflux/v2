@@ -1,6 +1,5 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package ui // import "miniflux.app/ui"
 
@@ -38,8 +37,7 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithFeedID(feed.ID)
 	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithOrder(user.EntryOrder)
-	builder.WithDirection(user.EntryDirection)
+	builder.WithSorting(user.EntryOrder, user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 

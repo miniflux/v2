@@ -1,31 +1,32 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "August 29, 2022" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "June 25, 2023" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
 
 .SH SYNOPSIS
-\fBminiflux\fR [-vic] [-create-admin] [-debug] [-flush-sessions] [-info] [-migrate]
-         [-reset-feed-errors] [-reset-password] [-version] [-config-file] [-config-dump]
+\fBminiflux\fR [-vic] [-config-dump] [-config-file] [-create-admin] [-debug] [-flush-sessions]
+    [-healthcheck] [-info] [-migrate] [-refresh-feeds] [-reset-feed-errors] [-reset-password]
+    [-run-cleanup-tasks] [-version]
 
 .SH DESCRIPTION
 \fBminiflux\fR is a minimalist and opinionated feed reader.
 
 .SH OPTIONS
 .PP
-.B \-c
-.RS 4
-Load configuration file\&.
-.RE
-.PP
-.B \-config-file
-.RS 4
-Load configuration file\&.
-.RE
-.PP
 .B \-config-dump
 .RS 4
 Print parsed configuration values. This will include sensitive information like passwords\&.
+.RE
+.PP
+.B \-c /path/to/miniflux.conf
+.RS 4
+Load configuration file\&.
+.RE
+.PP
+.B \-config-file /path/to/miniflux.conf
+.RS 4
+Load configuration file\&.
 .RE
 .PP
 .B \-create-admin
@@ -43,7 +44,7 @@ Show debug logs\&.
 Flush all sessions (disconnect users)\&.
 .RE
 .PP
-.B \-healthcheck
+.B \-healthcheck <endpoint>
 .RS 4
 Perform a health check on the given endpoint\&.
 .br
@@ -52,17 +53,22 @@ The value "auto" try to guess the health check endpoint\&.
 .PP
 .B \-i
 .RS 4
-Show application information\&.
+Show build information\&.
 .RE
 .PP
 .B \-info
 .RS 4
-Show application information\&.
+Show build information\&.
 .RE
 .PP
 .B \-migrate
 .RS 4
 Run SQL migrations\&.
+.RE
+.PP
+.B \-refresh-feeds
+.RS 4
+Refresh a batch of feeds and exit\&.
 .RE
 .PP
 .B \-reset-feed-errors
@@ -73,6 +79,11 @@ Clear all feed errors for all users\&.
 .B \-reset-password
 .RS 4
 Reset user password\&.
+.RE
+.PP
+.B \-run-cleanup-tasks
+.RS 4
+Run cleanup tasks (delete old sessions and archives old entries)\&.
 .RE
 .PP
 .B \-v

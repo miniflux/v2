@@ -1,3 +1,20 @@
+Version 2.0.45 (June 21, 2023)
+------------------------------
+
+* Add media player to listen to audio and video podcasts with the possiblity to resume to last playback position
+* Add default tag names for Linkding integration
+* Mark only globally visible entries when marking all entries from UI
+* Use image included in feed as feed icon when available
+* Order history by `changed_at` and `published_at`
+* Remove title attribute from entry title links
+* Fix reading time that is not aligned correctly with the latest version of Safari
+* Use glyphs of the same size on keyboard shortcuts page
+* Add maskable versions of the PWA icon
+* Replace copyright header with SPDX identifier
+* Remove the "í" letter from the Portuguese "lido" word
+* Increase golangci-lint timeout value
+* Bump `github.com/tdewolff/minify/v2`, `github.com/prometheus/client_golang`, `golang.org/x/*` dependencies
+
 Version 2.0.44 (May 6, 2023)
 ----------------------------
 

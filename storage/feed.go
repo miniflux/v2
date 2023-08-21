@@ -1,6 +1,5 @@
-// Copyright 2017 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package storage // import "miniflux.app/storage"
 
@@ -135,8 +134,7 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 // Feeds returns all feeds that belongs to the given user.
 func (s *Storage) Feeds(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
 	return builder.GetFeeds()
 }
 
@@ -153,8 +151,7 @@ func getFeedsSorted(builder *FeedQueryBuilder) (model.Feeds, error) {
 func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
 	return getFeedsSorted(builder)
 }
 
@@ -171,8 +168,7 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCategoryID(categoryID)
 	builder.WithCounters()
-	builder.WithOrder(model.DefaultFeedSorting)
-	builder.WithDirection(model.DefaultFeedSortingDirection)
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
 	return getFeedsSorted(builder)
 }
 
@@ -290,9 +286,19 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			return fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
-		if !s.entryExists(tx, feed.Entries[i]) {
+		entryExists, err := s.entryExists(tx, feed.Entries[i])
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+			}
+			return err
+		}
+
+		if !entryExists {
 			if err := s.createEntry(tx, feed.Entries[i]); err != nil {
-				tx.Rollback()
+				if rollbackErr := tx.Rollback(); rollbackErr != nil {
+					return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+				}
 				return err
 			}
 		}

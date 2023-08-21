@@ -1,6 +1,5 @@
-// Copyright 2018 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package ui // import "miniflux.app/ui"
 
@@ -13,10 +12,6 @@ import (
 	"miniflux.app/http/response/json"
 )
 
-type enclosurePositionSaveRequest struct {
-	Progression int64 `json:"progression"`
-}
-
 func (h *handler) saveEnclosureProgression(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
 	enclosure, err := h.store.GetEnclosure(enclosureID)
@@ -24,6 +19,16 @@ func (h *handler) saveEnclosureProgression(w http.ResponseWriter, r *http.Reques
 		json.ServerError(w, r, err)
 		return
 	}
+
+	if enclosure == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	type enclosurePositionSaveRequest struct {
+		Progression int64 `json:"progression"`
+	}
+
 	var postData enclosurePositionSaveRequest
 	body, err := io.ReadAll(r.Body)
 	if err != nil {

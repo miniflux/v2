@@ -1,6 +1,5 @@
-// Copyright 2022 Frédéric Guillot. All rights reserved.
-// Use of this source code is governed by the Apache 2.0
-// license that can be found in the LICENSE file.
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package googlereader // import "miniflux.app/googlereader"
 
@@ -790,8 +789,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithEntryIDs(itemIDs)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(requestModifiers.SortDirection)
+	builder.WithSorting(model.DefaultSortingOrder, requestModifiers.SortDirection)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -1144,8 +1142,7 @@ func (h *handler) handleReadingListStream(w http.ResponseWriter, r *http.Request
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(rm.SortDirection)
+	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
 		builder.AfterDate(time.Unix(rm.StartTime, 0))
 	}
@@ -1187,8 +1184,7 @@ func (h *handler) handleStarredStream(w http.ResponseWriter, r *http.Request, rm
 	builder.WithStarred(true)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(rm.SortDirection)
+	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
 		builder.AfterDate(time.Unix(rm.StartTime, 0))
 	}
@@ -1230,8 +1226,7 @@ func (h *handler) handleReadStream(w http.ResponseWriter, r *http.Request, rm Re
 	builder.WithStatus(model.EntryStatusRead)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(rm.SortDirection)
+	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
 		builder.AfterDate(time.Unix(rm.StartTime, 0))
 	}
@@ -1279,8 +1274,7 @@ func (h *handler) handleFeedStream(w http.ResponseWriter, r *http.Request, rm Re
 	builder.WithFeedID(feedID)
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
-	builder.WithOrder(model.DefaultSortingOrder)
-	builder.WithDirection(rm.SortDirection)
+	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
 		builder.AfterDate(time.Unix(rm.StartTime, 0))
 	}

@@ -81,6 +81,7 @@
         "%d minuutin lukuaika",
         "%d minuutin lukuaika"
     ],
+    "entry.tags.label": "Tags:",
     "page.shared_entries.title": "Jaetut artikkelit",
     "page.unread.title": "Lukemattomat",
     "page.starred.title": "Suosikit",
@@ -321,6 +322,7 @@
     "form.prefs.label.entry_order": "Lajittele sarakkeen mukaan",
     "form.prefs.label.default_home_page": "Oletusarvoinen etusivu",
     "form.prefs.label.categories_sorting_order": "Kategorioiden lajittelu",
+    "form.prefs.label.mark_read_on_view": "Merkitse kohdat automaattisesti luetuiksi, kun niitä tarkastellaan",
     "form.import.label.file": "OPML-tiedosto",
     "form.import.label.url": "URL",
     "form.integration.fever_activate": "Ota Fever API käyttöön",
@@ -363,6 +365,7 @@
     "form.integration.linkding_endpoint": "Linkding API-päätepiste",
     "form.integration.linkding_api_key": "Linkding API-avain",
     "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_bookmark": "Merkitse kirjanmerkki lukemattomaksi",
     "form.integration.matrix_bot_activate": "Siirrä uudet artikkelit Matrixiin",
     "form.integration.matrix_bot_user": "Matrixin käyttäjätunnus",
     "form.integration.matrix_bot_password": "Matrix-käyttäjän salasana",
