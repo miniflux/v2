@@ -1,3 +1,36 @@
+Version 2.0.47 (August 20, 2023)
+--------------------------------
+
+* Update rules for `webtoons.com`
+* Use HTTP client from the standard library for third-party integrations
+* Rename internal `url` package to `urllib` to avoid overlap with `net/url`
+* Add Shaarli integration
+* Add Shiori integration
+* Add Apprise integration
+* Consider base path when generating third-party services API endpoint
+* Use podcast duration tag as reading time
+* Move internal packages to an `internal` folder
+    * For reference: <https://go.dev/doc/go1.4#internalpackages>
+* Rename Miniflux package name to follow Go module naming convention
+    * For reference: <https://go.dev/ref/mod#major-version-suffixes>
+* Update RockyLinux image from 8 to 9 (used to build RPM package)
+* Add force refresh in feed edit and feed entries page
+* Use Odysee video duration as read time
+* Upgrade to Go 1.21
+* Use details disclosure element to show the list of third-party services
+* Use Web Share API for sharing entry
+* Add a workaround for parsing some invalid date format
+* Add Thunder Client API collection into contrib folder
+* Add new API endpoint: `/entries/{entryID}/save`
+* Trigger Docker and packages workflows only for semantic tags
+    * Go module versioning expect Git tags to start with the letter v.
+    * The goal is to keep the existing naming convention for generated artifacts and 
+    have proper versioning for the Go module.
+* Bump `golang.org/x/*` dependencies
+* Bump `github.com/yuin/goldmark`
+* Bump `github.com/tdewolff/minify/v2`
+* Bump `github.com/mccutchen/go-httpbin/v2`
+
 Version 2.0.46 (July 21, 2023)
 ------------------------------
 
