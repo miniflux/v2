@@ -3,7 +3,7 @@ DOCKER_IMAGE := miniflux/miniflux
 VERSION      := $(shell git describe --tags --abbrev=0)
 COMMIT       := $(shell git rev-parse --short HEAD)
 BUILD_DATE   := `date +%FT%T%z`
-LD_FLAGS     := "-s -w -X 'miniflux.app/version.Version=$(VERSION)' -X 'miniflux.app/version.Commit=$(COMMIT)' -X 'miniflux.app/version.BuildDate=$(BUILD_DATE)'"
+LD_FLAGS     := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)' -X 'miniflux.app/v2/internal/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/internal/version.BuildDate=$(BUILD_DATE)'"
 PKG_LIST     := $(shell go list ./... | grep -v /vendor/)
 DB_URL       := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
 DEB_IMG_ARCH := amd64
@@ -43,7 +43,7 @@ export PGPASSWORD := postgres
 	debian-packages
 
 miniflux:
-	@ go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
+	@ CGO_ENABLED=0 go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 linux-amd64:
 	@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
@@ -97,7 +97,7 @@ windows-x86:
 	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
 
 run:
-	@ LOG_DATE_TIME=1 DEBUG=1 RUN_MIGRATIONS=1 go run main.go
+	@ LOG_DATE_TIME=1 DEBUG=1 RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
 
 clean:
 	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb
@@ -122,7 +122,7 @@ integration-test:
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 	
 	while ! nc -z localhost 8080; do sleep 1; done
-	go test -v -tags=integration -count=1 miniflux.app/tests
+	go test -v -tags=integration -count=1 miniflux.app/v2/internal/tests
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`

@@ -1,3 +1,71 @@
+Version 2.0.47 (August 20, 2023)
+--------------------------------
+
+* Update rules for `webtoons.com`
+* Use HTTP client from the standard library for third-party integrations
+* Rename internal `url` package to `urllib` to avoid overlap with `net/url`
+* Add Shaarli integration
+* Add Shiori integration
+* Add Apprise integration
+* Add Readwise Reader integration
+* Consider base path when generating third-party services API endpoint
+* Use podcast duration tag as reading time
+* Move internal packages to an `internal` folder
+    * For reference: <https://go.dev/doc/go1.4#internalpackages>
+* Rename Miniflux package name to follow Go module naming convention
+    * For reference: <https://go.dev/ref/mod#major-version-suffixes>
+* Update RockyLinux image from 8 to 9 (used to build RPM package)
+* Add force refresh in feed edit and feed entries page
+* Use Odysee video duration as read time
+* Upgrade to Go 1.21
+* Use details disclosure element to show the list of third-party services
+* Use Web Share API for sharing entry
+* Add a workaround for parsing some invalid date format
+* Add Thunder Client API collection into contrib folder
+* Add new API endpoint: `/entries/{entryID}/save`
+* Trigger Docker and packages workflows only for semantic tags
+    * Go module versioning expect Git tags to start with the letter v.
+    * The goal is to keep the existing naming convention for generated artifacts and 
+    have proper versioning for the Go module.
+* Bump `golang.org/x/*` dependencies
+* Bump `github.com/yuin/goldmark`
+* Bump `github.com/tdewolff/minify/v2`
+* Bump `github.com/mccutchen/go-httpbin/v2`
+
+Version 2.0.46 (July 21, 2023)
+------------------------------
+
+* Add scraper and rewrite rules for Webtoons
+* Fix regression in integration page and simplify SQL query
+* Wallabag integration: add more information in log messages
+* Add support for custom Youtube embed URL
+* Fix accessibility issues in modal component
+    * Fix modal aria role
+    * Trap focusing with tab / shift+tab inside the modal
+    * Restore keyboard focus when closing modal
+    * Automatically move keyboard focus to first focusable element unless specified otherwise
+    * Keyboard shortcut help modal: move keyboard focus to modal title
+    * Keyboard shortcut help modal: change close control from link to button
+* Add Notion integration
+* Update `golang.org/x/*` dependencies and `go-oidc` to v3.6.0
+* Improve responsive design
+* Add user setting for marking entry as read on view
+* Improve Russian translation
+* Add the possibility to run cleanup tasks from the command line
+* Add the possibility to run Miniflux as a cronjob
+* Use `go-httpbin` to run tests locally and avoid remote calls to `httpbin.org`
+* Display tags when viewing entries
+* Update categories API endpoint to return `total_unread` and `feed_count`
+* Improve date parser to handle various broken date formats
+* Avoid `pq: time zone displacement out of range` errors
+* Improve entry existance check to make better use of index
+* Add unique index `enclosures_user_entry_url_idx`
+* Add mark as unread for Linkding integration
+* Add sub-folder support for Wallabag integration
+* Use RockyLinux to build RPM package
+* Disable CGO when building RPM package
+* Disable CGO when building Docker images
+
 Version 2.0.45 (June 21, 2023)
 ------------------------------
 

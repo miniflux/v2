@@ -16,7 +16,8 @@
       },
       "extensions": [
         "ms-azuretools.vscode-docker",
-        "golang.go"
+        "golang.go",
+        "rangav.vscode-thunder-client"
       ]
     }
   }

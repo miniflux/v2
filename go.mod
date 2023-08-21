@@ -1,6 +1,6 @@
-module miniflux.app
+module miniflux.app/v2
 
-// +heroku goVersion go1.19
+// +heroku goVersion go1.21
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
@@ -9,15 +9,15 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.9
 	github.com/matrix-org/gomatrix v0.0.0-20220926102614-ceba4d9f7530
-	github.com/mccutchen/go-httpbin/v2 v2.9.2
+	github.com/mccutchen/go-httpbin/v2 v2.11.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
-	github.com/tdewolff/minify/v2 v2.12.7
-	github.com/yuin/goldmark v1.5.4
-	golang.org/x/crypto v0.11.0
-	golang.org/x/net v0.12.0
-	golang.org/x/oauth2 v0.10.0
-	golang.org/x/term v0.10.0
+	github.com/tdewolff/minify/v2 v2.12.8
+	github.com/yuin/goldmark v1.5.6
+	golang.org/x/crypto v0.12.0
+	golang.org/x/net v0.14.0
+	golang.org/x/oauth2 v0.11.0
+	golang.org/x/term v0.11.0
 	mvdan.cc/xurls/v2 v2.5.0
 )
 
@@ -31,12 +31,12 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.10.1 // indirect
-	github.com/tdewolff/parse/v2 v2.6.6 // indirect
+	github.com/tdewolff/parse/v2 v2.6.7 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
-go 1.19
+go 1.21

@@ -1,7 +1,7 @@
 Miniflux API Client
 ===================
 
-[![PkgGoDev](https://pkg.go.dev/badge/miniflux.app/client)](https://pkg.go.dev/miniflux.app/client)
+[![PkgGoDev](https://pkg.go.dev/badge/miniflux.app/v2/client)](https://pkg.go.dev/miniflux.app/v2/client)
 
 Client library for Miniflux REST API.
 
@@ -9,7 +9,7 @@ Installation
 ------------
 
 ```bash
-go get -u miniflux.app/client
+go get -u miniflux.app/v2/client
 ```
 
 Example
@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"os"
 
-	miniflux "miniflux.app/client"
+	miniflux "miniflux.app/v2/client"
 )
 
 func main() {
