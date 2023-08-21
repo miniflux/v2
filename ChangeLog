@@ -7,6 +7,7 @@ Version 2.0.47 (August 20, 2023)
 * Add Shaarli integration
 * Add Shiori integration
 * Add Apprise integration
+* Add Readwise Reader integration
 * Consider base path when generating third-party services API endpoint
 * Use podcast duration tag as reading time
 * Move internal packages to an `internal` folder
