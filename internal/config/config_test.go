@@ -724,6 +724,41 @@ func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
 	}
 }
 
+func TestDefautSchedulerEntryFrequencyFactorValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultSchedulerEntryFrequencyFactor
+	result := opts.SchedulerEntryFrequencyFactor()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_FACTOR value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefautSchedulerEntryFrequencyFactor(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", "2")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 2
+	result := opts.SchedulerEntryFrequencyFactor()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_FACTOR value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestPollingParsingErrorLimit(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("POLLING_PARSING_ERROR_LIMIT", "100")
