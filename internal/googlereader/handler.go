@@ -815,7 +815,7 @@ func (h *handler) streamItemContents(w http.ResponseWriter, r *http.Request) {
 		Updated: time.Now().Unix(),
 		Self: []contentHREF{
 			{
-				HREF: config.Opts.BaseURL() + route.Path(h.router, "StreamItemsContents"),
+				HREF: config.Opts.RootURL() + route.Path(h.router, "StreamItemsContents"),
 			},
 		},
 		Author: user.Username,
