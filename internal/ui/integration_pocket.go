@@ -32,7 +32,7 @@ func (h *handler) pocketAuthorize(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(h.store, request.SessionID(r))
 	connector := pocket.NewConnector(config.Opts.PocketConsumerKey(integration.PocketConsumerKey))
-	redirectURL := config.Opts.BaseURL() + route.Path(h.router, "pocketCallback")
+	redirectURL := config.Opts.RootURL() + route.Path(h.router, "pocketCallback")
 	requestToken, err := connector.RequestToken(redirectURL)
 	if err != nil {
 		logger.Error("[Pocket:Authorize] %v", err)
