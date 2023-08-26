@@ -279,6 +279,7 @@
     "form.feed.label.cookie": "Définir les cookies",
     "form.feed.label.scraper_rules": "Règles pour récupérer le contenu original",
     "form.feed.label.rewrite_rules": "Règles de réécriture",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.blocklist_rules": "Règles de blocage",
     "form.feed.label.keeplist_rules": "Règles d'autorisation",
     "form.feed.label.urlrewrite_rules": "Règles de réécriture d'URL",

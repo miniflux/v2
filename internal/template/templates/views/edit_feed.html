@@ -129,6 +129,14 @@
         </div>
         <input type="text" name="urlrewrite_rules" id="form-urlrewrite-rules" value="{{ .form.UrlRewriteRules }}" spellcheck="false">
 
+        <div class="form-label-row">
+            <label for="form-apprise-service-urls">
+                {{ t "form.feed.label.apprise_service_urls" }}
+            </label>
+            &nbsp;
+        </div>
+        <input type="text" name="apprise_service_urls" id="form-apprise-service-urls" value="{{ .form.AppriseServiceURLs }}" spellcheck="false">
+
         <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
         <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
         <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>

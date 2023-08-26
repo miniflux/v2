@@ -284,6 +284,7 @@
     "form.feed.label.blocklist_rules": "Правила черного списка",
     "form.feed.label.keeplist_rules": "Правила белого списка",
     "form.feed.label.urlrewrite_rules": "Правила перезаписи URL",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP кеш",
     "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
     "form.feed.label.fetch_via_proxy": "Использовать прокси",

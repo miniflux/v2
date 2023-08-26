@@ -280,6 +280,7 @@
     "form.feed.label.blocklist_rules": "阻止规则",
     "form.feed.label.keeplist_rules": "保留规则",
     "form.feed.label.urlrewrite_rules": "URL 重写规则",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 缓存",
     "form.feed.label.allow_self_signed_certificates": "允许自签名证书或无效证书",
     "form.feed.label.fetch_via_proxy": "通过代理获取",

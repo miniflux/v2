@@ -97,7 +97,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			} else if intg != nil {
 				localEntry := entry
 				go func() {
-					integration.PushEntry(localEntry, intg)
+					integration.PushEntry(localEntry, feed, intg)
 				}()
 				entriesToPush = append(entriesToPush, localEntry)
 			}

@@ -276,6 +276,7 @@
     "form.feed.label.cookie": "Atur Kuki",
     "form.feed.label.scraper_rules": "Aturan Pengambil Data",
     "form.feed.label.rewrite_rules": "Aturan Tulis Ulang",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.blocklist_rules": "Aturan Blokir",
     "form.feed.label.keeplist_rules": "Aturan Simpan",
     "form.feed.label.urlrewrite_rules": "Aturan Tulis Ulang URL",
