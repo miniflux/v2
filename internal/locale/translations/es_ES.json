@@ -279,6 +279,7 @@
     "form.feed.label.cookie": "Configurar las cookies",
     "form.feed.label.scraper_rules": "Reglas de extracción de información",
     "form.feed.label.rewrite_rules": "Reglas de reescribir",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.blocklist_rules": "Reglas de Filtrado (Bloquear)",
     "form.feed.label.keeplist_rules": "Reglas de Filtrado (Permitir)",
     "form.feed.label.urlrewrite_rules": "Reglas de Filtrado (Reescritura)",

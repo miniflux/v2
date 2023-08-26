@@ -285,6 +285,7 @@
   "form.feed.label.blocklist_rules": "Правила блокування",
   "form.feed.label.keeplist_rules": "Правила дозволення",
   "form.feed.label.urlrewrite_rules": "Правила перезапису URL-адрес",
+  "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
   "form.feed.label.ignore_http_cache": "Ігнорувати кеш HTTP",
   "form.feed.label.allow_self_signed_certificates": "Дозволити сертифікати з власним підписом або недійсні",
   "form.feed.label.fetch_via_proxy": "Використати проксі-сервер",

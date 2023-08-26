@@ -282,6 +282,7 @@
     "form.feed.label.blocklist_rules": "Blokkeer regels",
     "form.feed.label.keeplist_rules": "toestemmingsregels",
     "form.feed.label.urlrewrite_rules": "Regels voor het herschrijven van URL's",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.allow_self_signed_certificates": "Sta zelfondertekende of ongeldige certificaten toe",
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",

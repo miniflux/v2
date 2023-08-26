@@ -282,6 +282,7 @@
     "form.feed.label.blocklist_rules": "過濾規則",
     "form.feed.label.keeplist_rules": "保留規則",
     "form.feed.label.urlrewrite_rules": "URL 重写规则",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 快取",
     "form.feed.label.allow_self_signed_certificates": "允許自簽章憑證或無效憑證",
     "form.feed.label.fetch_via_proxy": "透過代理獲取",

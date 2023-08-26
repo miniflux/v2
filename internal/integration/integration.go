@@ -181,7 +181,7 @@ func PushEntries(entries model.Entries, integration *model.Integration) {
 }
 
 // PushEntry pushes an entry to third-party providers during feed refreshes.
-func PushEntry(entry *model.Entry, integration *model.Integration) {
+func PushEntry(entry *model.Entry, feed *model.Feed, integration *model.Integration) {
 	if integration.TelegramBotEnabled {
 		logger.Debug("[Integration] Sending Entry %q for User #%d to Telegram", entry.URL, integration.UserID)
 
@@ -193,8 +193,15 @@ func PushEntry(entry *model.Entry, integration *model.Integration) {
 	if integration.AppriseEnabled {
 		logger.Debug("[Integration] Sending Entry %q for User #%d to apprise", entry.URL, integration.UserID)
 
+		var appriseServiceURLs string
+		if len(feed.AppriseServiceURLs) > 0 {
+			appriseServiceURLs = feed.AppriseServiceURLs
+		} else {
+			appriseServiceURLs = integration.AppriseServicesURL
+		}
+
 		client := apprise.NewClient(
-			integration.AppriseServicesURL,
+			appriseServiceURLs,
 			integration.AppriseURL,
 		)
 

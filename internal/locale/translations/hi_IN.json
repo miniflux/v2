@@ -279,6 +279,7 @@
     "form.feed.label.cookie": "कुकीज़ सेट करें",
     "form.feed.label.scraper_rules": "खुरचनी नियम",
     "form.feed.label.rewrite_rules": "नियम फिर से लिखें",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.blocklist_rules": "ब्लॉक नियम",
     "form.feed.label.keeplist_rules": "नियम बनाए रखें",
     "form.feed.label.urlrewrite_rules": " यूआरएल पुनर्लेखन नियम",

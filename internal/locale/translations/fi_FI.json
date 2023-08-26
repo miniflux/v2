@@ -266,6 +266,7 @@
     "error.feed_invalid_blocklist_rule": "The block list rule is invalid.",
     "error.feed_invalid_keeplist_rule": "The keep list rule is invalid.",
     "form.feed.label.urlrewrite_rules": "URL-osoitteen uudelleenkirjoitussäännöt",
+    "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "error.user_mandatory_fields": "Käyttäjätunnus on pakollinen.",
     "error.api_key_already_exists": "API-avain on jo olemassa.",
     "error.unable_to_create_api_key": "API-avainta ei voi luoda.",

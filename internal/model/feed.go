@@ -56,6 +56,7 @@ type Feed struct {
 	HideGlobally                bool      `json:"hide_globally"`
 	UnreadCount                 int       `json:"-"`
 	ReadCount                   int       `json:"-"`
+	AppriseServiceURLs          string    `json:"apprise_service_urls"`
 }
 
 type FeedCounters struct {
