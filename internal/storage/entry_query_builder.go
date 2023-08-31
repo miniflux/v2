@@ -266,6 +266,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			f.crawler,
 			f.user_agent,
 			f.cookie,
+			f.hide_globally,
 			f.no_media_player,
 			fi.icon_id,
 			u.timezone
@@ -331,6 +332,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.Crawler,
 			&entry.Feed.UserAgent,
 			&entry.Feed.Cookie,
+			&entry.Feed.HideGlobally,
 			&entry.Feed.NoMediaPlayer,
 			&iconID,
 			&tz,
