@@ -19,17 +19,32 @@ type oidcProvider struct {
 	provider     *oidc.Provider
 }
 
+func NewOidcProvider(ctx context.Context, clientID, clientSecret, redirectURL, discoveryEndpoint string) (*oidcProvider, error) {
+	provider, err := oidc.NewProvider(ctx, discoveryEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oidcProvider{clientID: clientID, clientSecret: clientSecret, redirectURL: redirectURL, provider: provider}, nil
+}
+
 func (o *oidcProvider) GetUserExtraKey() string {
 	return "openid_connect_id"
 }
 
-func (o *oidcProvider) GetRedirectURL(state string) string {
-	return o.config().AuthCodeURL(state)
+func (o *oidcProvider) GetConfig() *oauth2.Config {
+	return &oauth2.Config{
+		RedirectURL:  o.redirectURL,
+		ClientID:     o.clientID,
+		ClientSecret: o.clientSecret,
+		Scopes:       []string{"openid", "email"},
+		Endpoint:     o.provider.Endpoint(),
+	}
 }
 
-func (o *oidcProvider) GetProfile(ctx context.Context, code string) (*Profile, error) {
-	conf := o.config()
-	token, err := conf.Exchange(ctx, code)
+func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string) (*Profile, error) {
+	conf := o.GetConfig()
+	token, err := conf.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", codeVerifier))
 	if err != nil {
 		return nil, err
 	}
@@ -53,23 +68,4 @@ func (o *oidcProvider) PopulateUserWithProfileID(user *model.User, profile *Prof
 
 func (o *oidcProvider) UnsetUserProfileID(user *model.User) {
 	user.OpenIDConnectID = ""
-}
-
-func (o *oidcProvider) config() *oauth2.Config {
-	return &oauth2.Config{
-		RedirectURL:  o.redirectURL,
-		ClientID:     o.clientID,
-		ClientSecret: o.clientSecret,
-		Scopes:       []string{"openid", "email"},
-		Endpoint:     o.provider.Endpoint(),
-	}
-}
-
-func newOidcProvider(ctx context.Context, clientID, clientSecret, redirectURL, discoveryEndpoint string) (*oidcProvider, error) {
-	provider, err := oidc.NewProvider(ctx, discoveryEndpoint)
-	if err != nil {
-		return nil, err
-	}
-
-	return &oidcProvider{clientID: clientID, clientSecret: clientSecret, redirectURL: redirectURL, provider: provider}, nil
 }

@@ -24,17 +24,30 @@ type googleProvider struct {
 	redirectURL  string
 }
 
+func NewGoogleProvider(clientID, clientSecret, redirectURL string) *googleProvider {
+	return &googleProvider{clientID: clientID, clientSecret: clientSecret, redirectURL: redirectURL}
+}
+
+func (g *googleProvider) GetConfig() *oauth2.Config {
+	return &oauth2.Config{
+		RedirectURL:  g.redirectURL,
+		ClientID:     g.clientID,
+		ClientSecret: g.clientSecret,
+		Scopes:       []string{"email"},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
+			TokenURL: "https://accounts.google.com/o/oauth2/token",
+		},
+	}
+}
+
 func (g *googleProvider) GetUserExtraKey() string {
 	return "google_id"
 }
 
-func (g *googleProvider) GetRedirectURL(state string) string {
-	return g.config().AuthCodeURL(state)
-}
-
-func (g *googleProvider) GetProfile(ctx context.Context, code string) (*Profile, error) {
-	conf := g.config()
-	token, err := conf.Exchange(ctx, code)
+func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier string) (*Profile, error) {
+	conf := g.GetConfig()
+	token, err := conf.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", codeVerifier))
 	if err != nil {
 		return nil, err
 	}
@@ -66,21 +79,4 @@ func (g *googleProvider) PopulateUserWithProfileID(user *model.User, profile *Pr
 
 func (g *googleProvider) UnsetUserProfileID(user *model.User) {
 	user.GoogleID = ""
-}
-
-func (g *googleProvider) config() *oauth2.Config {
-	return &oauth2.Config{
-		RedirectURL:  g.redirectURL,
-		ClientID:     g.clientID,
-		ClientSecret: g.clientSecret,
-		Scopes:       []string{"email"},
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://accounts.google.com/o/oauth2/auth",
-			TokenURL: "https://accounts.google.com/o/oauth2/token",
-		},
-	}
-}
-
-func newGoogleProvider(clientID, clientSecret, redirectURL string) *googleProvider {
-	return &googleProvider{clientID: clientID, clientSecret: clientSecret, redirectURL: redirectURL}
 }
