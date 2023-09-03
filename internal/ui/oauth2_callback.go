@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"crypto/subtle"
 	"errors"
 	"net/http"
 
@@ -38,7 +39,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	state := request.QueryStringParam(r, "state", "")
-	if state == "" || state != request.OAuth2State(r) {
+	if subtle.ConstantTimeCompare([]byte(state), []byte(request.OAuth2State(r))) == 0 {
 		logger.Error(`[OAuth2] Invalid state value: got "%s" instead of "%s"`, state, request.OAuth2State(r))
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
@@ -51,7 +52,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profile, err := authProvider.GetProfile(r.Context(), code)
+	profile, err := authProvider.GetProfile(r.Context(), code, request.OAuth2CodeVerifier(r))
 	if err != nil {
 		logger.Error("[OAuth2] %v", err)
 		html.Redirect(w, r, route.Path(h.router, "login"))

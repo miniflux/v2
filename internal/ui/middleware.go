@@ -94,7 +94,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 					return
 				}
 
-				html.BadRequest(w, r, errors.New("Invalid or missing CSRF"))
+				html.BadRequest(w, r, errors.New("invalid or missing CSRF"))
 				return
 			}
 		}
@@ -103,6 +103,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, request.SessionIDContextKey, session.ID)
 		ctx = context.WithValue(ctx, request.CSRFContextKey, session.Data.CSRF)
 		ctx = context.WithValue(ctx, request.OAuth2StateContextKey, session.Data.OAuth2State)
+		ctx = context.WithValue(ctx, request.OAuth2CodeVerifierContextKey, session.Data.OAuth2CodeVerifier)
 		ctx = context.WithValue(ctx, request.FlashMessageContextKey, session.Data.FlashMessage)
 		ctx = context.WithValue(ctx, request.FlashErrorMessageContextKey, session.Data.FlashErrorMessage)
 		ctx = context.WithValue(ctx, request.UserLanguageContextKey, session.Data.Language)

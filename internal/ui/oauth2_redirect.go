@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/logger"
+	"miniflux.app/v2/internal/oauth2"
 	"miniflux.app/v2/internal/ui/session"
 )
 
@@ -30,5 +31,10 @@ func (h *handler) oauth2Redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	html.Redirect(w, r, authProvider.GetRedirectURL(sess.NewOAuth2State()))
+	auth := oauth2.GenerateAuthorization(authProvider.GetConfig())
+
+	sess.SetOAuth2State(auth.State())
+	sess.SetOAuth2CodeVerifier(auth.CodeVerifier())
+
+	html.Redirect(w, r, auth.RedirectURL())
 }
