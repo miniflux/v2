@@ -92,7 +92,7 @@ func applyRule(entryURL string, entry *model.Entry, rule rule) {
 			logger.Debug("[Rewrite] Cannot find search and replace terms for replace rule %s", rule)
 		}
 	case "replace_title":
-		// Format: replace("search-term"|"replace-term")
+		// Format: replace_title("search-term"|"replace-term")
 		if len(rule.args) >= 2 {
 			entry.Title = replaceCustom(entry.Title, rule.args[0], rule.args[1])
 		} else {
