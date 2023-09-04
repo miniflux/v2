@@ -21,7 +21,7 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Run unit tests
       run: make test
 
@@ -44,7 +44,7 @@ jobs:
       with:
         go-version: "1.21"
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Install Postgres client
       run: sudo apt update && sudo apt install -y postgresql-client
     - name: Run integration tests
