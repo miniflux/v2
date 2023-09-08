@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/dublincore"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
@@ -182,7 +183,7 @@ type rssItem struct {
 	CommentLinks   []rssCommentLink `xml:"comments"`
 	EnclosureLinks []rssEnclosure   `xml:"enclosure"`
 	Categories     []rssCategory    `xml:"category"`
-	DublinCoreElement
+	dublincore.DublinCoreItemElement
 	FeedBurnerElement
 	PodcastEntryElement
 	media.Element
@@ -250,7 +251,7 @@ func (r *rssItem) entryAuthor() string {
 	}
 
 	if author == "" {
-		author = r.DublinCoreCreator
+		author = r.GetSanitizedCreator()
 	}
 
 	return sanitizer.StripTags(strings.TrimSpace(author))

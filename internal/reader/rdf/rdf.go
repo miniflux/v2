@@ -13,6 +13,7 @@ import (
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/dublincore"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -22,7 +23,7 @@ type rdfFeed struct {
 	Title   string    `xml:"channel>title"`
 	Link    string    `xml:"channel>link"`
 	Items   []rdfItem `xml:"item"`
-	DublinCoreFeedElement
+	dublincore.DublinCoreFeedElement
 }
 
 func (r *rdfFeed) Transform(baseURL string) *model.Feed {
@@ -38,7 +39,7 @@ func (r *rdfFeed) Transform(baseURL string) *model.Feed {
 	for _, item := range r.Items {
 		entry := item.Transform()
 		if entry.Author == "" && r.DublinCoreCreator != "" {
-			entry.Author = strings.TrimSpace(r.DublinCoreCreator)
+			entry.Author = r.GetSanitizedCreator()
 		}
 
 		if entry.URL == "" {
@@ -60,7 +61,7 @@ type rdfItem struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
-	DublinCoreEntryElement
+	dublincore.DublinCoreItemElement
 }
 
 func (r *rdfItem) Transform() *model.Entry {
@@ -88,7 +89,7 @@ func (r *rdfItem) entryContent() string {
 }
 
 func (r *rdfItem) entryAuthor() string {
-	return strings.TrimSpace(r.DublinCoreCreator)
+	return r.GetSanitizedCreator()
 }
 
 func (r *rdfItem) entryURL() string {
