@@ -4,6 +4,7 @@
 package crypto // import "miniflux.app/v2/internal/crypto"
 
 import (
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
@@ -47,4 +48,10 @@ func GenerateRandomStringHex(size int) string {
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
+}
+
+func GenerateSHA256Hmac(secret string, data []byte) string {
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write(data)
+	return hex.EncodeToString(h.Sum(nil))
 }

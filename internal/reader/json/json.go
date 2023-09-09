@@ -181,7 +181,7 @@ func (j *jsonItem) GetEnclosures() model.EnclosureList {
 }
 
 func (j *jsonItem) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.URL = j.URL
 	entry.Date = j.GetDate()
 	entry.Author = j.GetAuthor()
@@ -189,7 +189,10 @@ func (j *jsonItem) Transform() *model.Entry {
 	entry.Content = j.GetContent()
 	entry.Title = strings.TrimSpace(j.GetTitle())
 	entry.Enclosures = j.GetEnclosures()
-	entry.Tags = j.Tags
+	if len(j.Tags) > 0 {
+		entry.Tags = j.Tags
+	}
+
 	return entry
 }
 

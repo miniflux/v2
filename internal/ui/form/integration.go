@@ -69,6 +69,9 @@ type IntegrationForm struct {
 	ShaarliEnabled       bool
 	ShaarliURL           string
 	ShaarliAPISecret     string
+	WebhookEnabled       bool
+	WebhookURL           string
+	WebhookSecret        string
 }
 
 // Merge copy form values to the model.
@@ -129,6 +132,8 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.ShaarliEnabled = i.ShaarliEnabled
 	integration.ShaarliURL = i.ShaarliURL
 	integration.ShaarliAPISecret = i.ShaarliAPISecret
+	integration.WebhookEnabled = i.WebhookEnabled
+	integration.WebhookURL = i.WebhookURL
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -192,5 +197,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		ShaarliEnabled:       r.FormValue("shaarli_enabled") == "1",
 		ShaarliURL:           r.FormValue("shaarli_url"),
 		ShaarliAPISecret:     r.FormValue("shaarli_api_secret"),
+		WebhookEnabled:       r.FormValue("webhook_enabled") == "1",
+		WebhookURL:           r.FormValue("webhook_url"),
 	}
 }

@@ -190,7 +190,7 @@ type rssItem struct {
 }
 
 func (r *rssItem) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.URL = r.entryURL()
 	entry.CommentsURL = r.entryCommentsURL()
 	entry.Date = r.entryDate()
@@ -388,7 +388,7 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 }
 
 func (r *rssItem) entryCategories() []string {
-	var categoryList []string
+	categoryList := make([]string, 0)
 
 	for _, rssCategory := range r.Categories {
 		if strings.Contains(rssCategory.Inner, "<![CDATA[") {

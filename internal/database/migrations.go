@@ -758,4 +758,13 @@ var migrations = []func(tx *sql.Tx) error{
 		`)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN webhook_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN webhook_url text default '';
+			ALTER TABLE integrations ADD COLUMN webhook_secret text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

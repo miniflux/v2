@@ -138,7 +138,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$11
 			)
 		RETURNING
-			id, status
+			id, status, created_at, changed_at
 	`
 	err := tx.QueryRow(
 		query,
@@ -153,7 +153,12 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.FeedID,
 		entry.ReadingTime,
 		pq.Array(removeDuplicates(entry.Tags)),
-	).Scan(&entry.ID, &entry.Status)
+	).Scan(
+		&entry.ID,
+		&entry.Status,
+		&entry.CreatedAt,
+		&entry.ChangedAt,
+	)
 
 	if err != nil {
 		return fmt.Errorf(`store: unable to create entry %q (feed #%d): %v`, entry.URL, entry.FeedID, err)
@@ -215,7 +220,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		enclosure.EntryID = entry.ID
 	}
 
-	return s.updateEnclosures(tx, entry.UserID, entry.ID, entry.Enclosures)
+	return s.updateEnclosures(tx, entry)
 }
 
 // entryExists checks if an entry already exists based on its hash when refreshing a feed.
@@ -264,7 +269,7 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 }
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
-func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (err error) {
+func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
 	var entryHashes []string
 
 	for _, entry := range entries {
@@ -273,15 +278,15 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 
 		tx, err := s.db.Begin()
 		if err != nil {
-			return fmt.Errorf(`store: unable to start transaction: %v`, err)
+			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
 		entryExists, err := s.entryExists(tx, entry)
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
 			}
-			return err
+			return nil, err
 		}
 
 		if entryExists {
@@ -290,17 +295,20 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			}
 		} else {
 			err = s.createEntry(tx, entry)
+			if err == nil {
+				newEntries = append(newEntries, entry)
+			}
 		}
 
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
+				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
 			}
-			return err
+			return nil, err
 		}
 
 		if err := tx.Commit(); err != nil {
-			return fmt.Errorf(`store: unable to commit transaction: %v`, err)
+			return nil, fmt.Errorf(`store: unable to commit transaction: %v`, err)
 		}
 
 		entryHashes = append(entryHashes, entry.Hash)
@@ -312,7 +320,7 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 		}
 	}()
 
-	return nil
+	return newEntries, nil
 }
 
 // ArchiveEntries changes the status of entries to "removed" after the given number of days.

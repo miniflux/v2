@@ -19,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/integration/shiori"
 	"miniflux.app/v2/internal/integration/telegrambot"
 	"miniflux.app/v2/internal/integration/wallabag"
+	"miniflux.app/v2/internal/integration/webhook"
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 )
@@ -168,45 +169,55 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 	}
 }
 
-// PushEntries pushes an entry array to third-party providers during feed refreshes.
-func PushEntries(entries model.Entries, integration *model.Integration) {
-	if integration.MatrixBotEnabled {
-		logger.Debug("[Integration] Sending %d entries for User #%d to Matrix", len(entries), integration.UserID)
+// PushEntries pushes a list of entries to activated third-party providers during feed refreshes.
+func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *model.Integration) {
+	if userIntegrations.MatrixBotEnabled {
+		logger.Debug("[Integration] Sending %d entries for User #%d to Matrix", len(entries), userIntegrations.UserID)
 
-		err := matrixbot.PushEntries(entries, integration.MatrixBotURL, integration.MatrixBotUser, integration.MatrixBotPassword, integration.MatrixBotChatID)
+		err := matrixbot.PushEntries(entries, userIntegrations.MatrixBotURL, userIntegrations.MatrixBotUser, userIntegrations.MatrixBotPassword, userIntegrations.MatrixBotChatID)
 		if err != nil {
 			logger.Error("[Integration] push entries to matrix bot failed: %v", err)
 		}
 	}
-}
 
-// PushEntry pushes an entry to third-party providers during feed refreshes.
-func PushEntry(entry *model.Entry, feed *model.Feed, integration *model.Integration) {
-	if integration.TelegramBotEnabled {
-		logger.Debug("[Integration] Sending Entry %q for User #%d to Telegram", entry.URL, integration.UserID)
+	if userIntegrations.WebhookEnabled {
+		logger.Debug("[Integration] Sending %d entries for User #%d to Webhook URL: %s", len(entries), userIntegrations.UserID, userIntegrations.WebhookURL)
 
-		err := telegrambot.PushEntry(entry, integration.TelegramBotToken, integration.TelegramBotChatID)
-		if err != nil {
-			logger.Error("[Integration] push entry to telegram bot failed: %v", err)
+		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret)
+		if err := webhookClient.SendWebhook(entries); err != nil {
+			logger.Error("[Integration] sending entries to webhook failed: %v", err)
 		}
 	}
-	if integration.AppriseEnabled {
-		logger.Debug("[Integration] Sending Entry %q for User #%d to apprise", entry.URL, integration.UserID)
 
-		var appriseServiceURLs string
-		if len(feed.AppriseServiceURLs) > 0 {
-			appriseServiceURLs = feed.AppriseServiceURLs
-		} else {
-			appriseServiceURLs = integration.AppriseServicesURL
-		}
+	// Integrations that only support sending individual entries
+	if userIntegrations.TelegramBotEnabled || userIntegrations.AppriseEnabled {
+		for _, entry := range entries {
+			if userIntegrations.TelegramBotEnabled {
+				logger.Debug("[Integration] Sending Entry %q for User #%d to Telegram", entry.URL, userIntegrations.UserID)
 
-		client := apprise.NewClient(
-			appriseServiceURLs,
-			integration.AppriseURL,
-		)
+				err := telegrambot.PushEntry(entry, userIntegrations.TelegramBotToken, userIntegrations.TelegramBotChatID)
+				if err != nil {
+					logger.Error("[Integration] push entry to telegram bot failed: %v", err)
+				}
+			}
 
-		if err := client.SendNotification(entry); err != nil {
-			logger.Error("[Integration] push entry to apprise failed: %v", err)
+			if userIntegrations.AppriseEnabled {
+				logger.Debug("[Integration] Sending Entry %q for User #%d to apprise", entry.URL, userIntegrations.UserID)
+
+				appriseServiceURLs := userIntegrations.AppriseURL
+				if feed.AppriseServiceURLs != "" {
+					appriseServiceURLs = feed.AppriseServiceURLs
+				}
+
+				client := apprise.NewClient(
+					userIntegrations.AppriseServicesURL,
+					appriseServiceURLs,
+				)
+
+				if err := client.SendNotification(entry); err != nil {
+					logger.Error("[Integration] push entry to apprise failed: %v", err)
+				}
+			}
 		}
 	}
 }

@@ -167,7 +167,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shiori_password,
 			shaarli_enabled,
 			shaarli_url,
-			shaarli_api_secret
+			shaarli_api_secret,
+			webhook_enabled,
+			webhook_url,
+			webhook_secret
 		FROM
 			integrations
 		WHERE
@@ -234,6 +237,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.ShaarliEnabled,
 		&integration.ShaarliURL,
 		&integration.ShaarliAPISecret,
+		&integration.WebhookEnabled,
+		&integration.WebhookURL,
+		&integration.WebhookSecret,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -308,9 +314,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			shiori_password=$55,
 			shaarli_enabled=$56,
 			shaarli_url=$57,
-			shaarli_api_secret=$58
+			shaarli_api_secret=$58,
+			webhook_enabled=$59,
+			webhook_url=$60,
+			webhook_secret=$61
 		WHERE
-			user_id=$59
+			user_id=$62
 	`
 	_, err := s.db.Exec(
 		query,
@@ -372,6 +381,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.ShaarliEnabled,
 		integration.ShaarliURL,
 		integration.ShaarliAPISecret,
+		integration.WebhookEnabled,
+		integration.WebhookURL,
+		integration.WebhookSecret,
 		integration.UserID,
 	)
 

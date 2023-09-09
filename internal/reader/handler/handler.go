@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
@@ -177,15 +178,24 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		// We don't update existing entries when the crawler is enabled (we crawl only inexisting entries). Unless it is forced to refresh
 		updateExistingEntries := forceRefresh || !originalFeed.Crawler
-		if storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries); storeErr != nil {
+		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
+		if storeErr != nil {
 			originalFeed.WithError(storeErr.Error())
 			store.UpdateFeedError(originalFeed)
 			return storeErr
 		}
 
+		userIntegrations, intErr := store.Integration(userID)
+		if intErr != nil {
+			logger.Error("[RefreshFeed] Fetching integrations for user %d failed: %v; the refresh process will go on, but no integrations will run this time.", userID, intErr)
+		} else if userIntegrations != nil && len(newEntries) > 0 {
+			go integration.PushEntries(originalFeed, newEntries, userIntegrations)
+		}
+
 		// We update caching headers only if the feed has been modified,
 		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.WithClientResponse(response)
+
 		checkFeedIcon(
 			store,
 			originalFeed.ID,
