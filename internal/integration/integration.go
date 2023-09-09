@@ -174,7 +174,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 	if userIntegrations.MatrixBotEnabled {
 		logger.Debug("[Integration] Sending %d entries for User #%d to Matrix", len(entries), userIntegrations.UserID)
 
-		err := matrixbot.PushEntries(entries, userIntegrations.MatrixBotURL, userIntegrations.MatrixBotUser, userIntegrations.MatrixBotPassword, userIntegrations.MatrixBotChatID)
+		err := matrixbot.PushEntries(feed, entries, userIntegrations.MatrixBotURL, userIntegrations.MatrixBotUser, userIntegrations.MatrixBotPassword, userIntegrations.MatrixBotChatID)
 		if err != nil {
 			logger.Error("[Integration] push entries to matrix bot failed: %v", err)
 		}
