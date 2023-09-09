@@ -16,6 +16,6 @@ func getOAuth2Manager(ctx context.Context) *oauth2.Manager {
 		config.Opts.OAuth2ClientID(),
 		config.Opts.OAuth2ClientSecret(),
 		config.Opts.OAuth2RedirectURL(),
-		config.Opts.OAuth2OidcDiscoveryEndpoint(),
+		config.Opts.OIDCDiscoveryEndpoint(),
 	)
 }

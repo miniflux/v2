@@ -136,7 +136,7 @@ type Options struct {
 	oauth2ClientID                     string
 	oauth2ClientSecret                 string
 	oauth2RedirectURL                  string
-	oauth2OidcDiscoveryEndpoint        string
+	oidcDiscoveryEndpoint              string
 	oauth2Provider                     string
 	pocketConsumerKey                  string
 	httpClientTimeout                  int
@@ -208,7 +208,7 @@ func NewOptions() *Options {
 		oauth2ClientID:                     defaultOAuth2ClientID,
 		oauth2ClientSecret:                 defaultOAuth2ClientSecret,
 		oauth2RedirectURL:                  defaultOAuth2RedirectURL,
-		oauth2OidcDiscoveryEndpoint:        defaultOAuth2OidcDiscoveryEndpoint,
+		oidcDiscoveryEndpoint:              defaultOAuth2OidcDiscoveryEndpoint,
 		oauth2Provider:                     defaultOAuth2Provider,
 		pocketConsumerKey:                  defaultPocketConsumerKey,
 		httpClientTimeout:                  defaultHTTPClientTimeout,
@@ -401,9 +401,9 @@ func (o *Options) OAuth2RedirectURL() string {
 	return o.oauth2RedirectURL
 }
 
-// OAuth2OidcDiscoveryEndpoint returns the OAuth2 OIDC discovery endpoint.
-func (o *Options) OAuth2OidcDiscoveryEndpoint() string {
-	return o.oauth2OidcDiscoveryEndpoint
+// OIDCDiscoveryEndpoint returns the OAuth2 OIDC discovery endpoint.
+func (o *Options) OIDCDiscoveryEndpoint() string {
+	return o.oidcDiscoveryEndpoint
 }
 
 // OAuth2Provider returns the name of the OAuth2 provider configured.
@@ -619,7 +619,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"METRICS_USERNAME":                       o.metricsUsername,
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),
-		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,
+		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oidcDiscoveryEndpoint,
 		"OAUTH2_PROVIDER":                        o.oauth2Provider,
 		"OAUTH2_REDIRECT_URL":                    o.oauth2RedirectURL,
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
