@@ -220,9 +220,9 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	return nil
 }
 
-func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
+func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, feedIconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
 	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, iconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
+		icon, err := icon.FindIcon(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {
 			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
 		} else if icon == nil {
