@@ -5,11 +5,17 @@ package oauth2 // import "miniflux.app/v2/internal/oauth2"
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"miniflux.app/v2/internal/model"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
+)
+
+var (
+	ErrEmptyUsername = errors.New("oidc: username is empty")
 )
 
 type oidcProvider struct {
@@ -46,15 +52,20 @@ func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string
 	conf := o.GetConfig()
 	token, err := conf.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", codeVerifier))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`oidc: failed to exchange token: %w`, err)
 	}
 
 	userInfo, err := o.provider.UserInfo(ctx, oauth2.StaticTokenSource(token))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`oidc: failed to get user info: %w`, err)
 	}
 
 	profile := &Profile{Key: o.GetUserExtraKey(), ID: userInfo.Subject, Username: userInfo.Email}
+
+	if profile.Username == "" {
+		return nil, ErrEmptyUsername
+	}
+
 	return profile, nil
 }
 
