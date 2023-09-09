@@ -5,46 +5,39 @@ package matrixbot // import "miniflux.app/v2/internal/integration/matrixbot"
 
 import (
 	"fmt"
+	"strings"
 
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
-
-	"github.com/matrix-org/gomatrix"
 )
 
 // PushEntry pushes entries to matrix chat using integration settings provided
-func PushEntries(entries model.Entries, serverURL, botLogin, botPassword, chatID string) error {
-	bot, err := gomatrix.NewClient(serverURL, "", "")
+func PushEntries(feed *model.Feed, entries model.Entries, matrixBaseURL, matrixUsername, matrixPassword, matrixRoomID string) error {
+	client := NewClient(matrixBaseURL)
+	discovery, err := client.DiscoverEndpoints()
 	if err != nil {
-		return fmt.Errorf("matrixbot: bot creation failed: %w", err)
+		return err
 	}
 
-	resp, err := bot.Login(&gomatrix.ReqLogin{
-		Type:     "m.login.password",
-		User:     botLogin,
-		Password: botPassword,
-	})
-
+	loginResponse, err := client.Login(discovery.HomeServerInformation.BaseURL, matrixUsername, matrixPassword)
 	if err != nil {
-		logger.Debug("matrixbot: login failed: %w", err)
-		return fmt.Errorf("matrixbot: login failed, please check your credentials or turn on debug mode")
+		return err
 	}
 
-	bot.SetCredentials(resp.UserID, resp.AccessToken)
-	defer func() {
-		bot.Logout()
-		bot.ClearCredentials()
-	}()
+	var textMessages []string
+	var formattedTextMessages []string
 
-	message := ""
 	for _, entry := range entries {
-		message = message + entry.Title + " " + entry.URL + "\n"
+		textMessages = append(textMessages, fmt.Sprintf(`[%s] %s - %s`, feed.Title, entry.Title, entry.URL))
+		formattedTextMessages = append(formattedTextMessages, fmt.Sprintf(`<li><strong>%s</strong>: <a href="%s">%s</a></li>`, feed.Title, entry.URL, entry.Title))
 	}
 
-	if _, err = bot.SendText(chatID, message); err != nil {
-		logger.Debug("matrixbot: sending message failed: %w", err)
-		return fmt.Errorf("matrixbot: sending message failed, turn on debug mode for more informations")
-	}
+	_, err = client.SendFormattedTextMessage(
+		discovery.HomeServerInformation.BaseURL,
+		loginResponse.AccessToken,
+		matrixRoomID,
+		strings.Join(textMessages, "\n"),
+		"<ul>"+strings.Join(formattedTextMessages, "\n")+"</ul>",
+	)
 
-	return nil
+	return err
 }
