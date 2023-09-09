@@ -84,6 +84,9 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		ShaarliEnabled:       integration.ShaarliEnabled,
 		ShaarliURL:           integration.ShaarliURL,
 		ShaarliAPISecret:     integration.ShaarliAPISecret,
+		WebhookEnabled:       integration.WebhookEnabled,
+		WebhookURL:           integration.WebhookURL,
+		WebhookSecret:        integration.WebhookSecret,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

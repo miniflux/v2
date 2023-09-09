@@ -65,7 +65,7 @@ type rdfItem struct {
 }
 
 func (r *rdfItem) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.Title = r.entryTitle()
 	entry.Author = r.entryAuthor()
 	entry.URL = r.entryURL()

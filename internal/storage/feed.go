@@ -345,9 +345,9 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			hide_globally=$24,
 			url_rewrite_rules=$25,
 			no_media_player=$26,
-			apprise_service_urls=$29
+			apprise_service_urls=$27
 		WHERE
-			id=$27 AND user_id=$28
+			id=$28 AND user_id=$29
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -376,9 +376,9 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.HideGlobally,
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
+		feed.AppriseServiceURLs,
 		feed.ID,
 		feed.UserID,
-		feed.AppriseServiceURLs,
 	)
 
 	if err != nil {

@@ -64,4 +64,7 @@ type Integration struct {
 	ShaarliEnabled       bool
 	ShaarliURL           string
 	ShaarliAPISecret     string
+	WebhookEnabled       bool
+	WebhookURL           string
+	WebhookSecret        string
 }
