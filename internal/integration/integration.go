@@ -172,7 +172,7 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 // PushEntries pushes a list of entries to activated third-party providers during feed refreshes.
 func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *model.Integration) {
 	if userIntegrations.MatrixBotEnabled {
-		logger.Debug("[Integration] Sending %d entries for User #%d to Matrix", len(entries), userIntegrations.UserID)
+		logger.Debug("[Integration] Sending %d entries for user #%d to Matrix", len(entries), userIntegrations.UserID)
 
 		err := matrixbot.PushEntries(feed, entries, userIntegrations.MatrixBotURL, userIntegrations.MatrixBotUser, userIntegrations.MatrixBotPassword, userIntegrations.MatrixBotChatID)
 		if err != nil {
@@ -193,16 +193,23 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 	if userIntegrations.TelegramBotEnabled || userIntegrations.AppriseEnabled {
 		for _, entry := range entries {
 			if userIntegrations.TelegramBotEnabled {
-				logger.Debug("[Integration] Sending Entry %q for User #%d to Telegram", entry.URL, userIntegrations.UserID)
+				logger.Debug("[Integration] Sending entry %q for user #%d to Telegram", entry.URL, userIntegrations.UserID)
 
-				err := telegrambot.PushEntry(entry, userIntegrations.TelegramBotToken, userIntegrations.TelegramBotChatID)
-				if err != nil {
-					logger.Error("[Integration] push entry to telegram bot failed: %v", err)
+				if err := telegrambot.PushEntry(
+					feed,
+					entry,
+					userIntegrations.TelegramBotToken,
+					userIntegrations.TelegramBotChatID,
+					userIntegrations.TelegramBotTopicID,
+					userIntegrations.TelegramBotDisableWebPagePreview,
+					userIntegrations.TelegramBotDisableNotification,
+				); err != nil {
+					logger.Error("[Integration] %v", err)
 				}
 			}
 
 			if userIntegrations.AppriseEnabled {
-				logger.Debug("[Integration] Sending Entry %q for User #%d to apprise", entry.URL, userIntegrations.UserID)
+				logger.Debug("[Integration] Sending entry %q for user #%d to Apprise", entry.URL, userIntegrations.UserID)
 
 				appriseServiceURLs := userIntegrations.AppriseURL
 				if feed.AppriseServiceURLs != "" {
@@ -215,7 +222,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 				)
 
 				if err := client.SendNotification(entry); err != nil {
-					logger.Error("[Integration] push entry to apprise failed: %v", err)
+					logger.Error("[Integration] %v", err)
 				}
 			}
 		}

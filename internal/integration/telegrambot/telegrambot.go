@@ -4,47 +4,47 @@
 package telegrambot // import "miniflux.app/v2/internal/integration/telegrambot"
 
 import (
-	"bytes"
 	"fmt"
-	"html/template"
-	"strconv"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"miniflux.app/v2/internal/model"
 )
 
-// PushEntry pushes entry to telegram chat using integration settings provided
-func PushEntry(entry *model.Entry, botToken, chatID string) error {
-	bot, err := tgbotapi.NewBotAPI(botToken)
-	if err != nil {
-		return fmt.Errorf("telegrambot: bot creation failed: %w", err)
+func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, topicID *int64, disableWebPagePreview, disableNotification bool) error {
+	textTemplate := `<b><a href=%q>%s</a></b> - <a href=%q>%s</a>`
+	formattedText := fmt.Sprintf(
+		textTemplate,
+		feed.SiteURL,
+		feed.Title,
+		entry.URL,
+		entry.Title,
+	)
+
+	message := &MessageRequest{
+		ChatID:                chatID,
+		Text:                  formattedText,
+		ParseMode:             HTMLFormatting,
+		DisableWebPagePreview: disableWebPagePreview,
+		DisableNotification:   disableNotification,
 	}
 
-	tpl, err := template.New("message").Parse("{{ .Title }}\n<a href=\"{{ .URL }}\">{{ .URL }}</a>")
-	if err != nil {
-		return fmt.Errorf("telegrambot: template parsing failed: %w", err)
+	if topicID != nil {
+		message.MessageThreadID = *topicID
 	}
 
-	var result bytes.Buffer
-	if err := tpl.Execute(&result, entry); err != nil {
-		return fmt.Errorf("telegrambot: template execution failed: %w", err)
-	}
+	var markupRow []*InlineKeyboardButton
 
-	chatIDInt, _ := strconv.ParseInt(chatID, 10, 64)
-	msg := tgbotapi.NewMessage(chatIDInt, result.String())
-	msg.ParseMode = tgbotapi.ModeHTML
-	msg.DisableWebPagePreview = false
+	minifluxURLButton := InlineKeyboardButton{Text: "Go to article", URL: entry.URL}
+	markupRow = append(markupRow, &minifluxURLButton)
 
 	if entry.CommentsURL != "" {
-		msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
-			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonURL("Comments", entry.CommentsURL),
-			))
+		commentButton := InlineKeyboardButton{Text: "Comments", URL: entry.CommentsURL}
+		markupRow = append(markupRow, &commentButton)
 	}
 
-	if _, err := bot.Send(msg); err != nil {
-		return fmt.Errorf("telegrambot: sending message failed: %w", err)
-	}
+	message.ReplyMarkup = &InlineKeyboard{}
+	message.ReplyMarkup.InlineKeyboard = append(message.ReplyMarkup.InlineKeyboard, markupRow)
 
-	return nil
+	client := NewClient(botToken, chatID)
+	_, err := client.SendMessage(message)
+	return err
 }
