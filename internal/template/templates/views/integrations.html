@@ -328,6 +328,17 @@
             <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
             <input type="text" name="telegram_bot_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramBotChatID }}" spellcheck="false">
 
+            <label for="form-telegram-topic-id">{{ t "form.integration.telegram_topic_id" }}</label>
+            <input type="number" name="telegram_bot_topic_id" id="form-telegram-topic-id" {{ if .form.TelegramBotTopicID }}value="{{ .form.TelegramBotTopicID }}"{{ end }}>
+
+            <label>
+                <input type="checkbox" name="telegram_bot_disable_web_page_preview" value="1" {{ if .form.TelegramBotDisableWebPagePreview }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_web_page_preview" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="telegram_bot_disable_notification" value="1" {{ if .form.TelegramBotDisableNotification }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_notification" }}
+            </label>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>

@@ -5,7 +5,6 @@ module miniflux.app/v2
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/coreos/go-oidc/v3 v3.6.0
-	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.9
 	github.com/mccutchen/go-httpbin/v2 v2.11.0
@@ -31,7 +30,6 @@ require (
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/tdewolff/parse/v2 v2.6.7 // indirect
-	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
