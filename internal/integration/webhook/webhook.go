@@ -26,7 +26,7 @@ func NewClient(webhookURL, webhookSecret string) *Client {
 	return &Client{webhookURL, webhookSecret}
 }
 
-func (c *Client) SendWebhook(entries model.Entries) error {
+func (c *Client) SendWebhook(feed *model.Feed, entries model.Entries) error {
 	if c.webhookURL == "" {
 		return fmt.Errorf(`webhook: missing webhook URL`)
 	}
@@ -35,7 +35,20 @@ func (c *Client) SendWebhook(entries model.Entries) error {
 		return nil
 	}
 
-	requestBody, err := json.Marshal(entries)
+	webhookEvent := &WebhookEvent{
+		// Send only a subset of the fields to avoid leaking sensitive data.
+		Feed: &WebhookFeed{
+			ID:        feed.ID,
+			UserID:    feed.UserID,
+			FeedURL:   feed.FeedURL,
+			SiteURL:   feed.SiteURL,
+			Title:     feed.Title,
+			CheckedAt: feed.CheckedAt,
+		},
+		Entries: entries,
+	}
+
+	requestBody, err := json.Marshal(webhookEvent)
 	if err != nil {
 		return fmt.Errorf("webhook: unable to encode request body: %v", err)
 	}
@@ -61,4 +74,18 @@ func (c *Client) SendWebhook(entries model.Entries) error {
 	}
 
 	return nil
+}
+
+type WebhookFeed struct {
+	ID        int64     `json:"id"`
+	UserID    int64     `json:"user_id"`
+	FeedURL   string    `json:"feed_url"`
+	SiteURL   string    `json:"site_url"`
+	Title     string    `json:"title"`
+	CheckedAt time.Time `json:"checked_at"`
+}
+
+type WebhookEvent struct {
+	Feed    *WebhookFeed  `json:"feed"`
+	Entries model.Entries `json:"entries"`
 }

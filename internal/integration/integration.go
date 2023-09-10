@@ -181,10 +181,10 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 	}
 
 	if userIntegrations.WebhookEnabled {
-		logger.Debug("[Integration] Sending %d entries for User #%d to Webhook URL: %s", len(entries), userIntegrations.UserID, userIntegrations.WebhookURL)
+		logger.Debug("[Integration] Sending %d entries for user #%d to Webhook URL: %s", len(entries), userIntegrations.UserID, userIntegrations.WebhookURL)
 
 		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret)
-		if err := webhookClient.SendWebhook(entries); err != nil {
+		if err := webhookClient.SendWebhook(feed, entries); err != nil {
 			logger.Error("[Integration] sending entries to webhook failed: %v", err)
 		}
 	}
