@@ -51,7 +51,7 @@ type Feed struct {
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	Category                    *Category `json:"category,omitempty"`
 	Entries                     Entries   `json:"entries,omitempty"`
-	IconURL                     string    `json:"icon_url"`
+	IconURL                     string    `json:"-"`
 	Icon                        *FeedIcon `json:"icon"`
 	HideGlobally                bool      `json:"hide_globally"`
 	UnreadCount                 int       `json:"-"`
