@@ -321,8 +321,9 @@ tr:hover {
 
 /* Forms */
 fieldset {
-    border: 1px solid #ddd;
+    border: 1px dotted #ddd;
     padding: 8px;
+    margin-bottom: 20px;
 }
 
 legend {
@@ -484,6 +485,10 @@ a.button-primary:focus,
 .buttons {
     margin-top: 10px;
     margin-bottom: 20px;
+}
+
+fieldset .buttons {
+    margin-bottom: 0;
 }
 
 /* Alerts */
