@@ -167,6 +167,15 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 			logger.Error("[Integration] Unable to send entry #%d to Shaarli for user #%d: %v", entry.ID, integration.UserID, err)
 		}
 	}
+
+	if integration.WebhookEnabled {
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Webhook URL: %s", entry.ID, entry.URL, integration.UserID, integration.WebhookURL)
+
+		webhookClient := webhook.NewClient(integration.WebhookURL, integration.WebhookSecret)
+		if err := webhookClient.SendSaveEntryWebhookEvent(entry); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
+		}
+	}
 }
 
 // PushEntries pushes a list of entries to activated third-party providers during feed refreshes.
@@ -184,7 +193,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 		logger.Debug("[Integration] Sending %d entries for user #%d to Webhook URL: %s", len(entries), userIntegrations.UserID, userIntegrations.WebhookURL)
 
 		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret)
-		if err := webhookClient.SendWebhook(feed, entries); err != nil {
+		if err := webhookClient.SendNewEntriesWebhookEvent(feed, entries); err != nil {
 			logger.Error("[Integration] sending entries to webhook failed: %v", err)
 		}
 	}

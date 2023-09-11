@@ -428,7 +428,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				linkding_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
-				shaarli_enabled='t'
+				shaarli_enabled='t' OR
+				webhook_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
