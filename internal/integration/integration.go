@@ -17,6 +17,7 @@ import (
 	"miniflux.app/v2/internal/integration/readwise"
 	"miniflux.app/v2/internal/integration/shaarli"
 	"miniflux.app/v2/internal/integration/shiori"
+	"miniflux.app/v2/internal/integration/siyuan-note"
 	"miniflux.app/v2/internal/integration/telegrambot"
 	"miniflux.app/v2/internal/integration/wallabag"
 	"miniflux.app/v2/internal/logger"
@@ -164,6 +165,20 @@ func SendEntry(entry *model.Entry, integration *model.Integration) {
 
 		if err := client.CreateLink(entry.URL, entry.Title); err != nil {
 			logger.Error("[Integration] Unable to send entry #%d to Shaarli for user #%d: %v", entry.ID, integration.UserID, err)
+		}
+	}
+
+	if integration.SiyuanNoteEnabled {
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Siyuan-Note", entry.ID, entry.URL, integration.UserID)
+
+		client := siyuannote.NewClient(
+			integration.SiyuanNoteURL,
+			integration.SiyuanNoteToken,
+			integration.SiyuanNoteNotebookName,
+			integration.SiyuanNotePagePath,
+		)
+		if err := client.UpdateDocument(entry.URL, entry.Title, entry.Content); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 }

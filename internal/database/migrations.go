@@ -752,4 +752,15 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN siyuannote_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN siyuannote_url text default '';
+			ALTER TABLE integrations ADD COLUMN siyuannote_token text default '';
+			ALTER TABLE integrations ADD COLUMN siyuannote_notebook_name text default '';
+			ALTER TABLE integrations ADD COLUMN siyuannote_page_path text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

@@ -365,6 +365,31 @@
             </div>
         </div>
     </details>
+
+    <details {{ if .form.SiyuanNoteEnabled }}open{{ end }}>
+        <summary>Siyuan-Note</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="siyuannote_enabled" value="1" {{ if .form.SiyuanNoteEnabled }}checked{{ end }}> {{ t "form.integration.siyuannote_activate" }}
+            </label>
+    
+            <label for="form-siyuannote-token">{{ t "form.integration.siyuannote_token" }}</label>
+            <input type="password" name="siyuannote_token" id="form-siyuannote-token" value="{{ .form.SiyuanNoteToken }}" placeholder="" spellcheck="false">
+    
+            <label for="form-siyuannote-notebook-name">{{ t "form.integration.siyuannote_notebook_name" }}</label>
+            <input type="text" name="siyuannote_notebook_name" id="form-siyuannote-notebook-name" value="{{ .form.SiyuanNoteNotebookName }}" placeholder="Personal" spellcheck="false">
+            
+            <label for="form-siyuannote-page-path">{{ t "form.integration.siyuannote_page_path" }}</label>
+            <input type="text" name="siyuannote_page_path" id="form-siyuannote-page-path" value="{{ .form.SiyuanNotePagePath }}" placeholder="/" spellcheck="false">
+
+            <label for="form-siyuannote-url">{{ t "form.integration.siyuannote_url" }}</label>
+            <input type="url" name="siyuannote_url" id="form-siyuannote-url" value="{{ .form.SiyuanNoteURL }}" placeholder="http://127.0.0.1:6806" spellcheck="false">
+    
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
 </form>
 
 <h3>{{ t "page.integration.bookmarklet" }}</h3>

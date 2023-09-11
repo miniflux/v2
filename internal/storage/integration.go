@@ -167,7 +167,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shiori_password,
 			shaarli_enabled,
 			shaarli_url,
-			shaarli_api_secret
+			shaarli_api_secret,
+			siyuannote_enabled,
+			siyuannote_url,
+			siyuannote_notebook_name,
+			siyuannote_page_path,
+			siyuannote_token
 		FROM
 			integrations
 		WHERE
@@ -234,6 +239,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.ShaarliEnabled,
 		&integration.ShaarliURL,
 		&integration.ShaarliAPISecret,
+		&integration.SiyuanNoteEnabled,
+		&integration.SiyuanNoteURL,
+		&integration.SiyuanNoteNotebookName,
+		&integration.SiyuanNotePagePath,
+		&integration.SiyuanNoteToken,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -308,9 +318,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			shiori_password=$55,
 			shaarli_enabled=$56,
 			shaarli_url=$57,
-			shaarli_api_secret=$58
+			shaarli_api_secret=$58,
+			siyuannote_enabled=$59,
+			siyuannote_url=$60,
+			siyuannote_notebook_name=$61,
+			siyuannote_page_path=$62,
+			siyuannote_token=$63
 		WHERE
-			user_id=$59
+			user_id=$64
 	`
 	_, err := s.db.Exec(
 		query,
@@ -372,6 +387,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.ShaarliEnabled,
 		integration.ShaarliURL,
 		integration.ShaarliAPISecret,
+		integration.SiyuanNoteEnabled,
+		integration.SiyuanNoteURL,
+		integration.SiyuanNoteNotebookName,
+		integration.SiyuanNotePagePath,
+		integration.SiyuanNoteToken,
 		integration.UserID,
 	)
 
@@ -404,7 +424,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				linkding_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
-				shaarli_enabled='t'
+				shaarli_enabled='t' OR
+				siyuannote_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
