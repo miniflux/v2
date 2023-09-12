@@ -90,11 +90,11 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		WebhookEnabled:                   integration.WebhookEnabled,
 		WebhookURL:                       integration.WebhookURL,
 		WebhookSecret:                    integration.WebhookSecret,
-		SiyuanNoteEnabled:      integration.SiyuanNoteEnabled,
-		SiyuanNoteURL:          integration.SiyuanNoteURL,
-		SiyuanNoteToken:        integration.SiyuanNoteToken,
-		SiyuanNoteNotebookName: integration.SiyuanNoteNotebookName,
-		SiyuanNotePagePath: 	integration.SiyuanNotePagePath,
+		SiyuanNoteEnabled:                integration.SiyuanNoteEnabled,
+		SiyuanNoteURL:                    integration.SiyuanNoteURL,
+		SiyuanNoteToken:                  integration.SiyuanNoteToken,
+		SiyuanNoteNotebookName:           integration.SiyuanNoteNotebookName,
+		SiyuanNotePagePath:               integration.SiyuanNotePagePath,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
