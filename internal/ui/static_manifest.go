@@ -40,7 +40,6 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		Icons           []webManifestIcon      `json:"icons"`
 		ShareTarget     webManifestShareTarget `json:"share_target"`
 		Display         string                 `json:"display"`
-		ThemeColor      string                 `json:"theme_color"`
 		BackgroundColor string                 `json:"background_color"`
 	}
 
@@ -60,7 +59,6 @@ func (h *handler) showWebManifest(w http.ResponseWriter, r *http.Request) {
 		Description:     "Minimalist Feed Reader",
 		Display:         displayMode,
 		StartURL:        route.Path(h.router, "login"),
-		ThemeColor:      themeColor,
 		BackgroundColor: themeColor,
 		Icons: []webManifestIcon{
 			{Source: route.Path(h.router, "appIcon", "filename", "icon-120.png"), Sizes: "120x120", Type: "image/png", Purpose: "any"},
