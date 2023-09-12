@@ -11,7 +11,7 @@ jobs:
     name: Javascript Linter
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install jshint
       run: |
         sudo npm install -g jshint@2.13.3
@@ -22,7 +22,7 @@ jobs:
     name: Golang Linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version: "1.21"

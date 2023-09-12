@@ -240,10 +240,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			fetch_via_proxy,
 			hide_globally,
 			url_rewrite_rules,
-			no_media_player
+			no_media_player,
+			apprise_service_urls
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
 		RETURNING
 			id
 	`
@@ -272,6 +273,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.HideGlobally,
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
+		feed.AppriseServiceURLs,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -342,9 +344,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			fetch_via_proxy=$23,
 			hide_globally=$24,
 			url_rewrite_rules=$25,
-			no_media_player=$26
+			no_media_player=$26,
+			apprise_service_urls=$27
 		WHERE
-			id=$27 AND user_id=$28
+			id=$28 AND user_id=$29
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -373,6 +376,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.HideGlobally,
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
+		feed.AppriseServiceURLs,
 		feed.ID,
 		feed.UserID,
 	)

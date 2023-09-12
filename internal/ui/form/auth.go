@@ -5,6 +5,7 @@ package form // import "miniflux.app/v2/internal/ui/form"
 
 import (
 	"net/http"
+	"strings"
 
 	"miniflux.app/v2/internal/errors"
 )
@@ -27,7 +28,7 @@ func (a AuthForm) Validate() error {
 // NewAuthForm returns a new AuthForm.
 func NewAuthForm(r *http.Request) *AuthForm {
 	return &AuthForm{
-		Username: r.FormValue("username"),
-		Password: r.FormValue("password"),
+		Username: strings.TrimSpace(r.FormValue("username")),
+		Password: strings.TrimSpace(r.FormValue("password")),
 	}
 }

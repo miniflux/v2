@@ -49,20 +49,20 @@ func (g *googleProvider) GetProfile(ctx context.Context, code, codeVerifier stri
 	conf := g.GetConfig()
 	token, err := conf.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", codeVerifier))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("google: failed to exchange token: %w", err)
 	}
 
 	client := conf.Client(ctx, token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("google: failed to get user info: %w", err)
 	}
 	defer resp.Body.Close()
 
 	var user googleProfile
 	decoder := json.NewDecoder(resp.Body)
 	if err := decoder.Decode(&user); err != nil {
-		return nil, fmt.Errorf("oauth2: unable to unserialize google profile: %v", err)
+		return nil, fmt.Errorf("google: unable to unserialize Google profile: %w", err)
 	}
 
 	profile := &Profile{Key: g.GetUserExtraKey(), ID: user.Sub, Username: user.Email}

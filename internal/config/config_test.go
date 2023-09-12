@@ -917,7 +917,7 @@ func TestDefaultOAuth2RedirectURLValue(t *testing.T) {
 	}
 }
 
-func TestOAuth2OidcDiscoveryEndpoint(t *testing.T) {
+func TestOAuth2OIDCDiscoveryEndpoint(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("OAUTH2_OIDC_DISCOVERY_ENDPOINT", "http://example.org")
 
@@ -928,14 +928,14 @@ func TestOAuth2OidcDiscoveryEndpoint(t *testing.T) {
 	}
 
 	expected := "http://example.org"
-	result := opts.OAuth2OidcDiscoveryEndpoint()
+	result := opts.OIDCDiscoveryEndpoint()
 
 	if result != expected {
 		t.Fatalf(`Unexpected OAUTH2_OIDC_DISCOVERY_ENDPOINT value, got %q instead of %q`, result, expected)
 	}
 }
 
-func TestDefaultOAuth2OidcDiscoveryEndpointValue(t *testing.T) {
+func TestDefaultOIDCDiscoveryEndpointValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -945,10 +945,10 @@ func TestDefaultOAuth2OidcDiscoveryEndpointValue(t *testing.T) {
 	}
 
 	expected := defaultOAuth2OidcDiscoveryEndpoint
-	result := opts.OAuth2OidcDiscoveryEndpoint()
+	result := opts.OIDCDiscoveryEndpoint()
 
 	if result != expected {
-		t.Fatalf(`Unexpected OAUTH2_REDIRECT_URL value, got %q instead of %q`, result, expected)
+		t.Fatalf(`Unexpected OAUTH2_OIDC_DISCOVERY_ENDPOINT value, got %q instead of %q`, result, expected)
 	}
 }
 

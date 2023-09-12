@@ -39,6 +39,13 @@ type Entry struct {
 	Tags        []string      `json:"tags"`
 }
 
+func NewEntry() *Entry {
+	return &Entry{
+		Enclosures: make(EnclosureList, 0),
+		Tags:       make([]string, 0),
+	}
+}
+
 // Entries represents a list of entries.
 type Entries []*Entry
 

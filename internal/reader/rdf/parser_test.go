@@ -349,6 +349,34 @@ func TestParseItemWithDublicCoreDate(t *testing.T) {
 	}
 }
 
+func TestParseItemWithEncodedHTMLInDCCreatorField(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
+			<description>Test</description>
+			<link>http://example.org/test.html</link>
+			<dc:creator>&lt;a href=&quot;http://example.org/author1&quot;>Author 1&lt;/a&gt; (University 1), &lt;a href=&quot;http://example.org/author2&quot;>Author 2&lt;/a&gt; (University 2)</dc:creator>
+			<dc:date>2018-04-10T05:00:00+00:00</dc:date>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedAuthor := "Author 1 (University 1), Author 2 (University 2)"
+	if feed.Entries[0].Author != expectedAuthor {
+		t.Errorf("Incorrect entry author, got: %s, want: %s", feed.Entries[0].Author, expectedAuthor)
+	}
+}
+
 func TestParseItemWithoutDate(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">

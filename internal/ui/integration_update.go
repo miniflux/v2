@@ -67,6 +67,18 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.GoogleReaderPassword = ""
 	}
 
+	if integrationForm.WebhookEnabled {
+		if integrationForm.WebhookURL == "" {
+			integration.WebhookEnabled = false
+			integration.WebhookSecret = ""
+		} else if integration.WebhookSecret == "" {
+			integration.WebhookSecret = crypto.GenerateRandomStringHex(32)
+		}
+	} else {
+		integration.WebhookURL = ""
+		integration.WebhookSecret = ""
+	}
+
 	err = h.store.UpdateIntegration(integration)
 	if err != nil {
 		html.ServerError(w, r, err)

@@ -86,7 +86,7 @@ type atom03Entry struct {
 }
 
 func (a *atom03Entry) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.URL = a.Links.originalLink()
 	entry.Date = a.entryDate()
 	entry.Author = a.Author.String()

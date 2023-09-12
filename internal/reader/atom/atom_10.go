@@ -95,7 +95,7 @@ type atom10Entry struct {
 }
 
 func (a *atom10Entry) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.URL = a.Links.originalLink()
 	entry.Date = a.entryDate()
 	entry.Author = a.Authors.String()
@@ -219,7 +219,7 @@ func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 }
 
 func (r *atom10Entry) entryCategories() []string {
-	var categoryList []string
+	categoryList := make([]string, 0)
 
 	for _, atomCategory := range r.Categories {
 		if strings.TrimSpace(atomCategory.Label) != "" {

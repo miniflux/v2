@@ -107,8 +107,10 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 		VALUES
 			($1, $2, $3, $4, $5, $6)
 		ON CONFLICT (user_id, entry_id, md5(url)) DO NOTHING
+		RETURNING
+			id
 	`
-	_, err := tx.Exec(
+	if err := tx.QueryRow(
 		query,
 		enclosureURL,
 		enclosure.Size,
@@ -116,24 +118,22 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 		enclosure.EntryID,
 		enclosure.UserID,
 		enclosure.MediaProgression,
-	)
-
-	if err != nil {
-		return fmt.Errorf(`store: unable to create enclosure: %v`, err)
+	).Scan(&enclosure.ID); err != nil && err != sql.ErrNoRows {
+		return fmt.Errorf(`store: unable to create enclosure: %w`, err)
 	}
 
 	return nil
 }
 
-func (s *Storage) updateEnclosures(tx *sql.Tx, userID, entryID int64, enclosures model.EnclosureList) error {
-	if len(enclosures) == 0 {
+func (s *Storage) updateEnclosures(tx *sql.Tx, entry *model.Entry) error {
+	if len(entry.Enclosures) == 0 {
 		return nil
 	}
 
-	sqlValues := []any{userID, entryID}
+	sqlValues := []any{entry.UserID, entry.ID}
 	sqlPlaceholders := []string{}
 
-	for _, enclosure := range enclosures {
+	for _, enclosure := range entry.Enclosures {
 		sqlPlaceholders = append(sqlPlaceholders, fmt.Sprintf(`$%d`, len(sqlValues)+1))
 		sqlValues = append(sqlValues, strings.TrimSpace(enclosure.URL))
 
@@ -143,11 +143,10 @@ func (s *Storage) updateEnclosures(tx *sql.Tx, userID, entryID int64, enclosures
 	}
 
 	query := `
-		DELETE FROM enclosures
+		DELETE FROM
+			enclosures
 		WHERE
-			user_id=$1 AND
-			entry_id=$2 AND
-			url NOT IN (%s)
+			user_id=$1 AND entry_id=$2 AND url NOT IN (%s)
 	`
 
 	query = fmt.Sprintf(query, strings.Join(sqlPlaceholders, `,`))

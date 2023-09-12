@@ -450,6 +450,22 @@ func TestRewriteReplaceCustom(t *testing.T) {
 	}
 }
 
+func TestRewriteReplaceTitleCustom(t *testing.T) {
+	controlEntry := &model.Entry{
+		Title:   `Ouch, a thistle`,
+		Content: `The replace_title rewrite rule should not modify the content.`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `The replace_title rewrite rule should not modify the content.`,
+	}
+	Rewriter("https://example.org/article", testEntry, `replace_title("(?i)^a\\s*ti"|"Ouch, a this")`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
 func TestRewriteRemoveCustom(t *testing.T) {
 	controlEntry := &model.Entry{
 		Title:   `A title`,

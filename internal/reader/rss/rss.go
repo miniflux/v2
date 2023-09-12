@@ -15,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/dublincore"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
@@ -182,14 +183,14 @@ type rssItem struct {
 	CommentLinks   []rssCommentLink `xml:"comments"`
 	EnclosureLinks []rssEnclosure   `xml:"enclosure"`
 	Categories     []rssCategory    `xml:"category"`
-	DublinCoreElement
+	dublincore.DublinCoreItemElement
 	FeedBurnerElement
 	PodcastEntryElement
 	media.Element
 }
 
 func (r *rssItem) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.URL = r.entryURL()
 	entry.CommentsURL = r.entryCommentsURL()
 	entry.Date = r.entryDate()
@@ -250,7 +251,7 @@ func (r *rssItem) entryAuthor() string {
 	}
 
 	if author == "" {
-		author = r.DublinCoreCreator
+		author = r.GetSanitizedCreator()
 	}
 
 	return sanitizer.StripTags(strings.TrimSpace(author))
@@ -387,7 +388,7 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 }
 
 func (r *rssItem) entryCategories() []string {
-	var categoryList []string
+	categoryList := make([]string, 0)
 
 	for _, rssCategory := range r.Categories {
 		if strings.Contains(rssCategory.Inner, "<![CDATA[") {
