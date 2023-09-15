@@ -34,7 +34,7 @@ Version 2.0.48 (September 15, 2023)
 * Strip HTML tags from DublinCore Creator tags
 * Fix scroll up behavior on Firefox Android
 * Add missing `return` statement in `fetchContent` UI handler
-* Add `replace_title` write rule to adjust entry titles
+* Add `replace_title` rewrite rule to adjust entry titles
 * Fix Pocket integration redirect URL and Google Reader API HREF
 * Fix feed `hide_globally` property to use it with third-party clients.
 
