@@ -1,3 +1,43 @@
+Version 2.0.48 (September 15, 2023)
+-----------------------------------
+
+* Add generic webhook integration
+    * Send webhook events when new entries are detected
+    * Send wehbook events when saving an entry
+    * Sign the outgoing requests with HMAC-SHA256
+* Improve Telegram integration
+    * Add built-in Telegram client
+    * Remove dependency on `go-telegram-bot-api` library
+    * Add new options:
+        * Optional topic ID
+        * Disable page preview
+        * Disable notifications
+    * Add new button to go to article
+* Improve Matrix integration
+    * Add built-in Matrix client
+    * Remove dependency on `gomatrix` library
+    * Send HTML formatted messages to Matrix
+* OpenID Connect authentication improvements:
+    * Add OAuth2 PKCE support
+    * Add `profile` scope to OIDC integration to support accounts without email address
+    * Prevent empty username when using the OIDC integration
+* Add `factor` for `entry_frequency` scheduler:
+    * Allow the user to increase the frequency of the `entry_frequency`
+    scheduler by a configurable factor in order to shorten the time between
+    updates.
+* Fix: status bar is unreadable when using PWA in dark mode on Firefox Android
+* Group form fields into fieldsets to improve page layout
+* Update Russian translation
+* Make sure icon URLs are always absolute
+* Add Apprise service URLs per feed
+* Trim `username` and `password` form fields
+* Strip HTML tags from DublinCore Creator tags
+* Fix scroll up behavior on Firefox Android
+* Add missing `return` statement in `fetchContent` UI handler
+* Add `replace_title` write rule to adjust entry titles
+* Fix Pocket integration redirect URL and Google Reader API HREF
+* Fix feed `hide_globally` property to use it with third-party clients.
+
 Version 2.0.47 (August 20, 2023)
 --------------------------------
 
