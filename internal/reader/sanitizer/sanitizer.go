@@ -297,6 +297,10 @@ func hasValidURIScheme(src string) bool {
 		"tel:",
 		"webcal://",
 		"xmpp:",
+
+		// iOS Apps
+		"opener://",  // https://www.opener.link
+		"hack://",  // https://apps.apple.com/it/app/hack-for-hacker-news-reader/id1464477788?l=en-GB
 	}
 
 	for _, prefix := range whitelist {
