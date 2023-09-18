@@ -362,7 +362,6 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 				logger.Error("[openHackerNewsLinksWith] unknown app provided: %q", app)
 				return
 			}
-
 		})
 
 		output, _ := doc.Find("body").First().Html()
