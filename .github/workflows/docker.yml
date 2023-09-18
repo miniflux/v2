@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build Alpine image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./packaging/docker/alpine/Dockerfile
@@ -25,7 +25,7 @@ jobs:
       - name: Test Alpine Docker image
         run: docker run --rm ${{ github.repository_owner }}/miniflux:alpine-dev miniflux -i
       - name: Build Distroless image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./packaging/docker/distroless/Dockerfile
@@ -101,7 +101,7 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Build and Push Alpine images
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./packaging/docker/alpine/Dockerfile
@@ -110,7 +110,7 @@ jobs:
           tags: ${{ steps.docker_alpine_tag.outputs.tags }}
 
       - name: Build and Push Distroless images
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./packaging/docker/distroless/Dockerfile
