@@ -212,6 +212,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 					userIntegrations.TelegramBotTopicID,
 					userIntegrations.TelegramBotDisableWebPagePreview,
 					userIntegrations.TelegramBotDisableNotification,
+					userIntegrations.TelegramBotDisableButtons,
 				); err != nil {
 					logger.Error("[Integration] %v", err)
 				}

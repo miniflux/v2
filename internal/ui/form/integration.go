@@ -53,6 +53,7 @@ type IntegrationForm struct {
 	TelegramBotTopicID               *int64
 	TelegramBotDisableWebPagePreview bool
 	TelegramBotDisableNotification   bool
+	TelegramBotDisableButtons        bool
 	LinkdingEnabled                  bool
 	LinkdingURL                      string
 	LinkdingAPIKey                   string
@@ -119,6 +120,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.TelegramBotTopicID = i.TelegramBotTopicID
 	integration.TelegramBotDisableWebPagePreview = i.TelegramBotDisableWebPagePreview
 	integration.TelegramBotDisableNotification = i.TelegramBotDisableNotification
+	integration.TelegramBotDisableButtons = i.TelegramBotDisableButtons
 	integration.LinkdingEnabled = i.LinkdingEnabled
 	integration.LinkdingURL = i.LinkdingURL
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
@@ -187,6 +189,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		TelegramBotTopicID:               optionalInt64Field(r.FormValue("telegram_bot_topic_id")),
 		TelegramBotDisableWebPagePreview: r.FormValue("telegram_bot_disable_web_page_preview") == "1",
 		TelegramBotDisableNotification:   r.FormValue("telegram_bot_disable_notification") == "1",
+		TelegramBotDisableButtons:        r.FormValue("telegram_bot_disable_buttons") == "1",
 		LinkdingEnabled:                  r.FormValue("linkding_enabled") == "1",
 		LinkdingURL:                      r.FormValue("linkding_url"),
 		LinkdingAPIKey:                   r.FormValue("linkding_api_key"),
