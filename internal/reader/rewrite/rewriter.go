@@ -113,6 +113,10 @@ func applyRule(entryURL string, entry *model.Entry, rule rule) {
 		} else {
 			entry.Content = applyFuncOnTextContent(entry.Content, "body", decodeBase64Content)
 		}
+	case "add_hn_links_using_hack":
+		entry.Content = addHackerNewsLinksUsing(entry.Content, "hack")
+	case "add_hn_links_using_opener":
+		entry.Content = addHackerNewsLinksUsing(entry.Content, "opener")
 	case "parse_markdown":
 		entry.Content = parseMarkdown(entry.Content)
 	case "remove_tables":

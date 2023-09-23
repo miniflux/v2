@@ -577,3 +577,49 @@ func TestRemoveClickbait(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+
+func TestAddHackerNewsLinksUsingHack(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a></p>
+		<p>Points: 23</p>
+		<p># Comments: 38</p>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a> <a href="hack://item?id=37620043">Open with HACK</a></p>
+		<p>Points: 23</p>
+		<p># Comments: 38</p>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `add_hn_links_using_hack`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestAddHackerNewsLinksUsingOpener(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a></p>
+		<p>Points: 23</p>
+		<p># Comments: 38</p>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a> <a href="opener://x-callback-url/show-options?url=https%3A%2F%2Fnews.ycombinator.com%2Fitem%3Fid%3D37620043">Open with Opener</a></p>
+		<p>Points: 23</p>
+		<p># Comments: 38</p>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `add_hn_links_using_opener`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
