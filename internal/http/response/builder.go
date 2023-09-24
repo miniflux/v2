@@ -8,11 +8,10 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
-
-	"miniflux.app/v2/internal/logger"
 )
 
 const compressionThreshold = 1024
@@ -91,7 +90,7 @@ func (b *Builder) Write() {
 		b.writeHeaders()
 		_, err := io.Copy(b.w, v)
 		if err != nil {
-			logger.Error("%v", err)
+			slog.Error("Unable to write response body", slog.Any("error", err))
 		}
 	}
 }

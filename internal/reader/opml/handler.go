@@ -4,11 +4,9 @@
 package opml // import "miniflux.app/v2/internal/reader/opml"
 
 import (
-	"errors"
 	"fmt"
 	"io"
 
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 )
@@ -53,21 +51,18 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 			if subscription.CategoryName == "" {
 				category, err = h.store.FirstCategory(userID)
 				if err != nil {
-					logger.Error("[OPML:Import] %v", err)
-					return errors.New("unable to find first category")
+					return fmt.Errorf("opml: unable to find first category: %w", err)
 				}
 			} else {
 				category, err = h.store.CategoryByTitle(userID, subscription.CategoryName)
 				if err != nil {
-					logger.Error("[OPML:Import] %v", err)
-					return errors.New("unable to search category by title")
+					return fmt.Errorf("opml: unable to search category by title: %w", err)
 				}
 
 				if category == nil {
 					category, err = h.store.CreateCategory(userID, &model.CategoryRequest{Title: subscription.CategoryName})
 					if err != nil {
-						logger.Error("[OPML:Import] %v", err)
-						return fmt.Errorf(`unable to create this category: %q`, subscription.CategoryName)
+						return fmt.Errorf(`opml: unable to create this category: %q`, subscription.CategoryName)
 					}
 				}
 			}

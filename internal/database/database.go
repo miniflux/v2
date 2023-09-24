@@ -6,6 +6,7 @@ package database // import "miniflux.app/v2/internal/database"
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"time"
 
 	// Postgresql driver import
@@ -31,12 +32,13 @@ func Migrate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
-	fmt.Println("-> Current schema version:", currentVersion)
-	fmt.Println("-> Latest schema version:", schemaVersion)
+	slog.Debug("Running database migrations",
+		slog.Int("current_version", currentVersion),
+		slog.Int("latest_version", schemaVersion),
+	)
 
 	for version := currentVersion; version < schemaVersion; version++ {
 		newVersion := version + 1
-		fmt.Println("* Migrating to version:", newVersion)
 
 		tx, err := db.Begin()
 		if err != nil {

@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/logger"
 )
 
 type login struct {
@@ -122,8 +121,6 @@ type contentItemOrigin struct {
 
 // Unauthorized sends a not authorized error to the client.
 func Unauthorized(w http.ResponseWriter, r *http.Request) {
-	logger.Error("[HTTP:Unauthorized] %s", r.URL)
-
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusUnauthorized)
 	builder.WithHeader("Content-Type", "text/plain")
@@ -134,8 +131,6 @@ func Unauthorized(w http.ResponseWriter, r *http.Request) {
 
 // OK sends a ok response to the client.
 func OK(w http.ResponseWriter, r *http.Request) {
-	logger.Info("[HTTP:OK] %s", r.URL)
-
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusOK)
 	builder.WithHeader("Content-Type", "text/plain")

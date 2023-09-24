@@ -4,16 +4,16 @@
 package cli // import "miniflux.app/v2/internal/cli"
 
 import (
+	"log/slog"
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/worker"
 )
 
 func runScheduler(store *storage.Storage, pool *worker.Pool) {
-	logger.Info(`Starting background scheduler...`)
+	slog.Debug(`Starting background scheduler...`)
 
 	go feedScheduler(
 		store,
@@ -31,10 +31,12 @@ func runScheduler(store *storage.Storage, pool *worker.Pool) {
 func feedScheduler(store *storage.Storage, pool *worker.Pool, frequency, batchSize int) {
 	for range time.Tick(time.Duration(frequency) * time.Minute) {
 		jobs, err := store.NewBatch(batchSize)
-		logger.Info("[Scheduler:Feed] Pushing %d jobs to the queue", len(jobs))
 		if err != nil {
-			logger.Error("[Scheduler:Feed] %v", err)
+			slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
 		} else {
+			slog.Info("Created a batch of feeds",
+				slog.Int("nb_jobs", len(jobs)),
+			)
 			pool.Push(jobs)
 		}
 	}

@@ -6,7 +6,6 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"net/http"
 
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/template"
 	"miniflux.app/v2/internal/worker"
@@ -20,7 +19,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 
 	templateEngine := template.NewEngine(router)
 	if err := templateEngine.ParseTemplates(); err != nil {
-		logger.Fatal(`Unable to parse templates: %v`, err)
+		panic(err)
 	}
 
 	handler := &handler{router, store, templateEngine, pool}

@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -47,9 +46,7 @@ func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 
 	apiKey := model.NewAPIKey(user.ID, apiKeyForm.Description)
 	if err = h.store.CreateAPIKey(apiKey); err != nil {
-		logger.Error("[UI:SaveAPIKey] %v", err)
-		view.Set("errorMessage", "error.unable_to_create_api_key")
-		html.OK(w, r, view.Render("create_api_key"))
+		html.ServerError(w, r, err)
 		return
 	}
 

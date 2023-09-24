@@ -5,6 +5,8 @@ package httpd // import "miniflux.app/v2/internal/http/server"
 
 import (
 	"crypto/tls"
+	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -17,7 +19,6 @@ import (
 	"miniflux.app/v2/internal/fever"
 	"miniflux.app/v2/internal/googlereader"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui"
 	"miniflux.app/v2/internal/version"
@@ -66,12 +67,12 @@ func startSystemdSocketServer(server *http.Server) {
 		f := os.NewFile(3, "systemd socket")
 		listener, err := net.FileListener(f)
 		if err != nil {
-			logger.Fatal(`Unable to create listener from systemd socket: %v`, err)
+			printErrorAndExit(`Unable to create listener from systemd socket: %v`, err)
 		}
 
-		logger.Info(`Listening on systemd socket`)
+		slog.Info(`Starting server using systemd socket`)
 		if err := server.Serve(listener); err != http.ErrServerClosed {
-			logger.Fatal(`Server failed to start: %v`, err)
+			printErrorAndExit(`Server failed to start: %v`, err)
 		}
 	}()
 }
@@ -82,17 +83,17 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 	go func(sock string) {
 		listener, err := net.Listen("unix", sock)
 		if err != nil {
-			logger.Fatal(`Server failed to start: %v`, err)
+			printErrorAndExit(`Server failed to start: %v`, err)
 		}
 		defer listener.Close()
 
 		if err := os.Chmod(sock, 0666); err != nil {
-			logger.Fatal(`Unable to change socket permission: %v`, err)
+			printErrorAndExit(`Unable to change socket permission: %v`, err)
 		}
 
-		logger.Info(`Listening on Unix socket %q`, sock)
+		slog.Info("Starting server using a Unix socket", slog.String("socket", sock))
 		if err := server.Serve(listener); err != http.ErrServerClosed {
-			logger.Fatal(`Server failed to start: %v`, err)
+			printErrorAndExit(`Server failed to start: %v`, err)
 		}
 	}(socketFile)
 }
@@ -137,9 +138,12 @@ func startAutoCertTLSServer(server *http.Server, certDomain string, store *stora
 	go s.ListenAndServe()
 
 	go func() {
-		logger.Info(`Listening on %q by using auto-configured certificate for %q`, server.Addr, certDomain)
+		slog.Info("Starting TLS server using automatic certificate management",
+			slog.String("listen_address", server.Addr),
+			slog.String("domain", certDomain),
+		)
 		if err := server.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
-			logger.Fatal(`Server failed to start: %v`, err)
+			printErrorAndExit(`Server failed to start: %v`, err)
 		}
 	}()
 }
@@ -147,18 +151,24 @@ func startAutoCertTLSServer(server *http.Server, certDomain string, store *stora
 func startTLSServer(server *http.Server, certFile, keyFile string) {
 	server.TLSConfig = tlsConfig()
 	go func() {
-		logger.Info(`Listening on %q by using certificate %q and key %q`, server.Addr, certFile, keyFile)
+		slog.Info("Starting TLS server using a certificate",
+			slog.String("listen_address", server.Addr),
+			slog.String("cert_file", certFile),
+			slog.String("key_file", keyFile),
+		)
 		if err := server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
-			logger.Fatal(`Server failed to start: %v`, err)
+			printErrorAndExit(`Server failed to start: %v`, err)
 		}
 	}()
 }
 
 func startHTTPServer(server *http.Server) {
 	go func() {
-		logger.Info(`Listening on %q without TLS`, server.Addr)
+		slog.Info("Starting HTTP server",
+			slog.String("listen_address", server.Addr),
+		)
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
-			logger.Fatal(`Server failed to start: %v`, err)
+			printErrorAndExit(`Server failed to start: %v`, err)
 		}
 	}()
 }
@@ -206,7 +216,11 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 
 				// Returns a 404 if the client is not authorized to access the metrics endpoint.
 				if route.GetName() == "metrics" && !isAllowedToAccessMetricsEndpoint(r) {
-					logger.Error(`[Metrics] [ClientIP=%s] Client not allowed (%s)`, request.ClientIP(r), r.RemoteAddr)
+					slog.Warn("Authentication failed while accessing the metrics endpoint",
+						slog.String("client_ip", request.ClientIP(r)),
+						slog.String("client_user_agent", r.UserAgent()),
+						slog.String("client_remote_addr", r.RemoteAddr),
+					)
 					http.NotFound(w, r)
 					return
 				}
@@ -220,21 +234,37 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 }
 
 func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
+	clientIP := request.ClientIP(r)
+
 	if config.Opts.MetricsUsername() != "" && config.Opts.MetricsPassword() != "" {
-		clientIP := request.ClientIP(r)
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
-			logger.Info("[Metrics] [ClientIP=%s] No authentication header sent", clientIP)
+			slog.Warn("Metrics endpoint accessed without authentication header",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("client_user_agent", r.UserAgent()),
+				slog.String("client_remote_addr", r.RemoteAddr),
+			)
 			return false
 		}
 
 		if username == "" || password == "" {
-			logger.Info("[Metrics] [ClientIP=%s] Empty username or password", clientIP)
+			slog.Warn("Metrics endpoint accessed with empty username or password",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("client_user_agent", r.UserAgent()),
+				slog.String("client_remote_addr", r.RemoteAddr),
+			)
 			return false
 		}
 
 		if username != config.Opts.MetricsUsername() || password != config.Opts.MetricsPassword() {
-			logger.Error("[Metrics] [ClientIP=%s] Invalid username or password", clientIP)
+			slog.Warn("Metrics endpoint accessed with invalid username or password",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("client_user_agent", r.UserAgent()),
+				slog.String("client_remote_addr", r.RemoteAddr),
+			)
 			return false
 		}
 	}
@@ -242,7 +272,14 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 	for _, cidr := range config.Opts.MetricsAllowedNetworks() {
 		_, network, err := net.ParseCIDR(cidr)
 		if err != nil {
-			logger.Fatal(`[Metrics] Unable to parse CIDR %v`, err)
+			slog.Error("Metrics endpoint accessed with invalid CIDR",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("client_user_agent", r.UserAgent()),
+				slog.String("client_remote_addr", r.RemoteAddr),
+				slog.String("cidr", cidr),
+			)
+			return false
 		}
 
 		// We use r.RemoteAddr in this case because HTTP headers like X-Forwarded-For can be easily spoofed.
@@ -253,4 +290,11 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 	}
 
 	return false
+}
+
+func printErrorAndExit(format string, a ...any) {
+	message := fmt.Sprintf(format, a...)
+	slog.Error(message)
+	fmt.Fprintf(os.Stderr, "%v\n", message)
+	os.Exit(1)
 }

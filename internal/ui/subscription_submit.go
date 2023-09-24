@@ -10,7 +10,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/reader/subscription"
@@ -61,14 +60,11 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.AllowSelfSignedCertificates,
 	)
 	if findErr != nil {
-		logger.Error("[UI:SubmitSubscription] %q -> %s", subscriptionForm.URL, findErr)
 		v.Set("form", subscriptionForm)
 		v.Set("errorMessage", findErr)
 		html.OK(w, r, v.Render("add_subscription"))
 		return
 	}
-
-	logger.Debug("[UI:SubmitSubscription] %s", subscriptions)
 
 	n := len(subscriptions)
 	switch {

@@ -4,22 +4,19 @@
 package handler // import "miniflux.app/v2/internal/reader/handler"
 
 import (
-	"fmt"
-	"time"
+	"log/slog"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/browser"
 	"miniflux.app/v2/internal/reader/icon"
 	"miniflux.app/v2/internal/reader/parser"
 	"miniflux.app/v2/internal/reader/processor"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/timer"
 )
 
 var (
@@ -30,7 +27,10 @@ var (
 
 // CreateFeed fetch, parse and store a new feed.
 func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequest) (*model.Feed, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[CreateFeed] FeedURL=%s", feedCreationRequest.FeedURL))
+	slog.Debug("Begin feed creation process",
+		slog.Int64("user_id", userID),
+		slog.String("feed_url", feedCreationRequest.FeedURL),
+	)
 
 	user, storeErr := store.UserByID(userID)
 	if storeErr != nil {
@@ -90,7 +90,11 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		return nil, storeErr
 	}
 
-	logger.Debug("[CreateFeed] Feed saved with ID: %d", subscription.ID)
+	slog.Debug("Created feed",
+		slog.Int64("user_id", userID),
+		slog.Int64("feed_id", subscription.ID),
+		slog.String("feed_url", subscription.FeedURL),
+	)
 
 	checkFeedIcon(
 		store,
@@ -106,7 +110,12 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 
 // RefreshFeed refreshes a feed.
 func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool) error {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[RefreshFeed] feedID=%d", feedID))
+	slog.Debug("Begin feed refresh process",
+		slog.Int64("user_id", userID),
+		slog.Int64("feed_id", feedID),
+		slog.Bool("force_refresh", forceRefresh),
+	)
+
 	user, storeErr := store.UserByID(userID)
 	if storeErr != nil {
 		return storeErr
@@ -164,7 +173,10 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	if originalFeed.IgnoreHTTPCache || response.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
-		logger.Debug("[RefreshFeed] Feed #%d has been modified", feedID)
+		slog.Debug("Feed modified",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+		)
 
 		updatedFeed, parseErr := parser.ParseFeed(response.EffectiveURL, response.BodyAsString())
 		if parseErr != nil {
@@ -187,7 +199,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		userIntegrations, intErr := store.Integration(userID)
 		if intErr != nil {
-			logger.Error("[RefreshFeed] Fetching integrations for user %d failed: %v; the refresh process will go on, but no integrations will run this time.", userID, intErr)
+			slog.Error("Fetching integrations failed; the refresh process will go on, but no integrations will run this time",
+				slog.Int64("user_id", userID),
+				slog.Int64("feed_id", feedID),
+				slog.Any("error", intErr),
+			)
 		} else if userIntegrations != nil && len(newEntries) > 0 {
 			go integration.PushEntries(originalFeed, newEntries, userIntegrations)
 		}
@@ -206,7 +222,10 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			originalFeed.AllowSelfSignedCertificates,
 		)
 	} else {
-		logger.Debug("[RefreshFeed] Feed #%d not modified", feedID)
+		slog.Debug("Feed not modified",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+		)
 	}
 
 	originalFeed.ResetErrorCounter()
@@ -224,12 +243,26 @@ func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, feedIconURL
 	if !store.HasIcon(feedID) {
 		icon, err := icon.FindIcon(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {
-			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
+			slog.Warn("Unable to find feed icon",
+				slog.Int64("feed_id", feedID),
+				slog.String("website_url", websiteURL),
+				slog.String("feed_icon_url", feedIconURL),
+				slog.Any("error", err),
+			)
 		} else if icon == nil {
-			logger.Debug(`[CheckFeedIcon] No icon found (feedID=%d websiteURL=%s)`, feedID, websiteURL)
+			slog.Debug("No icon found",
+				slog.Int64("feed_id", feedID),
+				slog.String("website_url", websiteURL),
+				slog.String("feed_icon_url", feedIconURL),
+			)
 		} else {
 			if err := store.CreateFeedIcon(feedID, icon); err != nil {
-				logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
+				slog.Error("Unable to store feed icon",
+					slog.Int64("feed_id", feedID),
+					slog.String("website_url", websiteURL),
+					slog.String("feed_icon_url", feedIconURL),
+					slog.Any("error", err),
+				)
 			}
 		}
 	}

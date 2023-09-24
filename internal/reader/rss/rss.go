@@ -6,13 +6,13 @@ package rss // import "miniflux.app/v2/internal/reader/rss"
 import (
 	"encoding/xml"
 	"html"
+	"log/slog"
 	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/dublincore"
@@ -216,7 +216,11 @@ func (r *rssItem) entryDate() time.Time {
 	if value != "" {
 		result, err := date.Parse(value)
 		if err != nil {
-			logger.Error("rss: %v (entry GUID = %s)", err, r.GUID)
+			slog.Warn("Unable to parse date from RSS feed",
+				slog.String("date", value),
+				slog.String("guid", r.GUID.Data),
+				slog.Any("error", err),
+			)
 			return time.Now()
 		}
 
