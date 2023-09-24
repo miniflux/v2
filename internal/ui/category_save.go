@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -43,9 +42,7 @@ func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err = h.store.CreateCategory(loggedUser.ID, categoryRequest); err != nil {
-		logger.Error("[UI:SaveCategory] %v", err)
-		view.Set("errorMessage", "error.unable_to_create_category")
-		html.OK(w, r, view.Render("create_category"))
+		html.ServerError(w, r, err)
 		return
 	}
 

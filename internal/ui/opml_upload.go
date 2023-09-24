@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
@@ -11,14 +12,14 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/reader/opml"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
 
 func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
-	user, err := h.store.UserByID(request.UserID(r))
+	loggedUserID := request.UserID(r)
+	user, err := h.store.UserByID(loggedUserID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -26,17 +27,20 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		logger.Error("[UI:UploadOPML] %v", err)
+		slog.Error("OPML file upload error",
+			slog.Int64("user_id", loggedUserID),
+			slog.Any("error", err),
+		)
+
 		html.Redirect(w, r, route.Path(h.router, "import"))
 		return
 	}
 	defer file.Close()
 
-	logger.Debug(
-		"[UI:UploadOPML] User #%d uploaded this file: %s (%d bytes)",
-		user.ID,
-		fileHeader.Filename,
-		fileHeader.Size,
+	slog.Info("OPML file uploaded",
+		slog.Int64("user_id", loggedUserID),
+		slog.String("file_name", fileHeader.Filename),
+		slog.Int64("file_size", fileHeader.Size),
 	)
 
 	sess := session.New(h.store, request.SessionID(r))
@@ -62,7 +66,8 @@ func (h *handler) uploadOPML(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
-	user, err := h.store.UserByID(request.UserID(r))
+	loggedUserID := request.UserID(r)
+	user, err := h.store.UserByID(loggedUserID)
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -74,10 +79,9 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Debug(
-		"[UI:FetchOPML] User #%d fetching this URL: %s",
-		user.ID,
-		url,
+	slog.Info("Fetching OPML file remotely",
+		slog.Int64("user_id", loggedUserID),
+		slog.String("opml_file_url", url),
 	)
 
 	sess := session.New(h.store, request.SessionID(r))

@@ -7,12 +7,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"html"
+	"log/slog"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/logger"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/yuin/goldmark"
@@ -359,7 +359,9 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 				open_with_hack := `<a href="` + url + `">Open with HACK</a>`
 				a.Parent().AppendHtml(" " + open_with_hack)
 			} else {
-				logger.Error("[openHackerNewsLinksWith] unknown app provided: %q", app)
+				slog.Warn("Unknown app provided for openHackerNewsLinksWith rewrite rule",
+					slog.String("app", app),
+				)
 				return
 			}
 		})

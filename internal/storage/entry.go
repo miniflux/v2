@@ -7,10 +7,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 
 	"github.com/lib/pq"
@@ -52,7 +52,10 @@ func (s *Storage) CountUnreadEntries(userID int64) int {
 
 	n, err := builder.CountEntries()
 	if err != nil {
-		logger.Error(`store: unable to count unread entries for user #%d: %v`, userID, err)
+		slog.Error("Unable to count unread entries",
+			slog.Int64("user_id", userID),
+			slog.Any("error", err),
+		)
 		return 0
 	}
 
@@ -316,7 +319,11 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 
 	go func() {
 		if err := s.cleanupEntries(feedID, entryHashes); err != nil {
-			logger.Error(`store: feed #%d: %v`, feedID, err)
+			slog.Error("Unable to cleanup entries",
+				slog.Int64("user_id", userID),
+				slog.Int64("feed_id", feedID),
+				slog.Any("error", err),
+			)
 		}
 	}()
 
@@ -463,7 +470,10 @@ func (s *Storage) MarkAllAsRead(userID int64) error {
 	}
 
 	count, _ := result.RowsAffected()
-	logger.Debug("[Storage:MarkAllAsRead] %d items marked as read", count)
+	slog.Debug("Marked all entries as read",
+		slog.Int64("user_id", userID),
+		slog.Int64("nb_entries", count),
+	)
 
 	return nil
 }
@@ -490,7 +500,10 @@ func (s *Storage) MarkGloballyVisibleFeedsAsRead(userID int64) error {
 	}
 
 	count, _ := result.RowsAffected()
-	logger.Debug("[Storage:MarkGloballyVisibleFeedsAsRead] %d items marked as read", count)
+	slog.Debug("Marked globally visible feed entries as read",
+		slog.Int64("user_id", userID),
+		slog.Int64("nb_entries", count),
+	)
 
 	return nil
 }
@@ -512,7 +525,11 @@ func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
 	}
 
 	count, _ := result.RowsAffected()
-	logger.Debug("[Storage:MarkFeedAsRead] %d items marked as read", count)
+	slog.Debug("Marked feed entries as read",
+		slog.Int64("user_id", userID),
+		slog.Int64("feed_id", feedID),
+		slog.Int64("nb_entries", count),
+	)
 
 	return nil
 }
@@ -540,7 +557,11 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 	}
 
 	count, _ := result.RowsAffected()
-	logger.Debug("[Storage:MarkCategoryAsRead] %d items marked as read", count)
+	slog.Debug("Marked category entries as read",
+		slog.Int64("user_id", userID),
+		slog.Int64("category_id", categoryID),
+		slog.Int64("nb_entries", count),
+	)
 
 	return nil
 }

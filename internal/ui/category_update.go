@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -60,9 +59,7 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 
 	categoryRequest.Patch(category)
 	if err := h.store.UpdateCategory(category); err != nil {
-		logger.Error("[UI:UpdateCategory] %v", err)
-		view.Set("errorMessage", "error.unable_to_update_category")
-		html.OK(w, r, view.Render("edit_category"))
+		html.ServerError(w, r, err)
 		return
 	}
 

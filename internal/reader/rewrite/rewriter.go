@@ -4,11 +4,11 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
+	"log/slog"
 	"strconv"
 	"strings"
 	"text/scanner"
 
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -28,7 +28,10 @@ func Rewriter(entryURL string, entry *model.Entry, customRewriteRules string) {
 	rules := parseRules(rulesList)
 	rules = append(rules, rule{name: "add_pdf_download_link"})
 
-	logger.Debug(`[Rewrite] Applying rules %v for %q`, rules, entryURL)
+	slog.Debug("Rewrite rules applied",
+		slog.Any("rules", rules),
+		slog.String("entry_url", entryURL),
+	)
 
 	for _, rule := range rules {
 		applyRule(entryURL, entry, rule)
@@ -89,21 +92,30 @@ func applyRule(entryURL string, entry *model.Entry, rule rule) {
 		if len(rule.args) >= 2 {
 			entry.Content = replaceCustom(entry.Content, rule.args[0], rule.args[1])
 		} else {
-			logger.Debug("[Rewrite] Cannot find search and replace terms for replace rule %s", rule)
+			slog.Warn("Cannot find search and replace terms for replace rule",
+				slog.Any("rule", rule),
+				slog.String("entry_url", entryURL),
+			)
 		}
 	case "replace_title":
 		// Format: replace_title("search-term"|"replace-term")
 		if len(rule.args) >= 2 {
 			entry.Title = replaceCustom(entry.Title, rule.args[0], rule.args[1])
 		} else {
-			logger.Debug("[Rewrite] Cannot find search and replace terms for replace rule %s", rule)
+			slog.Warn("Cannot find search and replace terms for replace_title rule",
+				slog.Any("rule", rule),
+				slog.String("entry_url", entryURL),
+			)
 		}
 	case "remove":
 		// Format: remove("#selector > .element, .another")
 		if len(rule.args) >= 1 {
 			entry.Content = removeCustom(entry.Content, rule.args[0])
 		} else {
-			logger.Debug("[Rewrite] Cannot find selector for remove rule %s", rule)
+			slog.Warn("Cannot find selector for remove rule",
+				slog.Any("rule", rule),
+				slog.String("entry_url", entryURL),
+			)
 		}
 	case "add_castopod_episode":
 		entry.Content = addCastopodEpisode(entryURL, entry.Content)

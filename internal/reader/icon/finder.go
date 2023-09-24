@@ -13,7 +13,6 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 
@@ -65,7 +64,6 @@ func generateIconURL(websiteURL, feedIconURL string) (iconURL string, err error)
 
 func fetchHTMLDocumentAndFindIconURL(websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (string, error) {
 	rootURL := urllib.RootURL(websiteURL)
-	logger.Debug("[FindIcon] Find icon from HTML webpage: %s", rootURL)
 
 	clt := client.NewClientWithConfig(rootURL, config.Opts)
 	clt.WithUserAgent(userAgent)

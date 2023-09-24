@@ -7,11 +7,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"runtime"
+	"log/slog"
 	"sort"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -432,7 +431,11 @@ func (s *Storage) RemoveFeed(userID, feedID int64) error {
 			return fmt.Errorf(`store: unable to read user feed entry ID: %v`, err)
 		}
 
-		logger.Debug(`[FEED DELETION] Deleting entry #%d of feed #%d for user #%d (%d GoRoutines)`, entryID, feedID, userID, runtime.NumGoroutine())
+		slog.Debug("Deleting entry",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.Int64("entry_id", entryID),
+		)
 
 		if _, err := s.db.Exec(`DELETE FROM entries WHERE id=$1 AND user_id=$2`, entryID, userID); err != nil {
 			return fmt.Errorf(`store: unable to delete user feed entries #%d: %v`, entryID, err)

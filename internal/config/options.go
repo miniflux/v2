@@ -15,7 +15,10 @@ import (
 
 const (
 	defaultHTTPS                              = false
+	defaultLogFile                            = "stderr"
 	defaultLogDateTime                        = false
+	defaultLogFormat                          = "text"
+	defaultLogLevel                           = "info"
 	defaultHSTS                               = true
 	defaultHTTPService                        = true
 	defaultSchedulerService                   = true
@@ -91,11 +94,13 @@ type Option struct {
 // Options contains configuration options.
 type Options struct {
 	HTTPS                              bool
+	logFile                            string
 	logDateTime                        bool
+	logFormat                          string
+	logLevel                           string
 	hsts                               bool
 	httpService                        bool
 	schedulerService                   bool
-	debug                              bool
 	serverTimingHeader                 bool
 	baseURL                            string
 	rootURL                            string
@@ -165,11 +170,13 @@ func NewOptions() *Options {
 
 	return &Options{
 		HTTPS:                              defaultHTTPS,
+		logFile:                            defaultLogFile,
 		logDateTime:                        defaultLogDateTime,
+		logFormat:                          defaultLogFormat,
+		logLevel:                           defaultLogLevel,
 		hsts:                               defaultHSTS,
 		httpService:                        defaultHTTPService,
 		schedulerService:                   defaultSchedulerService,
-		debug:                              defaultDebug,
 		serverTimingHeader:                 defaultTiming,
 		baseURL:                            defaultBaseURL,
 		rootURL:                            defaultRootURL,
@@ -231,9 +238,28 @@ func NewOptions() *Options {
 	}
 }
 
+func (o *Options) LogFile() string {
+	return o.logFile
+}
+
 // LogDateTime returns true if the date/time should be displayed in log messages.
 func (o *Options) LogDateTime() bool {
 	return o.logDateTime
+}
+
+// LogFormat returns the log format.
+func (o *Options) LogFormat() string {
+	return o.logFormat
+}
+
+// LogLevel returns the log level.
+func (o *Options) LogLevel() string {
+	return o.logLevel
+}
+
+// SetLogLevel sets the log level.
+func (o *Options) SetLogLevel(level string) {
+	o.logLevel = level
 }
 
 // HasMaintenanceMode returns true if maintenance mode is enabled.
@@ -244,11 +270,6 @@ func (o *Options) HasMaintenanceMode() bool {
 // MaintenanceMessage returns maintenance message.
 func (o *Options) MaintenanceMessage() string {
 	return o.maintenanceMessage
-}
-
-// HasDebugMode returns true if debug mode is enabled.
-func (o *Options) HasDebugMode() bool {
-	return o.debug
 }
 
 // HasServerTimingHeader returns true if server-timing headers enabled.
@@ -593,7 +614,6 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DATABASE_MAX_CONNS":                     o.databaseMaxConns,
 		"DATABASE_MIN_CONNS":                     o.databaseMinConns,
 		"DATABASE_URL":                           redactSecretValue(o.databaseURL, redactSecret),
-		"DEBUG":                                  o.debug,
 		"DISABLE_HSTS":                           !o.hsts,
 		"DISABLE_HTTP_SERVICE":                   !o.httpService,
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
@@ -609,7 +629,10 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"INVIDIOUS_INSTANCE":                     o.invidiousInstance,
 		"KEY_FILE":                               o.certKeyFile,
 		"LISTEN_ADDR":                            o.listenAddr,
+		"LOG_FILE":                               o.logFile,
 		"LOG_DATE_TIME":                          o.logDateTime,
+		"LOG_FORMAT":                             o.logFormat,
+		"LOG_LEVEL":                              o.logLevel,
 		"MAINTENANCE_MESSAGE":                    o.maintenanceMessage,
 		"MAINTENANCE_MODE":                       o.maintenanceMode,
 		"METRICS_ALLOWED_NETWORKS":               strings.Join(o.metricsAllowedNetworks, ","),
