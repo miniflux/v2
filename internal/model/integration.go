@@ -70,4 +70,9 @@ type Integration struct {
 	WebhookEnabled                   bool
 	WebhookURL                       string
 	WebhookSecret                    string
+	SiyuanNoteEnabled                bool
+	SiyuanNoteURL                    string
+	SiyuanNoteToken        	         string
+	SiyuanNoteNotebookName 	         string
+	SiyuanNotePagePath               string
 }

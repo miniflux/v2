@@ -76,6 +76,11 @@ type IntegrationForm struct {
 	WebhookEnabled                   bool
 	WebhookURL                       string
 	WebhookSecret                    string
+	SiyuanNoteEnabled                bool
+	SiyuanNoteURL                    string
+	SiyuanNoteToken                  string
+	SiyuanNoteNotebookName           string
+	SiyuanNotePagePath               string
 }
 
 // Merge copy form values to the model.
@@ -141,6 +146,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.ShaarliAPISecret = i.ShaarliAPISecret
 	integration.WebhookEnabled = i.WebhookEnabled
 	integration.WebhookURL = i.WebhookURL
+	integration.SiyuanNoteEnabled = i.SiyuanNoteEnabled
+	integration.SiyuanNoteURL = i.SiyuanNoteURL
+	integration.SiyuanNoteToken = i.SiyuanNoteToken
+	integration.SiyuanNoteNotebookName = i.SiyuanNoteNotebookName
+	integration.SiyuanNotePagePath = i.SiyuanNotePagePath
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -209,6 +219,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		ShaarliAPISecret:                 r.FormValue("shaarli_api_secret"),
 		WebhookEnabled:                   r.FormValue("webhook_enabled") == "1",
 		WebhookURL:                       r.FormValue("webhook_url"),
+		SiyuanNoteEnabled:                r.FormValue("siyuannote_enabled") == "1",
+		SiyuanNoteURL:                    r.FormValue("siyuannote_url"),
+		SiyuanNoteNotebookName:           r.FormValue("siyuannote_notebook_name"),
+		SiyuanNotePagePath:               r.FormValue("siyuannote_page_path"),
+		SiyuanNoteToken:                  r.FormValue("siyuannote_token"),
 	}
 }
 

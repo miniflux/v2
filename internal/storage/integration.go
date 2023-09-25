@@ -173,7 +173,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shaarli_api_secret,
 			webhook_enabled,
 			webhook_url,
-			webhook_secret
+			webhook_secret,
+			siyuannote_enabled,
+			siyuannote_url,
+			siyuannote_notebook_name,
+			siyuannote_page_path,
+			siyuannote_token
 		FROM
 			integrations
 		WHERE
@@ -246,6 +251,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WebhookEnabled,
 		&integration.WebhookURL,
 		&integration.WebhookSecret,
+		&integration.SiyuanNoteEnabled,
+		&integration.SiyuanNoteURL,
+		&integration.SiyuanNoteNotebookName,
+		&integration.SiyuanNotePagePath,
+		&integration.SiyuanNoteToken,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -326,9 +336,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			shaarli_api_secret=$61,
 			webhook_enabled=$62,
 			webhook_url=$63,
-			webhook_secret=$64
+			webhook_secret=$64,
+			siyuannote_enabled=$65,
+			siyuannote_url=$66,
+			siyuannote_notebook_name=$67,
+			siyuannote_page_path=$68,
+			siyuannote_token=$69
 		WHERE
-			user_id=$65
+			user_id=$70
 	`
 	_, err := s.db.Exec(
 		query,
@@ -396,6 +411,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.WebhookEnabled,
 		integration.WebhookURL,
 		integration.WebhookSecret,
+		integration.SiyuanNoteEnabled,
+		integration.SiyuanNoteURL,
+		integration.SiyuanNoteNotebookName,
+		integration.SiyuanNotePagePath,
+		integration.SiyuanNoteToken,
 		integration.UserID,
 	)
 

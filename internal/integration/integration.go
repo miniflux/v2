@@ -19,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/integration/readwise"
 	"miniflux.app/v2/internal/integration/shaarli"
 	"miniflux.app/v2/internal/integration/shiori"
+	"miniflux.app/v2/internal/integration/siyuan-note"
 	"miniflux.app/v2/internal/integration/telegrambot"
 	"miniflux.app/v2/internal/integration/wallabag"
 	"miniflux.app/v2/internal/integration/webhook"
@@ -285,6 +286,20 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 				slog.String("webhook_url", userIntegrations.WebhookURL),
 				slog.Any("error", err),
 			)
+		}
+	}
+
+	if integration.SiyuanNoteEnabled {
+		logger.Debug("[Integration] Sending entry #%d %q for user #%d to Siyuan-Note", entry.ID, entry.URL, integration.UserID)
+
+		client := siyuannote.NewClient(
+			integration.SiyuanNoteURL,
+			integration.SiyuanNoteToken,
+			integration.SiyuanNoteNotebookName,
+			integration.SiyuanNotePagePath,
+		)
+		if err := client.UpdateDocument(entry.URL, entry.Title, entry.Content); err != nil {
+			logger.Error("[Integration] UserID #%d: %v", integration.UserID, err)
 		}
 	}
 }
