@@ -6,12 +6,12 @@ package atom // import "miniflux.app/v2/internal/reader/atom"
 import (
 	"encoding/xml"
 	"html"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/media"
@@ -144,7 +144,11 @@ func (a *atom10Entry) entryDate() time.Time {
 	if dateText != "" {
 		result, err := date.Parse(dateText)
 		if err != nil {
-			logger.Error("atom: %v (entry ID = %s)", err, a.ID)
+			slog.Warn("Unable to parse date from Atom 0.3 feed",
+				slog.String("date", dateText),
+				slog.String("id", a.ID),
+				slog.Any("error", err),
+			)
 			return time.Now()
 		}
 

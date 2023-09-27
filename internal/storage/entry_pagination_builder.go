@@ -7,10 +7,8 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/timer"
 )
 
 // EntryPaginationBuilder is a builder for entry prev/next queries.
@@ -101,8 +99,6 @@ func (e *EntryPaginationBuilder) Entries() (*model.Entry, *model.Entry, error) {
 }
 
 func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID int64, err error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[EntryPaginationBuilder] %v, %v", e.conditions, e.args))
-
 	cte := `
 		WITH entry_pagination AS (
 			SELECT

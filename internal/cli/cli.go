@@ -6,11 +6,13 @@ package cli // import "miniflux.app/v2/internal/cli"
 import (
 	"flag"
 	"fmt"
+	"io"
+	"log/slog"
+	"os"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/database"
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/version"
@@ -74,13 +76,13 @@ func Parse() {
 	if flagConfigFile != "" {
 		config.Opts, err = cfg.ParseFile(flagConfigFile)
 		if err != nil {
-			logger.Fatal("%v", err)
+			printErrorAndExit(err)
 		}
 	}
 
 	config.Opts, err = cfg.ParseEnvironmentVariables()
 	if err != nil {
-		logger.Fatal("%v", err)
+		printErrorAndExit(err)
 	}
 
 	if flagConfigDump {
@@ -88,12 +90,27 @@ func Parse() {
 		return
 	}
 
-	if config.Opts.LogDateTime() {
-		logger.EnableDateTime()
+	if flagDebugMode {
+		config.Opts.SetLogLevel("debug")
 	}
 
-	if flagDebugMode || config.Opts.HasDebugMode() {
-		logger.EnableDebug()
+	logFile := config.Opts.LogFile()
+	var logFileHandler io.Writer
+	switch logFile {
+	case "stdout":
+		logFileHandler = os.Stdout
+	case "stderr":
+		logFileHandler = os.Stderr
+	default:
+		logFileHandler, err = os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+		if err != nil {
+			printErrorAndExit(fmt.Errorf("unable to open log file: %v", err))
+		}
+		defer logFileHandler.(*os.File).Close()
+	}
+
+	if err := InitializeDefaultLogger(config.Opts.LogLevel(), logFileHandler, config.Opts.LogFormat(), config.Opts.LogDateTime()); err != nil {
+		printErrorAndExit(err)
 	}
 
 	if flagHealthCheck != "" {
@@ -112,25 +129,23 @@ func Parse() {
 	}
 
 	if config.Opts.IsDefaultDatabaseURL() {
-		logger.Info("The default value for DATABASE_URL is used")
+		slog.Info("The default value for DATABASE_URL is used")
 	}
 
-	logger.Debug("Loading translations...")
 	if err := locale.LoadCatalogMessages(); err != nil {
-		logger.Fatal("Unable to load translations: %v", err)
+		printErrorAndExit(fmt.Errorf("unable to load translations: %v", err))
 	}
 
-	logger.Debug("Loading static assets...")
 	if err := static.CalculateBinaryFileChecksums(); err != nil {
-		logger.Fatal("Unable to calculate binary files checksum: %v", err)
+		printErrorAndExit(fmt.Errorf("unable to calculate binary file checksums: %v", err))
 	}
 
 	if err := static.GenerateStylesheetsBundles(); err != nil {
-		logger.Fatal("Unable to generate Stylesheet bundles: %v", err)
+		printErrorAndExit(fmt.Errorf("unable to generate stylesheets bundles: %v", err))
 	}
 
 	if err := static.GenerateJavascriptBundles(); err != nil {
-		logger.Fatal("Unable to generate Javascript bundles: %v", err)
+		printErrorAndExit(fmt.Errorf("unable to generate javascript bundles: %v", err))
 	}
 
 	db, err := database.NewConnectionPool(
@@ -140,19 +155,19 @@ func Parse() {
 		config.Opts.DatabaseConnectionLifetime(),
 	)
 	if err != nil {
-		logger.Fatal("Unable to initialize database connection pool: %v", err)
+		printErrorAndExit(fmt.Errorf("unable to connect to database: %v", err))
 	}
 	defer db.Close()
 
 	store := storage.NewStorage(db)
 
 	if err := store.Ping(); err != nil {
-		logger.Fatal("Unable to connect to the database: %v", err)
+		printErrorAndExit(err)
 	}
 
 	if flagMigrate {
 		if err := database.Migrate(db); err != nil {
-			logger.Fatal(`%v`, err)
+			printErrorAndExit(err)
 		}
 		return
 	}
@@ -180,12 +195,12 @@ func Parse() {
 	// Run migrations and start the daemon.
 	if config.Opts.RunMigrations() {
 		if err := database.Migrate(db); err != nil {
-			logger.Fatal(`%v`, err)
+			printErrorAndExit(err)
 		}
 	}
 
 	if err := database.IsSchemaUpToDate(db); err != nil {
-		logger.Fatal(`You must run the SQL migrations, %v`, err)
+		printErrorAndExit(err)
 	}
 
 	// Create admin user and start the daemon.
@@ -204,4 +219,9 @@ func Parse() {
 	}
 
 	startDaemon(store)
+}
+
+func printErrorAndExit(err error) {
+	fmt.Fprintf(os.Stderr, "%v\n", err)
+	os.Exit(1)
 }

@@ -6,6 +6,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"crypto/subtle"
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
@@ -14,7 +15,6 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 )
@@ -26,40 +26,47 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {
-		logger.Error("[OAuth2] Invalid or missing provider")
+		slog.Warn("Invalid or missing OAuth2 provider")
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
 	code := request.QueryStringParam(r, "code", "")
 	if code == "" {
-		logger.Error("[OAuth2] No code received on callback")
+		slog.Warn("No code received on OAuth2 callback")
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
 	state := request.QueryStringParam(r, "state", "")
 	if subtle.ConstantTimeCompare([]byte(state), []byte(request.OAuth2State(r))) == 0 {
-		logger.Error(`[OAuth2] Invalid state value: got "%s" instead of "%s"`, state, request.OAuth2State(r))
+		slog.Warn("Invalid OAuth2 state value received",
+			slog.String("expected", request.OAuth2State(r)),
+			slog.String("received", state),
+		)
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
 	authProvider, err := getOAuth2Manager(r.Context()).FindProvider(provider)
 	if err != nil {
-		logger.Error("[OAuth2] %v", err)
+		slog.Error("Unable to initialize OAuth2 provider",
+			slog.String("provider", provider),
+			slog.Any("error", err),
+		)
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
 
 	profile, err := authProvider.GetProfile(r.Context(), code, request.OAuth2CodeVerifier(r))
 	if err != nil {
-		logger.Error("[OAuth2] %v", err)
+		slog.Warn("Unable to get OAuth2 profile from provider",
+			slog.String("provider", provider),
+			slog.Any("error", err),
+		)
 		html.Redirect(w, r, route.Path(h.router, "login"))
 		return
 	}
-
-	logger.Info("[OAuth2] [ClientIP=%s] Successful auth for %s", clientIP, profile)
 
 	if request.IsAuthenticated(r) {
 		loggedUser, err := h.store.UserByID(request.UserID(r))
@@ -69,7 +76,11 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if h.store.AnotherUserWithFieldExists(loggedUser.ID, profile.Key, profile.ID) {
-			logger.Error("[OAuth2] User #%d cannot be associated because it is already associated with another user", loggedUser.ID)
+			slog.Error("Oauth2 user cannot be associated because it is already associated with another user",
+				slog.Int64("user_id", loggedUser.ID),
+				slog.String("oauth2_provider", provider),
+				slog.String("oauth2_profile_id", profile.ID),
+			)
 			sess.NewFlashErrorMessage(printer.Printf("error.duplicate_linked_account"))
 			html.Redirect(w, r, route.Path(h.router, "settings"))
 			return
@@ -119,7 +130,13 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Info("[OAuth2] [ClientIP=%s] username=%s (%s) just logged in", clientIP, user.Username, profile)
+	slog.Info("User authenticated successfully using OAuth2",
+		slog.Bool("authentication_successful", true),
+		slog.String("client_ip", clientIP),
+		slog.String("user_agent", r.UserAgent()),
+		slog.Int64("user_id", user.ID),
+		slog.String("username", user.Username),
+	)
 
 	h.store.SetLastLogin(user.ID)
 	sess.SetLanguage(user.Language)

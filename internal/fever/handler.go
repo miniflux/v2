@@ -4,6 +4,7 @@
 package fever // import "miniflux.app/v2/internal/fever"
 
 import (
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,7 +13,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/integration"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/proxy"
 	"miniflux.app/v2/internal/storage"
@@ -80,7 +80,9 @@ is_spark equal to 1.
 */
 func (h *handler) handleGroups(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching groups for user #%d", userID)
+	slog.Debug("[Fever] Fetching groups",
+		slog.Int64("user_id", userID),
+	)
 
 	categories, err := h.store.Categories(userID)
 	if err != nil {
@@ -130,7 +132,9 @@ For the “Sparks” super group the items should be limited to feeds with an is
 */
 func (h *handler) handleFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching feeds for userID=%d", userID)
+	slog.Debug("[Fever] Fetching feeds",
+		slog.Int64("user_id", userID),
+	)
 
 	feeds, err := h.store.Feeds(userID)
 	if err != nil {
@@ -183,7 +187,9 @@ A PHP/HTML example:
 */
 func (h *handler) handleFavicons(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching favicons for user #%d", userID)
+	slog.Debug("[Fever] Fetching favicons",
+		slog.Int64("user_id", userID),
+	)
 
 	icons, err := h.store.Icons(userID)
 	if err != nil {
@@ -247,16 +253,24 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	case request.HasQueryParam(r, "since_id"):
 		sinceID := request.QueryInt64Param(r, "since_id", 0)
 		if sinceID > 0 {
-			logger.Debug("[Fever] Fetching items since #%d for user #%d", sinceID, userID)
+			slog.Debug("[Fever] Fetching items since a given date",
+				slog.Int64("user_id", userID),
+				slog.Int64("since_id", sinceID),
+			)
 			builder.AfterEntryID(sinceID)
 		}
 	case request.HasQueryParam(r, "max_id"):
 		maxID := request.QueryInt64Param(r, "max_id", 0)
 		if maxID == 0 {
-			logger.Debug("[Fever] Fetching most recent items for user #%d", userID)
+			slog.Debug("[Fever] Fetching most recent items",
+				slog.Int64("user_id", userID),
+			)
 			builder.WithSorting("id", "DESC")
 		} else if maxID > 0 {
-			logger.Debug("[Fever] Fetching items before #%d for user #%d", maxID, userID)
+			slog.Debug("[Fever] Fetching items before a given item ID",
+				slog.Int64("user_id", userID),
+				slog.Int64("max_id", maxID),
+			)
 			builder.BeforeEntryID(maxID)
 			builder.WithSorting("id", "DESC")
 		}
@@ -274,7 +288,9 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 			builder.WithEntryIDs(itemIDs)
 		}
 	default:
-		logger.Debug("[Fever] Fetching oldest items for user #%d", userID)
+		slog.Debug("[Fever] Fetching oldest items",
+			slog.Int64("user_id", userID),
+		)
 	}
 
 	entries, err := builder.GetEntries()
@@ -330,7 +346,9 @@ A request with the unread_item_ids argument will return one additional member:
 */
 func (h *handler) handleUnreadItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching unread items for user #%d", userID)
+	slog.Debug("[Fever] Fetching unread items",
+		slog.Int64("user_id", userID),
+	)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStatus(model.EntryStatusUnread)
@@ -361,7 +379,9 @@ with the remote Fever installation.
 */
 func (h *handler) handleSavedItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Fetching saved items for user #%d", userID)
+	slog.Debug("[Fever] Fetching saved items",
+		slog.Int64("user_id", userID),
+	)
 
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithStarred(true)
@@ -389,7 +409,9 @@ id=? where ? is replaced with the id of the item to modify
 */
 func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	logger.Debug("[Fever] Receiving mark=item call for user #%d", userID)
+	slog.Debug("[Fever] Receiving mark=item call",
+		slog.Int64("user_id", userID),
+	)
 
 	entryID := request.FormInt64Value(r, "id")
 	if entryID <= 0 {
@@ -407,20 +429,32 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if entry == nil {
-		logger.Debug("[Fever] Marking entry #%d but not found, ignored", entryID)
+		slog.Debug("[Fever] Entry not found",
+			slog.Int64("user_id", userID),
+			slog.Int64("entry_id", entryID),
+		)
 		json.OK(w, r, newBaseResponse())
 		return
 	}
 
 	switch r.FormValue("as") {
 	case "read":
-		logger.Debug("[Fever] Mark entry #%d as read for user #%d", entryID, userID)
+		slog.Debug("[Fever] Mark entry as read",
+			slog.Int64("user_id", userID),
+			slog.Int64("entry_id", entryID),
+		)
 		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusRead)
 	case "unread":
-		logger.Debug("[Fever] Mark entry #%d as unread for user #%d", entryID, userID)
+		slog.Debug("[Fever] Mark entry as unread",
+			slog.Int64("user_id", userID),
+			slog.Int64("entry_id", entryID),
+		)
 		h.store.SetEntriesStatus(userID, []int64{entryID}, model.EntryStatusUnread)
 	case "saved":
-		logger.Debug("[Fever] Mark entry #%d as saved for user #%d", entryID, userID)
+		slog.Debug("[Fever] Mark entry as saved",
+			slog.Int64("user_id", userID),
+			slog.Int64("entry_id", entryID),
+		)
 		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
@@ -436,7 +470,10 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 			integration.SendEntry(entry, settings)
 		}()
 	case "unsaved":
-		logger.Debug("[Fever] Mark entry #%d as unsaved for user #%d", entryID, userID)
+		slog.Debug("[Fever] Mark entry as unsaved",
+			slog.Int64("user_id", userID),
+			slog.Int64("entry_id", entryID),
+		)
 		if err := h.store.ToggleBookmark(userID, entryID); err != nil {
 			json.ServerError(w, r, err)
 			return
@@ -457,7 +494,11 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 	feedID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
 
-	logger.Debug("[Fever] Mark feed #%d as read for user #%d before %v", feedID, userID, before)
+	slog.Debug("[Fever] Mark feed as read before a given date",
+		slog.Int64("user_id", userID),
+		slog.Int64("feed_id", feedID),
+		slog.Time("before_ts", before),
+	)
 
 	if feedID <= 0 {
 		return
@@ -465,7 +506,12 @@ func (h *handler) handleWriteFeeds(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		if err := h.store.MarkFeedAsRead(userID, feedID, before); err != nil {
-			logger.Error("[Fever] MarkFeedAsRead failed: %v", err)
+			slog.Error("[Fever] Unable to mark feed as read",
+				slog.Int64("user_id", userID),
+				slog.Int64("feed_id", feedID),
+				slog.Time("before_ts", before),
+				slog.Any("error", err),
+			)
 		}
 	}()
 
@@ -483,7 +529,11 @@ func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 	groupID := request.FormInt64Value(r, "id")
 	before := time.Unix(request.FormInt64Value(r, "before"), 0)
 
-	logger.Debug("[Fever] Mark group #%d as read for user #%d before %v", groupID, userID, before)
+	slog.Debug("[Fever] Mark group as read before a given date",
+		slog.Int64("user_id", userID),
+		slog.Int64("group_id", groupID),
+		slog.Time("before_ts", before),
+	)
 
 	if groupID < 0 {
 		return
@@ -499,7 +549,12 @@ func (h *handler) handleWriteGroups(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err != nil {
-			logger.Error("[Fever] MarkCategoryAsRead failed: %v", err)
+			slog.Error("[Fever] Unable to mark group as read",
+				slog.Int64("user_id", userID),
+				slog.Int64("group_id", groupID),
+				slog.Time("before_ts", before),
+				slog.Any("error", err),
+			)
 		}
 	}()
 

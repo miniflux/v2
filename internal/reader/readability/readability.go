@@ -7,11 +7,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log/slog"
 	"math"
 	"regexp"
 	"strings"
-
-	"miniflux.app/v2/internal/logger"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"
@@ -83,10 +82,12 @@ func ExtractContent(page io.Reader) (string, error) {
 	removeUnlikelyCandidates(document)
 
 	candidates := getCandidates(document)
-	logger.Debug("[Readability] Candidates: %v", candidates)
-
 	topCandidate := getTopCandidate(document, candidates)
-	logger.Debug("[Readability] TopCandidate: %v", topCandidate)
+
+	slog.Debug("Readability parsing",
+		slog.Any("candidates", candidates),
+		slog.Any("topCandidate", topCandidate),
+	)
 
 	output := getArticle(topCandidate, candidates)
 	return output, nil

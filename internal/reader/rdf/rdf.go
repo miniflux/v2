@@ -6,11 +6,11 @@ package rdf // import "miniflux.app/v2/internal/reader/rdf"
 import (
 	"encoding/xml"
 	"html"
+	"log/slog"
 	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/dublincore"
@@ -100,7 +100,11 @@ func (r *rdfItem) entryDate() time.Time {
 	if r.DublinCoreDate != "" {
 		result, err := date.Parse(r.DublinCoreDate)
 		if err != nil {
-			logger.Error("rdf: %v (entry link = %s)", err, r.Link)
+			slog.Warn("Unable to parse date from RDF feed",
+				slog.String("date", r.DublinCoreDate),
+				slog.String("link", r.Link),
+				slog.Any("error", err),
+			)
 			return time.Now()
 		}
 
