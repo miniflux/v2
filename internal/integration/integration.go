@@ -354,6 +354,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 					userIntegrations.TelegramBotTopicID,
 					userIntegrations.TelegramBotDisableWebPagePreview,
 					userIntegrations.TelegramBotDisableNotification,
+					userIntegrations.TelegramBotDisableButtons,
 				); err != nil {
 					slog.Error("Unable to send entry to Telegram",
 						slog.Int64("user_id", userIntegrations.UserID),

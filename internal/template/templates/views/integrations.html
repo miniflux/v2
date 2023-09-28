@@ -339,6 +339,10 @@
                 <input type="checkbox" name="telegram_bot_disable_notification" value="1" {{ if .form.TelegramBotDisableNotification }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_notification" }}
             </label>
 
+            <label>
+                <input type="checkbox" name="telegram_bot_disable_buttons" value="1" {{ if .form.TelegramBotDisableButtons }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_buttons" }}
+            </label>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
