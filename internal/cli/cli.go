@@ -32,6 +32,7 @@ const (
 	flagHealthCheckHelp     = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
 	flagRefreshFeedsHelp    = "Refresh a batch of feeds and exit"
 	flagRunCleanupTasksHelp = "Run cleanup tasks (delete old sessions and archives old entries)"
+	flagExportUserFeedsHelp = "Export user feeds (provide the username as argument)"
 )
 
 // Parse parses command line arguments.
@@ -51,6 +52,7 @@ func Parse() {
 		flagHealthCheck     string
 		flagRefreshFeeds    bool
 		flagRunCleanupTasks bool
+		flagExportUserFeeds string
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -69,6 +71,7 @@ func Parse() {
 	flag.StringVar(&flagHealthCheck, "healthcheck", "", flagHealthCheckHelp)
 	flag.BoolVar(&flagRefreshFeeds, "refresh-feeds", false, flagRefreshFeedsHelp)
 	flag.BoolVar(&flagRunCleanupTasks, "run-cleanup-tasks", false, flagRunCleanupTasksHelp)
+	flag.StringVar(&flagExportUserFeeds, "export-user-feeds", "", flagExportUserFeedsHelp)
 	flag.Parse()
 
 	cfg := config.NewParser()
@@ -174,6 +177,11 @@ func Parse() {
 
 	if flagResetFeedErrors {
 		store.ResetFeedErrors()
+		return
+	}
+
+	if flagExportUserFeeds != "" {
+		exportUserFeeds(store, flagExportUserFeeds)
 		return
 	}
 
