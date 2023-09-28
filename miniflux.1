@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "September 24, 2023" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "September 27, 2023" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -37,6 +37,13 @@ Create admin user\&.
 .B \-debug
 .RS 4
 Set log level to debug\&.
+.RE
+.PP
+.B \-export-user-feeds <username>
+.RS 4
+Export user feeds (provide the username as argument)\&.
+.br
+Example: "miniflux -export-user-feeds someone > feeds.xml"\&.
 .RE
 .PP
 .B \-flush-sessions
