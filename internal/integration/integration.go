@@ -370,16 +370,17 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 					slog.Int64("user_id", userIntegrations.UserID),
 					slog.Int64("entry_id", entry.ID),
 					slog.String("entry_url", entry.URL),
+					slog.String("apprise_url", userIntegrations.AppriseURL),
 				)
 
-				appriseServiceURLs := userIntegrations.AppriseURL
+				appriseServiceURLs := userIntegrations.AppriseServicesURL
 				if feed.AppriseServiceURLs != "" {
 					appriseServiceURLs = feed.AppriseServiceURLs
 				}
 
 				client := apprise.NewClient(
-					userIntegrations.AppriseServicesURL,
 					appriseServiceURLs,
+					userIntegrations.AppriseURL,
 				)
 
 				if err := client.SendNotification(entry); err != nil {
@@ -387,6 +388,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 						slog.Int64("user_id", userIntegrations.UserID),
 						slog.Int64("entry_id", entry.ID),
 						slog.String("entry_url", entry.URL),
+						slog.String("apprise_url", userIntegrations.AppriseURL),
 						slog.Any("error", err),
 					)
 				}
