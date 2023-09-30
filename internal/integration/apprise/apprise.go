@@ -28,7 +28,7 @@ func NewClient(serviceURL, baseURL string) *Client {
 
 func (c *Client) SendNotification(entry *model.Entry) error {
 	if c.baseURL == "" || c.servicesURL == "" {
-		return fmt.Errorf("apprise: missing base URL or service URL")
+		return fmt.Errorf("apprise: missing base URL or services URL")
 	}
 
 	message := "[" + entry.Title + "]" + "(" + entry.URL + ")" + "\n\n"
