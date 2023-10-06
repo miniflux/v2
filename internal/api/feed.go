@@ -24,6 +24,16 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Make the feed category optional for clients who don't support categories.
+	if feedCreationRequest.CategoryID == 0 {
+		category, err := h.store.FirstCategory(userID)
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+		feedCreationRequest.CategoryID = category.ID
+	}
+
 	if validationErr := validator.ValidateFeedCreation(h.store, userID, &feedCreationRequest); validationErr != nil {
 		json.BadRequest(w, r, validationErr.Error())
 		return
