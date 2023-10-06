@@ -512,6 +512,12 @@ func (c *Client) FetchCounters() (*FeedCounters, error) {
 	return &result, nil
 }
 
+// FlushHistory changes all entries with the status "read" to "removed".
+func (c *Client) FlushHistory() error {
+	_, err := c.request.Put("/v1/flush-history", nil)
+	return err
+}
+
 func buildFilterQueryString(path string, filter *Filter) string {
 	if filter != nil {
 		values := url.Values{}

@@ -434,9 +434,9 @@ func TestHistoryOrder(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	selectedEntry := result.Entries[2].ID
+	selectedEntryID := result.Entries[2].ID
 
-	err = client.UpdateEntries([]int64{selectedEntry}, miniflux.EntryStatusRead)
+	err = client.UpdateEntries([]int64{selectedEntryID}, miniflux.EntryStatusRead)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -446,7 +446,38 @@ func TestHistoryOrder(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if history.Entries[0].ID != selectedEntry {
+	if history.Entries[0].ID != selectedEntryID {
 		t.Fatal("The entry that we just read should be at the top of the history")
+	}
+}
+
+func TestFlushHistory(t *testing.T) {
+	client := createClient(t)
+	createFeed(t, client)
+
+	result, err := client.Entries(&miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	selectedEntryID := result.Entries[0].ID
+
+	err = client.UpdateEntries([]int64{selectedEntryID}, miniflux.EntryStatusRead)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = client.FlushHistory()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	history, err := client.Entries(&miniflux.Filter{Status: miniflux.EntryStatusRemoved})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if history.Entries[0].ID != selectedEntryID {
+		t.Fatal("The entry that we just read should have the removed status")
 	}
 }

@@ -283,6 +283,12 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, map[string]string{"content": entry.Content})
 }
 
+func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
+	loggedUserID := request.UserID(r)
+	go h.store.FlushHistory(loggedUserID)
+	json.Accepted(w, r)
+}
+
 func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 	if beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0); beforeEntryID > 0 {
 		builder.BeforeEntryID(beforeEntryID)
