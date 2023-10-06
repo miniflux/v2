@@ -496,7 +496,7 @@ func (c *Client) SaveEntry(entryID int64) error {
 	return err
 }
 
-// FetchCounters
+// FetchCounters fetches feed counters.
 func (c *Client) FetchCounters() (*FeedCounters, error) {
 	body, err := c.request.Get("/v1/feeds/counters")
 	if err != nil {
@@ -516,6 +516,22 @@ func (c *Client) FetchCounters() (*FeedCounters, error) {
 func (c *Client) FlushHistory() error {
 	_, err := c.request.Put("/v1/flush-history", nil)
 	return err
+}
+
+// Icon fetches a feed icon.
+func (c *Client) Icon(iconID int64) (*FeedIcon, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/icons/%d", iconID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var feedIcon *FeedIcon
+	if err := json.NewDecoder(body).Decode(&feedIcon); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return feedIcon, nil
 }
 
 func buildFilterQueryString(path string, filter *Filter) string {

@@ -54,7 +54,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/feeds/{feedID}", handler.getFeed).Methods(http.MethodGet)
 	sr.HandleFunc("/feeds/{feedID}", handler.updateFeed).Methods(http.MethodPut)
 	sr.HandleFunc("/feeds/{feedID}", handler.removeFeed).Methods(http.MethodDelete)
-	sr.HandleFunc("/feeds/{feedID}/icon", handler.feedIcon).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/{feedID}/icon", handler.getIconByFeedID).Methods(http.MethodGet)
 	sr.HandleFunc("/feeds/{feedID}/mark-all-as-read", handler.markFeedAsRead).Methods(http.MethodPut)
 	sr.HandleFunc("/export", handler.exportFeeds).Methods(http.MethodGet)
 	sr.HandleFunc("/import", handler.importFeeds).Methods(http.MethodPost)
@@ -67,4 +67,5 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/entries/{entryID}/save", handler.saveEntry).Methods(http.MethodPost)
 	sr.HandleFunc("/entries/{entryID}/fetch-content", handler.fetchContent).Methods(http.MethodGet)
 	sr.HandleFunc("/flush-history", handler.flushHistory).Methods(http.MethodPut, http.MethodDelete)
+	sr.HandleFunc("/icons/{iconID}", handler.getIconByIconID).Methods(http.MethodGet)
 }
