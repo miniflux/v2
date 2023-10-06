@@ -147,6 +147,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder.WithOffset(offset)
 	builder.WithLimit(limit)
 	builder.WithTags(tags)
+	builder.WithEnclosures()
 	configureFilters(builder, r)
 
 	entries, err := builder.GetEntries()
