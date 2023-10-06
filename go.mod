@@ -7,7 +7,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.6.0
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.9
-	github.com/mccutchen/go-httpbin/v2 v2.11.0
+	github.com/mccutchen/go-httpbin/v2 v2.11.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/tdewolff/minify/v2 v2.12.9
