@@ -23,6 +23,13 @@ type EntryQueryBuilder struct {
 	sortExpressions []string
 	limit           int
 	offset          int
+	fetchEnclosures bool
+}
+
+// WithEnclosures fetches enclosures for each entry.
+func (e *EntryQueryBuilder) WithEnclosures() *EntryQueryBuilder {
+	e.fetchEnclosures = true
+	return e
 }
 
 // WithSearchQuery adds full-text search query to the condition.
@@ -209,7 +216,7 @@ func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 
 	err = e.store.db.QueryRow(fmt.Sprintf(query, condition), e.args...).Scan(&count)
 	if err != nil {
-		return 0, fmt.Errorf("unable to count entries: %v", err)
+		return 0, fmt.Errorf("store: unable to count entries: %v", err)
 	}
 
 	return count, nil
@@ -256,11 +263,13 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			e.created_at,
 			e.changed_at,
 			e.tags,
+			(SELECT true FROM enclosures WHERE entry_id=e.id LIMIT 1) as has_enclosure,
 			f.title as feed_title,
 			f.feed_url,
 			f.site_url,
 			f.checked_at,
-			f.category_id, c.title as category_title,
+			f.category_id,
+			c.title as category_title,
 			f.scraper_rules,
 			f.rewrite_rules,
 			f.crawler,
@@ -289,19 +298,17 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
-		return nil, fmt.Errorf("unable to get entries: %v", err)
+		return nil, fmt.Errorf("store: unable to get entries: %v", err)
 	}
 	defer rows.Close()
 
 	entries := make(model.Entries, 0)
 	for rows.Next() {
-		var entry model.Entry
 		var iconID sql.NullInt64
 		var tz string
+		var hasEnclosure sql.NullBool
 
-		entry.Feed = &model.Feed{}
-		entry.Feed.Category = &model.Category{}
-		entry.Feed.Icon = &model.FeedIcon{}
+		entry := model.NewEntry()
 
 		err := rows.Scan(
 			&entry.ID,
@@ -321,6 +328,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.CreatedAt,
 			&entry.ChangedAt,
 			pq.Array(&entry.Tags),
+			&hasEnclosure,
 			&entry.Feed.Title,
 			&entry.Feed.FeedURL,
 			&entry.Feed.SiteURL,
@@ -339,7 +347,14 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		)
 
 		if err != nil {
-			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
+			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
+		}
+
+		if hasEnclosure.Valid && hasEnclosure.Bool && e.fetchEnclosures {
+			entry.Enclosures, err = e.store.GetEnclosures(entry.ID)
+			if err != nil {
+				return nil, fmt.Errorf("store: unable to fetch enclosures for entry #%d: %w", entry.ID, err)
+			}
 		}
 
 		if iconID.Valid {
@@ -358,7 +373,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		entry.Feed.UserID = entry.UserID
 		entry.Feed.Icon.FeedID = entry.FeedID
 		entry.Feed.Category.UserID = entry.UserID
-		entries = append(entries, &entry)
+		entries = append(entries, entry)
 	}
 
 	return entries, nil
@@ -373,7 +388,7 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 
 	rows, err := e.store.db.Query(query, e.args...)
 	if err != nil {
-		return nil, fmt.Errorf("unable to get entries: %v", err)
+		return nil, fmt.Errorf("store: unable to get entries: %v", err)
 	}
 	defer rows.Close()
 
@@ -383,7 +398,7 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 
 		err := rows.Scan(&entryID)
 		if err != nil {
-			return nil, fmt.Errorf("unable to fetch entry row: %v", err)
+			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
 
 		entryIDs = append(entryIDs, entryID)
