@@ -91,6 +91,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		WebhookEnabled:                   integration.WebhookEnabled,
 		WebhookURL:                       integration.WebhookURL,
 		WebhookSecret:                    integration.WebhookSecret,
+		RSSBridgeEnabled:                 integration.RSSBridgeEnabled,
+		RSSBridgeURL:                     integration.RSSBridgeURL,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

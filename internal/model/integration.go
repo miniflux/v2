@@ -71,4 +71,6 @@ type Integration struct {
 	WebhookEnabled                   bool
 	WebhookURL                       string
 	WebhookSecret                    string
+	RSSBridgeEnabled                 bool
+	RSSBridgeURL                     string
 }
