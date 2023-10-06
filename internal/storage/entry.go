@@ -442,7 +442,7 @@ func (s *Storage) ToggleBookmark(userID int64, entryID int64) error {
 	return nil
 }
 
-// FlushHistory set all entries with the status "read" to "removed".
+// FlushHistory changes all entries with the status "read" to "removed".
 func (s *Storage) FlushHistory(userID int64) error {
 	query := `
 		UPDATE
