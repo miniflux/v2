@@ -540,12 +540,28 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("after", strconv.FormatInt(filter.After, 10))
 		}
 
-		if filter.AfterEntryID > 0 {
-			values.Set("after_entry_id", strconv.FormatInt(filter.AfterEntryID, 10))
-		}
-
 		if filter.Before > 0 {
 			values.Set("before", strconv.FormatInt(filter.Before, 10))
+		}
+
+		if filter.PublishedAfter > 0 {
+			values.Set("published_after", strconv.FormatInt(filter.PublishedAfter, 10))
+		}
+
+		if filter.PublishedBefore > 0 {
+			values.Set("published_before", strconv.FormatInt(filter.PublishedBefore, 10))
+		}
+
+		if filter.ChangedAfter > 0 {
+			values.Set("changed_after", strconv.FormatInt(filter.ChangedAfter, 10))
+		}
+
+		if filter.ChangedBefore > 0 {
+			values.Set("changed_before", strconv.FormatInt(filter.ChangedBefore, 10))
+		}
+
+		if filter.AfterEntryID > 0 {
+			values.Set("after_entry_id", strconv.FormatInt(filter.AfterEntryID, 10))
 		}
 
 		if filter.BeforeEntryID > 0 {

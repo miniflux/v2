@@ -283,28 +283,39 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
-	beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0)
-	if beforeEntryID > 0 {
+	if beforeEntryID := request.QueryInt64Param(r, "before_entry_id", 0); beforeEntryID > 0 {
 		builder.BeforeEntryID(beforeEntryID)
 	}
 
-	afterEntryID := request.QueryInt64Param(r, "after_entry_id", 0)
-	if afterEntryID > 0 {
+	if afterEntryID := request.QueryInt64Param(r, "after_entry_id", 0); afterEntryID > 0 {
 		builder.AfterEntryID(afterEntryID)
 	}
 
-	beforeTimestamp := request.QueryInt64Param(r, "before", 0)
-	if beforeTimestamp > 0 {
-		builder.BeforeDate(time.Unix(beforeTimestamp, 0))
+	if beforePublishedTimestamp := request.QueryInt64Param(r, "before", 0); beforePublishedTimestamp > 0 {
+		builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
 	}
 
-	afterTimestamp := request.QueryInt64Param(r, "after", 0)
-	if afterTimestamp > 0 {
-		builder.AfterDate(time.Unix(afterTimestamp, 0))
+	if afterPublishedTimestamp := request.QueryInt64Param(r, "after", 0); afterPublishedTimestamp > 0 {
+		builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
 	}
 
-	categoryID := request.QueryInt64Param(r, "category_id", 0)
-	if categoryID > 0 {
+	if beforePublishedTimestamp := request.QueryInt64Param(r, "published_before", 0); beforePublishedTimestamp > 0 {
+		builder.BeforePublishedDate(time.Unix(beforePublishedTimestamp, 0))
+	}
+
+	if afterPublishedTimestamp := request.QueryInt64Param(r, "published_after", 0); afterPublishedTimestamp > 0 {
+		builder.AfterPublishedDate(time.Unix(afterPublishedTimestamp, 0))
+	}
+
+	if beforeChangedTimestamp := request.QueryInt64Param(r, "changed_before", 0); beforeChangedTimestamp > 0 {
+		builder.BeforeChangedDate(time.Unix(beforeChangedTimestamp, 0))
+	}
+
+	if afterChangedTimestamp := request.QueryInt64Param(r, "changed_after", 0); afterChangedTimestamp > 0 {
+		builder.AfterChangedDate(time.Unix(afterChangedTimestamp, 0))
+	}
+
+	if categoryID := request.QueryInt64Param(r, "category_id", 0); categoryID > 0 {
 		builder.WithCategoryID(categoryID)
 	}
 
@@ -315,8 +326,7 @@ func configureFilters(builder *storage.EntryQueryBuilder, r *http.Request) {
 		}
 	}
 
-	searchQuery := request.QueryStringParam(r, "search", "")
-	if searchQuery != "" {
+	if searchQuery := request.QueryStringParam(r, "search", ""); searchQuery != "" {
 		builder.WithSearchQuery(searchQuery)
 	}
 }
