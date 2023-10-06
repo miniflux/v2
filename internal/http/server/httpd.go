@@ -100,10 +100,9 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 
 func tlsConfig() *tls.Config {
 	// See https://blog.cloudflare.com/exposing-go-on-the-internet/
-	// And https://wikia.mozilla.org/Security/Server_Side_TLS
+	// And https://wiki.mozilla.org/Security/Server_Side_TLS
 	return &tls.Config{
-		MinVersion:               tls.VersionTLS12,
-		PreferServerCipherSuites: true,
+		MinVersion: tls.VersionTLS12,
 		CurvePreferences: []tls.CurveID{
 			tls.CurveP256,
 			tls.X25519,
