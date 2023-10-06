@@ -1329,10 +1329,10 @@ func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.
 	builder.WithOffset(rm.Offset)
 	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
-		builder.AfterDate(time.Unix(rm.StartTime, 0))
+		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 	if rm.StopTime > 0 {
-		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	rawEntryIDs, err := builder.GetEntryIDs()
@@ -1367,10 +1367,10 @@ func (h *handler) handleStarredStreamHandler(w http.ResponseWriter, r *http.Requ
 	builder.WithOffset(rm.Offset)
 	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
-		builder.AfterDate(time.Unix(rm.StartTime, 0))
+		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 	if rm.StopTime > 0 {
-		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	rawEntryIDs, err := builder.GetEntryIDs()
@@ -1405,10 +1405,10 @@ func (h *handler) handleReadStreamHandler(w http.ResponseWriter, r *http.Request
 	builder.WithOffset(rm.Offset)
 	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
-		builder.AfterDate(time.Unix(rm.StartTime, 0))
+		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 	if rm.StopTime > 0 {
-		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	rawEntryIDs, err := builder.GetEntryIDs()
@@ -1449,10 +1449,10 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 	builder.WithOffset(rm.Offset)
 	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
 	if rm.StartTime > 0 {
-		builder.AfterDate(time.Unix(rm.StartTime, 0))
+		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
 	if rm.StopTime > 0 {
-		builder.BeforeDate(time.Unix(rm.StopTime, 0))
+		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
 	}
 
 	rawEntryIDs, err := builder.GetEntryIDs()

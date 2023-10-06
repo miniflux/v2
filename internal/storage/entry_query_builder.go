@@ -51,15 +51,29 @@ func (e *EntryQueryBuilder) WithStarred(starred bool) *EntryQueryBuilder {
 	return e
 }
 
-// BeforeDate adds a condition < published_at
-func (e *EntryQueryBuilder) BeforeDate(date time.Time) *EntryQueryBuilder {
+// BeforeChangedDate adds a condition < changed_at
+func (e *EntryQueryBuilder) BeforeChangedDate(date time.Time) *EntryQueryBuilder {
+	e.conditions = append(e.conditions, fmt.Sprintf("e.changed_at < $%d", len(e.args)+1))
+	e.args = append(e.args, date)
+	return e
+}
+
+// AfterChangedDate adds a condition > changed_at
+func (e *EntryQueryBuilder) AfterChangedDate(date time.Time) *EntryQueryBuilder {
+	e.conditions = append(e.conditions, fmt.Sprintf("e.changed_at > $%d", len(e.args)+1))
+	e.args = append(e.args, date)
+	return e
+}
+
+// BeforePublishedDate adds a condition < published_at
+func (e *EntryQueryBuilder) BeforePublishedDate(date time.Time) *EntryQueryBuilder {
 	e.conditions = append(e.conditions, fmt.Sprintf("e.published_at < $%d", len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
 }
 
-// AfterDate adds a condition > published_at
-func (e *EntryQueryBuilder) AfterDate(date time.Time) *EntryQueryBuilder {
+// AfterPublishedDate adds a condition > published_at
+func (e *EntryQueryBuilder) AfterPublishedDate(date time.Time) *EntryQueryBuilder {
 	e.conditions = append(e.conditions, fmt.Sprintf("e.published_at > $%d", len(e.args)+1))
 	e.args = append(e.args, date)
 	return e
