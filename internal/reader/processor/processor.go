@@ -7,25 +7,22 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"math"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
-	"unicode/utf8"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/browser"
+	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/reader/rewrite"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/reader/scraper"
 	"miniflux.app/v2/internal/storage"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/rylans/getlang"
 )
 
 var (
@@ -174,7 +171,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 
 	if content != "" {
 		entry.Content = content
-		entry.ReadingTime = calculateReadingTime(content, user)
+		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 	}
 
 	rewrite.Rewriter(url, entry, entry.Feed.RewriteRules)
@@ -252,7 +249,7 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 	}
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
-		entry.ReadingTime = calculateReadingTime(entry.Content, user)
+		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 	}
 }
 
@@ -359,19 +356,4 @@ func parseISO8601(from string) (time.Duration, error) {
 	}
 
 	return d, nil
-}
-
-func calculateReadingTime(content string, user *model.User) int {
-	sanitizedContent := sanitizer.StripTags(content)
-	languageInfo := getlang.FromString(sanitizedContent)
-
-	var timeToReadInt int
-	if languageInfo.LanguageCode() == "ko" || languageInfo.LanguageCode() == "zh" || languageInfo.LanguageCode() == "jp" {
-		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / float64(user.CJKReadingSpeed)))
-	} else {
-		nbOfWords := len(strings.Fields(sanitizedContent))
-		timeToReadInt = int(math.Ceil(float64(nbOfWords) / float64(user.DefaultReadingSpeed)))
-	}
-
-	return timeToReadInt
 }
