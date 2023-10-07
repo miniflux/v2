@@ -336,7 +336,10 @@ function handleFetchOriginalContent() {
         response.json().then((data) => {
             if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
                 document.querySelector(".entry-content").innerHTML = data.content;
-                document.querySelector(".entry-reading-time").innerHTML = data.reading_time;
+                let entryReadingtimeElement = document.querySelector(".entry-reading-time");
+                if (entryReadingtimeElement) {
+                    entryReadingtimeElement.innerHTML = data.reading_time;
+                }
             }
         });
     });
