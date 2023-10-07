@@ -1,0 +1,16 @@
+meta {
+  name: Get all users
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/users
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}

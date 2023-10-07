@@ -1,0 +1,26 @@
+meta {
+  name: Delete a user
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{minifluxBaseURL}}/v1/users/{{userID}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "language": "fr_FR"
+  }
+}
+
+vars:pre-request {
+  userID: 2
+}

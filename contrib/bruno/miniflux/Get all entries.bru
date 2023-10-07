@@ -1,0 +1,22 @@
+meta {
+  name: Get all entries
+  type: http
+  seq: 34
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/entries
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "feed_url": "https://miniflux.app/feed.xml"
+  }
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Flush history
+  type: http
+  seq: 40
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/flush-history
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "url": "https://miniflux.app"
+  }
+}

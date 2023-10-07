@@ -1,0 +1,23 @@
+meta {
+  name: Create a new user
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{minifluxBaseURL}}/v1/users
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "username": "foobar",
+    "password": "secret123"
+  }
+}
