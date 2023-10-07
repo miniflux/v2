@@ -397,6 +397,40 @@ func TestUpdateStatus(t *testing.T) {
 	}
 }
 
+func TestUpdateEntry(t *testing.T) {
+	client := createClient(t)
+	createFeed(t, client)
+
+	result, err := client.Entries(&miniflux.Filter{Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	title := "New title"
+	content := "New content"
+
+	_, err = client.UpdateEntry(result.Entries[0].ID, &miniflux.EntryModificationRequest{
+		Title:   &title,
+		Content: &content,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	entry, err := client.Entry(result.Entries[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Title != title {
+		t.Fatal("The entry title should be updated")
+	}
+
+	if entry.Content != content {
+		t.Fatal("The entry content should be updated")
+	}
+}
+
 func TestToggleBookmark(t *testing.T) {
 	client := createClient(t)
 	createFeed(t, client)

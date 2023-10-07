@@ -58,3 +58,19 @@ type EntriesStatusUpdateRequest struct {
 	EntryIDs []int64 `json:"entry_ids"`
 	Status   string  `json:"status"`
 }
+
+// EntryUpdateRequest represents a request to update an entry.
+type EntryUpdateRequest struct {
+	Title   *string `json:"title"`
+	Content *string `json:"content"`
+}
+
+func (e *EntryUpdateRequest) Patch(entry *Entry) {
+	if e.Title != nil && *e.Title != "" {
+		entry.Title = *e.Title
+	}
+
+	if e.Content != nil && *e.Content != "" {
+		entry.Content = *e.Content
+	}
+}
