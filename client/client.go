@@ -484,6 +484,22 @@ func (c *Client) UpdateEntries(entryIDs []int64, status string) error {
 	return err
 }
 
+// UpdateEntry updates an entry.
+func (c *Client) UpdateEntry(entryID int64, entryChanges *EntryModificationRequest) (*Entry, error) {
+	body, err := c.request.Put(fmt.Sprintf("/v1/entries/%d", entryID), entryChanges)
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var entry *Entry
+	if err := json.NewDecoder(body).Decode(&entry); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return entry, nil
+}
+
 // ToggleBookmark toggles entry bookmark value.
 func (c *Client) ToggleBookmark(entryID int64) error {
 	_, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/bookmark", entryID), nil)

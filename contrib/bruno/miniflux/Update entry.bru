@@ -1,0 +1,27 @@
+meta {
+  name: Update entry
+  type: http
+  seq: 41
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/entries/{{entryID}}
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "title": "New title",
+    "content": "Some text"
+  }
+}
+
+vars:pre-request {
+  entryID: 1789
+}

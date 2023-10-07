@@ -18,6 +18,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/proxy"
 	"miniflux.app/v2/internal/reader/processor"
+	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/validator"
@@ -232,6 +233,58 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 	json.Accepted(w, r)
 }
 
+func (h *handler) updateEntry(w http.ResponseWriter, r *http.Request) {
+	var entryUpdateRequest model.EntryUpdateRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&entryUpdateRequest); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	if err := validator.ValidateEntryModification(&entryUpdateRequest); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	loggedUserID := request.UserID(r)
+	entryID := request.RouteInt64Param(r, "entryID")
+
+	entryBuilder := h.store.NewEntryQueryBuilder(loggedUserID)
+	entryBuilder.WithEntryID(entryID)
+	entryBuilder.WithoutStatus(model.EntryStatusRemoved)
+
+	entry, err := entryBuilder.GetEntry()
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if entry == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	user, err := h.store.UserByID(loggedUserID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if user == nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	entryUpdateRequest.Patch(entry)
+	entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+
+	if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	json.Created(w, r, entry)
+}
+
 func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 	loggedUserID := request.UserID(r)
 	entryID := request.RouteInt64Param(r, "entryID")
@@ -251,7 +304,7 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.store.UserByID(entry.UserID)
+	user, err := h.store.UserByID(loggedUserID)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

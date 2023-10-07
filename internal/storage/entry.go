@@ -67,42 +67,25 @@ func (s *Storage) NewEntryQueryBuilder(userID int64) *EntryQueryBuilder {
 	return NewEntryQueryBuilder(s, userID)
 }
 
-// UpdateEntryContent updates entry content.
-func (s *Storage) UpdateEntryContent(entry *model.Entry) error {
-	tx, err := s.db.Begin()
-	if err != nil {
-		return err
-	}
-
+// UpdateEntryTitleAndContent updates entry title and content.
+func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	query := `
 		UPDATE
 			entries
 		SET
-			content=$1, reading_time=$2
+			title=$1,
+			content=$2,
+			reading_time=$3,
+			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($2, ''), 500000)), 'B')
 		WHERE
-			id=$3 AND user_id=$4
+			id=$4 AND user_id=$5
 	`
-	_, err = tx.Exec(query, entry.Content, entry.ReadingTime, entry.ID, entry.UserID)
-	if err != nil {
-		tx.Rollback()
-		return fmt.Errorf(`store: unable to update content of entry #%d: %v`, entry.ID, err)
+
+	if _, err := s.db.Exec(query, entry.Title, entry.Content, entry.ReadingTime, entry.ID, entry.UserID); err != nil {
+		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
 	}
 
-	query = `
-		UPDATE
-			entries
-		SET
-			document_vectors = setweight(to_tsvector(left(coalesce(title, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce(content, ''), 500000)), 'B')
-		WHERE
-			id=$1 AND user_id=$2
-	`
-	_, err = tx.Exec(query, entry.ID, entry.UserID)
-	if err != nil {
-		tx.Rollback()
-		return fmt.Errorf(`store: unable to update content of entry #%d: %v`, entry.ID, err)
-	}
-
-	return tx.Commit()
+	return nil
 }
 
 // createEntry add a new entry.
