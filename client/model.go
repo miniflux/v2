@@ -276,3 +276,14 @@ type EntryResultSet struct {
 	Total   int     `json:"total"`
 	Entries Entries `json:"entries"`
 }
+
+// VersionResponse represents the version and the build information of the Miniflux instance.
+type VersionResponse struct {
+	Version   string `json:"version"`
+	Commit    string `json:"commit"`
+	BuildDate string `json:"build_date"`
+	GoVersion string `json:"go_version"`
+	Compiler  string `json:"compiler"`
+	Arch      string `json:"arch"`
+	OS        string `json:"os"`
+}
