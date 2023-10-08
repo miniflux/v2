@@ -21,3 +21,13 @@ type entriesResponse struct {
 type feedCreationResponse struct {
 	FeedID int64 `json:"feed_id"`
 }
+
+type versionResponse struct {
+	Version   string `json:"version"`
+	Commit    string `json:"commit"`
+	BuildDate string `json:"build_date"`
+	GoVersion string `json:"go_version"`
+	Compiler  string `json:"compiler"`
+	Arch      string `json:"arch"`
+	OS        string `json:"os"`
+}

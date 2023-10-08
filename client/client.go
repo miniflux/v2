@@ -30,6 +30,22 @@ func New(endpoint string, credentials ...string) *Client {
 	return &Client{request: &request{endpoint: endpoint, apiKey: credentials[0]}}
 }
 
+// Version returns the version of the Miniflux instance.
+func (c *Client) Version() (*VersionResponse, error) {
+	body, err := c.request.Get("/v1/version")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var versionResponse *VersionResponse
+	if err := json.NewDecoder(body).Decode(&versionResponse); err != nil {
+		return nil, fmt.Errorf("miniflux: json error (%v)", err)
+	}
+
+	return versionResponse, nil
+}
+
 // Me returns the logged user information.
 func (c *Client) Me() (*User, error) {
 	body, err := c.request.Get("/v1/me")
