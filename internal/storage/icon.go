@@ -114,6 +114,12 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 
 	return nil
 }
+func (s *Storage) RemoveFeedIcon(feedID int64) error {
+	if _, err := s.db.Exec(`DELETE FROM feed_icons WHERE feed_id=$1`, feedID); err != nil {
+		return fmt.Errorf(`store: unable to remove feed icon: %v`, err)
+	}
+	return nil
+}
 
 // Icons returns all icons that belongs to a user.
 func (s *Storage) Icons(userID int64) (model.Icons, error) {

@@ -256,6 +256,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		return localizedError
 	}
 
+	refreshIcon := forceRefresh
+
 	if originalFeed.IgnoreHTTPCache || responseHandler.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		slog.Debug("Feed modified",
 			slog.Int64("user_id", userID),
@@ -321,19 +323,34 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()
 
-		checkFeedIcon(
-			store,
-			requestBuilder,
-			originalFeed.ID,
-			originalFeed.SiteURL,
-			updatedFeed.IconURL,
-		)
+		if updatedFeed.IconURL != originalFeed.IconURL {
+			originalFeed.IconURL = updatedFeed.IconURL
+			refreshIcon = true
+		}
 	} else {
 		slog.Debug("Feed not modified",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
 		)
 	}
+
+	if refreshIcon {
+		if err := store.RemoveFeedIcon(feedID); err != nil {
+			slog.Debug("Unable to remove Feed Icon",
+				slog.Int64("feed_id", feedID),
+			)
+		}
+	}
+
+	checkFeedIcon(
+		store,
+		originalFeed.ID,
+		originalFeed.SiteURL,
+		originalFeed.IconURL,
+		originalFeed.UserAgent,
+		originalFeed.FetchViaProxy,
+		originalFeed.AllowSelfSignedCertificates,
+	)
 
 	originalFeed.ResetErrorCounter()
 
