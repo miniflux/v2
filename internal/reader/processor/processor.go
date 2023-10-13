@@ -94,25 +94,41 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
-		if match {
-			logger.Debug("[Processor] Blocking entry %q from feed %q based on rule %q", entry.Title, feed.FeedURL, feed.BlocklistRules)
+		if matchField(feed.BlocklistRules, entry.URL) {
+			logger.Debug("[Processor] Block entry %q from feed %q based on rule %q applied on %s", entry.Title, feed.FeedURL, feed.BlocklistRules, "URL")
+			return true
+		}
+		if matchField(feed.BlocklistRules, entry.Title) {
+			logger.Debug("[Processor] Block entry %q from feed %q based on rule %q applied on %s", entry.Title, feed.FeedURL, feed.BlocklistRules, "Title")
 			return true
 		}
 	}
+
 	return false
 }
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
-		match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
-		if match {
-			logger.Debug("[Processor] Allow entry %q from feed %q based on rule %q", entry.Title, feed.FeedURL, feed.KeeplistRules)
+		if matchField(feed.KeeplistRules, entry.URL) {
+			logger.Debug("[Processor] Allow entry %q from feed %q based on rule %q applied on %s", entry.Title, feed.FeedURL, feed.KeeplistRules, "URL")
+			return true
+		}
+		if matchField(feed.KeeplistRules, entry.Title) {
+			logger.Debug("[Processor] Allow entry %q from feed %q based on rule %q applied on %s", entry.Title, feed.FeedURL, feed.KeeplistRules, "Title")
 			return true
 		}
 		return false
 	}
 	return true
+}
+
+func matchField(pattern, value string) bool {
+	match, err := regexp.MatchString(pattern, value)
+	if err != nil {
+		logger.Error("[Processor] Unable to match pattern %q with value %q: %v", pattern, value, err)
+	}
+
+	return match
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
