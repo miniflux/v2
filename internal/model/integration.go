@@ -47,6 +47,7 @@ type Integration struct {
 	TelegramBotTopicID               *int64
 	TelegramBotDisableWebPagePreview bool
 	TelegramBotDisableNotification   bool
+	TelegramBotDisableButtons        bool
 	LinkdingEnabled                  bool
 	LinkdingURL                      string
 	LinkdingAPIKey                   string

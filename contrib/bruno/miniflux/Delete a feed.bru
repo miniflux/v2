@@ -1,0 +1,26 @@
+meta {
+  name: Delete a feed
+  type: http
+  seq: 26
+}
+
+delete {
+  url: {{minifluxBaseURL}}/v1/feeds/{{feedID}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "user_agent": "My user agent"
+  }
+}
+
+vars:pre-request {
+  feedID: 18
+}

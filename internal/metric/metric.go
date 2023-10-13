@@ -4,9 +4,9 @@
 package metric // import "miniflux.app/v2/internal/metric"
 
 import (
+	"log/slog"
 	"time"
 
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -164,7 +164,7 @@ func NewCollector(store *storage.Storage, refreshInterval int) *Collector {
 // GatherStorageMetrics polls the database to fetch metrics.
 func (c *Collector) GatherStorageMetrics() {
 	for range time.Tick(time.Duration(c.refreshInterval) * time.Second) {
-		logger.Debug("[Metric] Collecting database metrics")
+		slog.Debug("Collecting metrics from the database")
 
 		usersGauge.Set(float64(c.store.CountUsers()))
 		brokenFeedsGauge.Set(float64(c.store.CountAllFeedsWithErrors()))

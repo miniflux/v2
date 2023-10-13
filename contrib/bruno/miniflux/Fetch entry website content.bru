@@ -1,0 +1,26 @@
+meta {
+  name: Fetch entry website content
+  type: http
+  seq: 39
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/entries/{{entryID}}/fetch-content
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "feed_url": "https://miniflux.app/feed.xml"
+  }
+}
+
+vars:pre-request {
+  entryID: 1698
+}

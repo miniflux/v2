@@ -4,10 +4,10 @@
 package worker // import "miniflux.app/v2/internal/worker"
 
 import (
+	"log/slog"
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/model"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
@@ -22,11 +22,17 @@ type Worker struct {
 
 // Run wait for a job and refresh the given feed.
 func (w *Worker) Run(c chan model.Job) {
-	logger.Debug("[Worker] #%d started", w.id)
+	slog.Debug("Worker started",
+		slog.Int("worker_id", w.id),
+	)
 
 	for {
 		job := <-c
-		logger.Debug("[Worker #%d] Received feed #%d for user #%d", w.id, job.FeedID, job.UserID)
+		slog.Debug("Job received by worker",
+			slog.Int("worker_id", w.id),
+			slog.Int64("user_id", job.UserID),
+			slog.Int64("feed_id", job.FeedID),
+		)
 
 		startTime := time.Now()
 		refreshErr := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID, false)
@@ -40,7 +46,11 @@ func (w *Worker) Run(c chan model.Job) {
 		}
 
 		if refreshErr != nil {
-			logger.Error("[Worker] Refreshing the feed #%d returned this error: %v", job.FeedID, refreshErr)
+			slog.Warn("Unable to refresh a feed",
+				slog.Int64("user_id", job.UserID),
+				slog.Int64("feed_id", job.FeedID),
+				slog.Any("error", refreshErr),
+			)
 		}
 	}
 }

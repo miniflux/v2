@@ -1,0 +1,22 @@
+meta {
+  name: Discover feeds
+  type: http
+  seq: 18
+}
+
+post {
+  url: {{minifluxBaseURL}}/v1/discover
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "url": "https://miniflux.app"
+  }
+}

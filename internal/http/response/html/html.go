@@ -4,10 +4,11 @@
 package html // import "miniflux.app/v2/internal/http/response/html"
 
 import (
+	"log/slog"
 	"net/http"
 
+	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
-	"miniflux.app/v2/internal/logger"
 )
 
 // OK creates a new HTML response with a 200 status code.
@@ -21,7 +22,18 @@ func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
 
 // ServerError sends an internal error to the client.
 func ServerError(w http.ResponseWriter, r *http.Request, err error) {
-	logger.Error("[HTTP:Internal Server Error] %s => %v", r.URL, err)
+	slog.Error(http.StatusText(http.StatusInternalServerError),
+		slog.Any("error", err),
+		slog.String("client_ip", request.ClientIP(r)),
+		slog.Group("request",
+			slog.String("method", r.Method),
+			slog.String("uri", r.RequestURI),
+			slog.String("user_agent", r.UserAgent()),
+		),
+		slog.Group("response",
+			slog.Int("status_code", http.StatusInternalServerError),
+		),
+	)
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
@@ -34,7 +46,18 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 
 // BadRequest sends a bad request error to the client.
 func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
-	logger.Error("[HTTP:Bad Request] %s => %v", r.URL, err)
+	slog.Warn(http.StatusText(http.StatusBadRequest),
+		slog.Any("error", err),
+		slog.String("client_ip", request.ClientIP(r)),
+		slog.Group("request",
+			slog.String("method", r.Method),
+			slog.String("uri", r.RequestURI),
+			slog.String("user_agent", r.UserAgent()),
+		),
+		slog.Group("response",
+			slog.Int("status_code", http.StatusBadRequest),
+		),
+	)
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusBadRequest)
@@ -47,7 +70,17 @@ func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
 
 // Forbidden sends a forbidden error to the client.
 func Forbidden(w http.ResponseWriter, r *http.Request) {
-	logger.Error("[HTTP:Forbidden] %s", r.URL)
+	slog.Warn(http.StatusText(http.StatusForbidden),
+		slog.String("client_ip", request.ClientIP(r)),
+		slog.Group("request",
+			slog.String("method", r.Method),
+			slog.String("uri", r.RequestURI),
+			slog.String("user_agent", r.UserAgent()),
+		),
+		slog.Group("response",
+			slog.Int("status_code", http.StatusForbidden),
+		),
+	)
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusForbidden)
@@ -59,7 +92,17 @@ func Forbidden(w http.ResponseWriter, r *http.Request) {
 
 // NotFound sends a page not found error to the client.
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	logger.Error("[HTTP:Not Found] %s", r.URL)
+	slog.Warn(http.StatusText(http.StatusNotFound),
+		slog.String("client_ip", request.ClientIP(r)),
+		slog.Group("request",
+			slog.String("method", r.Method),
+			slog.String("uri", r.RequestURI),
+			slog.String("user_agent", r.UserAgent()),
+		),
+		slog.Group("response",
+			slog.Int("status_code", http.StatusNotFound),
+		),
+	)
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusNotFound)
@@ -76,7 +119,17 @@ func Redirect(w http.ResponseWriter, r *http.Request, uri string) {
 
 // RequestedRangeNotSatisfiable sends a range not satisfiable error to the client.
 func RequestedRangeNotSatisfiable(w http.ResponseWriter, r *http.Request, contentRange string) {
-	logger.Error("[HTTP:Range Not Satisfiable] %s", r.URL)
+	slog.Warn(http.StatusText(http.StatusRequestedRangeNotSatisfiable),
+		slog.String("client_ip", request.ClientIP(r)),
+		slog.Group("request",
+			slog.String("method", r.Method),
+			slog.String("uri", r.RequestURI),
+			slog.String("user_agent", r.UserAgent()),
+		),
+		slog.Group("response",
+			slog.Int("status_code", http.StatusRequestedRangeNotSatisfiable),
+		),
+	)
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusRequestedRangeNotSatisfiable)

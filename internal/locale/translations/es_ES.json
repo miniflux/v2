@@ -382,6 +382,7 @@
     "form.integration.telegram_topic_id": "Topic ID",
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
+    "form.integration.telegram_bot_disable_buttons": "Disable buttons",
     "form.integration.linkding_activate": "Enviar artículos a Linkding",
     "form.integration.linkding_endpoint": "Acceso API de Linkding",
     "form.integration.linkding_api_key": "Clave de API de Linkding",

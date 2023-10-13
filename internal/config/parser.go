@@ -10,7 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	url_parser "net/url"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -72,10 +72,25 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		value := strings.TrimSpace(fields[1])
 
 		switch key {
+		case "LOG_FILE":
+			p.opts.logFile = parseString(value, defaultLogFile)
 		case "LOG_DATE_TIME":
 			p.opts.logDateTime = parseBool(value, defaultLogDateTime)
+		case "LOG_LEVEL":
+			parsedValue := parseString(value, defaultLogLevel)
+			if parsedValue == "debug" || parsedValue == "info" || parsedValue == "warning" || parsedValue == "error" {
+				p.opts.logLevel = parsedValue
+			}
+		case "LOG_FORMAT":
+			parsedValue := parseString(value, defaultLogFormat)
+			if parsedValue == "json" || parsedValue == "text" {
+				p.opts.logFormat = parsedValue
+			}
 		case "DEBUG":
-			p.opts.debug = parseBool(value, defaultDebug)
+			parsedValue := parseBool(value, defaultDebug)
+			if parsedValue {
+				p.opts.logLevel = "debug"
+			}
 		case "SERVER_TIMING_HEADER":
 			p.opts.serverTimingHeader = parseBool(value, defaultTiming)
 		case "BASE_URL":
@@ -247,19 +262,19 @@ func parseBaseURL(value string) (string, string, string, error) {
 		value = value[:len(value)-1]
 	}
 
-	url, err := url_parser.Parse(value)
+	parsedURL, err := url.Parse(value)
 	if err != nil {
 		return "", "", "", fmt.Errorf("config: invalid BASE_URL: %w", err)
 	}
 
-	scheme := strings.ToLower(url.Scheme)
+	scheme := strings.ToLower(parsedURL.Scheme)
 	if scheme != "https" && scheme != "http" {
 		return "", "", "", errors.New("config: invalid BASE_URL: scheme must be http or https")
 	}
 
-	basePath := url.Path
-	url.Path = ""
-	return value, url.String(), basePath, nil
+	basePath := parsedURL.Path
+	parsedURL.Path = ""
+	return value, parsedURL.String(), basePath, nil
 }
 
 func parseBool(value string, fallback bool) bool {

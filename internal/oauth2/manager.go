@@ -6,8 +6,7 @@ package oauth2 // import "miniflux.app/v2/internal/oauth2"
 import (
 	"context"
 	"errors"
-
-	"miniflux.app/v2/internal/logger"
+	"log/slog"
 )
 
 type Manager struct {
@@ -32,7 +31,9 @@ func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDi
 
 	if oidcDiscoveryEndpoint != "" {
 		if genericOidcProvider, err := NewOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
-			logger.Error("[OAuth2] failed to initialize OIDC provider: %v", err)
+			slog.Error("Failed to initialize OIDC provider",
+				slog.Any("error", err),
+			)
 		} else {
 			m.AddProvider("oidc", genericOidcProvider)
 		}

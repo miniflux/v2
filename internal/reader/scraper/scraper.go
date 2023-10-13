@@ -7,11 +7,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/reader/readability"
 	"miniflux.app/v2/internal/urllib"
 
@@ -55,10 +55,15 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 
 	var content string
 	if sameSite && rules != "" {
-		logger.Debug(`[Scraper] Using rules %q for %q`, rules, websiteURL)
+		slog.Debug("Extracting content with custom rules",
+			"url", websiteURL,
+			"rules", rules,
+		)
 		content, err = scrapContent(response.Body, rules)
 	} else {
-		logger.Debug(`[Scraper] Using readability for %q`, websiteURL)
+		slog.Debug("Extracting content with readability",
+			"url", websiteURL,
+		)
 		content, err = readability.ExtractContent(response.Body)
 	}
 

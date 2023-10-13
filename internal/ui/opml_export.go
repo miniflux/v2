@@ -13,11 +13,11 @@ import (
 )
 
 func (h *handler) exportFeeds(w http.ResponseWriter, r *http.Request) {
-	opml, err := opml.NewHandler(h.store).Export(request.UserID(r))
+	opmlExport, err := opml.NewHandler(h.store).Export(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
 
-	xml.Attachment(w, r, "feeds.opml", opml)
+	xml.Attachment(w, r, "feeds.opml", opmlExport)
 }

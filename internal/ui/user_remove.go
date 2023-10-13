@@ -37,7 +37,7 @@ func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if selectedUser.ID == loggedUser.ID {
-		html.BadRequest(w, r, errors.New("You cannot remove yourself"))
+		html.BadRequest(w, r, errors.New("you cannot remove yourself"))
 		return
 	}
 

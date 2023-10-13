@@ -5,11 +5,11 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -40,25 +40,37 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 		token := r.Header.Get("X-Auth-Token")
 
 		if token == "" {
-			logger.Debug("[API][TokenAuth] [ClientIP=%s] No API Key provided, go to the next middleware", clientIP)
+			slog.Debug("[API] Skipped API token authentication because no API Key has been provided",
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+			)
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		user, err := m.store.UserByAPIKey(token)
 		if err != nil {
-			logger.Error("[API][TokenAuth] %v", err)
 			json.ServerError(w, r, err)
 			return
 		}
 
 		if user == nil {
-			logger.Error("[API][TokenAuth] [ClientIP=%s] No user found with the given API key", clientIP)
+			slog.Warn("[API] No user found with the provided API key",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+			)
 			json.Unauthorized(w, r)
 			return
 		}
 
-		logger.Info("[API][TokenAuth] [ClientIP=%s] User authenticated: %s", clientIP, user.Username)
+		slog.Info("[API] User authenticated successfully with the API Token Authentication",
+			slog.Bool("authentication_successful", true),
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", r.UserAgent()),
+			slog.String("username", user.Username),
+		)
+
 		m.store.SetLastLogin(user.ID)
 		m.store.SetAPIKeyUsedTimestamp(user.ID, token)
 
@@ -84,37 +96,60 @@ func (m *middleware) basicAuth(next http.Handler) http.Handler {
 		clientIP := request.ClientIP(r)
 		username, password, authOK := r.BasicAuth()
 		if !authOK {
-			logger.Debug("[API][BasicAuth] [ClientIP=%s] No authentication headers sent", clientIP)
+			slog.Warn("[API] No Basic HTTP Authentication header sent with the request",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+			)
 			json.Unauthorized(w, r)
 			return
 		}
 
 		if username == "" || password == "" {
-			logger.Error("[API][BasicAuth] [ClientIP=%s] Empty username or password", clientIP)
+			slog.Warn("[API] Empty username or password provided during Basic HTTP Authentication",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+			)
 			json.Unauthorized(w, r)
 			return
 		}
 
 		if err := m.store.CheckPassword(username, password); err != nil {
-			logger.Error("[API][BasicAuth] [ClientIP=%s] Invalid username or password: %s", clientIP, username)
+			slog.Warn("[API] Invalid username or password provided during Basic HTTP Authentication",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+				slog.String("username", username),
+			)
 			json.Unauthorized(w, r)
 			return
 		}
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
-			logger.Error("[API][BasicAuth] %v", err)
 			json.ServerError(w, r, err)
 			return
 		}
 
 		if user == nil {
-			logger.Error("[API][BasicAuth] [ClientIP=%s] User not found: %s", clientIP, username)
+			slog.Warn("[API] User not found while using Basic HTTP Authentication",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+				slog.String("username", username),
+			)
 			json.Unauthorized(w, r)
 			return
 		}
 
-		logger.Info("[API][BasicAuth] [ClientIP=%s] User authenticated: %s", clientIP, username)
+		slog.Info("[API] User authenticated successfully with the Basic HTTP Authentication",
+			slog.Bool("authentication_successful", true),
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", r.UserAgent()),
+			slog.String("username", username),
+		)
+
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()

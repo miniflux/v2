@@ -5,6 +5,7 @@ package cli // import "miniflux.app/v2/internal/cli"
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,7 +14,6 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	httpd "miniflux.app/v2/internal/http/server"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/systemd"
@@ -21,7 +21,7 @@ import (
 )
 
 func startDaemon(store *storage.Storage) {
-	logger.Info("Starting daemon...")
+	slog.Debug("Starting daemon...")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -44,26 +44,25 @@ func startDaemon(store *storage.Storage) {
 	}
 
 	if systemd.HasNotifySocket() {
-		logger.Info("Sending readiness notification to Systemd")
+		slog.Debug("Sending readiness notification to Systemd")
 
 		if err := systemd.SdNotify(systemd.SdNotifyReady); err != nil {
-			logger.Error("Unable to send readiness notification to systemd: %v", err)
+			slog.Error("Unable to send readiness notification to systemd", slog.Any("error", err))
 		}
 
 		if config.Opts.HasWatchdog() && systemd.HasSystemdWatchdog() {
-			logger.Info("Activating Systemd watchdog")
+			slog.Debug("Activating Systemd watchdog")
 
 			go func() {
 				interval, err := systemd.WatchdogInterval()
 				if err != nil {
-					logger.Error("Unable to parse watchdog interval from systemd: %v", err)
+					slog.Error("Unable to get watchdog interval from systemd", slog.Any("error", err))
 					return
 				}
 
 				for {
-					err := store.Ping()
-					if err != nil {
-						logger.Error(`Systemd Watchdog: %v`, err)
+					if err := store.Ping(); err != nil {
+						slog.Error("Unable to ping database", slog.Any("error", err))
 					} else {
 						systemd.SdNotify(systemd.SdNotifyWatchdog)
 					}
@@ -75,7 +74,7 @@ func startDaemon(store *storage.Storage) {
 	}
 
 	<-stop
-	logger.Info("Shutting down the process...")
+	slog.Debug("Shutting down the process")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -83,5 +82,5 @@ func startDaemon(store *storage.Storage) {
 		httpServer.Shutdown(ctx)
 	}
 
-	logger.Info("Process gracefully stopped")
+	slog.Debug("Process gracefully stopped")
 }

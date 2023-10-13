@@ -9,12 +9,9 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, topicID *int64, disableWebPagePreview, disableNotification bool) error {
-	textTemplate := `<b><a href=%q>%s</a></b> - <a href=%q>%s</a>`
+func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, topicID *int64, disableWebPagePreview, disableNotification bool, disableButtons bool) error {
 	formattedText := fmt.Sprintf(
-		textTemplate,
-		feed.SiteURL,
-		feed.Title,
+		`<a href=%q>%s</a>`,
 		entry.URL,
 		entry.Title,
 	)
@@ -31,18 +28,23 @@ func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, to
 		message.MessageThreadID = *topicID
 	}
 
-	var markupRow []*InlineKeyboardButton
+	if !disableButtons {
+		var markupRow []*InlineKeyboardButton
 
-	minifluxURLButton := InlineKeyboardButton{Text: "Go to article", URL: entry.URL}
-	markupRow = append(markupRow, &minifluxURLButton)
+		websiteURLButton := InlineKeyboardButton{Text: "Go to website", URL: feed.SiteURL}
+		markupRow = append(markupRow, &websiteURLButton)
 
-	if entry.CommentsURL != "" {
-		commentButton := InlineKeyboardButton{Text: "Comments", URL: entry.CommentsURL}
-		markupRow = append(markupRow, &commentButton)
+		articleURLButton := InlineKeyboardButton{Text: "Go to article", URL: entry.URL}
+		markupRow = append(markupRow, &articleURLButton)
+
+		if entry.CommentsURL != "" {
+			commentURLButton := InlineKeyboardButton{Text: "Comments", URL: entry.CommentsURL}
+			markupRow = append(markupRow, &commentURLButton)
+		}
+
+		message.ReplyMarkup = &InlineKeyboard{}
+		message.ReplyMarkup.InlineKeyboard = append(message.ReplyMarkup.InlineKeyboard, markupRow)
 	}
-
-	message.ReplyMarkup = &InlineKeyboard{}
-	message.ReplyMarkup.InlineKeyboard = append(message.ReplyMarkup.InlineKeyboard, markupRow)
 
 	client := NewClient(botToken, chatID)
 	_, err := client.SendMessage(message)

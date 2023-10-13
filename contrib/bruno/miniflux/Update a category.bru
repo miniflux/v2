@@ -1,0 +1,26 @@
+meta {
+  name: Update a category
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/categories/{{categoryID}}
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "title": "Test Update"
+  }
+}
+
+vars:pre-request {
+  categoryID: 1
+}

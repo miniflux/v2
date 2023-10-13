@@ -5,11 +5,11 @@ package fever // import "miniflux.app/v2/internal/fever"
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -26,25 +26,45 @@ func (m *middleware) serve(next http.Handler) http.Handler {
 		clientIP := request.ClientIP(r)
 		apiKey := r.FormValue("api_key")
 		if apiKey == "" {
-			logger.Info("[Fever] [ClientIP=%s] No API key provided", clientIP)
+			slog.Warn("[Fever] No API key provided",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+			)
 			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
 		user, err := m.store.UserByFeverToken(apiKey)
 		if err != nil {
-			logger.Error("[Fever] %v", err)
+			slog.Error("[Fever] Unable to fetch user by API key",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+				slog.Any("error", err),
+			)
 			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
 		if user == nil {
-			logger.Info("[Fever] [ClientIP=%s] No user found with this API key", clientIP)
+			slog.Warn("[Fever] No user found with the API key provided",
+				slog.Bool("authentication_failed", true),
+				slog.String("client_ip", clientIP),
+				slog.String("user_agent", r.UserAgent()),
+			)
 			json.OK(w, r, newAuthFailureResponse())
 			return
 		}
 
-		logger.Info("[Fever] [ClientIP=%s] User #%d is authenticated with user agent %q", clientIP, user.ID, r.UserAgent())
+		slog.Info("[Fever] User authenticated successfully",
+			slog.Bool("authentication_successful", true),
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", r.UserAgent()),
+			slog.Int64("user_id", user.ID),
+			slog.String("username", user.Username),
+		)
+
 		m.store.SetLastLogin(user.ID)
 
 		ctx := r.Context()

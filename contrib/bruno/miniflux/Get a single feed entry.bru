@@ -1,0 +1,27 @@
+meta {
+  name: Get a single feed entry
+  type: http
+  seq: 33
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/feeds/{{feedID}}/entries/{{entryID}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "feed_url": "https://miniflux.app/feed.xml"
+  }
+}
+
+vars:pre-request {
+  feedID: 19
+  entryID: 1698
+}

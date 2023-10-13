@@ -5,8 +5,11 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	"net/http"
+	"runtime"
 
+	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/storage"
+	"miniflux.app/v2/internal/version"
 	"miniflux.app/v2/internal/worker"
 
 	"github.com/gorilla/mux"
@@ -54,7 +57,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/feeds/{feedID}", handler.getFeed).Methods(http.MethodGet)
 	sr.HandleFunc("/feeds/{feedID}", handler.updateFeed).Methods(http.MethodPut)
 	sr.HandleFunc("/feeds/{feedID}", handler.removeFeed).Methods(http.MethodDelete)
-	sr.HandleFunc("/feeds/{feedID}/icon", handler.feedIcon).Methods(http.MethodGet)
+	sr.HandleFunc("/feeds/{feedID}/icon", handler.getIconByFeedID).Methods(http.MethodGet)
 	sr.HandleFunc("/feeds/{feedID}/mark-all-as-read", handler.markFeedAsRead).Methods(http.MethodPut)
 	sr.HandleFunc("/export", handler.exportFeeds).Methods(http.MethodGet)
 	sr.HandleFunc("/import", handler.importFeeds).Methods(http.MethodPost)
@@ -63,7 +66,23 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/entries", handler.getEntries).Methods(http.MethodGet)
 	sr.HandleFunc("/entries", handler.setEntryStatus).Methods(http.MethodPut)
 	sr.HandleFunc("/entries/{entryID}", handler.getEntry).Methods(http.MethodGet)
+	sr.HandleFunc("/entries/{entryID}", handler.updateEntry).Methods(http.MethodPut)
 	sr.HandleFunc("/entries/{entryID}/bookmark", handler.toggleBookmark).Methods(http.MethodPut)
 	sr.HandleFunc("/entries/{entryID}/save", handler.saveEntry).Methods(http.MethodPost)
 	sr.HandleFunc("/entries/{entryID}/fetch-content", handler.fetchContent).Methods(http.MethodGet)
+	sr.HandleFunc("/flush-history", handler.flushHistory).Methods(http.MethodPut, http.MethodDelete)
+	sr.HandleFunc("/icons/{iconID}", handler.getIconByIconID).Methods(http.MethodGet)
+	sr.HandleFunc("/version", handler.versionHandler).Methods(http.MethodGet)
+}
+
+func (h *handler) versionHandler(w http.ResponseWriter, r *http.Request) {
+	json.OK(w, r, &versionResponse{
+		Version:   version.Version,
+		Commit:    version.Commit,
+		BuildDate: version.BuildDate,
+		GoVersion: runtime.Version(),
+		Compiler:  runtime.Compiler,
+		Arch:      runtime.GOARCH,
+		OS:        runtime.GOOS,
+	})
 }

@@ -30,6 +30,22 @@ func New(endpoint string, credentials ...string) *Client {
 	return &Client{request: &request{endpoint: endpoint, apiKey: credentials[0]}}
 }
 
+// Version returns the version of the Miniflux instance.
+func (c *Client) Version() (*VersionResponse, error) {
+	body, err := c.request.Get("/v1/version")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var versionResponse *VersionResponse
+	if err := json.NewDecoder(body).Decode(&versionResponse); err != nil {
+		return nil, fmt.Errorf("miniflux: json error (%v)", err)
+	}
+
+	return versionResponse, nil
+}
+
 // Me returns the logged user information.
 func (c *Client) Me() (*User, error) {
 	body, err := c.request.Get("/v1/me")
@@ -484,6 +500,22 @@ func (c *Client) UpdateEntries(entryIDs []int64, status string) error {
 	return err
 }
 
+// UpdateEntry updates an entry.
+func (c *Client) UpdateEntry(entryID int64, entryChanges *EntryModificationRequest) (*Entry, error) {
+	body, err := c.request.Put(fmt.Sprintf("/v1/entries/%d", entryID), entryChanges)
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var entry *Entry
+	if err := json.NewDecoder(body).Decode(&entry); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return entry, nil
+}
+
 // ToggleBookmark toggles entry bookmark value.
 func (c *Client) ToggleBookmark(entryID int64) error {
 	_, err := c.request.Put(fmt.Sprintf("/v1/entries/%d/bookmark", entryID), nil)
@@ -496,7 +528,7 @@ func (c *Client) SaveEntry(entryID int64) error {
 	return err
 }
 
-// FetchCounters
+// FetchCounters fetches feed counters.
 func (c *Client) FetchCounters() (*FeedCounters, error) {
 	body, err := c.request.Get("/v1/feeds/counters")
 	if err != nil {
@@ -510,6 +542,28 @@ func (c *Client) FetchCounters() (*FeedCounters, error) {
 	}
 
 	return &result, nil
+}
+
+// FlushHistory changes all entries with the status "read" to "removed".
+func (c *Client) FlushHistory() error {
+	_, err := c.request.Put("/v1/flush-history", nil)
+	return err
+}
+
+// Icon fetches a feed icon.
+func (c *Client) Icon(iconID int64) (*FeedIcon, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/icons/%d", iconID))
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var feedIcon *FeedIcon
+	if err := json.NewDecoder(body).Decode(&feedIcon); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return feedIcon, nil
 }
 
 func buildFilterQueryString(path string, filter *Filter) string {
@@ -540,12 +594,28 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("after", strconv.FormatInt(filter.After, 10))
 		}
 
-		if filter.AfterEntryID > 0 {
-			values.Set("after_entry_id", strconv.FormatInt(filter.AfterEntryID, 10))
-		}
-
 		if filter.Before > 0 {
 			values.Set("before", strconv.FormatInt(filter.Before, 10))
+		}
+
+		if filter.PublishedAfter > 0 {
+			values.Set("published_after", strconv.FormatInt(filter.PublishedAfter, 10))
+		}
+
+		if filter.PublishedBefore > 0 {
+			values.Set("published_before", strconv.FormatInt(filter.PublishedBefore, 10))
+		}
+
+		if filter.ChangedAfter > 0 {
+			values.Set("changed_after", strconv.FormatInt(filter.ChangedAfter, 10))
+		}
+
+		if filter.ChangedBefore > 0 {
+			values.Set("changed_before", strconv.FormatInt(filter.ChangedBefore, 10))
+		}
+
+		if filter.AfterEntryID > 0 {
+			values.Set("after_entry_id", strconv.FormatInt(filter.AfterEntryID, 10))
 		}
 
 		if filter.BeforeEntryID > 0 {

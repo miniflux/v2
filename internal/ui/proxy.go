@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -16,7 +17,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/response/html"
-	"miniflux.app/v2/internal/logger"
 )
 
 func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
@@ -29,19 +29,19 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 	encodedDigest := request.RouteStringParam(r, "encodedDigest")
 	encodedURL := request.RouteStringParam(r, "encodedURL")
 	if encodedURL == "" {
-		html.BadRequest(w, r, errors.New("No URL provided"))
+		html.BadRequest(w, r, errors.New("no URL provided"))
 		return
 	}
 
 	decodedDigest, err := base64.URLEncoding.DecodeString(encodedDigest)
 	if err != nil {
-		html.BadRequest(w, r, errors.New("Unable to decode this Digest"))
+		html.BadRequest(w, r, errors.New("unable to decode this digest"))
 		return
 	}
 
 	decodedURL, err := base64.URLEncoding.DecodeString(encodedURL)
 	if err != nil {
-		html.BadRequest(w, r, errors.New("Unable to decode this URL"))
+		html.BadRequest(w, r, errors.New("unable to decode this URL"))
 		return
 	}
 
@@ -55,7 +55,9 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mediaURL := string(decodedURL)
-	logger.Debug(`[Proxy] Fetching %q`, mediaURL)
+	slog.Debug("MediaProxy: Fetching remote resource",
+		slog.String("media_url", mediaURL),
+	)
 
 	req, err := http.NewRequest("GET", mediaURL, nil)
 	if err != nil {
@@ -82,19 +84,28 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := clt.Do(req)
 	if err != nil {
-		logger.Error(`[Proxy] Unable to initialize HTTP client: %v`, err)
+		slog.Error("MediaProxy: Unable to initialize HTTP client",
+			slog.String("media_url", mediaURL),
+			slog.Any("error", err),
+		)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusRequestedRangeNotSatisfiable {
-		logger.Error(`[Proxy] Status Code is %d for URL %q`, resp.StatusCode, mediaURL)
+		slog.Warn("MediaProxy: "+http.StatusText(http.StatusRequestedRangeNotSatisfiable),
+			slog.String("media_url", mediaURL),
+			slog.Int("status_code", resp.StatusCode),
+		)
 		html.RequestedRangeNotSatisfiable(w, r, resp.Header.Get("Content-Range"))
 		return
 	}
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
-		logger.Error(`[Proxy] Status Code is %d for URL %q`, resp.StatusCode, mediaURL)
+		slog.Warn("MediaProxy: Unexpected response status code",
+			slog.String("media_url", mediaURL),
+			slog.Int("status_code", resp.StatusCode),
+		)
 		html.NotFound(w, r)
 		return
 	}

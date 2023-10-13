@@ -10,7 +10,6 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -74,9 +73,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	err = h.store.UpdateUser(settingsForm.Merge(loggedUser))
 	if err != nil {
-		logger.Error("[UI:UpdateSettings] %v", err)
-		view.Set("errorMessage", "error.unable_to_update_user")
-		html.OK(w, r, view.Render("settings"))
+		html.ServerError(w, r, err)
 		return
 	}
 

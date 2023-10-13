@@ -5,11 +5,12 @@ package httpd // import "miniflux.app/v2/internal/http/server"
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
+	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
-	"miniflux.app/v2/internal/logger"
 )
 
 func middleware(next http.Handler) http.Handler {
@@ -22,12 +23,18 @@ func middleware(next http.Handler) http.Handler {
 			config.Opts.HTTPS = true
 		}
 
-		protocol := "HTTP"
-		if config.Opts.HTTPS {
-			protocol = "HTTPS"
-		}
-
-		logger.Debug("[%s] %s %s %s", protocol, clientIP, r.Method, r.RequestURI)
+		t1 := time.Now()
+		defer func() {
+			slog.Debug("Incoming request",
+				slog.String("client_ip", clientIP),
+				slog.Group("request",
+					slog.String("method", r.Method),
+					slog.String("uri", r.RequestURI),
+					slog.String("protocol", r.Proto),
+					slog.Duration("execution_time", time.Since(t1)),
+				),
+			)
+		}()
 
 		if config.Opts.HTTPS && config.Opts.HasHSTS() {
 			w.Header().Set("Strict-Transport-Security", "max-age=31536000")

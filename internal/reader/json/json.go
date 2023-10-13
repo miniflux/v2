@@ -4,11 +4,11 @@
 package json // import "miniflux.app/v2/internal/reader/json"
 
 import (
+	"log/slog"
 	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/sanitizer"
@@ -110,7 +110,11 @@ func (j *jsonItem) GetDate() time.Time {
 		if value != "" {
 			d, err := date.Parse(value)
 			if err != nil {
-				logger.Error("json: %v", err)
+				slog.Warn("Unable to parse date from JSON feed",
+					slog.String("date", value),
+					slog.String("url", j.URL),
+					slog.Any("error", err),
+				)
 				return time.Now()
 			}
 
