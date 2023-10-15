@@ -31,7 +31,7 @@ func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUse
 func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
 		SELECT
-			users.id, users.is_admin, users.timezone
+			users.id, users.username, users.is_admin, users.timezone
 		FROM
 			users
 		LEFT JOIN
@@ -41,7 +41,7 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	`
 
 	var user model.User
-	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.IsAdmin, &user.Timezone)
+	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Timezone)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, nil
