@@ -6,16 +6,13 @@ package oauth2 // import "miniflux.app/v2/internal/oauth2"
 import (
 	"context"
 	"errors"
-
-	"miniflux.app/v2/internal/logger"
+	"log/slog"
 )
 
-// Manager handles OAuth2 providers.
 type Manager struct {
 	providers map[string]Provider
 }
 
-// FindProvider returns the given provider.
 func (m *Manager) FindProvider(name string) (Provider, error) {
 	if provider, found := m.providers[name]; found {
 		return provider, nil
@@ -24,19 +21,19 @@ func (m *Manager) FindProvider(name string) (Provider, error) {
 	return nil, errors.New("oauth2 provider not found")
 }
 
-// AddProvider add a new OAuth2 provider.
 func (m *Manager) AddProvider(name string, provider Provider) {
 	m.providers[name] = provider
 }
 
-// NewManager returns a new Manager.
 func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint string) *Manager {
 	m := &Manager{providers: make(map[string]Provider)}
-	m.AddProvider("google", newGoogleProvider(clientID, clientSecret, redirectURL))
+	m.AddProvider("google", NewGoogleProvider(clientID, clientSecret, redirectURL))
 
 	if oidcDiscoveryEndpoint != "" {
-		if genericOidcProvider, err := newOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
-			logger.Error("[OAuth2] failed to initialize OIDC provider: %v", err)
+		if genericOidcProvider, err := NewOidcProvider(ctx, clientID, clientSecret, redirectURL, oidcDiscoveryEndpoint); err != nil {
+			slog.Error("Failed to initialize OIDC provider",
+				slog.Any("error", err),
+			)
 		} else {
 			m.AddProvider("oidc", genericOidcProvider)
 		}

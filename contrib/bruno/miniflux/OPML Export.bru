@@ -1,0 +1,26 @@
+meta {
+  name: OPML Export
+  type: http
+  seq: 30
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/export
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "user_agent": "My user agent"
+  }
+}
+
+vars:pre-request {
+  feedID: 19
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Update entries status
+  type: http
+  seq: 35
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/entries
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "entry_ids": [1698, 1699],
+    "status": "read"
+  }
+}

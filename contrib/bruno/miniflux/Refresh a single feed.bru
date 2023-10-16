@@ -1,0 +1,26 @@
+meta {
+  name: Refresh a single feed
+  type: http
+  seq: 23
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/feeds/{{feedID}}/refresh
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "feed_url": "https://miniflux.app/feed.xml"
+  }
+}
+
+vars:pre-request {
+  feedID: 18
+}

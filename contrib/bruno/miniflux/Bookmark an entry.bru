@@ -1,0 +1,26 @@
+meta {
+  name: Bookmark an entry
+  type: http
+  seq: 37
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/entries/{{entryID}}/bookmark
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "feed_url": "https://miniflux.app/feed.xml"
+  }
+}
+
+vars:pre-request {
+  entryID: 1698
+}

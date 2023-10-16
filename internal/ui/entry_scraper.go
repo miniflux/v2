@@ -34,12 +34,10 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.store.UserByID(entry.UserID)
+	user, err := h.store.UserByID(loggedUserID)
 	if err != nil {
 		json.ServerError(w, r, err)
-	}
-	if user == nil {
-		json.NotFound(w, r)
+		return
 	}
 
 	feedBuilder := storage.NewFeedQueryBuilder(h.store, loggedUserID)
@@ -60,8 +58,9 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.store.UpdateEntryContent(entry); err != nil {
+	if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
 		json.ServerError(w, r, err)
+		return
 	}
 
 	readingTime := locale.NewPrinter(user.Language).Plural("entry.estimated_reading_time", entry.ReadingTime, entry.ReadingTime)

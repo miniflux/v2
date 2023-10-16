@@ -6,6 +6,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
@@ -13,7 +14,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
@@ -38,11 +38,17 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 			if m.isPublicRoute(r) {
 				next.ServeHTTP(w, r)
 			} else {
-				logger.Debug("[UI:UserSession] Session not found, redirect to login page")
+				slog.Debug("Redirecting to login page because no user session has been found",
+					slog.Any("url", r.RequestURI),
+				)
 				html.Redirect(w, r, route.Path(m.router, "login"))
 			}
 		} else {
-			logger.Debug("[UI:UserSession] %s", session)
+			slog.Debug("User session found",
+				slog.Any("url", r.RequestURI),
+				slog.Int64("user_id", session.UserID),
+				slog.Int64("user_session_id", session.ID),
+			)
 
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, request.UserIDContextKey, session.UserID)
@@ -62,14 +68,16 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 		if session == nil {
 			if request.IsAuthenticated(r) {
 				userID := request.UserID(r)
-				logger.Debug("[UI:AppSession] Cookie expired but user #%d is logged: creating a new session", userID)
+				slog.Debug("Cookie expired but user is logged: creating a new app session",
+					slog.Int64("user_id", userID),
+				)
 				session, err = m.store.CreateAppSessionWithUserPrefs(userID)
 				if err != nil {
 					html.ServerError(w, r, err)
 					return
 				}
 			} else {
-				logger.Debug("[UI:AppSession] Session not found, creating a new one")
+				slog.Debug("App session not found, creating a new one")
 				session, err = m.store.CreateAppSession()
 				if err != nil {
 					html.ServerError(w, r, err)
@@ -78,8 +86,6 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 			}
 
 			http.SetCookie(w, cookie.New(cookie.CookieAppSessionID, session.ID, config.Opts.HTTPS, config.Opts.BasePath()))
-		} else {
-			logger.Debug("[UI:AppSession] %s", session)
 		}
 
 		if r.Method == http.MethodPost {
@@ -87,14 +93,18 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 			headerValue := r.Header.Get("X-Csrf-Token")
 
 			if session.Data.CSRF != formValue && session.Data.CSRF != headerValue {
-				logger.Error(`[UI:AppSession] Invalid or missing CSRF token: Form="%s", Header="%s"`, formValue, headerValue)
+				slog.Warn("Invalid or missing CSRF token",
+					slog.Any("url", r.RequestURI),
+					slog.String("form_csrf", formValue),
+					slog.String("header_csrf", headerValue),
+				)
 
 				if mux.CurrentRoute(r).GetName() == "checkLogin" {
 					html.Redirect(w, r, route.Path(m.router, "login"))
 					return
 				}
 
-				html.BadRequest(w, r, errors.New("Invalid or missing CSRF"))
+				html.BadRequest(w, r, errors.New("invalid or missing CSRF"))
 				return
 			}
 		}
@@ -103,6 +113,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, request.SessionIDContextKey, session.ID)
 		ctx = context.WithValue(ctx, request.CSRFContextKey, session.Data.CSRF)
 		ctx = context.WithValue(ctx, request.OAuth2StateContextKey, session.Data.OAuth2State)
+		ctx = context.WithValue(ctx, request.OAuth2CodeVerifierContextKey, session.Data.OAuth2CodeVerifier)
 		ctx = context.WithValue(ctx, request.FlashMessageContextKey, session.Data.FlashMessage)
 		ctx = context.WithValue(ctx, request.FlashErrorMessageContextKey, session.Data.FlashErrorMessage)
 		ctx = context.WithValue(ctx, request.UserLanguageContextKey, session.Data.Language)
@@ -120,7 +131,10 @@ func (m *middleware) getAppSessionValueFromCookie(r *http.Request) *model.Sessio
 
 	session, err := m.store.AppSession(cookieValue)
 	if err != nil {
-		logger.Error("[UI:AppSession] %v", err)
+		slog.Debug("Unable to fetch app session from the database; another session will be created",
+			slog.Any("cookie_value", cookieValue),
+			slog.Any("error", err),
+		)
 		return nil
 	}
 
@@ -158,7 +172,10 @@ func (m *middleware) getUserSessionFromCookie(r *http.Request) *model.UserSessio
 
 	session, err := m.store.UserSessionByToken(cookieValue)
 	if err != nil {
-		logger.Error("[UI:UserSession] %v", err)
+		slog.Error("Unable to fetch user session from the database",
+			slog.Any("cookie_value", cookieValue),
+			slog.Any("error", err),
+		)
 		return nil
 	}
 
@@ -179,7 +196,11 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 		}
 
 		clientIP := request.ClientIP(r)
-		logger.Info("[AuthProxy] [ClientIP=%s] Received authenticated requested for %q", clientIP, username)
+		slog.Debug("[AuthProxy] Received authenticated requested",
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", r.UserAgent()),
+			slog.String("username", username),
+		)
 
 		user, err := m.store.UserByUsername(username)
 		if err != nil {
@@ -188,9 +209,13 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 		}
 
 		if user == nil {
-			logger.Error("[AuthProxy] [ClientIP=%s] %q doesn't exist", clientIP, username)
-
 			if !config.Opts.IsAuthProxyUserCreationAllowed() {
+				slog.Debug("[AuthProxy] User doesn't exist and user creation is not allowed",
+					slog.Bool("authentication_failed", true),
+					slog.String("client_ip", clientIP),
+					slog.String("user_agent", r.UserAgent()),
+					slog.String("username", username),
+				)
 				html.Forbidden(w, r)
 				return
 			}
@@ -207,7 +232,13 @@ func (m *middleware) handleAuthProxy(next http.Handler) http.Handler {
 			return
 		}
 
-		logger.Info("[AuthProxy] [ClientIP=%s] username=%s just logged in", clientIP, user.Username)
+		slog.Info("[AuthProxy] User authenticated successfully",
+			slog.Bool("authentication_successful", true),
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", r.UserAgent()),
+			slog.Int64("user_id", user.ID),
+			slog.String("username", user.Username),
+		)
 
 		m.store.SetLastLogin(user.ID)
 

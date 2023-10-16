@@ -27,7 +27,7 @@ func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("Unable to fetch icon by hash: %v", err)
+		return nil, fmt.Errorf("store: unable to fetch icon #%d: %w", iconID, err)
 	}
 
 	return &icon, nil
@@ -63,7 +63,7 @@ func (s *Storage) IconByHash(icon *model.Icon) error {
 	if err == sql.ErrNoRows {
 		return nil
 	} else if err != nil {
-		return fmt.Errorf(`store: unable to fetch icon by hash: %v`, err)
+		return fmt.Errorf(`store: unable to fetch icon by hash %q: %v`, icon.Hash, err)
 	}
 
 	return nil

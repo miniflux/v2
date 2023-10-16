@@ -10,7 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	url_parser "net/url"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -72,10 +72,25 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		value := strings.TrimSpace(fields[1])
 
 		switch key {
+		case "LOG_FILE":
+			p.opts.logFile = parseString(value, defaultLogFile)
 		case "LOG_DATE_TIME":
 			p.opts.logDateTime = parseBool(value, defaultLogDateTime)
+		case "LOG_LEVEL":
+			parsedValue := parseString(value, defaultLogLevel)
+			if parsedValue == "debug" || parsedValue == "info" || parsedValue == "warning" || parsedValue == "error" {
+				p.opts.logLevel = parsedValue
+			}
+		case "LOG_FORMAT":
+			parsedValue := parseString(value, defaultLogFormat)
+			if parsedValue == "json" || parsedValue == "text" {
+				p.opts.logFormat = parsedValue
+			}
 		case "DEBUG":
-			p.opts.debug = parseBool(value, defaultDebug)
+			parsedValue := parseBool(value, defaultDebug)
+			if parsedValue {
+				p.opts.logLevel = "debug"
+			}
 		case "SERVER_TIMING_HEADER":
 			p.opts.serverTimingHeader = parseBool(value, defaultTiming)
 		case "BASE_URL":
@@ -135,6 +150,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.schedulerEntryFrequencyMaxInterval = parseInt(value, defaultSchedulerEntryFrequencyMaxInterval)
 		case "SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL":
 			p.opts.schedulerEntryFrequencyMinInterval = parseInt(value, defaultSchedulerEntryFrequencyMinInterval)
+		case "SCHEDULER_ENTRY_FREQUENCY_FACTOR":
+			p.opts.schedulerEntryFrequencyFactor = parseInt(value, defaultSchedulerEntryFrequencyFactor)
 		case "POLLING_PARSING_ERROR_LIMIT":
 			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		// kept for compatibility purpose
@@ -178,7 +195,7 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		case "OAUTH2_REDIRECT_URL":
 			p.opts.oauth2RedirectURL = parseString(value, defaultOAuth2RedirectURL)
 		case "OAUTH2_OIDC_DISCOVERY_ENDPOINT":
-			p.opts.oauth2OidcDiscoveryEndpoint = parseString(value, defaultOAuth2OidcDiscoveryEndpoint)
+			p.opts.oidcDiscoveryEndpoint = parseString(value, defaultOAuth2OidcDiscoveryEndpoint)
 		case "OAUTH2_PROVIDER":
 			p.opts.oauth2Provider = parseString(value, defaultOAuth2Provider)
 		case "HTTP_CLIENT_TIMEOUT":
@@ -245,19 +262,19 @@ func parseBaseURL(value string) (string, string, string, error) {
 		value = value[:len(value)-1]
 	}
 
-	url, err := url_parser.Parse(value)
+	parsedURL, err := url.Parse(value)
 	if err != nil {
 		return "", "", "", fmt.Errorf("config: invalid BASE_URL: %w", err)
 	}
 
-	scheme := strings.ToLower(url.Scheme)
+	scheme := strings.ToLower(parsedURL.Scheme)
 	if scheme != "https" && scheme != "http" {
 		return "", "", "", errors.New("config: invalid BASE_URL: scheme must be http or https")
 	}
 
-	basePath := url.Path
-	url.Path = ""
-	return value, url.String(), basePath, nil
+	basePath := parsedURL.Path
+	parsedURL.Path = ""
+	return value, parsedURL.String(), basePath, nil
 }
 
 func parseBool(value string, fallback bool) bool {

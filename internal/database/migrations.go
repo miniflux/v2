@@ -752,4 +752,35 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			ALTER TABLE feeds ADD COLUMN apprise_service_urls text default '';
+		`)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN webhook_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN webhook_url text default '';
+			ALTER TABLE integrations ADD COLUMN webhook_secret text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN telegram_bot_topic_id int;
+			ALTER TABLE integrations ADD COLUMN telegram_bot_disable_web_page_preview bool default 'f';
+			ALTER TABLE integrations ADD COLUMN telegram_bot_disable_notification bool default 'f';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN telegram_bot_disable_buttons bool default 'f';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

@@ -1,0 +1,26 @@
+meta {
+  name: Mark all category entries as read
+  type: http
+  seq: 13
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/categories/{{categoryID}}/mark-all-as-read
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "title": "Test Update"
+  }
+}
+
+vars:pre-request {
+  categoryID: 2
+}

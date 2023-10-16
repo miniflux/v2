@@ -1,0 +1,26 @@
+meta {
+  name: Get feed icon by feed ID
+  type: http
+  seq: 27
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/feeds/{{feedID}}/icon
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "user_agent": "My user agent"
+  }
+}
+
+vars:pre-request {
+  feedID: 19
+}

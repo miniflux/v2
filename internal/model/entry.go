@@ -39,6 +39,17 @@ type Entry struct {
 	Tags        []string      `json:"tags"`
 }
 
+func NewEntry() *Entry {
+	return &Entry{
+		Enclosures: make(EnclosureList, 0),
+		Tags:       make([]string, 0),
+		Feed: &Feed{
+			Category: &Category{},
+			Icon:     &FeedIcon{},
+		},
+	}
+}
+
 // Entries represents a list of entries.
 type Entries []*Entry
 
@@ -46,4 +57,20 @@ type Entries []*Entry
 type EntriesStatusUpdateRequest struct {
 	EntryIDs []int64 `json:"entry_ids"`
 	Status   string  `json:"status"`
+}
+
+// EntryUpdateRequest represents a request to update an entry.
+type EntryUpdateRequest struct {
+	Title   *string `json:"title"`
+	Content *string `json:"content"`
+}
+
+func (e *EntryUpdateRequest) Patch(entry *Entry) {
+	if e.Title != nil && *e.Title != "" {
+		entry.Title = *e.Title
+	}
+
+	if e.Content != nil && *e.Content != "" {
+		entry.Content = *e.Content
+	}
 }

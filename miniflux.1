@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "July 21, 2023" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "September 27, 2023" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -36,7 +36,14 @@ Create admin user\&.
 .PP
 .B \-debug
 .RS 4
-Show debug logs\&.
+Set log level to debug\&.
+.RE
+.PP
+.B \-export-user-feeds <username>
+.RS 4
+Export user feeds (provide the username as argument)\&.
+.br
+Example: "miniflux -export-user-feeds someone > feeds.xml"\&.
 .RE
 .PP
 .B \-flush-sessions
@@ -113,11 +120,6 @@ Environment variables override the values defined in the config file.
 
 .SH ENVIRONMENT
 .TP
-.B DEBUG
-Set the value to 1 to enable debug logs\&.
-.br
-Disabled by default\&.
-.TP
 .B FETCH_ODYSEE_WATCH_TIME
 Set the value to 1 to scrape video duration from Odysee website and
 use it as a reading time\&.
@@ -144,6 +146,21 @@ Disabled by default\&.
 Display the date and time in log messages\&.
 .br
 Disabled by default\&.
+.TP
+.B LOG_FILE
+Supported values are "stderr", "stdout", or a file name\&.
+.br
+Default is "stderr"\&.
+.TP
+.B LOG_FORMAT
+Supported log formats are "text" or "json"\&.
+.br
+Default is "text"\&.
+.TP
+.B LOG_LEVEL
+Supported values are "debug", "info", "warning", or "error"\&.
+.br
+Default is "info"\&.
 .TP
 .B WORKER_POOL_SIZE
 Number of background workers\&.
@@ -180,6 +197,11 @@ Default is 24 hours\&.
 Minimum interval in minutes for the entry frequency scheduler\&.
 .br
 Default is 5 minutes\&.
+.TP
+.B SCHEDULER_ENTRY_FREQUENCY_FACTOR
+Factor to increase refresh frequency for the entry frequency scheduler\&.
+.br
+Default is 1\&.
 .TP
 .B POLLING_PARSING_ERROR_LIMIT
 The maximum number of parsing errors that the program will try before stopping polling a feed. Once the limit is reached, the user must refresh the feed manually. Set to 0 for unlimited.

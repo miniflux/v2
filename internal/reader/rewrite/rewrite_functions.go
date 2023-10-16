@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"html"
+	"log/slog"
 	"net/url"
 	"regexp"
 	"strings"
@@ -319,6 +320,57 @@ func decodeBase64Content(entryContent string) string {
 	} else {
 		return html.EscapeString(string(ret))
 	}
+}
+
+func addHackerNewsLinksUsing(entryContent, app string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	hn_prefix := "https://news.ycombinator.com/"
+	matches := doc.Find(`a[href^="` + hn_prefix + `"]`)
+
+	if matches.Length() > 0 {
+		matches.Each(func(i int, a *goquery.Selection) {
+			hrefAttr, _ := a.Attr("href")
+
+			hn_uri, err := url.Parse(hrefAttr)
+			if err != nil {
+				return
+			}
+
+			if app == "opener" {
+				params := url.Values{}
+				params.Add("url", hn_uri.String())
+
+				url := url.URL{
+					Scheme:   "opener",
+					Host:     "x-callback-url",
+					Path:     "show-options",
+					RawQuery: params.Encode(),
+				}
+
+				open_with_opener := `<a href="` + url.String() + `">Open with Opener</a>`
+				a.Parent().AppendHtml(" " + open_with_opener)
+			} else if app == "hack" {
+				url := strings.Replace(hn_uri.String(), hn_prefix, "hack://", 1)
+
+				open_with_hack := `<a href="` + url + `">Open with HACK</a>`
+				a.Parent().AppendHtml(" " + open_with_hack)
+			} else {
+				slog.Warn("Unknown app provided for openHackerNewsLinksWith rewrite rule",
+					slog.String("app", app),
+				)
+				return
+			}
+		})
+
+		output, _ := doc.Find("body").First().Html()
+		return output
+	}
+
+	return entryContent
 }
 
 func parseMarkdown(entryContent string) string {

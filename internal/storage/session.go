@@ -53,7 +53,7 @@ func (s *Storage) createAppSession(session *model.Session) (*model.Session, erro
 }
 
 // UpdateAppSessionField updates only one session field.
-func (s *Storage) UpdateAppSessionField(sessionID, field string, value interface{}) error {
+func (s *Storage) UpdateAppSessionField(sessionID, field string, value any) error {
 	query := `
 		UPDATE
 			sessions

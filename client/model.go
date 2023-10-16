@@ -222,6 +222,12 @@ type Entry struct {
 	Tags        []string   `json:"tags"`
 }
 
+// EntryModificationRequest represents a request to modify an entry.
+type EntryModificationRequest struct {
+	Title   *string `json:"title"`
+	Content *string `json:"content"`
+}
+
 // Entries represents a list of entries.
 type Entries []*Entry
 
@@ -245,24 +251,39 @@ const (
 
 // Filter is used to filter entries.
 type Filter struct {
-	Status        string
-	Offset        int
-	Limit         int
-	Order         string
-	Direction     string
-	Starred       string
-	Before        int64
-	After         int64
-	BeforeEntryID int64
-	AfterEntryID  int64
-	Search        string
-	CategoryID    int64
-	FeedID        int64
-	Statuses      []string
+	Status          string
+	Offset          int
+	Limit           int
+	Order           string
+	Direction       string
+	Starred         string
+	Before          int64
+	After           int64
+	PublishedBefore int64
+	PublishedAfter  int64
+	ChangedBefore   int64
+	ChangedAfter    int64
+	BeforeEntryID   int64
+	AfterEntryID    int64
+	Search          string
+	CategoryID      int64
+	FeedID          int64
+	Statuses        []string
 }
 
 // EntryResultSet represents the response when fetching entries.
 type EntryResultSet struct {
 	Total   int     `json:"total"`
 	Entries Entries `json:"entries"`
+}
+
+// VersionResponse represents the version and the build information of the Miniflux instance.
+type VersionResponse struct {
+	Version   string `json:"version"`
+	Commit    string `json:"commit"`
+	BuildDate string `json:"build_date"`
+	GoVersion string `json:"go_version"`
+	Compiler  string `json:"compiler"`
+	Arch      string `json:"arch"`
+	OS        string `json:"os"`
 }

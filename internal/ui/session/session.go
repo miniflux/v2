@@ -4,7 +4,6 @@
 package session // import "miniflux.app/v2/internal/ui/session"
 
 import (
-	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -14,11 +13,12 @@ type Session struct {
 	sessionID string
 }
 
-// NewOAuth2State generates a new OAuth2 state and stores the value into the database.
-func (s *Session) NewOAuth2State() string {
-	state := crypto.GenerateRandomString(32)
+func (s *Session) SetOAuth2State(state string) {
 	s.store.UpdateAppSessionField(s.sessionID, "oauth2_state", state)
-	return state
+}
+
+func (s *Session) SetOAuth2CodeVerifier(codeVerfier string) {
+	s.store.UpdateAppSessionField(s.sessionID, "oauth2_code_verifier", codeVerfier)
 }
 
 // NewFlashMessage creates a new flash message.

@@ -7,19 +7,16 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/errors"
-	"miniflux.app/v2/internal/logger"
-	"miniflux.app/v2/internal/timer"
 )
 
 const (
@@ -74,40 +71,12 @@ func NewClientWithConfig(url string, opts *config.Options) *Client {
 	}
 }
 
-func (c *Client) String() string {
-	etagHeader := c.requestEtagHeader
-	if c.requestEtagHeader == "" {
-		etagHeader = "None"
-	}
-
-	lastModifiedHeader := c.requestLastModifiedHeader
-	if c.requestLastModifiedHeader == "" {
-		lastModifiedHeader = "None"
-	}
-
-	return fmt.Sprintf(
-		`InputURL=%q ETag=%s LastMod=%s Auth=%v UserAgent=%q Verify=%v`,
-		c.inputURL,
-		etagHeader,
-		lastModifiedHeader,
-		c.requestAuthorizationHeader != "" || (c.requestUsername != "" && c.requestPassword != ""),
-		c.requestUserAgent,
-		!c.AllowSelfSignedCertificates,
-	)
-}
-
 // WithCredentials defines the username/password for HTTP Basic authentication.
 func (c *Client) WithCredentials(username, password string) *Client {
 	if username != "" && password != "" {
 		c.requestUsername = username
 		c.requestPassword = password
 	}
-	return c
-}
-
-// WithAuthorization defines the authorization HTTP header value.
-func (c *Client) WithAuthorization(authorization string) *Client {
-	c.requestAuthorizationHeader = authorization
 	return c
 }
 
@@ -162,55 +131,21 @@ func (c *Client) Get() (*Response, error) {
 	return c.executeRequest(request)
 }
 
-// PostForm performs a POST HTTP request with form encoded values.
-func (c *Client) PostForm(values url.Values) (*Response, error) {
-	request, err := c.buildRequest(http.MethodPost, strings.NewReader(values.Encode()))
-	if err != nil {
-		return nil, err
-	}
-
-	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	return c.executeRequest(request)
-}
-
-// PostJSON performs a POST HTTP request with a JSON payload.
-func (c *Client) PostJSON(data interface{}) (*Response, error) {
-	b, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	request, err := c.buildRequest(http.MethodPost, bytes.NewReader(b))
-	if err != nil {
-		return nil, err
-	}
-
-	request.Header.Add("Content-Type", "application/json")
-	return c.executeRequest(request)
-}
-
-// PatchJSON performs a Patch HTTP request with a JSON payload.
-func (c *Client) PatchJSON(data interface{}) (*Response, error) {
-	b, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	request, err := c.buildRequest(http.MethodPatch, bytes.NewReader(b))
-	if err != nil {
-		return nil, err
-	}
-
-	request.Header.Add("Content-Type", "application/json")
-	return c.executeRequest(request)
-}
-
 func (c *Client) executeRequest(request *http.Request) (*Response, error) {
-	defer timer.ExecutionTime(time.Now(), fmt.Sprintf("[HttpClient] inputURL=%s", c.inputURL))
+	startTime := time.Now()
 
-	logger.Debug("[HttpClient:Before] Method=%s %s",
-		request.Method,
-		c.String(),
+	slog.Debug("Executing outgoing HTTP request",
+		slog.Group("request",
+			slog.String("method", request.Method),
+			slog.String("url", request.URL.String()),
+			slog.String("user_agent", request.UserAgent()),
+			slog.Bool("is_authenticated", c.requestAuthorizationHeader != "" || (c.requestUsername != "" && c.requestPassword != "")),
+			slog.Bool("has_cookie", c.requestCookie != ""),
+			slog.Bool("with_redirects", !c.doNotFollowRedirects),
+			slog.Bool("with_proxy", c.useProxy),
+			slog.String("proxy_url", c.ClientProxyURL),
+			slog.Bool("with_caching_headers", c.requestEtagHeader != "" || c.requestLastModifiedHeader != ""),
+		),
 	)
 
 	client := c.buildClient()
@@ -257,15 +192,32 @@ func (c *Client) executeRequest(request *http.Request) (*Response, error) {
 		ContentLength: resp.ContentLength,
 	}
 
-	logger.Debug("[HttpClient:After] Method=%s %s; Response => %s",
-		request.Method,
-		c.String(),
-		response,
+	slog.Debug("Completed outgoing HTTP request",
+		slog.Duration("duration", time.Since(startTime)),
+		slog.Group("request",
+			slog.String("method", request.Method),
+			slog.String("url", request.URL.String()),
+			slog.String("user_agent", request.UserAgent()),
+			slog.Bool("is_authenticated", c.requestAuthorizationHeader != "" || (c.requestUsername != "" && c.requestPassword != "")),
+			slog.Bool("has_cookie", c.requestCookie != ""),
+			slog.Bool("with_redirects", !c.doNotFollowRedirects),
+			slog.Bool("with_proxy", c.useProxy),
+			slog.String("proxy_url", c.ClientProxyURL),
+			slog.Bool("with_caching_headers", c.requestEtagHeader != "" || c.requestLastModifiedHeader != ""),
+		),
+		slog.Group("response",
+			slog.Int("status_code", response.StatusCode),
+			slog.String("effective_url", response.EffectiveURL),
+			slog.String("content_type", response.ContentType),
+			slog.Int64("content_length", response.ContentLength),
+			slog.String("last_modified", response.LastModified),
+			slog.String("etag", response.ETag),
+			slog.String("expires", response.Expires),
+		),
 	)
 
 	// Ignore caching headers for feeds that do not want any cache.
 	if resp.Header.Get("Expires") == "0" {
-		logger.Debug("[HttpClient] Ignore caching headers for %q", response.EffectiveURL)
 		response.ETag = ""
 		response.LastModified = ""
 	}
@@ -323,9 +275,11 @@ func (c *Client) buildClient() http.Client {
 	if c.useProxy && c.ClientProxyURL != "" {
 		proxyURL, err := url.Parse(c.ClientProxyURL)
 		if err != nil {
-			logger.Error("[HttpClient] Proxy URL error: %v", err)
+			slog.Error("Unable to parse proxy URL",
+				slog.String("proxy_url", c.ClientProxyURL),
+				slog.Any("error", err),
+			)
 		} else {
-			logger.Debug("[HttpClient] Use proxy: %s", proxyURL)
 			transport.Proxy = http.ProxyURL(proxyURL)
 		}
 	}

@@ -6,13 +6,14 @@ package rdf // import "miniflux.app/v2/internal/reader/rdf"
 import (
 	"encoding/xml"
 	"html"
+	"log/slog"
 	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/dublincore"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
 )
@@ -22,7 +23,7 @@ type rdfFeed struct {
 	Title   string    `xml:"channel>title"`
 	Link    string    `xml:"channel>link"`
 	Items   []rdfItem `xml:"item"`
-	DublinCoreFeedElement
+	dublincore.DublinCoreFeedElement
 }
 
 func (r *rdfFeed) Transform(baseURL string) *model.Feed {
@@ -38,7 +39,7 @@ func (r *rdfFeed) Transform(baseURL string) *model.Feed {
 	for _, item := range r.Items {
 		entry := item.Transform()
 		if entry.Author == "" && r.DublinCoreCreator != "" {
-			entry.Author = strings.TrimSpace(r.DublinCoreCreator)
+			entry.Author = r.GetSanitizedCreator()
 		}
 
 		if entry.URL == "" {
@@ -60,11 +61,11 @@ type rdfItem struct {
 	Title       string `xml:"title"`
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
-	DublinCoreEntryElement
+	dublincore.DublinCoreItemElement
 }
 
 func (r *rdfItem) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.Title = r.entryTitle()
 	entry.Author = r.entryAuthor()
 	entry.URL = r.entryURL()
@@ -88,7 +89,7 @@ func (r *rdfItem) entryContent() string {
 }
 
 func (r *rdfItem) entryAuthor() string {
-	return strings.TrimSpace(r.DublinCoreCreator)
+	return r.GetSanitizedCreator()
 }
 
 func (r *rdfItem) entryURL() string {
@@ -99,7 +100,11 @@ func (r *rdfItem) entryDate() time.Time {
 	if r.DublinCoreDate != "" {
 		result, err := date.Parse(r.DublinCoreDate)
 		if err != nil {
-			logger.Error("rdf: %v (entry link = %s)", err, r.Link)
+			slog.Warn("Unable to parse date from RDF feed",
+				slog.String("date", r.DublinCoreDate),
+				slog.String("link", r.Link),
+				slog.Any("error", err),
+			)
 			return time.Now()
 		}
 

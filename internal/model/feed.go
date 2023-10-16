@@ -51,11 +51,12 @@ type Feed struct {
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	Category                    *Category `json:"category,omitempty"`
 	Entries                     Entries   `json:"entries,omitempty"`
-	IconURL                     string    `json:"icon_url"`
+	IconURL                     string    `json:"-"`
 	Icon                        *FeedIcon `json:"icon"`
 	HideGlobally                bool      `json:"hide_globally"`
 	UnreadCount                 int       `json:"-"`
 	ReadCount                   int       `json:"-"`
+	AppriseServiceURLs          string    `json:"apprise_service_urls"`
 }
 
 type FeedCounters struct {
@@ -115,10 +116,10 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int) {
 		if weeklyCount == 0 {
 			intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
 		} else {
-			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount)))
+			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount*config.Opts.SchedulerEntryFrequencyFactor())))
+			intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
+			intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
 		}
-		intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
-		intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
 		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 	default:
 		f.NextCheckAt = time.Now()

@@ -15,7 +15,10 @@ import (
 
 const (
 	defaultHTTPS                              = false
+	defaultLogFile                            = "stderr"
 	defaultLogDateTime                        = false
+	defaultLogFormat                          = "text"
+	defaultLogLevel                           = "info"
 	defaultHSTS                               = true
 	defaultHTTPService                        = true
 	defaultSchedulerService                   = true
@@ -30,6 +33,7 @@ const (
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
+	defaultSchedulerEntryFrequencyFactor      = 1
 	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
@@ -90,11 +94,13 @@ type Option struct {
 // Options contains configuration options.
 type Options struct {
 	HTTPS                              bool
+	logFile                            string
 	logDateTime                        bool
+	logFormat                          string
+	logLevel                           string
 	hsts                               bool
 	httpService                        bool
 	schedulerService                   bool
-	debug                              bool
 	serverTimingHeader                 bool
 	baseURL                            string
 	rootURL                            string
@@ -118,6 +124,7 @@ type Options struct {
 	pollingScheduler                   string
 	schedulerEntryFrequencyMinInterval int
 	schedulerEntryFrequencyMaxInterval int
+	schedulerEntryFrequencyFactor      int
 	pollingParsingErrorLimit           int
 	workerPoolSize                     int
 	createAdmin                        bool
@@ -134,7 +141,7 @@ type Options struct {
 	oauth2ClientID                     string
 	oauth2ClientSecret                 string
 	oauth2RedirectURL                  string
-	oauth2OidcDiscoveryEndpoint        string
+	oidcDiscoveryEndpoint              string
 	oauth2Provider                     string
 	pocketConsumerKey                  string
 	httpClientTimeout                  int
@@ -163,11 +170,13 @@ func NewOptions() *Options {
 
 	return &Options{
 		HTTPS:                              defaultHTTPS,
+		logFile:                            defaultLogFile,
 		logDateTime:                        defaultLogDateTime,
+		logFormat:                          defaultLogFormat,
+		logLevel:                           defaultLogLevel,
 		hsts:                               defaultHSTS,
 		httpService:                        defaultHTTPService,
 		schedulerService:                   defaultSchedulerService,
-		debug:                              defaultDebug,
 		serverTimingHeader:                 defaultTiming,
 		baseURL:                            defaultBaseURL,
 		rootURL:                            defaultRootURL,
@@ -191,6 +200,7 @@ func NewOptions() *Options {
 		pollingScheduler:                   defaultPollingScheduler,
 		schedulerEntryFrequencyMinInterval: defaultSchedulerEntryFrequencyMinInterval,
 		schedulerEntryFrequencyMaxInterval: defaultSchedulerEntryFrequencyMaxInterval,
+		schedulerEntryFrequencyFactor:      defaultSchedulerEntryFrequencyFactor,
 		pollingParsingErrorLimit:           defaultPollingParsingErrorLimit,
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
@@ -205,7 +215,7 @@ func NewOptions() *Options {
 		oauth2ClientID:                     defaultOAuth2ClientID,
 		oauth2ClientSecret:                 defaultOAuth2ClientSecret,
 		oauth2RedirectURL:                  defaultOAuth2RedirectURL,
-		oauth2OidcDiscoveryEndpoint:        defaultOAuth2OidcDiscoveryEndpoint,
+		oidcDiscoveryEndpoint:              defaultOAuth2OidcDiscoveryEndpoint,
 		oauth2Provider:                     defaultOAuth2Provider,
 		pocketConsumerKey:                  defaultPocketConsumerKey,
 		httpClientTimeout:                  defaultHTTPClientTimeout,
@@ -228,9 +238,28 @@ func NewOptions() *Options {
 	}
 }
 
+func (o *Options) LogFile() string {
+	return o.logFile
+}
+
 // LogDateTime returns true if the date/time should be displayed in log messages.
 func (o *Options) LogDateTime() bool {
 	return o.logDateTime
+}
+
+// LogFormat returns the log format.
+func (o *Options) LogFormat() string {
+	return o.logFormat
+}
+
+// LogLevel returns the log level.
+func (o *Options) LogLevel() string {
+	return o.logLevel
+}
+
+// SetLogLevel sets the log level.
+func (o *Options) SetLogLevel(level string) {
+	o.logLevel = level
 }
 
 // HasMaintenanceMode returns true if maintenance mode is enabled.
@@ -241,11 +270,6 @@ func (o *Options) HasMaintenanceMode() bool {
 // MaintenanceMessage returns maintenance message.
 func (o *Options) MaintenanceMessage() string {
 	return o.maintenanceMessage
-}
-
-// HasDebugMode returns true if debug mode is enabled.
-func (o *Options) HasDebugMode() bool {
-	return o.debug
 }
 
 // HasServerTimingHeader returns true if server-timing headers enabled.
@@ -368,6 +392,11 @@ func (o *Options) SchedulerEntryFrequencyMinInterval() int {
 	return o.schedulerEntryFrequencyMinInterval
 }
 
+// SchedulerEntryFrequencyFactor returns the factor for the entry frequency scheduler.
+func (o *Options) SchedulerEntryFrequencyFactor() int {
+	return o.schedulerEntryFrequencyFactor
+}
+
 // PollingParsingErrorLimit returns the limit of errors when to stop polling.
 func (o *Options) PollingParsingErrorLimit() int {
 	return o.pollingParsingErrorLimit
@@ -393,9 +422,9 @@ func (o *Options) OAuth2RedirectURL() string {
 	return o.oauth2RedirectURL
 }
 
-// OAuth2OidcDiscoveryEndpoint returns the OAuth2 OIDC discovery endpoint.
-func (o *Options) OAuth2OidcDiscoveryEndpoint() string {
-	return o.oauth2OidcDiscoveryEndpoint
+// OIDCDiscoveryEndpoint returns the OAuth2 OIDC discovery endpoint.
+func (o *Options) OIDCDiscoveryEndpoint() string {
+	return o.oidcDiscoveryEndpoint
 }
 
 // OAuth2Provider returns the name of the OAuth2 provider configured.
@@ -585,7 +614,6 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DATABASE_MAX_CONNS":                     o.databaseMaxConns,
 		"DATABASE_MIN_CONNS":                     o.databaseMinConns,
 		"DATABASE_URL":                           redactSecretValue(o.databaseURL, redactSecret),
-		"DEBUG":                                  o.debug,
 		"DISABLE_HSTS":                           !o.hsts,
 		"DISABLE_HTTP_SERVICE":                   !o.httpService,
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
@@ -601,7 +629,10 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"INVIDIOUS_INSTANCE":                     o.invidiousInstance,
 		"KEY_FILE":                               o.certKeyFile,
 		"LISTEN_ADDR":                            o.listenAddr,
+		"LOG_FILE":                               o.logFile,
 		"LOG_DATE_TIME":                          o.logDateTime,
+		"LOG_FORMAT":                             o.logFormat,
+		"LOG_LEVEL":                              o.logLevel,
 		"MAINTENANCE_MESSAGE":                    o.maintenanceMessage,
 		"MAINTENANCE_MODE":                       o.maintenanceMode,
 		"METRICS_ALLOWED_NETWORKS":               strings.Join(o.metricsAllowedNetworks, ","),
@@ -611,7 +642,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"METRICS_USERNAME":                       o.metricsUsername,
 		"OAUTH2_CLIENT_ID":                       o.oauth2ClientID,
 		"OAUTH2_CLIENT_SECRET":                   redactSecretValue(o.oauth2ClientSecret, redactSecret),
-		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oauth2OidcDiscoveryEndpoint,
+		"OAUTH2_OIDC_DISCOVERY_ENDPOINT":         o.oidcDiscoveryEndpoint,
 		"OAUTH2_PROVIDER":                        o.oauth2Provider,
 		"OAUTH2_REDIRECT_URL":                    o.oauth2RedirectURL,
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
@@ -628,6 +659,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"RUN_MIGRATIONS":                         o.runMigrations,
 		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
 		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": o.schedulerEntryFrequencyMinInterval,
+		"SCHEDULER_ENTRY_FREQUENCY_FACTOR":       o.schedulerEntryFrequencyFactor,
 		"SCHEDULER_SERVICE":                      o.schedulerService,
 		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WATCHDOG":                               o.watchdog,

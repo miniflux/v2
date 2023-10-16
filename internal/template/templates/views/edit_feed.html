@@ -40,112 +40,148 @@
             <div class="alert alert-error">{{ t .errorMessage }}</div>
         {{ end }}
 
-        <label for="form-category">{{ t "form.feed.label.category" }}</label>
-        <select id="form-category" name="category_id" autofocus>
-        {{ range .categories }}
-            <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
-        {{ end }}
-        </select>
+        <fieldset>
+            <legend>{{ t "form.feed.fieldset.general" }}</legend>
 
-        <label for="form-title">{{ t "form.feed.label.title" }}</label>
-        <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required>
+            <label for="form-category">{{ t "form.feed.label.category" }}</label>
+            <select id="form-category" name="category_id" autofocus>
+            {{ range .categories }}
+                <option value="{{ .ID }}" {{ if eq .ID $.form.CategoryID }}selected="selected"{{ end }}>{{ .Title }}</option>
+            {{ end }}
+            </select>
 
-        <label for="form-site-url">{{ t "form.feed.label.site_url" }}</label>
-        <input type="url" name="site_url" id="form-site-url" placeholder="https://domain.tld/" value="{{ .form.SiteURL }}" spellcheck="false" required>
+            <label for="form-title">{{ t "form.feed.label.title" }}</label>
+            <input type="text" name="title" id="form-title" value="{{ .form.Title }}" spellcheck="false" required>
 
-        <label for="form-feed-url">{{ t "form.feed.label.feed_url" }}</label>
-        <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" spellcheck="false" required>
+            <label for="form-site-url">{{ t "form.feed.label.site_url" }}</label>
+            <input type="url" name="site_url" id="form-site-url" placeholder="https://domain.tld/" value="{{ .form.SiteURL }}" spellcheck="false" required>
 
-        <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
-        <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}" spellcheck="false">
+            <label for="form-feed-url">{{ t "form.feed.label.feed_url" }}</label>
+            <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" spellcheck="false" required>
 
-        <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
-        <!--
-            We are using the type "text" otherwise Firefox always autocomplete this password:
+            {{ if not .form.CategoryHidden }}
+            <label><input type="checkbox" name="hide_globally" value="1"{{ if .form.HideGlobally }} checked{{ end }}> {{ t "form.feed.label.hide_globally" }}</label>
+            {{ end }}
 
-            - autocomplete="off" or autocomplete="new-password" doesn't change anything
-            - Changing the input ID doesn't change anything
-            - Using a different input name doesn't change anything
-        -->
-        <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}" spellcheck="false">
+            <label><input type="checkbox" name="no_media_player" {{ if .form.NoMediaPlayer }}checked{{ end }} value="1" >  {{ t "form.feed.label.no_media_player" }} </label>
+            <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
 
-	    <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
-	    <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" spellcheck="false">
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </fieldset>
 
-        <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
-        <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
+        <fieldset>
+            <legend>{{ t "form.feed.fieldset.network_settings" }}</legend>
 
-        <div class="form-label-row">
-            <label for="form-scraper-rules">
-                {{ t "form.feed.label.scraper_rules" }}
-            </label>
-            &nbsp;
-            <a href="https://miniflux.app/docs/rules.html#scraper-rules" target="_blank">
-                {{ icon "external-link" }}
-            </a>
-        </div>
-        <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}" spellcheck="false">
+            <label for="form-feed-username">{{ t "form.feed.label.feed_username" }}</label>
+            <input type="text" name="feed_username" id="form-feed-username" value="{{ .form.Username }}" spellcheck="false">
 
-        <div class="form-label-row">
-            <label for="form-rewrite-rules">
-                {{ t "form.feed.label.rewrite_rules" }}
-            </label>
-            &nbsp;
-            <a href="https://miniflux.app/docs/rules.html#rewrite-rules" target="_blank">
-                {{ icon "external-link" }}
-            </a>
-        </div>
-        <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}" spellcheck="false">
-        <div class="form-label-row">
-            <label for="form-blocklist-rules">
-                {{ t "form.feed.label.blocklist_rules" }}
-            </label>
-            &nbsp;
-            <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
-                {{ icon "external-link" }}
-            </a>
-        </div>
-        <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}" spellcheck="false">
+            <label for="form-feed-password">{{ t "form.feed.label.feed_password" }}</label>
+            <!--
+                We are using the type "text" otherwise Firefox always autocomplete this password:
 
-        <div class="form-label-row">
-            <label for="form-keeplist-rules">
-                {{ t "form.feed.label.keeplist_rules" }}
-            </label>
-            &nbsp;
-            <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
-                {{ icon "external-link" }}
-            </a>
-        </div>
-        <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
+                - autocomplete="off" or autocomplete="new-password" doesn't change anything
+                - Changing the input ID doesn't change anything
+                - Using a different input name doesn't change anything
+            -->
+            <input type="text" name="feed_password" id="form-feed-password" value="{{ .form.Password }}" spellcheck="false">
 
-        <div class="form-label-row">
-            <label for="form-urlrewrite-rules">
-                {{ t "form.feed.label.urlrewrite_rules" }}
-            </label>
-            &nbsp;
-            <a href=" https://miniflux.app/docs/rules.html#rewriteurl-rules" target="_blank">
-                {{ icon "external-link" }}
-            </a>
-        </div>
-        <input type="text" name="urlrewrite_rules" id="form-urlrewrite-rules" value="{{ .form.UrlRewriteRules }}" spellcheck="false">
+            <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
+            <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" spellcheck="false">
 
-        <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
-        <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
-        <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
-        {{ if .hasProxyConfigured }}
-        <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
-        {{ end }}
-        <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
+            <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
+            <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
 
-        <label><input type="checkbox" name="no_media_player" {{ if .form.NoMediaPlayer }}checked{{ end }} value="1" >  {{ t "form.feed.label.no_media_player" }} </label>
+            <label><input type="checkbox" name="crawler" value="1" {{ if .form.Crawler }}checked{{ end }}> {{ t "form.feed.label.crawler" }}</label>
+            <label><input type="checkbox" name="ignore_http_cache" value="1" {{ if .form.IgnoreHTTPCache }}checked{{ end }}> {{ t "form.feed.label.ignore_http_cache" }}</label>
+            <label><input type="checkbox" name="allow_self_signed_certificates" value="1" {{ if .form.AllowSelfSignedCertificates }}checked{{ end }}> {{ t "form.feed.label.allow_self_signed_certificates" }}</label>
+            {{ if .hasProxyConfigured }}
+            <label><input type="checkbox" name="fetch_via_proxy" value="1" {{ if .form.FetchViaProxy }}checked{{ end }}> {{ t "form.feed.label.fetch_via_proxy" }}</label>
+            {{ end }}
 
-        {{ if not .form.CategoryHidden }}
-        <label><input type="checkbox" name="hide_globally" value="1"{{ if .form.HideGlobally }} checked{{ end }}> {{ t "form.feed.label.hide_globally" }}</label>
-        {{ end }}
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </fieldset>
 
-        <div class="buttons">
-            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button> {{ t "action.or" }} <a href="{{ route "feeds" }}">{{ t "action.cancel" }}</a>
-        </div>
+        <fieldset>
+            <legend>{{ t "form.feed.fieldset.rules" }}</legend>
+
+            <div class="form-label-row">
+                <label for="form-scraper-rules">
+                    {{ t "form.feed.label.scraper_rules" }}
+                </label>
+                &nbsp;
+                <a href="https://miniflux.app/docs/rules.html#scraper-rules" target="_blank">
+                    {{ icon "external-link" }}
+                </a>
+            </div>
+            <input type="text" name="scraper_rules" id="form-scraper-rules" value="{{ .form.ScraperRules }}" spellcheck="false">
+
+            <div class="form-label-row">
+                <label for="form-rewrite-rules">
+                    {{ t "form.feed.label.rewrite_rules" }}
+                </label>
+                &nbsp;
+                <a href="https://miniflux.app/docs/rules.html#rewrite-rules" target="_blank">
+                    {{ icon "external-link" }}
+                </a>
+            </div>
+            <input type="text" name="rewrite_rules" id="form-rewrite-rules" value="{{ .form.RewriteRules }}" spellcheck="false">
+            <div class="form-label-row">
+                <label for="form-blocklist-rules">
+                    {{ t "form.feed.label.blocklist_rules" }}
+                </label>
+                &nbsp;
+                <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
+                    {{ icon "external-link" }}
+                </a>
+            </div>
+            <input type="text" name="blocklist_rules" id="form-blocklist-rules" value="{{ .form.BlocklistRules }}" spellcheck="false">
+
+            <div class="form-label-row">
+                <label for="form-keeplist-rules">
+                    {{ t "form.feed.label.keeplist_rules" }}
+                </label>
+                &nbsp;
+                <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
+                    {{ icon "external-link" }}
+                </a>
+            </div>
+            <input type="text" name="keeplist_rules" id="form-keeplist-rules" value="{{ .form.KeeplistRules }}" spellcheck="false">
+
+            <div class="form-label-row">
+                <label for="form-urlrewrite-rules">
+                    {{ t "form.feed.label.urlrewrite_rules" }}
+                </label>
+                &nbsp;
+                <a href=" https://miniflux.app/docs/rules.html#rewriteurl-rules" target="_blank">
+                    {{ icon "external-link" }}
+                </a>
+            </div>
+            <input type="text" name="urlrewrite_rules" id="form-urlrewrite-rules" value="{{ .form.UrlRewriteRules }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{ t "form.feed.fieldset.integration" }}</legend>
+
+            <div class="form-label-row">
+                <label for="form-apprise-service-urls">
+                    {{ t "form.feed.label.apprise_service_urls" }}
+                </label>
+                &nbsp;
+            </div>
+            <input type="text" name="apprise_service_urls" id="form-apprise-service-urls" value="{{ .form.AppriseServiceURLs }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </fieldset>
     </form>
 
     <div class="panel">

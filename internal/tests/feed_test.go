@@ -762,14 +762,28 @@ func TestGetFeedIcon(t *testing.T) {
 	}
 
 	if feedIcon.ID == 0 {
-		t.Fatalf(`Invalid feed icon ID, got "%v"`, feedIcon.ID)
+		t.Fatalf(`Invalid feed icon ID, got "%d"`, feedIcon.ID)
 	}
 
-	if feedIcon.MimeType != "image/x-icon" {
-		t.Fatalf(`Invalid feed icon mime type, got "%v" instead of "%v"`, feedIcon.MimeType, "image/x-icon")
+	expectedMimeType := "image/x-icon"
+	if feedIcon.MimeType != expectedMimeType {
+		t.Fatalf(`Invalid feed icon mime type, got %q instead of %q`, feedIcon.MimeType, expectedMimeType)
 	}
 
-	if !strings.Contains(feedIcon.Data, "image/x-icon") {
+	if !strings.HasPrefix(feedIcon.Data, expectedMimeType) {
+		t.Fatalf(`Invalid feed icon data, got "%v"`, feedIcon.Data)
+	}
+
+	feedIcon, err = client.Icon(feedIcon.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedIcon.MimeType != expectedMimeType {
+		t.Fatalf(`Invalid feed icon mime type, got %q instead of %q`, feedIcon.MimeType, expectedMimeType)
+	}
+
+	if !strings.HasPrefix(feedIcon.Data, expectedMimeType) {
 		t.Fatalf(`Invalid feed icon data, got "%v"`, feedIcon.Data)
 	}
 }

@@ -1,0 +1,26 @@
+meta {
+  name: Mark all user entries as read
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/users/{{userID}}/mark-all-as-read
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "title": "Test Update"
+  }
+}
+
+vars:pre-request {
+  userID: 1
+}

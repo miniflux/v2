@@ -20,6 +20,7 @@ const (
 	SessionIDContextKey
 	CSRFContextKey
 	OAuth2StateContextKey
+	OAuth2CodeVerifierContextKey
 	FlashMessageContextKey
 	FlashErrorMessageContextKey
 	PocketRequestTokenContextKey
@@ -92,6 +93,10 @@ func UserSessionToken(r *http.Request) string {
 // OAuth2State returns the current OAuth2 state.
 func OAuth2State(r *http.Request) string {
 	return getContextStringValue(r, OAuth2StateContextKey)
+}
+
+func OAuth2CodeVerifier(r *http.Request) string {
+	return getContextStringValue(r, OAuth2CodeVerifierContextKey)
 }
 
 // FlashMessage returns the message message if any.

@@ -152,3 +152,28 @@ func TestFeedScheduleNextCheckEntryCountBasedMinInterval(t *testing.T) {
 		t.Error(`The next_check_at should not be before the now + min interval`)
 	}
 }
+
+func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
+	factor := 2
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", fmt.Sprintf("%d", factor))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+	feed := &Feed{}
+	weeklyCount := 7
+	feed.ScheduleNextCheck(weeklyCount)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(config.Opts.SchedulerEntryFrequencyMaxInterval()/factor))) {
+		t.Error(`The next_check_at should not be after the now + factor * count`)
+	}
+}

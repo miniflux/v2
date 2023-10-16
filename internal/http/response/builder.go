@@ -8,11 +8,10 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
-
-	"miniflux.app/v2/internal/logger"
 )
 
 const compressionThreshold = 1024
@@ -61,7 +60,7 @@ func (b *Builder) WithoutCompression() *Builder {
 func (b *Builder) WithCaching(etag string, duration time.Duration, callback func(*Builder)) {
 	b.headers["ETag"] = etag
 	b.headers["Cache-Control"] = "public"
-	b.headers["Expires"] = time.Now().Add(duration).Format(time.RFC1123)
+	b.headers["Expires"] = time.Now().Add(duration).UTC().Format(http.TimeFormat)
 
 	if etag == b.r.Header.Get("If-None-Match") {
 		b.statusCode = http.StatusNotModified
@@ -91,7 +90,7 @@ func (b *Builder) Write() {
 		b.writeHeaders()
 		_, err := io.Copy(b.w, v)
 		if err != nil {
-			logger.Error("%v", err)
+			slog.Error("Unable to write response body", slog.Any("error", err))
 		}
 	}
 }

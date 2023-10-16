@@ -13,179 +13,23 @@
         <div class="alert alert-error">{{ t .errorMessage }}</div>
     {{ end }}
 
-    <details {{ if .form.FeverEnabled }}open{{ end }}>
-        <summary>Fever</summary>
+    <details {{ if .form.AppriseEnabled }}open{{ end }}>
+        <summary>Apprise</summary>
         <div class="form-section">
             <label>
-                <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "form.integration.fever_activate" }}
+                <input type="checkbox" name="apprise_enabled" value="1" {{ if .form.AppriseEnabled }}checked{{ end }}> {{ t "form.integration.apprise_activate" }}
             </label>
-    
-            <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
-            <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}" autocomplete="username" spellcheck="false">
-    
-            <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
-            <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
-    
-            <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
 
-    <details {{ if .form.GoogleReaderEnabled }}open{{ end }}>
-        <summary>Google Reader</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="googlereader_enabled" value="1" {{ if .form.GoogleReaderEnabled }}checked{{ end }}> {{ t "form.integration.googlereader_activate" }}
-            </label>
-    
-            <label for="form-googlereader-username">{{ t "form.integration.googlereader_username" }}</label>
-            <input type="text" name="googlereader_username" id="form-googlereader-username" value="{{ .form.GoogleReaderUsername }}" autocomplete="username" spellcheck="false">
-    
-            <label for="form-googlereader-password">{{ t "form.integration.googlereader_password" }}</label>
-            <input type="password" name="googlereader_password" id="form-googlereader-password" value="{{ .form.GoogleReaderPassword }}" autocomplete="new-password">
-    
-            <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ route "login" }}</strong></p>
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
+            <label for="form-apprise-url">{{ t "form.integration.apprise_url" }}</label>
+            <input type="url" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
 
-    <details {{ if .form.PinboardEnabled }}open{{ end }}>
-        <summary>Pinboard</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "form.integration.pinboard_activate" }}
+            <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}
+                <a href="https://github.com/caronc/apprise/wiki" target="_blank">
+                    {{ icon "external-link" }}
+                </a>
             </label>
-    
-            <label for="form-pinboard-token">{{ t "form.integration.pinboard_token" }}</label>
-            <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}" autocomplete="new-password">
-    
-            <label for="form-pinboard-tags">{{ t "form.integration.pinboard_tags" }}</label>
-            <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}" spellcheck="false">
-    
-            <label>
-                <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "form.integration.pinboard_bookmark" }}
-            </label>
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
+            <input type="text" name="apprise_services_url" id="form-apprise-services-urls" value="{{ .form.AppriseServicesURL }}" placeholder="tgram://<token>/<chat_id>/,matrix://" spellcheck="false">
 
-    <details {{ if .form.InstapaperEnabled }}open{{ end }}>
-        <summary>Instapaper</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "form.integration.instapaper_activate" }}
-            </label>
-    
-            <label for="form-instapaper-username">{{ t "form.integration.instapaper_username" }}</label>
-            <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}" spellcheck="false">
-    
-            <label for="form-instapaper-password">{{ t "form.integration.instapaper_password" }}</label>
-            <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.PocketEnabled }}open{{ end }}>
-        <summary>Pocket</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "form.integration.pocket_activate" }}
-            </label>
-    
-            {{ if not .hasPocketConsumerKeyConfigured }}
-                <label for="form-pocket-consumer-key">{{ t "form.integration.pocket_consumer_key" }}</label>
-                <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}" spellcheck="false">
-            {{ end }}
-    
-            <label for="form-pocket-access-token">{{ t "form.integration.pocket_access_token" }}</label>
-            <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}" autocomplete="new-password">
-    
-            {{ if not .form.PocketAccessToken }}
-                <p><a href="{{ route "pocketAuthorize" }}">{{ t "form.integration.pocket_connect_link" }}</a></p>
-            {{ end }}
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.WallabagEnabled }}open{{ end }}>
-        <summary>Wallabag</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "form.integration.wallabag_activate" }}
-            </label>
-    
-            <label>
-                <input type="checkbox" name="wallabag_only_url" value="1" {{ if .form.WallabagOnlyURL }}checked{{ end }}> {{ t "form.integration.wallabag_only_url" }}
-            </label>
-    
-            <label for="form-wallabag-url">{{ t "form.integration.wallabag_endpoint" }}</label>
-            <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/" spellcheck="false">
-    
-            <label for="form-wallabag-client-id">{{ t "form.integration.wallabag_client_id" }}</label>
-            <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}" spellcheck="false">
-    
-            <label for="form-wallabag-client-secret">{{ t "form.integration.wallabag_client_secret" }}</label>
-            <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}" autocomplete="new-password">
-    
-            <label for="form-wallabag-username">{{ t "form.integration.wallabag_username" }}</label>
-            <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}" spellcheck="false">
-    
-            <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
-            <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.NotionEnabled }}open{{ end }}>
-        <summary>Notion</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="notion_enabled" value="1" {{ if .form.NotionEnabled }}checked{{ end }}> {{ t "form.integration.notion_activate" }}
-            </label>
-    
-            <label for="form-notion-token">{{ t "form.integration.notion_token" }}</label>
-            <input type="password" name="notion_token" id="form-notion-token" value="{{ .form.NotionToken }}" spellcheck="false">
-    
-            <label for="form-notion-page-id">{{ t "form.integration.notion_page_id" }}</label>
-            <input type="text" name="notion_page_id" id="form-notion-page-id" value="{{ .form.NotionPageID }}" spellcheck="false">
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.NunuxKeeperEnabled }}open{{ end }}>
-        <summary>Nunux Keeper</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "form.integration.nunux_keeper_activate" }}
-            </label>
-    
-            <label for="form-nunux-keeper-url">{{ t "form.integration.nunux_keeper_endpoint" }}</label>
-            <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper" spellcheck="false">
-    
-            <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
-            <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}" spellcheck="false">
-    
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
@@ -198,34 +42,77 @@
             <label>
                 <input type="checkbox" name="espial_enabled" value="1" {{ if .form.EspialEnabled }}checked{{ end }}> {{ t "form.integration.espial_activate" }}
             </label>
-    
+
             <label for="form-espial-url">{{ t "form.integration.espial_endpoint" }}</label>
             <input type="url" name="espial_url" id="form-espial-url" value="{{ .form.EspialURL }}" placeholder="https://esp.ae8.org" spellcheck="false">
-    
+
             <label for="form-espial-api-key">{{ t "form.integration.espial_api_key" }}</label>
             <input type="text" name="espial_api_key" id="form-espial-api-key" value="{{ .form.EspialAPIKey }}" spellcheck="false">
-    
+
             <label for="form-espial-tags">{{ t "form.integration.espial_tags" }}</label>
             <input type="text" name="espial_tags" id="form-espial-tags" value="{{ .form.EspialTags }}" spellcheck="false">
-    
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
         </div>
     </details>
 
-    <details {{ if .form.ReadwiseEnabled }}open{{ end }}>
-        <summary>Readwise Reader</summary>
+    <details {{ if .form.FeverEnabled }}open{{ end }}>
+        <summary>Fever</summary>
         <div class="form-section">
             <label>
-                <input type="checkbox" name="readwise_enabled" value="1" {{ if .form.ReadwiseEnabled }}checked{{ end }}> {{ t "form.integration.readwise_activate" }}
+                <input type="checkbox" name="fever_enabled" value="1" {{ if .form.FeverEnabled }}checked{{ end }}> {{ t "form.integration.fever_activate" }}
             </label>
-    
-            <label for="form-readwise-api-key">{{ t "form.integration.readwise_api_key" }}</label>
-            <input type="text" name="readwise_api_key" id="form-readwise-api-key" value="{{ .form.ReadwiseAPIKey }}" spellcheck="false">
-    
-            <p><a href="https://readwise.io/access_token" target="_blank">{{ t "form.integration.readwise_api_key_link" }}</a></p>
-    
+
+            <label for="form-fever-username">{{ t "form.integration.fever_username" }}</label>
+            <input type="text" name="fever_username" id="form-fever-username" value="{{ .form.FeverUsername }}" autocomplete="username" spellcheck="false">
+
+            <label for="form-fever-password">{{ t "form.integration.fever_password" }}</label>
+            <input type="password" name="fever_password" id="form-fever-password" value="{{ .form.FeverPassword }}" autocomplete="new-password">
+
+            <p>{{ t "form.integration.fever_endpoint" }} <strong>{{ rootURL }}{{ route "feverEndpoint" }}</strong></p>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.GoogleReaderEnabled }}open{{ end }}>
+        <summary>Google Reader</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="googlereader_enabled" value="1" {{ if .form.GoogleReaderEnabled }}checked{{ end }}> {{ t "form.integration.googlereader_activate" }}
+            </label>
+
+            <label for="form-googlereader-username">{{ t "form.integration.googlereader_username" }}</label>
+            <input type="text" name="googlereader_username" id="form-googlereader-username" value="{{ .form.GoogleReaderUsername }}" autocomplete="username" spellcheck="false">
+
+            <label for="form-googlereader-password">{{ t "form.integration.googlereader_password" }}</label>
+            <input type="password" name="googlereader_password" id="form-googlereader-password" value="{{ .form.GoogleReaderPassword }}" autocomplete="new-password">
+
+            <p>{{ t "form.integration.googlereader_endpoint" }} <strong>{{ rootURL }}{{ route "login" }}</strong></p>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.InstapaperEnabled }}open{{ end }}>
+        <summary>Instapaper</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="instapaper_enabled" value="1" {{ if .form.InstapaperEnabled }}checked{{ end }}> {{ t "form.integration.instapaper_activate" }}
+            </label>
+
+            <label for="form-instapaper-username">{{ t "form.integration.instapaper_username" }}</label>
+            <input type="text" name="instapaper_username" id="form-instapaper-username" value="{{ .form.InstapaperUsername }}" spellcheck="false">
+
+            <label for="form-instapaper-password">{{ t "form.integration.instapaper_password" }}</label>
+            <input type="password" name="instapaper_password" id="form-instapaper-password" value="{{ .form.InstapaperPassword }}" autocomplete="new-password">
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
@@ -238,62 +125,20 @@
             <label>
                 <input type="checkbox" name="linkding_enabled" value="1" {{ if .form.LinkdingEnabled }}checked{{ end }}> {{ t "form.integration.linkding_activate" }}
             </label>
-    
+
             <label for="form-linkding-url">{{ t "form.integration.linkding_endpoint" }}</label>
             <input type="url" name="linkding_url" id="form-linkding-url" value="{{ .form.LinkdingURL }}" placeholder="https://linkding.com" spellcheck="false">
-    
+
             <label for="form-linkding-api-key">{{ t "form.integration.linkding_api_key" }}</label>
             <input type="text" name="linkding_api_key" id="form-linkding-api-key" value="{{ .form.LinkdingAPIKey }}" spellcheck="false">
-    
+
             <label for="form-linkding-tags">{{ t "form.integration.linkding_tags" }}</label>
             <input type="text" name="linkding_tags" id="form-linkding-tags" value="{{ .form.LinkdingTags }}" spellcheck="false">
-    
+
             <label>
                 <input type="checkbox" name="linkding_mark_as_unread" value="1" {{ if .form.LinkdingMarkAsUnread }}checked{{ end }}> {{ t "form.integration.linkding_bookmark" }}
             </label>
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
 
-    <details {{ if .form.AppriseEnabled }}open{{ end }}>
-        <summary>Apprise</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="apprise_enabled" value="1" {{ if .form.AppriseEnabled }}checked{{ end }}> {{ t "form.integration.apprise_activate" }}
-            </label>
-    
-            <label for="form-apprise-url">{{ t "form.integration.apprise_url" }}</label>
-            <input type="text" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
-    
-            <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}
-                <a href="https://github.com/caronc/apprise/wiki" target="_blank">
-                    {{ icon "external-link" }}
-                </a>
-            </label>
-            <input type="text" name="apprise_services_url" id="form-apprise-services-urls" value="{{ .form.AppriseServicesURL }}" placeholder="tgram://<token>/<chat_id>/,matrix://" spellcheck="false">
-    
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.TelegramBotEnabled }}open{{ end }}>
-        <summary>Telegram Bot</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="telegram_bot_enabled" value="1" {{ if .form.TelegramBotEnabled }}checked{{ end }}> {{ t "form.integration.telegram_bot_activate" }}
-            </label>
-    
-            <label for="form-telegram-bot-token">{{ t "form.integration.telegram_bot_token" }}</label>
-            <input type="text" name="telegram_bot_token" id="form-telegram-bot-token" value="{{ .form.TelegramBotToken }}" placeholder="bot123456:Abcdefg" spellcheck="false">
-    
-            <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
-            <input type="text" name="telegram_bot_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramBotChatID }}" spellcheck="false">
-    
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
@@ -306,19 +151,123 @@
             <label>
                 <input type="checkbox" name="matrix_bot_enabled" value="1" {{ if .form.MatrixBotEnabled }}checked{{ end }}> {{ t "form.integration.matrix_bot_activate" }}
             </label>
-    
+
             <label for="form-matrix-bot-user">{{ t "form.integration.matrix_bot_user" }}</label>
             <input type="text" name="matrix_bot_user" id="form-matrix-bot-user" value="{{ .form.MatrixBotUser }}" spellcheck="false">
-    
+
             <label for="form-matrix-chat-password">{{ t "form.integration.matrix_bot_password" }}</label>
             <input type="password" name="matrix_bot_password" id="form-matrix-password" value="{{ .form.MatrixBotPassword }}" spellcheck="false">
-    
+
             <label for="form-matrix-url">{{ t "form.integration.matrix_bot_url" }}</label>
-            <input type="text" name="matrix_bot_url" id="form-matrix-url" value="{{ .form.MatrixBotURL }}" spellcheck="false">
-    
+            <input type="url" name="matrix_bot_url" id="form-matrix-url" value="{{ .form.MatrixBotURL }}" spellcheck="false">
+
             <label for="form-matrix-chat-id">{{ t "form.integration.matrix_bot_chat_id" }}</label>
             <input type="text" name="matrix_bot_chat_id" id="form-matrix-chat-id" value="{{ .form.MatrixBotChatID }}" spellcheck="false">
-    
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.NotionEnabled }}open{{ end }}>
+        <summary>Notion</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="notion_enabled" value="1" {{ if .form.NotionEnabled }}checked{{ end }}> {{ t "form.integration.notion_activate" }}
+            </label>
+
+            <label for="form-notion-token">{{ t "form.integration.notion_token" }}</label>
+            <input type="password" name="notion_token" id="form-notion-token" value="{{ .form.NotionToken }}" spellcheck="false">
+
+            <label for="form-notion-page-id">{{ t "form.integration.notion_page_id" }}</label>
+            <input type="text" name="notion_page_id" id="form-notion-page-id" value="{{ .form.NotionPageID }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.NunuxKeeperEnabled }}open{{ end }}>
+        <summary>Nunux Keeper</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="nunux_keeper_enabled" value="1" {{ if .form.NunuxKeeperEnabled }}checked{{ end }}> {{ t "form.integration.nunux_keeper_activate" }}
+            </label>
+
+            <label for="form-nunux-keeper-url">{{ t "form.integration.nunux_keeper_endpoint" }}</label>
+            <input type="url" name="nunux_keeper_url" id="form-nunux-keeper-url" value="{{ .form.NunuxKeeperURL }}" placeholder="https://api.nunux.org/keeper" spellcheck="false">
+
+            <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
+            <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.PinboardEnabled }}open{{ end }}>
+        <summary>Pinboard</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="pinboard_enabled" value="1" {{ if .form.PinboardEnabled }}checked{{ end }}> {{ t "form.integration.pinboard_activate" }}
+            </label>
+
+            <label for="form-pinboard-token">{{ t "form.integration.pinboard_token" }}</label>
+            <input type="password" name="pinboard_token" id="form-pinboard-token" value="{{ .form.PinboardToken }}" autocomplete="new-password">
+
+            <label for="form-pinboard-tags">{{ t "form.integration.pinboard_tags" }}</label>
+            <input type="text" name="pinboard_tags" id="form-pinboard-tags" value="{{ .form.PinboardTags }}" spellcheck="false">
+
+            <label>
+                <input type="checkbox" name="pinboard_mark_as_unread" value="1" {{ if .form.PinboardMarkAsUnread }}checked{{ end }}> {{ t "form.integration.pinboard_bookmark" }}
+            </label>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.PocketEnabled }}open{{ end }}>
+        <summary>Pocket</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="pocket_enabled" value="1" {{ if .form.PocketEnabled }}checked{{ end }}> {{ t "form.integration.pocket_activate" }}
+            </label>
+
+            {{ if not .hasPocketConsumerKeyConfigured }}
+                <label for="form-pocket-consumer-key">{{ t "form.integration.pocket_consumer_key" }}</label>
+                <input type="text" name="pocket_consumer_key" id="form-pocket-consumer-key" value="{{ .form.PocketConsumerKey }}" spellcheck="false">
+            {{ end }}
+
+            <label for="form-pocket-access-token">{{ t "form.integration.pocket_access_token" }}</label>
+            <input type="password" name="pocket_access_token" id="form-pocket-access-token" value="{{ .form.PocketAccessToken }}" autocomplete="new-password">
+
+            {{ if not .form.PocketAccessToken }}
+                <p><a href="{{ route "pocketAuthorize" }}">{{ t "form.integration.pocket_connect_link" }}</a></p>
+            {{ end }}
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.ReadwiseEnabled }}open{{ end }}>
+        <summary>Readwise Reader</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="readwise_enabled" value="1" {{ if .form.ReadwiseEnabled }}checked{{ end }}> {{ t "form.integration.readwise_activate" }}
+            </label>
+
+            <label for="form-readwise-api-key">{{ t "form.integration.readwise_api_key" }}</label>
+            <input type="text" name="readwise_api_key" id="form-readwise-api-key" value="{{ .form.ReadwiseAPIKey }}" spellcheck="false">
+
+            <p><a href="https://readwise.io/access_token" target="_blank">{{ t "form.integration.readwise_api_key_link" }}</a></p>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
@@ -359,6 +308,93 @@
 
             <label for="form-shiori-password">{{ t "form.integration.shiori_password" }}</label>
             <input type="password" name="shiori_password" id="form-shiori-password" value="{{ .form.ShioriPassword }}" autocomplete="new-password">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.TelegramBotEnabled }}open{{ end }}>
+        <summary>Telegram Bot</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="telegram_bot_enabled" value="1" {{ if .form.TelegramBotEnabled }}checked{{ end }}> {{ t "form.integration.telegram_bot_activate" }}
+            </label>
+
+            <label for="form-telegram-bot-token">{{ t "form.integration.telegram_bot_token" }}</label>
+            <input type="text" name="telegram_bot_token" id="form-telegram-bot-token" value="{{ .form.TelegramBotToken }}" placeholder="bot123456:Abcdefg" spellcheck="false">
+
+            <label for="form-telegram-chat-id">{{ t "form.integration.telegram_chat_id" }}</label>
+            <input type="text" name="telegram_bot_chat_id" id="form-telegram-chat-id" value="{{ .form.TelegramBotChatID }}" spellcheck="false">
+
+            <label for="form-telegram-topic-id">{{ t "form.integration.telegram_topic_id" }}</label>
+            <input type="number" name="telegram_bot_topic_id" id="form-telegram-topic-id" {{ if .form.TelegramBotTopicID }}value="{{ .form.TelegramBotTopicID }}"{{ end }}>
+
+            <label>
+                <input type="checkbox" name="telegram_bot_disable_web_page_preview" value="1" {{ if .form.TelegramBotDisableWebPagePreview }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_web_page_preview" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="telegram_bot_disable_notification" value="1" {{ if .form.TelegramBotDisableNotification }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_notification" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="telegram_bot_disable_buttons" value="1" {{ if .form.TelegramBotDisableButtons }}checked{{ end }}> {{ t "form.integration.telegram_bot_disable_buttons" }}
+            </label>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.WallabagEnabled }}open{{ end }}>
+        <summary>Wallabag</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="wallabag_enabled" value="1" {{ if .form.WallabagEnabled }}checked{{ end }}> {{ t "form.integration.wallabag_activate" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="wallabag_only_url" value="1" {{ if .form.WallabagOnlyURL }}checked{{ end }}> {{ t "form.integration.wallabag_only_url" }}
+            </label>
+
+            <label for="form-wallabag-url">{{ t "form.integration.wallabag_endpoint" }}</label>
+            <input type="url" name="wallabag_url" id="form-wallabag-url" value="{{ .form.WallabagURL }}" placeholder="http://v2.wallabag.org/" spellcheck="false">
+
+            <label for="form-wallabag-client-id">{{ t "form.integration.wallabag_client_id" }}</label>
+            <input type="text" name="wallabag_client_id" id="form-wallabag-client-id" value="{{ .form.WallabagClientID }}" spellcheck="false">
+
+            <label for="form-wallabag-client-secret">{{ t "form.integration.wallabag_client_secret" }}</label>
+            <input type="password" name="wallabag_client_secret" id="form-wallabag-client-secret" value="{{ .form.WallabagClientSecret }}" autocomplete="new-password">
+
+            <label for="form-wallabag-username">{{ t "form.integration.wallabag_username" }}</label>
+            <input type="text" name="wallabag_username" id="form-wallabag-username" value="{{ .form.WallabagUsername }}" spellcheck="false">
+
+            <label for="form-wallabag-password">{{ t "form.integration.wallabag_password" }}</label>
+            <input type="password" name="wallabag_password" id="form-wallabag-password" value="{{ .form.WallabagPassword }}" autocomplete="new-password">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.WebhookEnabled }}open{{ end }}>
+        <summary>Webhook</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="webhook_enabled" value="1" {{ if .form.WebhookEnabled }}checked{{ end }}> {{ t "form.integration.webhook_activate" }}
+            </label>
+
+            <label for="form-webhook-url">{{ t "form.integration.webhook_url" }}</label>
+            <input type="url" name="webhook_url" id="form-webhook-url" value="{{ .form.WebhookURL }}" placeholder="https://username:password@example.org" spellcheck="false">
+
+            {{ if .form.WebhookSecret }}
+            <label for="form-webhook-secret">{{ t "form.integration.webhook_secret" }}</label>
+            <input type="text" name="webhook_secret" id="form-webhook-secret" value="{{ .form.WebhookSecret }}" spellcheck="false" readonly>
+            {{ end }}
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

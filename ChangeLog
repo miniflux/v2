@@ -1,3 +1,74 @@
+Version 2.0.49 (October 15, 2023)
+---------------------------------
+
+* Implement structured logging using `log/slog` package. New config options available:
+    * `LOG_FORMAT`: `json` or `text`
+    * `LOG_LEVEL`: `debug`, `info`, `warning`, or `error`
+    * `LOG_FILE`: `sdterr`, `stdout`, or a file path
+    * The `DEBUG` option is now deprecated in favor of `LOG_LEVEL`
+* API Improvements:
+    * Add endpoint `/v1/version`
+    * Add endpoint `PUT /v1/entries` to update entry title and content
+    * Add endpoint `/v1/icons/{iconID}`
+    * Add endpoint `/v1/flush-history` to flush history
+    * Make the category optional when creating feeds for API clients who don't support categories
+    * Add enclosures to `GET /v1/entries` endpoint
+    * Add `published_after`, `published_before`, `changed_after` and `changed_before` options to `/v1/entries` endpoint
+* Telegram integration improvements:
+    * Replace feed HTML link with a button to avoid page preview issues
+    * Add the possibility to disable buttons
+* Add Bruno Miniflux API collection in `contrib` folder (Bruno is an open source alternative to Postman/Insomnia)
+* Add command line argument to export user feeds as OPML
+* Add new rewrite rules `add_hn_links_using_hack` and `add_hn_links_using_opener` to open HN comments with iOS apps
+* Fix timestamp format for `Expires` response header
+* Fix Javascript error when reading time option is disabled
+* Fix Apprise logic to handle feed service URLs
+* Fix missing word in force refresh message
+* Remove deprecated `PreferServerCipherSuites` TLS option
+* Replace `github.com/rylans/getlang` with `github.com/abadojack/whatlanggo` because `getlang` doesn't seems to be updated anymore
+* Bump `github.com/mccutchen/go-httpbin/v2` from `2.11.0` to `2.11.1`
+* Bump `golang.org/x/*` dependencies
+
+Version 2.0.48 (September 15, 2023)
+-----------------------------------
+
+* Add generic webhook integration
+    * Send webhook events when new entries are detected
+    * Send wehbook events when saving an entry
+    * Sign the outgoing requests with HMAC-SHA256
+* Improve Telegram integration
+    * Add built-in Telegram client
+    * Remove dependency on `go-telegram-bot-api` library
+    * Add new options:
+        * Optional topic ID
+        * Disable page preview
+        * Disable notifications
+    * Add new button to go to article
+* Improve Matrix integration
+    * Add built-in Matrix client
+    * Remove dependency on `gomatrix` library
+    * Send HTML formatted messages to Matrix
+* OpenID Connect authentication improvements:
+    * Add OAuth2 PKCE support
+    * Add `profile` scope to OIDC integration to support accounts without email address
+    * Prevent empty username when using the OIDC integration
+* Add `factor` for `entry_frequency` scheduler:
+    * Allow the user to increase the frequency of the `entry_frequency`
+    scheduler by a configurable factor in order to shorten the time between
+    updates.
+* Fix: status bar is unreadable when using PWA in dark mode on Firefox Android
+* Group form fields into fieldsets to improve page layout
+* Update Russian translation
+* Make sure icon URLs are always absolute
+* Add Apprise service URLs per feed
+* Trim `username` and `password` form fields
+* Strip HTML tags from DublinCore Creator tags
+* Fix scroll up behavior on Firefox Android
+* Add missing `return` statement in `fetchContent` UI handler
+* Add `replace_title` rewrite rule to adjust entry titles
+* Fix Pocket integration redirect URL and Google Reader API HREF
+* Fix feed `hide_globally` property to use it with third-party clients.
+
 Version 2.0.47 (August 20, 2023)
 --------------------------------
 

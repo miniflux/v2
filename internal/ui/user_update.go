@@ -9,7 +9,6 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
@@ -64,9 +63,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 
 	userForm.Merge(selectedUser)
 	if err := h.store.UpdateUser(selectedUser); err != nil {
-		logger.Error("[UI:UpdateUser] %v", err)
-		view.Set("errorMessage", "error.unable_to_update_user")
-		html.OK(w, r, view.Render("edit_user"))
+		html.ServerError(w, r, err)
 		return
 	}
 

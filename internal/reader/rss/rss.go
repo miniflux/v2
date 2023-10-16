@@ -6,15 +6,16 @@ package rss // import "miniflux.app/v2/internal/reader/rss"
 import (
 	"encoding/xml"
 	"html"
+	"log/slog"
 	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
+	"miniflux.app/v2/internal/reader/dublincore"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
@@ -182,14 +183,14 @@ type rssItem struct {
 	CommentLinks   []rssCommentLink `xml:"comments"`
 	EnclosureLinks []rssEnclosure   `xml:"enclosure"`
 	Categories     []rssCategory    `xml:"category"`
-	DublinCoreElement
+	dublincore.DublinCoreItemElement
 	FeedBurnerElement
 	PodcastEntryElement
 	media.Element
 }
 
 func (r *rssItem) Transform() *model.Entry {
-	entry := new(model.Entry)
+	entry := model.NewEntry()
 	entry.URL = r.entryURL()
 	entry.CommentsURL = r.entryCommentsURL()
 	entry.Date = r.entryDate()
@@ -215,7 +216,11 @@ func (r *rssItem) entryDate() time.Time {
 	if value != "" {
 		result, err := date.Parse(value)
 		if err != nil {
-			logger.Error("rss: %v (entry GUID = %s)", err, r.GUID)
+			slog.Warn("Unable to parse date from RSS feed",
+				slog.String("date", value),
+				slog.String("guid", r.GUID.Data),
+				slog.Any("error", err),
+			)
 			return time.Now()
 		}
 
@@ -250,7 +255,7 @@ func (r *rssItem) entryAuthor() string {
 	}
 
 	if author == "" {
-		author = r.DublinCoreCreator
+		author = r.GetSanitizedCreator()
 	}
 
 	return sanitizer.StripTags(strings.TrimSpace(author))
@@ -387,7 +392,7 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 }
 
 func (r *rssItem) entryCategories() []string {
-	var categoryList []string
+	categoryList := make([]string, 0)
 
 	for _, rssCategory := range r.Categories {
 		if strings.Contains(rssCategory.Inner, "<![CDATA[") {

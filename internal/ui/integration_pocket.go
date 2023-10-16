@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"log/slog"
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
@@ -12,7 +13,6 @@ import (
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/integration/pocket"
 	"miniflux.app/v2/internal/locale"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/ui/session"
 )
 
@@ -32,10 +32,13 @@ func (h *handler) pocketAuthorize(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(h.store, request.SessionID(r))
 	connector := pocket.NewConnector(config.Opts.PocketConsumerKey(integration.PocketConsumerKey))
-	redirectURL := config.Opts.BaseURL() + route.Path(h.router, "pocketCallback")
+	redirectURL := config.Opts.RootURL() + route.Path(h.router, "pocketCallback")
 	requestToken, err := connector.RequestToken(redirectURL)
 	if err != nil {
-		logger.Error("[Pocket:Authorize] %v", err)
+		slog.Warn("Pocket authorization request failed",
+			slog.Any("user_id", user.ID),
+			slog.Any("error", err),
+		)
 		sess.NewFlashErrorMessage(printer.Printf("error.pocket_request_token"))
 		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return
@@ -64,7 +67,10 @@ func (h *handler) pocketCallback(w http.ResponseWriter, r *http.Request) {
 	connector := pocket.NewConnector(config.Opts.PocketConsumerKey(integration.PocketConsumerKey))
 	accessToken, err := connector.AccessToken(request.PocketRequestToken(r))
 	if err != nil {
-		logger.Error("[Pocket:Callback] %v", err)
+		slog.Warn("Unable to get Pocket access token",
+			slog.Any("user_id", user.ID),
+			slog.Any("error", err),
+		)
 		sess.NewFlashErrorMessage(printer.Printf("error.pocket_access_token"))
 		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return

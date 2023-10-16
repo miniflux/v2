@@ -6,11 +6,11 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"runtime"
 	"strings"
 
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 
 	"github.com/lib/pq"
@@ -506,14 +506,20 @@ func (s *Storage) RemoveUser(userID int64) error {
 func (s *Storage) RemoveUserAsync(userID int64) {
 	go func() {
 		if err := s.deleteUserFeeds(userID); err != nil {
-			logger.Error(`%v`, err)
+			slog.Error("Unable to delete user feedd",
+				slog.Int64("user_id", userID),
+				slog.Any("error", err),
+			)
 			return
 		}
 
 		s.db.Exec(`DELETE FROM users WHERE id=$1`, userID)
 		s.db.Exec(`DELETE FROM integrations WHERE user_id=$1`, userID)
 
-		logger.Debug(`[MASS DELETE] User #%d has been deleted (%d GoRoutines)`, userID, runtime.NumGoroutine())
+		slog.Debug("User deleted",
+			slog.Int64("user_id", userID),
+			slog.Int("goroutines", runtime.NumGoroutine()),
+		)
 	}()
 }
 
@@ -528,7 +534,11 @@ func (s *Storage) deleteUserFeeds(userID int64) error {
 		var feedID int64
 		rows.Scan(&feedID)
 
-		logger.Debug(`[USER DELETION] Deleting feed #%d for user #%d (%d GoRoutines)`, feedID, userID, runtime.NumGoroutine())
+		slog.Debug("Deleting feed",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.Int("goroutines", runtime.NumGoroutine()),
+		)
 
 		if err := s.RemoveFeed(userID, feedID); err != nil {
 			return err

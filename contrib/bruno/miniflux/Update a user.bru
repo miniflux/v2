@@ -1,0 +1,26 @@
+meta {
+  name: Update a user
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{minifluxBaseURL}}/v1/users/{{userID}}
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "language": "fr_FR"
+  }
+}
+
+vars:pre-request {
+  userID: 1
+}

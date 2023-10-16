@@ -13,7 +13,6 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/client"
-	"miniflux.app/v2/internal/logger"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 
@@ -21,48 +20,72 @@ import (
 )
 
 // FindIcon try to find the website's icon.
-func FindIcon(websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
-	if iconURL == "" {
-		rootURL := urllib.RootURL(websiteURL)
-		logger.Debug("[FindIcon] Trying to find an icon: rootURL=%q websiteURL=%q userAgent=%q", rootURL, websiteURL, userAgent)
-
-		clt := client.NewClientWithConfig(rootURL, config.Opts)
-		clt.WithUserAgent(userAgent)
-		clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
-
-		if fetchViaProxy {
-			clt.WithProxy()
-		}
-
-		response, err := clt.Get()
-		if err != nil {
-			return nil, fmt.Errorf("icon: unable to download website index page: %v", err)
-		}
-
-		if response.HasServerFailure() {
-			return nil, fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
-		}
-
-		iconURL, err = parseDocument(rootURL, response.Body)
+func FindIcon(websiteURL, feedIconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (icon *model.Icon, err error) {
+	if feedIconURL == "" {
+		feedIconURL, err = fetchHTMLDocumentAndFindIconURL(websiteURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if strings.HasPrefix(iconURL, "data:") {
-		return parseImageDataURL(iconURL)
+	if strings.HasPrefix(feedIconURL, "data:") {
+		return parseImageDataURL(feedIconURL)
 	}
 
-	logger.Debug("[FindIcon] Fetching icon => %s", iconURL)
-	icon, err := downloadIcon(iconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
+	feedIconURL, err = generateIconURL(websiteURL, feedIconURL)
 	if err != nil {
+		return nil, err
+	}
+
+	if icon, err = downloadIcon(feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates); err != nil {
 		return nil, err
 	}
 
 	return icon, nil
 }
 
-func parseDocument(websiteURL string, data io.Reader) (string, error) {
+func generateIconURL(websiteURL, feedIconURL string) (iconURL string, err error) {
+	feedIconURL = strings.TrimSpace(feedIconURL)
+
+	if feedIconURL == "" {
+		iconURL, err = urllib.JoinBaseURLAndPath(urllib.RootURL(websiteURL), "favicon.ico")
+		if err != nil {
+			return "", fmt.Errorf(`icon: unable to join base URL and path: %w`, err)
+		}
+	} else {
+		iconURL, err = urllib.AbsoluteURL(websiteURL, feedIconURL)
+		if err != nil {
+			return "", fmt.Errorf(`icon: unable to convert icon URL to absolute URL: %w`, err)
+		}
+	}
+
+	return iconURL, nil
+}
+
+func fetchHTMLDocumentAndFindIconURL(websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (string, error) {
+	rootURL := urllib.RootURL(websiteURL)
+
+	clt := client.NewClientWithConfig(rootURL, config.Opts)
+	clt.WithUserAgent(userAgent)
+	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
+
+	if fetchViaProxy {
+		clt.WithProxy()
+	}
+
+	response, err := clt.Get()
+	if err != nil {
+		return "", fmt.Errorf("icon: unable to download website index page: %v", err)
+	}
+
+	if response.HasServerFailure() {
+		return "", fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
+	}
+
+	return findIconURLFromHTMLDocument(response.Body)
+}
+
+func findIconURLFromHTMLDocument(body io.Reader) (string, error) {
 	queries := []string{
 		"link[rel='shortcut icon']",
 		"link[rel='Shortcut Icon']",
@@ -70,7 +93,7 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 		"link[rel='icon']",
 	}
 
-	doc, err := goquery.NewDocumentFromReader(data)
+	doc, err := goquery.NewDocumentFromReader(body)
 	if err != nil {
 		return "", fmt.Errorf("icon: unable to read document: %v", err)
 	}
@@ -86,12 +109,6 @@ func parseDocument(websiteURL string, data io.Reader) (string, error) {
 		if iconURL != "" {
 			break
 		}
-	}
-
-	if iconURL == "" {
-		iconURL = urllib.RootURL(websiteURL) + "favicon.ico"
-	} else {
-		iconURL, _ = urllib.AbsoluteURL(websiteURL, iconURL)
 	}
 
 	return iconURL, nil

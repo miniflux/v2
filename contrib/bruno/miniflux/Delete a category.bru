@@ -1,0 +1,26 @@
+meta {
+  name: Delete a category
+  type: http
+  seq: 12
+}
+
+delete {
+  url: {{minifluxBaseURL}}/v1/categories/{{categoryID}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "title": "Test Update"
+  }
+}
+
+vars:pre-request {
+  categoryID: 1
+}

@@ -31,7 +31,7 @@ func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUse
 func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
 		SELECT
-			users.id, users.is_admin, users.timezone
+			users.id, users.username, users.is_admin, users.timezone
 		FROM
 			users
 		LEFT JOIN
@@ -41,7 +41,7 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	`
 
 	var user model.User
-	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.IsAdmin, &user.Timezone)
+	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Timezone)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, nil
@@ -148,6 +148,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			telegram_bot_enabled,
 			telegram_bot_token,
 			telegram_bot_chat_id,
+			telegram_bot_topic_id,
+			telegram_bot_disable_web_page_preview,
+			telegram_bot_disable_notification,
+			telegram_bot_disable_buttons,
 			linkding_enabled,
 			linkding_url,
 			linkding_api_key,
@@ -167,7 +171,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shiori_password,
 			shaarli_enabled,
 			shaarli_url,
-			shaarli_api_secret
+			shaarli_api_secret,
+			webhook_enabled,
+			webhook_url,
+			webhook_secret
 		FROM
 			integrations
 		WHERE
@@ -214,6 +221,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.TelegramBotEnabled,
 		&integration.TelegramBotToken,
 		&integration.TelegramBotChatID,
+		&integration.TelegramBotTopicID,
+		&integration.TelegramBotDisableWebPagePreview,
+		&integration.TelegramBotDisableNotification,
+		&integration.TelegramBotDisableButtons,
 		&integration.LinkdingEnabled,
 		&integration.LinkdingURL,
 		&integration.LinkdingAPIKey,
@@ -234,6 +245,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.ShaarliEnabled,
 		&integration.ShaarliURL,
 		&integration.ShaarliAPISecret,
+		&integration.WebhookEnabled,
+		&integration.WebhookURL,
+		&integration.WebhookSecret,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -280,37 +294,44 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			telegram_bot_enabled=$27,
 			telegram_bot_token=$28,
 			telegram_bot_chat_id=$29,
-			espial_enabled=$30,
-			espial_url=$31,
-			espial_api_key=$32,
-			espial_tags=$33,
-			linkding_enabled=$34,
-			linkding_url=$35,
-			linkding_api_key=$36,
-			linkding_tags=$37,
-			linkding_mark_as_unread=$38,
-			matrix_bot_enabled=$39,
-			matrix_bot_user=$40,
-			matrix_bot_password=$41,
-			matrix_bot_url=$42,
-			matrix_bot_chat_id=$43,
-			notion_enabled=$44,
-			notion_token=$45,
-			notion_page_id=$46,
-			readwise_enabled=$47,
-			readwise_api_key=$48,
-			apprise_enabled=$49,
-			apprise_url=$50,
-			apprise_services_url=$51,
-			shiori_enabled=$52,
-			shiori_url=$53,
-			shiori_username=$54,
-			shiori_password=$55,
-			shaarli_enabled=$56,
-			shaarli_url=$57,
-			shaarli_api_secret=$58
+			telegram_bot_topic_id=$30,
+			telegram_bot_disable_web_page_preview=$31,
+			telegram_bot_disable_notification=$32,
+			telegram_bot_disable_buttons=$33,
+			espial_enabled=$34,
+			espial_url=$35,
+			espial_api_key=$36,
+			espial_tags=$37,
+			linkding_enabled=$38,
+			linkding_url=$39,
+			linkding_api_key=$40,
+			linkding_tags=$41,
+			linkding_mark_as_unread=$42,
+			matrix_bot_enabled=$43,
+			matrix_bot_user=$44,
+			matrix_bot_password=$45,
+			matrix_bot_url=$46,
+			matrix_bot_chat_id=$47,
+			notion_enabled=$48,
+			notion_token=$49,
+			notion_page_id=$50,
+			readwise_enabled=$51,
+			readwise_api_key=$52,
+			apprise_enabled=$53,
+			apprise_url=$54,
+			apprise_services_url=$55,
+			shiori_enabled=$56,
+			shiori_url=$57,
+			shiori_username=$58,
+			shiori_password=$59,
+			shaarli_enabled=$60,
+			shaarli_url=$61,
+			shaarli_api_secret=$62,
+			webhook_enabled=$63,
+			webhook_url=$64,
+			webhook_secret=$65
 		WHERE
-			user_id=$59
+			user_id=$66
 	`
 	_, err := s.db.Exec(
 		query,
@@ -343,6 +364,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.TelegramBotEnabled,
 		integration.TelegramBotToken,
 		integration.TelegramBotChatID,
+		integration.TelegramBotTopicID,
+		integration.TelegramBotDisableWebPagePreview,
+		integration.TelegramBotDisableNotification,
+		integration.TelegramBotDisableButtons,
 		integration.EspialEnabled,
 		integration.EspialURL,
 		integration.EspialAPIKey,
@@ -372,6 +397,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.ShaarliEnabled,
 		integration.ShaarliURL,
 		integration.ShaarliAPISecret,
+		integration.WebhookEnabled,
+		integration.WebhookURL,
+		integration.WebhookSecret,
 		integration.UserID,
 	)
 
@@ -404,7 +432,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				linkding_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
-				shaarli_enabled='t'
+				shaarli_enabled='t' OR
+				webhook_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

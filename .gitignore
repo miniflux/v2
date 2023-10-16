@@ -1,5 +1,5 @@
 miniflux-*
-miniflux
+./miniflux
 *.rpm
 *.deb
 .idea

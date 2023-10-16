@@ -164,7 +164,7 @@ class TouchHandler {
 
         elements.forEach((element) => {
             element.addEventListener("touchstart", (e) => this.onItemTouchStart(e), hasPassiveOption ? { passive: true } : false);
-            element.addEventListener("touchmove", (e) => this.onItemTouchMove(e), hasPassiveOption ? { passive: false } : false);
+            element.addEventListener("touchmove", (e) => this.onItemTouchMove(e), hasPassiveOption ? { passive: true } : false);
             element.addEventListener("touchend", (e) => this.onItemTouchEnd(e), hasPassiveOption ? { passive: true } : false);
             element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
         });

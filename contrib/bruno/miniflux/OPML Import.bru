@@ -1,0 +1,40 @@
+meta {
+  name: OPML Import
+  type: http
+  seq: 31
+}
+
+post {
+  url: {{minifluxBaseURL}}/v1/import
+  body: xml
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+body:json {
+  {
+    "user_agent": "My user agent"
+  }
+}
+
+body:xml {
+  <?xml version="1.0" encoding="UTF-8"?>
+  <opml version="2.0">
+      <head>
+          <title>Miniflux</title>
+      </head>
+      <body>
+          <outline text="My category">
+              <outline title="Miniflux" text="Miniflux" xmlUrl="https://miniflux.app/feed.xml" htmlUrl="https://miniflux.app"></outline>
+          </outline>
+      </body>
+  </opml>
+}
+
+vars:pre-request {
+  feedID: 19
+}

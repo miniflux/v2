@@ -1,0 +1,20 @@
+meta {
+  name: Get a single user by ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{minifluxBaseURL}}/v1/users/{{userID}}
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{minifluxUsername}}
+  password: {{minifluxPassword}}
+}
+
+vars:pre-request {
+  userID: 1
+}

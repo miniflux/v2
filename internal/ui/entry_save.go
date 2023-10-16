@@ -29,15 +29,13 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	settings, err := h.store.Integration(request.UserID(r))
+	userIntegrations, err := h.store.Integration(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	go func() {
-		integration.SendEntry(entry, settings)
-	}()
+	go integration.SendEntry(entry, userIntegrations)
 
 	json.Created(w, r, map[string]string{"message": "saved"})
 }

@@ -14,13 +14,13 @@ import (
 
 func (h *handler) exportFeeds(w http.ResponseWriter, r *http.Request) {
 	opmlHandler := opml.NewHandler(h.store)
-	opml, err := opmlHandler.Export(request.UserID(r))
+	opmlExport, err := opmlHandler.Export(request.UserID(r))
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 
-	xml.OK(w, r, opml)
+	xml.OK(w, r, opmlExport)
 }
 
 func (h *handler) importFeeds(w http.ResponseWriter, r *http.Request) {
