@@ -38,7 +38,7 @@ func (s *Storage) NewUserBatch(userID int64, batchSize int) (jobs model.JobList,
 		FROM
 			feeds
 		WHERE
-			user_id=$1 AND disabled is false
+			user_id=$1 AND disabled is false AND next_check_at < now()
 		ORDER BY next_check_at ASC LIMIT %d
 	`
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID)
@@ -55,7 +55,7 @@ func (s *Storage) NewCategoryBatch(userID int64, categoryID int64, batchSize int
 		FROM
 			feeds
 		WHERE
-			user_id=$1 AND category_id=$2 AND disabled is false
+			user_id=$1 AND category_id=$2 AND disabled is false AND next_check_at < now()
 		ORDER BY next_check_at ASC LIMIT %d
 	`
 	return s.fetchBatchRows(fmt.Sprintf(query, batchSize), userID, categoryID)

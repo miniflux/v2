@@ -36,9 +36,13 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		h.pool.Push(jobs)
-	}()
+	slog.Info(
+		"Triggered a manual refresh of all feeds from the web ui",
+		slog.Int64("user_id", userID),
+		slog.Int("nb_jobs", len(jobs)),
+	)
+
+	go h.pool.Push(jobs)
 
 	html.Redirect(w, r, route.Path(h.router, "feeds"))
 }
