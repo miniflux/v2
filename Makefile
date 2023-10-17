@@ -131,7 +131,7 @@ clean-integration-test:
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-image:
-	docker build -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/alpine/Dockerfile .
+	docker build --pull -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/alpine/Dockerfile .
 
 docker-image-distroless:
 	docker build -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/distroless/Dockerfile .
