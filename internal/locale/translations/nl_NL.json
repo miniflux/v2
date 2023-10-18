@@ -101,6 +101,7 @@
     "page.edit_user.title": "Bewerk gebruiker: %s",
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "Laatste update:",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Aantal ongelezen vermeldingen",
     "page.feeds.read_counter": "Aantal gelezen vermeldingen",
     "page.feeds.error_count": [

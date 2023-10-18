@@ -103,6 +103,7 @@
     "page.edit_user.title": "Редагування користувача: %s",
     "page.feeds.title": "Стрічки",
     "page.feeds.last_check": "Остання перевірка:",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Кількість непрочитаних записів",
     "page.feeds.read_counter": "Кількість прочитаних записів",
     "page.feeds.error_count": [

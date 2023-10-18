@@ -101,6 +101,7 @@
     "page.edit_user.title": "%s उपभोक्ता संपाद करे",
     "page.feeds.title": "फ़ीड",
     "page.feeds.last_check": "आखरी जाँच",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "अपठित विषयवस्तुया",
     "page.feeds.read_counter": "पड़े हुए विषयवस्तुया",
     "page.feeds.error_count": [

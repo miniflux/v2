@@ -101,6 +101,7 @@
     "page.edit_user.title": "Muokkaa käyttäjä: %s",
     "page.feeds.title": "Syötteet",
     "page.feeds.last_check": "Viimeisin tarkistus:",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Lukemattomien artikkeleiden määrä",
     "page.feeds.read_counter": "Luettujen artikkeleiden määrä",
     "page.feeds.error_count": [
