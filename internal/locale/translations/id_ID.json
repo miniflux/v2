@@ -99,6 +99,7 @@
     "page.edit_user.title": "Sunting Pengguna: %s",
     "page.feeds.title": "Umpan",
     "page.feeds.last_check": "Terakhir diperiksa:",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Jumlah entri yang belum dibaca",
     "page.feeds.read_counter": "Jumlah entri yang telah dibaca",
     "page.feeds.error_count": [
