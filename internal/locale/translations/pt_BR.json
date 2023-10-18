@@ -101,6 +101,7 @@
     "page.edit_user.title": "Editar usuário: %s",
     "page.feeds.title": "Fontes",
     "page.feeds.last_check": "Última verificação:",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Numero de itens não lidos",
     "page.feeds.read_counter": "Número de itens lidos",
     "page.feeds.error_count": [

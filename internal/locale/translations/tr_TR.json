@@ -101,6 +101,7 @@
     "page.edit_user.title": "Kullanıcıyı Düzenle: %s",
     "page.feeds.title": "Beslemeler",
     "page.feeds.last_check": "Son kontrol:",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Okunmamış iletilerin sayısı",
     "page.feeds.read_counter": "Okunmuş iletilerin sayısı",
     "page.feeds.error_count": [

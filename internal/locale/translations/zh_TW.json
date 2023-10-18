@@ -101,6 +101,7 @@
     "page.edit_user.title": "編輯使用者 : %s",
     "page.feeds.title": "Feeds",
     "page.feeds.last_check": "最後檢查時間：",
+    "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "未讀文章數",
     "page.feeds.read_counter": "已讀文章數",
     "page.feeds.error_count": [

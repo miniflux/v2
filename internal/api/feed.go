@@ -5,6 +5,7 @@ package api // import "miniflux.app/v2/internal/api"
 
 import (
 	json_parser "encoding/json"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -74,9 +75,13 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		h.pool.Push(jobs)
-	}()
+	slog.Info(
+		"Triggered a manual refresh of all feeds from the API",
+		slog.Int64("user_id", userID),
+		slog.Int("nb_jobs", len(jobs)),
+	)
+
+	go h.pool.Push(jobs)
 
 	json.NoContent(w, r)
 }

@@ -25,6 +25,12 @@
                     <li class="item-meta-info-checked-at">
                         {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed $.user.Timezone .CheckedAt }}</time>
                     </li>
+                    {{ $nextCheckDuration := duration .NextCheckAt }}
+                    {{ if ne $nextCheckDuration "" }}
+                    <li class="item-meta-info-next-check-at">
+                        {{ t "page.feeds.next_check" }} <time datetime="{{ isodate .NextCheckAt }}" title="{{ isodate .NextCheckAt }}">{{ $nextCheckDuration }}</time>
+                    </li>
+                    {{ end }}
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">

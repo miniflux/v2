@@ -97,6 +97,10 @@ func TestFeedScheduleNextCheckDefault(t *testing.T) {
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
+
+	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(config.Opts.PollingFrequency()))) {
+		t.Error(`The next_check_at should not be after the now + polling frequency`)
+	}
 }
 
 func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
