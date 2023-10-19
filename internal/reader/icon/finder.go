@@ -194,6 +194,8 @@ func parseImageDataURL(value string) (*model.Icon, error) {
 			return nil, fmt.Errorf(`icon: unable to decode data URL %q`, value)
 		}
 		blob = []byte(decodedData)
+	case "utf8":
+		blob = []byte(data)
 	default:
 		return nil, fmt.Errorf(`icon: unsupported data URL encoding %q`, value)
 	}

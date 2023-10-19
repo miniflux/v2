@@ -44,6 +44,26 @@ func TestParseImageDataURLWithNoEncoding(t *testing.T) {
 	}
 }
 
+func TestParseImageWithRawSVGEncodedInUTF8(t *testing.T) {
+	iconURL := `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 456 456'><circle></circle></svg>`
+	icon, err := parseImageDataURL(iconURL)
+	if err != nil {
+		t.Fatalf(`We should be able to parse valid data URL: %v`, err)
+	}
+
+	if icon.MimeType != "image/svg+xml" {
+		t.Fatal(`Invalid mime type parsed`)
+	}
+
+	if icon.Hash == "" {
+		t.Fatal(`Image hash should be computed`)
+	}
+
+	if string(icon.Content) != `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 456 456'><circle></circle></svg>` {
+		t.Fatal(`Invalid SVG content`)
+	}
+}
+
 func TestParseImageDataURLWithNoMediaTypeAndNoEncoding(t *testing.T) {
 	iconURL := `data:,Hello%2C%20World%21`
 	_, err := parseImageDataURL(iconURL)
