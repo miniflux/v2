@@ -441,5 +441,7 @@
         "%d год назад",
         "%d года назад",
         "%d лет назад"
-    ]
+    ],
+    "page.background_feed_refresh.title": "Обновление подписок",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

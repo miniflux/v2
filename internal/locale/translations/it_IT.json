@@ -433,5 +433,7 @@
     "time_elapsed.years": [
         "%d anno fa",
         "%d anni fa"
-    ]
+    ],
+    "page.background_feed_refresh.title": "Aggiornamento in background",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

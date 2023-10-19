@@ -442,5 +442,7 @@
         "%d рік тому",
         "%d роки тому",
         "%d років тому"
-    ]
+    ],
+    "page.background_feed_refresh.title": "Оновлення стрічок в фоновому режимі",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

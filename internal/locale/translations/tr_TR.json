@@ -433,5 +433,7 @@
     "time_elapsed.years": [
         "%d yıl önce",
         "%d yıl önce"
-    ]
+    ],
+    "page.background_feed_refresh.title": "Arka plan beslemesi yenileme",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

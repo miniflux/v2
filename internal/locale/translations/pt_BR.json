@@ -433,5 +433,7 @@
     "time_elapsed.years": [
         "há %d ano",
         "há %d anos"
-    ]
+    ],
+    "page.background_feed_refresh.title": "Atualização de fonte em segundo plano",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }
