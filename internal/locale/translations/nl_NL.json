@@ -450,5 +450,7 @@
     "This web page is empty": "Deze webpagina is leeg",
     "Invalid SSL certificate (original error: %q)": "Ongeldig SSL-certificaat (originele error: %q)",
     "This website is unreachable (original error: %q)": "Deze website is onbereikbaar (originele error: %q)",
-    "Website unreachable, the request timed out after %d seconds": "Website onbereikbaar, de request gaf een timeout na %d seconden"
+    "Website unreachable, the request timed out after %d seconds": "Website onbereikbaar, de request gaf een timeout na %d seconden",
+    "page.background_feed_refresh.title": "Achtergrond vernieuwen",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

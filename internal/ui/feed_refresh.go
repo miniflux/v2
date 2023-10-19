@@ -11,6 +11,8 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
+	"miniflux.app/v2/internal/ui/session"
+	"miniflux.app/v2/internal/ui/view"
 )
 
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +32,13 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
 	jobs, err := h.store.NewUserBatch(userID, h.store.CountFeeds(userID))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -44,5 +53,12 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 
 	go h.pool.Push(jobs)
 
-	html.Redirect(w, r, route.Path(h.router, "feeds"))
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
+	view.Set("menu", "feeds")
+	view.Set("user", user)
+	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+
+	html.OK(w, r, view.Render("feed_background_refresh"))
 }

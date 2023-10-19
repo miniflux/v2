@@ -458,5 +458,7 @@
     "This web page is empty": "Ta strona jest pusta",
     "Invalid SSL certificate (original error: %q)": "Certyfikat SSL jest nieprawidłowy (błąd: %q)",
     "This website is unreachable (original error: %q)": "Ta strona jest niedostępna (błąd: %q)",
-    "Website unreachable, the request timed out after %d seconds": "Strona internetowa nieosiągalna, żądanie wygasło po %d sekundach"
+    "Website unreachable, the request timed out after %d seconds": "Strona internetowa nieosiągalna, żądanie wygasło po %d sekundach",
+    "page.background_feed_refresh.title": "Odświeżanie kanałów w tle",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

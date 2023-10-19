@@ -433,5 +433,7 @@
     "time_elapsed.years": [
         "%d साल पहले",
         "%d वर्षों पहले"
-    ]
+    ],
+    "page.background_feed_refresh.title": "फ़ीड रीफ़्रेश किया जा रहा है",
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }
