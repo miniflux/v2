@@ -112,59 +112,16 @@ func TestParseDocumentWithWhitespaceIconURL(t *testing.T) {
 		/static/img/favicon.ico
 	">`
 
-	iconURL, err := findIconURLFromHTMLDocument(strings.NewReader(html))
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if iconURL != "/static/img/favicon.ico" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURL)
-	}
-}
-
-func TestGenerateIconURL(t *testing.T) {
-	iconURL, err := generateIconURL("https://example.org/", "/favicon.png")
-	if err != nil {
-		t.Fatal(err)
+	if len(iconURLs) != 1 {
+		t.Fatalf(`Invalid number of icon URLs, got %d`, len(iconURLs))
 	}
 
-	if iconURL != "https://example.org/favicon.png" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURL)
-	}
-
-	iconURL, err = generateIconURL("https://example.org/", "img/favicon.png")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if iconURL != "https://example.org/img/favicon.png" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURL)
-	}
-
-	iconURL, err = generateIconURL("https://example.org/", "https://example.org/img/favicon.png")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if iconURL != "https://example.org/img/favicon.png" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURL)
-	}
-
-	iconURL, err = generateIconURL("https://example.org/", "//example.org/img/favicon.png")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if iconURL != "https://example.org/img/favicon.png" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURL)
-	}
-
-	iconURL, err = generateIconURL("https://example.org/", "  ")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if iconURL != "https://example.org/favicon.ico" {
-		t.Errorf(`Invalid icon URL, got %q`, iconURL)
+	if iconURLs[0] != "/static/img/favicon.ico" {
+		t.Errorf(`Invalid icon URL, got %q`, iconURLs[0])
 	}
 }
