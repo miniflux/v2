@@ -75,11 +75,17 @@ func (h *handler) showFeedEntryPage(w http.ResponseWriter, r *http.Request) {
 	nextEntryRoute := ""
 	if nextEntry != nil {
 		nextEntryRoute = route.Path(h.router, "feedEntry", "feedID", feedID, "entryID", nextEntry.ID)
+		if request.HasQueryParam(r, "all") {
+			nextEntryRoute += "?all"
+		}
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
 		prevEntryRoute = route.Path(h.router, "feedEntry", "feedID", feedID, "entryID", prevEntry.ID)
+		if request.HasQueryParam(r, "all") {
+			prevEntryRoute += "?all"
+		}
 	}
 
 	// Restore entry read status if needed after fetching the pagination.

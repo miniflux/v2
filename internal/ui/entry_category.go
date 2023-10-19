@@ -75,11 +75,17 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 	nextEntryRoute := ""
 	if nextEntry != nil {
 		nextEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
+		if request.HasQueryParam(r, "all") {
+			nextEntryRoute += "?all"
+		}
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
 		prevEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+		if request.HasQueryParam(r, "all") {
+			prevEntryRoute += "?all"
+		}
 	}
 
 	// Restore entry read status if needed after fetching the pagination.
