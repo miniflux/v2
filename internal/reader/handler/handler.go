@@ -241,8 +241,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, feedIconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
 	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
-		if err != nil {
+		iconFinder := icon.NewIconFinder(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
+		if icon, err := iconFinder.FindIcon(); err != nil {
 			slog.Warn("Unable to find feed icon",
 				slog.Int64("feed_id", feedID),
 				slog.String("website_url", websiteURL),
