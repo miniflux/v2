@@ -53,6 +53,19 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
 	entryPaginationBuilder.WithCategoryID(categoryID)
+
+	// Limit pagination to unread unless 'all' query param is specified
+	if !request.HasQueryParam(r, "all") {
+		if entry.Status == model.EntryStatusRead {
+			err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
+			if err != nil {
+				html.ServerError(w, r, err)
+				return
+			}
+		}
+		entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
+	}
+
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -67,6 +80,15 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 	prevEntryRoute := ""
 	if prevEntry != nil {
 		prevEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+	}
+
+	// Restore entry read status if needed after fetching the pagination.
+	if entry.Status == model.EntryStatusRead {
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
