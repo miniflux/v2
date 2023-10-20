@@ -453,6 +453,6 @@
     "You are not authorized to access this resource (invalid username/password)": "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen (Benutzername/Passwort ungültig)",
     "Unable to fetch this resource (Status Code = %d)": "Ressource konnte nicht abgerufen werden (code=%d)",
     "Resource not found (404), this feed doesn't exist anymore, check the feed URL": "Ressource nicht gefunden (404), dieses Abonnement existiert nicht mehr, überprüfen Sie die Abonnement-URL",
-    "page.background_feed_refresh.title": "Hintergrundaktualisierung",
+    "alert.too_many_feeds_refresh": "You have triggered too many feed refreshes. Please wait 30 minutes before trying again.",
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

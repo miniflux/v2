@@ -434,6 +434,6 @@
         "%d year ago",
         "%d years ago"
     ],
-    "page.background_feed_refresh.title": "Background feed refresh",
+    "alert.too_many_feeds_refresh": "You have triggered too many feed refreshes. Please wait 30 minutes before trying again.",
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

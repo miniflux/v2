@@ -453,6 +453,6 @@
     "You are not authorized to access this resource (invalid username/password)": "Vous n'êtes pas autorisé à accéder à cette ressource (nom d'utilisateur / mot de passe incorrect)",
     "Unable to fetch this resource (Status Code = %d)": "Impossible de récupérer cette ressource (code=%d)",
     "Resource not found (404), this feed doesn't exist anymore, check the feed URL": "Page introuvable (404), cet abonnement n'existe plus, vérifiez l'adresse du flux",
-    "page.background_feed_refresh.title": "Actualisation des abonnements en arrière-plan",
+    "alert.too_many_feeds_refresh": "Vous avez déclenché trop d'actualisations de flux. Veuillez attendre 30 minutes avant de réessayer.",
     "alert.background_feed_refresh": "Les abonnements sont en cours d'actualisation en arrière-plan. Vous pouvez continuer à naviguer dans l'application."
 }
