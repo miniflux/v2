@@ -17,7 +17,10 @@
       "extensions": [
         "ms-azuretools.vscode-docker",
         "golang.go",
-        "rangav.vscode-thunder-client"
+        "rangav.vscode-thunder-client",
+        "GitHub.codespaces",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
       ]
     }
   }
