@@ -21,6 +21,7 @@ func refreshFeeds(store *storage.Storage) {
 	jobs, err := store.NewBatch(config.Opts.BatchSize())
 	if err != nil {
 		slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
+		return
 	}
 
 	nbJobs := len(jobs)
@@ -48,7 +49,7 @@ func refreshFeeds(store *storage.Storage) {
 				)
 
 				if err := feedHandler.RefreshFeed(store, job.UserID, job.FeedID, false); err != nil {
-					slog.Error("Unable to refresh feed",
+					slog.Warn("Unable to refresh feed",
 						slog.Int64("feed_id", job.FeedID),
 						slog.Int64("user_id", job.UserID),
 						slog.Any("error", err),
