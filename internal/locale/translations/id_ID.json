@@ -444,6 +444,6 @@
     "You are not authorized to access this resource (invalid username/password)": "Anda tidak memiliki izin yang cukup untuk mengakses umpan ini (nama pengguna/kata sandi tidak valid)",
     "Unable to fetch this resource (Status Code = %d)": "Tidak bisa mengambil umpan ini (Kode Status = %d)",
     "Resource not found (404), this feed doesn't exist anymore, check the feed URL": "Umpan tidak ditemukan (404), umpan ini tidak ada lagi, periksa URL umpan",
-    "page.background_feed_refresh.title": "Memuat ulang umpan di latar belakang",
+    "alert.too_many_feeds_refresh": "You have triggered too many feed refreshes. Please wait 30 minutes before trying again.",
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running."
 }

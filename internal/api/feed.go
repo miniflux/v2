@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/model"
@@ -69,7 +70,14 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	jobs, err := h.store.NewUserBatch(userID, h.store.CountFeeds(userID))
+
+	batchBuilder := h.store.NewBatchBuilder()
+	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())
+	batchBuilder.WithoutDisabledFeeds()
+	batchBuilder.WithNextCheckExpired()
+	batchBuilder.WithUserID(userID)
+
+	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
