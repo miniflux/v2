@@ -243,7 +243,7 @@ func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, feedIconURL
 	if !store.HasIcon(feedID) {
 		iconFinder := icon.NewIconFinder(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
 		if icon, err := iconFinder.FindIcon(); err != nil {
-			slog.Warn("Unable to find feed icon",
+			slog.Debug("Unable to find feed icon",
 				slog.Int64("feed_id", feedID),
 				slog.String("website_url", websiteURL),
 				slog.String("feed_icon_url", feedIconURL),
