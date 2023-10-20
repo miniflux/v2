@@ -189,16 +189,16 @@ func (f *IconFinder) DownloadIcon(iconURL string) (*model.Icon, error) {
 
 	response, err := clt.Get()
 	if err != nil {
-		return nil, fmt.Errorf("icon: unable to download iconURL: %v", err)
+		return nil, fmt.Errorf("icon: unable to download icon %s: %v", iconURL, err)
 	}
 
 	if response.HasServerFailure() {
-		return nil, fmt.Errorf("icon: unable to download icon: status=%d", response.StatusCode)
+		return nil, fmt.Errorf("icon: unable to download icon %s: status=%d", iconURL, response.StatusCode)
 	}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("icon: unable to read downloaded icon: %v", err)
+		return nil, fmt.Errorf("icon: unable to read downloaded icon from %s: %v", iconURL, err)
 	}
 
 	if len(body) == 0 {
