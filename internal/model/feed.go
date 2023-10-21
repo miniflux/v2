@@ -49,14 +49,18 @@ type Feed struct {
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
-	Category                    *Category `json:"category,omitempty"`
-	Entries                     Entries   `json:"entries,omitempty"`
-	IconURL                     string    `json:"-"`
-	Icon                        *FeedIcon `json:"icon"`
 	HideGlobally                bool      `json:"hide_globally"`
-	UnreadCount                 int       `json:"-"`
-	ReadCount                   int       `json:"-"`
 	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+
+	// Non persisted attributes
+	Category *Category `json:"category,omitempty"`
+	Icon     *FeedIcon `json:"icon"`
+	Entries  Entries   `json:"entries,omitempty"`
+
+	TTL         int    `json:"-"`
+	IconURL     string `json:"-"`
+	UnreadCount int    `json:"-"`
+	ReadCount   int    `json:"-"`
 }
 
 type FeedCounters struct {
