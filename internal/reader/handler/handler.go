@@ -5,6 +5,7 @@ package handler // import "miniflux.app/v2/internal/reader/handler"
 
 import (
 	"log/slog"
+	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/errors"
@@ -183,6 +184,28 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			originalFeed.WithError(parseErr.Localize(printer))
 			store.UpdateFeedError(originalFeed)
 			return parseErr
+		}
+
+		// If the feed has a TTL defined, we use it to make sure we don't check it too often.
+		if updatedFeed.TTL > 0 {
+			minNextCheckAt := time.Now().Add(time.Minute * time.Duration(updatedFeed.TTL))
+			slog.Debug("Feed TTL",
+				slog.Int64("user_id", userID),
+				slog.Int64("feed_id", feedID),
+				slog.Int("ttl", updatedFeed.TTL),
+				slog.Time("next_check_at", originalFeed.NextCheckAt),
+			)
+
+			if originalFeed.NextCheckAt.IsZero() || originalFeed.NextCheckAt.Before(minNextCheckAt) {
+				slog.Debug("Updating next check date based on TTL",
+					slog.Int64("user_id", userID),
+					slog.Int64("feed_id", feedID),
+					slog.Int("ttl", updatedFeed.TTL),
+					slog.Time("new_next_check_at", minNextCheckAt),
+					slog.Time("old_next_check_at", originalFeed.NextCheckAt),
+				)
+				originalFeed.NextCheckAt = minNextCheckAt
+			}
 		}
 
 		originalFeed.Entries = updatedFeed.Entries
