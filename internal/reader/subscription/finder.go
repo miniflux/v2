@@ -29,13 +29,16 @@ var (
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
 func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (subscriptions Subscriptions, localizedError *errors.LocalizedError) {
 	if rssbridgeURL != "" {
-		body, err := rssbridge.DetectBridge(rssbridgeURL, websiteURL)
+		bridges, err := rssbridge.DetectBridges(rssbridgeURL, websiteURL)
 		if err != nil {
-			localizedError = err
+			localizedError = errors.NewLocalizedError("RSS-Bridge: %v", err)
 		}
-		subscriptions, err = parseWebPage(rssbridgeURL, strings.NewReader(body))
-		if err != nil {
-			localizedError = err
+		for _, bridge := range bridges {
+			subscriptions = append(subscriptions, &Subscription{
+				Title: bridge.BridgeMeta.Name,
+				URL:   bridge.URL,
+				Type:  "atom",
+			})
 		}
 	}
 
