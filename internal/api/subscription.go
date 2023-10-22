@@ -32,7 +32,7 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		rssbridgeURL = intg.RSSBridgeURL
 	}
 
-	subscriptions, finderErr := subscription.FindSubscriptions(
+	subscriptions, localizedError := subscription.FindSubscriptions(
 		subscriptionDiscoveryRequest.URL,
 		subscriptionDiscoveryRequest.UserAgent,
 		subscriptionDiscoveryRequest.Cookie,
@@ -42,12 +42,13 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		subscriptionDiscoveryRequest.AllowSelfSignedCertificates,
 		rssbridgeURL,
 	)
-	if finderErr != nil {
-		json.ServerError(w, r, finderErr)
+
+	if localizedError != nil {
+		json.ServerError(w, r, localizedError.Error())
 		return
 	}
 
-	if subscriptions == nil {
+	if len(subscriptions) == 0 {
 		json.NotFound(w, r)
 		return
 	}

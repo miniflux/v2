@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/client"
 )
 
 // List of supported schedulers.
@@ -79,20 +78,13 @@ func (f *Feed) String() string {
 	)
 }
 
-// WithClientResponse updates feed attributes from an HTTP request.
-func (f *Feed) WithClientResponse(response *client.Response) {
-	f.EtagHeader = response.ETag
-	f.LastModifiedHeader = response.LastModified
-	f.FeedURL = response.EffectiveURL
-}
-
 // WithCategoryID initializes the category attribute of the feed.
 func (f *Feed) WithCategoryID(categoryID int64) {
 	f.Category = &Category{ID: categoryID}
 }
 
-// WithError adds a new error message and increment the error counter.
-func (f *Feed) WithError(message string) {
+// WithTranslatedErrorMessage adds a new error message and increment the error counter.
+func (f *Feed) WithTranslatedErrorMessage(message string) {
 	f.ParsingErrorCount++
 	f.ParsingErrorMsg = message
 }

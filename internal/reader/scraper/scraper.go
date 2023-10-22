@@ -4,67 +4,54 @@
 package scraper // import "miniflux.app/v2/internal/reader/scraper"
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readability"
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-// Fetch downloads a web page and returns relevant contents.
-func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCertificates, useProxy bool) (string, error) {
-	clt := client.NewClientWithConfig(websiteURL, config.Opts)
-	clt.WithUserAgent(userAgent)
-	clt.WithCookie(cookie)
-	if useProxy {
-		clt.WithProxy()
-	}
-	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
+func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, websiteURL, rules string) (string, error) {
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
 
-	response, err := clt.Get()
-	if err != nil {
-		return "", err
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to scrape website", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return "", localizedError.Error()
 	}
 
-	if response.HasServerFailure() {
-		return "", errors.New("scraper: unable to download web page")
-	}
-
-	if !isAllowedContentType(response.ContentType) {
-		return "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", response.ContentType)
-	}
-
-	if err = response.EnsureUnicodeBody(); err != nil {
-		return "", err
+	if !isAllowedContentType(responseHandler.ContentType()) {
+		return "", fmt.Errorf("scraper: this resource is not a HTML document (%s)", responseHandler.ContentType())
 	}
 
 	// The entry URL could redirect somewhere else.
-	sameSite := urllib.Domain(websiteURL) == urllib.Domain(response.EffectiveURL)
-	websiteURL = response.EffectiveURL
+	sameSite := urllib.Domain(websiteURL) == urllib.Domain(responseHandler.EffectiveURL())
+	websiteURL = responseHandler.EffectiveURL()
 
 	if rules == "" {
 		rules = getPredefinedScraperRules(websiteURL)
 	}
 
 	var content string
+	var err error
+
 	if sameSite && rules != "" {
 		slog.Debug("Extracting content with custom rules",
 			"url", websiteURL,
 			"rules", rules,
 		)
-		content, err = scrapContent(response.Body, rules)
+		content, err = findContentUsingCustomRules(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()), rules)
 	} else {
 		slog.Debug("Extracting content with readability",
 			"url", websiteURL,
 		)
-		content, err = readability.ExtractContent(response.Body)
+		content, err = readability.ExtractContent(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
 	}
 
 	if err != nil {
@@ -74,7 +61,7 @@ func Fetch(websiteURL, rules, userAgent string, cookie string, allowSelfSignedCe
 	return content, nil
 }
 
-func scrapContent(page io.Reader, rules string) (string, error) {
+func findContentUsingCustomRules(page io.Reader, rules string) (string, error) {
 	document, err := goquery.NewDocumentFromReader(page)
 	if err != nil {
 		return "", err

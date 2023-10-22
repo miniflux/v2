@@ -7,7 +7,7 @@
 </section>
 
 {{ if .errorMessage }}
-    <div class="alert alert-error">{{ t .errorMessage }}</div>
+    <div class="alert alert-error">{{ .errorMessage }}</div>
 {{ end }}
 
 <form action="{{ route "uploadOPML" }}" method="post" enctype="multipart/form-data">

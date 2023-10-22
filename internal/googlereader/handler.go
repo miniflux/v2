@@ -673,9 +673,9 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	subscriptions, s_err := mfs.FindSubscriptions(url, "", "", "", "", false, false, "")
-	if s_err != nil {
-		json.ServerError(w, r, s_err)
+	subscriptions, localizedError := mfs.FindSubscriptions(url, "", "", "", "", false, false, "")
+	if localizedError != nil {
+		json.ServerError(w, r, localizedError.Error())
 		return
 	}
 
@@ -746,9 +746,9 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 		return nil, verr.Error()
 	}
 
-	created, err := mff.CreateFeed(store, userID, &feedRequest)
+	created, localizedError := mff.CreateFeed(store, userID, &feedRequest)
 	if err != nil {
-		return nil, err
+		return nil, localizedError.Error()
 	}
 
 	if title != "" {

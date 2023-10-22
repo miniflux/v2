@@ -41,9 +41,9 @@ func (h *handler) createFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feed, err := feedHandler.CreateFeed(h.store, userID, &feedCreationRequest)
-	if err != nil {
-		json.ServerError(w, r, err)
+	feed, localizedError := feedHandler.CreateFeed(h.store, userID, &feedCreationRequest)
+	if localizedError != nil {
+		json.ServerError(w, r, localizedError.Error())
 		return
 	}
 
@@ -59,9 +59,9 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := feedHandler.RefreshFeed(h.store, userID, feedID, false)
-	if err != nil {
-		json.ServerError(w, r, err)
+	localizedError := feedHandler.RefreshFeed(h.store, userID, feedID, false)
+	if localizedError != nil {
+		json.ServerError(w, r, localizedError.Error())
 		return
 	}
 

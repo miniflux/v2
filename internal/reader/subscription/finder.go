@@ -4,16 +4,16 @@
 package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"log/slog"
 	"regexp"
-	"strings"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/errors"
-	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/integration/rssbridge"
-	"miniflux.app/v2/internal/reader/browser"
+	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/parser"
 	"miniflux.app/v2/internal/urllib"
 
@@ -21,18 +21,70 @@ import (
 )
 
 var (
-	errUnreadableDoc    = "Unable to analyze this page: %v"
 	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)`)
 	youtubeVideoRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
 )
 
-// FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
+	websiteURL = findYoutubeChannelFeed(websiteURL)
+	websiteURL = parseYoutubeVideoPage(websiteURL)
+
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithUsernameAndPassword(username, password)
+	requestBuilder.WithUserAgent(userAgent)
+	requestBuilder.WithCookie(cookie)
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.UseProxy(fetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(allowSelfSignedCertificates)
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to find subscriptions", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return nil, localizedError
+	}
+
+	responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
+	if localizedError != nil {
+		slog.Warn("Unable to find subscriptions", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return nil, localizedError
+	}
+
+	if format := parser.DetectFeedFormat(string(responseBody)); format != parser.FormatUnknown {
+		var subscriptions Subscriptions
+		subscriptions = append(subscriptions, &Subscription{
+			Title: responseHandler.EffectiveURL(),
+			URL:   responseHandler.EffectiveURL(),
+			Type:  format,
+		})
+
+		return subscriptions, nil
+	}
+
+	subscriptions, localizedError := parseWebPage(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
+	if localizedError != nil || subscriptions != nil {
+		return subscriptions, localizedError
+	}
+
 	if rssbridgeURL != "" {
+		slog.Debug("Trying to detect feeds using RSS-Bridge",
+			slog.String("website_url", websiteURL),
+			slog.String("rssbridge_url", rssbridgeURL),
+		)
+
 		bridges, err := rssbridge.DetectBridges(rssbridgeURL, websiteURL)
 		if err != nil {
-			return nil, errors.NewLocalizedError("RSS-Bridge: %v", err)
+			return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_detect_rssbridge", err)
 		}
+
+		slog.Debug("RSS-Bridge results",
+			slog.String("website_url", websiteURL),
+			slog.String("rssbridge_url", rssbridgeURL),
+			slog.Int("nb_bridges", len(bridges)),
+		)
+
 		if len(bridges) > 0 {
 			var subscriptions Subscriptions
 			for _, bridge := range bridges {
@@ -46,45 +98,10 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 		}
 	}
 
-	websiteURL = findYoutubeChannelFeed(websiteURL)
-	websiteURL = parseYoutubeVideoPage(websiteURL)
-
-	clt := client.NewClientWithConfig(websiteURL, config.Opts)
-	clt.WithCredentials(username, password)
-	clt.WithUserAgent(userAgent)
-	clt.WithCookie(cookie)
-	clt.AllowSelfSignedCertificates = allowSelfSignedCertificates
-
-	if fetchViaProxy {
-		clt.WithProxy()
-	}
-
-	response, err := browser.Exec(clt)
-	if err != nil {
-		return nil, err
-	}
-
-	body := response.BodyAsString()
-	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
-		var subscriptions Subscriptions
-		subscriptions = append(subscriptions, &Subscription{
-			Title: response.EffectiveURL,
-			URL:   response.EffectiveURL,
-			Type:  format,
-		})
-
-		return subscriptions, nil
-	}
-
-	subscriptions, err := parseWebPage(response.EffectiveURL, strings.NewReader(body))
-	if err != nil || subscriptions != nil {
-		return subscriptions, err
-	}
-
-	return tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
+	return tryWellKnownUrls(websiteURL, userAgent, cookie, username, password, fetchViaProxy, allowSelfSignedCertificates)
 }
 
-func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
+func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	var subscriptions Subscriptions
 	queries := map[string]string{
 		"link[type='application/rss+xml']":   "rss",
@@ -95,7 +112,7 @@ func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.Loc
 
 	doc, err := goquery.NewDocumentFromReader(data)
 	if err != nil {
-		return nil, errors.NewLocalizedError(errUnreadableDoc, err)
+		return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_parse_html_document", err)
 	}
 
 	for query, kind := range queries {
@@ -140,13 +157,19 @@ func parseYoutubeVideoPage(websiteURL string) string {
 		return websiteURL
 	}
 
-	clt := client.NewClientWithConfig(websiteURL, config.Opts)
-	response, browserErr := browser.Exec(clt)
-	if browserErr != nil {
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to find subscriptions", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
 		return websiteURL
 	}
 
-	doc, docErr := goquery.NewDocumentFromReader(response.Body)
+	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
 	if docErr != nil {
 		return websiteURL
 	}
@@ -158,7 +181,7 @@ func parseYoutubeVideoPage(websiteURL string) string {
 	return websiteURL
 }
 
-func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) (Subscriptions, *errors.LocalizedError) {
+func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	var subscriptions Subscriptions
 	knownURLs := map[string]string{
 		"atom.xml": "atom",
@@ -173,6 +196,7 @@ func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) 
 		// Look for knownURLs in the root.
 		websiteURLRoot,
 	}
+
 	// Look for knownURLs in current subdirectory, such as 'example.com/blog/'.
 	websiteURL, _ = urllib.AbsoluteURL(websiteURL, "./")
 	if websiteURL != websiteURLRoot {
@@ -185,30 +209,33 @@ func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) 
 			if err != nil {
 				continue
 			}
-			clt := client.NewClientWithConfig(fullURL, config.Opts)
-			clt.WithCredentials(username, password)
-			clt.WithUserAgent(userAgent)
-			clt.WithCookie(cookie)
+
+			requestBuilder := fetcher.NewRequestBuilder()
+			requestBuilder.WithUsernameAndPassword(username, password)
+			requestBuilder.WithUserAgent(userAgent)
+			requestBuilder.WithCookie(cookie)
+			requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+			requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+			requestBuilder.UseProxy(fetchViaProxy)
+			requestBuilder.IgnoreTLSErrors(allowSelfSignedCertificates)
 
 			// Some websites redirects unknown URLs to the home page.
 			// As result, the list of known URLs is returned to the subscription list.
 			// We don't want the user to choose between invalid feed URLs.
-			clt.WithoutRedirects()
+			requestBuilder.WithoutRedirects()
 
-			response, err := clt.Get()
-			if err != nil {
+			responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(fullURL))
+			defer responseHandler.Close()
+
+			if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 				continue
 			}
 
-			if response != nil && response.StatusCode == 200 {
-				subscription := new(Subscription)
-				subscription.Type = kind
-				subscription.Title = fullURL
-				subscription.URL = fullURL
-				if subscription.URL != "" {
-					subscriptions = append(subscriptions, subscription)
-				}
-			}
+			subscription := new(Subscription)
+			subscription.Type = kind
+			subscription.Title = fullURL
+			subscription.URL = fullURL
+			subscriptions = append(subscriptions, subscription)
 		}
 	}
 
