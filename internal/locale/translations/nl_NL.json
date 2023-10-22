@@ -404,6 +404,8 @@
     "form.integration.webhook_activate": "Enable Webhook",
     "form.integration.webhook_url": "Webhook URL",
     "form.integration.webhook_secret": "Webhook Secret",
+    "form.integration.rssbridge_activate": "Check RSS-Bridge when adding subscriptions",
+    "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.api_key.label.description": "API-sleutellabel",
     "form.submit.loading": "Laden...",
     "form.submit.saving": "Opslaag...",

@@ -12,6 +12,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/http/client"
+	"miniflux.app/v2/internal/integration/rssbridge"
 	"miniflux.app/v2/internal/reader/browser"
 	"miniflux.app/v2/internal/reader/parser"
 	"miniflux.app/v2/internal/urllib"
@@ -26,7 +27,25 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool) (Subscriptions, *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *errors.LocalizedError) {
+	if rssbridgeURL != "" {
+		bridges, err := rssbridge.DetectBridges(rssbridgeURL, websiteURL)
+		if err != nil {
+			return nil, errors.NewLocalizedError("RSS-Bridge: %v", err)
+		}
+		if len(bridges) > 0 {
+			var subscriptions Subscriptions
+			for _, bridge := range bridges {
+				subscriptions = append(subscriptions, &Subscription{
+					Title: bridge.BridgeMeta.Name,
+					URL:   bridge.URL,
+					Type:  "atom",
+				})
+			}
+			return subscriptions, nil
+		}
+	}
+
 	websiteURL = findYoutubeChannelFeed(websiteURL)
 	websiteURL = parseYoutubeVideoPage(websiteURL)
 

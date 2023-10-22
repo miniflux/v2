@@ -673,7 +673,7 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	subscriptions, s_err := mfs.FindSubscriptions(url, "", "", "", "", false, false)
+	subscriptions, s_err := mfs.FindSubscriptions(url, "", "", "", "", false, false, "")
 	if s_err != nil {
 		json.ServerError(w, r, s_err)
 		return

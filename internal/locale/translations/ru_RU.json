@@ -406,6 +406,8 @@
     "form.integration.webhook_activate": "Включить вебхуки",
     "form.integration.webhook_url": "Адрес вебхуков",
     "form.integration.webhook_secret": "Секретный ключ для вебхуков",
+    "form.integration.rssbridge_activate": "Check RSS-Bridge when adding subscriptions",
+    "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.api_key.label.description": "Описание API-ключа",
     "form.submit.loading": "Загрузка…",
     "form.submit.saving": "Сохранение…",

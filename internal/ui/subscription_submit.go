@@ -50,6 +50,11 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var rssbridgeURL string
+	if intg, err := h.store.Integration(user.ID); err == nil && intg != nil && intg.RSSBridgeEnabled {
+		rssbridgeURL = intg.RSSBridgeURL
+	}
+
 	subscriptions, findErr := subscription.FindSubscriptions(
 		subscriptionForm.URL,
 		subscriptionForm.UserAgent,
@@ -58,6 +63,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.Password,
 		subscriptionForm.FetchViaProxy,
 		subscriptionForm.AllowSelfSignedCertificates,
+		rssbridgeURL,
 	)
 	if findErr != nil {
 		v.Set("form", subscriptionForm)
