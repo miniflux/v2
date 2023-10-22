@@ -27,18 +27,22 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (subscriptions Subscriptions, localizedError *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *errors.LocalizedError) {
 	if rssbridgeURL != "" {
 		bridges, err := rssbridge.DetectBridges(rssbridgeURL, websiteURL)
 		if err != nil {
-			localizedError = errors.NewLocalizedError("RSS-Bridge: %v", err)
+			return nil, errors.NewLocalizedError("RSS-Bridge: %v", err)
 		}
-		for _, bridge := range bridges {
-			subscriptions = append(subscriptions, &Subscription{
-				Title: bridge.BridgeMeta.Name,
-				URL:   bridge.URL,
-				Type:  "atom",
-			})
+		if len(bridges) > 0 {
+			var subscriptions Subscriptions
+			for _, bridge := range bridges {
+				subscriptions = append(subscriptions, &Subscription{
+					Title: bridge.BridgeMeta.Name,
+					URL:   bridge.URL,
+					Type:  "atom",
+				})
+			}
+			return subscriptions, nil
 		}
 	}
 
@@ -62,25 +66,22 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 
 	body := response.BodyAsString()
 	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
+		var subscriptions Subscriptions
 		subscriptions = append(subscriptions, &Subscription{
 			Title: response.EffectiveURL,
 			URL:   response.EffectiveURL,
 			Type:  format,
 		})
+
+		return subscriptions, nil
 	}
 
-	if len(subscriptions) == 0 {
-		subscriptions, err = parseWebPage(response.EffectiveURL, strings.NewReader(body))
-		if err != nil {
-			return subscriptions, err
-		}
+	subscriptions, err := parseWebPage(response.EffectiveURL, strings.NewReader(body))
+	if err != nil || subscriptions != nil {
+		return subscriptions, err
 	}
 
-	if len(subscriptions) == 0 {
-		subscriptions = tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
-	}
-
-	return
+	return tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
 }
 
 func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
@@ -157,7 +158,7 @@ func parseYoutubeVideoPage(websiteURL string) string {
 	return websiteURL
 }
 
-func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) Subscriptions {
+func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) (Subscriptions, *errors.LocalizedError) {
 	var subscriptions Subscriptions
 	knownURLs := map[string]string{
 		"atom.xml": "atom",
@@ -211,5 +212,5 @@ func tryWellKnownUrls(websiteURL, userAgent, cookie, username, password string) 
 		}
 	}
 
-	return subscriptions
+	return subscriptions, nil
 }
