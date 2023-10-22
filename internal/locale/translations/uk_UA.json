@@ -469,5 +469,6 @@
     "error.duplicated_feed": "This feed already exists.",
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
-    "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v."
+    "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

@@ -4,6 +4,7 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -29,7 +30,7 @@ func TestParseAtom(t *testing.T) {
 
 	</feed>`
 
-	feed, err := ParseFeed("https://example.org/", data)
+	feed, err := ParseFeed("https://example.org/", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -57,7 +58,7 @@ func TestParseAtomFeedWithRelativeURL(t *testing.T) {
 
 	</feed>`
 
-	feed, err := ParseFeed("https://example.org/blog/atom.xml", data)
+	feed, err := ParseFeed("https://example.org/blog/atom.xml", strings.NewReader(data))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +92,7 @@ func TestParseRSS(t *testing.T) {
 	</channel>
 	</rss>`
 
-	feed, err := ParseFeed("http://liftoff.msfc.nasa.gov/", data)
+	feed, err := ParseFeed("http://liftoff.msfc.nasa.gov/", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -117,7 +118,7 @@ func TestParseRSSFeedWithRelativeURL(t *testing.T) {
 	</channel>
 	</rss>`
 
-	feed, err := ParseFeed("http://example.org/rss.xml", data)
+	feed, err := ParseFeed("http://example.org/rss.xml", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -158,7 +159,7 @@ func TestParseRDF(t *testing.T) {
 		  </item>
 		</rdf:RDF>`
 
-	feed, err := ParseFeed("http://example.org/", data)
+	feed, err := ParseFeed("http://example.org/", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -187,7 +188,7 @@ func TestParseRDFWithRelativeURL(t *testing.T) {
 		  </item>
 		</rdf:RDF>`
 
-	feed, err := ParseFeed("http://example.org/rdf.xml", data)
+	feed, err := ParseFeed("http://example.org/rdf.xml", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -225,7 +226,7 @@ func TestParseJson(t *testing.T) {
 		]
 	}`
 
-	feed, err := ParseFeed("https://example.org/feed.json", data)
+	feed, err := ParseFeed("https://example.org/feed.json", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -250,7 +251,7 @@ func TestParseJsonFeedWithRelativeURL(t *testing.T) {
 		]
 	}`
 
-	feed, err := ParseFeed("https://example.org/blog/feed.json", data)
+	feed, err := ParseFeed("https://example.org/blog/feed.json", strings.NewReader(data))
 	if err != nil {
 		t.Error(err)
 	}
@@ -285,14 +286,14 @@ func TestParseUnknownFeed(t *testing.T) {
 		</html>
 	`
 
-	_, err := ParseFeed("https://example.org/", data)
+	_, err := ParseFeed("https://example.org/", strings.NewReader(data))
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
 	}
 }
 
 func TestParseEmptyFeed(t *testing.T) {
-	_, err := ParseFeed("", "")
+	_, err := ParseFeed("", strings.NewReader(""))
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
 	}

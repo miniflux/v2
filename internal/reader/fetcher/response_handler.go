@@ -95,14 +95,14 @@ func (r *ResponseHandler) ReadBody(maxBodySize int64) ([]byte, *locale.Localized
 func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	if r.clientErr != nil {
 		switch r.clientErr.(type) {
-		case x509.CertificateInvalidError, x509.UnknownAuthorityError, x509.HostnameError:
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.tls_error", r.clientErr.Error())
+		case x509.CertificateInvalidError, x509.HostnameError:
+			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.tls_error", r.clientErr)
 		case *net.OpError:
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_operation", r.clientErr.Error())
+			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_operation", r.clientErr)
 		case net.Error:
 			networkErr := r.clientErr.(net.Error)
 			if networkErr.Timeout() {
-				return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_timeout", r.clientErr.Error())
+				return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_timeout", r.clientErr)
 			}
 		}
 
@@ -110,7 +110,7 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_empty_response")
 		}
 
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_client_error", r.clientErr.Error())
+		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_client_error", r.clientErr)
 	}
 
 	switch r.httpResponse.StatusCode {
