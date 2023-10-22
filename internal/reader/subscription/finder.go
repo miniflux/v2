@@ -27,11 +27,22 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *errors.LocalizedError) {
-	parsedWebsiteURL := findYoutubeChannelFeed(websiteURL) //nolint:ineffassign,staticcheck
-	parsedWebsiteURL = parseYoutubeVideoPage(websiteURL)
+func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (subscriptions Subscriptions, localizedError *errors.LocalizedError) {
+	if rssbridgeURL != "" {
+		body, err := rssbridge.DetectBridge(rssbridgeURL, websiteURL)
+		if err != nil {
+			localizedError = err
+		}
+		subscriptions, err = parseWebPage(rssbridgeURL, strings.NewReader(body))
+		if err != nil {
+			localizedError = err
+		}
+	}
 
-	clt := client.NewClientWithConfig(parsedWebsiteURL, config.Opts)
+	websiteURL = findYoutubeChannelFeed(websiteURL)
+	websiteURL = parseYoutubeVideoPage(websiteURL)
+
+	clt := client.NewClientWithConfig(websiteURL, config.Opts)
 	clt.WithCredentials(username, password)
 	clt.WithUserAgent(userAgent)
 	clt.WithCookie(cookie)
@@ -46,8 +57,6 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 		return nil, err
 	}
 
-	var subscriptions Subscriptions
-
 	body := response.BodyAsString()
 	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
 		subscriptions = append(subscriptions, &Subscription{
@@ -59,7 +68,7 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 
 	if len(subscriptions) == 0 {
 		subscriptions, err = parseWebPage(response.EffectiveURL, strings.NewReader(body))
-		if err != nil && rssbridgeURL == "" {
+		if err != nil {
 			return subscriptions, err
 		}
 	}
@@ -68,19 +77,7 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 		subscriptions = tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
 	}
 
-	if rssbridgeURL != "" {
-		body, err := rssbridge.DetectBridge(rssbridgeURL, websiteURL)
-		if err != nil {
-			return subscriptions, err
-		}
-		rssbridgeSubs, err := parseWebPage(rssbridgeURL, strings.NewReader(body))
-		if err != nil {
-			return subscriptions, err
-		}
-		subscriptions = append(subscriptions, rssbridgeSubs...)
-	}
-
-	return subscriptions, nil
+	return
 }
 
 func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {
