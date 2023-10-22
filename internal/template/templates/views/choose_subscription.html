@@ -7,9 +7,6 @@
 </section>
 
 <form action="{{ route "chooseSubscription" }}" method="POST">
-    {{ if .errorMessage }}
-        <div class="alert alert-error">{{ t .errorMessage }}</div>
-    {{ end }}
     <input type="hidden" name="csrf" value="{{ .csrf }}">
     <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">
     <input type="hidden" name="user_agent" value="{{ .form.UserAgent }}">
