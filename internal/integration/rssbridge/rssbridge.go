@@ -32,6 +32,9 @@ func DetectBridges(rssbridgeURL, websiteURL string) (bridgeResponse []Bridge, er
 		return nil, err
 	}
 	defer response.Body.Close()
+	if response.StatusCode == http.StatusNotFound {
+		return
+	}
 	if err := json.NewDecoder(response.Body).Decode(&bridgeResponse); err != nil {
 		return nil, fmt.Errorf("RSS-Bridge: unable to decode bridge response: %w", err)
 	}
