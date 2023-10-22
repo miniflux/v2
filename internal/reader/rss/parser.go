@@ -4,21 +4,18 @@
 package rss // import "miniflux.app/v2/internal/reader/rss"
 
 import (
+	"fmt"
 	"io"
 
-	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/xml"
 )
 
 // Parse returns a normalized feed struct from a RSS feed.
-func Parse(baseURL string, data io.Reader) (*model.Feed, *errors.LocalizedError) {
+func Parse(baseURL string, data io.Reader) (*model.Feed, error) {
 	feed := new(rssFeed)
-	decoder := xml.NewDecoder(data)
-	err := decoder.Decode(feed)
-	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse RSS feed: %q", err)
+	if err := xml.NewDecoder(data).Decode(feed); err != nil {
+		return nil, fmt.Errorf("rss: unable to parse feed: %w", err)
 	}
-
 	return feed.Transform(baseURL), nil
 }

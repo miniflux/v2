@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/reader/subscription"
@@ -43,9 +44,9 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	v.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
 
 	subscriptionForm := form.NewSubscriptionForm(r)
-	if err := subscriptionForm.Validate(); err != nil {
+	if validationErr := subscriptionForm.Validate(); validationErr != nil {
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", err.Error())
+		v.Set("errorMessage", validationErr.Translate(user.Language))
 		html.OK(w, r, v.Render("add_subscription"))
 		return
 	}
@@ -55,7 +56,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		rssbridgeURL = intg.RSSBridgeURL
 	}
 
-	subscriptions, findErr := subscription.FindSubscriptions(
+	subscriptions, localizedError := subscription.FindSubscriptions(
 		subscriptionForm.URL,
 		subscriptionForm.UserAgent,
 		subscriptionForm.Cookie,
@@ -65,9 +66,9 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.AllowSelfSignedCertificates,
 		rssbridgeURL,
 	)
-	if findErr != nil {
+	if localizedError != nil {
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", findErr)
+		v.Set("errorMessage", localizedError.Translate(user.Language))
 		html.OK(w, r, v.Render("add_subscription"))
 		return
 	}
@@ -76,10 +77,10 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case n == 0:
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", "error.subscription_not_found")
+		v.Set("errorMessage", locale.NewLocalizedError("error.subscription_not_found").Translate(user.Language))
 		html.OK(w, r, v.Render("add_subscription"))
 	case n == 1:
-		feed, err := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
+		feed, localizedError := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
 			CategoryID:                  subscriptionForm.CategoryID,
 			FeedURL:                     subscriptions[0].URL,
 			Crawler:                     subscriptionForm.Crawler,
@@ -95,9 +96,9 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
 		})
-		if err != nil {
+		if localizedError != nil {
 			v.Set("form", subscriptionForm)
-			v.Set("errorMessage", err)
+			v.Set("errorMessage", localizedError.Translate(user.Language))
 			html.OK(w, r, v.Render("add_subscription"))
 			return
 		}

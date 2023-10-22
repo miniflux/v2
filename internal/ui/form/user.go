@@ -6,7 +6,7 @@ package form // import "miniflux.app/v2/internal/ui/form"
 import (
 	"net/http"
 
-	"miniflux.app/v2/internal/errors"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -19,31 +19,31 @@ type UserForm struct {
 }
 
 // ValidateCreation validates user creation.
-func (u UserForm) ValidateCreation() error {
+func (u UserForm) ValidateCreation() *locale.LocalizedError {
 	if u.Username == "" || u.Password == "" || u.Confirmation == "" {
-		return errors.NewLocalizedError("error.fields_mandatory")
+		return locale.NewLocalizedError("error.fields_mandatory")
 	}
 
 	if u.Password != u.Confirmation {
-		return errors.NewLocalizedError("error.different_passwords")
+		return locale.NewLocalizedError("error.different_passwords")
 	}
 
 	return nil
 }
 
 // ValidateModification validates user modification.
-func (u UserForm) ValidateModification() error {
+func (u UserForm) ValidateModification() *locale.LocalizedError {
 	if u.Username == "" {
-		return errors.NewLocalizedError("error.user_mandatory_fields")
+		return locale.NewLocalizedError("error.user_mandatory_fields")
 	}
 
 	if u.Password != "" {
 		if u.Password != u.Confirmation {
-			return errors.NewLocalizedError("error.different_passwords")
+			return locale.NewLocalizedError("error.different_passwords")
 		}
 
 		if len(u.Password) < 6 {
-			return errors.NewLocalizedError("error.password_min_length")
+			return locale.NewLocalizedError("error.password_min_length")
 		}
 	}
 

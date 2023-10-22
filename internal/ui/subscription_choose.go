@@ -41,14 +41,14 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 
 	subscriptionForm := form.NewSubscriptionForm(r)
-	if err := subscriptionForm.Validate(); err != nil {
+	if validationErr := subscriptionForm.Validate(); validationErr != nil {
 		view.Set("form", subscriptionForm)
-		view.Set("errorMessage", err.Error())
+		view.Set("errorMessage", validationErr.Translate(user.Language))
 		html.OK(w, r, view.Render("add_subscription"))
 		return
 	}
 
-	feed, err := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
+	feed, localizedError := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
 		CategoryID:                  subscriptionForm.CategoryID,
 		FeedURL:                     subscriptionForm.URL,
 		Crawler:                     subscriptionForm.Crawler,
@@ -64,9 +64,9 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 		FetchViaProxy:               subscriptionForm.FetchViaProxy,
 	})
-	if err != nil {
+	if localizedError != nil {
 		view.Set("form", subscriptionForm)
-		view.Set("errorMessage", err)
+		view.Set("errorMessage", localizedError.Translate(user.Language))
 		html.OK(w, r, view.Render("add_subscription"))
 		return
 	}

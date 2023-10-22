@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package rssbridge // import "miniflux.app/integration/rssbridge"
 
 import (
@@ -29,14 +32,14 @@ func DetectBridges(rssbridgeURL, websiteURL string) (bridgeResponse []Bridge, er
 
 	response, err := http.Get(u.String())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RSS-Bridge: unable to excute request: %w", err)
 	}
 	defer response.Body.Close()
 	if response.StatusCode == http.StatusNotFound {
 		return
 	}
 	if response.StatusCode > 400 {
-		return nil, fmt.Errorf("RSS-Bridge: server failure (%d)", response.StatusCode)
+		return nil, fmt.Errorf("RSS-Bridge: unexpected status code %d", response.StatusCode)
 	}
 	if err := json.NewDecoder(response.Body).Decode(&bridgeResponse); err != nil {
 		return nil, fmt.Errorf("RSS-Bridge: unable to decode bridge response: %w", err)

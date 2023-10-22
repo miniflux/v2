@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"miniflux.app/v2/internal/errors"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/validator"
 )
 
@@ -29,26 +29,26 @@ type SubscriptionForm struct {
 	UrlRewriteRules             string
 }
 
-// Validate makes sure the form values are valid.
-func (s *SubscriptionForm) Validate() error {
+// Validate makes sure the form values locale.are valid.
+func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 	if s.URL == "" || s.CategoryID == 0 {
-		return errors.NewLocalizedError("error.feed_mandatory_fields")
+		return locale.NewLocalizedError("error.feed_mandatory_fields")
 	}
 
 	if !validator.IsValidURL(s.URL) {
-		return errors.NewLocalizedError("error.invalid_feed_url")
+		return locale.NewLocalizedError("error.invalid_feed_url")
 	}
 
 	if !validator.IsValidRegex(s.BlocklistRules) {
-		return errors.NewLocalizedError("error.feed_invalid_blocklist_rule")
+		return locale.NewLocalizedError("error.feed_invalid_blocklist_rule")
 	}
 
 	if !validator.IsValidRegex(s.KeeplistRules) {
-		return errors.NewLocalizedError("error.feed_invalid_keeplist_rule")
+		return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
 	}
 
 	if !validator.IsValidRegex(s.UrlRewriteRules) {
-		return errors.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
+		return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
 	}
 
 	return nil

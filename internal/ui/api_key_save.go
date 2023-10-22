@@ -9,6 +9,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/form"
 	"miniflux.app/v2/internal/ui/session"
@@ -32,14 +33,14 @@ func (h *handler) saveAPIKey(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
-	if err := apiKeyForm.Validate(); err != nil {
-		view.Set("errorMessage", err.Error())
+	if validationErr := apiKeyForm.Validate(); validationErr != nil {
+		view.Set("errorMessage", validationErr.Translate(user.Language))
 		html.OK(w, r, view.Render("create_api_key"))
 		return
 	}
 
 	if h.store.APIKeyExists(user.ID, apiKeyForm.Description) {
-		view.Set("errorMessage", "error.api_key_already_exists")
+		view.Set("errorMessage", locale.NewLocalizedError("error.api_key_already_exists").Translate(user.Language))
 		html.OK(w, r, view.Render("create_api_key"))
 		return
 	}

@@ -13,28 +13,24 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
 type IconFinder struct {
-	websiteURL                  string
-	feedIconURL                 string
-	userAgent                   string
-	fetchViaProxy               bool
-	allowSelfSignedCertificates bool
+	requestBuilder *fetcher.RequestBuilder
+	websiteURL     string
+	feedIconURL    string
 }
 
-func NewIconFinder(websiteURL, feedIconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) *IconFinder {
+func NewIconFinder(requestBuilder *fetcher.RequestBuilder, websiteURL, feedIconURL string) *IconFinder {
 	return &IconFinder{
-		websiteURL:                  websiteURL,
-		feedIconURL:                 feedIconURL,
-		userAgent:                   userAgent,
-		fetchViaProxy:               fetchViaProxy,
-		allowSelfSignedCertificates: allowSelfSignedCertificates,
+		requestBuilder: requestBuilder,
+		websiteURL:     websiteURL,
+		feedIconURL:    feedIconURL,
 	}
 }
 
@@ -105,12 +101,16 @@ func (f *IconFinder) FetchIconsFromHTMLDocument() (*model.Icon, error) {
 		slog.String("website_url", f.websiteURL),
 	)
 
-	documentBody, err := f.FetchRootDocument()
-	if err != nil {
-		return nil, err
+	rootURL := urllib.RootURL(f.websiteURL)
+
+	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(rootURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		return nil, fmt.Errorf("icon: unable to download website index page: %w", localizedError.Error())
 	}
 
-	iconURLs, err := findIconURLsFromHTMLDocument(documentBody)
+	iconURLs, err := findIconURLsFromHTMLDocument(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
 	if err != nil {
 		return nil, err
 	}
@@ -151,64 +151,28 @@ func (f *IconFinder) FetchIconsFromHTMLDocument() (*model.Icon, error) {
 	return nil, nil
 }
 
-func (f *IconFinder) FetchRootDocument() (io.Reader, error) {
-	rootURL := urllib.RootURL(f.websiteURL)
-
-	clt := client.NewClientWithConfig(rootURL, config.Opts)
-	clt.WithUserAgent(f.userAgent)
-	clt.AllowSelfSignedCertificates = f.allowSelfSignedCertificates
-
-	if f.fetchViaProxy {
-		clt.WithProxy()
-	}
-
-	response, err := clt.Get()
-	if err != nil {
-		return nil, fmt.Errorf("icon: unable to download website index page: %v", err)
-	}
-
-	if response.HasServerFailure() {
-		return nil, fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
-	}
-
-	return response.Body, nil
-}
-
 func (f *IconFinder) DownloadIcon(iconURL string) (*model.Icon, error) {
 	slog.Debug("Downloading icon",
 		slog.String("website_url", f.websiteURL),
 		slog.String("icon_url", iconURL),
 	)
 
-	clt := client.NewClientWithConfig(iconURL, config.Opts)
-	clt.WithUserAgent(f.userAgent)
-	clt.AllowSelfSignedCertificates = f.allowSelfSignedCertificates
-	if f.fetchViaProxy {
-		clt.WithProxy()
+	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(iconURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		return nil, fmt.Errorf("icon: unable to download website icon: %w", localizedError.Error())
 	}
 
-	response, err := clt.Get()
-	if err != nil {
-		return nil, fmt.Errorf("icon: unable to download icon %s: %v", iconURL, err)
-	}
-
-	if response.HasServerFailure() {
-		return nil, fmt.Errorf("icon: unable to download icon %s: status=%d", iconURL, response.StatusCode)
-	}
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf("icon: unable to read downloaded icon from %s: %v", iconURL, err)
-	}
-
-	if len(body) == 0 {
-		return nil, fmt.Errorf("icon: downloaded icon is empty, iconURL=%s", iconURL)
+	responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
+	if localizedError != nil {
+		return nil, fmt.Errorf("icon: unable to read response body: %w", localizedError.Error())
 	}
 
 	icon := &model.Icon{
-		Hash:     crypto.HashFromBytes(body),
-		MimeType: response.ContentType,
-		Content:  body,
+		Hash:     crypto.HashFromBytes(responseBody),
+		MimeType: responseHandler.ContentType(),
+		Content:  responseBody,
 	}
 
 	return icon, nil

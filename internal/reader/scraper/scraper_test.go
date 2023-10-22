@@ -58,7 +58,7 @@ func TestSelectorRules(t *testing.T) {
 			t.Fatalf(`Unable to read file %q: %v`, filename, err)
 		}
 
-		actualResult, err := scrapContent(bytes.NewReader(html), rule)
+		actualResult, err := findContentUsingCustomRules(bytes.NewReader(html), rule)
 		if err != nil {
 			t.Fatalf(`Scraping error for %q - %q: %v`, filename, rule, err)
 		}

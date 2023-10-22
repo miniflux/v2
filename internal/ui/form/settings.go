@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"miniflux.app/v2/internal/errors"
+	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -64,13 +64,13 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 }
 
 // Validate makes sure the form values are valid.
-func (s *SettingsForm) Validate() error {
+func (s *SettingsForm) Validate() *locale.LocalizedError {
 	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
-		return errors.NewLocalizedError("error.settings_mandatory_fields")
+		return locale.NewLocalizedError("error.settings_mandatory_fields")
 	}
 
 	if s.CJKReadingSpeed <= 0 || s.DefaultReadingSpeed <= 0 {
-		return errors.NewLocalizedError("error.settings_reading_speed_is_positive")
+		return locale.NewLocalizedError("error.settings_reading_speed_is_positive")
 	}
 
 	if s.Confirmation == "" {
@@ -80,7 +80,7 @@ func (s *SettingsForm) Validate() error {
 		s.Password = ""
 	} else if s.Password != "" {
 		if s.Password != s.Confirmation {
-			return errors.NewLocalizedError("error.different_passwords")
+			return locale.NewLocalizedError("error.different_passwords")
 		}
 	}
 

@@ -44,8 +44,8 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(loggedUser.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
 
-	if err := settingsForm.Validate(); err != nil {
-		view.Set("errorMessage", err.Error())
+	if validationErr := settingsForm.Validate(); validationErr != nil {
+		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
 		html.OK(w, r, view.Render("settings"))
 		return
 	}
@@ -66,7 +66,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, loggedUser.ID, userModificationRequest); validationErr != nil {
-		view.Set("errorMessage", validationErr.TranslationKey)
+		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
 		html.OK(w, r, view.Render("settings"))
 		return
 	}

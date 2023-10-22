@@ -5,14 +5,14 @@ package opml // import "miniflux.app/v2/internal/reader/opml"
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 
-	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/reader/encoding"
 )
 
 // Parse reads an OPML file and returns a SubcriptionList.
-func Parse(data io.Reader) (SubcriptionList, *errors.LocalizedError) {
+func Parse(data io.Reader) (SubcriptionList, error) {
 	opmlDocument := NewOPMLDocument()
 	decoder := xml.NewDecoder(data)
 	decoder.Entity = xml.HTMLEntity
@@ -21,7 +21,7 @@ func Parse(data io.Reader) (SubcriptionList, *errors.LocalizedError) {
 
 	err := decoder.Decode(opmlDocument)
 	if err != nil {
-		return nil, errors.NewLocalizedError("Unable to parse OPML file: %q", err)
+		return nil, fmt.Errorf("opml: unable to parse document: %w", err)
 	}
 
 	return getSubscriptionsFromOutlines(opmlDocument.Outlines, ""), nil

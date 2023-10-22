@@ -10,27 +10,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/client"
 )
-
-func TestFeedWithResponse(t *testing.T) {
-	response := &client.Response{ETag: "Some etag", LastModified: "Some date", EffectiveURL: "Some URL"}
-
-	feed := &Feed{}
-	feed.WithClientResponse(response)
-
-	if feed.EtagHeader != "Some etag" {
-		t.Fatal(`The ETag header should be set`)
-	}
-
-	if feed.LastModifiedHeader != "Some date" {
-		t.Fatal(`The LastModified header should be set`)
-	}
-
-	if feed.FeedURL != "Some URL" {
-		t.Fatal(`The Feed URL should be set`)
-	}
-}
 
 func TestFeedCategorySetter(t *testing.T) {
 	feed := &Feed{}
@@ -47,7 +27,7 @@ func TestFeedCategorySetter(t *testing.T) {
 
 func TestFeedErrorCounter(t *testing.T) {
 	feed := &Feed{}
-	feed.WithError("Some Error")
+	feed.WithTranslatedErrorMessage("Some Error")
 
 	if feed.ParsingErrorMsg != "Some Error" {
 		t.Error(`The error message must be set`)

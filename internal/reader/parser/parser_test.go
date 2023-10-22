@@ -4,11 +4,7 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
-	"bytes"
-	"os"
 	"testing"
-
-	"miniflux.app/v2/internal/http/client"
 )
 
 func TestParseAtom(t *testing.T) {
@@ -299,52 +295,5 @@ func TestParseEmptyFeed(t *testing.T) {
 	_, err := ParseFeed("", "")
 	if err == nil {
 		t.Error("ParseFeed must returns an error")
-	}
-}
-
-func TestDifferentEncodingWithResponse(t *testing.T) {
-	var unicodeTestCases = []struct {
-		filename, contentType string
-		index                 int
-		title                 string
-	}{
-		// Arabic language encoded in UTF-8.
-		{"urdu_UTF8.xml", "text/xml; charset=utf-8", 0, "امریکی عسکری امداد کی بندش کی وجوہات: انڈیا سے جنگ، جوہری پروگرام اور اب دہشت گردوں کی پشت پناہی"},
-
-		// Windows-1251 encoding and not charset in HTTP header.
-		{"encoding_WINDOWS-1251.xml", "text/xml", 0, "Цитата #17703"},
-
-		// No encoding in XML, but defined in HTTP Content-Type header.
-		{"no_encoding_ISO-8859-1.xml", "application/xml; charset=ISO-8859-1", 2, "La criminalité liée surtout à... l'ennui ?"},
-
-		// ISO-8859-1 encoding defined in XML and HTTP header.
-		{"encoding_ISO-8859-1.xml", "application/rss+xml; charset=ISO-8859-1", 5, "Projekt Jedi: Microsoft will weiter mit US-Militär zusammenarbeiten"},
-
-		// UTF-8 encoding defined in RDF document and HTTP header.
-		{"rdf_UTF8.xml", "application/rss+xml; charset=utf-8", 1, "Mega-Deal: IBM übernimmt Red Hat"},
-
-		// UTF-8 encoding defined only in RDF document.
-		{"rdf_UTF8.xml", "application/rss+xml", 1, "Mega-Deal: IBM übernimmt Red Hat"},
-	}
-
-	for _, tc := range unicodeTestCases {
-		content, err := os.ReadFile("testdata/" + tc.filename)
-		if err != nil {
-			t.Fatalf(`Unable to read file %q: %v`, tc.filename, err)
-		}
-
-		r := &client.Response{Body: bytes.NewReader(content), ContentType: tc.contentType}
-		if encodingErr := r.EnsureUnicodeBody(); encodingErr != nil {
-			t.Fatalf(`Encoding error for %q: %v`, tc.filename, encodingErr)
-		}
-
-		feed, parseErr := ParseFeed("https://example.org/", r.BodyAsString())
-		if parseErr != nil {
-			t.Fatalf(`Parsing error for %q - %q: %v`, tc.filename, tc.contentType, parseErr)
-		}
-
-		if feed.Entries[tc.index].Title != tc.title {
-			t.Errorf(`Unexpected title, got %q instead of %q`, feed.Entries[tc.index].Title, tc.title)
-		}
 	}
 }
