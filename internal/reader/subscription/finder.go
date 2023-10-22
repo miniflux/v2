@@ -28,7 +28,7 @@ var (
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
 func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *errors.LocalizedError) {
-	parsedWebsiteURL := findYoutubeChannelFeed(websiteURL)
+	parsedWebsiteURL := findYoutubeChannelFeed(websiteURL) //nolint:ineffassign,staticcheck
 	parsedWebsiteURL = parseYoutubeVideoPage(websiteURL)
 
 	clt := client.NewClientWithConfig(parsedWebsiteURL, config.Opts)
