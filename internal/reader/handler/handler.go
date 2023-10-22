@@ -4,6 +4,7 @@
 package handler // import "miniflux.app/v2/internal/reader/handler"
 
 import (
+	"bytes"
 	"errors"
 	"log/slog"
 	"time"
@@ -24,6 +25,83 @@ var (
 	ErrFeedNotFound     = errors.New("fetcher: feed not found")
 	ErrDuplicatedFeed   = errors.New("fetcher: duplicated feed")
 )
+
+func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequestFromSubscriptionDiscovery) (*model.Feed, *locale.LocalizedErrorWrapper) {
+	slog.Debug("Begin feed creation process from subscription discovery",
+		slog.Int64("user_id", userID),
+		slog.String("feed_url", feedCreationRequest.FeedURL),
+	)
+
+	user, storeErr := store.UserByID(userID)
+	if storeErr != nil {
+		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+	}
+
+	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
+		return nil, locale.NewLocalizedErrorWrapper(ErrCategoryNotFound, "error.category_not_found")
+	}
+
+	if store.FeedURLExists(userID, feedCreationRequest.FeedURL) {
+		return nil, locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
+	}
+
+	subscription, parseErr := parser.ParseFeed(feedCreationRequest.FeedURL, feedCreationRequest.Content)
+	if parseErr != nil {
+		return nil, locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
+	}
+
+	subscription.UserID = userID
+	subscription.UserAgent = feedCreationRequest.UserAgent
+	subscription.Cookie = feedCreationRequest.Cookie
+	subscription.Username = feedCreationRequest.Username
+	subscription.Password = feedCreationRequest.Password
+	subscription.Crawler = feedCreationRequest.Crawler
+	subscription.Disabled = feedCreationRequest.Disabled
+	subscription.IgnoreHTTPCache = feedCreationRequest.IgnoreHTTPCache
+	subscription.AllowSelfSignedCertificates = feedCreationRequest.AllowSelfSignedCertificates
+	subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
+	subscription.ScraperRules = feedCreationRequest.ScraperRules
+	subscription.RewriteRules = feedCreationRequest.RewriteRules
+	subscription.BlocklistRules = feedCreationRequest.BlocklistRules
+	subscription.KeeplistRules = feedCreationRequest.KeeplistRules
+	subscription.UrlRewriteRules = feedCreationRequest.UrlRewriteRules
+	subscription.EtagHeader = feedCreationRequest.ETag
+	subscription.LastModifiedHeader = feedCreationRequest.LastModified
+	subscription.FeedURL = feedCreationRequest.FeedURL
+	subscription.WithCategoryID(feedCreationRequest.CategoryID)
+	subscription.CheckedNow()
+
+	processor.ProcessFeedEntries(store, subscription, user, true)
+
+	if storeErr := store.CreateFeed(subscription); storeErr != nil {
+		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+	}
+
+	slog.Debug("Created feed",
+		slog.Int64("user_id", userID),
+		slog.Int64("feed_id", subscription.ID),
+		slog.String("feed_url", subscription.FeedURL),
+	)
+
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithUsernameAndPassword(feedCreationRequest.Username, feedCreationRequest.Password)
+	requestBuilder.WithUserAgent(feedCreationRequest.UserAgent)
+	requestBuilder.WithCookie(feedCreationRequest.Cookie)
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.UseProxy(feedCreationRequest.FetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates)
+
+	checkFeedIcon(
+		store,
+		requestBuilder,
+		subscription.ID,
+		subscription.SiteURL,
+		subscription.IconURL,
+	)
+
+	return subscription, nil
+}
 
 // CreateFeed fetch, parse and store a new feed.
 func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model.FeedCreationRequest) (*model.Feed, *locale.LocalizedErrorWrapper) {
@@ -68,7 +146,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		return nil, locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
 	}
 
-	subscription, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), string(responseBody))
+	subscription, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
 	if parseErr != nil {
 		return nil, locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
 	}
@@ -188,7 +266,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			return localizedError
 		}
 
-		updatedFeed, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), string(responseBody))
+		updatedFeed, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
 		if parseErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed")
 

@@ -7,9 +7,11 @@ import (
 	json_parser "encoding/json"
 	"net/http"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/validator"
 )
@@ -32,14 +34,17 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		rssbridgeURL = intg.RSSBridgeURL
 	}
 
-	subscriptions, localizedError := subscription.FindSubscriptions(
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.WithUserAgent(subscriptionDiscoveryRequest.UserAgent)
+	requestBuilder.WithCookie(subscriptionDiscoveryRequest.Cookie)
+	requestBuilder.WithUsernameAndPassword(subscriptionDiscoveryRequest.Username, subscriptionDiscoveryRequest.Password)
+	requestBuilder.UseProxy(subscriptionDiscoveryRequest.FetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(subscriptionDiscoveryRequest.AllowSelfSignedCertificates)
+
+	subscriptions, localizedError := subscription.NewSubscriptionFinder(requestBuilder).FindSubscriptions(
 		subscriptionDiscoveryRequest.URL,
-		subscriptionDiscoveryRequest.UserAgent,
-		subscriptionDiscoveryRequest.Cookie,
-		subscriptionDiscoveryRequest.Username,
-		subscriptionDiscoveryRequest.Password,
-		subscriptionDiscoveryRequest.FetchViaProxy,
-		subscriptionDiscoveryRequest.AllowSelfSignedCertificates,
 		rssbridgeURL,
 	)
 

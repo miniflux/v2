@@ -460,5 +460,6 @@
     "error.duplicated_feed": "Ce flux existe déjà.",
     "error.unable_to_parse_feed": "Impossible d'analyser ce flux : %v.",
     "error.feed_not_found": "Impossible de trouver ce flux.",
-    "error.unable_to_detect_rssbridge": "Impossible de détecter un flux RSS en utilisant RSS-Bridge: %v."
+    "error.unable_to_detect_rssbridge": "Impossible de détecter un flux RSS en utilisant RSS-Bridge: %v.",
+    "error.feed_format_not_detected": "Impossible de détecter le format du flux : %v."
 }
