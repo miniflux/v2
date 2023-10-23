@@ -204,14 +204,10 @@ function markEntryAsRead(element) {
 // Send the Ajax request to refresh all feeds in the background
 function handleRefreshAllFeeds() {
     let url = document.body.dataset.refreshAllFeedsUrl;
-    let request = new RequestBuilder(url);
 
-    request.withCallback(() => {
-        window.location.reload();
-    });
-
-    request.withHttpMethod("GET");
-    request.execute();
+    if (url) {
+        window.location.href = url;
+    }
 }
 
 // Send the Ajax request to change entries statuses.

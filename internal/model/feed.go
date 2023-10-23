@@ -5,11 +5,11 @@ package model // import "miniflux.app/v2/internal/model"
 
 import (
 	"fmt"
+	"io"
 	"math"
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/client"
 )
 
 // List of supported schedulers.
@@ -49,14 +49,18 @@ type Feed struct {
 	IgnoreHTTPCache             bool      `json:"ignore_http_cache"`
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
-	Category                    *Category `json:"category,omitempty"`
-	Entries                     Entries   `json:"entries,omitempty"`
-	IconURL                     string    `json:"-"`
-	Icon                        *FeedIcon `json:"icon"`
 	HideGlobally                bool      `json:"hide_globally"`
-	UnreadCount                 int       `json:"-"`
-	ReadCount                   int       `json:"-"`
 	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+
+	// Non persisted attributes
+	Category *Category `json:"category,omitempty"`
+	Icon     *FeedIcon `json:"icon"`
+	Entries  Entries   `json:"entries,omitempty"`
+
+	TTL         int    `json:"-"`
+	IconURL     string `json:"-"`
+	UnreadCount int    `json:"-"`
+	ReadCount   int    `json:"-"`
 }
 
 type FeedCounters struct {
@@ -75,20 +79,13 @@ func (f *Feed) String() string {
 	)
 }
 
-// WithClientResponse updates feed attributes from an HTTP request.
-func (f *Feed) WithClientResponse(response *client.Response) {
-	f.EtagHeader = response.ETag
-	f.LastModifiedHeader = response.LastModified
-	f.FeedURL = response.EffectiveURL
-}
-
 // WithCategoryID initializes the category attribute of the feed.
 func (f *Feed) WithCategoryID(categoryID int64) {
 	f.Category = &Category{ID: categoryID}
 }
 
-// WithError adds a new error message and increment the error counter.
-func (f *Feed) WithError(message string) {
+// WithTranslatedErrorMessage adds a new error message and increment the error counter.
+func (f *Feed) WithTranslatedErrorMessage(message string) {
 	f.ParsingErrorCount++
 	f.ParsingErrorMsg = message
 }
@@ -122,12 +119,37 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int) {
 		}
 		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 	default:
-		f.NextCheckAt = time.Now()
+		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(config.Opts.PollingFrequency()))
 	}
 }
 
 // FeedCreationRequest represents the request to create a feed.
 type FeedCreationRequest struct {
+	FeedURL                     string `json:"feed_url"`
+	CategoryID                  int64  `json:"category_id"`
+	UserAgent                   string `json:"user_agent"`
+	Cookie                      string `json:"cookie"`
+	Username                    string `json:"username"`
+	Password                    string `json:"password"`
+	Crawler                     bool   `json:"crawler"`
+	Disabled                    bool   `json:"disabled"`
+	NoMediaPlayer               bool   `json:"no_media_player"`
+	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
+	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	FetchViaProxy               bool   `json:"fetch_via_proxy"`
+	ScraperRules                string `json:"scraper_rules"`
+	RewriteRules                string `json:"rewrite_rules"`
+	BlocklistRules              string `json:"blocklist_rules"`
+	KeeplistRules               string `json:"keeplist_rules"`
+	HideGlobally                bool   `json:"hide_globally"`
+	UrlRewriteRules             string `json:"urlrewrite_rules"`
+}
+
+type FeedCreationRequestFromSubscriptionDiscovery struct {
+	Content      io.ReadSeeker
+	ETag         string
+	LastModified string
+
 	FeedURL                     string `json:"feed_url"`
 	CategoryID                  int64  `json:"category_id"`
 	UserAgent                   string `json:"user_agent"`

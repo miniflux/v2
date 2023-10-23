@@ -60,7 +60,7 @@ func (b *Builder) WithoutCompression() *Builder {
 func (b *Builder) WithCaching(etag string, duration time.Duration, callback func(*Builder)) {
 	b.headers["ETag"] = etag
 	b.headers["Cache-Control"] = "public"
-	b.headers["Expires"] = time.Now().Add(duration).Format(time.RFC1123)
+	b.headers["Expires"] = time.Now().Add(duration).UTC().Format(http.TimeFormat)
 
 	if etag == b.r.Header.Get("If-None-Match") {
 		b.statusCode = http.StatusNotModified

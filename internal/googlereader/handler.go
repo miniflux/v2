@@ -20,6 +20,7 @@ import (
 	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/proxy"
+	"miniflux.app/v2/internal/reader/fetcher"
 	mff "miniflux.app/v2/internal/reader/handler"
 	mfs "miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/storage"
@@ -667,15 +668,24 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := r.Form.Get(ParamQuickAdd)
-	if !validator.IsValidURL(url) {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid URL: %s", url))
+	feedURL := r.Form.Get(ParamQuickAdd)
+	if !validator.IsValidURL(feedURL) {
+		json.BadRequest(w, r, fmt.Errorf("googlereader: invalid URL: %s", feedURL))
 		return
 	}
 
-	subscriptions, s_err := mfs.FindSubscriptions(url, "", "", "", "", false, false)
-	if s_err != nil {
-		json.ServerError(w, r, s_err)
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+
+	var rssBridgeURL string
+	if intg, err := h.store.Integration(userID); err == nil && intg != nil && intg.RSSBridgeEnabled {
+		rssBridgeURL = intg.RSSBridgeURL
+	}
+
+	subscriptions, localizedError := mfs.NewSubscriptionFinder(requestBuilder).FindSubscriptions(feedURL, rssBridgeURL)
+	if localizedError != nil {
+		json.ServerError(w, r, localizedError.Error())
 		return
 	}
 
@@ -746,9 +756,9 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 		return nil, verr.Error()
 	}
 
-	created, err := mff.CreateFeed(store, userID, &feedRequest)
+	created, localizedError := mff.CreateFeed(store, userID, &feedRequest)
 	if err != nil {
-		return nil, err
+		return nil, localizedError.Error()
 	}
 
 	if title != "" {

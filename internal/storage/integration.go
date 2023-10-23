@@ -31,7 +31,7 @@ func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUse
 func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	query := `
 		SELECT
-			users.id, users.is_admin, users.timezone
+			users.id, users.username, users.is_admin, users.timezone
 		FROM
 			users
 		LEFT JOIN
@@ -41,7 +41,7 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	`
 
 	var user model.User
-	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.IsAdmin, &user.Timezone)
+	err := s.db.QueryRow(query, token).Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Timezone)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, nil
@@ -174,7 +174,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shaarli_api_secret,
 			webhook_enabled,
 			webhook_url,
-			webhook_secret
+			webhook_secret,
+			rssbridge_enabled,
+			rssbridge_url
 		FROM
 			integrations
 		WHERE
@@ -248,6 +250,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WebhookEnabled,
 		&integration.WebhookURL,
 		&integration.WebhookSecret,
+		&integration.RSSBridgeEnabled,
+		&integration.RSSBridgeURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -329,9 +333,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			shaarli_api_secret=$62,
 			webhook_enabled=$63,
 			webhook_url=$64,
-			webhook_secret=$65
+			webhook_secret=$65,
+			rssbridge_enabled=$66,
+			rssbridge_url=$67
 		WHERE
-			user_id=$66
+			user_id=$68
 	`
 	_, err := s.db.Exec(
 		query,
@@ -400,6 +406,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.WebhookEnabled,
 		integration.WebhookURL,
 		integration.WebhookSecret,
+		integration.RSSBridgeEnabled,
+		integration.RSSBridgeURL,
 		integration.UserID,
 	)
 

@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/locale"
 
 	"github.com/gorilla/mux"
@@ -119,10 +118,6 @@ func (e *Engine) Render(name string, data map[string]interface{}) []byte {
 			switch k := key.(type) {
 			case string:
 				return printer.Printf(k, args...)
-			case errors.LocalizedError:
-				return k.Localize(printer)
-			case *errors.LocalizedError:
-				return k.Localize(printer)
 			case error:
 				return k.Error()
 			default:

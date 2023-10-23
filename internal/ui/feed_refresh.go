@@ -6,11 +6,14 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"log/slog"
 	"net/http"
+	"time"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
+	"miniflux.app/v2/internal/locale"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
+	"miniflux.app/v2/internal/ui/session"
 )
 
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
@@ -30,15 +33,36 @@ func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
-	jobs, err := h.store.NewUserBatch(userID, h.store.CountFeeds(userID))
-	if err != nil {
-		html.ServerError(w, r, err)
-		return
-	}
+	printer := locale.NewPrinter(request.UserLanguage(r))
+	sess := session.New(h.store, request.SessionID(r))
 
-	go func() {
-		h.pool.Push(jobs)
-	}()
+	// Avoid accidental and excessive refreshes.
+	if time.Now().UTC().Unix()-request.LastForceRefresh(r) < 1800 {
+		sess.NewFlashErrorMessage(printer.Printf("alert.too_many_feeds_refresh"))
+	} else {
+		// We allow the end-user to force refresh all its feeds
+		// without taking into consideration the number of errors.
+		batchBuilder := h.store.NewBatchBuilder()
+		batchBuilder.WithoutDisabledFeeds()
+		batchBuilder.WithUserID(userID)
+
+		jobs, err := batchBuilder.FetchJobs()
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+
+		slog.Info(
+			"Triggered a manual refresh of all feeds from the web ui",
+			slog.Int64("user_id", userID),
+			slog.Int("nb_jobs", len(jobs)),
+		)
+
+		go h.pool.Push(jobs)
+
+		sess.SetLastForceRefresh()
+		sess.NewFlashMessage(printer.Printf("alert.background_feed_refresh"))
+	}
 
 	html.Redirect(w, r, route.Path(h.router, "feeds"))
 }

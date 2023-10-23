@@ -1500,3 +1500,51 @@ func TestParseEntryWithCategoryAndCDATA(t *testing.T) {
 		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
 	}
 }
+
+func TestParseFeedWithTTLField(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<ttl>60</ttl>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.TTL != 60 {
+		t.Errorf("Incorrect TTL, got: %d", feed.TTL)
+	}
+}
+
+func TestParseFeedWithIncorrectTTLValue(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<ttl>invalid</ttl>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.TTL != 0 {
+		t.Errorf("Incorrect TTL, got: %d", feed.TTL)
+	}
+}

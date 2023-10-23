@@ -1,3 +1,34 @@
+Version 2.0.49 (October 15, 2023)
+---------------------------------
+
+* Implement structured logging using `log/slog` package. New config options available:
+    * `LOG_FORMAT`: `json` or `text`
+    * `LOG_LEVEL`: `debug`, `info`, `warning`, or `error`
+    * `LOG_FILE`: `sdterr`, `stdout`, or a file path
+    * The `DEBUG` option is now deprecated in favor of `LOG_LEVEL`
+* API Improvements:
+    * Add endpoint `/v1/version`
+    * Add endpoint `PUT /v1/entries` to update entry title and content
+    * Add endpoint `/v1/icons/{iconID}`
+    * Add endpoint `/v1/flush-history` to flush history
+    * Make the category optional when creating feeds for API clients who don't support categories
+    * Add enclosures to `GET /v1/entries` endpoint
+    * Add `published_after`, `published_before`, `changed_after` and `changed_before` options to `/v1/entries` endpoint
+* Telegram integration improvements:
+    * Replace feed HTML link with a button to avoid page preview issues
+    * Add the possibility to disable buttons
+* Add Bruno Miniflux API collection in `contrib` folder (Bruno is an open source alternative to Postman/Insomnia)
+* Add command line argument to export user feeds as OPML
+* Add new rewrite rules `add_hn_links_using_hack` and `add_hn_links_using_opener` to open HN comments with iOS apps
+* Fix timestamp format for `Expires` response header
+* Fix Javascript error when reading time option is disabled
+* Fix Apprise logic to handle feed service URLs
+* Fix missing word in force refresh message
+* Remove deprecated `PreferServerCipherSuites` TLS option
+* Replace `github.com/rylans/getlang` with `github.com/abadojack/whatlanggo` because `getlang` doesn't seems to be updated anymore
+* Bump `github.com/mccutchen/go-httpbin/v2` from `2.11.0` to `2.11.1`
+* Bump `golang.org/x/*` dependencies
+
 Version 2.0.48 (September 15, 2023)
 -----------------------------------
 

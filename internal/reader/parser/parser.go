@@ -4,9 +4,9 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
-	"strings"
+	"errors"
+	"io"
 
-	"miniflux.app/v2/internal/errors"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/atom"
 	"miniflux.app/v2/internal/reader/json"
@@ -14,18 +14,25 @@ import (
 	"miniflux.app/v2/internal/reader/rss"
 )
 
+var ErrFeedFormatNotDetected = errors.New("parser: unable to detect feed format")
+
 // ParseFeed analyzes the input data and returns a normalized feed object.
-func ParseFeed(baseURL, data string) (*model.Feed, *errors.LocalizedError) {
-	switch DetectFeedFormat(data) {
+func ParseFeed(baseURL string, r io.ReadSeeker) (*model.Feed, error) {
+	r.Seek(0, io.SeekStart)
+	switch DetectFeedFormat(r) {
 	case FormatAtom:
-		return atom.Parse(baseURL, strings.NewReader(data))
+		r.Seek(0, io.SeekStart)
+		return atom.Parse(baseURL, r)
 	case FormatRSS:
-		return rss.Parse(baseURL, strings.NewReader(data))
+		r.Seek(0, io.SeekStart)
+		return rss.Parse(baseURL, r)
 	case FormatJSON:
-		return json.Parse(baseURL, strings.NewReader(data))
+		r.Seek(0, io.SeekStart)
+		return json.Parse(baseURL, r)
 	case FormatRDF:
-		return rdf.Parse(baseURL, strings.NewReader(data))
+		r.Seek(0, io.SeekStart)
+		return rdf.Parse(baseURL, r)
 	default:
-		return nil, errors.NewLocalizedError("Unsupported feed format")
+		return nil, ErrFeedFormatNotDetected
 	}
 }
