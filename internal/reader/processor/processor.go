@@ -145,9 +145,13 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 func matchField(pattern, value string) bool {
 	match, err := regexp.MatchString(pattern, value)
 	if err != nil {
-		slog.Error("[Processor] Unable to match pattern %q with value %q: %v", pattern, value, err)
+		slog.Debug("Failed on regexp match",
+			slog.String("pattern", pattern),
+			slog.String("value", value),
+			slog.Bool("match", match),
+			slog.Any("error", err),
+		)
 	}
-
 	return match
 }
 
