@@ -63,6 +63,10 @@ func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bo
 	return true
 }
 
+func (r *ResponseHandler) IsRateLimited() bool {
+	return r.httpResponse.StatusCode == http.StatusTooManyRequests
+}
+
 func (r *ResponseHandler) Close() {
 	if r.httpResponse != nil && r.httpResponse.Body != nil && r.clientErr == nil {
 		r.httpResponse.Body.Close()

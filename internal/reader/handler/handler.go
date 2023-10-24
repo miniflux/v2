@@ -240,6 +240,15 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()
 
+	if responseHandler.IsRateLimited() {
+		slog.Warn("Feed is rate limited (429 status code)",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+		)
+
+		originalFeed.NextCheckAt = time.Now().Add(time.Hour * 12)
+	}
+
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
 		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
