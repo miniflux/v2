@@ -177,6 +177,7 @@ func (f *IconFinder) DownloadIcon(iconURL string) (*model.Icon, error) {
 		Hash:     crypto.HashFromBytes(responseBody),
 		MimeType: responseHandler.ContentType(),
 		Content:  responseBody,
+		URL:      iconURL,
 	}
 
 	return icon, nil

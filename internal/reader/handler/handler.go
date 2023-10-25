@@ -97,6 +97,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 		subscription.ID,
 		subscription.SiteURL,
 		subscription.IconURL,
+		false,
 	)
 
 	return subscription, nil
@@ -189,6 +190,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		subscription.ID,
 		subscription.SiteURL,
 		subscription.IconURL,
+		false,
 	)
 	return subscription, nil
 }
@@ -255,8 +257,6 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		store.UpdateFeedError(originalFeed)
 		return localizedError
 	}
-
-	refreshIcon := forceRefresh
 
 	if originalFeed.IgnoreHTTPCache || responseHandler.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		slog.Debug("Feed modified",
@@ -325,7 +325,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		if updatedFeed.IconURL != originalFeed.IconURL {
 			originalFeed.IconURL = updatedFeed.IconURL
-			refreshIcon = true
+			forceRefresh = true
 		}
 	} else {
 		slog.Debug("Feed not modified",
@@ -334,22 +334,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		)
 	}
 
-	if refreshIcon {
-		if err := store.RemoveFeedIcon(feedID); err != nil {
-			slog.Debug("Unable to remove Feed Icon",
-				slog.Int64("feed_id", feedID),
-			)
-		}
-	}
-
 	checkFeedIcon(
 		store,
+		requestBuilder,
 		originalFeed.ID,
 		originalFeed.SiteURL,
 		originalFeed.IconURL,
-		originalFeed.UserAgent,
-		originalFeed.FetchViaProxy,
-		originalFeed.AllowSelfSignedCertificates,
+		forceRefresh,
 	)
 
 	originalFeed.ResetErrorCounter()
@@ -364,8 +355,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	return nil
 }
 
-func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilder, feedID int64, websiteURL, feedIconURL string) {
-	if !store.HasIcon(feedID) {
+func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilder, feedID int64, websiteURL, feedIconURL string, forceRefresh bool) {
+	if !store.HasIcon(feedID) || forceRefresh {
 		iconFinder := icon.NewIconFinder(requestBuilder, websiteURL, feedIconURL)
 		if icon, err := iconFinder.FindIcon(); err != nil {
 			slog.Debug("Unable to find feed icon",
@@ -381,6 +372,16 @@ func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilde
 				slog.String("feed_icon_url", feedIconURL),
 			)
 		} else {
+			if icon.URL == "" {
+				icon.URL = feedIconURL
+			}
+			if forceRefresh {
+				if err := store.RemoveFeedIcon(feedID); err != nil {
+					slog.Debug("Unable to remove Feed Icon",
+						slog.Int64("feed_id", feedID),
+					)
+				}
+			}
 			if err := store.CreateFeedIcon(feedID, icon); err != nil {
 				slog.Error("Unable to store feed icon",
 					slog.Int64("feed_id", feedID),
