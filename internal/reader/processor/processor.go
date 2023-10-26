@@ -115,8 +115,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
-		if match {
+		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) {
 			slog.Debug("Blocking entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
@@ -127,13 +126,13 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
-		match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
-		if match {
+		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) {
 			slog.Debug("Allow entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
@@ -146,6 +145,19 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 		return false
 	}
 	return true
+}
+
+func matchField(pattern, value string) bool {
+	match, err := regexp.MatchString(pattern, value)
+	if err != nil {
+		slog.Debug("Failed on regexp match",
+			slog.String("pattern", pattern),
+			slog.String("value", value),
+			slog.Bool("match", match),
+			slog.Any("error", err),
+		)
+	}
+	return match
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
