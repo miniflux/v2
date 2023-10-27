@@ -10,7 +10,7 @@ async function isConditionalLoginSupported() {
 
 // URLBase64 to ArrayBuffer
 function bufferDecode(value) {
-    return Uint8Array.from(atob(value), c => c.charCodeAt(0));
+    return Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
 }
 
 // ArrayBuffer to URLBase64
