@@ -1,4 +1,4 @@
-package model // import "miniflux.app/model"
+package model // import "miniflux.app/v2/internal/model"
 
 import (
 	"database/sql/driver"

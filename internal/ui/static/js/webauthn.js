@@ -3,7 +3,7 @@ function isWebAuthnSupported() {
 }
 
 async function isConditionalLoginSupported() {
-    return isWebAuthnSupported() && 
+    return isWebAuthnSupported() &&
      window.PublicKeyCredential.isConditionalMediationAvailable &&
      window.PublicKeyCredential.isConditionalMediationAvailable();
 }

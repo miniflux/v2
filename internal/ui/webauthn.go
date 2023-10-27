@@ -1,4 +1,4 @@
-package ui // import "miniflux.app/ui"
+package ui // import "miniflux.app/v2/internal/ui"
 
 import (
 	"fmt"
