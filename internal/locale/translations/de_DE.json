@@ -467,7 +467,7 @@
     "webauthn.register": "Hauptschlüssel registrieren",
     "webauthn.register.error": "Hauptschlüssel kann nicht registriert werden",
     "webauthn.delete" : [
-        "Entfernen Sie $d Hauptschlüssel",
+        "Entfernen Sie %d Hauptschlüssel",
         "%d Hauptschlüssel entfernen"
     ]
 }
