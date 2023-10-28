@@ -141,7 +141,8 @@ async function conditionalLogin() {
     }
 }
 
-async function removeCreds() {
+async function removeCreds(event) {
+    event.preventDefault();
     let removeCredsURL = "webauthnDeleteAllUrl";
     await post(removeCredsURL, null, {});
     window.location.reload();
@@ -157,6 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (registerButton != null) {
         registerButton.disabled = false;
         registerButton.addEventListener("click", (e) => {
+            e.preventDefault();
             register().catch((err) => showError(err));
         });
     }
