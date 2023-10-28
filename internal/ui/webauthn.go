@@ -13,7 +13,6 @@ import (
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
-	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/ui/session"
 )
@@ -53,7 +52,6 @@ func newWebAuthn(h *handler) (*webauthn.WebAuthn, error) {
 		RPDisplayName: "Miniflux",
 		RPID:          url.Hostname(),
 		RPOrigin:      config.Opts.RootURL(),
-		RPIcon:        config.Opts.BaseURL() + route.Path(h.router, "favicon"),
 	})
 }
 
