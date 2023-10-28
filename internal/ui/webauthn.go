@@ -73,11 +73,28 @@ func (h *handler) beginRegistration(w http.ResponseWriter, r *http.Request) {
 		json.ServerError(w, r, err)
 		return
 	}
-	options, sessionData, err := web.BeginRegistration(WebAuthnUser{
-		user,
-		crypto.GenerateRandomBytes(32),
-		nil,
-	})
+	var creds []webauthn.Credential
+
+	creds, err = h.store.WebAuthnCredentialsByUserID(user.ID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	credsDescriptors := make([]protocol.CredentialDescriptor, len(creds))
+	for i, cred := range creds {
+		credsDescriptors[i] = cred.Descriptor()
+	}
+
+	options, sessionData, err := web.BeginRegistration(
+		WebAuthnUser{
+			user,
+			crypto.GenerateRandomBytes(32),
+			nil,
+		},
+		webauthn.WithExclusions(credsDescriptors),
+	)
+
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

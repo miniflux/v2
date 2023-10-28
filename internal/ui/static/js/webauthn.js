@@ -66,6 +66,9 @@ async function register() {
     let credOptions = await r.json();
     credOptions.publicKey.challenge = bufferDecode(credOptions.publicKey.challenge);
     credOptions.publicKey.user.id = bufferDecode(credOptions.publicKey.user.id);
+    if(Object.hasOwn(credOptions.publicKey, 'excludeCredentials')) {
+        credOptions.publicKey.excludeCredentials.forEach((credential) => credential.id = bufferDecode(credential.id));
+    }
     let attestation = await navigator.credentials.create(credOptions);
     let cred = {
         id: attestation.id,
@@ -88,12 +91,11 @@ async function register() {
 async function login(username, conditional) {
     let beginLoginURL = "webauthnLoginBeginUrl";
     let r = await get(beginLoginURL, username);
-    let c = await r.json();
-    let credOptions = {
-        publicKey: {
-            challenge: bufferDecode(c.publicKey.challenge)
-        },
-    };
+    let credOptions = await r.json();
+    credOptions.publicKey.challenge = bufferDecode(credOptions.publicKey.challenge);
+    if(Object.hasOwn(credOptions.publicKey, 'allowCredentials')) {
+        credOptions.publicKey.allowCredentials.forEach((credential) => credential.id = bufferDecode(credential.id));
+    }
     if (conditional) {
         credOptions.signal = abortController.signal;
         credOptions.mediation = "conditional";
