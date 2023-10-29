@@ -288,3 +288,11 @@ func parseImageDataURL(value string) (*model.Icon, error) {
 
 	return icon, nil
 }
+
+func URLHasChanged(original, updated, siteURL string) bool {
+	if updated == "" {
+		return false
+	}
+	updated, _ = urllib.AbsoluteURL(siteURL, updated)
+	return original == updated
+}

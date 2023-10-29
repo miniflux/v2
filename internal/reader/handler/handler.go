@@ -323,9 +323,15 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()
 
-		if updatedFeed.IconURL != originalFeed.IconURL {
+		if icon.URLHasChanged(originalFeed.IconURL, updatedFeed.IconURL, updatedFeed.SiteURL) {
 			originalFeed.IconURL = updatedFeed.IconURL
 			forceRefresh = true
+		} else {
+			slog.Debug("Feed icon not modified",
+				slog.Int64("user_id", userID),
+				slog.Int64("feed_id", feedID),
+				slog.String("feed_icon_url", originalFeed.IconURL),
+			)
 		}
 	} else {
 		slog.Debug("Feed not modified",
@@ -372,9 +378,6 @@ func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilde
 				slog.String("feed_icon_url", feedIconURL),
 			)
 		} else {
-			if icon.URL == "" {
-				icon.URL = feedIconURL
-			}
 			if forceRefresh {
 				if err := store.RemoveFeedIcon(feedID); err != nil {
 					slog.Debug("Unable to remove Feed Icon",
