@@ -817,7 +817,10 @@ var migrations = []func(tx *sql.Tx) error{
 				attestation_type varchar(255) not null,
 				aaguid bytea,
 				sign_count bigint,
-				clone_warning bool
+				clone_warning bool,
+				name text,
+				added_on timestamp with time zone default now(),
+				last_seen_on timestamp with time zone default now()
 			);
 		`)
 		return

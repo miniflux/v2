@@ -2,9 +2,11 @@ package model // import "miniflux.app/v2/internal/model"
 
 import (
 	"database/sql/driver"
+	"encoding/hex"
 	jsonenc "encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/go-webauthn/webauthn/webauthn"
 )
@@ -32,4 +34,16 @@ func (s WebAuthnSession) String() string {
 		return "{}"
 	}
 	return fmt.Sprintf("{Challenge: %s, UserID: %x}", s.SessionData.Challenge, s.SessionData.UserID)
+}
+
+type WebAuthnCredential struct {
+	Credential webauthn.Credential
+	Name       string
+	AddedOn    *time.Time
+	LastSeenOn *time.Time
+	Handle     []byte
+}
+
+func (s WebAuthnCredential) HandleEncoded() string {
+	return hex.EncodeToString(s.Handle)
 }

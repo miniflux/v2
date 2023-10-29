@@ -180,9 +180,22 @@
     "page.settings.unlink_google_account": "Google アカウントと接続を解除する",
     "page.settings.link_oidc_account": "OpenID Connect アカウントと接続する",
     "page.settings.unlink_oidc_account": "OpenID Connect アカウントと接続を解除する",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "パスキーを登録する",
+    "page.settings.webauthn.register.error": "パスキーを登録できません",
+    "page.settings.webauthn.delete": [
+        "%d 個のパスキーを削除",
+        "%d 個のパスキーを削除"
+    ],
     "page.login.title": "ログイン",
     "page.login.google_signin": "Google アカウントでログイン",
     "page.login.oidc_signin": "OpenID Connect アカウントでログイン",
+    "page.login.webauthn_login": "パスキーでログイン",
+    "page.login.webauthn_login.error": "パスキーでログインできない",
     "page.integrations.title": "連携",
     "page.integration.miniflux_api": "Miniflux API",
     "page.integration.miniflux_api_endpoint": "API Endpoint",
@@ -210,6 +223,7 @@
     "page.offline.title": "オフラインモード",
     "page.offline.message": "オフラインです",
     "page.offline.refresh_page": "ページを更新してみてください",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "共有エントリはありません。",
     "alert.no_bookmark": "現在星付きはありません。",
     "alert.no_category": "カテゴリが存在しません。",
@@ -461,13 +475,5 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
-    "webauthn.login": "パスキーでログイン",
-    "webauthn.login.error": "パスキーでログインできない",
-    "webauthn.register": "パスキーを登録する",
-    "webauthn.register.error": "パスキーを登録できません",
-    "webauthn.delete" : [
-        "%d 個のパスキーを削除",
-        "%d 個のパスキーを削除"
-    ]
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

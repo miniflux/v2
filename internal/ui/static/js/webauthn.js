@@ -85,7 +85,10 @@ async function register() {
         throw new Error("Login failed with HTTP status " + response.status);
     }
     console.log("registration successful");
-    window.location.reload();
+
+    let jsonData = await response.json();
+    let redirect = jsonData.redirect;
+    window.location.href = redirect;
 }
 
 async function login(username, conditional) {

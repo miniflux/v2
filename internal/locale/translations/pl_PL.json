@@ -182,9 +182,23 @@
     "page.settings.unlink_google_account": "Odłącz moje konto Google",
     "page.settings.link_oidc_account": "Połącz z moim kontem OpenID Connect",
     "page.settings.unlink_oidc_account": "Odłącz moje konto OpenID Connect",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "Zarejestruj klucz dostępu",
+    "page.settings.webauthn.register.error": "Nie można zarejestrować klucza dostępu",
+    "page.settings.webauthn.delete": [
+        "Usuń %d klucz dostępu",
+        "Usuń %d klucze dostępu",
+        "Usuń %d klucze dostępu"
+    ],
     "page.login.title": "Zaloguj się",
     "page.login.google_signin": "Zaloguj przez Google",
     "page.login.oidc_signin": "Zaloguj przez OpenID Connect",
+    "page.login.webauthn_login": "Zaloguj się za pomocą hasła",
+    "page.login.webauthn_login.error": "Nie można zalogować się za pomocą klucza dostępu",
     "page.integrations.title": "Usługi",
     "page.integration.miniflux_api": "Miniflux API",
     "page.integration.miniflux_api_endpoint": "Punkt końcowy API",
@@ -212,6 +226,7 @@
     "page.offline.title": "Tryb offline",
     "page.offline.message": "Jesteś odłączony od sieci",
     "page.offline.refresh_page": "Spróbuj odświeżyć stronę",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "Brak wspólnego wpisu.",
     "alert.no_bookmark": "Obecnie nie ma żadnych zakładek.",
     "alert.no_category": "Nie ma żadnej kategorii!",
@@ -469,14 +484,5 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
-    "webauthn.login": "Zaloguj się za pomocą hasła",
-    "webauthn.login.error": "Nie można zalogować się za pomocą klucza dostępu",
-    "webauthn.register": "Zarejestruj klucz dostępu",
-    "webauthn.register.error": "Nie można zarejestrować klucza dostępu",
-    "webauthn.delete" : [
-        "Usuń %d klucz dostępu",
-        "Usuń %d klucze dostępu",
-        "Usuń %d klucze dostępu"
-    ]
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

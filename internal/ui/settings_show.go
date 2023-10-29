@@ -52,6 +52,12 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	creds, err := h.store.WebAuthnCredentialsByUserID(user.ID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
 	view.Set("form", settingsForm)
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages())
@@ -63,6 +69,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("default_home_pages", model.HomePages())
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
 	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(user.ID))
+	view.Set("webAuthnCerts", creds)
 
 	html.OK(w, r, view.Render("settings"))
 }

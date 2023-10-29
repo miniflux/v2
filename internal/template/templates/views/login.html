@@ -21,10 +21,10 @@
     </form>
     {{ if .webAuthnEnabled }}
     <div class="alert alert-error hidden" id="webauthn-error">
-        {{ t "webauthn.login.error" }}
+        {{ t "page.login.webauthn_login.error" }}
     </div>
     <div class="buttons">
-        <button class="button" id="webauthn-login" disabled>{{ t "webauthn.login" }}</button>
+        <button class="button" id="webauthn-login" disabled>{{ t "page.login.webauthn_login" }}</button>
     </div>
     {{ end }}
     {{ if hasOAuth2Provider "google" }}

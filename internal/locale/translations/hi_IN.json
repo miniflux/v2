@@ -180,9 +180,22 @@
     "page.settings.unlink_google_account": "मेरा गूगल खाता हटाय",
     "page.settings.link_oidc_account": "मेरा ओपन-ईद खाता जोरीय",
     "page.settings.unlink_oidc_account": "मेरा ओपन-ईद खाता हटाय",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "रजिस्टर पासकी",
+    "page.settings.webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
+    "page.settings.webauthn.delete": [
+        "%d पासकुंजी निकालें",
+        "%d पासकी हटाएं"
+    ],
     "page.login.title": "साइन इन करें",
     "page.login.google_signin": "गूगल के साथ साइन इन करें",
     "page.login.oidc_signin": "ओपन-ईद के साथ साइन इन करें",
+    "page.login.webauthn_login": "पासकी से लॉगिन करें",
+    "page.login.webauthn_login.error": "पासकी से लॉगिन करने में असमर्थ",
     "page.integrations.title": "एकीकरण",
     "page.integration.miniflux_api": "मिनिफलक्ष एपीआई",
     "page.integration.miniflux_api_endpoint": "एपीआई समापन बिंदु",
@@ -210,6 +223,7 @@
     "page.offline.title": "ऑफ़लाइन मोड",
     "page.offline.message": "आप संपर्क में नहीं हैं",
     "page.offline.refresh_page": "पृष्ठ को ताज़ा करने का प्रयास करें",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "कोई साझा प्रविष्टि नहीं है",
     "alert.no_bookmark": "इस समय कोई बुकमार्क नहीं है",
     "alert.no_category": "कोई श्रेणी नहीं है।",
@@ -461,13 +475,5 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
-    "webauthn.login": "पासकी से लॉगिन करें",
-    "webauthn.login.error": "पासकी से लॉगिन करने में असमर्थ",
-    "webauthn.register": "रजिस्टर पासकी",
-    "webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
-    "webauthn.delete" : [
-        "%d पासकुंजी निकालें",
-        "%d पासकी हटाएं"
-    ]
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

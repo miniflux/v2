@@ -180,9 +180,22 @@
     "page.settings.unlink_google_account": "解除 Google 帳號關聯",
     "page.settings.link_oidc_account": "關聯我的 OpenID Connect 賬戶",
     "page.settings.unlink_oidc_account": "解除 OpenID Connect 帳號關聯",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "註冊密鑰",
+    "page.settings.webauthn.register.error": "無法註冊密鑰",
+    "page.settings.webauthn.delete": [
+        "刪除 %d 個密碼",
+        "刪除 %d 個密鑰"
+    ],
     "page.login.title": "登入",
     "page.login.google_signin": "使用 Google 登入",
     "page.login.oidc_signin": "使用 OpenID Connect 登入",
+    "page.login.webauthn_login": "使用密碼登錄",
+    "page.login.webauthn_login.error": "無法使用密碼登錄",
     "page.integrations.title": "整合",
     "page.integration.miniflux_api": "Miniflux API",
     "page.integration.miniflux_api_endpoint": "API Endpoint",
@@ -210,6 +223,7 @@
     "page.offline.title": "離線模式",
     "page.offline.message": "您已離線",
     "page.offline.refresh_page": "嘗試重新整理頁面",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "沒有分享文章。",
     "alert.no_bookmark": "目前沒有收藏",
     "alert.no_category": "目前沒有分類",
@@ -461,13 +475,5 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
-    "webauthn.login": "使用密碼登錄",
-    "webauthn.login.error": "無法使用密碼登錄",
-    "webauthn.register": "註冊密鑰",
-    "webauthn.register.error": "無法註冊密鑰",
-    "webauthn.delete" : [
-        "刪除 %d 個密碼",
-        "刪除 %d 個密鑰"
-    ]
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

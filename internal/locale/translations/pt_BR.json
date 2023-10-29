@@ -180,9 +180,22 @@
     "page.settings.unlink_google_account": "Desvincular minha conta do Google",
     "page.settings.link_oidc_account": "Vincular minha conta do OpenID Connect",
     "page.settings.unlink_oidc_account": "Desvincular minha conta do OpenID Connect",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "Registrar senha",
+    "page.settings.webauthn.register.error": "Não foi possível registrar a senha",
+    "page.settings.webauthn.delete": [
+        "Remover %d senha",
+        "Remover %d senhas"
+    ],
     "page.login.title": "Iniciar Sessão",
     "page.login.google_signin": "Iniciar Sessão com sua conta do Google",
     "page.login.oidc_signin": "Iniciar Sessão com sua conta do OpenID Connect",
+    "page.login.webauthn_login": "Entrar com senha",
+    "page.login.webauthn_login.error": "Não é possível fazer login com senha",
     "page.integrations.title": "Integrações",
     "page.integration.miniflux_api": "API do Miniflux",
     "page.integration.miniflux_api_endpoint": "Endpoint da API",
@@ -210,6 +223,7 @@
     "page.offline.title": "Modo offline",
     "page.offline.message": "Você está offline",
     "page.offline.refresh_page": "Tente atualizar a página",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "Não há itens compartilhados.",
     "alert.no_bookmark": "Não há favorito neste momento.",
     "alert.no_category": "Não há categoria.",
@@ -461,13 +475,5 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
-    "webauthn.login": "Entrar com senha",
-    "webauthn.login.error": "Não é possível fazer login com senha",
-    "webauthn.register": "Registrar senha",
-    "webauthn.register.error": "Não foi possível registrar a senha",
-    "webauthn.delete" : [
-        "Remover %d senha",
-        "Remover %d senhas"
-    ]
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

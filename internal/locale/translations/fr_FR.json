@@ -180,9 +180,22 @@
     "page.settings.unlink_google_account": "Dissocier mon compte Google",
     "page.settings.link_oidc_account": "Associer mon compte OpenID Connect",
     "page.settings.unlink_oidc_account": "Dissocier mon compte OpenID Connect",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "Enregistrer le mot de passe",
+    "page.settings.webauthn.register.error": "Impossible d'enregistrer le mot de passe",
+    "page.settings.webauthn.delete": [
+        "Supprimer %d clé d'accès",
+        "Supprimer %d mots de passe"
+    ],
     "page.login.title": "Connexion",
     "page.login.google_signin": "Se connecter avec Google",
     "page.login.oidc_signin": "Se connecter avec OpenID Connect",
+    "page.login.webauthn_login": "Connectez-vous avec un mot de passe",
+    "page.login.webauthn_login.error": "Impossible de se connecter avec le mot de passe",
     "page.integrations.title": "Intégrations",
     "page.integration.miniflux_api": "API de Miniflux",
     "page.integration.miniflux_api_endpoint": "Point de terminaison de l'API",
@@ -210,6 +223,7 @@
     "page.offline.title": "Mode Hors-Ligne",
     "page.offline.message": "Vous n'êtes pas connecté",
     "page.offline.refresh_page": "Essayez de rafraîchir la page",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "Il n'y a pas d'article partagé.",
     "alert.no_bookmark": "Il n'y a aucun favoris pour le moment.",
     "alert.no_category": "Il n'y a aucune catégorie.",
@@ -461,13 +475,5 @@
     "error.unable_to_parse_feed": "Impossible d'analyser ce flux : %v.",
     "error.feed_not_found": "Impossible de trouver ce flux.",
     "error.unable_to_detect_rssbridge": "Impossible de détecter un flux RSS en utilisant RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Impossible de détecter le format du flux : %v.",
-    "webauthn.login": "Connectez-vous avec un mot de passe",
-    "webauthn.login.error": "Impossible de se connecter avec le mot de passe",
-    "webauthn.register": "Enregistrer le mot de passe",
-    "webauthn.register.error": "Impossible d'enregistrer le mot de passe",
-    "webauthn.delete" : [
-        "Supprimer %d clé d'accès",
-        "Supprimer %d mots de passe"
-    ]
+    "error.feed_format_not_detected": "Impossible de détecter le format du flux : %v."
 }

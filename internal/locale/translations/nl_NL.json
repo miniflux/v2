@@ -181,7 +181,20 @@
     "page.settings.unlink_google_account": "Ontkoppel mijn Google-account",
     "page.settings.link_oidc_account": "Koppel mijn OpenID Connect-account",
     "page.settings.unlink_oidc_account": "Ontkoppel mijn OpenID Connect-account",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "Wachtwoord registreren",
+    "page.settings.webauthn.register.error": "Kan wachtwoord niet registreren",
+    "page.settings.webauthn.delete": [
+        "Verwijder %d wachtwoord",
+        "Verwijder %d wachtwoordsleutels"
+    ],
     "page.login.oidc_signin": "Inloggen via OpenID Connect",
+    "page.login.webauthn_login": "Inloggen met wachtwoord",
+    "page.login.webauthn_login.error": "Kan niet inloggen met wachtwoord",
     "page.login.google_signin": "Inloggen via Google",
     "page.integrations.title": "Integraties",
     "page.integration.miniflux_api": "Miniflux API",
@@ -210,6 +223,7 @@
     "page.offline.title": "Offline modus",
     "page.offline.message": "Je bent offline",
     "page.offline.refresh_page": "Probeer de pagina te vernieuwen",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "Er is geen gedeelde toegang.",
     "alert.no_bookmark": "Er zijn op dit moment geen favorieten.",
     "alert.no_category": "Er zijn geen categorieën.",
@@ -461,13 +475,5 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
-    "webauthn.login": "Inloggen met wachtwoord",
-    "webauthn.login.error": "Kan niet inloggen met wachtwoord",
-    "webauthn.register": "Wachtwoord registreren",
-    "webauthn.register.error": "Kan wachtwoord niet registreren",
-    "webauthn.delete" : [
-        "Verwijder %d wachtwoord",
-        "Verwijder %d wachtwoordsleutels"
-    ]
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }
