@@ -19,12 +19,12 @@ import (
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
 	feedID := request.RouteInt64Param(r, "feedID")
 	forceRefresh := request.QueryBoolParam(r, "forceRefresh", false)
-	if err := feedHandler.RefreshFeed(h.store, request.UserID(r), feedID, forceRefresh); err != nil {
+	if localizedError := feedHandler.RefreshFeed(h.store, request.UserID(r), feedID, forceRefresh); localizedError != nil {
 		slog.Warn("Unable to refresh feed",
 			slog.Int64("user_id", request.UserID(r)),
 			slog.Int64("feed_id", feedID),
 			slog.Bool("force_refresh", forceRefresh),
-			slog.Any("error", err),
+			slog.Any("error", localizedError.Error()),
 		)
 	}
 

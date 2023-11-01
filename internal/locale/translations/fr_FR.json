@@ -439,7 +439,7 @@
     "alert.too_many_feeds_refresh": "Vous avez déclenché trop d'actualisations de flux. Veuillez attendre 30 minutes avant de réessayer.",
     "alert.background_feed_refresh": "Les abonnements sont en cours d'actualisation en arrière-plan. Vous pouvez continuer à naviguer dans l'application.",
     "error.http_response_too_large": "La réponse HTTP est trop volumineuse. Vous pouvez augmenter la limite de taille de réponse HTTP dans les paramètres de l'application (redémarrage de l'application nécessaire).",
-    "error.http_body_read": "Impossible de lire le corps de la réponse HTTP.",
+    "error.http_body_read": "Impossible de lire le corps de la réponse HTTP : %v.",
     "error.http_empty_response_body": "Le corps de la réponse HTTP est vide.",
     "error.http_empty_response": "La réponse HTTP est vide. Peut-être que ce site web bloque Miniflux avec une protection anti-bot ?",
     "error.tls_error": "Erreur TLS : %v. Vous pouvez désactiver la vérification TLS dans les paramètres de l'abonnement.",
