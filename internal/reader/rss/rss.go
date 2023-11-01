@@ -235,7 +235,7 @@ func (r *rssItem) entryDate() time.Time {
 	if value != "" {
 		result, err := date.Parse(value)
 		if err != nil {
-			slog.Warn("Unable to parse date from RSS feed",
+			slog.Debug("Unable to parse date from RSS feed",
 				slog.String("date", value),
 				slog.String("guid", r.GUID.Data),
 				slog.Any("error", err),

@@ -214,11 +214,15 @@ func TestParseWeirdDateFormat(t *testing.T) {
 		"Jun 23, 2023 19:00 GMT",
 		"09/15/2014 4:20 pm PST",
 		"Fri, 23rd Jun 2023 09:32:20 GMT",
+		"Sat, Oct 28 2023 08:28:28 PM",
+		"Monday, October 6, 2023 - 16:29\n",
+		"10/30/23 21:55:58",
+		"30.10.23",
 	}
 
 	for _, date := range dates {
 		if _, err := Parse(date); err != nil {
-			t.Errorf(`Unable to parse date: %q`, date)
+			t.Errorf(`Unable to parse date: %q (%v)`, date, err)
 		}
 	}
 }
