@@ -78,8 +78,8 @@ func (r *ResponseHandler) ReadBody(maxBodySize int64) ([]byte, *locale.Localized
 
 	buffer, err := io.ReadAll(limitedReader)
 	if err != nil && err != io.EOF {
-		if err == io.ErrUnexpectedEOF {
-			return nil, locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: response body too large: %w", err), "error.http_response_too_large")
+		if err, ok := err.(*http.MaxBytesError); ok {
+			return nil, locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: response body too large: %d bytes", err.Limit), "error.http_response_too_large")
 		}
 
 		return nil, locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: unable to read response body: %w", err), "error.http_body_read", err)
