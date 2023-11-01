@@ -100,7 +100,7 @@ func (r *rdfItem) entryDate() time.Time {
 	if r.DublinCoreDate != "" {
 		result, err := date.Parse(r.DublinCoreDate)
 		if err != nil {
-			slog.Warn("Unable to parse date from RDF feed",
+			slog.Debug("Unable to parse date from RDF feed",
 				slog.String("date", r.DublinCoreDate),
 				slog.String("link", r.Link),
 				slog.Any("error", err),
