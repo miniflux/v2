@@ -6,7 +6,7 @@ package model // import "miniflux.app/v2/internal/model"
 import (
 	"database/sql/driver"
 	"encoding/hex"
-	jsonenc "encoding/json"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -20,7 +20,7 @@ type WebAuthnSession struct {
 }
 
 func (s WebAuthnSession) Value() (driver.Value, error) {
-	return jsonenc.Marshal(s)
+	return json.Marshal(s)
 }
 
 func (s *WebAuthnSession) Scan(value interface{}) error {
@@ -29,7 +29,7 @@ func (s *WebAuthnSession) Scan(value interface{}) error {
 		return errors.New("type assertion to []byte failed")
 	}
 
-	return jsonenc.Unmarshal(b, &s)
+	return json.Unmarshal(b, &s)
 }
 
 func (s WebAuthnSession) String() string {
