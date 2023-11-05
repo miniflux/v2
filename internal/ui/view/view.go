@@ -6,6 +6,7 @@ package view // import "miniflux.app/v2/internal/ui/view"
 import (
 	"net/http"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/template"
 	"miniflux.app/v2/internal/ui/session"
@@ -43,5 +44,7 @@ func New(tpl *template.Engine, r *http.Request, sess *session.Session) *View {
 	b.params["theme_checksum"] = static.StylesheetBundleChecksums[theme]
 	b.params["app_js_checksum"] = static.JavascriptBundleChecksums["app"]
 	b.params["sw_js_checksum"] = static.JavascriptBundleChecksums["service-worker"]
+	b.params["webauthn_js_checksum"] = static.JavascriptBundleChecksums["webauthn"]
+	b.params["webAuthnEnabled"] = config.Opts.WebAuthn()
 	return b
 }

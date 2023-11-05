@@ -120,7 +120,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, request.UserThemeContextKey, session.Data.Theme)
 		ctx = context.WithValue(ctx, request.PocketRequestTokenContextKey, session.Data.PocketRequestToken)
 		ctx = context.WithValue(ctx, request.LastForceRefreshContextKey, session.Data.LastForceRefresh)
-
+		ctx = context.WithValue(ctx, request.WebAuthnDataContextKey, session.Data.WebAuthnSessionData)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -159,7 +159,9 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 		"sharedEntry",
 		"healthcheck",
 		"offline",
-		"proxy":
+		"proxy",
+		"webauthnLoginBegin",
+		"webauthnLoginFinish":
 		return true
 	default:
 		return false

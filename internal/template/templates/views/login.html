@@ -19,6 +19,14 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "action.login" }}</button>
         </div>
     </form>
+    {{ if .webAuthnEnabled }}
+    <div class="alert alert-error hidden" id="webauthn-error">
+        {{ t "page.login.webauthn_login.error" }}
+    </div>
+    <div class="buttons">
+        <button class="button" id="webauthn-login" disabled>{{ t "page.login.webauthn_login" }}</button>
+    </div>
+    {{ end }}
     {{ if hasOAuth2Provider "google" }}
     <div class="oauth2">
         <a href="{{ route "oauth2Redirect" "provider" "google" }}">{{ t "page.login.google_signin" }}</a>

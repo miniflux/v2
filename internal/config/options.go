@@ -81,6 +81,7 @@ const (
 	defaultMetricsPassword                    = ""
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
+	defaultWebAuthn                           = true
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -161,6 +162,7 @@ type Options struct {
 	watchdog                           bool
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
+	webAuthn                           bool
 }
 
 // NewOptions returns Options with default values.
@@ -235,6 +237,7 @@ func NewOptions() *Options {
 		watchdog:                           defaultWatchdog,
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    randomKey,
+		webAuthn:                           defaultWebAuthn,
 	}
 }
 
@@ -592,6 +595,11 @@ func (o *Options) ProxyPrivateKey() []byte {
 	return o.proxyPrivateKey
 }
 
+// WebAuthn returns true if WebAuthn logins are supported
+func (o *Options) WebAuthn() bool {
+	return o.webAuthn
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	var keyValues = map[string]interface{}{
@@ -665,6 +673,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"WATCHDOG":                               o.watchdog,
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
 		"YOUTUBE_EMBED_URL_OVERRIDE":             o.youTubeEmbedUrlOverride,
+		"WEBAUTHN":                               o.webAuthn,
 	}
 
 	keys := make([]string, 0, len(keyValues))

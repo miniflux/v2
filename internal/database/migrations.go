@@ -807,4 +807,22 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return
 	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TABLE webauthn_credentials (
+				handle bytea primary key,
+				cred_id bytea unique not null,
+				user_id int references users(id) on delete cascade not null,
+				public_key bytea not null,
+				attestation_type varchar(255) not null,
+				aaguid bytea,
+				sign_count bigint,
+				clone_warning bool,
+				name text,
+				added_on timestamp with time zone default now(),
+				last_seen_on timestamp with time zone default now()
+			);
+		`)
+		return
+	},
 }

@@ -46,7 +46,56 @@
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
+        </fieldset>
+
+
+        {{ if .webAuthnEnabled }}
+        <fieldset>
+            <legend>{{ t "page.settings.webauthn.passkeys" }}</legend>
+        <div class="alert alert-error hidden" id="webauthn-error">
+            {{ t "page.settings.webauthn.register.error" }}
+        </div>
+        <div class="buttons">
+            <button class="button" id="webauthn-register" disabled>
+                {{ t "page.settings.webauthn.register" }}
+            </button>
+            {{ if gt .countWebAuthnCerts 0}}
+            <button class="button" id="webauthn-delete">
+                {{ plural "page.settings.webauthn.delete" .countWebAuthnCerts .countWebAuthnCerts }}
+            </button>
+            {{ end }}
+        </div>
+            {{ if .webAuthnCerts}}
+            <div class="details-content">
+            <table>
+                <tr>
+                    <th>{{ t "page.settings.webauthn.passkey_name" }}</th>
+                    <th>{{ t "page.settings.webauthn.added_on" }}</th>
+                    <th>{{ t "page.settings.webauthn.last_seen_on" }}</th>
+                    <th>{{ t "page.settings.webauthn.actions" }}</th>
+                </tr>
+                {{ range .webAuthnCerts }}
+                <tr>
+                    <td>{{ .Name }}</td>
+                    <td>{{ elapsed $.user.Timezone .AddedOn }}</td>
+                    <td>{{ elapsed $.user.Timezone .LastSeenOn }}</td>
+                    <td>
+                        <a href="#"
+                            data-confirm="true"
+                            data-label-question="{{ t "confirm.question" }}"
+                            data-label-yes="{{ t "confirm.yes" }}"
+                            data-label-no="{{ t "confirm.no" }}"
+                            data-label-loading="{{ t "confirm.loading" }}"
+                            data-url="{{ route "webauthnDelete" "credentialHandle" .HandleEncoded }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
+                        <a href="{{ route "webauthnRename" "credentialHandle" .HandleEncoded }}">{{ icon "edit" }} {{ t "action.edit" }}</a>
+                    </td>
+                </tr>
+                {{ end }}
+            </table>
+            </div>
+            {{ end }}
     </fieldset>
+        {{ end }}
 
     <fieldset>
         <legend>{{ t "form.prefs.fieldset.reader_settings" }}</legend>
