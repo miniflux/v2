@@ -12,12 +12,6 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-// public_key bytea not null,
-// attestation_type varchar(255) not null,
-// aaguid bytea,
-// sign_count bigint,
-// clone_warning bool
-
 // handle storage of webauthn credentials
 func (s *Storage) AddWebAuthnCredential(userID int64, handle []byte, credential *webauthn.Credential) error {
 	query := `
