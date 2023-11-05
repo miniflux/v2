@@ -185,17 +185,17 @@
     "page.settings.webauthn.passkey_name": "Passkey Name",
     "page.settings.webauthn.added_on": "Added On",
     "page.settings.webauthn.last_seen_on": "Last Used",
-    "page.settings.webauthn.register": "Enregistrer le mot de passe",
-    "page.settings.webauthn.register.error": "Impossible d'enregistrer le mot de passe",
-    "page.settings.webauthn.delete": [
-        "Supprimer %d clé d'accès",
-        "Supprimer %d mots de passe"
+    "page.settings.webauthn.register": "Register passkey",
+    "page.settings.webauthn.register.error": "Unable to register passkey",
+    "page.settings.webauthn.delete" : [
+        "Remove %d passkey",
+        "Remove %d passkeys"
     ],
     "page.login.title": "Connexion",
     "page.login.google_signin": "Se connecter avec Google",
     "page.login.oidc_signin": "Se connecter avec OpenID Connect",
-    "page.login.webauthn_login": "Connectez-vous avec un mot de passe",
-    "page.login.webauthn_login.error": "Impossible de se connecter avec le mot de passe",
+    "page.login.webauthn_login": "Login with passkey",
+    "page.login.webauthn_login.error": "Unable to login with passkey",
     "page.integrations.title": "Intégrations",
     "page.integration.miniflux_api": "API de Miniflux",
     "page.integration.miniflux_api_endpoint": "Point de terminaison de l'API",
