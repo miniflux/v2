@@ -689,3 +689,12 @@ function checkShareAPI(title, url) {
         window.location.reload();
     }
 }
+
+function getCsrfToken() {
+    let element = document.querySelector("body[data-csrf-token]");
+    if (element !== null) {
+        return element.dataset.csrfToken;
+    }
+
+    return "";
+}

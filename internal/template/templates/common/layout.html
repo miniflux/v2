@@ -44,9 +44,6 @@
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
     <script src="{{ route "javascript" "name" "service-worker" "checksum" .sw_js_checksum }}" defer id="service-worker-script"></script>
-    {{ if .webAuthnEnabled }}
-    <script src="{{ route "javascript" "name" "webauthn" "checksum" .webauthn_js_checksum }}" defer></script>
-    {{ end }}
 </head>
 <body
     {{ if .csrf }}data-csrf-token="{{ .csrf }}"{{ end }}
