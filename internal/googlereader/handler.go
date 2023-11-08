@@ -123,24 +123,14 @@ const (
 	LikeStream
 )
 
-// Stream defines a stream type and its id
+// Stream defines a stream type and its ID.
 type Stream struct {
 	Type StreamType
 	ID   string
 }
 
-// RequestModifiers are the parsed request parameters
-type RequestModifiers struct {
-	ExcludeTargets    []Stream
-	FilterTargets     []Stream
-	Streams           []Stream
-	Count             int
-	Offset            int
-	SortDirection     string
-	StartTime         int64
-	StopTime          int64
-	ContinuationToken string
-	UserID            int64
+func (s Stream) String() string {
+	return fmt.Sprintf("%v - '%s'", s.Type, s.ID)
 }
 
 func (st StreamType) String() string {
@@ -170,34 +160,51 @@ func (st StreamType) String() string {
 	}
 }
 
-func (s Stream) String() string {
-	return fmt.Sprintf("%v - '%s'", s.Type, s.ID)
+// RequestModifiers are the parsed request parameters.
+type RequestModifiers struct {
+	ExcludeTargets    []Stream
+	FilterTargets     []Stream
+	Streams           []Stream
+	Count             int
+	Offset            int
+	SortDirection     string
+	StartTime         int64
+	StopTime          int64
+	ContinuationToken string
+	UserID            int64
 }
 
 func (r RequestModifiers) String() string {
-	result := fmt.Sprintf("UserID: %d\n", r.UserID)
-	result += fmt.Sprintf("Streams: %d\n", len(r.Streams))
+	var results []string
+
+	results = append(results, fmt.Sprintf("UserID: %d", r.UserID))
+
+	var streamStr []string
 	for _, s := range r.Streams {
-		result += fmt.Sprintf("         %v\n", s)
+		streamStr = append(streamStr, s.String())
 	}
+	results = append(results, fmt.Sprintf("Streams: [%s]", strings.Join(streamStr, ", ")))
 
-	result += fmt.Sprintf("Exclusions: %d\n", len(r.ExcludeTargets))
+	var exclusions []string
 	for _, s := range r.ExcludeTargets {
-		result += fmt.Sprintf("            %v\n", s)
+		exclusions = append(exclusions, s.String())
 	}
+	results = append(results, fmt.Sprintf("Exclusions: [%s]", strings.Join(exclusions, ", ")))
 
-	result += fmt.Sprintf("Filter: %d\n", len(r.FilterTargets))
+	var filters []string
 	for _, s := range r.FilterTargets {
-		result += fmt.Sprintf("        %v\n", s)
+		filters = append(filters, s.String())
 	}
-	result += fmt.Sprintf("Count: %d\n", r.Count)
-	result += fmt.Sprintf("Offset: %d\n", r.Offset)
-	result += fmt.Sprintf("Sort Direction: %s\n", r.SortDirection)
-	result += fmt.Sprintf("Continuation Token: %s\n", r.ContinuationToken)
-	result += fmt.Sprintf("Start Time: %d\n", r.StartTime)
-	result += fmt.Sprintf("Stop Time: %d\n", r.StopTime)
+	results = append(results, fmt.Sprintf("Filters: [%s]", strings.Join(filters, ", ")))
 
-	return result
+	results = append(results, fmt.Sprintf("Count: %d", r.Count))
+	results = append(results, fmt.Sprintf("Offset: %d", r.Offset))
+	results = append(results, fmt.Sprintf("Sort Direction: %s", r.SortDirection))
+	results = append(results, fmt.Sprintf("Continuation Token: %s", r.ContinuationToken))
+	results = append(results, fmt.Sprintf("Start Time: %d", r.StartTime))
+	results = append(results, fmt.Sprintf("Stop Time: %d", r.StopTime))
+
+	return strings.Join(results, "; ")
 }
 
 // Serve handles Google Reader API calls.
@@ -1279,7 +1286,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("[GoogleReader] Request modifiers",
+	slog.Debug("[GoogleReader] Request Modifiers",
 		slog.String("handler", "streamItemIDsHandler"),
 		slog.String("client_ip", clientIP),
 		slog.String("user_agent", r.UserAgent()),
@@ -1458,11 +1465,22 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 	builder.WithLimit(rm.Count)
 	builder.WithOffset(rm.Offset)
 	builder.WithSorting(model.DefaultSortingOrder, rm.SortDirection)
+
 	if rm.StartTime > 0 {
 		builder.AfterPublishedDate(time.Unix(rm.StartTime, 0))
 	}
+
 	if rm.StopTime > 0 {
 		builder.BeforePublishedDate(time.Unix(rm.StopTime, 0))
+	}
+
+	if len(rm.ExcludeTargets) > 0 {
+		for _, s := range rm.ExcludeTargets {
+			switch s.Type {
+			case ReadStream:
+				builder.WithoutStatus(model.EntryStatusRead)
+			}
+		}
 	}
 
 	rawEntryIDs, err := builder.GetEntryIDs()
@@ -1470,6 +1488,7 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 		json.ServerError(w, r, err)
 		return
 	}
+
 	var itemRefs = make([]itemRef, 0)
 	for _, entryID := range rawEntryIDs {
 		formattedID := strconv.FormatInt(entryID, 10)
@@ -1481,6 +1500,7 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 		json.ServerError(w, r, err)
 		return
 	}
+
 	continuation := 0
 	if len(itemRefs)+rm.Offset < totalEntries {
 		continuation = len(itemRefs) + rm.Offset
