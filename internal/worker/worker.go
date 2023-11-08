@@ -35,21 +35,21 @@ func (w *Worker) Run(c chan model.Job) {
 		)
 
 		startTime := time.Now()
-		refreshErr := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID, false)
+		localizedError := feedHandler.RefreshFeed(w.store, job.UserID, job.FeedID, false)
 
 		if config.Opts.HasMetricsCollector() {
 			status := "success"
-			if refreshErr != nil {
+			if localizedError != nil {
 				status = "error"
 			}
 			metric.BackgroundFeedRefreshDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
 		}
 
-		if refreshErr != nil {
+		if localizedError != nil {
 			slog.Warn("Unable to refresh a feed",
 				slog.Int64("user_id", job.UserID),
 				slog.Int64("feed_id", job.FeedID),
-				slog.Any("error", refreshErr),
+				slog.Any("error", localizedError.Error()),
 			)
 		}
 	}
