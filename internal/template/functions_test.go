@@ -95,6 +95,32 @@ func TestIsEmail(t *testing.T) {
 	}
 }
 
+func TestDuration(t *testing.T) {
+	now := time.Now()
+	var dt = []struct {
+		in  time.Time
+		out string
+	}{
+		{time.Time{}, ""},
+		{now.Add(time.Hour), "1h0m0s"},
+		{now.Add(time.Minute), "1m0s"},
+		{now.Add(time.Minute * 40), "40m0s"},
+		{now.Add(time.Millisecond * 40), "0s"},
+		{now.Add(time.Millisecond * 80), "0s"},
+		{now.Add(time.Millisecond * 400), "0s"},
+		{now.Add(time.Millisecond * 800), "1s"},
+		{now.Add(time.Millisecond * 4321), "4s"},
+		{now.Add(time.Millisecond * 8765), "9s"},
+		{now.Add(time.Microsecond * 12345678), "12s"},
+		{now.Add(time.Microsecond * 87654321), "1m28s"},
+	}
+	for i, tt := range dt {
+		if out := durationImpl(tt.in, now); out != tt.out {
+			t.Errorf(`%d. content mismatch for "%v": expected=%q got=%q`, i, tt.in, tt.out, out)
+		}
+	}
+}
+
 func TestElapsedTime(t *testing.T) {
 	printer := locale.NewPrinter("en_US")
 	var dt = []struct {
