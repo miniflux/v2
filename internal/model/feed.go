@@ -57,10 +57,11 @@ type Feed struct {
 	Icon     *FeedIcon `json:"icon"`
 	Entries  Entries   `json:"entries,omitempty"`
 
-	TTL         int    `json:"-"`
-	IconURL     string `json:"-"`
-	UnreadCount int    `json:"-"`
-	ReadCount   int    `json:"-"`
+	TTL                    int    `json:"-"`
+	IconURL                string `json:"-"`
+	UnreadCount            int    `json:"-"`
+	ReadCount              int    `json:"-"`
+	NumberOfVisibleEntries int    `json:"-"`
 }
 
 type FeedCounters struct {
