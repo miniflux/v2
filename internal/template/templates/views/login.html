@@ -20,11 +20,13 @@
         </div>
     </form>
     {{ if .webAuthnEnabled }}
-    <div class="alert alert-error hidden" id="webauthn-error">
-        {{ t "page.login.webauthn_login.error" }}
-    </div>
-    <div class="buttons">
-        <button class="button" id="webauthn-login" disabled>{{ t "page.login.webauthn_login" }}</button>
+    <div class="webauthn">
+        <div class="alert alert-error hidden" id="webauthn-error">
+            {{ t "page.login.webauthn_login.error" }}
+        </div>
+        <div class="buttons">
+            <button class="button button-primary" id="webauthn-login" disabled>{{ t "page.login.webauthn_login" }}</button>
+        </div>
     </div>
     {{ end }}
     {{ if hasOAuth2Provider "google" }}
