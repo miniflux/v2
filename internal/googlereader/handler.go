@@ -992,7 +992,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		if entry.Feed.Category.Title != "" {
 			categories = append(categories, fmt.Sprintf(UserLabelPrefix, userID)+entry.Feed.Category.Title)
 		}
-		if entry.Starred {
+		if entry.Status == model.EntryStatusRead {
 			categories = append(categories, userRead)
 		}
 
