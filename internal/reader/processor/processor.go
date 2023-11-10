@@ -67,7 +67,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			requestBuilder := fetcher.NewRequestBuilder()
 			requestBuilder.WithUserAgent(feed.UserAgent)
 			requestBuilder.WithCookie(feed.Cookie)
-			requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+			requestBuilder.WithMaxRequestDuration(config.Opts.HTTPClientMaxRequestDuration())
 			requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 			requestBuilder.UseProxy(feed.FetchViaProxy)
 			requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
@@ -168,7 +168,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUserAgent(feed.UserAgent)
 	requestBuilder.WithCookie(feed.Cookie)
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithMaxRequestDuration(config.Opts.HTTPClientMaxRequestDuration())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(feed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
@@ -294,7 +294,7 @@ func shouldFetchOdyseeWatchTime(entry *model.Entry) bool {
 
 func fetchYouTubeWatchTime(websiteURL string) (int, error) {
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithMaxRequestDuration(config.Opts.HTTPClientMaxRequestDuration())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
@@ -325,7 +325,7 @@ func fetchYouTubeWatchTime(websiteURL string) (int, error) {
 
 func fetchOdyseeWatchTime(websiteURL string) (int, error) {
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithMaxRequestDuration(config.Opts.HTTPClientMaxRequestDuration())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))

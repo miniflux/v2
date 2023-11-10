@@ -35,7 +35,7 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 	}
 
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithMaxRequestDuration(config.Opts.HTTPClientMaxRequestDuration())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.WithUserAgent(subscriptionDiscoveryRequest.UserAgent)
 	requestBuilder.WithCookie(subscriptionDiscoveryRequest.Cookie)

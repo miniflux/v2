@@ -58,7 +58,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithMaxRequestDuration(config.Opts.HTTPClientMaxRequestDuration())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.WithUserAgent(subscriptionForm.UserAgent)
 	requestBuilder.WithCookie(subscriptionForm.Cookie)

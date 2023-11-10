@@ -1586,9 +1586,9 @@ func TestHTTPSOn(t *testing.T) {
 	}
 }
 
-func TestHTTPClientTimeout(t *testing.T) {
+func TestHTTPClientMaxRequestDuration(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("HTTP_CLIENT_TIMEOUT", "42")
+	os.Setenv("HTTP_CLIENT_MAX_REQUEST_DURATION", "42")
 
 	parser := NewParser()
 	opts, err := parser.ParseEnvironmentVariables()
@@ -1597,14 +1597,14 @@ func TestHTTPClientTimeout(t *testing.T) {
 	}
 
 	expected := 42
-	result := opts.HTTPClientTimeout()
+	result := opts.HTTPClientMaxRequestDuration()
 
 	if result != expected {
-		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+		t.Fatalf(`Unexpected HTTP_CLIENT_MAX_REQUEST_DURATION value, got %d instead of %d`, result, expected)
 	}
 }
 
-func TestDefaultHTTPClientTimeoutValue(t *testing.T) {
+func TestDefaultHTTPClientMaxRequestDurationValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -1613,11 +1613,11 @@ func TestDefaultHTTPClientTimeoutValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultHTTPClientTimeout
-	result := opts.HTTPClientTimeout()
+	expected := defaultHTTPClientMaxRequestDuration
+	result := opts.HTTPClientMaxRequestDuration()
 
 	if result != expected {
-		t.Fatalf(`Unexpected HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
+		t.Fatalf(`Unexpected HTTP_CLIENT_MAX_REQUEST_DURATION value, got %d instead of %d`, result, expected)
 	}
 }
 

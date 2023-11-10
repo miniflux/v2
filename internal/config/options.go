@@ -66,7 +66,7 @@ const (
 	defaultOAuth2OidcDiscoveryEndpoint        = ""
 	defaultOAuth2Provider                     = ""
 	defaultPocketConsumerKey                  = ""
-	defaultHTTPClientTimeout                  = 20
+	defaultHTTPClientMaxRequestDuration       = 60
 	defaultHTTPClientMaxBodySize              = 15
 	defaultHTTPClientProxy                    = ""
 	defaultHTTPServerTimeout                  = 300
@@ -145,7 +145,7 @@ type Options struct {
 	oidcDiscoveryEndpoint              string
 	oauth2Provider                     string
 	pocketConsumerKey                  string
-	httpClientTimeout                  int
+	httpClientMaxRequestDuration       int
 	httpClientMaxBodySize              int64
 	httpClientProxy                    string
 	httpClientUserAgent                string
@@ -220,7 +220,7 @@ func NewOptions() *Options {
 		oidcDiscoveryEndpoint:              defaultOAuth2OidcDiscoveryEndpoint,
 		oauth2Provider:                     defaultOAuth2Provider,
 		pocketConsumerKey:                  defaultPocketConsumerKey,
-		httpClientTimeout:                  defaultHTTPClientTimeout,
+		httpClientMaxRequestDuration:       defaultHTTPClientMaxRequestDuration,
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
 		httpClientProxy:                    defaultHTTPClientProxy,
 		httpClientUserAgent:                defaultHTTPClientUserAgent,
@@ -515,9 +515,9 @@ func (o *Options) PocketConsumerKey(defaultValue string) string {
 	return defaultValue
 }
 
-// HTTPClientTimeout returns the time limit in seconds before the HTTP client cancel the request.
-func (o *Options) HTTPClientTimeout() int {
-	return o.httpClientTimeout
+// HTTPClientMaxRequestDuration returns the time limit in seconds before the HTTP client cancel the request.
+func (o *Options) HTTPClientMaxRequestDuration() int {
+	return o.httpClientMaxRequestDuration
 }
 
 // HTTPClientMaxBodySize returns the number of bytes allowed for the HTTP client to transfer.
@@ -629,8 +629,8 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
 		"HTTPS":                                  o.HTTPS,
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
+		"HTTP_CLIENT_MAX_REQUEST_DURATION":       o.httpClientMaxRequestDuration,
 		"HTTP_CLIENT_PROXY":                      o.httpClientProxy,
-		"HTTP_CLIENT_TIMEOUT":                    o.httpClientTimeout,
 		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
 		"HTTP_SERVER_TIMEOUT":                    o.httpServerTimeout,
 		"HTTP_SERVICE":                           o.httpService,

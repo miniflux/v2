@@ -4,33 +4,33 @@
 package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"log/slog"
-	"net"
 	"net/http"
 	"net/url"
 	"time"
 )
 
 const (
-	defaultHTTPClientTimeout     = 20
-	defaultHTTPClientMaxBodySize = 15 * 1024 * 1024
+	defaultHTTPClientMaxRequestDuration = 60
+	defaultHTTPClientMaxBodySize        = 15 * 1024 * 1024
 )
 
 type RequestBuilder struct {
-	headers          http.Header
-	clientProxyURL   string
-	useClientProxy   bool
-	clientTimeout    int
-	withoutRedirects bool
-	ignoreTLSErrors  bool
+	headers            http.Header
+	clientProxyURL     string
+	useClientProxy     bool
+	maxRequestDuration int
+	withoutRedirects   bool
+	ignoreTLSErrors    bool
 }
 
 func NewRequestBuilder() *RequestBuilder {
 	return &RequestBuilder{
-		headers:       make(http.Header),
-		clientTimeout: defaultHTTPClientTimeout,
+		headers:            make(http.Header),
+		maxRequestDuration: defaultHTTPClientMaxRequestDuration,
 	}
 }
 
@@ -86,8 +86,8 @@ func (r *RequestBuilder) UseProxy(value bool) *RequestBuilder {
 	return r
 }
 
-func (r *RequestBuilder) WithTimeout(timeout int) *RequestBuilder {
-	r.clientTimeout = timeout
+func (r *RequestBuilder) WithMaxRequestDuration(timeout int) *RequestBuilder {
+	r.maxRequestDuration = timeout
 	return r
 }
 
@@ -104,20 +104,6 @@ func (r *RequestBuilder) IgnoreTLSErrors(value bool) *RequestBuilder {
 func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, error) {
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			// Default is 30s.
-			Timeout: 10 * time.Second,
-
-			// Default is 30s.
-			KeepAlive: 15 * time.Second,
-		}).DialContext,
-
-		// Default is 100.
-		MaxIdleConns: 50,
-
-		// Default is 90s.
-		IdleConnTimeout: 10 * time.Second,
-
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: r.ignoreTLSErrors,
 		},
@@ -135,7 +121,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	client := &http.Client{
-		Timeout: time.Duration(r.clientTimeout) * time.Second,
+		Transport: transport,
 	}
 
 	if r.withoutRedirects {
@@ -144,9 +130,10 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		}
 	}
 
-	client.Transport = transport
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(r.maxRequestDuration)*time.Second)
+	defer cancel()
 
-	req, err := http.NewRequest("GET", requestURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", requestURL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -159,6 +146,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		slog.String("method", req.Method),
 		slog.String("url", req.URL.String()),
 		slog.Any("headers", req.Header),
+		slog.Int("max_request_duration", r.maxRequestDuration),
 		slog.Bool("without_redirects", r.withoutRedirects),
 		slog.Bool("with_proxy", r.useClientProxy),
 		slog.String("proxy_url", r.clientProxyURL),
