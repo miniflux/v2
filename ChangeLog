@@ -1,3 +1,41 @@
+Version 2.0.50 (November 12, 2023)
+----------------------------------
+
+* Add WebAuthn / Passkey integration
+* Add RSS-Bridge integration
+* Take RSS TTL field into consideration to schedule next check date
+* Show number of visible entries instead of number of read entries in feed list
+* OpenID Connect: Redirect to configured user home page after successful authentication
+* Google Reader API fixes:
+    * `user/{userID}/state/com.google/read` is missing in categories section for read entries
+    * Take `ExcludeTargets` into consideration in feed stream handler
+* Allow iframes pointing to Twitch videos
+* Filter feed entries based on URL or title
+* Take into consideration `hide_globally` property defined for categories in `/v1/entries` API endpoint
+* Add category ID to webhooks request body
+* Update date parser to parse more invalid date formats
+* Refactor feed discovery handler, and avoid an extra HTTP request if the URL provided is the feed
+* Refactor HTTP Client and `LocalizedError` packages
+* Refactor Batch Builder, and prevent accidental and excessive refreshes from the web UI
+* Refactor icon finder:
+    - Continue the discovery process when the feed icon is invalid
+    - Search all icons from the HTML document and do not stop on the first one
+* Add support for SVG icons with data URL without encoding
+* Expose `next_check_at` in the web ui and API
+* Add database indexes to improve performance
+* Change log level to warning for failed feeds refresh in cronjob
+* Do not log website without icon as warning
+* Add GitHub workflow to build binaries
+* Add GitHub extensions to devcontainer
+* Make sure to pull the latest base image when building the Docker image
+* Strip version prefix when building Debian package
+* Add `github-cli` and `docker-outside-of-docker` features to devcontainer
+* Bump `golang.org/x/*` dependencies
+* Bump `github.com/gorilla/mux` from `1.8.0` to `1.8.1`
+* Bump `github.com/tdewolff/minify/v2` from `2.19.9` to `2.20.6`
+* Bump `github.com/yuin/goldmark` from `1.5.6` to `1.6.0`
+* Bump `github.com/coreos/go-oidc/v3` from `3.6.0` to `3.7.0`
+
 Version 2.0.49 (October 15, 2023)
 ---------------------------------
 
