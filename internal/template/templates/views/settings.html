@@ -194,6 +194,7 @@
         <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
 
         <label for="form-content-security-policy">{{ t "form.prefs.label.content_security_policy" }}</label>
+        <p class="form-csp-note">Default: <code>default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ "{{" }} $$stylesheetNonce {{ "}}" }}'</code></p>
         <input type="text" name="content_security_policy" id="form-content-security-policy" value="{{ .form.ContentSecurityPolicy }}" spellcheck="false"></input>
 
         <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="8" spellcheck="false">{{ .form.CustomCSS }}</textarea>
