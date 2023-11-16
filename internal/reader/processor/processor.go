@@ -65,7 +65,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			startTime := time.Now()
 
 			requestBuilder := fetcher.NewRequestBuilder()
-			requestBuilder.WithUserAgent(feed.UserAgent)
+			requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
 			requestBuilder.WithCookie(feed.Cookie)
 			requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 			requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
@@ -166,7 +166,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	websiteURL := getUrlFromEntry(feed, entry)
 
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithUserAgent(feed.UserAgent)
+	requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(feed.Cookie)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())

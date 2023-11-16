@@ -53,11 +53,11 @@ func (r *RequestBuilder) WithLastModified(lastModified string) *RequestBuilder {
 	return r
 }
 
-func (r *RequestBuilder) WithUserAgent(userAgent string) *RequestBuilder {
+func (r *RequestBuilder) WithUserAgent(userAgent string, defaultUserAgent string) *RequestBuilder {
 	if userAgent != "" {
 		r.headers.Set("User-Agent", userAgent)
 	} else {
-		r.headers.Del("User-Agent")
+		r.headers.Set("User-Agent", defaultUserAgent)
 	}
 	return r
 }
