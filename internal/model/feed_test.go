@@ -72,7 +72,8 @@ func TestFeedScheduleNextCheckDefault(t *testing.T) {
 
 	feed := &Feed{}
 	weeklyCount := 10
-	feed.ScheduleNextCheck(weeklyCount)
+	newTTL := 0
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -97,7 +98,8 @@ func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	}
 	feed := &Feed{}
 	weeklyCount := 100
-	feed.ScheduleNextCheck(weeklyCount)
+	newTTL := 0
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -124,7 +126,8 @@ func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
 	}
 	feed := &Feed{}
 	weeklyCount := maxInterval * 100
-	feed.ScheduleNextCheck(weeklyCount)
+	newTTL := 0
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -151,7 +154,8 @@ func TestFeedScheduleNextCheckEntryCountBasedMinInterval(t *testing.T) {
 	}
 	feed := &Feed{}
 	weeklyCount := minInterval / 2
-	feed.ScheduleNextCheck(weeklyCount)
+	newTTL := 0
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -176,7 +180,8 @@ func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
 	}
 	feed := &Feed{}
 	weeklyCount := 7
-	feed.ScheduleNextCheck(weeklyCount)
+	newTTL := 0
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -184,5 +189,71 @@ func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
 
 	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(config.Opts.SchedulerEntryFrequencyMaxInterval()/factor))) {
 		t.Error(`The next_check_at should not be after the now + factor * count`)
+	}
+}
+
+func TestFeedScheduleNextCheckEntryFrequencySmallNewTTL(t *testing.T) {
+	// If the feed has a TTL defined, we use it to make sure we don't check it too often.
+	maxInterval := 500
+	minInterval := 100
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+	feed := &Feed{}
+	weeklyCount := minInterval / 2
+	// TTL is smaller than minInterval.
+	newTTL := minInterval / 2
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	if feed.NextCheckAt.Before(time.Now().Add(time.Minute * time.Duration(minInterval))) {
+		t.Error(`The next_check_at should not be before the now + min interval`)
+	}
+	if feed.NextCheckAt.Before(time.Now().Add(time.Minute * time.Duration(newTTL))) {
+		t.Error(`The next_check_at should not be before the now + TTL`)
+	}
+}
+
+func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
+	// If the feed has a TTL defined, we use it to make sure we don't check it too often.
+	maxInterval := 500
+	minInterval := 100
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+	feed := &Feed{}
+	// TTL is larger than minInterval.
+	weeklyCount := minInterval / 2
+	newTTL := minInterval * 2
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	if feed.NextCheckAt.Before(time.Now().Add(time.Minute * time.Duration(minInterval))) {
+		t.Error(`The next_check_at should not be before the now + min interval`)
+	}
+	if feed.NextCheckAt.Before(time.Now().Add(time.Minute * time.Duration(newTTL))) {
+		t.Error(`The next_check_at should not be before the now + TTL`)
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"errors"
 	"log/slog"
-	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration"
@@ -217,6 +216,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	weeklyEntryCount := 0
+	newTTL := 0
 	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
 		var weeklyCountErr error
 		weeklyEntryCount, weeklyCountErr = store.WeeklyFeedEntryCount(userID, feedID)
@@ -226,7 +226,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
@@ -282,26 +282,15 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		}
 
 		// If the feed has a TTL defined, we use it to make sure we don't check it too often.
-		if updatedFeed.TTL > 0 {
-			minNextCheckAt := time.Now().Add(time.Minute * time.Duration(updatedFeed.TTL))
-			slog.Debug("Feed TTL",
-				slog.Int64("user_id", userID),
-				slog.Int64("feed_id", feedID),
-				slog.Int("ttl", updatedFeed.TTL),
-				slog.Time("next_check_at", originalFeed.NextCheckAt),
-			)
-
-			if originalFeed.NextCheckAt.IsZero() || originalFeed.NextCheckAt.Before(minNextCheckAt) {
-				slog.Debug("Updating next check date based on TTL",
-					slog.Int64("user_id", userID),
-					slog.Int64("feed_id", feedID),
-					slog.Int("ttl", updatedFeed.TTL),
-					slog.Time("new_next_check_at", minNextCheckAt),
-					slog.Time("old_next_check_at", originalFeed.NextCheckAt),
-				)
-				originalFeed.NextCheckAt = minNextCheckAt
-			}
-		}
+		newTTL = updatedFeed.TTL
+		// Set the next check at with updated arguments.
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+		slog.Debug("Updated next check date",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.Int("ttl", newTTL),
+			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
+		)
 
 		originalFeed.Entries = updatedFeed.Entries
 		processor.ProcessFeedEntries(store, originalFeed, user, forceRefresh)
