@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"errors"
 	"log/slog"
-	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration"
@@ -226,7 +225,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount, 0)
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
@@ -280,26 +279,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		}
 
 		// If the feed has a TTL defined, we use it to make sure we don't check it too often.
-		if updatedFeed.TTL > 0 {
-			minNextCheckAt := time.Now().Add(time.Minute * time.Duration(updatedFeed.TTL))
-			slog.Debug("Feed TTL",
-				slog.Int64("user_id", userID),
-				slog.Int64("feed_id", feedID),
-				slog.Int("ttl", updatedFeed.TTL),
-				slog.Time("next_check_at", originalFeed.NextCheckAt),
-			)
-
-			if originalFeed.NextCheckAt.IsZero() || originalFeed.NextCheckAt.Before(minNextCheckAt) {
-				slog.Debug("Updating next check date based on TTL",
-					slog.Int64("user_id", userID),
-					slog.Int64("feed_id", feedID),
-					slog.Int("ttl", updatedFeed.TTL),
-					slog.Time("new_next_check_at", minNextCheckAt),
-					slog.Time("old_next_check_at", originalFeed.NextCheckAt),
-				)
-				originalFeed.NextCheckAt = minNextCheckAt
-			}
-		}
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, updatedFeed.TTL)
+		slog.Debug("Updating next check date based on TTL",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
+			slog.Int("ttl", updatedFeed.TTL),
+		)
 
 		originalFeed.Entries = updatedFeed.Entries
 		processor.ProcessFeedEntries(store, originalFeed, user, forceRefresh)

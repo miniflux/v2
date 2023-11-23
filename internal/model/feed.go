@@ -107,7 +107,7 @@ func (f *Feed) CheckedNow() {
 }
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
-func (f *Feed) ScheduleNextCheck(weeklyCount int) {
+func (f *Feed) ScheduleNextCheck(weeklyCount int, newTTL int) {
 	switch config.Opts.PollingScheduler() {
 	case SchedulerEntryFrequency:
 		var intervalMinutes int
@@ -121,6 +121,15 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int) {
 		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 	default:
 		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(config.Opts.PollingFrequency()))
+	}
+	// If the feed has a TTL defined, we use it to make sure we don't check it too often.
+	f.TTL = newTTL
+	if newTTL <= 0 {
+		return
+	}
+	minNextCheckAt := time.Now().Add(time.Minute * time.Duration(newTTL))
+	if f.NextCheckAt.IsZero() || f.NextCheckAt.Before(minNextCheckAt) {
+		f.NextCheckAt = minNextCheckAt
 	}
 }
 
