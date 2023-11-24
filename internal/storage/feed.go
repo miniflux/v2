@@ -162,9 +162,15 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.
 func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
+	// Calculate a virtual weekly count based on the average updating frequency.
+	// This helps after just adding a high volume feed.
+	// Return 0 when the 'count(*)' is zero(0) or one(1).
 	query := `
 		SELECT
-			count(*)
+			COALESCE(CAST(CEIL(
+				(EXTRACT(epoch from interval '1 week'))	/
+				NULLIF((EXTRACT(epoch from (max(published_at)-min(published_at))/NULLIF((count(*)-1), 0) )), 0)
+			) AS BIGINT), 0)
 		FROM
 			entries
 		WHERE
