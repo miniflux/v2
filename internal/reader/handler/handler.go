@@ -194,12 +194,13 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 }
 
 // RefreshFeed refreshes a feed.
-func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool) *locale.LocalizedErrorWrapper {
+func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool) (localizedError *locale.LocalizedErrorWrapper) {
 	slog.Debug("Begin feed refresh process",
 		slog.Int64("user_id", userID),
 		slog.Int64("feed_id", feedID),
 		slog.Bool("force_refresh", forceRefresh),
 	)
+	localizedError = nil
 
 	user, storeErr := store.UserByID(userID)
 	if storeErr != nil {
@@ -242,7 +243,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()
 
-	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+	if localizedError = responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
 		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
 		store.UpdateFeedError(originalFeed)
@@ -250,7 +251,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	if store.AnotherFeedURLExists(userID, originalFeed.ID, responseHandler.EffectiveURL()) {
-		localizedError := locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
+		localizedError = locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
 		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
 		store.UpdateFeedError(originalFeed)
 		return localizedError
@@ -299,7 +300,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		updateExistingEntries := forceRefresh || !originalFeed.Crawler
 		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
 		if storeErr != nil {
-			localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+			localizedError = locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 			originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
 			store.UpdateFeedError(originalFeed)
 			return localizedError
@@ -338,13 +339,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	originalFeed.ResetErrorCounter()
 
 	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
-		localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+		localizedError = locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
 		store.UpdateFeedError(originalFeed)
 		return localizedError
 	}
 
-	return nil
+	return localizedError
 }
 
 func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilder, feedID int64, websiteURL, feedIconURL string) {
