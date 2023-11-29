@@ -34,6 +34,7 @@ const (
 	defaultSchedulerEntryFrequencyMinInterval = 5
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
 	defaultSchedulerEntryFrequencyFactor      = 1
+	defaultSchedulerRoundRobinMinInterval     = 60
 	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
@@ -126,6 +127,7 @@ type Options struct {
 	schedulerEntryFrequencyMinInterval int
 	schedulerEntryFrequencyMaxInterval int
 	schedulerEntryFrequencyFactor      int
+	schedulerRoundRobinMinInterval     int
 	pollingParsingErrorLimit           int
 	workerPoolSize                     int
 	createAdmin                        bool
@@ -203,6 +205,7 @@ func NewOptions() *Options {
 		schedulerEntryFrequencyMinInterval: defaultSchedulerEntryFrequencyMinInterval,
 		schedulerEntryFrequencyMaxInterval: defaultSchedulerEntryFrequencyMaxInterval,
 		schedulerEntryFrequencyFactor:      defaultSchedulerEntryFrequencyFactor,
+		schedulerRoundRobinMinInterval:     defaultSchedulerRoundRobinMinInterval,
 		pollingParsingErrorLimit:           defaultPollingParsingErrorLimit,
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
@@ -398,6 +401,10 @@ func (o *Options) SchedulerEntryFrequencyMinInterval() int {
 // SchedulerEntryFrequencyFactor returns the factor for the entry frequency scheduler.
 func (o *Options) SchedulerEntryFrequencyFactor() int {
 	return o.schedulerEntryFrequencyFactor
+}
+
+func (o *Options) SchedulerRoundRobinMinInterval() int {
+	return o.schedulerRoundRobinMinInterval
 }
 
 // PollingParsingErrorLimit returns the limit of errors when to stop polling.
@@ -668,6 +675,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
 		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": o.schedulerEntryFrequencyMinInterval,
 		"SCHEDULER_ENTRY_FREQUENCY_FACTOR":       o.schedulerEntryFrequencyFactor,
+		"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":     o.schedulerRoundRobinMinInterval,
 		"SCHEDULER_SERVICE":                      o.schedulerService,
 		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WATCHDOG":                               o.watchdog,

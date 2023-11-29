@@ -934,6 +934,41 @@ func TestDefautSchedulerEntryFrequencyFactor(t *testing.T) {
 	}
 }
 
+func TestSchedulerRoundRobinValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultSchedulerRoundRobinMinInterval
+	result := opts.SchedulerRoundRobinMinInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestSchedulerRoundRobinDefault(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", "15")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 15
+	result := opts.SchedulerRoundRobinMinInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestPollingParsingErrorLimit(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("POLLING_PARSING_ERROR_LIMIT", "100")

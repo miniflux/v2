@@ -83,6 +83,31 @@ func TestFeedScheduleNextCheckDefault(t *testing.T) {
 	}
 }
 
+func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
+	minInterval := 1
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "round_robin")
+	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+	feed := &Feed{}
+	weeklyCount := 100
+	feed.ScheduleNextCheck(weeklyCount)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(minInterval))) {
+		t.Error(`The next_check_at should not be after the now + min interval`)
+	}
+}
+
 func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
 	maxInterval := 5
 	minInterval := 1
