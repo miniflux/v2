@@ -120,7 +120,7 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int) {
 		}
 		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 	default:
-		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(config.Opts.PollingFrequency()))
+		f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(config.Opts.SchedulerRoundRobinMinInterval()))
 	}
 }
 
