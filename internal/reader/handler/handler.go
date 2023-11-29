@@ -232,6 +232,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
 	requestBuilder.WithUserAgent(originalFeed.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(originalFeed.Cookie)
+	requestBuilder.WithETag(originalFeed.EtagHeader)
+	requestBuilder.WithLastModified(originalFeed.LastModifiedHeader)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(originalFeed.FetchViaProxy)
