@@ -218,6 +218,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 	weeklyEntryCount := 0
 	newTTL := 0
+	rateLimited := false
 	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
 		var weeklyCountErr error
 		weeklyEntryCount, weeklyCountErr = store.WeeklyFeedEntryCount(userID, feedID)
@@ -230,12 +231,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	// Commit the result to the database at the end of this function.
 	// If we met an error before entering the defer function, localizedError would not be nil.
 	defer func() {
-		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL, rateLimited)
 		slog.Debug("Updated next check date",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
 			slog.Int("weeklyEntryCount", weeklyEntryCount),
 			slog.Int("ttl", newTTL),
+			slog.Bool("rateLimited", rateLimited),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
 		if localizedError == nil {
@@ -265,6 +267,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()
+
+	rateLimited = responseHandler.IsRateLimited()
+	if rateLimited {
+		slog.Warn("Feed is rate limited (429 status code)", slog.String("feed_url", originalFeed.FeedURL))
+	}
 
 	if localizedError = responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
