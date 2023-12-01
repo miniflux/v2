@@ -249,6 +249,40 @@ func TestParseWebPageWithMultipleFeeds(t *testing.T) {
 	}
 }
 
+func TestParseWebPageWithDuplicatedFeeds(t *testing.T) {
+	htmlPage := `
+	<!doctype html>
+	<html>
+		<head>
+			<link href="http://example.org/feed.xml" rel="alternate" type="application/rss+xml" title="Feed A">
+			<link href="http://example.org/feed.xml" rel="alternate" type="application/rss+xml" title="Feed B">
+		</head>
+		<body>
+		</body>
+	</html>`
+
+	subscriptions, err := NewSubscriptionFinder(nil).FindSubscriptionsFromWebPage("http://example.org/", strings.NewReader(htmlPage))
+	if err != nil {
+		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
+	}
+
+	if len(subscriptions) != 1 {
+		t.Fatal(`Incorrect number of subscriptions returned`)
+	}
+
+	if subscriptions[0].Title != "Feed A" {
+		t.Errorf(`Incorrect subscription title: %q`, subscriptions[0].Title)
+	}
+
+	if subscriptions[0].URL != "http://example.org/feed.xml" {
+		t.Errorf(`Incorrect subscription URL: %q`, subscriptions[0].URL)
+	}
+
+	if subscriptions[0].Type != "rss" {
+		t.Errorf(`Incorrect subscription type: %q`, subscriptions[0].Type)
+	}
+}
+
 func TestParseWebPageWithEmptyFeedURL(t *testing.T) {
 	htmlPage := `
 	<!doctype html>
