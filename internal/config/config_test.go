@@ -829,7 +829,7 @@ func TestPollingScheduler(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMaxIntervalValue(t *testing.T) {
+func TestDefautSchedulerEntryFrequencyMaxIntervalValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -846,7 +846,7 @@ func TestDefautSchedulerCountBasedMaxIntervalValue(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
+func TestSchedulerEntryFrequencyMaxInterval(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", "30")
 
@@ -864,7 +864,7 @@ func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMinIntervalValue(t *testing.T) {
+func TestDefautSchedulerEntryFrequencyMinIntervalValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -881,7 +881,7 @@ func TestDefautSchedulerCountBasedMinIntervalValue(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
+func TestSchedulerEntryFrequencyMinInterval(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", "30")
 
@@ -916,7 +916,7 @@ func TestDefautSchedulerEntryFrequencyFactorValue(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerEntryFrequencyFactor(t *testing.T) {
+func TestSchedulerEntryFrequencyFactor(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", "2")
 
@@ -934,7 +934,7 @@ func TestDefautSchedulerEntryFrequencyFactor(t *testing.T) {
 	}
 }
 
-func TestSchedulerRoundRobinValue(t *testing.T) {
+func TestDefaultSchedulerRoundRobinValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -951,7 +951,7 @@ func TestSchedulerRoundRobinValue(t *testing.T) {
 	}
 }
 
-func TestSchedulerRoundRobinDefault(t *testing.T) {
+func TestSchedulerRoundRobin(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", "15")
 
