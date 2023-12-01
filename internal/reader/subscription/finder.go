@@ -152,6 +152,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL string, bod
 	}
 
 	var subscriptions Subscriptions
+	subscriptionURLs := make(map[string]bool)
 	for query, kind := range queries {
 		doc.Find(query).Each(func(i int, s *goquery.Selection) {
 			subscription := new(Subscription)
@@ -163,7 +164,10 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL string, bod
 
 			if feedURL, exists := s.Attr("href"); exists {
 				if feedURL != "" {
-					subscription.URL, _ = urllib.AbsoluteURL(websiteURL, feedURL)
+					subscription.URL, err = urllib.AbsoluteURL(websiteURL, feedURL)
+					if err != nil {
+						return
+					}
 				}
 			}
 
@@ -171,7 +175,8 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL string, bod
 				subscription.Title = subscription.URL
 			}
 
-			if subscription.URL != "" {
+			if subscription.URL != "" && !subscriptionURLs[subscription.URL] {
+				subscriptionURLs[subscription.URL] = true
 				subscriptions = append(subscriptions, subscription)
 			}
 		})
