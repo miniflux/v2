@@ -29,7 +29,7 @@ func Parse(baseURL string, r io.Reader) (*model.Feed, error) {
 		rawFeed = new(atom10Feed)
 	}
 
-	if err := xml_decoder.NewDecoder(&buf).Decode(rawFeed); err != nil {
+	if err := xml_decoder.NewXMLDecoder(&buf).Decode(rawFeed); err != nil {
 		return nil, fmt.Errorf("atom: unable to parse feed: %w", err)
 	}
 
@@ -37,7 +37,7 @@ func Parse(baseURL string, r io.Reader) (*model.Feed, error) {
 }
 
 func getAtomFeedVersion(data io.Reader) string {
-	decoder := xml_decoder.NewDecoder(data)
+	decoder := xml_decoder.NewXMLDecoder(data)
 	for {
 		token, _ := decoder.Token()
 		if token == nil {

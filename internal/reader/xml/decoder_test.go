@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestUTF8WithIllegalCharacters(t *testing.T) {
+func TestXMLDocumentWithIllegalUnicodeCharacters(t *testing.T) {
 	type myxml struct {
 		XMLName xml.Name `xml:"rss"`
 		Version string   `xml:"version,attr"`
@@ -23,7 +23,7 @@ func TestUTF8WithIllegalCharacters(t *testing.T) {
 
 	var x myxml
 
-	decoder := NewDecoder(reader)
+	decoder := NewXMLDecoder(reader)
 	err := decoder.Decode(&x)
 	if err != nil {
 		t.Error(err)
@@ -34,7 +34,7 @@ func TestUTF8WithIllegalCharacters(t *testing.T) {
 	}
 }
 
-func TestWindows251WithIllegalCharacters(t *testing.T) {
+func TestXMLDocumentWindows251EncodedWithIllegalCharacters(t *testing.T) {
 	type myxml struct {
 		XMLName xml.Name `xml:"rss"`
 		Version string   `xml:"version,attr"`
@@ -47,7 +47,7 @@ func TestWindows251WithIllegalCharacters(t *testing.T) {
 
 	var x myxml
 
-	decoder := NewDecoder(reader)
+	decoder := NewXMLDecoder(reader)
 	err := decoder.Decode(&x)
 	if err != nil {
 		t.Error(err)
@@ -58,7 +58,7 @@ func TestWindows251WithIllegalCharacters(t *testing.T) {
 	}
 }
 
-func TestIllegalEncodingField(t *testing.T) {
+func TestXMLDocumentWithIncorrectEncodingField(t *testing.T) {
 	type myxml struct {
 		XMLName xml.Name `xml:"rss"`
 		Version string   `xml:"version,attr"`
@@ -71,7 +71,7 @@ func TestIllegalEncodingField(t *testing.T) {
 
 	var x myxml
 
-	decoder := NewDecoder(reader)
+	decoder := NewXMLDecoder(reader)
 	err := decoder.Decode(&x)
 	if err != nil {
 		t.Error(err)

@@ -14,6 +14,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/encoding"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/urllib"
 
@@ -110,7 +111,10 @@ func (f *IconFinder) FetchIconsFromHTMLDocument() (*model.Icon, error) {
 		return nil, fmt.Errorf("icon: unable to download website index page: %w", localizedError.Error())
 	}
 
-	iconURLs, err := findIconURLsFromHTMLDocument(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+	iconURLs, err := findIconURLsFromHTMLDocument(
+		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
+		responseHandler.ContentType(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +182,7 @@ func (f *IconFinder) DownloadIcon(iconURL string) (*model.Icon, error) {
 	return icon, nil
 }
 
-func findIconURLsFromHTMLDocument(body io.Reader) ([]string, error) {
+func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string, error) {
 	queries := []string{
 		"link[rel='shortcut icon']",
 		"link[rel='Shortcut Icon']",
@@ -186,7 +190,12 @@ func findIconURLsFromHTMLDocument(body io.Reader) ([]string, error) {
 		"link[rel='icon']",
 	}
 
-	doc, err := goquery.NewDocumentFromReader(body)
+	htmlDocumentReader, err := encoding.CharsetReaderFromContentType(contentType, body)
+	if err != nil {
+		return nil, fmt.Errorf("icon: unable to create charset reader: %w", err)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(htmlDocumentReader)
 	if err != nil {
 		return nil, fmt.Errorf("icon: unable to read document: %v", err)
 	}
