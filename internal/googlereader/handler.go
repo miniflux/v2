@@ -872,18 +872,19 @@ func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request
 		}
 	case "edit":
 		if title != "" {
-			err := rename(streamIds[0], title, h.store, userID)
-			if err != nil {
+			if err := rename(streamIds[0], title, h.store, userID); err != nil {
 				json.ServerError(w, r, err)
 				return
 			}
-		} else {
+		}
+
+		if r.Form.Has(ParamTagsAdd) {
 			if newLabel.Type != LabelStream {
 				json.BadRequest(w, r, errors.New("destination must be a label"))
 				return
 			}
-			err := move(streamIds[0], newLabel, h.store, userID)
-			if err != nil {
+
+			if err := move(streamIds[0], newLabel, h.store, userID); err != nil {
 				json.ServerError(w, r, err)
 				return
 			}
