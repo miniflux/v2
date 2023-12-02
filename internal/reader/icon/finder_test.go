@@ -112,7 +112,7 @@ func TestParseDocumentWithWhitespaceIconURL(t *testing.T) {
 		/static/img/favicon.ico
 	">`
 
-	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html))
+	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
 	if err != nil {
 		t.Fatal(err)
 	}

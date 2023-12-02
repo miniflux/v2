@@ -30,7 +30,7 @@ func DetectFeedFormat(r io.ReadSeeker) string {
 	}
 
 	r.Seek(0, io.SeekStart)
-	decoder := rxml.NewDecoder(r)
+	decoder := rxml.NewXMLDecoder(r)
 
 	for {
 		token, _ := decoder.Token()

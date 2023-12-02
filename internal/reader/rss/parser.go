@@ -14,7 +14,7 @@ import (
 // Parse returns a normalized feed struct from a RSS feed.
 func Parse(baseURL string, data io.Reader) (*model.Feed, error) {
 	feed := new(rssFeed)
-	if err := xml.NewDecoder(data).Decode(feed); err != nil {
+	if err := xml.NewXMLDecoder(data).Decode(feed); err != nil {
 		return nil, fmt.Errorf("rss: unable to parse feed: %w", err)
 	}
 	return feed.Transform(baseURL), nil

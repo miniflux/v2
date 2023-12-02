@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/reader/encoding"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readability"
 	"miniflux.app/v2/internal/urllib"
@@ -41,17 +42,25 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, websiteURL, rules str
 	var content string
 	var err error
 
+	htmlDocumentReader, err := encoding.CharsetReaderFromContentType(
+		responseHandler.ContentType(),
+		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
+	)
+	if err != nil {
+		return "", fmt.Errorf("scraper: unable to read HTML document: %v", err)
+	}
+
 	if sameSite && rules != "" {
 		slog.Debug("Extracting content with custom rules",
 			"url", websiteURL,
 			"rules", rules,
 		)
-		content, err = findContentUsingCustomRules(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()), rules)
+		content, err = findContentUsingCustomRules(htmlDocumentReader, rules)
 	} else {
 		slog.Debug("Extracting content with readability",
 			"url", websiteURL,
 		)
-		content, err = readability.ExtractContent(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+		content, err = readability.ExtractContent(htmlDocumentReader)
 	}
 
 	if err != nil {
