@@ -41,6 +41,21 @@ type SaveUrlInput struct {
 	Url             string `json:"url"`
 }
 
+type errorResponse struct {
+	Errors []struct {
+		Message string `json:"message"`
+	} `json:"errors"`
+}
+
+type successResponse struct {
+	Data struct {
+		SaveUrl struct {
+			Url             string `json:"url"`
+			ClientRequestId string `json:"clientRequestId"`
+		} `json:"saveUrl"`
+	} `json:"data"`
+}
+
 type Client interface {
 	SaveUrl(url string) error
 }
@@ -88,13 +103,23 @@ func (c *client) SaveUrl(url string) error {
 		return err
 	}
 
+	defer resp.Body.Close()
+	b, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("omnivore: failed to parse response: %s", err)
+	}
+
 	if resp.StatusCode >= 400 {
-		defer resp.Body.Close()
-		b, err = io.ReadAll(resp.Body)
-		if err != nil {
-			return err
+		var errResponse errorResponse
+		if err = json.Unmarshal(b, &errResponse); err != nil {
+			return fmt.Errorf("omnivore: failed to save URL: status=%d %s", resp.StatusCode, string(b))
 		}
-		return fmt.Errorf("omnivore: failed to save URL: status=%d %s", resp.StatusCode, string(b))
+		return fmt.Errorf("omnivore: failed to save URL: status=%d %s", resp.StatusCode, errResponse.Errors[0].Message)
+	}
+
+	var successReponse successResponse
+	if err = json.Unmarshal(b, &successReponse); err != nil {
+		return fmt.Errorf("omnivore: failed to parse response, however the request appears successful, is the url correct?: status=%d %s", resp.StatusCode, string(b))
 	}
 
 	return nil
