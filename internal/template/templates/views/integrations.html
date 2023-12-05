@@ -208,6 +208,25 @@
         </div>
     </details>
 
+    <details {{ if .form.OmnivoreEnabled }}open{{ end }}>
+        <summary>Omnivore</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="omnivore_enabled" value="1" {{ if .form.OmnivoreEnabled }}checked{{ end }}> {{ t "form.integration.omnivore_activate" }}
+            </label>
+
+            <label for="form-omnivore-api-key">{{ t "form.integration.omnivore_api_key" }}</label>
+            <input type="text" name="omnivore_api_key" id="form-omnivore-api-key" value="{{ .form.OmnivoreAPIKey }}" spellcheck="false">
+
+            <label for="form-omnivore-url">{{ t "form.integration.omnivore_url" }}</label>
+            <input type="url" name="omnivore_url" id="form-omnivore-url" value="{{ .form.OmnivoreURL }}" placeholder="https://api-prod.omnivore.app/api/graphql" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.PinboardEnabled }}open{{ end }}>
         <summary>Pinboard</summary>
         <div class="form-section">

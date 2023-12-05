@@ -73,4 +73,7 @@ type Integration struct {
 	WebhookSecret                    string
 	RSSBridgeEnabled                 bool
 	RSSBridgeURL                     string
+	OmnivoreEnabled                  bool
+	OmnivoreAPIKey                   string
+	OmnivoreURL                      string
 }

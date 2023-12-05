@@ -14,6 +14,7 @@ import (
 	"miniflux.app/v2/internal/integration/matrixbot"
 	"miniflux.app/v2/internal/integration/notion"
 	"miniflux.app/v2/internal/integration/nunuxkeeper"
+	"miniflux.app/v2/internal/integration/omnivore"
 	"miniflux.app/v2/internal/integration/pinboard"
 	"miniflux.app/v2/internal/integration/pocket"
 	"miniflux.app/v2/internal/integration/readwise"
@@ -283,6 +284,23 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
 				slog.String("webhook_url", userIntegrations.WebhookURL),
+				slog.Any("error", err),
+			)
+		}
+	}
+	if userIntegrations.OmnivoreEnabled {
+		slog.Debug("Sending entry to Omnivore",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := omnivore.NewClient(userIntegrations.OmnivoreAPIKey, userIntegrations.OmnivoreURL)
+		if err := client.SaveUrl(entry.URL); err != nil {
+			slog.Error("Unable to send entry to Omnivore",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
 				slog.Any("error", err),
 			)
 		}

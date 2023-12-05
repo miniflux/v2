@@ -176,7 +176,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			webhook_url,
 			webhook_secret,
 			rssbridge_enabled,
-			rssbridge_url
+			rssbridge_url,
+			omnivore_enabled,
+			omnivore_api_key,
+			omnivore_url
 		FROM
 			integrations
 		WHERE
@@ -252,6 +255,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WebhookSecret,
 		&integration.RSSBridgeEnabled,
 		&integration.RSSBridgeURL,
+		&integration.OmnivoreEnabled,
+		&integration.OmnivoreAPIKey,
+		&integration.OmnivoreURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -335,9 +341,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			webhook_url=$64,
 			webhook_secret=$65,
 			rssbridge_enabled=$66,
-			rssbridge_url=$67
+			rssbridge_url=$67,
+			omnivore_enabled=$68,
+			omnivore_api_key=$69,
+			omnivore_url=$70
 		WHERE
-			user_id=$68
+			user_id=$71
 	`
 	_, err := s.db.Exec(
 		query,
@@ -408,6 +417,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.WebhookSecret,
 		integration.RSSBridgeEnabled,
 		integration.RSSBridgeURL,
+		integration.OmnivoreEnabled,
+		integration.OmnivoreAPIKey,
+		integration.OmnivoreURL,
 		integration.UserID,
 	)
 
@@ -441,7 +453,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
 				shaarli_enabled='t' OR
-				webhook_enabled='t'
+				webhook_enabled='t' OR
+				omnivore_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

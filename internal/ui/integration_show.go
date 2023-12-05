@@ -93,6 +93,9 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		WebhookSecret:                    integration.WebhookSecret,
 		RSSBridgeEnabled:                 integration.RSSBridgeEnabled,
 		RSSBridgeURL:                     integration.RSSBridgeURL,
+		OmnivoreEnabled:                  integration.OmnivoreEnabled,
+		OmnivoreAPIKey:                   integration.OmnivoreAPIKey,
+		OmnivoreURL:                      integration.OmnivoreURL,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
