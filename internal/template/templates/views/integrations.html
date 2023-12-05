@@ -219,7 +219,7 @@
             <input type="text" name="omnivore_api_key" id="form-omnivore-api-key" value="{{ .form.OmnivoreAPIKey }}" spellcheck="false">
 
             <label for="form-omnivore-url">{{ t "form.integration.omnivore_url" }}</label>
-            <input type="text" name="omnivore_url" id="form-omnivore-url" value="{{ .form.OmnivoreURL }}" placeholder="https://api-prod.omnivore.app/api/graphql" spellcheck="false">
+            <input type="url" name="omnivore_url" id="form-omnivore-url" value="{{ .form.OmnivoreURL }}" placeholder="https://api-prod.omnivore.app/api/graphql" spellcheck="false">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
