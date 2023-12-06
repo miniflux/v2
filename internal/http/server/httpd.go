@@ -268,6 +268,12 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 		}
 	}
 
+	remoteIP := request.FindRemoteIP(r)
+	if remoteIP == "@" {
+		// This indicates a request sent via a Unix socket, always consider these trusted.
+		return true
+	}
+
 	for _, cidr := range config.Opts.MetricsAllowedNetworks() {
 		_, network, err := net.ParseCIDR(cidr)
 		if err != nil {
@@ -283,7 +289,7 @@ func isAllowedToAccessMetricsEndpoint(r *http.Request) bool {
 
 		// We use r.RemoteAddr in this case because HTTP headers like X-Forwarded-For can be easily spoofed.
 		// The recommendation is to use HTTP Basic authentication.
-		if network.Contains(net.ParseIP(request.FindRemoteIP(r))) {
+		if network.Contains(net.ParseIP(remoteIP)) {
 			return true
 		}
 	}
