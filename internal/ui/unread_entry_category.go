@@ -15,7 +15,7 @@ import (
 	"miniflux.app/v2/internal/ui/view"
 )
 
-func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) {
+func (h *handler) showUnreadCategoryEntryPage(w http.ResponseWriter, r *http.Request) {
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -53,6 +53,16 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
 	entryPaginationBuilder.WithCategoryID(categoryID)
+	entryPaginationBuilder.WithStatus(model.EntryStatusUnread)
+
+	if entry.Status == model.EntryStatusRead {
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusUnread)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
+	}
+
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -61,12 +71,21 @@ func (h *handler) showCategoryEntryPage(w http.ResponseWriter, r *http.Request) 
 
 	nextEntryRoute := ""
 	if nextEntry != nil {
-		nextEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
+		nextEntryRoute = route.Path(h.router, "unreadCategoryEntry", "categoryID", categoryID, "entryID", nextEntry.ID)
 	}
 
 	prevEntryRoute := ""
 	if prevEntry != nil {
-		prevEntryRoute = route.Path(h.router, "categoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+		prevEntryRoute = route.Path(h.router, "unreadCategoryEntry", "categoryID", categoryID, "entryID", prevEntry.ID)
+	}
+
+	// Restore entry read status if needed after fetching the pagination.
+	if entry.Status == model.EntryStatusRead {
+		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
+		if err != nil {
+			html.ServerError(w, r, err)
+			return
+		}
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
