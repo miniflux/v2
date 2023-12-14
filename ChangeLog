@@ -1,3 +1,27 @@
+Version 2.0.51 (December 13, 2023)
+----------------------------------
+
+* Add Omnivore integration
+* Fixes for the regressions introduced in version 2.0.50:
+    * Ensure all HTML documents are encoded in UTF-8
+    * Send default User-Agent and HTTP caching headers when making HTTP requests
+* Allow Youtube links to be opened outside the `iframe` (avoid `ERR_BLOCKED_BY_RESPONSE` error)
+* Fix inaccessible metrics endpoint when listening on Unix socket
+* Allow renaming and moving feed at the same time in the Google Reader API
+* Log `nb_jobs` only when number of jobs is larger than 0 in background scheduler
+* Deduplicate feed URLs when parsing HTML document during discovery process
+* Calculate a virtual weekly count based on the average updating frequency (`POLLING_SCHEDULER=entry_frequency`)
+* Update GitHub Actions workflow to be able to run the linter and tests on-demand
+* Add `SCHEDULER_ROUND_ROBIN_MIN_INTERVAL` config option
+* Add links to GitHub for the commit hash and the version in the about page
+* Use "starred" rather than "bookmarked" in English translation
+* Update Chinese (CN & TW) translation
+* Bump `github.com/google/uuid` from `1.4.0` to `1.5.0`
+* Bump `github.com/coreos/go-oidc/v3` from `3.7.0` to `3.9.0`
+* Bump `github.com/tdewolff/minify/v2` from `2.20.6` to `2.20.9`
+* Bump `github.com/go-webauthn/webauthn` from `0.8.6` to `0.9.4`
+* Bump `golang.org/x/oauth2` from `0.14.0` to `0.15.0`
+
 Version 2.0.50 (November 12, 2023)
 ----------------------------------
 
