@@ -540,6 +540,15 @@ Default is 16 workers\&.
 YouTube URL which will be used for embeds\&.
 .br
 Default is https://www.youtube-nocookie.com/embed/\&.
+.TP
+.B CONTENT_SECURITY_POLICY
+Set custom value for Content-Security-Policy meta tag. Used when custom CSS is applied.
+.br
+It may contain "nonce-%s", where nonce will be placed\&.
+.br
+Default is "default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-%s'; require-trusted-types-for 'script'; trusted-types ttpolicy;"\&.
+.TP
+
 .SH AUTHORS
 .P
 Miniflux is written and maintained by Fr\['e]d\['e]ric Guillot\&.

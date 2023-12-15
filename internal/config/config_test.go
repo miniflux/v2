@@ -2127,3 +2127,21 @@ func TestParseConfigDumpOutput(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestContentSecurityPolicy(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("CONTENT_SECURITY_POLICY", "default-src 'self' fonts.googleapis.com fonts.gstatic.com; img-src * data:; media-src *; frame-src *; style-src 'self' fonts.googleapis.com fonts.gstatic.com 'nonce-%s'")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := "default-src 'self' fonts.googleapis.com fonts.gstatic.com; img-src * data:; media-src *; frame-src *; style-src 'self' fonts.googleapis.com fonts.gstatic.com 'nonce-%s'"
+	result := opts.ContentSecurityPolicy()
+
+	if result != expected {
+		t.Fatalf(`Unexpected CONTENT_SECURITY_POLICY value, got %v instead of %v`, result, expected)
+	}
+}

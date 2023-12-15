@@ -46,5 +46,6 @@ func New(tpl *template.Engine, r *http.Request, sess *session.Session) *View {
 		"sw_js_checksum":       static.JavascriptBundleChecksums["service-worker"],
 		"webauthn_js_checksum": static.JavascriptBundleChecksums["webauthn"],
 		"webAuthnEnabled":      config.Opts.WebAuthn(),
+		"contentSecurityPolicy": config.Opts.ContentSecurityPolicy(),
 	}}
 }
