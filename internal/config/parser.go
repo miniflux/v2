@@ -250,6 +250,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.proxyPrivateKey = parseBytes(value, randomKey)
 		case "WEBAUTHN":
 			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
+		case "CONTENT_SECURITY_POLICY":
+			p.opts.contentSecurityPolicy = parseString(value, defaultContentSecurityPolicy)
 		}
 	}
 
