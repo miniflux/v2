@@ -18,10 +18,10 @@ github.com/fxamacker/cbor/v2 v2.5.0 h1:oHsG0V/Q6E/wqTS2O1Cozzsy69nqCiguo5Q1a1ADi
 github.com/fxamacker/cbor/v2 v2.5.0/go.mod h1:TA1xS00nchWmaBnEIxPSE5oHLuJBAVvqrtAnWBwBCVo=
 github.com/go-jose/go-jose/v3 v3.0.1 h1:pWmKFVtt+Jl0vBZTIpz/eAKwsm6LkIxDVVbFHKkchhA=
 github.com/go-jose/go-jose/v3 v3.0.1/go.mod h1:RNkWWRld676jZEYoV3+XK8L2ZnNSvIsxFMht0mSX+u8=
-github.com/go-webauthn/webauthn v0.9.4 h1:YxvHSqgUyc5AK2pZbqkWWR55qKeDPhP8zLDr6lpIc2g=
-github.com/go-webauthn/webauthn v0.9.4/go.mod h1:LqupCtzSef38FcxzaklmOn7AykGKhAhr9xlRbdbgnTw=
-github.com/go-webauthn/x v0.1.5 h1:V2TCzDU2TGLd0kSZOXdrqDVV5JB9ILnKxA9S53CSBw0=
-github.com/go-webauthn/x v0.1.5/go.mod h1:qbzWwcFcv4rTwtCLOZd+icnr6B7oSsAGZJqlt8cukqY=
+github.com/go-webauthn/webauthn v0.10.0 h1:yuW2e1tXnRAwAvKrR4q4LQmc6XtCMH639/ypZGhZCwk=
+github.com/go-webauthn/webauthn v0.10.0/go.mod h1:l0NiauXhL6usIKqNLCUM3Qir43GK7ORg8ggold0Uv/Y=
+github.com/go-webauthn/x v0.1.6 h1:QNAX+AWeqRt9loE8mULeWJCqhVG5D/jvdmJ47fIWCkQ=
+github.com/go-webauthn/x v0.1.6/go.mod h1:W8dFVZ79o4f+nY1eOUICy/uq5dhrRl7mxQkYhXTo0FA=
 github.com/golang-jwt/jwt/v5 v5.2.0 h1:d/ix8ftRUorsN+5eMIlF4T6J8CAt9rch3My2winC1Jw=
 github.com/golang-jwt/jwt/v5 v5.2.0/go.mod h1:pqrtFR0X4osieyHYxtmOUWsAWrfe1Q5UVIyoH402zdk=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
