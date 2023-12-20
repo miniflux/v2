@@ -115,7 +115,15 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) {
+		var containsBlockedTag bool = false
+		for _, tag := range entry.Tags {
+        if matchField(feed.BlocklistRules, tag) {
+					containsBlockedTag = true
+					break
+				}
+		}
+
+		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || containsBlockedTag {
 			slog.Debug("Blocking entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
