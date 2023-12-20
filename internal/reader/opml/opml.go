@@ -34,6 +34,23 @@ type opmlOutline struct {
 	Outlines opmlOutlineCollection `xml:"outline,omitempty"`
 }
 
+func (outline opmlOutline) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type opmlOutlineXml opmlOutline
+
+	outlineType := ""
+	if outline.IsSubscription() {
+		outlineType = "rss"
+	}
+
+	return e.EncodeElement(struct {
+		opmlOutlineXml
+		Type string `xml:"type,attr,omitempty"`
+	}{
+		opmlOutlineXml: opmlOutlineXml(outline),
+		Type:           outlineType,
+	}, start)
+}
+
 func (o *opmlOutline) IsSubscription() bool {
 	return strings.TrimSpace(o.FeedURL) != ""
 }
