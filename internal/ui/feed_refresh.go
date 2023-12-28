@@ -14,6 +14,7 @@ import (
 	"miniflux.app/v2/internal/locale"
 	feedHandler "miniflux.app/v2/internal/reader/handler"
 	"miniflux.app/v2/internal/ui/session"
+    "miniflux.app/v2/internal/config"
 )
 
 func (h *handler) refreshFeed(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +38,9 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 
 	// Avoid accidental and excessive refreshes.
-	if time.Now().UTC().Unix()-request.LastForceRefresh(r) < 1800 {
-		sess.NewFlashErrorMessage(printer.Printf("alert.too_many_feeds_refresh"))
+	if time.Now().UTC().Unix()-request.LastForceRefresh(r) < int64(config.Opts.ForceRefresh())*60 {
+        time := config.Opts.ForceRefresh()
+		sess.NewFlashErrorMessage(printer.Plural("alert.too_many_feeds_refresh", time, time))
 	} else {
 		// We allow the end-user to force refresh all its feeds
 		// without taking into consideration the number of errors.
