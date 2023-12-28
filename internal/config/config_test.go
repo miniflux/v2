@@ -759,7 +759,7 @@ func TestPollingFrequency(t *testing.T) {
 	}
 }
 
-func TestDefautForceRefresh(t *testing.T) {
+func TestDefautForceRefreshInterval(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -768,17 +768,17 @@ func TestDefautForceRefresh(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultForceRefresh
-	result := opts.ForceRefresh()
+	expected := defaultForceRefreshInterval
+	result := opts.ForceRefreshInterval()
 
 	if result != expected {
-		t.Fatalf(`Unexpected FORCE_REFRESH value, got %v instead of %v`, result, expected)
+        t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 
-func TestForceRefresh(t *testing.T) {
+func TestForceRefreshInterval(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("FORCE_REFRESH", "42")
+	os.Setenv("FORCE_REFRESH_INTERVAL", "42")
 
 	parser := NewParser()
 	opts, err := parser.ParseEnvironmentVariables()
@@ -787,10 +787,10 @@ func TestForceRefresh(t *testing.T) {
 	}
 
 	expected := 42
-	result := opts.ForceRefresh()
+	result := opts.ForceRefreshInterval()
 
 	if result != expected {
-		t.Fatalf(`Unexpected FORCE_REFRESH value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 

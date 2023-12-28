@@ -38,8 +38,8 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 
 	// Avoid accidental and excessive refreshes.
-	if time.Now().UTC().Unix()-request.LastForceRefresh(r) < int64(config.Opts.ForceRefresh())*60 {
-		time := config.Opts.ForceRefresh()
+	if time.Now().UTC().Unix()-request.LastForceRefresh(r) < int64(config.Opts.ForceRefreshInterval())*60 {
+		time := config.Opts.ForceRefreshInterval()
 		sess.NewFlashErrorMessage(printer.Plural("alert.too_many_feeds_refresh", time, time))
 	} else {
 		// We allow the end-user to force refresh all its feeds
