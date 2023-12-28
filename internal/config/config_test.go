@@ -759,6 +759,41 @@ func TestPollingFrequency(t *testing.T) {
 	}
 }
 
+func TestDefautForceRefresh(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultForceRefresh
+	result := opts.ForceRefresh()
+
+	if result != expected {
+		t.Fatalf(`Unexpected FORCE_REFRESH value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestForceRefresh(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("FORCE_REFRESH", "42")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 42
+	result := opts.ForceRefresh()
+
+	if result != expected {
+		t.Fatalf(`Unexpected FORCE_REFRESH value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestDefaultBatchSizeValue(t *testing.T) {
 	os.Clearenv()
 
