@@ -772,7 +772,7 @@ func TestDefautForceRefreshInterval(t *testing.T) {
 	result := opts.ForceRefreshInterval()
 
 	if result != expected {
-        t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
+		t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 
