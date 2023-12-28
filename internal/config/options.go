@@ -29,7 +29,7 @@ const (
 	defaultBasePath                           = ""
 	defaultWorkerPoolSize                     = 5
 	defaultPollingFrequency                   = 60
-    defaultForceRefresh                       = 30
+	defaultForceRefresh                       = 30
 	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5
@@ -123,7 +123,7 @@ type Options struct {
 	cleanupArchiveBatchSize            int
 	cleanupRemoveSessionsDays          int
 	pollingFrequency                   int
-    forceRefresh                      int 
+	forceRefresh                       int
 	batchSize                          int
 	pollingScheduler                   string
 	schedulerEntryFrequencyMinInterval int
@@ -202,7 +202,7 @@ func NewOptions() *Options {
 		cleanupArchiveBatchSize:            defaultCleanupArchiveBatchSize,
 		cleanupRemoveSessionsDays:          defaultCleanupRemoveSessionsDays,
 		pollingFrequency:                   defaultPollingFrequency,
-        forceRefresh:                       defaultForceRefresh, 
+		forceRefresh:                       defaultForceRefresh,
 		batchSize:                          defaultBatchSize,
 		pollingScheduler:                   defaultPollingScheduler,
 		schedulerEntryFrequencyMinInterval: defaultSchedulerEntryFrequencyMinInterval,
@@ -381,9 +381,9 @@ func (o *Options) PollingFrequency() int {
 	return o.pollingFrequency
 }
 
-// ForceRefresh returns the force refresh interval 
+// ForceRefresh returns the force refresh interval
 func (o *Options) ForceRefresh() int {
-    return o.forceRefresh 
+	return o.forceRefresh
 }
 
 // BatchSize returns the number of feeds to send for background processing.
@@ -671,7 +671,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
 		"POCKET_CONSUMER_KEY":                    redactSecretValue(o.pocketConsumerKey, redactSecret),
 		"POLLING_FREQUENCY":                      o.pollingFrequency,
-        "FORCE_REFRESH":                          o.forceRefresh,
+		"FORCE_REFRESH":                          o.forceRefresh,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
 		"PROXY_HTTP_CLIENT_TIMEOUT":              o.proxyHTTPClientTimeout,
