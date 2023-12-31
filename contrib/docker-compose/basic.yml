@@ -24,6 +24,7 @@ services:
     environment:
       - POSTGRES_USER=miniflux
       - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=miniflux
     volumes:
       - miniflux-db:/var/lib/postgresql/data
     healthcheck:
