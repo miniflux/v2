@@ -453,7 +453,10 @@
         "il y a %d an",
         "il y a %d ans"
     ],
-    "alert.too_many_feeds_refresh": "Vous avez déclenché trop d'actualisations de flux. Veuillez attendre 30 minutes avant de réessayer.",
+    "alert.too_many_feeds_refresh": [
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+    ],
     "alert.background_feed_refresh": "Les abonnements sont en cours d'actualisation en arrière-plan. Vous pouvez continuer à naviguer dans l'application.",
     "error.http_response_too_large": "La réponse HTTP est trop volumineuse. Vous pouvez augmenter la limite de taille de réponse HTTP dans les paramètres de l'application (redémarrage de l'application nécessaire).",
     "error.http_body_read": "Impossible de lire le corps de la réponse HTTP : %v.",

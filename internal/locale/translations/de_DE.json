@@ -453,7 +453,10 @@
         "vor %d Jahr",
         "vor %d Jahren"
     ],
-    "alert.too_many_feeds_refresh": "Sie haben zu viele Aktualisierungen ausgelöst. Bitte warten Sie 30 Minuten, bevor Sie es erneut versuchen.",
+    "alert.too_many_feeds_refresh": [
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+    ],
     "alert.background_feed_refresh": "Alle Abonnements werden derzeit im Hintergrund aktualisiert. Sie können Miniflux weiterhin benutzen, während dieser Prozess ausgeführt wird.",
     "error.http_response_too_large": "Die HTTP-Antwort ist zu groß. Sie könnten die Grenze für die Größe der HTTP-Antwort in den globalen Einstellungen erhöhen (benötigt einen Neustart des Servers)",
     "error.http_body_read": "Der HTTP-Inhalt kann nicht gelesen werden: %v",
