@@ -340,6 +340,16 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		)
 	}
 
+	// new request without LastTimeout or ETag to allow for icons that are older than the feed
+	requestBuilder = fetcher.NewRequestBuilder()
+	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
+	requestBuilder.WithUserAgent(originalFeed.UserAgent, config.Opts.HTTPClientUserAgent())
+	requestBuilder.WithCookie(originalFeed.Cookie)
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.UseProxy(originalFeed.FetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates)
+
 	checkFeedIcon(
 		store,
 		requestBuilder,
