@@ -294,5 +294,5 @@ func URLHasChanged(original, updated, siteURL string) bool {
 		return false
 	}
 	updated, _ = urllib.AbsoluteURL(siteURL, updated)
-	return original == updated
+	return original != updated
 }
