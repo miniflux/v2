@@ -117,10 +117,10 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
 		var containsBlockedTag bool = false
 		for _, tag := range entry.Tags {
-        if matchField(feed.BlocklistRules, tag) {
-					containsBlockedTag = true
-					break
-				}
+			if matchField(feed.BlocklistRules, tag) {
+				containsBlockedTag = true
+				break
+			}
 		}
 
 		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || containsBlockedTag {
@@ -142,10 +142,10 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
 		var containsAllowedTag bool = false
 		for _, tag := range entry.Tags {
-        if matchField(feed.KeeplistRules, tag) {
-					containsAllowedTag = true
-					break
-				}
+			if matchField(feed.KeeplistRules, tag) {
+				containsAllowedTag = true
+				break
+			}
 		}
 
 		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || containsAllowedTag {
