@@ -84,7 +84,7 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
-	defaultContentSecurityPolicy              = ""
+	defaultContentSecurityPolicy              = "default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-%s'"
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
