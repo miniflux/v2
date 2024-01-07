@@ -110,7 +110,7 @@ func (j *jsonItem) GetDate() time.Time {
 		if value != "" {
 			d, err := date.Parse(value)
 			if err != nil {
-				slog.Warn("Unable to parse date from JSON feed",
+				slog.Debug("Unable to parse date from JSON feed",
 					slog.String("date", value),
 					slog.String("url", j.URL),
 					slog.Any("error", err),

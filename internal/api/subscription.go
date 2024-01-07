@@ -7,8 +7,11 @@ import (
 	json_parser "encoding/json"
 	"net/http"
 
+	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/validator"
 )
@@ -25,21 +28,32 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	subscriptions, finderErr := subscription.FindSubscriptions(
+	var rssbridgeURL string
+	intg, err := h.store.Integration(request.UserID(r))
+	if err == nil && intg != nil && intg.RSSBridgeEnabled {
+		rssbridgeURL = intg.RSSBridgeURL
+	}
+
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.WithUserAgent(subscriptionDiscoveryRequest.UserAgent, config.Opts.HTTPClientUserAgent())
+	requestBuilder.WithCookie(subscriptionDiscoveryRequest.Cookie)
+	requestBuilder.WithUsernameAndPassword(subscriptionDiscoveryRequest.Username, subscriptionDiscoveryRequest.Password)
+	requestBuilder.UseProxy(subscriptionDiscoveryRequest.FetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(subscriptionDiscoveryRequest.AllowSelfSignedCertificates)
+
+	subscriptions, localizedError := subscription.NewSubscriptionFinder(requestBuilder).FindSubscriptions(
 		subscriptionDiscoveryRequest.URL,
-		subscriptionDiscoveryRequest.UserAgent,
-		subscriptionDiscoveryRequest.Cookie,
-		subscriptionDiscoveryRequest.Username,
-		subscriptionDiscoveryRequest.Password,
-		subscriptionDiscoveryRequest.FetchViaProxy,
-		subscriptionDiscoveryRequest.AllowSelfSignedCertificates,
+		rssbridgeURL,
 	)
-	if finderErr != nil {
-		json.ServerError(w, r, finderErr)
+
+	if localizedError != nil {
+		json.ServerError(w, r, localizedError.Error())
 		return
 	}
 
-	if subscriptions == nil {
+	if len(subscriptions) == 0 {
 		json.NotFound(w, r)
 		return
 	}

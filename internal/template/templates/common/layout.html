@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Miniflux">
-    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials"/>
+    <link rel="manifest" href="{{ route "webManifest" }}" crossorigin="use-credentials">
 
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="no-referrer">
@@ -50,6 +50,13 @@
     data-add-subscription-url="{{ route "addSubscription" }}"
     data-entries-status-url="{{ route "updateEntriesStatus" }}"
     data-refresh-all-feeds-url="{{ route "refreshAllFeeds" }}"
+    {{ if .webAuthnEnabled }}
+    data-webauthn-register-begin-url="{{ route "webauthnRegisterBegin" }}"
+    data-webauthn-register-finish-url="{{ route "webauthnRegisterFinish" }}"
+    data-webauthn-login-begin-url="{{ route "webauthnLoginBegin" }}"
+    data-webauthn-login-finish-url="{{ route "webauthnLoginFinish" }}"
+    data-webauthn-delete-all-url="{{ route "webauthnDeleteAll" }}"
+    {{ end }}
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
 
     {{ if .user }}

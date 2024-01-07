@@ -163,17 +163,23 @@ func isEmail(str string) bool {
 
 // Returns the duration in human readable format (hours and minutes).
 func duration(t time.Time) string {
+	return durationImpl(t, time.Now())
+}
+
+// Accepts now argument for easy testing
+func durationImpl(t time.Time, now time.Time) string {
 	if t.IsZero() {
 		return ""
 	}
 
-	diff := time.Until(t)
+	diff := t.Sub(now)
 
 	if diff < 0 {
 		return ""
 	}
 
-	return diff.String()
+	// Round to nearest second to get e.g. "14m56s" rather than "14m56.245483933s"
+	return diff.Round(time.Second).String()
 }
 
 func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {

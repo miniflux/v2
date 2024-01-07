@@ -10,27 +10,12 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/client"
 )
 
-func TestFeedWithResponse(t *testing.T) {
-	response := &client.Response{ETag: "Some etag", LastModified: "Some date", EffectiveURL: "Some URL"}
-
-	feed := &Feed{}
-	feed.WithClientResponse(response)
-
-	if feed.EtagHeader != "Some etag" {
-		t.Fatal(`The ETag header should be set`)
-	}
-
-	if feed.LastModifiedHeader != "Some date" {
-		t.Fatal(`The LastModified header should be set`)
-	}
-
-	if feed.FeedURL != "Some URL" {
-		t.Fatal(`The Feed URL should be set`)
-	}
-}
+const (
+	largeWeeklyCount = 10080
+	noNewTTL         = 0
+)
 
 func TestFeedCategorySetter(t *testing.T) {
 	feed := &Feed{}
@@ -47,7 +32,7 @@ func TestFeedCategorySetter(t *testing.T) {
 
 func TestFeedErrorCounter(t *testing.T) {
 	feed := &Feed{}
-	feed.WithError("Some Error")
+	feed.WithTranslatedErrorMessage("Some Error")
 
 	if feed.ParsingErrorMsg != "Some Error" {
 		t.Error(`The error message must be set`)
@@ -82,7 +67,18 @@ func TestFeedCheckedNow(t *testing.T) {
 	}
 }
 
+func checkTargetInterval(t *testing.T, feed *Feed, targetInterval int, timeBefore time.Time, message string) {
+	if feed.NextCheckAt.Before(timeBefore.Add(time.Minute * time.Duration(targetInterval))) {
+		t.Errorf(`The next_check_at should be after timeBefore + %s`, message)
+	}
+	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(targetInterval))) {
+		t.Errorf(`The next_check_at should be before now + %s`, message)
+	}
+}
+
 func TestFeedScheduleNextCheckDefault(t *testing.T) {
+	os.Clearenv()
+
 	var err error
 	parser := config.NewParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
@@ -90,20 +86,46 @@ func TestFeedScheduleNextCheckDefault(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
+	timeBefore := time.Now()
 	feed := &Feed{}
 	weeklyCount := 10
-	feed.ScheduleNextCheck(weeklyCount)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(config.Opts.PollingFrequency()))) {
-		t.Error(`The next_check_at should not be after the now + polling frequency`)
-	}
+	targetInterval := config.Opts.SchedulerRoundRobinMinInterval()
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "default SchedulerRoundRobinMinInterval")
 }
 
-func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
+func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
+	minInterval := 1
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "round_robin")
+	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+	weeklyCount := 100
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	targetInterval := minInterval
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "round robin min interval")
+}
+
+func TestFeedScheduleNextCheckEntryFrequencyMaxInterval(t *testing.T) {
 	maxInterval := 5
 	minInterval := 1
 	os.Clearenv()
@@ -117,20 +139,51 @@ func TestFeedScheduleNextCheckEntryCountBasedMaxInterval(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
+
+	timeBefore := time.Now()
 	feed := &Feed{}
-	weeklyCount := maxInterval * 100
-	feed.ScheduleNextCheck(weeklyCount)
+	// Use a very small weekly count to trigger the max interval
+	weeklyCount := 1
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(maxInterval))) {
-		t.Error(`The next_check_at should not be after the now + max interval`)
-	}
+	targetInterval := maxInterval
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "entry frequency max interval")
 }
 
-func TestFeedScheduleNextCheckEntryCountBasedMinInterval(t *testing.T) {
+func TestFeedScheduleNextCheckEntryFrequencyMaxIntervalZeroWeeklyCount(t *testing.T) {
+	maxInterval := 5
+	minInterval := 1
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+	// Use a very small weekly count to trigger the max interval
+	weeklyCount := 0
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	targetInterval := maxInterval
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "entry frequency max interval")
+}
+
+func TestFeedScheduleNextCheckEntryFrequencyMinInterval(t *testing.T) {
 	maxInterval := 500
 	minInterval := 100
 	os.Clearenv()
@@ -144,17 +197,19 @@ func TestFeedScheduleNextCheckEntryCountBasedMinInterval(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
+
+	timeBefore := time.Now()
 	feed := &Feed{}
-	weeklyCount := minInterval / 2
-	feed.ScheduleNextCheck(weeklyCount)
+	// Use a very large weekly count to trigger the min interval
+	weeklyCount := largeWeeklyCount
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	if feed.NextCheckAt.Before(time.Now().Add(time.Minute * time.Duration(minInterval))) {
-		t.Error(`The next_check_at should not be before the now + min interval`)
-	}
+	targetInterval := minInterval
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "entry frequency min interval")
 }
 
 func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
@@ -169,15 +224,88 @@ func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
+
+	timeBefore := time.Now()
 	feed := &Feed{}
 	weeklyCount := 7
-	feed.ScheduleNextCheck(weeklyCount)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
 	}
 
-	if feed.NextCheckAt.After(time.Now().Add(time.Minute * time.Duration(config.Opts.SchedulerEntryFrequencyMaxInterval()/factor))) {
-		t.Error(`The next_check_at should not be after the now + factor * count`)
+	targetInterval := config.Opts.SchedulerEntryFrequencyMaxInterval() / factor
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "factor * count")
+}
+
+func TestFeedScheduleNextCheckEntryFrequencySmallNewTTL(t *testing.T) {
+	// If the feed has a TTL defined, we use it to make sure we don't check it too often.
+	maxInterval := 500
+	minInterval := 100
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+	// Use a very large weekly count to trigger the min interval
+	weeklyCount := largeWeeklyCount
+	// TTL is smaller than minInterval.
+	newTTL := minInterval / 2
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	targetInterval := minInterval
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "entry frequency min interval")
+
+	if feed.NextCheckAt.Before(timeBefore.Add(time.Minute * time.Duration(newTTL))) {
+		t.Error(`The next_check_at should be after timeBefore + TTL`)
+	}
+}
+
+func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
+	// If the feed has a TTL defined, we use it to make sure we don't check it too often.
+	maxInterval := 500
+	minInterval := 100
+	os.Clearenv()
+	os.Setenv("POLLING_SCHEDULER", "entry_frequency")
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", fmt.Sprintf("%d", maxInterval))
+	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", fmt.Sprintf("%d", minInterval))
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+	// Use a very large weekly count to trigger the min interval
+	weeklyCount := largeWeeklyCount
+	// TTL is larger than minInterval.
+	newTTL := minInterval * 2
+	feed.ScheduleNextCheck(weeklyCount, newTTL)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	targetInterval := newTTL
+	checkTargetInterval(t, feed, targetInterval, timeBefore, "TTL")
+
+	if feed.NextCheckAt.Before(timeBefore.Add(time.Minute * time.Duration(minInterval))) {
+		t.Error(`The next_check_at should be after timeBefore + entry frequency min interval`)
 	}
 }

@@ -1,0 +1,26 @@
+name: Build Binaries
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Compile binaries
+        run: make build
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: miniflux-*
+          if-no-files-found: error
+          retention-days: 5

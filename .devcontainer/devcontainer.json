@@ -7,6 +7,10 @@
   "forwardPorts": [
     8080
   ],
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -17,7 +21,10 @@
       "extensions": [
         "ms-azuretools.vscode-docker",
         "golang.go",
-        "rangav.vscode-thunder-client"
+        "rangav.vscode-thunder-client",
+        "GitHub.codespaces",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
       ]
     }
   }

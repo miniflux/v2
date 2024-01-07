@@ -52,7 +52,7 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if validationErr := validator.ValidateCategoryModification(h.store, loggedUser.ID, category.ID, categoryRequest); validationErr != nil {
-		view.Set("errorMessage", validationErr.TranslationKey)
+		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
 		html.OK(w, r, view.Render("create_category"))
 		return
 	}

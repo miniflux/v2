@@ -77,6 +77,11 @@ type IntegrationForm struct {
 	WebhookEnabled                   bool
 	WebhookURL                       string
 	WebhookSecret                    string
+	RSSBridgeEnabled                 bool
+	RSSBridgeURL                     string
+	OmnivoreEnabled                  bool
+	OmnivoreAPIKey                   string
+	OmnivoreURL                      string
 }
 
 // Merge copy form values to the model.
@@ -143,6 +148,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.ShaarliAPISecret = i.ShaarliAPISecret
 	integration.WebhookEnabled = i.WebhookEnabled
 	integration.WebhookURL = i.WebhookURL
+	integration.RSSBridgeEnabled = i.RSSBridgeEnabled
+	integration.RSSBridgeURL = i.RSSBridgeURL
+	integration.OmnivoreEnabled = i.OmnivoreEnabled
+	integration.OmnivoreAPIKey = i.OmnivoreAPIKey
+	integration.OmnivoreURL = i.OmnivoreURL
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -212,6 +222,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		ShaarliAPISecret:                 r.FormValue("shaarli_api_secret"),
 		WebhookEnabled:                   r.FormValue("webhook_enabled") == "1",
 		WebhookURL:                       r.FormValue("webhook_url"),
+		RSSBridgeEnabled:                 r.FormValue("rssbridge_enabled") == "1",
+		RSSBridgeURL:                     r.FormValue("rssbridge_url"),
+		OmnivoreEnabled:                  r.FormValue("omnivore_enabled") == "1",
+		OmnivoreAPIKey:                   r.FormValue("omnivore_api_key"),
+		OmnivoreURL:                      r.FormValue("omnivore_url"),
 	}
 }
 

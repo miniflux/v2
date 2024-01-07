@@ -219,6 +219,10 @@ var dateFormats = []string{
 	"Mon, 2rd Jan 2006 15:04:05 MST",
 	"Mon, 2nd Jan 2006 15:04:05 MST",
 	"Mon, 2st Jan 2006 15:04:05 MST",
+	"Mon, Jan 02 2006 03:04:05 PM",
+	"Monday, January 2, 2006 - 15:04",
+	"01/02/06 15:04:05",
+	"02.01.06",
 }
 
 var invalidTimezoneReplacer = strings.NewReplacer(
@@ -309,6 +313,7 @@ var invalidLocalizedDateReplacer = strings.NewReplacer(
 // Parse parses a given date string using a large
 // list of commonly found feed date formats.
 func Parse(rawInput string) (t time.Time, err error) {
+	rawInput = strings.TrimSpace(rawInput)
 	timestamp, err := strconv.ParseInt(rawInput, 10, 64)
 	if err == nil {
 		return time.Unix(timestamp, 0), nil
@@ -316,7 +321,6 @@ func Parse(rawInput string) (t time.Time, err error) {
 
 	processedInput := invalidLocalizedDateReplacer.Replace(rawInput)
 	processedInput = invalidTimezoneReplacer.Replace(processedInput)
-	processedInput = strings.TrimSpace(processedInput)
 	if processedInput == "" {
 		return t, errors.New(`date parser: empty value`)
 	}

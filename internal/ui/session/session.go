@@ -4,6 +4,9 @@
 package session // import "miniflux.app/v2/internal/ui/session"
 
 import (
+	"time"
+
+	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
 )
 
@@ -11,6 +14,15 @@ import (
 type Session struct {
 	store     *storage.Storage
 	sessionID string
+}
+
+// New returns a new session handler.
+func New(store *storage.Storage, sessionID string) *Session {
+	return &Session{store, sessionID}
+}
+
+func (s *Session) SetLastForceRefresh() {
+	s.store.UpdateAppSessionField(s.sessionID, "last_force_refresh", time.Now().UTC().Unix())
 }
 
 func (s *Session) SetOAuth2State(state string) {
@@ -62,7 +74,6 @@ func (s *Session) SetPocketRequestToken(requestToken string) {
 	s.store.UpdateAppSessionField(s.sessionID, "pocket_request_token", requestToken)
 }
 
-// New returns a new session handler.
-func New(store *storage.Storage, sessionID string) *Session {
-	return &Session{store, sessionID}
+func (s *Session) SetWebAuthnSessionData(sessionData *model.WebAuthnSession) {
+	s.store.UpdateAppSessionObjectField(s.sessionID, "webauthn_session_data", sessionData)
 }

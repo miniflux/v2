@@ -759,6 +759,41 @@ func TestPollingFrequency(t *testing.T) {
 	}
 }
 
+func TestDefautForceRefreshInterval(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultForceRefreshInterval
+	result := opts.ForceRefreshInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestForceRefreshInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("FORCE_REFRESH_INTERVAL", "42")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 42
+	result := opts.ForceRefreshInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected FORCE_REFRESH_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestDefaultBatchSizeValue(t *testing.T) {
 	os.Clearenv()
 
@@ -829,7 +864,7 @@ func TestPollingScheduler(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMaxIntervalValue(t *testing.T) {
+func TestDefautSchedulerEntryFrequencyMaxIntervalValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -846,7 +881,7 @@ func TestDefautSchedulerCountBasedMaxIntervalValue(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
+func TestSchedulerEntryFrequencyMaxInterval(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL", "30")
 
@@ -864,7 +899,7 @@ func TestDefautSchedulerCountBasedMaxInterval(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMinIntervalValue(t *testing.T) {
+func TestDefautSchedulerEntryFrequencyMinIntervalValue(t *testing.T) {
 	os.Clearenv()
 
 	parser := NewParser()
@@ -881,7 +916,7 @@ func TestDefautSchedulerCountBasedMinIntervalValue(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerCountBasedMinInterval(t *testing.T) {
+func TestSchedulerEntryFrequencyMinInterval(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL", "30")
 
@@ -916,7 +951,7 @@ func TestDefautSchedulerEntryFrequencyFactorValue(t *testing.T) {
 	}
 }
 
-func TestDefautSchedulerEntryFrequencyFactor(t *testing.T) {
+func TestSchedulerEntryFrequencyFactor(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("SCHEDULER_ENTRY_FREQUENCY_FACTOR", "2")
 
@@ -931,6 +966,41 @@ func TestDefautSchedulerEntryFrequencyFactor(t *testing.T) {
 
 	if result != expected {
 		t.Fatalf(`Unexpected SCHEDULER_ENTRY_FREQUENCY_FACTOR value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDefaultSchedulerRoundRobinValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultSchedulerRoundRobinMinInterval
+	result := opts.SchedulerRoundRobinMinInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MIN_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestSchedulerRoundRobin(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("SCHEDULER_ROUND_ROBIN_MIN_INTERVAL", "15")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 15
+	result := opts.SchedulerRoundRobinMinInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MIN_INTERVAL value, got %v instead of %v`, result, expected)
 	}
 }
 

@@ -4,8 +4,9 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
+	"bytes"
 	"encoding/xml"
-	"strings"
+	"io"
 
 	rxml "miniflux.app/v2/internal/reader/xml"
 )
@@ -20,12 +21,16 @@ const (
 )
 
 // DetectFeedFormat tries to guess the feed format from input data.
-func DetectFeedFormat(data string) string {
-	if strings.HasPrefix(strings.TrimSpace(data), "{") {
+func DetectFeedFormat(r io.ReadSeeker) string {
+	data := make([]byte, 512)
+	r.Read(data)
+
+	if bytes.HasPrefix(bytes.TrimSpace(data), []byte("{")) {
 		return FormatJSON
 	}
 
-	decoder := rxml.NewDecoder(strings.NewReader(data))
+	r.Seek(0, io.SeekStart)
+	decoder := rxml.NewXMLDecoder(r)
 
 	for {
 		token, _ := decoder.Token()

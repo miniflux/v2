@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "September 27, 2023" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "November 5, 2023" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -172,6 +172,10 @@ Refresh interval in minutes for feeds\&.
 .br
 Default is 60 minutes\&.
 .TP
+.B FORCE_REFRESH_INTERVAL
+The minimum interval for manual refresh\&.
+.br
+Default is 30 minutes\&.
 .B BATCH_SIZE
 Number of feeds to send to the queue for each interval\&.
 .br
@@ -202,6 +206,11 @@ Default is 5 minutes\&.
 Factor to increase refresh frequency for the entry frequency scheduler\&.
 .br
 Default is 1\&.
+.TP
+.B SCHEDULER_ROUND_ROBIN_MIN_INTERVAL
+Minimum interval in minutes for the round robin scheduler\&.
+.br
+Default is 60 minutes\&.
 .TP
 .B POLLING_PARSING_ERROR_LIMIT
 The maximum number of parsing errors that the program will try before stopping polling a feed. Once the limit is reached, the user must refresh the feed manually. Set to 0 for unlimited.
@@ -507,9 +516,14 @@ Set a custom invidious instance to use\&.
 Default is yewtu.be\&.
 .TP
 .B PROXY_PRIVATE_KEY
-Set a custom custom private key used to sign proxified media url\&.
+Set a custom custom private key used to sign proxified media URL\&.
 .br
 Default is randomly generated at startup\&.
+.TP
+.B WEBAUTHN
+Enable or disable WebAuthn/Passkey authentication\&.
+.br
+Default is disabled\&.
 
 .SH AUTHORS
 .P

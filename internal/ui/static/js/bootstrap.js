@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     handleSubmitButtons();
 
     if (!document.querySelector("body[data-disable-keyboard-shortcuts=true]")) {
@@ -47,6 +47,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let touchHandler = new TouchHandler();
     touchHandler.listen();
+
+    if (WebAuthnHandler.isWebAuthnSupported()) {
+        const webauthnHandler = new WebAuthnHandler();
+
+        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials() });
+
+        let registerButton = document.getElementById("webauthn-register");
+        if (registerButton != null) {
+            registerButton.disabled = false;
+
+            onClick("#webauthn-register", () => {
+                webauthnHandler.register().catch((err) => WebAuthnHandler.showErrorMessage(err));
+            });
+        }
+
+        let loginButton = document.getElementById("webauthn-login");
+        if (loginButton != null) {
+            const abortController = new AbortController();
+            loginButton.disabled = false;
+
+            onClick("#webauthn-login", () => {
+                let usernameField = document.getElementById("form-username");
+                if (usernameField != null) {
+                    abortController.abort();
+                    webauthnHandler.login(usernameField.value).catch(err => WebAuthnHandler.showErrorMessage(err));
+                }
+            });
+
+            webauthnHandler.conditionalLogin(abortController).catch(err => WebAuthnHandler.showErrorMessage(err));
+        }
+    }
 
     onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
     onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
@@ -116,11 +147,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-   // enclosure media player position save & resume
+    // Save and resume media position
     const elements = document.querySelectorAll("audio[data-last-position],video[data-last-position]");
     elements.forEach((element) => {
-        // we set the current time of media players
-        if (element.dataset.lastPosition){ element.currentTime = element.dataset.lastPosition; }
+        if (element.dataset.lastPosition) {
+            element.currentTime = element.dataset.lastPosition;
+        }
         element.ontimeupdate = () => handlePlayerProgressionSave(element);
     });
 });

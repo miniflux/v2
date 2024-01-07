@@ -11,7 +11,7 @@
                     <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
                 </span>
                 <span class="feed-entries-counter">
-                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span title="{{ t "page.feeds.read_counter" }}">{{ .ReadCount }}</span>)
+                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span>{{ .NumberOfVisibleEntries }}</span>)
                 </span>
                 <span class="category">
                     <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>

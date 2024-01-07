@@ -363,7 +363,7 @@ input[type="number"] {
     font-size: 99%;
     margin-bottom: 10px;
     margin-top: 5px;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type="search"]:focus,
@@ -393,7 +393,7 @@ textarea {
     padding: 3px;
     margin-bottom: 10px;
     margin-top: 5px;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 textarea:focus {
@@ -440,8 +440,7 @@ a.button {
 
 .button {
     display: inline-block;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     font-size: 1.1em;
     cursor: pointer;
     padding: 3px 10px;
@@ -607,7 +606,7 @@ template {
 /* Login form */
 .login-form {
     margin: 50px auto 0;
-    max-width: 280px;
+    max-width: 300px;
 }
 
 /* Counters */
@@ -1112,4 +1111,8 @@ audio, video {
 
 .integration-form details .form-section {
     margin-top: 15px;
+}
+
+.hidden {
+    display: none;
 }

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/model"
@@ -136,7 +137,14 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
-	jobs, err := h.store.NewCategoryBatch(userID, categoryID, h.store.CountFeeds(userID))
+	batchBuilder := h.store.NewBatchBuilder()
+	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())
+	batchBuilder.WithoutDisabledFeeds()
+	batchBuilder.WithUserID(userID)
+	batchBuilder.WithCategoryID(categoryID)
+	batchBuilder.WithNextCheckExpired()
+
+	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {
 		json.ServerError(w, r, err)
 		return

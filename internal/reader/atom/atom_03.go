@@ -126,7 +126,7 @@ func (a *atom03Entry) entryDate() time.Time {
 	if dateText != "" {
 		result, err := date.Parse(dateText)
 		if err != nil {
-			slog.Warn("Unable to parse date from Atom 0.3 feed",
+			slog.Debug("Unable to parse date from Atom 0.3 feed",
 				slog.String("date", dateText),
 				slog.String("id", a.ID),
 				slog.Any("error", err),

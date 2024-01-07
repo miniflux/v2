@@ -18,9 +18,18 @@ func refreshFeeds(store *storage.Storage) {
 	var wg sync.WaitGroup
 
 	startTime := time.Now()
-	jobs, err := store.NewBatch(config.Opts.BatchSize())
+
+	// Generate a batch of feeds for any user that has feeds to refresh.
+	batchBuilder := store.NewBatchBuilder()
+	batchBuilder.WithBatchSize(config.Opts.BatchSize())
+	batchBuilder.WithErrorLimit(config.Opts.PollingParsingErrorLimit())
+	batchBuilder.WithoutDisabledFeeds()
+	batchBuilder.WithNextCheckExpired()
+
+	jobs, err := batchBuilder.FetchJobs()
 	if err != nil {
 		slog.Error("Unable to fetch jobs from database", slog.Any("error", err))
+		return
 	}
 
 	nbJobs := len(jobs)
@@ -47,11 +56,11 @@ func refreshFeeds(store *storage.Storage) {
 					slog.Int("worker_id", workerID),
 				)
 
-				if err := feedHandler.RefreshFeed(store, job.UserID, job.FeedID, false); err != nil {
-					slog.Error("Unable to refresh feed",
+				if localizedError := feedHandler.RefreshFeed(store, job.UserID, job.FeedID, false); err != nil {
+					slog.Warn("Unable to refresh feed",
 						slog.Int64("feed_id", job.FeedID),
 						slog.Int64("user_id", job.UserID),
-						slog.Any("error", err),
+						slog.Any("error", localizedError.Error()),
 					)
 				}
 			}
