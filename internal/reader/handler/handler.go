@@ -93,10 +93,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 
 	checkFeedIcon(
 		store,
-		requestBuilder,
-		subscription.ID,
-		subscription.SiteURL,
-		subscription.IconURL,
+		subscription,
 		false,
 	)
 
@@ -186,10 +183,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 
 	checkFeedIcon(
 		store,
-		requestBuilder,
-		subscription.ID,
-		subscription.SiteURL,
-		subscription.IconURL,
+		subscription,
 		false,
 	)
 	return subscription, nil
@@ -340,22 +334,9 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		)
 	}
 
-	// new request without LastTimeout or ETag to allow for icons that are older than the feed
-	requestBuilder = fetcher.NewRequestBuilder()
-	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
-	requestBuilder.WithUserAgent(originalFeed.UserAgent, config.Opts.HTTPClientUserAgent())
-	requestBuilder.WithCookie(originalFeed.Cookie)
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
-	requestBuilder.UseProxy(originalFeed.FetchViaProxy)
-	requestBuilder.IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates)
-
 	checkFeedIcon(
 		store,
-		requestBuilder,
-		originalFeed.ID,
-		originalFeed.SiteURL,
-		originalFeed.IconURL,
+		originalFeed,
 		forceRefresh,
 	)
 
@@ -371,35 +352,45 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	return nil
 }
 
-func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilder, feedID int64, websiteURL, feedIconURL string, forceRefresh bool) {
-	if !store.HasIcon(feedID) || forceRefresh {
-		iconFinder := icon.NewIconFinder(requestBuilder, websiteURL, feedIconURL)
+func checkFeedIcon(store *storage.Storage, feed *model.Feed, forceRefresh bool) {
+	if !store.HasIcon(feed.ID) || forceRefresh {
+		requestBuilder := fetcher.NewRequestBuilder()
+		requestBuilder.WithUsernameAndPassword(feed.Username, feed.Password)
+		requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
+		requestBuilder.WithCookie(feed.Cookie)
+		requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+		requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+		requestBuilder.UseProxy(feed.FetchViaProxy)
+		requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
+
+		iconFinder := icon.NewIconFinder(requestBuilder, feed.SiteURL, feed.IconURL)
 		if icon, err := iconFinder.FindIcon(); err != nil {
 			slog.Debug("Unable to find feed icon",
-				slog.Int64("feed_id", feedID),
-				slog.String("website_url", websiteURL),
-				slog.String("feed_icon_url", feedIconURL),
+				slog.Int64("feed_id", feed.ID),
+				slog.String("website_url", feed.SiteURL),
+				slog.String("feed_icon_url", feed.IconURL),
 				slog.Any("error", err),
 			)
 		} else if icon == nil {
 			slog.Debug("No icon found",
-				slog.Int64("feed_id", feedID),
-				slog.String("website_url", websiteURL),
-				slog.String("feed_icon_url", feedIconURL),
+				slog.Int64("feed_id", feed.ID),
+				slog.String("website_url", feed.SiteURL),
+				slog.String("feed_icon_url", feed.IconURL),
 			)
 		} else {
 			if forceRefresh {
-				if err := store.RemoveFeedIcon(feedID); err != nil {
-					slog.Debug("Unable to remove Feed Icon",
-						slog.Int64("feed_id", feedID),
+				if err := store.RemoveFeedIcon(feed.ID); err != nil {
+					slog.Error("Unable to remove Feed Icon",
+						slog.Int64("feed_id", feed.ID),
+						slog.Any("error", err),
 					)
 				}
 			}
-			if err := store.CreateFeedIcon(feedID, icon); err != nil {
+			if err := store.CreateFeedIcon(feed.ID, icon); err != nil {
 				slog.Error("Unable to store feed icon",
-					slog.Int64("feed_id", feedID),
-					slog.String("website_url", websiteURL),
-					slog.String("feed_icon_url", feedIconURL),
+					slog.Int64("feed_id", feed.ID),
+					slog.String("website_url", feed.SiteURL),
+					slog.String("feed_icon_url", feed.IconURL),
 					slog.Any("error", err),
 				)
 			}
