@@ -317,7 +317,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()
 
-		if icon.URLHasChanged(originalFeed.IconURL, updatedFeed.IconURL, updatedFeed.SiteURL) {
+		if originalFeed.IconURL != updatedFeed.IconURL {
 			originalFeed.IconURL = updatedFeed.IconURL
 			forceRefresh = true
 		} else {
