@@ -114,8 +114,27 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 
 	return nil
 }
+
+// RemoveFeedIcon removes the feed_icon relation and the icon if no other feed is using it
 func (s *Storage) RemoveFeedIcon(feedID int64) error {
+	var iconID int64
+	err := s.db.QueryRow(`SELECT icon_id FROM feed_icons WHERE feed_id=$1`, feedID).Scan(&iconID)
+	if err == sql.ErrNoRows {
+		return nil
+	} else if err != nil {
+		return fmt.Errorf(`store: unable to fetch iconID: %v`, err)
+	}
+
 	if _, err := s.db.Exec(`DELETE FROM feed_icons WHERE feed_id=$1`, feedID); err != nil {
+		return fmt.Errorf(`store: unable to remove feed icon: %v`, err)
+	}
+
+	query := `
+		DELETE FROM icons
+		WHERE
+			id=$1 AND NOT EXISTS(SELECT icon_id FROM feed_icons WHERE icon_id=$1);
+	`
+	if _, err := s.db.Exec(query, iconID); err != nil {
 		return fmt.Errorf(`store: unable to remove feed icon: %v`, err)
 	}
 	return nil
