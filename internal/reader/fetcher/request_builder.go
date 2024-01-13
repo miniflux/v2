@@ -16,6 +16,7 @@ import (
 const (
 	defaultHTTPClientTimeout     = 20
 	defaultHTTPClientMaxBodySize = 15 * 1024 * 1024
+	defaultAcceptHeader          = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
 )
 
 type RequestBuilder struct {
@@ -154,7 +155,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	req.Header = r.headers
-	req.Header.Set("Accept", "*/*")
+	req.Header.Set("Accept", defaultAcceptHeader)
 	req.Header.Set("Connection", "close")
 
 	slog.Debug("Making outgoing request", slog.Group("request",
