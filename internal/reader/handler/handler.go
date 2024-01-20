@@ -270,7 +270,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		updatedFeed, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
 		if parseErr != nil {
-			localizedError := locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed")
+			localizedError := locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
 
 			if errors.Is(parseErr, parser.ErrFeedFormatNotDetected) {
 				localizedError = locale.NewLocalizedErrorWrapper(parseErr, "error.feed_format_not_detected", parseErr)
