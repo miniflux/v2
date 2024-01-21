@@ -98,6 +98,7 @@ func addDynamicImage(entryURL, entryContent string) string {
 		"data-orig-file",
 		"data-large-file",
 		"data-medium-file",
+		"data-original-mos",
 		"data-2000src",
 		"data-1000src",
 		"data-800src",
