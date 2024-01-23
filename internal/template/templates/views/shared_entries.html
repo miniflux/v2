@@ -2,22 +2,28 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "page.shared_entries.title" }} ({{ .total }})</h1>
+    <h1>
+        {{ t "page.shared_entries.title" }}
+        <span aria-hidden="true">({{ .total }})</span>
+    </h1>
+    <span class="sr-only">{{ t "page.shared_entries.total" }}: {{ .total }}</span>
     {{ if .entries }}
-    <ul>
-        <li>
-            <a href="#"
-                data-confirm="true"
-                data-url="{{ route "flushHistory" }}"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
-        </li>
-    </ul>
+    <nav aria-label="{{ t "page.shared_entries.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="#"
+                    data-confirm="true"
+                    data-url="{{ route "flushHistory" }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
+            </li>
+        </ul>
+    </nav>
     {{ end }}
 </section>
 

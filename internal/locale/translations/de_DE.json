@@ -18,6 +18,7 @@
     "action.home_screen": "Zum Startbildschirm hinzufügen",
     "tooltip.keyboard_shortcuts": "Tastenkürzel: %s",
     "tooltip.logged_user": "Angemeldet als %s",
+    "menu.title": "Menu",
     "menu.unread": "Ungelesen",
     "menu.starred": "Lesezeichen",
     "menu.history": "Verlauf",
@@ -81,11 +82,14 @@
     "entry.estimated_reading_time": [
         "%d Minute zu lesen",
         "%d Minuten zu lesen"
-    ],    
+    ],
     "entry.tags.label": "Stichworte:",
     "page.shared_entries.title": "Geteilte Artikel",
+    "page.shared_entries.total": "Number of shared entries",
     "page.unread.title": "Ungelesen",
+    "page.unread.total": "Number of unread entries",
     "page.starred.title": "Lesezeichen",
+    "page.starred.total": "Number of starred entries",
     "page.categories.title": "Kategorien",
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.entries": "Artikel",
@@ -95,6 +99,7 @@
         "Es gibt %d Abonnements."
     ],
     "page.categories.unread_counter": "Anzahl der ungelesenen Artikel",
+    "page.categories.all_counter": "Number of all entries",
     "page.new_category.title": "Neue Kategorie",
     "page.new_user.title": "Neuer Benutzer",
     "page.edit_category.title": "Kategorie bearbeiten: %s",
@@ -109,6 +114,7 @@
         "%d Fehler"
     ],
     "page.history.title": "Verlauf",
+    "page.history.total": "Number of read entries",
     "page.import.title": "Importieren",
     "page.search.title": "Suchergebnisse",
     "page.about.title": "Über",

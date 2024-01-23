@@ -18,6 +18,7 @@
     "action.home_screen": "Ajouter à l'écran d'accueil",
     "tooltip.keyboard_shortcuts": "Raccourci clavier : %s",
     "tooltip.logged_user": "Connecté en tant que %s",
+    "menu.title": "Menu",
     "menu.unread": "Non lus",
     "menu.starred": "Favoris",
     "menu.history": "Historique",
@@ -81,20 +82,25 @@
     "entry.estimated_reading_time": [
         "%d minute de lecture",
         "%d minutes de lecture"
-    ],    
+    ],
     "entry.tags.label": "Libellés :",
     "page.shared_entries.title": "Articles partagés",
+    "page.shared_entries.total": "Number of shared entries",
     "page.unread.title": "Non lus",
+    "page.unread.total": "Number of unread entries",
     "page.starred.title": "Favoris",
+    "page.starred.total": "Number of starred entries",
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.entries": "Articles",
     "page.categories.feeds": "Abonnements",
+    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
     ],
     "page.categories.unread_counter": "Nombre d'entrées non lues",
+    "page.categories.all_counter": "Number of all entries",
     "page.new_category.title": "Nouvelle catégorie",
     "page.new_user.title": "Nouvel Utilisateur",
     "page.edit_category.title": "Modification de la catégorie : %s",
@@ -109,6 +115,7 @@
         "%d erreurs"
     ],
     "page.history.title": "Historique",
+    "page.history.total": "Number of read entries",
     "page.import.title": "Importation",
     "page.search.title": "Résultats de la recherche",
     "page.about.title": "À propos",

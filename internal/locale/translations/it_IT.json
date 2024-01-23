@@ -18,6 +18,7 @@
     "action.home_screen": "Aggiungere alla schermata Home",
     "tooltip.keyboard_shortcuts": "Scorciatoia da tastiera: %s",
     "tooltip.logged_user": "Autenticato come %s",
+    "menu.title": "Menu",
     "menu.unread": "Da leggere",
     "menu.starred": "Preferiti",
     "menu.history": "Cronologia",
@@ -81,20 +82,25 @@
     "entry.estimated_reading_time": [
         "%d minuto di lettura",
         "%d minuti di lettura"
-    ],    
+    ],
     "entry.tags.label": "Tag:",
     "page.shared_entries.title": "Voci condivise",
+    "page.shared_entries.total": "Number of shared entries",
     "page.unread.title": "Da leggere",
+    "page.unread.total": "Number of unread entries",
     "page.starred.title": "Preferiti",
+    "page.starred.total": "Number of starred entries",
     "page.categories.title": "Categorie",
     "page.categories.no_feed": "Nessun feed.",
     "page.categories.entries": "Articoli",
     "page.categories.feeds": "Abbonamenti",
+    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "C'è %d feed.",
         "Ci sono %d feed."
     ],
     "page.categories.unread_counter": "Numero di voci non lette",
+    "page.categories.all_counter": "Number of all entries",
     "page.new_category.title": "Nuova categoria",
     "page.new_user.title": "Nuovo utente",
     "page.edit_category.title": "Modifica categoria: %s",
@@ -109,6 +115,7 @@
         "%d errori"
     ],
     "page.history.title": "Cronologia",
+    "page.history.total": "Number of read entries",
     "page.import.title": "Importa",
     "page.search.title": "Risultati della ricerca",
     "page.about.title": "Informazioni",

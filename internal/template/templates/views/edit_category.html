@@ -3,17 +3,19 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.edit_category.title" .category.Title }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
-        </li>
-    </ul>
+    <nav aria-label="{{ t "page.edit_category.title" .category.Title }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
+            </li>
+        </ul>
+    </nav>
 </section>
 
 <form action="{{ route "updateCategory" "categoryID" .category.ID }}" method="post" autocomplete="off">
