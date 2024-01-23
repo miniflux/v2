@@ -834,4 +834,16 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN linkace_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN linkace_url text default '';
+			ALTER TABLE integrations ADD COLUMN linkace_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN linkace_tags text default '';
+			ALTER TABLE integrations ADD COLUMN linkace_is_private bool default 't';
+			ALTER TABLE integrations ADD COLUMN linkace_check_disabled bool default 't';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

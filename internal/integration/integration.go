@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/integration/apprise"
 	"miniflux.app/v2/internal/integration/espial"
 	"miniflux.app/v2/internal/integration/instapaper"
+	"miniflux.app/v2/internal/integration/linkace"
 	"miniflux.app/v2/internal/integration/linkding"
 	"miniflux.app/v2/internal/integration/matrixbot"
 	"miniflux.app/v2/internal/integration/notion"
@@ -172,6 +173,30 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		client := pocket.NewClient(config.Opts.PocketConsumerKey(userIntegrations.PocketConsumerKey), userIntegrations.PocketAccessToken)
 		if err := client.AddURL(entry.URL, entry.Title); err != nil {
 			slog.Error("Unable to send entry to Pocket",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
+	if userIntegrations.LinkAceEnabled {
+		slog.Debug("Sending entry to LinkAce",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := linkace.NewClient(
+			userIntegrations.LinkAceURL,
+			userIntegrations.LinkAceAPIKey,
+			userIntegrations.LinkAceTags,
+			userIntegrations.LinkAcePrivate,
+			userIntegrations.LinkAceCheckDisabled,
+		)
+		if err := client.AddURL(entry.URL, entry.Title); err != nil {
+			slog.Error("Unable to send entry to LinkAce",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
