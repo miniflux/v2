@@ -119,6 +119,36 @@
         </div>
     </details>
 
+    <details {{ if .form.LinkAceEnabled }}open{{ end }}>
+        <summary>LinkAce</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="linkace_enabled" value="1" {{ if .form.LinkAceEnabled }}checked{{ end }}> {{ t "form.integration.linkace_activate" }}
+            </label>
+
+            <label for="form-linkace-url">{{ t "form.integration.linkace_endpoint" }}</label>
+            <input type="url" name="linkace_url" id="form-linkace-url" value="{{ .form.LinkAceURL }}" placeholder="http://linkace-url:port" spellcheck="false">
+
+            <label for="form-linkace-api-key">{{ t "form.integration.linkace_api_key" }}</label>
+            <input type="text" name="linkace_api_key" id="form-linkace-api-key" value="{{ .form.LinkAceAPIKey }}" spellcheck="false">
+
+            <label for="form-linkace-tags">{{ t "form.integration.linkace_tags" }}</label>
+            <input type="text" name="linkace_tags" id="form-linkace-tags" value="{{ .form.LinkAceTags }}" spellcheck="false">
+
+            <label>
+                <input type="checkbox" name="linkace_is_private" value="1" {{ if .form.LinkAcePrivate }}checked{{ end }}> {{ t "form.integration.linkace_is_private" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="linkace_check_disabled" value="1" {{ if .form.LinkAceCheckDisabled }}checked{{ end }}> {{ t "form.integration.linkace_check_disabled" }}
+            </label>
+            
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.LinkdingEnabled }}open{{ end }}>
         <summary>Linkding</summary>
         <div class="form-section">
