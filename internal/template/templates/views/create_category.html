@@ -3,11 +3,13 @@
 {{ define "content"}}
 <section class="page-header">
     <h1>{{ t "page.new_category.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
-        </li>
-    </ul>
+    <nav aria-label="{{ t "page.new_category.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
+            </li>
+        </ul>
+    </nav>
 </section>
 
 <form action="{{ route "saveCategory" }}" method="post" autocomplete="off">

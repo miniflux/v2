@@ -18,6 +18,7 @@
     "action.home_screen": "添加到主屏幕",
     "tooltip.keyboard_shortcuts": "快捷键: %s",
     "tooltip.logged_user": "当前登录 %s",
+    "menu.title": "Menu",
     "menu.unread": "未读",
     "menu.starred": "收藏",
     "menu.history": "历史",
@@ -84,12 +85,16 @@
     ],
     "entry.tags.label": "标签：",
     "page.shared_entries.title": "已分享的文章",
+    "page.shared_entries.total": "Number of shared entries",
     "page.unread.title": "未读",
+    "page.unread.total": "Number of unread entries",
     "page.starred.title": "收藏",
+    "page.starred.total": "Number of starred entries",
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
     "page.categories.entries": "查看内容",
     "page.categories.feeds": "查看源",
+    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
@@ -107,6 +112,7 @@
         "%d 错误"
     ],
     "page.history.title": "历史",
+    "page.history.total": "Number of read entries",
     "page.import.title": "导入",
     "page.search.title": "搜索结果",
     "page.about.title": "关于",

@@ -2,44 +2,56 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1 dir="auto">{{ .category.Title }} ({{ .total }})</h1>
-    <ul>
-    {{ if .entries }}
-        <li>
-            <a href="#"
-                data-action="markPageAsRead"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}"
-                data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
-        </li>
-        <li>
-            <a href="#"
-                data-confirm="true"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}"
-                data-url="{{ route "markCategoryAsRead" "categoryID" .category.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
-        </li>
-    {{ end }}
-    {{ if .showOnlyUnreadEntries }}
-        <li>
-            <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
-        </li>
-    {{ else }}
-        <li>
-            <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
-        </li>
-    {{ end }}
-        <li>
-            <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "refreshCategoryEntriesPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
-        </li>
-    </ul>
+    <h1 dir="auto">
+        {{ .category.Title }}
+        <span aria-hidden="true">({{ .total }})</span>
+    </h1>
+    <span class="sr-only">
+        {{ if .showOnlyUnreadEntries }}
+        {{ t "page.categories.unread_counter" }}: {{ .total }}
+        {{ else }}
+        {{ t "page.categories.all_counter" }}: {{ .total }}
+        {{ end }}
+    </span>
+    <nav aria-label="{{ .category.Title }} {{ t "menu.title" }}">
+        <ul>
+        {{ if .entries }}
+            <li>
+                <a href="#"
+                    data-action="markPageAsRead"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
+            </li>
+            <li>
+                <a href="#"
+                    data-confirm="true"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}"
+                    data-url="{{ route "markCategoryAsRead" "categoryID" .category.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
+            </li>
+        {{ end }}
+        {{ if .showOnlyUnreadEntries }}
+            <li>
+                <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
+            </li>
+        {{ else }}
+            <li>
+                <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+            </li>
+        {{ end }}
+            <li>
+                <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "refreshCategoryEntriesPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+            </li>
+        </ul>
+    </nav>
 </section>
 
 {{ if not .entries }}

@@ -2,29 +2,35 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "page.unread.title" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
+    <h1>
+        {{ t "page.unread.title" }}
+        <span aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
+    </h1>
+    <span class="sr-only">{{ t "page.unread.total" }}: {{ .countUnread }}</span>
     {{ if .entries }}
-    <ul>
-        <li>
-            <a href="#"
-                data-action="markPageAsRead"
-                data-show-only-unread="1"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
-        </li>
-        <li>
-            <a href="#"
-                data-confirm="true"
-                data-url="{{ route "markAllAsRead" }}"
-                data-redirect-url="{{ route "unread" }}"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
-        </li>
-    </ul>
+    <nav aria-label="{{ t "page.unread.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="#"
+                    data-action="markPageAsRead"
+                    data-show-only-unread="1"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
+            </li>
+            <li>
+                <a href="#"
+                    data-confirm="true"
+                    data-url="{{ route "markAllAsRead" }}"
+                    data-redirect-url="{{ route "unread" }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
+            </li>
+        </ul>
+    </nav>
     {{ end }}
 </section>
 

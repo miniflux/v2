@@ -2,7 +2,11 @@
 
 {{ define "content"}}
 <section class="page-header">
-    <h1>{{ t "page.starred.title" }} ({{ .total }})</h1>
+    <h1 dir="auto">
+        {{ t "page.starred.title" }}
+        <span aria-hidden="true"> ({{ .total }})</span>
+    </h1>
+    <span class="sr-only">{{ t "page.starred.total" }}: {{ .total }}</span>
 </section>
 
 {{ if not .entries }}
