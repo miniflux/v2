@@ -5,6 +5,9 @@ on:
   pull_request:
     branches:
     - main
+  push:
+    branched:
+    - "*"
   workflow_dispatch:
 
 jobs:
