@@ -64,6 +64,25 @@ a:hover {
   white-space: nowrap !important;
 }
 
+.skip-to-content-link {
+  --padding-size: 8px;
+  --border-size: 1px;
+
+  background-color: var(--category-background-color);
+  color: var(--category-color);
+  border: var(--border-size) solid var(--category-border-color);
+  border-radius: 5px;
+  inset-inline-start: 50%;
+  padding: var(--padding-size);
+  position: absolute;
+  transition: translate 0.3s;
+  translate: -50% calc(-100% - calc(var(--padding-size) * 2) - calc(var(--border-size) * 2));
+}
+
+.skip-to-content-link:focus {
+  translate: -50% 0;
+}
+
 /* Header and main menu */
 .header {
     margin-top: 10px;
