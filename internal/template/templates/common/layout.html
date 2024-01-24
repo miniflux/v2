@@ -60,6 +60,10 @@
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
 
     {{ if .user }}
+
+    <a class="skip-to-content-link" href="#main">
+      Skip to content
+    </a>
     <header class="header">
         <nav>
             <div class="logo">
@@ -118,7 +122,7 @@
     {{ if .flashErrorMessage }}
         <div class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
-    <main>
+    <main id="main">
         {{template "content" .}}
     </main>
     <template id="keyboard-shortcuts">
