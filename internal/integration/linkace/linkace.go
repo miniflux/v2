@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 	"strings"
+	"time"
 
 	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/version"
