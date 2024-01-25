@@ -89,7 +89,27 @@ a:hover {
     margin-bottom: 20px;
 }
 
-.header nav ul {
+.header nav {
+    display: flex;
+    align-items: center;
+}
+
+.header nav details {
+    flex: 1;
+}
+
+.header nav details[open] svg {
+    rotate: 180deg;
+}
+
+.header nav summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.header nav summary::-webkit-details-marker {
     display: none;
 }
 
@@ -188,7 +208,8 @@ a:hover {
 /* Search form */
 .search {
     text-align: center;
-    display: none;
+    margin-top: 10px;
+    margin-right: 5px;
 }
 
 .search-toggle-switch {
@@ -266,10 +287,6 @@ a:hover {
         margin-left: 5px;
     }
 
-    .header nav ul {
-        display: block;
-    }
-
     .header li {
         display: inline;
         padding: 0;
@@ -289,8 +306,6 @@ a:hover {
     .search {
         text-align: right;
         display: block;
-        margin-top: 10px;
-        margin-right: 5px;
     }
 
     .search-toggle-switch {

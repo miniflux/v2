@@ -113,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, true);
 
     if (document.documentElement.clientWidth < 600) {
-        onClick(".logo", () => toggleMainMenu());
         onClick(".header nav li", (event) => onClickMainMenuListItem(event));
     }
 
