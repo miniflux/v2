@@ -103,6 +103,7 @@
     ],
     "page.categories.unread_counter": "Numero de itens não lidos",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Nova categoria",
     "page.new_user.title": "Novo usuário",
     "page.edit_category.title": "Editar categoria: %s",

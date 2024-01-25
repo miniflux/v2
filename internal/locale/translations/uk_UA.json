@@ -105,6 +105,7 @@
     ],
     "page.categories.unread_counter": "Кількість непрочитаних записів",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Нова категорія",
     "page.new_user.title": "Новий користувач",
     "page.edit_category.title": "Редагування категорії: %s",

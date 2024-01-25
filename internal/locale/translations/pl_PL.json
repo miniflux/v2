@@ -104,6 +104,7 @@
     ],
     "page.categories.unread_counter": "Liczba nieprzeczytanych wpisów",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Nowa kategoria",
     "page.new_user.title": "Nowy użytkownik",
     "page.edit_category.title": "Edycja Kategorii: %s",

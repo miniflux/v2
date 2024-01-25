@@ -103,6 +103,7 @@
     ],
     "page.categories.unread_counter": "未読記事の数",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "新規カテゴリ",
     "page.new_user.title": "新規ユーザー",
     "page.edit_category.title": "カテゴリを編集: %s",

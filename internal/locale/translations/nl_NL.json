@@ -103,6 +103,7 @@
     ],
     "page.categories.unread_counter": "Aantal ongelezen vermeldingen",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Nieuwe categorie",
     "page.new_user.title": "Nieuwe gebruiker",
     "page.edit_category.title": "Bewerken van categorie: %s",

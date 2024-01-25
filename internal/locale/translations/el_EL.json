@@ -103,6 +103,7 @@
     ],
     "page.categories.unread_counter": "Αριθμός μη αναγνωσμένων καταχωρήσεων",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Νέα Κατηγορία",
     "page.new_user.title": "Νέος Χρήστης",
     "page.edit_category.title": "Επεξεργασία κατηγορίας: % s",

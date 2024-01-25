@@ -101,6 +101,8 @@
         "有 %d 个源"
     ],
     "page.categories.unread_counter": "未读文章数",
+    "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
     "page.edit_category.title": "编辑分类 : %s",
