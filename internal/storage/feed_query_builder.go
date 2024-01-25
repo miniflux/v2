@@ -163,7 +163,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			c.hide_globally as category_hidden,
 			fi.icon_id,
 			u.timezone,
-			f.apprise_service_urls
+			f.apprise_service_urls,
+			f.icon_url
 		FROM
 			feeds f
 		LEFT JOIN
@@ -230,6 +231,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&iconID,
 			&tz,
 			&feed.AppriseServiceURLs,
+			&feed.IconURL,
 		)
 
 		if err != nil {

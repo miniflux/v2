@@ -14,6 +14,7 @@ type Icon struct {
 	Hash     string `json:"hash"`
 	MimeType string `json:"mime_type"`
 	Content  []byte `json:"-"`
+	URL      string `json:"-"`
 }
 
 // DataURL returns the data URL of the icon.
