@@ -99,12 +99,14 @@ a:hover {
    border: none;
    background-color: transparent;
    display: inline-block;
+   cursor: pointer;
 }
 
 .header nav button[aria-controls="header-menu"] svg {
     padding: 5px;
-    inline-size: 20px;
-    block-size: 20px;
+    inline-size: 24px;
+    block-size: 24px;
+    translate: 0 2px;
 }
 
 .header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
@@ -223,12 +225,23 @@ a:hover {
     margin-right: 5px;
 }
 
+.search details svg {
+   padding: 5px;
+   inline-size: 24px;
+   block-size: 24px;
+   translate: 0 -1px;
+}
+
 .search details[open] svg {
    rotate: 180deg;
 }
 
 .search details > summary {
   list-style: none;
+  display: flex;
+  justify-content: center;
+  inline-size: fit-content;
+  margin-inline: auto;
 }
 
 .search details > summary::marker, /* Latest Chrome, Edge, Firefox */
@@ -352,6 +365,10 @@ a:hover {
     .search {
         text-align: right;
         display: block;
+    }
+
+    .search details > summary {
+      margin-inline: auto 0;
     }
 
     .search-toggle-switch {
