@@ -116,10 +116,10 @@
         <search role="search" class="search">
             <details {{ if $.searchQuery }}open{{ end }}>
                 <summary>
-                    <span id="search-label">{{ t "search.label" }}</span>
+                    <span>{{ t "search.label" }}</span>
                 </summary>
                 <form action="{{ route "searchEntries" }}" aria-labelledby="search-input-label">
-                    <input type="search" name="q" aria-labelledby="search-label" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                    <input type="search" name="q" aria-label="{{ t "search.label" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
                     <button type="submit">{{ t "search.submit" }}</button>
                 </form>
             </details>
