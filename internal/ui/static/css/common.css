@@ -223,6 +223,20 @@ a:hover {
     margin-right: 5px;
 }
 
+.search details[open] svg {
+   rotate: 180deg;
+}
+
+.search details > summary {
+  list-style: none;
+}
+
+.search details > summary::marker, /* Latest Chrome, Edge, Firefox */
+.search details > summary::-webkit-details-marker /* Safari */ {
+  display: none;
+}
+
+
 .search-toggle-switch {
     display: none;
 }
