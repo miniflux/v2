@@ -1,11 +1,13 @@
 {{ define "title"}}{{ t "page.import.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.import.title" }}</h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.import.title" }}</h1>
     {{ template "feed_menu" }}
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if .errorMessage }}
     <div class="alert alert-error">{{ .errorMessage }}</div>
 {{ end }}

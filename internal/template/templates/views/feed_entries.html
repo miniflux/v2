@@ -1,8 +1,8 @@
 {{ define "title"}}{{ .feed.Title }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1 dir="auto">
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title" dir="auto">
         <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="{{ .user.MarkReadOnView }}">{{ .feed.Title }}</a>
         <span aria-hidden="true">({{ .total }})</span>
     </h1>
@@ -70,8 +70,10 @@
             </li>
         </ul>
     </nav>
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if ne .feed.ParsingErrorCount 0 }}
 <div class="alert alert-error">
     <h3>{{ t "alert.feed_error" }}</h3>

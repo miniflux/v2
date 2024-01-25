@@ -1,11 +1,13 @@
 {{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.add_feed.title" }}</h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.add_feed.title" }}</h1>
     {{ template "feed_menu" }}
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 <form action="{{ route "chooseSubscription" }}" method="POST">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
     <input type="hidden" name="category_id" value="{{ .form.CategoryID }}">

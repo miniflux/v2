@@ -1,8 +1,8 @@
 {{ define "title"}}{{ .category.Title }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1 dir="auto">
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title" dir="auto">
         {{ .category.Title }}
         <span aria-hidden="true">({{ .total }})</span>
     </h1>
@@ -15,7 +15,7 @@
     </span>
     <nav aria-label="{{ .category.Title }} {{ t "menu.title" }}">
         <ul>
-        {{ if .entries }}
+            {{ if .entries }}
             <li>
                 <a href="#"
                     data-action="markPageAsRead"
@@ -34,16 +34,16 @@
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-url="{{ route "markCategoryAsRead" "categoryID" .category.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
             </li>
-        {{ end }}
-        {{ if .showOnlyUnreadEntries }}
+            {{ end }}
+            {{ if .showOnlyUnreadEntries }}
             <li>
                 <a href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
             </li>
-        {{ else }}
+            {{ else }}
             <li>
                 <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
             </li>
-        {{ end }}
+            {{ end }}
             <li>
                 <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
             </li>
@@ -52,8 +52,10 @@
             </li>
         </ul>
     </nav>
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_category_entry" }}</p>
 {{ else }}

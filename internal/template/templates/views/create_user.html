@@ -1,11 +1,13 @@
 {{ define "title"}}{{ t "page.new_user.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.new_user.title" }}</h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.new_user.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 <form action="{{ route "saveUser" }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
