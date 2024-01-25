@@ -1,5 +1,5 @@
 {{ define "feed_menu" }}
-<ul>
+<nav aria-label="{{ t "page.feeds.title" }} {{ t "menu.title" }}"><ul>
     <li>
         <a href="{{ route "feeds" }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
     </li>
@@ -15,5 +15,5 @@
     <li>
         <a href="{{ route "refreshAllFeeds" }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
     </li>
-</ul>
+</ul></nav>
 {{ end }}
