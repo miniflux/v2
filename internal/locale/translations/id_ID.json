@@ -101,6 +101,7 @@
     ],
     "page.categories.unread_counter": "Jumlah entri yang belum dibaca",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Kategori Baru",
     "page.new_user.title": "Pengguna Baru",
     "page.edit_category.title": "Sunting Kategori: %s",

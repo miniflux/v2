@@ -104,6 +104,7 @@
     ],
     "page.categories.unread_counter": "Количество непрочитанных статей",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Новая категория",
     "page.new_user.title": "Новый пользователь",
     "page.edit_category.title": "Изменить категорию: %s",

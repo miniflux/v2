@@ -103,6 +103,7 @@
     ],
     "page.categories.unread_counter": "अपठित प्रविष्टिया",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "नया श्रेणी",
     "page.new_user.title": "नया उपभोक्ता",
     "page.edit_category.title": "%s श्रेणी संपाद करे",

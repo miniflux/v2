@@ -96,12 +96,14 @@
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.entries": "Artikel",
     "page.categories.feeds": "Abonnements",
+    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."
     ],
     "page.categories.unread_counter": "Anzahl der ungelesenen Artikel",
     "page.categories.all_counter": "Number of all entries",
+    "page.categories.total": "Number of categories",
     "page.new_category.title": "Neue Kategorie",
     "page.new_user.title": "Neuer Benutzer",
     "page.edit_category.title": "Kategorie bearbeiten: %s",
