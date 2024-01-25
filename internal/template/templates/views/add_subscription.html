@@ -1,11 +1,13 @@
 {{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.add_feed.title" }}</h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.add_feed.title" }}</h1>
     {{ template "feed_menu" }}
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .categories }}
     <p class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
 {{ else }}

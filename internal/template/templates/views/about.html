@@ -1,11 +1,13 @@
 {{ define "title"}}{{ t "page.about.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.about.title" }}</h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.about.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 <div class="panel">
     <h3>Miniflux</h3>
     <ul>

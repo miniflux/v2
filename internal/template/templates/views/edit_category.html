@@ -1,8 +1,8 @@
 {{ define "title"}}{{ t "page.edit_category.title" .category.Title }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.edit_category.title" .category.Title }}</h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.edit_category.title" .category.Title }}</h1>
     <nav aria-label="{{ t "page.edit_category.title" .category.Title }} {{ t "menu.title" }}">
         <ul>
             <li>
@@ -16,8 +16,10 @@
             </li>
         </ul>
     </nav>
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 <form action="{{ route "updateCategory" "categoryID" .category.ID }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 

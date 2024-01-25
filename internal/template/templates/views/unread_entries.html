@@ -1,8 +1,8 @@
 {{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">
         {{ t "page.unread.title" }}
         <span aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
     </h1>
@@ -32,8 +32,10 @@
         </ul>
     </nav>
     {{ end }}
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}

@@ -64,7 +64,7 @@
     <a class="skip-to-content-link" href="#main">
       Skip to content
     </a>
-    <header class="header">
+    <div class="header">
         <nav>
             <details>
                 <summary  aria-label="{{ t "menu.title" }}">
@@ -120,11 +120,8 @@
                     <button type="submit">{{ t "search.submit" }}</button>
                 </form>
             </details>
-            <!-- <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}"> -->
-            <!--     <a href="#" data-action="search">&laquo;&nbsp;{{ t "search.label" }}</a> -->
-            <!-- </div> -->
         </search>
-    </header>
+    </div>
     {{ end }}
     {{ if .flashMessage }}
         <div class="flash-message alert alert-success">{{ .flashMessage }}</div>
@@ -132,6 +129,9 @@
     {{ if .flashErrorMessage }}
         <div class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
+
+    {{template "header" .}}
+
     <main id="main">
         {{template "content" .}}
     </main>

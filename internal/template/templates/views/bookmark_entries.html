@@ -1,14 +1,16 @@
 {{ define "title"}}{{ t "page.starred.title" }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1 dir="auto">
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title" dir="auto">
         {{ t "page.starred.title" }}
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
     <span class="sr-only">{{ t "page.starred.total" }}: {{ .total }}</span>
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .entries }}
     <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}

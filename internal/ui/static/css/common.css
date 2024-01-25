@@ -149,6 +149,7 @@ a:hover {
 
 /* Page header and footer*/
 .page-header {
+    padding-inline: 5px;
     margin-bottom: 25px;
 }
 

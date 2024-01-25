@@ -1,8 +1,8 @@
 {{ define "title"}}{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1 dir="auto">
+{{ define "header"}}
+<header class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title" dir="auto">
         {{ .category.Title }} <span aria-hidden="true">&gt;</span> {{ t "page.feeds.title" }}
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
@@ -34,8 +34,10 @@
             </li>
         </ul>
     </nav>
-</section>
+</header>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .feeds }}
     <p class="alert">{{ t "alert.no_feed_in_category" }}</p>
 {{ else }}
