@@ -345,6 +345,7 @@
     "form.prefs.label.categories_sorting_order": "Colonne de tri des catégories",
     "form.prefs.label.mark_read_on_view": "Marquer automatiquement les entrées comme lues lorsqu'elles sont consultées",
     "form.prefs.label.content_security_policy": "Content Security Policy",
+    "form.prefs.label.content_security_policy.default": "Default",
     "form.prefs.fieldset.application_settings": "Paramètres de l'application",
     "form.prefs.fieldset.authentication_settings": "Paramètres d'authentification",
     "form.prefs.fieldset.reader_settings": "Paramètres du lecteur",

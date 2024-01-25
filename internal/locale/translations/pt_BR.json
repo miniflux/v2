@@ -345,6 +345,7 @@
     "form.prefs.label.categories_sorting_order": "Classificação das categorias",
     "form.prefs.label.mark_read_on_view": "Marcar automaticamente as entradas como lidas quando visualizadas",
     "form.prefs.label.content_security_policy": "Content Security Policy",
+    "form.prefs.label.content_security_policy.default": "Default",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

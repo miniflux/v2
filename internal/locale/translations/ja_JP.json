@@ -345,6 +345,7 @@
     "form.prefs.label.categories_sorting_order": "カテゴリの表示順",
     "form.prefs.label.mark_read_on_view": "表示時にエントリを自動的に既読としてマークします",
     "form.prefs.label.content_security_policy": "Content Security Policy",
+    "form.prefs.label.content_security_policy.default": "Default",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

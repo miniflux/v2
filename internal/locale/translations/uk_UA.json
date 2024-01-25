@@ -349,6 +349,7 @@
     "form.prefs.label.categories_sorting_order": "Сортування за категоріями",
     "form.prefs.label.mark_read_on_view": "Автоматично позначати записи як прочитані під час перегляду",
     "form.prefs.label.content_security_policy": "Content Security Policy",
+    "form.prefs.label.content_security_policy.default": "Default",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",
     "form.prefs.fieldset.reader_settings": "Reader Settings",

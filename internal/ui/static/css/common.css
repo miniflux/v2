@@ -424,10 +424,6 @@ input::placeholder {
     margin-left: 10px;
 }
 
-.form-csp-note {
-    font-size: 0.9em;
-}
-
 details > summary {
     outline: none;
     cursor: pointer;
