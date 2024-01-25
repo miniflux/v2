@@ -66,57 +66,60 @@
     </a>
     <div class="header">
         <nav>
-            <details>
-                <summary  aria-label="{{ t "menu.title" }}">
-                    <div class="logo"><a aria-label="{{ t "menu.home_page" }}" href="{{ route .user.DefaultHomePage }}">Mini<span>flux</span></a></div>
+            <div class="logo">
+                <a aria-label="{{ t "menu.home_page" }}" href="{{ route .user.DefaultHomePage }}">
+                    Mini<span>flux</span>
+                </a>
+                <button aria-controls="header-menu" aria-expanded="false" aria-label="{{ t "menu.title" }}">
                     <svg aria-label="{{ t "menu.title" }}" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
                     </svg>
-                </summary>
-                <ul id="header-menu">
-                    <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
-                        <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
-                          {{ if gt .countUnread 0 }}
-                              <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
-                          {{ end }}
-                        </a>
+                </button>
+            </div>
+            <ul id="header-menu">
+                <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
+                    <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
+                      {{ if gt .countUnread 0 }}
+                          <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
+                      {{ end }}
+                    </a>
+                </li>
+                <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
+                    <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }}</a>
+                </li>
+                <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
+                    <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
+                </li>
+                <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
+                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "menu.feeds" }}
+                      {{ if gt .countErrorFeeds 0 }}
+                          <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
+                      {{ end }}
+                    </a>
+                    <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}">
+                        (+)
+                    </a>
+                </li>
+                <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
+                    <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
+                </li>
+                <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
+                    <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
+                </li>
+                {{ if not hasAuthProxy }}
+                    <li>
+                        <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
                     </li>
-                    <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
-                        <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }}</a>
-                    </li>
-                    <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
-                        <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
-                    </li>
-                    <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
-                        <a href="{{ route "feeds" }}" data-page="feeds">{{ t "menu.feeds" }}
-                          {{ if gt .countErrorFeeds 0 }}
-                              <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
-                          {{ end }}
-                        </a>
-                        <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}">
-                            (+)
-                        </a>
-                    </li>
-                    <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
-                        <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
-                    </li>
-                    <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
-                        <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
-                    </li>
-                    {{ if not hasAuthProxy }}
-                        <li>
-                            <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
-                        </li>
-                    {{ end }}
-                </ul>
-            </details>
+                {{ end }}
+            </ul>
         </nav>
         <search role="search" class="search">
             <details {{ if $.searchQuery }}open{{ end }}>
-                <summary>{{ t "search.label" }}</summary>
+                <summary>
+                    <span id="search-label">{{ t "search.label" }}</span>
+                </summary>
                 <form action="{{ route "searchEntries" }}" aria-labelledby="search-input-label">
-                    <label class="sr-only" for="search-input" id="search-input-label">{{ t "search.label" }}</label>
-                    <input type="search" name="q" id="search-input" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                    <input type="search" name="q" aria-labelledby="search-label" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
                     <button type="submit">{{ t "search.submit" }}</button>
                 </form>
             </details>

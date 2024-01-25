@@ -27,13 +27,14 @@ function onAuxClick(selector, callback, noPreventDefault) {
 
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu() {
+    console.log("clc")
     let menu = document.querySelector(".header nav ul");
-    let menuToggleButton = document.querySelector(".header .logo a");
-    if (DomHelper.isVisible(menu)) {
-        menu.style.display = "none";
+    let menuToggleButton = document.querySelector(".header button[aria-controls='header-menu']");
+    if (menu.classList.contains("js-menu-show")) {
+        menu.classList.remove("js-menu-show")
         menuToggleButton.setAttribute("aria-expanded", false)
     } else {
-        menu.style.display = "block";
+        menu.classList.add("js-menu-show")
         menuToggleButton.setAttribute("aria-expanded", true)
     }
 }

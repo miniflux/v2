@@ -112,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
+    onClick("button[aria-controls='header-menu']", () => toggleMainMenu());
     if (document.documentElement.clientWidth < 600) {
         onClick(".header nav li", (event) => onClickMainMenuListItem(event));
     }

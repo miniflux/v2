@@ -91,25 +91,31 @@ a:hover {
 
 .header nav {
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    flex-direction: column;
 }
 
-.header nav details {
-    flex: 1;
+.header nav button[aria-controls="header-menu"] {
+   border: none;
+   background-color: transparent;
+   display: inline-block;
 }
 
-.header nav details[open] svg {
+.header nav button[aria-controls="header-menu"] svg {
+    padding: 5px;
+    inline-size: 20px;
+    block-size: 20px;
+}
+
+.header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
     rotate: 180deg;
 }
 
-.header nav summary {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+.header ul.js-menu-show {
+    display: initial;
 }
-.header nav summary::-webkit-details-marker {
+
+.header ul:not(.js-menu-show) {
     display: none;
 }
 
@@ -187,11 +193,15 @@ a:hover {
 .logo {
     cursor: pointer;
     text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .logo a {
     color: var(--logo-color);
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .logo a:hover {
@@ -295,6 +305,27 @@ a:hover {
         line-height: normal;
         border: none;
         font-size: 1.0em;
+    }
+
+    .header nav {
+        align-items: start;
+        flex-direction: row;
+    }
+
+    .header nav button[aria-controls="header-menu"] svg {
+        display: none;
+    }
+
+    .header nav button[aria-controls="header-menu"] svg {
+        rotate: -90deg;
+    }
+
+    .header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
+        rotate: 90deg;
+    }
+
+    .header ul:not(.js-menu-show), .header ul.js-menu-show {
+        display: revert;
     }
 
     .page-header li,
