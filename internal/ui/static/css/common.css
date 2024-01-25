@@ -166,6 +166,7 @@ a:hover {
 .page-header h1 {
     font-weight: 500;
     border-bottom: 1px dotted var(--page-header-title-border-color);
+    font-size: 1.5rem;
 }
 
 .page-header h1 a {
@@ -191,7 +192,6 @@ a:hover {
 
 /* Logo */
 .logo {
-    cursor: pointer;
     text-align: center;
     display: flex;
     justify-content: center;
