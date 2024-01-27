@@ -64,7 +64,7 @@
     <a class="skip-to-content-link" href="#main">
       Skip to content
     </a>
-    <div class="header">
+    <header class="header">
         <nav>
             <div class="logo">
                 <a aria-label="{{ t "menu.home_page" }}" href="{{ route .user.DefaultHomePage }}">
@@ -127,7 +127,7 @@
                 </form>
             </details>
         </search>
-    </div>
+    </header>
     {{ end }}
     {{ if .flashMessage }}
         <div class="flash-message alert alert-success">{{ .flashMessage }}</div>
@@ -136,7 +136,7 @@
         <div class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
 
-    {{template "header" .}}
+    {{template "page_header" .}}
 
     <main id="main">
         {{template "content" .}}
