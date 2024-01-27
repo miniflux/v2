@@ -1,7 +1,7 @@
 {{ define "title"}}{{ t "page.shared_entries.title" }} ({{ .total }}){{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">
         {{ t "page.shared_entries.title" }}
         <span aria-hidden="true">({{ .total }})</span>
@@ -25,7 +25,7 @@
         </ul>
     </nav>
     {{ end }}
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

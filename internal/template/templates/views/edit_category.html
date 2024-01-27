@@ -1,7 +1,7 @@
 {{ define "title"}}{{ t "page.edit_category.title" .category.Title }}{{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">{{ t "page.edit_category.title" .category.Title }}</h1>
     <nav aria-label="{{ t "page.edit_category.title" .category.Title }} {{ t "menu.title" }}">
         <ul>
@@ -16,7 +16,7 @@
             </li>
         </ul>
     </nav>
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

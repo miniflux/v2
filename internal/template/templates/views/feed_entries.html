@@ -1,7 +1,7 @@
 {{ define "title"}}{{ .feed.Title }} ({{ .total }}){{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title" dir="auto">
         <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="{{ .user.MarkReadOnView }}">{{ .feed.Title }}</a>
         <span aria-hidden="true">({{ .total }})</span>
@@ -70,7 +70,7 @@
             </li>
         </ul>
     </nav>
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

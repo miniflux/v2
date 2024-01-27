@@ -1,10 +1,10 @@
 {{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">{{ t "page.add_feed.title" }}</h1>
     {{ template "feed_menu" }}
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

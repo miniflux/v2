@@ -1,7 +1,7 @@
 {{ define "title"}}{{ .category.Title }} ({{ .total }}){{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title" dir="auto">
         {{ .category.Title }}
         <span aria-hidden="true">({{ .total }})</span>
@@ -52,7 +52,7 @@
             </li>
         </ul>
     </nav>
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

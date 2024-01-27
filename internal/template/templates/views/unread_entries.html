@@ -1,7 +1,7 @@
 {{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">
         {{ t "page.unread.title" }}
         <span aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
@@ -32,7 +32,7 @@
         </ul>
     </nav>
     {{ end }}
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

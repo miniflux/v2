@@ -1,10 +1,10 @@
 {{ define "title"}}{{ t "page.api_keys.title" }}{{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">{{ t "page.api_keys.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}

@@ -1,10 +1,10 @@
 {{ define "title"}}{{ t "page.integrations.title" }}{{ end }}
 
-{{ define "header"}}
-<header class="page-header" aria-labelledby="page-header-title">
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title">{{ t "page.integrations.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
-</header>
+</section>
 {{ end }}
 
 {{ define "content"}}
@@ -144,7 +144,7 @@
             <label>
                 <input type="checkbox" name="linkace_check_disabled" value="1" {{ if .form.LinkAceCheckDisabled }}checked{{ end }}> {{ t "form.integration.linkace_check_disabled" }}
             </label>
-            
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>
