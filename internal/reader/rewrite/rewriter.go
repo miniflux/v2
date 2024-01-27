@@ -69,6 +69,8 @@ func applyRule(entryURL string, entry *model.Entry, rule rule) {
 		entry.Content = addMailtoSubject(entryURL, entry.Content)
 	case "add_dynamic_image":
 		entry.Content = addDynamicImage(entryURL, entry.Content)
+	case "add_dynamic_iframe":
+		entry.Content = addDynamicIframe(entryURL, entry.Content)
 	case "add_youtube_video":
 		entry.Content = addYoutubeVideo(entryURL, entry.Content)
 	case "add_invidious_video":

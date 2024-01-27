@@ -506,7 +506,7 @@ func (s *Storage) RemoveUser(userID int64) error {
 func (s *Storage) RemoveUserAsync(userID int64) {
 	go func() {
 		if err := s.deleteUserFeeds(userID); err != nil {
-			slog.Error("Unable to delete user feedd",
+			slog.Error("Unable to delete user feeds",
 				slog.Int64("user_id", userID),
 				slog.Any("error", err),
 			)

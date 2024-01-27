@@ -25,7 +25,7 @@
             <label for="form-apprise-url">{{ t "form.integration.apprise_url" }}</label>
             <input type="url" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
 
-            <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}
+            <label for="form-apprise-services-urls">{{ t "form.integration.apprise_services_url" }}
                 <a href="https://github.com/caronc/apprise/wiki" target="_blank">
                     {{ icon "external-link" }}
                 </a>
@@ -121,6 +121,36 @@
         </div>
     </details>
 
+    <details {{ if .form.LinkAceEnabled }}open{{ end }}>
+        <summary>LinkAce</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="linkace_enabled" value="1" {{ if .form.LinkAceEnabled }}checked{{ end }}> {{ t "form.integration.linkace_activate" }}
+            </label>
+
+            <label for="form-linkace-url">{{ t "form.integration.linkace_endpoint" }}</label>
+            <input type="url" name="linkace_url" id="form-linkace-url" value="{{ .form.LinkAceURL }}" placeholder="http://linkace-url:port" spellcheck="false">
+
+            <label for="form-linkace-api-key">{{ t "form.integration.linkace_api_key" }}</label>
+            <input type="text" name="linkace_api_key" id="form-linkace-api-key" value="{{ .form.LinkAceAPIKey }}" spellcheck="false">
+
+            <label for="form-linkace-tags">{{ t "form.integration.linkace_tags" }}</label>
+            <input type="text" name="linkace_tags" id="form-linkace-tags" value="{{ .form.LinkAceTags }}" spellcheck="false">
+
+            <label>
+                <input type="checkbox" name="linkace_is_private" value="1" {{ if .form.LinkAcePrivate }}checked{{ end }}> {{ t "form.integration.linkace_is_private" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="linkace_check_disabled" value="1" {{ if .form.LinkAceCheckDisabled }}checked{{ end }}> {{ t "form.integration.linkace_check_disabled" }}
+            </label>
+            
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.LinkdingEnabled }}open{{ end }}>
         <summary>Linkding</summary>
         <div class="form-section">
@@ -157,7 +187,7 @@
             <label for="form-matrix-bot-user">{{ t "form.integration.matrix_bot_user" }}</label>
             <input type="text" name="matrix_bot_user" id="form-matrix-bot-user" value="{{ .form.MatrixBotUser }}" spellcheck="false">
 
-            <label for="form-matrix-chat-password">{{ t "form.integration.matrix_bot_password" }}</label>
+            <label for="form-matrix-password">{{ t "form.integration.matrix_bot_password" }}</label>
             <input type="password" name="matrix_bot_password" id="form-matrix-password" value="{{ .form.MatrixBotPassword }}" spellcheck="false">
 
             <label for="form-matrix-url">{{ t "form.integration.matrix_bot_url" }}</label>
