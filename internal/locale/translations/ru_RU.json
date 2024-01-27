@@ -110,6 +110,7 @@
     "page.edit_category.title": "Изменить категорию: %s",
     "page.edit_user.title": "Изменить пользователя: %s",
     "page.feeds.title": "Подписки",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Последняя проверка:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Количество непрочитанных статей",

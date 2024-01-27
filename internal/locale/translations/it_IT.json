@@ -109,6 +109,7 @@
     "page.edit_category.title": "Modifica categoria: %s",
     "page.edit_user.title": "Modifica utente: %s",
     "page.feeds.title": "Feed",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Ultimo controllo:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Numero di voci non lette",

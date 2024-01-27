@@ -107,6 +107,7 @@
     "page.edit_category.title": "Sunting Kategori: %s",
     "page.edit_user.title": "Sunting Pengguna: %s",
     "page.feeds.title": "Umpan",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Terakhir diperiksa:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Jumlah entri yang belum dibaca",

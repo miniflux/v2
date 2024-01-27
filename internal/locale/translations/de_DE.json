@@ -109,6 +109,7 @@
     "page.edit_category.title": "Kategorie bearbeiten: %s",
     "page.edit_user.title": "Benutzer bearbeiten: %s",
     "page.feeds.title": "Abonnements",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Letzte Aktualisierung:",
     "page.feeds.next_check": "Nächste Aktualisierung:",
     "page.feeds.unread_counter": "Anzahl der ungelesenen Artikel",

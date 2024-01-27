@@ -1,22 +1,43 @@
 {{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
-        <article role="article" class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if and (.Icon) (gt .Icon.IconID 0) }}
-                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
-                    {{ end }}
-                    {{ if .Disabled }} 🚫 {{ end }}
-                    <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
-                </span>
+        <article
+            class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}"
+            aria-labelledby="feed-title-{{ .ID }}"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="feed-title-{{ .ID }}" class="item-title">
+
+                    <a href="{{ route "feedEntries" "feedID" .ID }}">
+                        {{ if and (.Icon) (gt .Icon.IconID 0) }}
+                            <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ if .Disabled }} 🚫 {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
                 <span class="feed-entries-counter">
-                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span>{{ .NumberOfVisibleEntries }}</span>)
+                    <span aria-hidden="true">(</span>
+                    <span class="sr-only">
+                        {{ t "page.feeds.unread_counter" }}:
+                    </span>
+                    <span>{{ .UnreadCount }}</span>
+                    <span aria-hidden="true">/</span>
+                    <span class="sr-only">
+                        {{ t "page.categories.all_counter" }}:
+                    </span>
+                    <span>{{ .NumberOfVisibleEntries }}</span>
+                    <span aria-hidden="true">)</span>
                 </span>
                 <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
+                    <a id="feed-category-{{ .ID }}"
+                       href="{{ route "categoryEntries" "categoryID" .Category.ID }}"
+                       aria-label="{{ t "page.feeds.category" }}: {{ .Category.Title }}"
+                    >
+                        {{ .Category.Title }}
+                    </a>
                 </span>
-            </div>
+            </header>
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-site-url" dir="auto">
