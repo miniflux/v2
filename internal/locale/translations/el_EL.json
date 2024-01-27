@@ -109,6 +109,7 @@
     "page.edit_category.title": "Επεξεργασία κατηγορίας: % s",
     "page.edit_user.title": "Επεξεργασία χρήστη: % s",
     "page.feeds.title": "Ροές",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Τελευταίος έλεγχος:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Αριθμός μη αναγνωσμένων καταχωρήσεων",

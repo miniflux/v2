@@ -109,6 +109,7 @@
     "page.edit_category.title": "編輯分類 : %s",
     "page.edit_user.title": "編輯使用者 : %s",
     "page.feeds.title": "Feeds",
+    "page.feeds.category": "分類",
     "page.feeds.last_check": "最後檢查時間：",
     "page.feeds.next_check": "下次檢查時間:",
     "page.feeds.unread_counter": "未讀文章數",

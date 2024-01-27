@@ -815,9 +815,31 @@ template {
     box-shadow: var(--current-item-box-shadow);
 }
 
+
+.item-header {
+    font-size: 1rem;
+}
+
+.item-header span {
+    font-weight: normal;
+}
+
+.item-title {
+    font-size: 1rem;
+    margin: 0;
+    display: inline;
+}
+
 .item-title a {
     text-decoration: none;
     font-weight: var(--item-title-link-font-weight);
+    font-size: inherit;
+}
+
+.feed-entries-counter {
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
 }
 
 .item-status-read .item-title a {

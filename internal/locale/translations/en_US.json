@@ -109,6 +109,7 @@
     "page.edit_category.title": "Edit Category: %s",
     "page.edit_user.title": "Edit User: %s",
     "page.feeds.title": "Feeds",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Last check:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Number of unread entries",

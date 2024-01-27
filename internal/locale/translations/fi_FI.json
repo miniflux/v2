@@ -109,6 +109,7 @@
     "page.edit_category.title": "Muokkaa kategoria: %s",
     "page.edit_user.title": "Muokkaa käyttäjä: %s",
     "page.feeds.title": "Syötteet",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Viimeisin tarkistus:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Lukemattomien artikkeleiden määrä",

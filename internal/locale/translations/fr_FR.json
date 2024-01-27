@@ -109,6 +109,7 @@
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_user.title": "Modification de l'utilisateur : %s",
     "page.feeds.title": "Abonnements",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Dernière vérification :",
     "page.feeds.next_check": "Prochaine vérification :",
     "page.feeds.unread_counter": "Nombre d'entrées non lues",

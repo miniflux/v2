@@ -109,6 +109,7 @@
     "page.edit_category.title": "%s श्रेणी संपाद करे",
     "page.edit_user.title": "%s उपभोक्ता संपाद करे",
     "page.feeds.title": "फ़ीड",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "आखरी जाँच",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "अपठित विषयवस्तुया",

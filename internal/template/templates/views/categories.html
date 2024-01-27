@@ -23,13 +23,21 @@
 {{ else }}
     <div class="items">
         {{ range .categories }}
-        <article role="article" class="item category-item {{if gt (deRef .TotalUnread) 0 }} category-has-unread{{end}}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
+        <article
+            class="item category-item {{if gt (deRef .TotalUnread) 0 }} category-has-unread{{end}}"
+            aria-labelledby="category-title-{{ .ID }}"
+        >
+            <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
+                <h2 class="item-title">
                     <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
-                </span>
-                (<span title="{{ t "page.categories.unread_counter" }}">{{ .TotalUnread }}</span>)
-            </div>
+                    <span aria-hidden="true">(</span>
+                    <span class="sr-only">
+                        {{ t "page.categories.unread_counter" }}:
+                    </span>
+                    <span>{{ .TotalUnread }}</span>
+                    <span aria-hidden="true">)</span>
+                </h2>
+            </header>
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-feed-count">

@@ -110,6 +110,7 @@
     "page.edit_category.title": "Edycja Kategorii: %s",
     "page.edit_user.title": "Edytuj użytkownika: %s",
     "page.feeds.title": "Kanały",
+    "page.feeds.category": "Category",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
     "page.feeds.next_check": "Next check:",
     "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
