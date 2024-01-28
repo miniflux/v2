@@ -122,7 +122,7 @@
                     </svg>
                 </summary>
                 <form action="{{ route "searchEntries" }}" aria-labelledby="search-input-label">
-                    <input type="search" name="q" aria-label="{{ t "search.label" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                    <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
                     <button type="submit">{{ t "search.submit" }}</button>
                 </form>
             </details>

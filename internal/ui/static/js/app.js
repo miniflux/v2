@@ -27,7 +27,6 @@ function onAuxClick(selector, callback, noPreventDefault) {
 
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu() {
-    console.log("clc")
     let menu = document.querySelector(".header nav ul");
     let menuToggleButton = document.querySelector(".header button[aria-controls='header-menu']");
     if (menu.classList.contains("js-menu-show")) {
@@ -69,8 +68,16 @@ function handleSubmitButtons() {
 function setFocusToSearchInput(event) {
     event.preventDefault();
     event.stopPropagation();
+	  const toggleSearchButton = document.querySelector(".search details")
+    console.log(toggleSearchButton.getAttribute("open"))
+    if (!toggleSearchButton.getAttribute("open")) {
+      toggleSearchButton.setAttribute("open", "")
+      const searchInputElement = document.getElementById("search-input");
+      searchInputElement.focus();
+      searchInputElement.value = "";
+    }
 
-    let toggleSwitchElement = document.querySelector(".search-toggle-switch");
+    /* let toggleSwitchElement = document.querySelector(".search-toggle-switch");
     if (toggleSwitchElement) {
         toggleSwitchElement.style.display = "none";
     }
@@ -84,7 +91,7 @@ function setFocusToSearchInput(event) {
     if (searchInputElement) {
         searchInputElement.focus();
         searchInputElement.value = "";
-    }
+    } */
 }
 
 // Show modal dialog with the list of keyboard shortcuts.

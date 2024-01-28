@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
     onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
     onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
-    onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
     onClick("a[data-share-status]", () => handleShare());
     onClick("a[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
     onClick("a[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
