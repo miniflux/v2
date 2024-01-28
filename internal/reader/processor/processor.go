@@ -123,7 +123,7 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 			}
 		}
 
-		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || containsBlockedTag {
+		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || matchField(feed.BlocklistRules, entry.Author) || containsBlockedTag {
 			slog.Debug("Blocking entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
@@ -148,7 +148,7 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 			}
 		}
 
-		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || containsAllowedTag {
+		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || matchField(feed.KeeplistRules, entry.Author) || containsAllowedTag {
 			slog.Debug("Allow entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
