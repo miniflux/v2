@@ -68,30 +68,13 @@ function handleSubmitButtons() {
 function setFocusToSearchInput(event) {
     event.preventDefault();
     event.stopPropagation();
-	  const toggleSearchButton = document.querySelector(".search details")
-    console.log(toggleSearchButton.getAttribute("open"))
+    const toggleSearchButton = document.querySelector(".search details")
     if (!toggleSearchButton.getAttribute("open")) {
       toggleSearchButton.setAttribute("open", "")
       const searchInputElement = document.getElementById("search-input");
       searchInputElement.focus();
       searchInputElement.value = "";
     }
-
-    /* let toggleSwitchElement = document.querySelector(".search-toggle-switch");
-    if (toggleSwitchElement) {
-        toggleSwitchElement.style.display = "none";
-    }
-
-    let searchFormElement = document.querySelector(".search-form");
-    if (searchFormElement) {
-        searchFormElement.style.display = "block";
-    }
-
-    let searchInputElement = document.getElementById("search-input");
-    if (searchInputElement) {
-        searchInputElement.focus();
-        searchInputElement.value = "";
-    } */
 }
 
 // Show modal dialog with the list of keyboard shortcuts.
