@@ -320,8 +320,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		if originalFeed.IconURL != updatedFeed.IconURL {
 			originalFeed.IconURL = updatedFeed.IconURL
 			forceRefresh = true
-		} else {
-			slog.Debug("Feed icon not modified",
+		} else if originalFeed.IconURL != "" {
+			slog.Debug("Feed icon URL not modified",
 				slog.Int64("user_id", userID),
 				slog.Int64("feed_id", feedID),
 				slog.String("feed_icon_url", originalFeed.IconURL),
