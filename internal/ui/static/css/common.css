@@ -948,6 +948,7 @@ article.category-has-unread {
 /* Entry view */
 .entry header {
     padding-bottom: 5px;
+    padding-inline: 5px;
     border-bottom: 1px dotted var(--entry-header-border-color);
 }
 

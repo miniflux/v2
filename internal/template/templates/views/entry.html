@@ -1,7 +1,7 @@
 {{ define "title"}}{{ .entry.Title }}{{ end }}
 
 {{ define "page_header"}}
-<section class="entry page-header" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
+<section class="entry" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
     <header class="entry-header">
         <h1 id="page-header-title" dir="auto">
             <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
