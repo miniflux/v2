@@ -19,16 +19,28 @@
     </div>
     <div class="items">
         {{ range .entries }}
-        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
+        <article
+            class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "starredEntry" "entryID" .ID }}">
+                        {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "starredEntry" "entryID" .ID }}">{{ .Title }}</a>
+                        {{ else }}
+                        <span class="sr-only">{{ .Feed.Title }}</span>
+                        {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                        {{ .Feed.Category.Title }}
+                    </a>
                 </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
+            </header>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
         </article>
         {{ end }}

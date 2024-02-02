@@ -156,7 +156,7 @@
 </div>
 {{ end }}
 {{ end }}
-<article role="article" class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
+<article class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
     {{ if (and .entry.Enclosures (not .entry.Feed.NoMediaPlayer)) }}
     {{ range .entry.Enclosures }}
     {{ if ne .URL "" }}
