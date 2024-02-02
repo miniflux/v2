@@ -1,17 +1,18 @@
 {{ define "title"}}{{ t "page.history.title" }} ({{ .total }}){{ end }}
 
 {{ define "page_header"}}
-<section class="page-header" aria-labelledby="page-header-title">
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
     <h1 id="page-header-title">
         {{ t "page.history.title" }}
         <span aria-hidden="true">({{ .total }})</span>
     </h1>
-    <span class="sr-only">{{ t "page.history.total" }}: {{ .total }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ t "page.history.total" }}: {{ .total }}</span>
     <nav aria-label="{{ t "page.history.title" }} {{ t "menu.title" }}">
         <ul>
             {{ if .entries }}
             <li>
                 <a href="#"
+                    role="button"
                     data-confirm="true"
                     data-url="{{ route "flushHistory" }}"
                     data-label-question="{{ t "confirm.question" }}"
@@ -37,16 +38,28 @@
     </div>
     <div class="items">
         {{ range .entries }}
-        <article class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
+        <article
+            class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "readEntry" "entryID" .ID }}">
+                        {{ if ne .Feed.Icon.IconID 0 }}
                         <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+                        {{ else }}
+                        <span class="sr-only">{{ .Feed.Title }}</span>
+                        {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                        {{ .Feed.Category.Title }}
+                    </a>
                 </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
+            </header>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
         </article>
         {{ end }}

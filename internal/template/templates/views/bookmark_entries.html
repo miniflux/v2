@@ -1,12 +1,12 @@
 {{ define "title"}}{{ t "page.starred.title" }} ({{ .total }}){{ end }}
 
 {{ define "page_header"}}
-<section class="page-header" aria-labelledby="page-header-title">
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
     <h1 id="page-header-title" dir="auto">
         {{ t "page.starred.title" }}
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
-    <span class="sr-only">{{ t "page.starred.total" }}: {{ .total }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ t "page.starred.total" }}: {{ .total }}</span>
 </section>
 {{ end }}
 

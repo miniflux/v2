@@ -133,7 +133,7 @@ a:hover {
     color: #888;
 }
 
-.header a {
+.header :is(a, summary) {
     font-size: 0.9em;
     color: var(--header-link-color);
     text-decoration: none;
@@ -145,10 +145,6 @@ a:hover {
     color: var(--header-active-link-color);
     /* Note: Firefox on Windows does not show the link as bold if the value is under 600 */
     font-weight: 600;
-}
-
-.header a:hover {
-    color: var(--header-link-hover-color);
 }
 
 .header a:focus {
@@ -229,7 +225,7 @@ a:hover {
    padding: 5px;
    inline-size: 24px;
    block-size: 24px;
-   translate: 0 -1px;
+   translate: 0 -3px;
 }
 
 .search details[open] svg {
@@ -335,7 +331,7 @@ a:hover {
     }
 
     .header nav {
-        align-items: start;
+        align-items: end;
         flex-direction: row;
     }
 
@@ -353,6 +349,10 @@ a:hover {
 
     .header ul:not(.js-menu-show), .header ul.js-menu-show {
         display: revert;
+    }
+
+    .header :is(a, summary):hover {
+        color: var(--header-link-hover-color);
     }
 
     .page-header li,
@@ -750,6 +750,11 @@ template {
     color: var(--category-link-hover-color);
 }
 
+
+.category-item-total {
+    color: var(--body-color);
+}
+
 /* Pagination */
 .pagination {
     font-size: 1.1em;
@@ -822,6 +827,7 @@ template {
 
 .item-header span {
     font-weight: normal;
+    display: inline-block;
 }
 
 .item-title {
