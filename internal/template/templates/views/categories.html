@@ -1,12 +1,12 @@
 {{ define "title"}}{{ t "page.categories.title" }} ({{ .total }}){{ end }}
 
 {{ define "page_header"}}
-<section class="page-header" aria-labelledby="page-header-title">
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
     <h1 id="page-header-title" dir="auto">
         {{ t "page.categories.title" }}
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
-    <span class="sr-only">{{ t "page.categories.total" }}: {{ .total }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ t "page.categories.total" }}: {{ .total }}</span>
     <nav aria-label="{{ t "page.categories.title" }} {{ t "menu.title" }}">
         <ul>
             <li>
@@ -29,13 +29,13 @@
         >
             <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
                 <h2 class="item-title">
-                    <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
-                    <span aria-hidden="true">(</span>
-                    <span class="sr-only">
-                        {{ t "page.categories.unread_counter" }}:
-                    </span>
-                    <span>{{ .TotalUnread }}</span>
-                    <span aria-hidden="true">)</span>
+                    <a href="{{ route "categoryEntries" "categoryID" .ID }}" aria-label="{{ .Title }}, {{ t "page.categories.unread_counter" }}: {{ .TotalUnread }}">
+                        {{ .Title }}
+                        <span class="category-item-total" aria-hidden="true">
+                            (<span class="sr-only">{{ t "page.categories.unread_counter" }}: </span>{{ .TotalUnread }})
+                        </span>
+                    </a>
+
                 </h2>
             </header>
             <div class="item-meta">
@@ -57,6 +57,8 @@
                     {{ if eq (deRef .FeedCount) 0 }}
                     <li class="item-meta-icons-delete">
                         <a href="#"
+                            role="button"
+                            aria-describedby="category-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
@@ -68,6 +70,8 @@
                     {{ if gt (deRef .TotalUnread) 0 }}
                       <li class="item-meta-icons-mark-as-read">
                         <a href="#"
+                            role="button"
+                            aria-describedby="category-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"

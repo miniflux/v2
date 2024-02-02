@@ -55,13 +55,19 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
-                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}"
+                            role="button"
+                            aria-describedby="feed-title-{{ .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-edit">
-                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
+                        <a href="{{ route "editFeed" "feedID" .ID }}"
+                            role="button"
+                            aria-describedby="feed-title-{{ .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-remove">
                         <a href="#"
+                            role="button"
+                            aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
@@ -72,6 +78,8 @@
                     {{ if .UnreadCount }}
                       <li class="item-meta-icons-mark-as-read">
                         <a href="#"
+                            role="button"
+                            aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"

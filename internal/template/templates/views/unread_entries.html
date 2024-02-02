@@ -1,17 +1,18 @@
 {{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
 {{ define "page_header"}}
-<section class="page-header" aria-labelledby="page-header-title">
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
     <h1 id="page-header-title">
         {{ t "page.unread.title" }}
         <span aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
     </h1>
-    <span class="sr-only">{{ t "page.unread.total" }}: {{ .countUnread }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ t "page.unread.total" }}: {{ .countUnread }}</span>
     {{ if .entries }}
     <nav aria-label="{{ t "page.unread.title" }} {{ t "menu.title" }}">
         <ul>
             <li>
                 <a href="#"
+                    role="button"
                     data-action="markPageAsRead"
                     data-show-only-unread="1"
                     data-label-question="{{ t "confirm.question" }}"
@@ -21,6 +22,7 @@
             </li>
             <li>
                 <a href="#"
+                    role="button"
                     data-confirm="true"
                     data-url="{{ route "markAllAsRead" }}"
                     data-redirect-url="{{ route "unread" }}"
@@ -75,6 +77,7 @@
         <ul>
             <li>
                 <a href="#"
+                    role="button"
                     data-action="markPageAsRead"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"

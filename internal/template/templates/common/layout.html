@@ -78,10 +78,16 @@
             </div>
             <ul id="header-menu">
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
-                    <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
-                      {{ if gt .countUnread 0 }}
-                          <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
-                      {{ end }}
+                    <a href="{{ route "unread" }}"
+                        data-page="unread"
+                        {{ if gt .countUnread 0 }}
+                        aria-label="{{ t "menu.unread" }}, {{ t "page.unread.total" }}: {{ .countUnread }}"
+                        {{ end }}
+                    >
+                        {{ t "menu.unread" }}
+                        {{ if gt .countUnread 0 }}
+                        <span class="unread-counter-wrapper" aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
+                        {{ end }}
                     </a>
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
@@ -96,7 +102,7 @@
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
                     </a>
-                    <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}">
+                    <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}" aria-label="{{ t "menu.add_feed" }}">
                         (+)
                     </a>
                 </li>
