@@ -79,6 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    onClick("a[data-action=markAboveAsRead]", (event) => {
+        const entry = findEntry(event.target);
+
+        if (entry) {
+            markAboveAsRead(entry);
+        }
+    });
     onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
     onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
     onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());

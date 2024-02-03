@@ -26,6 +26,16 @@
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
                 >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
         </li>
+        <li>
+            <a href="#"
+                title="{{ t "Mark above read" }}"
+                data-action="markAboveAsRead"
+                data-label-loading="{{ t "confirm.loading" }}"
+                data-label-unread="{{ t "entry.status.unread" }}"
+                data-label-read="{{ t "entry.status.read" }}"
+                data-value="mark-above-read"
+                >{{ icon "unread" }}<span class="icon-label">Mark above as read</span></a>
+        </li>
         <li class="item-meta-icons-star">
             <a href="#"
                 data-toggle-bookmark="true"

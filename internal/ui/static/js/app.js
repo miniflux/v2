@@ -190,6 +190,41 @@ function toggleEntryStatus(element, toasting) {
     });
 }
 
+// Mark entries above the current as read
+function markAboveAsRead(element) {
+    let allItems = DomHelper.getVisibleElements(".items .item");
+    let entryIDs = [];
+
+    let entryID = parseInt(element.dataset.id, 10);
+
+    if (!entryID) return;
+
+    for (const element of allItems) {
+        const itemId = parseInt(element.dataset.id, 10);
+        element.classList.add("item-status-read");
+        entryIDs.push(itemId);
+
+        if (entryID === itemId) {
+            break;
+        }
+    }
+
+    if (entryIDs.length > 0) {
+        updateEntriesStatus(entryIDs, "read", () => {
+            // Refresh the page if user wants to hide unread
+            let element = document.querySelector("a[data-action=markPageAsRead]");
+            let showOnlyUnread = false;
+            if (element) {
+                showOnlyUnread = element.dataset.showOnlyUnread || false;
+            }
+
+            if (showOnlyUnread) {
+                window.location.href = window.location.href;
+            }
+        });
+    }
+}
+
 // Mark a single entry as read.
 function markEntryAsRead(element) {
     if (element.classList.contains("item-status-unread")) {
