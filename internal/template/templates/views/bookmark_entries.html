@@ -6,7 +6,7 @@
         {{ t "page.starred.title" }}
         <span aria-hidden="true"> ({{ .total }})</span>
     </h1>
-    <span id="page-header-title-count" class="sr-only">{{ t "page.starred.total" }}: {{ .total }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.starred_entry_count" .total .total }}</span>
 </section>
 {{ end }}
 

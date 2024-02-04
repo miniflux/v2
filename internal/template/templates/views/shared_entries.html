@@ -6,7 +6,7 @@
         {{ t "page.shared_entries.title" }}
         <span aria-hidden="true">({{ .total }})</span>
     </h1>
-    <span id="page-header-title-count" class="sr-only">{{ t "page.shared_entries.total" }}: {{ .total }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.shared_entries_count" .total .total }}</span>
     {{ if .entries }}
     <nav aria-label="{{ t "page.shared_entries.title" }} {{ t "menu.title" }}">
         <ul>

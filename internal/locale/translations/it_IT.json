@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Sei sicuro?",
     "confirm.question.refresh": "Vuoi forzare l'aggiornamento?",
     "confirm.yes": "sì",
@@ -87,39 +88,55 @@
     ],
     "entry.tags.label": "Tag:",
     "page.shared_entries.title": "Voci condivise",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Da leggere",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Preferiti",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categorie",
     "page.categories.no_feed": "Nessun feed.",
     "page.categories.entries": "Articoli",
     "page.categories.feeds": "Abbonamenti",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "C'è %d feed.",
         "Ci sono %d feed."
     ],
     "page.categories.unread_counter": "Numero di voci non lette",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Nuova categoria",
     "page.new_user.title": "Nuovo utente",
     "page.edit_category.title": "Modifica categoria: %s",
     "page.edit_user.title": "Modifica utente: %s",
     "page.feeds.title": "Feed",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Ultimo controllo:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Numero di voci non lette",
     "page.feeds.read_counter": "Numero di voci lette",
     "page.feeds.error_count": [
         "%d errore",
         "%d errori"
     ],
     "page.history.title": "Cronologia",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importa",
     "page.search.title": "Risultati della ricerca",
     "page.about.title": "Informazioni",

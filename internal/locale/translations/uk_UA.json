@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Ви впевнені?",
     "confirm.question.refresh": "Ви хочете змусити оновити?",
     "confirm.yes": "так",
@@ -88,33 +89,46 @@
     ],
     "entry.tags.label": "Теги:",
     "page.shared_entries.title": "Спильні записи",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Непрочитане",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "З зірочкою",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Категорії",
     "page.categories.no_feed": "Немає стрічки.",
     "page.categories.entries": "Статті",
     "page.categories.feeds": "Підписки",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "Містить %d стрічку.",
         "Містить %d стрічки.",
         "Містить %d стрічок."
     ],
     "page.categories.unread_counter": "Кількість непрочитаних записів",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Нова категорія",
     "page.new_user.title": "Новий користувач",
     "page.edit_category.title": "Редагування категорії: %s",
     "page.edit_user.title": "Редагування користувача: %s",
     "page.feeds.title": "Стрічки",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Остання перевірка:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Кількість непрочитаних записів",
     "page.feeds.read_counter": "Кількість прочитаних записів",
     "page.feeds.error_count": [
         "%d помилка",
@@ -122,7 +136,10 @@
         "%d помилок"
     ],
     "page.history.title": "Історія",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Імпорт",
     "page.search.title": "Результати пошуку",
     "page.about.title": "Про додадок",

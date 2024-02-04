@@ -6,7 +6,7 @@
         {{ t "page.unread.title" }}
         <span aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
     </h1>
-    <span id="page-header-title-count" class="sr-only">{{ t "page.unread.total" }}: {{ .countUnread }}</span>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.unread_entry_count" .countUnread .countUnread }}</span>
     {{ if .entries }}
     <nav aria-label="{{ t "page.unread.title" }} {{ t "menu.title" }}">
         <ul>

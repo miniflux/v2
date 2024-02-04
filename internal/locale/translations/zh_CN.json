@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "您确认吗？",
     "confirm.question.refresh": "您是否要强制刷新？",
     "confirm.yes": "是",
@@ -87,37 +88,53 @@
     ],
     "entry.tags.label": "标签：",
     "page.shared_entries.title": "已分享的文章",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "未读",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "收藏",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
     "page.categories.entries": "查看内容",
     "page.categories.feeds": "查看源",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
     "page.categories.unread_counter": "未读文章数",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
     "page.edit_category.title": "编辑分类 : %s",
     "page.edit_user.title": "编辑用户 : %s",
     "page.feeds.title": "源",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "最后检查时间：",
     "page.feeds.next_check": "下次检查时间：",
-    "page.feeds.unread_counter": "未读文章数",
     "page.feeds.read_counter": "已读文章数",
     "page.feeds.error_count": [
         "%d 错误"
     ],
     "page.history.title": "历史",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "导入",
     "page.search.title": "搜索结果",
     "page.about.title": "关于",

@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Είστε σίγουροι;",
     "confirm.question.refresh": "Θέλετε να επιτελέσετε μια υποχρεωτική ανανέωση;",
     "confirm.yes": "ναι",
@@ -87,39 +88,55 @@
     ],
     "entry.tags.label": "Ετικέτες:",
     "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Μη αναγνωσμένα",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Αγαπημένo",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Κατηγορίες",
     "page.categories.no_feed": "Καμία ροή.",
     "page.categories.entries": "Άρθρα",
     "page.categories.feeds": "Συνδρομές",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "Υπάρχει μία %d ροή.",
         "Υπάρχουν %d ροές."
     ],
     "page.categories.unread_counter": "Αριθμός μη αναγνωσμένων καταχωρήσεων",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
     "page.new_category.title": "Νέα Κατηγορία",
     "page.new_user.title": "Νέος Χρήστης",
     "page.edit_category.title": "Επεξεργασία κατηγορίας: % s",
     "page.edit_user.title": "Επεξεργασία χρήστη: % s",
     "page.feeds.title": "Ροές",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Τελευταίος έλεγχος:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Αριθμός μη αναγνωσμένων καταχωρήσεων",
     "page.feeds.read_counter": "Αριθμός αναγνωσμένων καταχωρήσεων",
     "page.feeds.error_count": [
         "%d σφάλμα",
         "%d σφάλματα"
     ],
     "page.history.title": "Ιστορικό",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.import.title": "Εισαγωγή",
     "page.search.title": "Αποτελέσματα Αναζήτησης",
     "page.about.title": "Περί",

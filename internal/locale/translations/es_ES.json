@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "¿Estás seguro?",
     "confirm.question.refresh": "¿Quieres forzar la actualización?",
     "confirm.yes": "sí",
@@ -87,39 +88,55 @@
     ],
     "entry.tags.label": "Etiquetas:",
     "page.shared_entries.title": "Artículos compartidos",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "No leídos",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Marcadores",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categorías",
     "page.categories.no_feed": "Sin fuente.",
     "page.categories.entries": "Artículos",
     "page.categories.feeds": "Fuentes",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "Hay %d fuente.",
         "Hay %d fuentes."
     ],
     "page.categories.unread_counter": "Número de artículos no leídos",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Nueva categoría",
     "page.new_user.title": "Nuevo usuario",
     "page.edit_category.title": "Editar categoría: %s",
     "page.edit_user.title": "Editar usuario: %s",
     "page.feeds.title": "Fuentes",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Última verificación:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Número de artículos no leídos",
     "page.feeds.read_counter": "Número de artículos leídos",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"
     ],
     "page.history.title": "Historial",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importar",
     "page.search.title": "Resultados de la búsqueda",
     "page.about.title": "Acerca de",

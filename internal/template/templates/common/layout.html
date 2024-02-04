@@ -61,9 +61,7 @@
 
     {{ if .user }}
 
-    <a class="skip-to-content-link" href="#main">
-      Skip to content
-    </a>
+    <a class="skip-to-content-link" href="#main">{{ t "skip_to_content" }}</a>
     <header class="header">
         <nav>
             <div class="logo">
@@ -81,7 +79,7 @@
                     <a href="{{ route "unread" }}"
                         data-page="unread"
                         {{ if gt .countUnread 0 }}
-                        aria-label="{{ t "menu.unread" }}, {{ t "page.unread.total" }}: {{ .countUnread }}"
+                        aria-label="{{ t "menu.unread" }}, {{ plural "page.unread_entry_count" .countUnread .countUnread }}"
                         {{ end }}
                     >
                         {{ t "menu.unread" }}
