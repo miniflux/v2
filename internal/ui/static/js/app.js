@@ -200,13 +200,13 @@ function markAboveAsRead(element) {
     if (!entryID) return;
 
     for (const element of allItems) {
-        const itemId = parseInt(element.dataset.id, 10);
-        element.classList.add("item-status-read");
-        entryIDs.push(itemId);
-
         if (entryID === itemId) {
             break;
         }
+
+        const itemId = parseInt(element.dataset.id, 10);
+        element.classList.add("item-status-read");
+        entryIDs.push(itemId);
     }
 
     if (entryIDs.length > 0) {
