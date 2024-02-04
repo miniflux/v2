@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "您確認嗎？",
     "confirm.question.refresh": "您想要強制刷新嗎？",
     "confirm.yes": "是",
@@ -87,39 +88,55 @@
     ],
     "entry.tags.label": "標籤：",
     "page.shared_entries.title": "已分享的文章",
-    "page.shared_entries.total": "已分享的文章數",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "未讀",
-    "page.unread.total": "未讀文章數",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "收藏",
-    "page.starred.total": "收藏文章數",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "分類",
     "page.categories.no_feed": "沒有Feed",
     "page.categories.entries": "檢視內容",
     "page.categories.feeds": "檢視Feeds",
-    "page.categories.feeds.total": "Feeds總數",
     "page.categories.feed_count": [
         "有 %d 個Feed",
         "有 %d 個Feeds"
     ],
     "page.categories.unread_counter": "未讀文章數",
-    "page.categories.all_counter": "所有文章數",
-    "page.categories.total": "分類總數",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "新分類",
     "page.new_user.title": "新使用者",
     "page.edit_category.title": "編輯分類 : %s",
     "page.edit_user.title": "編輯使用者 : %s",
     "page.feeds.title": "Feeds",
-    "page.feeds.category": "分類",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "最後檢查時間：",
     "page.feeds.next_check": "下次檢查時間:",
-    "page.feeds.unread_counter": "未讀文章數",
     "page.feeds.read_counter": "已讀文章數",
     "page.feeds.error_count": [
         "%d 錯誤",
         "%d 錯誤"
     ],
     "page.history.title": "歷史",
-    "page.history.total": "已讀文章數",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "匯入",
     "page.search.title": "搜尋結果",
     "page.about.title": "關於",

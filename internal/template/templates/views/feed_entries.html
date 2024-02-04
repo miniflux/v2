@@ -8,9 +8,9 @@
     </h1>
     <span class="sr-only">
         {{ if .showOnlyUnreadEntries }}
-        {{ t "page.feeds.unread_counter" }}: {{ .total }}
+        {{ plural "page.unread_entry_count" .total .total }}
         {{ else }}
-        {{ t "page.feeds.read_counter" }}: {{ .total }}
+        {{ plural "page.total_entry_count" .total .total }}
         {{ end }}
     </span>
     <nav aria-label="{{ .feed.Title }} {{ t "menu.title" }}">
@@ -118,7 +118,7 @@
                 <span class="category">
                     <a
                         href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}"
-                        aria-label="{{ t "page.feeds.category" }}: {{ .Feed.Category.Title }}"
+                        aria-label="{{ t "page.category_label" .Feed.Category.Title }}"
                     >
                         {{ .Feed.Category.Title }}
                     </a>

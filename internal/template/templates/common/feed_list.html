@@ -7,7 +7,6 @@
         >
             <header class="item-header" dir="auto">
                 <h2 id="feed-title-{{ .ID }}" class="item-title">
-
                     <a href="{{ route "feedEntries" "feedID" .ID }}">
                         {{ if and (.Icon) (gt .Icon.IconID 0) }}
                             <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
@@ -18,21 +17,17 @@
                 </h2>
                 <span class="feed-entries-counter">
                     <span aria-hidden="true">(</span>
-                    <span class="sr-only">
-                        {{ t "page.feeds.unread_counter" }}:
-                    </span>
-                    <span>{{ .UnreadCount }}</span>
+                    <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
+                    <span aria-hidden="true">{{ .UnreadCount }}</span>
                     <span aria-hidden="true">/</span>
-                    <span class="sr-only">
-                        {{ t "page.categories.all_counter" }}:
-                    </span>
-                    <span>{{ .NumberOfVisibleEntries }}</span>
+                    <span class="sr-only">{{ plural "page.total_entry_count" .NumberOfVisibleEntries .NumberOfVisibleEntries }}</span>
+                    <span aria-hidden="true">{{ .NumberOfVisibleEntries }}</span>
                     <span aria-hidden="true">)</span>
                 </span>
                 <span class="category">
                     <a id="feed-category-{{ .ID }}"
                        href="{{ route "categoryEntries" "categoryID" .Category.ID }}"
-                       aria-label="{{ t "page.feeds.category" }}: {{ .Category.Title }}"
+                       aria-label="{{ t "page.category_label" .Category.Title }}"
                     >
                         {{ .Category.Title }}
                     </a>

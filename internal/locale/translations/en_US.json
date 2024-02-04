@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Are you sure?",
     "confirm.question.refresh": "Are you sure you want to force refresh?",
     "confirm.yes": "yes",
@@ -87,39 +88,54 @@
     ],
     "entry.tags.label": "Tags:",
     "page.shared_entries.title": "Shared entries",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Unread",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Starred",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categories",
     "page.categories.no_feed": "No feed.",
     "page.categories.entries": "Entries",
     "page.categories.feeds": "Feeds",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "There is %d feed.",
         "There are %d feeds."
     ],
-    "page.categories.unread_counter": "Number of unread entries",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "New Category",
     "page.new_user.title": "New User",
     "page.edit_category.title": "Edit Category: %s",
     "page.edit_user.title": "Edit User: %s",
     "page.feeds.title": "Feeds",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Last check:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Number of unread entries",
     "page.feeds.read_counter": "Number of read entries",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
     ],
     "page.history.title": "History",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Import",
     "page.search.title": "Search Results",
     "page.about.title": "About",

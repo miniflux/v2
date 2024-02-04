@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Oletko varma?",
     "confirm.question.refresh": "Haluatko pakottaa päivityksen?",
     "confirm.yes": "kyllä",
@@ -87,39 +88,55 @@
     ],
     "entry.tags.label": "Tags:",
     "page.shared_entries.title": "Jaetut artikkelit",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Lukemattomat",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Suosikit",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Kategoriat",
     "page.categories.no_feed": "Ei syötettä.",
     "page.categories.entries": "Artikkelit",
     "page.categories.feeds": "Tilaukset",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "On %d syöte.",
         "On %d syötettä."
     ],
     "page.categories.unread_counter": "Lukemattomien artikkeleiden määrä",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Uusi kategoria",
     "page.new_user.title": "Uusi käyttäjä",
     "page.edit_category.title": "Muokkaa kategoria: %s",
     "page.edit_user.title": "Muokkaa käyttäjä: %s",
     "page.feeds.title": "Syötteet",
-    "page.feeds.category": "Category",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Viimeisin tarkistus:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Lukemattomien artikkeleiden määrä",
     "page.feeds.read_counter": "Luettujen artikkeleiden määrä",
     "page.feeds.error_count": [
         "%d virhe",
         "%d virhettä"
     ],
     "page.history.title": "Historia",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Tuo",
     "page.search.title": "Hakutulokset",
     "page.about.title": "Tietoja",

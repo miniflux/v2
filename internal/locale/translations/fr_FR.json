@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Aller au contenu",
     "confirm.question": "Êtes-vous sûr ?",
     "confirm.question.refresh": "Voulez-vous forcer le rafraîchissement ?",
     "confirm.yes": "oui",
@@ -19,7 +20,7 @@
     "tooltip.keyboard_shortcuts": "Raccourci clavier : %s",
     "tooltip.logged_user": "Connecté en tant que %s",
     "menu.title": "Menu",
-    "menu.home_page": "Home page",
+    "menu.home_page": "Page d'accueil",
     "menu.unread": "Non lus",
     "menu.starred": "Favoris",
     "menu.history": "Historique",
@@ -52,7 +53,7 @@
     "menu.shared_entries": "Articles partagés",
     "search.label": "Recherche",
     "search.placeholder": "Recherche...",
-    "search.submit": "Submit",
+    "search.submit": "Rechercher",
     "pagination.next": "Suivant",
     "pagination.previous": "Précédent",
     "entry.status.unread": "Non lu",
@@ -87,39 +88,55 @@
     ],
     "entry.tags.label": "Libellés :",
     "page.shared_entries.title": "Articles partagés",
-    "page.shared_entries.total": "Number of shared entries",
+    "page.shared_entries_count": [
+        "%d article partagé",
+        "%d articles partagés"
+    ],
     "page.unread.title": "Non lus",
-    "page.unread.total": "Number of unread entries",
+    "page.unread_entry_count": [
+        "%d article non lu",
+        "%d articles non lus"
+    ],
+    "page.total_entry_count": [
+        "%d article au total",
+        "%d articles au total"
+    ],
     "page.starred.title": "Favoris",
-    "page.starred.total": "Number of starred entries",
+    "page.starred_entry_count": [
+        "%d favori",
+        "%d favoris"
+    ],
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.entries": "Articles",
     "page.categories.feeds": "Abonnements",
-    "page.categories.feeds.total": "Number of feeds",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
     ],
     "page.categories.unread_counter": "Nombre d'entrées non lues",
-    "page.categories.all_counter": "Number of all entries",
-    "page.categories.total": "Number of categories",
+    "page.categories_count": [
+        "%d catégorie",
+        "%d catégories"
+    ],
     "page.new_category.title": "Nouvelle catégorie",
     "page.new_user.title": "Nouvel Utilisateur",
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_user.title": "Modification de l'utilisateur : %s",
     "page.feeds.title": "Abonnements",
-    "page.feeds.category": "Category",
+    "page.category_label": "Catégorie : %s",
     "page.feeds.last_check": "Dernière vérification :",
     "page.feeds.next_check": "Prochaine vérification :",
-    "page.feeds.unread_counter": "Nombre d'entrées non lues",
     "page.feeds.read_counter": "Nombre d'entrées lues",
     "page.feeds.error_count": [
         "%d erreur",
         "%d erreurs"
     ],
     "page.history.title": "Historique",
-    "page.history.total": "Number of read entries",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importation",
     "page.search.title": "Résultats de la recherche",
     "page.about.title": "À propos",
