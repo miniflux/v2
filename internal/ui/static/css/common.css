@@ -335,7 +335,7 @@ a:hover {
         flex-direction: row;
     }
 
-    .header nav button[aria-controls="header-menu"] svg {
+    .header nav button[aria-controls="header-menu"] {
         display: none;
     }
 
