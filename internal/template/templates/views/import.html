@@ -9,7 +9,7 @@
 
 {{ define "content"}}
 {{ if .errorMessage }}
-    <div class="alert alert-error">{{ .errorMessage }}</div>
+    <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
 {{ end }}
 
 <form action="{{ route "uploadOPML" }}" method="post" enctype="multipart/form-data">

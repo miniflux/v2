@@ -19,7 +19,7 @@
 
 {{ define "content"}}
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "alert.no_category" }}</p>
+    <p role="alert" class="alert alert-error">{{ t "alert.no_category" }}</p>
 {{ else }}
     <div class="items">
         {{ range .categories }}

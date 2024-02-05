@@ -134,10 +134,10 @@
     </header>
     {{ end }}
     {{ if .flashMessage }}
-        <div class="flash-message alert alert-success">{{ .flashMessage }}</div>
+        <div role="alert" class="flash-message alert alert-success">{{ .flashMessage }}</div>
     {{ end }}
     {{ if .flashErrorMessage }}
-        <div class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
+        <div role="alert" class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
 
     {{template "page_header" .}}
