@@ -333,6 +333,54 @@ func TestRewriteWithImageAndLazySrcset(t *testing.T) {
 	}
 }
 
+func TestRewriteWithNoLazyIframe(t *testing.T) {
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe src="https://example.org/embed" allowfullscreen></iframe>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe src="https://example.org/embed" allowfullscreen></iframe>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_iframe")
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteWithLazyIframe(t *testing.T) {
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe data-src="https://example.org/embed" allowfullscreen="" src="https://example.org/embed"></iframe>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe data-src="https://example.org/embed" allowfullscreen></iframe>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_iframe")
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteWithLazyIframeAndSrc(t *testing.T) {
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe src="https://example.org/embed" data-src="https://example.org/embed" allowfullscreen=""></iframe>`,
+	}
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<iframe src="about:blank" data-src="https://example.org/embed" allowfullscreen></iframe>`,
+	}
+	Rewriter("https://example.org/article", testEntry, "add_dynamic_iframe")
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
 func TestNewLineRewriteRule(t *testing.T) {
 	controlEntry := &model.Entry{
 		Title:   `A title`,

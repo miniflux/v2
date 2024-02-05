@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Ви впевнені?",
     "confirm.question.refresh": "Ви хочете змусити оновити?",
     "confirm.yes": "так",
@@ -18,6 +19,8 @@
     "action.home_screen": "Додати до головного екрану",
     "tooltip.keyboard_shortcuts": "Комбінація клавіш: %s",
     "tooltip.logged_user": "Здійснено вхід як %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Непрочитане",
     "menu.starred": "З зірочкою",
     "menu.history": "Історія",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Спільні записи",
     "search.label": "Пошук",
     "search.placeholder": "Шукати...",
+    "search.submit": "Search",
     "pagination.next": "Вперед",
     "pagination.previous": "Назад",
     "entry.status.unread": "Непрочитане",
@@ -85,8 +89,24 @@
     ],
     "entry.tags.label": "Теги:",
     "page.shared_entries.title": "Спильні записи",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Непрочитане",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "З зірочкою",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Категорії",
     "page.categories.no_feed": "Немає стрічки.",
     "page.categories.entries": "Статті",
@@ -97,14 +117,18 @@
         "Містить %d стрічок."
     ],
     "page.categories.unread_counter": "Кількість непрочитаних записів",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Нова категорія",
     "page.new_user.title": "Новий користувач",
     "page.edit_category.title": "Редагування категорії: %s",
     "page.edit_user.title": "Редагування користувача: %s",
     "page.feeds.title": "Стрічки",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Остання перевірка:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Кількість непрочитаних записів",
     "page.feeds.read_counter": "Кількість прочитаних записів",
     "page.feeds.error_count": [
         "%d помилка",
@@ -112,6 +136,10 @@
         "%d помилок"
     ],
     "page.history.title": "Історія",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Імпорт",
     "page.search.title": "Результати пошуку",
     "page.about.title": "Про додадок",
@@ -183,9 +211,23 @@
     "page.settings.unlink_google_account": "Відключити мій обліковий запис Google",
     "page.settings.link_oidc_account": "Підключити мій обліковий запис OpenID Connect",
     "page.settings.unlink_oidc_account": "Відключити мій обліковий запис OpenID Connect",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "Зареєструвати пароль",
+    "page.settings.webauthn.register.error": "Не вдалося зареєструвати ключ доступу",
+    "page.settings.webauthn.delete": [
+        "Видалити %d ключ доступу",
+        "Видаліть %d ключа доступу",
+        "Видаліть %d ключа доступу"
+    ],
     "page.login.title": "Вхід",
     "page.login.google_signin": "Увійти через Google",
     "page.login.oidc_signin": "Увійти через OpenID Connect",
+    "page.login.webauthn_login": "Увійти за допомогою пароля",
+    "page.login.webauthn_login.error": "Неможливо ввійти за допомогою ключа доступу",
     "page.integrations.title": "Інтеграції",
     "page.integration.miniflux_api": "Miniflux API",
     "page.integration.miniflux_api_endpoint": "Адреса доступу API",
@@ -213,6 +255,7 @@
     "page.offline.title": "Автономний режим",
     "page.offline.message": "Ви офлайн",
     "page.offline.refresh_page": "Спробуйте оновити сторінку",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "Немає спільного запису.",
     "alert.no_bookmark": "Наразі закладки відсутні.",
     "alert.no_category": "Немає категорії.",
@@ -373,6 +416,9 @@
     "form.integration.nunux_keeper_activate": "Зберігати статті до Nunux Keeper",
     "form.integration.nunux_keeper_endpoint": "Nunux Keeper API Endpoint",
     "form.integration.nunux_keeper_api_key": "Ключ API Nunux Keeper",
+    "form.integration.omnivore_activate": "Зберігати статті до Omnivore",
+    "form.integration.omnivore_url": "Omnivore API Endpoint",
+    "form.integration.omnivore_api_key": "Ключ API Omnivore",
     "form.integration.espial_activate": "Зберігати статті до Espial",
     "form.integration.espial_endpoint": "Espial API Endpoint",
     "form.integration.espial_api_key": "Ключ API Espial",
@@ -387,6 +433,12 @@
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
     "form.integration.telegram_chat_id": "ID чату",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Зберігати статті до Linkding",
     "form.integration.linkding_endpoint": "Linkding API Endpoint",
     "form.integration.linkding_api_key": "Ключ API Linkding",
@@ -407,6 +459,8 @@
     "form.integration.webhook_activate": "Enable Webhook",
     "form.integration.webhook_url": "Webhook URL",
     "form.integration.webhook_secret": "Webhook Secret",
+    "form.integration.rssbridge_activate": "Check RSS-Bridge when adding subscriptions",
+    "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.api_key.label.description": "Назва ключа API",
     "form.submit.loading": "Завантаження...",
     "form.submit.saving": "Зберігаю...",
@@ -442,5 +496,34 @@
         "%d рік тому",
         "%d роки тому",
         "%d років тому"
-    ]
+    ],
+    "alert.too_many_feeds_refresh": [
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+    ],
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
+    "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",
+    "error.http_body_read": "Unable to read the HTTP body: %v.",
+    "error.http_empty_response_body": "The HTTP response body is empty.",
+    "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
+    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
+    "error.network_timeout": "This website is too slow and the request timed out: %v",
+    "error.http_client_error": "HTTP client error: %v.",
+    "error.http_not_authorized": "Access to this website is not authorized. It could be a bad username or password.",
+    "error.http_too_many_requests": "Miniflux generated too many requests to this website. Please, try again later or change the application configuration.",
+    "error.http_forbidden": "Access to this website is forbidden. Perhaps, this website has a bot protection mechanism?",
+    "error.http_resource_not_found": "The requested resource is not found. Please, verify the URL.",
+    "error.http_internal_server_error": "The website is not available at the moment due to a server error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_bad_gateway": "The website is not available at the moment due to a bad gateway error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_service_unavailable": "The website is not available at the moment due to an internal server error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_gateway_timeout": "The website is not available at the moment due to a gateway timeout error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_unexpected_status_code": "The website is not available at the moment due to an unexpected HTTP status code: %d. The problem is not on Miniflux side. Please, try again later.",
+    "error.database_error": "Database error: %v.",
+    "error.category_not_found": "This category does not exist or does not belong to this user.",
+    "error.duplicated_feed": "This feed already exists.",
+    "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
+    "error.feed_not_found": "This feed does not exist or does not belong to this user.",
+    "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

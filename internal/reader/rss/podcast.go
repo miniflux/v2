@@ -4,11 +4,13 @@
 package rss // import "miniflux.app/v2/internal/reader/rss"
 
 import (
-	"fmt"
+	"errors"
 	"math"
 	"strconv"
 	"strings"
 )
+
+var ErrInvalidDurationFormat = errors.New("rss: invalid duration format")
 
 // PodcastFeedElement represents iTunes and GooglePlay feed XML elements.
 // Specs:
@@ -74,21 +76,19 @@ func (e *PodcastEntryElement) PodcastDescription() string {
 	return strings.TrimSpace(description)
 }
 
-var invalidDurationFormatErr = fmt.Errorf("rss: invalid duration format")
-
 // normalizeDuration returns the duration tag value as a number of minutes
 func normalizeDuration(rawDuration string) (int, error) {
 	var sumSeconds int
 
 	durationParts := strings.Split(rawDuration, ":")
 	if len(durationParts) > 3 {
-		return 0, invalidDurationFormatErr
+		return 0, ErrInvalidDurationFormat
 	}
 
 	for i, durationPart := range durationParts {
 		durationPartValue, err := strconv.Atoi(durationPart)
 		if err != nil {
-			return 0, invalidDurationFormatErr
+			return 0, ErrInvalidDurationFormat
 		}
 
 		sumSeconds += int(math.Pow(60, float64(len(durationParts)-i-1))) * durationPartValue

@@ -29,11 +29,13 @@ const (
 	defaultBasePath                           = ""
 	defaultWorkerPoolSize                     = 5
 	defaultPollingFrequency                   = 60
+	defaultForceRefreshInterval               = 30
 	defaultBatchSize                          = 100
 	defaultPollingScheduler                   = "round_robin"
 	defaultSchedulerEntryFrequencyMinInterval = 5
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
 	defaultSchedulerEntryFrequencyFactor      = 1
+	defaultSchedulerRoundRobinMinInterval     = 60
 	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
@@ -81,6 +83,7 @@ const (
 	defaultMetricsPassword                    = ""
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
+	defaultWebAuthn                           = false
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -120,11 +123,13 @@ type Options struct {
 	cleanupArchiveBatchSize            int
 	cleanupRemoveSessionsDays          int
 	pollingFrequency                   int
+	forceRefreshInterval               int
 	batchSize                          int
 	pollingScheduler                   string
 	schedulerEntryFrequencyMinInterval int
 	schedulerEntryFrequencyMaxInterval int
 	schedulerEntryFrequencyFactor      int
+	schedulerRoundRobinMinInterval     int
 	pollingParsingErrorLimit           int
 	workerPoolSize                     int
 	createAdmin                        bool
@@ -161,6 +166,7 @@ type Options struct {
 	watchdog                           bool
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
+	webAuthn                           bool
 }
 
 // NewOptions returns Options with default values.
@@ -196,11 +202,13 @@ func NewOptions() *Options {
 		cleanupArchiveBatchSize:            defaultCleanupArchiveBatchSize,
 		cleanupRemoveSessionsDays:          defaultCleanupRemoveSessionsDays,
 		pollingFrequency:                   defaultPollingFrequency,
+		forceRefreshInterval:               defaultForceRefreshInterval,
 		batchSize:                          defaultBatchSize,
 		pollingScheduler:                   defaultPollingScheduler,
 		schedulerEntryFrequencyMinInterval: defaultSchedulerEntryFrequencyMinInterval,
 		schedulerEntryFrequencyMaxInterval: defaultSchedulerEntryFrequencyMaxInterval,
 		schedulerEntryFrequencyFactor:      defaultSchedulerEntryFrequencyFactor,
+		schedulerRoundRobinMinInterval:     defaultSchedulerRoundRobinMinInterval,
 		pollingParsingErrorLimit:           defaultPollingParsingErrorLimit,
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
@@ -235,6 +243,7 @@ func NewOptions() *Options {
 		watchdog:                           defaultWatchdog,
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    randomKey,
+		webAuthn:                           defaultWebAuthn,
 	}
 }
 
@@ -372,6 +381,11 @@ func (o *Options) PollingFrequency() int {
 	return o.pollingFrequency
 }
 
+// ForceRefreshInterval returns the force refresh interval
+func (o *Options) ForceRefreshInterval() int {
+	return o.forceRefreshInterval
+}
+
 // BatchSize returns the number of feeds to send for background processing.
 func (o *Options) BatchSize() int {
 	return o.batchSize
@@ -395,6 +409,10 @@ func (o *Options) SchedulerEntryFrequencyMinInterval() int {
 // SchedulerEntryFrequencyFactor returns the factor for the entry frequency scheduler.
 func (o *Options) SchedulerEntryFrequencyFactor() int {
 	return o.schedulerEntryFrequencyFactor
+}
+
+func (o *Options) SchedulerRoundRobinMinInterval() int {
+	return o.schedulerRoundRobinMinInterval
 }
 
 // PollingParsingErrorLimit returns the limit of errors when to stop polling.
@@ -592,6 +610,11 @@ func (o *Options) ProxyPrivateKey() []byte {
 	return o.proxyPrivateKey
 }
 
+// WebAuthn returns true if WebAuthn logins are supported
+func (o *Options) WebAuthn() bool {
+	return o.webAuthn
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	var keyValues = map[string]interface{}{
@@ -648,6 +671,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
 		"POCKET_CONSUMER_KEY":                    redactSecretValue(o.pocketConsumerKey, redactSecret),
 		"POLLING_FREQUENCY":                      o.pollingFrequency,
+		"FORCE_REFRESH_INTERVAL":                 o.forceRefreshInterval,
 		"POLLING_PARSING_ERROR_LIMIT":            o.pollingParsingErrorLimit,
 		"POLLING_SCHEDULER":                      o.pollingScheduler,
 		"PROXY_HTTP_CLIENT_TIMEOUT":              o.proxyHTTPClientTimeout,
@@ -660,11 +684,13 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL": o.schedulerEntryFrequencyMaxInterval,
 		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": o.schedulerEntryFrequencyMinInterval,
 		"SCHEDULER_ENTRY_FREQUENCY_FACTOR":       o.schedulerEntryFrequencyFactor,
+		"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":     o.schedulerRoundRobinMinInterval,
 		"SCHEDULER_SERVICE":                      o.schedulerService,
 		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WATCHDOG":                               o.watchdog,
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
 		"YOUTUBE_EMBED_URL_OVERRIDE":             o.youTubeEmbedUrlOverride,
+		"WEBAUTHN":                               o.webAuthn,
 	}
 
 	keys := make([]string, 0, len(keyValues))

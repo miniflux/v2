@@ -142,6 +142,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.workerPoolSize = parseInt(value, defaultWorkerPoolSize)
 		case "POLLING_FREQUENCY":
 			p.opts.pollingFrequency = parseInt(value, defaultPollingFrequency)
+		case "FORCE_REFRESH_INTERVAL":
+			p.opts.forceRefreshInterval = parseInt(value, defaultForceRefreshInterval)
 		case "BATCH_SIZE":
 			p.opts.batchSize = parseInt(value, defaultBatchSize)
 		case "POLLING_SCHEDULER":
@@ -152,6 +154,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.schedulerEntryFrequencyMinInterval = parseInt(value, defaultSchedulerEntryFrequencyMinInterval)
 		case "SCHEDULER_ENTRY_FREQUENCY_FACTOR":
 			p.opts.schedulerEntryFrequencyFactor = parseInt(value, defaultSchedulerEntryFrequencyFactor)
+		case "SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":
+			p.opts.schedulerRoundRobinMinInterval = parseInt(value, defaultSchedulerRoundRobinMinInterval)
 		case "POLLING_PARSING_ERROR_LIMIT":
 			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		// kept for compatibility purpose
@@ -244,6 +248,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			randomKey := make([]byte, 16)
 			rand.Read(randomKey)
 			p.opts.proxyPrivateKey = parseBytes(value, randomKey)
+		case "WEBAUTHN":
+			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
 		}
 	}
 

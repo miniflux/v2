@@ -48,6 +48,12 @@ type Integration struct {
 	TelegramBotDisableWebPagePreview bool
 	TelegramBotDisableNotification   bool
 	TelegramBotDisableButtons        bool
+	LinkAceEnabled                   bool
+	LinkAceURL                       string
+	LinkAceAPIKey                    string
+	LinkAceTags                      string
+	LinkAcePrivate                   bool
+	LinkAceCheckDisabled             bool
 	LinkdingEnabled                  bool
 	LinkdingURL                      string
 	LinkdingAPIKey                   string
@@ -71,4 +77,9 @@ type Integration struct {
 	WebhookEnabled                   bool
 	WebhookURL                       string
 	WebhookSecret                    string
+	RSSBridgeEnabled                 bool
+	RSSBridgeURL                     string
+	OmnivoreEnabled                  bool
+	OmnivoreAPIKey                   string
+	OmnivoreURL                      string
 }

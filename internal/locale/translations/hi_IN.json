@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "मंजूर है?",
     "confirm.question.refresh": "क्या आप बल द्वारा ताज़ा करना चाहते हैं?",
     "confirm.yes": "हाँ",
@@ -18,6 +19,8 @@
     "action.home_screen": "होम स्क्रीन में शामिल करें",
     "tooltip.keyboard_shortcuts": "कुंजीपटल संक्षिप्त रीति: %s",
     "tooltip.logged_user": "%s के रूप में लॉग इन किया",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "अपठित",
     "menu.starred": "तारांकित",
     "menu.history": "इतिहास",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "साझा प्रविष्टियां",
     "search.label": "खोजे",
     "search.placeholder": "खोजे...",
+    "search.submit": "Search",
     "pagination.next": "अगला",
     "pagination.previous": "पिछला",
     "entry.status.unread": "अपठित",
@@ -81,11 +85,27 @@
     "entry.estimated_reading_time": [
         "पढ़ने मे %d मिनट मागेगा",
         "पढ़ने मे %d मिनट मागेगा"
-    ],    
+    ],
     "entry.tags.label": "टैग:",
     "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "अपठित",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "तारांकित",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "श्रेणियाँ",
     "page.categories.no_feed": "कोई फ़ीड नहीं है।",
     "page.categories.entries": "विषयवस्तुया",
@@ -95,20 +115,28 @@
         "%d फ़ीड बाकी है।"
     ],
     "page.categories.unread_counter": "अपठित प्रविष्टिया",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "नया श्रेणी",
     "page.new_user.title": "नया उपभोक्ता",
     "page.edit_category.title": "%s श्रेणी संपाद करे",
     "page.edit_user.title": "%s उपभोक्ता संपाद करे",
     "page.feeds.title": "फ़ीड",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "आखरी जाँच",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "अपठित विषयवस्तुया",
     "page.feeds.read_counter": "पड़े हुए विषयवस्तुया",
     "page.feeds.error_count": [
         "%d समस्या",
         "%d समस्याए"
     ],
     "page.history.title": "इतिहास",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "आयात",
     "page.search.title": "खोज का परिणाम",
     "page.about.title": "पृष्ठ के बारे में",
@@ -180,9 +208,22 @@
     "page.settings.unlink_google_account": "मेरा गूगल खाता हटाय",
     "page.settings.link_oidc_account": "मेरा ओपन-ईद खाता जोरीय",
     "page.settings.unlink_oidc_account": "मेरा ओपन-ईद खाता हटाय",
+    "page.settings.webauthn.passkeys": "Passkeys",
+    "page.settings.webauthn.actions": "Actions",
+    "page.settings.webauthn.passkey_name": "Passkey Name",
+    "page.settings.webauthn.added_on": "Added On",
+    "page.settings.webauthn.last_seen_on": "Last Used",
+    "page.settings.webauthn.register": "रजिस्टर पासकी",
+    "page.settings.webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
+    "page.settings.webauthn.delete": [
+        "%d पासकुंजी निकालें",
+        "%d पासकी हटाएं"
+    ],
     "page.login.title": "साइन इन करें",
     "page.login.google_signin": "गूगल के साथ साइन इन करें",
     "page.login.oidc_signin": "ओपन-ईद के साथ साइन इन करें",
+    "page.login.webauthn_login": "पासकी से लॉगिन करें",
+    "page.login.webauthn_login.error": "पासकी से लॉगिन करने में असमर्थ",
     "page.integrations.title": "एकीकरण",
     "page.integration.miniflux_api": "मिनिफलक्ष एपीआई",
     "page.integration.miniflux_api_endpoint": "एपीआई समापन बिंदु",
@@ -210,6 +251,7 @@
     "page.offline.title": "ऑफ़लाइन मोड",
     "page.offline.message": "आप संपर्क में नहीं हैं",
     "page.offline.refresh_page": "पृष्ठ को ताज़ा करने का प्रयास करें",
+    "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "कोई साझा प्रविष्टि नहीं है",
     "alert.no_bookmark": "इस समय कोई बुकमार्क नहीं है",
     "alert.no_category": "कोई श्रेणी नहीं है।",
@@ -349,7 +391,7 @@
     "form.integration.pinboard_bookmark": "बुकमार्क को अपठित के रूप में चिह्नित करें",
     "form.integration.instapaper_activate": "विषय-वस्तु को इंस्टापेपर में सहेजें",
     "form.integration.instapaper_username": "इंस्टापेपर यूजरनेम",
-    "form.integration.instapaper_password": "इंस्टापेपर पासवर्ड", 
+    "form.integration.instapaper_password": "इंस्टापेपर पासवर्ड",
     "form.integration.pocket_activate": "विषय-कविता को पॉकेट में सहेजें",
     "form.integration.pocket_consumer_key": "पॉकेट उपभोक्ता कुंजी",
     "form.integration.pocket_access_token": "पॉकेट एक्सेस टोकन",
@@ -370,6 +412,9 @@
     "form.integration.nunux_keeper_activate": "विषय-वस्तु को ननक्स कीपर में सहेजें",
     "form.integration.nunux_keeper_endpoint": "ननक्स कीपर एपीआई समापन बिंदु",
     "form.integration.nunux_keeper_api_key": "ननक्स कीपर एपीआई कुंजी",
+    "form.integration.omnivore_activate": "Save entries to Omnivore",
+    "form.integration.omnivore_api_key": "Omnivore API key",
+    "form.integration.omnivore_url": "Omnivore API Endpoint",
     "form.integration.espial_activate": "विषय-वस्तु को जासूसी में सहेजें",
     "form.integration.espial_endpoint": "जासूसी एपीआई समापन बिंदु",
     "form.integration.espial_api_key": "जासूसी एपीआई कुंजी",
@@ -384,6 +429,12 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "लिंक्डिन में विषयवस्तु सहेजें",
     "form.integration.linkding_endpoint": "लिंकिंग एपीआई समापन बिंदु",
     "form.integration.linkding_api_key": "लिंकिंग एपीआई कुंजी",
@@ -404,6 +455,8 @@
     "form.integration.webhook_activate": "Enable Webhook",
     "form.integration.webhook_url": "Webhook URL",
     "form.integration.webhook_secret": "Webhook Secret",
+    "form.integration.rssbridge_activate": "Check RSS-Bridge when adding subscriptions",
+    "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.api_key.label.description": "एपीआई कुंजी लेबल",
     "form.submit.loading": "लोड हो रहा है...",
     "form.submit.saving": "सहेजा जा रहा है...",
@@ -433,5 +486,34 @@
     "time_elapsed.years": [
         "%d साल पहले",
         "%d वर्षों पहले"
-    ]
+    ],
+    "alert.too_many_feeds_refresh": [
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+    ],
+    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
+    "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",
+    "error.http_body_read": "Unable to read the HTTP body: %v.",
+    "error.http_empty_response_body": "The HTTP response body is empty.",
+    "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
+    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
+    "error.network_timeout": "This website is too slow and the request timed out: %v",
+    "error.http_client_error": "HTTP client error: %v.",
+    "error.http_not_authorized": "Access to this website is not authorized. It could be a bad username or password.",
+    "error.http_too_many_requests": "Miniflux generated too many requests to this website. Please, try again later or change the application configuration.",
+    "error.http_forbidden": "Access to this website is forbidden. Perhaps, this website has a bot protection mechanism?",
+    "error.http_resource_not_found": "The requested resource is not found. Please, verify the URL.",
+    "error.http_internal_server_error": "The website is not available at the moment due to a server error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_bad_gateway": "The website is not available at the moment due to a bad gateway error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_service_unavailable": "The website is not available at the moment due to an internal server error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_gateway_timeout": "The website is not available at the moment due to a gateway timeout error. The problem is not on Miniflux side. Please, try again later.",
+    "error.http_unexpected_status_code": "The website is not available at the moment due to an unexpected HTTP status code: %d. The problem is not on Miniflux side. Please, try again later.",
+    "error.database_error": "Database error: %v.",
+    "error.category_not_found": "This category does not exist or does not belong to this user.",
+    "error.duplicated_feed": "This feed already exists.",
+    "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
+    "error.feed_not_found": "This feed does not exist or does not belong to this user.",
+    "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
+    "error.feed_format_not_detected": "Unable to detect feed format: %v."
 }

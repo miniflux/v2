@@ -54,6 +54,12 @@ type IntegrationForm struct {
 	TelegramBotDisableWebPagePreview bool
 	TelegramBotDisableNotification   bool
 	TelegramBotDisableButtons        bool
+	LinkAceEnabled                   bool
+	LinkAceURL                       string
+	LinkAceAPIKey                    string
+	LinkAceTags                      string
+	LinkAcePrivate                   bool
+	LinkAceCheckDisabled             bool
 	LinkdingEnabled                  bool
 	LinkdingURL                      string
 	LinkdingAPIKey                   string
@@ -77,6 +83,11 @@ type IntegrationForm struct {
 	WebhookEnabled                   bool
 	WebhookURL                       string
 	WebhookSecret                    string
+	RSSBridgeEnabled                 bool
+	RSSBridgeURL                     string
+	OmnivoreEnabled                  bool
+	OmnivoreAPIKey                   string
+	OmnivoreURL                      string
 }
 
 // Merge copy form values to the model.
@@ -121,6 +132,12 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.TelegramBotDisableWebPagePreview = i.TelegramBotDisableWebPagePreview
 	integration.TelegramBotDisableNotification = i.TelegramBotDisableNotification
 	integration.TelegramBotDisableButtons = i.TelegramBotDisableButtons
+	integration.LinkAceEnabled = i.LinkAceEnabled
+	integration.LinkAceURL = i.LinkAceURL
+	integration.LinkAceAPIKey = i.LinkAceAPIKey
+	integration.LinkAceTags = i.LinkAceTags
+	integration.LinkAcePrivate = i.LinkAcePrivate
+	integration.LinkAceCheckDisabled = i.LinkAceCheckDisabled
 	integration.LinkdingEnabled = i.LinkdingEnabled
 	integration.LinkdingURL = i.LinkdingURL
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
@@ -143,6 +160,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.ShaarliAPISecret = i.ShaarliAPISecret
 	integration.WebhookEnabled = i.WebhookEnabled
 	integration.WebhookURL = i.WebhookURL
+	integration.RSSBridgeEnabled = i.RSSBridgeEnabled
+	integration.RSSBridgeURL = i.RSSBridgeURL
+	integration.OmnivoreEnabled = i.OmnivoreEnabled
+	integration.OmnivoreAPIKey = i.OmnivoreAPIKey
+	integration.OmnivoreURL = i.OmnivoreURL
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -190,6 +212,12 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		TelegramBotDisableWebPagePreview: r.FormValue("telegram_bot_disable_web_page_preview") == "1",
 		TelegramBotDisableNotification:   r.FormValue("telegram_bot_disable_notification") == "1",
 		TelegramBotDisableButtons:        r.FormValue("telegram_bot_disable_buttons") == "1",
+		LinkAceEnabled:                   r.FormValue("linkace_enabled") == "1",
+		LinkAceURL:                       r.FormValue("linkace_url"),
+		LinkAceAPIKey:                    r.FormValue("linkace_api_key"),
+		LinkAceTags:                      r.FormValue("linkace_tags"),
+		LinkAcePrivate:                   r.FormValue("linkace_is_private") == "1",
+		LinkAceCheckDisabled:             r.FormValue("linkace_check_disabled") == "1",
 		LinkdingEnabled:                  r.FormValue("linkding_enabled") == "1",
 		LinkdingURL:                      r.FormValue("linkding_url"),
 		LinkdingAPIKey:                   r.FormValue("linkding_api_key"),
@@ -212,6 +240,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		ShaarliAPISecret:                 r.FormValue("shaarli_api_secret"),
 		WebhookEnabled:                   r.FormValue("webhook_enabled") == "1",
 		WebhookURL:                       r.FormValue("webhook_url"),
+		RSSBridgeEnabled:                 r.FormValue("rssbridge_enabled") == "1",
+		RSSBridgeURL:                     r.FormValue("rssbridge_url"),
+		OmnivoreEnabled:                  r.FormValue("omnivore_enabled") == "1",
+		OmnivoreAPIKey:                   r.FormValue("omnivore_api_key"),
+		OmnivoreURL:                      r.FormValue("omnivore_url"),
 	}
 }
 

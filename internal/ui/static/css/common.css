@@ -50,13 +50,74 @@ a:hover {
     text-decoration: none;
 }
 
+.sr-only {
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
+}
+
+.skip-to-content-link {
+  --padding-size: 8px;
+  --border-size: 1px;
+
+  background-color: var(--category-background-color);
+  color: var(--category-color);
+  border: var(--border-size) solid var(--category-border-color);
+  border-radius: 5px;
+  inset-inline-start: 50%;
+  padding: var(--padding-size);
+  position: absolute;
+  transition: translate 0.3s;
+  translate: -50% calc(-100% - calc(var(--padding-size) * 2) - calc(var(--border-size) * 2));
+}
+
+.skip-to-content-link:focus {
+  translate: -50% 0;
+}
+
 /* Header and main menu */
 .header {
     margin-top: 10px;
     margin-bottom: 20px;
 }
 
-.header nav ul {
+.header nav {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.header nav button[aria-controls="header-menu"] {
+   border: none;
+   background-color: transparent;
+   display: inline-block;
+   cursor: pointer;
+}
+
+.header nav button[aria-controls="header-menu"] svg {
+    padding: 5px;
+    inline-size: 24px;
+    block-size: 24px;
+    translate: 0 2px;
+}
+
+.header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
+    rotate: 180deg;
+}
+
+.header ul.js-menu-show {
+    display: initial;
+}
+
+.header ul:not(.js-menu-show) {
     display: none;
 }
 
@@ -72,7 +133,7 @@ a:hover {
     color: #888;
 }
 
-.header a {
+.header :is(a, summary) {
     font-size: 0.9em;
     color: var(--header-link-color);
     text-decoration: none;
@@ -86,16 +147,13 @@ a:hover {
     font-weight: 600;
 }
 
-.header a:hover {
-    color: var(--header-link-hover-color);
-}
-
 .header a:focus {
     color: var(--header-link-focus-color);
 }
 
 /* Page header and footer*/
 .page-header {
+    padding-inline: 5px;
     margin-bottom: 25px;
 }
 
@@ -106,6 +164,7 @@ a:hover {
 .page-header h1 {
     font-weight: 500;
     border-bottom: 1px dotted var(--page-header-title-border-color);
+    font-size: 1.5rem;
 }
 
 .page-header h1 a {
@@ -131,13 +190,16 @@ a:hover {
 
 /* Logo */
 .logo {
-    cursor: pointer;
     text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .logo a {
     color: var(--logo-color);
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .logo a:hover {
@@ -155,8 +217,34 @@ a:hover {
 /* Search form */
 .search {
     text-align: center;
-    display: none;
+    margin-top: 10px;
+    margin-right: 5px;
 }
+
+.search details svg {
+   padding: 5px;
+   inline-size: 24px;
+   block-size: 24px;
+   translate: 0 -3px;
+}
+
+.search details[open] svg {
+   rotate: 180deg;
+}
+
+.search details > summary {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  inline-size: fit-content;
+  margin-inline: auto;
+}
+
+.search details > summary::marker, /* Latest Chrome, Edge, Firefox */
+.search details > summary::-webkit-details-marker /* Safari */ {
+  display: none;
+}
+
 
 .search-toggle-switch {
     display: none;
@@ -233,10 +321,6 @@ a:hover {
         margin-left: 5px;
     }
 
-    .header nav ul {
-        display: block;
-    }
-
     .header li {
         display: inline;
         padding: 0;
@@ -244,6 +328,31 @@ a:hover {
         line-height: normal;
         border: none;
         font-size: 1.0em;
+    }
+
+    .header nav {
+        align-items: end;
+        flex-direction: row;
+    }
+
+    .header nav button[aria-controls="header-menu"] {
+        display: none;
+    }
+
+    .header nav button[aria-controls="header-menu"] svg {
+        rotate: -90deg;
+    }
+
+    .header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
+        rotate: 90deg;
+    }
+
+    .header ul:not(.js-menu-show), .header ul.js-menu-show {
+        display: revert;
+    }
+
+    .header :is(a, summary):hover {
+        color: var(--header-link-hover-color);
     }
 
     .page-header li,
@@ -256,8 +365,10 @@ a:hover {
     .search {
         text-align: right;
         display: block;
-        margin-top: 10px;
-        margin-right: 5px;
+    }
+
+    .search details > summary {
+      margin-inline: auto 0;
     }
 
     .search-toggle-switch {
@@ -363,7 +474,7 @@ input[type="number"] {
     font-size: 99%;
     margin-bottom: 10px;
     margin-top: 5px;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type="search"]:focus,
@@ -393,7 +504,7 @@ textarea {
     padding: 3px;
     margin-bottom: 10px;
     margin-top: 5px;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 textarea:focus {
@@ -440,8 +551,7 @@ a.button {
 
 .button {
     display: inline-block;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     font-size: 1.1em;
     cursor: pointer;
     padding: 3px 10px;
@@ -607,7 +717,7 @@ template {
 /* Login form */
 .login-form {
     margin: 50px auto 0;
-    max-width: 280px;
+    max-width: 300px;
 }
 
 /* Counters */
@@ -638,6 +748,11 @@ template {
 .category a:hover,
 .category a:focus {
     color: var(--category-link-hover-color);
+}
+
+
+.category-item-total {
+    color: var(--body-color);
 }
 
 /* Pagination */
@@ -705,9 +820,32 @@ template {
     box-shadow: var(--current-item-box-shadow);
 }
 
+
+.item-header {
+    font-size: 1rem;
+}
+
+.item-header span {
+    font-weight: normal;
+    display: inline-block;
+}
+
+.item-title {
+    font-size: 1rem;
+    margin: 0;
+    display: inline;
+}
+
 .item-title a {
     text-decoration: none;
     font-weight: var(--item-title-link-font-weight);
+    font-size: inherit;
+}
+
+.feed-entries-counter {
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
 }
 
 .item-status-read .item-title a {
@@ -816,6 +954,7 @@ article.category-has-unread {
 /* Entry view */
 .entry header {
     padding-bottom: 5px;
+    padding-inline: 5px;
     border-bottom: 1px dotted var(--entry-header-border-color);
 }
 
@@ -1112,4 +1251,8 @@ audio, video {
 
 .integration-form details .form-section {
     margin-top: 15px;
+}
+
+.hidden {
+    display: none;
 }

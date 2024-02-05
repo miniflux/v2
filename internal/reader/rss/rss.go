@@ -33,8 +33,26 @@ type rssFeed struct {
 	PubDate        string    `xml:"channel>pubDate"`
 	ManagingEditor string    `xml:"channel>managingEditor"`
 	Webmaster      string    `xml:"channel>webMaster"`
+	TimeToLive     rssTTL    `xml:"channel>ttl"`
 	Items          []rssItem `xml:"channel>item"`
 	PodcastFeedElement
+}
+
+type rssTTL struct {
+	Data string `xml:",chardata"`
+}
+
+func (r *rssTTL) Value() int {
+	if r.Data == "" {
+		return 0
+	}
+
+	value, err := strconv.Atoi(r.Data)
+	if err != nil {
+		return 0
+	}
+
+	return value
 }
 
 func (r *rssFeed) Transform(baseURL string) *model.Feed {
@@ -60,6 +78,7 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 	}
 
 	feed.IconURL = strings.TrimSpace(r.ImageURL)
+	feed.TTL = r.TimeToLive.Value()
 
 	for _, item := range r.Items {
 		entry := item.Transform()
@@ -216,7 +235,7 @@ func (r *rssItem) entryDate() time.Time {
 	if value != "" {
 		result, err := date.Parse(value)
 		if err != nil {
-			slog.Warn("Unable to parse date from RSS feed",
+			slog.Debug("Unable to parse date from RSS feed",
 				slog.String("date", value),
 				slog.String("guid", r.GUID.Data),
 				slog.Any("error", err),

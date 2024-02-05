@@ -1,16 +1,18 @@
 {{ define "title"}}{{ t "page.settings.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.settings.title" }}</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.settings.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
 </section>
+{{ end }}
 
+{{ define "content"}}
 <form method="post" autocomplete="off" action="{{ route "updateSettings" }}">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
-        <div class="alert alert-error">{{ t .errorMessage }}</div>
+        <div class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
     <fieldset>
@@ -18,10 +20,10 @@
 
         <label for="form-username">{{ t "form.user.label.username" }}</label>
         <input type="text" name="username" id="form-username" value="{{ .form.Username }}" autocomplete="username" required>
-    
+
         <label for="form-password">{{ t "form.user.label.password" }}</label>
         <input type="password" name="password" id="form-password" value="{{ .form.Password }}" autocomplete="new-password">
-    
+
         <label for="form-confirmation">{{ t "form.user.label.confirmation" }}</label>
         <input type="password" name="confirmation" id="form-confirmation" value="{{ .form.Confirmation }}" autocomplete="new-password">
 
@@ -48,6 +50,55 @@
         </div>
     </fieldset>
 
+    {{ if .webAuthnEnabled }}
+    <fieldset>
+        <legend>{{ t "page.settings.webauthn.passkeys" }}</legend>
+
+        <div class="alert alert-error hidden" id="webauthn-error">
+            {{ t "page.settings.webauthn.register.error" }}
+        </div>
+
+        {{ if .webAuthnCerts}}
+        <table>
+            <tr>
+                <th>{{ t "page.settings.webauthn.passkey_name" }}</th>
+                <th>{{ t "page.settings.webauthn.added_on" }}</th>
+                <th>{{ t "page.settings.webauthn.last_seen_on" }}</th>
+                <th>{{ t "page.settings.webauthn.actions" }}</th>
+            </tr>
+            {{ range .webAuthnCerts }}
+            <tr>
+                <td>{{ .Name }}</td>
+                <td>{{ elapsed $.user.Timezone .AddedOn }}</td>
+                <td>{{ elapsed $.user.Timezone .LastSeenOn }}</td>
+                <td>
+                    <a href="#"
+                        data-confirm="true"
+                        data-label-question="{{ t "confirm.question" }}"
+                        data-label-yes="{{ t "confirm.yes" }}"
+                        data-label-no="{{ t "confirm.no" }}"
+                        data-label-loading="{{ t "confirm.loading" }}"
+                        data-url="{{ route "webauthnDelete" "credentialHandle" .HandleEncoded }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
+                    <a href="{{ route "webauthnRename" "credentialHandle" .HandleEncoded }}">{{ icon "edit" }} {{ t "action.edit" }}</a>
+                </td>
+            </tr>
+            {{ end }}
+        </table>
+        {{ end }}
+
+        <div class="buttons">
+            <button class="button button-primary" id="webauthn-register" disabled>
+                {{ t "page.settings.webauthn.register" }}
+            </button>
+            {{ if gt .countWebAuthnCerts 0}}
+            <button class="button button-danger" id="webauthn-delete">
+                {{ plural "page.settings.webauthn.delete" .countWebAuthnCerts .countWebAuthnCerts }}
+            </button>
+            {{ end }}
+        </div>
+    </fieldset>
+    {{ end }}
+
     <fieldset>
         <legend>{{ t "form.prefs.fieldset.reader_settings" }}</legend>
 
@@ -56,10 +107,10 @@
 
         <label for="form-default-reading-speed">{{ t "form.prefs.label.default_reading_speed" }}</label>
         <input type="number" name="default_reading_speed" id="form-default-reading-speed" value="{{ .form.DefaultReadingSpeed }}" min="1">
-    
+
         <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
-        <label><input type="checkbox" name="mark_read_on_view" value="1" {{ if .form.MarkReadOnView }}checked{{ end }}> {{ t "form.prefs.label.mark_read_on_view" }}</label>    
+        <label><input type="checkbox" name="mark_read_on_view" value="1" {{ if .form.MarkReadOnView }}checked{{ end }}> {{ t "form.prefs.label.mark_read_on_view" }}</label>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
@@ -116,13 +167,13 @@
             <option value="asc" {{ if eq "asc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.older_first" }}</option>
             <option value="desc" {{ if eq "desc" $.form.EntryDirection }}selected="selected"{{ end }}>{{ t "form.prefs.select.recent_first" }}</option>
         </select>
-    
+
         <label for="form-entry-order">{{ t "form.prefs.label.entry_order" }}</label>
         <select id="form-entry-order" name="entry_order">
             <option value="published_at" {{ if eq "published_at" $.form.EntryOrder }}selected="selected"{{ end }}>{{ t "form.prefs.select.publish_time" }}</option>
             <option value="created_at" {{ if eq "created_at" $.form.EntryOrder }}selected="selected"{{ end }}>{{ t "form.prefs.select.created_time" }}</option>
         </select>
-    
+
         <label for="form-categories-sorting-order">{{ t "form.prefs.label.categories_sorting_order" }}</label>
         <select id="form-categories-sorting-order" name="categories_sorting_order">
         {{ range $key, $value := .categories_sorting_options }}
@@ -139,12 +190,13 @@
 
         <label for="form-entries-per-page">{{ t "form.prefs.label.entries_per_page" }}</label>
         <input type="number" name="entries_per_page" id="form-entries-per-page" value="{{ .form.EntriesPerPage }}" min="1">
-    
+
         <label><input type="checkbox" name="keyboard_shortcuts" value="1" {{ if .form.KeyboardShortcuts }}checked{{ end }}> {{ t "form.prefs.label.keyboard_shortcuts" }}</label>
-    
+
         <label><input type="checkbox" name="entry_swipe" value="1" {{ if .form.EntrySwipe }}checked{{ end }}> {{ t "form.prefs.label.entry_swipe" }}</label>
 
-        <label>{{t "form.prefs.label.custom_css" }}</label><textarea name="custom_css" cols="40" rows="8" spellcheck="false">{{ .form.CustomCSS }}</textarea>
+        <label for="form-custom-css">{{t "form.prefs.label.custom_css" }}</label>
+        <textarea id="form-custom-css" name="custom_css" cols="40" rows="10" spellcheck="false">{{ .form.CustomCSS }}</textarea>
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>

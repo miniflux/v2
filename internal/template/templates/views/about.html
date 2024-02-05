@@ -1,16 +1,18 @@
 {{ define "title"}}{{ t "page.about.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.about.title" }}</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.about.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
 </section>
+{{ end }}
 
+{{ define "content"}}
 <div class="panel">
     <h3>Miniflux</h3>
     <ul>
-        <li><strong>{{ t "page.about.version" }}</strong> {{ .version }}</li>
-        <li><strong>Git Commit</strong> {{ .commit }}</li>
+        <li><strong>{{ t "page.about.version" }}</strong> <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a></li>
+        <li><strong>Git Commit</strong> <a href="https://github.com/miniflux/v2/commit/{{ .commit }}">{{ .commit }}</a></li>
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
         {{ if .user.IsAdmin }}<li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>{{ end }}
 	<li><strong>{{t "page.about.go_version" }}</strong> {{ .go_version }}</li>

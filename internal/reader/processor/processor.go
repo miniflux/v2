@@ -12,10 +12,9 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	"miniflux.app/v2/internal/http/client"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/reader/browser"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/reader/rewrite"
 	"miniflux.app/v2/internal/reader/sanitizer"
@@ -52,7 +51,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			continue
 		}
 
-		url := getUrlFromEntry(feed, entry)
+		websiteURL := getUrlFromEntry(feed, entry)
 		entryIsNew := !store.EntryURLExists(feed.ID, entry.URL)
 		if feed.Crawler && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
@@ -64,13 +63,19 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			)
 
 			startTime := time.Now()
-			content, scraperErr := scraper.Fetch(
-				url,
+
+			requestBuilder := fetcher.NewRequestBuilder()
+			requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
+			requestBuilder.WithCookie(feed.Cookie)
+			requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+			requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+			requestBuilder.UseProxy(feed.FetchViaProxy)
+			requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
+
+			content, scraperErr := scraper.ScrapeWebsite(
+				requestBuilder,
+				websiteURL,
 				feed.ScraperRules,
-				feed.UserAgent,
-				feed.Cookie,
-				feed.AllowSelfSignedCertificates,
-				feed.FetchViaProxy,
 			)
 
 			if config.Opts.HasMetricsCollector() {
@@ -96,10 +101,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			}
 		}
 
-		rewrite.Rewriter(url, entry, feed.RewriteRules)
+		rewrite.Rewriter(websiteURL, entry, feed.RewriteRules)
 
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
-		entry.Content = sanitizer.Sanitize(url, entry.Content)
+		entry.Content = sanitizer.Sanitize(websiteURL, entry.Content)
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 		filteredEntries = append(filteredEntries, entry)
@@ -110,8 +115,15 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		match, _ := regexp.MatchString(feed.BlocklistRules, entry.Title)
-		if match {
+		var containsBlockedTag bool = false
+		for _, tag := range entry.Tags {
+			if matchField(feed.BlocklistRules, tag) {
+				containsBlockedTag = true
+				break
+			}
+		}
+
+		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || matchField(feed.BlocklistRules, entry.Author) || containsBlockedTag {
 			slog.Debug("Blocking entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
@@ -122,13 +134,21 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
-		match, _ := regexp.MatchString(feed.KeeplistRules, entry.Title)
-		if match {
+		var containsAllowedTag bool = false
+		for _, tag := range entry.Tags {
+			if matchField(feed.KeeplistRules, tag) {
+				containsAllowedTag = true
+				break
+			}
+		}
+
+		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || matchField(feed.KeeplistRules, entry.Author) || containsAllowedTag {
 			slog.Debug("Allow entry based on rule",
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
@@ -143,18 +163,36 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	return true
 }
 
+func matchField(pattern, value string) bool {
+	match, err := regexp.MatchString(pattern, value)
+	if err != nil {
+		slog.Debug("Failed on regexp match",
+			slog.String("pattern", pattern),
+			slog.String("value", value),
+			slog.Bool("match", match),
+			slog.Any("error", err),
+		)
+	}
+	return match
+}
+
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
 func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User) error {
 	startTime := time.Now()
-	url := getUrlFromEntry(feed, entry)
+	websiteURL := getUrlFromEntry(feed, entry)
 
-	content, scraperErr := scraper.Fetch(
-		url,
-		entry.Feed.ScraperRules,
-		entry.Feed.UserAgent,
-		entry.Feed.Cookie,
-		feed.AllowSelfSignedCertificates,
-		feed.FetchViaProxy,
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
+	requestBuilder.WithCookie(feed.Cookie)
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.UseProxy(feed.FetchViaProxy)
+	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
+
+	content, scraperErr := scraper.ScrapeWebsite(
+		requestBuilder,
+		websiteURL,
+		feed.ScraperRules,
 	)
 
 	if config.Opts.HasMetricsCollector() {
@@ -174,8 +212,8 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 	}
 
-	rewrite.Rewriter(url, entry, entry.Feed.RewriteRules)
-	entry.Content = sanitizer.Sanitize(url, entry.Content)
+	rewrite.Rewriter(websiteURL, entry, entry.Feed.RewriteRules)
+	entry.Content = sanitizer.Sanitize(websiteURL, entry.Content)
 
 	return nil
 }
@@ -270,14 +308,20 @@ func shouldFetchOdyseeWatchTime(entry *model.Entry) bool {
 	return matches != nil
 }
 
-func fetchYouTubeWatchTime(url string) (int, error) {
-	clt := client.NewClientWithConfig(url, config.Opts)
-	response, browserErr := browser.Exec(clt)
-	if browserErr != nil {
-		return 0, browserErr
+func fetchYouTubeWatchTime(websiteURL string) (int, error) {
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to fetch YouTube page", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return 0, localizedError.Error()
 	}
 
-	doc, docErr := goquery.NewDocumentFromReader(response.Body)
+	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
 	if docErr != nil {
 		return 0, docErr
 	}
@@ -295,14 +339,20 @@ func fetchYouTubeWatchTime(url string) (int, error) {
 	return int(dur.Minutes()), nil
 }
 
-func fetchOdyseeWatchTime(url string) (int, error) {
-	clt := client.NewClientWithConfig(url, config.Opts)
-	response, browserErr := browser.Exec(clt)
-	if browserErr != nil {
-		return 0, browserErr
+func fetchOdyseeWatchTime(websiteURL string) (int, error) {
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to fetch Odysee watch time", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return 0, localizedError.Error()
 	}
 
-	doc, docErr := goquery.NewDocumentFromReader(response.Body)
+	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
 	if docErr != nil {
 		return 0, docErr
 	}

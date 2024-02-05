@@ -174,7 +174,7 @@ func getExtraAttributes(tagName string) ([]string, []string) {
 	case "video", "audio":
 		return []string{"controls"}, []string{"controls"}
 	case "iframe":
-		return []string{"sandbox", "loading"}, []string{`sandbox="allow-scripts allow-same-origin allow-popups"`, `loading="lazy"`}
+		return []string{"sandbox", "loading"}, []string{`sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"`, `loading="lazy"`}
 	case "img":
 		return []string{"loading"}, []string{`loading="lazy"`}
 	default:
@@ -351,6 +351,7 @@ func isValidIframeSource(baseURL, src string) bool {
 		"https://bandcamp.com",
 		"https://cdn.embedly.com",
 		"https://player.bilibili.com",
+		"https://player.twitch.tv",
 	}
 
 	// allow iframe from same origin

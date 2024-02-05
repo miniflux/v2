@@ -87,17 +87,6 @@ func (s *Storage) CountAllFeeds() map[string]int64 {
 	return results
 }
 
-// CountFeeds returns the number of feeds that belongs to the given user.
-func (s *Storage) CountFeeds(userID int64) int {
-	var result int
-	err := s.db.QueryRow(`SELECT count(*) FROM feeds WHERE user_id=$1`, userID).Scan(&result)
-	if err != nil {
-		return 0
-	}
-
-	return result
-}
-
 // CountUserFeedsWithErrors returns the number of feeds with parsing errors that belong to the given user.
 func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
 	pollingParsingErrorLimit := config.Opts.PollingParsingErrorLimit()
@@ -173,9 +162,15 @@ func (s *Storage) FeedsByCategoryWithCounters(userID, categoryID int64) (model.F
 
 // WeeklyFeedEntryCount returns the weekly entry count for a feed.
 func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
+	// Calculate a virtual weekly count based on the average updating frequency.
+	// This helps after just adding a high volume feed.
+	// Return 0 when the 'count(*)' is zero(0) or one(1).
 	query := `
 		SELECT
-			count(*)
+			COALESCE(CAST(CEIL(
+				(EXTRACT(epoch from interval '1 week'))	/
+				NULLIF((EXTRACT(epoch from (max(published_at)-min(published_at))/NULLIF((count(*)-1), 0) )), 0)
+			) AS BIGINT), 0)
 		FROM
 			entries
 		WHERE

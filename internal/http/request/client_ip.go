@@ -30,20 +30,13 @@ func FindClientIP(r *http.Request) string {
 	return FindRemoteIP(r)
 }
 
-// FindRemoteIP returns remote client IP address.
+// FindRemoteIP returns remote client IP address without considering HTTP headers.
 func FindRemoteIP(r *http.Request) string {
 	remoteIP, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
 		remoteIP = r.RemoteAddr
 	}
-	remoteIP = dropIPv6zone(remoteIP)
-
-	// When listening on a Unix socket, RemoteAddr is empty.
-	if remoteIP == "" {
-		remoteIP = "127.0.0.1"
-	}
-
-	return remoteIP
+	return dropIPv6zone(remoteIP)
 }
 
 func dropIPv6zone(address string) string {

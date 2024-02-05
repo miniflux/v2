@@ -28,17 +28,13 @@ function onAuxClick(selector, callback, noPreventDefault) {
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu() {
     let menu = document.querySelector(".header nav ul");
-    if (DomHelper.isVisible(menu)) {
-        menu.style.display = "none";
+    let menuToggleButton = document.querySelector(".header button[aria-controls='header-menu']");
+    if (menu.classList.contains("js-menu-show")) {
+        menu.classList.remove("js-menu-show")
+        menuToggleButton.setAttribute("aria-expanded", false)
     } else {
-        menu.style.display = "block";
-    }
-
-    let searchElement = document.querySelector(".header .search");
-    if (DomHelper.isVisible(searchElement)) {
-        searchElement.style.display = "none";
-    } else {
-        searchElement.style.display = "block";
+        menu.classList.add("js-menu-show")
+        menuToggleButton.setAttribute("aria-expanded", true)
     }
 }
 
@@ -72,21 +68,12 @@ function handleSubmitButtons() {
 function setFocusToSearchInput(event) {
     event.preventDefault();
     event.stopPropagation();
-
-    let toggleSwitchElement = document.querySelector(".search-toggle-switch");
-    if (toggleSwitchElement) {
-        toggleSwitchElement.style.display = "none";
-    }
-
-    let searchFormElement = document.querySelector(".search-form");
-    if (searchFormElement) {
-        searchFormElement.style.display = "block";
-    }
-
-    let searchInputElement = document.getElementById("search-input");
-    if (searchInputElement) {
-        searchInputElement.focus();
-        searchInputElement.value = "";
+    const toggleSearchButton = document.querySelector(".search details")
+    if (!toggleSearchButton.getAttribute("open")) {
+      toggleSearchButton.setAttribute("open", "")
+      const searchInputElement = document.getElementById("search-input");
+      searchInputElement.focus();
+      searchInputElement.value = "";
     }
 }
 
@@ -204,14 +191,10 @@ function markEntryAsRead(element) {
 // Send the Ajax request to refresh all feeds in the background
 function handleRefreshAllFeeds() {
     let url = document.body.dataset.refreshAllFeedsUrl;
-    let request = new RequestBuilder(url);
 
-    request.withCallback(() => {
-        window.location.reload();
-    });
-
-    request.withHttpMethod("GET");
-    request.execute();
+    if (url) {
+        window.location.href = url;
+    }
 }
 
 // Send the Ajax request to change entries statuses.
@@ -692,4 +675,13 @@ function checkShareAPI(title, url) {
         console.error(err);
         window.location.reload();
     }
+}
+
+function getCsrfToken() {
+    let element = document.querySelector("body[data-csrf-token]");
+    if (element !== null) {
+        return element.dataset.csrfToken;
+    }
+
+    return "";
 }

@@ -1,16 +1,18 @@
 {{ define "title"}}{{ t "page.integrations.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.integrations.title" }}</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.integrations.title" }}</h1>
     {{ template "settings_menu" dict "user" .user }}
 </section>
+{{ end }}
 
+{{ define "content"}}
 <form method="post" autocomplete="off" action="{{ route "updateIntegration" }}" class="integration-form">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
-        <div class="alert alert-error">{{ t .errorMessage }}</div>
+        <div class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
     <details {{ if .form.AppriseEnabled }}open{{ end }}>
@@ -23,7 +25,7 @@
             <label for="form-apprise-url">{{ t "form.integration.apprise_url" }}</label>
             <input type="url" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
 
-            <label for="form-apprise-services-url">{{ t "form.integration.apprise_services_url" }}
+            <label for="form-apprise-services-urls">{{ t "form.integration.apprise_services_url" }}
                 <a href="https://github.com/caronc/apprise/wiki" target="_blank">
                     {{ icon "external-link" }}
                 </a>
@@ -119,6 +121,36 @@
         </div>
     </details>
 
+    <details {{ if .form.LinkAceEnabled }}open{{ end }}>
+        <summary>LinkAce</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="linkace_enabled" value="1" {{ if .form.LinkAceEnabled }}checked{{ end }}> {{ t "form.integration.linkace_activate" }}
+            </label>
+
+            <label for="form-linkace-url">{{ t "form.integration.linkace_endpoint" }}</label>
+            <input type="url" name="linkace_url" id="form-linkace-url" value="{{ .form.LinkAceURL }}" placeholder="http://linkace-url:port" spellcheck="false">
+
+            <label for="form-linkace-api-key">{{ t "form.integration.linkace_api_key" }}</label>
+            <input type="text" name="linkace_api_key" id="form-linkace-api-key" value="{{ .form.LinkAceAPIKey }}" spellcheck="false">
+
+            <label for="form-linkace-tags">{{ t "form.integration.linkace_tags" }}</label>
+            <input type="text" name="linkace_tags" id="form-linkace-tags" value="{{ .form.LinkAceTags }}" spellcheck="false">
+
+            <label>
+                <input type="checkbox" name="linkace_is_private" value="1" {{ if .form.LinkAcePrivate }}checked{{ end }}> {{ t "form.integration.linkace_is_private" }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="linkace_check_disabled" value="1" {{ if .form.LinkAceCheckDisabled }}checked{{ end }}> {{ t "form.integration.linkace_check_disabled" }}
+            </label>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.LinkdingEnabled }}open{{ end }}>
         <summary>Linkding</summary>
         <div class="form-section">
@@ -155,7 +187,7 @@
             <label for="form-matrix-bot-user">{{ t "form.integration.matrix_bot_user" }}</label>
             <input type="text" name="matrix_bot_user" id="form-matrix-bot-user" value="{{ .form.MatrixBotUser }}" spellcheck="false">
 
-            <label for="form-matrix-chat-password">{{ t "form.integration.matrix_bot_password" }}</label>
+            <label for="form-matrix-password">{{ t "form.integration.matrix_bot_password" }}</label>
             <input type="password" name="matrix_bot_password" id="form-matrix-password" value="{{ .form.MatrixBotPassword }}" spellcheck="false">
 
             <label for="form-matrix-url">{{ t "form.integration.matrix_bot_url" }}</label>
@@ -201,6 +233,25 @@
 
             <label for="form-nunux-keeper-api-key">{{ t "form.integration.nunux_keeper_api_key" }}</label>
             <input type="text" name="nunux_keeper_api_key" id="form-nunux-keeper-api-key" value="{{ .form.NunuxKeeperAPIKey }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.OmnivoreEnabled }}open{{ end }}>
+        <summary>Omnivore</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="omnivore_enabled" value="1" {{ if .form.OmnivoreEnabled }}checked{{ end }}> {{ t "form.integration.omnivore_activate" }}
+            </label>
+
+            <label for="form-omnivore-api-key">{{ t "form.integration.omnivore_api_key" }}</label>
+            <input type="text" name="omnivore_api_key" id="form-omnivore-api-key" value="{{ .form.OmnivoreAPIKey }}" spellcheck="false">
+
+            <label for="form-omnivore-url">{{ t "form.integration.omnivore_url" }}</label>
+            <input type="url" name="omnivore_url" id="form-omnivore-url" value="{{ .form.OmnivoreURL }}" placeholder="https://api-prod.omnivore.app/api/graphql" spellcheck="false">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
@@ -395,6 +446,22 @@
             <label for="form-webhook-secret">{{ t "form.integration.webhook_secret" }}</label>
             <input type="text" name="webhook_secret" id="form-webhook-secret" value="{{ .form.WebhookSecret }}" spellcheck="false" readonly>
             {{ end }}
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.RSSBridgeEnabled }}open{{ end }}>
+        <summary>RSS-Bridge</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="rssbridge_enabled" value="1" {{ if .form.RSSBridgeEnabled }}checked{{ end }}> {{ t "form.integration.rssbridge_activate" }}
+            </label>
+
+            <label for="form-rssbridge-url">{{ t "form.integration.rssbridge_url" }}</label>
+            <input type="url" name="rssbridge_url" id="form-rssbridge-url" value="{{ .form.RSSBridgeURL }}" spellcheck="false">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

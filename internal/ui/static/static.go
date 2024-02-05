@@ -118,6 +118,7 @@ func GenerateJavascriptBundles() error {
 			"js/request_builder.js",
 			"js/modal_handler.js",
 			"js/app.js",
+			"js/webauthn_handler.js",
 			"js/bootstrap.js",
 		},
 		"service-worker": {

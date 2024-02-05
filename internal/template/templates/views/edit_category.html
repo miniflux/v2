@@ -1,26 +1,30 @@
 {{ define "title"}}{{ t "page.edit_category.title" .category.Title }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.edit_category.title" .category.Title }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
-        </li>
-    </ul>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.edit_category.title" .category.Title }}</h1>
+    <nav aria-label="{{ t "page.edit_category.title" .category.Title }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "categoryFeeds" "categoryID" .category.ID }}">{{ icon "feeds" }}{{ t "menu.feeds" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
+            </li>
+        </ul>
+    </nav>
 </section>
+{{ end }}
 
+{{ define "content"}}
 <form action="{{ route "updateCategory" "categoryID" .category.ID }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
-        <div class="alert alert-error">{{ t .errorMessage }}</div>
+        <div class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
     <label for="form-title">{{ t "form.category.label.title" }}</label>

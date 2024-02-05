@@ -152,6 +152,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			telegram_bot_disable_web_page_preview,
 			telegram_bot_disable_notification,
 			telegram_bot_disable_buttons,
+			linkace_enabled,
+			linkace_url,
+			linkace_api_key,
+			linkace_tags,
+			linkace_is_private,
+			linkace_check_disabled,
 			linkding_enabled,
 			linkding_url,
 			linkding_api_key,
@@ -174,7 +180,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			shaarli_api_secret,
 			webhook_enabled,
 			webhook_url,
-			webhook_secret
+			webhook_secret,
+			rssbridge_enabled,
+			rssbridge_url,
+			omnivore_enabled,
+			omnivore_api_key,
+			omnivore_url
 		FROM
 			integrations
 		WHERE
@@ -225,6 +236,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.TelegramBotDisableWebPagePreview,
 		&integration.TelegramBotDisableNotification,
 		&integration.TelegramBotDisableButtons,
+		&integration.LinkAceEnabled,
+		&integration.LinkAceURL,
+		&integration.LinkAceAPIKey,
+		&integration.LinkAceTags,
+		&integration.LinkAcePrivate,
+		&integration.LinkAceCheckDisabled,
 		&integration.LinkdingEnabled,
 		&integration.LinkdingURL,
 		&integration.LinkdingAPIKey,
@@ -248,6 +265,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WebhookEnabled,
 		&integration.WebhookURL,
 		&integration.WebhookSecret,
+		&integration.RSSBridgeEnabled,
+		&integration.RSSBridgeURL,
+		&integration.OmnivoreEnabled,
+		&integration.OmnivoreAPIKey,
+		&integration.OmnivoreURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -302,36 +324,47 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			espial_url=$35,
 			espial_api_key=$36,
 			espial_tags=$37,
-			linkding_enabled=$38,
-			linkding_url=$39,
-			linkding_api_key=$40,
-			linkding_tags=$41,
-			linkding_mark_as_unread=$42,
-			matrix_bot_enabled=$43,
-			matrix_bot_user=$44,
-			matrix_bot_password=$45,
-			matrix_bot_url=$46,
-			matrix_bot_chat_id=$47,
-			notion_enabled=$48,
-			notion_token=$49,
-			notion_page_id=$50,
-			readwise_enabled=$51,
-			readwise_api_key=$52,
-			apprise_enabled=$53,
-			apprise_url=$54,
-			apprise_services_url=$55,
-			shiori_enabled=$56,
-			shiori_url=$57,
-			shiori_username=$58,
-			shiori_password=$59,
-			shaarli_enabled=$60,
-			shaarli_url=$61,
-			shaarli_api_secret=$62,
-			webhook_enabled=$63,
-			webhook_url=$64,
-			webhook_secret=$65
+			linkace_enabled=$38,
+			linkace_url=$39,
+			linkace_api_key=$40,
+			linkace_tags=$41,
+			linkace_is_private=$42,
+			linkace_check_disabled=$43,
+			linkding_enabled=$44,
+			linkding_url=$45,
+			linkding_api_key=$46,
+			linkding_tags=$47,
+			linkding_mark_as_unread=$48,
+			matrix_bot_enabled=$49,
+			matrix_bot_user=$50,
+			matrix_bot_password=$51,
+			matrix_bot_url=$52,
+			matrix_bot_chat_id=$53,
+			notion_enabled=$54,
+			notion_token=$55,
+			notion_page_id=$56,
+			readwise_enabled=$57,
+			readwise_api_key=$58,
+			apprise_enabled=$59,
+			apprise_url=$60,
+			apprise_services_url=$61,
+			shiori_enabled=$62,
+			shiori_url=$63,
+			shiori_username=$64,
+			shiori_password=$65,
+			shaarli_enabled=$66,
+			shaarli_url=$67,
+			shaarli_api_secret=$68,
+			webhook_enabled=$69,
+			webhook_url=$70,
+			webhook_secret=$71,
+			rssbridge_enabled=$72,
+			rssbridge_url=$73,
+			omnivore_enabled=$74,
+			omnivore_api_key=$75,
+			omnivore_url=$76
 		WHERE
-			user_id=$66
+			user_id=$77
 	`
 	_, err := s.db.Exec(
 		query,
@@ -372,6 +405,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.EspialURL,
 		integration.EspialAPIKey,
 		integration.EspialTags,
+		integration.LinkAceEnabled,
+		integration.LinkAceURL,
+		integration.LinkAceAPIKey,
+		integration.LinkAceTags,
+		integration.LinkAcePrivate,
+		integration.LinkAceCheckDisabled,
 		integration.LinkdingEnabled,
 		integration.LinkdingURL,
 		integration.LinkdingAPIKey,
@@ -400,6 +439,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.WebhookEnabled,
 		integration.WebhookURL,
 		integration.WebhookSecret,
+		integration.RSSBridgeEnabled,
+		integration.RSSBridgeURL,
+		integration.OmnivoreEnabled,
+		integration.OmnivoreAPIKey,
+		integration.OmnivoreURL,
 		integration.UserID,
 	)
 
@@ -429,11 +473,13 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				espial_enabled='t' OR
 				readwise_enabled='t' OR
 				pocket_enabled='t' OR
+				linkace_enabled='t' OR
 				linkding_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
 				shaarli_enabled='t' OR
-				webhook_enabled='t'
+				webhook_enabled='t' OR
+				omnivore_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

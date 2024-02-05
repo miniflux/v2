@@ -68,6 +68,12 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		TelegramBotDisableWebPagePreview: integration.TelegramBotDisableWebPagePreview,
 		TelegramBotDisableNotification:   integration.TelegramBotDisableNotification,
 		TelegramBotDisableButtons:        integration.TelegramBotDisableButtons,
+		LinkAceEnabled:                   integration.LinkAceEnabled,
+		LinkAceURL:                       integration.LinkAceURL,
+		LinkAceAPIKey:                    integration.LinkAceAPIKey,
+		LinkAceTags:                      integration.LinkAceTags,
+		LinkAcePrivate:                   integration.LinkAcePrivate,
+		LinkAceCheckDisabled:             integration.LinkAceCheckDisabled,
 		LinkdingEnabled:                  integration.LinkdingEnabled,
 		LinkdingURL:                      integration.LinkdingURL,
 		LinkdingAPIKey:                   integration.LinkdingAPIKey,
@@ -91,6 +97,11 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		WebhookEnabled:                   integration.WebhookEnabled,
 		WebhookURL:                       integration.WebhookURL,
 		WebhookSecret:                    integration.WebhookSecret,
+		RSSBridgeEnabled:                 integration.RSSBridgeEnabled,
+		RSSBridgeURL:                     integration.RSSBridgeURL,
+		OmnivoreEnabled:                  integration.OmnivoreEnabled,
+		OmnivoreAPIKey:                   integration.OmnivoreAPIKey,
+		OmnivoreURL:                      integration.OmnivoreURL,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

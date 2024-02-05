@@ -799,4 +799,51 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN rssbridge_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN rssbridge_url text default '';
+		`
+		_, err = tx.Exec(sql)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		_, err = tx.Exec(`
+			CREATE TABLE webauthn_credentials (
+				handle bytea primary key,
+				cred_id bytea unique not null,
+				user_id int references users(id) on delete cascade not null,
+				public_key bytea not null,
+				attestation_type varchar(255) not null,
+				aaguid bytea,
+				sign_count bigint,
+				clone_warning bool,
+				name text,
+				added_on timestamp with time zone default now(),
+				last_seen_on timestamp with time zone default now()
+			);
+		`)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN omnivore_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN omnivore_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN omnivore_url text default '';
+		`
+		_, err = tx.Exec(sql)
+		return
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN linkace_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN linkace_url text default '';
+			ALTER TABLE integrations ADD COLUMN linkace_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN linkace_tags text default '';
+			ALTER TABLE integrations ADD COLUMN linkace_is_private bool default 't';
+			ALTER TABLE integrations ADD COLUMN linkace_check_disabled bool default 't';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

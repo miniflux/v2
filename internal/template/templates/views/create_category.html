@@ -1,20 +1,24 @@
 {{ define "title"}}{{ t "page.new_category.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.new_category.title" }}</h1>
-    <ul>
-        <li>
-            <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
-        </li>
-    </ul>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.new_category.title" }}</h1>
+    <nav aria-label="{{ t "page.new_category.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="{{ route "categories" }}">{{ icon "categories" }}{{ t "menu.categories" }}</a>
+            </li>
+        </ul>
+    </nav>
 </section>
+{{ end }}
 
+{{ define "content"}}
 <form action="{{ route "saveCategory" }}" method="post" autocomplete="off">
     <input type="hidden" name="csrf" value="{{ .csrf }}">
 
     {{ if .errorMessage }}
-        <div class="alert alert-error">{{ t .errorMessage }}</div>
+        <div class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
     <label for="form-title">{{ t "form.category.label.title" }}</label>

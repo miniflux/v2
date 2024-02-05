@@ -98,6 +98,7 @@ func addDynamicImage(entryURL, entryContent string) string {
 		"data-orig-file",
 		"data-large-file",
 		"data-medium-file",
+		"data-original-mos",
 		"data-2000src",
 		"data-1000src",
 		"data-800src",
@@ -157,6 +158,43 @@ func addDynamicImage(entryURL, entryContent string) string {
 			}
 		})
 	}
+
+	if changed {
+		output, _ := doc.Find("body").First().Html()
+		return output
+	}
+
+	return entryContent
+}
+
+func addDynamicIframe(entryURL, entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	// Ordered most preferred to least preferred.
+	candidateAttrs := []string{
+		"data-src",
+		"data-original",
+		"data-orig",
+		"data-url",
+		"data-lazy-src",
+	}
+
+	changed := false
+
+	doc.Find("iframe").Each(func(i int, iframe *goquery.Selection) {
+		for _, candidateAttr := range candidateAttrs {
+			if srcAttr, found := iframe.Attr(candidateAttr); found {
+				changed = true
+
+				iframe.SetAttr("src", srcAttr)
+
+				break
+			}
+		}
+	})
 
 	if changed {
 		output, _ := doc.Find("body").First().Html()

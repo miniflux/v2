@@ -12,6 +12,10 @@ type Subscription struct {
 	Type  string `json:"type"`
 }
 
+func NewSubscription(title, url, kind string) *Subscription {
+	return &Subscription{Title: title, URL: url, Type: kind}
+}
+
 func (s Subscription) String() string {
 	return fmt.Sprintf(`Title="%s", URL="%s", Type="%s"`, s.Title, s.URL, s.Type)
 }
