@@ -75,7 +75,6 @@
         {{ end }}
         <li class="item-meta-icons-external-url">
             <a href="{{ .entry.URL | safeURL  }}"
-                role="button"
                 aria-describedby="entry-title-{{ .entry.ID }}"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -85,7 +84,6 @@
         {{ if .entry.CommentsURL }}
             <li class="item-meta-icons-comments">
                 <a href="{{ .entry.CommentsURL | safeURL  }}"
-                    role="button"
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.comments.title" }}"
                     target="_blank"

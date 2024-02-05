@@ -51,12 +51,10 @@
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
                         <a href="{{ route "refreshFeed" "feedID" .ID }}"
-                            role="button"
                             aria-describedby="feed-title-{{ .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-edit">
                         <a href="{{ route "editFeed" "feedID" .ID }}"
-                            role="button"
                             aria-describedby="feed-title-{{ .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-remove">
