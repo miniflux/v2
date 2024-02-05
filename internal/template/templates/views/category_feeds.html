@@ -38,7 +38,7 @@
 
 {{ define "content"}}
 {{ if not .feeds }}
-    <p class="alert">{{ t "alert.no_feed_in_category" }}</p>
+    <p role="alert" class="alert">{{ t "alert.no_feed_in_category" }}</p>
 {{ else }}
     {{ template "feed_list" dict "user" .user "feeds" .feeds "ParsingErrorCount" .ParsingErrorCount }}
 {{ end }}

@@ -39,7 +39,7 @@
 
 {{ define "content"}}
 {{ if not .entries }}
-    <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+    <p role="alert" class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
     <div class="pagination-top">
         {{ template "pagination" .pagination }}

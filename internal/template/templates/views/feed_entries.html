@@ -75,7 +75,7 @@
 
 {{ define "content"}}
 {{ if ne .feed.ParsingErrorCount 0 }}
-<div class="alert alert-error">
+<div role="alert" class="alert alert-error">
     <h3>{{ t "alert.feed_error" }}</h3>
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
@@ -83,9 +83,9 @@
 
 {{ if not .entries }}
     {{ if .showOnlyUnreadEntries }}
-        <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+        <p role="alert" class="alert">{{ t "alert.no_unread_entry" }}</p>
     {{ else }}
-        <p class="alert">{{ t "alert.no_feed_entry" }}</p>
+        <p role="alert" class="alert">{{ t "alert.no_feed_entry" }}</p>
     {{ end }}
 {{ else }}
     <div class="pagination-top">

@@ -12,7 +12,7 @@
 
 {{ define "content"}}
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
+    <p role="alert" class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
     <div class="pagination-top">
         {{ template "pagination" .pagination }}
