@@ -11,6 +11,7 @@
             <ul>
                 <li>
                     <a href="#"
+                        role="button"
                         title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
                         data-label-loading="{{ t "entry.state.saving" }}"
@@ -23,6 +24,7 @@
                 </li>
                 <li>
                     <a href="#"
+                        role="button"
                         data-toggle-bookmark="true"
                         data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
                         data-label-loading="{{ t "entry.state.saving" }}"
@@ -36,6 +38,7 @@
                 {{ if .hasSaveEntry }}
                 <li>
                     <a href="#"
+                        role="button"
                         title="{{ t "entry.save.title" }}"
                         data-save-entry="true"
                         data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
@@ -54,6 +57,7 @@
                 </li>
                 <li>
                     <a href="#"
+                        role="button"
                         data-confirm="true"
                         data-url="{{ route "unshareEntry" "entryID" .entry.ID }}"
                         data-label-question="{{ t "confirm.question" }}"
@@ -78,6 +82,7 @@
                 </li>
                 <li>
                     <a href="#"
+                        role="button"
                         title="{{ t "entry.scraper.title" }}"
                         data-fetch-content-entry="true"
                         data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
