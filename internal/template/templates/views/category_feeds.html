@@ -18,6 +18,7 @@
             {{ if eq .total 0 }}
             <li>
                 <a href="#"
+                    role="button"
                     data-confirm="true"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
@@ -28,7 +29,7 @@
             </li>
             {{ end }}
             <li>
-                <a href="{{ route "refreshCategoryFeedsPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+                <a role="button" href="{{ route "refreshCategoryFeedsPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
             </li>
         </ul>
     </nav>
