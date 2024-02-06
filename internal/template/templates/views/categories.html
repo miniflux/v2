@@ -29,13 +29,11 @@
         >
             <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
                 <h2 class="item-title">
-                    <a href="{{ route "categoryEntries" "categoryID" .ID }}" aria-label="{{ .Title }}, {{ t "page.categories.unread_counter" }}: {{ .TotalUnread }}">
+                    <a href="{{ route "categoryEntries" "categoryID" .ID }}">
                         {{ .Title }}
-                        <span class="category-item-total" aria-hidden="true">
-                            (<span class="sr-only">{{ t "page.categories.unread_counter" }}: </span>{{ .TotalUnread }})
-                        </span>
+                        <span class="category-item-total" aria-hidden="true">({{ .TotalUnread }})</span>
+                        <span class="sr-only">{{ plural "page.unread_entry_count" (deRef .TotalUnread) (deRef .TotalUnread) }}</span>
                     </a>
-
                 </h2>
             </header>
             <div class="item-meta">

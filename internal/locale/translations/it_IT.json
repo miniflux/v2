@@ -114,7 +114,6 @@
         "C'è %d feed.",
         "Ci sono %d feed."
     ],
-    "page.categories.unread_counter": "Numero di voci non lette",
     "page.categories_count": [
         "%d category",
         "%d categories"

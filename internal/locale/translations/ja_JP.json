@@ -114,7 +114,6 @@
         "%d 件のフィードがあります。",
         "%d 件のフィードがあります。"
     ],
-    "page.categories.unread_counter": "未読記事の数",
     "page.categories_count": [
         "%d category",
         "%d categories"

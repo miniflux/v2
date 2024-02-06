@@ -115,7 +115,6 @@
         "Есть %d подписки.",
         "Есть %d подписок."
     ],
-    "page.categories.unread_counter": "Количество непрочитанных статей",
     "page.categories_count": [
         "%d category",
         "%d categories"
