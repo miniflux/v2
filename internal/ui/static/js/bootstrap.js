@@ -111,9 +111,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    onClick("button[aria-controls='header-menu']", () => toggleMainMenu());
     if (document.documentElement.clientWidth < 600) {
+        let logoElement = document.querySelector(".logo");
+        if (logoElement) {
+            logoElement.setAttribute("role", "button");
+        }
+        onClick(".logo", () => toggleMainMenu());
         onClick(".header nav li", (event) => onClickMainMenuListItem(event));
+    } else {
+        onClick("button[aria-controls='header-menu']", () => toggleMainMenu());
     }
 
     if ("serviceWorker" in navigator) {
