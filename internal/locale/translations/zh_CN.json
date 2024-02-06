@@ -113,7 +113,6 @@
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
-    "page.categories.unread_counter": "未读文章数",
     "page.categories_count": [
         "%d category",
         "%d categories"

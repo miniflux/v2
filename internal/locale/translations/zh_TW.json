@@ -114,7 +114,6 @@
         "有 %d 個Feed",
         "有 %d 個Feeds"
     ],
-    "page.categories.unread_counter": "未讀文章數",
     "page.categories_count": [
         "%d category",
         "%d categories"

@@ -114,7 +114,6 @@
         "Er is %d feed.",
         "Er zijn %d feeds."
     ],
-    "page.categories.unread_counter": "Aantal ongelezen vermeldingen",
     "page.categories_count": [
         "%d category",
         "%d categories"
