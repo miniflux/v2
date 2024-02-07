@@ -95,21 +95,13 @@ a:hover {
     flex-direction: column;
 }
 
-.header nav button[aria-controls="header-menu"] {
-   border: none;
-   background-color: transparent;
-   display: inline-block;
-   cursor: pointer;
-}
-
-.header nav button[aria-controls="header-menu"] svg {
+.header nav .logo svg {
     padding: 5px;
     inline-size: 24px;
     block-size: 24px;
-    translate: 0 2px;
 }
 
-.header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
+.header nav .logo[aria-expanded="true"] svg {
     rotate: 180deg;
 }
 
@@ -335,16 +327,8 @@ a:hover {
         flex-direction: row;
     }
 
-    .header nav button[aria-controls="header-menu"] {
+    .header .logo svg {
         display: none;
-    }
-
-    .header nav button[aria-controls="header-menu"] svg {
-        rotate: -90deg;
-    }
-
-    .header nav button[aria-controls="header-menu"][aria-expanded="true"] svg {
-        rotate: 90deg;
     }
 
     .header ul:not(.js-menu-show), .header ul.js-menu-show {
