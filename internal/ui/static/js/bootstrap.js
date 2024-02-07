@@ -111,16 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    if (document.documentElement.clientWidth < 600) {
-        let logoElement = document.querySelector(".logo");
-        if (logoElement) {
-            logoElement.setAttribute("role", "button");
-        }
-        onClick(".logo", () => toggleMainMenu());
-        onClick(".header nav li", (event) => onClickMainMenuListItem(event));
-    } else {
-        onClick("button[aria-controls='header-menu']", () => toggleMainMenu());
-    }
+    checkMenuToggleModeByLayout()
+    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
+
+    const logoElement = document.querySelector(".logo")
+    logoElement.addEventListener("click", (event) => toggleMainMenu(event));
+    logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
+
+    onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
     if ("serviceWorker" in navigator) {
         let scriptElement = document.getElementById("service-worker-script");

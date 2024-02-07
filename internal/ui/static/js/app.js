@@ -25,10 +25,46 @@ function onAuxClick(selector, callback, noPreventDefault) {
     });
 }
 
+// make logo element as button on mobile layout
+function checkMenuToggleModeByLayout() {
+    const logoElement = document.querySelector(".logo");
+    const homePageLinkElement = document.querySelector(".logo > a")
+    if (!logoElement) return
+    const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label")
+
+    const navMenuElement = document.getElementById("header-menu");
+    const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show")
+
+    if (document.documentElement.clientWidth < 620) {
+        logoElement.setAttribute("role", "button");
+        logoElement.setAttribute("tabindex", "0");
+        logoElement.setAttribute("aria-label", logoToggleButtonLabel)
+        if (navMenuElementIsExpanded) {
+           logoElement.setAttribute("aria-expanded", "true")
+        } else {
+           logoElement.setAttribute("aria-expanded", "false")
+        }
+        homePageLinkElement.setAttribute("tabindex", "-1")
+    } else {
+        logoElement.removeAttribute("role");
+        logoElement.removeAttribute("tabindex");
+        logoElement.removeAttribute("aria-expanded");
+        logoElement.removeAttribute("aria-label")
+        homePageLinkElement.removeAttribute("tabindex");
+    }
+}
+
 // Show and hide the main menu on mobile devices.
-function toggleMainMenu() {
+function toggleMainMenu(event) {
+    if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
+        return
+    }
+    if (event.currentTarget.getAttribute("role")) {
+        event.preventDefault()
+    }
+
     let menu = document.querySelector(".header nav ul");
-    let menuToggleButton = document.querySelector(".header button[aria-controls='header-menu']");
+    let menuToggleButton = document.querySelector(".logo");
     if (menu.classList.contains("js-menu-show")) {
         menu.classList.remove("js-menu-show")
         menuToggleButton.setAttribute("aria-expanded", false)
