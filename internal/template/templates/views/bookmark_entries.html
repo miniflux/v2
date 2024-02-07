@@ -28,9 +28,7 @@
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
                     <a href="{{ route "starredEntry" "entryID" .ID }}">
                         {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                        {{ else }}
-                        <span class="sr-only">{{ .Feed.Title }}</span>
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
