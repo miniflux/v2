@@ -99,7 +99,7 @@ function markPageAsRead() {
         updateEntriesStatus(entryIDs, "read", () => {
             // Make sure the Ajax request reach the server before we reload the page.
 
-            let element = document.querySelector("a[data-action=markPageAsRead]");
+            let element = document.querySelector(":is(a, button)[data-action=markPageAsRead]");
             let showOnlyUnread = false;
             if (element) {
                 showOnlyUnread = element.dataset.showOnlyUnread || false;
@@ -125,7 +125,7 @@ function handleEntryStatus(item, element, setToRead) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        if (!setToRead || currentEntry.querySelector("a[data-toggle-status]").dataset.value == "unread") {
+        if (!setToRead || currentEntry.querySelector(":is(a, button)[data-toggle-status]").dataset.value == "unread") {
             toggleEntryStatus(currentEntry, toasting);
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
@@ -144,7 +144,7 @@ function handleEntryStatus(item, element, setToRead) {
 // Change the entry status to the opposite value.
 function toggleEntryStatus(element, toasting) {
     let entryID = parseInt(element.dataset.id, 10);
-    let link = element.querySelector("a[data-toggle-status]");
+    let link = element.querySelector(":is(a, button)[data-toggle-status]");
 
     let currentStatus = link.dataset.value;
     let newStatus = currentStatus === "read" ? "unread" : "read";
@@ -223,7 +223,7 @@ function handleSaveEntry(element) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        saveEntry(currentEntry.querySelector("a[data-save-entry]"), toasting);
+        saveEntry(currentEntry.querySelector(":is(a, button)[data-save-entry]"), toasting);
     }
 }
 
@@ -263,7 +263,7 @@ function handleBookmark(element) {
 
 // Send the Ajax request and change the icon when bookmarking an entry.
 function toggleBookmark(parentElement, toasting) {
-    let element = parentElement.querySelector("a[data-toggle-bookmark]");
+    let element = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
     if (!element) {
         return;
     }
@@ -304,7 +304,7 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    let element = document.querySelector("a[data-fetch-content-entry]");
+    let element = document.querySelector(":is(a, button)[data-fetch-content-entry]");
     if (!element) {
         return;
     }
@@ -340,13 +340,13 @@ function openOriginalLink(openLinkInCurrentTab) {
         return;
     }
 
-    let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
+    let currentItemOriginalLink = document.querySelector(".current-item :is(a, button)[data-original-link]");
     if (currentItemOriginalLink !== null) {
         DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
 
         let currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
-        if (document.location.href != document.querySelector('a[data-page=starred]').href) {
+        if (document.location.href != document.querySelector(':is(a, button)[data-page=starred]').href) {
             goToListItem(1);
         }
         markEntryAsRead(currentItem);
@@ -355,7 +355,7 @@ function openOriginalLink(openLinkInCurrentTab) {
 
 function openCommentLink(openLinkInCurrentTab) {
     if (!isListView()) {
-        let entryLink = document.querySelector("a[data-comments-link]");
+        let entryLink = document.querySelector(":is(a, button)[data-comments-link]");
         if (entryLink !== null) {
             if (openLinkInCurrentTab) {
                 window.location.href = entryLink.getAttribute("href");
@@ -365,7 +365,7 @@ function openCommentLink(openLinkInCurrentTab) {
             return;
         }
     } else {
-        let currentItemCommentsLink = document.querySelector(".current-item a[data-comments-link]");
+        let currentItemCommentsLink = document.querySelector(".current-item :is(a, button)[data-comments-link]");
         if (currentItemCommentsLink !== null) {
             DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
         }
@@ -401,7 +401,7 @@ function unsubscribeFromFeed() {
  * @param {boolean} fallbackSelf Refresh actual page if the page is not found.
  */
 function goToPage(page, fallbackSelf) {
-    let element = document.querySelector("a[data-page=" + page + "]");
+    let element = document.querySelector(":is(a, button)[data-page=" + page + "]");
 
     if (element) {
         document.location.href = element.href;
@@ -441,7 +441,7 @@ function goToFeed() {
             window.location.href = feedAnchor.href;
         }
     } else {
-        let currentItemFeed = document.querySelector(".current-item a[data-feed-link]");
+        let currentItemFeed = document.querySelector(".current-item :is(a, button)[data-feed-link]");
         if (currentItemFeed !== null) {
             window.location.href = currentItemFeed.getAttribute("href");
         }
@@ -538,7 +538,7 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    if (linkElement.tagName != 'A') {
+    if (linkElement.tagName != 'A' && linkElement.tagName != "BUTTON") {
         linkElement = linkElement.parentNode;
     }
 
@@ -641,7 +641,7 @@ function handlePlayerProgressionSave(playerElement) {
  * handle new share entires and already shared entries
  */
 function handleShare() {
-    let link = document.querySelector('a[data-share-status]');
+    let link = document.querySelector(':is(a, button)[data-share-status]');
     let title = document.querySelector("body > main > section > header > h1 > a");
     if (link.dataset.shareStatus === "shared") {
         checkShareAPI(title, link.href);

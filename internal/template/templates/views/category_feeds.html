@@ -17,19 +17,30 @@
             </li>
             {{ if eq .total 0 }}
             <li>
-                <a href="#"
-                    role="button"
+                <button
                     data-confirm="true"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-redirect-url="{{ route "categories" }}"
-                    data-url="{{ route "removeCategory" "categoryID" .category.ID }}">{{ icon "delete" }}{{ t "action.remove" }}</a>
+                    data-url="{{ route "removeCategory" "categoryID" .category.ID }}"
+                >
+                    {{ icon "delete" }}{{ t "action.remove" }}
+                </button>
             </li>
             {{ end }}
             <li>
-                <a role="button" href="{{ route "refreshCategoryFeedsPage" "categoryID" .category.ID }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+                <form
+                    class="page-header-action-form"
+                    action="{{ route "refreshCategoryFeedsPage" "categoryID" .category.ID }}"
+                >
+                    <button
+                        data-label-loading="{{ t "confirm.loading" }}"
+                    >
+                        {{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}
+                    </button>
+                </form>
             </li>
         </ul>
     </nav>

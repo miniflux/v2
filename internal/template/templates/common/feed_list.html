@@ -58,27 +58,25 @@
                             aria-describedby="feed-title-{{ .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-remove">
-                        <a href="#"
-                            role="button"
+                        <button
                             aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
                     {{ if .UnreadCount }}
                       <li class="item-meta-icons-mark-as-read">
-                        <a href="#"
-                            role="button"
+                        <button
                             aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></button>
                       </li>
                     {{ end }}
                 </ul>

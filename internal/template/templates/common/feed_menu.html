@@ -13,7 +13,11 @@
         <a href="{{ route "import" }}">{{ icon "feed-import" }}{{ t "menu.import" }}</a>
     </li>
     <li>
-        <a role="button" href="{{ route "refreshAllFeeds" }}">{{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}</a>
+        <form action="{{ route "refreshAllFeeds" }}" class="page-header-action-form">
+            <button data-label-loading="{{ t "confirm.loading" }}">
+                {{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}
+            </button>
+        </form>
     </li>
 </ul></nav>
 {{ end }}

@@ -188,6 +188,25 @@ a:hover {
     padding-bottom: 2px;
 }
 
+.page-header-action-form {
+    display: inline-flex;
+}
+
+:is(.page-header, .page-footer) ul :is(a, button) {
+    color: var(--link-color);
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+}
+
+:is(.page-header, .page-footer) ul :is(a:is(:hover, :focus), button:is(:hover, :focus)) {
+    color: var(--link-hover-color);
+}
+
+:is(.page-header, .page-footer) ul button:active {
+    translate: 1px 1px;
+}
+
 /* Logo */
 .logo {
     text-align: center;
@@ -862,8 +881,7 @@ template {
     text-decoration: none;
 }
 
-.item-meta a:hover,
-.item-meta a:focus {
+.item-meta :is(a:is(:focus, :hover), button:is(:focus, :hover)) {
     color: #333;
 }
 
@@ -891,6 +909,22 @@ template {
 
 .item-meta-icons li:last-child {
     margin-right: 0;
+}
+
+.item-meta-icons :is(a, button) {
+    color: #777;
+    text-decoration: none;
+    font-size: 0.8rem;
+    border: none;
+    background-color: transparent;
+}
+
+.item-meta-icons a span {
+    text-decoration: underline;
+}
+
+.item-meta-icons button:active {
+    translate: 1px 1px;
 }
 
 .items {
