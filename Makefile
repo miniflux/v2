@@ -12,6 +12,7 @@ export PGPASSWORD := postgres
 
 .PHONY: \
 	miniflux \
+	miniflux-no-pie \
 	linux-amd64 \
 	linux-arm64 \
 	linux-armv7 \
@@ -44,6 +45,9 @@ export PGPASSWORD := postgres
 
 miniflux:
 	@ CGO_ENABLED=0 go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
+
+miniflux-no-pie:
+	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 linux-amd64:
 	@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
