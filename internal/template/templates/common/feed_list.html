@@ -3,7 +3,8 @@
         {{ range .feeds }}
         <article
             class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}"
-            aria-labelledby="feed-title-{{ .ID }}"
+            aria-labelledby="feed-title-{{ .ID }} feed-entries-counter"
+            tabindex="-1"
         >
             <header class="item-header" dir="auto">
                 <h2 id="feed-title-{{ .ID }}" class="item-title">
@@ -15,7 +16,7 @@
                         {{ .Title }}
                     </a>
                 </h2>
-                <span class="feed-entries-counter">
+                <span id="feed-entries-counter" class="feed-entries-counter">
                     <span aria-hidden="true">(</span>
                     <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
                     <span aria-hidden="true">{{ .UnreadCount }}</span>

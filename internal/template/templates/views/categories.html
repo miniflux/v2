@@ -26,6 +26,7 @@
         <article
             class="item category-item {{if gt (deRef .TotalUnread) 0 }} category-has-unread{{end}}"
             aria-labelledby="category-title-{{ .ID }}"
+            tabindex="-1"
         >
             <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
                 <h2 class="item-title">

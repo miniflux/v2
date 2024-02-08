@@ -495,7 +495,7 @@ function goToListItem(offset) {
 
     if (document.querySelector(".current-item") === null) {
         items[0].classList.add("current-item");
-        items[0].querySelector('.item-header a').focus();
+        items[0].focus();
         return;
     }
 
@@ -507,7 +507,7 @@ function goToListItem(offset) {
 
             item.classList.add("current-item");
             DomHelper.scrollPageTo(item);
-            item.querySelector('.item-header a').focus();
+            item.focus();
 
             break;
         }

@@ -50,6 +50,7 @@
             class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
             data-id="{{ .ID }}"
             aria-labelledby="entry-title-{{ .ID }}"
+            tabindex="-1"
         >
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
