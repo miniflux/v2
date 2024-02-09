@@ -192,18 +192,19 @@ a:hover {
     display: inline-flex;
 }
 
-:is(.page-header, .page-footer, .entry-header) ul :is(a, button) {
+:is(.page-button, .page-link) {
     color: var(--link-color);
     border: none;
     background-color: transparent;
     font-size: 1rem;
+    cursor: pointer;
+
+    &:is(hover, :focus) {
+        color: var(--link-hover-color);
+    }
 }
 
-:is(.page-header, .page-footer, .entry-header) ul :is(a:is(:hover, :focus), button:is(:hover, :focus)) {
-    color: var(--link-hover-color);
-}
-
-:is(.page-header, .page-footer, .entry-header) ul button:active {
+.page-button:active {
     translate: 1px 1px;
 }
 
@@ -911,12 +912,13 @@ template {
     margin-right: 0;
 }
 
-.item-meta-icons :is(a, button) {
+.item-meta-icons li > :is(a, button) {
     color: #777;
     text-decoration: none;
     font-size: 0.8rem;
     border: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 .item-meta-icons a span {
@@ -1244,8 +1246,12 @@ details.entry-enclosures {
     color: #ed2d04;
 }
 
-.confirm a {
+.confirm button {
     color: #ed2d04;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: inherit;
 }
 
 .loading {

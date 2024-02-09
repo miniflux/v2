@@ -556,8 +556,7 @@ function handleConfirmationMessage(linkElement, callback) {
         containerElement.appendChild(loadingElement);
     }
 
-    let yesElement = document.createElement("a");
-    yesElement.href = "#";
+    let yesElement = document.createElement("button");
     yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
     yesElement.onclick = (event) => {
         event.preventDefault();
@@ -567,8 +566,7 @@ function handleConfirmationMessage(linkElement, callback) {
         callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
     };
 
-    let noElement = document.createElement("a");
-    noElement.href = "#";
+    let noElement = document.createElement("button");
     noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
     noElement.onclick = (event) => {
         event.preventDefault();

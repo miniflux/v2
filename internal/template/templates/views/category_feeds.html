@@ -10,14 +10,15 @@
     <nav aria-label="{{ .category.Title }} {{ t "page.feeds.title" }} {{ t "menu.title" }}">
         <ul>
             <li>
-                <a href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "entries" }}{{ t "menu.feed_entries" }}</a>
+                <a class="page-link" href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "entries" }}{{ t "menu.feed_entries" }}</a>
             </li>
             <li>
-                <a href="{{ route "editCategory" "categoryID" .category.ID }}">{{ icon "edit" }}{{ t "menu.edit_category" }}</a>
+                <a class="page-link" href="{{ route "editCategory" "categoryID" .category.ID }}">{{ icon "edit" }}{{ t "menu.edit_category" }}</a>
             </li>
             {{ if eq .total 0 }}
             <li>
                 <button
+                    class="page-button"
                     data-confirm="true"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
@@ -36,6 +37,7 @@
                     action="{{ route "refreshCategoryFeedsPage" "categoryID" .category.ID }}"
                 >
                     <button
+                        class="page-button"
                         data-label-loading="{{ t "confirm.loading" }}"
                     >
                         {{ icon "refresh" }}{{ t "menu.refresh_all_feeds" }}

@@ -12,6 +12,7 @@
         <ul>
             <li>
                 <button
+                    class="page-button"
                     data-confirm="true"
                     data-url="{{ route "flushHistory" }}"
                     data-label-question="{{ t "confirm.question" }}"
@@ -20,7 +21,7 @@
                     data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</button>
             </li>
             <li>
-                <a href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
+                <a class="page-link" href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
             </li>
         </ul>
     </nav>
