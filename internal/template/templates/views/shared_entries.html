@@ -1,46 +1,61 @@
 {{ define "title"}}{{ t "page.shared_entries.title" }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.shared_entries.title" }} ({{ .total }})</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
+    <h1 id="page-header-title">
+        {{ t "page.shared_entries.title" }}
+        <span aria-hidden="true">({{ .total }})</span>
+    </h1>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.shared_entries_count" .total .total }}</span>
     {{ if .entries }}
-    <ul>
-        <li>
-            <a href="#"
-                data-confirm="true"
-                data-url="{{ route "flushHistory" }}"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</a>
-        </li>
-        <li>
-            <a href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
-        </li>
-    </ul>
+    <nav aria-label="{{ t "page.shared_entries.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="#"
+                    role="button"
+                    data-confirm="true"
+                    data-url="{{ route "flushHistory" }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</a>
+            </li>
+            <li>
+                <a href="{{ route "sharedEntries" }}">{{ icon "share" }}{{ t "menu.shared_entries" }}</a>
+            </li>
+        </ul>
+    </nav>
     {{ end }}
 </section>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
+    <p role="alert" class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
 {{ else }}
     <div class="items">
         {{ range .entries }}
-        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "readEntry" "entryID" .ID }}">{{ .Title }}</a>
+        <article
+            class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "readEntry" "entryID" .ID }}">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ .Title }}
+                    </a>
                     {{ if .ShareCode }}
-                        <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
-                            title="{{ t "entry.shared_entry.title" }}"
-                            target="_blank">{{ icon "share" }}</a>
+                    <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
+                        title="{{ t "entry.shared_entry.title" }}"
+                        target="_blank">{{ icon "share" }}</a>
                     {{ end }}
-                </span>
+                </h2>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
+            </header>
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-site-url">

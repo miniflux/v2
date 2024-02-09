@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
     onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
     onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
     onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
-    onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
     onClick("a[data-share-status]", () => handleShare());
     onClick("a[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
     onClick("a[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
@@ -119,10 +118,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    if (document.documentElement.clientWidth < 600) {
-        onClick(".logo", () => toggleMainMenu());
-        onClick(".header nav li", (event) => onClickMainMenuListItem(event));
-    }
+    checkMenuToggleModeByLayout()
+    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
+
+    const logoElement = document.querySelector(".logo")
+    logoElement.addEventListener("click", (event) => toggleMainMenu(event));
+    logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
+
+    onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
     if ("serviceWorker" in navigator) {
         let scriptElement = document.getElementById("service-worker-script");

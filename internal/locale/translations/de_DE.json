@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Sind Sie sicher?",
     "confirm.question.refresh": "Möchten Sie eine erzwungene Aktualisierung durchführen?",
     "confirm.yes": "ja",
@@ -18,6 +19,8 @@
     "action.home_screen": "Zum Startbildschirm hinzufügen",
     "tooltip.keyboard_shortcuts": "Tastenkürzel: %s",
     "tooltip.logged_user": "Angemeldet als %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Ungelesen",
     "menu.starred": "Lesezeichen",
     "menu.history": "Verlauf",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Geteilte Artikel",
     "search.label": "Suche",
     "search.placeholder": "Suche...",
+    "search.submit": "Search",
     "pagination.next": "Nächste",
     "pagination.previous": "Vorherige",
     "entry.status.unread": "Ungelesen",
@@ -81,11 +85,27 @@
     "entry.estimated_reading_time": [
         "%d Minute zu lesen",
         "%d Minuten zu lesen"
-    ],    
+    ],
     "entry.tags.label": "Stichworte:",
     "page.shared_entries.title": "Geteilte Artikel",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Ungelesen",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Lesezeichen",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Kategorien",
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.entries": "Artikel",
@@ -94,21 +114,28 @@
         "Es gibt %d Abonnement.",
         "Es gibt %d Abonnements."
     ],
-    "page.categories.unread_counter": "Anzahl der ungelesenen Artikel",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Neue Kategorie",
     "page.new_user.title": "Neuer Benutzer",
     "page.edit_category.title": "Kategorie bearbeiten: %s",
     "page.edit_user.title": "Benutzer bearbeiten: %s",
     "page.feeds.title": "Abonnements",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Letzte Aktualisierung:",
     "page.feeds.next_check": "Nächste Aktualisierung:",
-    "page.feeds.unread_counter": "Anzahl der ungelesenen Artikel",
     "page.feeds.read_counter": "Anzahl der gelesenen Artikel",
     "page.feeds.error_count": [
         "%d Fehler",
         "%d Fehler"
     ],
     "page.history.title": "Verlauf",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importieren",
     "page.search.title": "Suchergebnisse",
     "page.about.title": "Über",

@@ -18,6 +18,8 @@
     <ul class="item-meta-icons">
         <li class="item-meta-icons-read">
             <a href="#"
+                role="button"
+                aria-describedby="entry-title-{{ .entry.ID }}"
                 title="{{ t "entry.status.title" }}"
                 data-toggle-status="true"
                 data-label-loading="{{ t "entry.state.saving" }}"
@@ -38,6 +40,8 @@
         </li>
         <li class="item-meta-icons-star">
             <a href="#"
+                role="button"
+                aria-describedby="entry-title-{{ .entry.ID }}"
                 data-toggle-bookmark="true"
                 data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
                 data-label-loading="{{ t "entry.state.saving" }}"
@@ -49,11 +53,15 @@
         {{ if .entry.ShareCode }}
             <li class="item-meta-icons-share">
                 <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                    role="button"
+                    aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.shared_entry.title" }}"
                     target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
             </li>
             <li class="item-meta-icons-delete">
                 <a href="#"
+                    role="button"
+                    aria-describedby="entry-title-{{ .entry.ID }}"
                     data-confirm="true"
                     data-url="{{ route "unshareEntry" "entryID" .entry.ID }}"
                     data-label-question="{{ t "confirm.question" }}"
@@ -65,6 +73,8 @@
         {{ if .hasSaveEntry }}
             <li>
                 <a href="#"
+                    role="button"
+                    aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.save.title" }}"
                     data-save-entry="true"
                     data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
@@ -75,6 +85,7 @@
         {{ end }}
         <li class="item-meta-icons-external-url">
             <a href="{{ .entry.URL | safeURL  }}"
+                aria-describedby="entry-title-{{ .entry.ID }}"
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerpolicy="no-referrer"
@@ -83,6 +94,7 @@
         {{ if .entry.CommentsURL }}
             <li class="item-meta-icons-comments">
                 <a href="{{ .entry.CommentsURL | safeURL  }}"
+                    aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.comments.title" }}"
                     target="_blank"
                     rel="noopener noreferrer"

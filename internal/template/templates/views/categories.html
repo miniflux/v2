@@ -1,27 +1,41 @@
 {{ define "title"}}{{ t "page.categories.title" }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.categories.title" }} ({{ .total }})</h1>
-    <ul>
-        <li>
-            <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
-        </li>
-    </ul>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
+    <h1 id="page-header-title" dir="auto">
+        {{ t "page.categories.title" }}
+        <span aria-hidden="true"> ({{ .total }})</span>
+    </h1>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.categories_count" .total .total }}</span>
+    <nav aria-label="{{ t "page.categories.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="{{ route "createCategory" }}">{{ icon "add-category" }}{{ t "menu.create_category" }}</a>
+            </li>
+        </ul>
+    </nav>
 </section>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "alert.no_category" }}</p>
+    <p role="alert" class="alert alert-error">{{ t "alert.no_category" }}</p>
 {{ else }}
     <div class="items">
         {{ range .categories }}
-        <article role="article" class="item category-item {{if gt (deRef .TotalUnread) 0 }} category-has-unread{{end}}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    <a href="{{ route "categoryEntries" "categoryID" .ID }}">{{ .Title }}</a>
-                </span>
-                (<span title="{{ t "page.categories.unread_counter" }}">{{ .TotalUnread }}</span>)
-            </div>
+        <article
+            class="item category-item {{if gt (deRef .TotalUnread) 0 }} category-has-unread{{end}}"
+            aria-labelledby="category-title-{{ .ID }}"
+        >
+            <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
+                <h2 class="item-title">
+                    <a href="{{ route "categoryEntries" "categoryID" .ID }}">
+                        {{ .Title }}
+                        <span class="category-item-total" aria-hidden="true">({{ .TotalUnread }})</span>
+                        <span class="sr-only">{{ plural "page.unread_entry_count" (deRef .TotalUnread) (deRef .TotalUnread) }}</span>
+                    </a>
+                </h2>
+            </header>
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-feed-count">
@@ -41,6 +55,8 @@
                     {{ if eq (deRef .FeedCount) 0 }}
                     <li class="item-meta-icons-delete">
                         <a href="#"
+                            role="button"
+                            aria-describedby="category-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
@@ -52,6 +68,8 @@
                     {{ if gt (deRef .TotalUnread) 0 }}
                       <li class="item-meta-icons-mark-as-read">
                         <a href="#"
+                            role="button"
+                            aria-describedby="category-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"

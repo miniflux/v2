@@ -1,19 +1,21 @@
 {{ define "title"}}{{ t "page.add_feed.title" }}{{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.add_feed.title" }}</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.add_feed.title" }}</h1>
     {{ template "feed_menu" }}
 </section>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .categories }}
-    <p class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
+    <p role="alert" class="alert alert-error">{{ t "page.add_feed.no_category" }}</p>
 {{ else }}
     <form action="{{ route "submitSubscription" }}" method="post" autocomplete="off">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
 
         {{ if .errorMessage }}
-            <div class="alert alert-error">{{ .errorMessage }}</div>
+            <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
         {{ end }}
 
         <label for="form-url">{{ t "page.add_feed.label.url" }}</label>

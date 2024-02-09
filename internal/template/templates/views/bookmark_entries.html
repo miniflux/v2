@@ -1,28 +1,44 @@
 {{ define "title"}}{{ t "page.starred.title" }} ({{ .total }}){{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.starred.title" }} ({{ .total }})</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
+    <h1 id="page-header-title" dir="auto">
+        {{ t "page.starred.title" }}
+        <span aria-hidden="true"> ({{ .total }})</span>
+    </h1>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.starred_entry_count" .total .total }}</span>
 </section>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .entries }}
-    <p class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
+    <p role="alert" class="alert alert-info">{{ t "alert.no_bookmark" }}</p>
 {{ else }}
     <div class="pagination-top">
         {{ template "pagination" .pagination }}
     </div>
     <div class="items">
         {{ range .entries }}
-        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "starredEntry" "entryID" .ID }}">{{ .Title }}</a>
+        <article
+            class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "starredEntry" "entryID" .ID }}">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                        {{ .Feed.Category.Title }}
+                    </a>
                 </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
+            </header>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
         </article>
         {{ end }}

@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "मंजूर है?",
     "confirm.question.refresh": "क्या आप बल द्वारा ताज़ा करना चाहते हैं?",
     "confirm.yes": "हाँ",
@@ -18,6 +19,8 @@
     "action.home_screen": "होम स्क्रीन में शामिल करें",
     "tooltip.keyboard_shortcuts": "कुंजीपटल संक्षिप्त रीति: %s",
     "tooltip.logged_user": "%s के रूप में लॉग इन किया",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "अपठित",
     "menu.starred": "तारांकित",
     "menu.history": "इतिहास",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "साझा प्रविष्टियां",
     "search.label": "खोजे",
     "search.placeholder": "खोजे...",
+    "search.submit": "Search",
     "pagination.next": "अगला",
     "pagination.previous": "पिछला",
     "entry.status.unread": "अपठित",
@@ -81,11 +85,27 @@
     "entry.estimated_reading_time": [
         "पढ़ने मे %d मिनट मागेगा",
         "पढ़ने मे %d मिनट मागेगा"
-    ],    
+    ],
     "entry.tags.label": "टैग:",
     "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "अपठित",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "तारांकित",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "श्रेणियाँ",
     "page.categories.no_feed": "कोई फ़ीड नहीं है।",
     "page.categories.entries": "विषयवस्तुया",
@@ -94,21 +114,28 @@
         "%d फ़ीड बाकी है।",
         "%d फ़ीड बाकी है।"
     ],
-    "page.categories.unread_counter": "अपठित प्रविष्टिया",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "नया श्रेणी",
     "page.new_user.title": "नया उपभोक्ता",
     "page.edit_category.title": "%s श्रेणी संपाद करे",
     "page.edit_user.title": "%s उपभोक्ता संपाद करे",
     "page.feeds.title": "फ़ीड",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "आखरी जाँच",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "अपठित विषयवस्तुया",
     "page.feeds.read_counter": "पड़े हुए विषयवस्तुया",
     "page.feeds.error_count": [
         "%d समस्या",
         "%d समस्याए"
     ],
     "page.history.title": "इतिहास",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "आयात",
     "page.search.title": "खोज का परिणाम",
     "page.about.title": "पृष्ठ के बारे में",
@@ -363,7 +390,7 @@
     "form.integration.pinboard_bookmark": "बुकमार्क को अपठित के रूप में चिह्नित करें",
     "form.integration.instapaper_activate": "विषय-वस्तु को इंस्टापेपर में सहेजें",
     "form.integration.instapaper_username": "इंस्टापेपर यूजरनेम",
-    "form.integration.instapaper_password": "इंस्टापेपर पासवर्ड", 
+    "form.integration.instapaper_password": "इंस्टापेपर पासवर्ड",
     "form.integration.pocket_activate": "विषय-कविता को पॉकेट में सहेजें",
     "form.integration.pocket_consumer_key": "पॉकेट उपभोक्ता कुंजी",
     "form.integration.pocket_access_token": "पॉकेट एक्सेस टोकन",

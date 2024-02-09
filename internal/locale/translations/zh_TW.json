@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "您確認嗎？",
     "confirm.question.refresh": "您想要強制刷新嗎？",
     "confirm.yes": "是",
@@ -18,6 +19,8 @@
     "action.home_screen": "新增到主螢幕",
     "tooltip.keyboard_shortcuts": "快捷鍵: %s",
     "tooltip.logged_user": "當前登入 %s",
+    "menu.title": "導覽",
+    "menu.home_page": "主頁",
     "menu.unread": "未讀",
     "menu.starred": "收藏",
     "menu.history": "歷史",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "已分享的文章",
     "search.label": "搜尋",
     "search.placeholder": "搜尋…",
+    "search.submit": "送出",
     "pagination.next": "下一頁",
     "pagination.previous": "上一頁",
     "entry.status.unread": "標為未讀",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "標籤：",
     "page.shared_entries.title": "已分享的文章",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "未讀",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "收藏",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "分類",
     "page.categories.no_feed": "沒有Feed",
     "page.categories.entries": "檢視內容",
@@ -94,21 +114,28 @@
         "有 %d 個Feed",
         "有 %d 個Feeds"
     ],
-    "page.categories.unread_counter": "未讀文章數",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "新分類",
     "page.new_user.title": "新使用者",
     "page.edit_category.title": "編輯分類 : %s",
     "page.edit_user.title": "編輯使用者 : %s",
     "page.feeds.title": "Feeds",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "最後檢查時間：",
     "page.feeds.next_check": "下次檢查時間:",
-    "page.feeds.unread_counter": "未讀文章數",
     "page.feeds.read_counter": "已讀文章數",
     "page.feeds.error_count": [
         "%d 錯誤",
         "%d 錯誤"
     ],
     "page.history.title": "歷史",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "匯入",
     "page.search.title": "搜尋結果",
     "page.about.title": "關於",
@@ -282,7 +309,7 @@
     "error.invalid_entry_direction": "無效的輸入方向。",
     "error.invalid_display_mode": "無效的網頁應用顯示模式。",
     "error.invalid_gesture_nav": "手勢導航無效.",
-    "error.invalid_default_home_page": "默認主頁無效！",
+    "error.invalid_default_home_page": "預設主頁無效！",
     "form.feed.label.title": "標題",
     "form.feed.label.site_url": "網站 URL",
     "form.feed.label.feed_url": "訂閱 Feed URL",
@@ -341,7 +368,7 @@
     "form.prefs.label.show_reading_time": "顯示文章的預計閱讀時間",
     "form.prefs.label.custom_css": "自定義 CSS",
     "form.prefs.label.entry_order": "文章排序依據",
-    "form.prefs.label.default_home_page": "默認主頁",
+    "form.prefs.label.default_home_page": "預設主頁",
     "form.prefs.label.categories_sorting_order": "分類排序",
     "form.prefs.label.mark_read_on_view": "查看時自動將條目標記為已讀",
     "form.prefs.fieldset.application_settings": "應用程式設定",

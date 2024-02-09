@@ -25,20 +25,52 @@ function onAuxClick(selector, callback, noPreventDefault) {
     });
 }
 
-// Show and hide the main menu on mobile devices.
-function toggleMainMenu() {
-    let menu = document.querySelector(".header nav ul");
-    if (DomHelper.isVisible(menu)) {
-        menu.style.display = "none";
+// make logo element as button on mobile layout
+function checkMenuToggleModeByLayout() {
+    const logoElement = document.querySelector(".logo");
+    const homePageLinkElement = document.querySelector(".logo > a")
+    if (!logoElement) return
+    const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label")
+
+    const navMenuElement = document.getElementById("header-menu");
+    const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show")
+
+    if (document.documentElement.clientWidth < 620) {
+        logoElement.setAttribute("role", "button");
+        logoElement.setAttribute("tabindex", "0");
+        logoElement.setAttribute("aria-label", logoToggleButtonLabel)
+        if (navMenuElementIsExpanded) {
+           logoElement.setAttribute("aria-expanded", "true")
+        } else {
+           logoElement.setAttribute("aria-expanded", "false")
+        }
+        homePageLinkElement.setAttribute("tabindex", "-1")
     } else {
-        menu.style.display = "block";
+        logoElement.removeAttribute("role");
+        logoElement.removeAttribute("tabindex");
+        logoElement.removeAttribute("aria-expanded");
+        logoElement.removeAttribute("aria-label")
+        homePageLinkElement.removeAttribute("tabindex");
+    }
+}
+
+// Show and hide the main menu on mobile devices.
+function toggleMainMenu(event) {
+    if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
+        return
+    }
+    if (event.currentTarget.getAttribute("role")) {
+        event.preventDefault()
     }
 
-    let searchElement = document.querySelector(".header .search");
-    if (DomHelper.isVisible(searchElement)) {
-        searchElement.style.display = "none";
+    let menu = document.querySelector(".header nav ul");
+    let menuToggleButton = document.querySelector(".logo");
+    if (menu.classList.contains("js-menu-show")) {
+        menu.classList.remove("js-menu-show")
+        menuToggleButton.setAttribute("aria-expanded", false)
     } else {
-        searchElement.style.display = "block";
+        menu.classList.add("js-menu-show")
+        menuToggleButton.setAttribute("aria-expanded", true)
     }
 }
 
@@ -72,21 +104,12 @@ function handleSubmitButtons() {
 function setFocusToSearchInput(event) {
     event.preventDefault();
     event.stopPropagation();
-
-    let toggleSwitchElement = document.querySelector(".search-toggle-switch");
-    if (toggleSwitchElement) {
-        toggleSwitchElement.style.display = "none";
-    }
-
-    let searchFormElement = document.querySelector(".search-form");
-    if (searchFormElement) {
-        searchFormElement.style.display = "block";
-    }
-
-    let searchInputElement = document.getElementById("search-input");
-    if (searchInputElement) {
-        searchInputElement.focus();
-        searchInputElement.value = "";
+    const toggleSearchButton = document.querySelector(".search details")
+    if (!toggleSearchButton.getAttribute("open")) {
+      toggleSearchButton.setAttribute("open", "")
+      const searchInputElement = document.getElementById("search-input");
+      searchInputElement.focus();
+      searchInputElement.value = "";
     }
 }
 

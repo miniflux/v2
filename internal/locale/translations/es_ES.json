@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "¿Estás seguro?",
     "confirm.question.refresh": "¿Quieres forzar la actualización?",
     "confirm.yes": "sí",
@@ -18,6 +19,8 @@
     "action.home_screen": "Añadir a la pantalla principal",
     "tooltip.keyboard_shortcuts": "Atajo de teclado: %s",
     "tooltip.logged_user": "Registrado como %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "No leídos",
     "menu.starred": "Marcadores",
     "menu.history": "Historial",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Artículos compartidos",
     "search.label": "Buscar",
     "search.placeholder": "Búsqueda...",
+    "search.submit": "Search",
     "pagination.next": "Siguiente",
     "pagination.previous": "Anterior",
     "entry.status.unread": "No leído",
@@ -81,11 +85,27 @@
     "entry.estimated_reading_time": [
         "%d minuto de lectura",
         "%d minutos de lectura"
-    ],    
+    ],
     "entry.tags.label": "Etiquetas:",
     "page.shared_entries.title": "Artículos compartidos",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "No leídos",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Marcadores",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categorías",
     "page.categories.no_feed": "Sin fuente.",
     "page.categories.entries": "Artículos",
@@ -94,21 +114,28 @@
         "Hay %d fuente.",
         "Hay %d fuentes."
     ],
-    "page.categories.unread_counter": "Número de artículos no leídos",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Nueva categoría",
     "page.new_user.title": "Nuevo usuario",
     "page.edit_category.title": "Editar categoría: %s",
     "page.edit_user.title": "Editar usuario: %s",
     "page.feeds.title": "Fuentes",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Última verificación:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Número de artículos no leídos",
     "page.feeds.read_counter": "Número de artículos leídos",
     "page.feeds.error_count": [
         "%d error",
         "%d errores"
     ],
     "page.history.title": "Historial",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importar",
     "page.search.title": "Resultados de la búsqueda",
     "page.about.title": "Acerca de",

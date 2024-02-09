@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Czy jesteś pewny?",
     "confirm.question.refresh": "Czy chcesz wymusić odświeżenie?",
     "confirm.yes": "tak",
@@ -18,6 +19,8 @@
     "action.home_screen": "Dodaj do ekranu głównego",
     "tooltip.keyboard_shortcuts": "Skróty klawiszowe: %s",
     "tooltip.logged_user": "Zalogowany jako %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Nieprzeczytane",
     "menu.starred": "Ulubione",
     "menu.history": "Historia",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Udostępnione wpisy",
     "search.label": "Szukaj",
     "search.placeholder": "Szukaj...",
+    "search.submit": "Search",
     "pagination.next": "Następny",
     "pagination.previous": "Poprzedni",
     "entry.status.unread": "Nieprzeczytane",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "Tagi:",
     "page.shared_entries.title": "Udostępnione wpisy",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Nieprzeczytane",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Oznaczone gwiazdką",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Kategorie",
     "page.categories.no_feed": "Brak kanałów.",
     "page.categories.entries": "Artykuły",
@@ -95,15 +115,18 @@
         "Są %d kanały.",
         "Jest %d kanałów."
     ],
-    "page.categories.unread_counter": "Liczba nieprzeczytanych wpisów",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Nowa kategoria",
     "page.new_user.title": "Nowy użytkownik",
     "page.edit_category.title": "Edycja Kategorii: %s",
     "page.edit_user.title": "Edytuj użytkownika: %s",
     "page.feeds.title": "Kanały",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Ostatnia aktualizacja:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Liczba nieprzeczytanych wpisów",
     "page.feeds.read_counter": "Liczba przeczytanych wpisów",
     "page.feeds.error_count": [
         "%d błąd",
@@ -111,6 +134,10 @@
         "%d błędów"
     ],
     "page.history.title": "Historia",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importuj",
     "page.search.title": "Wyniki wyszukiwania",
     "page.about.title": "O",

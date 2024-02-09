@@ -1,51 +1,71 @@
 {{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
 
-{{ define "content"}}
-<section class="page-header">
-    <h1>{{ t "page.unread.title" }} (<span class="unread-counter">{{ .countUnread }}</span>)</h1>
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
+    <h1 id="page-header-title">
+        {{ t "page.unread.title" }}
+        <span aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
+    </h1>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.unread_entry_count" .countUnread .countUnread }}</span>
     {{ if .entries }}
-    <ul>
-        <li>
-            <a href="#"
-                data-action="markPageAsRead"
-                data-show-only-unread="1"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
-        </li>
-        <li>
-            <a href="#"
-                data-confirm="true"
-                data-url="{{ route "markAllAsRead" }}"
-                data-redirect-url="{{ route "unread" }}"
-                data-label-question="{{ t "confirm.question" }}"
-                data-label-yes="{{ t "confirm.yes" }}"
-                data-label-no="{{ t "confirm.no" }}"
-                data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
-        </li>
-    </ul>
+    <nav aria-label="{{ t "page.unread.title" }} {{ t "menu.title" }}">
+        <ul>
+            <li>
+                <a href="#"
+                    role="button"
+                    data-action="markPageAsRead"
+                    data-show-only-unread="1"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
+            </li>
+            <li>
+                <a href="#"
+                    role="button"
+                    data-confirm="true"
+                    data-url="{{ route "markAllAsRead" }}"
+                    data-redirect-url="{{ route "unread" }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
+            </li>
+        </ul>
+    </nav>
     {{ end }}
 </section>
+{{ end }}
 
+{{ define "content"}}
 {{ if not .entries }}
-    <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+    <p role="alert" class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
     <div class="pagination-top">
         {{ template "pagination" .pagination }}
     </div>
     <div class="items hide-read-items">
         {{ range .entries }}
-        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                    {{ end }}
-                    <a href="{{ route "unreadEntry" "entryID" .ID }}">{{ .Title }}</a>
+        <article
+            class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "unreadEntry" "entryID" .ID }}">
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                        {{ .Feed.Category.Title }}
+                    </a>
                 </span>
-                <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>
-            </div>
+            </header>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
         </article>
         {{ end }}
@@ -55,11 +75,15 @@
         <ul>
             <li>
                 <a href="#"
+                    role="button"
                     data-action="markPageAsRead"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
-                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
+                    data-label-loading="{{ t "confirm.loading" }}"
+                >
+                    {{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}
+                </a>
             </li>
         </ul>
         {{ end }}
