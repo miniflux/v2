@@ -804,6 +804,10 @@ template {
     box-shadow: var(--current-item-box-shadow);
 }
 
+.item.current-item:focus {
+    outline: none;
+}
+
 
 .item-header {
     font-size: 1rem;
