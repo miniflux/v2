@@ -191,7 +191,7 @@ a:hover {
     font-size: 1rem;
     cursor: pointer;
 
-    &:is(hover, :focus) {
+    &:is(:hover, :focus) {
         color: var(--link-hover-color);
     }
 }
