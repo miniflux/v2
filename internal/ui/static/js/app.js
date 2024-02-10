@@ -273,12 +273,11 @@ function saveEntry(element, toasting) {
         return;
     }
 
-    let previousInnerHTML = element.innerHTML;
     element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
-        element.innerHTML = previousInnerHTML;
+        element.innerHTML = '<span class="icon-label">' + element.dataset.labelDone + '</span>';
         element.dataset.completed = true;
         if (toasting) {
             let iconElement = document.querySelector("template#icon-save");
