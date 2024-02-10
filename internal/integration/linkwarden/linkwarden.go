@@ -36,11 +36,11 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	}
 
 	requestBody, err := json.Marshal(&linkwardenBookmark{
-		Url:      entryURL,
-		Name:    "",
-		Description:    "",
-		Tags: []string{},
-		Collection: map[string]interface{}{},
+		Url:         entryURL,
+		Name:        "",
+		Description: "",
+		Tags:        []string{},
+		Collection:  map[string]interface{}{},
 	})
 
 	if err != nil {
@@ -71,9 +71,9 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 }
 
 type linkwardenBookmark struct {
-	Url      string   `json:"url"`
-	Name    string   `json:"name"`
-	Description    string   `json:"description"`
-	Tags []string `json:"tags"`
-	Collection map[string]interface{} `json:"collection"`
+	Url         string                 `json:"url"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Tags        []string               `json:"tags"`
+	Collection  map[string]interface{} `json:"collection"`
 }
