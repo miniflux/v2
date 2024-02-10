@@ -163,6 +163,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linkding_api_key,
 			linkding_tags,
 			linkding_mark_as_unread,
+			linkwarden_enabled,
+			linkwarden_url,
+			linkwarden_api_key,
 			matrix_bot_enabled,
 			matrix_bot_user,
 			matrix_bot_password,
@@ -247,6 +250,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkdingAPIKey,
 		&integration.LinkdingTags,
 		&integration.LinkdingMarkAsUnread,
+		&integration.LinkwardenEnabled,
+		&integration.LinkwardenURL,
+		&integration.LinkwardenAPIKey,
 		&integration.MatrixBotEnabled,
 		&integration.MatrixBotUser,
 		&integration.MatrixBotPassword,
@@ -362,9 +368,12 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			rssbridge_url=$73,
 			omnivore_enabled=$74,
 			omnivore_api_key=$75,
-			omnivore_url=$76
+			omnivore_url=$76,
+			linkwarden_enabled=$77,
+			linkwarden_url=$78,
+			linkwarden_api_key=$79
 		WHERE
-			user_id=$77
+			user_id=$80
 	`
 	_, err := s.db.Exec(
 		query,
@@ -444,6 +453,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.OmnivoreEnabled,
 		integration.OmnivoreAPIKey,
 		integration.OmnivoreURL,
+		integration.LinkwardenEnabled,
+		integration.LinkwardenURL,
+		integration.LinkwardenAPIKey,
 		integration.UserID,
 	)
 
@@ -475,6 +487,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				pocket_enabled='t' OR
 				linkace_enabled='t' OR
 				linkding_enabled='t' OR
+				linkwarden_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
 				shaarli_enabled='t' OR
