@@ -13,7 +13,7 @@ class KeyboardHandler {
     listen() {
         document.onkeydown = (event) => {
             let key = this.getKey(event);
-            if (this.isEventIgnored(event, key) || this.isModifierKeyDown(event)) {
+            if (this.isEventIgnored(event, key) || this.isModifierKeyDown(event) || this.isConfirmAlertModalCloseEvent(key)) {
                 return;
             }
 
@@ -50,6 +50,11 @@ class KeyboardHandler {
 
     isModifierKeyDown(event) {
         return event.getModifierState("Control") || event.getModifierState("Alt") || event.getModifierState("Meta");
+    }
+
+    isConfirmAlertModalCloseEvent(key) {
+        const dialogElement = document.getElementById("confirm-alert-dialog")
+        return dialogElement.getAttribute("open") !== null && key == "Escape"
     }
 
     getKey(event) {

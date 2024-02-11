@@ -605,6 +605,57 @@ fieldset .buttons {
     margin-bottom: 0;
 }
 
+/* Alert dialog */
+.alert-dialog {
+    outline: none;
+    border: 1px dotted var(--item-border-color);
+    position: relative;
+
+    &[open] {
+        margin: revert;
+        padding: revert;
+        padding-block-start: 45px;
+    }
+
+    &:is(:focus, :focus-within) {
+        border: var(--current-item-border-width) solid var(--current-item-border-color);
+    }
+}
+
+.alert-dialog-close-form {
+    position: absolute;
+    inset-block-start: 5px;
+    inset-inline-end: 5px;
+}
+
+.alert-dialog-close-form-button {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    padding: 8px;
+    cursor: pointer;
+
+    :is(:focus, :hover) {
+        color: var(--link-hover-color);
+    }
+
+    :active {
+        translate: 1px 1px;
+    }
+
+}
+
+.alert-dialog-title {
+    display: block;
+    margin-block-end: 15px;
+}
+
+.alert-dialog-confirm-button {
+    margin-inline-end: 10px;
+}
+
 /* Alerts */
 .alert {
     padding: 8px 35px 8px 14px;

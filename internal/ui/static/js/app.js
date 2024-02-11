@@ -87,7 +87,7 @@ function onClickMainMenuListItem(event) {
 
 // Change the button label when the page is loading.
 function handleSubmitButtons() {
-    let elements = document.querySelectorAll("form");
+    let elements = document.querySelectorAll("form:not([method=dialog])");
     elements.forEach((element) => {
         element.onsubmit = () => {
             let button = element.querySelector("button");
@@ -574,57 +574,41 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    if (linkElement.tagName != 'A' && linkElement.tagName != "BUTTON") {
+    if (!["A,", "BUTTON"].includes(linkElement.tagName)) {
         linkElement = linkElement.parentNode;
     }
 
-    linkElement.style.display = "none";
+    const dialogElement = document.getElementById("confirm-alert-dialog");
+    const questionElement = document.getElementById("confirm-alert-dialog-question");
+    questionElement.textContent = `${linkElement.dataset.labelQuestion} ${linkElement.dataset.labelAction}`;
 
-    let containerElement = linkElement.parentNode;
-    let questionElement = document.createElement("span");
-
-    function createLoadingElement() {
-        let loadingElement = document.createElement("span");
-        loadingElement.className = "loading";
-        loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
-
-        questionElement.remove();
-        containerElement.appendChild(loadingElement);
-    }
-
-    let yesElement = document.createElement("button");
-    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
-    yesElement.onclick = (event) => {
-        event.preventDefault();
-
-        createLoadingElement();
-
+    const yesButtonElement = document.getElementById("confirm-alert-dialog-yes-button");
+    yesButtonElement.textContent = linkElement.dataset.labelYes;
+    yesButtonElement.addEventListener("click", (event) => {
+        turnButtonToLoadingState(yesButtonElement, linkElement.dataset.labelLoading);
         callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
-    };
+    });
 
-    let noElement = document.createElement("button");
-    noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
-    noElement.onclick = (event) => {
+    const noButtonElement = document.getElementById("confirm-alert-dialog-no-button");
+    noButtonElement.textContent = linkElement.dataset.labelNo;
+    noButtonElement.addEventListener("click", (event) => {
         event.preventDefault();
-
         const noActionUrl = linkElement.dataset.noActionUrl;
         if (noActionUrl) {
-            createLoadingElement();
-
+            turnButtonToLoadingState(noButtonElement, linkElement.dataset.labelLoading);
             callback(noActionUrl, linkElement.dataset.redirectUrl);
         } else {
-            linkElement.style.display = "inline";
-            questionElement.remove();
+            dialogElement.close();
         }
-    };
+    });
 
-    questionElement.className = "confirm";
-    questionElement.appendChild(document.createTextNode(linkElement.dataset.labelQuestion + " "));
-    questionElement.appendChild(yesElement);
-    questionElement.appendChild(document.createTextNode(", "));
-    questionElement.appendChild(noElement);
+    dialogElement.showModal();
 
-    containerElement.appendChild(questionElement);
+    function turnButtonToLoadingState(buttonElement, loadingText) {
+        buttonElement.innerHTML = loadingText
+        buttonElement.classList.add("loading")
+        buttonElement.setAttribute("aria-disabled", "true")
+    }
 }
 
 function showToast(label, iconElement) {
