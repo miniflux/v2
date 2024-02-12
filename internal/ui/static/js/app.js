@@ -577,22 +577,30 @@ function handleConfirmationMessage(linkElement, callback) {
     if (!["A,", "BUTTON"].includes(linkElement.tagName)) {
         linkElement = linkElement.parentNode;
     }
+    const dialogTemplate = document.getElementById("confirm-dialog-template")
+    const clonedDialogTemplate = dialogTemplate.content.cloneNode(true);
 
     const dialogElement = document.getElementById("confirm-alert-dialog");
-    const questionElement = document.getElementById("confirm-alert-dialog-question");
+    const questionElement = clonedDialogTemplate.querySelector(".alert-dialog-title");
     questionElement.textContent = `${linkElement.dataset.labelQuestion} ${linkElement.dataset.labelAction}`;
 
-    const yesButtonElement = document.getElementById("confirm-alert-dialog-yes-button");
+    const yesButtonElement = clonedDialogTemplate.querySelector(".alert-dialog-confirm-button");
     yesButtonElement.textContent = linkElement.dataset.labelYes;
     yesButtonElement.addEventListener("click", (event) => {
+        yesButtonElement.setAttribute("aria-atomic", "true");
+        yesButtonElement.setAttribute("aria-live", "polite");
         turnButtonToLoadingState(yesButtonElement, linkElement.dataset.labelLoading);
         callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
     });
 
-    const noButtonElement = document.getElementById("confirm-alert-dialog-no-button");
+    const noButtonElement = clonedDialogTemplate.querySelector(".alert-dialog-cancel-button");
     noButtonElement.textContent = linkElement.dataset.labelNo;
     noButtonElement.addEventListener("click", (event) => {
         event.preventDefault();
+
+        noButtonElement.setAttribute("aria-atomic", "true");
+        noButtonElement.setAttribute("aria-live", "polite");
+
         const noActionUrl = linkElement.dataset.noActionUrl;
         if (noActionUrl) {
             turnButtonToLoadingState(noButtonElement, linkElement.dataset.labelLoading);
@@ -602,6 +610,7 @@ function handleConfirmationMessage(linkElement, callback) {
         }
     });
 
+    dialogElement.appendChild(clonedDialogTemplate)
     dialogElement.showModal();
 
     function turnButtonToLoadingState(buttonElement, loadingText) {
@@ -609,6 +618,15 @@ function handleConfirmationMessage(linkElement, callback) {
         buttonElement.classList.add("loading")
         buttonElement.setAttribute("aria-disabled", "true")
     }
+}
+
+function removeDialogContext(dialogElement) {
+    const dialogElementChildren = Array.from(dialogElement.children)
+    const dialogElementChildrenWithoutTemplate = dialogElementChildren
+        .filter((child) => { return child.id != "confirm-dialog-template" })
+    dialogElementChildrenWithoutTemplate.forEach((child) => {
+        child.remove()
+    })
 }
 
 function showToast(label, iconElement) {
