@@ -27,6 +27,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v4
         with:
           args: --timeout 10m --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
