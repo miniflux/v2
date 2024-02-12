@@ -65,6 +65,9 @@ type IntegrationForm struct {
 	LinkdingAPIKey                   string
 	LinkdingTags                     string
 	LinkdingMarkAsUnread             bool
+	LinkwardenEnabled                bool
+	LinkwardenURL                    string
+	LinkwardenAPIKey                 string
 	MatrixBotEnabled                 bool
 	MatrixBotUser                    string
 	MatrixBotPassword                string
@@ -143,6 +146,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
 	integration.LinkdingTags = i.LinkdingTags
 	integration.LinkdingMarkAsUnread = i.LinkdingMarkAsUnread
+	integration.LinkwardenEnabled = i.LinkwardenEnabled
+	integration.LinkwardenURL = i.LinkwardenURL
+	integration.LinkwardenAPIKey = i.LinkwardenAPIKey
 	integration.MatrixBotEnabled = i.MatrixBotEnabled
 	integration.MatrixBotUser = i.MatrixBotUser
 	integration.MatrixBotPassword = i.MatrixBotPassword
@@ -223,6 +229,9 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		LinkdingAPIKey:                   r.FormValue("linkding_api_key"),
 		LinkdingTags:                     r.FormValue("linkding_tags"),
 		LinkdingMarkAsUnread:             r.FormValue("linkding_mark_as_unread") == "1",
+		LinkwardenEnabled:                r.FormValue("linkwarden_enabled") == "1",
+		LinkwardenURL:                    r.FormValue("linkwarden_url"),
+		LinkwardenAPIKey:                 r.FormValue("linkwarden_api_key"),
 		MatrixBotEnabled:                 r.FormValue("matrix_bot_enabled") == "1",
 		MatrixBotUser:                    r.FormValue("matrix_bot_user"),
 		MatrixBotPassword:                r.FormValue("matrix_bot_password"),

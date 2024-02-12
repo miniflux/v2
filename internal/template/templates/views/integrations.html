@@ -177,6 +177,25 @@
         </div>
     </details>
 
+    <details {{ if .form.LinkwardenEnabled }}open{{ end }}>
+        <summary>Linkwarden</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="linkwarden_enabled" value="1" {{ if .form.LinkwardenEnabled }}checked{{ end }}> {{ t "form.integration.linkwarden_activate" }}
+            </label>
+
+            <label for="form-linkwarden-url">{{ t "form.integration.linkwarden_endpoint" }}</label>
+            <input type="url" name="linkwarden_url" id="form-linkwarden-url" value="{{ .form.LinkwardenURL }}" placeholder="https://linkwarden.app" spellcheck="false">
+
+            <label for="form-linkwarden-api-key">{{ t "form.integration.linkwarden_api_key" }}</label>
+            <input type="text" name="linkwarden_api_key" id="form-linkwarden-api-key" value="{{ .form.LinkwardenAPIKey }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.MatrixBotEnabled }}open{{ end }}>
         <summary>Matrix Bot</summary>
         <div class="form-section">
