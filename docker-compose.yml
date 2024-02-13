@@ -2,7 +2,7 @@ services:
   miniflux:
     image: miniflux/miniflux:latest
     ports:
-      - "80:8080"
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
