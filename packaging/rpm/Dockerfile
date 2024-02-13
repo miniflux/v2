@@ -15,3 +15,5 @@ COPY --from=build /go/src/app/miniflux.1 /root/rpmbuild/SOURCES/
 COPY --from=build /go/src/app/packaging/systemd/miniflux.service /root/rpmbuild/SOURCES/
 COPY --from=build /go/src/app/packaging/miniflux.conf /root/rpmbuild/SOURCES/
 COPY --from=build /go/src/app/packaging/rpm/miniflux.spec /root/rpmbuild/SPECS/miniflux.spec
+
+
