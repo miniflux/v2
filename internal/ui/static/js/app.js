@@ -54,6 +54,27 @@ function checkMenuToggleModeByLayout() {
     }
 }
 
+function fixVoiceOverDetailsSummaryBug() {
+    const detailsElements = document.querySelectorAll("details")
+    detailsElements.forEach((details) => {
+        const summaryElement = details.querySelector("summary")
+        summaryElement.setAttribute("role", "button")
+        setSummaryAriaExpandedByDetails(details, summaryElement)
+
+        details.addEventListener("toggle", () => {
+            setSummaryAriaExpandedByDetails(details, summaryElement)
+        })
+    })
+
+    function setSummaryAriaExpandedByDetails(details, summary) {
+        if (details.open) {
+            summary.setAttribute("aria-expanded", "true")
+        } else {
+            summary.setAttribute("aria-expanded", "false")
+        }
+    }
+}
+
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu(event) {
     if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
