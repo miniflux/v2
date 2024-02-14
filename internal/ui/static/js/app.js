@@ -581,8 +581,12 @@ function handleConfirmationMessage(linkElement, callback) {
     const clonedDialogTemplate = dialogTemplate.content.cloneNode(true);
 
     const dialogElement = document.getElementById("confirm-alert-dialog");
-    const questionElement = clonedDialogTemplate.querySelector(".alert-dialog-title");
-    questionElement.textContent = `${linkElement.dataset.labelQuestion} ${linkElement.dataset.labelAction}`;
+    const titleElement = clonedDialogTemplate.querySelector(".alert-dialog-title");
+    titleElement.textContent = linkElement.dataset.labelQuestion;
+
+    const descriptionElement = clonedDialogTemplate.querySelector(".alert-dialog-description");
+    descriptionElement.textContent = linkElement.dataset.labelAction;
+
 
     const yesButtonElement = clonedDialogTemplate.querySelector(".alert-dialog-confirm-button");
     yesButtonElement.textContent = linkElement.dataset.labelYes;

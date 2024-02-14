@@ -33,6 +33,12 @@
     --button-primary-focus-border-color: #2f5bb7;
     --button-primary-focus-background: #357ae8;
 
+    --button-secondary-border-color: #777;
+    --button-secondary-background: #777;
+    --button-secondary-color: #fff;
+    --button-secondary-focus-border-color: #777;
+    --button-secondary-focus-background: #777;
+
     --input-border: 1px solid #ccc;
     --input-background: #fff;
     --input-color: #333;

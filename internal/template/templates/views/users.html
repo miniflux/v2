@@ -32,13 +32,14 @@
                 </td>
                 <td>
                     <a href="{{ route "editUser" "userID" .ID }}">{{ t "action.edit" }}</a>,
-                    <a href="#"
+                    <button
                         data-confirm="true"
                         data-label-question="{{ t "confirm.question" }}"
+                        data-label-action="{{ t "action.remove" }}"
                         data-label-yes="{{ t "confirm.yes" }}"
                         data-label-no="{{ t "confirm.no" }}"
                         data-label-loading="{{ t "confirm.loading" }}"
-                        data-url="{{ route "removeUser" "userID" .ID }}">{{ t "action.remove" }}</a>
+                        data-url="{{ route "removeUser" "userID" .ID }}">{{ t "action.remove" }}</button>
                 </td>
             </tr>
             {{ end }}

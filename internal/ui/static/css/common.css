@@ -578,6 +578,18 @@ a.button-primary:focus,
     color: var(--button-primary-color);
 }
 
+.button-secondary {
+    border-color: var(--button-secondary-border-color);
+    background: var(--button-secondary-background);
+    color: var(--button-secondary-color);
+
+    &:is(:hover, :focus) {
+        border-color: var(--button-secondary-focus-border-color);
+        background: var(--button-secondary-focus-background);
+        color: var(--button-secondary-color);
+    }
+}
+
 .button-danger {
     border-color: #b0281a;
     background: #d14836;
@@ -612,9 +624,13 @@ fieldset .buttons {
     position: relative;
 
     &[open] {
+        --close-button-width: 32px;
+
         margin: revert;
-        padding: revert;
-        padding-block-start: 45px;
+        padding: 25px;
+        display: grid;
+        grid-template-columns: 50% calc(50% - var(--close-button-width)) var(--close-button-width);
+        grid-template-rows: repeat(3, min-content);
     }
 
     &:is(:focus, :focus-within) {
@@ -623,9 +639,12 @@ fieldset .buttons {
 }
 
 .alert-dialog-close-form {
-    position: absolute;
-    inset-block-start: 5px;
-    inset-inline-end: 5px;
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    inline-size: auto;
 }
 
 .alert-dialog-close-form-button {
@@ -634,26 +653,49 @@ fieldset .buttons {
     display: flex;
     align-content: center;
     justify-content: center;
-    padding: 8px;
     cursor: pointer;
+    position: relative;
+    padding: 8px;
+    inline-size: 100%;
+    aspect-ratio: 1 / 1;
 
-    :is(:focus, :hover) {
+    &:is(:focus, :hover) {
         color: var(--link-hover-color);
     }
 
-    :active {
+    &:active {
         translate: 1px 1px;
     }
 
+    & svg {
+        inline-size: 100%;
+        block-size: 100%;
+    }
 }
 
 .alert-dialog-title {
-    display: block;
-    margin-block-end: 15px;
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+    white-space: nowrap;
+    margin-inline-end: 5px;
+}
+
+.alert-dialog-description {
+    margin-block: 15px;
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
 }
 
 .alert-dialog-confirm-button {
-    margin-inline-end: 10px;
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+    margin-inline-end: 5px;
+}
+
+.alert-dialog-cancel-button {
+    grid-column: 2 / -1;
+    grid-row: 3 / 4;
+    margin-inline-start: 5px;
 }
 
 /* Alerts */
