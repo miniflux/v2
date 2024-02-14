@@ -114,6 +114,8 @@ document.addEventListener("DOMContentLoaded", () => {
     checkMenuToggleModeByLayout()
     window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
 
+    fixVoiceOverDetailsSummaryBug()
+
     const logoElement = document.querySelector(".logo")
     logoElement.addEventListener("click", (event) => toggleMainMenu(event));
     logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
