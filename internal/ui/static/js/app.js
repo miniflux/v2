@@ -54,6 +54,27 @@ function checkMenuToggleModeByLayout() {
     }
 }
 
+function fixVoiceOverDetailsSummaryBug() {
+    const detailsElements = document.querySelectorAll("details")
+    detailsElements.forEach((details) => {
+        const summaryElement = details.querySelector("summary")
+        summaryElement.setAttribute("role", "button")
+        setSummaryAriaExpandedByDetails(details, summaryElement)
+
+        details.addEventListener("toggle", () => {
+            setSummaryAriaExpandedByDetails(details, summaryElement)
+        })
+    })
+
+    function setSummaryAriaExpandedByDetails(details, summary) {
+        if (details.open) {
+            summary.setAttribute("aria-expanded", "true")
+        } else {
+            summary.setAttribute("aria-expanded", "false")
+        }
+    }
+}
+
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu(event) {
     if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
@@ -273,12 +294,11 @@ function saveEntry(element, toasting) {
         return;
     }
 
-    let previousInnerHTML = element.innerHTML;
     element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
-        element.innerHTML = previousInnerHTML;
+        element.innerHTML = '<span class="icon-label">' + element.dataset.labelDone + '</span>';
         element.dataset.completed = true;
         if (toasting) {
             let iconElement = document.querySelector("template#icon-save");

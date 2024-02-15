@@ -233,18 +233,21 @@ a:hover {
     margin-right: 5px;
 }
 
-.search details svg {
+.search-summary-icon {
    padding: 5px;
    inline-size: 24px;
    block-size: 24px;
    translate: 0 -3px;
 }
 
-.search details[open] svg {
-   rotate: 180deg;
+.search-details {
+
+   &[open] .search-summary-icon {
+       rotate: 180deg;
+    }
 }
 
-.search details > summary {
+.search-summary {
   list-style: none;
   display: flex;
   justify-content: center;
@@ -252,11 +255,10 @@ a:hover {
   margin-inline: auto;
 }
 
-.search details > summary::marker, /* Latest Chrome, Edge, Firefox */
-.search details > summary::-webkit-details-marker /* Safari */ {
+.search-summary::marker, /* Latest Chrome, Edge, Firefox */
+.search-summary::-webkit-details-marker /* Safari */ {
   display: none;
 }
-
 
 .search-toggle-switch {
     display: none;
