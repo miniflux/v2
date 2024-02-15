@@ -53,7 +53,6 @@
                     class="page-button"
                     data-confirm="true"
                     data-label-question="{{ t "confirm.question.refresh" }}"
-                    data-label-action="{{ t "menu.refresh_feed" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
@@ -67,6 +66,7 @@
                 <button
                     class="page-button"
                     data-confirm="true"
+                    data-confirm-is-danger
                     data-action="remove-feed"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-action="{{ t "action.remove_feed" }}"
@@ -143,7 +143,7 @@
                     class="page-button"
                     data-action="markPageAsRead"
                     data-label-question="{{ t "confirm.question" }}"
-                    data-label-action="{{ t "confirm.question" }}"
+                    data-label-action="{{ t "menu.mark_page_as_read" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"

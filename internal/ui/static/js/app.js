@@ -587,9 +587,12 @@ function handleConfirmationMessage(linkElement, callback) {
     const descriptionElement = clonedDialogTemplate.querySelector(".alert-dialog-description");
     descriptionElement.textContent = linkElement.dataset.labelAction;
 
-
     const yesButtonElement = clonedDialogTemplate.querySelector(".alert-dialog-confirm-button");
     yesButtonElement.textContent = linkElement.dataset.labelYes;
+    if (linkElement.getAttribute("data-confirm-is-danger") !== null) {
+        yesButtonElement.classList.remove("button-primary")
+        yesButtonElement.classList.add("button-danger")
+    }
     yesButtonElement.addEventListener("click", (event) => {
         yesButtonElement.setAttribute("aria-atomic", "true");
         yesButtonElement.setAttribute("aria-live", "polite");

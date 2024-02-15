@@ -56,10 +56,10 @@
                     {{ if eq (deRef .FeedCount) 0 }}
                     <li class="item-meta-icons-delete">
                         <button
-                            aria-describedby="category-title-{{ .ID }}"
                             data-confirm="true"
+                            data-confirm-is-danger
                             data-label-question="{{ t "confirm.question" }}"
-                            data-label-action="{{ t "action.remove" }}"
+                            data-label-action="{{ t "confirm.action.category.remove" .Title }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
@@ -69,10 +69,9 @@
                     {{ if gt (deRef .TotalUnread) 0 }}
                       <li class="item-meta-icons-mark-as-read">
                         <button
-                            aria-describedby="category-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
-                            data-label-action="{{ t "menu.mark_all_as_read" }}"
+                            data-label-action="{{ t "confirm.action.category.mark_all_as_read" .Title }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"

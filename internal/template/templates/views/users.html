@@ -33,9 +33,11 @@
                 <td>
                     <a href="{{ route "editUser" "userID" .ID }}">{{ t "action.edit" }}</a>,
                     <button
+                        class="page-button"
                         data-confirm="true"
+                        data-confirm-is-danger
                         data-label-question="{{ t "confirm.question" }}"
-                        data-label-action="{{ t "action.remove" }}"
+                        data-label-action="{{ t "confirm.action.user.remove" .Username }}"
                         data-label-yes="{{ t "confirm.yes" }}"
                         data-label-no="{{ t "confirm.no" }}"
                         data-label-loading="{{ t "confirm.loading" }}"

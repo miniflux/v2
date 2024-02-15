@@ -631,6 +631,7 @@ fieldset .buttons {
         display: grid;
         grid-template-columns: 50% calc(50% - var(--close-button-width)) var(--close-button-width);
         grid-template-rows: repeat(3, min-content);
+        position: fixed;
     }
 
     &:is(:focus, :focus-within) {
@@ -678,6 +679,7 @@ fieldset .buttons {
     grid-row: 1 / 2;
     white-space: nowrap;
     margin-inline-end: 5px;
+    font-weight: 500;
 }
 
 .alert-dialog-description {
@@ -724,11 +726,10 @@ fieldset .buttons {
     color: var(--alert-error-color);
     background-color: var(--alert-error-background-color);
     border-color: var(--alert-error-border-color);
-}
 
-.alert-error h3,
-.alert-error a {
-    color: var(--alert-error-color);
+    :is(.page-button, h3, a) {
+        color: var(--alert-error-color);
+    }
 }
 
 .alert-info {
