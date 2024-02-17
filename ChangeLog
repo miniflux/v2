@@ -14,7 +14,7 @@ Version 2.1.0 (February 17, 2024)
 * Always try to use HTTP/2 when fetching feeds if available
 * Add `type` attribute in OPML export as per OPML 2.0 specs
 * Fix missing translation argument for the key `error.unable_to_parse_feed`
-* Fix Debian package builder when using Go 1.12 and `armhf` architecture
+* Fix Debian package builder when using Go 1.22 and `armhf` architecture
 * Fix typo in log message
 * Fix incorrect label shown when saving an article
 * Fix incorrect condition in refresh feeds cli
@@ -36,7 +36,7 @@ Version 2.1.0 (February 17, 2024)
     * Add `nav` landmark to page header links
 * Limit feed/category entry pagination to unread entries when coming from unread entry list
 * Update German translation
-* Update GitHub Actions to Go 1.12
+* Update GitHub Actions to Go 1.22
 * Bump `golang.org/x/term` from `0.16.0` to `0.17.0`
 * Bump `github.com/google/uuid` from `1.5.0` to `1.6.0`
 * Bump `github.com/yuin/goldmark` from `1.6.0` to `1.7.0`
