@@ -1,3 +1,54 @@
+Version 2.1.0 (February 17, 2024)
+---------------------------------
+
+* Add Linkwarden integration
+* Add LinkAce integration
+* Add `FORCE_REFRESH_INTERVAL` config option
+* Add `item-meta-info-reading-time` CSS class
+* Add `add_dynamic_iframe` rewrite function
+* Add attribute `data-original-mos` to `add_dynamic_image` rewrite candidates
+* Update entry processor to allow blocking/keeping entries by tags and/or authors
+* Change default `Accept` header when fetching feeds
+* Rewrite relative RSS Bridge URL to absolute URL
+* Use numeric user ID in Alpine and distroless container image (avoid `securityContext` error in Kubernetes)
+* Always try to use HTTP/2 when fetching feeds if available
+* Add `type` attribute in OPML export as per OPML 2.0 specs
+* Fix missing translation argument for the key `error.unable_to_parse_feed`
+* Fix Debian package builder when using Go 1.12 and `armhf` architecture
+* Fix typo in log message
+* Fix incorrect label shown when saving an article
+* Fix incorrect condition in refresh feeds cli
+* Fix incorrect label `for` attribute
+* Add missing label ID for custom CSS field
+* Accessibility improvements:
+    * Add workaround for macOS VoiceOver that didn't announce `details` and `summary` when expanded
+    * Add `alert` role to alert message element
+    * Add a `h2` heading to the article element so that the screen reader users can navigate the article through the heading level
+    * Add an `aria-label` attribute for the article element for screen readers
+    * Remove the icon image `alt` attribute in feeds list to prevent screen reader to announce it before entry title
+    * Add `sr-only` CSS class for screen reader users (provides more context)
+    * Differentiate between buttons and links
+    * Change links that could perform actions to buttons
+    * Improve translation of hidden Aria elements
+    * Remove the redundant article role
+    * Add a search landmark for the search form so that the screen reader users can navigate to it
+    * Add skip to content link
+    * Add `nav` landmark to page header links
+* Limit feed/category entry pagination to unread entries when coming from unread entry list
+* Update German translation
+* Update GitHub Actions to Go 1.12
+* Bump `golang.org/x/term` from `0.16.0` to `0.17.0`
+* Bump `github.com/google/uuid` from `1.5.0` to `1.6.0`
+* Bump `github.com/yuin/goldmark` from `1.6.0` to `1.7.0`
+* Bump `golang.org/x/oauth2` from `0.15.0` to `0.17.0`
+* Bump `github.com/tdewolff/minify/v2` from `2.20.10` to `2.20.12`
+* Bump `golang.org/x/term` from `0.15.0` to `0.16.0`
+* Bump `github.com/prometheus/client_golang` from `1.17.0` to `1.18.0`
+* Bump `github.com/tdewolff/minify/v2` from `2.20.9` to `2.20.16`
+* Bump `golang.org/x/crypto` from `0.16.0` to `0.19.0`
+* Bump `github.com/go-webauthn/webauthn` from `0.9.4` to` 0.10.1`
+* Bump `golang.org/x/net` from `0.20.0` to `0.21.0`
+
 Version 2.0.51 (December 13, 2023)
 ----------------------------------
 
@@ -158,7 +209,7 @@ Version 2.0.47 (August 20, 2023)
 * Add new API endpoint: `/entries/{entryID}/save`
 * Trigger Docker and packages workflows only for semantic tags
     * Go module versioning expect Git tags to start with the letter v.
-    * The goal is to keep the existing naming convention for generated artifacts and 
+    * The goal is to keep the existing naming convention for generated artifacts and
     have proper versioning for the Go module.
 * Bump `golang.org/x/*` dependencies
 * Bump `github.com/yuin/goldmark`
