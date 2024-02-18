@@ -1969,7 +1969,7 @@ func TestParseConfigDumpOutput(t *testing.T) {
 
 func TestContentSecurityPolicy(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("CONTENT_SECURITY_POLICY", "fonts.googleapis.com fonts.gstatic.com")
+	os.Setenv("CONTENT_SECURITY_POLICY", "default-src 'self' fonts.googleapis.com fonts.gstatic.com; img-src * data:; media-src *; frame-src *; style-src 'self' fonts.googleapis.com fonts.gstatic.com 'nonce-%s'")
 
 	parser := NewParser()
 	opts, err := parser.ParseEnvironmentVariables()
@@ -1977,7 +1977,7 @@ func TestContentSecurityPolicy(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := "fonts.googleapis.com fonts.gstatic.com"
+	expected := "default-src 'self' fonts.googleapis.com fonts.gstatic.com; img-src * data:; media-src *; frame-src *; style-src 'self' fonts.googleapis.com fonts.gstatic.com 'nonce-%s'"
 	result := opts.ContentSecurityPolicy()
 
 	if result != expected {
