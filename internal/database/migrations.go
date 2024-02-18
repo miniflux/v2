@@ -735,6 +735,16 @@ var migrations = []func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
+			ALTER TABLE integrations ADD COLUMN readeck_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN readeck_url text default '';
+			ALTER TABLE integrations ADD COLUMN readeck_api_key text default '';
+			ALTER TABLE integrations ADD COLUMN readeck_tags text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
 			ALTER TABLE integrations ADD COLUMN shiori_enabled bool default 'f';
 			ALTER TABLE integrations ADD COLUMN shiori_url text default '';
 			ALTER TABLE integrations ADD COLUMN shiori_username text default '';

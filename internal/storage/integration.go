@@ -174,6 +174,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			apprise_enabled,
 			apprise_url,
 			apprise_services_url,
+			readeck_enabled,
+			readeck_url,
+			readeck_api_key,
+			readeck_tags,
 			shiori_enabled,
 			shiori_url,
 			shiori_username,
@@ -261,6 +265,10 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.AppriseEnabled,
 		&integration.AppriseURL,
 		&integration.AppriseServicesURL,
+		&integration.ReadeckEnabled,
+		&integration.ReadeckURL,
+		&integration.ReadeckAPIKey,
+		&integration.ReadeckTags,
 		&integration.ShioriEnabled,
 		&integration.ShioriURL,
 		&integration.ShioriUsername,
@@ -354,26 +362,30 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			apprise_enabled=$59,
 			apprise_url=$60,
 			apprise_services_url=$61,
-			shiori_enabled=$62,
-			shiori_url=$63,
-			shiori_username=$64,
-			shiori_password=$65,
-			shaarli_enabled=$66,
-			shaarli_url=$67,
-			shaarli_api_secret=$68,
-			webhook_enabled=$69,
-			webhook_url=$70,
-			webhook_secret=$71,
-			rssbridge_enabled=$72,
-			rssbridge_url=$73,
-			omnivore_enabled=$74,
-			omnivore_api_key=$75,
-			omnivore_url=$76,
-			linkwarden_enabled=$77,
-			linkwarden_url=$78,
-			linkwarden_api_key=$79
+			readeck_enabled=$62,
+			readeck_url=$63,
+			readeck_api_key=$64,
+			readeck_tags=$65,
+			shiori_enabled=$66,
+			shiori_url=$67,
+			shiori_username=$68,
+			shiori_password=$69,
+			shaarli_enabled=$70,
+			shaarli_url=$71,
+			shaarli_api_secret=$72,
+			webhook_enabled=$73,
+			webhook_url=$74,
+			webhook_secret=$75,
+			rssbridge_enabled=$76,
+			rssbridge_url=$77,
+			omnivore_enabled=$78,
+			omnivore_api_key=$79,
+			omnivore_url=$80,
+			linkwarden_enabled=$81,
+			linkwarden_url=$82,
+			linkwarden_api_key=$83
 		WHERE
-			user_id=$80
+			user_id=$84
 	`
 	_, err := s.db.Exec(
 		query,
@@ -438,6 +450,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.AppriseEnabled,
 		integration.AppriseURL,
 		integration.AppriseServicesURL,
+		integration.ReadeckEnabled,
+		integration.ReadeckURL,
+		integration.ReadeckAPIKey,
+		integration.ReadeckTags,
 		integration.ShioriEnabled,
 		integration.ShioriURL,
 		integration.ShioriUsername,
@@ -490,6 +506,7 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				linkwarden_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
+				readeck_enabled='t' OR
 				shaarli_enabled='t' OR
 				webhook_enabled='t' OR
 				omnivore_enabled='t'

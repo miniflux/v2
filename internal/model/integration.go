@@ -70,6 +70,10 @@ type Integration struct {
 	AppriseEnabled                   bool
 	AppriseURL                       string
 	AppriseServicesURL               string
+	ReadeckEnabled                   bool
+	ReadeckURL                       string
+	ReadeckAPIKey                    string
+	ReadeckTags                      string
 	ShioriEnabled                    bool
 	ShioriURL                        string
 	ShioriUsername                   string
