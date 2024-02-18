@@ -36,8 +36,13 @@
 
     {{ if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
+    {{ $containsNonce := contains .contentSecurityPolicy "nonce-%s" }}
+    {{ if $containsNonce }}
     {{ noescape ( printf "<meta http-equiv=\"Content-Security-Policy\" content=\"%s\">" (printf .contentSecurityPolicy $stylesheetNonce ) ) }}
-    <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
+    {{ else }}
+    {{ noescape ( printf "<meta http-equiv=\"Content-Security-Policy\" content=\"%s\">" .contentSecurityPolicy ) }}
+    {{ end }}
+    <style {{ if $containsNonce }}nonce="{{ $stylesheetNonce }}"{{end}}>{{ .user.Stylesheet | safeCSS }}</style>
     {{ else }}
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *">
     {{ end }}
