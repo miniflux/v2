@@ -738,7 +738,7 @@ var migrations = []func(tx *sql.Tx) error{
 			ALTER TABLE integrations ADD COLUMN readeck_enabled bool default 'f';
 			ALTER TABLE integrations ADD COLUMN readeck_url text default '';
 			ALTER TABLE integrations ADD COLUMN readeck_api_key text default '';
-			ALTER TABLE integrations ADD COLUMN readeck_tags text default '';
+			ALTER TABLE integrations ADD COLUMN readeck_labels text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err

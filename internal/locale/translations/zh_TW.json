@@ -450,7 +450,7 @@
     "form.integration.readeck_activate": "儲存文章到 Readeck",
     "form.integration.readeck_endpoint": "Readeck API 端點",
     "form.integration.readeck_api_key": "Readeck API 金鑰",
-    "form.integration.readeck_tags": "Readeck Tags",
+    "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.shiori_activate": "儲存文章到 Shiori",
     "form.integration.shiori_endpoint": "Shiori API 端點",
     "form.integration.shiori_username": "Shiori 使用者名稱",

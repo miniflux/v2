@@ -20,11 +20,11 @@ const defaultClientTimeout = 10 * time.Second
 type Client struct {
 	baseURL string
 	apiKey  string
-	tags    string
+	labels  string
 }
 
-func NewClient(baseURL, apiKey, tags string) *Client {
-	return &Client{baseURL: baseURL, apiKey: apiKey, tags: tags}
+func NewClient(baseURL, apiKey, labels string) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey, labels: labels}
 }
 
 func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
@@ -32,7 +32,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 		return fmt.Errorf("readeck: missing base URL or API key")
 	}
 
-	tagsSplitFn := func(c rune) bool {
+	labelsSplitFn := func(c rune) bool {
 		return c == ',' || c == ' '
 	}
 
@@ -44,7 +44,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 	requestBody, err := json.Marshal(&readeckBookmark{
 		Url:    entryURL,
 		Title:  entryTitle,
-		Labels: strings.FieldsFunc(c.tags, tagsSplitFn),
+		Labels: strings.FieldsFunc(c.labels, labelsSplitFn),
 	})
 
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 }
 
 type readeckBookmark struct {
-	Url    string   `json:"url,omitempty"`
-	Title  string   `json:"title,omitempty"`
+	Url    string   `json:"url"`
+	Title  string   `json:"title"`
 	Labels []string `json:"labels,omitempty"`
 }

@@ -450,7 +450,7 @@
     "form.integration.readeck_activate": "Makaleleri Readeck'e kaydet",
     "form.integration.readeck_endpoint": "Readeck API Uç Noktası",
     "form.integration.readeck_api_key": "Readeck API Anahtarı",
-    "form.integration.readeck_tags": "Readeck Tags",
+    "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.shiori_activate": "Makaleleri Shiori'e kaydet",
     "form.integration.shiori_endpoint": "Shiori API Uç Noktası",
     "form.integration.shiori_username": "Shiori Kullanıcı Adı",

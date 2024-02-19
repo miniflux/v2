@@ -261,7 +261,7 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		client := readeck.NewClient(
 			userIntegrations.ReadeckURL,
 			userIntegrations.ReadeckAPIKey,
-			userIntegrations.ReadeckTags,
+			userIntegrations.ReadeckLabels,
 		)
 		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
 			slog.Error("Unable to send entry to Readeck",

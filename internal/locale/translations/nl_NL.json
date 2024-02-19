@@ -450,7 +450,7 @@
     "form.integration.readeck_activate": "Opslaan naar Readeck",
     "form.integration.readeck_endpoint": "Readeck URL",
     "form.integration.readeck_api_key": "Readeck API-sleutel",
-    "form.integration.readeck_tags": "Readeck Tags",
+    "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.shiori_activate": "Opslaan naar Shiori",
     "form.integration.shiori_endpoint": "Shiori URL",
     "form.integration.shiori_username": "Shiori gebruikersnaam",

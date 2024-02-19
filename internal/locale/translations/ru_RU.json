@@ -453,7 +453,7 @@
     "form.integration.readeck_activate": "Сохранять статьи в Readeck",
     "form.integration.readeck_endpoint": "Конечная точка Readeck API",
     "form.integration.readeck_api_key": "API-ключ Readeck",
-    "form.integration.readeck_tags": "Теги Readeck",
+    "form.integration.readeck_labels": "Теги Readeck",
     "form.integration.shiori_activate": "Сохранять статьи в Shiori",
     "form.integration.shiori_endpoint": "Конечная точка Shiori API",
     "form.integration.shiori_username": "Имя пользователя Shiori",

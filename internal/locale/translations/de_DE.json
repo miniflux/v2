@@ -450,7 +450,7 @@
     "form.integration.readeck_activate": "Artikel in Readeck speichern",
     "form.integration.readeck_endpoint": "Readeck API-Endpunkt",
     "form.integration.readeck_api_key": "Readeck API-Schlüssel",
-    "form.integration.readeck_tags": "Readeck Tags",
+    "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.shiori_activate": "Artikel in Shiori speichern",
     "form.integration.shiori_endpoint": "Shiori API-Endpunkt",
     "form.integration.shiori_username": "Shiori Benutzername",

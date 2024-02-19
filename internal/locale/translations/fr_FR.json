@@ -450,7 +450,7 @@
     "form.integration.readeck_activate": "Sauvegarder les articles vers Readeck",
     "form.integration.readeck_endpoint": "URL de l'API de Readeck",
     "form.integration.readeck_api_key": "Clé d'API de Readeck",
-    "form.integration.readeck_tags": "Readeck Tags",
+    "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.shiori_activate": "Sauvegarder les articles vers Shiori",
     "form.integration.shiori_endpoint": "URL de l'API de Shiori",
     "form.integration.shiori_username": "Nom d'utilisateur de Shiori",

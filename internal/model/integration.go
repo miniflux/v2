@@ -73,7 +73,7 @@ type Integration struct {
 	ReadeckEnabled                   bool
 	ReadeckURL                       string
 	ReadeckAPIKey                    string
-	ReadeckTags                      string
+	ReadeckLabels                    string
 	ShioriEnabled                    bool
 	ShioriURL                        string
 	ShioriUsername                   string

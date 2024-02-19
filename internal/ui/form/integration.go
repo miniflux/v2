@@ -79,7 +79,7 @@ type IntegrationForm struct {
 	ReadeckEnabled                   bool
 	ReadeckURL                       string
 	ReadeckAPIKey                    string
-	ReadeckTags                      string
+	ReadeckLabels                    string
 	ShioriEnabled                    bool
 	ShioriURL                        string
 	ShioriUsername                   string
@@ -164,7 +164,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.ReadeckEnabled = i.ReadeckEnabled
 	integration.ReadeckURL = i.ReadeckURL
 	integration.ReadeckAPIKey = i.ReadeckAPIKey
-	integration.ReadeckTags = i.ReadeckTags
+	integration.ReadeckLabels = i.ReadeckLabels
 	integration.ShioriEnabled = i.ShioriEnabled
 	integration.ShioriURL = i.ShioriURL
 	integration.ShioriUsername = i.ShioriUsername
@@ -251,7 +251,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		ReadeckEnabled:                   r.FormValue("readeck_enabled") == "1",
 		ReadeckURL:                       r.FormValue("readeck_url"),
 		ReadeckAPIKey:                    r.FormValue("readeck_api_key"),
-		ReadeckTags:                      r.FormValue("readeck_tags"),
+		ReadeckLabels:                    r.FormValue("readeck_labels"),
 		ShioriEnabled:                    r.FormValue("shiori_enabled") == "1",
 		ShioriURL:                        r.FormValue("shiori_url"),
 		ShioriUsername:                   r.FormValue("shiori_username"),
