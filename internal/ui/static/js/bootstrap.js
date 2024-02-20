@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("l", () => goToPage("next"));
         keyboardHandler.on("z t", () => scrollToCurrentItem());
         keyboardHandler.on("o", () => openSelectedItem());
+        keyboardHandler.on("Enter", () => openSelectedItem());
         keyboardHandler.on("v", () => openOriginalLink());
         keyboardHandler.on("V", () => openOriginalLink(true));
         keyboardHandler.on("c", () => openCommentLink());
