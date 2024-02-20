@@ -370,6 +370,10 @@
                 <input type="checkbox" name="readeck_enabled" value="1" {{ if .form.ReadeckEnabled }}checked{{ end }}> {{ t "form.integration.readeck_activate" }}
             </label>
 
+            <label>
+                <input type="checkbox" name="readeck_only_url" value="1" {{ if .form.ReadeckOnlyURL }}checked{{ end }}> {{ t "form.integration.readeck_only_url" }}
+            </label>
+
             <label for="form-readeck-url">{{ t "form.integration.readeck_endpoint" }}</label>
             <input type="url" name="readeck_url" id="form-readeck-url" value="{{ .form.ReadeckURL }}" placeholder="https://readeck.com" spellcheck="false">
 

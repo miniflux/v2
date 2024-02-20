@@ -451,6 +451,7 @@
     "form.integration.readeck_endpoint": "Readeck URL",
     "form.integration.readeck_api_key": "Readeck API-sleutel",
     "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "Alleen URL verzenden (in plaats van volledige inhoud)",
     "form.integration.shiori_activate": "Opslaan naar Shiori",
     "form.integration.shiori_endpoint": "Shiori URL",
     "form.integration.shiori_username": "Shiori gebruikersnaam",

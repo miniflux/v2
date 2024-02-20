@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"mime/multipart"
 	"net/http"
 	"strings"
 	"time"
@@ -21,19 +22,16 @@ type Client struct {
 	baseURL string
 	apiKey  string
 	labels  string
+	onlyURL bool
 }
 
-func NewClient(baseURL, apiKey, labels string) *Client {
-	return &Client{baseURL: baseURL, apiKey: apiKey, labels: labels}
+func NewClient(baseURL, apiKey, labels string, onlyURL bool) *Client {
+	return &Client{baseURL: baseURL, apiKey: apiKey, labels: labels, onlyURL: onlyURL}
 }
 
-func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
+func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string) error {
 	if c.baseURL == "" || c.apiKey == "" {
 		return fmt.Errorf("readeck: missing base URL or API key")
-	}
-
-	labelsSplitFn := func(c rune) bool {
-		return c == ',' || c == ' '
 	}
 
 	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/bookmarks/")
@@ -41,22 +39,80 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string) error {
 		return fmt.Errorf(`readeck: invalid API endpoint: %v`, err)
 	}
 
-	requestBody, err := json.Marshal(&readeckBookmark{
-		Url:    entryURL,
-		Title:  entryTitle,
-		Labels: strings.FieldsFunc(c.labels, labelsSplitFn),
-	})
+	labelsSplitFn := func(c rune) bool {
+		return c == ',' || c == ' '
+	}
+	labelsSplit := strings.FieldsFunc(c.labels, labelsSplitFn)
 
-	if err != nil {
-		return fmt.Errorf("readeck: unable to encode request body: %v", err)
+	var request *http.Request
+	if c.onlyURL {
+		requestBodyJson, err := json.Marshal(&readeckBookmark{
+			Url:    entryURL,
+			Title:  entryTitle,
+			Labels: labelsSplit,
+		})
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body: %v", err)
+		}
+		request, err = http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBodyJson))
+		request.Header.Set("Content-Type", "application/json")
+	} else {
+		requestBody := new(bytes.Buffer)
+		multipartWriter := multipart.NewWriter(requestBody)
+
+		urlPart, err := multipartWriter.CreateFormField("url")
+		urlPart.Write([]byte(entryURL))
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body (entry url): %v", err)
+		}
+
+		titlePart, err := multipartWriter.CreateFormField("title")
+		titlePart.Write([]byte(entryTitle))
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body (entry title): %v", err)
+		}
+
+		featurePart, err := multipartWriter.CreateFormField("feature_find_main")
+		featurePart.Write([]byte("false")) // false to disable readability
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body (feature_find_main flag): %v", err)
+		}
+
+		for _, label := range labelsSplit {
+			labelPart, err := multipartWriter.CreateFormField("labels")
+			labelPart.Write([]byte(label))
+			if err != nil {
+				return fmt.Errorf("readeck: unable to encode request body (entry labels): %v", err)
+			}
+		}
+
+		contentBodyHeader, err := json.Marshal(&partContentHeader{
+			Url:           entryURL,
+			ContentHeader: contentHeader{ContentType: "text/html"},
+		})
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body (entry content header): %v", err)
+		}
+
+		contentPart, err := multipartWriter.CreateFormFile("resource", "blob")
+		contentPart.Write(contentBodyHeader)
+		contentPart.Write([]byte("\n"))
+		contentPart.Write([]byte(entryContent))
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body (entry content): %v", err)
+		}
+
+		err = multipartWriter.Close()
+		if err != nil {
+			return fmt.Errorf("readeck: unable to encode request body: %v", err)
+		}
+		request, err = http.NewRequest(http.MethodPost, apiEndpoint, requestBody)
+		if err != nil {
+			return fmt.Errorf("readeck: unable to create request: %v", err)
+		}
+		request.Header.Set("Content-Type", multipartWriter.FormDataContentType())
 	}
 
-	request, err := http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBody))
-	if err != nil {
-		return fmt.Errorf("readeck: unable to create request: %v", err)
-	}
-
-	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("User-Agent", "Miniflux/"+version.Version)
 	request.Header.Set("Authorization", "Bearer "+c.apiKey)
 
@@ -78,4 +134,13 @@ type readeckBookmark struct {
 	Url    string   `json:"url"`
 	Title  string   `json:"title"`
 	Labels []string `json:"labels,omitempty"`
+}
+
+type contentHeader struct {
+	ContentType string `json:"content-type"`
+}
+
+type partContentHeader struct {
+	Url           string        `json:"url"`
+	ContentHeader contentHeader `json:"headers"`
 }

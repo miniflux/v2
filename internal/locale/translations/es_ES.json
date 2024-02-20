@@ -451,6 +451,7 @@
     "form.integration.readeck_endpoint": "Acceso API de Readeck",
     "form.integration.readeck_api_key": "Clave de API de Readeck",
     "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "Enviar solo URL (en lugar de contenido completo)",
     "form.integration.shiori_activate": "Guardar artículos a Shiori",
     "form.integration.shiori_endpoint": "Extremo de API de Shiori",
     "form.integration.shiori_username": "Nombre de usuario de Shiori",

@@ -451,6 +451,7 @@
     "form.integration.readeck_endpoint": "Readeck の API Endpoint",
     "form.integration.readeck_api_key": "Readeck の API key",
     "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "URL のみを送信 (完全なコンテンツではなく)",
     "form.integration.shiori_activate": "Shiori に記事を保存する",
     "form.integration.shiori_endpoint": "Shiori の API Endpoint",
     "form.integration.shiori_username": "Shiori の ユーザー名",

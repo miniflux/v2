@@ -451,6 +451,7 @@
     "form.integration.readeck_endpoint": "Τελικό σημείο Readeck API",
     "form.integration.readeck_api_key": "Κλειδί API Readeck",
     "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "Αποστολή μόνο URL (αντί για πλήρες περιεχόμενο)",
     "form.integration.shiori_activate": "Αποθήκευση άρθρων στο Shiori",
     "form.integration.shiori_endpoint": "Τελικό σημείο Shiori",
     "form.integration.shiori_username": "Όνομα Χρήστη Shiori",

@@ -449,6 +449,7 @@
     "form.integration.readeck_endpoint": "Readeck API 端点",
     "form.integration.readeck_api_key": "Readeck API 密钥",
     "form.integration.readeck_labels": "Readeck 默认标签",
+    "form.integration.readeck_only_url": "仅发送 URL（而不是完整内容）",
     "form.integration.shiori_activate": "保存文章到 Shiori",
     "form.integration.shiori_endpoint": "Shiori API 端点",
     "form.integration.shiori_username": "Shiori 用户名",

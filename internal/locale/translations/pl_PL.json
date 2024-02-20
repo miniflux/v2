@@ -454,6 +454,7 @@
     "form.integration.readeck_endpoint": "Readeck URL",
     "form.integration.readeck_api_key": "Readeck API key",
     "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "Wyślij tylko adres URL (zamiast pełnej treści)",
     "form.integration.shiori_activate": "Zapisz artykuły do Shiori",
     "form.integration.shiori_endpoint": "Shiori URL",
     "form.integration.shiori_username": "Login do Shiori",

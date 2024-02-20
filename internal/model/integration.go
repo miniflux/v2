@@ -74,6 +74,7 @@ type Integration struct {
 	ReadeckURL                       string
 	ReadeckAPIKey                    string
 	ReadeckLabels                    string
+	ReadeckOnlyURL                   bool
 	ShioriEnabled                    bool
 	ShioriURL                        string
 	ShioriUsername                   string
