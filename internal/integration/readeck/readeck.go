@@ -64,29 +64,29 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 		multipartWriter := multipart.NewWriter(requestBody)
 
 		urlPart, err := multipartWriter.CreateFormField("url")
-		urlPart.Write([]byte(entryURL))
 		if err != nil {
 			return fmt.Errorf("readeck: unable to encode request body (entry url): %v", err)
 		}
+		urlPart.Write([]byte(entryURL))
 
 		titlePart, err := multipartWriter.CreateFormField("title")
-		titlePart.Write([]byte(entryTitle))
 		if err != nil {
 			return fmt.Errorf("readeck: unable to encode request body (entry title): %v", err)
 		}
+		titlePart.Write([]byte(entryTitle))
 
 		featurePart, err := multipartWriter.CreateFormField("feature_find_main")
-		featurePart.Write([]byte("false")) // false to disable readability
 		if err != nil {
 			return fmt.Errorf("readeck: unable to encode request body (feature_find_main flag): %v", err)
 		}
+		featurePart.Write([]byte("false")) // false to disable readability
 
 		for _, label := range labelsSplit {
 			labelPart, err := multipartWriter.CreateFormField("labels")
-			labelPart.Write([]byte(label))
 			if err != nil {
 				return fmt.Errorf("readeck: unable to encode request body (entry labels): %v", err)
 			}
+			labelPart.Write([]byte(label))
 		}
 
 		contentBodyHeader, err := json.Marshal(&partContentHeader{
@@ -98,12 +98,12 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 		}
 
 		contentPart, err := multipartWriter.CreateFormFile("resource", "blob")
-		contentPart.Write(contentBodyHeader)
-		contentPart.Write([]byte("\n"))
-		contentPart.Write([]byte(entryContent))
 		if err != nil {
 			return fmt.Errorf("readeck: unable to encode request body (entry content): %v", err)
 		}
+		contentPart.Write(contentBodyHeader)
+		contentPart.Write([]byte("\n"))
+		contentPart.Write([]byte(entryContent))
 
 		err = multipartWriter.Close()
 		if err != nil {
