@@ -79,15 +79,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
-    onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
-    onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
-    onClick("a[data-action=search]", (event) => setFocusToSearchInput(event));
-    onClick("a[data-share-status]", () => handleShare());
-    onClick("a[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
-    onClick("a[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
+    onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntry(event.target));
+    onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
+    onClick(":is(a, button)[data-fetch-content-entry]", () => handleFetchOriginalContent());
+    onClick(":is(a, button)[data-share-status]", () => handleShare());
+    onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
+    onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
 
-    onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
+    onClick(":is(a, button)[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
 
         request.withCallback((response) => {
@@ -112,10 +111,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    if (document.documentElement.clientWidth < 600) {
-        onClick(".logo", () => toggleMainMenu());
-        onClick(".header nav li", (event) => onClickMainMenuListItem(event));
-    }
+    checkMenuToggleModeByLayout()
+    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
+
+    fixVoiceOverDetailsSummaryBug()
+
+    const logoElement = document.querySelector(".logo")
+    logoElement.addEventListener("click", (event) => toggleMainMenu(event));
+    logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
+
+    onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
     if ("serviceWorker" in navigator) {
         let scriptElement = document.getElementById("service-worker-script");

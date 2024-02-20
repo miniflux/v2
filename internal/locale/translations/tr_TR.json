@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Emin misiniz?",
     "confirm.question.refresh": "Zorla yenilemek istiyor musunuz?",
     "confirm.yes": "evet",
@@ -18,6 +19,8 @@
     "action.home_screen": "Ana ekrana ekle",
     "tooltip.keyboard_shortcuts": "Klavye Kısayolu: %s",
     "tooltip.logged_user": "%s olarak giriş yapıldı",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Okunmadı",
     "menu.starred": "Yıldız",
     "menu.history": "Geçmiş",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Paylaşılan iletiler",
     "search.label": "Ara",
     "search.placeholder": "Ara...",
+    "search.submit": "Search",
     "pagination.next": "Sonraki",
     "pagination.previous": "Önceki",
     "entry.status.unread": "Okunmadı",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "Etiketleri:",
     "page.shared_entries.title": "Paylaşılan iletiler",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Okunmadı",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Yıldızlı",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Kategoriler",
     "page.categories.no_feed": "Besleme yok.",
     "page.categories.entries": "Makaleler",
@@ -94,21 +114,28 @@
         "%d besleme var.",
         "%d besleme var."
     ],
-    "page.categories.unread_counter": "Okunmamış iletilerin sayısı",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Yeni Kategori",
     "page.new_user.title": "Yeni Kullanıcı",
     "page.edit_category.title": "Kategoriyi Düzenle: %s",
     "page.edit_user.title": "Kullanıcıyı Düzenle: %s",
     "page.feeds.title": "Beslemeler",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Son kontrol:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Okunmamış iletilerin sayısı",
     "page.feeds.read_counter": "Okunmuş iletilerin sayısı",
     "page.feeds.error_count": [
         "%d hata",
         "%d hata"
     ],
     "page.history.title": "Geçmiş",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "İçeri Aktar",
     "page.search.title": "Arama Sonuçları",
     "page.about.title": "Hakkında",
@@ -401,11 +428,20 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Makaleleri Linkding'e kaydet",
     "form.integration.linkding_endpoint": "Linkding API Uç Noktası",
     "form.integration.linkding_api_key": "Linkding API Anahtarı",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Yer imini okunmadı olarak işaretle",
+    "form.integration.linkwarden_activate": "Makaleleri Linkwarden'e kaydet",
+    "form.integration.linkwarden_endpoint": "Linkwarden API Uç Noktası",
+    "form.integration.linkwarden_api_key": "Linkwarden API Anahtarı",
     "form.integration.matrix_bot_activate": "Yeni makaleleri Matrix'e aktarın",
     "form.integration.matrix_bot_user": "Matrix için Kullanıcı Adı",
     "form.integration.matrix_bot_password": "Matrix kullanıcısı için şifre",

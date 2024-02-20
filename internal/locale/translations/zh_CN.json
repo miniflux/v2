@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "您确认吗？",
     "confirm.question.refresh": "您是否要强制刷新？",
     "confirm.yes": "是",
@@ -18,6 +19,8 @@
     "action.home_screen": "添加到主屏幕",
     "tooltip.keyboard_shortcuts": "快捷键: %s",
     "tooltip.logged_user": "当前登录 %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "未读",
     "menu.starred": "收藏",
     "menu.history": "历史",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "已分享的文章",
     "search.label": "搜索",
     "search.placeholder": "搜索…",
+    "search.submit": "Search",
     "pagination.next": "下一页",
     "pagination.previous": "上一页",
     "entry.status.unread": "标为未读",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "标签：",
     "page.shared_entries.title": "已分享的文章",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "未读",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "收藏",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
     "page.categories.entries": "查看内容",
@@ -93,20 +113,27 @@
     "page.categories.feed_count": [
         "有 %d 个源"
     ],
-    "page.categories.unread_counter": "未读文章数",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
     "page.edit_category.title": "编辑分类 : %s",
     "page.edit_user.title": "编辑用户 : %s",
     "page.feeds.title": "源",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "最后检查时间：",
     "page.feeds.next_check": "下次检查时间：",
-    "page.feeds.unread_counter": "未读文章数",
     "page.feeds.read_counter": "已读文章数",
     "page.feeds.error_count": [
         "%d 错误"
     ],
     "page.history.title": "历史",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "导入",
     "page.search.title": "搜索结果",
     "page.about.title": "关于",
@@ -399,11 +426,20 @@
     "form.integration.telegram_bot_disable_notification": "禁用通知",
     "form.integration.telegram_bot_disable_buttons": "不展示按钮",
     "form.integration.telegram_chat_id": "聊天ID",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "保存文章到 Linkding",
     "form.integration.linkding_endpoint": "Linkding API 端点",
     "form.integration.linkding_api_key": "Linkding API 密钥",
     "form.integration.linkding_tags": "Linkding 默认标签",
     "form.integration.linkding_bookmark": "标记为未读",
+    "form.integration.linkwarden_activate": "保存文章到 Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden API 端点",
+    "form.integration.linkwarden_api_key": "Linkwarden API 密钥",
     "form.integration.matrix_bot_activate": "将新文章推送到 Matrix",
     "form.integration.matrix_bot_user": "Matrix Bot 用户名",
     "form.integration.matrix_bot_password": "Matrix Bot 密码",

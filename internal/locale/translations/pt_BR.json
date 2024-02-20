@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Tem certeza?",
     "confirm.question.refresh": "Você deseja forçar a atualização?",
     "confirm.yes": "Sim",
@@ -18,6 +19,8 @@
     "action.home_screen": "Voltar para a tela inicial",
     "tooltip.keyboard_shortcuts": "Atalho do teclado: %s",
     "tooltip.logged_user": "Autenticado como %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Não lido",
     "menu.starred": "Favoritos",
     "menu.history": "Histórico",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Itens compartilhados",
     "search.label": "Buscar",
     "search.placeholder": "Buscar por...",
+    "search.submit": "Search",
     "pagination.next": "Próximo",
     "pagination.previous": "Anterior",
     "entry.status.unread": "Não lido",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "Etiquetas:",
     "page.shared_entries.title": "Itens compartilhados",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Não lidos",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Favoritos",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categorias",
     "page.categories.no_feed": "Sem fonte.",
     "page.categories.entries": "Itens",
@@ -94,21 +114,28 @@
         "Existe %d fonte.",
         "Existem %d fontes."
     ],
-    "page.categories.unread_counter": "Numero de itens não lidos",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Nova categoria",
     "page.new_user.title": "Novo usuário",
     "page.edit_category.title": "Editar categoria: %s",
     "page.edit_user.title": "Editar usuário: %s",
     "page.feeds.title": "Fontes",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Última verificação:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Numero de itens não lidos",
     "page.feeds.read_counter": "Número de itens lidos",
     "page.feeds.error_count": [
         "%d erro",
         "%d erros"
     ],
     "page.history.title": "Histórico",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importar",
     "page.search.title": "Resultados da busca",
     "page.about.title": "Sobre",
@@ -401,11 +428,20 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Salvar itens no Linkding",
     "form.integration.linkding_endpoint": "Endpoint de API do Linkding",
     "form.integration.linkding_api_key": "Chave de API do Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Salvar marcador como não lido",
+    "form.integration.linkwarden_activate": "Salvar itens no Linkwarden",
+    "form.integration.linkwarden_endpoint": "Endpoint de API do Linkwarden",
+    "form.integration.linkwarden_api_key": "Chave de API do Linkwarden",
     "form.integration.matrix_bot_activate": "Transferir novos artigos para o Matrix",
     "form.integration.matrix_bot_user": "Nome de utilizador para Matrix",
     "form.integration.matrix_bot_password": "Palavra-passe para utilizador da Matrix",

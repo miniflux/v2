@@ -1,22 +1,39 @@
 {{ define "feed_list" }}
     <div class="items">
         {{ range .feeds }}
-        <article role="article" class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}">
-            <div class="item-header" dir="auto">
-                <span class="item-title">
-                    {{ if and (.Icon) (gt .Icon.IconID 0) }}
-                        <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Title }}">
-                    {{ end }}
-                    {{ if .Disabled }} 🚫 {{ end }}
-                    <a href="{{ route "feedEntries" "feedID" .ID }}">{{ .Title }}</a>
-                </span>
-                <span class="feed-entries-counter">
-                    (<span title="{{ t "page.feeds.unread_counter" }}">{{ .UnreadCount }}</span>/<span>{{ .NumberOfVisibleEntries }}</span>)
+        <article
+            class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}"
+            aria-labelledby="feed-title-{{ .ID }} feed-entries-counter"
+            tabindex="-1"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="feed-title-{{ .ID }}" class="item-title">
+                    <a href="{{ route "feedEntries" "feedID" .ID }}">
+                        {{ if and (.Icon) (gt .Icon.IconID 0) }}
+                            <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ if .Disabled }} 🚫 {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span id="feed-entries-counter" class="feed-entries-counter">
+                    <span aria-hidden="true">(</span>
+                    <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
+                    <span aria-hidden="true">{{ .UnreadCount }}</span>
+                    <span aria-hidden="true">/</span>
+                    <span class="sr-only">{{ plural "page.total_entry_count" .NumberOfVisibleEntries .NumberOfVisibleEntries }}</span>
+                    <span aria-hidden="true">{{ .NumberOfVisibleEntries }}</span>
+                    <span aria-hidden="true">)</span>
                 </span>
                 <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Category.ID }}">{{ .Category.Title }}</a>
+                    <a id="feed-category-{{ .ID }}"
+                       href="{{ route "categoryEntries" "categoryID" .Category.ID }}"
+                       aria-label="{{ t "page.category_label" .Category.Title }}"
+                    >
+                        {{ .Category.Title }}
+                    </a>
                 </span>
-            </div>
+            </header>
             <div class="item-meta">
                 <ul class="item-meta-info">
                     <li class="item-meta-info-site-url" dir="auto">
@@ -34,29 +51,33 @@
                 </ul>
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
-                        <a href="{{ route "refreshFeed" "feedID" .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
+                        <a href="{{ route "refreshFeed" "feedID" .ID }}"
+                            aria-describedby="feed-title-{{ .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-edit">
-                        <a href="{{ route "editFeed" "feedID" .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
+                        <a href="{{ route "editFeed" "feedID" .ID }}"
+                            aria-describedby="feed-title-{{ .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-remove">
-                        <a href="#"
+                        <button
+                            aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
                     {{ if .UnreadCount }}
                       <li class="item-meta-icons-mark-as-read">
-                        <a href="#"
+                        <button
+                            aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></button>
                       </li>
                     {{ end }}
                 </ul>

@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Weet je het zeker?",
     "confirm.question.refresh": "Wil je een gedwongen vernieuwing uitvoeren?",
     "confirm.yes": "ja",
@@ -18,6 +19,8 @@
     "action.home_screen": "Toevoegen aan startscherm",
     "tooltip.keyboard_shortcuts": "Sneltoets: %s",
     "tooltip.logged_user": "Ingelogd als %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Ongelezen",
     "menu.starred": "Favorieten",
     "menu.history": "Geschiedenis",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Gedeelde vermeldingen",
     "search.label": "Zoeken",
     "search.placeholder": "Zoeken...",
+    "search.submit": "Search",
     "pagination.next": "Volgende",
     "pagination.previous": "Vorige",
     "entry.status.unread": "Ongelezen",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "Labels:",
     "page.shared_entries.title": "Gedeelde vermeldingen",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Ongelezen",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Favorieten",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categorieën",
     "page.categories.no_feed": "Geen feeds.",
     "page.categories.entries": "Lidwoord",
@@ -94,21 +114,28 @@
         "Er is %d feed.",
         "Er zijn %d feeds."
     ],
-    "page.categories.unread_counter": "Aantal ongelezen vermeldingen",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Nieuwe categorie",
     "page.new_user.title": "Nieuwe gebruiker",
     "page.edit_category.title": "Bewerken van categorie: %s",
     "page.edit_user.title": "Bewerk gebruiker: %s",
     "page.feeds.title": "Feeds",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Laatste update:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Aantal ongelezen vermeldingen",
     "page.feeds.read_counter": "Aantal gelezen vermeldingen",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
     ],
     "page.history.title": "Geschiedenis",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importeren",
     "page.login.title": "Inloggen",
     "page.search.title": "Zoekresultaten",
@@ -401,11 +428,20 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Opslaan naar Linkding",
     "form.integration.linkding_endpoint": "Linkding URL",
     "form.integration.linkding_api_key": "Linkding API-sleutel",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Markeer bookmark als gelezen",
+    "form.integration.linkwarden_activate": "Opslaan naar Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden URL",
+    "form.integration.linkwarden_api_key": "Linkwarden API-sleutel",
     "form.integration.matrix_bot_activate": "Nieuwe artikelen overbrengen naar Matrix",
     "form.integration.matrix_bot_user": "Gebruikersnaam voor Matrix",
     "form.integration.matrix_bot_password": "Wachtwoord voor Matrix-gebruiker",

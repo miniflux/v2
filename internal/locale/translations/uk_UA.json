@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Ви впевнені?",
     "confirm.question.refresh": "Ви хочете змусити оновити?",
     "confirm.yes": "так",
@@ -18,6 +19,8 @@
     "action.home_screen": "Додати до головного екрану",
     "tooltip.keyboard_shortcuts": "Комбінація клавіш: %s",
     "tooltip.logged_user": "Здійснено вхід як %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Непрочитане",
     "menu.starred": "З зірочкою",
     "menu.history": "Історія",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Спільні записи",
     "search.label": "Пошук",
     "search.placeholder": "Шукати...",
+    "search.submit": "Search",
     "pagination.next": "Вперед",
     "pagination.previous": "Назад",
     "entry.status.unread": "Непрочитане",
@@ -85,8 +89,24 @@
     ],
     "entry.tags.label": "Теги:",
     "page.shared_entries.title": "Спильні записи",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Непрочитане",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "З зірочкою",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Категорії",
     "page.categories.no_feed": "Немає стрічки.",
     "page.categories.entries": "Статті",
@@ -96,15 +116,18 @@
         "Містить %d стрічки.",
         "Містить %d стрічок."
     ],
-    "page.categories.unread_counter": "Кількість непрочитаних записів",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "Нова категорія",
     "page.new_user.title": "Новий користувач",
     "page.edit_category.title": "Редагування категорії: %s",
     "page.edit_user.title": "Редагування користувача: %s",
     "page.feeds.title": "Стрічки",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Остання перевірка:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Кількість непрочитаних записів",
     "page.feeds.read_counter": "Кількість прочитаних записів",
     "page.feeds.error_count": [
         "%d помилка",
@@ -112,6 +135,10 @@
         "%d помилок"
     ],
     "page.history.title": "Історія",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Імпорт",
     "page.search.title": "Результати пошуку",
     "page.about.title": "Про додадок",
@@ -405,11 +432,20 @@
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
     "form.integration.telegram_chat_id": "ID чату",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Зберігати статті до Linkding",
     "form.integration.linkding_endpoint": "Linkding API Endpoint",
     "form.integration.linkding_api_key": "Ключ API Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Відмічати закладку як непрочитану",
+    "form.integration.linkwarden_activate": "Зберігати статті до Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden API Endpoint",
+    "form.integration.linkwarden_api_key": "Ключ API Linkwarden",
     "form.integration.matrix_bot_activate": "Перенесення нових статей в Матрицю",
     "form.integration.matrix_bot_user": "Ім'я користувача для Matrix",
     "form.integration.matrix_bot_password": "Пароль для користувача Matrix",

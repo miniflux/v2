@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "よろしいですか?",
     "confirm.question.refresh": "強制的に更新しますか？",
     "confirm.yes": "はい",
@@ -18,6 +19,8 @@
     "action.home_screen": "ホームスクリーンに追加",
     "tooltip.keyboard_shortcuts": "キーボードショートカット: %s",
     "tooltip.logged_user": "%s としてログイン中",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "未読",
     "menu.starred": "星付き",
     "menu.history": "履歴",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "共有エントリ",
     "search.label": "検索",
     "search.placeholder": "…を検索",
+    "search.submit": "Search",
     "pagination.next": "次",
     "pagination.previous": "前",
     "entry.status.unread": "未読にする",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "タグ:",
     "page.shared_entries.title": "共有エントリ",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "未読",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "星付き",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "カテゴリ",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.entries": "記事一覧",
@@ -94,21 +114,28 @@
         "%d 件のフィードがあります。",
         "%d 件のフィードがあります。"
     ],
-    "page.categories.unread_counter": "未読記事の数",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "新規カテゴリ",
     "page.new_user.title": "新規ユーザー",
     "page.edit_category.title": "カテゴリを編集: %s",
     "page.edit_user.title": "ユーザーを編集: %s",
     "page.feeds.title": "フィード一覧",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "最終チェック:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "未読記事の数",
     "page.feeds.read_counter": "既読記事の数",
     "page.feeds.error_count": [
         "%d 個のエラー",
         "%d 個のエラー"
     ],
     "page.history.title": "履歴",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "インポート",
     "page.search.title": "検索結果",
     "page.about.title": "ソフトウェア情報",
@@ -401,11 +428,20 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Linkding に記事を保存する",
     "form.integration.linkding_endpoint": "Linkding の API Endpoint",
     "form.integration.linkding_api_key": "Linkding の API key",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "ブックマークを未読にする",
+    "form.integration.linkwarden_activate": "Linkwarden に記事を保存する",
+    "form.integration.linkwarden_endpoint": "Linkwarden の API Endpoint",
+    "form.integration.linkwarden_api_key": "Linkwarden の API key",
     "form.integration.matrix_bot_activate": "新しい記事をMatrixに転送する",
     "form.integration.matrix_bot_user": "Matrixのユーザー名",
     "form.integration.matrix_bot_password": "Matrixユーザ用パスワード",

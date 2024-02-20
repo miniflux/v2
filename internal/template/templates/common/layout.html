@@ -60,17 +60,30 @@
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
 
     {{ if .user }}
+
+    <a class="skip-to-content-link" href="#main">{{ t "skip_to_content" }}</a>
     <header class="header">
         <nav>
-            <div class="logo">
-                <a href="{{ route .user.DefaultHomePage }}">Mini<span>flux</span></a>
+            <div class="logo" data-toggle-button-label="{{ t "menu.title" }}">
+                <a aria-label="{{ t "menu.home_page" }}" href="{{ route .user.DefaultHomePage }}">
+                    Mini<span>flux</span>
+                </a>
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                </svg>
             </div>
-            <ul>
+            <ul id="header-menu">
                 <li {{ if eq .menu "unread" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g u" }}">
-                    <a href="{{ route "unread" }}" data-page="unread">{{ t "menu.unread" }}
-                      {{ if gt .countUnread 0 }}
-                          <span class="unread-counter-wrapper">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
-                      {{ end }}
+                    <a href="{{ route "unread" }}"
+                        data-page="unread"
+                        {{ if gt .countUnread 0 }}
+                        aria-label="{{ t "menu.unread" }}, {{ plural "page.unread_entry_count" .countUnread .countUnread }}"
+                        {{ end }}
+                    >
+                        {{ t "menu.unread" }}
+                        {{ if gt .countUnread 0 }}
+                        <span class="unread-counter-wrapper" aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
+                        {{ end }}
                     </a>
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
@@ -85,7 +98,7 @@
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
                     </a>
-                    <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}">
+                    <a href="{{ route "addSubscription" }}" title="{{ t "tooltip.keyboard_shortcuts" "+" }}" aria-label="{{ t "menu.add_feed" }}">
                         (+)
                     </a>
                 </li>
@@ -101,24 +114,33 @@
                     </li>
                 {{ end }}
             </ul>
-            <div class="search">
-                <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "search.label" }}</a>
-                </div>
-                <form action="{{ route "searchEntries" }}" class="search-form {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <input type="search" name="q" id="search-input" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
-                </form>
-            </div>
         </nav>
+        <search role="search" class="search">
+            <details class="search-details" {{ if $.searchQuery }}open{{ end }}>
+                <summary class="search-summary">
+                    <span>{{ t "search.label" }}</span>
+                    <svg class="bi bi-chevron-down search-summary-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                    </svg>
+                </summary>
+                <form action="{{ route "searchEntries" }}" aria-labelledby="search-input-label">
+                    <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
+                    <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "search.submit" }}</button>
+                </form>
+            </details>
+        </search>
     </header>
     {{ end }}
     {{ if .flashMessage }}
-        <div class="flash-message alert alert-success">{{ .flashMessage }}</div>
+        <div role="alert" class="flash-message alert alert-success">{{ .flashMessage }}</div>
     {{ end }}
     {{ if .flashErrorMessage }}
-        <div class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
+        <div role="alert" class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
-    <main>
+
+    {{template "page_header" .}}
+
+    <main id="main">
         {{template "content" .}}
     </main>
     <template id="keyboard-shortcuts">

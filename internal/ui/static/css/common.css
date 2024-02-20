@@ -50,13 +50,66 @@ a:hover {
     text-decoration: none;
 }
 
+.sr-only {
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
+}
+
+.skip-to-content-link {
+  --padding-size: 8px;
+  --border-size: 1px;
+
+  background-color: var(--category-background-color);
+  color: var(--category-color);
+  border: var(--border-size) solid var(--category-border-color);
+  border-radius: 5px;
+  inset-inline-start: 50%;
+  padding: var(--padding-size);
+  position: absolute;
+  transition: translate 0.3s;
+  translate: -50% calc(-100% - calc(var(--padding-size) * 2) - calc(var(--border-size) * 2));
+}
+
+.skip-to-content-link:focus {
+  translate: -50% 0;
+}
+
 /* Header and main menu */
 .header {
     margin-top: 10px;
     margin-bottom: 20px;
 }
 
-.header nav ul {
+.header nav {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.header nav .logo svg {
+    padding: 5px;
+    inline-size: 24px;
+    block-size: 24px;
+}
+
+.header nav .logo[aria-expanded="true"] svg {
+    rotate: 180deg;
+}
+
+.header ul.js-menu-show {
+    display: initial;
+}
+
+.header ul:not(.js-menu-show) {
     display: none;
 }
 
@@ -72,7 +125,7 @@ a:hover {
     color: #888;
 }
 
-.header a {
+.header :is(a, summary) {
     font-size: 0.9em;
     color: var(--header-link-color);
     text-decoration: none;
@@ -86,16 +139,13 @@ a:hover {
     font-weight: 600;
 }
 
-.header a:hover {
-    color: var(--header-link-hover-color);
-}
-
 .header a:focus {
     color: var(--header-link-focus-color);
 }
 
 /* Page header and footer*/
 .page-header {
+    padding-inline: 5px;
     margin-bottom: 25px;
 }
 
@@ -106,6 +156,7 @@ a:hover {
 .page-header h1 {
     font-weight: 500;
     border-bottom: 1px dotted var(--page-header-title-border-color);
+    font-size: 1.5rem;
 }
 
 .page-header h1 a {
@@ -129,15 +180,38 @@ a:hover {
     padding-bottom: 2px;
 }
 
+.page-header-action-form {
+    display: inline-flex;
+}
+
+:is(.page-button, .page-link) {
+    color: var(--link-color);
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &:is(:hover, :focus) {
+        color: var(--link-hover-color);
+    }
+}
+
+.page-button:active {
+    translate: 1px 1px;
+}
+
 /* Logo */
 .logo {
-    cursor: pointer;
     text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .logo a {
     color: var(--logo-color);
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .logo a:hover {
@@ -155,7 +229,35 @@ a:hover {
 /* Search form */
 .search {
     text-align: center;
-    display: none;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+.search-summary-icon {
+   padding: 5px;
+   inline-size: 24px;
+   block-size: 24px;
+   translate: 0 -3px;
+}
+
+.search-details {
+
+   &[open] .search-summary-icon {
+       rotate: 180deg;
+    }
+}
+
+.search-summary {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  inline-size: fit-content;
+  margin-inline: auto;
+}
+
+.search-summary::marker, /* Latest Chrome, Edge, Firefox */
+.search-summary::-webkit-details-marker /* Safari */ {
+  display: none;
 }
 
 .search-toggle-switch {
@@ -230,11 +332,6 @@ a:hover {
         text-align: left;
         float: left;
         margin-right: 15px;
-        margin-left: 5px;
-    }
-
-    .header nav ul {
-        display: block;
     }
 
     .header li {
@@ -244,6 +341,23 @@ a:hover {
         line-height: normal;
         border: none;
         font-size: 1.0em;
+    }
+
+    .header nav {
+        align-items: end;
+        flex-direction: row;
+    }
+
+    .header .logo svg {
+        display: none;
+    }
+
+    .header ul:not(.js-menu-show), .header ul.js-menu-show {
+        display: revert;
+    }
+
+    .header :is(a, summary):hover {
+        color: var(--header-link-hover-color);
     }
 
     .page-header li,
@@ -256,8 +370,10 @@ a:hover {
     .search {
         text-align: right;
         display: block;
-        margin-top: 10px;
-        margin-right: 5px;
+    }
+
+    .search details > summary {
+      margin-inline: auto 0;
     }
 
     .search-toggle-switch {
@@ -639,6 +755,11 @@ template {
     color: var(--category-link-hover-color);
 }
 
+
+.category-item-total {
+    color: var(--body-color);
+}
+
 /* Pagination */
 .pagination {
     font-size: 1.1em;
@@ -704,9 +825,36 @@ template {
     box-shadow: var(--current-item-box-shadow);
 }
 
+.item.current-item:focus {
+    outline: none;
+}
+
+
+.item-header {
+    font-size: 1rem;
+}
+
+.item-header span {
+    font-weight: normal;
+    display: inline-block;
+}
+
+.item-title {
+    font-size: 1rem;
+    margin: 0;
+    display: inline;
+}
+
 .item-title a {
     text-decoration: none;
     font-weight: var(--item-title-link-font-weight);
+    font-size: inherit;
+}
+
+.feed-entries-counter {
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
 }
 
 .item-status-read .item-title a {
@@ -723,8 +871,7 @@ template {
     text-decoration: none;
 }
 
-.item-meta a:hover,
-.item-meta a:focus {
+.item-meta :is(a:is(:focus, :hover), button:is(:focus, :hover)) {
     color: #333;
 }
 
@@ -752,6 +899,23 @@ template {
 
 .item-meta-icons li:last-child {
     margin-right: 0;
+}
+
+.item-meta-icons li > :is(a, button) {
+    color: #777;
+    text-decoration: none;
+    font-size: 0.8rem;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.item-meta-icons a span {
+    text-decoration: underline;
+}
+
+.item-meta-icons button:active {
+    translate: 1px 1px;
 }
 
 .items {
@@ -815,6 +979,7 @@ article.category-has-unread {
 /* Entry view */
 .entry header {
     padding-bottom: 5px;
+    padding-inline: 5px;
     border-bottom: 1px dotted var(--entry-header-border-color);
 }
 
@@ -839,8 +1004,8 @@ article.category-has-unread {
     margin-bottom: 20px;
 }
 
-.entry-actions a {
-    text-decoration: none;
+.entry-actions a span {
+    text-decoration: underline;
 }
 
 .entry-actions li {
@@ -1070,8 +1235,12 @@ details.entry-enclosures {
     color: #ed2d04;
 }
 
-.confirm a {
+.confirm button {
     color: #ed2d04;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: inherit;
 }
 
 .loading {

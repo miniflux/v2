@@ -25,20 +25,73 @@ function onAuxClick(selector, callback, noPreventDefault) {
     });
 }
 
-// Show and hide the main menu on mobile devices.
-function toggleMainMenu() {
-    let menu = document.querySelector(".header nav ul");
-    if (DomHelper.isVisible(menu)) {
-        menu.style.display = "none";
+// make logo element as button on mobile layout
+function checkMenuToggleModeByLayout() {
+    const logoElement = document.querySelector(".logo");
+    const homePageLinkElement = document.querySelector(".logo > a")
+    if (!logoElement) return
+    const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label")
+
+    const navMenuElement = document.getElementById("header-menu");
+    const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show")
+
+    if (document.documentElement.clientWidth < 620) {
+        logoElement.setAttribute("role", "button");
+        logoElement.setAttribute("tabindex", "0");
+        logoElement.setAttribute("aria-label", logoToggleButtonLabel)
+        if (navMenuElementIsExpanded) {
+           logoElement.setAttribute("aria-expanded", "true")
+        } else {
+           logoElement.setAttribute("aria-expanded", "false")
+        }
+        homePageLinkElement.setAttribute("tabindex", "-1")
     } else {
-        menu.style.display = "block";
+        logoElement.removeAttribute("role");
+        logoElement.removeAttribute("tabindex");
+        logoElement.removeAttribute("aria-expanded");
+        logoElement.removeAttribute("aria-label")
+        homePageLinkElement.removeAttribute("tabindex");
+    }
+}
+
+function fixVoiceOverDetailsSummaryBug() {
+    const detailsElements = document.querySelectorAll("details")
+    detailsElements.forEach((details) => {
+        const summaryElement = details.querySelector("summary")
+        summaryElement.setAttribute("role", "button")
+        setSummaryAriaExpandedByDetails(details, summaryElement)
+
+        details.addEventListener("toggle", () => {
+            setSummaryAriaExpandedByDetails(details, summaryElement)
+        })
+    })
+
+    function setSummaryAriaExpandedByDetails(details, summary) {
+        if (details.open) {
+            summary.setAttribute("aria-expanded", "true")
+        } else {
+            summary.setAttribute("aria-expanded", "false")
+        }
+    }
+}
+
+// Show and hide the main menu on mobile devices.
+function toggleMainMenu(event) {
+    if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
+        return
+    }
+    if (event.currentTarget.getAttribute("role")) {
+        event.preventDefault()
     }
 
-    let searchElement = document.querySelector(".header .search");
-    if (DomHelper.isVisible(searchElement)) {
-        searchElement.style.display = "none";
+    let menu = document.querySelector(".header nav ul");
+    let menuToggleButton = document.querySelector(".logo");
+    if (menu.classList.contains("js-menu-show")) {
+        menu.classList.remove("js-menu-show")
+        menuToggleButton.setAttribute("aria-expanded", false)
     } else {
-        searchElement.style.display = "block";
+        menu.classList.add("js-menu-show")
+        menuToggleButton.setAttribute("aria-expanded", true)
     }
 }
 
@@ -72,21 +125,12 @@ function handleSubmitButtons() {
 function setFocusToSearchInput(event) {
     event.preventDefault();
     event.stopPropagation();
-
-    let toggleSwitchElement = document.querySelector(".search-toggle-switch");
-    if (toggleSwitchElement) {
-        toggleSwitchElement.style.display = "none";
-    }
-
-    let searchFormElement = document.querySelector(".search-form");
-    if (searchFormElement) {
-        searchFormElement.style.display = "block";
-    }
-
-    let searchInputElement = document.getElementById("search-input");
-    if (searchInputElement) {
-        searchInputElement.focus();
-        searchInputElement.value = "";
+    const toggleSearchButton = document.querySelector(".search details")
+    if (!toggleSearchButton.getAttribute("open")) {
+      toggleSearchButton.setAttribute("open", "")
+      const searchInputElement = document.getElementById("search-input");
+      searchInputElement.focus();
+      searchInputElement.value = "";
     }
 }
 
@@ -112,7 +156,7 @@ function markPageAsRead() {
         updateEntriesStatus(entryIDs, "read", () => {
             // Make sure the Ajax request reach the server before we reload the page.
 
-            let element = document.querySelector("a[data-action=markPageAsRead]");
+            let element = document.querySelector(":is(a, button)[data-action=markPageAsRead]");
             let showOnlyUnread = false;
             if (element) {
                 showOnlyUnread = element.dataset.showOnlyUnread || false;
@@ -138,7 +182,7 @@ function handleEntryStatus(item, element, setToRead) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        if (!setToRead || currentEntry.querySelector("a[data-toggle-status]").dataset.value == "unread") {
+        if (!setToRead || currentEntry.querySelector(":is(a, button)[data-toggle-status]").dataset.value == "unread") {
             toggleEntryStatus(currentEntry, toasting);
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
@@ -157,7 +201,7 @@ function handleEntryStatus(item, element, setToRead) {
 // Change the entry status to the opposite value.
 function toggleEntryStatus(element, toasting) {
     let entryID = parseInt(element.dataset.id, 10);
-    let link = element.querySelector("a[data-toggle-status]");
+    let link = element.querySelector(":is(a, button)[data-toggle-status]");
 
     let currentStatus = link.dataset.value;
     let newStatus = currentStatus === "read" ? "unread" : "read";
@@ -236,7 +280,7 @@ function handleSaveEntry(element) {
     let toasting = !element;
     let currentEntry = findEntry(element);
     if (currentEntry) {
-        saveEntry(currentEntry.querySelector("a[data-save-entry]"), toasting);
+        saveEntry(currentEntry.querySelector(":is(a, button)[data-save-entry]"), toasting);
     }
 }
 
@@ -250,12 +294,11 @@ function saveEntry(element, toasting) {
         return;
     }
 
-    let previousInnerHTML = element.innerHTML;
     element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
-        element.innerHTML = previousInnerHTML;
+        element.innerHTML = '<span class="icon-label">' + element.dataset.labelDone + '</span>';
         element.dataset.completed = true;
         if (toasting) {
             let iconElement = document.querySelector("template#icon-save");
@@ -276,7 +319,7 @@ function handleBookmark(element) {
 
 // Send the Ajax request and change the icon when bookmarking an entry.
 function toggleBookmark(parentElement, toasting) {
-    let element = parentElement.querySelector("a[data-toggle-bookmark]");
+    let element = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
     if (!element) {
         return;
     }
@@ -317,7 +360,7 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    let element = document.querySelector("a[data-fetch-content-entry]");
+    let element = document.querySelector(":is(a, button)[data-fetch-content-entry]");
     if (!element) {
         return;
     }
@@ -353,13 +396,13 @@ function openOriginalLink(openLinkInCurrentTab) {
         return;
     }
 
-    let currentItemOriginalLink = document.querySelector(".current-item a[data-original-link]");
+    let currentItemOriginalLink = document.querySelector(".current-item :is(a, button)[data-original-link]");
     if (currentItemOriginalLink !== null) {
         DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
 
         let currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
-        if (document.location.href != document.querySelector('a[data-page=starred]').href) {
+        if (document.location.href != document.querySelector(':is(a, button)[data-page=starred]').href) {
             goToListItem(1);
         }
         markEntryAsRead(currentItem);
@@ -368,7 +411,7 @@ function openOriginalLink(openLinkInCurrentTab) {
 
 function openCommentLink(openLinkInCurrentTab) {
     if (!isListView()) {
-        let entryLink = document.querySelector("a[data-comments-link]");
+        let entryLink = document.querySelector(":is(a, button)[data-comments-link]");
         if (entryLink !== null) {
             if (openLinkInCurrentTab) {
                 window.location.href = entryLink.getAttribute("href");
@@ -378,7 +421,7 @@ function openCommentLink(openLinkInCurrentTab) {
             return;
         }
     } else {
-        let currentItemCommentsLink = document.querySelector(".current-item a[data-comments-link]");
+        let currentItemCommentsLink = document.querySelector(".current-item :is(a, button)[data-comments-link]");
         if (currentItemCommentsLink !== null) {
             DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
         }
@@ -414,7 +457,7 @@ function unsubscribeFromFeed() {
  * @param {boolean} fallbackSelf Refresh actual page if the page is not found.
  */
 function goToPage(page, fallbackSelf) {
-    let element = document.querySelector("a[data-page=" + page + "]");
+    let element = document.querySelector(":is(a, button)[data-page=" + page + "]");
 
     if (element) {
         document.location.href = element.href;
@@ -454,7 +497,7 @@ function goToFeed() {
             window.location.href = feedAnchor.href;
         }
     } else {
-        let currentItemFeed = document.querySelector(".current-item a[data-feed-link]");
+        let currentItemFeed = document.querySelector(".current-item :is(a, button)[data-feed-link]");
         if (currentItemFeed !== null) {
             window.location.href = currentItemFeed.getAttribute("href");
         }
@@ -472,7 +515,7 @@ function goToListItem(offset) {
 
     if (document.querySelector(".current-item") === null) {
         items[0].classList.add("current-item");
-        items[0].querySelector('.item-header a').focus();
+        items[0].focus();
         return;
     }
 
@@ -484,7 +527,7 @@ function goToListItem(offset) {
 
             item.classList.add("current-item");
             DomHelper.scrollPageTo(item);
-            item.querySelector('.item-header a').focus();
+            item.focus();
 
             break;
         }
@@ -551,7 +594,7 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    if (linkElement.tagName != 'A') {
+    if (linkElement.tagName != 'A' && linkElement.tagName != "BUTTON") {
         linkElement = linkElement.parentNode;
     }
 
@@ -569,8 +612,7 @@ function handleConfirmationMessage(linkElement, callback) {
         containerElement.appendChild(loadingElement);
     }
 
-    let yesElement = document.createElement("a");
-    yesElement.href = "#";
+    let yesElement = document.createElement("button");
     yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
     yesElement.onclick = (event) => {
         event.preventDefault();
@@ -580,8 +622,7 @@ function handleConfirmationMessage(linkElement, callback) {
         callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
     };
 
-    let noElement = document.createElement("a");
-    noElement.href = "#";
+    let noElement = document.createElement("button");
     noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
     noElement.onclick = (event) => {
         event.preventDefault();
@@ -654,7 +695,7 @@ function handlePlayerProgressionSave(playerElement) {
  * handle new share entires and already shared entries
  */
 function handleShare() {
-    let link = document.querySelector('a[data-share-status]');
+    let link = document.querySelector(':is(a, button)[data-share-status]');
     let title = document.querySelector("body > main > section > header > h1 > a");
     if (link.dataset.shareStatus === "shared") {
         checkShareAPI(title, link.href);

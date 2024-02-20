@@ -48,11 +48,20 @@ type Integration struct {
 	TelegramBotDisableWebPagePreview bool
 	TelegramBotDisableNotification   bool
 	TelegramBotDisableButtons        bool
+	LinkAceEnabled                   bool
+	LinkAceURL                       string
+	LinkAceAPIKey                    string
+	LinkAceTags                      string
+	LinkAcePrivate                   bool
+	LinkAceCheckDisabled             bool
 	LinkdingEnabled                  bool
 	LinkdingURL                      string
 	LinkdingAPIKey                   string
 	LinkdingTags                     string
 	LinkdingMarkAsUnread             bool
+	LinkwardenEnabled                bool
+	LinkwardenURL                    string
+	LinkwardenAPIKey                 string
 	MatrixBotEnabled                 bool
 	MatrixBotUser                    string
 	MatrixBotPassword                string

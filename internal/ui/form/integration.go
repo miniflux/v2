@@ -54,11 +54,20 @@ type IntegrationForm struct {
 	TelegramBotDisableWebPagePreview bool
 	TelegramBotDisableNotification   bool
 	TelegramBotDisableButtons        bool
+	LinkAceEnabled                   bool
+	LinkAceURL                       string
+	LinkAceAPIKey                    string
+	LinkAceTags                      string
+	LinkAcePrivate                   bool
+	LinkAceCheckDisabled             bool
 	LinkdingEnabled                  bool
 	LinkdingURL                      string
 	LinkdingAPIKey                   string
 	LinkdingTags                     string
 	LinkdingMarkAsUnread             bool
+	LinkwardenEnabled                bool
+	LinkwardenURL                    string
+	LinkwardenAPIKey                 string
 	MatrixBotEnabled                 bool
 	MatrixBotUser                    string
 	MatrixBotPassword                string
@@ -126,11 +135,20 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.TelegramBotDisableWebPagePreview = i.TelegramBotDisableWebPagePreview
 	integration.TelegramBotDisableNotification = i.TelegramBotDisableNotification
 	integration.TelegramBotDisableButtons = i.TelegramBotDisableButtons
+	integration.LinkAceEnabled = i.LinkAceEnabled
+	integration.LinkAceURL = i.LinkAceURL
+	integration.LinkAceAPIKey = i.LinkAceAPIKey
+	integration.LinkAceTags = i.LinkAceTags
+	integration.LinkAcePrivate = i.LinkAcePrivate
+	integration.LinkAceCheckDisabled = i.LinkAceCheckDisabled
 	integration.LinkdingEnabled = i.LinkdingEnabled
 	integration.LinkdingURL = i.LinkdingURL
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
 	integration.LinkdingTags = i.LinkdingTags
 	integration.LinkdingMarkAsUnread = i.LinkdingMarkAsUnread
+	integration.LinkwardenEnabled = i.LinkwardenEnabled
+	integration.LinkwardenURL = i.LinkwardenURL
+	integration.LinkwardenAPIKey = i.LinkwardenAPIKey
 	integration.MatrixBotEnabled = i.MatrixBotEnabled
 	integration.MatrixBotUser = i.MatrixBotUser
 	integration.MatrixBotPassword = i.MatrixBotPassword
@@ -200,11 +218,20 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		TelegramBotDisableWebPagePreview: r.FormValue("telegram_bot_disable_web_page_preview") == "1",
 		TelegramBotDisableNotification:   r.FormValue("telegram_bot_disable_notification") == "1",
 		TelegramBotDisableButtons:        r.FormValue("telegram_bot_disable_buttons") == "1",
+		LinkAceEnabled:                   r.FormValue("linkace_enabled") == "1",
+		LinkAceURL:                       r.FormValue("linkace_url"),
+		LinkAceAPIKey:                    r.FormValue("linkace_api_key"),
+		LinkAceTags:                      r.FormValue("linkace_tags"),
+		LinkAcePrivate:                   r.FormValue("linkace_is_private") == "1",
+		LinkAceCheckDisabled:             r.FormValue("linkace_check_disabled") == "1",
 		LinkdingEnabled:                  r.FormValue("linkding_enabled") == "1",
 		LinkdingURL:                      r.FormValue("linkding_url"),
 		LinkdingAPIKey:                   r.FormValue("linkding_api_key"),
 		LinkdingTags:                     r.FormValue("linkding_tags"),
 		LinkdingMarkAsUnread:             r.FormValue("linkding_mark_as_unread") == "1",
+		LinkwardenEnabled:                r.FormValue("linkwarden_enabled") == "1",
+		LinkwardenURL:                    r.FormValue("linkwarden_url"),
+		LinkwardenAPIKey:                 r.FormValue("linkwarden_api_key"),
 		MatrixBotEnabled:                 r.FormValue("matrix_bot_enabled") == "1",
 		MatrixBotUser:                    r.FormValue("matrix_bot_user"),
 		MatrixBotPassword:                r.FormValue("matrix_bot_password"),

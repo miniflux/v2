@@ -1,24 +1,26 @@
 {{ define "settings_menu" }}
-<ul>
-    <li>
-        <a href="{{ route "settings" }}">{{ icon "settings" }}{{ t "menu.settings" }}</a>
-    </li>
-    <li>
-        <a href="{{ route "integrations" }}">{{ icon "third-party-services" }}{{ t "menu.integrations" }}</a>
-    </li>
-    <li>
-        <a href="{{ route "apiKeys" }}">{{ icon "api" }}{{ t "menu.api_keys" }}</a>
-    </li>
-    <li>
-        <a href="{{ route "sessions" }}">{{ icon "sessions" }}{{ t "menu.sessions" }}</a>
-    </li>
-    {{ if .user.IsAdmin }}
+<nav aria-label="{{ t "page.settings.title" }} {{ t "menu.title" }}">
+    <ul>
         <li>
-            <a href="{{ route "users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
+            <a href="{{ route "settings" }}">{{ icon "settings" }}{{ t "menu.settings" }}</a>
         </li>
-    {{ end }}
-    <li>
-        <a href="{{ route "about" }}">{{ icon "about" }}{{ t "menu.about" }}</a>
-    </li>
-</ul>
+        <li>
+            <a href="{{ route "integrations" }}">{{ icon "third-party-services" }}{{ t "menu.integrations" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "apiKeys" }}">{{ icon "api" }}{{ t "menu.api_keys" }}</a>
+        </li>
+        <li>
+            <a href="{{ route "sessions" }}">{{ icon "sessions" }}{{ t "menu.sessions" }}</a>
+        </li>
+        {{ if .user.IsAdmin }}
+            <li>
+                <a href="{{ route "users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
+            </li>
+        {{ end }}
+        <li>
+            <a href="{{ route "about" }}">{{ icon "about" }}{{ t "menu.about" }}</a>
+        </li>
+    </ul>
+</nav>
 {{ end }}

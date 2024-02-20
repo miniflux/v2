@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Aller au contenu",
     "confirm.question": "Êtes-vous sûr ?",
     "confirm.question.refresh": "Voulez-vous forcer le rafraîchissement ?",
     "confirm.yes": "oui",
@@ -18,6 +19,8 @@
     "action.home_screen": "Ajouter à l'écran d'accueil",
     "tooltip.keyboard_shortcuts": "Raccourci clavier : %s",
     "tooltip.logged_user": "Connecté en tant que %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Page d'accueil",
     "menu.unread": "Non lus",
     "menu.starred": "Favoris",
     "menu.history": "Historique",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Articles partagés",
     "search.label": "Recherche",
     "search.placeholder": "Recherche...",
+    "search.submit": "Rechercher",
     "pagination.next": "Suivant",
     "pagination.previous": "Précédent",
     "entry.status.unread": "Non lu",
@@ -81,11 +85,27 @@
     "entry.estimated_reading_time": [
         "%d minute de lecture",
         "%d minutes de lecture"
-    ],    
+    ],
     "entry.tags.label": "Libellés :",
     "page.shared_entries.title": "Articles partagés",
+    "page.shared_entries_count": [
+        "%d article partagé",
+        "%d articles partagés"
+    ],
     "page.unread.title": "Non lus",
+    "page.unread_entry_count": [
+        "%d article non lu",
+        "%d articles non lus"
+    ],
+    "page.total_entry_count": [
+        "%d article au total",
+        "%d articles au total"
+    ],
     "page.starred.title": "Favoris",
+    "page.starred_entry_count": [
+        "%d favori",
+        "%d favoris"
+    ],
     "page.categories.title": "Catégories",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.entries": "Articles",
@@ -94,21 +114,28 @@
         "Il y a %d abonnement.",
         "Il y a %d abonnements."
     ],
-    "page.categories.unread_counter": "Nombre d'entrées non lues",
+    "page.categories_count": [
+        "%d catégorie",
+        "%d catégories"
+    ],
     "page.new_category.title": "Nouvelle catégorie",
     "page.new_user.title": "Nouvel Utilisateur",
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_user.title": "Modification de l'utilisateur : %s",
     "page.feeds.title": "Abonnements",
+    "page.category_label": "Catégorie : %s",
     "page.feeds.last_check": "Dernière vérification :",
     "page.feeds.next_check": "Prochaine vérification :",
-    "page.feeds.unread_counter": "Nombre d'entrées non lues",
     "page.feeds.read_counter": "Nombre d'entrées lues",
     "page.feeds.error_count": [
         "%d erreur",
         "%d erreurs"
     ],
     "page.history.title": "Historique",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Importation",
     "page.search.title": "Résultats de la recherche",
     "page.about.title": "À propos",
@@ -401,11 +428,20 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Désactiver l'aperçu de la page Web",
     "form.integration.telegram_bot_disable_notification": "Désactiver les notifications",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Sauvegarder les articles vers Linkding",
     "form.integration.linkding_endpoint": "URL de l'API de Linkding",
     "form.integration.linkding_api_key": "Clé d'API de Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Marquer le lien comme non lu",
+    "form.integration.linkwarden_activate": "Sauvegarder les articles vers Linkwarden",
+    "form.integration.linkwarden_endpoint": "URL de l'API de Linkwarden",
+    "form.integration.linkwarden_api_key": "Clé d'API de Linkwarden",
     "form.integration.matrix_bot_activate": "Envoyer les nouveaux articles vers Matrix",
     "form.integration.matrix_bot_user": "Nom de l'utilisateur Matrix",
     "form.integration.matrix_bot_password": "Mot de passe de l'utilisateur Matrix",

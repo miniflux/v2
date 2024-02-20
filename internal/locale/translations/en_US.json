@@ -1,4 +1,5 @@
 {
+    "skip_to_content": "Skip to content",
     "confirm.question": "Are you sure?",
     "confirm.question.refresh": "Are you sure you want to force refresh?",
     "confirm.yes": "yes",
@@ -18,6 +19,8 @@
     "action.home_screen": "Add to home screen",
     "tooltip.keyboard_shortcuts": "Keyboard Shortcut: %s",
     "tooltip.logged_user": "Logged in as %s",
+    "menu.title": "Menu",
+    "menu.home_page": "Home page",
     "menu.unread": "Unread",
     "menu.starred": "Starred",
     "menu.history": "History",
@@ -50,6 +53,7 @@
     "menu.shared_entries": "Shared entries",
     "search.label": "Search",
     "search.placeholder": "Search…",
+    "search.submit": "Search",
     "pagination.next": "Next",
     "pagination.previous": "Previous",
     "entry.status.unread": "Unread",
@@ -84,8 +88,24 @@
     ],
     "entry.tags.label": "Tags:",
     "page.shared_entries.title": "Shared entries",
+    "page.shared_entries_count": [
+        "%d shared entry",
+        "%d shared entries"
+    ],
     "page.unread.title": "Unread",
+    "page.unread_entry_count": [
+        "%d unread entry",
+        "%d unread entries"
+    ],
+    "page.total_entry_count": [
+        "%d entry in total",
+        "%d entries in total"
+    ],
     "page.starred.title": "Starred",
+    "page.starred_entry_count": [
+        "%d starred entry",
+        "%d starred entries"
+    ],
     "page.categories.title": "Categories",
     "page.categories.no_feed": "No feed.",
     "page.categories.entries": "Entries",
@@ -94,21 +114,28 @@
         "There is %d feed.",
         "There are %d feeds."
     ],
-    "page.categories.unread_counter": "Number of unread entries",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.new_category.title": "New Category",
     "page.new_user.title": "New User",
     "page.edit_category.title": "Edit Category: %s",
     "page.edit_user.title": "Edit User: %s",
     "page.feeds.title": "Feeds",
+    "page.category_label": "Category: %s",
     "page.feeds.last_check": "Last check:",
     "page.feeds.next_check": "Next check:",
-    "page.feeds.unread_counter": "Number of unread entries",
     "page.feeds.read_counter": "Number of read entries",
     "page.feeds.error_count": [
         "%d error",
         "%d errors"
     ],
     "page.history.title": "History",
+    "page.read_entry_count": [
+        "%d read entry",
+        "%d read entries"
+    ],
     "page.import.title": "Import",
     "page.search.title": "Search Results",
     "page.about.title": "About",
@@ -401,11 +428,20 @@
     "form.integration.telegram_bot_disable_web_page_preview": "Disable web page preview",
     "form.integration.telegram_bot_disable_notification": "Disable notification",
     "form.integration.telegram_bot_disable_buttons": "Disable buttons",
+    "form.integration.linkace_activate": "Save entries to LinkAce",
+    "form.integration.linkace_endpoint": "LinkAce API Endpoint",
+    "form.integration.linkace_api_key": "LinkAce API key",
+    "form.integration.linkace_tags": "LinkAce Tags",
+    "form.integration.linkace_is_private": "Mark link as private",
+    "form.integration.linkace_check_disabled": "Disable link check",
     "form.integration.linkding_activate": "Save entries to Linkding",
     "form.integration.linkding_endpoint": "Linkding API Endpoint",
     "form.integration.linkding_api_key": "Linkding API key",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Mark bookmark as unread",
+    "form.integration.linkwarden_activate": "Save entries to Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden API Endpoint",
+    "form.integration.linkwarden_api_key": "Linkwarden API key",
     "form.integration.matrix_bot_activate": "Push new entries to Matrix",
     "form.integration.matrix_bot_user": "Username for Matrix",
     "form.integration.matrix_bot_password": "Password for Matrix user",
