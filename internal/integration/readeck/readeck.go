@@ -55,6 +55,9 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 			return fmt.Errorf("readeck: unable to encode request body: %v", err)
 		}
 		request, err = http.NewRequest(http.MethodPost, apiEndpoint, bytes.NewReader(requestBodyJson))
+		if err != nil {
+			return fmt.Errorf("readeck: unable to create request: %v", err)
+		}
 		request.Header.Set("Content-Type", "application/json")
 	} else {
 		requestBody := new(bytes.Buffer)
