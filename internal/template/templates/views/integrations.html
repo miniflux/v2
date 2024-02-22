@@ -26,7 +26,7 @@
             <input type="url" name="apprise_url" id="form-apprise-url" value="{{ .form.AppriseURL }}" placeholder="http://apprise:8080" spellcheck="false">
 
             <label for="form-apprise-services-urls">{{ t "form.integration.apprise_services_url" }}
-                <a href="https://github.com/caronc/apprise/wiki" target="_blank">
+                <a href="https://github.com/caronc/apprise/wiki">
                     {{ icon "external-link" }}
                 </a>
             </label>
@@ -336,7 +336,7 @@
             <label for="form-readwise-api-key">{{ t "form.integration.readwise_api_key" }}</label>
             <input type="text" name="readwise_api_key" id="form-readwise-api-key" value="{{ .form.ReadwiseAPIKey }}" spellcheck="false">
 
-            <p><a href="https://readwise.io/access_token" target="_blank">{{ t "form.integration.readwise_api_key_link" }}</a></p>
+            <p><a href="https://readwise.io/access_token">{{ t "form.integration.readwise_api_key_link" }}</a></p>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
