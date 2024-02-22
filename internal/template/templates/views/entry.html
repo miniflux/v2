@@ -4,7 +4,7 @@
 <section class="entry" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
     <header class="entry-header">
         <h1 id="page-header-title" dir="auto">
-            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+            <a href="{{ .entry.URL | safeURL }}" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
         </h1>
         {{ if .user }}
         <div class="entry-actions">
@@ -52,8 +52,8 @@
                 <li>
                     <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
                         title="{{ t "entry.shared_entry.title" }}"
-                        data-share-status="shared"
-                        target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+                        data-share-status="shared">
+                        {{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
                 </li>
                 <li>
                     <button
@@ -70,14 +70,13 @@
                     <a href="{{ route "shareEntry" "entryID" .entry.ID }}"
                         class="page-link"
                         title="{{ t "entry.share.title" }}"
-                        data-share-status="share"
-                        target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
+                        data-share-status="share">
+                        {{ icon "share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
                 </li>
                 {{ end }}
                 <li>
                     <a href="{{ .entry.URL | safeURL  }}"
                         class="page-link"
-                        target="_blank"
                         rel="noopener noreferrer"
                         referrerpolicy="no-referrer"
                         data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
@@ -96,7 +95,6 @@
                     <a href="{{ .entry.CommentsURL | safeURL }}"
                         class="page-link"
                         title="{{ t "entry.comments.title" }}"
-                        target="_blank"
                         rel="noopener noreferrer"
                         referrerpolicy="no-referrer"
                         data-comments-link="true"
