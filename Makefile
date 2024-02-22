@@ -77,7 +77,7 @@ openbsd-amd64:
 	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
 
 windows-amd64:
-	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
 
 build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
 
@@ -98,13 +98,13 @@ openbsd-x86:
 	@ GOOS=openbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
 
 windows-x86:
-	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
 
 run:
 	@ LOG_DATE_TIME=1 DEBUG=1 RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
 
 clean:
-	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb
+	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb $(APP)*.exe
 
 test:
 	go test -cover -race -count=1 ./...
@@ -124,7 +124,7 @@ integration-test:
 	RUN_MIGRATIONS=1 \
 	DEBUG=1 \
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
-	
+
 	while ! nc -z localhost 8080; do sleep 1; done
 	go test -v -tags=integration -count=1 miniflux.app/v2/internal/tests
 
