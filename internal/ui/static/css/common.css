@@ -1005,7 +1005,7 @@ article.category-has-unread {
 }
 
 .entry-actions a span {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .entry-actions li {
