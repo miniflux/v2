@@ -44,7 +44,7 @@ export PGPASSWORD := postgres
 	debian-packages
 
 miniflux:
-	@ CGO_ENABLED=0 go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
+	@ go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 miniflux-no-pie:
 	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
