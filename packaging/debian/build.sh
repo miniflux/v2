@@ -13,7 +13,7 @@ cd /src
 if [ "$PKG_ARCH" = "armhf" ]; then
     make miniflux-no-pie
 else
-    make miniflux
+    CGO_ENABLED=0 make miniflux
 fi
 
 mkdir -p /build/debian && \
