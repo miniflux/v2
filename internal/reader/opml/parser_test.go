@@ -129,10 +129,10 @@ func TestParseOpmlVersion1(t *testing.T) {
 			<dateCreated>Wed, 13 Mar 2019 11:51:41 GMT</dateCreated>
 		</head>
 		<body>
-			<outline title="Feed 1">
+			<outline title="Category 1">
 				<outline type="rss" title="Feed 1" xmlUrl="http://example.org/feed1/" htmlUrl="http://example.org/1"></outline>
 			</outline>
-			<outline title="Feed 2">
+			<outline title="Category 2">
 				<outline type="rss" title="Feed 2" xmlUrl="http://example.org/feed2/" htmlUrl="http://example.org/2"></outline>
 			</outline>
 		</body>
@@ -140,8 +140,8 @@ func TestParseOpmlVersion1(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: ""})
-	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: ""})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: "Category 1"})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: "Category 2"})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
@@ -250,7 +250,7 @@ func TestParseOpmlWithInvalidCharacterEntity(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/a&b", SiteURL: "http://example.org/c&d", CategoryName: ""})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/a&b", SiteURL: "http://example.org/c&d", CategoryName: "Feed 1"})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
