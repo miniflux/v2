@@ -61,6 +61,14 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 				}
 			})
 
+			doc.Find("video").Each(func(i int, video *goquery.Selection) {
+				if posterAttrValue, ok := video.Attr("poster"); ok {
+					if !isDataURL(posterAttrValue) && (proxyOption == "all" || !urllib.IsHTTPS(posterAttrValue)) {
+						video.SetAttr("poster", proxifyFunction(router, posterAttrValue))
+					}
+				}
+			})
+
 		case "audio":
 			doc.Find("audio").Each(func(i int, audio *goquery.Selection) {
 				if srcAttrValue, ok := audio.Attr("src"); ok {
@@ -83,6 +91,12 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 				if srcAttrValue, ok := video.Attr("src"); ok {
 					if !isDataURL(srcAttrValue) && (proxyOption == "all" || !urllib.IsHTTPS(srcAttrValue)) {
 						video.SetAttr("src", proxifyFunction(router, srcAttrValue))
+					}
+				}
+
+				if posterAttrValue, ok := video.Attr("poster"); ok {
+					if !isDataURL(posterAttrValue) && (proxyOption == "all" || !urllib.IsHTTPS(posterAttrValue)) {
+						video.SetAttr("poster", proxifyFunction(router, posterAttrValue))
 					}
 				}
 			})
