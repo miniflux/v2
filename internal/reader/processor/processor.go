@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"regexp"
+	"slices"
 	"strconv"
 	"time"
 
@@ -115,13 +116,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		var containsBlockedTag bool = false
-		for _, tag := range entry.Tags {
-			if matchField(feed.BlocklistRules, tag) {
-				containsBlockedTag = true
-				break
-			}
-		}
+		containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+			return matchField(feed.BlocklistRules, tag)
+		})
 
 		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || matchField(feed.BlocklistRules, entry.Author) || containsBlockedTag {
 			slog.Debug("Blocking entry based on rule",
@@ -140,13 +137,9 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
-		var containsAllowedTag bool = false
-		for _, tag := range entry.Tags {
-			if matchField(feed.KeeplistRules, tag) {
-				containsAllowedTag = true
-				break
-			}
-		}
+		containsAllowedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+			return matchField(feed.KeeplistRules, tag)
+		})
 
 		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || matchField(feed.KeeplistRules, entry.Author) || containsAllowedTag {
 			slog.Debug("Allow entry based on rule",
