@@ -202,24 +202,24 @@ type Feeds []*Feed
 // Entry represents a subscription item in the system.
 type Entry struct {
 	ID          int64      `json:"id"`
-	UserID      int64      `json:"user_id"`
-	FeedID      int64      `json:"feed_id"`
-	Status      string     `json:"status"`
+	Date        time.Time  `json:"published_at"`
+	ChangedAt   time.Time  `json:"changed_at"`
+	CreatedAt   time.Time  `json:"created_at"`
+	Feed        *Feed      `json:"feed,omitempty"`
 	Hash        string     `json:"hash"`
-	Title       string     `json:"title"`
 	URL         string     `json:"url"`
 	CommentsURL string     `json:"comments_url"`
-	Date        time.Time  `json:"published_at"`
-	CreatedAt   time.Time  `json:"created_at"`
-	ChangedAt   time.Time  `json:"changed_at"`
+	Title       string     `json:"title"`
+	Status      string     `json:"status"`
 	Content     string     `json:"content"`
 	Author      string     `json:"author"`
 	ShareCode   string     `json:"share_code"`
-	Starred     bool       `json:"starred"`
-	ReadingTime int        `json:"reading_time"`
 	Enclosures  Enclosures `json:"enclosures,omitempty"`
-	Feed        *Feed      `json:"feed,omitempty"`
 	Tags        []string   `json:"tags"`
+	ReadingTime int        `json:"reading_time"`
+	UserID      int64      `json:"user_id"`
+	FeedID      int64      `json:"feed_id"`
+	Starred     bool       `json:"starred"`
 }
 
 // EntryModificationRequest represents a request to modify an entry.
