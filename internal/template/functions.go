@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"math"
 	"net/mail"
+	"slices"
 	"strings"
 	"time"
 
@@ -72,12 +73,7 @@ func (f *funcMap) Map() template.FuncMap {
 			return link
 		},
 		"mustBeProxyfied": func(mediaType string) bool {
-			for _, t := range config.Opts.ProxyMediaTypes() {
-				if t == mediaType {
-					return true
-				}
-			}
-			return false
+			return slices.Contains(config.Opts.ProxyMediaTypes(), mediaType)
 		},
 		"domain": func(websiteURL string) string {
 			return urllib.Domain(websiteURL)
