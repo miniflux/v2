@@ -178,7 +178,7 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 		WHERE
 			entries.user_id=$1 AND
 			entries.feed_id=$2 AND
-			entries.published_at BETWEEN (now() - interval '1 week') AND now();
+			entries.published_at >= now() - interval '1 week';
 	`
 
 	var weeklyCount int
