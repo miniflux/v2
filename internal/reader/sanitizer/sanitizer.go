@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -183,24 +184,16 @@ func getExtraAttributes(tagName string) ([]string, []string) {
 }
 
 func isValidTag(tagName string) bool {
-	for element := range getTagAllowList() {
-		if tagName == element {
-			return true
-		}
+	if _, ok := getTagAllowList()[tagName]; ok {
+		return true
 	}
-
 	return false
 }
 
 func isValidAttribute(tagName, attributeName string) bool {
-	for element, attributes := range getTagAllowList() {
-		if tagName == element {
-			if inList(attributeName, attributes) {
-				return true
-			}
-		}
+	if attributes, ok := getTagAllowList()[tagName]; ok {
+		return inList(attributeName, attributes)
 	}
-
 	return false
 }
 
@@ -235,24 +228,21 @@ func isPixelTracker(tagName string, attributes []html.Attribute) bool {
 }
 
 func hasRequiredAttributes(tagName string, attributes []string) bool {
-	elements := make(map[string][]string)
-	elements["a"] = []string{"href"}
-	elements["iframe"] = []string{"src"}
-	elements["img"] = []string{"src"}
-	elements["source"] = []string{"src", "srcset"}
+	elements := map[string][]string{
+		"a":      {"href"},
+		"iframe": {"src"},
+		"img":    {"src"},
+		"source": {"src", "srcset"},
+	}
 
-	for element, attrs := range elements {
-		if tagName == element {
-			for _, attribute := range attributes {
-				for _, attr := range attrs {
-					if attr == attribute {
-						return true
-					}
-				}
+	if attrs, ok := elements[tagName]; ok {
+		for _, attribute := range attributes {
+			if slices.Contains(attrs, attribute) {
+				return true
 			}
-
-			return false
 		}
+
+		return false
 	}
 
 	return true
@@ -303,13 +293,9 @@ func hasValidURIScheme(src string) bool {
 		"hack://",   // https://apps.apple.com/it/app/hack-for-hacker-news-reader/id1464477788?l=en-GB
 	}
 
-	for _, prefix := range whitelist {
-		if strings.HasPrefix(src, prefix) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(whitelist, func(prefix string) bool {
+		return strings.HasPrefix(src, prefix)
+	})
 }
 
 func isBlockedResource(src string) bool {
@@ -322,13 +308,9 @@ func isBlockedResource(src string) bool {
 		"feeds.feedburner.com",
 	}
 
-	for _, element := range blacklist {
-		if strings.Contains(src, element) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(blacklist, func(element string) bool {
+		return strings.Contains(src, element)
+	})
 }
 
 func isValidIframeSource(baseURL, src string) bool {
@@ -364,83 +346,72 @@ func isValidIframeSource(baseURL, src string) bool {
 		return true
 	}
 
-	for _, prefix := range whitelist {
-		if strings.HasPrefix(src, prefix) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(whitelist, func(prefix string) bool {
+		return strings.HasPrefix(src, prefix)
+	})
 }
 
 func getTagAllowList() map[string][]string {
-	whitelist := make(map[string][]string)
-	whitelist["img"] = []string{"alt", "title", "src", "srcset", "sizes", "width", "height"}
-	whitelist["picture"] = []string{}
-	whitelist["audio"] = []string{"src"}
-	whitelist["video"] = []string{"poster", "height", "width", "src"}
-	whitelist["source"] = []string{"src", "type", "srcset", "sizes", "media"}
-	whitelist["dt"] = []string{"id"}
-	whitelist["dd"] = []string{"id"}
-	whitelist["dl"] = []string{"id"}
-	whitelist["table"] = []string{}
-	whitelist["caption"] = []string{}
-	whitelist["thead"] = []string{}
-	whitelist["tfooter"] = []string{}
-	whitelist["tr"] = []string{}
-	whitelist["td"] = []string{"rowspan", "colspan"}
-	whitelist["th"] = []string{"rowspan", "colspan"}
-	whitelist["h1"] = []string{"id"}
-	whitelist["h2"] = []string{"id"}
-	whitelist["h3"] = []string{"id"}
-	whitelist["h4"] = []string{"id"}
-	whitelist["h5"] = []string{"id"}
-	whitelist["h6"] = []string{"id"}
-	whitelist["strong"] = []string{}
-	whitelist["em"] = []string{}
-	whitelist["code"] = []string{}
-	whitelist["pre"] = []string{}
-	whitelist["blockquote"] = []string{}
-	whitelist["q"] = []string{"cite"}
-	whitelist["p"] = []string{}
-	whitelist["ul"] = []string{"id"}
-	whitelist["li"] = []string{"id"}
-	whitelist["ol"] = []string{"id"}
-	whitelist["br"] = []string{}
-	whitelist["del"] = []string{}
-	whitelist["a"] = []string{"href", "title", "id"}
-	whitelist["figure"] = []string{}
-	whitelist["figcaption"] = []string{}
-	whitelist["cite"] = []string{}
-	whitelist["time"] = []string{"datetime"}
-	whitelist["abbr"] = []string{"title"}
-	whitelist["acronym"] = []string{"title"}
-	whitelist["wbr"] = []string{}
-	whitelist["dfn"] = []string{}
-	whitelist["sub"] = []string{}
-	whitelist["sup"] = []string{"id"}
-	whitelist["var"] = []string{}
-	whitelist["samp"] = []string{}
-	whitelist["s"] = []string{}
-	whitelist["del"] = []string{}
-	whitelist["ins"] = []string{}
-	whitelist["kbd"] = []string{}
-	whitelist["rp"] = []string{}
-	whitelist["rt"] = []string{}
-	whitelist["rtc"] = []string{}
-	whitelist["ruby"] = []string{}
-	whitelist["iframe"] = []string{"width", "height", "frameborder", "src", "allowfullscreen"}
-	return whitelist
+	return map[string][]string{
+		"a":          {"href", "title", "id"},
+		"abbr":       {"title"},
+		"acronym":    {"title"},
+		"audio":      {"src"},
+		"blockquote": {},
+		"br":         {},
+		"caption":    {},
+		"cite":       {},
+		"code":       {},
+		"dd":         {"id"},
+		"del":        {},
+		"dfn":        {},
+		"dl":         {"id"},
+		"dt":         {"id"},
+		"em":         {},
+		"figcaption": {},
+		"figure":     {},
+		"h1":         {"id"},
+		"h2":         {"id"},
+		"h3":         {"id"},
+		"h4":         {"id"},
+		"h5":         {"id"},
+		"h6":         {"id"},
+		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
+		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height"},
+		"ins":        {},
+		"kbd":        {},
+		"li":         {"id"},
+		"ol":         {"id"},
+		"p":          {},
+		"picture":    {},
+		"pre":        {},
+		"q":          {"cite"},
+		"rp":         {},
+		"rt":         {},
+		"rtc":        {},
+		"ruby":       {},
+		"s":          {},
+		"samp":       {},
+		"source":     {"src", "type", "srcset", "sizes", "media"},
+		"strong":     {},
+		"sub":        {},
+		"sup":        {"id"},
+		"table":      {},
+		"td":         {"rowspan", "colspan"},
+		"tfooter":    {},
+		"th":         {"rowspan", "colspan"},
+		"thead":      {},
+		"time":       {"datetime"},
+		"tr":         {},
+		"ul":         {"id"},
+		"var":        {},
+		"video":      {"poster", "height", "width", "src"},
+		"wbr":        {},
+	}
 }
 
 func inList(needle string, haystack []string) bool {
-	for _, element := range haystack {
-		if element == needle {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(haystack, needle)
 }
 
 func rewriteIframeURL(link string) string {
@@ -459,13 +430,7 @@ func isBlockedTag(tagName string) bool {
 		"style",
 	}
 
-	for _, element := range blacklist {
-		if element == tagName {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(blacklist, tagName)
 }
 
 func sanitizeSrcsetAttr(baseURL, value string) string {
@@ -493,13 +458,9 @@ func isValidDataAttribute(value string) bool {
 		"data:image/gif",
 		"data:image/webp",
 	}
-
-	for _, prefix := range dataAttributeAllowList {
-		if strings.HasPrefix(value, prefix) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(dataAttributeAllowList, func(prefix string) bool {
+		return strings.HasPrefix(value, prefix)
+	})
 }
 
 func isAnchor(tagName string, attribute html.Attribute) bool {
