@@ -170,7 +170,7 @@ func (s *Storage) CleanOldUserSessions(days int) int64 {
 		DELETE FROM
 			user_sessions
 		WHERE
-			id IN (SELECT id FROM user_sessions WHERE created_at < now() - interval '%d days')
+			created_at < now() - interval '%d days'
 	`
 	result, err := s.db.Exec(fmt.Sprintf(query, days))
 	if err != nil {
