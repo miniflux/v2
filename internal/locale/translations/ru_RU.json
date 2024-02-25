@@ -330,6 +330,7 @@
     "form.feed.label.apprise_service_urls": "Список ссылок сервисов Apprise, разделенный запятой",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP кеш",
     "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Использовать прокси",
     "form.feed.label.disabled": "Не обновлять эту подписку",
     "form.feed.label.no_media_player": "Отключить медиаплеер (аудио и видео)",

@@ -327,6 +327,7 @@
     "form.feed.label.urlrewrite_rules": "Règles de réécriture d'URL",
     "form.feed.label.ignore_http_cache": "Ignorer le cache HTTP",
     "form.feed.label.allow_self_signed_certificates": "Autoriser les certificats auto-signés ou non valides",
+    "form.feed.label.disable_http2": "Désactiver HTTP/2",
     "form.feed.label.fetch_via_proxy": "Récupérer via proxy",
     "form.feed.label.disabled": "Ne pas actualiser ce flux",
     "form.feed.label.no_media_player": "Pas de lecteur multimedia (audio/vidéo)",

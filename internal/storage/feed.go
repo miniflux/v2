@@ -174,8 +174,8 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 		FROM
 			entries
 		WHERE
-			entries.user_id=$1 AND 
-			entries.feed_id=$2 AND 
+			entries.user_id=$1 AND
+			entries.feed_id=$2 AND
 			entries.published_at BETWEEN (now() - interval '1 week') AND now();
 	`
 
@@ -235,10 +235,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			hide_globally,
 			url_rewrite_rules,
 			no_media_player,
-			apprise_service_urls
+			apprise_service_urls,
+			disable_http2
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
 		RETURNING
 			id
 	`
@@ -268,6 +269,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
 		feed.AppriseServiceURLs,
+		feed.DisableHTTP2,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -339,9 +341,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			hide_globally=$24,
 			url_rewrite_rules=$25,
 			no_media_player=$26,
-			apprise_service_urls=$27
+			apprise_service_urls=$27,
+			disable_http2=$28
 		WHERE
-			id=$28 AND user_id=$29
+			id=$29 AND user_id=$30
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -371,6 +374,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
 		feed.AppriseServiceURLs,
+		feed.DisableHTTP2,
 		feed.ID,
 		feed.UserID,
 	)

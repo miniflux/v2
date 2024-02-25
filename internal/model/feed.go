@@ -51,6 +51,7 @@ type Feed struct {
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	HideGlobally                bool      `json:"hide_globally"`
 	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+	DisableHTTP2                bool      `json:"disable_http2"`
 
 	// Non persisted attributes
 	Category *Category `json:"category,omitempty"`
@@ -150,6 +151,7 @@ type FeedCreationRequest struct {
 	KeeplistRules               string `json:"keeplist_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
+	DisableHTTP2                bool   `json:"disable_http2"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -175,6 +177,7 @@ type FeedCreationRequestFromSubscriptionDiscovery struct {
 	KeeplistRules               string `json:"keeplist_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
+	DisableHTTP2                bool   `json:"disable_http2"`
 }
 
 // FeedModificationRequest represents the request to update a feed.
@@ -199,6 +202,7 @@ type FeedModificationRequest struct {
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
+	DisableHTTP2                *bool   `json:"disable_http2"`
 }
 
 // Patch updates a feed with modified values.
@@ -281,6 +285,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.HideGlobally != nil {
 		feed.HideGlobally = *f.HideGlobally
+	}
+
+	if f.DisableHTTP2 != nil {
+		feed.DisableHTTP2 = *f.DisableHTTP2
 	}
 }
 

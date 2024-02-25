@@ -327,6 +327,7 @@
     "form.feed.label.urlrewrite_rules": " यूआरएल पुनर्लेखन नियम",
     "form.feed.label.ignore_http_cache": "एचटीटीपी कैश पर ध्यान न दें",
     "form.feed.label.allow_self_signed_certificates": "स्व-हस्ताक्षरित या अमान्य प्रमाणपत्रों की अनुमति दें",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "प्रॉक्सी के माध्यम से प्राप्त करें",
     "form.feed.label.disabled": "इस फ़ीड को रीफ़्रेश न करें",
     "form.feed.label.no_media_player": "No media player (audio/video)",

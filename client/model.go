@@ -140,6 +140,7 @@ type Feed struct {
 	Password                    string    `json:"password"`
 	Category                    *Category `json:"category,omitempty"`
 	HideGlobally                bool      `json:"hide_globally"`
+	DisableHTTP2                bool      `json:"disable_http2"`
 }
 
 // FeedCreationRequest represents the request to create a feed.
@@ -160,6 +161,7 @@ type FeedCreationRequest struct {
 	BlocklistRules              string `json:"blocklist_rules"`
 	KeeplistRules               string `json:"keeplist_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
+	DisableHTTP2                bool   `json:"disable_http2"`
 }
 
 // FeedModificationRequest represents the request to update a feed.
@@ -182,6 +184,7 @@ type FeedModificationRequest struct {
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
+	DisableHTTP2                *bool   `json:"disable_http2"`
 }
 
 // FeedIcon represents the feed icon.

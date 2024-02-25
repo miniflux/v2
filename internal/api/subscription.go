@@ -42,6 +42,7 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 	requestBuilder.WithUsernameAndPassword(subscriptionDiscoveryRequest.Username, subscriptionDiscoveryRequest.Password)
 	requestBuilder.UseProxy(subscriptionDiscoveryRequest.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(subscriptionDiscoveryRequest.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(subscriptionDiscoveryRequest.DisableHTTP2)
 
 	subscriptions, localizedError := subscription.NewSubscriptionFinder(requestBuilder).FindSubscriptions(
 		subscriptionDiscoveryRequest.URL,
