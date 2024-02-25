@@ -229,7 +229,15 @@ func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
 func (s *Storage) GetReadTime(entry *model.Entry, feed *model.Feed) int {
 	var result int
 	s.db.QueryRow(
-		`SELECT reading_time FROM entries WHERE user_id=$1 AND feed_id=$2 AND hash=$3`,
+		`SELECT
+			reading_time 
+		FROM 
+			entries 
+		WHERE 
+			user_id=$1 AND
+			feed_id=$2 AND 
+			hash=$3
+		`,
 		feed.UserID,
 		feed.ID,
 		entry.Hash,
