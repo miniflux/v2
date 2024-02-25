@@ -545,14 +545,18 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 		SET
 			status=$1,
 			changed_at=now()
+		FROM
+			feeds
 		WHERE
-			user_id=$2
+			feed_id=feeds.id
+		AND
+			feeds.user_id=$2
 		AND
 			status=$3
 		AND
 			published_at < $4
 		AND
-			feed_id IN (SELECT id FROM feeds WHERE user_id=$2 AND category_id=$5)
+			feeds.category_id=$5
 	`
 	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread, before, categoryID)
 	if err != nil {
