@@ -331,6 +331,7 @@
     "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "Ігнорувати кеш HTTP",
     "form.feed.label.allow_self_signed_certificates": "Дозволити сертифікати з власним підписом або недійсні",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Використати проксі-сервер",
     "form.feed.label.disabled": "Не оновлювати цю стрічку",
     "form.feed.label.no_media_player": "No media player (audio/video)",

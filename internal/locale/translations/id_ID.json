@@ -324,6 +324,7 @@
     "form.feed.label.urlrewrite_rules": "Aturan Tulis Ulang URL",
     "form.feed.label.ignore_http_cache": "Abaikan Tembolok HTTP",
     "form.feed.label.allow_self_signed_certificates": "Perbolehkan sertifikat web tidak valid atau sertifikasi sendiri",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Ambil via Proksi",
     "form.feed.label.disabled": "Jangan perbarui umpan ini",
     "form.feed.label.no_media_player": "No media player (audio/video)",

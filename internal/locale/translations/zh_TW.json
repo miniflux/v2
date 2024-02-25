@@ -327,6 +327,7 @@
     "form.feed.label.apprise_service_urls": "使用逗號分隔的 Apprise 服務 URL 列表",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 快取",
     "form.feed.label.allow_self_signed_certificates": "允許自簽章憑證或無效憑證",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "透過代理獲取",
     "form.feed.label.disabled": "請勿更新此 Feed",
     "form.feed.label.no_media_player": "沒有媒體播放器(音訊/視訊)",

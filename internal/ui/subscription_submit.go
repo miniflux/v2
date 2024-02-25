@@ -65,6 +65,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	requestBuilder.WithUsernameAndPassword(subscriptionForm.Username, subscriptionForm.Password)
 	requestBuilder.UseProxy(subscriptionForm.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(subscriptionForm.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(subscriptionForm.DisableHTTP2)
 
 	subscriptionFinder := subscription.NewSubscriptionFinder(requestBuilder)
 	subscriptions, localizedError := subscriptionFinder.FindSubscriptions(
@@ -103,6 +104,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			KeeplistRules:               subscriptionForm.KeeplistRules,
 			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
+			DisableHTTP2:                subscriptionForm.DisableHTTP2,
 		})
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)
@@ -128,6 +130,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			KeeplistRules:               subscriptionForm.KeeplistRules,
 			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
+			DisableHTTP2:                subscriptionForm.DisableHTTP2,
 		})
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)

@@ -327,6 +327,7 @@
     "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.allow_self_signed_certificates": "Sta zelfondertekende of ongeldige certificaten toe",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
     "form.feed.label.disabled": "Vernieuw deze feed niet",
     "form.feed.label.no_media_player": "No media player (audio/video)",
