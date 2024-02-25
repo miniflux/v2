@@ -64,9 +64,11 @@ func (s *Storage) CountAllFeeds() map[string]int64 {
 	}
 	defer rows.Close()
 
-	results := make(map[string]int64)
-	results["enabled"] = 0
-	results["disabled"] = 0
+	results := map[string]int64{
+		"enabled":  0,
+		"disabled": 0,
+		"total":    0,
+	}
 
 	for rows.Next() {
 		var disabled bool
