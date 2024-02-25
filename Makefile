@@ -110,7 +110,9 @@ test:
 	go test -cover -race -count=1 ./...
 
 lint:
-	golint -set_exit_status ${PKG_LIST}
+	go vet ./...
+	staticcheck ./...
+	golangci-lint run --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
 
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'

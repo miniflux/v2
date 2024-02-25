@@ -12,11 +12,11 @@ import (
 // ValidateRange makes sure the offset/limit values are valid.
 func ValidateRange(offset, limit int) error {
 	if offset < 0 {
-		return fmt.Errorf(`Offset value should be >= 0`)
+		return fmt.Errorf(`offset value should be >= 0`)
 	}
 
 	if limit < 0 {
-		return fmt.Errorf(`Limit value should be >= 0`)
+		return fmt.Errorf(`limit value should be >= 0`)
 	}
 
 	return nil
@@ -29,7 +29,7 @@ func ValidateDirection(direction string) error {
 		return nil
 	}
 
-	return fmt.Errorf(`Invalid direction, valid direction values are: "asc" or "desc"`)
+	return fmt.Errorf(`invalid direction, valid direction values are: "asc" or "desc"`)
 }
 
 // IsValidRegex verifies if the regex can be compiled.
