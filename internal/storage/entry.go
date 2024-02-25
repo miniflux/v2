@@ -230,12 +230,12 @@ func (s *Storage) GetReadTime(entry *model.Entry, feed *model.Feed) int {
 	var result int
 	s.db.QueryRow(
 		`SELECT
-			reading_time 
-		FROM 
-			entries 
-		WHERE 
+			reading_time
+		FROM
+			entries
+		WHERE
 			user_id=$1 AND
-			feed_id=$2 AND 
+			feed_id=$2 AND
 			hash=$3
 		`,
 		feed.UserID,
@@ -333,7 +333,19 @@ func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) 
 		SET
 			status=$1
 		WHERE
-			id=ANY(SELECT id FROM entries WHERE status=$2 AND starred is false AND share_code='' AND created_at < now () - '%d days'::interval ORDER BY created_at ASC LIMIT %d)
+			id IN (
+				SELECT
+					id
+				FROM
+					entries
+				WHERE
+					status=$2 AND
+					starred is false AND
+					share_code='' AND
+					created_at < now () - '%d days'::interval
+				ORDER BY
+					created_at ASC LIMIT %d
+				)
 	`
 
 	result, err := s.db.Exec(fmt.Sprintf(query, days, limit), model.EntryStatusRemoved, status)
