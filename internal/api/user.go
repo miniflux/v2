@@ -77,7 +77,7 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if userModificationRequest.IsAdmin != nil && *userModificationRequest.IsAdmin {
-			json.BadRequest(w, r, errors.New("Only administrators can change permissions of standard users"))
+			json.BadRequest(w, r, errors.New("only administrators can change permissions of standard users"))
 			return
 		}
 	}
@@ -141,7 +141,7 @@ func (h *handler) userByID(w http.ResponseWriter, r *http.Request) {
 	userID := request.RouteInt64Param(r, "userID")
 	user, err := h.store.UserByID(userID)
 	if err != nil {
-		json.BadRequest(w, r, errors.New("Unable to fetch this user from the database"))
+		json.BadRequest(w, r, errors.New("unable to fetch this user from the database"))
 		return
 	}
 
@@ -163,7 +163,7 @@ func (h *handler) userByUsername(w http.ResponseWriter, r *http.Request) {
 	username := request.RouteStringParam(r, "username")
 	user, err := h.store.UserByUsername(username)
 	if err != nil {
-		json.BadRequest(w, r, errors.New("Unable to fetch this user from the database"))
+		json.BadRequest(w, r, errors.New("unable to fetch this user from the database"))
 		return
 	}
 
@@ -194,7 +194,7 @@ func (h *handler) removeUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if user.ID == request.UserID(r) {
-		json.BadRequest(w, r, errors.New("You cannot remove yourself"))
+		json.BadRequest(w, r, errors.New("you cannot remove yourself"))
 		return
 	}
 
