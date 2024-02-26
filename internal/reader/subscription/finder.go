@@ -196,11 +196,14 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL, contentTyp
 
 func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	knownURLs := map[string]string{
-		"atom.xml": parser.FormatAtom,
-		"feed.xml": parser.FormatAtom,
-		"feed/":    parser.FormatAtom,
-		"rss.xml":  parser.FormatRSS,
-		"rss/":     parser.FormatRSS,
+		"atom.xml":  parser.FormatAtom,
+		"feed.xml":  parser.FormatAtom,
+		"feed/":     parser.FormatAtom,
+		"rss.xml":   parser.FormatRSS,
+		"rss/":      parser.FormatRSS,
+		"index.rss": parser.FormatRSS,
+		"index.xml": parser.FormatRSS,
+		"feed.atom": parser.FormatAtom,
 	}
 
 	websiteURLRoot := urllib.RootURL(websiteURL)
