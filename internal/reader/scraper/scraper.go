@@ -78,10 +78,9 @@ func findContentUsingCustomRules(page io.Reader, rules string) (string, error) {
 
 	contents := ""
 	document.Find(rules).Each(func(i int, s *goquery.Selection) {
-		var content string
-
-		content, _ = goquery.OuterHtml(s)
-		contents += content
+		if content, err := goquery.OuterHtml(s); err == nil {
+			contents += content
+		}
 	})
 
 	return contents, nil
@@ -89,13 +88,11 @@ func findContentUsingCustomRules(page io.Reader, rules string) (string, error) {
 
 func getPredefinedScraperRules(websiteURL string) string {
 	urlDomain := urllib.Domain(websiteURL)
+	urlDomain = strings.TrimPrefix(urlDomain, "www.")
 
-	for domain, rules := range predefinedRules {
-		if strings.Contains(urlDomain, domain) {
-			return rules
-		}
+	if rules, ok := predefinedRules[urlDomain]; ok {
+		return rules
 	}
-
 	return ""
 }
 
