@@ -342,13 +342,13 @@ func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) 
 					status=$2 AND
 					starred is false AND
 					share_code='' AND
-					created_at < now () - '%d days'::interval
+					created_at < now () - $3::interval
 				ORDER BY
-					created_at ASC LIMIT %d
+					created_at ASC LIMIT $4
 				)
 	`
 
-	result, err := s.db.Exec(fmt.Sprintf(query, days, limit), model.EntryStatusRemoved, status)
+	result, err := s.db.Exec(query, model.EntryStatusRemoved, status, fmt.Sprintf("%d days", days), limit)
 	if err != nil {
 		return 0, fmt.Errorf(`store: unable to archive %s entries: %v`, status, err)
 	}
