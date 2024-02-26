@@ -232,14 +232,15 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL strin
 			defer responseHandler.Close()
 
 			if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+				slog.Debug("Unable to subscribe", slog.String("fullURL", fullURL), slog.Any("error", localizedError.Error()))
 				continue
 			}
 
-			subscription := new(Subscription)
-			subscription.Type = kind
-			subscription.Title = fullURL
-			subscription.URL = fullURL
-			subscriptions = append(subscriptions, subscription)
+			subscriptions = append(subscriptions, &Subscription{
+				Type:  kind,
+				Title: fullURL,
+				URL:   fullURL,
+			})
 		}
 	}
 
@@ -267,7 +268,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromRSSBridge(websiteURL, rssBridg
 		return nil, nil
 	}
 
-	var subscriptions Subscriptions
+	subscriptions := make(Subscriptions, 0, len(bridges))
 	for _, bridge := range bridges {
 		subscriptions = append(subscriptions, &Subscription{
 			Title: bridge.BridgeMeta.Name,
