@@ -7,6 +7,14 @@ import (
 	"testing"
 )
 
+func FuzzParse(f *testing.F) {
+	f.Add("2017-12-22T22:09:49+00:00")
+	f.Add("Fri, 31 Mar 2023 20:19:00 America/Los_Angeles")
+	f.Fuzz(func(t *testing.T, date string) {
+		Parse(date)
+	})
+}
+
 func TestParseEmptyDate(t *testing.T) {
 	if _, err := Parse("  "); err == nil {
 		t.Fatalf(`Empty dates should return an error`)
