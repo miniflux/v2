@@ -55,3 +55,8 @@ func GenerateSHA256Hmac(secret string, data []byte) string {
 	h.Write(data)
 	return hex.EncodeToString(h.Sum(nil))
 }
+
+func GenerateUUID() string {
+	b := GenerateRandomBytes(16)
+	return fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
+}
