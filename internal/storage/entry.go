@@ -252,8 +252,8 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 			entries
 		WHERE
 			feed_id=$1 AND
-			status=$3 AND
-			NOT (hash=ANY($4))
+			status=$2 AND
+			NOT (hash=ANY($3))
 	`
 	if _, err := s.db.Exec(query, feedID, model.EntryStatusRemoved, pq.Array(entryHashes)); err != nil {
 		return fmt.Errorf(`store: unable to cleanup entries: %v`, err)
