@@ -6,22 +6,25 @@ package date // import "miniflux.app/v2/internal/reader/date"
 import (
 	"errors"
 	"fmt"
-	"math"
 	"strconv"
 	"strings"
 	"time"
 )
 
-// DateFormats taken from github.com/mjibson/goread
+// RFC822, RFC850, and RFC1123 formats should be applied only to local times.
+var dateFormatsLocalTimesOnly = []string{
+	time.RFC822, // RSS
+	time.RFC850,
+	time.RFC1123,
+}
+
+// dateFormats taken from github.com/mjibson/goread
 var dateFormats = []string{
-	time.RFC822,  // RSS
 	time.RFC822Z, // RSS
 	time.RFC3339, // Atom
 	time.UnixDate,
 	time.RubyDate,
-	time.RFC850,
 	time.RFC1123Z,
-	time.RFC1123,
 	time.ANSIC,
 	"Mon, 02 Jan 2006 15:04:05 MST -07:00",
 	"Mon, January 2, 2006, 3:04 PM MST",
@@ -314,34 +317,30 @@ var invalidLocalizedDateReplacer = strings.NewReplacer(
 // list of commonly found feed date formats.
 func Parse(rawInput string) (t time.Time, err error) {
 	rawInput = strings.TrimSpace(rawInput)
-	timestamp, err := strconv.ParseInt(rawInput, 10, 64)
-	if err == nil {
+	if rawInput == "" {
+		return t, errors.New(`date parser: empty value`)
+	}
+
+	if timestamp, err := strconv.ParseInt(rawInput, 10, 64); err == nil {
 		return time.Unix(timestamp, 0), nil
 	}
 
 	processedInput := invalidLocalizedDateReplacer.Replace(rawInput)
 	processedInput = invalidTimezoneReplacer.Replace(processedInput)
-	if processedInput == "" {
-		return t, errors.New(`date parser: empty value`)
+
+	for _, layout := range dateFormatsLocalTimesOnly {
+		if t, err = parseLocalTimeDates(layout, processedInput); err == nil {
+			return checkTimezoneRange(t), nil
+		}
 	}
 
 	for _, layout := range dateFormats {
-		switch layout {
-		case time.RFC822, time.RFC850, time.RFC1123:
-			if t, err = parseLocalTimeDates(layout, processedInput); err == nil {
-				t = checkTimezoneRange(t)
-				return
-			}
-		}
-
 		if t, err = time.Parse(layout, processedInput); err == nil {
-			t = checkTimezoneRange(t)
-			return
+			return checkTimezoneRange(t), nil
 		}
 	}
 
-	err = fmt.Errorf(`date parser: failed to parse date "%s"`, rawInput)
-	return
+	return t, fmt.Errorf(`date parser: failed to parse date "%s"`, rawInput)
 }
 
 // According to Golang documentation:
@@ -369,7 +368,7 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 // Avoid "pq: time zone displacement out of range" errors
 func checkTimezoneRange(t time.Time) time.Time {
 	_, offset := t.Zone()
-	if math.Abs(float64(offset)) > 14*60*60 {
+	if float64(offset) > 14*60*60 || float64(offset) < -12*60*60 {
 		t = t.UTC()
 	}
 	return t
