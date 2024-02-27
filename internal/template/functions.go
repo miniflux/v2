@@ -36,8 +36,8 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasKey":         hasKey,
 		"truncate":       truncate,
 		"isEmail":        isEmail,
-		"baseURL": config.Opts.BaseURL,
-		"rootURL":  config.Opts.RootURL,
+		"baseURL":        config.Opts.BaseURL,
+		"rootURL":        config.Opts.RootURL,
 		"hasOAuth2Provider": func(provider string) bool {
 			return config.Opts.OAuth2Provider() == provider
 		},
@@ -71,7 +71,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"mustBeProxyfied": func(mediaType string) bool {
 			return slices.Contains(config.Opts.ProxyMediaTypes(), mediaType)
 		},
-		"domain":  urllib.Domain,
+		"domain":    urllib.Domain,
 		"hasPrefix": strings.HasPrefix,
 		"contains":  strings.Contains,
 		"replace": func(str, old, new string) string {
@@ -209,11 +209,7 @@ func formatFileSize(b int64) string {
 	if b < unit {
 		return fmt.Sprintf("%d B", b)
 	}
-	div, exp := int64(unit), 0
-	for n := b / unit; n >= unit; n /= unit {
-		div *= unit
-		exp++
-	}
-	return fmt.Sprintf("%.1f %ciB",
-		float64(b)/float64(div), "KMGTPE"[exp])
+	base := math.Log(float64(b)) / math.Log(unit)
+	number := math.Pow(unit, base-math.Floor(base))
+	return fmt.Sprintf("%.1f %ciB", number, "KMGTPE"[int64(base)-1])
 }
