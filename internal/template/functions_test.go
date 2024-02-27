@@ -156,6 +156,8 @@ func TestFormatFileSize(t *testing.T) {
 		input    int64
 		expected string
 	}{
+		{0, "0 B"},
+		{1, "1 B"},
 		{500, "500 B"},
 		{1024, "1.0 KiB"},
 		{43520, "42.5 KiB"},
