@@ -180,13 +180,13 @@ func durationImpl(t time.Time, now time.Time) string {
 
 func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 	if t.IsZero() {
-		return printer.Printf("time_elapsed.not_yet")
+		return printer.Print("time_elapsed.not_yet")
 	}
 
 	now := timezone.Now(tz)
 	t = timezone.Convert(tz, t)
 	if now.Before(t) {
-		return printer.Printf("time_elapsed.not_yet")
+		return printer.Print("time_elapsed.not_yet")
 	}
 
 	diff := now.Sub(t)
@@ -196,7 +196,7 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 	d := int(s / 86400)
 	switch {
 	case s < 60:
-		return printer.Printf("time_elapsed.now")
+		return printer.Print("time_elapsed.now")
 	case s < 3600:
 		minutes := int(diff.Minutes())
 		return printer.Plural("time_elapsed.minutes", minutes, minutes)
@@ -204,7 +204,7 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 		hours := int(diff.Hours())
 		return printer.Plural("time_elapsed.hours", hours, hours)
 	case d == 1:
-		return printer.Printf("time_elapsed.yesterday")
+		return printer.Print("time_elapsed.yesterday")
 	case d < 21:
 		return printer.Plural("time_elapsed.days", d, d)
 	case d < 31:

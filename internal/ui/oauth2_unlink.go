@@ -47,7 +47,7 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasPassword {
-		sess.NewFlashErrorMessage(printer.Printf("error.unlink_account_without_password"))
+		sess.NewFlashErrorMessage(printer.Print("error.unlink_account_without_password"))
 		html.Redirect(w, r, route.Path(h.router, "settings"))
 		return
 	}
@@ -58,6 +58,6 @@ func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(printer.Printf("alert.account_unlinked"))
+	sess.NewFlashMessage(printer.Print("alert.account_unlinked"))
 	html.Redirect(w, r, route.Path(h.router, "settings"))
 }
