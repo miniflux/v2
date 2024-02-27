@@ -36,12 +36,8 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasKey":         hasKey,
 		"truncate":       truncate,
 		"isEmail":        isEmail,
-		"baseURL": func() string {
-			return config.Opts.BaseURL()
-		},
-		"rootURL": func() string {
-			return config.Opts.RootURL()
-		},
+		"baseURL": config.Opts.BaseURL,
+		"rootURL":  config.Opts.RootURL,
 		"hasOAuth2Provider": func(provider string) bool {
 			return config.Opts.OAuth2Provider() == provider
 		},
@@ -75,24 +71,16 @@ func (f *funcMap) Map() template.FuncMap {
 		"mustBeProxyfied": func(mediaType string) bool {
 			return slices.Contains(config.Opts.ProxyMediaTypes(), mediaType)
 		},
-		"domain": func(websiteURL string) string {
-			return urllib.Domain(websiteURL)
-		},
-		"hasPrefix": func(str, prefix string) bool {
-			return strings.HasPrefix(str, prefix)
-		},
-		"contains": func(str, substr string) bool {
-			return strings.Contains(str, substr)
-		},
+		"domain":  urllib.Domain,
+		"hasPrefix": strings.HasPrefix,
+		"contains":  strings.Contains,
 		"replace": func(str, old, new string) string {
 			return strings.Replace(str, old, new, 1)
 		},
 		"isodate": func(ts time.Time) string {
 			return ts.Format("2006-01-02 15:04:05")
 		},
-		"theme_color": func(theme, colorScheme string) string {
-			return model.ThemeColor(theme, colorScheme)
-		},
+		"theme_color": model.ThemeColor,
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
 				`<svg class="icon" aria-hidden="true"><use xlink:href="%s#icon-%s"/></svg>`,
