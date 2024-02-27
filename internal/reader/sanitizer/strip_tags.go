@@ -11,6 +11,7 @@ import (
 )
 
 // StripTags removes all HTML/XML tags from the input string.
+// This function must *only* be used for cosmetic purposes, not to prevent code injections like XSS.
 func StripTags(input string) string {
 	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
 	var buffer bytes.Buffer
