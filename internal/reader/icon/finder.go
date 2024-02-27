@@ -9,6 +9,7 @@ import (
 	"io"
 	"log/slog"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
@@ -184,10 +185,10 @@ func (f *IconFinder) DownloadIcon(iconURL string) (*model.Icon, error) {
 
 func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string, error) {
 	queries := []string{
-		"link[rel='shortcut icon']",
-		"link[rel='Shortcut Icon']",
-		"link[rel='icon shortcut']",
-		"link[rel='icon']",
+		"link[rel='icon' i]",
+		"link[rel='shortcut icon' i]",
+		"link[rel='icon shortcut' i]",
+		"link[rel='apple-touch-icon-precomposed.png']",
 	}
 
 	htmlDocumentReader, err := encoding.CharsetReaderFromContentType(contentType, body)
@@ -205,18 +206,13 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 		slog.Debug("Searching icon URL in HTML document", slog.String("query", query))
 
 		doc.Find(query).Each(func(i int, s *goquery.Selection) {
-			var iconURL string
-
 			if href, exists := s.Attr("href"); exists {
-				iconURL = strings.TrimSpace(href)
-			}
-
-			if iconURL != "" {
-				iconURLs = append(iconURLs, iconURL)
-
-				slog.Debug("Found icon URL in HTML document",
-					slog.String("query", query),
-					slog.String("icon_url", iconURL))
+				if iconURL := strings.TrimSpace(href); iconURL != "" {
+					iconURLs = append(iconURLs, iconURL)
+					slog.Debug("Found icon URL in HTML document",
+						slog.String("query", query),
+						slog.String("icon_url", iconURL))
+				}
 			}
 		})
 	}
@@ -225,35 +221,23 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs#syntax
-// data:[<mediatype>][;base64],<data>
+// data:[<mediatype>][;encoding],<data>
+// we consider <mediatype> to be mandatory, and it has to start with `image/`.
+// we consider `base64`, `utf8` and the empty string to be the only valid encodings
 func parseImageDataURL(value string) (*model.Icon, error) {
-	var mediaType string
-	var encoding string
+	re := regexp.MustCompile(`^data:` +
+		`(?P<mediatype>image/[^;,]+)` +
+		`(?:;(?P<encoding>base64|utf8))?` +
+		`,(?P<data>.+)$`)
 
-	if !strings.HasPrefix(value, "data:") {
-		return nil, fmt.Errorf(`icon: invalid data URL (missing data:) %q`, value)
+	matches := re.FindStringSubmatch(value)
+	if matches == nil {
+		return nil, fmt.Errorf(`icon: invalid data URL %q`, value)
 	}
 
-	value = value[5:]
-
-	comma := strings.Index(value, ",")
-	if comma < 0 {
-		return nil, fmt.Errorf(`icon: invalid data URL (no comma) %q`, value)
-	}
-
-	data := value[comma+1:]
-	semicolon := strings.Index(value[0:comma], ";")
-
-	if semicolon > 0 {
-		mediaType = value[0:semicolon]
-		encoding = value[semicolon+1 : comma]
-	} else {
-		mediaType = value[0:comma]
-	}
-
-	if !strings.HasPrefix(mediaType, "image/") {
-		return nil, fmt.Errorf(`icon: invalid media type %q`, mediaType)
-	}
+	mediaType := matches[re.SubexpIndex("mediatype")]
+	encoding := matches[re.SubexpIndex("encoding")]
+	data := matches[re.SubexpIndex("data")]
 
 	var blob []byte
 	switch encoding {
@@ -271,19 +255,11 @@ func parseImageDataURL(value string) (*model.Icon, error) {
 		blob = []byte(decodedData)
 	case "utf8":
 		blob = []byte(data)
-	default:
-		return nil, fmt.Errorf(`icon: unsupported data URL encoding %q`, value)
 	}
 
-	if len(blob) == 0 {
-		return nil, fmt.Errorf(`icon: empty data URL %q`, value)
-	}
-
-	icon := &model.Icon{
+	return &model.Icon{
 		Hash:     crypto.HashFromBytes(blob),
 		Content:  blob,
 		MimeType: mediaType,
-	}
-
-	return icon, nil
+	}, nil
 }
