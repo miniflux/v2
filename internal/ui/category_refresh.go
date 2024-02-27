@@ -33,7 +33,7 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 
 
 	// Avoid accidental and excessive refreshes.
 	if time.Now().UTC().Unix()-request.LastForceRefresh(r) < 1800 {
-		sess.NewFlashErrorMessage(printer.Printf("alert.too_many_feeds_refresh"))
+		sess.NewFlashErrorMessage(printer.Print("alert.too_many_feeds_refresh"))
 	} else {
 		// We allow the end-user to force refresh all its feeds in this category
 		// without taking into consideration the number of errors.
@@ -58,7 +58,7 @@ func (h *handler) refreshCategory(w http.ResponseWriter, r *http.Request) int64 
 		go h.pool.Push(jobs)
 
 		sess.SetLastForceRefresh()
-		sess.NewFlashMessage(printer.Printf("alert.background_feed_refresh"))
+		sess.NewFlashMessage(printer.Print("alert.background_feed_refresh"))
 	}
 
 	return categoryID
