@@ -156,14 +156,11 @@ func durationImpl(t time.Time, now time.Time) string {
 		return ""
 	}
 
-	diff := t.Sub(now)
-
-	if diff < 0 {
-		return ""
+	if diff := t.Sub(now); diff >= 0 {
+		// Round to nearest second to get e.g. "14m56s" rather than "14m56.245483933s"
+		return diff.Round(time.Second).String()
 	}
-
-	// Round to nearest second to get e.g. "14m56s" rather than "14m56.245483933s"
-	return diff.Round(time.Second).String()
+	return ""
 }
 
 func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
