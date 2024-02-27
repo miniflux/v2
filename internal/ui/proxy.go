@@ -10,6 +10,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -51,6 +52,27 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	if !hmac.Equal(decodedDigest, expectedMAC) {
 		html.Forbidden(w, r)
+		return
+	}
+
+	u, err := url.Parse(string(decodedURL))
+	if err != nil {
+		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		return
+	}
+
+	if u.Scheme != "http" && u.Scheme != "https" {
+		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		return
+	}
+
+	if u.Host == "" {
+		html.BadRequest(w, r, errors.New("invalid URL provided"))
+		return
+	}
+
+	if !u.IsAbs() {
+		html.BadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
