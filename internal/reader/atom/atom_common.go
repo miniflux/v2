@@ -46,7 +46,7 @@ type atomLinks []*atomLink
 
 func (a atomLinks) originalLink() string {
 	for _, link := range a {
-		if strings.ToLower(link.Rel) == "alternate" {
+		if strings.EqualFold(link.Rel, "alternate") {
 			return strings.TrimSpace(link.URL)
 		}
 
@@ -60,7 +60,7 @@ func (a atomLinks) originalLink() string {
 
 func (a atomLinks) firstLinkWithRelation(relation string) string {
 	for _, link := range a {
-		if strings.ToLower(link.Rel) == relation {
+		if strings.EqualFold(link.Rel, relation) {
 			return strings.TrimSpace(link.URL)
 		}
 	}
@@ -70,9 +70,9 @@ func (a atomLinks) firstLinkWithRelation(relation string) string {
 
 func (a atomLinks) firstLinkWithRelationAndType(relation string, contentTypes ...string) string {
 	for _, link := range a {
-		if strings.ToLower(link.Rel) == relation {
+		if strings.EqualFold(link.Rel, relation) {
 			for _, contentType := range contentTypes {
-				if strings.ToLower(link.Type) == contentType {
+				if strings.EqualFold(link.Type, contentType) {
 					return strings.TrimSpace(link.URL)
 				}
 			}
