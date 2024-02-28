@@ -232,9 +232,10 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL strin
 			f.requestBuilder.WithoutRedirects()
 
 			responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(fullURL))
-			defer responseHandler.Close()
+			localizedError := responseHandler.LocalizedError()
+			responseHandler.Close()
 
-			if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+			if localizedError != nil {
 				slog.Debug("Unable to subscribe", slog.String("fullURL", fullURL), slog.Any("error", localizedError.Error()))
 				continue
 			}
