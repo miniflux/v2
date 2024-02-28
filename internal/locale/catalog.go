@@ -20,7 +20,7 @@ var translationFiles embed.FS
 // LoadCatalogMessages loads and parses all translations encoded in JSON.
 func LoadCatalogMessages() error {
 	var err error
-	defaultCatalog = make(catalog)
+	defaultCatalog = make(catalog, len(AvailableLanguages()))
 
 	for language := range AvailableLanguages() {
 		defaultCatalog[language], err = loadTranslationFile(language)
