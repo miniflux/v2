@@ -128,9 +128,9 @@ func (s *Storage) CleanOldSessions(days int) int64 {
 		DELETE FROM
 			sessions
 		WHERE
-			created_at < now() - interval '%d days'
+			created_at < now() - $1::interval
 	`
-	result, err := s.db.Exec(fmt.Sprintf(query, days))
+	result, err := s.db.Exec(query, fmt.Sprintf("%d days", days))
 	if err != nil {
 		return 0
 	}
