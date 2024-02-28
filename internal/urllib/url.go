@@ -67,7 +67,7 @@ func IsHTTPS(websiteURL string) bool {
 		return false
 	}
 
-	return strings.ToLower(parsedURL.Scheme) == "https"
+	return strings.EqualFold(parsedURL.Scheme, "https")
 }
 
 // Domain returns only the domain part of the given URL.
