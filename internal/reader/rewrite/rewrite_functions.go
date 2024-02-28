@@ -302,7 +302,7 @@ func replaceTextLinks(input string) string {
 }
 
 func replaceLineFeeds(input string) string {
-	return strings.Replace(input, "\n", "<br>", -1)
+	return strings.ReplaceAll(input, "\n", "<br>")
 }
 
 func replaceCustom(entryContent string, searchTerm string, replaceTerm string) string {
