@@ -132,7 +132,7 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 		}
 	})
 
-	output.Write([]byte("</div>"))
+	output.WriteString("</div>")
 	return output.String()
 }
 
