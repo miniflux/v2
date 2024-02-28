@@ -21,7 +21,7 @@ type UserSession struct {
 }
 
 func (u *UserSession) String() string {
-	return fmt.Sprintf(`ID="%d", UserID="%d", IP="%s", Token="%s"`, u.ID, u.UserID, u.IP, u.Token)
+	return fmt.Sprintf(`ID=%q, UserID=%q, IP=%q, Token=%q`, u.ID, u.UserID, u.IP, u.Token)
 }
 
 // UseTimezone converts creation date to the given timezone.

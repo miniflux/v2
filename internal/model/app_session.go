@@ -67,5 +67,5 @@ type Session struct {
 }
 
 func (s *Session) String() string {
-	return fmt.Sprintf(`ID="%s", Data={%v}`, s.ID, s.Data)
+	return fmt.Sprintf(`ID=%q, Data={%v}`, s.ID, s.Data)
 }

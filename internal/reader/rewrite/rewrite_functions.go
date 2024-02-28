@@ -292,7 +292,7 @@ func addInvidiousVideo(entryURL, entryContent string) string {
 
 func addPDFLink(entryURL, entryContent string) string {
 	if strings.HasSuffix(entryURL, ".pdf") {
-		return fmt.Sprintf(`<a href="%s">PDF</a><br>%s`, entryURL, entryContent)
+		return fmt.Sprintf(`<a href=%q>PDF</a><br>%s`, entryURL, entryContent)
 	}
 	return entryContent
 }

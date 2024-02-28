@@ -27,7 +27,7 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 		contents := static.JavascriptBundles[filename]
 
 		if filename == "service-worker" {
-			variables := fmt.Sprintf(`const OFFLINE_URL="%s";`, route.Path(h.router, "offline"))
+			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, route.Path(h.router, "offline"))
 			contents = append([]byte(variables)[:], contents[:]...)
 		}
 

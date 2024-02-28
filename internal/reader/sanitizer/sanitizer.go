@@ -154,7 +154,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 		}
 
 		attrNames = append(attrNames, attribute.Key)
-		htmlAttrs = append(htmlAttrs, fmt.Sprintf(`%s="%s"`, attribute.Key, html.EscapeString(value)))
+		htmlAttrs = append(htmlAttrs, fmt.Sprintf(`%s=%q`, attribute.Key, html.EscapeString(value)))
 	}
 
 	if !isAnchorLink {

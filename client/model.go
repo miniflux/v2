@@ -107,7 +107,7 @@ type Subscription struct {
 }
 
 func (s Subscription) String() string {
-	return fmt.Sprintf(`Title="%s", URL="%s", Type="%s"`, s.Title, s.URL, s.Type)
+	return fmt.Sprintf(`Title=%q, URL=%q, Type=%q`, s.Title, s.URL, s.Type)
 }
 
 // Subscriptions represents a list of subscriptions.
