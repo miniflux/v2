@@ -156,7 +156,7 @@ func (d *Description) HTML() string {
 		return d.Description
 	}
 
-	content := strings.Replace(d.Description, "\n", "<br>", -1)
+	content := strings.ReplaceAll(d.Description, "\n", "<br>")
 	return textLinkRegex.ReplaceAllString(content, `<a href="${1}">${1}</a>`)
 }
 
