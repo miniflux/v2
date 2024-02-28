@@ -22,7 +22,7 @@ import (
 var (
 	youtubeRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
 	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
-	invidioRegex   = regexp.MustCompile(`https?:\/\/(.*)\/watch\?v=(.*)`)
+	invidioRegex   = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
 	imgRegex       = regexp.MustCompile(`<img [^>]+>`)
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
