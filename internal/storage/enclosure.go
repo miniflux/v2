@@ -132,7 +132,7 @@ func (s *Storage) updateEnclosures(tx *sql.Tx, entry *model.Entry) error {
 		return nil
 	}
 
-	sqlValues := make([]string, len(entry.Enclosures))
+	sqlValues := make([]string, 0, len(entry.Enclosures))
 	for _, enclosure := range entry.Enclosures {
 		sqlValues = append(sqlValues, strings.TrimSpace(enclosure.URL))
 
