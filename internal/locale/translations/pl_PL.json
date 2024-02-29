@@ -84,25 +84,30 @@
     "entry.shared_entry.label": "Udostępnianie",
     "entry.estimated_reading_time": [
         "%d minuta czytania",
+        "%d minuty czytania",
         "%d minut czytania"
     ],
     "entry.tags.label": "Tagi:",
     "page.shared_entries.title": "Udostępnione wpisy",
     "page.shared_entries_count": [
         "%d shared entry",
+        "%d shared entry",
         "%d shared entries"
     ],
     "page.unread.title": "Nieprzeczytane",
     "page.unread_entry_count": [
         "%d unread entry",
+        "%d unread entry",
         "%d unread entries"
     ],
     "page.total_entry_count": [
+        "%d entry in total",
         "%d entry in total",
         "%d entries in total"
     ],
     "page.starred.title": "Oznaczone gwiazdką",
     "page.starred_entry_count": [
+        "%d starred entry",
         "%d starred entry",
         "%d starred entries"
     ],
@@ -116,6 +121,7 @@
         "Jest %d kanałów."
     ],
     "page.categories_count": [
+        "%d category",
         "%d category",
         "%d categories"
     ],
@@ -135,6 +141,7 @@
     ],
     "page.history.title": "Historia",
     "page.read_entry_count": [
+        "%d read entry",
         "%d read entry",
         "%d read entries"
     ],
@@ -506,6 +513,7 @@
     ],
     "alert.too_many_feeds_refresh": [
         "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again.",
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
