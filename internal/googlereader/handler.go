@@ -984,7 +984,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 	}
 	contentItems := make([]contentItem, len(entries))
 	for i, entry := range entries {
-		enclosures := make([]contentItemEnclosure, len(entry.Enclosures))
+		enclosures := make([]contentItemEnclosure, 0, len(entry.Enclosures))
 		for _, enclosure := range entry.Enclosures {
 			enclosures = append(enclosures, contentItemEnclosure{URL: enclosure.URL, Type: enclosure.MimeType})
 		}
