@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)`)
+	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)$`)
 	tagAllowList      = map[string][]string{
 		"a":          {"href", "title", "id"},
 		"abbr":       {"title"},

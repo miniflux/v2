@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)

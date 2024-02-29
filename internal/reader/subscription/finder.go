@@ -23,8 +23,8 @@ import (
 )
 
 var (
-	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)`)
-	youtubeVideoRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)$`)
+	youtubeVideoRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 )
 
 type SubscriptionFinder struct {
