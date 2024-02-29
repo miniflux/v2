@@ -84,26 +84,31 @@
     "entry.shared_entry.label": "Поделиться",
     "entry.estimated_reading_time": [
         "%d минута чтения",
+        "%d минуты чтения",
         "%d минут чтения"
     ],
     "entry.tags.label": "Теги:",
     "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d shared entry",
+        "%d shared entries",
         "%d shared entries"
     ],
     "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d unread entry",
+        "%d unread entries",
         "%d unread entries"
     ],
     "page.total_entry_count": [
         "%d entry in total",
+        "%d entries in total",
         "%d entries in total"
     ],
     "page.starred.title": "Избранное",
     "page.starred_entry_count": [
         "%d starred entry",
+        "%d starred entries",
         "%d starred entries"
     ],
     "page.categories.title": "Категории",
@@ -117,6 +122,7 @@
     ],
     "page.categories_count": [
         "%d category",
+        "%d categories",
         "%d categories"
     ],
     "page.new_category.title": "Новая категория",
@@ -136,6 +142,7 @@
     "page.history.title": "История",
     "page.read_entry_count": [
         "%d read entry",
+        "%d read entries",
         "%d read entries"
     ],
     "page.import.title": "Импорт",
@@ -506,6 +513,7 @@
     ],
     "alert.too_many_feeds_refresh": [
         "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again.",
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",

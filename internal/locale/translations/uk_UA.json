@@ -91,20 +91,24 @@
     "page.shared_entries.title": "Спильні записи",
     "page.shared_entries_count": [
         "%d shared entry",
+        "%d shared entries",
         "%d shared entries"
     ],
     "page.unread.title": "Непрочитане",
     "page.unread_entry_count": [
         "%d unread entry",
+        "%d unread entries",
         "%d unread entries"
     ],
     "page.total_entry_count": [
         "%d entry in total",
+        "%d entries in total",
         "%d entries in total"
     ],
     "page.starred.title": "З зірочкою",
     "page.starred_entry_count": [
         "%d starred entry",
+        "%d starred entries",
         "%d starred entries"
     ],
     "page.categories.title": "Категорії",
@@ -118,6 +122,7 @@
     ],
     "page.categories_count": [
         "%d category",
+        "%d categories",
         "%d categories"
     ],
     "page.new_category.title": "Нова категорія",
@@ -137,6 +142,7 @@
     "page.history.title": "Історія",
     "page.read_entry_count": [
         "%d read entry",
+        "%d read entries",
         "%d read entries"
     ],
     "page.import.title": "Імпорт",
@@ -507,6 +513,7 @@
     ],
     "alert.too_many_feeds_refresh": [
         "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again.",
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
