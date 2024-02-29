@@ -20,6 +20,62 @@ import (
 
 var (
 	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)`)
+	tagAllowList      = map[string][]string{
+		"a":          {"href", "title", "id"},
+		"abbr":       {"title"},
+		"acronym":    {"title"},
+		"audio":      {"src"},
+		"blockquote": {},
+		"br":         {},
+		"caption":    {},
+		"cite":       {},
+		"code":       {},
+		"dd":         {"id"},
+		"del":        {},
+		"dfn":        {},
+		"dl":         {"id"},
+		"dt":         {"id"},
+		"em":         {},
+		"figcaption": {},
+		"figure":     {},
+		"h1":         {"id"},
+		"h2":         {"id"},
+		"h3":         {"id"},
+		"h4":         {"id"},
+		"h5":         {"id"},
+		"h6":         {"id"},
+		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
+		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height"},
+		"ins":        {},
+		"kbd":        {},
+		"li":         {"id"},
+		"ol":         {"id"},
+		"p":          {},
+		"picture":    {},
+		"pre":        {},
+		"q":          {"cite"},
+		"rp":         {},
+		"rt":         {},
+		"rtc":        {},
+		"ruby":       {},
+		"s":          {},
+		"samp":       {},
+		"source":     {"src", "type", "srcset", "sizes", "media"},
+		"strong":     {},
+		"sub":        {},
+		"sup":        {"id"},
+		"table":      {},
+		"td":         {"rowspan", "colspan"},
+		"tfooter":    {},
+		"th":         {"rowspan", "colspan"},
+		"thead":      {},
+		"time":       {"datetime"},
+		"tr":         {},
+		"ul":         {"id"},
+		"var":        {},
+		"video":      {"poster", "height", "width", "src"},
+		"wbr":        {},
+	}
 )
 
 // Sanitize returns safe HTML.
@@ -184,14 +240,14 @@ func getExtraAttributes(tagName string) ([]string, []string) {
 }
 
 func isValidTag(tagName string) bool {
-	if _, ok := getTagAllowList()[tagName]; ok {
+	if _, ok := tagAllowList[tagName]; ok {
 		return true
 	}
 	return false
 }
 
 func isValidAttribute(tagName, attributeName string) bool {
-	if attributes, ok := getTagAllowList()[tagName]; ok {
+	if attributes, ok := tagAllowList[tagName]; ok {
 		return inList(attributeName, attributes)
 	}
 	return false
@@ -350,66 +406,6 @@ func isValidIframeSource(baseURL, src string) bool {
 		return strings.HasPrefix(src, prefix)
 	})
 }
-
-func getTagAllowList() map[string][]string {
-	return map[string][]string{
-		"a":          {"href", "title", "id"},
-		"abbr":       {"title"},
-		"acronym":    {"title"},
-		"audio":      {"src"},
-		"blockquote": {},
-		"br":         {},
-		"caption":    {},
-		"cite":       {},
-		"code":       {},
-		"dd":         {"id"},
-		"del":        {},
-		"dfn":        {},
-		"dl":         {"id"},
-		"dt":         {"id"},
-		"em":         {},
-		"figcaption": {},
-		"figure":     {},
-		"h1":         {"id"},
-		"h2":         {"id"},
-		"h3":         {"id"},
-		"h4":         {"id"},
-		"h5":         {"id"},
-		"h6":         {"id"},
-		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
-		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height"},
-		"ins":        {},
-		"kbd":        {},
-		"li":         {"id"},
-		"ol":         {"id"},
-		"p":          {},
-		"picture":    {},
-		"pre":        {},
-		"q":          {"cite"},
-		"rp":         {},
-		"rt":         {},
-		"rtc":        {},
-		"ruby":       {},
-		"s":          {},
-		"samp":       {},
-		"source":     {"src", "type", "srcset", "sizes", "media"},
-		"strong":     {},
-		"sub":        {},
-		"sup":        {"id"},
-		"table":      {},
-		"td":         {"rowspan", "colspan"},
-		"tfooter":    {},
-		"th":         {"rowspan", "colspan"},
-		"thead":      {},
-		"time":       {"datetime"},
-		"tr":         {},
-		"ul":         {"id"},
-		"var":        {},
-		"video":      {"poster", "height", "width", "src"},
-		"wbr":        {},
-	}
-}
-
 func inList(needle string, haystack []string) bool {
 	return slices.Contains(haystack, needle)
 }
