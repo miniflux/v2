@@ -114,7 +114,7 @@ function handleSubmitButtons() {
             let button = element.querySelector("button");
 
             if (button) {
-                button.innerHTML = button.dataset.labelLoading;
+                button.textContent = button.dataset.labelLoading;
                 button.disabled = true;
             }
         };
@@ -206,7 +206,7 @@ function toggleEntryStatus(element, toasting) {
     let currentStatus = link.dataset.value;
     let newStatus = currentStatus === "read" ? "unread" : "read";
 
-    link.querySelector("span").innerHTML = link.dataset.labelLoading;
+    link.querySelector("span").textContent = link.dataset.labelLoading;
     updateEntriesStatus([entryID], newStatus, () => {
         let iconElement, label;
 
@@ -284,6 +284,14 @@ function handleSaveEntry(element) {
     }
 }
 
+// Set the span-child of `element` to contain `label`.
+function changeSpanLabel(element, label) {
+    let span = document.createElement('span');
+    span.classList.add('icon-label');
+    span.textContent = label; 
+    element.appendChild(span);
+}
+
 // Send the Ajax request to save an entry.
 function saveEntry(element, toasting) {
     if (!element) {
@@ -294,11 +302,14 @@ function saveEntry(element, toasting) {
         return;
     }
 
-    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
+
+    element.textContent = ''
+    changeSpanLabel(element, element.dataset.labelLoading);
 
     let request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
-        element.innerHTML = '<span class="icon-label">' + element.dataset.labelDone + '</span>';
+        element.textContent = ''
+    	changeSpanLabel(element, element.dataset.labelDone);
         element.dataset.completed = true;
         if (toasting) {
             let iconElement = document.querySelector("template#icon-save");
@@ -324,7 +335,8 @@ function toggleBookmark(parentElement, toasting) {
         return;
     }
 
-    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
+    element.textContent = ''
+    changeSpanLabel(element, element.dataset.labelLoading);
 
     let request = new RequestBuilder(element.dataset.bookmarkUrl);
     request.withCallback(() => {
@@ -348,8 +360,12 @@ function toggleBookmark(parentElement, toasting) {
             }
         }
 
-        element.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+	element.textContent = '';
+	let newIcon = iconElement.content.cloneNode(true);
+	element.appendChild(newIcon);
+    	changeSpanLabel(element, label);
         element.dataset.value = newStarStatus;
+	    //debugger;
     });
     request.execute();
 }
@@ -365,19 +381,23 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    let previousInnerHTML = element.innerHTML;
-    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
+    //let previousInnerHTML = element.innerHTML;
+    let previousElement = element.cloneNode(true)
+    element.textContent = ''
+    changeSpanLabel(element, element.dataset.labelLoading);
 
     let request = new RequestBuilder(element.dataset.fetchContentUrl);
     request.withCallback((response) => {
-        element.innerHTML = previousInnerHTML;
+        //element.innerHTML = previousInnerHTML;
+	element.textContent = '';
+	element.appendChild(previousElement);
 
         response.json().then((data) => {
             if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
-                document.querySelector(".entry-content").innerHTML = data.content;
+                document.querySelector(".entry-content").innerHTML = ttpolicy.createHTML(data.content);
                 let entryReadingtimeElement = document.querySelector(".entry-reading-time");
                 if (entryReadingtimeElement) {
-                    entryReadingtimeElement.innerHTML = data.reading_time;
+                    entryReadingtimeElement.innerHTML = ttpolicy.createHTML(data.reading_time);
                 }
             }
         });
@@ -654,7 +674,10 @@ function showToast(label, iconElement) {
 
     const toastMsgElement = document.getElementById("toast-msg");
     if (toastMsgElement) {
-        toastMsgElement.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+	toastMsgElement.textContent = ''
+	let newIcon = iconElement.content.cloneNode(true);
+	element.appendChild(newIcon);
+    	changeSpanLabel(toastMsgElement, label);
 
         const toastElementWrapper = document.getElementById("toast-wrapper");
         if (toastElementWrapper) {
