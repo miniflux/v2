@@ -150,10 +150,10 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		return fmt.Errorf(`store: unable to create entry %q (feed #%d): %v`, entry.URL, entry.FeedID, err)
 	}
 
-	for i := 0; i < len(entry.Enclosures); i++ {
-		entry.Enclosures[i].EntryID = entry.ID
-		entry.Enclosures[i].UserID = entry.UserID
-		err := s.createEnclosure(tx, entry.Enclosures[i])
+	for _, enclosure := range entry.Enclosures {
+		enclosure.EntryID = entry.ID
+		enclosure.UserID = entry.UserID
+		err := s.createEnclosure(tx, enclosure)
 		if err != nil {
 			return err
 		}

@@ -277,16 +277,16 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
 	}
 
-	for i := 0; i < len(feed.Entries); i++ {
-		feed.Entries[i].FeedID = feed.ID
-		feed.Entries[i].UserID = feed.UserID
+	for _, entry := range feed.Entries {
+		entry.FeedID = feed.ID
+		entry.UserID = feed.UserID
 
 		tx, err := s.db.Begin()
 		if err != nil {
 			return fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
-		entryExists, err := s.entryExists(tx, feed.Entries[i])
+		entryExists, err := s.entryExists(tx, entry)
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
 				return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
@@ -295,7 +295,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		}
 
 		if !entryExists {
-			if err := s.createEntry(tx, feed.Entries[i]); err != nil {
+			if err := s.createEntry(tx, entry); err != nil {
 				if rollbackErr := tx.Rollback(); rollbackErr != nil {
 					return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
 				}

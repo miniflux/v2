@@ -28,7 +28,7 @@ const (
 
 func getRandomUsername() string {
 	var suffix []string
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		suffix = append(suffix, strconv.Itoa(rand.Intn(1000)))
 	}
 	return "user" + strings.Join(suffix, "")
