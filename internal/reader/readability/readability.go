@@ -21,8 +21,7 @@ const (
 )
 
 var (
-	divToPElementsRegexp = regexp.MustCompile(`(?i)<(a|blockquote|dl|div|img|ol|p|pre|table|ul)`)
-	sentenceRegexp       = regexp.MustCompile(`\.( |$)`)
+	divToPElementsRegexp = regexp.MustCompile(`(?i)<(?:a|blockquote|dl|div|img|ol|p|pre|table|ul)`)
 
 	blacklistCandidatesRegexp  = regexp.MustCompile(`(?i)popupbody|-ad|g-plus`)
 	okMaybeItsACandidateRegexp = regexp.MustCompile(`(?i)and|article|body|column|main|shadow`)
@@ -114,9 +113,11 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 			content := s.Text()
 			contentLength := len(content)
 
-			if contentLength >= 80 && linkDensity < .25 {
-				append = true
-			} else if contentLength < 80 && linkDensity == 0 && sentenceRegexp.MatchString(content) {
+			if contentLength >= 80 {
+				if linkDensity < .25 {
+					append = true
+				}
+			} else if linkDensity == 0 && (content[len(content)-1] == '.' || strings.Contains(content, ". ")) {
 				append = true
 			}
 		}
