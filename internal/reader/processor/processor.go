@@ -204,7 +204,9 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 
 	if content != "" {
 		entry.Content = content
-		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		if user.ShowReadingTime {
+			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		}
 	}
 
 	rewrite.Rewriter(websiteURL, entry, entry.Feed.RewriteRules)
@@ -282,7 +284,9 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 	}
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
-		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		if user.ShowReadingTime {
+			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		}
 	}
 }
 

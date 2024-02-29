@@ -275,7 +275,9 @@ func (h *handler) updateEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	entryUpdateRequest.Patch(entry)
-	entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+	if user.ShowReadingTime {
+		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+	}
 
 	if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
 		json.ServerError(w, r, err)
