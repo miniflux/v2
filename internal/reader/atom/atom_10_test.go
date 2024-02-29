@@ -418,7 +418,7 @@ func TestParseEntryWithPlainTextTitle(t *testing.T) {
 	}
 
 	expected := `AT&T bought by SBC!`
-	for i := 0; i < 2; i++ {
+	for i := range 2 {
 		if feed.Entries[i].Title != expected {
 			t.Errorf("Incorrect title for entry #%d, got: %q", i, feed.Entries[i].Title)
 		}
@@ -677,7 +677,7 @@ func TestParseEntryWithHTMLSummary(t *testing.T) {
 	}
 
 	expected := `<code>std::unique_ptr&lt;S&gt;</code>`
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		if feed.Entries[i].Content != expected {
 			t.Errorf("Incorrect content for entry #%d, got: %q", i, feed.Entries[i].Content)
 		}
@@ -729,7 +729,7 @@ func TestParseEntryWithTextSummary(t *testing.T) {
 	}
 
 	expected := `AT&amp;T &lt;S&gt;`
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		if feed.Entries[i].Content != expected {
 			t.Errorf("Incorrect content for entry #%d, got: %q", i, feed.Entries[i].Content)
 		}
@@ -782,7 +782,7 @@ func TestParseEntryWithTextContent(t *testing.T) {
 	}
 
 	expected := `AT&amp;T &lt;S&gt;`
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		if feed.Entries[i].Content != expected {
 			t.Errorf("Incorrect content for entry #%d, got: %q", i, feed.Entries[i].Content)
 		}
@@ -827,7 +827,7 @@ func TestParseEntryWithHTMLContent(t *testing.T) {
 	}
 
 	expected := `AT&amp;T bought <b>by SBC</b>!`
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		if feed.Entries[i].Content != expected {
 			t.Errorf("Incorrect content for entry #%d, got: %q", i, feed.Entries[i].Content)
 		}

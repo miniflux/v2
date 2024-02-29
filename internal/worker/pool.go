@@ -26,7 +26,7 @@ func NewPool(store *storage.Storage, nbWorkers int) *Pool {
 		queue: make(chan model.Job),
 	}
 
-	for i := 0; i < nbWorkers; i++ {
+	for i := range nbWorkers {
 		worker := &Worker{id: i, store: store}
 		go worker.Run(workerPool.queue)
 	}

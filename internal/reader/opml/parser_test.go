@@ -81,7 +81,7 @@ func TestParseOpmlWithCategories(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 3)
 	}
 
-	for i := 0; i < len(subscriptions); i++ {
+	for i := range len(subscriptions) {
 		if !subscriptions[i].Equals(expected[i]) {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
@@ -114,7 +114,7 @@ func TestParseOpmlWithEmptyTitleAndEmptySiteURL(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
 	}
 
-	for i := 0; i < len(subscriptions); i++ {
+	for i := range len(subscriptions) {
 		if !subscriptions[i].Equals(expected[i]) {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
@@ -152,7 +152,7 @@ func TestParseOpmlVersion1(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
 	}
 
-	for i := 0; i < len(subscriptions); i++ {
+	for i := range len(subscriptions) {
 		if !subscriptions[i].Equals(expected[i]) {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
@@ -186,7 +186,7 @@ func TestParseOpmlVersion1WithoutOuterOutline(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 2)
 	}
 
-	for i := 0; i < len(subscriptions); i++ {
+	for i := range len(subscriptions) {
 		if !subscriptions[i].Equals(expected[i]) {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
@@ -228,7 +228,7 @@ func TestParseOpmlVersion1WithSeveralNestedOutlines(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 3)
 	}
 
-	for i := 0; i < len(subscriptions); i++ {
+	for i := range len(subscriptions) {
 		if !subscriptions[i].Equals(expected[i]) {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
@@ -261,7 +261,7 @@ func TestParseOpmlWithInvalidCharacterEntity(t *testing.T) {
 		t.Fatalf("Wrong number of subscriptions: %d instead of %d", len(subscriptions), 1)
 	}
 
-	for i := 0; i < len(subscriptions); i++ {
+	for i := range len(subscriptions) {
 		if !subscriptions[i].Equals(expected[i]) {
 			t.Errorf(`Subscription is different: "%v" vs "%v"`, subscriptions[i], expected[i])
 		}
