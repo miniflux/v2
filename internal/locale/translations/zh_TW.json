@@ -83,40 +83,33 @@
     "entry.shared_entry.title": "開啟公共連結",
     "entry.shared_entry.label": "分享",
     "entry.estimated_reading_time": [
-        "需要 %d 分鐘閱讀",
         "需要 %d 分鐘閱讀"
     ],
     "entry.tags.label": "標籤：",
     "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
-        "%d shared entry",
-        "%d shared entries"
+        "%d shared entry"
     ],
     "page.unread.title": "未讀",
     "page.unread_entry_count": [
-        "%d unread entry",
-        "%d unread entries"
+        "%d unread entry"
     ],
     "page.total_entry_count": [
-        "%d entry in total",
-        "%d entries in total"
+        "%d entry in total"
     ],
     "page.starred.title": "收藏",
     "page.starred_entry_count": [
-        "%d starred entry",
-        "%d starred entries"
+        "%d starred entry"
     ],
     "page.categories.title": "分類",
     "page.categories.no_feed": "沒有Feed",
     "page.categories.entries": "檢視內容",
     "page.categories.feeds": "檢視Feeds",
     "page.categories.feed_count": [
-        "有 %d 個Feed",
-        "有 %d 個Feeds"
+        "有 %d 個Feed"
     ],
     "page.categories_count": [
-        "%d category",
-        "%d categories"
+        "%d category"
     ],
     "page.new_category.title": "新分類",
     "page.new_user.title": "新使用者",
@@ -128,13 +121,11 @@
     "page.feeds.next_check": "下次檢查時間:",
     "page.feeds.read_counter": "已讀文章數",
     "page.feeds.error_count": [
-        "%d 錯誤",
         "%d 錯誤"
     ],
     "page.history.title": "歷史",
     "page.read_entry_count": [
-        "%d read entry",
-        "%d read entries"
+        "%d read entry"
     ],
     "page.import.title": "匯入",
     "page.search.title": "搜尋結果",
@@ -215,7 +206,6 @@
     "page.settings.webauthn.register": "註冊 Passkey",
     "page.settings.webauthn.register.error": "無法註冊 Passkey",
     "page.settings.webauthn.delete": [
-        "刪除 %d 個 Passkey",
         "刪除 %d 個 Passkey"
     ],
     "page.login.title": "登入",
@@ -472,32 +462,25 @@
     "time_elapsed.yesterday": "昨天",
     "time_elapsed.now": "剛剛",
     "time_elapsed.minutes": [
-        "%d 分鐘前",
         "%d 分鐘前"
     ],
     "time_elapsed.hours": [
-        "%d 小時前",
         "%d 小時前"
     ],
     "time_elapsed.days": [
-        "%d 天前",
         "%d 天前"
     ],
     "time_elapsed.weeks": [
-        "%d 周前",
         "%d 周前"
     ],
     "time_elapsed.months": [
-        "%d 月前",
         "%d 月前"
     ],
     "time_elapsed.years": [
-        "%d 年前",
         "%d 年前"
     ],
     "alert.too_many_feeds_refresh": [
-        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
-        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
     "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",
