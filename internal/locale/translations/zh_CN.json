@@ -83,28 +83,23 @@
     "entry.shared_entry.title": "打开公共链接",
     "entry.shared_entry.label": "分享",
     "entry.estimated_reading_time": [
-        "需要 %d 分钟阅读",
         "需要 %d 分钟阅读"
     ],
     "entry.tags.label": "标签：",
     "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
-        "%d shared entry",
-        "%d shared entries"
+        "%d shared entry"
     ],
     "page.unread.title": "未读",
     "page.unread_entry_count": [
-        "%d unread entry",
-        "%d unread entries"
+        "%d unread entry"
     ],
     "page.total_entry_count": [
-        "%d entry in total",
-        "%d entries in total"
+        "%d entry in total"
     ],
     "page.starred.title": "收藏",
     "page.starred_entry_count": [
-        "%d starred entry",
-        "%d starred entries"
+        "%d starred entry"
     ],
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
@@ -114,8 +109,7 @@
         "有 %d 个源"
     ],
     "page.categories_count": [
-        "%d category",
-        "%d categories"
+        "%d category"
     ],
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
@@ -131,8 +125,7 @@
     ],
     "page.history.title": "历史",
     "page.read_entry_count": [
-        "%d read entry",
-        "%d read entries"
+        "%d read entry"
     ],
     "page.import.title": "导入",
     "page.search.title": "搜索结果",
@@ -213,7 +206,6 @@
     "page.settings.webauthn.register": "注册 Passkey",
     "page.settings.webauthn.register.error": "无法注册 Passkey",
     "page.settings.webauthn.delete": [
-        "删除 %d 个 Passkey",
         "删除 %d 个 Passkey"
     ],
     "page.login.title": "登录",
@@ -488,8 +480,7 @@
         "%d 年前"
     ],
     "alert.too_many_feeds_refresh": [
-        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
-        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
     "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",

@@ -39,8 +39,19 @@ var pluralForms = map[string](func(n int) int){
 		}
 		return 2
 	},
+	// nplurals=2; plural=(n > 1);
+	"fr_FR": func(n int) int {
+		if n > 1 {
+			return 1
+		}
+		return 0
+	},
 	// nplurals=1; plural=0;
 	"id_ID": func(n int) int {
+		return 0
+	},
+	// nplurals=1; plural=0;
+	"ja_JP": func(n int) int {
 		return 0
 	},
 	// nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
@@ -61,10 +72,20 @@ var pluralForms = map[string](func(n int) int){
 		return 0
 	},
 	"ru_RU": pluralFormRuSrUa,
+	// nplurals=2; plural=(n > 1);
+	"tr_TR": func(n int) int {
+		if n > 1 {
+			return 1
+		}
+		return 0
+	},
 	"uk_UA": pluralFormRuSrUa,
 	"sr_RS": pluralFormRuSrUa,
 	// nplurals=1; plural=0;
 	"zh_CN": func(n int) int {
+		return 0
+	},
+	"zh_TW": func(n int) int {
 		return 0
 	},
 }
