@@ -35,6 +35,7 @@
     "menu.about": "关于",
     "menu.export": "导出",
     "menu.import": "导入",
+    "menu.search": "搜索",
     "menu.create_category": "新建分类",
     "menu.mark_page_as_read": "标记为已读",
     "menu.mark_all_as_read": "全部标为已读",

@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("?", () => showKeyboardShortcuts());
         keyboardHandler.on("+", () => goToAddSubscription());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
-        keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
+        keyboardHandler.on("/", () => goToPage("search"));
         keyboardHandler.on("a", () => {
             let enclosureElement = document.querySelector('.entry-enclosures');
             if (enclosureElement) {

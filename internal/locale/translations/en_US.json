@@ -35,6 +35,7 @@
     "menu.about": "About",
     "menu.export": "Export",
     "menu.import": "Import",
+    "menu.search": "Search",
     "menu.create_category": "Create a category",
     "menu.mark_page_as_read": "Mark this page as read",
     "menu.mark_all_as_read": "Mark all as read",

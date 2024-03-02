@@ -17,8 +17,7 @@ class KeyboardHandler {
                 return;
             }
 
-            if (key != "Enter")
-            {
+            if (key != "Enter") {
                 event.preventDefault();
             }
 

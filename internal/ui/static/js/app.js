@@ -121,19 +121,6 @@ function handleSubmitButtons() {
     });
 }
 
-// Set cursor focus to the search input.
-function setFocusToSearchInput(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const toggleSearchButton = document.querySelector(".search details")
-    if (!toggleSearchButton.getAttribute("open")) {
-      toggleSearchButton.setAttribute("open", "")
-      const searchInputElement = document.getElementById("search-input");
-      searchInputElement.focus();
-      searchInputElement.value = "";
-    }
-}
-
 // Show modal dialog with the list of keyboard shortcuts.
 function showKeyboardShortcuts() {
     let template = document.getElementById("keyboard-shortcuts");

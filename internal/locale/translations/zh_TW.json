@@ -35,6 +35,7 @@
     "menu.about": "關於",
     "menu.export": "匯出",
     "menu.import": "匯入",
+    "menu.search": "搜尋",
     "menu.create_category": "新建分類",
     "menu.mark_page_as_read": "將此頁面標記為已讀",
     "menu.mark_all_as_read": "全部標為已讀",
