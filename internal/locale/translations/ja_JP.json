@@ -35,6 +35,7 @@
     "menu.about": "ソフトウェア情報",
     "menu.export": "エクスポート",
     "menu.import": "インポート",
+    "menu.search": "検索",
     "menu.create_category": "カテゴリを作成",
     "menu.mark_page_as_read": "このページを既読にする",
     "menu.mark_all_as_read": "すべて既読にする",

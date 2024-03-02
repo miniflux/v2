@@ -35,6 +35,7 @@
     "menu.about": "Hakkında",
     "menu.export": "Dışarı Aktar",
     "menu.import": "İçeri Aktar",
+    "menu.search": "Ara",
     "menu.create_category": "Kategori oluştur",
     "menu.mark_page_as_read": "Bu sayfayı okundu olarak işaretle",
     "menu.mark_all_as_read": "Tümünü okundu olarak işaretle",

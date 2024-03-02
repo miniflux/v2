@@ -60,7 +60,6 @@
     {{ if .user }}{{ if not .user.KeyboardShortcuts }}data-disable-keyboard-shortcuts="true"{{ end }}{{ end }}>
 
     {{ if .user }}
-
     <a class="skip-to-content-link" href="#main">{{ t "skip_to_content" }}</a>
     <header class="header">
         <nav>
@@ -105,6 +104,9 @@
                 <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
                     <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
                 </li>
+                <li {{ if eq .menu "search" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "/" }}">
+                    <a href="{{ route "search" }}" data-page="search">{{ t "menu.search" }}</a>
+                </li>
                 <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
                     <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
                 </li>
@@ -115,20 +117,6 @@
                 {{ end }}
             </ul>
         </nav>
-        <search role="search" class="search">
-            <details class="search-details" {{ if $.searchQuery }}open{{ end }}>
-                <summary class="search-summary">
-                    <span>{{ t "search.label" }}</span>
-                    <svg class="bi bi-chevron-down search-summary-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
-                    </svg>
-                </summary>
-                <form action="{{ route "searchEntries" }}" aria-labelledby="search-input-label">
-                    <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
-                    <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "search.submit" }}</button>
-                </form>
-            </details>
-        </search>
     </header>
     {{ end }}
     {{ if .flashMessage }}

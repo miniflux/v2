@@ -35,6 +35,7 @@
     "menu.about": "О приложении",
     "menu.export": "Экспорт",
     "menu.import": "Импорт",
+    "menu.search": "Поиск",
     "menu.create_category": "Создать категорию",
     "menu.mark_page_as_read": "Отметить эту страницу прочитанной",
     "menu.mark_all_as_read": "Отметить всё как прочитанное",
