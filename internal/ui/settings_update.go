@@ -18,9 +18,6 @@ import (
 )
 
 func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
-
 	loggedUser, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -35,6 +32,8 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 
 	settingsForm := form.NewSettingsForm(r)
 
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages())

@@ -17,9 +17,6 @@ import (
 )
 
 func (h *handler) bookmarklet(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
-
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -45,6 +42,8 @@ func (h *handler) bookmarklet(w http.ResponseWriter, r *http.Request) {
 		bookmarkletURL = xurls.Relaxed().FindString(text)
 	}
 
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", form.SubscriptionForm{URL: bookmarkletURL})
 	view.Set("categories", categories)
 	view.Set("menu", "feeds")
