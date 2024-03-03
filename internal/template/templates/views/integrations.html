@@ -326,43 +326,6 @@
         </div>
     </details>
 
-    <details {{ if .form.ReadwiseEnabled }}open{{ end }}>
-        <summary>Readwise Reader</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="readwise_enabled" value="1" {{ if .form.ReadwiseEnabled }}checked{{ end }}> {{ t "form.integration.readwise_activate" }}
-            </label>
-
-            <label for="form-readwise-api-key">{{ t "form.integration.readwise_api_key" }}</label>
-            <input type="text" name="readwise_api_key" id="form-readwise-api-key" value="{{ .form.ReadwiseAPIKey }}" spellcheck="false">
-
-            <p><a href="https://readwise.io/access_token" target="_blank">{{ t "form.integration.readwise_api_key_link" }}</a></p>
-
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.ShaarliEnabled }}open{{ end }}>
-        <summary>Shaarli</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="shaarli_enabled" value="1" {{ if .form.ShaarliEnabled }}checked{{ end }}> {{ t "form.integration.shaarli_activate" }}
-            </label>
-
-            <label for="form-shaarli-url">{{ t "form.integration.shaarli_endpoint" }}</label>
-            <input type="url" name="shaarli_url" id="form-shaarli-url" value="{{ .form.ShaarliURL }}" placeholder="https://shaarli.example.org" spellcheck="false">
-
-            <label for="form-shaarli-api-secret">{{ t "form.integration.shaarli_api_secret" }}</label>
-            <input type="password" name="shaarli_api_secret" id="form-shaarli-api-secret" value="{{ .form.ShaarliAPISecret }}" autocomplete="new-password">
-
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
     <details {{ if .form.ReadeckEnabled }}open{{ end }}>
         <summary>Readeck</summary>
         <div class="form-section">
@@ -382,6 +345,59 @@
 
             <label for="form-readeck-labels">{{ t "form.integration.readeck_labels" }}</label>
             <input type="text" name="readeck_labels" id="form-readeck-labels" value="{{ .form.ReadeckLabels }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.ReadwiseEnabled }}open{{ end }}>
+        <summary>Readwise Reader</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="readwise_enabled" value="1" {{ if .form.ReadwiseEnabled }}checked{{ end }}> {{ t "form.integration.readwise_activate" }}
+            </label>
+
+            <label for="form-readwise-api-key">{{ t "form.integration.readwise_api_key" }}</label>
+            <input type="text" name="readwise_api_key" id="form-readwise-api-key" value="{{ .form.ReadwiseAPIKey }}" spellcheck="false">
+
+            <p><a href="https://readwise.io/access_token" target="_blank">{{ t "form.integration.readwise_api_key_link" }}</a></p>
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.RSSBridgeEnabled }}open{{ end }}>
+        <summary>RSS-Bridge</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="rssbridge_enabled" value="1" {{ if .form.RSSBridgeEnabled }}checked{{ end }}> {{ t "form.integration.rssbridge_activate" }}
+            </label>
+
+            <label for="form-rssbridge-url">{{ t "form.integration.rssbridge_url" }}</label>
+            <input type="url" name="rssbridge_url" id="form-rssbridge-url" value="{{ .form.RSSBridgeURL }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
+    <details {{ if .form.ShaarliEnabled }}open{{ end }}>
+        <summary>Shaarli</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="shaarli_enabled" value="1" {{ if .form.ShaarliEnabled }}checked{{ end }}> {{ t "form.integration.shaarli_activate" }}
+            </label>
+
+            <label for="form-shaarli-url">{{ t "form.integration.shaarli_endpoint" }}</label>
+            <input type="url" name="shaarli_url" id="form-shaarli-url" value="{{ .form.ShaarliURL }}" placeholder="https://shaarli.example.org" spellcheck="false">
+
+            <label for="form-shaarli-api-secret">{{ t "form.integration.shaarli_api_secret" }}</label>
+            <input type="password" name="shaarli_api_secret" id="form-shaarli-api-secret" value="{{ .form.ShaarliAPISecret }}" autocomplete="new-password">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
@@ -491,22 +507,6 @@
             <label for="form-webhook-secret">{{ t "form.integration.webhook_secret" }}</label>
             <input type="text" name="webhook_secret" id="form-webhook-secret" value="{{ .form.WebhookSecret }}" spellcheck="false" readonly>
             {{ end }}
-
-            <div class="buttons">
-                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
-            </div>
-        </div>
-    </details>
-
-    <details {{ if .form.RSSBridgeEnabled }}open{{ end }}>
-        <summary>RSS-Bridge</summary>
-        <div class="form-section">
-            <label>
-                <input type="checkbox" name="rssbridge_enabled" value="1" {{ if .form.RSSBridgeEnabled }}checked{{ end }}> {{ t "form.integration.rssbridge_activate" }}
-            </label>
-
-            <label for="form-rssbridge-url">{{ t "form.integration.rssbridge_url" }}</label>
-            <input type="url" name="rssbridge_url" id="form-rssbridge-url" value="{{ .form.RSSBridgeURL }}" spellcheck="false">
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
