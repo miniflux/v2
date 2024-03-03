@@ -14,9 +14,6 @@ import (
 )
 
 func (h *handler) showEditCategoryPage(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
-
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -43,6 +40,8 @@ func (h *handler) showEditCategoryPage(w http.ResponseWriter, r *http.Request) {
 		categoryForm.HideGlobally = "checked"
 	}
 
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("form", categoryForm)
 	view.Set("category", category)
 	view.Set("menu", "categories")

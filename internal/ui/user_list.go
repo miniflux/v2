@@ -13,9 +13,6 @@ import (
 )
 
 func (h *handler) showUsersPage(w http.ResponseWriter, r *http.Request) {
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
-
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -35,6 +32,8 @@ func (h *handler) showUsersPage(w http.ResponseWriter, r *http.Request) {
 
 	users.UseTimezone(user.Timezone)
 
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("users", users)
 	view.Set("menu", "settings")
 	view.Set("user", user)
