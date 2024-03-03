@@ -23,7 +23,7 @@ func (h *Handler) Export(userID int64) (string, error) {
 		return "", err
 	}
 
-	var subscriptions SubcriptionList
+	subscriptions := make(SubcriptionList, 0, len(feeds))
 	for _, feed := range feeds {
 		subscriptions = append(subscriptions, &Subcription{
 			Title:        feed.Title,
