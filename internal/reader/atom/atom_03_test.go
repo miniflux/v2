@@ -27,7 +27,7 @@ func TestParseAtom03(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func TestParseAtom03WithoutFeedTitle(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -110,7 +110,7 @@ func TestParseAtom03WithoutEntryTitleButWithLink(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +138,7 @@ func TestParseAtom03WithoutEntryTitleButWithSummary(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -166,7 +166,7 @@ func TestParseAtom03WithoutEntryTitleButWithXMLContent(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -197,7 +197,7 @@ func TestParseAtom03WithSummaryOnly(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -228,7 +228,7 @@ func TestParseAtom03WithXMLContent(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -259,7 +259,7 @@ func TestParseAtom03WithBase64Content(t *testing.T) {
 		</entry>
 	</feed>`
 
-	feed, err := Parse("http://diveintomark.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://diveintomark.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
