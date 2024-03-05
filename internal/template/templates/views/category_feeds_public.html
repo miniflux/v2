@@ -1,0 +1,22 @@
+{{ define "title"}}{{ .category.Title }} &gt; {{ t "page.feeds.title" }} ({{ .total }}){{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title" dir="auto">
+        <img class="td-logo" src="https://www.tampadevs.com/_assets/misc/logos/tampa-devs.svg" alt="Tampa Devs logo">
+        {{ .category.Title }} <span aria-hidden="true">&gt;</span> {{ t "page.feeds.title" }}
+        <span aria-hidden="true"> ({{ .total }})</span>
+    </h1>
+    <span class="sr-only">{{ plural "page.categories.feed_count" .total .total }}</span>
+    {{ template "homepage_menu" }}
+</section>
+{{ end }}
+
+{{ define "content"}}
+{{ if not .feeds }}
+    <p role="alert" class="alert">{{ t "alert.no_feed_in_category" }}</p>
+{{ else }}
+    {{ template "feed_list_public" dict "feeds" .feeds "ParsingErrorCount" .ParsingErrorCount }}
+{{ end }}
+
+{{ end }}

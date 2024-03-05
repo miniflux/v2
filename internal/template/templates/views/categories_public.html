@@ -1,0 +1,55 @@
+{{ define "title"}}{{ t "page.categories.title" }} ({{ .total }}){{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title page-header-title-count">
+    <h1 id="page-header-title" dir="auto">
+        <img class="td-logo" src="https://www.tampadevs.com/_assets/misc/logos/tampa-devs.svg" alt="Tampa Devs logo">
+        {{ t "page.public_categories.title" }}
+    </h1>
+    <span id="page-header-title-count" class="sr-only">{{ plural "page.categories_count" .total .total }}</span>
+
+    {{ template "homepage_menu" }}
+</section>
+{{ end }}
+
+{{ define "content"}}
+{{ if not .categories }}
+    <p role="alert" class="alert alert-error">{{ t "alert.no_category" }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .categories }}
+        <article
+            class="item category-item"
+            aria-labelledby="category-title-{{ .ID }}"
+            tabindex="-1"
+        >
+            <header id="category-title-{{ .ID }}"  class="item-header" dir="auto">
+                <h2 class="item-title">
+                    <a href="{{ route "publicCategoryEntries" "categoryID" .ID }}">
+                        {{ .Title }}
+
+                    </a>
+                </h2>
+            </header>
+            <div class="item-meta">
+                <ul class="item-meta-info">
+                    <li class="item-meta-info-feed-count">
+                        {{ if eq (deRef .FeedCount) 0 }}{{ t "page.categories.no_feed" }}{{ else }}{{ plural "page.categories.feed_count" (deRef .FeedCount) (deRef .FeedCount) }}{{ end }}
+                    </li>
+                </ul>
+                <ul class="item-meta-icons">
+                    <li class="item-meta-icons-entries">
+                        <a href="{{ route "publicCategoryEntries" "categoryID" .ID }}">{{ icon "entries" }}<span class="icon-label">{{ t "page.categories.entries" }}</span></a>
+                    </li>
+                    <li class="item-meta-icons-feeds">
+                        <a href="{{ route "publicCategoryFeeds" "categoryID" .ID }}">{{ icon "feeds" }}<span class="icon-label">{{ t "page.categories.feeds" }}</span></a>
+                    </li>
+
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ end }}

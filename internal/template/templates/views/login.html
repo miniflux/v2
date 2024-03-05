@@ -5,7 +5,7 @@
 
 {{ define "content"}}
 <section class="login-form">
-    <form action="{{ route "checkLogin" }}" method="post">
+    <form action="{{ route "signin" }}" method="post">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
 
         {{ if .errorMessage }}

@@ -37,6 +37,25 @@ func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 	}
 }
 
+// NewPublicFeedQueryBuilder returns a new FeedQueryBuilder.
+func NewPublicFeedQueryBuilder(store *Storage) *FeedQueryBuilder {
+	return &FeedQueryBuilder{
+		store: store,
+	}
+}
+
+// WithPublicCategories
+func (f *FeedQueryBuilder) WithPublicCategories() *FeedQueryBuilder {
+	f.conditions = append(f.conditions, "c.public = true")
+	return f
+}
+
+// WithHomepageCategories
+func (f *FeedQueryBuilder) WithHomepageCategories() *FeedQueryBuilder {
+	f.conditions = append(f.conditions, "c.show_on_homepage = true")
+	return f
+}
+
 // WithCategoryID filter by category ID.
 func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 	if categoryID > 0 {
@@ -161,6 +180,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.category_id,
 			c.title as category_title,
 			c.hide_globally as category_hidden,
+			c.public as public,
+			c.show_on_homepage as show_on_homepage,
 			fi.icon_id,
 			u.timezone,
 			f.apprise_service_urls
@@ -227,6 +248,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.Category.ID,
 			&feed.Category.Title,
 			&feed.Category.HideGlobally,
+			&feed.Category.Public,
+			&feed.Category.ShowOnHomepage,
 			&iconID,
 			&tz,
 			&feed.AppriseServiceURLs,

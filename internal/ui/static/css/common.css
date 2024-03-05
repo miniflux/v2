@@ -1286,3 +1286,8 @@ audio, video {
 .hidden {
     display: none;
 }
+
+.td-logo {
+    width: 25px;
+    height: 25px;
+}

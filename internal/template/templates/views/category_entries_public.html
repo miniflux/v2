@@ -1,0 +1,65 @@
+{{ define "title"}}{{ .category.Title }} ({{ .total }}){{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title" dir="auto">
+            <img class="td-logo" src="https://www.tampadevs.com/_assets/misc/logos/tampa-devs.svg" alt="Tampa Devs logo">
+            {{ .category.Title }}
+    </h1>
+    <span class="sr-only">
+
+    </span>
+    <nav aria-label="{{ .category.Title }} {{ t "menu.title" }}">
+        <ul>
+
+        </ul>
+    </nav>
+    {{ template "homepage_menu" }}
+</section>
+{{ end }}
+
+{{ define "content"}}
+{{ if not .entries }}
+    <p role="alert" class="alert">{{ t "alert.no_category_entry" }}</p>
+{{ else }}
+    <div class="pagination-top">
+        {{ template "pagination" .pagination }}
+    </div>
+    <div class="items">
+        {{ range .entries }}
+        <article
+            class="item item-status-unread"
+            data-id="{{ .ID }}"
+            aria-labelledby="entry-title-{{ .ID }}"
+            tabindex="-1"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="entry-title-{{ .ID }}" class="item-title">
+                    <a
+                        href="{{ .URL }}"
+                    >
+                        {{ if ne .Feed.Icon.IconID 0 }}
+                            <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+            </header>
+            {{ template "item_meta_public" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+        </article>
+        {{ end }}
+    </div>
+    <section class="page-footer">
+        {{ if .entries }}
+        <ul>
+            <li>
+            </li>
+        </ul>
+        {{ end }}
+    </section>
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
+    </div>
+{{ end }}
+
+{{ end }}

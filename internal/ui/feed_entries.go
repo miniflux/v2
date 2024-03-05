@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/session"
 	"miniflux.app/v2/internal/ui/view"
 )
@@ -28,18 +29,34 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if feed == nil {
+	publicFeed, err := h.store.PublicFeedByID(feedID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	if feed == nil && publicFeed == nil {
 		html.NotFound(w, r)
 		return
 	}
 
 	offset := request.QueryIntParam(r, "offset", 0)
-	builder := h.store.NewEntryQueryBuilder(user.ID)
-	builder.WithFeedID(feed.ID)
-	builder.WithStatus(model.EntryStatusUnread)
-	builder.WithSorting(user.EntryOrder, user.EntryDirection)
+
+	var builder storage.EntryQueryBuilder
+
+	if feed != nil {
+		builder = *h.store.NewEntryQueryBuilder(user.ID)
+		builder.WithFeedID(feed.ID)
+		builder.WithStatus(model.EntryStatusUnread)
+		builder.WithSorting(user.EntryOrder, user.EntryDirection)
+		builder.WithLimit(user.EntriesPerPage)
+	} else {
+		builder = *h.store.NewEntryQueryBuilder(1)
+		builder.WithSorting("created_at", "")
+		builder.WithFeedID(publicFeed.ID)
+	}
+
 	builder.WithOffset(offset)
-	builder.WithLimit(user.EntriesPerPage)
 
 	entries, err := builder.GetEntries()
 	if err != nil {
@@ -53,18 +70,31 @@ func (h *handler) showFeedEntriesPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
-	view.Set("feed", feed)
-	view.Set("entries", entries)
-	view.Set("total", count)
-	view.Set("pagination", getPagination(route.Path(h.router, "feedEntries", "feedID", feed.ID), count, offset, user.EntriesPerPage))
-	view.Set("menu", "feeds")
-	view.Set("user", user)
-	view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
-	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
-	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
-	view.Set("showOnlyUnreadEntries", true)
+	if feed != nil {
+		sess := session.New(h.store, request.SessionID(r))
+		view := view.New(h.tpl, r, sess)
+		view.Set("feed", feed)
+		view.Set("entries", entries)
+		view.Set("total", count)
+		view.Set("pagination", getPagination(route.Path(h.router, "feedEntries", "feedID", feed.ID), count, offset, user.EntriesPerPage))
+		view.Set("menu", "feeds")
+		view.Set("user", user)
+		view.Set("countUnread", h.store.CountUnreadEntries(user.ID))
+		view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
+		view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
+		view.Set("showOnlyUnreadEntries", true)
 
-	html.OK(w, r, view.Render("feed_entries"))
+		html.OK(w, r, view.Render("feed_entries"))
+	} else {
+		sess := session.New(h.store, request.SessionID(r))
+		view := view.New(h.tpl, r, sess)
+		view.Set("feed", publicFeed)
+		view.Set("entries", entries)
+		view.Set("total", count)
+		view.Set("pagination", getPagination(route.Path(h.router, "feedEntries", "feedID", publicFeed.ID), count, offset, 10))
+		view.Set("menu", "feeds")
+		view.Set("showOnlyUnreadEntries", false)
+
+		html.OK(w, r, view.Render("feed_entries_public"))
+	}
 }

@@ -855,4 +855,24 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE categories ADD COLUMN public bool default 'f';
+			ALTER TABLE categories ADD COLUMN show_on_homepage bool default 'f';
+			
+			CREATE INDEX idx_categories_public ON categories(public);
+			CREATE INDEX idx_categories_show_on_homepage ON categories(show_on_homepage);
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE categories ADD COLUMN homepage_default bool default 'f';
+			
+			CREATE INDEX idx_homepage_default ON categories(public);
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

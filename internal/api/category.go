@@ -25,6 +25,17 @@ func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if !user.IsAdmin {
+		categoryRequest.ShowOnHomepage = ""
+		categoryRequest.IsHomepageDefault = ""
+	}
+
 	if validationErr := validator.ValidateCategoryCreation(h.store, userID, &categoryRequest); validationErr != nil {
 		json.BadRequest(w, r, validationErr.Error())
 		return
@@ -41,6 +52,12 @@ func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
 	category, err := h.store.Category(userID, categoryID)
@@ -63,6 +80,11 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	if validationErr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryRequest); validationErr != nil {
 		json.BadRequest(w, r, validationErr.Error())
 		return
+	}
+
+	if !user.IsAdmin {
+		categoryRequest.ShowOnHomepage = ""
+		categoryRequest.IsHomepageDefault = ""
 	}
 
 	categoryRequest.Patch(category)

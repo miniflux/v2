@@ -143,12 +143,38 @@ func (s *Storage) FeedsWithCounters(userID int64) (model.Feeds, error) {
 	return getFeedsSorted(builder)
 }
 
+// PublicFeeds returns all public feeds.
+func (s *Storage) PublicFeeds(userID int64) (model.Feeds, error) {
+	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithPublicCategories()
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
+	return getFeedsSorted(builder)
+}
+
+// HomepageFeeds returns all public feeds.
+func (s *Storage) HomepageFeeds() (model.Feeds, error) {
+	builder := NewPublicFeedQueryBuilder(s)
+	builder.WithHomepageCategories()
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
+	return getFeedsSorted(builder)
+}
+
 // Return read and unread count.
 func (s *Storage) FetchCounters(userID int64) (model.FeedCounters, error) {
 	builder := NewFeedQueryBuilder(s, userID)
 	builder.WithCounters()
 	reads, unreads, err := builder.fetchFeedCounter()
 	return model.FeedCounters{ReadCounters: reads, UnreadCounters: unreads}, err
+}
+
+// HomepageFeedsByCategoryWithCounters returns all feeds of the given homepage category with counters of read and unread entries.
+func (s *Storage) HomepageFeedsByCategoryWithCounters(categoryID int64) (model.Feeds, error) {
+	builder := NewPublicFeedQueryBuilder(s)
+	builder.WithHomepageCategories()
+	builder.WithCategoryID(categoryID)
+	builder.WithCounters()
+	builder.WithSorting(model.DefaultFeedSorting, model.DefaultFeedSortingDirection)
+	return getFeedsSorted(builder)
 }
 
 // FeedsByCategoryWithCounters returns all feeds of the given user/category with counters of read and unread entries.
@@ -195,6 +221,22 @@ func (s *Storage) WeeklyFeedEntryCount(userID, feedID int64) (int, error) {
 // FeedByID returns a feed by the ID.
 func (s *Storage) FeedByID(userID, feedID int64) (*model.Feed, error) {
 	builder := NewFeedQueryBuilder(s, userID)
+	builder.WithFeedID(feedID)
+	feed, err := builder.GetFeed()
+
+	switch {
+	case errors.Is(err, sql.ErrNoRows):
+		return nil, nil
+	case err != nil:
+		return nil, fmt.Errorf(`store: unable to fetch feed #%d: %v`, feedID, err)
+	}
+
+	return feed, nil
+}
+
+// PublicFeedByID returns a feed by the ID.
+func (s *Storage) PublicFeedByID(feedID int64) (*model.Feed, error) {
+	builder := NewPublicFeedQueryBuilder(s)
 	builder.WithFeedID(feedID)
 	feed, err := builder.GetFeed()
 

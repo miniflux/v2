@@ -1,0 +1,17 @@
+{{ define "title"}}{{ t "page.homepage.title" }}{{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title"><img class="td-logo" src="https://www.tampadevs.com/_assets/misc/logos/tampa-devs.svg" alt="Tampa Devs logo">{{ t "page.homepage.title" }}</h1>
+    {{ template "homepage_menu" }}
+</section>
+{{ end }}
+
+{{ define "content"}}
+{{ if not .feeds }}
+    <p role="alert" class="alert">{{ t "alert.no_feeds_available" }}</p>
+{{ else }}
+    {{ template "public_feed_list" dict "feeds" .feeds "ParsingErrorCount" .ParsingErrorCount }}
+{{ end }}
+
+{{ end }}

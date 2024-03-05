@@ -1,0 +1,62 @@
+{{ define "feed_list_public" }}
+    <div class="items">
+        {{ range .feeds }}
+        <article
+            class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ end }}"
+            aria-labelledby="feed-title-{{ .ID }} feed-entries-counter"
+            tabindex="-1"
+        >
+            <header class="item-header" dir="auto">
+                <h2 id="feed-title-{{ .ID }}" class="item-title">
+                    <a href="{{ .SiteURL }}">
+                        {{ if and (.Icon) (gt .Icon.IconID 0) }}
+                            <img src="{{ route "icon" "iconID" .Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
+                        {{ end }}
+                        {{ if .Disabled }} 🚫 {{ end }}
+                        {{ .Title }}
+                    </a>
+                </h2>
+                <span id="feed-entries-counter" class="feed-entries-counter">
+                    <span aria-hidden="true">(</span>
+                    <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
+                    <span class="sr-only">{{ plural "page.total_entry_count" .NumberOfVisibleEntries .NumberOfVisibleEntries }}</span>
+                    <span aria-hidden="true">{{ .NumberOfVisibleEntries }}</span>
+                    <span aria-hidden="true">)</span>
+                </span>
+                <span class="category">
+                    <a id="feed-category-{{ .ID }}"
+                       href="{{ route "publicCategoryEntries" "categoryID" .Category.ID }}"
+                       aria-label="{{ t "page.category_label" .Category.Title }}"
+                    >
+                        {{ .Category.Title }}
+                    </a>
+                </span>
+            </header>
+            <div class="item-meta">
+                <ul class="item-meta-info">
+                    <li class="item-meta-info-site-url" dir="auto">
+                        <a href="{{ .SiteURL | safeURL  }}" title="{{ .SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ domain .SiteURL }}</a>
+                    </li>
+                    <li class="item-meta-info-checked-at">
+                        {{ t "page.feeds.last_check" }} <time datetime="{{ isodate .CheckedAt }}" title="{{ isodate .CheckedAt }}">{{ elapsed "UTC" .CheckedAt }}</time>
+                    </li>
+                    {{ $nextCheckDuration := duration .NextCheckAt }}
+                    {{ if ne $nextCheckDuration "" }}
+                    <li class="item-meta-info-next-check-at">
+                        {{ t "page.feeds.next_check" }} <time datetime="{{ isodate .NextCheckAt }}" title="{{ isodate .NextCheckAt }}">{{ $nextCheckDuration }}</time>
+                    </li>
+                    {{ end }}
+                </ul>
+                <ul class="item-meta-icons">
+                </ul>
+            </div>
+            {{ if ne .ParsingErrorCount 0 }}
+                <div class="parsing-error">
+                    <strong title="{{ .ParsingErrorMsg }}" class="parsing-error-count">{{ plural "page.feeds.error_count" .ParsingErrorCount .ParsingErrorCount }}</strong>
+                    - <small class="parsing-error-message">{{ .ParsingErrorMsg }}</small>
+                </div>
+            {{ end }}
+        </article>
+        {{ end }}
+    </div>
+{{ end }}

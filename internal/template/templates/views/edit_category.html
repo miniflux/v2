@@ -35,6 +35,22 @@
         {{ t "form.category.hide_globally" }}
     </label>
 
+    <label>
+        <input type="checkbox" name="public" {{ if .form.Public }}checked{{ end }}>
+        {{ t "form.category.public" }}
+    </label>
+
+    {{ if .user.IsAdmin }}
+        <label>
+            <input type="checkbox" name="show_on_homepage" {{ if .form.ShowOnHomepage }}checked{{ end }}>
+            {{ t "form.category.show_on_homepage" }}
+        </label>
+        <label>
+            <input type="checkbox" name="is_homepage_default" {{ if .form.IsHomepageDefault }}checked{{ end }}>
+            {{ t "form.category.is_homepage_default" }}
+        </label>
+    {{ end }}
+
     <div class="buttons">
         <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
     </div>

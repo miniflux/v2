@@ -115,6 +115,15 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/users/{userID}/update", handler.updateUser).Name("updateUser").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/users/{userID}/remove", handler.removeUser).Name("removeUser").Methods(http.MethodPost)
 
+	// User public profile
+	//uiRouter.HandleFunc("/u/{userName}", handler.showUserProfile).Name("removeUser").Methods(http.MethodPost)
+
+	// Public pages.
+	uiRouter.Handle("/", http.HandlerFunc(handler.showPublicHomepage)).Name("home").Methods(http.MethodGet)
+	uiRouter.Handle("/c", http.HandlerFunc(handler.showPublicCategoryListPage)).Name("public_categories").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/c/{categoryID}/entries", handler.showPublicCategoryEntriesPage).Name("publicCategoryEntries").Methods(http.MethodGet)
+	uiRouter.HandleFunc("/c/{categoryID}/feeds", handler.showPublicCategoryFeedsPage).Name("publicCategoryFeeds").Methods(http.MethodGet)
+
 	// Settings pages.
 	uiRouter.HandleFunc("/settings", handler.showSettingsPage).Name("settings").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/settings", handler.updateSettings).Name("updateSettings").Methods(http.MethodPost)
@@ -149,9 +158,9 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/offline", handler.showOfflinePage).Name("offline").Methods(http.MethodGet)
 
 	// Authentication pages.
-	uiRouter.HandleFunc("/login", handler.checkLogin).Name("checkLogin").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/signin", handler.checkLogin).Name("signin").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/logout", handler.logout).Name("logout").Methods(http.MethodGet)
-	uiRouter.Handle("/", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage))).Name("login").Methods(http.MethodGet)
+	uiRouter.Handle("/login", middleware.handleAuthProxy(http.HandlerFunc(handler.showLoginPage))).Name("login").Methods(http.MethodGet)
 
 	// WebAuthn flow
 	uiRouter.HandleFunc("/webauthn/register/begin", handler.beginRegistration).Name("webauthnRegisterBegin").Methods(http.MethodGet)

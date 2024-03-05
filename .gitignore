@@ -4,3 +4,5 @@ miniflux-*
 *.deb
 .idea
 .vscode
+.DS_Store
+template0

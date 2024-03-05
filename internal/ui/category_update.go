@@ -4,6 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
+	"fmt"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -47,8 +48,18 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
 
 	categoryRequest := &model.CategoryRequest{
-		Title:        categoryForm.Title,
-		HideGlobally: categoryForm.HideGlobally,
+		Title:             categoryForm.Title,
+		HideGlobally:      categoryForm.HideGlobally,
+		Public:            categoryForm.Public,
+		ShowOnHomepage:    categoryForm.ShowOnHomepage,
+		IsHomepageDefault: categoryForm.IsHomepageDefault,
+	}
+
+	fmt.Printf("CAT::: %v", categoryRequest)
+
+	if !loggedUser.IsAdmin {
+		categoryRequest.ShowOnHomepage = ""
+		categoryRequest.IsHomepageDefault = ""
 	}
 
 	if validationErr := validator.ValidateCategoryModification(h.store, loggedUser.ID, category.ID, categoryRequest); validationErr != nil {
