@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("g f", goToFeedOrFeeds);
         keyboardHandler.on("g c", () => goToPage("categories"));
         keyboardHandler.on("g s", () => goToPage("settings"));
+        keyboardHandler.on("g g", () => goToPrevious(TOP));
+        keyboardHandler.on("G", () => goToNext(BOTTOM));
         keyboardHandler.on("ArrowLeft", goToPrevious);
         keyboardHandler.on("ArrowRight", goToNext);
         keyboardHandler.on("k", goToPrevious);
