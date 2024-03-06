@@ -4,7 +4,6 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"regexp"
@@ -19,7 +18,7 @@ import (
 )
 
 var (
-	youtubeEmbedRegex = regexp.MustCompile(`//www\.youtube\.com/embed/(.*)$`)
+	youtubeEmbedRegex = regexp.MustCompile(`//(?:www\.)?youtube\.com/embed/(.+)$`)
 	tagAllowList      = map[string][]string{
 		"a":          {"href", "title", "id"},
 		"abbr":       {"title"},
@@ -80,12 +79,12 @@ var (
 
 // Sanitize returns safe HTML.
 func Sanitize(baseURL, input string) string {
-	var buffer bytes.Buffer
+	var buffer strings.Builder
 	var tagStack []string
 	var parentTag string
 	blacklistedTagDepth := 0
 
-	tokenizer := html.NewTokenizer(bytes.NewBufferString(input))
+	tokenizer := html.NewTokenizer(strings.NewReader(input))
 	for {
 		if tokenizer.Next() == html.ErrorToken {
 			err := tokenizer.Err()
@@ -114,7 +113,10 @@ func Sanitize(baseURL, input string) string {
 			tagName := token.DataAtom.String()
 			parentTag = tagName
 
-			if !isPixelTracker(tagName, token.Attr) && isValidTag(tagName) {
+			if isPixelTracker(tagName, token.Attr) {
+				continue
+			}
+			if isValidTag(tagName) {
 				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
 
 				if hasRequiredAttributes(tagName, attrNames) {
@@ -131,16 +133,18 @@ func Sanitize(baseURL, input string) string {
 			}
 		case html.EndTagToken:
 			tagName := token.DataAtom.String()
-			if isValidTag(tagName) && inList(tagName, tagStack) {
-				buffer.WriteString(fmt.Sprintf("</%s>", tagName))
+			if isValidTag(tagName) && slices.Contains(tagStack, tagName) {
+				buffer.WriteString("</" + tagName + ">")
 			} else if isBlockedTag(tagName) {
 				blacklistedTagDepth--
 			}
 		case html.SelfClosingTagToken:
 			tagName := token.DataAtom.String()
-			if !isPixelTracker(tagName, token.Attr) && isValidTag(tagName) {
+			if isPixelTracker(tagName, token.Attr) {
+				continue
+			}
+			if isValidTag(tagName) {
 				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
-
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + "/>")
@@ -187,11 +191,10 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 
 		if isExternalResourceAttribute(attribute.Key) {
 			if tagName == "iframe" {
-				if isValidIframeSource(baseURL, attribute.Val) {
-					value = rewriteIframeURL(attribute.Val)
-				} else {
+				if !isValidIframeSource(baseURL, attribute.Val) {
 					continue
 				}
+				value = rewriteIframeURL(attribute.Val)
 			} else if tagName == "img" && attribute.Key == "src" && isValidDataAttribute(attribute.Val) {
 				value = attribute.Val
 			} else if isAnchor("a", attribute) {
@@ -248,7 +251,7 @@ func isValidTag(tagName string) bool {
 
 func isValidAttribute(tagName, attributeName string) bool {
 	if attributes, ok := tagAllowList[tagName]; ok {
-		return inList(attributeName, attributes)
+		return slices.Contains(attributes, attributeName)
 	}
 	return false
 }
@@ -263,24 +266,23 @@ func isExternalResourceAttribute(attribute string) bool {
 }
 
 func isPixelTracker(tagName string, attributes []html.Attribute) bool {
-	if tagName == "img" {
-		hasHeight := false
-		hasWidth := false
+	if tagName != "img" {
+		return false
+	}
+	hasHeight := false
+	hasWidth := false
 
-		for _, attribute := range attributes {
-			if attribute.Key == "height" && attribute.Val == "1" {
+	for _, attribute := range attributes {
+		if attribute.Val == "1" {
+			if attribute.Key == "height" {
 				hasHeight = true
-			}
-
-			if attribute.Key == "width" && attribute.Val == "1" {
+			} else if attribute.Key == "width" {
 				hasWidth = true
 			}
 		}
-
-		return hasHeight && hasWidth
 	}
 
-	return false
+	return hasHeight && hasWidth
 }
 
 func hasRequiredAttributes(tagName string, attributes []string) bool {
@@ -371,43 +373,31 @@ func isBlockedResource(src string) bool {
 
 func isValidIframeSource(baseURL, src string) bool {
 	whitelist := []string{
-		"//www.youtube.com",
-		"http://www.youtube.com",
-		"https://www.youtube.com",
-		"https://www.youtube-nocookie.com",
-		"http://player.vimeo.com",
-		"https://player.vimeo.com",
-		"http://www.dailymotion.com",
-		"https://www.dailymotion.com",
-		"http://vk.com",
-		"https://vk.com",
-		"http://soundcloud.com",
-		"https://soundcloud.com",
-		"http://w.soundcloud.com",
-		"https://w.soundcloud.com",
-		"http://bandcamp.com",
-		"https://bandcamp.com",
-		"https://cdn.embedly.com",
-		"https://player.bilibili.com",
-		"https://player.twitch.tv",
+		"bandcamp.com",
+		"cdn.embedly.com",
+		"player.bilibili.com",
+		"player.twitch.tv",
+		"player.vimeo.com",
+		"soundcloud.com",
+		"vk.com",
+		"w.soundcloud.com",
+		"dailymotion.com",
+		"youtube-nocookie.com",
+		"youtube.com",
 	}
+	domain := urllib.Domain(src)
 
 	// allow iframe from same origin
-	if urllib.Domain(baseURL) == urllib.Domain(src) {
+	if urllib.Domain(baseURL) == domain {
 		return true
 	}
 
 	// allow iframe from custom invidious instance
-	if config.Opts != nil && config.Opts.InvidiousInstance() == urllib.Domain(src) {
+	if config.Opts != nil && config.Opts.InvidiousInstance() == domain {
 		return true
 	}
 
-	return slices.ContainsFunc(whitelist, func(prefix string) bool {
-		return strings.HasPrefix(src, prefix)
-	})
-}
-func inList(needle string, haystack []string) bool {
-	return slices.Contains(haystack, needle)
+	return slices.Contains(whitelist, strings.TrimPrefix(domain, "www."))
 }
 
 func rewriteIframeURL(link string) string {
