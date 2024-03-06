@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "फ़ीड पर जाएं",
     "page.keyboard_shortcuts.go_to_previous_page": "पिछले पृष्ठ पर जाएं",
     "page.keyboard_shortcuts.go_to_next_page": "अगले पेज पर जाएं",
+    "page.keyboard_shortcuts.go_to_bottom_item": "निचले आइटम पर जाएँ",
+    "page.keyboard_shortcuts.go_to_top_item": "शीर्ष आइटम पर जाएँ",
     "page.keyboard_shortcuts.open_item": "चयनित आइटम खोलें",
     "page.keyboard_shortcuts.open_original": "मूल लिंक खोलें",
     "page.keyboard_shortcuts.open_original_same_window": "वर्तमान टैब में मूल लिंक खोलें",

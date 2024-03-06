@@ -179,6 +179,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Ga naar feed",
     "page.keyboard_shortcuts.go_to_previous_page": "Vorige pagina",
     "page.keyboard_shortcuts.go_to_next_page": "Volgende pagina",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Ga naar het onderste item",
+    "page.keyboard_shortcuts.go_to_top_item": "Ga naar het bovenste item",
     "page.keyboard_shortcuts.open_item": "Open geselecteerde link",
     "page.keyboard_shortcuts.open_original": "Open originele link",
     "page.keyboard_shortcuts.open_original_same_window": "Oorspronkelijke koppeling op huidig tabblad openen",

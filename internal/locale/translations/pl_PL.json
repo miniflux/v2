@@ -187,6 +187,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Przejdź do subskrypcji",
     "page.keyboard_shortcuts.go_to_previous_page": "Przejdź do poprzedniej strony",
     "page.keyboard_shortcuts.go_to_next_page": "Przejdź do następnej strony",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Przejdź do dolnego elementu",
+    "page.keyboard_shortcuts.go_to_top_item": "Przejdź do najwyższego elementu",
     "page.keyboard_shortcuts.open_item": "Otwórz zaznaczony artykuł",
     "page.keyboard_shortcuts.open_original": "Otwórz oryginalny artykuł",
     "page.keyboard_shortcuts.open_original_same_window": "Otwórz oryginalny link w bieżącej karcie",

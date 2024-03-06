@@ -169,6 +169,8 @@
     "page.keyboard_shortcuts.go_to_feed": "轉到Feed頁面",
     "page.keyboard_shortcuts.go_to_previous_page": "上一頁",
     "page.keyboard_shortcuts.go_to_next_page": "下一頁",
+    "page.keyboard_shortcuts.go_to_bottom_item": "转到底部项目",
+    "page.keyboard_shortcuts.go_to_top_item": "转到顶部项目",
     "page.keyboard_shortcuts.open_item": "開啟選定的文章",
     "page.keyboard_shortcuts.open_original": "開啟原始連結",
     "page.keyboard_shortcuts.open_original_same_window": "在當前標籤頁中開啟原始連結",

@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Voir abonnement",
     "page.keyboard_shortcuts.go_to_previous_page": "Page précédente",
     "page.keyboard_shortcuts.go_to_next_page": "Page suivante",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Aller à l'élément du bas",
+    "page.keyboard_shortcuts.go_to_top_item": "Aller à l'élément supérieur",
     "page.keyboard_shortcuts.open_item": "Ouvrir élément sélectionné",
     "page.keyboard_shortcuts.open_original": "Ouvrir le lien original",
     "page.keyboard_shortcuts.open_original_same_window": "Ouvrir le lien original dans l'onglet en cours",
@@ -215,7 +217,7 @@
     "page.settings.webauthn.last_seen_on": "Dernière utilisation",
     "page.settings.webauthn.register": "Enregister une nouvelle clé d’accès",
     "page.settings.webauthn.register.error": "Impossible d'enregistrer la clé d’accès",
-    "page.settings.webauthn.delete" : [
+    "page.settings.webauthn.delete": [
         "Supprimer %d clé d’accès",
         "Supprimer %d clés d’accès"
     ],

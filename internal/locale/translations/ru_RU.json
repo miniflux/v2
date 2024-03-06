@@ -187,6 +187,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Перейти к подписке",
     "page.keyboard_shortcuts.go_to_previous_page": "Перейти к предыдущей странице",
     "page.keyboard_shortcuts.go_to_next_page": "Перейти к следующей странице",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Перейти к нижнему элементу",
+    "page.keyboard_shortcuts.go_to_top_item": "Перейти к верхнему элементу",
     "page.keyboard_shortcuts.open_item": "Открыть выбранный элемент",
     "page.keyboard_shortcuts.open_original_same_window": "Открыть оригинальную ссылку в текущей вкладке",
     "page.keyboard_shortcuts.open_original": "Открыть оригинальную ссылку",

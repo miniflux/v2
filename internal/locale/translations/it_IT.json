@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Mostra il feed",
     "page.keyboard_shortcuts.go_to_previous_page": "Mostra la pagina precedente",
     "page.keyboard_shortcuts.go_to_next_page": "Mostra la pagina successiva",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Vai all'elemento in fondo",
+    "page.keyboard_shortcuts.go_to_top_item": "Vai all'elemento principale",
     "page.keyboard_shortcuts.open_item": "Apri l'articolo selezionato",
     "page.keyboard_shortcuts.open_original": "Apri la pagina web originale",
     "page.keyboard_shortcuts.open_original_same_window": "Apri il link originale nella scheda corrente",
