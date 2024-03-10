@@ -1,3 +1,116 @@
+Version 2.1.1 (March 10, 2024)
+-----------------------------
+
+* Move search form to a dedicated page
+* Add Readeck integration
+* Add feed option to disable HTTP/2 to avoid fingerprinting
+* Add `Enter` key as a hotkey to open selected item
+* Proxify `video` element `poster` attribute
+* Add a couple of new possible locations for feeds
+    * Hugo likes to generate `index.xml`
+    * `feed.atom` and `feed.rss` are used by enterprise-scale/old-school gigantic CMS
+* Fix categories import from Thunderbird's OPML
+* Fix logo misalignment when using languages that are more verbose than English
+* Google Reader: Do not return a 500 error when no items is returned
+* Handle RDF feeds with duplicated `<title>` elements
+* Sort integrations alphabetically
+* Add more URL validation in media proxy
+* Add unit test to ensure each translation has the correct number of plurals
+* Add missing plurals for some languages
+* Makefile: quiet `git describe` and `rev-parse` stderr: When building from a tarball instead of a cloned git repo, there would be two `fatal: not a git repository` errors emitted even though the build succeeds. This is because of how `VERSION` and `COMMIT` are set in the Makefile. This PR suppresses the stderr for these variable assignments.
+* Makefile: do not force `CGO_ENABLED=0` for `miniflux` target
+* Add GitHub Action pipeline to build packages on-demand
+* Remove Golint (deprecated), use `staticcheck` and `golangci-lint` instead
+* Build amd64/arm64 Debian packages with CGO disabled
+* Update `go.mod` and add `.exe` suffix to Windows binary
+* Add a couple of fuzzers
+* Fix CodeQL workflow
+* Code and performance improvements:
+    * Use an `io.ReadSeeker` instead of an `io.Reader` to parse feeds
+    * Speed up the sanitizer:
+        - Allow Youtube URLs to start with `www`
+        - Use `strings.Builder` instead of a `bytes.Buffer`
+        - Use a `strings.NewReader` instead of a `bytes.NewBufferString`
+        - Sprinkles a couple of `continue` to make the code-flow more obvious
+        - Inline calls to `inList`, and put their parameters in the right order
+        - Simplify `isPixelTracker`
+        - Simplify `isValidIframeSource`, by extracting the hostname and comparing it directly, instead of using the full url and checking if it starts with multiple variations of the same one (`//`, `http:`, `https://` multiplied by `/www.`)
+        - Add a benchmark
+        - Instead of having to allocate a ~100 keys map containing possibly dynamic values (at least to the go compiler), allocate it once in a global variable. This significantly speeds things up, by reducing the garbage
+        - Use constant time access for maps instead of iterating on them
+        - Build a ~large whitelist map inline instead of constructing it item by item (and remove a duplicate key/value pair)
+        - Use `slices` instead of hand-rolled loops
+    collector/allocator involvements.
+    * Reuse a `Reader` instead of copying to a buffer when parsing an Atom feed
+    * Preallocate memory when exporting to OPML: This should marginally increase performance when exporting a large amount of feeds to OPML
+    * Delay call of `view.New` after logging the user in: There is no need to do extra work like creating a session and its associated view until the user has been properly identified and as many possibly-failing sql request have been successfully run
+    * Use constant-time comparison for anti-csrf tokens: This is probably completely overkill, but since anti-csrf tokens are secrets, they should be compared against untrusted inputs in constant time
+    * Simplify and optimize `genericProxyRewriter`
+        - Reduce the amount of nested loops: it's preferable to search the whole page once and filter on it (even with filters that should always be false), than searching it again for every element we're looking for.
+        - Factorize the proxying conditions into a `shouldProxy` function to reduce the copy-pasta.
+    * Speed up `removeUnlikelyCandidates`: `.Not` returns a brand new `Selection`, copied element by element
+    * Improve `EstimateReadingTime`'s speed by a factor 7
+        - Refactorise the tests and add some
+        - Use 250 signs instead of the whole text
+        - Only check for Korean, Chinese and Japanese script
+        - Add a benchmark
+        - Use a more idiomatic control flow
+    * Don't compute reading-time when unused: If the user doesn't display reading times, there is no need to compute them. This should speed things up a bit, since `whatlanggo.Detect` is abysmally slow.
+    * Simplify `username` generation for the integration tests: No need to generate random numbers 10 times, generate a single big-enough one. A single int64 should be more than enough
+    * Add missing regex anchor detected by CodeQL
+    * Don't mix up slices capacity and length
+    * Use prepared statements for intervals, `ArchiveEntries` and `updateEnclosures`
+    * Use modern for-loops introduced with Go 1.22
+    * Remove a superfluous condition: No need to check if the length of `line` is positive since we're checking afterwards that it contains the `=` sign
+    * Close resources as soon as possible, instead of using `defer()` in a loop
+    * Remove superfluous escaping in a regex
+    * Use `strings.ReplaceAll` instead of `strings.Replace(…, -1)`
+    * Use `strings.EqualFold` instead of `strings.ToLower(…) ==`
+    * Use `.WriteString(` instead of `.Write([]byte(…`
+    * Use `%q` instead of `"%s"`
+    * Make `internal/worker/worker.go` read-only
+    * Use a switch-case construct in `internal/locale/plural.go` instead of an avalanche of `if`
+    * Template functions: simplify `formatFileSize` and `duration` implementation
+    * Inline some templating functions
+    * Make use of `printer.Print` when possible
+    * Add a `printer.Print` to `internal/locale/printer.go`: No need to use variadic functions with string format interpolation to generate static strings
+    * Minor code simplification in `internal/ui/view/view.go`: No need to create the map item by item when we can create it in one go
+    * Build the map inline in `CountAllFeeds()`: No need to build an empty map to then add more fields in it one by one
+    * Miscellaneous improvements to `internal/reader/subscription/finder.go`:
+        - Surface `localizedError` in `FindSubscriptionsFromWellKnownURLs` via `slog`
+        - Use an inline declaration for new subscriptions, like done elsewhere in the
+        file, if only for consistency's sake
+        - Preallocate the `subscriptions` slice when using an RSS-bridge,
+    * Use an update-where for `MarkCategoryAsRead` instead of a subquery
+    * Simplify `CleanOldUserSessions`' query: No need for a subquery, filtering on `created_at` directly is enough
+    * Simplify `cleanupEntries`' query
+        - `NOT (hash=ANY(%4))` can be expressed as `hash NOT IN $4`
+        - There is no need for a subquery operating on the same table, moving the conditions out is equivalent.
+    * Reformat `ArchiveEntries`'s query for consistency's sake and replace the `=ANY` with an `IN`
+    * Reformat the query in `GetEntryIDs` and `GetReadTime`'s query for consistency's sake
+    * Simplify `WeeklyFeedEntryCount`: No need for a `BETWEEN`: we want to filter on entries published in the last week, no need to express is as "entries published between now and last week", "entries published after last week" is enough
+    * Add some tests for `add_image_title`
+    * Remove `github.com/google/uuid` dependencies: Replace it with a hand-rolled implementation. Heck, an UUID isn't even a requirement according to Omnivore API docs
+    * Simplify `internal/reader/icon/finder.go`:
+        - Use a simple regex to parse data uri instead of a hand-rolled parser, and document what fields are considered mandatory.
+        - Use case-insensitive matching to find (fav)icons, instead of doing the same query twice with different letter cases
+        - Add `apple-touch-icon-precomposed.png` as a fallback `favicon`
+        - Reorder the queries to have `icon` first, since it seems to be the most popular one. It used to be last, meaning that pages had to be parsed completely 4 times, instead of one now.
+        - Minor factorisation in `findIconURLsFromHTMLDocument`
+    * Small refactoring of `internal/reader/date/parser.go`:
+        - Split dates formats into those that require local times and those who don't, so that there is no need to have a switch-case in the for loop with around 250 iterations at most.
+        - Be more strict when it comes to timezones, previously invalid ones like -13 were accepted. Also add a test for this.
+        - Bail out early if the date is an empty string.
+    * Make use of Go ≥ 1.21 slices package instead of hand-rolled loops
+    * Reorder the fields of the `Entry` struct to save some memory
+* Dependencies update:
+    * Bump `golang.org/x/oauth2` from `0.17.0` to `0.18.0`
+    * Bump `github.com/prometheus/client_golang` from `1.18.0` to `1.19.0`
+    * Bump `github.com/tdewolff/minify/v2` from `2.20.16` to `2.20.18`
+    * Bump `github.com/PuerkitoBio/goquery` from `1.8.1` to `1.9.1`
+    * Bump `golang.org/x/crypto` from `0.19.0` to `0.20.0`
+    * Bump `github.com/go-jose/go-jose/v3` from `3.0.1` to `3.0.3`
+
 Version 2.1.0 (February 17, 2024)
 ---------------------------------
 
