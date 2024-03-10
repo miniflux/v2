@@ -84,6 +84,7 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
+	defaultEntryMinAgeDays                    = -1
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -167,6 +168,7 @@ type Options struct {
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
 	webAuthn                           bool
+	entryMinAgeDays                    int
 }
 
 // NewOptions returns Options with default values.
@@ -241,6 +243,7 @@ func NewOptions() *Options {
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
+		entryMinAgeDays:                    defaultEntryMinAgeDays,
 	}
 }
 
@@ -612,6 +615,11 @@ func (o *Options) WebAuthn() bool {
 	return o.webAuthn
 }
 
+// EntryMinAgeDays returns the number of days after which entries should be retained.
+func (o *Options) EntryMinAgeDays() int {
+	return o.entryMinAgeDays
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	var keyValues = map[string]interface{}{
@@ -688,6 +696,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
 		"YOUTUBE_EMBED_URL_OVERRIDE":             o.youTubeEmbedUrlOverride,
 		"WEBAUTHN":                               o.webAuthn,
+		"ENTRY_MIN_AGE_DAYS":                     o.entryMinAgeDays,
 	}
 
 	keys := make([]string, 0, len(keyValues))
