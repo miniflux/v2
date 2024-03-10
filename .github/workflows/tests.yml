@@ -15,7 +15,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        go-version: ["1.22"]
+        go-version: ["1.22.x"]
     steps:
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -43,7 +43,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: "1.22"
+        go-version: "1.22.x"
     - name: Checkout
       uses: actions/checkout@v4
     - name: Install Postgres client
