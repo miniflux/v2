@@ -2,12 +2,12 @@ class KeyboardHandler {
     constructor() {
         this.queue = [];
         this.shortcuts = {};
-        this.triggers = [];
+        this.triggers = new Set();
     }
 
     on(combination, callback) {
         this.shortcuts[combination] = callback;
-        this.triggers.push(combination.split(" ")[0]);
+        this.triggers.add(combination.split(" ")[0]);
     }
 
     listen() {
@@ -48,7 +48,7 @@ class KeyboardHandler {
     isEventIgnored(event, key) {
         return event.target.tagName === "INPUT" ||
             event.target.tagName === "TEXTAREA" ||
-            (this.queue.length < 1 && !this.triggers.includes(key));
+            (this.queue.length < 1 && !this.triggers.has(key));
     }
 
     isModifierKeyDown(event) {
