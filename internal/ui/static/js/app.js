@@ -571,7 +571,7 @@ function isListView() {
 function findEntry(element) {
     if (isListView()) {
         if (element) {
-            return DomHelper.findParent(element, "item");
+            return element.closest(".item")
         } else {
             return document.querySelector(".current-item");
         }
