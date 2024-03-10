@@ -31,7 +31,7 @@ class TouchHandler {
             return element;
         }
 
-        return DomHelper.findParent(element, "entry-swipe");
+        return element.closest(".entry-swipe")
     }
 
     onItemTouchStart(event) {
