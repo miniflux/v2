@@ -63,13 +63,6 @@ class KeyboardHandler {
             'Left': 'ArrowLeft',
             'Right': 'ArrowRight'
         };
-
-        for (let key in mapping) {
-            if (mapping.hasOwnProperty(key) && key === event.key) {
-                return mapping[key];
-            }
-        }
-
-        return event.key;
+	return mapping[event.key]??event.key;
     }
 }
