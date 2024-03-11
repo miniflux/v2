@@ -28,49 +28,49 @@ function onAuxClick(selector, callback, noPreventDefault) {
 // make logo element as button on mobile layout
 function checkMenuToggleModeByLayout() {
     const logoElement = document.querySelector(".logo");
-    const homePageLinkElement = document.querySelector(".logo > a")
-    if (!logoElement) return
-    const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label")
+    const homePageLinkElement = document.querySelector(".logo > a");
+    if (!logoElement) return;
+    const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label");
 
     const navMenuElement = document.getElementById("header-menu");
-    const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show")
+    const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show");
 
     if (document.documentElement.clientWidth < 620) {
         logoElement.setAttribute("role", "button");
         logoElement.setAttribute("tabindex", "0");
-        logoElement.setAttribute("aria-label", logoToggleButtonLabel)
+        logoElement.setAttribute("aria-label", logoToggleButtonLabel);
         if (navMenuElementIsExpanded) {
-           logoElement.setAttribute("aria-expanded", "true")
+           logoElement.setAttribute("aria-expanded", "true");
         } else {
-           logoElement.setAttribute("aria-expanded", "false")
+           logoElement.setAttribute("aria-expanded", "false");
         }
-        homePageLinkElement.setAttribute("tabindex", "-1")
+        homePageLinkElement.setAttribute("tabindex", "-1");
     } else {
         logoElement.removeAttribute("role");
         logoElement.removeAttribute("tabindex");
         logoElement.removeAttribute("aria-expanded");
-        logoElement.removeAttribute("aria-label")
+        logoElement.removeAttribute("aria-label");
         homePageLinkElement.removeAttribute("tabindex");
     }
 }
 
 function fixVoiceOverDetailsSummaryBug() {
-    const detailsElements = document.querySelectorAll("details")
+    const detailsElements = document.querySelectorAll("details");
     detailsElements.forEach((details) => {
-        const summaryElement = details.querySelector("summary")
-        summaryElement.setAttribute("role", "button")
-        setSummaryAriaExpandedByDetails(details, summaryElement)
+        const summaryElement = details.querySelector("summary");
+        summaryElement.setAttribute("role", "button");
+        setSummaryAriaExpandedByDetails(details, summaryElement);
 
         details.addEventListener("toggle", () => {
-            setSummaryAriaExpandedByDetails(details, summaryElement)
-        })
-    })
+            setSummaryAriaExpandedByDetails(details, summaryElement);
+        });
+    });
 
     function setSummaryAriaExpandedByDetails(details, summary) {
         if (details.open) {
-            summary.setAttribute("aria-expanded", "true")
+            summary.setAttribute("aria-expanded", "true");
         } else {
-            summary.setAttribute("aria-expanded", "false")
+            summary.setAttribute("aria-expanded", "false");
         }
     }
 }
@@ -78,20 +78,21 @@ function fixVoiceOverDetailsSummaryBug() {
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu(event) {
     if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
-        return
+        return;
     }
+
     if (event.currentTarget.getAttribute("role")) {
-        event.preventDefault()
+        event.preventDefault();
     }
 
     let menu = document.querySelector(".header nav ul");
     let menuToggleButton = document.querySelector(".logo");
     if (menu.classList.contains("js-menu-show")) {
-        menu.classList.remove("js-menu-show")
-        menuToggleButton.setAttribute("aria-expanded", false)
+        menu.classList.remove("js-menu-show");
+        menuToggleButton.setAttribute("aria-expanded", false);
     } else {
-        menu.classList.add("js-menu-show")
-        menuToggleButton.setAttribute("aria-expanded", true)
+        menu.classList.add("js-menu-show");
+        menuToggleButton.setAttribute("aria-expanded", true);
     }
 }
 
@@ -352,7 +353,7 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    let previousElement = element.cloneNode(true)
+    let previousElement = element.cloneNode(true);
     element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.fetchContentUrl);
@@ -572,7 +573,7 @@ function isListView() {
 function findEntry(element) {
     if (isListView()) {
         if (element) {
-            return element.closest(".item")
+            return element.closest(".item");
         } else {
             return document.querySelector(".current-item");
         }
