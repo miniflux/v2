@@ -40,9 +40,9 @@ function checkMenuToggleModeByLayout() {
         logoElement.setAttribute("tabindex", "0");
         logoElement.setAttribute("aria-label", logoToggleButtonLabel);
         if (navMenuElementIsExpanded) {
-           logoElement.setAttribute("aria-expanded", "true");
+            logoElement.setAttribute("aria-expanded", "true");
         } else {
-           logoElement.setAttribute("aria-expanded", "false");
+            logoElement.setAttribute("aria-expanded", "false");
         }
         homePageLinkElement.setAttribute("tabindex", "-1");
     } else {
@@ -175,12 +175,12 @@ function handleEntryStatus(item, element, setToRead) {
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
             switch (item) {
-                case "previous":
-                    goToListItem(-1);
-                    break;
-                case "next":
-                    goToListItem(1);
-                    break;
+            case "previous":
+                goToListItem(-1);
+                break;
+            case "next":
+                goToListItem(1);
+                break;
             }
         }
     }
@@ -246,7 +246,7 @@ function handleRefreshAllFeeds() {
 function updateEntriesStatus(entryIDs, status, callback) {
     let url = document.body.dataset.entriesStatusUrl;
     let request = new RequestBuilder(url);
-    request.withBody({entry_ids: entryIDs, status: status});
+    request.withBody({ entry_ids: entryIDs, status: status });
     request.withCallback((resp) => {
         resp.json().then(count => {
             if (callback) {
@@ -358,8 +358,8 @@ function handleFetchOriginalContent() {
 
     let request = new RequestBuilder(element.dataset.fetchContentUrl);
     request.withCallback((response) => {
-	element.textContent = '';
-	element.appendChild(previousElement);
+        element.textContent = '';
+        element.appendChild(previousElement);
 
         response.json().then((data) => {
             if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
@@ -675,7 +675,7 @@ function handlePlayerProgressionSave(playerElement) {
     ) {
         playerElement.dataset.lastPosition = currentPositionInSeconds.toString();
         let request = new RequestBuilder(playerElement.dataset.saveUrl);
-        request.withBody({progression: currentPositionInSeconds});
+        request.withBody({ progression: currentPositionInSeconds });
         request.execute();
     }
 }
