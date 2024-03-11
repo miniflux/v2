@@ -114,7 +114,7 @@ function handleSubmitButtons() {
             let button = element.querySelector("button");
 
             if (button) {
-                button.innerHTML = button.dataset.labelLoading;
+                button.textContent = button.dataset.labelLoading;
                 button.disabled = true;
             }
         };
@@ -193,7 +193,7 @@ function toggleEntryStatus(element, toasting) {
     let currentStatus = link.dataset.value;
     let newStatus = currentStatus === "read" ? "unread" : "read";
 
-    link.querySelector("span").innerHTML = link.dataset.labelLoading;
+    link.querySelector("span").textContent = link.dataset.labelLoading;
     updateEntriesStatus([entryID], newStatus, () => {
         let iconElement, label;
 
@@ -352,12 +352,13 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    let previousInnerHTML = element.innerHTML;
+    let previousElement = element.cloneNode(true)
     element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
 
     let request = new RequestBuilder(element.dataset.fetchContentUrl);
     request.withCallback((response) => {
-        element.innerHTML = previousInnerHTML;
+	element.textContent = '';
+	element.appendChild(previousElement);
 
         response.json().then((data) => {
             if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
