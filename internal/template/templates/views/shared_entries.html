@@ -16,6 +16,7 @@
                     data-confirm="true"
                     data-url="{{ route "flushHistory" }}"
                     data-label-question="{{ t "confirm.question" }}"
+                    data-label-action="{{ t "menu.flush_history" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}{{ t "menu.flush_history" }}</button>
@@ -69,13 +70,14 @@
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-delete">
                         {{ icon "delete" }}
-                        <a href="#"
+                        <button
                             data-confirm="true"
                             data-url="{{ route "unshareEntry" "entryID" .ID }}"
                             data-label-question="{{ t "confirm.question" }}"
+                            data-label-action="{{ t "entry.unshare.label" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
-                            data-label-loading="{{ t "confirm.loading" }}">{{ t "entry.unshare.label" }}</a>
+                            data-label-loading="{{ t "confirm.loading" }}">{{ t "entry.unshare.label" }}</button>
                     </li>
                 </ul>
             </div>

@@ -108,7 +108,7 @@ function onClickMainMenuListItem(event) {
 
 // Change the button label when the page is loading.
 function handleSubmitButtons() {
-    let elements = document.querySelectorAll("form");
+    let elements = document.querySelectorAll("form:not([method=dialog])");
     elements.forEach((element) => {
         element.onsubmit = () => {
             let button = element.querySelector("button");
@@ -581,57 +581,66 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    if (linkElement.tagName != 'A' && linkElement.tagName != "BUTTON") {
+    if (!["A,", "BUTTON"].includes(linkElement.tagName)) {
         linkElement = linkElement.parentNode;
     }
+    const dialogTemplate = document.getElementById("confirm-dialog-template")
+    const clonedDialogTemplate = dialogTemplate.content.cloneNode(true);
 
-    linkElement.style.display = "none";
+    const dialogElement = document.getElementById("confirm-alert-dialog");
+    const titleElement = clonedDialogTemplate.querySelector(".alert-dialog-title");
+    titleElement.textContent = linkElement.dataset.labelQuestion;
 
-    let containerElement = linkElement.parentNode;
-    let questionElement = document.createElement("span");
+    const descriptionElement = clonedDialogTemplate.querySelector(".alert-dialog-description");
+    descriptionElement.textContent = linkElement.dataset.labelAction;
 
-    function createLoadingElement() {
-        let loadingElement = document.createElement("span");
-        loadingElement.className = "loading";
-        loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
-
-        questionElement.remove();
-        containerElement.appendChild(loadingElement);
+    const yesButtonElement = clonedDialogTemplate.querySelector(".alert-dialog-confirm-button");
+    yesButtonElement.textContent = linkElement.dataset.labelYes;
+    if (linkElement.getAttribute("data-confirm-is-danger") !== null) {
+        yesButtonElement.classList.remove("button-primary")
+        yesButtonElement.classList.add("button-danger")
     }
-
-    let yesElement = document.createElement("button");
-    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
-    yesElement.onclick = (event) => {
-        event.preventDefault();
-
-        createLoadingElement();
-
+    yesButtonElement.addEventListener("click", (event) => {
+        yesButtonElement.setAttribute("aria-atomic", "true");
+        yesButtonElement.setAttribute("aria-live", "polite");
+        turnButtonToLoadingState(yesButtonElement, linkElement.dataset.labelLoading);
         callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
-    };
+    });
 
-    let noElement = document.createElement("button");
-    noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
-    noElement.onclick = (event) => {
+    const noButtonElement = clonedDialogTemplate.querySelector(".alert-dialog-cancel-button");
+    noButtonElement.textContent = linkElement.dataset.labelNo;
+    noButtonElement.addEventListener("click", (event) => {
         event.preventDefault();
+
+        noButtonElement.setAttribute("aria-atomic", "true");
+        noButtonElement.setAttribute("aria-live", "polite");
 
         const noActionUrl = linkElement.dataset.noActionUrl;
         if (noActionUrl) {
-            createLoadingElement();
-
+            turnButtonToLoadingState(noButtonElement, linkElement.dataset.labelLoading);
             callback(noActionUrl, linkElement.dataset.redirectUrl);
         } else {
-            linkElement.style.display = "inline";
-            questionElement.remove();
+            dialogElement.close();
         }
-    };
+    });
 
-    questionElement.className = "confirm";
-    questionElement.appendChild(document.createTextNode(linkElement.dataset.labelQuestion + " "));
-    questionElement.appendChild(yesElement);
-    questionElement.appendChild(document.createTextNode(", "));
-    questionElement.appendChild(noElement);
+    dialogElement.appendChild(clonedDialogTemplate)
+    dialogElement.showModal();
 
-    containerElement.appendChild(questionElement);
+    function turnButtonToLoadingState(buttonElement, loadingText) {
+        buttonElement.innerHTML = loadingText
+        buttonElement.classList.add("loading")
+        buttonElement.setAttribute("aria-disabled", "true")
+    }
+}
+
+function removeDialogContext(dialogElement) {
+    const dialogElementChildren = Array.from(dialogElement.children)
+    const dialogElementChildrenWithoutTemplate = dialogElementChildren
+        .filter((child) => { return child.id != "confirm-dialog-template" })
+    dialogElementChildrenWithoutTemplate.forEach((child) => {
+        child.remove()
+    })
 }
 
 function showToast(label, iconElement) {

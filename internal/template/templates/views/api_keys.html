@@ -38,13 +38,14 @@
     <tr>
         <th>{{ t "page.api_keys.table.actions" }}</th>
         <td>
-            <a href="#"
+            <button
                 data-confirm="true"
                 data-label-question="{{ t "confirm.question" }}"
+                data-label-action="{{ t "action.remove" }}"
                 data-label-yes="{{ t "confirm.yes" }}"
                 data-label-no="{{ t "confirm.no" }}"
                 data-label-loading="{{ t "confirm.loading" }}"
-                data-url="{{ route "removeAPIKey" "keyID" .ID }}">{{ t "action.remove" }}</a>
+                data-url="{{ route "removeAPIKey" "keyID" .ID }}">{{ t "action.remove" }}</button>
         </td>
     </tr>
     </table>

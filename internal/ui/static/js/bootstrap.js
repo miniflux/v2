@@ -115,6 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     checkMenuToggleModeByLayout()
     window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
 
+    const alertDialogElement = document.getElementById("confirm-alert-dialog")
+    alertDialogElement.addEventListener("close", (event) => removeDialogContext(alertDialogElement))
+
     fixVoiceOverDetailsSummaryBug()
 
     const logoElement = document.querySelector(".logo")
