@@ -6,38 +6,38 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("g u", () => goToPage("unread"));
         keyboardHandler.on("g b", () => goToPage("starred"));
         keyboardHandler.on("g h", () => goToPage("history"));
-        keyboardHandler.on("g f", () => goToFeedOrFeeds());
+        keyboardHandler.on("g f", goToFeedOrFeeds);
         keyboardHandler.on("g c", () => goToPage("categories"));
         keyboardHandler.on("g s", () => goToPage("settings"));
-        keyboardHandler.on("ArrowLeft", () => goToPrevious());
-        keyboardHandler.on("ArrowRight", () => goToNext());
-        keyboardHandler.on("k", () => goToPrevious());
-        keyboardHandler.on("p", () => goToPrevious());
-        keyboardHandler.on("j", () => goToNext());
-        keyboardHandler.on("n", () => goToNext());
+        keyboardHandler.on("ArrowLeft", goToPrevious);
+        keyboardHandler.on("ArrowRight", goToNext);
+        keyboardHandler.on("k", goToPrevious);
+        keyboardHandler.on("p", goToPrevious);
+        keyboardHandler.on("j", goToNext);
+        keyboardHandler.on("n", goToNext);
         keyboardHandler.on("h", () => goToPage("previous"));
         keyboardHandler.on("l", () => goToPage("next"));
-        keyboardHandler.on("z t", () => scrollToCurrentItem());
-        keyboardHandler.on("o", () => openSelectedItem());
+        keyboardHandler.on("z t", scrollToCurrentItem);
+        keyboardHandler.on("o", openSelectedItem);
         keyboardHandler.on("Enter", () => openSelectedItem());
-        keyboardHandler.on("v", () => openOriginalLink());
+        keyboardHandler.on("v", openOriginalLink);
         keyboardHandler.on("V", () => openOriginalLink(true));
-        keyboardHandler.on("c", () => openCommentLink());
+        keyboardHandler.on("c", openCommentLink);
         keyboardHandler.on("C", () => openCommentLink(true));
         keyboardHandler.on("m", () => handleEntryStatus("next"));
         keyboardHandler.on("M", () => handleEntryStatus("previous"));
-        keyboardHandler.on("A", () => markPageAsRead());
-        keyboardHandler.on("s", () => handleSaveEntry());
-        keyboardHandler.on("d", () => handleFetchOriginalContent());
-        keyboardHandler.on("f", () => handleBookmark());
-        keyboardHandler.on("F", () => goToFeed());
-        keyboardHandler.on("R", () => handleRefreshAllFeeds());
-        keyboardHandler.on("?", () => showKeyboardShortcuts());
-        keyboardHandler.on("+", () => goToAddSubscription());
-        keyboardHandler.on("#", () => unsubscribeFromFeed());
+        keyboardHandler.on("A", markPageAsRead);
+        keyboardHandler.on("s", handleSaveEntry);
+        keyboardHandler.on("d", handleFetchOriginalContent);
+        keyboardHandler.on("f", handleBookmark);
+        keyboardHandler.on("F", goToFeed);
+        keyboardHandler.on("R", handleRefreshAllFeeds);
+        keyboardHandler.on("?", showKeyboardShortcuts);
+        keyboardHandler.on("+", goToAddSubscription);
+        keyboardHandler.on("#", unsubscribeFromFeed);
         keyboardHandler.on("/", () => goToPage("search"));
         keyboardHandler.on("a", () => {
-            let enclosureElement = document.querySelector('.entry-enclosures');
+            const enclosureElement = document.querySelector('.entry-enclosures');
             if (enclosureElement) {
                 enclosureElement.toggleAttribute('open');
             }
@@ -82,11 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntry(event.target));
     onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
-    onClick(":is(a, button)[data-fetch-content-entry]", () => handleFetchOriginalContent());
-    onClick(":is(a, button)[data-share-status]", () => handleShare());
-    onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
+    onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContent);
+    onClick(":is(a, button)[data-share-status]", handleShare);
+    onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, markPageAsRead));
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
-
     onClick(":is(a, button)[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
 
@@ -118,8 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fixVoiceOverDetailsSummaryBug();
 
     const logoElement = document.querySelector(".logo");
-    logoElement.addEventListener("click", (event) => toggleMainMenu(event));
-    logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
+    logoElement.addEventListener("click", toggleMainMenu);
+    logoElement.addEventListener("keydown", toggleMainMenu);
 
     onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
@@ -131,9 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt.
-        e.preventDefault();
-
         let deferredPrompt = e;
         const promptHomeScreen = document.getElementById('prompt-home-screen');
         if (promptHomeScreen) {
