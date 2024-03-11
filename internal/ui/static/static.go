@@ -5,9 +5,10 @@ package static // import "miniflux.app/v2/internal/ui/static"
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"embed"
 	"fmt"
+
+	"miniflux.app/v2/internal/crypto"
 
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
@@ -48,7 +49,7 @@ func CalculateBinaryFileChecksums() error {
 			return err
 		}
 
-		binaryFileChecksums[dirEntry.Name()] = fmt.Sprintf("%x", sha256.Sum256(data))
+		binaryFileChecksums[dirEntry.Name()] = crypto.HashFromBytes(data)
 	}
 
 	return nil
@@ -102,7 +103,7 @@ func GenerateStylesheetsBundles() error {
 		}
 
 		StylesheetBundles[bundle] = minifiedData
-		StylesheetBundleChecksums[bundle] = fmt.Sprintf("%x", sha256.Sum256(minifiedData))
+		StylesheetBundleChecksums[bundle] = crypto.HashFromBytes(minifiedData)
 	}
 
 	return nil
@@ -166,7 +167,7 @@ func GenerateJavascriptBundles() error {
 		}
 
 		JavascriptBundles[bundle] = minifiedData
-		JavascriptBundleChecksums[bundle] = fmt.Sprintf("%x", sha256.Sum256(minifiedData))
+		JavascriptBundleChecksums[bundle] = crypto.HashFromBytes(minifiedData)
 	}
 
 	return nil
