@@ -31,7 +31,7 @@ class TouchHandler {
             return element;
         }
 
-        return element.closest(".entry-swipe")
+        return element.closest(".entry-swipe");
     }
 
     onItemTouchStart(event) {
