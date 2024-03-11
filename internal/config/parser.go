@@ -6,7 +6,6 @@ package config // import "miniflux.app/v2/internal/config"
 import (
 	"bufio"
 	"bytes"
-	"crypto/rand"
 	"errors"
 	"fmt"
 	"io"
@@ -14,6 +13,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"miniflux.app/v2/internal/crypto"
 )
 
 // Parser handles configuration parsing.
@@ -64,8 +65,6 @@ func (p *Parser) parseFileContent(r io.Reader) (lines []string) {
 }
 
 func (p *Parser) parseLines(lines []string) (err error) {
-	var port string
-
 	for _, line := range lines {
 		fields := strings.SplitN(line, "=", 2)
 		key := strings.TrimSpace(fields[0])
@@ -87,8 +86,7 @@ func (p *Parser) parseLines(lines []string) (err error) {
 				p.opts.logFormat = parsedValue
 			}
 		case "DEBUG":
-			parsedValue := parseBool(value, defaultDebug)
-			if parsedValue {
+			if parseBool(value, defaultDebug) {
 				p.opts.logLevel = "debug"
 			}
 		case "SERVER_TIMING_HEADER":
@@ -99,7 +97,9 @@ func (p *Parser) parseLines(lines []string) (err error) {
 				return err
 			}
 		case "PORT":
-			port = value
+			if value != "" {
+				p.opts.listenAddr = ":" + value
+			}
 		case "LISTEN_ADDR":
 			p.opts.listenAddr = parseString(value, defaultListenAddr)
 		case "DATABASE_URL":
@@ -245,17 +245,12 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		case "INVIDIOUS_INSTANCE":
 			p.opts.invidiousInstance = parseString(value, defaultInvidiousInstance)
 		case "PROXY_PRIVATE_KEY":
-			randomKey := make([]byte, 16)
-			rand.Read(randomKey)
-			p.opts.proxyPrivateKey = parseBytes(value, randomKey)
+			p.opts.proxyPrivateKey = parseBytes(value, crypto.GenerateRandomBytes(16))
 		case "WEBAUTHN":
 			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
 		}
 	}
 
-	if port != "" {
-		p.opts.listenAddr = ":" + port
-	}
 	return nil
 }
 
@@ -264,9 +259,7 @@ func parseBaseURL(value string) (string, string, string, error) {
 		return defaultBaseURL, defaultRootURL, "", nil
 	}
 
-	if value[len(value)-1:] == "/" {
-		value = value[:len(value)-1]
-	}
+	value = strings.TrimSuffix(value, "/")
 
 	parsedURL, err := url.Parse(value)
 	if err != nil {
@@ -289,11 +282,7 @@ func parseBool(value string, fallback bool) bool {
 	}
 
 	value = strings.ToLower(value)
-	if value == "1" || value == "yes" || value == "true" || value == "on" {
-		return true
-	}
-
-	return false
+	return value == "1" || value == "yes" || value == "true" || value == "on"
 }
 
 func parseInt(value string, fallback int) int {
@@ -324,8 +313,7 @@ func parseStringList(value string, fallback []string) []string {
 	var strList []string
 	strMap := make(map[string]bool)
 
-	items := strings.Split(value, ",")
-	for _, item := range items {
+	for _, item := range strings.Split(value, ",") {
 		itemValue := strings.TrimSpace(item)
 
 		if _, found := strMap[itemValue]; !found {
