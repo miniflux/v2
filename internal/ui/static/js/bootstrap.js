@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (WebAuthnHandler.isWebAuthnSupported()) {
         const webauthnHandler = new WebAuthnHandler();
 
-        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials() });
+        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials(); });
 
         let registerButton = document.getElementById("webauthn-register");
         if (registerButton != null) {
@@ -112,12 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    checkMenuToggleModeByLayout()
-    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
+    checkMenuToggleModeByLayout();
+    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true });
 
-    fixVoiceOverDetailsSummaryBug()
+    fixVoiceOverDetailsSummaryBug();
 
-    const logoElement = document.querySelector(".logo")
+    const logoElement = document.querySelector(".logo");
     logoElement.addEventListener("click", (event) => toggleMainMenu(event));
     logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
 
