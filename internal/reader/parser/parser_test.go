@@ -4,9 +4,30 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
+	"os"
 	"strings"
 	"testing"
 )
+
+func BenchmarkParse(b *testing.B) {
+	var testCases = map[string][]string{
+		"large_atom.xml": {"https://dustri.org/b", ""},
+		"large_rss.xml":  {"https://dustri.org/b", ""},
+		"small_atom.xml": {"https://github.com/miniflux/v2/commits/main", ""},
+	}
+	for filename := range testCases {
+		data, err := os.ReadFile("./testdata/" + filename)
+		if err != nil {
+			b.Fatalf(`Unable to read file %q: %v`, filename, err)
+		}
+		testCases[filename][1] = string(data)
+	}
+	for range b.N {
+		for _, v := range testCases {
+			ParseFeed(v[0], strings.NewReader(v[1]))
+		}
+	}
+}
 
 func FuzzParse(f *testing.F) {
 	f.Add("https://z.org", `<?xml version="1.0" encoding="utf-8"?>

@@ -10,7 +10,7 @@ import (
 
 func TestDetectRDF(t *testing.T) {
 	data := `<?xml version="1.0"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://my.netscape.com/rdf/simple/0.9/"></rdf:RDF>`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatRDF {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatRDF)
@@ -19,7 +19,7 @@ func TestDetectRDF(t *testing.T) {
 
 func TestDetectRSS(t *testing.T) {
 	data := `<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatRSS {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatRSS)
@@ -28,7 +28,7 @@ func TestDetectRSS(t *testing.T) {
 
 func TestDetectAtom10(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatAtom {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatAtom)
@@ -37,7 +37,7 @@ func TestDetectAtom10(t *testing.T) {
 
 func TestDetectAtom03(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?><feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="en"></feed>`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatAtom {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatAtom)
@@ -46,7 +46,7 @@ func TestDetectAtom03(t *testing.T) {
 
 func TestDetectAtomWithISOCharset(t *testing.T) {
 	data := `<?xml version="1.0" encoding="ISO-8859-15"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatAtom {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatAtom)
@@ -60,7 +60,7 @@ func TestDetectJSON(t *testing.T) {
 		"title" : "Example"
 	}
 	`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatJSON {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
@@ -71,7 +71,7 @@ func TestDetectUnknown(t *testing.T) {
 	data := `
 	<!DOCTYPE html> <html> </html>
 	`
-	format := DetectFeedFormat(strings.NewReader(data))
+	format, _ := DetectFeedFormat(strings.NewReader(data))
 
 	if format != FormatUnknown {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatUnknown)
