@@ -138,8 +138,10 @@ func GenerateJavascriptBundles() error {
 	JavascriptBundles = make(map[string][]byte)
 	JavascriptBundleChecksums = make(map[string]string)
 
+	jsMinifier := js.Minifier{Version: 2017}
+
 	minifier := minify.New()
-	minifier.AddFunc("text/javascript", js.Minify)
+	minifier.AddFunc("text/javascript", jsMinifier.Minify)
 
 	for bundle, srcFiles := range bundles {
 		var buffer bytes.Buffer
