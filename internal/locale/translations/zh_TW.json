@@ -35,6 +35,7 @@
     "menu.about": "關於",
     "menu.export": "匯出",
     "menu.import": "匯入",
+    "menu.search": "搜尋",
     "menu.create_category": "新建分類",
     "menu.mark_page_as_read": "將此頁面標記為已讀",
     "menu.mark_all_as_read": "全部標為已讀",
@@ -83,41 +84,33 @@
     "entry.shared_entry.title": "開啟公共連結",
     "entry.shared_entry.label": "分享",
     "entry.estimated_reading_time": [
-        "需要 %d 分鐘閱讀",
         "需要 %d 分鐘閱讀"
     ],
     "entry.tags.label": "標籤：",
     "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
-        "%d shared entry",
-        "%d shared entries"
+        "%d shared entry"
     ],
     "page.unread.title": "未讀",
     "page.unread_entry_count": [
-        "%d unread entry",
-        "%d unread entries"
+        "%d unread entry"
     ],
     "page.total_entry_count": [
-        "%d entry in total",
-        "%d entries in total"
+        "%d entry in total"
     ],
     "page.starred.title": "收藏",
     "page.starred_entry_count": [
-        "%d starred entry",
-        "%d starred entries"
+        "%d starred entry"
     ],
     "page.categories.title": "分類",
     "page.categories.no_feed": "沒有Feed",
     "page.categories.entries": "檢視內容",
     "page.categories.feeds": "檢視Feeds",
     "page.categories.feed_count": [
-        "有 %d 個Feed",
-        "有 %d 個Feeds"
+        "有 %d 個Feed"
     ],
-    "page.categories.unread_counter": "未讀文章數",
     "page.categories_count": [
-        "%d category",
-        "%d categories"
+        "%d category"
     ],
     "page.new_category.title": "新分類",
     "page.new_user.title": "新使用者",
@@ -129,13 +122,11 @@
     "page.feeds.next_check": "下次檢查時間:",
     "page.feeds.read_counter": "已讀文章數",
     "page.feeds.error_count": [
-        "%d 錯誤",
         "%d 錯誤"
     ],
     "page.history.title": "歷史",
     "page.read_entry_count": [
-        "%d read entry",
-        "%d read entries"
+        "%d read entry"
     ],
     "page.import.title": "匯入",
     "page.search.title": "搜尋結果",
@@ -216,7 +207,6 @@
     "page.settings.webauthn.register": "註冊 Passkey",
     "page.settings.webauthn.register.error": "無法註冊 Passkey",
     "page.settings.webauthn.delete": [
-        "刪除 %d 個 Passkey",
         "刪除 %d 個 Passkey"
     ],
     "page.login.title": "登入",
@@ -328,6 +318,7 @@
     "form.feed.label.apprise_service_urls": "使用逗號分隔的 Apprise 服務 URL 列表",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 快取",
     "form.feed.label.allow_self_signed_certificates": "允許自簽章憑證或無效憑證",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "透過代理獲取",
     "form.feed.label.disabled": "請勿更新此 Feed",
     "form.feed.label.no_media_player": "沒有媒體播放器(音訊/視訊)",
@@ -440,11 +431,19 @@
     "form.integration.linkding_api_key": "Linkding API 金鑰",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "標記為未讀",
+    "form.integration.linkwarden_activate": "儲存文章到 Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden API 端點",
+    "form.integration.linkwarden_api_key": "Linkwarden API 金鑰",
     "form.integration.matrix_bot_activate": "推送文章到 Matrix",
     "form.integration.matrix_bot_user": "Matrix 的用戶名",
     "form.integration.matrix_bot_password": "Matrix 的密碼",
     "form.integration.matrix_bot_url": "Matrix 伺服器的 URL",
     "form.integration.matrix_bot_chat_id": "Matrix 房間 ID",
+    "form.integration.readeck_activate": "儲存文章到 Readeck",
+    "form.integration.readeck_endpoint": "Readeck API 端點",
+    "form.integration.readeck_api_key": "Readeck API 金鑰",
+    "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "仅发送 URL（而不是完整内容）",
     "form.integration.shiori_activate": "儲存文章到 Shiori",
     "form.integration.shiori_endpoint": "Shiori API 端點",
     "form.integration.shiori_username": "Shiori 使用者名稱",
@@ -464,32 +463,25 @@
     "time_elapsed.yesterday": "昨天",
     "time_elapsed.now": "剛剛",
     "time_elapsed.minutes": [
-        "%d 分鐘前",
         "%d 分鐘前"
     ],
     "time_elapsed.hours": [
-        "%d 小時前",
         "%d 小時前"
     ],
     "time_elapsed.days": [
-        "%d 天前",
         "%d 天前"
     ],
     "time_elapsed.weeks": [
-        "%d 周前",
         "%d 周前"
     ],
     "time_elapsed.months": [
-        "%d 月前",
         "%d 月前"
     ],
     "time_elapsed.years": [
-        "%d 年前",
         "%d 年前"
     ],
     "alert.too_many_feeds_refresh": [
-        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
-        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
     "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",

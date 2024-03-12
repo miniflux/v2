@@ -63,7 +63,7 @@ func (h *handler) refreshAllFeeds(w http.ResponseWriter, r *http.Request) {
 		go h.pool.Push(jobs)
 
 		sess.SetLastForceRefresh()
-		sess.NewFlashMessage(printer.Printf("alert.background_feed_refresh"))
+		sess.NewFlashMessage(printer.Print("alert.background_feed_refresh"))
 	}
 
 	html.Redirect(w, r, route.Path(h.router, "feeds"))

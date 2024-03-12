@@ -132,12 +132,15 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 		}
 	})
 
-	output.Write([]byte("</div>"))
+	output.WriteString("</div>")
 	return output.String()
 }
 
 func removeUnlikelyCandidates(document *goquery.Document) {
-	document.Find("*").Not("html,body").Each(func(i int, s *goquery.Selection) {
+	document.Find("*").Each(func(i int, s *goquery.Selection) {
+		if s.Length() == 0 || s.Get(0).Data == "html" || s.Get(0).Data == "body" {
+			return
+		}
 		class, _ := s.Attr("class")
 		id, _ := s.Attr("id")
 		str := class + id

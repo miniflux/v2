@@ -3,7 +3,8 @@
         {{ range .feeds }}
         <article
             class="item feed-item {{ if ne .ParsingErrorCount 0 }}feed-parsing-error{{ else if ne .UnreadCount 0 }}feed-has-unread{{ end }}"
-            aria-labelledby="feed-title-{{ .ID }}"
+            aria-labelledby="feed-title-{{ .ID }} feed-entries-counter"
+            tabindex="-1"
         >
             <header class="item-header" dir="auto">
                 <h2 id="feed-title-{{ .ID }}" class="item-title">
@@ -15,7 +16,7 @@
                         {{ .Title }}
                     </a>
                 </h2>
-                <span class="feed-entries-counter">
+                <span id="feed-entries-counter" class="feed-entries-counter">
                     <span aria-hidden="true">(</span>
                     <span class="sr-only">{{ plural "page.unread_entry_count" .UnreadCount .UnreadCount }}</span>
                     <span aria-hidden="true">{{ .UnreadCount }}</span>
@@ -51,36 +52,32 @@
                 <ul class="item-meta-icons">
                     <li class="item-meta-icons-refresh">
                         <a href="{{ route "refreshFeed" "feedID" .ID }}"
-                            role="button"
                             aria-describedby="feed-title-{{ .ID }}">{{ icon "refresh" }}<span class="icon-label">{{ t "menu.refresh_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-edit">
                         <a href="{{ route "editFeed" "feedID" .ID }}"
-                            role="button"
                             aria-describedby="feed-title-{{ .ID }}">{{ icon "edit" }}<span class="icon-label">{{ t "menu.edit_feed" }}</span></a>
                     </li>
                     <li class="item-meta-icons-remove">
-                        <a href="#"
-                            role="button"
+                        <button
                             aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></a>
+                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
                     {{ if .UnreadCount }}
                       <li class="item-meta-icons-mark-as-read">
-                        <a href="#"
-                            role="button"
+                        <button
                             aria-describedby="feed-title-{{ .ID }}"
                             data-confirm="true"
                             data-label-question="{{ t "confirm.question" }}"
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></a>
+                            data-url="{{ route "markFeedAsRead" "feedID" .ID }}">{{ icon "read" }}<span class="icon-label">{{ t "menu.mark_all_as_read" }}</span></button>
                       </li>
                     {{ end }}
                 </ul>

@@ -27,6 +27,7 @@ type SubscriptionForm struct {
 	BlocklistRules              string
 	KeeplistRules               string
 	UrlRewriteRules             string
+	DisableHTTP2                bool
 }
 
 // Validate makes sure the form values locale.are valid.
@@ -76,5 +77,6 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		BlocklistRules:              r.FormValue("blocklist_rules"),
 		KeeplistRules:               r.FormValue("keeplist_rules"),
 		UrlRewriteRules:             r.FormValue("urlrewrite_rules"),
+		DisableHTTP2:                r.FormValue("disable_http2") == "1",
 	}
 }

@@ -35,6 +35,7 @@
     "menu.about": "O stronie",
     "menu.export": "Eksportuj",
     "menu.import": "Importuj",
+    "menu.search": "Szukaj",
     "menu.create_category": "Utwórz kategorię",
     "menu.mark_page_as_read": "Oznacz jako przeczytane",
     "menu.mark_all_as_read": "Oznacz wszystko jako przeczytane",
@@ -84,25 +85,30 @@
     "entry.shared_entry.label": "Udostępnianie",
     "entry.estimated_reading_time": [
         "%d minuta czytania",
+        "%d minuty czytania",
         "%d minut czytania"
     ],
     "entry.tags.label": "Tagi:",
     "page.shared_entries.title": "Udostępnione wpisy",
     "page.shared_entries_count": [
         "%d shared entry",
+        "%d shared entry",
         "%d shared entries"
     ],
     "page.unread.title": "Nieprzeczytane",
     "page.unread_entry_count": [
         "%d unread entry",
+        "%d unread entry",
         "%d unread entries"
     ],
     "page.total_entry_count": [
+        "%d entry in total",
         "%d entry in total",
         "%d entries in total"
     ],
     "page.starred.title": "Oznaczone gwiazdką",
     "page.starred_entry_count": [
+        "%d starred entry",
         "%d starred entry",
         "%d starred entries"
     ],
@@ -115,8 +121,8 @@
         "Są %d kanały.",
         "Jest %d kanałów."
     ],
-    "page.categories.unread_counter": "Liczba nieprzeczytanych wpisów",
     "page.categories_count": [
+        "%d category",
         "%d category",
         "%d categories"
     ],
@@ -136,6 +142,7 @@
     ],
     "page.history.title": "Historia",
     "page.read_entry_count": [
+        "%d read entry",
         "%d read entry",
         "%d read entries"
     ],
@@ -331,6 +338,7 @@
     "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "Zignoruj ​​pamięć podręczną HTTP",
     "form.feed.label.allow_self_signed_certificates": "Zezwalaj na certyfikaty z podpisem własnym lub nieprawidłowe certyfikaty",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
     "form.feed.label.disabled": "Nie odświeżaj tego kanału",
     "form.feed.label.no_media_player": "No media player (audio/video)",
@@ -443,11 +451,19 @@
     "form.integration.linkding_api_key": "Linkding API key",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Zaznacz zakładkę jako nieprzeczytaną",
+    "form.integration.linkwarden_activate": "Zapisz artykuły do Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden URL",
+    "form.integration.linkwarden_api_key": "Linkwarden API key",
     "form.integration.matrix_bot_activate": "Przenieś nowe artykuły do Matrix",
     "form.integration.matrix_bot_user": "Nazwa użytkownika dla Matrix",
     "form.integration.matrix_bot_password": "Hasło dla użytkownika Matrix",
     "form.integration.matrix_bot_url": "URL serwera Matrix",
     "form.integration.matrix_bot_chat_id": "Identyfikator pokoju Matrix",
+    "form.integration.readeck_activate": "Zapisz artykuły do Readeck",
+    "form.integration.readeck_endpoint": "Readeck URL",
+    "form.integration.readeck_api_key": "Readeck API key",
+    "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "Wyślij tylko adres URL (zamiast pełnej treści)",
     "form.integration.shiori_activate": "Zapisz artykuły do Shiori",
     "form.integration.shiori_endpoint": "Shiori URL",
     "form.integration.shiori_username": "Login do Shiori",
@@ -498,6 +514,7 @@
     ],
     "alert.too_many_feeds_refresh": [
         "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again.",
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",

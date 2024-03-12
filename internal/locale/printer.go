@@ -10,6 +10,15 @@ type Printer struct {
 	language string
 }
 
+func (p *Printer) Print(key string) string {
+	if str, ok := defaultCatalog[p.language][key]; ok {
+		if translation, ok := str.(string); ok {
+			return translation
+		}
+	}
+	return key
+}
+
 // Printf is like fmt.Printf, but using language-specific formatting.
 func (p *Printer) Printf(key string, args ...interface{}) string {
 	var translation string

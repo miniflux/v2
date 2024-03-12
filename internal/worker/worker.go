@@ -21,7 +21,7 @@ type Worker struct {
 }
 
 // Run wait for a job and refresh the given feed.
-func (w *Worker) Run(c chan model.Job) {
+func (w *Worker) Run(c <-chan model.Job) {
 	slog.Debug("Worker started",
 		slog.Int("worker_id", w.id),
 	)

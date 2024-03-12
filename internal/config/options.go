@@ -4,12 +4,12 @@
 package config // import "miniflux.app/v2/internal/config"
 
 import (
-	"crypto/rand"
 	"fmt"
 	"sort"
 	"strings"
 	"time"
 
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -171,9 +171,6 @@ type Options struct {
 
 // NewOptions returns Options with default values.
 func NewOptions() *Options {
-	randomKey := make([]byte, 16)
-	rand.Read(randomKey)
-
 	return &Options{
 		HTTPS:                              defaultHTTPS,
 		logFile:                            defaultLogFile,
@@ -242,7 +239,7 @@ func NewOptions() *Options {
 		metricsPassword:                    defaultMetricsPassword,
 		watchdog:                           defaultWatchdog,
 		invidiousInstance:                  defaultInvidiousInstance,
-		proxyPrivateKey:                    randomKey,
+		proxyPrivateKey:                    crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
 	}
 }

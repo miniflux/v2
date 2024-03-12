@@ -17,48 +17,52 @@
         <ul>
             {{ if .entries }}
             <li>
-                <a href="#"
+                <button
+                    class="page-button"
                     data-action="markPageAsRead"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
             </li>
             <li>
-                <a href="#"
+                <button
+                    class="page-button"
                     data-confirm="true"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</a>
+                    data-url="{{ route "markFeedAsRead" "feedID" .feed.ID }}">{{ icon "mark-all-as-read" }}{{ t "menu.mark_all_as_read" }}</button>
             </li>
             {{ end }}
             {{ if .showOnlyUnreadEntries }}
             <li>
-                <a href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
+                <a class="page-link" href="{{ route "feedEntriesAll" "feedID" .feed.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
             </li>
             {{ else }}
             <li>
-                <a href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+                <a class="page-link" href="{{ route "feedEntries" "feedID" .feed.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
             </li>
             {{ end }}
             <li>
-                <a href="#"
+                <button
+                    class="page-button"
                     data-confirm="true"
                     data-label-question="{{ t "confirm.question.refresh" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=true"
-                    data-no-action-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=false">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</a>
+                    data-no-action-url="{{ route "refreshFeed" "feedID" .feed.ID }}?forceRefresh=false">{{ icon "refresh" }}{{ t "menu.refresh_feed" }}</button>
             </li>
             <li>
-                <a href="{{ route "editFeed" "feedID" .feed.ID }}">{{ icon "edit" }}{{ t "menu.edit_feed" }}</a>
+                <a class="page-link" href="{{ route "editFeed" "feedID" .feed.ID }}">{{ icon "edit" }}{{ t "menu.edit_feed" }}</a>
             </li>
             <li>
-                <a href="#"
+                <button
+                    class="page-button"
                     data-confirm="true"
                     data-action="remove-feed"
                     data-label-question="{{ t "confirm.question" }}"
@@ -66,7 +70,7 @@
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
                     data-url="{{ route "removeFeed" "feedID" .feed.ID }}"
-                    data-redirect-url="{{ route "feeds" }}">{{ icon "delete" }}{{ t "action.remove_feed" }}</a>
+                    data-redirect-url="{{ route "feeds" }}">{{ icon "delete" }}{{ t "action.remove_feed" }}</button>
             </li>
         </ul>
     </nav>
@@ -75,7 +79,7 @@
 
 {{ define "content"}}
 {{ if ne .feed.ParsingErrorCount 0 }}
-<div class="alert alert-error">
+<div role="alert" class="alert alert-error">
     <h3>{{ t "alert.feed_error" }}</h3>
     <p>{{ t .feed.ParsingErrorMsg }}</p>
 </div>
@@ -83,9 +87,9 @@
 
 {{ if not .entries }}
     {{ if .showOnlyUnreadEntries }}
-        <p class="alert">{{ t "alert.no_unread_entry" }}</p>
+        <p role="alert" class="alert">{{ t "alert.no_unread_entry" }}</p>
     {{ else }}
-        <p class="alert">{{ t "alert.no_feed_entry" }}</p>
+        <p role="alert" class="alert">{{ t "alert.no_feed_entry" }}</p>
     {{ end }}
 {{ else }}
     <div class="pagination-top">
@@ -97,6 +101,7 @@
             class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
             data-id="{{ .ID }}"
             aria-labelledby="entry-title-{{ .ID }}"
+            tabindex="-1"
         >
             <header class="item-header" dir="auto">
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
@@ -108,9 +113,7 @@
                         {{ end }}
                     >
                         {{ if ne .Feed.Icon.IconID 0 }}
-                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
-                        {{ else }}
-                        <span class="sr-only">{{ .Feed.Title }}</span>
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="">
                         {{ end }}
                         {{ .Title }}
                     </a>
@@ -132,13 +135,14 @@
         {{ if .entries }}
         <ul>
             <li>
-                <a href="#"
+                <button
+                    class="page-button"
                     data-action="markPageAsRead"
                     data-label-question="{{ t "confirm.question" }}"
                     data-label-yes="{{ t "confirm.yes" }}"
                     data-label-no="{{ t "confirm.no" }}"
                     data-label-loading="{{ t "confirm.loading" }}"
-                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</a>
+                    data-show-only-unread="{{ if .showOnlyUnreadEntries }}1{{ end }}">{{ icon "mark-page-as-read" }}{{ t "menu.mark_page_as_read" }}</button>
             </li>
         </ul>
         {{ end }}

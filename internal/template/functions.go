@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"math"
 	"net/mail"
+	"slices"
 	"strings"
 	"time"
 
@@ -35,12 +36,8 @@ func (f *funcMap) Map() template.FuncMap {
 		"hasKey":         hasKey,
 		"truncate":       truncate,
 		"isEmail":        isEmail,
-		"baseURL": func() string {
-			return config.Opts.BaseURL()
-		},
-		"rootURL": func() string {
-			return config.Opts.RootURL()
-		},
+		"baseURL":        config.Opts.BaseURL,
+		"rootURL":        config.Opts.RootURL,
 		"hasOAuth2Provider": func(provider string) bool {
 			return config.Opts.OAuth2Provider() == provider
 		},
@@ -72,31 +69,18 @@ func (f *funcMap) Map() template.FuncMap {
 			return link
 		},
 		"mustBeProxyfied": func(mediaType string) bool {
-			for _, t := range config.Opts.ProxyMediaTypes() {
-				if t == mediaType {
-					return true
-				}
-			}
-			return false
+			return slices.Contains(config.Opts.ProxyMediaTypes(), mediaType)
 		},
-		"domain": func(websiteURL string) string {
-			return urllib.Domain(websiteURL)
-		},
-		"hasPrefix": func(str, prefix string) bool {
-			return strings.HasPrefix(str, prefix)
-		},
-		"contains": func(str, substr string) bool {
-			return strings.Contains(str, substr)
-		},
+		"domain":    urllib.Domain,
+		"hasPrefix": strings.HasPrefix,
+		"contains":  strings.Contains,
 		"replace": func(str, old, new string) string {
 			return strings.Replace(str, old, new, 1)
 		},
 		"isodate": func(ts time.Time) string {
 			return ts.Format("2006-01-02 15:04:05")
 		},
-		"theme_color": func(theme, colorScheme string) string {
-			return model.ThemeColor(theme, colorScheme)
-		},
+		"theme_color": model.ThemeColor,
 		"icon": func(iconName string) template.HTML {
 			return template.HTML(fmt.Sprintf(
 				`<svg class="icon" aria-hidden="true"><use xlink:href="%s#icon-%s"/></svg>`,
@@ -172,25 +156,22 @@ func durationImpl(t time.Time, now time.Time) string {
 		return ""
 	}
 
-	diff := t.Sub(now)
-
-	if diff < 0 {
-		return ""
+	if diff := t.Sub(now); diff >= 0 {
+		// Round to nearest second to get e.g. "14m56s" rather than "14m56.245483933s"
+		return diff.Round(time.Second).String()
 	}
-
-	// Round to nearest second to get e.g. "14m56s" rather than "14m56.245483933s"
-	return diff.Round(time.Second).String()
+	return ""
 }
 
 func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 	if t.IsZero() {
-		return printer.Printf("time_elapsed.not_yet")
+		return printer.Print("time_elapsed.not_yet")
 	}
 
 	now := timezone.Now(tz)
 	t = timezone.Convert(tz, t)
 	if now.Before(t) {
-		return printer.Printf("time_elapsed.not_yet")
+		return printer.Print("time_elapsed.not_yet")
 	}
 
 	diff := now.Sub(t)
@@ -200,7 +181,7 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 	d := int(s / 86400)
 	switch {
 	case s < 60:
-		return printer.Printf("time_elapsed.now")
+		return printer.Print("time_elapsed.now")
 	case s < 3600:
 		minutes := int(diff.Minutes())
 		return printer.Plural("time_elapsed.minutes", minutes, minutes)
@@ -208,7 +189,7 @@ func elapsedTime(printer *locale.Printer, tz string, t time.Time) string {
 		hours := int(diff.Hours())
 		return printer.Plural("time_elapsed.hours", hours, hours)
 	case d == 1:
-		return printer.Printf("time_elapsed.yesterday")
+		return printer.Print("time_elapsed.yesterday")
 	case d < 21:
 		return printer.Plural("time_elapsed.days", d, d)
 	case d < 31:
@@ -228,11 +209,7 @@ func formatFileSize(b int64) string {
 	if b < unit {
 		return fmt.Sprintf("%d B", b)
 	}
-	div, exp := int64(unit), 0
-	for n := b / unit; n >= unit; n /= unit {
-		div *= unit
-		exp++
-	}
-	return fmt.Sprintf("%.1f %ciB",
-		float64(b)/float64(div), "KMGTPE"[exp])
+	base := math.Log(float64(b)) / math.Log(unit)
+	number := math.Pow(unit, base-math.Floor(base))
+	return fmt.Sprintf("%.1f %ciB", number, "KMGTPE"[int64(base)-1])
 }

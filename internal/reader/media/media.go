@@ -12,6 +12,7 @@ import (
 var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 
 // Element represents XML media elements.
+// Specs: https://www.rssboard.org/media-rss
 type Element struct {
 	MediaGroups       []Group         `xml:"http://search.yahoo.com/mrss/ group"`
 	MediaContents     []Content       `xml:"http://search.yahoo.com/mrss/ content"`
@@ -156,7 +157,7 @@ func (d *Description) HTML() string {
 		return d.Description
 	}
 
-	content := strings.Replace(d.Description, "\n", "<br>", -1)
+	content := strings.ReplaceAll(d.Description, "\n", "<br>")
 	return textLinkRegex.ReplaceAllString(content, `<a href="${1}">${1}</a>`)
 }
 

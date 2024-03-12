@@ -909,7 +909,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 	)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		json.ServerError(w, r, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -960,7 +960,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	if len(entries) == 0 {
-		json.ServerError(w, r, fmt.Errorf("googlereader: no items returned from the database"))
+		json.BadRequest(w, r, fmt.Errorf("googlereader: no items returned from the database for item IDs: %v", itemIDs))
 		return
 	}
 
@@ -984,7 +984,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 	}
 	contentItems := make([]contentItem, len(entries))
 	for i, entry := range entries {
-		enclosures := make([]contentItemEnclosure, len(entry.Enclosures))
+		enclosures := make([]contentItemEnclosure, 0, len(entry.Enclosures))
 		for _, enclosure := range entry.Enclosures {
 			enclosures = append(enclosures, contentItemEnclosure{URL: enclosure.URL, Type: enclosure.MimeType})
 		}
@@ -1206,7 +1206,7 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 	)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		json.ServerError(w, r, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -1252,7 +1252,7 @@ func (h *handler) userInfoHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		json.ServerError(w, r, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -1277,7 +1277,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err := checkOutputFormat(w, r); err != nil {
-		json.ServerError(w, r, fmt.Errorf("googlereader: output only as json supported"))
+		json.BadRequest(w, r, err)
 		return
 	}
 

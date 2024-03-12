@@ -4,7 +4,6 @@
 package atom // import "miniflux.app/v2/internal/reader/atom"
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -18,25 +17,23 @@ type atomFeed interface {
 }
 
 // Parse returns a normalized feed struct from a Atom feed.
-func Parse(baseURL string, r io.Reader) (*model.Feed, error) {
-	var buf bytes.Buffer
-	tee := io.TeeReader(r, &buf)
-
+func Parse(baseURL string, r io.ReadSeeker) (*model.Feed, error) {
 	var rawFeed atomFeed
-	if getAtomFeedVersion(tee) == "0.3" {
+	if getAtomFeedVersion(r) == "0.3" {
 		rawFeed = new(atom03Feed)
 	} else {
 		rawFeed = new(atom10Feed)
 	}
+	r.Seek(0, io.SeekStart)
 
-	if err := xml_decoder.NewXMLDecoder(&buf).Decode(rawFeed); err != nil {
+	if err := xml_decoder.NewXMLDecoder(r).Decode(rawFeed); err != nil {
 		return nil, fmt.Errorf("atom: unable to parse feed: %w", err)
 	}
 
 	return rawFeed.Transform(baseURL), nil
 }
 
-func getAtomFeedVersion(data io.Reader) string {
+func getAtomFeedVersion(data io.ReadSeeker) string {
 	decoder := xml_decoder.NewXMLDecoder(data)
 	for {
 		token, _ := decoder.Token()

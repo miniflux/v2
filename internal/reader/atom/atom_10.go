@@ -184,7 +184,7 @@ func (a *atom10Entry) entryEnclosures() model.EnclosureList {
 	}
 
 	for _, link := range a.Links {
-		if strings.ToLower(link.Rel) == "enclosure" {
+		if strings.EqualFold(link.Rel, "enclosure") {
 			if link.URL == "" {
 				continue
 			}

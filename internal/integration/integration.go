@@ -12,12 +12,14 @@ import (
 	"miniflux.app/v2/internal/integration/instapaper"
 	"miniflux.app/v2/internal/integration/linkace"
 	"miniflux.app/v2/internal/integration/linkding"
+	"miniflux.app/v2/internal/integration/linkwarden"
 	"miniflux.app/v2/internal/integration/matrixbot"
 	"miniflux.app/v2/internal/integration/notion"
 	"miniflux.app/v2/internal/integration/nunuxkeeper"
 	"miniflux.app/v2/internal/integration/omnivore"
 	"miniflux.app/v2/internal/integration/pinboard"
 	"miniflux.app/v2/internal/integration/pocket"
+	"miniflux.app/v2/internal/integration/readeck"
 	"miniflux.app/v2/internal/integration/readwise"
 	"miniflux.app/v2/internal/integration/shaarli"
 	"miniflux.app/v2/internal/integration/shiori"
@@ -220,6 +222,50 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		)
 		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
 			slog.Error("Unable to send entry to Linkding",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
+	if userIntegrations.LinkwardenEnabled {
+		slog.Debug("Sending entry to linkwarden",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := linkwarden.NewClient(
+			userIntegrations.LinkwardenURL,
+			userIntegrations.LinkwardenAPIKey,
+		)
+		if err := client.CreateBookmark(entry.URL, entry.Title); err != nil {
+			slog.Error("Unable to send entry to Linkwarden",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
+	if userIntegrations.ReadeckEnabled {
+		slog.Debug("Sending entry to Readeck",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := readeck.NewClient(
+			userIntegrations.ReadeckURL,
+			userIntegrations.ReadeckAPIKey,
+			userIntegrations.ReadeckLabels,
+			userIntegrations.ReadeckOnlyURL,
+		)
+		if err := client.CreateBookmark(entry.URL, entry.Title, entry.Content); err != nil {
+			slog.Error("Unable to send entry to Readeck",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),

@@ -67,6 +67,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.EtagHeader = feedCreationRequest.ETag
 	subscription.LastModifiedHeader = feedCreationRequest.LastModified
 	subscription.FeedURL = feedCreationRequest.FeedURL
+	subscription.DisableHTTP2 = feedCreationRequest.DisableHTTP2
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.CheckedNow()
 
@@ -90,6 +91,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(feedCreationRequest.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(feedCreationRequest.DisableHTTP2)
 
 	checkFeedIcon(
 		store,
@@ -126,6 +128,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(feedCreationRequest.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(feedCreationRequest.DisableHTTP2)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(feedCreationRequest.FeedURL))
 	defer responseHandler.Close()
@@ -159,6 +162,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.Disabled = feedCreationRequest.Disabled
 	subscription.IgnoreHTTPCache = feedCreationRequest.IgnoreHTTPCache
 	subscription.AllowSelfSignedCertificates = feedCreationRequest.AllowSelfSignedCertificates
+	subscription.DisableHTTP2 = feedCreationRequest.DisableHTTP2
 	subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
 	subscription.ScraperRules = feedCreationRequest.ScraperRules
 	subscription.RewriteRules = feedCreationRequest.RewriteRules
@@ -238,6 +242,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(originalFeed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(originalFeed.DisableHTTP2)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()

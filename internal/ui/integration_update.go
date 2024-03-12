@@ -36,7 +36,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	integrationForm.Merge(integration)
 
 	if integration.FeverUsername != "" && h.store.HasDuplicateFeverUsername(user.ID, integration.FeverUsername) {
-		sess.NewFlashErrorMessage(printer.Printf("error.duplicate_fever_username"))
+		sess.NewFlashErrorMessage(printer.Print("error.duplicate_fever_username"))
 		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return
 	}
@@ -50,7 +50,7 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if integration.GoogleReaderUsername != "" && h.store.HasDuplicateGoogleReaderUsername(user.ID, integration.GoogleReaderUsername) {
-		sess.NewFlashErrorMessage(printer.Printf("error.duplicate_googlereader_username"))
+		sess.NewFlashErrorMessage(printer.Print("error.duplicate_googlereader_username"))
 		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return
 	}
@@ -85,6 +85,6 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(printer.Printf("alert.prefs_saved"))
+	sess.NewFlashMessage(printer.Print("alert.prefs_saved"))
 	html.Redirect(w, r, route.Path(h.router, "integrations"))
 }

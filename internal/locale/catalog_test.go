@@ -53,11 +53,11 @@ func TestAllKeysHaveValue(t *testing.T) {
 			switch value := v.(type) {
 			case string:
 				if value == "" {
-					t.Errorf(`The key %q for the language %q have an empty string as value`, k, language)
+					t.Errorf(`The key %q for the language %q has an empty string as value`, k, language)
 				}
-			case []string:
+			case []any:
 				if len(value) == 0 {
-					t.Errorf(`The key %q for the language %q have an empty list as value`, k, language)
+					t.Errorf(`The key %q for the language %q has an empty list as value`, k, language)
 				}
 			}
 		}
@@ -84,6 +84,23 @@ func TestMissingTranslations(t *testing.T) {
 		for key := range references {
 			if _, found := messages[key]; !found {
 				t.Fatalf(`Translation key %q not found in language %q`, key, language)
+			}
+		}
+	}
+}
+
+func TestTranslationFilePluralForms(t *testing.T) {
+	for language := range AvailableLanguages() {
+		messages, err := loadTranslationFile(language)
+		if err != nil {
+			t.Fatalf(`Unable to load translation messages for language %q`, language)
+		}
+
+		for k, v := range messages {
+			if value, ok := v.([]any); ok {
+				if len(value) != numberOfPluralFormsPerLanguage[language] {
+					t.Errorf(`The key %q for the language %q does not have the expected number of plurals, got %d instead of %d`, k, language, len(value), numberOfPluralFormsPerLanguage[language])
+				}
 			}
 		}
 	}

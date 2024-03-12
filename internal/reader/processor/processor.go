@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"regexp"
+	"slices"
 	"strconv"
 	"time"
 
@@ -25,7 +26,7 @@ import (
 )
 
 var (
-	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
@@ -71,6 +72,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 			requestBuilder.UseProxy(feed.FetchViaProxy)
 			requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
+			requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
 			content, scraperErr := scraper.ScrapeWebsite(
 				requestBuilder,
@@ -115,13 +117,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.BlocklistRules != "" {
-		var containsBlockedTag bool = false
-		for _, tag := range entry.Tags {
-			if matchField(feed.BlocklistRules, tag) {
-				containsBlockedTag = true
-				break
-			}
-		}
+		containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+			return matchField(feed.BlocklistRules, tag)
+		})
 
 		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || matchField(feed.BlocklistRules, entry.Author) || containsBlockedTag {
 			slog.Debug("Blocking entry based on rule",
@@ -140,13 +138,9 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 	if feed.KeeplistRules != "" {
-		var containsAllowedTag bool = false
-		for _, tag := range entry.Tags {
-			if matchField(feed.KeeplistRules, tag) {
-				containsAllowedTag = true
-				break
-			}
-		}
+		containsAllowedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+			return matchField(feed.KeeplistRules, tag)
+		})
 
 		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || matchField(feed.KeeplistRules, entry.Author) || containsAllowedTag {
 			slog.Debug("Allow entry based on rule",
@@ -188,6 +182,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(feed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
+	requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
 	content, scraperErr := scraper.ScrapeWebsite(
 		requestBuilder,
@@ -209,7 +204,9 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 
 	if content != "" {
 		entry.Content = content
-		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		if user.ShowReadingTime {
+			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		}
 	}
 
 	rewrite.Rewriter(websiteURL, entry, entry.Feed.RewriteRules)
@@ -287,7 +284,9 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 	}
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
-		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		if user.ShowReadingTime {
+			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
+		}
 	}
 }
 

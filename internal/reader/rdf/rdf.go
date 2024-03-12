@@ -58,7 +58,7 @@ func (r *rdfFeed) Transform(baseURL string) *model.Feed {
 }
 
 type rdfItem struct {
-	Title       string `xml:"title"`
+	Title       string `xml:"http://purl.org/rss/1.0/ title"`
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
 	dublincore.DublinCoreItemElement
@@ -72,11 +72,21 @@ func (r *rdfItem) Transform() *model.Entry {
 	entry.Content = r.entryContent()
 	entry.Hash = r.entryHash()
 	entry.Date = r.entryDate()
+
+	if entry.Title == "" {
+		entry.Title = entry.URL
+	}
 	return entry
 }
 
 func (r *rdfItem) entryTitle() string {
-	return html.UnescapeString(strings.TrimSpace(r.Title))
+	for _, title := range []string{r.Title, r.DublinCoreTitle} {
+		title = strings.TrimSpace(title)
+		if title != "" {
+			return html.UnescapeString(title)
+		}
+	}
+	return ""
 }
 
 func (r *rdfItem) entryContent() string {

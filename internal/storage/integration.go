@@ -163,6 +163,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linkding_api_key,
 			linkding_tags,
 			linkding_mark_as_unread,
+			linkwarden_enabled,
+			linkwarden_url,
+			linkwarden_api_key,
 			matrix_bot_enabled,
 			matrix_bot_user,
 			matrix_bot_password,
@@ -171,6 +174,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			apprise_enabled,
 			apprise_url,
 			apprise_services_url,
+			readeck_enabled,
+			readeck_url,
+			readeck_api_key,
+			readeck_labels,
+			readeck_only_url,
 			shiori_enabled,
 			shiori_url,
 			shiori_username,
@@ -247,6 +255,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinkdingAPIKey,
 		&integration.LinkdingTags,
 		&integration.LinkdingMarkAsUnread,
+		&integration.LinkwardenEnabled,
+		&integration.LinkwardenURL,
+		&integration.LinkwardenAPIKey,
 		&integration.MatrixBotEnabled,
 		&integration.MatrixBotUser,
 		&integration.MatrixBotPassword,
@@ -255,6 +266,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.AppriseEnabled,
 		&integration.AppriseURL,
 		&integration.AppriseServicesURL,
+		&integration.ReadeckEnabled,
+		&integration.ReadeckURL,
+		&integration.ReadeckAPIKey,
+		&integration.ReadeckLabels,
+		&integration.ReadeckOnlyURL,
 		&integration.ShioriEnabled,
 		&integration.ShioriURL,
 		&integration.ShioriUsername,
@@ -348,23 +364,31 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			apprise_enabled=$59,
 			apprise_url=$60,
 			apprise_services_url=$61,
-			shiori_enabled=$62,
-			shiori_url=$63,
-			shiori_username=$64,
-			shiori_password=$65,
-			shaarli_enabled=$66,
-			shaarli_url=$67,
-			shaarli_api_secret=$68,
-			webhook_enabled=$69,
-			webhook_url=$70,
-			webhook_secret=$71,
-			rssbridge_enabled=$72,
-			rssbridge_url=$73,
-			omnivore_enabled=$74,
-			omnivore_api_key=$75,
-			omnivore_url=$76
+			readeck_enabled=$62,
+			readeck_url=$63,
+			readeck_api_key=$64,
+			readeck_labels=$65,
+			readeck_only_url=$66,
+			shiori_enabled=$67,
+			shiori_url=$68,
+			shiori_username=$69,
+			shiori_password=$70,
+			shaarli_enabled=$71,
+			shaarli_url=$72,
+			shaarli_api_secret=$73,
+			webhook_enabled=$74,
+			webhook_url=$75,
+			webhook_secret=$76,
+			rssbridge_enabled=$77,
+			rssbridge_url=$78,
+			omnivore_enabled=$79,
+			omnivore_api_key=$80,
+			omnivore_url=$81,
+			linkwarden_enabled=$82,
+			linkwarden_url=$83,
+			linkwarden_api_key=$84
 		WHERE
-			user_id=$77
+			user_id=$85
 	`
 	_, err := s.db.Exec(
 		query,
@@ -429,6 +453,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.AppriseEnabled,
 		integration.AppriseURL,
 		integration.AppriseServicesURL,
+		integration.ReadeckEnabled,
+		integration.ReadeckURL,
+		integration.ReadeckAPIKey,
+		integration.ReadeckLabels,
+		integration.ReadeckOnlyURL,
 		integration.ShioriEnabled,
 		integration.ShioriURL,
 		integration.ShioriUsername,
@@ -444,6 +473,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.OmnivoreEnabled,
 		integration.OmnivoreAPIKey,
 		integration.OmnivoreURL,
+		integration.LinkwardenEnabled,
+		integration.LinkwardenURL,
+		integration.LinkwardenAPIKey,
 		integration.UserID,
 	)
 
@@ -475,8 +507,10 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				pocket_enabled='t' OR
 				linkace_enabled='t' OR
 				linkding_enabled='t' OR
+				linkwarden_enabled='t' OR
 				apprise_enabled='t' OR
 				shiori_enabled='t' OR
+				readeck_enabled='t' OR
 				shaarli_enabled='t' OR
 				webhook_enabled='t' OR
 				omnivore_enabled='t'

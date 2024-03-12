@@ -1,7 +1,7 @@
 APP          := miniflux
 DOCKER_IMAGE := miniflux/miniflux
-VERSION      := $(shell git describe --tags --abbrev=0)
-COMMIT       := $(shell git rev-parse --short HEAD)
+VERSION      := $(shell git describe --tags --abbrev=0 2>/dev/null)
+COMMIT       := $(shell git rev-parse --short HEAD 2>/dev/null)
 BUILD_DATE   := `date +%FT%T%z`
 LD_FLAGS     := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)' -X 'miniflux.app/v2/internal/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/internal/version.BuildDate=$(BUILD_DATE)'"
 PKG_LIST     := $(shell go list ./... | grep -v /vendor/)
@@ -12,6 +12,7 @@ export PGPASSWORD := postgres
 
 .PHONY: \
 	miniflux \
+	miniflux-no-pie \
 	linux-amd64 \
 	linux-arm64 \
 	linux-armv7 \
@@ -43,7 +44,10 @@ export PGPASSWORD := postgres
 	debian-packages
 
 miniflux:
-	@ CGO_ENABLED=0 go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
+	@ go build -buildmode=pie -ldflags=$(LD_FLAGS) -o $(APP) main.go
+
+miniflux-no-pie:
+	@ go build -ldflags=$(LD_FLAGS) -o $(APP) main.go
 
 linux-amd64:
 	@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
@@ -73,7 +77,7 @@ openbsd-amd64:
 	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
 
 windows-amd64:
-	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
 
 build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
 
@@ -94,19 +98,21 @@ openbsd-x86:
 	@ GOOS=openbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
 
 windows-x86:
-	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
+	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
 
 run:
 	@ LOG_DATE_TIME=1 DEBUG=1 RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
 
 clean:
-	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb
+	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb $(APP)*.exe
 
 test:
 	go test -cover -race -count=1 ./...
 
 lint:
-	golint -set_exit_status ${PKG_LIST}
+	go vet ./...
+	staticcheck ./...
+	golangci-lint run --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
 
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
@@ -120,7 +126,7 @@ integration-test:
 	RUN_MIGRATIONS=1 \
 	DEBUG=1 \
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
-	
+
 	while ! nc -z localhost 8080; do sleep 1; done
 	go test -v -tags=integration -count=1 miniflux.app/v2/internal/tests
 

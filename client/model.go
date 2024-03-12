@@ -107,7 +107,7 @@ type Subscription struct {
 }
 
 func (s Subscription) String() string {
-	return fmt.Sprintf(`Title="%s", URL="%s", Type="%s"`, s.Title, s.URL, s.Type)
+	return fmt.Sprintf(`Title=%q, URL=%q, Type=%q`, s.Title, s.URL, s.Type)
 }
 
 // Subscriptions represents a list of subscriptions.
@@ -140,6 +140,7 @@ type Feed struct {
 	Password                    string    `json:"password"`
 	Category                    *Category `json:"category,omitempty"`
 	HideGlobally                bool      `json:"hide_globally"`
+	DisableHTTP2                bool      `json:"disable_http2"`
 }
 
 // FeedCreationRequest represents the request to create a feed.
@@ -160,6 +161,7 @@ type FeedCreationRequest struct {
 	BlocklistRules              string `json:"blocklist_rules"`
 	KeeplistRules               string `json:"keeplist_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
+	DisableHTTP2                bool   `json:"disable_http2"`
 }
 
 // FeedModificationRequest represents the request to update a feed.
@@ -182,6 +184,7 @@ type FeedModificationRequest struct {
 	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
+	DisableHTTP2                *bool   `json:"disable_http2"`
 }
 
 // FeedIcon represents the feed icon.
@@ -202,24 +205,24 @@ type Feeds []*Feed
 // Entry represents a subscription item in the system.
 type Entry struct {
 	ID          int64      `json:"id"`
-	UserID      int64      `json:"user_id"`
-	FeedID      int64      `json:"feed_id"`
-	Status      string     `json:"status"`
+	Date        time.Time  `json:"published_at"`
+	ChangedAt   time.Time  `json:"changed_at"`
+	CreatedAt   time.Time  `json:"created_at"`
+	Feed        *Feed      `json:"feed,omitempty"`
 	Hash        string     `json:"hash"`
-	Title       string     `json:"title"`
 	URL         string     `json:"url"`
 	CommentsURL string     `json:"comments_url"`
-	Date        time.Time  `json:"published_at"`
-	CreatedAt   time.Time  `json:"created_at"`
-	ChangedAt   time.Time  `json:"changed_at"`
+	Title       string     `json:"title"`
+	Status      string     `json:"status"`
 	Content     string     `json:"content"`
 	Author      string     `json:"author"`
 	ShareCode   string     `json:"share_code"`
-	Starred     bool       `json:"starred"`
-	ReadingTime int        `json:"reading_time"`
 	Enclosures  Enclosures `json:"enclosures,omitempty"`
-	Feed        *Feed      `json:"feed,omitempty"`
 	Tags        []string   `json:"tags"`
+	ReadingTime int        `json:"reading_time"`
+	UserID      int64      `json:"user_id"`
+	FeedID      int64      `json:"feed_id"`
+	Starred     bool       `json:"starred"`
 }
 
 // EntryModificationRequest represents a request to modify an entry.

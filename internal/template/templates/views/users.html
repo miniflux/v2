@@ -9,7 +9,7 @@
 
 {{ define "content"}}
 {{ if eq (len .users) 1 }}
-    <p class="alert">{{ t "alert.no_user" }}</p>
+    <p role="alert" class="alert">{{ t "alert.no_user" }}</p>
 {{ else }}
     <table>
         <tr>

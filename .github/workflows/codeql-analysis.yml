@@ -29,6 +29,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - uses: actions/setup-go@v5
+      with:
+        go-version: "1.22.x"
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
 

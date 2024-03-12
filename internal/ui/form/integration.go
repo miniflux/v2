@@ -65,6 +65,9 @@ type IntegrationForm struct {
 	LinkdingAPIKey                   string
 	LinkdingTags                     string
 	LinkdingMarkAsUnread             bool
+	LinkwardenEnabled                bool
+	LinkwardenURL                    string
+	LinkwardenAPIKey                 string
 	MatrixBotEnabled                 bool
 	MatrixBotUser                    string
 	MatrixBotPassword                string
@@ -73,6 +76,11 @@ type IntegrationForm struct {
 	AppriseEnabled                   bool
 	AppriseURL                       string
 	AppriseServicesURL               string
+	ReadeckEnabled                   bool
+	ReadeckURL                       string
+	ReadeckAPIKey                    string
+	ReadeckLabels                    string
+	ReadeckOnlyURL                   bool
 	ShioriEnabled                    bool
 	ShioriURL                        string
 	ShioriUsername                   string
@@ -143,6 +151,9 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.LinkdingAPIKey = i.LinkdingAPIKey
 	integration.LinkdingTags = i.LinkdingTags
 	integration.LinkdingMarkAsUnread = i.LinkdingMarkAsUnread
+	integration.LinkwardenEnabled = i.LinkwardenEnabled
+	integration.LinkwardenURL = i.LinkwardenURL
+	integration.LinkwardenAPIKey = i.LinkwardenAPIKey
 	integration.MatrixBotEnabled = i.MatrixBotEnabled
 	integration.MatrixBotUser = i.MatrixBotUser
 	integration.MatrixBotPassword = i.MatrixBotPassword
@@ -151,6 +162,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.AppriseEnabled = i.AppriseEnabled
 	integration.AppriseServicesURL = i.AppriseServicesURL
 	integration.AppriseURL = i.AppriseURL
+	integration.ReadeckEnabled = i.ReadeckEnabled
+	integration.ReadeckURL = i.ReadeckURL
+	integration.ReadeckAPIKey = i.ReadeckAPIKey
+	integration.ReadeckLabels = i.ReadeckLabels
+	integration.ReadeckOnlyURL = i.ReadeckOnlyURL
 	integration.ShioriEnabled = i.ShioriEnabled
 	integration.ShioriURL = i.ShioriURL
 	integration.ShioriUsername = i.ShioriUsername
@@ -223,6 +239,9 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		LinkdingAPIKey:                   r.FormValue("linkding_api_key"),
 		LinkdingTags:                     r.FormValue("linkding_tags"),
 		LinkdingMarkAsUnread:             r.FormValue("linkding_mark_as_unread") == "1",
+		LinkwardenEnabled:                r.FormValue("linkwarden_enabled") == "1",
+		LinkwardenURL:                    r.FormValue("linkwarden_url"),
+		LinkwardenAPIKey:                 r.FormValue("linkwarden_api_key"),
 		MatrixBotEnabled:                 r.FormValue("matrix_bot_enabled") == "1",
 		MatrixBotUser:                    r.FormValue("matrix_bot_user"),
 		MatrixBotPassword:                r.FormValue("matrix_bot_password"),
@@ -231,6 +250,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		AppriseEnabled:                   r.FormValue("apprise_enabled") == "1",
 		AppriseURL:                       r.FormValue("apprise_url"),
 		AppriseServicesURL:               r.FormValue("apprise_services_url"),
+		ReadeckEnabled:                   r.FormValue("readeck_enabled") == "1",
+		ReadeckURL:                       r.FormValue("readeck_url"),
+		ReadeckAPIKey:                    r.FormValue("readeck_api_key"),
+		ReadeckLabels:                    r.FormValue("readeck_labels"),
+		ReadeckOnlyURL:                   r.FormValue("readeck_only_url") == "1",
 		ShioriEnabled:                    r.FormValue("shiori_enabled") == "1",
 		ShioriURL:                        r.FormValue("shiori_url"),
 		ShioriUsername:                   r.FormValue("shiori_username"),

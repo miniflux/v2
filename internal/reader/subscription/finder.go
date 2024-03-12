@@ -23,8 +23,8 @@ import (
 )
 
 var (
-	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)`)
-	youtubeVideoRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	youtubeChannelRegex = regexp.MustCompile(`youtube\.com/channel/(.*)$`)
+	youtubeVideoRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 )
 
 type SubscriptionFinder struct {
@@ -196,11 +196,14 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL, contentTyp
 
 func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	knownURLs := map[string]string{
-		"atom.xml": parser.FormatAtom,
-		"feed.xml": parser.FormatAtom,
-		"feed/":    parser.FormatAtom,
-		"rss.xml":  parser.FormatRSS,
-		"rss/":     parser.FormatRSS,
+		"atom.xml":  parser.FormatAtom,
+		"feed.xml":  parser.FormatAtom,
+		"feed/":     parser.FormatAtom,
+		"rss.xml":   parser.FormatRSS,
+		"rss/":      parser.FormatRSS,
+		"index.rss": parser.FormatRSS,
+		"index.xml": parser.FormatRSS,
+		"feed.atom": parser.FormatAtom,
 	}
 
 	websiteURLRoot := urllib.RootURL(websiteURL)
@@ -229,17 +232,19 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL strin
 			f.requestBuilder.WithoutRedirects()
 
 			responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(fullURL))
-			defer responseHandler.Close()
+			localizedError := responseHandler.LocalizedError()
+			responseHandler.Close()
 
-			if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+			if localizedError != nil {
+				slog.Debug("Unable to subscribe", slog.String("fullURL", fullURL), slog.Any("error", localizedError.Error()))
 				continue
 			}
 
-			subscription := new(Subscription)
-			subscription.Type = kind
-			subscription.Title = fullURL
-			subscription.URL = fullURL
-			subscriptions = append(subscriptions, subscription)
+			subscriptions = append(subscriptions, &Subscription{
+				Type:  kind,
+				Title: fullURL,
+				URL:   fullURL,
+			})
 		}
 	}
 
@@ -267,7 +272,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromRSSBridge(websiteURL, rssBridg
 		return nil, nil
 	}
 
-	var subscriptions Subscriptions
+	subscriptions := make(Subscriptions, 0, len(bridges))
 	for _, bridge := range bridges {
 		subscriptions = append(subscriptions, &Subscription{
 			Title: bridge.BridgeMeta.Name,

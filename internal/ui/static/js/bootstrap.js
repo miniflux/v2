@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("l", () => goToPage("next"));
         keyboardHandler.on("z t", () => scrollToCurrentItem());
         keyboardHandler.on("o", () => openSelectedItem());
+        keyboardHandler.on("Enter", () => openSelectedItem());
         keyboardHandler.on("v", () => openOriginalLink());
         keyboardHandler.on("V", () => openOriginalLink(true));
         keyboardHandler.on("c", () => openCommentLink());
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("?", () => showKeyboardShortcuts());
         keyboardHandler.on("+", () => goToAddSubscription());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
-        keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
+        keyboardHandler.on("/", () => goToPage("search"));
         keyboardHandler.on("a", () => {
             let enclosureElement = document.querySelector('.entry-enclosures');
             if (enclosureElement) {
@@ -51,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (WebAuthnHandler.isWebAuthnSupported()) {
         const webauthnHandler = new WebAuthnHandler();
 
-        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials() });
+        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials(); });
 
         let registerButton = document.getElementById("webauthn-register");
         if (registerButton != null) {
@@ -79,14 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    onClick("a[data-save-entry]", (event) => handleSaveEntry(event.target));
-    onClick("a[data-toggle-bookmark]", (event) => handleBookmark(event.target));
-    onClick("a[data-fetch-content-entry]", () => handleFetchOriginalContent());
-    onClick("a[data-share-status]", () => handleShare());
-    onClick("a[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
-    onClick("a[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
+    onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntry(event.target));
+    onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
+    onClick(":is(a, button)[data-fetch-content-entry]", () => handleFetchOriginalContent());
+    onClick(":is(a, button)[data-share-status]", () => handleShare());
+    onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
+    onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
 
-    onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
+    onClick(":is(a, button)[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);
 
         request.withCallback((response) => {
@@ -111,10 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    onClick("button[aria-controls='header-menu']", () => toggleMainMenu());
-    if (document.documentElement.clientWidth < 600) {
-        onClick(".header nav li", (event) => onClickMainMenuListItem(event));
-    }
+    checkMenuToggleModeByLayout();
+    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true });
+
+    fixVoiceOverDetailsSummaryBug();
+
+    const logoElement = document.querySelector(".logo");
+    logoElement.addEventListener("click", (event) => toggleMainMenu(event));
+    logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
+
+    onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
     if ("serviceWorker" in navigator) {
         let scriptElement = document.getElementById("service-worker-script");

@@ -33,18 +33,18 @@ func (v *View) Render(template string) []byte {
 
 // New returns a new view with default parameters.
 func New(tpl *template.Engine, r *http.Request, sess *session.Session) *View {
-	b := &View{tpl, r, make(map[string]interface{})}
 	theme := request.UserTheme(r)
-	b.params["menu"] = ""
-	b.params["csrf"] = request.CSRF(r)
-	b.params["flashMessage"] = sess.FlashMessage(request.FlashMessage(r))
-	b.params["flashErrorMessage"] = sess.FlashErrorMessage(request.FlashErrorMessage(r))
-	b.params["theme"] = theme
-	b.params["language"] = request.UserLanguage(r)
-	b.params["theme_checksum"] = static.StylesheetBundleChecksums[theme]
-	b.params["app_js_checksum"] = static.JavascriptBundleChecksums["app"]
-	b.params["sw_js_checksum"] = static.JavascriptBundleChecksums["service-worker"]
-	b.params["webauthn_js_checksum"] = static.JavascriptBundleChecksums["webauthn"]
-	b.params["webAuthnEnabled"] = config.Opts.WebAuthn()
-	return b
+	return &View{tpl, r, map[string]interface{}{
+		"menu":                 "",
+		"csrf":                 request.CSRF(r),
+		"flashMessage":         sess.FlashMessage(request.FlashMessage(r)),
+		"flashErrorMessage":    sess.FlashErrorMessage(request.FlashErrorMessage(r)),
+		"theme":                theme,
+		"language":             request.UserLanguage(r),
+		"theme_checksum":       static.StylesheetBundleChecksums[theme],
+		"app_js_checksum":      static.JavascriptBundleChecksums["app"],
+		"sw_js_checksum":       static.JavascriptBundleChecksums["service-worker"],
+		"webauthn_js_checksum": static.JavascriptBundleChecksums["webauthn"],
+		"webAuthnEnabled":      config.Opts.WebAuthn(),
+	}}
 }

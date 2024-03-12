@@ -35,6 +35,7 @@
     "menu.about": "Про додаток",
     "menu.export": "Експорт",
     "menu.import": "Імпорт",
+    "menu.search": "Пошук",
     "menu.create_category": "Створити категорію",
     "menu.mark_page_as_read": "Відмітити цю сторінку як прочитане",
     "menu.mark_all_as_read": "Відмітити все як прочитане",
@@ -91,20 +92,24 @@
     "page.shared_entries.title": "Спильні записи",
     "page.shared_entries_count": [
         "%d shared entry",
+        "%d shared entries",
         "%d shared entries"
     ],
     "page.unread.title": "Непрочитане",
     "page.unread_entry_count": [
         "%d unread entry",
+        "%d unread entries",
         "%d unread entries"
     ],
     "page.total_entry_count": [
         "%d entry in total",
+        "%d entries in total",
         "%d entries in total"
     ],
     "page.starred.title": "З зірочкою",
     "page.starred_entry_count": [
         "%d starred entry",
+        "%d starred entries",
         "%d starred entries"
     ],
     "page.categories.title": "Категорії",
@@ -116,9 +121,9 @@
         "Містить %d стрічки.",
         "Містить %d стрічок."
     ],
-    "page.categories.unread_counter": "Кількість непрочитаних записів",
     "page.categories_count": [
         "%d category",
+        "%d categories",
         "%d categories"
     ],
     "page.new_category.title": "Нова категорія",
@@ -138,6 +143,7 @@
     "page.history.title": "Історія",
     "page.read_entry_count": [
         "%d read entry",
+        "%d read entries",
         "%d read entries"
     ],
     "page.import.title": "Імпорт",
@@ -332,6 +338,7 @@
     "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "Ігнорувати кеш HTTP",
     "form.feed.label.allow_self_signed_certificates": "Дозволити сертифікати з власним підписом або недійсні",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Використати проксі-сервер",
     "form.feed.label.disabled": "Не оновлювати цю стрічку",
     "form.feed.label.no_media_player": "No media player (audio/video)",
@@ -444,11 +451,19 @@
     "form.integration.linkding_api_key": "Ключ API Linkding",
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkding_bookmark": "Відмічати закладку як непрочитану",
+    "form.integration.linkwarden_activate": "Зберігати статті до Linkwarden",
+    "form.integration.linkwarden_endpoint": "Linkwarden API Endpoint",
+    "form.integration.linkwarden_api_key": "Ключ API Linkwarden",
     "form.integration.matrix_bot_activate": "Перенесення нових статей в Матрицю",
     "form.integration.matrix_bot_user": "Ім'я користувача для Matrix",
     "form.integration.matrix_bot_password": "Пароль для користувача Matrix",
     "form.integration.matrix_bot_url": "URL-адреса сервера Матриці",
     "form.integration.matrix_bot_chat_id": "Ідентифікатор кімнати Матриці",
+    "form.integration.readeck_activate": "Зберігати статті до Readeck",
+    "form.integration.readeck_endpoint": "Readeck API Endpoint",
+    "form.integration.readeck_api_key": "Ключ API Readeck",
+    "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "Надіслати лише URL (замість повного вмісту)",
     "form.integration.shiori_activate": "Save articles to Shiori",
     "form.integration.shiori_endpoint": "Shiori API Endpoint",
     "form.integration.shiori_username": "Shiori Username",
@@ -499,6 +514,7 @@
     ],
     "alert.too_many_feeds_refresh": [
         "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again.",
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",

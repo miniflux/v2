@@ -163,7 +163,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			c.hide_globally as category_hidden,
 			fi.icon_id,
 			u.timezone,
-			f.apprise_service_urls
+			f.apprise_service_urls,
+			f.disable_http2
 		FROM
 			feeds f
 		LEFT JOIN
@@ -172,7 +173,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN
 			users u ON u.id=f.user_id
-		WHERE %s 
+		WHERE %s
 		%s
 	`
 
@@ -230,6 +231,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&iconID,
 			&tz,
 			&feed.AppriseServiceURLs,
+			&feed.DisableHTTP2,
 		)
 
 		if err != nil {
@@ -274,9 +276,9 @@ func (f *FeedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 			count(*)
 		FROM
 			entries e
-		%s 
+		%s
 		WHERE
-			%s 
+			%s
 		GROUP BY
 			e.feed_id, e.status
 	`

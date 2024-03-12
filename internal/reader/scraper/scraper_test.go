@@ -19,6 +19,10 @@ func TestGetPredefinedRules(t *testing.T) {
 		t.Error("Unable to find rule for linux.com")
 	}
 
+	if getPredefinedScraperRules("https://linux.com/") == "" {
+		t.Error("Unable to find rule for linux.com")
+	}
+
 	if getPredefinedScraperRules("https://example.org/") != "" {
 		t.Error("A rule not defined should not return anything")
 	}
