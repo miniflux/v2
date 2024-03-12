@@ -22,6 +22,17 @@ type ItunesFeedElement struct {
 	ItunesType       string                  `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd type"`
 }
 
+func (i *ItunesFeedElement) GetItunesCategories() []string {
+	var categories []string
+	for _, category := range i.ItunesCategories {
+		categories = append(categories, category.Text)
+		if category.SubCategory != nil {
+			categories = append(categories, category.SubCategory.Text)
+		}
+	}
+	return categories
+}
+
 type ItunesItemElement struct {
 	ItunesAuthor      string             `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd author"`
 	ItunesEpisode     string             `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd episode"`

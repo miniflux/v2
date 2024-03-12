@@ -31,6 +31,7 @@ type rssFeed struct {
 }
 
 type rssChannel struct {
+	Categories     []string  `xml:"rss category"`
 	Title          string    `xml:"rss title"`
 	Link           string    `xml:"rss link"`
 	ImageURL       string    `xml:"rss image>url"`
@@ -111,6 +112,13 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 			entry.Title = entry.URL
 		}
 
+		entry.Tags = append(entry.Tags, r.Channel.Categories...)
+		entry.Tags = append(entry.Tags, r.Channel.GetItunesCategories()...)
+
+		if r.Channel.GooglePlayCategory.Text != "" {
+			entry.Tags = append(entry.Tags, r.Channel.GooglePlayCategory.Text)
+		}
+
 		feed.Entries = append(feed.Entries, entry)
 	}
 
@@ -165,12 +173,6 @@ type rssEnclosure struct {
 	Length string `xml:"length,attr"`
 }
 
-type rssCategory struct {
-	XMLName xml.Name
-	Data    string `xml:",chardata"`
-	Inner   string `xml:",innerxml"`
-}
-
 func (enclosure *rssEnclosure) Size() int64 {
 	if enclosure.Length == "" {
 		return 0
@@ -188,7 +190,7 @@ type rssItem struct {
 	Author         rssAuthor      `xml:"rss author"`
 	Comments       string         `xml:"rss comments"`
 	EnclosureLinks []rssEnclosure `xml:"rss enclosure"`
-	Categories     []rssCategory  `xml:"rss category"`
+	Categories     []string       `xml:"rss category"`
 	dublincore.DublinCoreItemElement
 	FeedBurnerElement
 	media.Element
@@ -208,7 +210,7 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Content = r.entryContent()
 	entry.Title = r.entryTitle()
 	entry.Enclosures = r.entryEnclosures()
-	entry.Tags = r.entryCategories()
+	entry.Tags = r.Categories
 	if duration, err := normalizeDuration(r.ItunesDuration); err == nil {
 		entry.ReadingTime = duration
 	}
@@ -381,20 +383,6 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 	}
 
 	return enclosures
-}
-
-func (r *rssItem) entryCategories() []string {
-	categoryList := make([]string, 0)
-
-	for _, rssCategory := range r.Categories {
-		if strings.Contains(rssCategory.Inner, "<![CDATA[") {
-			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Data))
-		} else {
-			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Inner))
-		}
-	}
-
-	return categoryList
 }
 
 func (r *rssItem) entryCommentsURL() string {

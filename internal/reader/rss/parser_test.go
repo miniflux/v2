@@ -1434,18 +1434,17 @@ func TestParseEntryWithRSSDescriptionAndMediaDescription(t *testing.T) {
 	}
 }
 
-func TestParseEntryWithCategoryAndInnerHTML(t *testing.T) {
+func TestParseFeedWithCategories(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
 			<title>Example</title>
 			<link>https://example.org/</link>
-			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<category>Category 1</category>
+			<category><![CDATA[Category 2]]></category>
 			<item>
 				<title>Test</title>
 				<link>https://example.org/item</link>
-				<category>Category 1</category>
-				<category>Category 2</category>
 			</item>
 		</channel>
 		</rss>`
@@ -1459,27 +1458,99 @@ func TestParseEntryWithCategoryAndInnerHTML(t *testing.T) {
 		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := "Category 2"
-	result := feed.Entries[0].Tags[1]
-	if result != expected {
-		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	expected := []string{"Category 1", "Category 2"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
 	}
 }
 
-func TestParseEntryWithCategoryAndCDATA(t *testing.T) {
+func TestParseEntryWithCategories(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
 			<title>Example</title>
 			<link>https://example.org/</link>
-			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<category>Category 3</category>
 			<item>
 				<title>Test</title>
 				<link>https://example.org/item</link>
-				<author>
-					by <![CDATA[Foo Bar]]>
-				</author>
-				<category>Sample Category</category>
+				<category>Category 1</category>
+				<category><![CDATA[Category 2]]></category>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 3 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := []string{"Category 1", "Category 2", "Category 3"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
+	}
+}
+
+func TestParseFeedWithItunesCategories(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<itunes:category text="Society &amp; Culture">
+				<itunes:category text="Documentary" />
+			</itunes:category>
+			<itunes:category text="Health">
+				<itunes:category text="Mental Health" />
+			</itunes:category>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 4 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := []string{"Society & Culture", "Documentary", "Health", "Mental Health"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
+	}
+}
+
+func TestParseFeedWithGooglePlayCategory(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gplay="http://www.google.com/schemas/play-podcasts/1.0" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<gplay:category text="Art"></gplay:category>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
 			</item>
 		</channel>
 		</rss>`
@@ -1493,10 +1564,13 @@ func TestParseEntryWithCategoryAndCDATA(t *testing.T) {
 		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := "Sample Category"
-	result := feed.Entries[0].Tags[0]
-	if result != expected {
-		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	expected := []string{"Art"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
 	}
 }
 
