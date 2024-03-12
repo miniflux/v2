@@ -12,4 +12,5 @@ type SubscriptionDiscoveryRequest struct {
 	Password                    string `json:"password"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	DisableHTTP2                bool   `json:"disable_http2"`
 }

@@ -39,7 +39,7 @@ func (h *handler) pocketAuthorize(w http.ResponseWriter, r *http.Request) {
 			slog.Any("user_id", user.ID),
 			slog.Any("error", err),
 		)
-		sess.NewFlashErrorMessage(printer.Printf("error.pocket_request_token"))
+		sess.NewFlashErrorMessage(printer.Print("error.pocket_request_token"))
 		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return
 	}
@@ -71,7 +71,7 @@ func (h *handler) pocketCallback(w http.ResponseWriter, r *http.Request) {
 			slog.Any("user_id", user.ID),
 			slog.Any("error", err),
 		)
-		sess.NewFlashErrorMessage(printer.Printf("error.pocket_access_token"))
+		sess.NewFlashErrorMessage(printer.Print("error.pocket_access_token"))
 		html.Redirect(w, r, route.Path(h.router, "integrations"))
 		return
 	}
@@ -85,6 +85,6 @@ func (h *handler) pocketCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sess.NewFlashMessage(printer.Printf("alert.pocket_linked"))
+	sess.NewFlashMessage(printer.Print("alert.pocket_linked"))
 	html.Redirect(w, r, route.Path(h.router, "integrations"))
 }

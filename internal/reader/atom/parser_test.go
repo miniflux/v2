@@ -30,7 +30,7 @@ func TestDetectAtom10(t *testing.T) {
 
 	</feed>`
 
-	version := getAtomFeedVersion(bytes.NewBufferString(data))
+	version := getAtomFeedVersion(bytes.NewReader([]byte(data)))
 	if version != "1.0" {
 		t.Errorf(`Invalid Atom version detected: %s`, version)
 	}
@@ -54,7 +54,7 @@ func TestDetectAtom03(t *testing.T) {
 		</entry>
 	</feed>`
 
-	version := getAtomFeedVersion(bytes.NewBufferString(data))
+	version := getAtomFeedVersion(bytes.NewReader([]byte(data)))
 	if version != "0.3" {
 		t.Errorf(`Invalid Atom version detected: %s`, version)
 	}

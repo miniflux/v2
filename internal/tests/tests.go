@@ -7,9 +7,9 @@
 package tests
 
 import (
+	"fmt"
+	"math"
 	"math/rand"
-	"strconv"
-	"strings"
 	"testing"
 
 	miniflux "miniflux.app/v2/client"
@@ -27,11 +27,7 @@ const (
 )
 
 func getRandomUsername() string {
-	var suffix []string
-	for i := 0; i < 10; i++ {
-		suffix = append(suffix, strconv.Itoa(rand.Intn(1000)))
-	}
-	return "user" + strings.Join(suffix, "")
+	return fmt.Sprintf("user%10d", rand.Intn(math.MaxInt64))
 }
 
 func createClient(t *testing.T) *miniflux.Client {

@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/cookie"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
@@ -92,7 +93,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 			formValue := r.FormValue("csrf")
 			headerValue := r.Header.Get("X-Csrf-Token")
 
-			if session.Data.CSRF != formValue && session.Data.CSRF != headerValue {
+			if !crypto.ConstantTimeCmp(session.Data.CSRF, formValue) && !crypto.ConstantTimeCmp(session.Data.CSRF, headerValue) {
 				slog.Warn("Invalid or missing CSRF token",
 					slog.Any("url", r.RequestURI),
 					slog.String("form_csrf", formValue),

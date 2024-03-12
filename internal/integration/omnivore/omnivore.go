@@ -11,8 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
-
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -79,7 +78,7 @@ func (c *client) SaveUrl(url string) error {
 		"query": mutation,
 		"variables": map[string]interface{}{
 			"input": map[string]interface{}{
-				"clientRequestId": uuid.New().String(),
+				"clientRequestId": crypto.GenerateUUID(),
 				"source":          "api",
 				"url":             url,
 			},

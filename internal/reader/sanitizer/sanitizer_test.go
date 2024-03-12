@@ -16,6 +16,25 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
+func BenchmarkSanitize(b *testing.B) {
+	var testCases = map[string][]string{
+		"miniflux_github.html":    {"https://github.com/miniflux/v2", ""},
+		"miniflux_wikipedia.html": {"https://fr.wikipedia.org/wiki/Miniflux", ""},
+	}
+	for filename := range testCases {
+		data, err := os.ReadFile("testdata/" + filename)
+		if err != nil {
+			b.Fatalf(`Unable to read file %q: %v`, filename, err)
+		}
+		testCases[filename][1] = string(data)
+	}
+	for range b.N {
+		for _, v := range testCases {
+			Sanitize(v[0], v[1])
+		}
+	}
+}
+
 func TestValidInput(t *testing.T) {
 	input := `<p>This is a <strong>text</strong> with an image: <img src="http://example.org/" alt="Test" loading="lazy">.</p>`
 	output := Sanitize("http://example.org/", input)

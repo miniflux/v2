@@ -75,7 +75,7 @@ func TestParseRDFSample(t *testing.T) {
 
 	</rdf:RDF>`
 
-	feed, err := Parse("http://xml.com/pub/rdf.xml", bytes.NewBufferString(data))
+	feed, err := Parse("http://xml.com/pub/rdf.xml", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -186,7 +186,7 @@ func TestParseRDFSampleWithDublinCore(t *testing.T) {
 
 	</rdf:RDF>`
 
-	feed, err := Parse("http://meerkat.oreillynet.com/feed.rdf", bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com/feed.rdf", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -253,7 +253,7 @@ func TestParseItemWithOnlyFeedAuthor(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -278,7 +278,7 @@ func TestParseItemRelativeURL(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -307,7 +307,7 @@ func TestParseItemWithoutLink(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewBufferString(data))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -338,7 +338,7 @@ func TestParseItemWithDublicCoreDate(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -366,7 +366,7 @@ func TestParseItemWithEncodedHTMLInDCCreatorField(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -392,7 +392,7 @@ func TestParseItemWithoutDate(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -406,7 +406,7 @@ func TestParseItemWithoutDate(t *testing.T) {
 
 func TestParseItemWithEncodedHTMLTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
 	  <channel>
 			<title>Example</title>
 			<link>http://example.org</link>
@@ -419,19 +419,19 @@ func TestParseItemWithEncodedHTMLTitle(t *testing.T) {
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if feed.Entries[0].Title != `AT&T` {
-		t.Errorf("Incorrect entry title, got: %v", feed.Entries[0].Title)
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
 
 func TestParseInvalidXml(t *testing.T) {
 	data := `garbage`
-	_, err := Parse("http://example.org", bytes.NewBufferString(data))
+	_, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err == nil {
 		t.Fatal("Parse should returns an error")
 	}
@@ -446,7 +446,7 @@ func TestParseFeedWithHTMLEntity(t *testing.T) {
 	  </channel>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -465,7 +465,7 @@ func TestParseFeedWithInvalidCharacterEntity(t *testing.T) {
 	  </channel>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -502,7 +502,7 @@ func TestParseFeedWithURLWrappedInSpaces(t *testing.T) {
 	<item rdf:about="http://biorxiv.org/cgi/content/short/857789v1?rss=1">
 		<title>
 			<![CDATA[
-			Microscale Collagen and Fibroblast Interactions Enhance Primary Human Hepatocyte Functions in 3-Dimensional Models 
+			Microscale Collagen and Fibroblast Interactions Enhance Primary Human Hepatocyte Functions in 3-Dimensional Models
 			]]>
 		</title>
 		<link>
@@ -521,7 +521,7 @@ func TestParseFeedWithURLWrappedInSpaces(t *testing.T) {
 	</item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://biorxiv.org", bytes.NewBufferString(data))
+	feed, err := Parse("http://biorxiv.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -556,7 +556,7 @@ func TestParseRDFWithContentEncoded(t *testing.T) {
 		</item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -568,7 +568,7 @@ func TestParseRDFWithContentEncoded(t *testing.T) {
 	expected := `<p>Test</p>`
 	result := feed.Entries[0].Content
 	if result != expected {
-		t.Errorf(`Unexpected entry URL, got %q instead of %q`, result, expected)
+		t.Errorf(`Unexpected entry content, got %q instead of %q`, result, expected)
 	}
 }
 
@@ -589,7 +589,7 @@ func TestParseRDFWithEncodedHTMLDescription(t *testing.T) {
 		</item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org/", bytes.NewBufferString(data))
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -601,6 +601,105 @@ func TestParseRDFWithEncodedHTMLDescription(t *testing.T) {
 	expected := `AT&amp;T <img src="https://example.org/img.png"></a>`
 	result := feed.Entries[0].Content
 	if result != expected {
-		t.Errorf(`Unexpected entry URL, got %v instead of %v`, result, expected)
+		t.Errorf(`Unexpected entry content, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestParseRDFItemWithDuplicateTitleElement(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/"
+		xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<title>Item Title</title>
+			<dc:title/>
+			<link>http://example.org/</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `Item Title`
+	result := feed.Entries[0].Title
+	if result != expected {
+		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseRDFItemWithDublinCoreTitleElement(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/"
+		xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<dc:title>Dublin Core Title</dc:title>
+			<link>http://example.org/</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `Dublin Core Title`
+	result := feed.Entries[0].Title
+	if result != expected {
+		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseRDFItemWitEmptyTitleElement(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<title> </title>
+			<link>http://example.org/item</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `http://example.org/item`
+	result := feed.Entries[0].Title
+	if result != expected {
+		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
 	}
 }

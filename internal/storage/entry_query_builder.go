@@ -397,7 +397,18 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 // GetEntryIDs returns a list of entry IDs that match the condition.
 func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
-	query := `SELECT e.id FROM entries e LEFT JOIN feeds f ON f.id=e.feed_id WHERE %s %s`
+	query := `
+		SELECT
+			e.id
+		FROM 
+			entries e
+		LEFT JOIN
+			feeds f
+		ON
+			f.id=e.feed_id 
+		WHERE 
+			%s %s
+	`
 
 	condition := e.buildCondition()
 	query = fmt.Sprintf(query, condition, e.buildSorting())

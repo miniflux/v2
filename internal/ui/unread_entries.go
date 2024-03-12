@@ -19,10 +19,6 @@ import (
 
 func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	beginPreProcessing := time.Now()
-
-	sess := session.New(h.store, request.SessionID(r))
-	view := view.New(h.tpl, r, sess)
-
 	user, err := h.store.UserByID(request.UserID(r))
 	if err != nil {
 		html.ServerError(w, r, err)
@@ -59,6 +55,8 @@ func (h *handler) showUnreadPage(w http.ResponseWriter, r *http.Request) {
 	}
 	finishSqlFetchUnreadEntries := time.Now()
 
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
 	view.Set("entries", entries)
 	view.Set("pagination", getPagination(route.Path(h.router, "unread"), countUnread, offset, user.EntriesPerPage))
 	view.Set("menu", "unread")

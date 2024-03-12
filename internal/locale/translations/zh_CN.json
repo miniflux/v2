@@ -35,6 +35,7 @@
     "menu.about": "关于",
     "menu.export": "导出",
     "menu.import": "导入",
+    "menu.search": "搜索",
     "menu.create_category": "新建分类",
     "menu.mark_page_as_read": "标记为已读",
     "menu.mark_all_as_read": "全部标为已读",
@@ -83,28 +84,23 @@
     "entry.shared_entry.title": "打开公共链接",
     "entry.shared_entry.label": "分享",
     "entry.estimated_reading_time": [
-        "需要 %d 分钟阅读",
         "需要 %d 分钟阅读"
     ],
     "entry.tags.label": "标签：",
     "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
-        "%d shared entry",
-        "%d shared entries"
+        "%d shared entry"
     ],
     "page.unread.title": "未读",
     "page.unread_entry_count": [
-        "%d unread entry",
-        "%d unread entries"
+        "%d unread entry"
     ],
     "page.total_entry_count": [
-        "%d entry in total",
-        "%d entries in total"
+        "%d entry in total"
     ],
     "page.starred.title": "收藏",
     "page.starred_entry_count": [
-        "%d starred entry",
-        "%d starred entries"
+        "%d starred entry"
     ],
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
@@ -114,8 +110,7 @@
         "有 %d 个源"
     ],
     "page.categories_count": [
-        "%d category",
-        "%d categories"
+        "%d category"
     ],
     "page.new_category.title": "新分类",
     "page.new_user.title": "新用户",
@@ -131,8 +126,7 @@
     ],
     "page.history.title": "历史",
     "page.read_entry_count": [
-        "%d read entry",
-        "%d read entries"
+        "%d read entry"
     ],
     "page.import.title": "导入",
     "page.search.title": "搜索结果",
@@ -213,7 +207,6 @@
     "page.settings.webauthn.register": "注册 Passkey",
     "page.settings.webauthn.register.error": "无法注册 Passkey",
     "page.settings.webauthn.delete": [
-        "删除 %d 个 Passkey",
         "删除 %d 个 Passkey"
     ],
     "page.login.title": "登录",
@@ -325,6 +318,7 @@
     "form.feed.label.apprise_service_urls": "使用逗号分隔的 Apprise 服务 URL 列表",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 缓存",
     "form.feed.label.allow_self_signed_certificates": "允许自签名证书或无效证书",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "通过代理获取",
     "form.feed.label.disabled": "请勿刷新此源",
     "form.feed.label.no_media_player": "没有媒体播放器(音频/视频)",
@@ -445,6 +439,11 @@
     "form.integration.matrix_bot_password": "Matrix Bot 密码",
     "form.integration.matrix_bot_url": "Matrix 服务器 URL",
     "form.integration.matrix_bot_chat_id": "Matrix 聊天 ID",
+    "form.integration.readeck_activate": "保存文章到 Readeck",
+    "form.integration.readeck_endpoint": "Readeck API 端点",
+    "form.integration.readeck_api_key": "Readeck API 密钥",
+    "form.integration.readeck_labels": "Readeck 默认标签",
+    "form.integration.readeck_only_url": "仅发送 URL（而不是完整内容）",
     "form.integration.shiori_activate": "保存文章到 Shiori",
     "form.integration.shiori_endpoint": "Shiori API 端点",
     "form.integration.shiori_username": "Shiori 用户名",
@@ -482,8 +481,7 @@
         "%d 年前"
     ],
     "alert.too_many_feeds_refresh": [
-        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
-        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
     "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",

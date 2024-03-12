@@ -45,7 +45,7 @@ func refreshFeeds(store *storage.Storage) {
 		slog.Int("nb_workers", config.Opts.WorkerPoolSize()),
 	)
 
-	for i := 0; i < config.Opts.WorkerPoolSize(); i++ {
+	for i := range config.Opts.WorkerPoolSize() {
 		wg.Add(1)
 		go func(workerID int) {
 			defer wg.Done()

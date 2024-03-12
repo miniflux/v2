@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("l", () => goToPage("next"));
         keyboardHandler.on("z t", () => scrollToCurrentItem());
         keyboardHandler.on("o", () => openSelectedItem());
+        keyboardHandler.on("Enter", () => openSelectedItem());
         keyboardHandler.on("v", () => openOriginalLink());
         keyboardHandler.on("V", () => openOriginalLink(true));
         keyboardHandler.on("c", () => openCommentLink());
@@ -34,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.on("?", () => showKeyboardShortcuts());
         keyboardHandler.on("+", () => goToAddSubscription());
         keyboardHandler.on("#", () => unsubscribeFromFeed());
-        keyboardHandler.on("/", (e) => setFocusToSearchInput(e));
+        keyboardHandler.on("/", () => goToPage("search"));
         keyboardHandler.on("a", () => {
             let enclosureElement = document.querySelector('.entry-enclosures');
             if (enclosureElement) {
@@ -51,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (WebAuthnHandler.isWebAuthnSupported()) {
         const webauthnHandler = new WebAuthnHandler();
 
-        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials() });
+        onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials(); });
 
         let registerButton = document.getElementById("webauthn-register");
         if (registerButton != null) {
@@ -111,12 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-    checkMenuToggleModeByLayout()
-    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true })
+    checkMenuToggleModeByLayout();
+    window.addEventListener("resize", checkMenuToggleModeByLayout, { passive: true });
 
-    fixVoiceOverDetailsSummaryBug()
+    fixVoiceOverDetailsSummaryBug();
 
-    const logoElement = document.querySelector(".logo")
+    const logoElement = document.querySelector(".logo");
     logoElement.addEventListener("click", (event) => toggleMainMenu(event));
     logoElement.addEventListener("keydown", (event) => toggleMainMenu(event));
 

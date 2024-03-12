@@ -17,15 +17,23 @@ import (
 // EstimateReadingTime returns the estimated reading time of an article in minute.
 func EstimateReadingTime(content string, defaultReadingSpeed, cjkReadingSpeed int) int {
 	sanitizedContent := sanitizer.StripTags(content)
-	langInfo := whatlanggo.Detect(sanitizedContent)
 
-	var timeToReadInt int
-	if langInfo.IsReliable() && (langInfo.Lang == whatlanggo.Jpn || langInfo.Lang == whatlanggo.Cmn || langInfo.Lang == whatlanggo.Kor) {
-		timeToReadInt = int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / float64(cjkReadingSpeed)))
-	} else {
-		nbOfWords := len(strings.Fields(sanitizedContent))
-		timeToReadInt = int(math.Ceil(float64(nbOfWords) / float64(defaultReadingSpeed)))
+	// Litterature on language detection says that around 100 signes is enough, we're safe here.
+	truncationPoint := int(math.Min(float64(len(sanitizedContent)), 250))
+
+	// We're only interested in identifying Japanse/Chinese/Korean
+	options := whatlanggo.Options{
+		Whitelist: map[whatlanggo.Lang]bool{
+			whatlanggo.Jpn: true,
+			whatlanggo.Cmn: true,
+			whatlanggo.Kor: true,
+		},
 	}
+	langInfo := whatlanggo.DetectWithOptions(sanitizedContent[:truncationPoint], options)
 
-	return timeToReadInt
+	if langInfo.IsReliable() {
+		return int(math.Ceil(float64(utf8.RuneCountInString(sanitizedContent)) / float64(cjkReadingSpeed)))
+	}
+	nbOfWords := len(strings.Fields(sanitizedContent))
+	return int(math.Ceil(float64(nbOfWords) / float64(defaultReadingSpeed)))
 }

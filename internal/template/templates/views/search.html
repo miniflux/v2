@@ -1,0 +1,57 @@
+{{ define "title"}}{{ t "page.search.title" }} ({{ .total }}){{ end }}
+
+{{ define "page_header"}}
+<section class="page-header" aria-labelledby="page-header-title">
+    <h1 id="page-header-title">{{ t "page.search.title" }} ({{ .total }})</h1>
+</section>
+{{ end }}
+
+{{ define "content"}}
+<search role="search">
+    <form action="{{ route "search" }}" aria-labelledby="search-input-label">
+        <input type="search" name="q" id="search-input" aria-label="{{ t "search.label" }}" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ else }}autofocus{{ end }} required>
+        <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "search.submit" }}</button>
+    </form>
+</search>
+
+{{ if $.searchQuery }}
+    {{ if not .entries }}
+        <p role="alert" class="alert alert-info">{{ t "alert.no_search_result" }}</p>
+    {{ else }}
+        <div class="pagination-top">
+            {{ template "pagination" .pagination }}
+        </div>
+        <div class="items">
+            {{ range .entries }}
+            <article
+                class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}"
+                data-id="{{ .ID }}"
+                aria-labelledby="entry-title-{{ .ID }}"
+            >
+                <header class="item-header" dir="auto">
+                    <h2 id="entry-title-{{ .ID }}" class="item-title">
+                        <a href="{{ route "searchEntry" "entryID" .ID }}?q={{ $.searchQuery }}">
+                            {{ if ne .Feed.Icon.IconID 0 }}
+                            <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                            {{ else }}
+                            <span class="sr-only">{{ .Feed.Title }}</span>
+                            {{ end }}
+                            {{ .Title }}
+                        </a>
+                    </h2>
+                    <span class="category">
+                        <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
+                            {{ .Feed.Category.Title }}
+                        </a>
+                    </span>
+                </header>
+                {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
+            </article>
+            {{ end }}
+        </div>
+        <div class="pagination-bottom">
+            {{ template "pagination" .pagination }}
+        </div>
+    {{ end }}
+{{ end }}
+{{ end }}

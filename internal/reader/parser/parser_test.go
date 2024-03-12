@@ -8,6 +8,62 @@ import (
 	"testing"
 )
 
+func FuzzParse(f *testing.F) {
+	f.Add("https://z.org", `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>Example Feed</title>
+<link href="http://z.org/"/>
+<link href="/k"/>
+<updated>2003-12-13T18:30:02Z</updated>
+<author><name>John Doe</name></author>
+<id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+<entry>
+<title>a</title>
+<link href="http://example.org/b"/>
+<id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+<updated>2003-12-13T18:30:02Z</updated>
+<summary>c</summary>
+</entry>
+</feed>`)
+	f.Add("https://z.org", `<?xml version="1.0"?>
+<rss version="2.0">
+<channel>
+<title>a</title>
+<link>http://z.org</link>
+<item>
+<title>a</title>
+<link>http://z.org</link>
+<description>d</description>
+<pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+<guid>l</guid>
+</item>
+</channel>
+</rss>`)
+	f.Add("https://z.org", `<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+<channel>
+<title>a</title>
+<link>http://z.org/</link>
+</channel>
+<item>
+<title>a</title>
+<link>/</link>
+<description>c</description>
+</item>
+</rdf:RDF>`)
+	f.Add("http://z.org", `{
+"version": "http://jsonfeed.org/version/1",
+"title": "a",
+"home_page_url": "http://z.org/",
+"feed_url": "http://z.org/a.json",
+"items": [
+{"id": "2","content_text": "a","url": "https://z.org/2"},
+{"id": "1","content_html": "<a","url":"http://z.org/1"}]}`)
+	f.Fuzz(func(t *testing.T, url string, data string) {
+		ParseFeed(url, strings.NewReader(data))
+	})
+}
+
 func TestParseAtom(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">

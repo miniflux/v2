@@ -20,9 +20,9 @@ import (
 )
 
 var (
-	youtubeRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)`)
+	youtubeRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
-	invidioRegex   = regexp.MustCompile(`https?:\/\/(.*)\/watch\?v=(.*)`)
+	invidioRegex   = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
 	imgRegex       = regexp.MustCompile(`<img [^>]+>`)
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
@@ -292,7 +292,7 @@ func addInvidiousVideo(entryURL, entryContent string) string {
 
 func addPDFLink(entryURL, entryContent string) string {
 	if strings.HasSuffix(entryURL, ".pdf") {
-		return fmt.Sprintf(`<a href="%s">PDF</a><br>%s`, entryURL, entryContent)
+		return fmt.Sprintf(`<a href=%q>PDF</a><br>%s`, entryURL, entryContent)
 	}
 	return entryContent
 }
@@ -302,7 +302,7 @@ func replaceTextLinks(input string) string {
 }
 
 func replaceLineFeeds(input string) string {
-	return strings.Replace(input, "\n", "<br>", -1)
+	return strings.ReplaceAll(input, "\n", "<br>")
 }
 
 func replaceCustom(entryContent string, searchTerm string, replaceTerm string) string {

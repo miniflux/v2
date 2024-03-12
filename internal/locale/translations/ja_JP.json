@@ -35,6 +35,7 @@
     "menu.about": "ソフトウェア情報",
     "menu.export": "エクスポート",
     "menu.import": "インポート",
+    "menu.search": "検索",
     "menu.create_category": "カテゴリを作成",
     "menu.mark_page_as_read": "このページを既読にする",
     "menu.mark_all_as_read": "すべて既読にする",
@@ -83,40 +84,33 @@
     "entry.shared_entry.title": "公開リンクを開く",
     "entry.shared_entry.label": "共有する",
     "entry.estimated_reading_time": [
-        "%d 分で読めます",
         "%d 分で読めます"
     ],
     "entry.tags.label": "タグ:",
     "page.shared_entries.title": "共有エントリ",
     "page.shared_entries_count": [
-        "%d shared entry",
-        "%d shared entries"
+        "%d shared entry"
     ],
     "page.unread.title": "未読",
     "page.unread_entry_count": [
-        "%d unread entry",
-        "%d unread entries"
+        "%d unread entry"
     ],
     "page.total_entry_count": [
-        "%d entry in total",
-        "%d entries in total"
+        "%d entry in total"
     ],
     "page.starred.title": "星付き",
     "page.starred_entry_count": [
-        "%d starred entry",
-        "%d starred entries"
+        "%d starred entry"
     ],
     "page.categories.title": "カテゴリ",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.entries": "記事一覧",
     "page.categories.feeds": "フィード一覧",
     "page.categories.feed_count": [
-        "%d 件のフィードがあります。",
         "%d 件のフィードがあります。"
     ],
     "page.categories_count": [
-        "%d category",
-        "%d categories"
+        "%d category"
     ],
     "page.new_category.title": "新規カテゴリ",
     "page.new_user.title": "新規ユーザー",
@@ -128,13 +122,11 @@
     "page.feeds.next_check": "Next check:",
     "page.feeds.read_counter": "既読記事の数",
     "page.feeds.error_count": [
-        "%d 個のエラー",
         "%d 個のエラー"
     ],
     "page.history.title": "履歴",
     "page.read_entry_count": [
-        "%d read entry",
-        "%d read entries"
+        "%d read entry"
     ],
     "page.import.title": "インポート",
     "page.search.title": "検索結果",
@@ -215,7 +207,6 @@
     "page.settings.webauthn.register": "パスキーを登録する",
     "page.settings.webauthn.register.error": "パスキーを登録できません",
     "page.settings.webauthn.delete": [
-        "%d 個のパスキーを削除",
         "%d 個のパスキーを削除"
     ],
     "page.login.title": "ログイン",
@@ -327,6 +318,7 @@
     "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
     "form.feed.label.ignore_http_cache": "HTTPキャッシュを無視",
     "form.feed.label.allow_self_signed_certificates": "自己署名証明書または無効な証明書を許可する",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "プロキシ経由で取得",
     "form.feed.label.disabled": "このフィードを更新しない",
     "form.feed.label.no_media_player": "No media player (audio/video)",
@@ -447,6 +439,11 @@
     "form.integration.matrix_bot_password": "Matrixユーザ用パスワード",
     "form.integration.matrix_bot_url": "MatrixサーバーのURL",
     "form.integration.matrix_bot_chat_id": "MatrixルームのID",
+    "form.integration.readeck_activate": "Readeck に記事を保存する",
+    "form.integration.readeck_endpoint": "Readeck の API Endpoint",
+    "form.integration.readeck_api_key": "Readeck の API key",
+    "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_only_url": "URL のみを送信 (完全なコンテンツではなく)",
     "form.integration.shiori_activate": "Shiori に記事を保存する",
     "form.integration.shiori_endpoint": "Shiori の API Endpoint",
     "form.integration.shiori_username": "Shiori の ユーザー名",
@@ -466,32 +463,25 @@
     "time_elapsed.yesterday": "昨日",
     "time_elapsed.now": "今",
     "time_elapsed.minutes": [
-        "%d 分前",
         "%d 分前"
     ],
     "time_elapsed.hours": [
-        "%d 時間前",
         "%d 時間前"
     ],
     "time_elapsed.days": [
-        "%d 日前",
         "%d 日前"
     ],
     "time_elapsed.weeks": [
-        "%d 週間前",
         "%d 週間前"
     ],
     "time_elapsed.months": [
-        "%d か月前",
         "%d か月前"
     ],
     "time_elapsed.years": [
-        "%d 年前",
         "%d 年前"
     ],
     "alert.too_many_feeds_refresh": [
-        "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
-        "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
+        "You have triggered too many feed refreshes. Please wait %d minute before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
     "error.http_response_too_large": "The HTTP response is too large. You could increase the HTTP response size limit in the global settings (requires a server restart).",

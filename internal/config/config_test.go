@@ -1944,7 +1944,7 @@ func TestParseConfigDumpOutput(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := tmpfile.Write([]byte(serialized)); err != nil {
+	if _, err := tmpfile.WriteString(serialized); err != nil {
 		t.Fatal(err)
 	}
 

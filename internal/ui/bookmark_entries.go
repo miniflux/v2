@@ -43,7 +43,6 @@ func (h *handler) showStarredPage(w http.ResponseWriter, r *http.Request) {
 
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
-
 	view.Set("total", count)
 	view.Set("entries", entries)
 	view.Set("pagination", getPagination(route.Path(h.router, "starred"), count, offset, user.EntriesPerPage))

@@ -35,6 +35,7 @@
     "menu.about": "О приложении",
     "menu.export": "Экспорт",
     "menu.import": "Импорт",
+    "menu.search": "Поиск",
     "menu.create_category": "Создать категорию",
     "menu.mark_page_as_read": "Отметить эту страницу прочитанной",
     "menu.mark_all_as_read": "Отметить всё как прочитанное",
@@ -84,26 +85,31 @@
     "entry.shared_entry.label": "Поделиться",
     "entry.estimated_reading_time": [
         "%d минута чтения",
+        "%d минуты чтения",
         "%d минут чтения"
     ],
     "entry.tags.label": "Теги:",
     "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d shared entry",
+        "%d shared entries",
         "%d shared entries"
     ],
     "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d unread entry",
+        "%d unread entries",
         "%d unread entries"
     ],
     "page.total_entry_count": [
         "%d entry in total",
+        "%d entries in total",
         "%d entries in total"
     ],
     "page.starred.title": "Избранное",
     "page.starred_entry_count": [
         "%d starred entry",
+        "%d starred entries",
         "%d starred entries"
     ],
     "page.categories.title": "Категории",
@@ -117,6 +123,7 @@
     ],
     "page.categories_count": [
         "%d category",
+        "%d categories",
         "%d categories"
     ],
     "page.new_category.title": "Новая категория",
@@ -136,6 +143,7 @@
     "page.history.title": "История",
     "page.read_entry_count": [
         "%d read entry",
+        "%d read entries",
         "%d read entries"
     ],
     "page.import.title": "Импорт",
@@ -330,6 +338,7 @@
     "form.feed.label.apprise_service_urls": "Список ссылок сервисов Apprise, разделенный запятой",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP кеш",
     "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
+    "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",
     "form.feed.label.fetch_via_proxy": "Использовать прокси",
     "form.feed.label.disabled": "Не обновлять эту подписку",
     "form.feed.label.no_media_player": "Отключить медиаплеер (аудио и видео)",
@@ -450,6 +459,11 @@
     "form.integration.matrix_bot_password": "Пароль пользователя Matrix",
     "form.integration.matrix_bot_url": "Ссылка на сервер Matrix",
     "form.integration.matrix_bot_chat_id": "ID комнаты Matrix",
+    "form.integration.readeck_activate": "Сохранять статьи в Readeck",
+    "form.integration.readeck_endpoint": "Конечная точка Readeck API",
+    "form.integration.readeck_api_key": "API-ключ Readeck",
+    "form.integration.readeck_labels": "Теги Readeck",
+    "form.integration.readeck_only_url": "Отправлять только ссылку (без содержимого)",
     "form.integration.shiori_activate": "Сохранять статьи в Shiori",
     "form.integration.shiori_endpoint": "Конечная точка Shiori API",
     "form.integration.shiori_username": "Имя пользователя Shiori",
@@ -500,6 +514,7 @@
     ],
     "alert.too_many_feeds_refresh": [
         "You have triggered too many feed refreshes. Please wait %d minute before trying again.",
+        "You have triggered too many feed refreshes. Please wait %d minutes before trying again.",
         "You have triggered too many feed refreshes. Please wait %d minutes before trying again."
     ],
     "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",

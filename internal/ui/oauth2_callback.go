@@ -81,7 +81,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 				slog.String("oauth2_provider", provider),
 				slog.String("oauth2_profile_id", profile.ID),
 			)
-			sess.NewFlashErrorMessage(printer.Printf("error.duplicate_linked_account"))
+			sess.NewFlashErrorMessage(printer.Print("error.duplicate_linked_account"))
 			html.Redirect(w, r, route.Path(h.router, "settings"))
 			return
 		}
@@ -92,7 +92,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sess.NewFlashMessage(printer.Printf("alert.account_linked"))
+		sess.NewFlashMessage(printer.Print("alert.account_linked"))
 		html.Redirect(w, r, route.Path(h.router, "settings"))
 		return
 	}
@@ -110,7 +110,7 @@ func (h *handler) oauth2Callback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if h.store.UserExists(profile.Username) {
-			html.BadRequest(w, r, errors.New(printer.Printf("error.user_already_exists")))
+			html.BadRequest(w, r, errors.New(printer.Print("error.user_already_exists")))
 			return
 		}
 
