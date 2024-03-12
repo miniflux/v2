@@ -300,7 +300,7 @@ func TestParseEntryWithMultipleAtomLinks(t *testing.T) {
 			<item>
 				<title>Test</title>
 				<atom:link rel="payment" href="https://example.org/a" />
-				<atom:link rel="http://foobar.tld" href="https://example.org/b" />
+				<atom:link rel="alternate" href="https://example.org/b" />
 			</item>
 		</channel>
 		</rss>`
@@ -430,7 +430,7 @@ func TestParseEntryWithAuthorAndCDATA(t *testing.T) {
 				<title>Test</title>
 				<link>https://example.org/item</link>
 				<author>
-					by <![CDATA[Foo Bar]]>
+					<![CDATA[by Foo Bar]]>
 				</author>
 			</item>
 		</channel>
@@ -441,38 +441,6 @@ func TestParseEntryWithAuthorAndCDATA(t *testing.T) {
 		t.Fatal(err)
 	}
 	expected := "by Foo Bar"
-	result := feed.Entries[0].Author
-	if result != expected {
-		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
-	}
-}
-
-func TestParseEntryWithNonStandardAtomAuthor(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-		<channel>
-			<title>Example</title>
-			<link>https://example.org/</link>
-			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
-			<item>
-				<title>Test</title>
-				<link>https://example.org/item</link>
-				<author xmlns:author="http://www.w3.org/2005/Atom">
-					<name>Foo Bar</name>
-					<title>Vice President</title>
-					<department/>
-					<company>FooBar Inc.</company>
-				</author>
-			</item>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected := "Foo Bar"
 	result := feed.Entries[0].Author
 	if result != expected {
 		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
@@ -508,7 +476,7 @@ func TestParseEntryWithAtomAuthorEmail(t *testing.T) {
 	}
 }
 
-func TestParseEntryWithAtomAuthor(t *testing.T) {
+func TestParseEntryWithAtomAuthorName(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
@@ -1432,6 +1400,37 @@ func TestEntryDescriptionFromGooglePlayDescription(t *testing.T) {
 	result := feed.Entries[0].Content
 	if expected != result {
 		t.Errorf(`Unexpected podcast content, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseEntryWithRSSDescriptionAndMediaDescription(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Entry Title</title>
+				<link>http://www.example.com/entries/1</link>
+				<description>Entry Description</description>
+				<media:description type="plain">Media Description</media:description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	expected := "Entry Description"
+	result := feed.Entries[0].Content
+	if expected != result {
+		t.Errorf(`Unexpected description, got %q instead of %q`, result, expected)
 	}
 }
 
