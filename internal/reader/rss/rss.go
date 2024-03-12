@@ -16,6 +16,8 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/dublincore"
+	"miniflux.app/v2/internal/reader/googleplay"
+	"miniflux.app/v2/internal/reader/itunes"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
@@ -40,7 +42,8 @@ type rssChannel struct {
 	TimeToLive     rssTTL    `xml:"rss ttl"`
 	Items          []rssItem `xml:"rss item"`
 	AtomLinks
-	PodcastFeedElement
+	itunes.ItunesFeedElement
+	googleplay.GooglePlayFeedElement
 }
 
 type rssTTL struct {
@@ -128,16 +131,18 @@ func (r *rssFeed) feedURL() string {
 }
 
 func (r rssFeed) feedAuthor() string {
-	author := r.Channel.PodcastAuthor()
+	var author string
 	switch {
+	case r.Channel.ItunesAuthor != "":
+		author = r.Channel.ItunesAuthor
+	case r.Channel.GooglePlayAuthor != "":
+		author = r.Channel.GooglePlayAuthor
+	case r.Channel.ItunesOwner.String() != "":
+		author = r.Channel.ItunesOwner.String()
 	case r.Channel.ManagingEditor != "":
 		author = r.Channel.ManagingEditor
 	case r.Channel.Webmaster != "":
 		author = r.Channel.Webmaster
-	case r.Channel.GooglePlayAuthor != "":
-		author = r.Channel.GooglePlayAuthor
-	case r.Channel.PodcastOwner.String() != "":
-		author = r.Channel.PodcastOwner.String()
 	}
 	return sanitizer.StripTags(strings.TrimSpace(author))
 }
@@ -186,10 +191,11 @@ type rssItem struct {
 	Categories     []rssCategory  `xml:"rss category"`
 	dublincore.DublinCoreItemElement
 	FeedBurnerElement
-	PodcastEntryElement
 	media.Element
 	AtomAuthor
 	AtomLinks
+	itunes.ItunesItemElement
+	googleplay.GooglePlayItemElement
 }
 
 func (r *rssItem) Transform() *model.Entry {
@@ -203,7 +209,7 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Title = r.entryTitle()
 	entry.Enclosures = r.entryEnclosures()
 	entry.Tags = r.entryCategories()
-	if duration, err := normalizeDuration(r.Duration); err == nil {
+	if duration, err := normalizeDuration(r.ItunesDuration); err == nil {
 		entry.ReadingTime = duration
 	}
 
@@ -237,8 +243,6 @@ func (r *rssItem) entryAuthor() string {
 	var author string
 
 	switch {
-	case r.PodcastOwner.String() != "":
-		author = r.PodcastOwner.String()
 	case r.GooglePlayAuthor != "":
 		author = r.GooglePlayAuthor
 	case r.ItunesAuthor != "":
@@ -277,7 +281,13 @@ func (r *rssItem) entryTitle() string {
 }
 
 func (r *rssItem) entryContent() string {
-	for _, value := range []string{r.DublinCoreContent, r.Description, r.PodcastDescription()} {
+	for _, value := range []string{
+		r.DublinCoreContent,
+		r.Description,
+		r.GooglePlayDescription,
+		r.ItunesSummary,
+		r.ItunesSubtitle,
+	} {
 		if value != "" {
 			return value
 		}
