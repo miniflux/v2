@@ -16,26 +16,35 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/dublincore"
+	"miniflux.app/v2/internal/reader/googleplay"
+	"miniflux.app/v2/internal/reader/itunes"
 	"miniflux.app/v2/internal/reader/media"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/urllib"
 )
 
-// Specs: https://cyber.harvard.edu/rss/rss.html
+// Specs: https://www.rssboard.org/rss-specification
 type rssFeed struct {
-	XMLName        xml.Name  `xml:"rss"`
-	Version        string    `xml:"version,attr"`
-	Title          string    `xml:"channel>title"`
-	Links          []rssLink `xml:"channel>link"`
-	ImageURL       string    `xml:"channel>image>url"`
-	Language       string    `xml:"channel>language"`
-	Description    string    `xml:"channel>description"`
-	PubDate        string    `xml:"channel>pubDate"`
-	ManagingEditor string    `xml:"channel>managingEditor"`
-	Webmaster      string    `xml:"channel>webMaster"`
-	TimeToLive     rssTTL    `xml:"channel>ttl"`
-	Items          []rssItem `xml:"channel>item"`
-	PodcastFeedElement
+	XMLName xml.Name   `xml:"rss"`
+	Version string     `xml:"rss version,attr"`
+	Channel rssChannel `xml:"rss channel"`
+}
+
+type rssChannel struct {
+	Categories     []string  `xml:"rss category"`
+	Title          string    `xml:"rss title"`
+	Link           string    `xml:"rss link"`
+	ImageURL       string    `xml:"rss image>url"`
+	Language       string    `xml:"rss language"`
+	Description    string    `xml:"rss description"`
+	PubDate        string    `xml:"rss pubDate"`
+	ManagingEditor string    `xml:"rss managingEditor"`
+	Webmaster      string    `xml:"rss webMaster"`
+	TimeToLive     rssTTL    `xml:"rss ttl"`
+	Items          []rssItem `xml:"rss item"`
+	AtomLinks
+	itunes.ItunesFeedElement
+	googleplay.GooglePlayFeedElement
 }
 
 type rssTTL struct {
@@ -72,15 +81,15 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 		feed.FeedURL = feedURL
 	}
 
-	feed.Title = html.UnescapeString(strings.TrimSpace(r.Title))
+	feed.Title = html.UnescapeString(strings.TrimSpace(r.Channel.Title))
 	if feed.Title == "" {
 		feed.Title = feed.SiteURL
 	}
 
-	feed.IconURL = strings.TrimSpace(r.ImageURL)
-	feed.TTL = r.TimeToLive.Value()
+	feed.IconURL = strings.TrimSpace(r.Channel.ImageURL)
+	feed.TTL = r.Channel.TimeToLive.Value()
 
-	for _, item := range r.Items {
+	for _, item := range r.Channel.Items {
 		entry := item.Transform()
 		if entry.Author == "" {
 			entry.Author = r.feedAuthor()
@@ -103,6 +112,13 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 			entry.Title = entry.URL
 		}
 
+		entry.Tags = append(entry.Tags, r.Channel.Categories...)
+		entry.Tags = append(entry.Tags, r.Channel.GetItunesCategories()...)
+
+		if r.Channel.GooglePlayCategory.Text != "" {
+			entry.Tags = append(entry.Tags, r.Channel.GooglePlayCategory.Text)
+		}
+
 		feed.Entries = append(feed.Entries, entry)
 	}
 
@@ -110,32 +126,31 @@ func (r *rssFeed) Transform(baseURL string) *model.Feed {
 }
 
 func (r *rssFeed) siteURL() string {
-	for _, element := range r.Links {
-		if element.XMLName.Space == "" {
-			return strings.TrimSpace(element.Data)
-		}
-	}
-
-	return ""
+	return strings.TrimSpace(r.Channel.Link)
 }
 
 func (r *rssFeed) feedURL() string {
-	for _, element := range r.Links {
-		if element.XMLName.Space == "http://www.w3.org/2005/Atom" {
-			return strings.TrimSpace(element.Href)
+	for _, atomLink := range r.Channel.AtomLinks.Links {
+		if atomLink.Rel == "self" {
+			return strings.TrimSpace(atomLink.URL)
 		}
 	}
-
 	return ""
 }
 
 func (r rssFeed) feedAuthor() string {
-	author := r.PodcastAuthor()
+	var author string
 	switch {
-	case r.ManagingEditor != "":
-		author = r.ManagingEditor
-	case r.Webmaster != "":
-		author = r.Webmaster
+	case r.Channel.ItunesAuthor != "":
+		author = r.Channel.ItunesAuthor
+	case r.Channel.GooglePlayAuthor != "":
+		author = r.Channel.GooglePlayAuthor
+	case r.Channel.ItunesOwner.String() != "":
+		author = r.Channel.ItunesOwner.String()
+	case r.Channel.ManagingEditor != "":
+		author = r.Channel.ManagingEditor
+	case r.Channel.Webmaster != "":
+		author = r.Channel.Webmaster
 	}
 	return sanitizer.StripTags(strings.TrimSpace(author))
 }
@@ -146,27 +161,7 @@ type rssGUID struct {
 	IsPermaLink string `xml:"isPermaLink,attr"`
 }
 
-type rssLink struct {
-	XMLName xml.Name
-	Data    string `xml:",chardata"`
-	Href    string `xml:"href,attr"`
-	Rel     string `xml:"rel,attr"`
-}
-
-type rssCommentLink struct {
-	XMLName xml.Name
-	Data    string `xml:",chardata"`
-}
-
 type rssAuthor struct {
-	XMLName xml.Name
-	Data    string `xml:",chardata"`
-	Name    string `xml:"name"`
-	Email   string `xml:"email"`
-	Inner   string `xml:",innerxml"`
-}
-
-type rssTitle struct {
 	XMLName xml.Name
 	Data    string `xml:",chardata"`
 	Inner   string `xml:",innerxml"`
@@ -178,12 +173,6 @@ type rssEnclosure struct {
 	Length string `xml:"length,attr"`
 }
 
-type rssCategory struct {
-	XMLName xml.Name
-	Data    string `xml:",chardata"`
-	Inner   string `xml:",innerxml"`
-}
-
 func (enclosure *rssEnclosure) Size() int64 {
 	if enclosure.Length == "" {
 		return 0
@@ -193,19 +182,22 @@ func (enclosure *rssEnclosure) Size() int64 {
 }
 
 type rssItem struct {
-	GUID           rssGUID          `xml:"guid"`
-	Title          []rssTitle       `xml:"title"`
-	Links          []rssLink        `xml:"link"`
-	Description    string           `xml:"description"`
-	PubDate        string           `xml:"pubDate"`
-	Authors        []rssAuthor      `xml:"author"`
-	CommentLinks   []rssCommentLink `xml:"comments"`
-	EnclosureLinks []rssEnclosure   `xml:"enclosure"`
-	Categories     []rssCategory    `xml:"category"`
+	GUID           rssGUID        `xml:"rss guid"`
+	Title          string         `xml:"rss title"`
+	Link           string         `xml:"rss link"`
+	Description    string         `xml:"rss description"`
+	PubDate        string         `xml:"rss pubDate"`
+	Author         rssAuthor      `xml:"rss author"`
+	Comments       string         `xml:"rss comments"`
+	EnclosureLinks []rssEnclosure `xml:"rss enclosure"`
+	Categories     []string       `xml:"rss category"`
 	dublincore.DublinCoreItemElement
 	FeedBurnerElement
-	PodcastEntryElement
 	media.Element
+	AtomAuthor
+	AtomLinks
+	itunes.ItunesItemElement
+	googleplay.GooglePlayItemElement
 }
 
 func (r *rssItem) Transform() *model.Entry {
@@ -218,8 +210,8 @@ func (r *rssItem) Transform() *model.Entry {
 	entry.Content = r.entryContent()
 	entry.Title = r.entryTitle()
 	entry.Enclosures = r.entryEnclosures()
-	entry.Tags = r.entryCategories()
-	if duration, err := normalizeDuration(r.Duration); err == nil {
+	entry.Tags = r.Categories
+	if duration, err := normalizeDuration(r.ItunesDuration); err == nil {
 		entry.ReadingTime = duration
 	}
 
@@ -250,34 +242,24 @@ func (r *rssItem) entryDate() time.Time {
 }
 
 func (r *rssItem) entryAuthor() string {
-	author := ""
+	var author string
 
-	for _, rssAuthor := range r.Authors {
-		switch rssAuthor.XMLName.Space {
-		case "http://www.itunes.com/dtds/podcast-1.0.dtd", "http://www.google.com/schemas/play-podcasts/1.0":
-			author = rssAuthor.Data
-		case "http://www.w3.org/2005/Atom":
-			if rssAuthor.Name != "" {
-				author = rssAuthor.Name
-			} else if rssAuthor.Email != "" {
-				author = rssAuthor.Email
-			}
-		default:
-			if rssAuthor.Name != "" {
-				author = rssAuthor.Name
-			} else if strings.Contains(rssAuthor.Inner, "<![CDATA[") {
-				author = rssAuthor.Data
-			} else {
-				author = rssAuthor.Inner
-			}
-		}
+	switch {
+	case r.GooglePlayAuthor != "":
+		author = r.GooglePlayAuthor
+	case r.ItunesAuthor != "":
+		author = r.ItunesAuthor
+	case r.DublinCoreCreator != "":
+		author = r.DublinCoreCreator
+	case r.AtomAuthor.String() != "":
+		author = r.AtomAuthor.String()
+	case strings.Contains(r.Author.Inner, "<![CDATA["):
+		author = r.Author.Data
+	default:
+		author = r.Author.Inner
 	}
 
-	if author == "" {
-		author = r.GetSanitizedCreator()
-	}
-
-	return sanitizer.StripTags(strings.TrimSpace(author))
+	return strings.TrimSpace(sanitizer.StripTags(author))
 }
 
 func (r *rssItem) entryHash() string {
@@ -291,28 +273,23 @@ func (r *rssItem) entryHash() string {
 }
 
 func (r *rssItem) entryTitle() string {
-	var title string
+	title := r.Title
 
-	for _, rssTitle := range r.Title {
-		switch rssTitle.XMLName.Space {
-		case "http://search.yahoo.com/mrss/":
-			// Ignore title in media namespace
-		case "http://purl.org/dc/elements/1.1/":
-			title = rssTitle.Data
-		default:
-			title = rssTitle.Data
-		}
-
-		if title != "" {
-			break
-		}
+	if r.DublinCoreTitle != "" {
+		title = r.DublinCoreTitle
 	}
 
 	return html.UnescapeString(strings.TrimSpace(title))
 }
 
 func (r *rssItem) entryContent() string {
-	for _, value := range []string{r.DublinCoreContent, r.Description, r.PodcastDescription()} {
+	for _, value := range []string{
+		r.DublinCoreContent,
+		r.Description,
+		r.GooglePlayDescription,
+		r.ItunesSummary,
+		r.ItunesSubtitle,
+	} {
 		if value != "" {
 			return value
 		}
@@ -321,17 +298,15 @@ func (r *rssItem) entryContent() string {
 }
 
 func (r *rssItem) entryURL() string {
-	if r.FeedBurnerLink != "" {
-		return r.FeedBurnerLink
+	for _, link := range []string{r.FeedBurnerLink, r.Link} {
+		if link != "" {
+			return strings.TrimSpace(link)
+		}
 	}
 
-	for _, link := range r.Links {
-		if link.XMLName.Space == "http://www.w3.org/2005/Atom" && link.Href != "" && isValidLinkRelation(link.Rel) {
-			return strings.TrimSpace(link.Href)
-		}
-
-		if link.Data != "" {
-			return strings.TrimSpace(link.Data)
+	for _, atomLink := range r.AtomLinks.Links {
+		if atomLink.URL != "" && (strings.EqualFold(atomLink.Rel, "alternate") || atomLink.Rel == "") {
+			return strings.TrimSpace(atomLink.URL)
 		}
 	}
 
@@ -410,43 +385,11 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 	return enclosures
 }
 
-func (r *rssItem) entryCategories() []string {
-	categoryList := make([]string, 0)
-
-	for _, rssCategory := range r.Categories {
-		if strings.Contains(rssCategory.Inner, "<![CDATA[") {
-			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Data))
-		} else {
-			categoryList = append(categoryList, strings.TrimSpace(rssCategory.Inner))
-		}
-	}
-
-	return categoryList
-}
-
 func (r *rssItem) entryCommentsURL() string {
-	for _, commentLink := range r.CommentLinks {
-		if commentLink.XMLName.Space == "" {
-			commentsURL := strings.TrimSpace(commentLink.Data)
-			// The comments URL is supposed to be absolute (some feeds publishes incorrect comments URL)
-			// See https://cyber.harvard.edu/rss/rss.html#ltcommentsgtSubelementOfLtitemgt
-			if urllib.IsAbsoluteURL(commentsURL) {
-				return commentsURL
-			}
-		}
+	commentsURL := strings.TrimSpace(r.Comments)
+	if commentsURL != "" && urllib.IsAbsoluteURL(commentsURL) {
+		return commentsURL
 	}
 
 	return ""
-}
-
-func isValidLinkRelation(rel string) bool {
-	switch rel {
-	case "", "alternate", "enclosure", "related", "self", "via":
-		return true
-	default:
-		if strings.HasPrefix(rel, "http") {
-			return true
-		}
-		return false
-	}
 }

@@ -12,6 +12,7 @@ import (
 var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 
 // Element represents XML media elements.
+// Specs: https://www.rssboard.org/media-rss
 type Element struct {
 	MediaGroups       []Group         `xml:"http://search.yahoo.com/mrss/ group"`
 	MediaContents     []Content       `xml:"http://search.yahoo.com/mrss/ content"`
