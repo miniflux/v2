@@ -281,7 +281,7 @@ a:hover {
 }
 
 /* Hide the logo when there is not enough space to display menus when using languages more verbose than English */
-@media (min-width: 625px) and (max-width: 830px) {
+@media (min-width: 620px) and (max-width: 830px) {
     .logo {
         display: none;
     }
