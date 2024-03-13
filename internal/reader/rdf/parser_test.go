@@ -228,63 +228,87 @@ func TestParseRDFSampleWithDublinCore(t *testing.T) {
 	}
 }
 
-func TestParseItemWithOnlyFeedAuthor(t *testing.T) {
+func TestParseRDFFeedWithEmptyTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-
 	<rdf:RDF
-	  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	  xmlns:dc="http://purl.org/dc/elements/1.1/"
-	  xmlns="http://purl.org/rss/1.0/"
-	>
-
-	  <channel rdf:about="http://meerkat.oreillynet.com/?_fl=rss1.0">
-		<title>Meerkat</title>
-		<link>http://meerkat.oreillynet.com</link>
-		<dc:creator>Rael Dornfest (mailto:rael@oreilly.com)</dc:creator>
-	  </channel>
-
-	  <item rdf:about="http://c.moreover.com/click/here.pl?r123">
-		<title>XML: A Disruptive Technology</title>
-		<link>http://c.moreover.com/click/here.pl?r123</link>
-		<dc:description>
-		  XML is placing increasingly heavy loads on the existing technical
-		  infrastructure of the Internet.
-		</dc:description>
-	  </item>
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/">
+		<channel>
+			<link>http://example.org/item</link>
+		</channel>
+		<item>
+			<title>Example</title>
+			<link>http://example.org/item</link>
+			<description>Test</description>
+		</item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
+	feed, err := Parse("http://example.org/feed", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Author != "Rael Dornfest (mailto:rael@oreilly.com)" {
-		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	if feed.Title != "http://example.org/feed" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
 	}
 }
 
-func TestParseItemRelativeURL(t *testing.T) {
+func TestParseRDFFeedWithEmptyLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
-	  <channel>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/">
+		<channel>
+			<title>Example Feed</title>
+		</channel>
+		<item>
 			<title>Example</title>
-			<link>http://example.org</link>
-	  </channel>
-
-	  <item>
-			<title>Title</title>
+			<link>http://example.org/item</link>
 			<description>Test</description>
-			<link>something.html</link>
-	  </item>
+		</item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
+	feed, err := Parse("http://example.org/feed", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].URL != "http://example.org/something.html" {
-		t.Errorf("Incorrect entry url, got: %s", feed.Entries[0].URL)
+	if feed.SiteURL != "http://example.org/feed" {
+		t.Errorf(`Incorrect SiteURL, got: %q`, feed.SiteURL)
+	}
+
+	if feed.FeedURL != "http://example.org/feed" {
+		t.Errorf(`Incorrect FeedURL, got: %q`, feed.FeedURL)
+	}
+}
+
+func TestParseRDFFeedWithRelativeLink(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/">
+		<channel>
+			<title>Example Feed</title>
+			<link>/test/index.html</link>
+		</channel>
+		<item>
+			<title>Example</title>
+			<link>http://example.org/item</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/feed", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "http://example.org/test/index.html" {
+		t.Errorf(`Incorrect SiteURL, got: %q`, feed.SiteURL)
+	}
+
+	if feed.FeedURL != "http://example.org/feed" {
+		t.Errorf(`Incorrect FeedURL, got: %q`, feed.FeedURL)
 	}
 }
 
@@ -321,63 +345,7 @@ func TestParseItemWithoutLink(t *testing.T) {
 	}
 }
 
-func TestParseItemWithDublicCoreDate(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-	  <channel>
-			<title>Example</title>
-			<link>http://example.org</link>
-	  </channel>
-
-	  <item>
-			<title>Title</title>
-			<description>Test</description>
-			<link>http://example.org/test.html</link>
-			<dc:creator>Tester</dc:creator>
-			<dc:date>2018-04-10T05:00:00+00:00</dc:date>
-	  </item>
-	</rdf:RDF>`
-
-	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedDate := time.Date(2018, time.April, 10, 5, 0, 0, 0, time.UTC)
-	if !feed.Entries[0].Date.Equal(expectedDate) {
-		t.Errorf("Incorrect entry date, got: %v, want: %v", feed.Entries[0].Date, expectedDate)
-	}
-}
-
-func TestParseItemWithEncodedHTMLInDCCreatorField(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-	  <channel>
-			<title>Example</title>
-			<link>http://example.org</link>
-	  </channel>
-
-	  <item>
-			<title>Title</title>
-			<description>Test</description>
-			<link>http://example.org/test.html</link>
-			<dc:creator>&lt;a href=&quot;http://example.org/author1&quot;>Author 1&lt;/a&gt; (University 1), &lt;a href=&quot;http://example.org/author2&quot;>Author 2&lt;/a&gt; (University 2)</dc:creator>
-			<dc:date>2018-04-10T05:00:00+00:00</dc:date>
-	  </item>
-	</rdf:RDF>`
-
-	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expectedAuthor := "Author 1 (University 1), Author 2 (University 2)"
-	if feed.Entries[0].Author != expectedAuthor {
-		t.Errorf("Incorrect entry author, got: %s, want: %s", feed.Entries[0].Author, expectedAuthor)
-	}
-}
-
-func TestParseItemWithoutDate(t *testing.T) {
+func TestParseItemRelativeURL(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
 	  <channel>
@@ -388,90 +356,17 @@ func TestParseItemWithoutDate(t *testing.T) {
 	  <item>
 			<title>Title</title>
 			<description>Test</description>
-			<link>http://example.org/test.html</link>
+			<link>something.html</link>
 	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expectedDate := time.Now().In(time.Local)
-	diff := expectedDate.Sub(feed.Entries[0].Date)
-	if diff > time.Second {
-		t.Errorf("Incorrect entry date, got: %v", diff)
-	}
-}
-
-func TestParseItemWithEncodedHTMLTitle(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
-	  <channel>
-			<title>Example</title>
-			<link>http://example.org</link>
-	  </channel>
-
-	  <item>
-			<title>AT&amp;amp;T</title>
-			<description>Test</description>
-			<link>http://example.org/test.html</link>
-	  </item>
-	</rdf:RDF>`
-
-	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Entries[0].Title != `AT&T` {
-		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
-	}
-}
-
-func TestParseInvalidXml(t *testing.T) {
-	data := `garbage`
-	_, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
-	if err == nil {
-		t.Fatal("Parse should returns an error")
-	}
-}
-
-func TestParseFeedWithHTMLEntity(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
-	  <channel>
-			<title>Example &nbsp; Feed</title>
-			<link>http://example.org</link>
-	  </channel>
-	</rdf:RDF>`
-
-	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Title != "Example \u00a0 Feed" {
-		t.Errorf(`Incorrect title, got: %q`, feed.Title)
-	}
-}
-
-func TestParseFeedWithInvalidCharacterEntity(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
-	  <channel>
-			<title>Example Feed</title>
-			<link>http://example.org/a&b</link>
-	  </channel>
-	</rdf:RDF>`
-
-	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.SiteURL != "http://example.org/a&b" {
-		t.Errorf(`Incorrect URL, got: %q`, feed.SiteURL)
+	if feed.Entries[0].URL != "http://example.org/something.html" {
+		t.Errorf("Incorrect entry url, got: %s", feed.Entries[0].URL)
 	}
 }
 
@@ -536,6 +431,130 @@ func TestParseFeedWithURLWrappedInSpaces(t *testing.T) {
 
 	if feed.Entries[0].URL != `http://biorxiv.org/cgi/content/short/857789v1?rss=1` {
 		t.Errorf(`Unexpected entry URL, got %q`, feed.Entries[0].URL)
+	}
+}
+
+func TestParseRDFItemWitEmptyTitleElement(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<title> </title>
+			<link>http://example.org/item</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `http://example.org/item`
+	result := feed.Entries[0].Title
+	if result != expected {
+		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseRDFItemWithDublinCoreTitleElement(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/"
+		xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<dc:title>Dublin Core Title</dc:title>
+			<link>http://example.org/</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `Dublin Core Title`
+	result := feed.Entries[0].Title
+	if result != expected {
+		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseRDFItemWithDuplicateTitleElement(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/"
+		xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/</link>
+		</channel>
+		<item>
+			<title>Item Title</title>
+			<dc:title/>
+			<link>http://example.org/</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	}
+
+	expected := `Item Title`
+	result := feed.Entries[0].Title
+	if result != expected {
+		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseItemWithEncodedHTMLTitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>AT&amp;amp;T</title>
+			<description>Test</description>
+			<link>http://example.org/test.html</link>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != `AT&T` {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
 
@@ -605,101 +624,194 @@ func TestParseRDFWithEncodedHTMLDescription(t *testing.T) {
 	}
 }
 
-func TestParseRDFItemWithDuplicateTitleElement(t *testing.T) {
+func TestParseItemWithoutDate(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF
-		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-		xmlns="http://purl.org/rss/1.0/"
-		xmlns:dc="http://purl.org/dc/elements/1.1/">
-		<channel>
-			<title>Example Feed</title>
-			<link>http://example.org/</link>
-		</channel>
-		<item>
-			<title>Item Title</title>
-			<dc:title/>
-			<link>http://example.org/</link>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
 			<description>Test</description>
-		</item>
+			<link>http://example.org/test.html</link>
+	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(feed.Entries) != 1 {
-		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
-	}
-
-	expected := `Item Title`
-	result := feed.Entries[0].Title
-	if result != expected {
-		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	expectedDate := time.Now().In(time.Local)
+	diff := expectedDate.Sub(feed.Entries[0].Date)
+	if diff > time.Second {
+		t.Errorf("Incorrect entry date, got: %v", diff)
 	}
 }
 
-func TestParseRDFItemWithDublinCoreTitleElement(t *testing.T) {
+func TestParseItemWithDublicCoreDate(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF
-		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-		xmlns="http://purl.org/rss/1.0/"
-		xmlns:dc="http://purl.org/dc/elements/1.1/">
-		<channel>
-			<title>Example Feed</title>
-			<link>http://example.org/</link>
-		</channel>
-		<item>
-			<dc:title>Dublin Core Title</dc:title>
-			<link>http://example.org/</link>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
 			<description>Test</description>
-		</item>
+			<link>http://example.org/test.html</link>
+			<dc:creator>Tester</dc:creator>
+			<dc:date>2018-04-10T05:00:00+00:00</dc:date>
+	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(feed.Entries) != 1 {
-		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
-	}
-
-	expected := `Dublin Core Title`
-	result := feed.Entries[0].Title
-	if result != expected {
-		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	expectedDate := time.Date(2018, time.April, 10, 5, 0, 0, 0, time.UTC)
+	if !feed.Entries[0].Date.Equal(expectedDate) {
+		t.Errorf("Incorrect entry date, got: %v, want: %v", feed.Entries[0].Date, expectedDate)
 	}
 }
 
-func TestParseRDFItemWitEmptyTitleElement(t *testing.T) {
+func TestParseItemWithInvalidDublicCoreDate(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rdf:RDF
-		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-		xmlns="http://purl.org/rss/1.0/">
-		<channel>
-			<title>Example Feed</title>
-			<link>http://example.org/</link>
-		</channel>
-		<item>
-			<title> </title>
-			<link>http://example.org/item</link>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
 			<description>Test</description>
-		</item>
+			<link>http://example.org/test.html</link>
+			<dc:creator>Tester</dc:creator>
+			<dc:date>20-04-10T05:00:00+00:00</dc:date>
+	  </item>
 	</rdf:RDF>`
 
-	feed, err := Parse("http://example.org/", bytes.NewReader([]byte(data)))
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(feed.Entries) != 1 {
-		t.Fatalf(`Unexpected number of entries, got %d`, len(feed.Entries))
+	expectedDate := time.Now().In(time.Local)
+	diff := expectedDate.Sub(feed.Entries[0].Date)
+	if diff > time.Second {
+		t.Errorf("Incorrect entry date, got: %v", diff)
+	}
+}
+
+func TestParseItemWithEncodedHTMLInDCCreatorField(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+	  <channel>
+			<title>Example</title>
+			<link>http://example.org</link>
+	  </channel>
+
+	  <item>
+			<title>Title</title>
+			<description>Test</description>
+			<link>http://example.org/test.html</link>
+			<dc:creator>&lt;a href=&quot;http://example.org/author1&quot;>Author 1&lt;/a&gt; (University 1), &lt;a href=&quot;http://example.org/author2&quot;>Author 2&lt;/a&gt; (University 2)</dc:creator>
+			<dc:date>2018-04-10T05:00:00+00:00</dc:date>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	expected := `http://example.org/item`
-	result := feed.Entries[0].Title
-	if result != expected {
-		t.Errorf(`Unexpected entry title, got %q instead of %q`, result, expected)
+	expectedAuthor := "Author 1 (University 1), Author 2 (University 2)"
+	if feed.Entries[0].Author != expectedAuthor {
+		t.Errorf("Incorrect entry author, got: %s, want: %s", feed.Entries[0].Author, expectedAuthor)
+	}
+}
+
+func TestParseItemWithOnlyFeedAuthor(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+	  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	  xmlns:dc="http://purl.org/dc/elements/1.1/"
+	  xmlns="http://purl.org/rss/1.0/"
+	>
+
+	  <channel rdf:about="http://meerkat.oreillynet.com/?_fl=rss1.0">
+		<title>Meerkat</title>
+		<link>http://meerkat.oreillynet.com</link>
+		<dc:creator>Rael Dornfest (mailto:rael@oreilly.com)</dc:creator>
+	  </channel>
+
+	  <item rdf:about="http://c.moreover.com/click/here.pl?r123">
+		<title>XML: A Disruptive Technology</title>
+		<link>http://c.moreover.com/click/here.pl?r123</link>
+		<dc:description>
+		  XML is placing increasingly heavy loads on the existing technical
+		  infrastructure of the Internet.
+		</dc:description>
+	  </item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://meerkat.oreillynet.com", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Author != "Rael Dornfest (mailto:rael@oreilly.com)" {
+		t.Errorf("Incorrect entry author, got: %s", feed.Entries[0].Author)
+	}
+}
+
+func TestParseInvalidXml(t *testing.T) {
+	data := `garbage`
+	_, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err == nil {
+		t.Fatal("Parse should returns an error")
+	}
+}
+
+func TestParseFeedWithHTMLEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example &nbsp; Feed</title>
+			<link>http://example.org</link>
+	  </channel>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Example \u00a0 Feed" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+	}
+}
+
+func TestParseFeedWithInvalidCharacterEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+	  <channel>
+			<title>Example Feed</title>
+			<link>http://example.org/a&b</link>
+	  </channel>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "http://example.org/a&b" {
+		t.Errorf(`Incorrect URL, got: %q`, feed.SiteURL)
 	}
 }
