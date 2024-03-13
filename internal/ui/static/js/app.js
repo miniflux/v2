@@ -167,6 +167,14 @@ function handleEntryStatus(item, element, setToRead) {
     }
 }
 
+// Add a span-icon with a `label` to `element` as a child
+function addIcon(element, label) {
+    const span = document.createElement('span');
+    span.classList.add('icon-label');
+    span.textContent = label;
+    element.appendChild(span);
+}
+
 // Change the entry status to the opposite value.
 function toggleEntryStatus(element, toasting) {
     const entryID = parseInt(element.dataset.id, 10);
@@ -193,7 +201,8 @@ function toggleEntryStatus(element, toasting) {
             }
         }
 
-        link.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+        link.innerHTML = iconElement.innerHTML;
+        addIcon(link, label);
         link.dataset.value = newStatus;
 
         if (element.classList.contains("item-status-" + currentStatus)) {
@@ -258,11 +267,13 @@ function saveEntry(element, toasting) {
         return;
     }
 
-    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
+    element.textContent = "";
+    addIcon(element, element.dataset.labelLoading);
 
     const request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
-        element.innerHTML = '<span class="icon-label">' + element.dataset.labelDone + '</span>';
+        element.textContent = "";
+        addIcon(element, element.dataset.labelDone);
         element.dataset.completed = true;
         if (toasting) {
             const iconElement = document.querySelector("template#icon-save");
@@ -288,7 +299,8 @@ function toggleBookmark(parentElement, toasting) {
         return;
     }
 
-    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
+    element.textContent = "";
+    addIcon(element, element.dataset.labelLoading);
 
     const request = new RequestBuilder(element.dataset.bookmarkUrl);
     request.withCallback(() => {
@@ -310,7 +322,8 @@ function toggleBookmark(parentElement, toasting) {
             }
         }
 
-        element.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+        element.innerHTML = iconElement.innerHTML;
+        addIcon(element, label);
         element.dataset.value = newStarStatus;
     });
     request.execute();
@@ -328,7 +341,7 @@ function handleFetchOriginalContent() {
     }
 
     const previousElement = element.cloneNode(true);
-    element.innerHTML = '<span class="icon-label">' + element.dataset.labelLoading + '</span>';
+    addIcon(element, element.dataset.labelLoading);
 
     const request = new RequestBuilder(element.dataset.fetchContentUrl);
     request.withCallback((response) => {
@@ -615,7 +628,8 @@ function showToast(label, iconElement) {
 
     const toastMsgElement = document.getElementById("toast-msg");
     if (toastMsgElement) {
-        toastMsgElement.innerHTML = iconElement.innerHTML + '<span class="icon-label">' + label + '</span>';
+        toastMsgElement.innerHTML = iconElement.innerHTML;
+        addIcon(toastMsgElement, label);
 
         const toastElementWrapper = document.getElementById("toast-wrapper");
         if (toastElementWrapper) {
