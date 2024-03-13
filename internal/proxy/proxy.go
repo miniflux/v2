@@ -19,51 +19,34 @@ import (
 
 // ProxifyURL generates a relative URL for a proxified resource.
 func ProxifyURL(router *mux.Router, link string) string {
-	if link != "" {
-		proxyImageUrl := config.Opts.ProxyUrl()
+	if link == "" {
+		return ""
+	}
 
-		if proxyImageUrl == "" {
-			mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
-			mac.Write([]byte(link))
-			digest := mac.Sum(nil)
-			return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
-		}
-
+	if proxyImageUrl := config.Opts.ProxyUrl(); proxyImageUrl != "" {
 		proxyUrl, err := url.Parse(proxyImageUrl)
 		if err != nil {
 			return ""
 		}
-
 		proxyUrl.Path = path.Join(proxyUrl.Path, base64.URLEncoding.EncodeToString([]byte(link)))
 		return proxyUrl.String()
 	}
-	return ""
+
+	mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
+	mac.Write([]byte(link))
+	digest := mac.Sum(nil)
+	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
 }
 
 // AbsoluteProxifyURL generates an absolute URL for a proxified resource.
 func AbsoluteProxifyURL(router *mux.Router, host, link string) string {
-	if link != "" {
-		proxyImageUrl := config.Opts.ProxyUrl()
+	proxifiedUrl := ProxifyURL(router, link)
 
-		if proxyImageUrl == "" {
-			mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
-			mac.Write([]byte(link))
-			digest := mac.Sum(nil)
-			path := route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
-			if config.Opts.HTTPS {
-				return "https://" + host + path
-			} else {
-				return "http://" + host + path
-			}
-		}
-
-		proxyUrl, err := url.Parse(proxyImageUrl)
-		if err != nil {
-			return ""
-		}
-
-		proxyUrl.Path = path.Join(proxyUrl.Path, base64.URLEncoding.EncodeToString([]byte(link)))
-		return proxyUrl.String()
+	if config.Opts.ProxyUrl() == "" {
+		return proxifiedUrl
 	}
-	return ""
+	if config.Opts.HTTPS {
+		return "https://" + host + proxifiedUrl
+	}
+	return "http://" + host + proxifiedUrl
 }
