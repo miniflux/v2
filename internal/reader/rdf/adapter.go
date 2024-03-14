@@ -28,15 +28,14 @@ func (r *RDFAdapter) BuildFeed(feedURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:   stripTags(r.rdf.Channel.Title),
 		FeedURL: feedURL,
+		SiteURL: r.rdf.Channel.Link,
 	}
 
 	if feed.Title == "" {
 		feed.Title = feedURL
 	}
 
-	if siteURL, err := urllib.AbsoluteURL(feedURL, r.rdf.Channel.Link); err != nil {
-		feed.SiteURL = r.rdf.Channel.Link
-	} else {
+	if siteURL, err := urllib.AbsoluteURL(feedURL, r.rdf.Channel.Link); err == nil {
 		feed.SiteURL = siteURL
 	}
 
