@@ -13,11 +13,12 @@ var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!
 
 // Specs: https://www.rssboard.org/media-rss
 type MediaItemElement struct {
-	MediaGroups       []Group         `xml:"http://search.yahoo.com/mrss/ group"`
-	MediaContents     []Content       `xml:"http://search.yahoo.com/mrss/ content"`
-	MediaThumbnails   []Thumbnail     `xml:"http://search.yahoo.com/mrss/ thumbnail"`
-	MediaDescriptions DescriptionList `xml:"http://search.yahoo.com/mrss/ description"`
-	MediaPeerLinks    []PeerLink      `xml:"http://search.yahoo.com/mrss/ peerLink"`
+	MediaCategories   MediaCategoryList `xml:"http://search.yahoo.com/mrss/ category"`
+	MediaGroups       []Group           `xml:"http://search.yahoo.com/mrss/ group"`
+	MediaContents     []Content         `xml:"http://search.yahoo.com/mrss/ content"`
+	MediaThumbnails   []Thumbnail       `xml:"http://search.yahoo.com/mrss/ thumbnail"`
+	MediaDescriptions DescriptionList   `xml:"http://search.yahoo.com/mrss/ description"`
+	MediaPeerLinks    []PeerLink        `xml:"http://search.yahoo.com/mrss/ peerLink"`
 }
 
 // AllMediaThumbnails returns all thumbnail elements merged together.
@@ -172,4 +173,21 @@ func (dl DescriptionList) First() string {
 		}
 	}
 	return ""
+}
+
+type MediaCategoryList []MediaCategory
+
+func (mcl MediaCategoryList) Labels() []string {
+	var labels []string
+	for _, category := range mcl {
+		label := strings.TrimSpace(category.Label)
+		if label != "" {
+			labels = append(labels, label)
+		}
+	}
+	return labels
+}
+
+type MediaCategory struct {
+	Label string `xml:"label,attr"`
 }
