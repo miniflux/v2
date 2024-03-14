@@ -117,8 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fixVoiceOverDetailsSummaryBug();
 
     const logoElement = document.querySelector(".logo");
-    logoElement.addEventListener("click", toggleMainMenu);
-    logoElement.addEventListener("keydown", toggleMainMenu);
+    if (logoElement) {
+        logoElement.addEventListener("click", toggleMainMenu);
+        logoElement.addEventListener("keydown", toggleMainMenu);
+    }
 
     onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
