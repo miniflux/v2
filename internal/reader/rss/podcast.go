@@ -12,8 +12,7 @@ import (
 
 var ErrInvalidDurationFormat = errors.New("rss: invalid duration format")
 
-// normalizeDuration returns the duration tag value as a number of minutes
-func normalizeDuration(rawDuration string) (int, error) {
+func getDurationInMinutes(rawDuration string) (int, error) {
 	var sumSeconds int
 
 	durationParts := strings.Split(rawDuration, ":")

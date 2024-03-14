@@ -91,7 +91,7 @@ type atom10Entry struct {
 	Content    atom10Text       `xml:"http://www.w3.org/2005/Atom content"`
 	Authors    atomAuthors      `xml:"author"`
 	Categories []atom10Category `xml:"category"`
-	media.Element
+	media.MediaItemElement
 }
 
 func (a *atom10Entry) Transform() *model.Entry {
