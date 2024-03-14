@@ -201,7 +201,7 @@ function toggleEntryStatus(element, toasting) {
             }
         }
 
-        link.innerHTML = iconElement.innerHTML;
+        link.replaceChildren(iconElement.content.cloneNode(true));
         addIcon(link, label);
         link.dataset.value = newStatus;
 
@@ -322,7 +322,7 @@ function toggleBookmark(parentElement, toasting) {
             }
         }
 
-        element.innerHTML = iconElement.innerHTML;
+        element.replaceChildren(iconElement.content.cloneNode(true));
         addIcon(element, label);
         element.dataset.value = newStarStatus;
     });
@@ -353,7 +353,7 @@ function handleFetchOriginalContent() {
                 document.querySelector(".entry-content").innerHTML = data.content;
                 const entryReadingtimeElement = document.querySelector(".entry-reading-time");
                 if (entryReadingtimeElement) {
-                    entryReadingtimeElement.innerHTML = data.reading_time;
+                    entryReadingtimeElement.textContent = data.reading_time;
                 }
             }
         });
@@ -533,7 +533,7 @@ function incrementUnreadCounter(n) {
 function updateUnreadCounterValue(callback) {
     document.querySelectorAll("span.unread-counter").forEach((element) => {
         const oldValue = parseInt(element.textContent, 10);
-        element.innerHTML = callback(oldValue);
+        element.textContent = callback(oldValue);
     });
 
     if (window.location.href.endsWith('/unread')) {
@@ -628,7 +628,7 @@ function showToast(label, iconElement) {
 
     const toastMsgElement = document.getElementById("toast-msg");
     if (toastMsgElement) {
-        toastMsgElement.innerHTML = iconElement.innerHTML;
+        toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
         addIcon(toastMsgElement, label);
 
         const toastElementWrapper = document.getElementById("toast-wrapper");
