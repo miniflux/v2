@@ -1681,6 +1681,42 @@ func TestParseFeedWithGooglePlayCategory(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithMediaCategories(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<media:category label="Visual Art">visual_art</media:category>
+				<media:category scheme="http://search.yahoo.com/mrss/category_ schema">music/artist/album/song</media:category>
+				<media:category scheme="urn:flickr:tags">ycantpark mobile</media:category>
+				<media:category scheme="http://dmoz.org" label="Ace Ventura - Pet Detective">Arts/Movies/Titles/A/Ace_Ventura_Series/Ace_Ventura_ -_Pet_Detective</media:category>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 2 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := []string{"Visual Art", "Ace Ventura - Pet Detective"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
+	}
+}
+
 func TestParseFeedWithTTLField(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">

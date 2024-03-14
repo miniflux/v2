@@ -122,6 +122,7 @@ func (r *RSSAdapter) BuildFeed(feedURL string) *model.Feed {
 
 		// Populate entry categories.
 		entry.Tags = append(entry.Tags, item.Categories...)
+		entry.Tags = append(entry.Tags, item.MediaCategories.Labels()...)
 		entry.Tags = append(entry.Tags, r.rss.Channel.Categories...)
 		entry.Tags = append(entry.Tags, r.rss.Channel.GetItunesCategories()...)
 
