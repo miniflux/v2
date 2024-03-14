@@ -27,7 +27,7 @@ const (
 	defaultBaseURL                            = "http://localhost"
 	defaultRootURL                            = "http://localhost"
 	defaultBasePath                           = ""
-	defaultWorkerPoolSize                     = 5
+	defaultWorkerPoolSize                     = 16
 	defaultPollingFrequency                   = 60
 	defaultForceRefreshInterval               = 30
 	defaultBatchSize                          = 100
