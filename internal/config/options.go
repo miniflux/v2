@@ -615,7 +615,7 @@ func (o *Options) WebAuthn() bool {
 	return o.webAuthn
 }
 
-// EntryMinAgeDays returns the number of days after which entries should be retained.
+// entryMaxAgeDays returns the number of days after which entries should be retained.
 func (o *Options) EntryMaxAgeDays() int {
 	return o.entryMaxAgeDays
 }
