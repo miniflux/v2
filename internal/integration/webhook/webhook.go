@@ -34,7 +34,6 @@ func NewClient(webhookURL, webhookSecret string, store *storage.Storage) *Client
 }
 
 func (c *Client) SendSaveEntryWebhookEvent(entry *model.Entry) error {
-
 	feedCategory, err := c.store.Category(entry.UserID, entry.Feed.Category.ID)
 	if err != nil {
 		return fmt.Errorf("webhook: unable to find category: %v", err)
