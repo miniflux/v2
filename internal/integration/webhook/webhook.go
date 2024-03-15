@@ -74,7 +74,6 @@ func (c *Client) SendSaveEntryWebhookEvent(entry *model.Entry) error {
 }
 
 func (c *Client) SendNewEntriesWebhookEvent(feed *model.Feed, entries model.Entries) error {
-	fmt.Errorf("userID and category id %v", feed.UserID, feed.Category.ID)
 	if len(entries) == 0 {
 		return nil
 	}
