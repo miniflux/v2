@@ -85,7 +85,35 @@ func FuzzParse(f *testing.F) {
 	})
 }
 
-func TestParseAtom(t *testing.T) {
+func TestParseAtom03Feed(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+		<title>dive into mark</title>
+		<link rel="alternate" type="text/html" href="http://diveintomark.org/"/>
+		<modified>2003-12-13T18:30:02Z</modified>
+		<author><name>Mark Pilgrim</name></author>
+		<entry>
+			<title>Atom 0.3 snapshot</title>
+			<link rel="alternate" type="text/html" href="http://diveintomark.org/2003/12/13/atom03"/>
+			<id>tag:diveintomark.org,2003:3.2397</id>
+			<issued>2003-12-13T08:29:29-04:00</issued>
+			<modified>2003-12-13T18:30:02Z</modified>
+			<summary type="text/plain">It&apos;s a test</summary>
+			<content type="text/html" mode="escaped"><![CDATA[<p>HTML content</p>]]></content>
+		</entry>
+	</feed>`
+
+	feed, err := ParseFeed("https://example.org/", strings.NewReader(data))
+	if err != nil {
+		t.Error(err)
+	}
+
+	if feed.Title != "dive into mark" {
+		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+}
+
+func TestParseAtom10Feed(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 

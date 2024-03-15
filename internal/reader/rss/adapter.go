@@ -69,7 +69,6 @@ func (r *RSSAdapter) BuildFeed(feedURL string) *model.Feed {
 
 	for _, item := range r.rss.Channel.Items {
 		entry := model.NewEntry()
-		entry.Author = findEntryAuthor(&item)
 		entry.Date = findEntryDate(&item)
 		entry.Content = findEntryContent(&item)
 		entry.Enclosures = findEntryEnclosures(&item)
@@ -91,11 +90,11 @@ func (r *RSSAdapter) BuildFeed(feedURL string) *model.Feed {
 		if entry.Title == "" {
 			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
 		}
-
 		if entry.Title == "" {
 			entry.Title = entry.URL
 		}
 
+		entry.Author = findEntryAuthor(&item)
 		if entry.Author == "" {
 			entry.Author = findFeedAuthor(&r.rss.Channel)
 		}
