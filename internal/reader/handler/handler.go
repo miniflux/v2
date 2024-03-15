@@ -322,7 +322,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 				slog.Any("error", intErr),
 			)
 		} else if userIntegrations != nil && len(newEntries) > 0 {
-			go integration.PushEntries(originalFeed, newEntries, userIntegrations)
+			go integration.PushEntries(originalFeed, newEntries, userIntegrations, store)
 		}
 
 		// We update caching headers only if the feed has been modified,
