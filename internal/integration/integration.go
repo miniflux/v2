@@ -27,10 +27,11 @@ import (
 	"miniflux.app/v2/internal/integration/wallabag"
 	"miniflux.app/v2/internal/integration/webhook"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/storage"
 )
 
 // SendEntry sends the entry to third-party providers when the user click on "Save".
-func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
+func SendEntry(entry *model.Entry, userIntegrations *model.Integration, store *storage.Storage) {
 	if userIntegrations.PinboardEnabled {
 		slog.Debug("Sending entry to Pinboard",
 			slog.Int64("user_id", userIntegrations.UserID),
@@ -348,7 +349,7 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			slog.String("webhook_url", userIntegrations.WebhookURL),
 		)
 
-		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret)
+		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret, store)
 		if err := webhookClient.SendSaveEntryWebhookEvent(entry); err != nil {
 			slog.Error("Unable to send entry to Webhook",
 				slog.Int64("user_id", userIntegrations.UserID),
@@ -379,7 +380,7 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 }
 
 // PushEntries pushes a list of entries to activated third-party providers during feed refreshes.
-func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *model.Integration) {
+func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *model.Integration, store *storage.Storage) {
 	if userIntegrations.MatrixBotEnabled {
 		slog.Debug("Sending new entries to Matrix",
 			slog.Int64("user_id", userIntegrations.UserID),
@@ -413,7 +414,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 			slog.String("webhook_url", userIntegrations.WebhookURL),
 		)
 
-		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret)
+		webhookClient := webhook.NewClient(userIntegrations.WebhookURL, userIntegrations.WebhookSecret, store)
 		if err := webhookClient.SendNewEntriesWebhookEvent(feed, entries); err != nil {
 			slog.Debug("Unable to send new entries to Webhook",
 				slog.Int64("user_id", userIntegrations.UserID),

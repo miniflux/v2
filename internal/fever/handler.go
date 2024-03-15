@@ -467,7 +467,7 @@ func (h *handler) handleWriteItems(w http.ResponseWriter, r *http.Request) {
 		}
 
 		go func() {
-			integration.SendEntry(entry, settings)
+			integration.SendEntry(entry, settings, h.store)
 		}()
 	case "unsaved":
 		slog.Debug("[Fever] Mark entry as unsaved",
