@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -90,5 +91,30 @@ func TestParseISO8601(t *testing.T) {
 		if tc.expected != result {
 			t.Errorf(`Unexpected result, got %v for duration %q`, result, tc.duration)
 		}
+	}
+}
+
+func TestProcessEntryMaxAgeDays(t *testing.T) {
+	parser := config.NewParser()
+	var err error
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+	var scenarios = []struct {
+		entry    *model.Entry
+		expected bool
+	}{
+		{&model.Entry{Title: "Example1", Date: time.Date(2005, 5, 1, 05, 05, 05, 05, time.UTC)}, true},
+		{&model.Entry{Title: "Example2", Date: time.Date(2010, 5, 1, 05, 05, 05, 05, time.UTC)}, true},
+		{&model.Entry{Title: "Example3", Date: time.Date(2020, 5, 1, 05, 05, 05, 05, time.UTC)}, true},
+		{&model.Entry{Title: "Example4", Date: time.Date(2024, 3, 15, 05, 05, 05, 05, time.UTC)}, true},
+	}
+	for _, tc := range scenarios {
+		result := ProcessEntryMaxAgeDays(tc.entry)
+		if tc.expected != result {
+			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
+		}
+
 	}
 }

@@ -112,6 +112,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.databaseMinConns = parseInt(value, defaultDatabaseMinConns)
 		case "DATABASE_CONNECTION_LIFETIME":
 			p.opts.databaseConnectionLifetime = parseInt(value, defaultDatabaseConnectionLifetime)
+		case "FILTER_ENTRY_MAX_AGE_DAYS":
+			p.opts.entryMaxAgeDays = parseInt(value, defaultEntryMaxAgeDays)
 		case "RUN_MIGRATIONS":
 			p.opts.runMigrations = parseBool(value, defaultRunMigrations)
 		case "DISABLE_HSTS":
@@ -250,8 +252,6 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.proxyPrivateKey = parseBytes(value, randomKey)
 		case "WEBAUTHN":
 			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
-		case "ENTRY_MIN_AGE_DAYS":
-			p.opts.entryMinAgeDays = parseInt(value, defaultEntryMinAgeDays)
 		}
 	}
 

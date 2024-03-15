@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log/slog"
 	"sort"
-	"time"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
@@ -295,7 +294,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			return err
 		}
 
-		if !entryExists && (config.Opts.EntryMinAgeDays() == -1 || entry.Date.After(time.Now().AddDate(0, 0, -config.Opts.EntryMinAgeDays()))) {
+		if !entryExists {
 			if err := s.createEntry(tx, entry); err != nil {
 				if rollbackErr := tx.Rollback(); rollbackErr != nil {
 					return fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)

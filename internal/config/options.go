@@ -84,7 +84,7 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
-	defaultEntryMinAgeDays                    = -1
+	defaultEntryMaxAgeDays                    = 0
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -168,7 +168,7 @@ type Options struct {
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
 	webAuthn                           bool
-	entryMinAgeDays                    int
+	entryMaxAgeDays                    int
 }
 
 // NewOptions returns Options with default values.
@@ -243,7 +243,7 @@ func NewOptions() *Options {
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
-		entryMinAgeDays:                    defaultEntryMinAgeDays,
+		entryMaxAgeDays:                    defaultEntryMaxAgeDays,
 	}
 }
 
@@ -616,8 +616,8 @@ func (o *Options) WebAuthn() bool {
 }
 
 // EntryMinAgeDays returns the number of days after which entries should be retained.
-func (o *Options) EntryMinAgeDays() int {
-	return o.entryMinAgeDays
+func (o *Options) EntryMaxAgeDays() int {
+	return o.entryMaxAgeDays
 }
 
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
@@ -645,6 +645,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DISABLE_HSTS":                           !o.hsts,
 		"DISABLE_HTTP_SERVICE":                   !o.httpService,
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
+		"FILTER_ENTRY_MAX_AGE_DAYS":              o.entryMaxAgeDays,
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
 		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
 		"HTTPS":                                  o.HTTPS,
@@ -696,7 +697,6 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
 		"YOUTUBE_EMBED_URL_OVERRIDE":             o.youTubeEmbedUrlOverride,
 		"WEBAUTHN":                               o.webAuthn,
-		"ENTRY_MIN_AGE_DAYS":                     o.entryMinAgeDays,
 	}
 
 	keys := make([]string, 0, len(keyValues))

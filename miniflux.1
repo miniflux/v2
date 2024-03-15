@@ -307,6 +307,13 @@ Set the value to 1 to disable the internal scheduler service\&.
 .br
 Default is false (The internal scheduler service is enabled)\&.
 .TP
+.B FILTER_ENTRY_MAX_AGE_DAYS
+Number of days after which new entries should be retained.\&.
+.br
+Set 7 to fetch only entries 7 days old.\&.
+.br
+Default is 0\&.
+.TP
 .B CERT_FILE
 Path to SSL certificate\&.
 .br
@@ -526,12 +533,7 @@ Enable or disable WebAuthn/Passkey authentication\&.
 .br
 Default is disabled\&.
 .TP
-.B ENTRY_MIN_AGE_DAYS
-Number of days after which new entries should be retained.\&.
-.br
-Set 7 to fetch only entries 7 days old.\&.
-.br
-Default is -1\&.
+
 
 
 .SH AUTHORS
