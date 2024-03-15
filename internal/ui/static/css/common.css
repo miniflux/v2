@@ -242,6 +242,8 @@ a:hover {
     text-decoration: none;
     line-height: 30px;
     color: #fff;
+    background-color: transparent;
+    border: 0;
 }
 
 #btn-add-to-home-screen:hover {
