@@ -98,7 +98,6 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 		}
 
 		// Populate the entry date.
-		entry.Date = time.Now()
 		for _, value := range []string{item.DatePublished, item.DateModified} {
 			value = strings.TrimSpace(value)
 			if value != "" {
@@ -113,6 +112,9 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 					break
 				}
 			}
+		}
+		if entry.Date.IsZero() {
+			entry.Date = time.Now()
 		}
 
 		// Populate the entry author.

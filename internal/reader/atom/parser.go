@@ -11,22 +11,20 @@ import (
 	xml_decoder "miniflux.app/v2/internal/reader/xml"
 )
 
-type atomFeed interface {
-	Transform(baseURL string) *model.Feed
-}
-
 // Parse returns a normalized feed struct from a Atom feed.
 func Parse(baseURL string, r io.ReadSeeker, version string) (*model.Feed, error) {
-	var rawFeed atomFeed
-	if version == "0.3" {
-		rawFeed = new(atom03Feed)
-	} else {
-		rawFeed = new(atom10Feed)
+	switch version {
+	case "0.3":
+		atomFeed := new(Atom03Feed)
+		if err := xml_decoder.NewXMLDecoder(r).Decode(atomFeed); err != nil {
+			return nil, fmt.Errorf("atom: unable to parse Atom 0.3 feed: %w", err)
+		}
+		return NewAtom03Adapter(atomFeed).BuildFeed(baseURL), nil
+	default:
+		atomFeed := new(Atom10Feed)
+		if err := xml_decoder.NewXMLDecoder(r).Decode(atomFeed); err != nil {
+			return nil, fmt.Errorf("atom: unable to parse Atom 1.0 feed: %w", err)
+		}
+		return NewAtom10Adapter(atomFeed).BuildFeed(baseURL), nil
 	}
-
-	if err := xml_decoder.NewXMLDecoder(r).Decode(rawFeed); err != nil {
-		return nil, fmt.Errorf("atom: unable to parse feed: %w", err)
-	}
-
-	return rawFeed.Transform(baseURL), nil
 }
