@@ -152,11 +152,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Save and resume media position
-    const elements = document.querySelectorAll("audio[data-last-position],video[data-last-position]");
-    elements.forEach((element) => {
+    const lastPositionElements = document.querySelectorAll("audio[data-last-position],video[data-last-position]");
+    lastPositionElements.forEach((element) => {
         if (element.dataset.lastPosition) {
             element.currentTime = element.dataset.lastPosition;
         }
         element.ontimeupdate = () => handlePlayerProgressionSave(element);
+    });
+
+    // Set media playback rate
+    const playbackRateElements = document.querySelectorAll("audio[data-playback-rate],video[data-playback-rate]");
+    playbackRateElements.forEach((element) => {
+        if (element.dataset.playbackRate) {
+            element.playbackRate = element.dataset.playbackRate;
+        }
     });
 });

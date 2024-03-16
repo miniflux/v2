@@ -62,6 +62,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		DefaultReadingSpeed: model.OptionalInt(settingsForm.DefaultReadingSpeed),
 		CJKReadingSpeed:     model.OptionalInt(settingsForm.CJKReadingSpeed),
 		DefaultHomePage:     model.OptionalString(settingsForm.DefaultHomePage),
+		MediaPlaybackRate:   model.OptionalFloat(settingsForm.MediaPlaybackRate),
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, loggedUser.ID, userModificationRequest); validationErr != nil {

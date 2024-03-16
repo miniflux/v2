@@ -524,5 +524,7 @@
     "error.unable_to_parse_feed": "Dieses Abonnement kann nicht gelesen werden: %v.",
     "error.feed_not_found": "Dieses Abonnement existiert nicht oder gehört nicht zu diesem Benutzer.",
     "error.unable_to_detect_rssbridge": "Abonnement kann nicht durch RSS-Bridge erkannt werden: %v.",
-    "error.feed_format_not_detected": "Das Format des Abonnements kann nicht erkannt werden: %v."
+    "error.feed_format_not_detected": "Das Format des Abonnements kann nicht erkannt werden: %v.",
+    "form.prefs.label.media_playback_rate": "Wiedergabegeschwindigkeit von Audio/Video",
+    "error.settings_media_playback_rate_range": "Die Wiedergabegeschwindigkeit liegt außerhalb des Bereichs"
 }

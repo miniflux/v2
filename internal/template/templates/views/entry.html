@@ -172,6 +172,7 @@
     <div class="enclosure-audio" >
         <audio controls preload="metadata"
             data-last-position="{{ .MediaProgression }}"
+            {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
             data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
             >
             {{ if (and $.user (mustBeProxyfied "audio")) }}
@@ -185,6 +186,7 @@
         <div class="enclosure-video">
             <video controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
+                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 >
                 {{ if (and $.user (mustBeProxyfied "video")) }}
@@ -214,6 +216,7 @@
         <div class="enclosure-audio">
             <audio controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
+                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 >
                 {{ if (and $.user (mustBeProxyfied "audio")) }}
@@ -227,6 +230,7 @@
         <div class="enclosure-video">
             <video controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
+                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 >
                 {{ if (and $.user (mustBeProxyfied "video")) }}

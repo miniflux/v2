@@ -22,6 +22,7 @@ func TestValid(t *testing.T) {
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
 		DefaultHomePage:     "unread",
+		MediaPlaybackRate:   1.25,
 	}
 
 	err := settings.Validate()
@@ -45,6 +46,7 @@ func TestConfirmationEmpty(t *testing.T) {
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
 		DefaultHomePage:     "unread",
+		MediaPlaybackRate:   1.25,
 	}
 
 	err := settings.Validate()
@@ -72,6 +74,7 @@ func TestConfirmationIncorrect(t *testing.T) {
 		DefaultReadingSpeed: 35,
 		CJKReadingSpeed:     25,
 		DefaultHomePage:     "unread",
+		MediaPlaybackRate:   1.25,
 	}
 
 	err := settings.Validate()
