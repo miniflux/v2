@@ -11,17 +11,18 @@ import (
 
 var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 
-// Element represents XML media elements.
-type Element struct {
-	MediaGroups       []Group         `xml:"http://search.yahoo.com/mrss/ group"`
-	MediaContents     []Content       `xml:"http://search.yahoo.com/mrss/ content"`
-	MediaThumbnails   []Thumbnail     `xml:"http://search.yahoo.com/mrss/ thumbnail"`
-	MediaDescriptions DescriptionList `xml:"http://search.yahoo.com/mrss/ description"`
-	MediaPeerLinks    []PeerLink      `xml:"http://search.yahoo.com/mrss/ peerLink"`
+// Specs: https://www.rssboard.org/media-rss
+type MediaItemElement struct {
+	MediaCategories   MediaCategoryList `xml:"http://search.yahoo.com/mrss/ category"`
+	MediaGroups       []Group           `xml:"http://search.yahoo.com/mrss/ group"`
+	MediaContents     []Content         `xml:"http://search.yahoo.com/mrss/ content"`
+	MediaThumbnails   []Thumbnail       `xml:"http://search.yahoo.com/mrss/ thumbnail"`
+	MediaDescriptions DescriptionList   `xml:"http://search.yahoo.com/mrss/ description"`
+	MediaPeerLinks    []PeerLink        `xml:"http://search.yahoo.com/mrss/ peerLink"`
 }
 
 // AllMediaThumbnails returns all thumbnail elements merged together.
-func (e *Element) AllMediaThumbnails() []Thumbnail {
+func (e *MediaItemElement) AllMediaThumbnails() []Thumbnail {
 	var items []Thumbnail
 	items = append(items, e.MediaThumbnails...)
 	for _, mediaGroup := range e.MediaGroups {
@@ -31,7 +32,7 @@ func (e *Element) AllMediaThumbnails() []Thumbnail {
 }
 
 // AllMediaContents returns all content elements merged together.
-func (e *Element) AllMediaContents() []Content {
+func (e *MediaItemElement) AllMediaContents() []Content {
 	var items []Content
 	items = append(items, e.MediaContents...)
 	for _, mediaGroup := range e.MediaGroups {
@@ -41,7 +42,7 @@ func (e *Element) AllMediaContents() []Content {
 }
 
 // AllMediaPeerLinks returns all peer link elements merged together.
-func (e *Element) AllMediaPeerLinks() []PeerLink {
+func (e *MediaItemElement) AllMediaPeerLinks() []PeerLink {
 	var items []PeerLink
 	items = append(items, e.MediaPeerLinks...)
 	for _, mediaGroup := range e.MediaGroups {
@@ -51,7 +52,7 @@ func (e *Element) AllMediaPeerLinks() []PeerLink {
 }
 
 // FirstMediaDescription returns the first description element.
-func (e *Element) FirstMediaDescription() string {
+func (e *MediaItemElement) FirstMediaDescription() string {
 	description := e.MediaDescriptions.First()
 	if description != "" {
 		return description
@@ -172,4 +173,21 @@ func (dl DescriptionList) First() string {
 		}
 	}
 	return ""
+}
+
+type MediaCategoryList []MediaCategory
+
+func (mcl MediaCategoryList) Labels() []string {
+	var labels []string
+	for _, category := range mcl {
+		label := strings.TrimSpace(category.Label)
+		if label != "" {
+			labels = append(labels, label)
+		}
+	}
+	return labels
+}
+
+type MediaCategory struct {
+	Label string `xml:"label,attr"`
 }

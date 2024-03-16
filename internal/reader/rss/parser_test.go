@@ -300,7 +300,7 @@ func TestParseEntryWithMultipleAtomLinks(t *testing.T) {
 			<item>
 				<title>Test</title>
 				<atom:link rel="payment" href="https://example.org/a" />
-				<atom:link rel="http://foobar.tld" href="https://example.org/b" />
+				<atom:link rel="alternate" href="https://example.org/b" />
 			</item>
 		</channel>
 		</rss>`
@@ -430,7 +430,7 @@ func TestParseEntryWithAuthorAndCDATA(t *testing.T) {
 				<title>Test</title>
 				<link>https://example.org/item</link>
 				<author>
-					by <![CDATA[Foo Bar]]>
+					<![CDATA[by Foo Bar]]>
 				</author>
 			</item>
 		</channel>
@@ -441,38 +441,6 @@ func TestParseEntryWithAuthorAndCDATA(t *testing.T) {
 		t.Fatal(err)
 	}
 	expected := "by Foo Bar"
-	result := feed.Entries[0].Author
-	if result != expected {
-		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
-	}
-}
-
-func TestParseEntryWithNonStandardAtomAuthor(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-		<channel>
-			<title>Example</title>
-			<link>https://example.org/</link>
-			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
-			<item>
-				<title>Test</title>
-				<link>https://example.org/item</link>
-				<author xmlns:author="http://www.w3.org/2005/Atom">
-					<name>Foo Bar</name>
-					<title>Vice President</title>
-					<department/>
-					<company>FooBar Inc.</company>
-				</author>
-			</item>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected := "Foo Bar"
 	result := feed.Entries[0].Author
 	if result != expected {
 		t.Errorf("Incorrect entry author, got %q instead of %q", result, expected)
@@ -508,7 +476,7 @@ func TestParseEntryWithAtomAuthorEmail(t *testing.T) {
 	}
 }
 
-func TestParseEntryWithAtomAuthor(t *testing.T) {
+func TestParseEntryWithAtomAuthorName(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
@@ -778,6 +746,106 @@ func TestParseEntryWithContentEncoded(t *testing.T) {
 	}
 }
 
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryDescriptionWithEncodedHTMLTags(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description>this is &lt;b&gt;bold&lt;/b&gt;</description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `this is <b>bold</b>` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryWithDescriptionWithHTMLCDATA(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description><![CDATA[this is <b>bold</b>]]></description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `this is <b>bold</b>` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryDescriptionWithEncodingAngleBracketsInText(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description>5 &amp;lt; 8, ticker symbol &amp;lt;BIGCO&amp;gt;</description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `5 &lt; 8, ticker symbol &lt;BIGCO&gt;` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryDescriptionWithEncodingAngleBracketsWithinCDATASection(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description><![CDATA[5 &lt; 8, ticker symbol &lt;BIGCO&gt;]]></description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `5 &lt; 8, ticker symbol &lt;BIGCO&gt;` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
 func TestParseEntryWithFeedBurnerLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">
@@ -874,6 +942,59 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 	}
 
 	if feed.Entries[0].Enclosures[0].Size != 12345 {
+		t.Errorf("Incorrect enclosure length, got: %d", feed.Entries[0].Enclosures[0].Size)
+	}
+}
+
+func TestParseEntryWithIncorrectEnclosureLength(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+		<title>My Podcast Feed</title>
+		<link>http://example.org</link>
+		<author>some.email@example.org</author>
+		<item>
+			<title>Podcasting with RSS</title>
+			<link>http://www.example.org/entries/1</link>
+			<description>An overview of RSS podcasting</description>
+			<pubDate>Fri, 15 Jul 2005 00:00:00 -0500</pubDate>
+			<guid isPermaLink="true">http://www.example.org/entries/1</guid>
+			<enclosure url="http://www.example.org/myaudiofile.mp3" length="invalid" type="audio/mpeg" />
+			<enclosure url="http://www.example.org/myaudiofile.wav" length=" " type="audio" />
+		</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
+		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+	}
+
+	if len(feed.Entries[0].Enclosures) != 2 {
+		t.Errorf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	if feed.Entries[0].Enclosures[0].URL != "http://www.example.org/myaudiofile.mp3" {
+		t.Errorf("Incorrect enclosure URL, got: %s", feed.Entries[0].Enclosures[0].URL)
+	}
+
+	if feed.Entries[0].Enclosures[0].MimeType != "audio/mpeg" {
+		t.Errorf("Incorrect enclosure type, got: %s", feed.Entries[0].Enclosures[0].MimeType)
+	}
+
+	if feed.Entries[0].Enclosures[0].Size != 0 {
+		t.Errorf("Incorrect enclosure length, got: %d", feed.Entries[0].Enclosures[0].Size)
+	}
+
+	if feed.Entries[0].Enclosures[1].Size != 0 {
 		t.Errorf("Incorrect enclosure length, got: %d", feed.Entries[0].Enclosures[0].Size)
 	}
 }
@@ -1338,6 +1459,60 @@ func TestParseEntryWithMediaPeerLink(t *testing.T) {
 	}
 }
 
+func TestParseItunesDuration(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+		<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Podcast Episode</title>
+				<guid>http://example.com/episode.m4a</guid>
+				<pubDate>Tue, 08 Mar 2016 12:00:00 GMT</pubDate>
+				<itunes:duration>1:23:45</itunes:duration>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := 83
+	result := feed.Entries[0].ReadingTime
+	if expected != result {
+		t.Errorf(`Unexpected podcast duration, got %d instead of %d`, result, expected)
+	}
+}
+
+func TestParseIncorrectItunesDuration(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+		<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Podcast Episode</title>
+				<guid>http://example.com/episode.m4a</guid>
+				<pubDate>Tue, 08 Mar 2016 12:00:00 GMT</pubDate>
+				<itunes:duration>invalid</itunes:duration>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := 0
+	result := feed.Entries[0].ReadingTime
+	if expected != result {
+		t.Errorf(`Unexpected podcast duration, got %d instead of %d`, result, expected)
+	}
+}
+
 func TestEntryDescriptionFromItunesSummary(t *testing.T) {
 	data := `<?xml version="1.0" encoding="UTF-8"?>
 	<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
@@ -1435,18 +1610,48 @@ func TestEntryDescriptionFromGooglePlayDescription(t *testing.T) {
 	}
 }
 
-func TestParseEntryWithCategoryAndInnerHTML(t *testing.T) {
+func TestParseEntryWithRSSDescriptionAndMediaDescription(t *testing.T) {
+	data := `<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+		<channel>
+			<title>Podcast Example</title>
+			<link>http://www.example.com/index.html</link>
+			<item>
+				<title>Entry Title</title>
+				<link>http://www.example.com/entries/1</link>
+				<description>Entry Description</description>
+				<media:description type="plain">Media Description</media:description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	expected := "Entry Description"
+	result := feed.Entries[0].Content
+	if expected != result {
+		t.Errorf(`Unexpected description, got %q instead of %q`, result, expected)
+	}
+}
+
+func TestParseFeedWithCategories(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
 			<title>Example</title>
 			<link>https://example.org/</link>
-			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<category>Category 1</category>
+			<category><![CDATA[Category 2]]></category>
 			<item>
 				<title>Test</title>
 				<link>https://example.org/item</link>
-				<category>Category 1</category>
-				<category>Category 2</category>
 			</item>
 		</channel>
 		</rss>`
@@ -1460,27 +1665,99 @@ func TestParseEntryWithCategoryAndInnerHTML(t *testing.T) {
 		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := "Category 2"
-	result := feed.Entries[0].Tags[1]
-	if result != expected {
-		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	expected := []string{"Category 1", "Category 2"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
 	}
 }
 
-func TestParseEntryWithCategoryAndCDATA(t *testing.T) {
+func TestParseEntryWithCategories(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 		<channel>
 			<title>Example</title>
 			<link>https://example.org/</link>
-			<atom:link href="https://example.org/rss" type="application/rss+xml" rel="self"></atom:link>
+			<category>Category 3</category>
 			<item>
 				<title>Test</title>
 				<link>https://example.org/item</link>
-				<author>
-					by <![CDATA[Foo Bar]]>
-				</author>
-				<category>Sample Category</category>
+				<category>Category 1</category>
+				<category><![CDATA[Category 2]]></category>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 3 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := []string{"Category 1", "Category 2", "Category 3"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
+	}
+}
+
+func TestParseFeedWithItunesCategories(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<itunes:category text="Society &amp; Culture">
+				<itunes:category text="Documentary" />
+			</itunes:category>
+			<itunes:category text="Health">
+				<itunes:category text="Mental Health" />
+			</itunes:category>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 4 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := []string{"Society & Culture", "Documentary", "Health", "Mental Health"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
+	}
+}
+
+func TestParseFeedWithGooglePlayCategory(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gplay="http://www.google.com/schemas/play-podcasts/1.0" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<gplay:category text="Art"></gplay:category>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
 			</item>
 		</channel>
 		</rss>`
@@ -1494,10 +1771,49 @@ func TestParseEntryWithCategoryAndCDATA(t *testing.T) {
 		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := "Sample Category"
-	result := feed.Entries[0].Tags[0]
-	if result != expected {
-		t.Errorf("Incorrect entry category, got %q instead of %q", result, expected)
+	expected := []string{"Art"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
+	}
+}
+
+func TestParseEntryWithMediaCategories(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+				<media:category label="Visual Art">visual_art</media:category>
+				<media:category scheme="http://search.yahoo.com/mrss/category_ schema">music/artist/album/song</media:category>
+				<media:category scheme="urn:flickr:tags">ycantpark mobile</media:category>
+				<media:category scheme="http://dmoz.org" label="Ace Ventura - Pet Detective">Arts/Movies/Titles/A/Ace_Ventura_Series/Ace_Ventura_ -_Pet_Detective</media:category>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Tags) != 2 {
+		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	}
+
+	expected := []string{"Visual Art", "Ace Ventura - Pet Detective"}
+	result := feed.Entries[0].Tags
+
+	for i, tag := range result {
+		if tag != expected[i] {
+			t.Errorf("Incorrect tag, got: %q", tag)
+		}
 	}
 }
 

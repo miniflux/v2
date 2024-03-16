@@ -39,7 +39,7 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 }
 
 // ValidateFeedModification validates feed modification.
-func ValidateFeedModification(store *storage.Storage, userID int64, request *model.FeedModificationRequest) *locale.LocalizedError {
+func ValidateFeedModification(store *storage.Storage, userID, feedID int64, request *model.FeedModificationRequest) *locale.LocalizedError {
 	if request.FeedURL != nil {
 		if *request.FeedURL == "" {
 			return locale.NewLocalizedError("error.feed_url_not_empty")
@@ -47,6 +47,10 @@ func ValidateFeedModification(store *storage.Storage, userID int64, request *mod
 
 		if !IsValidURL(*request.FeedURL) {
 			return locale.NewLocalizedError("error.invalid_feed_url")
+		}
+
+		if store.AnotherFeedURLExists(userID, feedID, *request.FeedURL) {
+			return locale.NewLocalizedError("error.feed_already_exists")
 		}
 	}
 

@@ -22,26 +22,8 @@ class DomHelper {
     }
 
     static getVisibleElements(selector) {
-        let elements = document.querySelectorAll(selector);
-        let result = [];
-
-        for (let i = 0; i < elements.length; i++) {
-            if (this.isVisible(elements[i])) {
-                result.push(elements[i]);
-            }
-        }
-
-        return result;
-    }
-
-    static findParent(element, selector) {
-        for (; element && element !== document; element = element.parentNode) {
-            if (element.classList.contains(selector)) {
-                return element;
-            }
-        }
-
-        return null;
+        const elements = document.querySelectorAll(selector);
+        return [...elements].filter((element) => this.isVisible(element));
     }
 
     static hasPassiveEventListenerOption() {

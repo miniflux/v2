@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:/miniflux/v2/commits/main</id>
+  <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commits/main"/>
+  <link type="application/atom+xml" rel="self" href="https://github.com/miniflux/v2/commits/main.atom"/>
+  <title>Recent Commits to v2:main</title>
+  <updated>2024-03-12T05:30:27Z</updated>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/6d97f8b4582414b6ce69467656824690057d4793</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/6d97f8b4582414b6ce69467656824690057d4793"/>
+    <title>
+        Parse podcast categories
+    </title>
+    <updated>2024-03-12T05:30:27Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Parse podcast categories&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/f8e50947f2885047155a8070dddab133a5c685c2</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/f8e50947f2885047155a8070dddab133a5c685c2"/>
+    <title>
+        Move iTunes and GooglePlay XML definitions to their own packages
+    </title>
+    <updated>2024-03-12T05:09:31Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Move iTunes and GooglePlay XML definitions to their own packages&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/9a637ce95e05459adc4712027e6a07eaabcfe657</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/9a637ce95e05459adc4712027e6a07eaabcfe657"/>
+    <title>
+        Refactor RSS parser to use default namespace
+    </title>
+    <updated>2024-03-12T04:07:13Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Refactor RSS parser to use default namespace
+
+This change avoid some limitations of the Go XML parser regarding XML namespaces&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/d3a85b049b14d4a4ddd6b813134b2abd45fe5e8d</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/d3a85b049b14d4a4ddd6b813134b2abd45fe5e8d"/>
+    <title>
+        jsminifier: set JavaScript version
+    </title>
+    <updated>2024-03-12T02:02:52Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;jsminifier: set JavaScript version&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/5bcb37901c60463b27e1211e0f68295f213b19e6</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/5bcb37901c60463b27e1211e0f68295f213b19e6"/>
+    <title>
+        Use crypto.GenerateRandomBytes instead of doing it by hand
+    </title>
+    <updated>2024-03-11T23:31:43Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Use crypto.GenerateRandomBytes instead of doing it by hand
+
+This makes the code a bit shorter, and properly handle
+cryptographic error conditions.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/9c8a7dfffe2f4596dcbde2c923a7539914bb252f</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/9c8a7dfffe2f4596dcbde2c923a7539914bb252f"/>
+    <title>
+        Make use of HashFromBytes everywhere
+    </title>
+    <updated>2024-03-11T22:22:22Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Make use of HashFromBytes everywhere
+
+It feels a bit silly to have a function and to not make use of it.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/74e4032ffc9faad4fec602f283a32d2af8dec47e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/74e4032ffc9faad4fec602f283a32d2af8dec47e"/>
+    <title>
+        Small refactor of app.js
+    </title>
+    <updated>2024-03-11T22:18:57Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Small refactor of app.js
+
+- replace a lot of `let` with `const`
+- inline some `querySelectorAll` calls
+- reduce the scope of some variables
+- use some ternaries where it makes sense
+- inline one-line functions&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/fd1fee852cb35fa0f5b0ed6dc0c23b4a6ce368c3</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/fd1fee852cb35fa0f5b0ed6dc0c23b4a6ce368c3"/>
+    <title>
+        Simplify DomHelper.getVisibleElements
+    </title>
+    <updated>2024-03-11T22:03:00Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Simplify DomHelper.getVisibleElements
+
+Use a `filter` instead of a loop with an index.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/c51a3270da1f6af796b7d23fa4b434ccf11818e7</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/c51a3270da1f6af796b7d23fa4b434ccf11818e7"/>
+    <title>
+        GitHub Actions: Add basic ESLinter checks
+    </title>
+    <updated>2024-03-11T03:57:27Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;GitHub Actions: Add basic ESLinter checks&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/45fa641d26a5f68e663aa9af72e97523d8d63c1e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/45fa641d26a5f68e663aa9af72e97523d8d63c1e"/>
+    <title>
+        Fix JavaScript linter path in GitHub Actions
+    </title>
+    <updated>2024-03-11T03:37:18Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix JavaScript linter path in GitHub Actions&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/fd8f25916b025a92b1b8349ef9d0acdb832a9e8e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/fd8f25916b025a92b1b8349ef9d0acdb832a9e8e"/>
+    <title>
+        First steps towards trusted-types support
+    </title>
+    <updated>2024-03-11T03:14:30Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;First steps towards trusted-types support
+
+Refactor away some trival usages of `.innerHTML`. Unfortunately, there is no way to
+enabled trusted-types in report-only mode via `&amp;lt;meta&amp;gt;` tags, see
+https://github.com/w3c/webappsec-csp/issues/277&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/826e4d654f511ea8d1d385bdc09cbed69ff6a70f</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/826e4d654f511ea8d1d385bdc09cbed69ff6a70f"/>
+    <title>
+        Replace DomHelper.findParent with .closest
+    </title>
+    <updated>2024-03-11T03:06:54Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Replace DomHelper.findParent with .closest
+
+See https://developer.mozilla.org/en-US/docs/Web/API/Element/closest&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/d9d17f0d69d1dafb3bd9d81bf9fc27df3def4f4c</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/d9d17f0d69d1dafb3bd9d81bf9fc27df3def4f4c"/>
+    <title>
+        Use a `Set` instead of an array in a KeyboardHandler&#39;s member
+    </title>
+    <updated>2024-03-11T02:41:13Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Use a `Set` instead of an array in a KeyboardHandler&amp;#39;s member
+
+The variable `triggers` is only used to check if in contains a particular
+value. Given that the number of keyboard shortcuts is starting to be
+significant, let&amp;#39;s future-proof the performances and use a `Set` instead of an
+`Array` instead.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/eaaeb68474ff194f682e9521a848d7ab2c89348e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/eaaeb68474ff194f682e9521a848d7ab2c89348e"/>
+    <title>
+        Fix conditions to publish packages in GitHub workflows
+    </title>
+    <updated>2024-03-10T19:25:13Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Fix conditions to publish packages in GitHub workflows&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/382885f14403526adfa6c303927889c76fd5a1eb</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/382885f14403526adfa6c303927889c76fd5a1eb"/>
+    <title>
+        Update changeLog
+    </title>
+    <updated>2024-03-10T17:50:47Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/323546?s=30&amp;v=4"/>
+    <author>
+      <name>fguillot</name>
+      <uri>https://github.com/fguillot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Update changeLog&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/0f7b047b0a81253b6d146e05d561545303016b74</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/0f7b047b0a81253b6d146e05d561545303016b74"/>
+    <title>
+        Bump github.com/go-jose/go-jose/v3 from 3.0.1 to 3.0.3
+    </title>
+    <updated>2024-03-08T04:59:42Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/29110?s=30&amp;v=4"/>
+    <author>
+      <name>dependabot</name>
+      <uri>https://github.com/dependabot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Bump github.com/go-jose/go-jose/v3 from 3.0.1 to 3.0.3
+
+Bumps [github.com/go-jose/go-jose/v3](https://github.com/go-jose/go-jose) from 3.0.1 to 3.0.3.
+- [Release notes](https://github.com/go-jose/go-jose/releases)
+- [Changelog](https://github.com/go-jose/go-jose/blob/v3.0.3/CHANGELOG.md)
+- [Commits](https://github.com/go-jose/go-jose/compare/v3.0.1...v3.0.3)
+
+---
+updated-dependencies:
+- dependency-name: github.com/go-jose/go-jose/v3
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] &amp;lt;support@github.com&amp;gt;&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/a074773e6c5d3b2066094cbac0502094aa364713</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/a074773e6c5d3b2066094cbac0502094aa364713"/>
+    <title>
+        Use an io.ReadSeeker instead of an io.Reader to parse feeds
+    </title>
+    <updated>2024-03-07T04:13:39Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Use an io.ReadSeeker instead of an io.Reader to parse feeds
+
+This will allow to make use of func (*Reader) Seek, instead of re-recreating a
+new reader. It&amp;#39;s a large commit for a small change, but anything to simply the
+reader/buffer/ReadAll/… mess is a step in the right direction I think, and it
+should enable more follow-up simplifications.&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/3d0126be0b8a603401b7593250f80b0a8042b995</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/3d0126be0b8a603401b7593250f80b0a8042b995"/>
+    <title>
+        Speed the sanitizer up a bit, again
+    </title>
+    <updated>2024-03-06T03:31:50Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Speed the sanitizer up a bit, again
+
+- allow youtube urls to start with `www`
+- use `strings.Builder` instead of a `bytes.Buffer`
+- use a `strings.NewReader` instead of a `bytes.NewBufferString`
+- sprinkles a couple of `continue` to make the code-flow more obvious
+- inline calls to `inList`, and put their parameters in the right order
+- simplify isPixelTracker
+- simplify `isValidIframeSource`, by extracting the hostname and comparing it
+  directly, instead of using the full url and checking if it starts with
+  multiple variations of the same one (`//`, `http:`, `https://` multiplied by
+  ``/`www.`)
+- add a benchmark&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/eda2e2f3f5c278e44e2def72caedc33667a0fb6c</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/eda2e2f3f5c278e44e2def72caedc33667a0fb6c"/>
+    <title>
+        Bump golang.org/x/oauth2 from 0.17.0 to 0.18.0
+    </title>
+    <updated>2024-03-05T23:39:07Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/29110?s=30&amp;v=4"/>
+    <author>
+      <name>dependabot</name>
+      <uri>https://github.com/dependabot</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Bump golang.org/x/oauth2 from 0.17.0 to 0.18.0
+
+Bumps [golang.org/x/oauth2](https://github.com/golang/oauth2) from 0.17.0 to 0.18.0.
+- [Commits](https://github.com/golang/oauth2/compare/v0.17.0...v0.18.0)
+
+---
+updated-dependencies:
+- dependency-name: golang.org/x/oauth2
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] &amp;lt;support@github.com&amp;gt;&lt;/pre&gt;
+    </content>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/111e3f2106646cd29f7f74c0102f2a570c598e2e</id>
+    <link type="text/html" rel="alternate" href="https://github.com/miniflux/v2/commit/111e3f2106646cd29f7f74c0102f2a570c598e2e"/>
+    <title>
+        Reuse a Reader instead of copying to a buffer when parsing an atom feed
+    </title>
+    <updated>2024-03-05T01:36:10Z</updated>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/325724?s=30&amp;v=4"/>
+    <author>
+      <name>jvoisin</name>
+      <uri>https://github.com/jvoisin</uri>
+    </author>
+    <content type="html">
+      &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Reuse a Reader instead of copying to a buffer when parsing an atom feed&lt;/pre&gt;
+    </content>
+  </entry>
+</feed>

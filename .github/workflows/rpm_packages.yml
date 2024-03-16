@@ -38,7 +38,7 @@ jobs:
         if-no-files-found: error
         retention-days: 3
   publish-package:
-    if: github.event.push
+    if: github.event_name == 'push'
     name: Publish Packages
     runs-on: ubuntu-latest
     steps:

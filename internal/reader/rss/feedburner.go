@@ -3,8 +3,8 @@
 
 package rss // import "miniflux.app/v2/internal/reader/rss"
 
-// FeedBurnerElement represents FeedBurner XML elements.
-type FeedBurnerElement struct {
+// FeedBurnerItemElement represents FeedBurner XML elements.
+type FeedBurnerItemElement struct {
 	FeedBurnerLink          string `xml:"http://rssnamespace.org/feedburner/ext/1.0 origLink"`
 	FeedBurnerEnclosureLink string `xml:"http://rssnamespace.org/feedburner/ext/1.0 origEnclosureLink"`
 }

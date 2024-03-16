@@ -21,12 +21,12 @@ const (
 )
 
 // DetectFeedFormat tries to guess the feed format from input data.
-func DetectFeedFormat(r io.ReadSeeker) string {
+func DetectFeedFormat(r io.ReadSeeker) (string, string) {
 	data := make([]byte, 512)
 	r.Read(data)
 
 	if bytes.HasPrefix(bytes.TrimSpace(data), []byte("{")) {
-		return FormatJSON
+		return FormatJSON, ""
 	}
 
 	r.Seek(0, io.SeekStart)
@@ -41,14 +41,19 @@ func DetectFeedFormat(r io.ReadSeeker) string {
 		if element, ok := token.(xml.StartElement); ok {
 			switch element.Name.Local {
 			case "rss":
-				return FormatRSS
+				return FormatRSS, ""
 			case "feed":
-				return FormatAtom
+				for _, attr := range element.Attr {
+					if attr.Name.Local == "version" && attr.Value == "0.3" {
+						return FormatAtom, "0.3"
+					}
+				}
+				return FormatAtom, "1.0"
 			case "RDF":
-				return FormatRDF
+				return FormatRDF, ""
 			}
 		}
 	}
 
-	return FormatUnknown
+	return FormatUnknown, ""
 }

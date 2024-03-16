@@ -69,7 +69,7 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 	}
 
 	// Step 1) Check if the website URL is a feed.
-	if feedFormat := parser.DetectFeedFormat(f.feedResponseInfo.Content); feedFormat != parser.FormatUnknown {
+	if feedFormat, _ := parser.DetectFeedFormat(f.feedResponseInfo.Content); feedFormat != parser.FormatUnknown {
 		f.feedDownloaded = true
 		return Subscriptions{NewSubscription(responseHandler.EffectiveURL(), responseHandler.EffectiveURL(), feedFormat)}, nil
 	}

@@ -17,8 +17,7 @@ import (
 
 // HashFromBytes returns a SHA-256 checksum of the input.
 func HashFromBytes(value []byte) string {
-	sum := sha256.Sum256(value)
-	return fmt.Sprintf("%x", sum)
+	return fmt.Sprintf("%x", sha256.Sum256(value))
 }
 
 // Hash returns a SHA-256 checksum of a string.
