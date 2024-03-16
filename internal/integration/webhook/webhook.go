@@ -60,13 +60,14 @@ func (c *Client) SendSaveEntryWebhookEvent(entry *model.Entry) error {
 			Enclosures:  entry.Enclosures,
 			Tags:        entry.Tags,
 			Feed: &WebhookFeed{
-				ID:        entry.Feed.ID,
-				UserID:    entry.Feed.UserID,
-				Category:  feedCategory.Title,
-				FeedURL:   entry.Feed.FeedURL,
-				SiteURL:   entry.Feed.SiteURL,
-				Title:     entry.Feed.Title,
-				CheckedAt: entry.Feed.CheckedAt,
+				ID:         entry.Feed.ID,
+				UserID:     entry.Feed.UserID,
+				CategoryID: entry.Feed.Category.ID,
+				Category:   feedCategory,
+				FeedURL:    entry.Feed.FeedURL,
+				SiteURL:    entry.Feed.SiteURL,
+				Title:      entry.Feed.Title,
+				CheckedAt:  entry.Feed.CheckedAt,
 			},
 		},
 	})
@@ -107,13 +108,14 @@ func (c *Client) SendNewEntriesWebhookEvent(feed *model.Feed, entries model.Entr
 	return c.makeRequest(NewEntriesEventType, &WebhookNewEntriesEvent{
 		EventType: NewEntriesEventType,
 		Feed: &WebhookFeed{
-			ID:        feed.ID,
-			UserID:    feed.UserID,
-			Category:  feedCategory.Title,
-			FeedURL:   feed.FeedURL,
-			SiteURL:   feed.SiteURL,
-			Title:     feed.Title,
-			CheckedAt: feed.CheckedAt,
+			ID:         feed.ID,
+			UserID:     feed.UserID,
+			CategoryID: feed.Category.ID,
+			Category:   feedCategory,
+			FeedURL:    feed.FeedURL,
+			SiteURL:    feed.SiteURL,
+			Title:      feed.Title,
+			CheckedAt:  feed.CheckedAt,
 		},
 		Entries: webhookEntries,
 	})
@@ -154,13 +156,14 @@ func (c *Client) makeRequest(eventType string, payload any) error {
 }
 
 type WebhookFeed struct {
-	ID        int64     `json:"id"`
-	UserID    int64     `json:"user_id"`
-	Category  string    `json:"category"`
-	FeedURL   string    `json:"feed_url"`
-	SiteURL   string    `json:"site_url"`
-	Title     string    `json:"title"`
-	CheckedAt time.Time `json:"checked_at"`
+	ID         int64           `json:"id"`
+	UserID     int64           `json:"user_id"`
+	CategoryID int64           `json:"category_id"`
+	Category   *model.Category `json:"category"`
+	FeedURL    string          `json:"feed_url"`
+	SiteURL    string          `json:"site_url"`
+	Title      string          `json:"title"`
+	CheckedAt  time.Time       `json:"checked_at"`
 }
 
 type WebhookEntry struct {
