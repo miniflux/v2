@@ -290,3 +290,7 @@ type VersionResponse struct {
 	Arch      string `json:"arch"`
 	OS        string `json:"os"`
 }
+
+func SetOptionalField[T any](value T) *T {
+	return &value
+}
