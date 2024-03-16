@@ -108,6 +108,9 @@
         <label for="form-default-reading-speed">{{ t "form.prefs.label.default_reading_speed" }}</label>
         <input type="number" name="default_reading_speed" id="form-default-reading-speed" value="{{ .form.DefaultReadingSpeed }}" min="1">
 
+        <label for="form-media-playback-rate">{{ t "form.prefs.label.media_playback_rate" }}</label>
+        <input type="number" name="media_playback_rate" id="form-media-playback-rate" value="{{ .form.MediaPlaybackRate }}" min="0.25" max="4" step="any" />
+
         <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
         <label><input type="checkbox" name="mark_read_on_view" value="1" {{ if .form.MarkReadOnView }}checked{{ end }}> {{ t "form.prefs.label.mark_read_on_view" }}</label>

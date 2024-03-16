@@ -26,3 +26,11 @@ func OptionalInt64(value int64) *int64 {
 	}
 	return nil
 }
+
+// OptionalFloat populates an optional float64 field.
+func OptionalFloat(value float64) *float64 {
+	if value > 0 {
+		return &value
+	}
+	return nil
+}
