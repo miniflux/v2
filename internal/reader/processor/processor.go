@@ -47,7 +47,6 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			slog.Int64("feed_id", feed.ID),
 			slog.String("feed_url", feed.FeedURL),
 		)
-		
 		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) || !ProcessEntryMaxAgeDays(entry) {
 			continue
 		}
