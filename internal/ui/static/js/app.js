@@ -167,11 +167,11 @@ function handleEntryStatus(item, element, setToRead) {
     }
 }
 
-// Add a span-icon with a `label` to `element` as a child
-function addIcon(element, label) {
+// Add an icon-label span element.
+function appendIconLabel(element, labelTextContent) {
     const span = document.createElement('span');
     span.classList.add('icon-label');
-    span.textContent = label;
+    span.textContent = labelTextContent;
     element.appendChild(span);
 }
 
@@ -202,7 +202,7 @@ function toggleEntryStatus(element, toasting) {
         }
 
         link.replaceChildren(iconElement.content.cloneNode(true));
-        addIcon(link, label);
+        appendIconLabel(link, label);
         link.dataset.value = newStatus;
 
         if (element.classList.contains("item-status-" + currentStatus)) {
@@ -268,12 +268,12 @@ function saveEntry(element, toasting) {
     }
 
     element.textContent = "";
-    addIcon(element, element.dataset.labelLoading);
+    appendIconLabel(element, element.dataset.labelLoading);
 
     const request = new RequestBuilder(element.dataset.saveUrl);
     request.withCallback(() => {
         element.textContent = "";
-        addIcon(element, element.dataset.labelDone);
+        appendIconLabel(element, element.dataset.labelDone);
         element.dataset.completed = true;
         if (toasting) {
             const iconElement = document.querySelector("template#icon-save");
@@ -294,37 +294,37 @@ function handleBookmark(element) {
 
 // Send the Ajax request and change the icon when bookmarking an entry.
 function toggleBookmark(parentElement, toasting) {
-    const element = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
-    if (!element) {
+    const buttonElement = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
+    if (!buttonElement) {
         return;
     }
 
-    element.textContent = "";
-    addIcon(element, element.dataset.labelLoading);
+    buttonElement.textContent = "";
+    appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
 
-    const request = new RequestBuilder(element.dataset.bookmarkUrl);
+    const request = new RequestBuilder(buttonElement.dataset.bookmarkUrl);
     request.withCallback(() => {
-        const currentStarStatus = element.dataset.value;
+        const currentStarStatus = buttonElement.dataset.value;
         const newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
 
         let iconElement, label;
         if (currentStarStatus === "star") {
             iconElement = document.querySelector("template#icon-star");
-            label = element.dataset.labelStar;
+            label = buttonElement.dataset.labelStar;
             if (toasting) {
-                showToast(element.dataset.toastUnstar, iconElement);
+                showToast(buttonElement.dataset.toastUnstar, iconElement);
             }
         } else {
             iconElement = document.querySelector("template#icon-unstar");
-            label = element.dataset.labelUnstar;
+            label = buttonElement.dataset.labelUnstar;
             if (toasting) {
-                showToast(element.dataset.toastStar, iconElement);
+                showToast(buttonElement.dataset.toastStar, iconElement);
             }
         }
 
-        element.replaceChildren(iconElement.content.cloneNode(true));
-        addIcon(element, label);
-        element.dataset.value = newStarStatus;
+        buttonElement.replaceChildren(iconElement.content.cloneNode(true));
+        appendIconLabel(buttonElement, label);
+        buttonElement.dataset.value = newStarStatus;
     });
     request.execute();
 }
@@ -335,18 +335,20 @@ function handleFetchOriginalContent() {
         return;
     }
 
-    const element = document.querySelector(":is(a, button)[data-fetch-content-entry]");
-    if (!element) {
+    const buttonElement = document.querySelector(":is(a, button)[data-fetch-content-entry]");
+    if (!buttonElement) {
         return;
     }
 
-    const previousElement = element.cloneNode(true);
-    addIcon(element, element.dataset.labelLoading);
+    const previousElement = buttonElement.cloneNode(true);
 
-    const request = new RequestBuilder(element.dataset.fetchContentUrl);
+    buttonElement.textContent = "";
+    appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
+
+    const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
     request.withCallback((response) => {
-        element.textContent = '';
-        element.appendChild(previousElement);
+        buttonElement.textContent = '';
+        buttonElement.appendChild(previousElement);
 
         response.json().then((data) => {
             if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
@@ -629,7 +631,7 @@ function showToast(label, iconElement) {
     const toastMsgElement = document.getElementById("toast-msg");
     if (toastMsgElement) {
         toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
-        addIcon(toastMsgElement, label);
+        appendIconLabel(toastMsgElement, label);
 
         const toastElementWrapper = document.getElementById("toast-wrapper");
         if (toastElementWrapper) {
