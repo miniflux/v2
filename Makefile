@@ -128,7 +128,11 @@ integration-test:
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 
 	while ! nc -z localhost 8080; do sleep 1; done
-	go test -v -tags=integration -count=1 miniflux.app/v2/internal/tests
+
+	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
+	TEST_MINIFLUX_ADMIN_USERNAME=admin \
+	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	go test -v -count=1 ./internal/api
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
