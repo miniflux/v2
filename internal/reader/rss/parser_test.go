@@ -746,6 +746,106 @@ func TestParseEntryWithContentEncoded(t *testing.T) {
 	}
 }
 
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryDescriptionWithEncodedHTMLTags(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description>this is &lt;b&gt;bold&lt;/b&gt;</description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `this is <b>bold</b>` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryWithDescriptionWithHTMLCDATA(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description><![CDATA[this is <b>bold</b>]]></description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `this is <b>bold</b>` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryDescriptionWithEncodingAngleBracketsInText(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description>5 &amp;lt; 8, ticker symbol &amp;lt;BIGCO&amp;gt;</description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `5 &lt; 8, ticker symbol &lt;BIGCO&gt;` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
+// https://www.rssboard.org/rss-encoding-examples
+func TestParseEntryDescriptionWithEncodingAngleBracketsWithinCDATASection(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+		<channel>
+			<title>Example</title>
+			<link>http://example.org/</link>
+			<item>
+				<title>Item 1</title>
+				<link>http://example.org/item1</link>
+				<description><![CDATA[5 &lt; 8, ticker symbol &lt;BIGCO&gt;]]></description>
+			</item>
+		</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Content != `5 &lt; 8, ticker symbol &lt;BIGCO&gt;` {
+		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
+	}
+}
+
 func TestParseEntryWithFeedBurnerLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">
