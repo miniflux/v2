@@ -115,6 +115,5 @@ func TestProcessEntryMaxAgeDays(t *testing.T) {
 		if tc.expected != result {
 			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
 		}
-
 	}
 }
