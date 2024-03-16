@@ -236,13 +236,17 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
 	requestBuilder.WithUserAgent(originalFeed.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(originalFeed.Cookie)
-	requestBuilder.WithETag(originalFeed.EtagHeader)
-	requestBuilder.WithLastModified(originalFeed.LastModifiedHeader)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 	requestBuilder.UseProxy(originalFeed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(originalFeed.DisableHTTP2)
+
+	ignoreHTTPCache := originalFeed.IgnoreHTTPCache || forceRefresh
+	if !ignoreHTTPCache {
+		requestBuilder.WithETag(originalFeed.EtagHeader)
+		requestBuilder.WithLastModified(originalFeed.LastModifiedHeader)
+	}
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()
@@ -261,7 +265,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		return localizedError
 	}
 
-	if originalFeed.IgnoreHTTPCache || responseHandler.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
+	if ignoreHTTPCache || responseHandler.IsModified(originalFeed.EtagHeader, originalFeed.LastModifiedHeader) {
 		slog.Debug("Feed modified",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
