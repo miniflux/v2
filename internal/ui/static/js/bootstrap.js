@@ -125,9 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
     onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
     if ("serviceWorker" in navigator) {
-        let scriptElement = document.getElementById("service-worker-script");
+        const scriptElement = document.getElementById("service-worker-script");
         if (scriptElement) {
-            navigator.serviceWorker.register(scriptElement.src);
+	    navigator.serviceWorker.register(ttpolicy.createScriptURL(scriptElement.src));
         }
     }
 
