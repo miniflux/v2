@@ -14,6 +14,8 @@ import (
 
 	"miniflux.app/v2/internal/config"
 
+	nethtml "golang.org/x/net/html"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/yuin/goldmark"
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
@@ -301,10 +303,6 @@ func replaceTextLinks(input string) string {
 	return textLinkRegex.ReplaceAllString(input, `<a href="${1}">${1}</a>`)
 }
 
-func replaceLineFeeds(input string) string {
-	return strings.ReplaceAll(input, "\n", "<br>")
-}
-
 func replaceCustom(entryContent string, searchTerm string, replaceTerm string) string {
 	re, err := regexp.Compile(searchTerm)
 	if err == nil {
@@ -334,7 +332,7 @@ func addCastopodEpisode(entryURL, entryContent string) string {
 func applyFuncOnTextContent(entryContent string, selector string, repl func(string) string) string {
 	var treatChildren func(i int, s *goquery.Selection)
 	treatChildren = func(i int, s *goquery.Selection) {
-		if s.Nodes[0].Type == 1 {
+		if s.Nodes[0].Type == nethtml.TextNode {
 			s.ReplaceWithHtml(repl(s.Nodes[0].Data))
 		} else {
 			s.Contents().Each(treatChildren)
@@ -456,18 +454,4 @@ func removeTables(entryContent string) string {
 
 	output, _ := doc.Find("body").First().Html()
 	return output
-}
-
-func removeClickbait(entryTitle string) string {
-	titleWords := []string{}
-	for _, word := range strings.Fields(entryTitle) {
-		runes := []rune(word)
-		if len(runes) > 1 {
-			// keep first rune as is to keep the first capital letter
-			titleWords = append(titleWords, string([]rune{runes[0]})+strings.ToLower(string(runes[1:])))
-		} else {
-			titleWords = append(titleWords, word)
-		}
-	}
-	return strings.Join(titleWords, " ")
 }
