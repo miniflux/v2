@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if ("serviceWorker" in navigator) {
         const scriptElement = document.getElementById("service-worker-script");
         if (scriptElement) {
-            navigator.serviceWorker.register(scriptElement.src);
+	    navigator.serviceWorker.register(ttpolicy.createScriptURL(scriptElement.src));
         }
     }
 
