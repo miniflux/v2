@@ -117,8 +117,12 @@ lint:
 integration-test:
 	psql -U postgres -c 'drop database if exists miniflux_test;'
 	psql -U postgres -c 'create database miniflux_test;'
-	go build -o miniflux-test main.go
+	go build -o miniflux-test -cover -coverpkg=miniflux.app main.go
 
+	rm -rf .covdatafiles
+	mkdir -p .covdatafiles
+
+	GOCOVERDIR=.covdatafiles \
 	DATABASE_URL=$(DB_URL) \
 	ADMIN_USERNAME=admin \
 	ADMIN_PASSWORD=test123 \
@@ -133,11 +137,13 @@ integration-test:
 	TEST_MINIFLUX_ADMIN_USERNAME=admin \
 	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
 	go test -v -count=1 ./internal/api
+	ls -l .covdatafiles
+	go tool covdata percent -i=.covdatafiles
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
 	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
-	@ rm miniflux-test
+	@ rm -f miniflux-test
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-image:

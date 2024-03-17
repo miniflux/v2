@@ -2,5 +2,6 @@ miniflux-*
 ./miniflux
 *.rpm
 *.deb
+.covdatafiles
 .idea
 .vscode
