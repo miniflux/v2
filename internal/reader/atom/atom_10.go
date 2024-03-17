@@ -179,11 +179,12 @@ func (a *Atom10Text) Body() string {
 func (a *Atom10Text) Title() string {
 	var content string
 
-	if strings.EqualFold(a.Type, "xhtml") {
+	switch {
+	case strings.EqualFold(a.Type, "xhtml"):
 		content = a.xhtmlContent()
-	} else if strings.Contains(a.InnerXML, "<![CDATA[") {
+	case strings.Contains(a.InnerXML, "<![CDATA["):
 		content = html.UnescapeString(a.CharData)
-	} else {
+	default:
 		content = a.CharData
 	}
 

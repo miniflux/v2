@@ -133,12 +133,12 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 	`
 
 	if user.CategoriesSortingOrder == "alphabetical" {
-		query = query + `
+		query += `
 			ORDER BY
 				c.title ASC
 		`
 	} else {
-		query = query + `
+		query += `
 			ORDER BY
 				count_unread DESC,
 				c.title ASC
@@ -255,14 +255,14 @@ func (s *Storage) RemoveAndReplaceCategoriesByName(userid int64, titles []string
 	}
 
 	query = `
-		WITH d_cats AS (SELECT id FROM categories WHERE user_id = $1 AND title = ANY($2)) 
-		UPDATE feeds 
-		 SET category_id = 
-		  (SELECT id 
-			FROM categories 
-			WHERE user_id = $1 AND id NOT IN (SELECT id FROM d_cats) 
-			ORDER BY title ASC 
-			LIMIT 1) 
+		WITH d_cats AS (SELECT id FROM categories WHERE user_id = $1 AND title = ANY($2))
+		UPDATE feeds
+		 SET category_id =
+		  (SELECT id
+			FROM categories
+			WHERE user_id = $1 AND id NOT IN (SELECT id FROM d_cats)
+			ORDER BY title ASC
+			LIMIT 1)
 		WHERE user_id = $1 AND category_id IN (SELECT id FROM d_cats)
 	`
 	_, err = tx.Exec(query, userid, titleParam)

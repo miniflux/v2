@@ -10,6 +10,8 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
+	"os"
 
 	"miniflux.app/v2/internal/locale"
 )
@@ -94,23 +96,18 @@ func (r *ResponseHandler) ReadBody(maxBodySize int64) ([]byte, *locale.Localized
 
 func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	if r.clientErr != nil {
-		switch r.clientErr.(type) {
-		case x509.CertificateInvalidError, x509.HostnameError:
+		switch {
+		case isSSLError(r.clientErr):
 			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.tls_error", r.clientErr)
-		case *net.OpError:
+		case isNetworkError(r.clientErr):
 			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_operation", r.clientErr)
-		case net.Error:
-			networkErr := r.clientErr.(net.Error)
-			if networkErr.Timeout() {
-				return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_timeout", r.clientErr)
-			}
-		}
-
-		if errors.Is(r.clientErr, io.EOF) {
+		case os.IsTimeout(r.clientErr):
+			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.network_timeout", r.clientErr)
+		case errors.Is(r.clientErr, io.EOF):
 			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_empty_response")
+		default:
+			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_client_error", r.clientErr)
 		}
-
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: %w", r.clientErr), "error.http_client_error", r.clientErr)
 	}
 
 	switch r.httpResponse.StatusCode {
@@ -144,4 +141,33 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	}
 
 	return nil
+}
+
+func isNetworkError(err error) bool {
+	if _, ok := err.(*url.Error); ok {
+		return true
+	}
+	if err == io.EOF {
+		return true
+	}
+	var opErr *net.OpError
+	if ok := errors.As(err, &opErr); ok {
+		return true
+	}
+	return false
+}
+
+func isSSLError(err error) bool {
+	var certErr x509.UnknownAuthorityError
+	if errors.As(err, &certErr) {
+		return true
+	}
+
+	var hostErr x509.HostnameError
+	if errors.As(err, &hostErr) {
+		return true
+	}
+
+	var algErr x509.InsecureAlgorithmError
+	return errors.As(err, &algErr)
 }

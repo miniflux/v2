@@ -265,9 +265,10 @@ func getStreamFilterModifiers(r *http.Request) (RequestModifiers, error) {
 }
 
 func getStream(streamID string, userID int64) (Stream, error) {
-	if strings.HasPrefix(streamID, FeedPrefix) {
+	switch {
+	case strings.HasPrefix(streamID, FeedPrefix):
 		return Stream{Type: FeedStream, ID: strings.TrimPrefix(streamID, FeedPrefix)}, nil
-	} else if strings.HasPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID)) || strings.HasPrefix(streamID, StreamPrefix) {
+	case strings.HasPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID)) || strings.HasPrefix(streamID, StreamPrefix):
 		id := strings.TrimPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID))
 		id = strings.TrimPrefix(id, StreamPrefix)
 		switch id {
@@ -288,15 +289,15 @@ func getStream(streamID string, userID int64) (Stream, error) {
 		default:
 			return Stream{NoStream, ""}, fmt.Errorf("googlereader: unknown stream with id: %s", id)
 		}
-	} else if strings.HasPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID)) || strings.HasPrefix(streamID, LabelPrefix) {
+	case strings.HasPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID)) || strings.HasPrefix(streamID, LabelPrefix):
 		id := strings.TrimPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID))
 		id = strings.TrimPrefix(id, LabelPrefix)
 		return Stream{LabelStream, id}, nil
-	} else if streamID == "" {
+	case streamID == "":
 		return Stream{NoStream, ""}, nil
+	default:
+		return Stream{NoStream, ""}, fmt.Errorf("googlereader: unknown stream type: %s", streamID)
 	}
-
-	return Stream{NoStream, ""}, fmt.Errorf("googlereader: unknown stream type: %s", streamID)
 }
 
 func getStreams(streamIDs []string, userID int64) ([]Stream, error) {
@@ -382,7 +383,7 @@ func getItemIDs(r *http.Request) ([]int64, error) {
 	return itemIDs, nil
 }
 
-func checkOutputFormat(w http.ResponseWriter, r *http.Request) error {
+func checkOutputFormat(r *http.Request) error {
 	var output string
 	if r.Method == http.MethodPost {
 		err := r.ParseForm()
@@ -736,11 +737,12 @@ func getFeed(stream Stream, store *storage.Storage, userID int64) (*model.Feed, 
 }
 
 func getOrCreateCategory(category Stream, store *storage.Storage, userID int64) (*model.Category, error) {
-	if category.ID == "" {
+	switch {
+	case category.ID == "":
 		return store.FirstCategory(userID)
-	} else if store.CategoryTitleExists(userID, category.ID) {
+	case store.CategoryTitleExists(userID, category.ID):
 		return store.CategoryByTitle(userID, category.ID)
-	} else {
+	default:
 		catRequest := model.CategoryRequest{
 			Title: category.ID,
 		}
@@ -908,7 +910,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		slog.Int64("user_id", userID),
 	)
 
-	if err := checkOutputFormat(w, r); err != nil {
+	if err := checkOutputFormat(r); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -1170,7 +1172,7 @@ func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
 		slog.String("user_agent", r.UserAgent()),
 	)
 
-	if err := checkOutputFormat(w, r); err != nil {
+	if err := checkOutputFormat(r); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -1205,7 +1207,7 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 		slog.String("user_agent", r.UserAgent()),
 	)
 
-	if err := checkOutputFormat(w, r); err != nil {
+	if err := checkOutputFormat(r); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -1224,7 +1226,7 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 			URL:        feed.FeedURL,
 			Categories: []subscriptionCategory{{fmt.Sprintf(UserLabelPrefix, userID) + feed.Category.Title, feed.Category.Title, "folder"}},
 			HTMLURL:    feed.SiteURL,
-			IconURL:    "", //TODO Icons are only base64 encode in DB yet
+			IconURL:    "", // TODO: Icons are base64 encoded in the DB.
 		})
 	}
 	json.OK(w, r, result)
@@ -1251,7 +1253,7 @@ func (h *handler) userInfoHandler(w http.ResponseWriter, r *http.Request) {
 		slog.String("user_agent", r.UserAgent()),
 	)
 
-	if err := checkOutputFormat(w, r); err != nil {
+	if err := checkOutputFormat(r); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -1276,7 +1278,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 		slog.Int64("user_id", userID),
 	)
 
-	if err := checkOutputFormat(w, r); err != nil {
+	if err := checkOutputFormat(r); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
@@ -1477,8 +1479,7 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 
 	if len(rm.ExcludeTargets) > 0 {
 		for _, s := range rm.ExcludeTargets {
-			switch s.Type {
-			case ReadStream:
+			if s.Type == ReadStream {
 				builder.WithoutStatus(model.EntryStatusRead)
 			}
 		}

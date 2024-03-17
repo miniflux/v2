@@ -376,7 +376,8 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 				return
 			}
 
-			if app == "opener" {
+			switch app {
+			case "opener":
 				params := url.Values{}
 				params.Add("url", hn_uri.String())
 
@@ -389,12 +390,12 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 
 				open_with_opener := `<a href="` + url.String() + `">Open with Opener</a>`
 				a.Parent().AppendHtml(" " + open_with_opener)
-			} else if app == "hack" {
+			case "hack":
 				url := strings.Replace(hn_uri.String(), hn_prefix, "hack://", 1)
 
 				open_with_hack := `<a href="` + url + `">Open with HACK</a>`
 				a.Parent().AppendHtml(" " + open_with_hack)
-			} else {
+			default:
 				slog.Warn("Unknown app provided for openHackerNewsLinksWith rewrite rule",
 					slog.String("app", app),
 				)

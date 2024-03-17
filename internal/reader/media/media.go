@@ -93,8 +93,6 @@ func (mc *Content) MimeType() string {
 		return "video/*"
 	case mc.Type == "" && mc.Medium == "audio":
 		return "audio/*"
-	case mc.Type == "" && mc.Medium == "video":
-		return "video/*"
 	case mc.Type != "":
 		return mc.Type
 	default:

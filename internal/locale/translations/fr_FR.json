@@ -505,7 +505,7 @@
     "error.http_body_read": "Impossible de lire le corps de la réponse HTTP : %v.",
     "error.http_empty_response_body": "Le corps de la réponse HTTP est vide.",
     "error.http_empty_response": "La réponse HTTP est vide. Peut-être que ce site web bloque Miniflux avec une protection anti-bot ?",
-    "error.tls_error": "Erreur TLS : %v. Vous pouvez désactiver la vérification TLS dans les paramètres de l'abonnement.",
+    "error.tls_error": "Erreur TLS : %q. Vous pouvez désactiver la vérification TLS dans les paramètres de l'abonnement.",
     "error.network_operation": "Miniflux n'est pas en mesure de se connecter à ce site web à cause d'un problème réseau : %v.",
     "error.network_timeout": "Ce site web est trop lent à répondre : %v.",
     "error.http_client_error": "Erreur du client HTTP : %v.",

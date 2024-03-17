@@ -190,17 +190,18 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 		}
 
 		if isExternalResourceAttribute(attribute.Key) {
-			if tagName == "iframe" {
+			switch {
+			case tagName == "iframe":
 				if !isValidIframeSource(baseURL, attribute.Val) {
 					continue
 				}
 				value = rewriteIframeURL(attribute.Val)
-			} else if tagName == "img" && attribute.Key == "src" && isValidDataAttribute(attribute.Val) {
+			case tagName == "img" && attribute.Key == "src" && isValidDataAttribute(attribute.Val):
 				value = attribute.Val
-			} else if isAnchor("a", attribute) {
+			case isAnchor("a", attribute):
 				value = attribute.Val
 				isAnchorLink = true
-			} else {
+			default:
 				value, err = urllib.AbsoluteURL(baseURL, value)
 				if err != nil {
 					continue
