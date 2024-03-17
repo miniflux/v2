@@ -505,7 +505,7 @@
     "error.http_body_read": "Der HTTP-Inhalt kann nicht gelesen werden: %v",
     "error.http_empty_response_body": "Der Inhalt der HTTP-Antwort ist leer.",
     "error.http_empty_response": "Die HTTP-Antwort ist leer. Vielleicht versucht die Webseite, sich vor Bots zu schützen?",
-    "error.tls_error": "TLS-Fehler: %v. Wenn Sie mögen, können Sie versuchen die TLS-Verifizierung in den Einstellungen des Abonnements zu deaktivieren.",
+    "error.tls_error": "TLS-Fehler: %q. Wenn Sie mögen, können Sie versuchen die TLS-Verifizierung in den Einstellungen des Abonnements zu deaktivieren.",
     "error.network_operation": "Miniflux kann die Webseite aufgrund eines Netzwerk-Fehlers nicht erreichen: %v",
     "error.network_timeout": "Die Webseite ist zu langsam und die Anfrage ist abgelaufen: %v.",
     "error.http_client_error": "HTTP-Client-Fehler: %v.",

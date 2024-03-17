@@ -22,7 +22,7 @@ jobs:
       run: eslint internal/ui/static/js/*.js
 
   golangci:
-    name: Golang Linter
+    name: Golang Linters
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
       - run: "go vet ./..."
       - uses: golangci/golangci-lint-action@v4
         with:
-          args: --timeout 10m --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace
+          args: --timeout 10m --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace --enable gocritic
       - uses: dominikh/staticcheck-action@v1.3.0
         with:
           version: "2023.1.7"

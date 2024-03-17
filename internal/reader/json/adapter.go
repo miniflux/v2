@@ -5,7 +5,7 @@ package json // import "miniflux.app/v2/internal/reader/json"
 
 import (
 	"log/slog"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 
@@ -118,24 +118,21 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 		}
 
 		// Populate the entry author.
-		itemAuthors := append(item.Authors, j.jsonFeed.Authors...)
+		itemAuthors := j.jsonFeed.Authors
+		itemAuthors = append(itemAuthors, item.Authors...)
 		itemAuthors = append(itemAuthors, item.Author, j.jsonFeed.Author)
 
-		authorNamesMap := make(map[string]bool)
+		var authorNames []string
 		for _, author := range itemAuthors {
 			authorName := strings.TrimSpace(author.Name)
 			if authorName != "" {
-				authorNamesMap[authorName] = true
+				authorNames = append(authorNames, authorName)
 			}
 		}
 
-		var authors []string
-		for authorName := range authorNamesMap {
-			authors = append(authors, authorName)
-		}
-
-		sort.Strings(authors)
-		entry.Author = strings.Join(authors, ", ")
+		slices.Sort(authorNames)
+		authorNames = slices.Compact(authorNames)
+		entry.Author = strings.Join(authorNames, ", ")
 
 		// Populate the entry enclosures.
 		for _, attachment := range item.Attachments {
