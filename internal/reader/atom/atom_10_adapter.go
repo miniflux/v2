@@ -106,15 +106,17 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 
 		// Populate the entry date.
 		for _, value := range []string{atomEntry.Published, atomEntry.Updated} {
-			if parsedDate, err := date.Parse(value); err != nil {
-				slog.Debug("Unable to parse date from Atom 1.0 feed",
-					slog.String("date", value),
-					slog.String("url", entry.URL),
-					slog.Any("error", err),
-				)
-			} else {
-				entry.Date = parsedDate
-				break
+			if value != "" {
+				if parsedDate, err := date.Parse(value); err != nil {
+					slog.Debug("Unable to parse date from Atom 1.0 feed",
+						slog.String("date", value),
+						slog.String("url", entry.URL),
+						slog.Any("error", err),
+					)
+				} else {
+					entry.Date = parsedDate
+					break
+				}
 			}
 		}
 		if entry.Date.IsZero() {
