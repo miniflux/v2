@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
@@ -615,15 +616,7 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 	return
 }
 
-// removeDuplicate removes duplicate entries from a slice
-func removeDuplicates[T string | int](sliceList []T) []T {
-	allKeys := make(map[T]bool)
-	list := []T{}
-	for _, item := range sliceList {
-		if _, value := allKeys[item]; !value {
-			allKeys[item] = true
-			list = append(list, item)
-		}
-	}
-	return list
+func removeDuplicates(l []string) []string {
+	slices.Sort(l)
+	return slices.Compact(l)
 }
