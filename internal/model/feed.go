@@ -131,36 +131,15 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, newTTL int) {
 	f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 }
 
-// FeedCreationRequest represents the request to create a feed.
-type FeedCreationRequest struct {
-	FeedURL                     string `json:"feed_url"`
-	CategoryID                  int64  `json:"category_id"`
-	UserAgent                   string `json:"user_agent"`
-	Cookie                      string `json:"cookie"`
-	Username                    string `json:"username"`
-	Password                    string `json:"password"`
-	Crawler                     bool   `json:"crawler"`
-	Disabled                    bool   `json:"disabled"`
-	NoMediaPlayer               bool   `json:"no_media_player"`
-	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
-	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
-	FetchViaProxy               bool   `json:"fetch_via_proxy"`
-	ScraperRules                string `json:"scraper_rules"`
-	RewriteRules                string `json:"rewrite_rules"`
-	BlocklistRules              string `json:"blocklist_rules"`
-	KeeplistRules               string `json:"keeplist_rules"`
-	HideGlobally                bool   `json:"hide_globally"`
-	UrlRewriteRules             string `json:"urlrewrite_rules"`
-	DisableHTTP2                bool   `json:"disable_http2"`
-}
-
-type FeedCreationRequestFromSubscriptionDiscovery struct {
+type feedRequest struct {
 	Content      io.ReadSeeker
 	ETag         string
 	LastModified string
 
 	FeedURL                     string `json:"feed_url"`
+	SiteURL                     string `json:"site_url"`
 	CategoryID                  int64  `json:"category_id"`
+	Title                       string `json:"title"`
 	UserAgent                   string `json:"user_agent"`
 	Cookie                      string `json:"cookie"`
 	Username                    string `json:"username"`
@@ -181,29 +160,13 @@ type FeedCreationRequestFromSubscriptionDiscovery struct {
 }
 
 // FeedModificationRequest represents the request to update a feed.
-type FeedModificationRequest struct {
-	FeedURL                     string `json:"feed_url"`
-	SiteURL                     string `json:"site_url"`
-	Title                       string `json:"title"`
-	ScraperRules                string `json:"scraper_rules"`
-	RewriteRules                string `json:"rewrite_rules"`
-	BlocklistRules              string `json:"blocklist_rules"`
-	KeeplistRules               string `json:"keeplist_rules"`
-	UrlRewriteRules             string `json:"urlrewrite_rules"`
-	Crawler                     bool   `json:"crawler"`
-	UserAgent                   string `json:"user_agent"`
-	Cookie                      string `json:"cookie"`
-	Username                    string `json:"username"`
-	Password                    string `json:"password"`
-	CategoryID                  int64  `json:"category_id"`
-	Disabled                    bool   `json:"disabled"`
-	NoMediaPlayer               bool   `json:"no_media_player"`
-	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
-	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
-	FetchViaProxy               bool   `json:"fetch_via_proxy"`
-	HideGlobally                bool   `json:"hide_globally"`
-	DisableHTTP2                bool   `json:"disable_http2"`
-}
+type FeedModificationRequest feedRequest
+
+// FeedCreationRequest represents the request to create a feed.
+type FeedCreationRequest feedRequest
+
+// FeedCreationRequestFromSubscriptionDiscovery represents the request to create a feed from a subscription discovery.
+type FeedCreationRequestFromSubscriptionDiscovery feedRequest
 
 // Patch updates a feed with modified values.
 func (f *FeedModificationRequest) Patch(feed *Feed) {
@@ -239,7 +202,7 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 		feed.BlocklistRules = f.BlocklistRules
 	}
 
-	if f.Crawler != false {
+	if f.Crawler {
 		feed.Crawler = f.Crawler
 	}
 
@@ -263,31 +226,31 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 		feed.Category.ID = f.CategoryID
 	}
 
-	if f.Disabled != false {
+	if f.Disabled {
 		feed.Disabled = f.Disabled
 	}
 
-	if f.NoMediaPlayer != false {
+	if f.NoMediaPlayer {
 		feed.NoMediaPlayer = f.NoMediaPlayer
 	}
 
-	if f.IgnoreHTTPCache != false {
+	if f.IgnoreHTTPCache {
 		feed.IgnoreHTTPCache = f.IgnoreHTTPCache
 	}
 
-	if f.AllowSelfSignedCertificates != false {
+	if f.AllowSelfSignedCertificates {
 		feed.AllowSelfSignedCertificates = f.AllowSelfSignedCertificates
 	}
 
-	if f.FetchViaProxy != false {
+	if f.FetchViaProxy {
 		feed.FetchViaProxy = f.FetchViaProxy
 	}
 
-	if f.HideGlobally != false {
+	if f.HideGlobally {
 		feed.HideGlobally = f.HideGlobally
 	}
 
-	if f.DisableHTTP2 != false {
+	if f.DisableHTTP2 {
 		feed.DisableHTTP2 = f.DisableHTTP2
 	}
 }
