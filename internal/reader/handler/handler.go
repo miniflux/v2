@@ -198,12 +198,13 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 }
 
 // RefreshFeed refreshes a feed.
-func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool) *locale.LocalizedErrorWrapper {
+func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool) (localizedError *locale.LocalizedErrorWrapper) {
 	slog.Debug("Begin feed refresh process",
 		slog.Int64("user_id", userID),
 		slog.Int64("feed_id", feedID),
 		slog.Bool("force_refresh", forceRefresh),
 	)
+	localizedError = nil
 
 	user, storeErr := store.UserByID(userID)
 	if storeErr != nil {
@@ -230,7 +231,30 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+	// Commit the result to the database at the end of this function.
+	// If we met an error before entering the defer function, localizedError would not be nil.
+	defer func() {
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+		slog.Debug("Updated next check date",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.Int("weeklyEntryCount", weeklyEntryCount),
+			slog.Int("ttl", newTTL),
+			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
+		)
+		if localizedError == nil {
+			// We have not encountered any error before entering this delay function.
+			originalFeed.ResetErrorCounter()
+			if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
+				// Update the return value when there is an error.
+				localizedError = locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
+			}
+		}
+		if localizedError != nil {
+			originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
+			store.UpdateFeedError(originalFeed)
+		}
+	}()
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
@@ -251,17 +275,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()
 
-	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+	if localizedError = responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
-		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-		store.UpdateFeedError(originalFeed)
 		return localizedError
 	}
 
 	if store.AnotherFeedURLExists(userID, originalFeed.ID, responseHandler.EffectiveURL()) {
-		localizedError := locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
-		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-		store.UpdateFeedError(originalFeed)
+		localizedError = locale.NewLocalizedErrorWrapper(ErrDuplicatedFeed, "error.duplicated_feed")
 		return localizedError
 	}
 
@@ -279,27 +299,16 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		updatedFeed, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
 		if parseErr != nil {
-			localizedError := locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
-
 			if errors.Is(parseErr, parser.ErrFeedFormatNotDetected) {
 				localizedError = locale.NewLocalizedErrorWrapper(parseErr, "error.feed_format_not_detected", parseErr)
+			} else {
+				localizedError = locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
 			}
-
-			originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-			store.UpdateFeedError(originalFeed)
 			return localizedError
 		}
 
 		// If the feed has a TTL defined, we use it to make sure we don't check it too often.
 		newTTL = updatedFeed.TTL
-		// Set the next check at with updated arguments.
-		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
-		slog.Debug("Updated next check date",
-			slog.Int64("user_id", userID),
-			slog.Int64("feed_id", feedID),
-			slog.Int("ttl", newTTL),
-			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
-		)
 
 		originalFeed.Entries = updatedFeed.Entries
 		processor.ProcessFeedEntries(store, originalFeed, user, forceRefresh)
@@ -308,9 +317,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		updateExistingEntries := forceRefresh || !originalFeed.Crawler
 		newEntries, storeErr := store.RefreshFeedEntries(originalFeed.UserID, originalFeed.ID, originalFeed.Entries, updateExistingEntries)
 		if storeErr != nil {
-			localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-			originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-			store.UpdateFeedError(originalFeed)
+			localizedError = locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 			return localizedError
 		}
 
@@ -344,16 +351,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		)
 	}
 
-	originalFeed.ResetErrorCounter()
-
-	if storeErr := store.UpdateFeed(originalFeed); storeErr != nil {
-		localizedError := locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
-		originalFeed.WithTranslatedErrorMessage(localizedError.Translate(user.Language))
-		store.UpdateFeedError(originalFeed)
-		return localizedError
-	}
-
-	return nil
+	return localizedError
 }
 
 func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilder, feedID int64, websiteURL, feedIconURL string) {
