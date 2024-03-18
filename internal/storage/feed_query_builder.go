@@ -91,25 +91,25 @@ func (f *FeedQueryBuilder) buildCounterCondition() string {
 }
 
 func (f *FeedQueryBuilder) buildSorting() string {
-	var parts []string
+	var parts string
 
 	if len(f.sortExpressions) > 0 {
-		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, strings.Join(f.sortExpressions, ", ")))
+		parts += fmt.Sprintf(" ORDER BY %s", strings.Join(f.sortExpressions, ", "))
 	}
 
 	if len(parts) > 0 {
-		parts = append(parts, ", lower(f.title) ASC")
+		parts += ", lower(f.title) ASC"
 	}
 
 	if f.limit > 0 {
-		parts = append(parts, fmt.Sprintf(`LIMIT %d`, f.limit))
+		parts += fmt.Sprintf(" LIMIT %d", f.limit)
 	}
 
 	if f.offset > 0 {
-		parts = append(parts, fmt.Sprintf(`OFFSET %d`, f.offset))
+		parts += fmt.Sprintf(" OFFSET %d", f.offset)
 	}
 
-	return strings.Join(parts, " ")
+	return parts
 }
 
 // GetFeed returns a single feed that match the condition.
