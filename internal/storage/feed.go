@@ -59,10 +59,10 @@ func (s *Storage) AnotherFeedURLExists(userID, feedID int64, feedURL string) boo
 // CountAllFeeds returns the number of feeds in the database.
 func (s *Storage) CountAllFeeds() map[string]int64 {
 	rows, err := s.db.Query(`SELECT disabled, count(*) FROM feeds GROUP BY disabled`)
+	defer rows.Close()
 	if err != nil {
 		return nil
 	}
-	defer rows.Close()
 
 	results := map[string]int64{
 		"enabled":  0,
@@ -97,8 +97,7 @@ func (s *Storage) CountUserFeedsWithErrors(userID int64) int {
 	}
 	query := `SELECT count(*) FROM feeds WHERE user_id=$1 AND parsing_error_count >= $2`
 	var result int
-	err := s.db.QueryRow(query, userID, pollingParsingErrorLimit).Scan(&result)
-	if err != nil {
+	if err := s.db.QueryRow(query, userID, pollingParsingErrorLimit).Scan(&result); err != nil {
 		return 0
 	}
 
@@ -113,8 +112,7 @@ func (s *Storage) CountAllFeedsWithErrors() int {
 	}
 	query := `SELECT count(*) FROM feeds WHERE parsing_error_count >= $1`
 	var result int
-	err := s.db.QueryRow(query, pollingParsingErrorLimit).Scan(&result)
-	if err != nil {
+	if err := s.db.QueryRow(query, pollingParsingErrorLimit).Scan(&result); err != nil {
 		return 0
 	}
 
@@ -421,10 +419,10 @@ func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 // This operation can takes time if the feed has lot of entries.
 func (s *Storage) RemoveFeed(userID, feedID int64) error {
 	rows, err := s.db.Query(`SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`, userID, feedID)
+	defer rows.Close()
 	if err != nil {
 		return fmt.Errorf(`store: unable to get user feed entries: %v`, err)
 	}
-	defer rows.Close()
 
 	for rows.Next() {
 		var entryID int64

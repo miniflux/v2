@@ -34,17 +34,19 @@ func (e *EntryQueryBuilder) WithEnclosures() *EntryQueryBuilder {
 
 // WithSearchQuery adds full-text search query to the condition.
 func (e *EntryQueryBuilder) WithSearchQuery(query string) *EntryQueryBuilder {
-	if query != "" {
-		nArgs := len(e.args) + 1
-		e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
-		e.args = append(e.args, query)
-
-		// 0.0000001 = 0.1 / (seconds_in_a_day)
-		e.WithSorting(
-			fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
-			"DESC",
-		)
+	if query == "" {
+		return e
 	}
+
+	nArgs := len(e.args) + 1
+	e.conditions = append(e.conditions, fmt.Sprintf("e.document_vectors @@ plainto_tsquery($%d)", nArgs))
+	e.args = append(e.args, query)
+
+	// 0.0000001 = 0.1 / (seconds_in_a_day)
+	e.WithSorting(
+		fmt.Sprintf("ts_rank(document_vectors, plainto_tsquery($%d)) - extract (epoch from now() - published_at)::float * 0.0000001", nArgs),
+		"DESC",
+	)
 	return e
 }
 
@@ -158,11 +160,9 @@ func (e *EntryQueryBuilder) WithStatuses(statuses []string) *EntryQueryBuilder {
 
 // WithTags filter by a list of entry tags.
 func (e *EntryQueryBuilder) WithTags(tags []string) *EntryQueryBuilder {
-	if len(tags) > 0 {
-		for _, cat := range tags {
-			e.conditions = append(e.conditions, fmt.Sprintf("$%d = ANY(e.tags)", len(e.args)+1))
-			e.args = append(e.args, cat)
-		}
+	for _, cat := range tags {
+		e.conditions = append(e.conditions, fmt.Sprintf("$%d = ANY(e.tags)", len(e.args)+1))
+		e.args = append(e.args, cat)
 	}
 	return e
 }
@@ -312,10 +312,10 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	query = fmt.Sprintf(query, condition, sorting)
 
 	rows, err := e.store.db.Query(query, e.args...)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("store: unable to get entries: %v", err)
 	}
-	defer rows.Close()
 
 	entries := make(model.Entries, 0)
 	for rows.Next() {
@@ -414,10 +414,10 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 	query = fmt.Sprintf(query, condition, e.buildSorting())
 
 	rows, err := e.store.db.Query(query, e.args...)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("store: unable to get entries: %v", err)
 	}
-	defer rows.Close()
 
 	var entryIDs []int64
 	for rows.Next() {

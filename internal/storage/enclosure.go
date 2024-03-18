@@ -32,12 +32,12 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 	`
 
 	rows, err := s.db.Query(query, entryID)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch enclosures: %v`, err)
 	}
-	defer rows.Close()
 
-	enclosures := make(model.EnclosureList, 0)
+	var enclosures model.EnclosureList
 	for rows.Next() {
 		var enclosure model.Enclosure
 		err := rows.Scan(

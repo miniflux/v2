@@ -91,18 +91,17 @@ func (s *Storage) CategoryByTitle(userID int64, title string) (*model.Category, 
 func (s *Storage) Categories(userID int64) (model.Categories, error) {
 	query := `SELECT id, user_id, title, hide_globally FROM categories WHERE user_id=$1 ORDER BY title ASC`
 	rows, err := s.db.Query(query, userID)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch categories: %v`, err)
 	}
-	defer rows.Close()
 
-	categories := make(model.Categories, 0)
+	var categories model.Categories
 	for rows.Next() {
 		var category model.Category
 		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally); err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
-
 		categories = append(categories, &category)
 	}
 
@@ -146,18 +145,17 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 	}
 
 	rows, err := s.db.Query(query, model.EntryStatusUnread, userID)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch categories: %v`, err)
 	}
-	defer rows.Close()
 
-	categories := make(model.Categories, 0)
+	var categories model.Categories
 	for rows.Next() {
 		var category model.Category
 		if err := rows.Scan(&category.ID, &category.UserID, &category.Title, &category.HideGlobally, &category.FeedCount, &category.TotalUnread); err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch category row: %v`, err)
 		}
-
 		categories = append(categories, &category)
 	}
 

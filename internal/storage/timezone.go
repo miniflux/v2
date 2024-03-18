@@ -12,10 +12,10 @@ import (
 func (s *Storage) Timezones() (map[string]string, error) {
 	timezones := make(map[string]string)
 	rows, err := s.db.Query(`SELECT name FROM pg_timezone_names() ORDER BY name ASC`)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch timezones: %v`, err)
 	}
-	defer rows.Close()
 
 	for rows.Next() {
 		var timezone string

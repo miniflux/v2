@@ -27,10 +27,10 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 			user_id=$1 ORDER BY id DESC
 	`
 	rows, err := s.db.Query(query, userID)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch user sessions: %v`, err)
 	}
-	defer rows.Close()
 
 	var sessions model.UserSessions
 	for rows.Next() {

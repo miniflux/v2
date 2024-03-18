@@ -102,10 +102,10 @@ func (s *Storage) WebAuthnCredentialsByUserID(userID int64) ([]model.WebAuthnCre
 			user_id = $1
 	`
 	rows, err := s.db.Query(query, userID)
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
 	var creds []model.WebAuthnCredential
 	var nullName sql.NullString

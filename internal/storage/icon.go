@@ -130,10 +130,10 @@ func (s *Storage) Icons(userID int64) (model.Icons, error) {
 			feeds.user_id=$1
 	`
 	rows, err := s.db.Query(query, userID)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch icons: %v`, err)
 	}
-	defer rows.Close()
 
 	var icons model.Icons
 	for rows.Next() {

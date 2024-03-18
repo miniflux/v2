@@ -536,10 +536,10 @@ func (s *Storage) RemoveUserAsync(userID int64) {
 
 func (s *Storage) deleteUserFeeds(userID int64) error {
 	rows, err := s.db.Query(`SELECT id FROM feeds WHERE user_id=$1`, userID)
+	defer rows.Close()
 	if err != nil {
 		return fmt.Errorf(`store: unable to get user feeds: %v`, err)
 	}
-	defer rows.Close()
 
 	for rows.Next() {
 		var feedID int64
@@ -592,10 +592,10 @@ func (s *Storage) Users() (model.Users, error) {
 		ORDER BY username ASC
 	`
 	rows, err := s.db.Query(query)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch users: %v`, err)
 	}
-	defer rows.Close()
 
 	var users model.Users
 	for rows.Next() {

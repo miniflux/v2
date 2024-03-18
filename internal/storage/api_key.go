@@ -40,10 +40,10 @@ func (s *Storage) APIKeys(userID int64) (model.APIKeys, error) {
 		ORDER BY description ASC
 	`
 	rows, err := s.db.Query(query, userID)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch API Keys: %v`, err)
 	}
-	defer rows.Close()
 
 	apiKeys := make(model.APIKeys, 0)
 	for rows.Next() {

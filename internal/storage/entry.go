@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
@@ -18,25 +19,24 @@ import (
 
 // CountAllEntries returns the number of entries for each status in the database.
 func (s *Storage) CountAllEntries() map[string]int64 {
-	rows, err := s.db.Query(`SELECT status, count(*) FROM entries GROUP BY status`)
+	rows, err := s.db.Query(`SELECT status, COUNT(*) FROM entries GROUP BY status`)
+	defer rows.Close()
 	if err != nil {
 		return nil
 	}
-	defer rows.Close()
 
-	results := make(map[string]int64)
-	results[model.EntryStatusUnread] = 0
-	results[model.EntryStatusRead] = 0
-	results[model.EntryStatusRemoved] = 0
+	results := map[string]int64{
+		model.EntryStatusUnread: 0,
+		model.EntryStatusRead: 0,
+		model.EntryStatusRemoved: 0,
+	}
 
 	for rows.Next() {
 		var status string
 		var count int64
-
 		if err := rows.Scan(&status, &count); err != nil {
 			continue
 		}
-
 		results[status] = count
 	}
 
@@ -590,18 +590,17 @@ func (s *Storage) EntryShareCode(userID int64, entryID int64) (shareCode string,
 		err = fmt.Errorf(`store: unable to get share code for entry #%d: %v`, entryID, err)
 		return
 	}
-
-	if shareCode == "" {
-		shareCode = crypto.GenerateRandomStringHex(20)
-
-		query = `UPDATE entries SET share_code = $1 WHERE user_id=$2 AND id=$3`
-		_, err = s.db.Exec(query, shareCode, userID, entryID)
-		if err != nil {
-			err = fmt.Errorf(`store: unable to set share code for entry #%d: %v`, entryID, err)
-			return
-		}
+	if shareCode != "" {
+		return
 	}
 
+	shareCode = crypto.GenerateRandomStringHex(20)
+
+	query = `UPDATE entries SET share_code = $1 WHERE user_id=$2 AND id=$3`
+	_, err = s.db.Exec(query, shareCode, userID, entryID)
+	if err != nil {
+		err = fmt.Errorf(`store: unable to set share code for entry #%d: %v`, entryID, err)
+	}
 	return
 }
 
@@ -615,15 +614,7 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 	return
 }
 
-// removeDuplicate removes duplicate entries from a slice
 func removeDuplicates[T string | int](sliceList []T) []T {
-	allKeys := make(map[T]bool)
-	list := []T{}
-	for _, item := range sliceList {
-		if _, value := allKeys[item]; !value {
-			allKeys[item] = true
-			list = append(list, item)
-		}
-	}
-	return list
+	slices.Sort(sliceList)
+	return slices.Compact(sliceList)
 }
