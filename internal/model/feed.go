@@ -182,113 +182,113 @@ type FeedCreationRequestFromSubscriptionDiscovery struct {
 
 // FeedModificationRequest represents the request to update a feed.
 type FeedModificationRequest struct {
-	FeedURL                     *string `json:"feed_url"`
-	SiteURL                     *string `json:"site_url"`
-	Title                       *string `json:"title"`
-	ScraperRules                *string `json:"scraper_rules"`
-	RewriteRules                *string `json:"rewrite_rules"`
-	BlocklistRules              *string `json:"blocklist_rules"`
-	KeeplistRules               *string `json:"keeplist_rules"`
-	UrlRewriteRules             *string `json:"urlrewrite_rules"`
-	Crawler                     *bool   `json:"crawler"`
-	UserAgent                   *string `json:"user_agent"`
-	Cookie                      *string `json:"cookie"`
-	Username                    *string `json:"username"`
-	Password                    *string `json:"password"`
-	CategoryID                  *int64  `json:"category_id"`
-	Disabled                    *bool   `json:"disabled"`
-	NoMediaPlayer               *bool   `json:"no_media_player"`
-	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
-	AllowSelfSignedCertificates *bool   `json:"allow_self_signed_certificates"`
-	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
-	HideGlobally                *bool   `json:"hide_globally"`
-	DisableHTTP2                *bool   `json:"disable_http2"`
+	FeedURL                     string `json:"feed_url"`
+	SiteURL                     string `json:"site_url"`
+	Title                       string `json:"title"`
+	ScraperRules                string `json:"scraper_rules"`
+	RewriteRules                string `json:"rewrite_rules"`
+	BlocklistRules              string `json:"blocklist_rules"`
+	KeeplistRules               string `json:"keeplist_rules"`
+	UrlRewriteRules             string `json:"urlrewrite_rules"`
+	Crawler                     bool   `json:"crawler"`
+	UserAgent                   string `json:"user_agent"`
+	Cookie                      string `json:"cookie"`
+	Username                    string `json:"username"`
+	Password                    string `json:"password"`
+	CategoryID                  int64  `json:"category_id"`
+	Disabled                    bool   `json:"disabled"`
+	NoMediaPlayer               bool   `json:"no_media_player"`
+	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
+	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
+	FetchViaProxy               bool   `json:"fetch_via_proxy"`
+	HideGlobally                bool   `json:"hide_globally"`
+	DisableHTTP2                bool   `json:"disable_http2"`
 }
 
 // Patch updates a feed with modified values.
 func (f *FeedModificationRequest) Patch(feed *Feed) {
-	if f.FeedURL != nil && *f.FeedURL != "" {
-		feed.FeedURL = *f.FeedURL
+	if f.FeedURL != "" {
+		feed.FeedURL = f.FeedURL
 	}
 
-	if f.SiteURL != nil && *f.SiteURL != "" {
-		feed.SiteURL = *f.SiteURL
+	if f.SiteURL != "" {
+		feed.SiteURL = f.SiteURL
 	}
 
-	if f.Title != nil && *f.Title != "" {
-		feed.Title = *f.Title
+	if f.Title != "" {
+		feed.Title = f.Title
 	}
 
-	if f.ScraperRules != nil {
-		feed.ScraperRules = *f.ScraperRules
+	if f.ScraperRules != "" {
+		feed.ScraperRules = f.ScraperRules
 	}
 
-	if f.RewriteRules != nil {
-		feed.RewriteRules = *f.RewriteRules
+	if f.RewriteRules != "" {
+		feed.RewriteRules = f.RewriteRules
 	}
 
-	if f.KeeplistRules != nil {
-		feed.KeeplistRules = *f.KeeplistRules
+	if f.KeeplistRules != "" {
+		feed.KeeplistRules = f.KeeplistRules
 	}
 
-	if f.UrlRewriteRules != nil {
-		feed.UrlRewriteRules = *f.UrlRewriteRules
+	if f.UrlRewriteRules != "" {
+		feed.UrlRewriteRules = f.UrlRewriteRules
 	}
 
-	if f.BlocklistRules != nil {
-		feed.BlocklistRules = *f.BlocklistRules
+	if f.BlocklistRules != "" {
+		feed.BlocklistRules = f.BlocklistRules
 	}
 
-	if f.Crawler != nil {
-		feed.Crawler = *f.Crawler
+	if f.Crawler != false {
+		feed.Crawler = f.Crawler
 	}
 
-	if f.UserAgent != nil {
-		feed.UserAgent = *f.UserAgent
+	if f.UserAgent != "" {
+		feed.UserAgent = f.UserAgent
 	}
 
-	if f.Cookie != nil {
-		feed.Cookie = *f.Cookie
+	if f.Cookie != "" {
+		feed.Cookie = f.Cookie
 	}
 
-	if f.Username != nil {
-		feed.Username = *f.Username
+	if f.Username != "" {
+		feed.Username = f.Username
 	}
 
-	if f.Password != nil {
-		feed.Password = *f.Password
+	if f.Password != "" {
+		feed.Password = f.Password
 	}
 
-	if f.CategoryID != nil && *f.CategoryID > 0 {
-		feed.Category.ID = *f.CategoryID
+	if f.CategoryID > 0 {
+		feed.Category.ID = f.CategoryID
 	}
 
-	if f.Disabled != nil {
-		feed.Disabled = *f.Disabled
+	if f.Disabled != false {
+		feed.Disabled = f.Disabled
 	}
 
-	if f.NoMediaPlayer != nil {
-		feed.NoMediaPlayer = *f.NoMediaPlayer
+	if f.NoMediaPlayer != false {
+		feed.NoMediaPlayer = f.NoMediaPlayer
 	}
 
-	if f.IgnoreHTTPCache != nil {
-		feed.IgnoreHTTPCache = *f.IgnoreHTTPCache
+	if f.IgnoreHTTPCache != false {
+		feed.IgnoreHTTPCache = f.IgnoreHTTPCache
 	}
 
-	if f.AllowSelfSignedCertificates != nil {
-		feed.AllowSelfSignedCertificates = *f.AllowSelfSignedCertificates
+	if f.AllowSelfSignedCertificates != false {
+		feed.AllowSelfSignedCertificates = f.AllowSelfSignedCertificates
 	}
 
-	if f.FetchViaProxy != nil {
-		feed.FetchViaProxy = *f.FetchViaProxy
+	if f.FetchViaProxy != false {
+		feed.FetchViaProxy = f.FetchViaProxy
 	}
 
-	if f.HideGlobally != nil {
-		feed.HideGlobally = *f.HideGlobally
+	if f.HideGlobally != false {
+		feed.HideGlobally = f.HideGlobally
 	}
 
-	if f.DisableHTTP2 != nil {
-		feed.DisableHTTP2 = *f.DisableHTTP2
+	if f.DisableHTTP2 != false {
+		feed.DisableHTTP2 = f.DisableHTTP2
 	}
 }
 

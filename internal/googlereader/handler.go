@@ -772,7 +772,7 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 
 	if title != "" {
 		feedModification := model.FeedModificationRequest{
-			Title: &title,
+			Title: title,
 		}
 		feedModification.Patch(created)
 		if err := store.UpdateFeed(created); err != nil {
@@ -806,7 +806,7 @@ func rename(stream Stream, title string, store *storage.Storage, userID int64) e
 		return err
 	}
 	feedModification := model.FeedModificationRequest{
-		Title: &title,
+		Title: title,
 	}
 	feedModification.Patch(feed)
 	return store.UpdateFeed(feed)
@@ -822,7 +822,7 @@ func move(stream Stream, destination Stream, store *storage.Storage, userID int6
 		return err
 	}
 	feedModification := model.FeedModificationRequest{
-		CategoryID: &category.ID,
+		CategoryID: category.ID,
 	}
 	feedModification.Patch(feed)
 	return store.UpdateFeed(feed)
