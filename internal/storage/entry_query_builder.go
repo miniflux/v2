@@ -439,21 +439,21 @@ func (e *EntryQueryBuilder) buildCondition() string {
 }
 
 func (e *EntryQueryBuilder) buildSorting() string {
-	var parts []string
+	var parts string
 
 	if len(e.sortExpressions) > 0 {
-		parts = append(parts, fmt.Sprintf(`ORDER BY %s`, strings.Join(e.sortExpressions, ", ")))
+		parts += fmt.Sprintf(" ORDER BY %s", strings.Join(e.sortExpressions, ", "))
 	}
 
 	if e.limit > 0 {
-		parts = append(parts, fmt.Sprintf(`LIMIT %d`, e.limit))
+		parts += fmt.Sprintf(" LIMIT %d", e.limit)
 	}
 
 	if e.offset > 0 {
-		parts = append(parts, fmt.Sprintf(`OFFSET %d`, e.offset))
+		parts += fmt.Sprintf(" OFFSET %d", e.offset)
 	}
 
-	return strings.Join(parts, " ")
+	return parts
 }
 
 // NewEntryQueryBuilder returns a new EntryQueryBuilder.
