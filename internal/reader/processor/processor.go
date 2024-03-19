@@ -47,7 +47,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			slog.Int64("feed_id", feed.ID),
 			slog.String("feed_url", feed.FeedURL),
 		)
-		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) || !ProcessEntryMaxAgeDays(entry) {
+		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) || !isRecentEntry(entry) {
 			continue
 		}
 
@@ -413,8 +413,8 @@ func parseISO8601(from string) (time.Duration, error) {
 	return d, nil
 }
 
-func ProcessEntryMaxAgeDays(entry *model.Entry) bool {
-	if config.Opts.EntryMaxAgeDays() == 0 || entry.Date.After(time.Now().AddDate(0, 0, -config.Opts.EntryMaxAgeDays())) {
+func isRecentEntry(entry *model.Entry) bool {
+	if config.Opts.FilterEntryMaxAgeDays() == 0 || entry.Date.After(time.Now().AddDate(0, 0, -config.Opts.FilterEntryMaxAgeDays())) {
 		return true
 	}
 	return false

@@ -94,7 +94,7 @@ func TestParseISO8601(t *testing.T) {
 	}
 }
 
-func TestProcessEntryMaxAgeDays(t *testing.T) {
+func TestIsRecentEntry(t *testing.T) {
 	parser := config.NewParser()
 	var err error
 	config.Opts, err = parser.ParseEnvironmentVariables()
@@ -111,7 +111,7 @@ func TestProcessEntryMaxAgeDays(t *testing.T) {
 		{&model.Entry{Title: "Example4", Date: time.Date(2024, 3, 15, 05, 05, 05, 05, time.UTC)}, true},
 	}
 	for _, tc := range scenarios {
-		result := ProcessEntryMaxAgeDays(tc.entry)
+		result := isRecentEntry(tc.entry)
 		if tc.expected != result {
 			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
 		}

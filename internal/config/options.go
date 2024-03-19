@@ -55,6 +55,7 @@ const (
 	defaultProxyOption                        = "http-only"
 	defaultProxyMediaTypes                    = "image"
 	defaultProxyUrl                           = ""
+	defaultFilterEntryMaxAgeDays              = 0
 	defaultFetchOdyseeWatchTime               = false
 	defaultFetchYouTubeWatchTime              = false
 	defaultYouTubeEmbedUrlOverride            = "https://www.youtube-nocookie.com/embed/"
@@ -84,7 +85,6 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
-	defaultEntryMaxAgeDays                    = 0
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -142,6 +142,7 @@ type Options struct {
 	proxyUrl                           string
 	fetchOdyseeWatchTime               bool
 	fetchYouTubeWatchTime              bool
+	filterEntryMaxAgeDays              int
 	youTubeEmbedUrlOverride            string
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
@@ -168,7 +169,6 @@ type Options struct {
 	invidiousInstance                  string
 	proxyPrivateKey                    []byte
 	webAuthn                           bool
-	entryMaxAgeDays                    int
 }
 
 // NewOptions returns Options with default values.
@@ -215,6 +215,7 @@ func NewOptions() *Options {
 		proxyOption:                        defaultProxyOption,
 		proxyMediaTypes:                    []string{defaultProxyMediaTypes},
 		proxyUrl:                           defaultProxyUrl,
+		filterEntryMaxAgeDays:              defaultFilterEntryMaxAgeDays,
 		fetchOdyseeWatchTime:               defaultFetchOdyseeWatchTime,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		youTubeEmbedUrlOverride:            defaultYouTubeEmbedUrlOverride,
@@ -243,7 +244,6 @@ func NewOptions() *Options {
 		invidiousInstance:                  defaultInvidiousInstance,
 		proxyPrivateKey:                    crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
-		entryMaxAgeDays:                    defaultEntryMaxAgeDays,
 	}
 }
 
@@ -615,9 +615,9 @@ func (o *Options) WebAuthn() bool {
 	return o.webAuthn
 }
 
-// entryMaxAgeDays returns the number of days after which entries should be retained.
-func (o *Options) EntryMaxAgeDays() int {
-	return o.entryMaxAgeDays
+// FilterEntryMaxAgeDays returns the number of days after which entries should be retained.
+func (o *Options) FilterEntryMaxAgeDays() int {
+	return o.filterEntryMaxAgeDays
 }
 
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
@@ -645,7 +645,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DISABLE_HSTS":                           !o.hsts,
 		"DISABLE_HTTP_SERVICE":                   !o.httpService,
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
-		"FILTER_ENTRY_MAX_AGE_DAYS":              o.entryMaxAgeDays,
+		"FILTER_ENTRY_MAX_AGE_DAYS":              o.filterEntryMaxAgeDays,
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
 		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
 		"HTTPS":                                  o.HTTPS,
