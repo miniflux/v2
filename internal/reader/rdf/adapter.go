@@ -24,18 +24,18 @@ func NewRDFAdapter(rdf *RDF) *RDFAdapter {
 	return &RDFAdapter{rdf}
 }
 
-func (r *RDFAdapter) BuildFeed(feedURL string) *model.Feed {
+func (r *RDFAdapter) BuildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:   stripTags(r.rdf.Channel.Title),
-		FeedURL: feedURL,
-		SiteURL: r.rdf.Channel.Link,
+		FeedURL: strings.TrimSpace(baseURL),
+		SiteURL: strings.TrimSpace(r.rdf.Channel.Link),
 	}
 
 	if feed.Title == "" {
-		feed.Title = feedURL
+		feed.Title = baseURL
 	}
 
-	if siteURL, err := urllib.AbsoluteURL(feedURL, r.rdf.Channel.Link); err == nil {
+	if siteURL, err := urllib.AbsoluteURL(feed.FeedURL, feed.SiteURL); err == nil {
 		feed.SiteURL = siteURL
 	}
 

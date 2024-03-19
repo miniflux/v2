@@ -109,6 +109,100 @@ func TestParseRss2Sample(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithFeedURLWithTrailingSpace(t *testing.T) {
+	data := `<?xml version="1.0"?>
+		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="https://example.org/rss " type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/ ", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/rss" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+}
+
+func TestParseFeedWithRelativeFeedURL(t *testing.T) {
+	data := `<?xml version="1.0"?>
+		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/</link>
+			<atom:link href="/rss" type="application/rss+xml" rel="self"></atom:link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/rss" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+}
+
+func TestParseFeedSiteURLWithTrailingSpace(t *testing.T) {
+	data := `<?xml version="1.0"?>
+		<rss version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>https://example.org/ </link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "https://example.org/" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+}
+
+func TestParseFeedWithRelativeSiteURL(t *testing.T) {
+	data := `<?xml version="1.0"?>
+		<rss version="2.0">
+		<channel>
+			<title>Example</title>
+			<link>/example </link>
+			<item>
+				<title>Test</title>
+				<link>https://example.org/item</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "https://example.org/example" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+}
+
 func TestParseFeedWithoutTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">
