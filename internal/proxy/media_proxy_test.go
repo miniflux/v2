@@ -157,7 +157,82 @@ func TestProxyFilterWithHttpsAlways(t *testing.T) {
 	}
 }
 
+func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_OPTION", "all")
+	os.Setenv("PROXY_MEDIA_TYPES", "image")
+	os.Setenv("PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := AbsoluteProxyRewriter(r, "localhost", input)
+	expected := `<p><img src="http://localhost/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
 func TestProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_OPTION", "all")
+	os.Setenv("PROXY_MEDIA_TYPES", "image")
+	os.Setenv("PROXY_URL", "https://proxy-example/proxy")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := ProxyRewriter(r, input)
+	expected := `<p><img src="https://proxy-example/proxy/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestProxyFilterWithHttpsAlwaysAndIncorrectCustomProxyServer(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_OPTION", "all")
+	os.Setenv("PROXY_MEDIA_TYPES", "image")
+	os.Setenv("PROXY_URL", "http://:8080example.com")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+	output := ProxyRewriter(r, input)
+	expected := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
+
+	if expected != output {
+		t.Errorf(`Not expected output: got "%s" instead of "%s"`, output, expected)
+	}
+}
+
+func TestAbsoluteProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("PROXY_OPTION", "all")
 	os.Setenv("PROXY_MEDIA_TYPES", "image")
