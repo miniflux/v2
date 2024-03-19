@@ -766,7 +766,7 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 	}
 
 	created, localizedError := mff.CreateFeed(store, userID, &feedRequest)
-	if err != nil {
+	if localizedError != nil {
 		return nil, localizedError.Error()
 	}
 

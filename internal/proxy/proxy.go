@@ -7,6 +7,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"log/slog"
 	"net/url"
 	"path"
 
@@ -18,35 +19,54 @@ import (
 )
 
 // ProxifyURL generates a relative URL for a proxified resource.
-func ProxifyURL(router *mux.Router, link string) string {
-	if link == "" {
+func ProxifyURL(router *mux.Router, mediaURL string) string {
+	if mediaURL == "" {
 		return ""
 	}
 
-	if proxyImageUrl := config.Opts.ProxyUrl(); proxyImageUrl != "" {
-		proxyUrl, err := url.Parse(proxyImageUrl)
-		if err != nil {
-			return ""
-		}
-		proxyUrl.Path = path.Join(proxyUrl.Path, base64.URLEncoding.EncodeToString([]byte(link)))
-		return proxyUrl.String()
+	if customProxyURL := config.Opts.ProxyUrl(); customProxyURL != "" {
+		return ProxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
 	mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
-	mac.Write([]byte(link))
+	mac.Write([]byte(mediaURL))
 	digest := mac.Sum(nil)
-	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(link)))
+	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(mediaURL)))
 }
 
 // AbsoluteProxifyURL generates an absolute URL for a proxified resource.
-func AbsoluteProxifyURL(router *mux.Router, host, link string) string {
-	proxifiedUrl := ProxifyURL(router, link)
+func AbsoluteProxifyURL(router *mux.Router, host, mediaURL string) string {
+	if mediaURL == "" {
+		return ""
+	}
 
-	if config.Opts.ProxyUrl() == "" {
-		return proxifiedUrl
+	if customProxyURL := config.Opts.ProxyUrl(); customProxyURL != "" {
+		return ProxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
+
+	proxifiedUrl := ProxifyURL(router, mediaURL)
+	scheme := "http"
 	if config.Opts.HTTPS {
-		return "https://" + host + proxifiedUrl
+		scheme = "https"
 	}
-	return "http://" + host + proxifiedUrl
+
+	return scheme + "://" + host + proxifiedUrl
+}
+
+func ProxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
+	if customProxyURL == "" {
+		return mediaURL
+	}
+
+	proxyUrl, err := url.Parse(customProxyURL)
+	if err != nil {
+		slog.Error("Incorrect custom media proxy URL",
+			slog.String("custom_proxy_url", customProxyURL),
+			slog.Any("error", err),
+		)
+		return mediaURL
+	}
+
+	proxyUrl.Path = path.Join(proxyUrl.Path, base64.URLEncoding.EncodeToString([]byte(mediaURL)))
+	return proxyUrl.String()
 }
