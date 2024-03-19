@@ -24,15 +24,15 @@ func NewJSONAdapter(jsonFeed *JSONFeed) *JSONAdapter {
 	return &JSONAdapter{jsonFeed}
 }
 
-func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
+func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:   strings.TrimSpace(j.jsonFeed.Title),
-		FeedURL: j.jsonFeed.FeedURL,
-		SiteURL: j.jsonFeed.HomePageURL,
+		FeedURL: strings.TrimSpace(j.jsonFeed.FeedURL),
+		SiteURL: strings.TrimSpace(j.jsonFeed.HomePageURL),
 	}
 
 	if feed.FeedURL == "" {
-		feed.FeedURL = feedURL
+		feed.FeedURL = strings.TrimSpace(baseURL)
 	}
 
 	// Fallback to the feed URL if the site URL is empty.
@@ -40,11 +40,11 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 		feed.SiteURL = feed.FeedURL
 	}
 
-	if feedURL, err := urllib.AbsoluteURL(feedURL, j.jsonFeed.FeedURL); err == nil {
+	if feedURL, err := urllib.AbsoluteURL(baseURL, feed.FeedURL); err == nil {
 		feed.FeedURL = feedURL
 	}
 
-	if siteURL, err := urllib.AbsoluteURL(feedURL, j.jsonFeed.HomePageURL); err == nil {
+	if siteURL, err := urllib.AbsoluteURL(baseURL, feed.SiteURL); err == nil {
 		feed.SiteURL = siteURL
 	}
 

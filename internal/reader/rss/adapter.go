@@ -26,14 +26,15 @@ func NewRSSAdapter(rss *RSS) *RSSAdapter {
 	return &RSSAdapter{rss}
 }
 
-func (r *RSSAdapter) BuildFeed(feedURL string) *model.Feed {
+func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:   html.UnescapeString(strings.TrimSpace(r.rss.Channel.Title)),
-		FeedURL: feedURL,
-		SiteURL: r.rss.Channel.Link,
+		FeedURL: strings.TrimSpace(baseURL),
+		SiteURL: strings.TrimSpace(r.rss.Channel.Link),
 	}
 
-	if siteURL, err := urllib.AbsoluteURL(feedURL, r.rss.Channel.Link); err == nil {
+	// Ensure the Site URL is absolute.
+	if siteURL, err := urllib.AbsoluteURL(baseURL, feed.SiteURL); err == nil {
 		feed.SiteURL = siteURL
 	}
 
@@ -41,7 +42,7 @@ func (r *RSSAdapter) BuildFeed(feedURL string) *model.Feed {
 	for _, atomLink := range r.rss.Channel.AtomLinks.Links {
 		atomLinkHref := strings.TrimSpace(atomLink.Href)
 		if atomLinkHref != "" && atomLink.Rel == "self" {
-			if absoluteFeedURL, err := urllib.AbsoluteURL(feedURL, atomLinkHref); err == nil {
+			if absoluteFeedURL, err := urllib.AbsoluteURL(feed.FeedURL, atomLinkHref); err == nil {
 				feed.FeedURL = absoluteFeedURL
 				break
 			}

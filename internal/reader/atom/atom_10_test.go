@@ -217,12 +217,31 @@ func TestParseFeedURL(t *testing.T) {
 	}
 }
 
-func TestParseFeedWithRelativeURL(t *testing.T) {
+func TestParseFeedWithRelativeFeedURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <link rel="alternate" type="text/html" href="https://example.org/"/>
+	  <link rel="self" type="application/atom+xml" href="/feed"/>
+	  <updated>2003-12-13T18:30:02Z</updated>
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/feed" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+}
+
+func TestParseFeedWithRelativeSiteURL(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom">
 	  <title>Example Feed</title>
 	  <link href="/blog/atom.xml" rel="self" type="application/atom+xml"/>
-	  <link href="/blog"/>
+	  <link href="/blog "/>
 
 	  <entry>
 		<title>Test</title>
@@ -241,15 +260,47 @@ func TestParseFeedWithRelativeURL(t *testing.T) {
 	}
 
 	if feed.FeedURL != "https://example.org/blog/atom.xml" {
-		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+		t.Errorf("Incorrect feed URL, got: %q", feed.FeedURL)
 	}
 
 	if feed.SiteURL != "https://example.org/blog" {
-		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+		t.Errorf("Incorrect site URL, got: %q", feed.SiteURL)
 	}
 
 	if feed.Entries[0].URL != "https://example.org/blog/article.html" {
-		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
+		t.Errorf("Incorrect entry URL, got: %q", feed.Entries[0].URL)
+	}
+}
+
+func TestParseFeedSiteURLWithTrailingSpace(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <link href="http://example.org "/>
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "http://example.org" {
+		t.Errorf("Incorrect site URL, got: %q", feed.SiteURL)
+	}
+}
+
+func TestParseFeedWithFeedURLWithTrailingSpace(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+		<link href="/blog/atom.xml  " rel="self" type="application/atom+xml"/>
+	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/blog/atom.xml" {
+		t.Errorf("Incorrect site URL, got: %q", feed.FeedURL)
 	}
 }
 

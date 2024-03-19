@@ -86,15 +86,17 @@ type Content struct {
 
 // MimeType returns the attachment mime type.
 func (mc *Content) MimeType() string {
-	switch {
-	case mc.Type == "" && mc.Medium == "image":
-		return "image/*"
-	case mc.Type == "" && mc.Medium == "video":
-		return "video/*"
-	case mc.Type == "" && mc.Medium == "audio":
-		return "audio/*"
-	case mc.Type != "":
+	if mc.Type != "" {
 		return mc.Type
+	}
+
+	switch mc.Medium {
+	case "image":
+		return "image/*"
+	case "video":
+		return "video/*"
+	case "audio":
+		return "audio/*"
 	default:
 		return "application/octet-stream"
 	}
@@ -102,9 +104,6 @@ func (mc *Content) MimeType() string {
 
 // Size returns the attachment size.
 func (mc *Content) Size() int64 {
-	if mc.FileSize == "" {
-		return 0
-	}
 	size, _ := strconv.ParseInt(mc.FileSize, 10, 0)
 	return size
 }
