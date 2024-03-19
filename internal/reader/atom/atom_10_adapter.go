@@ -65,6 +65,12 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 			feed.IconURL = absoluteLogoURL
 		}
 	}
+	feed.Entries = a.populateEntries(feed.SiteURL)
+	return feed
+}
+
+func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
+	entries := make(model.Entries, 0, len(a.atomFeed.Entries))
 
 	for _, atomEntry := range a.atomFeed.Entries {
 		entry := model.NewEntry()
@@ -72,7 +78,7 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		// Populate the entry URL.
 		entry.URL = atomEntry.Links.OriginalLink()
 		if entry.URL != "" {
-			if absoluteEntryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL); err == nil {
+			if absoluteEntryURL, err := urllib.AbsoluteURL(siteURL, entry.URL); err == nil {
 				entry.URL = absoluteEntryURL
 			}
 		}
@@ -81,27 +87,27 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		entry.Content = atomEntry.Content.Body()
 		if entry.Content == "" {
 			entry.Content = atomEntry.Summary.Body()
-		}
-		if entry.Content == "" {
-			entry.Content = atomEntry.FirstMediaDescription()
+			if entry.Content == "" {
+				entry.Content = atomEntry.FirstMediaDescription()
+			}
 		}
 
 		// Populate the entry title.
 		entry.Title = atomEntry.Title.Title()
 		if entry.Title == "" {
 			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
-		}
-		if entry.Title == "" {
-			entry.Title = entry.URL
+			if entry.Title == "" {
+				entry.Title = entry.URL
+			}
 		}
 
 		// Populate the entry author.
 		authors := atomEntry.Authors.PersonNames()
 		if len(authors) == 0 {
-			authors = append(authors, a.atomFeed.Authors.PersonNames()...)
+			authors = a.atomFeed.Authors.PersonNames()
 		}
-		authors = slices.Compact(authors)
 		sort.Strings(authors)
+		authors = slices.Compact(authors)
 		entry.Author = strings.Join(authors, ", ")
 
 		// Populate the entry date.
@@ -126,13 +132,10 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		// Populate categories.
 		categories := atomEntry.Categories.CategoryNames()
 		if len(categories) == 0 {
-			categories = append(categories, a.atomFeed.Categories.CategoryNames()...)
+			categories = a.atomFeed.Categories.CategoryNames()
 		}
-		if len(categories) > 0 {
-			categories = slices.Compact(categories)
-			sort.Strings(categories)
-			entry.Tags = categories
-		}
+		sort.Strings(categories)
+		entry.Tags = slices.Compact(categories)
 
 		// Populate the commentsURL if defined.
 		// See https://tools.ietf.org/html/rfc4685#section-4
@@ -166,20 +169,18 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		for _, link := range atomEntry.Links {
-			if strings.EqualFold(link.Rel, "enclosure") {
-				if link.Href == "" {
-					continue
-				}
+			if !strings.EqualFold(link.Rel, "enclosure") || link.Href == "" {
+				continue
+			}
 
-				if _, found := uniqueEnclosuresMap[link.Href]; !found {
-					uniqueEnclosuresMap[link.Href] = true
-					length, _ := strconv.ParseInt(link.Length, 10, 0)
-					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-						URL:      link.Href,
-						MimeType: link.Type,
-						Size:     length,
-					})
-				}
+			if _, found := uniqueEnclosuresMap[link.Href]; !found {
+				uniqueEnclosuresMap[link.Href] = true
+				length, _ := strconv.ParseInt(link.Length, 10, 0)
+				entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+					URL:      link.Href,
+					MimeType: link.Type,
+					Size:     length,
+				})
 			}
 		}
 
@@ -205,8 +206,8 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 			}
 		}
 
-		feed.Entries = append(feed.Entries, entry)
+		entries = append(entries, entry)
 	}
 
-	return feed
+	return entries
 }
