@@ -112,6 +112,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.databaseMinConns = parseInt(value, defaultDatabaseMinConns)
 		case "DATABASE_CONNECTION_LIFETIME":
 			p.opts.databaseConnectionLifetime = parseInt(value, defaultDatabaseConnectionLifetime)
+		case "FILTER_ENTRY_MAX_AGE_DAYS":
+			p.opts.filterEntryMaxAgeDays = parseInt(value, defaultFilterEntryMaxAgeDays)
 		case "RUN_MIGRATIONS":
 			p.opts.runMigrations = parseBool(value, defaultRunMigrations)
 		case "DISABLE_HSTS":

@@ -55,6 +55,7 @@ const (
 	defaultProxyOption                        = "http-only"
 	defaultProxyMediaTypes                    = "image"
 	defaultProxyUrl                           = ""
+	defaultFilterEntryMaxAgeDays              = 0
 	defaultFetchOdyseeWatchTime               = false
 	defaultFetchYouTubeWatchTime              = false
 	defaultYouTubeEmbedUrlOverride            = "https://www.youtube-nocookie.com/embed/"
@@ -141,6 +142,7 @@ type Options struct {
 	proxyUrl                           string
 	fetchOdyseeWatchTime               bool
 	fetchYouTubeWatchTime              bool
+	filterEntryMaxAgeDays              int
 	youTubeEmbedUrlOverride            string
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
@@ -213,6 +215,7 @@ func NewOptions() *Options {
 		proxyOption:                        defaultProxyOption,
 		proxyMediaTypes:                    []string{defaultProxyMediaTypes},
 		proxyUrl:                           defaultProxyUrl,
+		filterEntryMaxAgeDays:              defaultFilterEntryMaxAgeDays,
 		fetchOdyseeWatchTime:               defaultFetchOdyseeWatchTime,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		youTubeEmbedUrlOverride:            defaultYouTubeEmbedUrlOverride,
@@ -612,6 +615,11 @@ func (o *Options) WebAuthn() bool {
 	return o.webAuthn
 }
 
+// FilterEntryMaxAgeDays returns the number of days after which entries should be retained.
+func (o *Options) FilterEntryMaxAgeDays() int {
+	return o.filterEntryMaxAgeDays
+}
+
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	var keyValues = map[string]interface{}{
@@ -637,6 +645,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DISABLE_HSTS":                           !o.hsts,
 		"DISABLE_HTTP_SERVICE":                   !o.httpService,
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
+		"FILTER_ENTRY_MAX_AGE_DAYS":              o.filterEntryMaxAgeDays,
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
 		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
 		"HTTPS":                                  o.HTTPS,
