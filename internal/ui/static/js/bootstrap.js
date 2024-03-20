@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     handleSubmitButtons();
 
     if (!document.querySelector("body[data-disable-keyboard-shortcuts=true]")) {
-        let keyboardHandler = new KeyboardHandler();
+        const keyboardHandler = new KeyboardHandler();
         keyboardHandler.on("g u", () => goToPage("unread"));
         keyboardHandler.on("g b", () => goToPage("starred"));
         keyboardHandler.on("g h", () => goToPage("history"));
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         keyboardHandler.listen();
     }
 
-    let touchHandler = new TouchHandler();
+    const touchHandler = new TouchHandler();
     touchHandler.listen();
 
     if (WebAuthnHandler.isWebAuthnSupported()) {
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials(); });
 
-        let registerButton = document.getElementById("webauthn-register");
+        const registerButton = document.getElementById("webauthn-register");
         if (registerButton != null) {
             registerButton.disabled = false;
 
@@ -65,13 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        let loginButton = document.getElementById("webauthn-login");
+        const loginButton = document.getElementById("webauthn-login");
         if (loginButton != null) {
             const abortController = new AbortController();
             loginButton.disabled = false;
 
             onClick("#webauthn-login", () => {
-                let usernameField = document.getElementById("form-username");
+                const usernameField = document.getElementById("form-username");
                 if (usernameField != null) {
                     abortController.abort();
                     webauthnHandler.login(usernameField.value).catch(err => WebAuthnHandler.showErrorMessage(err));
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     onClick(":is(a, button)[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, markPageAsRead));
     onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
     onClick(":is(a, button)[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
-        let request = new RequestBuilder(url);
+        const request = new RequestBuilder(url);
 
         request.withCallback((response) => {
             if (redirectURL) {
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     onClick(".header nav li", (event) => onClickMainMenuListItem(event));
 
     if ("serviceWorker" in navigator) {
-        let scriptElement = document.getElementById("service-worker-script");
+        const scriptElement = document.getElementById("service-worker-script");
         if (scriptElement) {
             navigator.serviceWorker.register(scriptElement.src);
         }
