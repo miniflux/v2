@@ -158,51 +158,92 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		uniqueEnclosuresMap := make(map[string]bool)
 
 		for _, mediaThumbnail := range atomEntry.AllMediaThumbnails() {
-			if _, found := uniqueEnclosuresMap[mediaThumbnail.URL]; !found {
-				uniqueEnclosuresMap[mediaThumbnail.URL] = true
-				entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-					URL:      mediaThumbnail.URL,
-					MimeType: mediaThumbnail.MimeType(),
-					Size:     mediaThumbnail.Size(),
-				})
+			mediaURL := strings.TrimSpace(mediaThumbnail.URL)
+			if mediaURL == "" {
+				continue
+			}
+			if _, found := uniqueEnclosuresMap[mediaURL]; !found {
+				if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+					slog.Debug("Unable to build absolute URL for media thumbnail",
+						slog.String("url", mediaThumbnail.URL),
+						slog.String("site_url", siteURL),
+						slog.Any("error", err),
+					)
+				} else {
+					uniqueEnclosuresMap[mediaAbsoluteURL] = true
+					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+						URL:      mediaAbsoluteURL,
+						MimeType: mediaThumbnail.MimeType(),
+						Size:     mediaThumbnail.Size(),
+					})
+				}
 			}
 		}
 
-		for _, link := range atomEntry.Links {
-			if !strings.EqualFold(link.Rel, "enclosure") || link.Href == "" {
-				continue
-			}
-
-			if _, found := uniqueEnclosuresMap[link.Href]; !found {
-				uniqueEnclosuresMap[link.Href] = true
-				length, _ := strconv.ParseInt(link.Length, 10, 0)
-				entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-					URL:      link.Href,
-					MimeType: link.Type,
-					Size:     length,
-				})
+		for _, link := range atomEntry.Links.findAllLinksWithRelation("enclosure") {
+			absoluteEnclosureURL, err := urllib.AbsoluteURL(siteURL, link.Href)
+			if err != nil {
+				slog.Debug("Unable to resolve absolute URL for enclosure",
+					slog.String("enclosure_url", link.Href),
+					slog.String("entry_url", entry.URL),
+					slog.Any("error", err),
+				)
+			} else {
+				if _, found := uniqueEnclosuresMap[absoluteEnclosureURL]; !found {
+					uniqueEnclosuresMap[absoluteEnclosureURL] = true
+					length, _ := strconv.ParseInt(link.Length, 10, 0)
+					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+						URL:      absoluteEnclosureURL,
+						MimeType: link.Type,
+						Size:     length,
+					})
+				}
 			}
 		}
 
 		for _, mediaContent := range atomEntry.AllMediaContents() {
-			if _, found := uniqueEnclosuresMap[mediaContent.URL]; !found {
-				uniqueEnclosuresMap[mediaContent.URL] = true
-				entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-					URL:      mediaContent.URL,
-					MimeType: mediaContent.MimeType(),
-					Size:     mediaContent.Size(),
-				})
+			mediaURL := strings.TrimSpace(mediaContent.URL)
+			if mediaURL == "" {
+				continue
+			}
+			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+				slog.Debug("Unable to build absolute URL for media content",
+					slog.String("url", mediaContent.URL),
+					slog.String("site_url", siteURL),
+					slog.Any("error", err),
+				)
+			} else {
+				if _, found := uniqueEnclosuresMap[mediaAbsoluteURL]; !found {
+					uniqueEnclosuresMap[mediaAbsoluteURL] = true
+					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+						URL:      mediaAbsoluteURL,
+						MimeType: mediaContent.MimeType(),
+						Size:     mediaContent.Size(),
+					})
+				}
 			}
 		}
 
 		for _, mediaPeerLink := range atomEntry.AllMediaPeerLinks() {
-			if _, found := uniqueEnclosuresMap[mediaPeerLink.URL]; !found {
-				uniqueEnclosuresMap[mediaPeerLink.URL] = true
-				entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
-					URL:      mediaPeerLink.URL,
-					MimeType: mediaPeerLink.MimeType(),
-					Size:     mediaPeerLink.Size(),
-				})
+			mediaURL := strings.TrimSpace(mediaPeerLink.URL)
+			if mediaURL == "" {
+				continue
+			}
+			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+				slog.Debug("Unable to build absolute URL for media peer link",
+					slog.String("url", mediaPeerLink.URL),
+					slog.String("site_url", siteURL),
+					slog.Any("error", err),
+				)
+			} else {
+				if _, found := uniqueEnclosuresMap[mediaAbsoluteURL]; !found {
+					uniqueEnclosuresMap[mediaAbsoluteURL] = true
+					entry.Enclosures = append(entry.Enclosures, &model.Enclosure{
+						URL:      mediaAbsoluteURL,
+						MimeType: mediaPeerLink.MimeType(),
+						Size:     mediaPeerLink.Size(),
+					})
+				}
 			}
 		}
 

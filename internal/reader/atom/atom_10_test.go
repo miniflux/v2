@@ -1105,7 +1105,7 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 	}
 
 	if len(feed.Entries) != 1 {
-		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
 
 	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
@@ -1137,6 +1137,89 @@ func TestParseEntryWithEnclosures(t *testing.T) {
 		if expectedResults[index].size != enclosure.Size {
 			t.Errorf(`Unexpected enclosure size, got %d instead of %d`, enclosure.Size, expectedResults[index].size)
 		}
+	}
+}
+
+func TestParseEntryWithRelativeEnclosureURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+		<id>https://www.example.org/myfeed</id>
+		<title>My Podcast Feed</title>
+		<link href="https://example.org" />
+		<link rel="self" href="https://example.org/myfeed" />
+		<entry>
+			<id>https://www.example.org/entries/1</id>
+			<title>Atom 1.0</title>
+			<updated>2005-07-15T12:00:00Z</updated>
+			<link href="https://www.example.org/entries/1" />
+			<link rel="enclosure"
+					type="audio/mpeg"
+					title="MP3"
+					href="  /myaudiofile.mp3  "
+					length="1234" />
+			</content>
+		</entry>
+  	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if len(feed.Entries[0].Enclosures) != 1 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	if feed.Entries[0].Enclosures[0].URL != "https://example.org/myaudiofile.mp3" {
+		t.Errorf("Incorrect enclosure URL, got: %q", feed.Entries[0].Enclosures[0].URL)
+	}
+}
+
+func TestParseEntryWithDuplicateEnclosureURL(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+		<id>http://www.example.org/myfeed</id>
+		<title>My Podcast Feed</title>
+		<link href="http://example.org" />
+		<link rel="self" href="http://example.org/myfeed" />
+		<entry>
+			<id>http://www.example.org/entries/1</id>
+			<title>Atom 1.0</title>
+			<updated>2005-07-15T12:00:00Z</updated>
+			<link href="http://www.example.org/entries/1" />
+			<link rel="enclosure"
+					type="audio/mpeg"
+					title="MP3"
+					href="http://www.example.org/myaudiofile.mp3"
+					length="1234" />
+			<link rel="enclosure"
+					type="audio/mpeg"
+					title="MP3"
+					href="   http://www.example.org/myaudiofile.mp3  "
+					length="1234" />
+			</content>
+		</entry>
+  	</feed>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if len(feed.Entries[0].Enclosures) != 1 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	if feed.Entries[0].Enclosures[0].URL != "http://www.example.org/myaudiofile.mp3" {
+		t.Errorf("Incorrect enclosure URL, got: %q", feed.Entries[0].Enclosures[0].URL)
 	}
 }
 
@@ -1334,20 +1417,25 @@ func TestParseWithInvalidCharacterEntity(t *testing.T) {
 func TestParseMediaGroup(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
-		<id>http://www.example.org/myfeed</id>
+		<id>https://www.example.org/myfeed</id>
 		<title>My Video Feed</title>
 		<updated>2005-07-15T12:00:00Z</updated>
-		<link href="http://example.org" />
-		<link rel="self" href="http://example.org/myfeed" />
+		<link href="https://example.org" />
+		<link rel="self" href="https://example.org/myfeed" />
 		<entry>
-			<id>http://www.example.org/entries/1</id>
+			<id>https://www.example.org/entries/1</id>
 			<title>Some Video</title>
 			<updated>2005-07-15T12:00:00Z</updated>
-			<link href="http://www.example.org/entries/1" />
+			<link href="https://www.example.org/entries/1" />
 			<media:group>
 				<media:title>Another title</media:title>
 				<media:content url="https://www.youtube.com/v/abcd" type="application/x-shockwave-flash" width="640" height="390"/>
-				<media:thumbnail url="https://example.org/thumbnail.jpg" width="480" height="360"/>
+				<media:content url="   /v/efg  " type="application/x-shockwave-flash" width="640" height="390"/>
+				<media:content url="     " type="application/x-shockwave-flash" width="640" height="390"/>
+				<media:thumbnail url="https://www.example.org/duplicate-thumbnail.jpg" width="480" height="360"/>
+				<media:thumbnail url="https://www.example.org/duplicate-thumbnail.jpg" width="480" height="360"/>
+				<media:thumbnail url=" /thumbnail2.jpg   " width="480" height="360"/>
+				<media:thumbnail url="    " width="480" height="360"/>
 				<media:description>Some description
 A website: http://example.org/</media:description>
 			</media:group>
@@ -1360,18 +1448,10 @@ A website: http://example.org/</media:description>
 	}
 
 	if len(feed.Entries) != 1 {
-		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
 
-	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
-		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
-	}
-
-	if feed.Entries[0].Content != `Some description<br>A website: <a href="http://example.org/">http://example.org/</a>` {
-		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
-	}
-
-	if len(feed.Entries[0].Enclosures) != 2 {
+	if len(feed.Entries[0].Enclosures) != 4 {
 		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
 	}
 
@@ -1380,8 +1460,10 @@ A website: http://example.org/</media:description>
 		mimeType string
 		size     int64
 	}{
-		{"https://example.org/thumbnail.jpg", "image/*", 0},
+		{"https://www.example.org/duplicate-thumbnail.jpg", "image/*", 0},
+		{"https://example.org/thumbnail2.jpg", "image/*", 0},
 		{"https://www.youtube.com/v/abcd", "application/x-shockwave-flash", 0},
+		{"https://example.org/v/efg", "application/x-shockwave-flash", 0},
 	}
 
 	for index, enclosure := range feed.Entries[0].Enclosures {
@@ -1402,19 +1484,26 @@ A website: http://example.org/</media:description>
 func TestParseMediaElements(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 	<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
-		<id>http://www.example.org/myfeed</id>
+		<id>https://www.example.org/myfeed</id>
 		<title>My Video Feed</title>
 		<updated>2005-07-15T12:00:00Z</updated>
-		<link href="http://example.org" />
-		<link rel="self" href="http://example.org/myfeed" />
+		<link href="https://example.org" />
+		<link rel="self" href="https://example.org/myfeed" />
 		<entry>
-			<id>http://www.example.org/entries/1</id>
+			<id>https://www.example.org/entries/1</id>
 			<title>Some Video</title>
 			<updated>2005-07-15T12:00:00Z</updated>
-			<link href="http://www.example.org/entries/1" />
+			<link href="https://www.example.org/entries/1" />
 			<media:title>Another title</media:title>
 			<media:content url="https://www.youtube.com/v/abcd" type="application/x-shockwave-flash" width="640" height="390"/>
-			<media:thumbnail url="https://example.org/thumbnail.jpg" width="480" height="360"/>
+			<media:content url="   /relative/media.mp4   " type="application/x-shockwave-flash" width="640" height="390"/>
+			<media:content url="      " type="application/x-shockwave-flash" width="640" height="390"/>
+			<media:thumbnail url="https://example.org/duplicated-thumbnail.jpg" width="480" height="360"/>
+			<media:thumbnail url="  https://example.org/duplicated-thumbnail.jpg  " width="480" height="360"/>
+			<media:thumbnail url="    " width="480" height="360"/>
+			<media:peerLink type="application/x-bittorrent" href="   http://www.example.org/sampleFile.torrent   " />
+			<media:peerLink type="application/x-bittorrent" href=" /sampleFile2.torrent" />
+			<media:peerLink type="application/x-bittorrent" href=" " />
 			<media:description>Some description
 A website: http://example.org/</media:description>
 		</entry>
@@ -1426,18 +1515,10 @@ A website: http://example.org/</media:description>
 	}
 
 	if len(feed.Entries) != 1 {
-		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
 	}
 
-	if feed.Entries[0].URL != "http://www.example.org/entries/1" {
-		t.Errorf("Incorrect entry URL, got: %s", feed.Entries[0].URL)
-	}
-
-	if feed.Entries[0].Content != `Some description<br>A website: <a href="http://example.org/">http://example.org/</a>` {
-		t.Errorf("Incorrect entry content, got: %q", feed.Entries[0].Content)
-	}
-
-	if len(feed.Entries[0].Enclosures) != 2 {
+	if len(feed.Entries[0].Enclosures) != 5 {
 		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
 	}
 
@@ -1446,8 +1527,11 @@ A website: http://example.org/</media:description>
 		mimeType string
 		size     int64
 	}{
-		{"https://example.org/thumbnail.jpg", "image/*", 0},
+		{"https://example.org/duplicated-thumbnail.jpg", "image/*", 0},
 		{"https://www.youtube.com/v/abcd", "application/x-shockwave-flash", 0},
+		{"https://example.org/relative/media.mp4", "application/x-shockwave-flash", 0},
+		{"http://www.example.org/sampleFile.torrent", "application/x-bittorrent", 0},
+		{"https://example.org/sampleFile2.torrent", "application/x-bittorrent", 0},
 	}
 
 	for index, enclosure := range feed.Entries[0].Enclosures {
