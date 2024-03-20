@@ -169,6 +169,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Ke umpan",
     "page.keyboard_shortcuts.go_to_previous_page": "Ke halaman sebelumnya",
     "page.keyboard_shortcuts.go_to_next_page": "Ke halaman berikutnya",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Pergi ke item paling bawah",
+    "page.keyboard_shortcuts.go_to_top_item": "Pergi ke item teratas",
     "page.keyboard_shortcuts.open_item": "Buka entri yang dipilih",
     "page.keyboard_shortcuts.open_original": "Buka tautan asli",
     "page.keyboard_shortcuts.open_original_same_window": "Buka tautan asli di bilah saat ini",

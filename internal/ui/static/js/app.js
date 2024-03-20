@@ -444,17 +444,31 @@ function goToPage(page, fallbackSelf) {
     }
 }
 
-function goToPrevious() {
+/**
+ * 
+ * @param {(number|event)} offset - many items to jump for focus. 
+ */
+function goToPrevious(offset) {
+    if (offset instanceof KeyboardEvent) {
+        offset = -1;
+    }
     if (isListView()) {
-        goToListItem(-1);
+        goToListItem(offset);
     } else {
         goToPage("previous");
     }
 }
 
-function goToNext() {
+/**
+ * 
+ * @param {(number|event)} offset - How many items to jump for focus. 
+ */
+function goToNext(offset) {
+    if (offset instanceof KeyboardEvent) {
+        offset = 1;
+    }
     if (isListView()) {
-        goToListItem(1);
+        goToListItem(offset);
     } else {
         goToPage("next");
     }
@@ -482,6 +496,10 @@ function goToFeed() {
     }
 }
 
+// Sentinel values for specific list navigation
+const TOP = 9999;
+const BOTTOM = -9999;
+
 /**
  * @param {number} offset How many items to jump for focus.
  */
@@ -501,8 +519,15 @@ function goToListItem(offset) {
         if (items[i].classList.contains("current-item")) {
             items[i].classList.remove("current-item");
 
-            const index = (i + offset + items.length) % items.length;
-            const item = items[index];
+            // By default adjust selection by offset
+            let itemOffset = (i + offset + items.length) % items.length; 
+            // Allow jumping to top or bottom
+            if (offset == TOP) {
+                itemOffset = 0;
+            } else if (offset == BOTTOM) {
+                itemOffset = items.length - 1;
+            }
+            const item = items[itemOffset];
 
             item.classList.add("current-item");
             DomHelper.scrollPageTo(item);

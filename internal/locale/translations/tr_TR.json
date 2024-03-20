@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Beslemeye git",
     "page.keyboard_shortcuts.go_to_previous_page": "Önceki sayfaya git",
     "page.keyboard_shortcuts.go_to_next_page": "Sonraki sayfaya git",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Alt öğeye git",
+    "page.keyboard_shortcuts.go_to_top_item": "En üstteki öğeye git",
     "page.keyboard_shortcuts.open_item": "Seçili öğeyi aç",
     "page.keyboard_shortcuts.open_original": "Orijinal bağlantıyı aç",
     "page.keyboard_shortcuts.open_original_same_window": "Orijinal bağlantıyı mevcut sekmede aç",

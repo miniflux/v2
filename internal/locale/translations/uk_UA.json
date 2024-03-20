@@ -187,6 +187,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Перейти до стрічки",
     "page.keyboard_shortcuts.go_to_previous_page": "Перейти до попередньої сторінки",
     "page.keyboard_shortcuts.go_to_next_page": "Перейти до наступної сторінки",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Перейти до нижнього пункту",
+    "page.keyboard_shortcuts.go_to_top_item": "Перейти до верхнього пункту",
     "page.keyboard_shortcuts.open_item": "Відкрити виділений запис",
     "page.keyboard_shortcuts.open_original": "Відкрити оригінальне посилання",
     "page.keyboard_shortcuts.open_original_same_window": "Відкрити оригінальне посилання в поточній вкладці",

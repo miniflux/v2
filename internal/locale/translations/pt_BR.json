@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Ir a fonte",
     "page.keyboard_shortcuts.go_to_previous_page": "Ir a página anterior",
     "page.keyboard_shortcuts.go_to_next_page": "Ir a página seguinte",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Ir para o item inferior",
+    "page.keyboard_shortcuts.go_to_top_item": "Ir para o item superior",
     "page.keyboard_shortcuts.open_item": "Abrir o item selecionado",
     "page.keyboard_shortcuts.open_original": "Abrir o conteúdo original",
     "page.keyboard_shortcuts.open_original_same_window": "Abrir o conteúdo original na janela atual",

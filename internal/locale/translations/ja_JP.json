@@ -169,6 +169,8 @@
     "page.keyboard_shortcuts.go_to_feed": "フィード",
     "page.keyboard_shortcuts.go_to_previous_page": "前のページ",
     "page.keyboard_shortcuts.go_to_next_page": "次のページ",
+    "page.keyboard_shortcuts.go_to_bottom_item": "一番下の項目に移動",
+    "page.keyboard_shortcuts.go_to_top_item": "先頭の項目に移動",
     "page.keyboard_shortcuts.open_item": "選択されたアイテムを開く",
     "page.keyboard_shortcuts.open_original": "オリジナルのリンクを開く",
     "page.keyboard_shortcuts.open_original_same_window": "現在のタブでオリジナルのリンクを開く",

@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Zum Abonnement gehen",
     "page.keyboard_shortcuts.go_to_previous_page": "Zur vorherigen Seite gehen",
     "page.keyboard_shortcuts.go_to_next_page": "Zur nächsten Seite gehen",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Gehen Sie zum untersten Element",
+    "page.keyboard_shortcuts.go_to_top_item": "Zum obersten Artikel gehen",
     "page.keyboard_shortcuts.open_item": "Gewählten Artikel öffnen",
     "page.keyboard_shortcuts.open_original": "Original-Artikel öffnen",
     "page.keyboard_shortcuts.open_original_same_window": "Öffne den Original-Link in der aktuellen Registerkarte",

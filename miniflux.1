@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "November 5, 2023" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "March 19, 2024" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -120,6 +120,130 @@ Environment variables override the values defined in the config file.
 
 .SH ENVIRONMENT
 .TP
+.B ADMIN_PASSWORD
+Admin user password, used only if $CREATE_ADMIN is enabled\&.
+.br
+Default is empty\&.
+.TP
+.B ADMIN_PASSWORD_FILE
+Path to a secret key exposed as a file, it should contain $ADMIN_PASSWORD value\&.
+.br
+Default is empty\&.
+.TP
+.B ADMIN_USERNAME
+Admin user login, used only if $CREATE_ADMIN is enabled\&.
+.br
+Default is empty\&.
+.TP
+.B ADMIN_USERNAME_FILE
+Path to a secret key exposed as a file, it should contain $ADMIN_USERNAME value\&.
+.br
+Default is empty\&.
+.TP
+.B AUTH_PROXY_HEADER
+Proxy authentication HTTP header\&.
+.br
+Default is empty.
+.TP
+.B AUTH_PROXY_USER_CREATION
+Set to 1 to create users based on proxy authentication information\&.
+.br
+Disabled by default\&.
+.TP
+.B BASE_URL
+Base URL to generate HTML links and base path for cookies\&.
+.br
+Default is http://localhost/\&.
+.TP
+.B BATCH_SIZE
+Number of feeds to send to the queue for each interval\&.
+.br
+Default is 100 feeds\&.
+.TP
+.B CERT_DOMAIN
+Use Let's Encrypt to get automatically a certificate for this domain\&.
+.br
+Default is empty\&.
+.TP
+.B CERT_FILE
+Path to SSL certificate\&.
+.br
+Default is empty\&.
+.TP
+.B CLEANUP_ARCHIVE_BATCH_SIZE
+Number of entries to archive for each job interval\&.
+.br
+Default is 10000 entries\&.
+.TP
+.B CLEANUP_ARCHIVE_READ_DAYS
+Number of days after marking read entries as removed\&.
+.br
+Set to -1 to keep all read entries.
+.br
+Default is 60 days\&.
+.TP
+.B CLEANUP_ARCHIVE_UNREAD_DAYS
+Number of days after marking unread entries as removed\&.
+.br
+Set to -1 to keep all unread entries.
+.br
+Default is 180 days\&.
+.TP
+.B CLEANUP_FREQUENCY_HOURS
+Cleanup job frequency. Remove old sessions and archive entries\&.
+.br
+Default is 24 hours\&.
+.TP
+.B CLEANUP_REMOVE_SESSIONS_DAYS
+Number of days after removing old sessions from the database\&.
+.br
+Default is 30 days\&.
+.TP
+.B CREATE_ADMIN
+Set to 1 to create an admin user from environment variables\&.
+.br
+Disabled by default\&.
+.TP
+.B DATABASE_CONNECTION_LIFETIME
+Set the maximum amount of time a connection may be reused\&.
+.br
+Default is 5 minutes\&.
+.TP
+.B DATABASE_MAX_CONNS
+Maximum number of database connections\&.
+.br
+Default is 20\&.
+.TP
+.B DATABASE_MIN_CONNS
+Minimum number of database connections\&.
+.br
+Default is 20\&.
+.TP
+.B DATABASE_URL
+Postgresql connection parameters\&.
+.br
+Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
+.TP
+.B DATABASE_URL_FILE
+Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
+.br
+Default is empty\&.
+.TP
+.B DISABLE_HSTS
+Disable HTTP Strict Transport Security header if \fBHTTPS\fR is set\&.
+.br
+Default is false (The HSTS is enabled)\&.
+.TP
+.B DISABLE_HTTP_SERVICE
+Set the value to 1 to disable the HTTP service\&.
+.br
+Default is false (The HTTP service is enabled)\&.
+.TP
+.B DISABLE_SCHEDULER_SERVICE
+Set the value to 1 to disable the internal scheduler service\&.
+.br
+Default is false (The internal scheduler service is enabled)\&.
+.TP
 .B FETCH_ODYSEE_WATCH_TIME
 Set the value to 1 to scrape video duration from Odysee website and
 use it as a reading time\&.
@@ -132,15 +256,64 @@ use it as a reading time\&.
 .br
 Disabled by default\&.
 .TP
-.B YOUTUBE_EMBED_URL_OVERRIDE
-YouTube URL which will be used for embeds\&.
+.B FILTER_ENTRY_MAX_AGE_DAYS
+Number of days after which new entries should be retained.\&.
 .br
-Default is https://www.youtube-nocookie.com/embed/\&
+Set 7 to fetch only entries 7 days old.\&.
+.br
+Default is 0\&.
 .TP
-.B SERVER_TIMING_HEADER
-Set the value to 1 to enable server-timing headers\&.
+.B FORCE_REFRESH_INTERVAL
+The minimum interval for manual refresh\&.
 .br
-Disabled by default\&.
+Default is 30 minutes\&.
+.TP
+.B HTTP_CLIENT_MAX_BODY_SIZE
+Maximum body size for HTTP requests in Mebibyte (MiB)\&.
+.br
+Default is 15 MiB\&.
+.TP
+.B HTTP_CLIENT_PROXY
+Proxy URL for HTTP client\&.
+.br
+Default is empty\&.
+.TP
+.B HTTP_CLIENT_TIMEOUT
+Time limit in seconds before the HTTP client cancel the request\&.
+.br
+Default is 20 seconds\&.
+.TP
+.B HTTP_CLIENT_USER_AGENT
+The default User-Agent header to use for the HTTP client. Can be overridden in per-feed settings\&.
+.br
+When empty, Miniflux uses a default User-Agent that includes the Miniflux version\&.
+.br
+Default is empty.
+.TP
+.B HTTP_SERVER_TIMEOUT
+Time limit in seconds before the HTTP client cancel the request\&.
+.br
+Default is 300 seconds\&.
+.TP
+.B HTTPS
+Forces cookies to use secure flag and send HSTS header\&.
+.br
+Default is empty\&.
+.TP
+.B INVIDIOUS_INSTANCE
+Set a custom invidious instance to use\&.
+.br
+Default is yewtu.be\&.
+.TP
+.B KEY_FILE
+Path to SSL private key\&.
+.br
+Default is empty\&.
+.TP
+.B LISTEN_ADDR
+Address to listen on. Use absolute path to listen on Unix socket (/var/run/miniflux.sock)\&.
+.br
+Default is 127.0.0.1:8080\&.
 .TP
 .B LOG_DATE_TIME
 Display the date and time in log messages\&.
@@ -162,190 +335,25 @@ Supported values are "debug", "info", "warning", or "error"\&.
 .br
 Default is "info"\&.
 .TP
-.B WORKER_POOL_SIZE
-Number of background workers\&.
+.B MAINTENANCE_MESSAGE
+Define a custom maintenance message\&.
 .br
-Default is 16 workers\&.
+Default is "Miniflux is currently under maintenance"\&.
 .TP
-.B POLLING_FREQUENCY
-Refresh interval in minutes for feeds\&.
-.br
-Default is 60 minutes\&.
-.TP
-.B FORCE_REFRESH_INTERVAL
-The minimum interval for manual refresh\&.
-.br
-Default is 30 minutes\&.
-.TP
-.B BATCH_SIZE
-Number of feeds to send to the queue for each interval\&.
-.br
-Default is 100 feeds\&.
-.TP
-.B POLLING_SCHEDULER
-Scheduler used for polling feeds. Possible values are "round_robin" or "entry_frequency"\&.
-.br
-The maximum number of feeds polled for a given period is subject to POLLING_FREQUENCY and BATCH_SIZE\&.
-.br
-When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&.
-.br
-The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
-.br
-Default is "round_robin"\&.
-.TP
-.B SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL
-Maximum interval in minutes for the entry frequency scheduler\&.
-.br
-Default is 24 hours\&.
-.TP
-.B SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL
-Minimum interval in minutes for the entry frequency scheduler\&.
-.br
-Default is 5 minutes\&.
-.TP
-.B SCHEDULER_ENTRY_FREQUENCY_FACTOR
-Factor to increase refresh frequency for the entry frequency scheduler\&.
-.br
-Default is 1\&.
-.TP
-.B SCHEDULER_ROUND_ROBIN_MIN_INTERVAL
-Minimum interval in minutes for the round robin scheduler\&.
-.br
-Default is 60 minutes\&.
-.TP
-.B POLLING_PARSING_ERROR_LIMIT
-The maximum number of parsing errors that the program will try before stopping polling a feed. Once the limit is reached, the user must refresh the feed manually. Set to 0 for unlimited.
-.br
-Default is 3\&.
-.TP
-.B DATABASE_URL
-Postgresql connection parameters\&.
-.br
-Default is "user=postgres password=postgres dbname=miniflux2 sslmode=disable"\&.
-.TP
-.B DATABASE_URL_FILE
-Path to a secret key exposed as a file, it should contain $DATABASE_URL value\&.
-.br
-Default is empty\&.
-.TP
-.B DATABASE_CONNECTION_LIFETIME
-Set the maximum amount of time a connection may be reused\&.
-.br
-Default is 5 minutes\&.
-.TP
-.B DATABASE_MAX_CONNS
-Maximum number of database connections\&.
-.br
-Default is 20\&.
-.TP
-.B DATABASE_MIN_CONNS
-Minimum number of database connections\&.
-.br
-Default is 20\&.
-.TP
-.B LISTEN_ADDR
-Address to listen on. Use absolute path to listen on Unix socket (/var/run/miniflux.sock)\&.
-.br
-Default is 127.0.0.1:8080\&.
-.TP
-.B PORT
-Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
-.br
-Default is empty\&.
-.TP
-.B BASE_URL
-Base URL to generate HTML links and base path for cookies\&.
-.br
-Default is http://localhost/\&.
-.TP
-.B CLEANUP_FREQUENCY_HOURS
-Cleanup job frequency. Remove old sessions and archive entries\&.
-.br
-Default is 24 hours\&.
-.TP
-.B CLEANUP_ARCHIVE_READ_DAYS
-Number of days after marking read entries as removed\&.
-.br
-Set to -1 to keep all read entries.
-.br
-Default is 60 days\&.
-.TP
-.B CLEANUP_ARCHIVE_UNREAD_DAYS
-Number of days after marking unread entries as removed\&.
-.br
-Set to -1 to keep all unread entries.
-.br
-Default is 180 days\&.
-.TP
-.B CLEANUP_ARCHIVE_BATCH_SIZE
-Number of entries to archive for each job interval\&.
-.br
-Default is 10000 entries\&.
-.TP
-.B CLEANUP_REMOVE_SESSIONS_DAYS
-Number of days after removing old sessions from the database\&.
-.br
-Default is 30 days\&.
-.TP
-.B HTTPS
-Forces cookies to use secure flag and send HSTS header\&.
-.br
-Default is empty\&.
-.TP
-.B DISABLE_HSTS
-Disable HTTP Strict Transport Security header if \fBHTTPS\fR is set\&.
-.br
-Default is false (The HSTS is enabled)\&.
-.TP
-.B DISABLE_HTTP_SERVICE
-Set the value to 1 to disable the HTTP service\&.
-.br
-Default is false (The HTTP service is enabled)\&.
-.TP
-.B DISABLE_SCHEDULER_SERVICE
-Set the value to 1 to disable the internal scheduler service\&.
-.br
-Default is false (The internal scheduler service is enabled)\&.
-.TP
-.B CERT_FILE
-Path to SSL certificate\&.
-.br
-Default is empty\&.
-.TP
-.B KEY_FILE
-Path to SSL private key\&.
-.br
-Default is empty\&.
-.TP
-.B CERT_DOMAIN
-Use Let's Encrypt to get automatically a certificate for this domain\&.
-.br
-Default is empty\&.
-.TP
-.B METRICS_COLLECTOR
-Set to 1 to enable metrics collector. Expose a /metrics endpoint for Prometheus.
+.B MAINTENANCE_MODE
+Set to 1 to enable maintenance mode\&.
 .br
 Disabled by default\&.
-.TP
-.B METRICS_REFRESH_INTERVAL
-Refresh interval to collect database metrics\&.
-.br
-Default is 60 seconds\&.
 .TP
 .B METRICS_ALLOWED_NETWORKS
 List of networks allowed to access the metrics endpoint (comma-separated values)\&.
 .br
 Default is 127.0.0.1/8\&.
 .TP
-.B METRICS_USERNAME
-Metrics endpoint username for basic HTTP authentication\&.
+.B METRICS_COLLECTOR
+Set to 1 to enable metrics collector. Expose a /metrics endpoint for Prometheus.
 .br
-Default is emtpty\&.
-.TP
-.B METRICS_USERNAME_FILE
-Path to a file that contains the username for the metrics endpoint HTTP authentication\&.
-.br
-Default is emtpty\&.
+Disabled by default\&.
 .TP
 .B METRICS_PASSWORD
 Metrics endpoint password for basic HTTP authentication\&.
@@ -357,10 +365,20 @@ Path to a file that contains the password for the metrics endpoint HTTP authenti
 .br
 Default is emtpty\&.
 .TP
-.B OAUTH2_PROVIDER
-Possible values are "google" or "oidc"\&.
+.B METRICS_REFRESH_INTERVAL
+Refresh interval to collect database metrics\&.
 .br
-Default is empty\&.
+Default is 60 seconds\&.
+.TP
+.B METRICS_USERNAME
+Metrics endpoint username for basic HTTP authentication\&.
+.br
+Default is emtpty\&.
+.TP
+.B METRICS_USERNAME_FILE
+Path to a file that contains the username for the metrics endpoint HTTP authentication\&.
+.br
+Default is emtpty\&.
 .TP
 .B OAUTH2_CLIENT_ID
 OAuth2 client ID\&.
@@ -382,6 +400,16 @@ Path to a secret key exposed as a file, it should contain $OAUTH2_CLIENT_SECRET 
 .br
 Default is empty\&.
 .TP
+.B OAUTH2_OIDC_DISCOVERY_ENDPOINT
+OpenID Connect discovery endpoint\&.
+.br
+Default is empty\&.
+.TP
+.B OAUTH2_PROVIDER
+Possible values are "google" or "oidc"\&.
+.br
+Default is empty\&.
+.TP
 .B OAUTH2_REDIRECT_URL
 OAuth2 redirect URL\&.
 .br
@@ -389,45 +417,10 @@ This URL must be registered with the provider and is something like https://mini
 .br
 Default is empty\&.
 .TP
-.B OAUTH2_OIDC_DISCOVERY_ENDPOINT
-OpenID Connect discovery endpoint\&.
-.br
-Default is empty\&.
-.TP
 .B OAUTH2_USER_CREATION
 Set to 1 to authorize OAuth2 user creation\&.
 .br
 Disabled by default\&.
-.TP
-.B RUN_MIGRATIONS
-Set to 1 to run database migrations\&.
-.br
-Disabled by default\&.
-.TP
-.B CREATE_ADMIN
-Set to 1 to create an admin user from environment variables\&.
-.br
-Disabled by default\&.
-.TP
-.B ADMIN_USERNAME
-Admin user login, used only if $CREATE_ADMIN is enabled\&.
-.br
-Default is empty\&.
-.TP
-.B ADMIN_USERNAME_FILE
-Path to a secret key exposed as a file, it should contain $ADMIN_USERNAME value\&.
-.br
-Default is empty\&.
-.TP
-.B ADMIN_PASSWORD
-Admin user password, used only if $CREATE_ADMIN is enabled\&.
-.br
-Default is empty\&.
-.TP
-.B ADMIN_PASSWORD_FILE
-Path to a secret key exposed as a file, it should contain $ADMIN_PASSWORD value\&.
-.br
-Default is empty\&.
 .TP
 .B POCKET_CONSUMER_KEY
 Pocket consumer API key for all users\&.
@@ -439,93 +432,106 @@ Path to a secret key exposed as a file, it should contain $POCKET_CONSUMER_KEY v
 .br
 Default is empty\&.
 .TP
-.B PROXY_OPTION
-Avoids mixed content warnings for external media: http-only, all, or none\&.
+.B POLLING_FREQUENCY
+Refresh interval in minutes for feeds\&.
 .br
-Default is http-only\&.
+Default is 60 minutes\&.
 .TP
-.B PROXY_MEDIA_TYPES
-A list of media types to proxify (comma-separated values): image, audio, video\&.
+.B POLLING_PARSING_ERROR_LIMIT
+The maximum number of parsing errors that the program will try before stopping polling a feed. Once the limit is reached, the user must refresh the feed manually. Set to 0 for unlimited.
 .br
-Default is image only\&.
+Default is 3\&.
+.TP
+.B POLLING_SCHEDULER
+Scheduler used for polling feeds. Possible values are "round_robin" or "entry_frequency"\&.
+.br
+The maximum number of feeds polled for a given period is subject to POLLING_FREQUENCY and BATCH_SIZE\&.
+.br
+When "entry_frequency" is selected, the refresh interval for a given feed is equal to the average updating interval of the last week of the feed\&.
+.br
+The actual number of feeds polled will not exceed the maximum number of feeds that could be polled for a given period\&.
+.br
+Default is "round_robin"\&.
+.TP
+.B PORT
+Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
+.br
+Default is empty\&.
 .TP
 .B PROXY_HTTP_CLIENT_TIMEOUT
 Time limit in seconds before the proxy HTTP client cancel the request\&.
 .br
 Default is 120 seconds\&.
 .TP
-.B PROXY_URL
-Sets a server to proxy media through\&.
+.B PROXY_MEDIA_TYPES
+A list of media types to proxify (comma-separated values): image, audio, video\&.
 .br
-Default is empty, miniflux does the proxying\&.
+Default is image only\&.
 .TP
-.B HTTP_CLIENT_TIMEOUT
-Time limit in seconds before the HTTP client cancel the request\&.
+.B PROXY_OPTION
+Avoids mixed content warnings for external media: http-only, all, or none\&.
 .br
-Default is 20 seconds\&.
-.TP
-.B HTTP_CLIENT_MAX_BODY_SIZE
-Maximum body size for HTTP requests in Mebibyte (MiB)\&.
-.br
-Default is 15 MiB\&.
-.TP
-.B HTTP_CLIENT_PROXY
-Proxy URL for HTTP client\&.
-.br
-Default is empty\&.
-.TP
-.B HTTP_CLIENT_USER_AGENT
-The default User-Agent header to use for the HTTP client. Can be overridden in per-feed settings\&.
-.br
-When empty, Miniflux uses a default User-Agent that includes the Miniflux version\&.
-.br
-Default is empty.
-.TP
-.B HTTP_SERVER_TIMEOUT
-Time limit in seconds before the HTTP client cancel the request\&.
-.br
-Default is 300 seconds\&.
-.TP
-.B AUTH_PROXY_HEADER
-Proxy authentication HTTP header\&.
-.br
-Default is empty.
-.TP
-.B AUTH_PROXY_USER_CREATION
-Set to 1 to create users based on proxy authentication information\&.
-.br
-Disabled by default\&.
-.TP
-.B MAINTENANCE_MODE
-Set to 1 to enable maintenance mode\&.
-.br
-Disabled by default\&.
-.TP
-.B MAINTENANCE_MESSAGE
-Define a custom maintenance message\&.
-.br
-Default is "Miniflux is currently under maintenance"\&.
-.TP
-.B WATCHDOG
-Enable or disable Systemd watchdog\&.
-.br
-Enabled by default\&.
-.TP
-.B INVIDIOUS_INSTANCE
-Set a custom invidious instance to use\&.
-.br
-Default is yewtu.be\&.
+Default is http-only\&.
 .TP
 .B PROXY_PRIVATE_KEY
 Set a custom custom private key used to sign proxified media URL\&.
 .br
 Default is randomly generated at startup\&.
 .TP
+.B PROXY_URL
+Sets a server to proxy media through\&.
+.br
+Default is empty, miniflux does the proxying\&.
+.TP
+.B RUN_MIGRATIONS
+Set to 1 to run database migrations\&.
+.br
+Disabled by default\&.
+.TP
+.B SCHEDULER_ENTRY_FREQUENCY_FACTOR
+Factor to increase refresh frequency for the entry frequency scheduler\&.
+.br
+Default is 1\&.
+.TP
+.B SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL
+Maximum interval in minutes for the entry frequency scheduler\&.
+.br
+Default is 24 hours\&.
+.TP
+.B SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL
+Minimum interval in minutes for the entry frequency scheduler\&.
+.br
+Default is 5 minutes\&.
+.TP
+.B SCHEDULER_ROUND_ROBIN_MIN_INTERVAL
+Minimum interval in minutes for the round robin scheduler\&.
+.br
+Default is 60 minutes\&.
+.TP
+.B SERVER_TIMING_HEADER
+Set the value to 1 to enable server-timing headers\&.
+.br
+Disabled by default\&.
+.TP
+.B WATCHDOG
+Enable or disable Systemd watchdog\&.
+.br
+Enabled by default\&.
+.TP
 .B WEBAUTHN
 Enable or disable WebAuthn/Passkey authentication\&.
 .br
 Default is disabled\&.
-
+.TP
+.B WORKER_POOL_SIZE
+Number of background workers\&.
+.br
+Default is 16 workers\&.
+.TP
+.B YOUTUBE_EMBED_URL_OVERRIDE
+YouTube URL which will be used for embeds\&.
+.br
+Default is https://www.youtube-nocookie.com/embed/\&.
 .SH AUTHORS
 .P
 Miniflux is written and maintained by Fr\['e]d\['e]ric Guillot\&.
