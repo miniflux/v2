@@ -176,6 +176,8 @@
     "page.keyboard_shortcuts.go_to_previous_item": "Go to previous item",
     "page.keyboard_shortcuts.go_to_next_item": "Go to next item",
     "page.keyboard_shortcuts.go_to_feed": "Go to feed",
+    "page.keyboard_shortcuts.go_to_top_item": "Go to top item",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Go to bottom item",
     "page.keyboard_shortcuts.go_to_previous_page": "Go to previous page",
     "page.keyboard_shortcuts.go_to_next_page": "Go to next page",
     "page.keyboard_shortcuts.open_item": "Open selected item",
@@ -215,7 +217,7 @@
     "page.settings.webauthn.last_seen_on": "Last Used",
     "page.settings.webauthn.register": "Register passkey",
     "page.settings.webauthn.register.error": "Unable to register passkey",
-    "page.settings.webauthn.delete" : [
+    "page.settings.webauthn.delete": [
         "Remove %d passkey",
         "Remove %d passkeys"
     ],

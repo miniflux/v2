@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Siirry syötteeseen",
     "page.keyboard_shortcuts.go_to_previous_page": "Siirry edelliselle sivulle",
     "page.keyboard_shortcuts.go_to_next_page": "Siirry seuraavalle sivulle",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Siirry alimpaan kohtaan",
+    "page.keyboard_shortcuts.go_to_top_item": "Siirry alkuun",
     "page.keyboard_shortcuts.open_item": "Avaa valittu kohde",
     "page.keyboard_shortcuts.open_original": "Avaa alkuperäinen linkki",
     "page.keyboard_shortcuts.open_original_same_window": "Avaa alkuperäinen linkki nykyisessä välilehdessä",
