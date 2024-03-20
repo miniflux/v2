@@ -96,6 +96,21 @@ func (a AtomLinks) firstLinkWithRelationAndType(relation string, contentTypes ..
 	return ""
 }
 
+func (a AtomLinks) findAllLinksWithRelation(relation string) []*AtomLink {
+	var links []*AtomLink
+
+	for _, link := range a {
+		if strings.EqualFold(link.Rel, relation) {
+			link.Href = strings.TrimSpace(link.Href)
+			if link.Href != "" {
+				links = append(links, link)
+			}
+		}
+	}
+
+	return links
+}
+
 // The "atom:category" element conveys information about a category
 // associated with an entry or feed.  This specification assigns no
 // meaning to the content (if any) of this element.

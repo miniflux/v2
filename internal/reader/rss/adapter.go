@@ -72,7 +72,7 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		entry := model.NewEntry()
 		entry.Date = findEntryDate(&item)
 		entry.Content = findEntryContent(&item)
-		entry.Enclosures = findEntryEnclosures(&item)
+		entry.Enclosures = findEntryEnclosures(&item, feed.SiteURL)
 
 		// Populate the entry URL.
 		entryURL := findEntryURL(&item)
@@ -245,18 +245,30 @@ func findEntryAuthor(rssItem *RSSItem) string {
 	return strings.TrimSpace(sanitizer.StripTags(author))
 }
 
-func findEntryEnclosures(rssItem *RSSItem) model.EnclosureList {
+func findEntryEnclosures(rssItem *RSSItem, siteURL string) model.EnclosureList {
 	enclosures := make(model.EnclosureList, 0)
 	duplicates := make(map[string]bool)
 
 	for _, mediaThumbnail := range rssItem.AllMediaThumbnails() {
-		if _, found := duplicates[mediaThumbnail.URL]; !found {
-			duplicates[mediaThumbnail.URL] = true
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaThumbnail.URL,
-				MimeType: mediaThumbnail.MimeType(),
-				Size:     mediaThumbnail.Size(),
-			})
+		mediaURL := strings.TrimSpace(mediaThumbnail.URL)
+		if mediaURL == "" {
+			continue
+		}
+		if _, found := duplicates[mediaURL]; !found {
+			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+				slog.Debug("Unable to build absolute URL for media thumbnail",
+					slog.String("url", mediaThumbnail.URL),
+					slog.String("site_url", siteURL),
+					slog.Any("error", err),
+				)
+			} else {
+				duplicates[mediaAbsoluteURL] = true
+				enclosures = append(enclosures, &model.Enclosure{
+					URL:      mediaAbsoluteURL,
+					MimeType: mediaThumbnail.MimeType(),
+					Size:     mediaThumbnail.Size(),
+				})
+			}
 		}
 	}
 
@@ -265,13 +277,18 @@ func findEntryEnclosures(rssItem *RSSItem) model.EnclosureList {
 
 		if rssItem.FeedBurnerEnclosureLink != "" {
 			filename := path.Base(rssItem.FeedBurnerEnclosureLink)
-			if strings.Contains(enclosureURL, filename) {
+			if strings.HasSuffix(enclosureURL, filename) {
 				enclosureURL = rssItem.FeedBurnerEnclosureLink
 			}
 		}
 
+		enclosureURL = strings.TrimSpace(enclosureURL)
 		if enclosureURL == "" {
 			continue
+		}
+
+		if absoluteEnclosureURL, err := urllib.AbsoluteURL(siteURL, enclosureURL); err == nil {
+			enclosureURL = absoluteEnclosureURL
 		}
 
 		if _, found := duplicates[enclosureURL]; !found {
@@ -286,24 +303,50 @@ func findEntryEnclosures(rssItem *RSSItem) model.EnclosureList {
 	}
 
 	for _, mediaContent := range rssItem.AllMediaContents() {
-		if _, found := duplicates[mediaContent.URL]; !found {
-			duplicates[mediaContent.URL] = true
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaContent.URL,
-				MimeType: mediaContent.MimeType(),
-				Size:     mediaContent.Size(),
-			})
+		mediaURL := strings.TrimSpace(mediaContent.URL)
+		if mediaURL == "" {
+			continue
+		}
+		if _, found := duplicates[mediaURL]; !found {
+			mediaURL := strings.TrimSpace(mediaContent.URL)
+			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+				slog.Debug("Unable to build absolute URL for media content",
+					slog.String("url", mediaContent.URL),
+					slog.String("site_url", siteURL),
+					slog.Any("error", err),
+				)
+			} else {
+				duplicates[mediaAbsoluteURL] = true
+				enclosures = append(enclosures, &model.Enclosure{
+					URL:      mediaAbsoluteURL,
+					MimeType: mediaContent.MimeType(),
+					Size:     mediaContent.Size(),
+				})
+			}
 		}
 	}
 
 	for _, mediaPeerLink := range rssItem.AllMediaPeerLinks() {
-		if _, found := duplicates[mediaPeerLink.URL]; !found {
-			duplicates[mediaPeerLink.URL] = true
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaPeerLink.URL,
-				MimeType: mediaPeerLink.MimeType(),
-				Size:     mediaPeerLink.Size(),
-			})
+		mediaURL := strings.TrimSpace(mediaPeerLink.URL)
+		if mediaURL == "" {
+			continue
+		}
+		if _, found := duplicates[mediaURL]; !found {
+			mediaURL := strings.TrimSpace(mediaPeerLink.URL)
+			if mediaAbsoluteURL, err := urllib.AbsoluteURL(siteURL, mediaURL); err != nil {
+				slog.Debug("Unable to build absolute URL for media peer link",
+					slog.String("url", mediaPeerLink.URL),
+					slog.String("site_url", siteURL),
+					slog.Any("error", err),
+				)
+			} else {
+				duplicates[mediaAbsoluteURL] = true
+				enclosures = append(enclosures, &model.Enclosure{
+					URL:      mediaAbsoluteURL,
+					MimeType: mediaPeerLink.MimeType(),
+					Size:     mediaPeerLink.Size(),
+				})
+			}
 		}
 	}
 
