@@ -18,8 +18,8 @@ import (
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/integration"
+	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxy"
 	"miniflux.app/v2/internal/reader/fetcher"
 	mff "miniflux.app/v2/internal/reader/handler"
 	mfs "miniflux.app/v2/internal/reader/subscription"
@@ -1003,14 +1003,14 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 			categories = append(categories, userStarred)
 		}
 
-		entry.Content = proxy.AbsoluteProxyRewriter(h.router, r.Host, entry.Content)
-		proxyOption := config.Opts.ProxyOption()
+		entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, r.Host, entry.Content)
+		proxyOption := config.Opts.MediaProxyMode()
 
 		for i := range entry.Enclosures {
 			if proxyOption == "all" || proxyOption != "none" && !urllib.IsHTTPS(entry.Enclosures[i].URL) {
-				for _, mediaType := range config.Opts.ProxyMediaTypes() {
+				for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
 					if strings.HasPrefix(entry.Enclosures[i].MimeType, mediaType+"/") {
-						entry.Enclosures[i].URL = proxy.AbsoluteProxifyURL(h.router, r.Host, entry.Enclosures[i].URL)
+						entry.Enclosures[i].URL = mediaproxy.ProxifyAbsoluteURL(h.router, r.Host, entry.Enclosures[i].URL)
 						break
 					}
 				}

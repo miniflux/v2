@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package proxy // import "miniflux.app/v2/internal/proxy"
+package mediaproxy // import "miniflux.app/v2/internal/mediaproxy"
 
 import (
 	"strings"
@@ -16,31 +16,29 @@ import (
 
 type urlProxyRewriter func(router *mux.Router, url string) string
 
-// ProxyRewriter replaces media URLs with internal proxy URLs.
-func ProxyRewriter(router *mux.Router, data string) string {
-	return genericProxyRewriter(router, ProxifyURL, data)
+func RewriteDocumentWithRelativeProxyURL(router *mux.Router, htmlDocument string) string {
+	return genericProxyRewriter(router, ProxifyRelativeURL, htmlDocument)
 }
 
-// AbsoluteProxyRewriter do the same as ProxyRewriter except it uses absolute URLs.
-func AbsoluteProxyRewriter(router *mux.Router, host, data string) string {
+func RewriteDocumentWithAbsoluteProxyURL(router *mux.Router, host, htmlDocument string) string {
 	proxifyFunction := func(router *mux.Router, url string) string {
-		return AbsoluteProxifyURL(router, host, url)
+		return ProxifyAbsoluteURL(router, host, url)
 	}
-	return genericProxyRewriter(router, proxifyFunction, data)
+	return genericProxyRewriter(router, proxifyFunction, htmlDocument)
 }
 
-func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, data string) string {
-	proxyOption := config.Opts.ProxyOption()
+func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, htmlDocument string) string {
+	proxyOption := config.Opts.MediaProxyMode()
 	if proxyOption == "none" {
-		return data
+		return htmlDocument
 	}
 
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(data))
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlDocument))
 	if err != nil {
-		return data
+		return htmlDocument
 	}
 
-	for _, mediaType := range config.Opts.ProxyMediaTypes() {
+	for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
 		switch mediaType {
 		case "image":
 			doc.Find("img, picture source").Each(func(i int, img *goquery.Selection) {
@@ -91,7 +89,7 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 
 	output, err := doc.Find("body").First().Html()
 	if err != nil {
-		return data
+		return htmlDocument
 	}
 
 	return output
