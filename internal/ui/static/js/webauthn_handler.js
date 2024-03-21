@@ -5,7 +5,7 @@ class WebAuthnHandler {
 
     static showErrorMessage(errorMessage) {
         console.log("webauthn error: " + errorMessage);
-        let alertElement = document.getElementById("webauthn-error");
+        const alertElement = document.getElementById("webauthn-error");
         if (alertElement) {
             alertElement.textContent += " (" + errorMessage + ")";
             alertElement.classList.remove("hidden");
@@ -79,14 +79,14 @@ class WebAuthnHandler {
             return;
         }
 
-        let credentialCreationOptions = await registerBeginResponse.json();
+        const credentialCreationOptions = await registerBeginResponse.json();
         credentialCreationOptions.publicKey.challenge = this.decodeBuffer(credentialCreationOptions.publicKey.challenge);
         credentialCreationOptions.publicKey.user.id = this.decodeBuffer(credentialCreationOptions.publicKey.user.id);
         if (Object.hasOwn(credentialCreationOptions.publicKey, 'excludeCredentials')) {
             credentialCreationOptions.publicKey.excludeCredentials.forEach((credential) => credential.id = this.decodeBuffer(credential.id));
         }
 
-        let attestation = await navigator.credentials.create(credentialCreationOptions);
+        const attestation = await navigator.credentials.create(credentialCreationOptions);
 
         let registrationFinishResponse;
         try {
@@ -108,7 +108,7 @@ class WebAuthnHandler {
             throw new Error("Login failed with HTTP status code " + response.status);
         }
 
-        let jsonData = await registrationFinishResponse.json();
+        const jsonData = await registrationFinishResponse.json();
         window.location.href = jsonData.redirect;
     }
 
@@ -121,7 +121,7 @@ class WebAuthnHandler {
             return;
         }
 
-        let credentialRequestOptions = await loginBeginResponse.json();
+        const credentialRequestOptions = await loginBeginResponse.json();
         credentialRequestOptions.publicKey.challenge = this.decodeBuffer(credentialRequestOptions.publicKey.challenge);
 
         if (Object.hasOwn(credentialRequestOptions.publicKey, 'allowCredentials')) {

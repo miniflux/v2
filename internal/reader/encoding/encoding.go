@@ -35,8 +35,3 @@ func CharsetReader(charsetLabel string, input io.Reader) (io.Reader, error) {
 	// Transform document to UTF-8 from the specified encoding in XML prolog.
 	return charset.NewReaderLabel(charsetLabel, r)
 }
-
-// CharsetReaderFromContentType is used when the encoding is not specified for the input document.
-func CharsetReaderFromContentType(contentType string, input io.Reader) (io.Reader, error) {
-	return charset.NewReader(input, contentType)
-}
