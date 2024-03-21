@@ -46,7 +46,7 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
+	mac := hmac.New(sha256.New, config.Opts.MediaProxyPrivateKey())
 	mac.Write(decodedURL)
 	expectedMAC := mac.Sum(nil)
 
@@ -99,9 +99,9 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 
 	clt := &http.Client{
 		Transport: &http.Transport{
-			IdleConnTimeout: time.Duration(config.Opts.ProxyHTTPClientTimeout()) * time.Second,
+			IdleConnTimeout: time.Duration(config.Opts.MediaProxyHTTPClientTimeout()) * time.Second,
 		},
-		Timeout: time.Duration(config.Opts.ProxyHTTPClientTimeout()) * time.Second,
+		Timeout: time.Duration(config.Opts.MediaProxyHTTPClientTimeout()) * time.Second,
 	}
 
 	resp, err := clt.Do(req)

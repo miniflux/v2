@@ -13,8 +13,8 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/integration"
+	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxy"
 	"miniflux.app/v2/internal/storage"
 
 	"github.com/gorilla/mux"
@@ -324,7 +324,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 			FeedID:    entry.FeedID,
 			Title:     entry.Title,
 			Author:    entry.Author,
-			HTML:      proxy.AbsoluteProxyRewriter(h.router, r.Host, entry.Content),
+			HTML:      mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, r.Host, entry.Content),
 			URL:       entry.URL,
 			IsSaved:   isSaved,
 			IsRead:    isRead,

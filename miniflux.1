@@ -345,6 +345,31 @@ Set to 1 to enable maintenance mode\&.
 .br
 Disabled by default\&.
 .TP
+.B MEDIA_PROXY_CUSTOM_URL
+Sets an external server to proxy media through\&.
+.br
+Default is empty, Miniflux does the proxying\&.
+.TP
+.B MEDIA_PROXY_HTTP_CLIENT_TIMEOUT
+Time limit in seconds before the media proxy HTTP client cancel the request\&.
+.br
+Default is 120 seconds\&.
+.TP
+.B MEDIA_PROXY_RESOURCE_TYPES
+A comma-separated list of media types to proxify. Supported values are: image, audio, video\&.
+.br
+Default is image\&.
+.TP
+.B MEDIA_PROXY_MODE
+Possible values: http-only, all, or none\&.
+.br
+Default is http-only\&.
+.TP
+.B MEDIA_PROXY_PRIVATE_KEY
+Set a custom custom private key used to sign proxified media URLs\&.
+.br
+By default, a secret is randomly generated during startup\&.
+.TP
 .B METRICS_ALLOWED_NETWORKS
 List of networks allowed to access the metrics endpoint (comma-separated values)\&.
 .br
@@ -457,31 +482,6 @@ Default is "round_robin"\&.
 Override LISTEN_ADDR to 0.0.0.0:$PORT\&.
 .br
 Default is empty\&.
-.TP
-.B PROXY_HTTP_CLIENT_TIMEOUT
-Time limit in seconds before the proxy HTTP client cancel the request\&.
-.br
-Default is 120 seconds\&.
-.TP
-.B PROXY_MEDIA_TYPES
-A list of media types to proxify (comma-separated values): image, audio, video\&.
-.br
-Default is image only\&.
-.TP
-.B PROXY_OPTION
-Avoids mixed content warnings for external media: http-only, all, or none\&.
-.br
-Default is http-only\&.
-.TP
-.B PROXY_PRIVATE_KEY
-Set a custom custom private key used to sign proxified media URL\&.
-.br
-Default is randomly generated at startup\&.
-.TP
-.B PROXY_URL
-Sets a server to proxy media through\&.
-.br
-Default is empty, miniflux does the proxying\&.
 .TP
 .B RUN_MIGRATIONS
 Set to 1 to run database migrations\&.

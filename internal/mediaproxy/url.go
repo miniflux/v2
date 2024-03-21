@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package proxy // import "miniflux.app/v2/internal/proxy"
+package mediaproxy // import "miniflux.app/v2/internal/mediaproxy"
 
 import (
 	"crypto/hmac"
@@ -18,33 +18,31 @@ import (
 	"miniflux.app/v2/internal/config"
 )
 
-// ProxifyURL generates a relative URL for a proxified resource.
-func ProxifyURL(router *mux.Router, mediaURL string) string {
+func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
 	if mediaURL == "" {
 		return ""
 	}
 
-	if customProxyURL := config.Opts.ProxyUrl(); customProxyURL != "" {
-		return ProxifyURLWithCustomProxy(mediaURL, customProxyURL)
+	if customProxyURL := config.Opts.MediaCustomProxyURL(); customProxyURL != "" {
+		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
-	mac := hmac.New(sha256.New, config.Opts.ProxyPrivateKey())
+	mac := hmac.New(sha256.New, config.Opts.MediaProxyPrivateKey())
 	mac.Write([]byte(mediaURL))
 	digest := mac.Sum(nil)
 	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(mediaURL)))
 }
 
-// AbsoluteProxifyURL generates an absolute URL for a proxified resource.
-func AbsoluteProxifyURL(router *mux.Router, host, mediaURL string) string {
+func ProxifyAbsoluteURL(router *mux.Router, host, mediaURL string) string {
 	if mediaURL == "" {
 		return ""
 	}
 
-	if customProxyURL := config.Opts.ProxyUrl(); customProxyURL != "" {
-		return ProxifyURLWithCustomProxy(mediaURL, customProxyURL)
+	if customProxyURL := config.Opts.MediaCustomProxyURL(); customProxyURL != "" {
+		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
-	proxifiedUrl := ProxifyURL(router, mediaURL)
+	proxifiedUrl := ProxifyRelativeURL(router, mediaURL)
 	scheme := "http"
 	if config.Opts.HTTPS {
 		scheme = "https"
@@ -53,7 +51,7 @@ func AbsoluteProxifyURL(router *mux.Router, host, mediaURL string) string {
 	return scheme + "://" + host + proxifiedUrl
 }
 
-func ProxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
+func proxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
 	if customProxyURL == "" {
 		return mediaURL
 	}
