@@ -15,6 +15,7 @@ import (
 const (
 	largeWeeklyCount = 10080
 	noNewTTL         = 0
+	noRateLimited    = false
 )
 
 func TestFeedCategorySetter(t *testing.T) {
@@ -89,7 +90,7 @@ func TestFeedScheduleNextCheckDefault(t *testing.T) {
 	timeBefore := time.Now()
 	feed := &Feed{}
 	weeklyCount := 10
-	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -115,7 +116,7 @@ func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	timeBefore := time.Now()
 	feed := &Feed{}
 	weeklyCount := 100
-	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -144,7 +145,7 @@ func TestFeedScheduleNextCheckEntryFrequencyMaxInterval(t *testing.T) {
 	feed := &Feed{}
 	// Use a very small weekly count to trigger the max interval
 	weeklyCount := 1
-	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -173,7 +174,7 @@ func TestFeedScheduleNextCheckEntryFrequencyMaxIntervalZeroWeeklyCount(t *testin
 	feed := &Feed{}
 	// Use a very small weekly count to trigger the max interval
 	weeklyCount := 0
-	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -202,7 +203,7 @@ func TestFeedScheduleNextCheckEntryFrequencyMinInterval(t *testing.T) {
 	feed := &Feed{}
 	// Use a very large weekly count to trigger the min interval
 	weeklyCount := largeWeeklyCount
-	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -228,7 +229,7 @@ func TestFeedScheduleNextCheckEntryFrequencyFactor(t *testing.T) {
 	timeBefore := time.Now()
 	feed := &Feed{}
 	weeklyCount := 7
-	feed.ScheduleNextCheck(weeklyCount, noNewTTL)
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -260,7 +261,7 @@ func TestFeedScheduleNextCheckEntryFrequencySmallNewTTL(t *testing.T) {
 	weeklyCount := largeWeeklyCount
 	// TTL is smaller than minInterval.
 	newTTL := minInterval / 2
-	feed.ScheduleNextCheck(weeklyCount, newTTL)
+	feed.ScheduleNextCheck(weeklyCount, newTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -296,7 +297,7 @@ func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
 	weeklyCount := largeWeeklyCount
 	// TTL is larger than minInterval.
 	newTTL := minInterval * 2
-	feed.ScheduleNextCheck(weeklyCount, newTTL)
+	feed.ScheduleNextCheck(weeklyCount, newTTL, noRateLimited)
 
 	if feed.NextCheckAt.IsZero() {
 		t.Error(`The next_check_at must be set`)
@@ -307,5 +308,27 @@ func TestFeedScheduleNextCheckEntryFrequencyLargeNewTTL(t *testing.T) {
 
 	if feed.NextCheckAt.Before(timeBefore.Add(time.Minute * time.Duration(minInterval))) {
 		t.Error(`The next_check_at should be after timeBefore + entry frequency min interval`)
+	}
+}
+
+func TestFeedScheduleNextCheckRateLimited(t *testing.T) {
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	feed := &Feed{}
+	weeklyCount := 10
+	rateLimited := true
+	feed.ScheduleNextCheck(weeklyCount, noNewTTL, rateLimited)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	if feed.NextCheckAt.Before(time.Now().Add(time.Minute * time.Duration(60*12))) {
+		t.Error(`The next_check_at should not be before the now + 12 hours`)
 	}
 }
