@@ -123,11 +123,13 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		// Populate entry categories.
 		entry.Tags = append(entry.Tags, item.Categories...)
 		entry.Tags = append(entry.Tags, item.MediaCategories.Labels()...)
-		entry.Tags = append(entry.Tags, r.rss.Channel.Categories...)
-		entry.Tags = append(entry.Tags, r.rss.Channel.GetItunesCategories()...)
+		if len(entry.Tags) == 0 {
+			entry.Tags = append(entry.Tags, r.rss.Channel.Categories...)
+			entry.Tags = append(entry.Tags, r.rss.Channel.GetItunesCategories()...)
 
-		if r.rss.Channel.GooglePlayCategory.Text != "" {
-			entry.Tags = append(entry.Tags, r.rss.Channel.GooglePlayCategory.Text)
+			if r.rss.Channel.GooglePlayCategory.Text != "" {
+				entry.Tags = append(entry.Tags, r.rss.Channel.GooglePlayCategory.Text)
+			}
 		}
 
 		feed.Entries = append(feed.Entries, entry)
