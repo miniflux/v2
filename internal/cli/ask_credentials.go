@@ -16,7 +16,7 @@ func askCredentials() (string, string) {
 	fd := int(os.Stdin.Fd())
 
 	if !term.IsTerminal(fd) {
-		printErrorAndExit(fmt.Errorf("this is not a terminal, exiting"))
+		printErrorAndExit(fmt.Errorf("this is not an interactive terminal, exiting"))
 	}
 
 	fmt.Print("Enter Username: ")

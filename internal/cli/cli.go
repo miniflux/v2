@@ -23,7 +23,7 @@ const (
 	flagVersionHelp         = "Show application version"
 	flagMigrateHelp         = "Run SQL migrations"
 	flagFlushSessionsHelp   = "Flush all sessions (disconnect users)"
-	flagCreateAdminHelp     = "Create admin user"
+	flagCreateAdminHelp     = "Create an admin user from an interactive terminal"
 	flagResetPasswordHelp   = "Reset user password"
 	flagResetFeedErrorsHelp = "Clear all feed errors for all users"
 	flagDebugModeHelp       = "Show debug logs"
@@ -191,7 +191,7 @@ func Parse() {
 	}
 
 	if flagCreateAdmin {
-		createAdmin(store)
+		createAdminUserFromInteractiveTerminal(store)
 		return
 	}
 
@@ -211,9 +211,8 @@ func Parse() {
 		printErrorAndExit(err)
 	}
 
-	// Create admin user and start the daemon.
 	if config.Opts.CreateAdmin() {
-		createAdmin(store)
+		createAdminUserFromEnvironmentVariables(store)
 	}
 
 	if flagRefreshFeeds {
