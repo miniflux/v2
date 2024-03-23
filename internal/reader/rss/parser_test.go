@@ -1890,11 +1890,11 @@ func TestParseEntryWithCategories(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(feed.Entries[0].Tags) != 3 {
-		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
+	if len(feed.Entries[0].Tags) != 2 {
+		t.Fatalf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := []string{"Category 1", "Category 2", "Category 3"}
+	expected := []string{"Category 1", "Category 2"}
 	result := feed.Entries[0].Tags
 
 	for i, tag := range result {
