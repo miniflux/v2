@@ -12,15 +12,20 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func createAdmin(store *storage.Storage) {
-	userCreationRequest := &model.UserCreationRequest{
-		Username: config.Opts.AdminUsername(),
-		Password: config.Opts.AdminPassword(),
-		IsAdmin:  true,
-	}
+func createAdminUserFromEnvironmentVariables(store *storage.Storage) {
+	createAdminUser(store, config.Opts.AdminUsername(), config.Opts.AdminPassword())
+}
 
-	if userCreationRequest.Username == "" || userCreationRequest.Password == "" {
-		userCreationRequest.Username, userCreationRequest.Password = askCredentials()
+func createAdminUserFromInteractiveTerminal(store *storage.Storage) {
+	username, password := askCredentials()
+	createAdminUser(store, username, password)
+}
+
+func createAdminUser(store *storage.Storage, username, password string) {
+	userCreationRequest := &model.UserCreationRequest{
+		Username: username,
+		Password: password,
+		IsAdmin:  true,
 	}
 
 	if store.UserExists(userCreationRequest.Username) {
@@ -34,7 +39,12 @@ func createAdmin(store *storage.Storage) {
 		printErrorAndExit(validationErr.Error())
 	}
 
-	if _, err := store.CreateUser(userCreationRequest); err != nil {
+	if user, err := store.CreateUser(userCreationRequest); err != nil {
 		printErrorAndExit(err)
+	} else {
+		slog.Info("Created new admin user",
+			slog.String("username", user.Username),
+			slog.Int64("user_id", user.ID),
+		)
 	}
 }
