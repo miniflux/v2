@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/crypto"
@@ -139,7 +140,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
-		pq.Array(removeDuplicates(entry.Tags)),
+		pq.Array(removeEmpty(removeDuplicates(entry.Tags))),
 	).Scan(
 		&entry.ID,
 		&entry.Status,
@@ -195,7 +196,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.Hash,
-		pq.Array(removeDuplicates(entry.Tags)),
+		pq.Array(removeEmpty(removeDuplicates(entry.Tags))),
 	).Scan(&entry.ID)
 
 	if err != nil {
@@ -619,4 +620,14 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 func removeDuplicates(l []string) []string {
 	slices.Sort(l)
 	return slices.Compact(l)
+}
+
+func removeEmpty(l []string) []string {
+	var finalSlice []string
+	for _, item := range l {
+		if strings.TrimSpace(item) != "" {
+			finalSlice = append(finalSlice, item)
+		}
+	}
+	return finalSlice
 }
