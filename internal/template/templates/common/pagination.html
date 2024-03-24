@@ -1,19 +1,18 @@
-{{ define "pagination" }}
+{{- define "pagination" }}
 <div class="pagination">
     <div class="pagination-prev {{ if not .ShowPrev }}disabled{{end}}">
-        {{ if .ShowPrev }}
+        {{- if .ShowPrev }}
             <a href="{{ .Route }}{{ if gt .PrevOffset 0 }}?offset={{ .PrevOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}{{ else }}{{ if .SearchQuery }}?q={{ .SearchQuery }}{{ end }}{{ end }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
-        {{ else }}
+        {{- else }}
             {{ t "pagination.previous" }}
-        {{ end }}
+        {{- end }}
     </div>
-
     <div class="pagination-next {{ if not .ShowNext }}disabled{{end}}">
-        {{ if .ShowNext }}
+        {{- if .ShowNext }}
             <a href="{{ .Route }}?offset={{ .NextOffset }}{{ if .SearchQuery }}&amp;q={{ .SearchQuery }}{{ end }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
-        {{ else }}
+        {{- else }}
             {{ t "pagination.next" }}
-        {{ end }}
+        {{- end }}
     </div>
 </div>
-{{ end }}
+{{- end }}

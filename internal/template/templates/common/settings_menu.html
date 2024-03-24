@@ -1,4 +1,4 @@
-{{ define "settings_menu" }}
+{{- define "settings_menu" }}
 <nav aria-label="{{ t "page.settings.title" }} {{ t "menu.title" }}">
     <ul>
         <li>
@@ -13,14 +13,14 @@
         <li>
             <a href="{{ route "sessions" }}">{{ icon "sessions" }}{{ t "menu.sessions" }}</a>
         </li>
-        {{ if .user.IsAdmin }}
-            <li>
-                <a href="{{ route "users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
-            </li>
-        {{ end }}
+        {{- if .user.IsAdmin }}
+        <li>
+            <a href="{{ route "users" }}">{{ icon "users" }}{{ t "menu.users" }}</a>
+        </li>
+        {{- end }}
         <li>
             <a href="{{ route "about" }}">{{ icon "about" }}{{ t "menu.about" }}</a>
         </li>
     </ul>
 </nav>
-{{ end }}
+{{- end }}

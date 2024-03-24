@@ -1,19 +1,19 @@
-{{ define "entry_pagination" }}
+{{- define "entry_pagination" }}
 <div class="pagination">
     <div class="pagination-prev {{ if not .prevEntry }}disabled{{end}}">
-        {{ if .prevEntry }}
+        {{- if .prevEntry }}
             <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
-        {{ else }}
+        {{- else }}
             {{ t "pagination.previous" }}
-        {{ end }}
+        {{- end }}
     </div>
 
     <div class="pagination-next {{ if not .nextEntry }}disabled{{end}}">
-        {{ if .nextEntry }}
+        {{- if .nextEntry }}
             <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
-        {{ else }}
+        {{- else }}
             {{ t "pagination.next" }}
-        {{ end }}
+        {{- end }}
     </div>
 </div>
-{{ end }}
+{{- end }}
