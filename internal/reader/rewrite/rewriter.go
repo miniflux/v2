@@ -14,6 +14,9 @@ import (
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
 )
 
 type rule struct {
@@ -97,6 +100,12 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 		entry.Content = removeTables(entry.Content)
 	case "remove_clickbait":
 		entry.Title = cases.Title(language.English).String(strings.ToLower(entry.Title))
+	case "compress":
+		minifier := minify.New()
+		minifier.AddFunc("text/html", html.Minify)
+		if minifiedHTML, err := minifier.String("text/html", entry.Content); err == nil {
+			entry.Content = minifiedHTML
+		}
 	}
 }
 

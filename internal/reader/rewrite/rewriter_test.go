@@ -703,3 +703,22 @@ func TestAddImageTitle(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+
+func TestCompress(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `
+		<img src="pif"          title="pouf" >
+		`,
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<img src=pif title=pouf>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `compress`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
