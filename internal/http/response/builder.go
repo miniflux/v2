@@ -96,7 +96,6 @@ func (b *Builder) Write() {
 }
 
 func (b *Builder) writeHeaders() {
-	b.headers["X-XSS-Protection"] = "1; mode=block"
 	b.headers["X-Content-Type-Options"] = "nosniff"
 	b.headers["X-Frame-Options"] = "DENY"
 	b.headers["Referrer-Policy"] = "no-referrer"
