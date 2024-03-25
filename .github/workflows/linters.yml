@@ -33,7 +33,7 @@ jobs:
       - uses: golangci/golangci-lint-action@v4
         with:
           args: --timeout 10m --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace --enable gocritic
-      - uses: dominikh/staticcheck-action@v1.3.0
+      - uses: dominikh/staticcheck-action@v1.3.1
         with:
           version: "2023.1.7"
           install-go: false
