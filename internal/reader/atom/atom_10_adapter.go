@@ -130,9 +130,18 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		}
 
 		// Populate categories.
-		categories := atomEntry.Categories.CategoryNames()
+		categories := []string{}
+		for _, category := range atomEntry.Categories.CategoryNames() {
+			if category != "" {
+				categories = append(categories, category)
+			}
+		}
 		if len(categories) == 0 {
-			categories = a.atomFeed.Categories.CategoryNames()
+			for _, category := range a.atomFeed.Categories.CategoryNames() {
+				if category != "" {
+					categories = append(categories, category)
+				}
+			}
 		}
 		sort.Strings(categories)
 		entry.Tags = slices.Compact(categories)
