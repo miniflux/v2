@@ -90,9 +90,9 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		entry.Title = findEntryTitle(&item)
 		if entry.Title == "" {
 			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
-		}
-		if entry.Title == "" {
-			entry.Title = entry.URL
+			if entry.Title == "" {
+				entry.Title = entry.URL
+			}
 		}
 
 		entry.Author = findEntryAuthor(&item)
@@ -101,11 +101,10 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Generate the entry hash.
-		for _, value := range []string{item.GUID.Data, entryURL} {
-			if value != "" {
-				entry.Hash = crypto.Hash(value)
-				break
-			}
+		if item.GUID.Data != "" {
+			entry.Hash = crypto.Hash(item.GUID.Data)
+		} else if entryURL != "" {
+			entry.Hash = crypto.Hash(entryURL)
 		}
 
 		// Find CommentsURL if defined.
@@ -121,12 +120,27 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Populate entry categories.
-		entry.Tags = append(entry.Tags, item.Categories...)
-		entry.Tags = append(entry.Tags, item.MediaCategories.Labels()...)
+		for _, tag := range item.Categories {
+			if tag != "" {
+				entry.Tags = append(entry.Tags, tag)
+			}
+		}
+		for _, tag := range item.MediaCategories.Labels() {
+			if tag != "" {
+				entry.Tags = append(entry.Tags, tag)
+			}
+		}
 		if len(entry.Tags) == 0 {
-			entry.Tags = append(entry.Tags, r.rss.Channel.Categories...)
-			entry.Tags = append(entry.Tags, r.rss.Channel.GetItunesCategories()...)
-
+			for _, tag := range r.rss.Channel.Categories {
+				if tag != "" {
+					entry.Tags = append(entry.Tags, tag)
+				}
+			}
+			for _, tag := range r.rss.Channel.GetItunesCategories() {
+				if tag != "" {
+					entry.Tags = append(entry.Tags, tag)
+				}
+			}
 			if r.rss.Channel.GooglePlayCategory.Text != "" {
 				entry.Tags = append(entry.Tags, r.rss.Channel.GooglePlayCategory.Text)
 			}
