@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"math"
 	"net/mail"
+	"net/url"
 	"slices"
 	"strings"
 	"time"
@@ -103,6 +104,9 @@ func (f *funcMap) Map() template.FuncMap {
 		},
 		"plural": func(key string, n int, args ...interface{}) string {
 			return ""
+		},
+		"urlEncode": func(s string) string {
+			return url.PathEscape(s)
 		},
 	}
 }
