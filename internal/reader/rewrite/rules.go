@@ -3,9 +3,7 @@
 
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
-// List of predefined rewrite rules (alphabetically sorted)
-// Available rules: "add_image_title", "add_youtube_video"
-// domain => rule name
+// Alphabetically sorted list of predefined rewrite rules
 var predefinedRules = map[string]string{
 	"abstrusegoose.com":      "add_image_title",
 	"amazingsuperpowers.com": "add_image_title",
