@@ -1,4 +1,4 @@
-{{ define "title"}}{{ t "page.unread.title" }} {{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ end }}
+{{ define "title"}}{{ if gt .countUnread 0 }}({{ .countUnread }}){{ end }} {{ t "page.unread.title" }}{{ end }}
 
 {{ define "page_header"}}
 <section class="page-header" aria-labelledby="page-header-title page-header-title-count">
