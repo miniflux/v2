@@ -72,6 +72,8 @@
     "entry.save.title": "Artikel opslaan",
     "entry.save.completed": "Done!",
     "entry.save.toast.completed": "Artikel opgeslagen",
+    "entry.scraper.label.rss": "Toon RSS-content",
+    "entry.scraper.title.rss": "Haal RSS-content op",
     "entry.scraper.label": "Downloaden",
     "entry.scraper.title": "Fetch original content",
     "entry.scraper.completed": "Klaar!",

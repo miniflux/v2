@@ -72,6 +72,8 @@
     "entry.save.title": "Сохранить эту статью",
     "entry.save.completed": "Готово!",
     "entry.save.toast.completed": "Статья сохранена",
+    "entry.scraper.label.rss": "Показать содержимое RSS",
+    "entry.scraper.title.rss": "Получить содержимое RSS",
     "entry.scraper.label": "Скачать",
     "entry.scraper.title": "Извлечь оригинальное содержимое",
     "entry.scraper.completed": "Готово!",

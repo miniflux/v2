@@ -72,6 +72,8 @@
     "entry.save.title": "保存这篇文章",
     "entry.save.completed": "完成",
     "entry.save.toast.completed": "已保存文章",
+    "entry.scraper.label.rss": "显示 RSS 内容",
+    "entry.scraper.title.rss": "获取 RSS 内容",
     "entry.scraper.label": "抓取全文",
     "entry.scraper.title": "抓取全文内容",
     "entry.scraper.completed": "抓取完成",

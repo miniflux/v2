@@ -85,11 +85,17 @@
                 <li>
                     <button
                         class="page-button"
-                        title="{{ t "entry.scraper.title" }}"
+                        title="{{ if .entry.WebContent }}{{ t "entry.scraper.title" }}{{ else }}{{ t "entry.scraper.title.rss" }}{{ end }}"
+                        data-title="{{ t "entry.scraper.title" }}"
+                        data-title-rss="{{ t "entry.scraper.title.rss" }}"
+                        data-label="{{ t "entry.scraper.label" }}"
+                        data-label-rss="{{ t "entry.scraper.label.rss" }}"
                         data-fetch-content-entry="true"
+                        data-switch-to="{{ if .entry.WebContent }}web{{ else }}rss{{ end }}"
                         data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
+                        data-fetch-original-content-url="{{ route "fetchOriginal" "entryID" .entry.ID }}"
                         data-label-loading="{{ t "entry.state.loading" }}"
-                        >{{ icon "scraper" }}<span class="icon-label">{{ t "entry.scraper.label" }}</span></button>
+                        >{{ icon "scraper" }}<span class="icon-label">{{ if .entry.WebContent }}{{ t "entry.scraper.label" }}{{ else }}{{ t "entry.scraper.label.rss" }}{{ end }}</span></button>
                 </li>
                 {{ if .entry.CommentsURL }}
                 <li>
@@ -201,9 +207,17 @@
         {{ end }}
         {{end}}
         {{ if .user }}
-        {{ noescape (proxyFilter .entry.Content) }}
+            {{ if .entry.WebContent }}
+                {{ noescape (proxyFilter .entry.WebContent) }}
+            {{ else }}
+                {{ noescape (proxyFilter .entry.Content) }}
+            {{ end }}
         {{ else }}
-        {{ noescape .entry.Content }}
+            {{ if .entry.WebContent }}
+                {{ noescape .entry.WebContent }}
+            {{ else }}
+                {{ noescape .entry.Content }}
+            {{ end }}
         {{ end }}
 </article>
 {{ if .entry.Enclosures }}

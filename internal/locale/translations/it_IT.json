@@ -72,6 +72,8 @@
     "entry.save.title": "Salva questo articolo",
     "entry.save.completed": "Fatto!",
     "entry.save.toast.completed": "Articolo salvato",
+    "entry.scraper.label.rss": "Mostra contenuto RSS",
+    "entry.scraper.title.rss": "Ottieni contenuto RSS",
     "entry.scraper.label": "Scarica",
     "entry.scraper.title": "Scarica il contenuto integrale",
     "entry.scraper.completed": "Fatto!",

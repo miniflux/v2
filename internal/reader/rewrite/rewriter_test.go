@@ -50,12 +50,12 @@ func TestReplaceTextLinks(t *testing.T) {
 
 func TestRewriteWithNoMatchingRule(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Some text.`,
+		Title:      `A title`,
+		WebContent: `Some text.`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Some text.`,
+		Title:      `A title`,
+		WebContent: `Some text.`,
 	}
 	Rewriter("https://example.org/article", testEntry, ``)
 
@@ -68,12 +68,12 @@ func TestRewriteWithYoutubeLink(t *testing.T) {
 	config.Opts = config.NewOptions()
 
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><br>Video Description`,
+		Title:      `A title`,
+		WebContent: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1234" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Video Description`,
+		Title:      `A title`,
+		WebContent: `Video Description`,
 	}
 	Rewriter("https://www.youtube.com/watch?v=1234", testEntry, ``)
 
@@ -95,12 +95,12 @@ func TestRewriteWithYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	}
 
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/1234" allowfullscreen></iframe><br>Video Description`,
+		Title:      `A title`,
+		WebContent: `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/1234" allowfullscreen></iframe><br>Video Description`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Video Description`,
+		Title:      `A title`,
+		WebContent: `Video Description`,
 	}
 	Rewriter("https://www.youtube.com/watch?v=1234", testEntry, ``)
 
@@ -111,12 +111,12 @@ func TestRewriteWithYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 
 func TestRewriteWithInexistingCustomRule(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Video Description`,
+		Title:      `A title`,
+		WebContent: `Video Description`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Video Description`,
+		Title:      `A title`,
+		WebContent: `Video Description`,
 	}
 	Rewriter("https://www.youtube.com/watch?v=1234", testEntry, `some rule`)
 
@@ -127,12 +127,12 @@ func TestRewriteWithInexistingCustomRule(t *testing.T) {
 
 func TestRewriteWithXkcdLink(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you."/><figcaption><p>Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you.</p></figcaption></figure>`,
+		Title:      `A title`,
+		WebContent: `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you."/><figcaption><p>Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you.</p></figcaption></figure>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
+		Title:      `A title`,
+		WebContent: `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
 	}
 	Rewriter("https://xkcd.com/1912/", testEntry, ``)
 
@@ -143,12 +143,12 @@ func TestRewriteWithXkcdLink(t *testing.T) {
 
 func TestRewriteWithXkcdLinkHtmlInjection(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="&lt;foo&gt;"/><figcaption><p>&lt;foo&gt;</p></figcaption></figure>`,
+		Title:      `A title`,
+		WebContent: `<figure><img src="https://imgs.xkcd.com/comics/thermostat.png" alt="&lt;foo&gt;"/><figcaption><p>&lt;foo&gt;</p></figcaption></figure>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="<foo>" alt="<foo>" />`,
+		Title:      `A title`,
+		WebContent: `<img src="https://imgs.xkcd.com/comics/thermostat.png" title="<foo>" alt="<foo>" />`,
 	}
 	Rewriter("https://xkcd.com/1912/", testEntry, ``)
 
@@ -159,12 +159,12 @@ func TestRewriteWithXkcdLinkHtmlInjection(t *testing.T) {
 
 func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
+		Title:      `A title`,
+		WebContent: `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
+		Title:      `A title`,
+		WebContent: `<img src="https://imgs.xkcd.com/comics/thermostat.png" alt="Your problem is so terrible, I worry that, if I help you, I risk drawing the attention of whatever god of technology inflicted it on you." />`,
 	}
 	Rewriter("https://xkcd.com/1912/", testEntry, ``)
 
@@ -175,12 +175,12 @@ func TestRewriteWithXkcdLinkAndImageNoTitle(t *testing.T) {
 
 func TestRewriteWithXkcdLinkAndNoImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `test`,
+		Title:      `A title`,
+		WebContent: `test`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `test`,
+		Title:      `A title`,
+		WebContent: `test`,
 	}
 	Rewriter("https://xkcd.com/1912/", testEntry, ``)
 
@@ -191,12 +191,12 @@ func TestRewriteWithXkcdLinkAndNoImage(t *testing.T) {
 
 func TestRewriteWithXkcdAndNoImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `test`,
+		Title:      `A title`,
+		WebContent: `test`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `test`,
+		Title:      `A title`,
+		WebContent: `test`,
 	}
 	Rewriter("https://xkcd.com/1912/", testEntry, ``)
 
@@ -207,12 +207,12 @@ func TestRewriteWithXkcdAndNoImage(t *testing.T) {
 
 func TestRewriteMailtoLink(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact [blah blah]</a>`,
+		Title:      `A title`,
+		WebContent: `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact [blah blah]</a>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact</a>`,
+		Title:      `A title`,
+		WebContent: `<a href="mailto:ryan@qwantz.com?subject=blah%20blah">contact</a>`,
 	}
 	Rewriter("https://www.qwantz.com/", testEntry, ``)
 
@@ -223,12 +223,12 @@ func TestRewriteMailtoLink(t *testing.T) {
 
 func TestRewriteWithPDFLink(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<a href="https://example.org/document.pdf">PDF</a><br>test`,
+		Title:      `A title`,
+		WebContent: `<a href="https://example.org/document.pdf">PDF</a><br>test`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `test`,
+		Title:      `A title`,
+		WebContent: `test`,
 	}
 	Rewriter("https://example.org/document.pdf", testEntry, ``)
 
@@ -239,12 +239,12 @@ func TestRewriteWithPDFLink(t *testing.T) {
 
 func TestRewriteWithNoLazyImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`,
+		Title:      `A title`,
+		WebContent: `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`,
+		Title:      `A title`,
+		WebContent: `<img src="https://example.org/image.jpg" alt="Image"><noscript><p>Some text</p></noscript>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
@@ -255,12 +255,12 @@ func TestRewriteWithNoLazyImage(t *testing.T) {
 
 func TestRewriteWithLazyImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Title:      `A title`,
+		WebContent: `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="" data-url="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Title:      `A title`,
+		WebContent: `<img src="" data-url="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
@@ -271,12 +271,12 @@ func TestRewriteWithLazyImage(t *testing.T) {
 
 func TestRewriteWithLazyDivImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Title:      `A title`,
+		WebContent: `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div data-url="https://example.org/image.jpg" alt="Image"></div><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Title:      `A title`,
+		WebContent: `<div data-url="https://example.org/image.jpg" alt="Image"></div><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
@@ -287,12 +287,12 @@ func TestRewriteWithLazyDivImage(t *testing.T) {
 
 func TestRewriteWithUnknownLazyNoScriptImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"/><img src="https://example.org/fallback.jpg" alt="Fallback"/>`,
+		Title:      `A title`,
+		WebContent: `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"/><img src="https://example.org/fallback.jpg" alt="Fallback"/>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Title:      `A title`,
+		WebContent: `<img src="" data-non-candidate="https://example.org/image.jpg" alt="Image"><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
@@ -303,12 +303,12 @@ func TestRewriteWithUnknownLazyNoScriptImage(t *testing.T) {
 
 func TestRewriteWithLazySrcset(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`,
+		Title:      `A title`,
+		WebContent: `<img srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`,
+		Title:      `A title`,
+		WebContent: `<img srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
@@ -319,12 +319,12 @@ func TestRewriteWithLazySrcset(t *testing.T) {
 
 func TestRewriteWithImageAndLazySrcset(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="meow" srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`,
+		Title:      `A title`,
+		WebContent: `<img src="meow" srcset="https://example.org/image.jpg" data-srcset="https://example.org/image.jpg" alt="Image"/>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="meow" srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`,
+		Title:      `A title`,
+		WebContent: `<img src="meow" srcset="" data-srcset="https://example.org/image.jpg" alt="Image">`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_image")
 
@@ -335,12 +335,12 @@ func TestRewriteWithImageAndLazySrcset(t *testing.T) {
 
 func TestRewriteWithNoLazyIframe(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe src="https://example.org/embed" allowfullscreen></iframe>`,
+		Title:      `A title`,
+		WebContent: `<iframe src="https://example.org/embed" allowfullscreen></iframe>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe src="https://example.org/embed" allowfullscreen></iframe>`,
+		Title:      `A title`,
+		WebContent: `<iframe src="https://example.org/embed" allowfullscreen></iframe>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_iframe")
 
@@ -351,12 +351,12 @@ func TestRewriteWithNoLazyIframe(t *testing.T) {
 
 func TestRewriteWithLazyIframe(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe data-src="https://example.org/embed" allowfullscreen="" src="https://example.org/embed"></iframe>`,
+		Title:      `A title`,
+		WebContent: `<iframe data-src="https://example.org/embed" allowfullscreen="" src="https://example.org/embed"></iframe>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe data-src="https://example.org/embed" allowfullscreen></iframe>`,
+		Title:      `A title`,
+		WebContent: `<iframe data-src="https://example.org/embed" allowfullscreen></iframe>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_iframe")
 
@@ -367,12 +367,12 @@ func TestRewriteWithLazyIframe(t *testing.T) {
 
 func TestRewriteWithLazyIframeAndSrc(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe src="https://example.org/embed" data-src="https://example.org/embed" allowfullscreen=""></iframe>`,
+		Title:      `A title`,
+		WebContent: `<iframe src="https://example.org/embed" data-src="https://example.org/embed" allowfullscreen=""></iframe>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe src="about:blank" data-src="https://example.org/embed" allowfullscreen></iframe>`,
+		Title:      `A title`,
+		WebContent: `<iframe src="about:blank" data-src="https://example.org/embed" allowfullscreen></iframe>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "add_dynamic_iframe")
 
@@ -383,12 +383,12 @@ func TestRewriteWithLazyIframeAndSrc(t *testing.T) {
 
 func TestNewLineRewriteRule(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `A<br>B<br>C`,
+		Title:      `A title`,
+		WebContent: `A<br>B<br>C`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: "A\nB\nC",
+		Title:      `A title`,
+		WebContent: "A\nB\nC",
 	}
 	Rewriter("https://example.org/article", testEntry, "nl2br")
 
@@ -399,12 +399,12 @@ func TestNewLineRewriteRule(t *testing.T) {
 
 func TestConvertTextLinkRewriteRule(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Test: <a href="http://example.org/a/b">http://example.org/a/b</a>`,
+		Title:      `A title`,
+		WebContent: `Test: <a href="http://example.org/a/b">http://example.org/a/b</a>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Test: http://example.org/a/b`,
+		Title:      `A title`,
+		WebContent: `Test: http://example.org/a/b`,
 	}
 	Rewriter("https://example.org/article", testEntry, "convert_text_link")
 
@@ -415,12 +415,12 @@ func TestConvertTextLinkRewriteRule(t *testing.T) {
 
 func TestMediumImage(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img alt="Image for post" class="t u v if aj" src="https://miro.medium.com/max/2560/1*ephLSqSzQYLvb7faDwzRbw.jpeg" width="1280" height="720" srcset="https://miro.medium.com/max/552/1*ephLSqSzQYLvb7faDwzRbw.jpeg 276w, https://miro.medium.com/max/1104/1*ephLSqSzQYLvb7faDwzRbw.jpeg 552w, https://miro.medium.com/max/1280/1*ephLSqSzQYLvb7faDwzRbw.jpeg 640w, https://miro.medium.com/max/1400/1*ephLSqSzQYLvb7faDwzRbw.jpeg 700w" sizes="700px"/>`,
+		Title:      `A title`,
+		WebContent: `<img alt="Image for post" class="t u v if aj" src="https://miro.medium.com/max/2560/1*ephLSqSzQYLvb7faDwzRbw.jpeg" width="1280" height="720" srcset="https://miro.medium.com/max/552/1*ephLSqSzQYLvb7faDwzRbw.jpeg 276w, https://miro.medium.com/max/1104/1*ephLSqSzQYLvb7faDwzRbw.jpeg 552w, https://miro.medium.com/max/1280/1*ephLSqSzQYLvb7faDwzRbw.jpeg 640w, https://miro.medium.com/max/1400/1*ephLSqSzQYLvb7faDwzRbw.jpeg 700w" sizes="700px"/>`,
 	}
 	testEntry := &model.Entry{
 		Title: `A title`,
-		Content: `
+		WebContent: `
 		<figure class="ht hu hv hw hx hy cy cz paragraph-image">
 			<div class="hz ia ib ic aj">
 				<div class="cy cz hs">
@@ -441,7 +441,7 @@ func TestMediumImage(t *testing.T) {
 		`,
 	}
 	Rewriter("https://example.org/article", testEntry, "fix_medium_images")
-	testEntry.Content = strings.TrimSpace(testEntry.Content)
+	testEntry.WebContent = strings.TrimSpace(testEntry.WebContent)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
@@ -450,15 +450,15 @@ func TestMediumImage(t *testing.T) {
 
 func TestRewriteNoScriptImageWithoutNoScriptTag(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."/><figcaption>MDN Logo</figcaption></figure>`,
+		Title:      `A title`,
+		WebContent: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."/><figcaption>MDN Logo</figcaption></figure>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><figcaption>MDN Logo</figcaption></figure>`,
+		Title:      `A title`,
+		WebContent: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><figcaption>MDN Logo</figcaption></figure>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "use_noscript_figure_images")
-	testEntry.Content = strings.TrimSpace(testEntry.Content)
+	testEntry.WebContent = strings.TrimSpace(testEntry.WebContent)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
@@ -467,15 +467,15 @@ func TestRewriteNoScriptImageWithoutNoScriptTag(t *testing.T) {
 
 func TestRewriteNoScriptImageWithNoScriptTag(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<figure><img src="http://example.org/logo.svg"/><figcaption>MDN Logo</figcaption></figure>`,
+		Title:      `A title`,
+		WebContent: `<figure><img src="http://example.org/logo.svg"/><figcaption>MDN Logo</figcaption></figure>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><noscript><img src="http://example.org/logo.svg"></noscript><figcaption>MDN Logo</figcaption></figure>`,
+		Title:      `A title`,
+		WebContent: `<figure><img src="https://developer.mozilla.org/static/img/favicon144.png" alt="The beautiful MDN logo."><noscript><img src="http://example.org/logo.svg"></noscript><figcaption>MDN Logo</figcaption></figure>`,
 	}
 	Rewriter("https://example.org/article", testEntry, "use_noscript_figure_images")
-	testEntry.Content = strings.TrimSpace(testEntry.Content)
+	testEntry.WebContent = strings.TrimSpace(testEntry.WebContent)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
@@ -484,12 +484,12 @@ func TestRewriteNoScriptImageWithNoScriptTag(t *testing.T) {
 
 func TestRewriteReplaceCustom(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.png">`,
+		Title:      `A title`,
+		WebContent: `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.png">`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.svg">`,
+		Title:      `A title`,
+		WebContent: `<img src="http://example.org/logo.svg"><img src="https://example.org/article/picture.svg">`,
 	}
 	Rewriter("https://example.org/article", testEntry, `replace("article/(.*).svg"|"article/$1.png")`)
 
@@ -500,12 +500,12 @@ func TestRewriteReplaceCustom(t *testing.T) {
 
 func TestRewriteReplaceTitleCustom(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `Ouch, a thistle`,
-		Content: `The replace_title rewrite rule should not modify the content.`,
+		Title:      `Ouch, a thistle`,
+		WebContent: `The replace_title rewrite rule should not modify the content.`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `The replace_title rewrite rule should not modify the content.`,
+		Title:      `A title`,
+		WebContent: `The replace_title rewrite rule should not modify the content.`,
 	}
 	Rewriter("https://example.org/article", testEntry, `replace_title("(?i)^a\\s*ti"|"Ouch, a this")`)
 
@@ -516,12 +516,12 @@ func TestRewriteReplaceTitleCustom(t *testing.T) {
 
 func TestRewriteRemoveCustom(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div>Lorem Ipsum <span class="ads keep">Super important info</span></div>`,
+		Title:      `A title`,
+		WebContent: `<div>Lorem Ipsum <span class="ads keep">Super important info</span></div>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div>Lorem Ipsum <span class="spam">I dont want to see this</span><span class="ads keep">Super important info</span></div>`,
+		Title:      `A title`,
+		WebContent: `<div>Lorem Ipsum <span class="spam">I dont want to see this</span><span class="ads keep">Super important info</span></div>`,
 	}
 	Rewriter("https://example.org/article", testEntry, `remove(".spam, .ads:not(.keep)")`)
 
@@ -532,12 +532,12 @@ func TestRewriteRemoveCustom(t *testing.T) {
 
 func TestRewriteAddCastopodEpisode(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<iframe width="650" frameborder="0" src="https://podcast.demo/@demo/episodes/test/embed/light"></iframe><br>Episode Description`,
+		Title:      `A title`,
+		WebContent: `<iframe width="650" frameborder="0" src="https://podcast.demo/@demo/episodes/test/embed/light"></iframe><br>Episode Description`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `Episode Description`,
+		Title:      `A title`,
+		WebContent: `Episode Description`,
 	}
 	Rewriter("https://podcast.demo/@demo/episodes/test", testEntry, `add_castopod_episode`)
 
@@ -548,12 +548,12 @@ func TestRewriteAddCastopodEpisode(t *testing.T) {
 
 func TestRewriteBase64Decode(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `This is some base64 encoded content`,
+		Title:      `A title`,
+		WebContent: `This is some base64 encoded content`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=`,
+		Title:      `A title`,
+		WebContent: `VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=`,
 	}
 	Rewriter("https://example.org/article", testEntry, `base64_decode`)
 
@@ -564,12 +564,12 @@ func TestRewriteBase64Decode(t *testing.T) {
 
 func TestRewriteBase64DecodeInHTML(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div>Lorem Ipsum not valid base64<span class="base64">This is some base64 encoded content</span></div>`,
+		Title:      `A title`,
+		WebContent: `<div>Lorem Ipsum not valid base64<span class="base64">This is some base64 encoded content</span></div>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div>Lorem Ipsum not valid base64<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`,
+		Title:      `A title`,
+		WebContent: `<div>Lorem Ipsum not valid base64<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`,
 	}
 	Rewriter("https://example.org/article", testEntry, `base64_decode`)
 
@@ -580,12 +580,12 @@ func TestRewriteBase64DecodeInHTML(t *testing.T) {
 
 func TestRewriteBase64DecodeArgs(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div>Lorem Ipsum<span class="base64">This is some base64 encoded content</span></div>`,
+		Title:      `A title`,
+		WebContent: `<div>Lorem Ipsum<span class="base64">This is some base64 encoded content</span></div>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<div>Lorem Ipsum<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`,
+		Title:      `A title`,
+		WebContent: `<div>Lorem Ipsum<span class="base64">VGhpcyBpcyBzb21lIGJhc2U2NCBlbmNvZGVkIGNvbnRlbnQ=</span></div>`,
 	}
 	Rewriter("https://example.org/article", testEntry, `base64_decode(".base64")`)
 
@@ -596,12 +596,12 @@ func TestRewriteBase64DecodeArgs(t *testing.T) {
 
 func TestRewriteRemoveTables(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<p>Test</p><p>Hello World!</p><p>Test</p>`,
+		Title:      `A title`,
+		WebContent: `<p>Test</p><p>Hello World!</p><p>Test</p>`,
 	}
 	testEntry := &model.Entry{
-		Title:   `A title`,
-		Content: `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td><p>Hello World!</p></td><td><p>Test</p></td></tr></tbody></table></td></tr></tbody></table>`,
+		Title:      `A title`,
+		WebContent: `<table class="container"><tbody><tr><td><p>Test</p><table class="row"><tbody><tr><td><p>Hello World!</p></td><td><p>Test</p></td></tr></tbody></table></td></tr></tbody></table>`,
 	}
 	Rewriter("https://example.org/article", testEntry, `remove_tables`)
 
@@ -612,12 +612,12 @@ func TestRewriteRemoveTables(t *testing.T) {
 
 func TestRemoveClickbait(t *testing.T) {
 	controlEntry := &model.Entry{
-		Title:   `This Is Amazing`,
-		Content: `Some description`,
+		Title:      `This Is Amazing`,
+		WebContent: `Some description`,
 	}
 	testEntry := &model.Entry{
-		Title:   `THIS IS AMAZING`,
-		Content: `Some description`,
+		Title:      `THIS IS AMAZING`,
+		WebContent: `Some description`,
 	}
 	Rewriter("https://example.org/article", testEntry, `remove_clickbait`)
 
@@ -629,7 +629,7 @@ func TestRemoveClickbait(t *testing.T) {
 func TestAddHackerNewsLinksUsingHack(t *testing.T) {
 	testEntry := &model.Entry{
 		Title: `A title`,
-		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		WebContent: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
 		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a></p>
 		<p>Points: 23</p>
 		<p># Comments: 38</p>`,
@@ -637,7 +637,7 @@ func TestAddHackerNewsLinksUsingHack(t *testing.T) {
 
 	controlEntry := &model.Entry{
 		Title: `A title`,
-		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		WebContent: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
 		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a> <a href="hack://item?id=37620043">Open with HACK</a></p>
 		<p>Points: 23</p>
 		<p># Comments: 38</p>`,
@@ -652,7 +652,7 @@ func TestAddHackerNewsLinksUsingHack(t *testing.T) {
 func TestAddHackerNewsLinksUsingOpener(t *testing.T) {
 	testEntry := &model.Entry{
 		Title: `A title`,
-		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		WebContent: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
 		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a></p>
 		<p>Points: 23</p>
 		<p># Comments: 38</p>`,
@@ -660,7 +660,7 @@ func TestAddHackerNewsLinksUsingOpener(t *testing.T) {
 
 	controlEntry := &model.Entry{
 		Title: `A title`,
-		Content: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
+		WebContent: `<p>Article URL: <a href="https://example.org/url">https://example.org/article</a></p>
 		<p>Comments URL: <a href="https://news.ycombinator.com/item?id=37620043">https://news.ycombinator.com/item?id=37620043</a> <a href="opener://x-callback-url/show-options?url=https%3A%2F%2Fnews.ycombinator.com%2Fitem%3Fid%3D37620043">Open with Opener</a></p>
 		<p>Points: 23</p>
 		<p># Comments: 38</p>`,
@@ -675,7 +675,7 @@ func TestAddHackerNewsLinksUsingOpener(t *testing.T) {
 func TestAddImageTitle(t *testing.T) {
 	testEntry := &model.Entry{
 		Title: `A title`,
-		Content: `
+		WebContent: `
 		<img src="pif" title="pouf">
 		<img src="pif" title="pouf" alt='"onerror=alert(1) a="'>
 		<img src="pif" title="pouf" alt='&quot;onerror=alert(1) a=&quot'>
@@ -688,7 +688,7 @@ func TestAddImageTitle(t *testing.T) {
 
 	controlEntry := &model.Entry{
 		Title: `A title`,
-		Content: `<figure><img src="pif" alt=""/><figcaption><p>pouf</p></figcaption></figure>
+		WebContent: `<figure><img src="pif" alt=""/><figcaption><p>pouf</p></figcaption></figure>
 		<figure><img src="pif" alt="" onerror="alert(1)" a=""/><figcaption><p>pouf</p></figcaption></figure>
 		<figure><img src="pif" alt="" onerror="alert(1)" a=""/><figcaption><p>pouf</p></figcaption></figure>
 		<figure><img src="pif" alt=";&#34;onerror=alert(1) a=;&#34;"/><figcaption><p>pouf</p></figcaption></figure>

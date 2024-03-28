@@ -72,6 +72,8 @@
     "entry.save.title": "Simpan artikel ini",
     "entry.save.completed": "Selesai!",
     "entry.save.toast.completed": "Artikel tersimpan",
+    "entry.scraper.label.rss": "Tampilkan Konten RSS",
+    "entry.scraper.title.rss": "Dapatkan Konten RSS",
     "entry.scraper.label": "Unduh",
     "entry.scraper.title": "Ambil konten asli",
     "entry.scraper.completed": "Selesai!",

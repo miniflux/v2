@@ -72,6 +72,8 @@
     "entry.save.title": "この記事を保存",
     "entry.save.completed": "完了!",
     "entry.save.toast.completed": "記事は保存されました",
+    "entry.scraper.label.rss": "RSS コンテンツを表示",
+    "entry.scraper.title.rss": "RSS コンテンツを取得",
     "entry.scraper.label": "ダウンロード",
     "entry.scraper.title": "オリジナルの内容を取得",
     "entry.scraper.completed": "完了!",

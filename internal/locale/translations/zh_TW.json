@@ -72,6 +72,8 @@
     "entry.save.title": "儲存這篇文章",
     "entry.save.completed": "完成",
     "entry.save.toast.completed": "已儲存文章",
+    "entry.scraper.label.rss": "顯示 RSS 內容",
+    "entry.scraper.title.rss": "獲取 RSS 內容",
     "entry.scraper.label": "下載原文",
     "entry.scraper.title": "下載原文內容",
     "entry.scraper.completed": "下載完成",
