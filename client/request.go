@@ -27,6 +27,7 @@ var (
 	ErrServerError   = errors.New("miniflux: internal server error")
 	ErrNotFound      = errors.New("miniflux: resource not found")
 	ErrBadRequest    = errors.New("miniflux: bad request")
+	ErrEmptyEndpoint = errors.New("miniflux: empty endpoint provided")
 )
 
 type errorResponse struct {
@@ -62,6 +63,9 @@ func (r *request) Delete(path string) error {
 }
 
 func (r *request) execute(method, path string, data interface{}) (io.ReadCloser, error) {
+	if r.endpoint == "" {
+		return nil, ErrEmptyEndpoint
+	}
 	if r.endpoint[len(r.endpoint)-1:] == "/" {
 		r.endpoint = r.endpoint[:len(r.endpoint)-1]
 	}
