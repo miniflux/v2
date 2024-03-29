@@ -149,7 +149,7 @@ type WebhookFeed struct {
 	ID         int64            `json:"id"`
 	UserID     int64            `json:"user_id"`
 	CategoryID int64            `json:"category_id"`
-	Category   *WebhookCategory `json:"category"`
+	Category   *WebhookCategory `json:"category,omitempty"`
 	FeedURL    string           `json:"feed_url"`
 	SiteURL    string           `json:"site_url"`
 	Title      string           `json:"title"`
