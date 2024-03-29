@@ -12,7 +12,6 @@ import (
 
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/version"
 )
 
@@ -26,18 +25,13 @@ const (
 type Client struct {
 	webhookURL    string
 	webhookSecret string
-	store         *storage.Storage
 }
 
-func NewClient(webhookURL, webhookSecret string, store *storage.Storage) *Client {
-	return &Client{webhookURL, webhookSecret, store}
+func NewClient(webhookURL, webhookSecret string) *Client {
+	return &Client{webhookURL, webhookSecret}
 }
 
 func (c *Client) SendSaveEntryWebhookEvent(entry *model.Entry) error {
-	feedCategory, err := c.store.Category(entry.UserID, entry.Feed.Category.ID)
-	if err != nil {
-		return fmt.Errorf("webhook: unable to find category: %v", err)
-	}
 	return c.makeRequest(SaveEntryEventType, &WebhookSaveEntryEvent{
 		EventType: SaveEntryEventType,
 		Entry: &WebhookEntry{
@@ -63,7 +57,7 @@ func (c *Client) SendSaveEntryWebhookEvent(entry *model.Entry) error {
 				ID:         entry.Feed.ID,
 				UserID:     entry.Feed.UserID,
 				CategoryID: entry.Feed.Category.ID,
-				Category:   feedCategory,
+				Category:   &WebhookCategory{ID: entry.Feed.Category.ID, Title: entry.Feed.Category.Title},
 				FeedURL:    entry.Feed.FeedURL,
 				SiteURL:    entry.Feed.SiteURL,
 				Title:      entry.Feed.Title,
@@ -101,17 +95,13 @@ func (c *Client) SendNewEntriesWebhookEvent(feed *model.Feed, entries model.Entr
 			Tags:        entry.Tags,
 		})
 	}
-	feedCategory, err := c.store.Category(feed.UserID, feed.Category.ID)
-	if err != nil {
-		return fmt.Errorf("webhook: unable to find category: %v", err)
-	}
 	return c.makeRequest(NewEntriesEventType, &WebhookNewEntriesEvent{
 		EventType: NewEntriesEventType,
 		Feed: &WebhookFeed{
 			ID:         feed.ID,
 			UserID:     feed.UserID,
 			CategoryID: feed.Category.ID,
-			Category:   feedCategory,
+			Category:   &WebhookCategory{ID: feed.Category.ID, Title: feed.Category.Title},
 			FeedURL:    feed.FeedURL,
 			SiteURL:    feed.SiteURL,
 			Title:      feed.Title,
@@ -156,14 +146,19 @@ func (c *Client) makeRequest(eventType string, payload any) error {
 }
 
 type WebhookFeed struct {
-	ID         int64           `json:"id"`
-	UserID     int64           `json:"user_id"`
-	CategoryID int64           `json:"category_id"`
-	Category   *model.Category `json:"category"`
-	FeedURL    string          `json:"feed_url"`
-	SiteURL    string          `json:"site_url"`
-	Title      string          `json:"title"`
-	CheckedAt  time.Time       `json:"checked_at"`
+	ID         int64            `json:"id"`
+	UserID     int64            `json:"user_id"`
+	CategoryID int64            `json:"category_id"`
+	Category   *WebhookCategory `json:"category"`
+	FeedURL    string           `json:"feed_url"`
+	SiteURL    string           `json:"site_url"`
+	Title      string           `json:"title"`
+	CheckedAt  time.Time        `json:"checked_at"`
+}
+
+type WebhookCategory struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
 }
 
 type WebhookEntry struct {

@@ -228,7 +228,7 @@ func (h *handler) saveEntry(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go integration.SendEntry(entry, settings, h.store)
+	go integration.SendEntry(entry, settings)
 
 	json.Accepted(w, r)
 }

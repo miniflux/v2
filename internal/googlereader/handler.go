@@ -651,7 +651,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 		for _, entry := range entries {
 			e := entry
 			go func() {
-				integration.SendEntry(e, settings, h.store)
+				integration.SendEntry(e, settings)
 			}()
 		}
 	}
