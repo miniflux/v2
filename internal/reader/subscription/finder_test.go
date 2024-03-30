@@ -8,6 +8,28 @@ import (
 	"testing"
 )
 
+func TestFindYoutubePlaylistFeed(t *testing.T) {
+	scenarios := map[string]string{
+		"https://www.youtube.com/playlist?list=PLOOwEPgFWm_NHcQd9aCi5JXWASHO_n5uR": "https://www.youtube.com/feeds/videos.xml?playlist_id=PLOOwEPgFWm_NHcQd9aCi5JXWASHO_n5uR",
+		"https://www.youtube.com/playlist?list=PLOOwEPgFWm_N42HlCLhqyJ0ZBWr5K1QDM": "https://www.youtube.com/feeds/videos.xml?playlist_id=PLOOwEPgFWm_N42HlCLhqyJ0ZBWr5K1QDM",
+	}
+
+	for websiteURL, expectedFeedURL := range scenarios {
+		subscriptions, localizedError := NewSubscriptionFinder(nil).FindSubscriptionsFromYouTubePlaylistPage(websiteURL)
+		if localizedError != nil {
+			t.Fatalf(`Parsing a correctly formatted YouTube playlist page should not return any error: %v`, localizedError)
+		}
+
+		if len(subscriptions) != 1 {
+			t.Fatal(`Incorrect number of subscriptions returned`)
+		}
+
+		if subscriptions[0].URL != expectedFeedURL {
+			t.Errorf(`Unexpected Feed, got %s, instead of %s`, subscriptions[0].URL, expectedFeedURL)
+		}
+	}
+}
+
 func TestFindYoutubeChannelFeed(t *testing.T) {
 	scenarios := map[string]string{
 		"https://www.youtube.com/channel/UC-Qj80avWItNRjkZ41rzHyw": "https://www.youtube.com/feeds/videos.xml?channel_id=UC-Qj80avWItNRjkZ41rzHyw",
