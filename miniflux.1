@@ -257,11 +257,11 @@ use it as a reading time\&.
 Disabled by default\&.
 .TP
 .B FILTER_ENTRY_MAX_AGE_DAYS
-Number of days after which new entries should be retained.\&.
+Number of days after which new entries should be retained\&.
 .br
-Set 7 to fetch only entries 7 days old.\&.
+Set 7 to fetch only entries 7 days old\&.
 .br
-Default is 0\&.
+Default is 0 (disabled)\&.
 .TP
 .B FORCE_REFRESH_INTERVAL
 The minimum interval for manual refresh\&.
@@ -368,7 +368,7 @@ Default is http-only\&.
 .B MEDIA_PROXY_PRIVATE_KEY
 Set a custom custom private key used to sign proxified media URLs\&.
 .br
-By default, a secret is randomly generated during startup\&.
+By default, a secret key is randomly generated during startup\&.
 .TP
 .B METRICS_ALLOWED_NETWORKS
 List of networks allowed to access the metrics endpoint (comma-separated values)\&.

@@ -1,3 +1,84 @@
+Version 2.1.2 (March 30, 2024)
+------------------------------
+
+* `api`: rewrite API integration tests without build tags
+* `ci`: add basic ESLinter checks
+* `ci`: enable go-critic linter and fix various issues detected
+* `ci`: fix JavaScript linter path in GitHub Actions
+* `cli`: avoid misleading error message when creating an admin user automatically
+* `config`: add `FILTER_ENTRY_MAX_AGE_DAYS` option
+* `config`: bump the number of simultaneous workers
+* `config`: rename `PROXY_*` options to `MEDIA_PROXY_*`
+* `config`: use `crypto.GenerateRandomBytes` instead of doing it by hand
+* `http/request`: refactor conditions to be more idiomatic
+* `http/response`: remove legacy `X-XSS-Protection` header
+* `integration/rssbrige`: fix rssbrige import
+* `integration/shaarli`: factorize the header+payload concatenation as data
+* `integration/shaarli`: no need to base64-encode then remove the padding when we can simply encode without padding
+* `integration/shaarli`: the JWT token was declared as using HS256 as algorithm, but was using HS512
+* `integration/webhook`: add category title to request body
+* `locale`: update Turkish translations
+* `man page`: sort config options in alphabetical order
+* `mediaproxy`: reduce the internal indentation of `ProxifiedUrl` by inverting some conditions
+* `mediaproxy`: simplify and refactor the package
+* `model`: replace` Optional{Int,Int64,Float64}` with a generic function `OptionalNumber()`
+* `model`: use struct embedding for `FeedCreationRequestFromSubscriptionDiscovery` to reduce code duplication
+* `reader/atom`: avoid debug message when the date is empty
+* `reader/atom`: change `if !a { a = } if !a {a = }` constructs into `if !a { a = ; if !a {a = }}` to reduce the number of comparisons and improve readability
+* `reader/atom`: Move the population of the feed's entries into a new function, to make BuildFeed easier to understand/separate concerns/implementation details
+* `reader/atom`: refactor Atom parser to use an adapter
+* `reader/atom`: use `sort+compact` instead of `compact+sort` to remove duplicates
+* `reader/atom`: when detecting the format, detect its version as well
+* `reader/encoding`: inline a one-liner function
+* `reader/handler`: fix force refresh feature
+* `reader/json`: refactor JSON Feed parser to use an adapter
+* `reader/media`: remove a superfluous error-check: `strconv.ParseInt` returns `0` when passed an empty string
+* `reader/media`: simplify switch-case by moving a common condition above it
+* `reader/processor`: compile block/keep regex only once per feed
+* `reader/rdf`: refactor RDF parser to use an adapter
+* `reader/rewrite`: inline some one-line functions
+* `reader/rewrite`: simplify `removeClickbait`
+* `reader/rewrite`: transform a free-standing function into a method
+* `reader/rewrite`: use a proper constant instead of a magic number in `applyFuncOnTextContent`
+* `reader/rss`: add support for `<media:category>` element
+* `reader/rss`: don't add empty tags to RSS items
+* `reader/rss`: refactor RSS parser to use a default namespace to avoid some limitations of the Go XML parser
+* `reader/rss`: refactor RSS Parser to use an adapter
+* `reader/rss`: remove some duplicated code in RSS parser
+* `reader`: ensure that enclosure URLs are always absolute
+* `reader`: move iTunes and GooglePlay XML definitions to their own packages
+* `reader`: parse podcast categories
+* `reader`: remove trailing space in `SiteURL` and `FeedURL`
+* `storage`: do not store empty tags
+* `storage`: simplify `removeDuplicates()` to use a `sort`+`compact` construct instead of doing it by hand with a hashmap
+* `storage`: Use plain strings concatenation instead of building an array and then joining it
+* `timezone`: make sure the tests pass when the timezone database is not installed on the host
+* `ui/css`: align `min-width` with the other `min-width` values
+* `ui/css`: fix regression: "Add to Home Screen" button is unreadable
+* `ui/js`: don't use lambdas to return a function, use directly the function instead
+* `ui/js`: enable trusted-types
+* `ui/js`: fix download button loading label
+* `ui/js`: fix JavaScript error on the login page when the user not authenticated
+* `ui/js`: inline one-line functions
+* `ui/js`: inline some `querySelectorAll` calls
+* `ui/js`: reduce the scope of some variables
+* `ui/js`: remove a hack for "Chrome 67 and earlier" since it was released in 2018
+* `ui/js`: replace `DomHelper.findParent` with `.closest`
+* `ui/js`: replace `let` with `const`
+* `ui/js`: simplify `DomHelper.getVisibleElements` by using a `filter` instead of a loop with an index
+* `ui/js`: use a `Set` instead of an array in a `KeyboardHandler`'s member
+* `ui/js`: use some ternaries where it makes sense
+* `ui/static`: make use of `HashFromBytes` everywhere
+* `ui/static`: set minifier ECMAScript version
+* `ui`: add keyboard shortcuts for scrolling to top/bottom of the item list
+* `ui`: add media player control playback speed
+* `ui`: remove unused variables and improve JSON decoding in `saveEnclosureProgression()`
+* `validator`: display an error message on edit feed page when the feed URL is not unique
+* Bump `github.com/coreos/go-oidc/v3` from `3.9.0` to `3.10.0`
+* Bump `github.com/go-webauthn/webauthn` from `0.10.1` to `0.10.2`
+* Bump `github.com/tdewolff/minify/v2` from `2.20.18` to `2.20.19`
+* Bump `google.golang.org/protobuf` from `1.32.0` to `1.33.0`
+
 Version 2.1.1 (March 10, 2024)
 -----------------------------
 
