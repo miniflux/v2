@@ -5,7 +5,7 @@ package json // import "miniflux.app/v2/internal/reader/json"
 
 import (
 	"log/slog"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 
@@ -24,15 +24,15 @@ func NewJSONAdapter(jsonFeed *JSONFeed) *JSONAdapter {
 	return &JSONAdapter{jsonFeed}
 }
 
-func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
+func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 	feed := &model.Feed{
 		Title:   strings.TrimSpace(j.jsonFeed.Title),
-		FeedURL: j.jsonFeed.FeedURL,
-		SiteURL: j.jsonFeed.HomePageURL,
+		FeedURL: strings.TrimSpace(j.jsonFeed.FeedURL),
+		SiteURL: strings.TrimSpace(j.jsonFeed.HomePageURL),
 	}
 
 	if feed.FeedURL == "" {
-		feed.FeedURL = feedURL
+		feed.FeedURL = strings.TrimSpace(baseURL)
 	}
 
 	// Fallback to the feed URL if the site URL is empty.
@@ -40,11 +40,11 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 		feed.SiteURL = feed.FeedURL
 	}
 
-	if feedURL, err := urllib.AbsoluteURL(feedURL, j.jsonFeed.FeedURL); err == nil {
+	if feedURL, err := urllib.AbsoluteURL(baseURL, feed.FeedURL); err == nil {
 		feed.FeedURL = feedURL
 	}
 
-	if siteURL, err := urllib.AbsoluteURL(feedURL, j.jsonFeed.HomePageURL); err == nil {
+	if siteURL, err := urllib.AbsoluteURL(baseURL, feed.SiteURL); err == nil {
 		feed.SiteURL = siteURL
 	}
 
@@ -98,7 +98,6 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 		}
 
 		// Populate the entry date.
-		entry.Date = time.Now()
 		for _, value := range []string{item.DatePublished, item.DateModified} {
 			value = strings.TrimSpace(value)
 			if value != "" {
@@ -114,26 +113,26 @@ func (j *JSONAdapter) BuildFeed(feedURL string) *model.Feed {
 				}
 			}
 		}
+		if entry.Date.IsZero() {
+			entry.Date = time.Now()
+		}
 
 		// Populate the entry author.
-		itemAuthors := append(item.Authors, j.jsonFeed.Authors...)
+		itemAuthors := j.jsonFeed.Authors
+		itemAuthors = append(itemAuthors, item.Authors...)
 		itemAuthors = append(itemAuthors, item.Author, j.jsonFeed.Author)
 
-		authorNamesMap := make(map[string]bool)
+		var authorNames []string
 		for _, author := range itemAuthors {
 			authorName := strings.TrimSpace(author.Name)
 			if authorName != "" {
-				authorNamesMap[authorName] = true
+				authorNames = append(authorNames, authorName)
 			}
 		}
 
-		var authors []string
-		for authorName := range authorNamesMap {
-			authors = append(authors, authorName)
-		}
-
-		sort.Strings(authors)
-		entry.Author = strings.Join(authors, ", ")
+		slices.Sort(authorNames)
+		authorNames = slices.Compact(authorNames)
+		entry.Author = strings.Join(authorNames, ", ")
 
 		// Populate the entry enclosures.
 		for _, attachment := range item.Attachments {

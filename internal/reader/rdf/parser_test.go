@@ -289,7 +289,37 @@ func TestParseRDFFeedWithRelativeLink(t *testing.T) {
 		xmlns="http://purl.org/rss/1.0/">
 		<channel>
 			<title>Example Feed</title>
-			<link>/test/index.html</link>
+			<link>/test/index.html  </link>
+		</channel>
+		<item>
+			<title>Example</title>
+			<link>http://example.org/item</link>
+			<description>Test</description>
+		</item>
+	</rdf:RDF>`
+
+	feed, err := Parse("http://example.org/feed", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "http://example.org/test/index.html" {
+		t.Errorf(`Incorrect SiteURL, got: %q`, feed.SiteURL)
+	}
+
+	if feed.FeedURL != "http://example.org/feed" {
+		t.Errorf(`Incorrect FeedURL, got: %q`, feed.FeedURL)
+	}
+}
+
+func TestParseRDFFeedSiteURLWithTrailingSpace(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rdf:RDF
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns="http://purl.org/rss/1.0/">
+		<channel>
+			<title>Example Feed</title>
+			<link>http://example.org/test/index.html </link>
 		</channel>
 		<item>
 			<title>Example</title>

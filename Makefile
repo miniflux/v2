@@ -101,7 +101,7 @@ windows-x86:
 	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
 
 run:
-	@ LOG_DATE_TIME=1 DEBUG=1 RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
+	@ LOG_DATE_TIME=1 LOG_LEVEL=debug RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
 
 clean:
 	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb $(APP)*.exe
@@ -128,7 +128,11 @@ integration-test:
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 
 	while ! nc -z localhost 8080; do sleep 1; done
-	go test -v -tags=integration -count=1 miniflux.app/v2/internal/tests
+
+	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
+	TEST_MINIFLUX_ADMIN_USERNAME=admin \
+	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	go test -v -count=1 ./internal/api
 
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`

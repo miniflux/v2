@@ -871,4 +871,15 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN media_playback_rate numeric default 1;`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// the WHERE part speed-up the request a lot
+		sql := `UPDATE entries SET tags = array_remove(tags, '') WHERE '' = ANY(tags);`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

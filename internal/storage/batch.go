@@ -60,18 +60,16 @@ func (b *BatchBuilder) WithoutDisabledFeeds() *BatchBuilder {
 }
 
 func (b *BatchBuilder) FetchJobs() (jobs model.JobList, err error) {
-	var parts []string
-	parts = append(parts, `SELECT id, user_id FROM feeds`)
+	query := `SELECT id, user_id FROM feeds`
 
 	if len(b.conditions) > 0 {
-		parts = append(parts, fmt.Sprintf("WHERE %s", strings.Join(b.conditions, " AND ")))
+		query += fmt.Sprintf(" WHERE %s", strings.Join(b.conditions, " AND "))
 	}
 
 	if b.limit > 0 {
-		parts = append(parts, fmt.Sprintf("ORDER BY next_check_at ASC LIMIT %d", b.limit))
+		query += fmt.Sprintf(" ORDER BY next_check_at ASC LIMIT %d", b.limit)
 	}
 
-	query := strings.Join(parts, " ")
 	rows, err := b.db.Query(query, b.args...)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch batch of jobs: %v`, err)

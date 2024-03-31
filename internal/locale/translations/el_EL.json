@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Πηγαίνετε στη ροή",
     "page.keyboard_shortcuts.go_to_previous_page": "Μετάβαση στην προηγούμενη σελίδα",
     "page.keyboard_shortcuts.go_to_next_page": "Μετάβαση στην επόμενη σελίδα",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Μετάβαση στο κάτω στοιχείο",
+    "page.keyboard_shortcuts.go_to_top_item": "Μετάβαση στο επάνω στοιχείο",
     "page.keyboard_shortcuts.open_item": "Άνοιγμα επιλεγμένου στοιχείου",
     "page.keyboard_shortcuts.open_original": "Άνοιγμα αρχικού συνδέσμου",
     "page.keyboard_shortcuts.open_original_same_window": "Άνοιγμα αρχικού συνδέσμου στην τρέχουσα καρτέλα",
@@ -505,7 +507,7 @@
     "error.http_body_read": "Unable to read the HTTP body: %v.",
     "error.http_empty_response_body": "The HTTP response body is empty.",
     "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.tls_error": "TLS error: %q. You could disable TLS verification in the feed settings if you would like.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.http_client_error": "HTTP client error: %v.",
@@ -524,5 +526,7 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "form.prefs.label.media_playback_rate": "Ταχύτητα αναπαραγωγής του ήχου/βίντεο",
+    "error.settings_media_playback_rate_range": "Η ταχύτητα αναπαραγωγής είναι εκτός εύρους"
 }

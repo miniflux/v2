@@ -27,8 +27,7 @@ func StripTags(input string) string {
 		}
 
 		token := tokenizer.Token()
-		switch token.Type {
-		case html.TextToken:
+		if token.Type == html.TextToken {
 			buffer.WriteString(token.Data)
 		}
 	}

@@ -41,6 +41,7 @@ type User struct {
 	DefaultHomePage        string     `json:"default_home_page"`
 	CategoriesSortingOrder string     `json:"categories_sorting_order"`
 	MarkReadOnView         bool       `json:"mark_read_on_view"`
+	MediaPlaybackRate      float64    `json:"media_playback_rate"`
 }
 
 func (u User) String() string {
@@ -58,28 +59,29 @@ type UserCreationRequest struct {
 
 // UserModificationRequest represents the request to update a user.
 type UserModificationRequest struct {
-	Username               *string `json:"username"`
-	Password               *string `json:"password"`
-	IsAdmin                *bool   `json:"is_admin"`
-	Theme                  *string `json:"theme"`
-	Language               *string `json:"language"`
-	Timezone               *string `json:"timezone"`
-	EntryDirection         *string `json:"entry_sorting_direction"`
-	EntryOrder             *string `json:"entry_sorting_order"`
-	Stylesheet             *string `json:"stylesheet"`
-	GoogleID               *string `json:"google_id"`
-	OpenIDConnectID        *string `json:"openid_connect_id"`
-	EntriesPerPage         *int    `json:"entries_per_page"`
-	KeyboardShortcuts      *bool   `json:"keyboard_shortcuts"`
-	ShowReadingTime        *bool   `json:"show_reading_time"`
-	EntrySwipe             *bool   `json:"entry_swipe"`
-	GestureNav             *string `json:"gesture_nav"`
-	DisplayMode            *string `json:"display_mode"`
-	DefaultReadingSpeed    *int    `json:"default_reading_speed"`
-	CJKReadingSpeed        *int    `json:"cjk_reading_speed"`
-	DefaultHomePage        *string `json:"default_home_page"`
-	CategoriesSortingOrder *string `json:"categories_sorting_order"`
-	MarkReadOnView         *bool   `json:"mark_read_on_view"`
+	Username               *string  `json:"username"`
+	Password               *string  `json:"password"`
+	IsAdmin                *bool    `json:"is_admin"`
+	Theme                  *string  `json:"theme"`
+	Language               *string  `json:"language"`
+	Timezone               *string  `json:"timezone"`
+	EntryDirection         *string  `json:"entry_sorting_direction"`
+	EntryOrder             *string  `json:"entry_sorting_order"`
+	Stylesheet             *string  `json:"stylesheet"`
+	GoogleID               *string  `json:"google_id"`
+	OpenIDConnectID        *string  `json:"openid_connect_id"`
+	EntriesPerPage         *int     `json:"entries_per_page"`
+	KeyboardShortcuts      *bool    `json:"keyboard_shortcuts"`
+	ShowReadingTime        *bool    `json:"show_reading_time"`
+	EntrySwipe             *bool    `json:"entry_swipe"`
+	GestureNav             *string  `json:"gesture_nav"`
+	DisplayMode            *string  `json:"display_mode"`
+	DefaultReadingSpeed    *int     `json:"default_reading_speed"`
+	CJKReadingSpeed        *int     `json:"cjk_reading_speed"`
+	DefaultHomePage        *string  `json:"default_home_page"`
+	CategoriesSortingOrder *string  `json:"categories_sorting_order"`
+	MarkReadOnView         *bool    `json:"mark_read_on_view"`
+	MediaPlaybackRate      *float64 `json:"media_playback_rate"`
 }
 
 // Users represents a list of users.
@@ -289,4 +291,8 @@ type VersionResponse struct {
 	Compiler  string `json:"compiler"`
 	Arch      string `json:"arch"`
 	OS        string `json:"os"`
+}
+
+func SetOptionalField[T any](value T) *T {
+	return &value
 }

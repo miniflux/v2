@@ -47,8 +47,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			slog.Int64("feed_id", feed.ID),
 			slog.String("feed_url", feed.FeedURL),
 		)
-
-		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) {
+		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) || !isRecentEntry(entry) {
 			continue
 		}
 
@@ -116,58 +115,65 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 }
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
-	if feed.BlocklistRules != "" {
-		containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-			return matchField(feed.BlocklistRules, tag)
-		})
+	if feed.BlocklistRules == "" {
+		return false
+	}
 
-		if matchField(feed.BlocklistRules, entry.URL) || matchField(feed.BlocklistRules, entry.Title) || matchField(feed.BlocklistRules, entry.Author) || containsBlockedTag {
-			slog.Debug("Blocking entry based on rule",
-				slog.Int64("entry_id", entry.ID),
-				slog.String("entry_url", entry.URL),
-				slog.Int64("feed_id", feed.ID),
-				slog.String("feed_url", feed.FeedURL),
-				slog.String("rule", feed.BlocklistRules),
-			)
-			return true
-		}
+	compiledBlocklist, err := regexp.Compile(feed.BlocklistRules)
+	if err != nil {
+		slog.Debug("Failed on regexp compilation",
+			slog.String("pattern", feed.BlocklistRules),
+			slog.Any("error", err),
+		)
+		return false
+	}
+
+	containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+		return compiledBlocklist.MatchString(tag)
+	})
+
+	if compiledBlocklist.MatchString(entry.URL) || compiledBlocklist.MatchString(entry.Title) || compiledBlocklist.MatchString(entry.Author) || containsBlockedTag {
+		slog.Debug("Blocking entry based on rule",
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+			slog.Int64("feed_id", feed.ID),
+			slog.String("feed_url", feed.FeedURL),
+			slog.String("rule", feed.BlocklistRules),
+		)
+		return true
 	}
 
 	return false
 }
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
-	if feed.KeeplistRules != "" {
-		containsAllowedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-			return matchField(feed.KeeplistRules, tag)
-		})
-
-		if matchField(feed.KeeplistRules, entry.URL) || matchField(feed.KeeplistRules, entry.Title) || matchField(feed.KeeplistRules, entry.Author) || containsAllowedTag {
-			slog.Debug("Allow entry based on rule",
-				slog.Int64("entry_id", entry.ID),
-				slog.String("entry_url", entry.URL),
-				slog.Int64("feed_id", feed.ID),
-				slog.String("feed_url", feed.FeedURL),
-				slog.String("rule", feed.KeeplistRules),
-			)
-			return true
-		}
-		return false
+	if feed.KeeplistRules == "" {
+		return true
 	}
-	return true
-}
 
-func matchField(pattern, value string) bool {
-	match, err := regexp.MatchString(pattern, value)
+	compiledKeeplist, err := regexp.Compile(feed.KeeplistRules)
 	if err != nil {
-		slog.Debug("Failed on regexp match",
-			slog.String("pattern", pattern),
-			slog.String("value", value),
-			slog.Bool("match", match),
+		slog.Debug("Failed on regexp compilation",
+			slog.String("pattern", feed.KeeplistRules),
 			slog.Any("error", err),
 		)
+		return false
 	}
-	return match
+	containsAllowedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+		return compiledKeeplist.MatchString(tag)
+	})
+
+	if compiledKeeplist.MatchString(entry.URL) || compiledKeeplist.MatchString(entry.Title) || compiledKeeplist.MatchString(entry.Author) || containsAllowedTag {
+		slog.Debug("Allow entry based on rule",
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+			slog.Int64("feed_id", feed.ID),
+			slog.String("feed_url", feed.FeedURL),
+			slog.String("rule", feed.KeeplistRules),
+		)
+		return true
+	}
+	return false
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
@@ -394,15 +400,22 @@ func parseISO8601(from string) (time.Duration, error) {
 
 		switch name {
 		case "hour":
-			d = d + (time.Duration(val) * time.Hour)
+			d += (time.Duration(val) * time.Hour)
 		case "minute":
-			d = d + (time.Duration(val) * time.Minute)
+			d += (time.Duration(val) * time.Minute)
 		case "second":
-			d = d + (time.Duration(val) * time.Second)
+			d += (time.Duration(val) * time.Second)
 		default:
 			return 0, fmt.Errorf("unknown field %s", name)
 		}
 	}
 
 	return d, nil
+}
+
+func isRecentEntry(entry *model.Entry) bool {
+	if config.Opts.FilterEntryMaxAgeDays() == 0 || entry.Date.After(time.Now().AddDate(0, 0, -config.Opts.FilterEntryMaxAgeDays())) {
+		return true
+	}
+	return false
 }

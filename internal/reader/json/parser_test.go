@@ -177,6 +177,82 @@ func TestParsePodcast(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithFeedURLWithTrailingSpace(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json ",
+		"items": []
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/feed.json" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+}
+
+func TestParseFeedWithRelativeFeedURL(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"feed_url": "/feed.json",
+		"items": []
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.FeedURL != "https://example.org/feed.json" {
+		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
+	}
+}
+
+func TestParseFeedSiteURLWithTrailingSpace(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/ ",
+		"feed_url": "https://example.org/feed.json",
+		"items": []
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "https://example.org/" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+}
+
+func TestParseFeedWithRelativeSiteURL(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "/home ",
+		"feed_url": "https://example.org/feed.json",
+		"items": []
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.SiteURL != "https://example.org/home" {
+		t.Errorf("Incorrect site URL, got: %s", feed.SiteURL)
+	}
+}
+
 func TestParseFeedWithoutTitle(t *testing.T) {
 	data := `{
 		"version": "https://jsonfeed.org/version/1",
@@ -769,6 +845,42 @@ func TestParseFeedIcon(t *testing.T) {
 	}
 	if feed.IconURL != "https://example.org/jsonfeed/icon.png" {
 		t.Errorf("Incorrect icon URL, got: %s", feed.IconURL)
+	}
+}
+
+func TestParseFeedWithRelativeAttachmentURL(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": [
+			{
+				"id": "2",
+				"content_text": "This is a second item.",
+				"url": "https://example.org/second-item",
+				"attachments": [
+					{
+						"url": "   /attachment.mp3  ",
+						"mime_type": "audio/mpeg",
+						"size_in_bytes": 123456
+					}
+				]
+			}
+		]
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries[0].Enclosures) != 1 {
+		t.Fatalf("Incorrect number of enclosures, got: %d", len(feed.Entries[0].Enclosures))
+	}
+
+	if feed.Entries[0].Enclosures[0].URL != "https://example.org/attachment.mp3" {
+		t.Errorf("Incorrect enclosure URL, got: %q", feed.Entries[0].Enclosures[0].URL)
 	}
 }
 

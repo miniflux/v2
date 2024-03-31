@@ -187,6 +187,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Перейти к подписке",
     "page.keyboard_shortcuts.go_to_previous_page": "Перейти к предыдущей странице",
     "page.keyboard_shortcuts.go_to_next_page": "Перейти к следующей странице",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Перейти к нижнему элементу",
+    "page.keyboard_shortcuts.go_to_top_item": "Перейти к верхнему элементу",
     "page.keyboard_shortcuts.open_item": "Открыть выбранный элемент",
     "page.keyboard_shortcuts.open_original_same_window": "Открыть оригинальную ссылку в текущей вкладке",
     "page.keyboard_shortcuts.open_original": "Открыть оригинальную ссылку",
@@ -522,7 +524,7 @@
     "error.http_body_read": "Unable to read the HTTP body: %v.",
     "error.http_empty_response_body": "The HTTP response body is empty.",
     "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.tls_error": "TLS error: %q. You could disable TLS verification in the feed settings if you would like.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.http_client_error": "HTTP client error: %v.",
@@ -541,5 +543,7 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "form.prefs.label.media_playback_rate": "Скорость воспроизведения аудио/видео",
+    "error.settings_media_playback_rate_range": "Скорость воспроизведения выходит за пределы диапазона"
 }

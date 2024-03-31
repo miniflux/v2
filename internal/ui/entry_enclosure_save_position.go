@@ -4,8 +4,7 @@
 package ui // import "miniflux.app/v2/internal/ui"
 
 import (
-	json2 "encoding/json"
-	"io"
+	json_parser "encoding/json"
 	"net/http"
 
 	"miniflux.app/v2/internal/http/request"
@@ -30,21 +29,13 @@ func (h *handler) saveEnclosureProgression(w http.ResponseWriter, r *http.Reques
 	}
 
 	var postData enclosurePositionSaveRequest
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	json2.Unmarshal(body, &postData)
-	if err != nil {
+	if err := json_parser.NewDecoder(r.Body).Decode(&postData); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
 	enclosure.MediaProgression = postData.Progression
 
-	err = h.store.UpdateEnclosure(enclosure)
-	if err != nil {
+	if err := h.store.UpdateEnclosure(enclosure); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
