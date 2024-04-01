@@ -14,6 +14,8 @@ import (
 	"miniflux.app/v2/internal/locale"
 
 	"github.com/gorilla/mux"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
 )
 
 //go:embed templates/common/*.html
@@ -41,7 +43,10 @@ func NewEngine(router *mux.Router) *Engine {
 
 // ParseTemplates parses template files embed into the application.
 func (e *Engine) ParseTemplates() error {
-	var commonTemplateContents strings.Builder
+	minifier := minify.New()
+	minifier.AddFunc("text/html", html.Minify)
+
+	var commonTemplateContentsBuilder strings.Builder
 
 	dirEntries, err := commonTemplateFiles.ReadDir("templates/common")
 	if err != nil {
@@ -53,7 +58,12 @@ func (e *Engine) ParseTemplates() error {
 		if err != nil {
 			return err
 		}
-		commonTemplateContents.Write(fileData)
+		commonTemplateContentsBuilder.Write(fileData)
+	}
+
+	commonTemplateContents := commonTemplateContentsBuilder.String()
+	if minifiedHTML, err := minifier.String("text/html", commonTemplateContents); err == nil {
+		commonTemplateContents = minifiedHTML
 	}
 
 	dirEntries, err = viewTemplateFiles.ReadDir("templates/views")
@@ -69,8 +79,16 @@ func (e *Engine) ParseTemplates() error {
 		}
 
 		var templateContents strings.Builder
-		templateContents.WriteString(commonTemplateContents.String())
-		templateContents.Write(fileData)
+		templateContents.WriteString(commonTemplateContents)
+
+		if minifiedHTML, err := minifier.Bytes("text/html", fileData); err == nil {
+			templateContents.Write(minifiedHTML)
+		} else {
+			slog.Debug("Unable to minify template",
+				slog.String("template_name", templateName),
+			)
+			templateContents.Write(fileData)
+		}
 
 		slog.Debug("Parsing template",
 			slog.String("template_name", templateName),
