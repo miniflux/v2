@@ -1,14 +1,10 @@
-FROM golang:alpine AS build
-ENV CGO_ENABLED=0
-RUN apk add --no-cache --update git
+FROM docker.io/library/golang:alpine3.19 AS build
+RUN apk add --no-cache build-base git make
 ADD . /go/src/app
 WORKDIR /go/src/app
-RUN go build \
-    -o miniflux \
-    -ldflags="-s -w -X 'miniflux.app/v2/internal/version.Version=`git describe --tags --abbrev=0`' -X 'miniflux.app/v2/internal/version.Commit=`git rev-parse --short HEAD`' -X 'miniflux.app/v2/internal/version.BuildDate=`date +%FT%T%z`'" \
-    main.go
+RUN make miniflux
 
-FROM alpine:latest
+FROM docker.io/library/alpine:3.19
 
 LABEL org.opencontainers.image.title=Miniflux
 LABEL org.opencontainers.image.description="Miniflux is a minimalist and opinionated feed reader"
