@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"math/rand"
 	"os"
 	"strings"
@@ -58,7 +57,7 @@ func (c *integrationTestConfig) isConfigured() bool {
 }
 
 func (c *integrationTestConfig) genRandomUsername() string {
-	return fmt.Sprintf("%s_%10d", c.testRegularUsername, rand.Intn(math.MaxInt64))
+	return fmt.Sprintf("%s_%10d", c.testRegularUsername, rand.Int())
 }
 
 func TestIncorrectEndpoint(t *testing.T) {

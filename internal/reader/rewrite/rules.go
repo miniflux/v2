@@ -24,7 +24,7 @@ var predefinedRules = map[string]string{
 	"monkeyuser.com":         "add_image_title",
 	"mrlovenstein.com":       "add_image_title",
 	"nedroid.com":            "add_image_title",
-	"oglaf.com":              "add_image_title",
+	"oglaf.com":              `replace("media.oglaf.com/story/tt(.+).gif"|"media.oglaf.com/comic/$1.jpg"),add_image_title`,
 	"optipess.com":           "add_image_title",
 	"peebleslab.com":         "add_image_title",
 	"quantamagazine.org":     `add_youtube_video_from_id, remove("h6:not(.byline,.post__title__kicker), #comments, .next-post__content, .footer__section, figure .outer--content, script")`,
