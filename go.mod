@@ -12,7 +12,7 @@ require (
 	github.com/prometheus/client_golang v1.19.0
 	github.com/tdewolff/minify/v2 v2.20.19
 	github.com/yuin/goldmark v1.7.1
-	golang.org/x/crypto v0.21.0
+	golang.org/x/crypto v0.22.0
 	golang.org/x/net v0.23.0
 	golang.org/x/oauth2 v0.19.0
 	golang.org/x/term v0.19.0
