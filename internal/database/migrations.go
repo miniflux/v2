@@ -882,4 +882,10 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		// Entry URLs can exceeds btree maximum size
+		// Checking entry existence is now using entries_feed_id_status_hash_idx index
+		_, err = tx.Exec(`DROP INDEX entries_feed_url_idx`)
+		return err
+	},
 }
