@@ -231,24 +231,21 @@ func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
 	return !result
 }
 
-// GetReadTime fetches the read time of an entry based on its hash, and the feed id and user id from the feed.
-// It's intended to be used on entries objects created by parsing a feed as they don't contain much information.
-// The feed param helps to scope the search to a specific user and feed in order to avoid hash clashes.
-func (s *Storage) GetReadTime(entry *model.Entry, feed *model.Feed) int {
+func (s *Storage) GetReadTime(feedID int64, entryHash string) int {
 	var result int
+
+	// Note: This query uses entries_feed_id_hash_key index
 	s.db.QueryRow(
 		`SELECT
 			reading_time
 		FROM
 			entries
 		WHERE
-			user_id=$1 AND
-			feed_id=$2 AND
-			hash=$3
+			feed_id=$1 AND
+			hash=$2
 		`,
-		feed.UserID,
-		feed.ID,
-		entry.Hash,
+		feedID,
+		entryHash,
 	).Scan(&result)
 	return result
 }

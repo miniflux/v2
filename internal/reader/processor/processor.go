@@ -251,6 +251,11 @@ func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
 }
 
 func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool, user *model.User) {
+	if !user.ShowReadingTime {
+		slog.Debug("Skip reading time estimation for this user", slog.Int64("user_id", user.ID))
+		return
+	}
+
 	if shouldFetchYouTubeWatchTime(entry) {
 		if entryIsNew {
 			watchTime, err := fetchYouTubeWatchTime(entry.URL)
@@ -266,7 +271,7 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 			}
 			entry.ReadingTime = watchTime
 		} else {
-			entry.ReadingTime = store.GetReadTime(entry, feed)
+			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
 		}
 	}
 
@@ -285,14 +290,13 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 			}
 			entry.ReadingTime = watchTime
 		} else {
-			entry.ReadingTime = store.GetReadTime(entry, feed)
+			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
 		}
 	}
+
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
-		if user.ShowReadingTime {
-			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
-		}
+		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 	}
 }
 
