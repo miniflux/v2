@@ -258,6 +258,7 @@
     "alert.no_bookmark": "Il n'y a aucun favoris pour le moment.",
     "alert.no_category": "Il n'y a aucune catégorie.",
     "alert.no_category_entry": "Il n'y a aucun article dans cette catégorie.",
+    "alert.no_tag_entry": "Il n'y a aucun article correspondant à ce tag.",
     "alert.no_feed_entry": "Il n'y a aucun article pour cet abonnement.",
     "alert.no_feed": "Vous n'avez aucun abonnement.",
     "alert.no_feed_in_category": "Il n'y a pas d'abonnement pour cette catégorie.",

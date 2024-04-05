@@ -258,6 +258,7 @@
     "alert.no_bookmark": "No hay marcador en este momento.",
     "alert.no_category": "No hay categoría.",
     "alert.no_category_entry": "No hay artículos en esta categoría.",
+    "alert.no_tag_entry": "No hay artículos con esta etiqueta.",
     "alert.no_feed_entry": "No hay artículos para esta fuente.",
     "alert.no_feed": "No tienes fuentes.",
     "alert.no_feed_in_category": "No hay fuentes para esta categoría.",

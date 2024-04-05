@@ -268,6 +268,7 @@
     "alert.no_bookmark": "Наразі закладки відсутні.",
     "alert.no_category": "Немає категорії.",
     "alert.no_category_entry": "У цій категорії немає записів.",
+    "alert.no_tag_entry": "Немає записів, що відповідають цьому тегу.",
     "alert.no_feed_entry": "У цій стрічці немає записів.",
     "alert.no_feed": "У вас немає підписок.",
     "alert.no_feed_in_category": "У цій категорії немає підписок.",
