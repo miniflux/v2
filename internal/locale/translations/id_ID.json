@@ -248,6 +248,7 @@
     "alert.no_bookmark": "Tidak ada markah.",
     "alert.no_category": "Tidak ada kategori.",
     "alert.no_category_entry": "Tidak ada artikel di kategori ini.",
+    "alert.no_tag_entry": "Tidak ada entri yang cocok dengan tag ini.",
     "alert.no_feed_entry": "Tidak ada artikel di umpan ini.",
     "alert.no_feed": "Anda tidak memiliki langganan.",
     "alert.no_feed_in_category": "Tidak ada langganan untuk kategori ini.",

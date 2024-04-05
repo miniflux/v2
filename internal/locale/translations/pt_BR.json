@@ -258,6 +258,7 @@
     "alert.no_bookmark": "Não há favorito neste momento.",
     "alert.no_category": "Não há categoria.",
     "alert.no_category_entry": "Não há itens nesta categoria.",
+    "alert.no_tag_entry": "Não há itens que correspondam a esta etiqueta.",
     "alert.no_feed_entry": "Não há itens nessa fonte.",
     "alert.no_feed": "Não há inscrições.",
     "alert.no_feed_in_category": "Não há inscrições nessa categoria.",

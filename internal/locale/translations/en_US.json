@@ -258,6 +258,7 @@
     "alert.no_bookmark": "There are no starred entries.",
     "alert.no_category": "There is no category.",
     "alert.no_category_entry": "There are no entries in this category.",
+    "alert.no_tag_entry": "There are no entries matching this tag.",
     "alert.no_feed_entry": "There are no entries for this feed.",
     "alert.no_feed": "You don’t have any feeds.",
     "alert.no_feed_in_category": "There is no feed for this category.",

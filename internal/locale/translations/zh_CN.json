@@ -248,6 +248,7 @@
     "alert.no_bookmark": "目前没有收藏",
     "alert.no_category": "目前没有分类",
     "alert.no_category_entry": "该分类下没有文章",
+    "alert.no_tag_entry": "没有与此标签匹配的条目。",
     "alert.no_feed_entry": "该源中没有文章",
     "alert.no_feed": "目前没有源",
     "alert.no_history": "目前没有历史",

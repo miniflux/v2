@@ -258,6 +258,7 @@
     "alert.no_bookmark": "Tällä hetkellä ei ole kirjanmerkkiä.",
     "alert.no_category": "Ei ole kategoriaa.",
     "alert.no_category_entry": "Tässä kategoriassa ei ole artikkeleita.",
+    "alert.no_tag_entry": "Tätä tunnistetta vastaavia merkintöjä ei ole.",
     "alert.no_feed_entry": "Tässä syötteessä ei ole artikkeleita.",
     "alert.no_feed": "Sinulla ei ole tilauksia.",
     "alert.no_feed_in_category": "Tälle kategorialle ei ole tilausta.",

@@ -248,6 +248,7 @@
     "alert.no_bookmark": "現在星付きはありません。",
     "alert.no_category": "カテゴリが存在しません。",
     "alert.no_category_entry": "このカテゴリには記事がありません。",
+    "alert.no_tag_entry": "このタグに一致するエントリーはありません。",
     "alert.no_feed_entry": "このフィードには記事がありません。",
     "alert.no_feed": "何も購読していません。",
     "alert.no_feed_in_category": "このカテゴリには購読中のフィードがありません。",

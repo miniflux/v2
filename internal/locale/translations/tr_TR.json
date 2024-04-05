@@ -18,6 +18,7 @@
   "alert.no_bookmark": "Yıldızlanmış makale yok.",
   "alert.no_category": "Hiç kategori yok.",
   "alert.no_category_entry": "Bu kategoride hiç makele yok.",
+  "alert.no_tag_entry": "Bu etiketle eşleşen hiçbir giriş yok.",
   "alert.no_feed": "Hiç beslemeniz yok.",
   "alert.no_feed_entry": "Bu besleme için makele yok.",
   "alert.no_feed_in_category": "Bu kategori için besleme yok.",

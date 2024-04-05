@@ -258,6 +258,7 @@
     "alert.no_bookmark": "Es existiert derzeit kein Lesezeichen.",
     "alert.no_category": "Es ist keine Kategorie vorhanden.",
     "alert.no_category_entry": "Es befindet sich kein Artikel in dieser Kategorie.",
+    "alert.no_tag_entry": "Es gibt keine Artikel, die diesem Tag entsprechen.",
     "alert.no_feed_entry": "Es existiert kein Artikel für dieses Abonnement.",
     "alert.no_feed": "Es sind keine Abonnements vorhanden.",
     "alert.no_feed_in_category": "Für diese Kategorie gibt es kein Abonnement.",

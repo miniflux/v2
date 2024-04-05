@@ -268,6 +268,7 @@
     "alert.no_bookmark": "Избранное отсутствует.",
     "alert.no_category": "Категории отсутствуют.",
     "alert.no_category_entry": "В этой категории нет статей.",
+    "alert.no_tag_entry": "Нет записей, соответствующих этому тегу.",
     "alert.no_feed_entry": "В этой подписке отсутствуют статьи.",
     "alert.no_feed": "У вас нет ни одной подписки.",
     "alert.no_feed_in_category": "Для этой категории нет подписки.",

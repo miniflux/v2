@@ -258,6 +258,7 @@
     "alert.no_bookmark": "Er zijn op dit moment geen favorieten.",
     "alert.no_category": "Er zijn geen categorieën.",
     "alert.no_category_entry": "Deze categorie bevat geen feeds.",
+    "alert.no_tag_entry": "Er zijn geen items die overeenkomen met deze tag.",
     "alert.no_feed_entry": "Er zijn geen artikelen in deze feed.",
     "alert.no_feed": "Je hebt nog geen feeds geabboneerd staan.",
     "alert.no_feed_in_category": "Er is geen abonnement voor deze categorie.",

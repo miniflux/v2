@@ -58,6 +58,15 @@ func (e *EntryPaginationBuilder) WithStatus(status string) {
 	}
 }
 
+func (e *EntryPaginationBuilder) WithTags(tags []string) {
+	if len(tags) > 0 {
+		for _, tag := range tags {
+			e.conditions = append(e.conditions, fmt.Sprintf("LOWER($%d) = ANY(LOWER(e.tags::text)::text[])", len(e.args)+1))
+			e.args = append(e.args, tag)
+		}
+	}
+}
+
 // WithGloballyVisible adds global visibility to the condition.
 func (e *EntryPaginationBuilder) WithGloballyVisible() {
 	e.conditions = append(e.conditions, "not c.hide_globally")

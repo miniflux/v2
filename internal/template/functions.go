@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"math"
 	"net/mail"
+	"net/url"
 	"slices"
 	"strings"
 	"time"
@@ -91,8 +92,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"nonce": func() string {
 			return crypto.GenerateRandomStringHex(16)
 		},
-		"deRef":    func(i *int) int { return *i },
-		"duration": duration,
+		"deRef":     func(i *int) int { return *i },
+		"duration":  duration,
+		"urlEncode": url.PathEscape,
 
 		// These functions are overrode at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {
