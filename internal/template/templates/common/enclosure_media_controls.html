@@ -1,0 +1,18 @@
+{{ define "enclosure_media_controls" }}
+<div class="media-controls">
+    <div class="media-seek-control">
+        <div class="media-control-label">{{ t "enclosure_media_controls.seek" }} </div>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="-30" title="{{ t "enclosure_media_controls.seek.title" "-30" }}" ><span class="icon-label" >-30s</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="-10" title="{{ t "enclosure_media_controls.seek.title" "-10" }}" ><span class="icon-label" >-10s</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="+10" title="{{ t "enclosure_media_controls.seek.title" "+10" }}" ><span class="icon-label" >+10s</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="seek" data-action-value="+30" title="{{ t "enclosure_media_controls.seek.title" "+30" }}" ><span class="icon-label" >+30s</span></button>
+    </div>
+    <div class="media-speed-control">
+
+        <div class="media-control-label">{{ t "enclosure_media_controls.speed" }} (<span class="speed-indicator" data-enclosure-id="{{.ID}}">x.xxx</span>)</div> <!-- Need JS to display the current speed unfortunately -->
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="speed" data-action-value="-0.25" title="{{ t "enclosure_media_controls.speed.slower.title" "0.25" }}"><span class="icon-label" >{{ t "enclosure_media_controls.speed.slower" }}</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="speed-reset" data-action-value="1" title="{{ t "enclosure_media_controls.speed.reset.title"}}"><span class="icon-label" >{{ t "enclosure_media_controls.speed.reset" }}</span></button>
+        <button class="page-button" data-enclosure-id="{{.ID}}" data-enclosure-action="speed" data-action-value="+0.25" title="{{ t "enclosure_media_controls.speed.faster.title" "0.25" }}"><span class="icon-label" >{{ t "enclosure_media_controls.speed.faster" }}</span></button>
+    </div>
+</div>
+{{ end }}
