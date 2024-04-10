@@ -446,8 +446,8 @@ function goToPage(page, fallbackSelf) {
 }
 
 /**
- * 
- * @param {(number|event)} offset - many items to jump for focus. 
+ *
+ * @param {(number|event)} offset - many items to jump for focus.
  */
 function goToPrevious(offset) {
     if (offset instanceof KeyboardEvent) {
@@ -461,8 +461,8 @@ function goToPrevious(offset) {
 }
 
 /**
- * 
- * @param {(number|event)} offset - How many items to jump for focus. 
+ *
+ * @param {(number|event)} offset - How many items to jump for focus.
  */
 function goToNext(offset) {
     if (offset instanceof KeyboardEvent) {
@@ -521,7 +521,7 @@ function goToListItem(offset) {
             items[i].classList.remove("current-item");
 
             // By default adjust selection by offset
-            let itemOffset = (i + offset + items.length) % items.length; 
+            let itemOffset = (i + offset + items.length) % items.length;
             // Allow jumping to top or bottom
             if (offset == TOP) {
                 itemOffset = 0;
@@ -741,4 +741,44 @@ function getCsrfToken() {
     }
 
     return "";
+}
+
+/**
+ * Handle all clicks on media player controls button on enclosures.
+ * Will change the current speed and position of the player accordingly.
+ * Will not save anything, all is done client-side, however, changing the position
+ * will trigger the handlePlayerProgressionSave and save the new position backends side.
+ * @param {Element} button
+ */
+function handleMediaControl(button) {
+    const action = button.dataset.enclosureAction;
+    const value = parseFloat(button.dataset.actionValue);
+    const targetEnclosureId = button.dataset.enclosureId;
+    const enclosures = document.querySelectorAll(`audio[data-enclosure-id="${targetEnclosureId}"],video[data-enclosure-id="${targetEnclosureId}"]`);
+    const speedIndicator = document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${targetEnclosureId}"]`);
+    enclosures.forEach((enclosure) => {
+        switch (action) {
+        case "seek":
+            enclosure.currentTime = enclosure.currentTime + value > 0 ? enclosure.currentTime + value : 0;
+            break;
+        case "speed":
+            // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.
+            // 0.25 was chosen because it will allow to get back to 1x in two "faster" click, and lower value with same property would be 0.
+            enclosure.playbackRate = Math.max(0.25, enclosure.playbackRate + value);
+            speedIndicator.forEach((speedI) => {
+                // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
+                // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
+                speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+            });
+            break;
+        case "speed-reset":
+            enclosure.playbackRate = value ;
+            speedIndicator.forEach((speedI) => {
+                // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
+                // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
+                speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+            });
+            break;
+        }
+    });
 }

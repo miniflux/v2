@@ -529,5 +529,14 @@
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
     "error.feed_format_not_detected": "Unable to detect feed format: %v.",
     "form.prefs.label.media_playback_rate": "Velocidade de reprodução do áudio/vídeo",
-    "error.settings_media_playback_rate_range": "A velocidade de reprodução está fora do intervalo"
+    "error.settings_media_playback_rate_range": "A velocidade de reprodução está fora do intervalo",
+    "enclosure_media_controls.seek" : "Seek:",
+    "enclosure_media_controls.seek.title" : "Seek %s seconds",
+    "enclosure_media_controls.speed" : "Speed:",
+    "enclosure_media_controls.speed.faster" : "Faster",
+    "enclosure_media_controls.speed.faster.title" : "Faster by %sx",
+    "enclosure_media_controls.speed.slower" : "Slower",
+    "enclosure_media_controls.speed.slower.title" : "Slower by %sx",
+    "enclosure_media_controls.speed.reset" : "Reset",
+    "enclosure_media_controls.speed.reset.title" : "Reset speed to 1x"
 }

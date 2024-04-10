@@ -496,5 +496,14 @@
   "time_elapsed.years": ["%d yıl önce", "%d yıl önce"],
   "time_elapsed.yesterday": "dün",
   "tooltip.keyboard_shortcuts": "Klavye Kısayolu: %s",
-  "tooltip.logged_user": "%s olarak giriş yapıldı"
+  "tooltip.logged_user": "%s olarak giriş yapıldı",
+  "enclosure_media_controls.seek" : "Seek:",
+  "enclosure_media_controls.seek.title" : "Seek %s seconds",
+  "enclosure_media_controls.speed" : "Speed:",
+  "enclosure_media_controls.speed.faster" : "Faster",
+  "enclosure_media_controls.speed.faster.title" : "Faster by %sx",
+  "enclosure_media_controls.speed.slower" : "Slower",
+  "enclosure_media_controls.speed.slower.title" : "Slower by %sx",
+  "enclosure_media_controls.speed.reset" : "Reset",
+  "enclosure_media_controls.speed.reset.title" : "Reset speed to 1x"
 }

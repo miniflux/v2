@@ -167,6 +167,20 @@ document.addEventListener("DOMContentLoaded", () => {
     playbackRateElements.forEach((element) => {
         if (element.dataset.playbackRate) {
             element.playbackRate = element.dataset.playbackRate;
+            if (element.dataset.enclosureId){
+                // In order to display properly the speed we need to do it on bootstrap.
+                // Could not do it backend side because I didn't know how to do it because of the template inclusion and
+                // the way the initial playback speed is handled. See enclosure_media_controls.html if you want to try to fix this
+                document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${element.dataset.enclosureId}"]`).forEach((speedI)=>{
+                    speedI.innerText = `${element.dataset.playbackRate}x`;
+                });
+            }
         }
+    });
+
+    // Set enclosure media controls handlers
+    const mediaControlsElements = document.querySelectorAll("button[data-enclosure-action]");
+    mediaControlsElements.forEach((element) => {
+        element.addEventListener("click", () => handleMediaControl(element));
     });
 });
