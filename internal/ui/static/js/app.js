@@ -86,7 +86,8 @@ function onClickMainMenuListItem(event) {
     if (element.tagName === "A") {
         window.location.href = element.getAttribute("href");
     } else {
-        window.location.href = element.querySelector("a").getAttribute("href");
+        const linkElement = element.querySelector("a") || element.closest("a");
+        window.location.href = linkElement.getAttribute("href");
     }
 }
 
