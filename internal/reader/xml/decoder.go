@@ -66,7 +66,7 @@ func filterValidXMLChar(r rune) rune {
 func procInst(param, s string) string {
 	// TODO: this parsing is somewhat lame and not exact.
 	// It works for all actual cases, though.
-	param = param + "="
+	param += "="
 	idx := strings.Index(s, param)
 	if idx == -1 {
 		return ""

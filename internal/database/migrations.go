@@ -871,4 +871,21 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN media_playback_rate numeric default 1;`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// the WHERE part speed-up the request a lot
+		sql := `UPDATE entries SET tags = array_remove(tags, '') WHERE '' = ANY(tags);`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx) (err error) {
+		// Entry URLs can exceeds btree maximum size
+		// Checking entry existence is now using entries_feed_id_status_hash_idx index
+		_, err = tx.Exec(`DROP INDEX entries_feed_url_idx`)
+		return err
+	},
 }

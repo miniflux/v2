@@ -26,6 +26,7 @@ var (
 	ErrForbidden     = errors.New("miniflux: access forbidden")
 	ErrServerError   = errors.New("miniflux: internal server error")
 	ErrNotFound      = errors.New("miniflux: resource not found")
+	ErrBadRequest    = errors.New("miniflux: bad request")
 )
 
 type errorResponse struct {
@@ -124,10 +125,10 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 		var resp errorResponse
 		decoder := json.NewDecoder(response.Body)
 		if err := decoder.Decode(&resp); err != nil {
-			return nil, fmt.Errorf("miniflux: bad request error (%v)", err)
+			return nil, fmt.Errorf("%w (%v)", ErrBadRequest, err)
 		}
 
-		return nil, fmt.Errorf("miniflux: bad request (%s)", resp.ErrorMessage)
+		return nil, fmt.Errorf("%w (%s)", ErrBadRequest, resp.ErrorMessage)
 	}
 
 	if response.StatusCode > 400 {

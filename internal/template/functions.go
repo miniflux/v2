@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"math"
 	"net/mail"
+	"net/url"
 	"slices"
 	"strings"
 	"time"
@@ -16,8 +17,8 @@ import (
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/http/route"
 	"miniflux.app/v2/internal/locale"
+	"miniflux.app/v2/internal/mediaproxy"
 	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/proxy"
 	"miniflux.app/v2/internal/timezone"
 	"miniflux.app/v2/internal/urllib"
 
@@ -57,19 +58,19 @@ func (f *funcMap) Map() template.FuncMap {
 			return template.HTML(str)
 		},
 		"proxyFilter": func(data string) string {
-			return proxy.ProxyRewriter(f.router, data)
+			return mediaproxy.RewriteDocumentWithRelativeProxyURL(f.router, data)
 		},
 		"proxyURL": func(link string) string {
-			proxyOption := config.Opts.ProxyOption()
+			mediaProxyMode := config.Opts.MediaProxyMode()
 
-			if proxyOption == "all" || (proxyOption != "none" && !urllib.IsHTTPS(link)) {
-				return proxy.ProxifyURL(f.router, link)
+			if mediaProxyMode == "all" || (mediaProxyMode != "none" && !urllib.IsHTTPS(link)) {
+				return mediaproxy.ProxifyRelativeURL(f.router, link)
 			}
 
 			return link
 		},
 		"mustBeProxyfied": func(mediaType string) bool {
-			return slices.Contains(config.Opts.ProxyMediaTypes(), mediaType)
+			return slices.Contains(config.Opts.MediaProxyResourceTypes(), mediaType)
 		},
 		"domain":    urllib.Domain,
 		"hasPrefix": strings.HasPrefix,
@@ -91,8 +92,9 @@ func (f *funcMap) Map() template.FuncMap {
 		"nonce": func() string {
 			return crypto.GenerateRandomStringHex(16)
 		},
-		"deRef":    func(i *int) int { return *i },
-		"duration": duration,
+		"deRef":     func(i *int) int { return *i },
+		"duration":  duration,
+		"urlEncode": url.PathEscape,
 
 		// These functions are overrode at runtime after the parsing.
 		"elapsed": func(timezone string, t time.Time) string {

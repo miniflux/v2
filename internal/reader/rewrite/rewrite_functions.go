@@ -14,6 +14,8 @@ import (
 
 	"miniflux.app/v2/internal/config"
 
+	nethtml "golang.org/x/net/html"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/yuin/goldmark"
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
@@ -301,10 +303,6 @@ func replaceTextLinks(input string) string {
 	return textLinkRegex.ReplaceAllString(input, `<a href="${1}">${1}</a>`)
 }
 
-func replaceLineFeeds(input string) string {
-	return strings.ReplaceAll(input, "\n", "<br>")
-}
-
 func replaceCustom(entryContent string, searchTerm string, replaceTerm string) string {
 	re, err := regexp.Compile(searchTerm)
 	if err == nil {
@@ -334,7 +332,7 @@ func addCastopodEpisode(entryURL, entryContent string) string {
 func applyFuncOnTextContent(entryContent string, selector string, repl func(string) string) string {
 	var treatChildren func(i int, s *goquery.Selection)
 	treatChildren = func(i int, s *goquery.Selection) {
-		if s.Nodes[0].Type == 1 {
+		if s.Nodes[0].Type == nethtml.TextNode {
 			s.ReplaceWithHtml(repl(s.Nodes[0].Data))
 		} else {
 			s.Contents().Each(treatChildren)
@@ -378,7 +376,8 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 				return
 			}
 
-			if app == "opener" {
+			switch app {
+			case "opener":
 				params := url.Values{}
 				params.Add("url", hn_uri.String())
 
@@ -391,12 +390,12 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 
 				open_with_opener := `<a href="` + url.String() + `">Open with Opener</a>`
 				a.Parent().AppendHtml(" " + open_with_opener)
-			} else if app == "hack" {
+			case "hack":
 				url := strings.Replace(hn_uri.String(), hn_prefix, "hack://", 1)
 
 				open_with_hack := `<a href="` + url + `">Open with HACK</a>`
 				a.Parent().AppendHtml(" " + open_with_hack)
-			} else {
+			default:
 				slog.Warn("Unknown app provided for openHackerNewsLinksWith rewrite rule",
 					slog.String("app", app),
 				)
@@ -456,18 +455,4 @@ func removeTables(entryContent string) string {
 
 	output, _ := doc.Find("body").First().Html()
 	return output
-}
-
-func removeClickbait(entryTitle string) string {
-	titleWords := []string{}
-	for _, word := range strings.Fields(entryTitle) {
-		runes := []rune(word)
-		if len(runes) > 1 {
-			// keep first rune as is to keep the first capital letter
-			titleWords = append(titleWords, string([]rune{runes[0]})+strings.ToLower(string(runes[1:])))
-		} else {
-			titleWords = append(titleWords, word)
-		}
-	}
-	return strings.Join(titleWords, " ")
 }

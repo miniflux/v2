@@ -18,16 +18,44 @@ type Client struct {
 }
 
 // New returns a new Miniflux client.
+// Deprecated: use NewClient instead.
 func New(endpoint string, credentials ...string) *Client {
-	// Web gives "API Endpoint = https://miniflux.app/v1/", it doesn't work (/v1/v1/me)
+	return NewClient(endpoint, credentials...)
+}
+
+// NewClient returns a new Miniflux client.
+func NewClient(endpoint string, credentials ...string) *Client {
+	// Trim trailing slashes and /v1 from the endpoint.
 	endpoint = strings.TrimSuffix(endpoint, "/")
 	endpoint = strings.TrimSuffix(endpoint, "/v1")
-	// trim to https://miniflux.app
-
-	if len(credentials) == 2 {
+	switch len(credentials) {
+	case 2:
 		return &Client{request: &request{endpoint: endpoint, username: credentials[0], password: credentials[1]}}
+	case 1:
+		return &Client{request: &request{endpoint: endpoint, apiKey: credentials[0]}}
+	default:
+		return &Client{request: &request{endpoint: endpoint}}
 	}
-	return &Client{request: &request{endpoint: endpoint, apiKey: credentials[0]}}
+}
+
+// Healthcheck checks if the application is up and running.
+func (c *Client) Healthcheck() error {
+	body, err := c.request.Get("/healthcheck")
+	if err != nil {
+		return fmt.Errorf("miniflux: unable to perform healthcheck: %w", err)
+	}
+	defer body.Close()
+
+	responseBodyContent, err := io.ReadAll(body)
+	if err != nil {
+		return fmt.Errorf("miniflux: unable to read healthcheck response: %w", err)
+	}
+
+	if string(responseBodyContent) != "OK" {
+		return fmt.Errorf("miniflux: invalid healthcheck response: %q", responseBodyContent)
+	}
+
+	return nil
 }
 
 // Version returns the version of the Miniflux instance.
@@ -526,6 +554,25 @@ func (c *Client) ToggleBookmark(entryID int64) error {
 func (c *Client) SaveEntry(entryID int64) error {
 	_, err := c.request.Post(fmt.Sprintf("/v1/entries/%d/save", entryID), nil)
 	return err
+}
+
+// FetchEntryOriginalContent fetches the original content of an entry using the scraper.
+func (c *Client) FetchEntryOriginalContent(entryID int64) (string, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/entries/%d/fetch-content", entryID))
+	if err != nil {
+		return "", err
+	}
+	defer body.Close()
+
+	var response struct {
+		Content string `json:"content"`
+	}
+
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		return "", fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return response.Content, nil
 }
 
 // FetchCounters fetches feed counters.

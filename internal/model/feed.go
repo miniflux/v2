@@ -159,25 +159,7 @@ type FeedCreationRequestFromSubscriptionDiscovery struct {
 	ETag         string
 	LastModified string
 
-	FeedURL                     string `json:"feed_url"`
-	CategoryID                  int64  `json:"category_id"`
-	UserAgent                   string `json:"user_agent"`
-	Cookie                      string `json:"cookie"`
-	Username                    string `json:"username"`
-	Password                    string `json:"password"`
-	Crawler                     bool   `json:"crawler"`
-	Disabled                    bool   `json:"disabled"`
-	NoMediaPlayer               bool   `json:"no_media_player"`
-	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
-	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
-	FetchViaProxy               bool   `json:"fetch_via_proxy"`
-	ScraperRules                string `json:"scraper_rules"`
-	RewriteRules                string `json:"rewrite_rules"`
-	BlocklistRules              string `json:"blocklist_rules"`
-	KeeplistRules               string `json:"keeplist_rules"`
-	HideGlobally                bool   `json:"hide_globally"`
-	UrlRewriteRules             string `json:"urlrewrite_rules"`
-	DisableHTTP2                bool   `json:"disable_http2"`
+	FeedCreationRequest
 }
 
 // FeedModificationRequest represents the request to update a feed.

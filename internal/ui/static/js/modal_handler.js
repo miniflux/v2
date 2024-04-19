@@ -8,7 +8,7 @@ class ModalHandler {
     }
 
     static getFocusableElements() {
-        let container = this.getModalContainer();
+        const container = this.getModalContainer();
 
         if (container === null) {
             return null;
@@ -18,14 +18,14 @@ class ModalHandler {
     }
 
     static setupFocusTrap() {
-        let focusableElements = this.getFocusableElements();
+        const focusableElements = this.getFocusableElements();
 
         if (focusableElements === null) {
             return;
         }
 
-        let firstFocusableElement = focusableElements[0];
-        let lastFocusableElement = focusableElements[focusableElements.length - 1];
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
 
         this.getModalContainer().onkeydown = (e) => {
             if (e.key !== 'Tab') {
@@ -57,13 +57,13 @@ class ModalHandler {
 
         this.activeElement = document.activeElement;
 
-        let container = document.createElement("div");
+        const container = document.createElement("div");
         container.id = "modal-container";
         container.setAttribute("role", "dialog");
         container.appendChild(document.importNode(fragment, true));
         document.body.appendChild(container);
 
-        let closeButton = document.querySelector("button.btn-close-modal");
+        const closeButton = document.querySelector("button.btn-close-modal");
         if (closeButton !== null) {
             closeButton.onclick = (event) => {
                 event.preventDefault();
@@ -89,7 +89,7 @@ class ModalHandler {
     }
 
     static close() {
-        let container = this.getModalContainer();
+        const container = this.getModalContainer();
         if (container !== null) {
             container.parentNode.removeChild(container);
         }

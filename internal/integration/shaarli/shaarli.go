@@ -11,7 +11,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/urllib"
@@ -74,14 +73,15 @@ func (c *Client) CreateLink(entryURL, entryTitle string) error {
 }
 
 func (c *Client) generateBearerToken() string {
-	header := strings.TrimRight(base64.URLEncoding.EncodeToString([]byte(`{"typ":"JWT", "alg":"HS256"}`)), "=")
-	payload := strings.TrimRight(base64.URLEncoding.EncodeToString([]byte(fmt.Sprintf(`{"iat": %d}`, time.Now().Unix()))), "=")
+	header := base64.RawURLEncoding.EncodeToString([]byte(`{"typ":"JWT","alg":"HS512"}`))
+	payload := base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf(`{"iat":%d}`, time.Now().Unix())))
+	data := header + "." + payload
 
 	mac := hmac.New(sha512.New, []byte(c.apiSecret))
-	mac.Write([]byte(header + "." + payload))
-	signature := strings.TrimRight(base64.URLEncoding.EncodeToString(mac.Sum(nil)), "=")
+	mac.Write([]byte(data))
+	signature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
 
-	return header + "." + payload + "." + signature
+	return data + "." + signature
 }
 
 type addLinkRequest struct {

@@ -5,391 +5,196 @@ package rss // import "miniflux.app/v2/internal/reader/rss"
 
 import (
 	"encoding/xml"
-	"html"
-	"log/slog"
-	"path"
 	"strconv"
 	"strings"
-	"time"
 
-	"miniflux.app/v2/internal/crypto"
-	"miniflux.app/v2/internal/model"
-	"miniflux.app/v2/internal/reader/date"
 	"miniflux.app/v2/internal/reader/dublincore"
 	"miniflux.app/v2/internal/reader/googleplay"
 	"miniflux.app/v2/internal/reader/itunes"
 	"miniflux.app/v2/internal/reader/media"
-	"miniflux.app/v2/internal/reader/sanitizer"
-	"miniflux.app/v2/internal/urllib"
 )
 
 // Specs: https://www.rssboard.org/rss-specification
-type rssFeed struct {
-	XMLName xml.Name   `xml:"rss"`
-	Version string     `xml:"rss version,attr"`
-	Channel rssChannel `xml:"rss channel"`
+type RSS struct {
+	// Version is the version of the RSS specification.
+	Version string `xml:"rss version,attr"`
+
+	// Channel is the main container for the RSS feed.
+	Channel RSSChannel `xml:"rss channel"`
 }
 
-type rssChannel struct {
-	Categories     []string  `xml:"rss category"`
-	Title          string    `xml:"rss title"`
-	Link           string    `xml:"rss link"`
-	ImageURL       string    `xml:"rss image>url"`
-	Language       string    `xml:"rss language"`
-	Description    string    `xml:"rss description"`
-	PubDate        string    `xml:"rss pubDate"`
-	ManagingEditor string    `xml:"rss managingEditor"`
-	Webmaster      string    `xml:"rss webMaster"`
-	TimeToLive     rssTTL    `xml:"rss ttl"`
-	Items          []rssItem `xml:"rss item"`
+type RSSChannel struct {
+	// Title is the name of the channel.
+	Title string `xml:"rss title"`
+
+	// Link is the URL to the HTML website corresponding to the channel.
+	Link string `xml:"rss link"`
+
+	// Description is a phrase or sentence describing the channel.
+	Description string `xml:"rss description"`
+
+	// Language is the language the channel is written in.
+	// A list of allowable values for this element, as provided by Netscape, is here: https://www.rssboard.org/rss-language-codes.
+	// You may also use values defined by the W3C: https://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes.
+	Language string `xml:"rss language"`
+
+	// Copyright is a string indicating the copyright.
+	Copyright string `xml:"rss copyRight"`
+
+	// ManagingEditor is the email address for the person responsible for editorial content.
+	ManagingEditor string `xml:"rss managingEditor"`
+
+	// Webmaster is the email address for the person responsible for technical issues relating to the channel.
+	Webmaster string `xml:"rss webMaster"`
+
+	// PubDate is the publication date for the content in the channel.
+	// All date-times in RSS conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred).
+	PubDate string `xml:"rss pubDate"`
+
+	// LastBuildDate is the last time the content of the channel changed.
+	LastBuildDate string `xml:"rss lastBuildDate"`
+
+	// Categories is a collection of categories to which the channel belongs.
+	Categories []string `xml:"rss category"`
+
+	// Generator is a string indicating the program used to generate the channel.
+	Generator string `xml:"rss generator"`
+
+	// Docs is a URL that points to the documentation for the format used in the RSS file.
+	DocumentationURL string `xml:"rss docs"`
+
+	// Cloud is a web service that supports the rssCloud interface which can be implemented in HTTP-POST, XML-RPC or SOAP 1.1.
+	Cloud *RSSCloud `xml:"rss cloud"`
+
+	// Image specifies a GIF, JPEG or PNG image that can be displayed with the channel.
+	Image *RSSImage `xml:"rss image"`
+
+	// TTL is a number of minutes that indicates how long a channel can be cached before refreshing from the source.
+	TTL string `xml:"rss ttl"`
+
+	// SkipHours is a hint for aggregators telling them which hours they can skip.
+	// An XML element that contains up to 24 <hour> sub-elements whose value is a number between 0 and 23,
+	// representing a time in GMT, when aggregators,
+	// if they support the feature, may not read the channel on hours listed in the skipHours element.
+	SkipHours []string `xml:"rss skipHours>hour"`
+
+	// SkipDays is a hint for aggregators telling them which days they can skip.
+	// An XML element that contains up to seven <day> sub-elements whose value is Monday, Tuesday, Wednesday, Thursday, Friday, Saturday or Sunday.
+	SkipDays []string `xml:"rss skipDays>day"`
+
+	// Items is a collection of items.
+	Items []RSSItem `xml:"rss item"`
+
 	AtomLinks
-	itunes.ItunesFeedElement
-	googleplay.GooglePlayFeedElement
+	itunes.ItunesChannelElement
+	googleplay.GooglePlayChannelElement
 }
 
-type rssTTL struct {
-	Data string `xml:",chardata"`
+type RSSCloud struct {
+	Domain            string `xml:"domain,attr"`
+	Port              string `xml:"port,attr"`
+	Path              string `xml:"path,attr"`
+	RegisterProcedure string `xml:"registerProcedure,attr"`
+	Protocol          string `xml:"protocol,attr"`
 }
 
-func (r *rssTTL) Value() int {
-	if r.Data == "" {
-		return 0
-	}
+type RSSImage struct {
+	// URL is the URL of a GIF, JPEG or PNG image that represents the channel.
+	URL string `xml:"url"`
 
-	value, err := strconv.Atoi(r.Data)
-	if err != nil {
-		return 0
-	}
+	// Title describes the image, it's used in the ALT attribute of the HTML <img> tag when the channel is rendered in HTML.
+	Title string `xml:"title"`
 
-	return value
+	// Link is the URL of the site, when the channel is rendered, the image is a link to the site.
+	Link string `xml:"link"`
 }
 
-func (r *rssFeed) Transform(baseURL string) *model.Feed {
-	var err error
+type RSSItem struct {
+	// Title is the title of the item.
+	Title string `xml:"rss title"`
 
-	feed := new(model.Feed)
+	// Link is the URL of the item.
+	Link string `xml:"rss link"`
 
-	siteURL := r.siteURL()
-	feed.SiteURL, err = urllib.AbsoluteURL(baseURL, siteURL)
-	if err != nil {
-		feed.SiteURL = siteURL
-	}
+	// Description is the item synopsis.
+	Description string `xml:"rss description"`
 
-	feedURL := r.feedURL()
-	feed.FeedURL, err = urllib.AbsoluteURL(baseURL, feedURL)
-	if err != nil {
-		feed.FeedURL = feedURL
-	}
+	// Author is the email address of the author of the item.
+	Author RSSAuthor `xml:"rss author"`
 
-	feed.Title = html.UnescapeString(strings.TrimSpace(r.Channel.Title))
-	if feed.Title == "" {
-		feed.Title = feed.SiteURL
-	}
+	// <category> is an optional sub-element of <item>.
+	// It has one optional attribute, domain, a string that identifies a categorization taxonomy.
+	Categories []string `xml:"rss category"`
 
-	feed.IconURL = strings.TrimSpace(r.Channel.ImageURL)
-	feed.TTL = r.Channel.TimeToLive.Value()
+	// <comments> is an optional sub-element of <item>.
+	// If present, it contains the URL of the comments page for the item.
+	CommentsURL string `xml:"rss comments"`
 
-	for _, item := range r.Channel.Items {
-		entry := item.Transform()
-		if entry.Author == "" {
-			entry.Author = r.feedAuthor()
-		}
+	// <enclosure> is an optional sub-element of <item>.
+	// It has three required attributes. url says where the enclosure is located,
+	// length says how big it is in bytes, and type says what its type is, a standard MIME type.
+	Enclosures []RSSEnclosure `xml:"rss enclosure"`
 
-		if entry.URL == "" {
-			entry.URL = feed.SiteURL
-		} else {
-			entryURL, err := urllib.AbsoluteURL(feed.SiteURL, entry.URL)
-			if err == nil {
-				entry.URL = entryURL
-			}
-		}
+	// <guid> is an optional sub-element of <item>.
+	// It's a string that uniquely identifies the item.
+	// When present, an aggregator may choose to use this string to determine if an item is new.
+	//
+	// There are no rules for the syntax of a guid.
+	// Aggregators must view them as a string.
+	// It's up to the source of the feed to establish the uniqueness of the string.
+	//
+	// If the guid element has an attribute named isPermaLink with a value of true,
+	// the reader may assume that it is a permalink to the item, that is, a url that can be opened in a Web browser,
+	// that points to the full item described by the <item> element.
+	//
+	// isPermaLink is optional, its default value is true.
+	// If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.
+	GUID RSSGUID `xml:"rss guid"`
 
-		if entry.Title == "" {
-			entry.Title = sanitizer.TruncateHTML(entry.Content, 100)
-		}
+	// <pubDate> is the publication date of the item.
+	// Its value is a string in RFC 822 format.
+	PubDate string `xml:"rss pubDate"`
 
-		if entry.Title == "" {
-			entry.Title = entry.URL
-		}
+	// <source> is an optional sub-element of <item>.
+	// Its value is the name of the RSS channel that the item came from, derived from its <title>.
+	// It has one required attribute, url, which contains the URL of the RSS channel.
+	Source RSSSource `xml:"rss source"`
 
-		entry.Tags = append(entry.Tags, r.Channel.Categories...)
-		entry.Tags = append(entry.Tags, r.Channel.GetItunesCategories()...)
-
-		if r.Channel.GooglePlayCategory.Text != "" {
-			entry.Tags = append(entry.Tags, r.Channel.GooglePlayCategory.Text)
-		}
-
-		feed.Entries = append(feed.Entries, entry)
-	}
-
-	return feed
-}
-
-func (r *rssFeed) siteURL() string {
-	return strings.TrimSpace(r.Channel.Link)
-}
-
-func (r *rssFeed) feedURL() string {
-	for _, atomLink := range r.Channel.AtomLinks.Links {
-		if atomLink.Rel == "self" {
-			return strings.TrimSpace(atomLink.URL)
-		}
-	}
-	return ""
-}
-
-func (r rssFeed) feedAuthor() string {
-	var author string
-	switch {
-	case r.Channel.ItunesAuthor != "":
-		author = r.Channel.ItunesAuthor
-	case r.Channel.GooglePlayAuthor != "":
-		author = r.Channel.GooglePlayAuthor
-	case r.Channel.ItunesOwner.String() != "":
-		author = r.Channel.ItunesOwner.String()
-	case r.Channel.ManagingEditor != "":
-		author = r.Channel.ManagingEditor
-	case r.Channel.Webmaster != "":
-		author = r.Channel.Webmaster
-	}
-	return sanitizer.StripTags(strings.TrimSpace(author))
-}
-
-type rssGUID struct {
-	XMLName     xml.Name
-	Data        string `xml:",chardata"`
-	IsPermaLink string `xml:"isPermaLink,attr"`
-}
-
-type rssAuthor struct {
-	XMLName xml.Name
-	Data    string `xml:",chardata"`
-	Inner   string `xml:",innerxml"`
-}
-
-type rssEnclosure struct {
-	URL    string `xml:"url,attr"`
-	Type   string `xml:"type,attr"`
-	Length string `xml:"length,attr"`
-}
-
-func (enclosure *rssEnclosure) Size() int64 {
-	if enclosure.Length == "" {
-		return 0
-	}
-	size, _ := strconv.ParseInt(enclosure.Length, 10, 0)
-	return size
-}
-
-type rssItem struct {
-	GUID           rssGUID        `xml:"rss guid"`
-	Title          string         `xml:"rss title"`
-	Link           string         `xml:"rss link"`
-	Description    string         `xml:"rss description"`
-	PubDate        string         `xml:"rss pubDate"`
-	Author         rssAuthor      `xml:"rss author"`
-	Comments       string         `xml:"rss comments"`
-	EnclosureLinks []rssEnclosure `xml:"rss enclosure"`
-	Categories     []string       `xml:"rss category"`
 	dublincore.DublinCoreItemElement
-	FeedBurnerElement
-	media.Element
+	FeedBurnerItemElement
+	media.MediaItemElement
 	AtomAuthor
 	AtomLinks
 	itunes.ItunesItemElement
 	googleplay.GooglePlayItemElement
 }
 
-func (r *rssItem) Transform() *model.Entry {
-	entry := model.NewEntry()
-	entry.URL = r.entryURL()
-	entry.CommentsURL = r.entryCommentsURL()
-	entry.Date = r.entryDate()
-	entry.Author = r.entryAuthor()
-	entry.Hash = r.entryHash()
-	entry.Content = r.entryContent()
-	entry.Title = r.entryTitle()
-	entry.Enclosures = r.entryEnclosures()
-	entry.Tags = r.Categories
-	if duration, err := normalizeDuration(r.ItunesDuration); err == nil {
-		entry.ReadingTime = duration
-	}
-
-	return entry
+type RSSAuthor struct {
+	XMLName xml.Name
+	Data    string `xml:",chardata"`
+	Inner   string `xml:",innerxml"`
 }
 
-func (r *rssItem) entryDate() time.Time {
-	value := r.PubDate
-	if r.DublinCoreDate != "" {
-		value = r.DublinCoreDate
-	}
-
-	if value != "" {
-		result, err := date.Parse(value)
-		if err != nil {
-			slog.Debug("Unable to parse date from RSS feed",
-				slog.String("date", value),
-				slog.String("guid", r.GUID.Data),
-				slog.Any("error", err),
-			)
-			return time.Now()
-		}
-
-		return result
-	}
-
-	return time.Now()
+type RSSEnclosure struct {
+	URL    string `xml:"url,attr"`
+	Type   string `xml:"type,attr"`
+	Length string `xml:"length,attr"`
 }
 
-func (r *rssItem) entryAuthor() string {
-	var author string
-
-	switch {
-	case r.GooglePlayAuthor != "":
-		author = r.GooglePlayAuthor
-	case r.ItunesAuthor != "":
-		author = r.ItunesAuthor
-	case r.DublinCoreCreator != "":
-		author = r.DublinCoreCreator
-	case r.AtomAuthor.String() != "":
-		author = r.AtomAuthor.String()
-	case strings.Contains(r.Author.Inner, "<![CDATA["):
-		author = r.Author.Data
-	default:
-		author = r.Author.Inner
+func (enclosure *RSSEnclosure) Size() int64 {
+	if strings.TrimSpace(enclosure.Length) == "" {
+		return 0
 	}
-
-	return strings.TrimSpace(sanitizer.StripTags(author))
+	size, _ := strconv.ParseInt(enclosure.Length, 10, 0)
+	return size
 }
 
-func (r *rssItem) entryHash() string {
-	for _, value := range []string{r.GUID.Data, r.entryURL()} {
-		if value != "" {
-			return crypto.Hash(value)
-		}
-	}
-
-	return ""
+type RSSGUID struct {
+	Data        string `xml:",chardata"`
+	IsPermaLink string `xml:"isPermaLink,attr"`
 }
 
-func (r *rssItem) entryTitle() string {
-	title := r.Title
-
-	if r.DublinCoreTitle != "" {
-		title = r.DublinCoreTitle
-	}
-
-	return html.UnescapeString(strings.TrimSpace(title))
-}
-
-func (r *rssItem) entryContent() string {
-	for _, value := range []string{
-		r.DublinCoreContent,
-		r.Description,
-		r.GooglePlayDescription,
-		r.ItunesSummary,
-		r.ItunesSubtitle,
-	} {
-		if value != "" {
-			return value
-		}
-	}
-	return ""
-}
-
-func (r *rssItem) entryURL() string {
-	for _, link := range []string{r.FeedBurnerLink, r.Link} {
-		if link != "" {
-			return strings.TrimSpace(link)
-		}
-	}
-
-	for _, atomLink := range r.AtomLinks.Links {
-		if atomLink.URL != "" && (strings.EqualFold(atomLink.Rel, "alternate") || atomLink.Rel == "") {
-			return strings.TrimSpace(atomLink.URL)
-		}
-	}
-
-	// Specs: https://cyber.harvard.edu/rss/rss.html#ltguidgtSubelementOfLtitemgt
-	// isPermaLink is optional, its default value is true.
-	// If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.
-	if r.GUID.IsPermaLink == "true" || r.GUID.IsPermaLink == "" {
-		return strings.TrimSpace(r.GUID.Data)
-	}
-
-	return ""
-}
-
-func (r *rssItem) entryEnclosures() model.EnclosureList {
-	enclosures := make(model.EnclosureList, 0)
-	duplicates := make(map[string]bool)
-
-	for _, mediaThumbnail := range r.AllMediaThumbnails() {
-		if _, found := duplicates[mediaThumbnail.URL]; !found {
-			duplicates[mediaThumbnail.URL] = true
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaThumbnail.URL,
-				MimeType: mediaThumbnail.MimeType(),
-				Size:     mediaThumbnail.Size(),
-			})
-		}
-	}
-
-	for _, enclosure := range r.EnclosureLinks {
-		enclosureURL := enclosure.URL
-
-		if r.FeedBurnerEnclosureLink != "" {
-			filename := path.Base(r.FeedBurnerEnclosureLink)
-			if strings.Contains(enclosureURL, filename) {
-				enclosureURL = r.FeedBurnerEnclosureLink
-			}
-		}
-
-		if enclosureURL == "" {
-			continue
-		}
-
-		if _, found := duplicates[enclosureURL]; !found {
-			duplicates[enclosureURL] = true
-
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      enclosureURL,
-				MimeType: enclosure.Type,
-				Size:     enclosure.Size(),
-			})
-		}
-	}
-
-	for _, mediaContent := range r.AllMediaContents() {
-		if _, found := duplicates[mediaContent.URL]; !found {
-			duplicates[mediaContent.URL] = true
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaContent.URL,
-				MimeType: mediaContent.MimeType(),
-				Size:     mediaContent.Size(),
-			})
-		}
-	}
-
-	for _, mediaPeerLink := range r.AllMediaPeerLinks() {
-		if _, found := duplicates[mediaPeerLink.URL]; !found {
-			duplicates[mediaPeerLink.URL] = true
-			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaPeerLink.URL,
-				MimeType: mediaPeerLink.MimeType(),
-				Size:     mediaPeerLink.Size(),
-			})
-		}
-	}
-
-	return enclosures
-}
-
-func (r *rssItem) entryCommentsURL() string {
-	commentsURL := strings.TrimSpace(r.Comments)
-	if commentsURL != "" && urllib.IsAbsoluteURL(commentsURL) {
-		return commentsURL
-	}
-
-	return ""
+type RSSSource struct {
+	URL  string `xml:"url,attr"`
+	Name string `xml:",chardata"`
 }

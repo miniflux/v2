@@ -187,6 +187,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Przejdź do subskrypcji",
     "page.keyboard_shortcuts.go_to_previous_page": "Przejdź do poprzedniej strony",
     "page.keyboard_shortcuts.go_to_next_page": "Przejdź do następnej strony",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Przejdź do dolnego elementu",
+    "page.keyboard_shortcuts.go_to_top_item": "Przejdź do najwyższego elementu",
     "page.keyboard_shortcuts.open_item": "Otwórz zaznaczony artykuł",
     "page.keyboard_shortcuts.open_original": "Otwórz oryginalny artykuł",
     "page.keyboard_shortcuts.open_original_same_window": "Otwórz oryginalny link w bieżącej karcie",
@@ -266,6 +268,7 @@
     "alert.no_bookmark": "Obecnie nie ma żadnych zakładek.",
     "alert.no_category": "Nie ma żadnej kategorii!",
     "alert.no_category_entry": "W tej kategorii nie ma żadnych artykułów",
+    "alert.no_tag_entry": "Nie ma wpisów pasujących do tego tagu.",
     "alert.no_feed_entry": "Nie ma artykułu dla tego kanału.",
     "alert.no_feed": "Nie masz żadnej subskrypcji.",
     "alert.no_feed_in_category": "Nie ma subskrypcji dla tej kategorii.",
@@ -522,7 +525,7 @@
     "error.http_body_read": "Unable to read the HTTP body: %v.",
     "error.http_empty_response_body": "The HTTP response body is empty.",
     "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.tls_error": "TLS error: %q. You could disable TLS verification in the feed settings if you would like.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.http_client_error": "HTTP client error: %v.",
@@ -541,5 +544,7 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "form.prefs.label.media_playback_rate": "Prędkość odtwarzania audio/wideo",
+    "error.settings_media_playback_rate_range": "Prędkość odtwarzania jest poza zakresem"
 }

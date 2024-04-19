@@ -102,6 +102,12 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.MediaPlaybackRate != nil {
+		if err := validateMediaPlaybackRate(*changes.MediaPlaybackRate); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -179,6 +185,13 @@ func validateDefaultHomePage(defaultHomePage string) *locale.LocalizedError {
 	defaultHomePages := model.HomePages()
 	if _, found := defaultHomePages[defaultHomePage]; !found {
 		return locale.NewLocalizedError("error.invalid_default_home_page")
+	}
+	return nil
+}
+
+func validateMediaPlaybackRate(mediaPlaybackRate float64) *locale.LocalizedError {
+	if mediaPlaybackRate < 0.25 || mediaPlaybackRate > 4 {
+		return locale.NewLocalizedError("error.settings_media_playback_rate_range")
 	}
 	return nil
 }

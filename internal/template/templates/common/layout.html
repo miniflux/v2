@@ -36,10 +36,10 @@
 
     {{ if and .user .user.Stylesheet }}
     {{ $stylesheetNonce := nonce }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'; require-trusted-types-for 'script'; trusted-types ttpolicy;">
     <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
     {{ else }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types ttpolicy;">
     {{ end }}
 
     <script src="{{ route "javascript" "name" "app" "checksum" .app_js_checksum }}" defer></script>
@@ -154,6 +154,8 @@
                     <li>{{ t "page.keyboard_shortcuts.go_to_previous_item" }} = <strong>p</strong>, <strong>k</strong>, <strong>&#x23F4;</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_next_item" }} = <strong>n</strong>, <strong>j</strong>, <strong>&#x23F5;</strong></li>
                     <li>{{ t "page.keyboard_shortcuts.go_to_feed" }} = <strong>F</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_top_item" }} = <strong>g + g</strong></li>
+                    <li>{{ t "page.keyboard_shortcuts.go_to_bottom_item" }} = <strong>G</strong></li>
                 </ul>
 
                 <p>{{ t "page.keyboard_shortcuts.subtitle.pages" }}</p>

@@ -6,6 +6,9 @@ package timezone // import "miniflux.app/v2/internal/timezone"
 import (
 	"testing"
 	"time"
+
+	// Make sure these tests pass when the timezone database is not installed on the host system.
+	_ "time/tzdata"
 )
 
 func TestNow(t *testing.T) {

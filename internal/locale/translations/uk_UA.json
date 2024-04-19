@@ -187,6 +187,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Перейти до стрічки",
     "page.keyboard_shortcuts.go_to_previous_page": "Перейти до попередньої сторінки",
     "page.keyboard_shortcuts.go_to_next_page": "Перейти до наступної сторінки",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Перейти до нижнього пункту",
+    "page.keyboard_shortcuts.go_to_top_item": "Перейти до верхнього пункту",
     "page.keyboard_shortcuts.open_item": "Відкрити виділений запис",
     "page.keyboard_shortcuts.open_original": "Відкрити оригінальне посилання",
     "page.keyboard_shortcuts.open_original_same_window": "Відкрити оригінальне посилання в поточній вкладці",
@@ -266,6 +268,7 @@
     "alert.no_bookmark": "Наразі закладки відсутні.",
     "alert.no_category": "Немає категорії.",
     "alert.no_category_entry": "У цій категорії немає записів.",
+    "alert.no_tag_entry": "Немає записів, що відповідають цьому тегу.",
     "alert.no_feed_entry": "У цій стрічці немає записів.",
     "alert.no_feed": "У вас немає підписок.",
     "alert.no_feed_in_category": "У цій категорії немає підписок.",
@@ -522,7 +525,7 @@
     "error.http_body_read": "Unable to read the HTTP body: %v.",
     "error.http_empty_response_body": "The HTTP response body is empty.",
     "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.tls_error": "TLS error: %q. You could disable TLS verification in the feed settings if you would like.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.http_client_error": "HTTP client error: %v.",
@@ -541,5 +544,7 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "form.prefs.label.media_playback_rate": "Швидкість відтворення аудіо/відео",
+    "error.settings_media_playback_rate_range": "Швидкість відтворення виходить за межі діапазону"
 }

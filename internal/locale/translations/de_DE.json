@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Zum Abonnement gehen",
     "page.keyboard_shortcuts.go_to_previous_page": "Zur vorherigen Seite gehen",
     "page.keyboard_shortcuts.go_to_next_page": "Zur nächsten Seite gehen",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Gehen Sie zum untersten Element",
+    "page.keyboard_shortcuts.go_to_top_item": "Zum obersten Artikel gehen",
     "page.keyboard_shortcuts.open_item": "Gewählten Artikel öffnen",
     "page.keyboard_shortcuts.open_original": "Original-Artikel öffnen",
     "page.keyboard_shortcuts.open_original_same_window": "Öffne den Original-Link in der aktuellen Registerkarte",
@@ -256,6 +258,7 @@
     "alert.no_bookmark": "Es existiert derzeit kein Lesezeichen.",
     "alert.no_category": "Es ist keine Kategorie vorhanden.",
     "alert.no_category_entry": "Es befindet sich kein Artikel in dieser Kategorie.",
+    "alert.no_tag_entry": "Es gibt keine Artikel, die diesem Tag entsprechen.",
     "alert.no_feed_entry": "Es existiert kein Artikel für dieses Abonnement.",
     "alert.no_feed": "Es sind keine Abonnements vorhanden.",
     "alert.no_feed_in_category": "Für diese Kategorie gibt es kein Abonnement.",
@@ -505,7 +508,7 @@
     "error.http_body_read": "Der HTTP-Inhalt kann nicht gelesen werden: %v",
     "error.http_empty_response_body": "Der Inhalt der HTTP-Antwort ist leer.",
     "error.http_empty_response": "Die HTTP-Antwort ist leer. Vielleicht versucht die Webseite, sich vor Bots zu schützen?",
-    "error.tls_error": "TLS-Fehler: %v. Wenn Sie mögen, können Sie versuchen die TLS-Verifizierung in den Einstellungen des Abonnements zu deaktivieren.",
+    "error.tls_error": "TLS-Fehler: %q. Wenn Sie mögen, können Sie versuchen die TLS-Verifizierung in den Einstellungen des Abonnements zu deaktivieren.",
     "error.network_operation": "Miniflux kann die Webseite aufgrund eines Netzwerk-Fehlers nicht erreichen: %v",
     "error.network_timeout": "Die Webseite ist zu langsam und die Anfrage ist abgelaufen: %v.",
     "error.http_client_error": "HTTP-Client-Fehler: %v.",
@@ -524,5 +527,7 @@
     "error.unable_to_parse_feed": "Dieses Abonnement kann nicht gelesen werden: %v.",
     "error.feed_not_found": "Dieses Abonnement existiert nicht oder gehört nicht zu diesem Benutzer.",
     "error.unable_to_detect_rssbridge": "Abonnement kann nicht durch RSS-Bridge erkannt werden: %v.",
-    "error.feed_format_not_detected": "Das Format des Abonnements kann nicht erkannt werden: %v."
+    "error.feed_format_not_detected": "Das Format des Abonnements kann nicht erkannt werden: %v.",
+    "form.prefs.label.media_playback_rate": "Wiedergabegeschwindigkeit von Audio/Video",
+    "error.settings_media_playback_rate_range": "Die Wiedergabegeschwindigkeit liegt außerhalb des Bereichs"
 }

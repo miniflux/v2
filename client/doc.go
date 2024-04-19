@@ -12,7 +12,7 @@ This code snippet fetch the list of users:
 		miniflux "miniflux.app/v2/client"
 	)
 
-	client := miniflux.New("https://api.example.org", "admin", "secret")
+	client := miniflux.NewClient("https://api.example.org", "admin", "secret")
 	users, err := client.Users()
 	if err != nil {
 		fmt.Println(err)

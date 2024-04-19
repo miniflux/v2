@@ -169,6 +169,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Ke umpan",
     "page.keyboard_shortcuts.go_to_previous_page": "Ke halaman sebelumnya",
     "page.keyboard_shortcuts.go_to_next_page": "Ke halaman berikutnya",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Pergi ke item paling bawah",
+    "page.keyboard_shortcuts.go_to_top_item": "Pergi ke item teratas",
     "page.keyboard_shortcuts.open_item": "Buka entri yang dipilih",
     "page.keyboard_shortcuts.open_original": "Buka tautan asli",
     "page.keyboard_shortcuts.open_original_same_window": "Buka tautan asli di bilah saat ini",
@@ -246,6 +248,7 @@
     "alert.no_bookmark": "Tidak ada markah.",
     "alert.no_category": "Tidak ada kategori.",
     "alert.no_category_entry": "Tidak ada artikel di kategori ini.",
+    "alert.no_tag_entry": "Tidak ada entri yang cocok dengan tag ini.",
     "alert.no_feed_entry": "Tidak ada artikel di umpan ini.",
     "alert.no_feed": "Anda tidak memiliki langganan.",
     "alert.no_feed_in_category": "Tidak ada langganan untuk kategori ini.",
@@ -488,7 +491,7 @@
     "error.http_body_read": "Unable to read the HTTP body: %v.",
     "error.http_empty_response_body": "The HTTP response body is empty.",
     "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.tls_error": "TLS error: %q. You could disable TLS verification in the feed settings if you would like.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.http_client_error": "HTTP client error: %v.",
@@ -507,5 +510,7 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "form.prefs.label.media_playback_rate": "Kecepatan pemutaran audio/video",
+    "error.settings_media_playback_rate_range": "Kecepatan pemutaran di luar jangkauan"
 }

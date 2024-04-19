@@ -6,7 +6,7 @@ package itunes // import "miniflux.app/v2/internal/reader/itunes"
 import "strings"
 
 // Specs: https://help.apple.com/itc/podcasts_connect/#/itcb54353390
-type ItunesFeedElement struct {
+type ItunesChannelElement struct {
 	ItunesAuthor     string                  `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd author"`
 	ItunesBlock      string                  `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd block"`
 	ItunesCategories []ItunesCategoryElement `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd category"`
@@ -22,7 +22,7 @@ type ItunesFeedElement struct {
 	ItunesType       string                  `xml:"http://www.itunes.com/dtds/podcast-1.0.dtd type"`
 }
 
-func (i *ItunesFeedElement) GetItunesCategories() []string {
+func (i *ItunesChannelElement) GetItunesCategories() []string {
 	var categories []string
 	for _, category := range i.ItunesCategories {
 		categories = append(categories, category.Text)

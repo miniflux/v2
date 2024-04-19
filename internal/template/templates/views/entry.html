@@ -135,7 +135,7 @@
         {{ if .entry.Tags }}
         <div class="entry-tags">
             {{ t "entry.tags.label" }}
-            {{range $i, $e := .entry.Tags}}{{if $i}}, {{end}}<strong>{{ $e }}</strong>{{end}}
+	    {{range $i, $e := .entry.Tags}}{{if $i}}, {{end}}<a href="{{ route "tagEntriesAll" "tagName" (urlEncode $e) }}"><strong>{{ $e }}</strong></a>{{end}}
         </div>
         {{ end }}
         <div class="entry-date">
@@ -172,6 +172,7 @@
     <div class="enclosure-audio" >
         <audio controls preload="metadata"
             data-last-position="{{ .MediaProgression }}"
+            {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
             data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
             >
             {{ if (and $.user (mustBeProxyfied "audio")) }}
@@ -185,6 +186,7 @@
         <div class="enclosure-video">
             <video controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
+                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 >
                 {{ if (and $.user (mustBeProxyfied "video")) }}
@@ -214,6 +216,7 @@
         <div class="enclosure-audio">
             <audio controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
+                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 >
                 {{ if (and $.user (mustBeProxyfied "audio")) }}
@@ -227,6 +230,7 @@
         <div class="enclosure-video">
             <video controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
+                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 >
                 {{ if (and $.user (mustBeProxyfied "video")) }}

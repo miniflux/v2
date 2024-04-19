@@ -33,6 +33,7 @@ type SettingsForm struct {
 	DefaultHomePage        string
 	CategoriesSortingOrder string
 	MarkReadOnView         bool
+	MediaPlaybackRate      float64
 }
 
 // Merge updates the fields of the given user.
@@ -55,6 +56,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.DefaultHomePage = s.DefaultHomePage
 	user.CategoriesSortingOrder = s.CategoriesSortingOrder
 	user.MarkReadOnView = s.MarkReadOnView
+	user.MediaPlaybackRate = s.MediaPlaybackRate
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -84,6 +86,10 @@ func (s *SettingsForm) Validate() *locale.LocalizedError {
 		}
 	}
 
+	if s.MediaPlaybackRate < 0.25 || s.MediaPlaybackRate > 4 {
+		return locale.NewLocalizedError("error.settings_media_playback_rate_range")
+	}
+
 	return nil
 }
 
@@ -100,6 +106,10 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 	cjkReadingSpeed, err := strconv.ParseInt(r.FormValue("cjk_reading_speed"), 10, 0)
 	if err != nil {
 		cjkReadingSpeed = 0
+	}
+	mediaPlaybackRate, err := strconv.ParseFloat(r.FormValue("media_playback_rate"), 64)
+	if err != nil {
+		mediaPlaybackRate = 1
 	}
 	return &SettingsForm{
 		Username:               r.FormValue("username"),
@@ -122,5 +132,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		DefaultHomePage:        r.FormValue("default_home_page"),
 		CategoriesSortingOrder: r.FormValue("categories_sorting_order"),
 		MarkReadOnView:         r.FormValue("mark_read_on_view") == "1",
+		MediaPlaybackRate:      mediaPlaybackRate,
 	}
 }

@@ -115,7 +115,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if validationErr := validator.ValidateFeedModification(h.store, userID, &feedModificationRequest); validationErr != nil {
+	if validationErr := validator.ValidateFeedModification(h.store, userID, originalFeed.ID, &feedModificationRequest); validationErr != nil {
 		json.BadRequest(w, r, validationErr.Error())
 		return
 	}

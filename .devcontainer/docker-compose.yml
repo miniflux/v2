@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: mcr.microsoft.com/devcontainers/go
+    image: mcr.microsoft.com/devcontainers/go:1.22
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
@@ -24,7 +24,7 @@ services:
     ports:
       - 5432:5432
   apprise:
-    image: caronc/apprise:latest
+    image: caronc/apprise:1.0
     restart: unless-stopped
     hostname: apprise
 volumes:

@@ -178,6 +178,8 @@
     "page.keyboard_shortcuts.go_to_feed": "Mostra il feed",
     "page.keyboard_shortcuts.go_to_previous_page": "Mostra la pagina precedente",
     "page.keyboard_shortcuts.go_to_next_page": "Mostra la pagina successiva",
+    "page.keyboard_shortcuts.go_to_bottom_item": "Vai all'elemento in fondo",
+    "page.keyboard_shortcuts.go_to_top_item": "Vai all'elemento principale",
     "page.keyboard_shortcuts.open_item": "Apri l'articolo selezionato",
     "page.keyboard_shortcuts.open_original": "Apri la pagina web originale",
     "page.keyboard_shortcuts.open_original_same_window": "Apri il link originale nella scheda corrente",
@@ -256,6 +258,7 @@
     "alert.no_bookmark": "Nessun preferito disponibile.",
     "alert.no_category": "Nessuna categoria disponibile.",
     "alert.no_category_entry": "Questa categoria non contiene alcun articolo.",
+    "alert.no_tag_entry": "Non ci sono voci corrispondenti a questo tag.",
     "alert.no_feed_entry": "Questo feed non contiene alcun articolo.",
     "alert.no_feed": "Nessun feed disponibile.",
     "alert.no_feed_in_category": "Non esiste un abbonamento per questa categoria.",
@@ -505,7 +508,7 @@
     "error.http_body_read": "Unable to read the HTTP body: %v.",
     "error.http_empty_response_body": "The HTTP response body is empty.",
     "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.tls_error": "TLS error: %v. You could disable TLS verification in the feed settings if you would like.",
+    "error.tls_error": "TLS error: %q. You could disable TLS verification in the feed settings if you would like.",
     "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
     "error.network_timeout": "This website is too slow and the request timed out: %v",
     "error.http_client_error": "HTTP client error: %v.",
@@ -524,5 +527,7 @@
     "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
     "error.feed_not_found": "This feed does not exist or does not belong to this user.",
     "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v."
+    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "form.prefs.label.media_playback_rate": "Velocità di riproduzione dell'audio/video",
+    "error.settings_media_playback_rate_range": "La velocità di riproduzione non rientra nell'intervallo"
 }

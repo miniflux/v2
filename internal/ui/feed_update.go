@@ -59,13 +59,13 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		FeedURL:         model.OptionalString(feedForm.FeedURL),
 		SiteURL:         model.OptionalString(feedForm.SiteURL),
 		Title:           model.OptionalString(feedForm.Title),
-		CategoryID:      model.OptionalInt64(feedForm.CategoryID),
+		CategoryID:      model.OptionalNumber(feedForm.CategoryID),
 		BlocklistRules:  model.OptionalString(feedForm.BlocklistRules),
 		KeeplistRules:   model.OptionalString(feedForm.KeeplistRules),
 		UrlRewriteRules: model.OptionalString(feedForm.UrlRewriteRules),
 	}
 
-	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feedModificationRequest); validationErr != nil {
+	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feed.ID, feedModificationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
 		html.OK(w, r, view.Render("edit_feed"))
 		return
