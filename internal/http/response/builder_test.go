@@ -228,10 +228,34 @@ func TestBuildResponseWithCachingAndEtag(t *testing.T) {
 	}
 }
 
-func TestBuildResponseWithGzipCompression(t *testing.T) {
+func TestBuildResponseWithBrotliCompression(t *testing.T) {
 	body := strings.Repeat("a", compressionThreshold+1)
 	r, err := http.NewRequest("GET", "/", nil)
 	r.Header.Set("Accept-Encoding", "gzip, deflate, br")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	w := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		New(w, r).WithBody(body).Write()
+	})
+
+	handler.ServeHTTP(w, r)
+	resp := w.Result()
+
+	expected := "br"
+	actual := resp.Header.Get("Content-Encoding")
+	if actual != expected {
+		t.Fatalf(`Unexpected header value, got %q instead of %q`, actual, expected)
+	}
+}
+
+func TestBuildResponseWithGzipCompression(t *testing.T) {
+	body := strings.Repeat("a", compressionThreshold+1)
+	r, err := http.NewRequest("GET", "/", nil)
+	r.Header.Set("Accept-Encoding", "gzip, deflate")
 	if err != nil {
 		t.Fatal(err)
 	}

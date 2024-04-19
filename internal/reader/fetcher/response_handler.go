@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"miniflux.app/v2/internal/locale"
 )
@@ -73,15 +74,16 @@ func (r *ResponseHandler) Close() {
 }
 
 func (r *ResponseHandler) getReader(maxBodySize int64) io.ReadCloser {
+	contentEncoding := strings.ToLower(r.httpResponse.Header.Get("Content-Encoding"))
 	slog.Debug("Request response",
 		slog.String("effective_url", r.EffectiveURL()),
-		slog.Int64("content_length", r.httpResponse.ContentLength),
-		slog.String("content_encoding", r.httpResponse.Header.Get("Content-Encoding")),
+		slog.String("content_length", r.httpResponse.Header.Get("Content-Length")),
+		slog.String("content_encoding", contentEncoding),
 		slog.String("content_type", r.httpResponse.Header.Get("Content-Type")),
 	)
 
 	reader := r.httpResponse.Body
-	switch r.httpResponse.Header.Get("Content-Encoding") {
+	switch contentEncoding {
 	case "br":
 		reader = NewBrotliReadCloser(r.httpResponse.Body)
 	case "gzip":
