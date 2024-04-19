@@ -31,12 +31,12 @@ func (h *handler) showAppIcon(w http.ResponseWriter, r *http.Request) {
 
 		switch filepath.Ext(filename) {
 		case ".png":
+			b.WithoutCompression()
 			b.WithHeader("Content-Type", "image/png")
 		case ".svg":
 			b.WithHeader("Content-Type", "image/svg+xml")
 		}
 
-		b.WithoutCompression()
 		b.WithBody(blob)
 		b.Write()
 	})

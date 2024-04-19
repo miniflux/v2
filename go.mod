@@ -5,6 +5,7 @@ module miniflux.app/v2
 require (
 	github.com/PuerkitoBio/goquery v1.9.1
 	github.com/abadojack/whatlanggo v1.0.1
+	github.com/andybalholm/brotli v1.1.0
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/go-webauthn/webauthn v0.10.2
 	github.com/gorilla/mux v1.8.1
@@ -27,7 +28,6 @@ require (
 )
 
 require (
-	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
