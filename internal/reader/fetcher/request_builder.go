@@ -169,6 +169,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	req.Header = r.headers
+	req.Header.Set("Accept-Encoding", "br, gzip")
 	req.Header.Set("Accept", defaultAcceptHeader)
 	req.Header.Set("Connection", "close")
 
