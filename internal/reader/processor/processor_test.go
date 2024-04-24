@@ -117,3 +117,12 @@ func TestIsRecentEntry(t *testing.T) {
 		}
 	}
 }
+
+func TestMinifyEntryContent(t *testing.T) {
+	input := `<p>    Some text with a <a href="http://example.org/"> link   </a>    </p>`
+	expected := `<p>Some text with a <a href="http://example.org/">link</a></p>`
+	result := minifyEntryContent(input)
+	if expected != result {
+		t.Errorf(`Unexpected result, got %q`, result)
+	}
+}

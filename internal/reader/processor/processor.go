@@ -38,9 +38,6 @@ var (
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.User, forceRefresh bool) {
 	var filteredEntries model.Entries
 
-	minifier := minify.New()
-	minifier.AddFunc("text/html", html.Minify)
-
 	// Process older entries first
 	for i := len(feed.Entries) - 1; i >= 0; i-- {
 		entry := feed.Entries[i]
@@ -107,11 +104,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 				)
 			} else if content != "" {
 				// We replace the entry content only if the scraper doesn't return any error.
-				if minifiedHTML, err := minifier.String("text/html", content); err == nil {
-					entry.Content = minifiedHTML
-				} else {
-					entry.Content = content
-				}
+				entry.Content = minifyEntryContent(content)
 			}
 		}
 
@@ -189,9 +182,6 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
 func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User) error {
-	minifier := minify.New()
-	minifier.AddFunc("text/html", html.Minify)
-
 	startTime := time.Now()
 	websiteURL := getUrlFromEntry(feed, entry)
 
@@ -223,11 +213,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	}
 
 	if content != "" {
-		if minifiedHTML, err := minifier.String("text/html", content); err == nil {
-			entry.Content = minifiedHTML
-		} else {
-			entry.Content = content
-		}
+		entry.Content = minifyEntryContent(content)
 		if user.ShowReadingTime {
 			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 		}
@@ -438,4 +424,20 @@ func isRecentEntry(entry *model.Entry) bool {
 		return true
 	}
 	return false
+}
+
+func minifyEntryContent(entryContent string) string {
+	m := minify.New()
+
+	// Options required to avoid breaking the HTML content.
+	m.Add("text/html", &html.Minifier{
+		KeepEndTags: true,
+		KeepQuotes:  true,
+	})
+
+	if minifiedHTML, err := m.String("text/html", entryContent); err == nil {
+		entryContent = minifiedHTML
+	}
+
+	return entryContent
 }
