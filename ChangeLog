@@ -1,3 +1,28 @@
+Version 2.1.3 (April 27, 2024)
+------------------------------
+
+* `api`: `rand.Intn(math.MaxInt64)` causes tests to fail on 32-bit architectures (use `rand.Int()` instead)
+* `ci`: use `docker/metadata-action` instead of deprecated shell-scripts
+* `database`: remove `entries_feed_url_idx` index because entry URLs can exceeds btree index size limit
+* `finder`: find feeds from YouTube playlist
+* `http/response`: add brotli compression support
+* `integration/matrix`: fix function name in comment
+* `packaging`: specify container registry explicitly (e.g., Podman does not use `docker.io` by default)
+* `packaging`: use `make miniflux` instead of duplicating `go build` arguments (this leverages Go's PIE build mode)
+* `reader/fetcher`: add brotli content encoding support
+* `reader/processor`: minimize feed entries HTML content
+* `reader/rewrite`: add a rule for `oglaf.com`
+* `storage`: change `GetReadTime()` function to use `entries_feed_id_hash_key` index
+* `ui`: add seek and speed controls to media player
+* `ui`: add tag entries page
+* `ui`: fix JavaScript error when clicking on unread counter
+* `ui`: use `FORCE_REFRESH_INTERVAL` config for category refresh
+* Bump `github.com/tdewolff/minify/v2` from `2.20.19` to `2.20.20`
+* Bump `golang.org/x/net` from `0.22.0` to `0.24.0`
+* Bump `golang.org/x/term` from `0.18.0` to `0.19.0`
+* Bump `golang.org/x/oauth2` from `0.18.0` to `0.19.0`
+* Bump `github.com/yuin/goldmark` from `1.7.0` to `1.7.1`
+
 Version 2.1.2 (March 30, 2024)
 ------------------------------
 
