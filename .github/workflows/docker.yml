@@ -41,9 +41,11 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/miniflux
             quay.io/${{ github.repository_owner }}/miniflux
           tags: |
-            type=ref,event=pr,suffix=-distroless
-            type=schedule,pattern=nightly,suffix=-distroless
-            type=semver,pattern={{raw}},suffix=-distroless
+            type=ref,event=pr
+            type=schedule,pattern=nightly
+            type=semver,pattern={{raw}}
+          flavor: |
+            suffix=-distroless,onlatest=true
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
