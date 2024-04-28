@@ -19,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/integration/omnivore"
 	"miniflux.app/v2/internal/integration/pinboard"
 	"miniflux.app/v2/internal/integration/pocket"
+	"miniflux.app/v2/internal/integration/raindrop"
 	"miniflux.app/v2/internal/integration/readeck"
 	"miniflux.app/v2/internal/integration/readwise"
 	"miniflux.app/v2/internal/integration/shaarli"
@@ -359,6 +360,7 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			)
 		}
 	}
+
 	if userIntegrations.OmnivoreEnabled {
 		slog.Debug("Sending entry to Omnivore",
 			slog.Int64("user_id", userIntegrations.UserID),
@@ -369,6 +371,24 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		client := omnivore.NewClient(userIntegrations.OmnivoreAPIKey, userIntegrations.OmnivoreURL)
 		if err := client.SaveUrl(entry.URL); err != nil {
 			slog.Error("Unable to send entry to Omnivore",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
+	if userIntegrations.RaindropEnabled {
+		slog.Debug("Sending entry to Raindrop",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := raindrop.NewClient(userIntegrations.RaindropToken, userIntegrations.RaindropCollectionID, userIntegrations.RaindropTags)
+		if err := client.CreateRaindrop(entry.URL, entry.Title); err != nil {
+			slog.Error("Unable to send entry to Raindrop",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),
