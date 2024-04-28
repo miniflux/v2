@@ -96,6 +96,10 @@ type IntegrationForm struct {
 	OmnivoreEnabled                  bool
 	OmnivoreAPIKey                   string
 	OmnivoreURL                      string
+	RaindropEnabled                  bool
+	RaindropToken                    string
+	RaindropCollectionID             string
+	RaindropTags                     string
 }
 
 // Merge copy form values to the model.
@@ -181,6 +185,10 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.OmnivoreEnabled = i.OmnivoreEnabled
 	integration.OmnivoreAPIKey = i.OmnivoreAPIKey
 	integration.OmnivoreURL = i.OmnivoreURL
+	integration.RaindropEnabled = i.RaindropEnabled
+	integration.RaindropToken = i.RaindropToken
+	integration.RaindropCollectionID = i.RaindropCollectionID
+	integration.RaindropTags = i.RaindropTags
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -269,6 +277,10 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		OmnivoreEnabled:                  r.FormValue("omnivore_enabled") == "1",
 		OmnivoreAPIKey:                   r.FormValue("omnivore_api_key"),
 		OmnivoreURL:                      r.FormValue("omnivore_url"),
+		RaindropEnabled:                  r.FormValue("raindrop_enabled") == "1",
+		RaindropToken:                    r.FormValue("raindrop_token"),
+		RaindropCollectionID:             r.FormValue("raindrop_collection_id"),
+		RaindropTags:                     r.FormValue("raindrop_tags"),
 	}
 }
 
