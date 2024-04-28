@@ -110,6 +110,10 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		OmnivoreEnabled:                  integration.OmnivoreEnabled,
 		OmnivoreAPIKey:                   integration.OmnivoreAPIKey,
 		OmnivoreURL:                      integration.OmnivoreURL,
+		RaindropEnabled:                  integration.RaindropEnabled,
+		RaindropToken:                    integration.RaindropToken,
+		RaindropCollectionID:             integration.RaindropCollectionID,
+		RaindropTags:                     integration.RaindropTags,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

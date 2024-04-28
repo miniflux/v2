@@ -326,6 +326,28 @@
         </div>
     </details>
 
+    <details {{ if .form.RaindropEnabled }}open{{ end }}>
+        <summary>Raindrop</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="raindrop_enabled" value="1" {{ if .form.RaindropEnabled }}checked{{ end }}> {{ t "form.integration.raindrop_activate" }}
+            </label>
+
+            <label for="form-raindrop-token">{{ t "form.integration.raindrop_token" }}</label>
+            <input type="text" name="raindrop_token" id="form-raindrop-token" value="{{ .form.RaindropToken }}" spellcheck="false">
+
+            <label for="form-raindrop-collection-id">{{ t "form.integration.raindrop_collection_id" }}</label>
+            <input type="text" name="raindrop_collection_id" id="form-raindrop-collection-id" value="{{ .form.RaindropCollectionID }}" spellcheck="false">
+
+            <label for="form-raindrop-tags">{{ t "form.integration.raindrop_tags" }}</label>
+            <input type="text" name="raindrop_tags" id="form-raindrop-tags" value="{{ .form.RaindropTags }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.ReadeckEnabled }}open{{ end }}>
         <summary>Readeck</summary>
         <div class="form-section">
