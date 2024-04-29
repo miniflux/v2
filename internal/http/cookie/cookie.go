@@ -6,15 +6,14 @@ package cookie // import "miniflux.app/v2/internal/http/cookie"
 import (
 	"net/http"
 	"time"
+
+	"miniflux.app/v2/internal/config"
 )
 
 // Cookie names.
 const (
 	CookieAppSessionID  = "MinifluxAppSessionID"
 	CookieUserSessionID = "MinifluxUserSessionID"
-
-	// Cookie duration in days.
-	cookieDuration = 30
 )
 
 // New creates a new cookie.
@@ -25,7 +24,7 @@ func New(name, value string, isHTTPS bool, path string) *http.Cookie {
 		Path:     basePath(path),
 		Secure:   isHTTPS,
 		HttpOnly: true,
-		Expires:  time.Now().Add(cookieDuration * 24 * time.Hour),
+		Expires:  time.Now().Add(time.Duration(config.Opts.CleanupRemoveSessionsDays()) * 24 * time.Hour),
 		SameSite: http.SameSiteLaxMode,
 	}
 }
