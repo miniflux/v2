@@ -259,6 +259,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.metricsPassword = parseString(value, defaultMetricsPassword)
 		case "METRICS_PASSWORD_FILE":
 			p.opts.metricsPassword = readSecretFile(value, defaultMetricsPassword)
+		case "FETCH_NEBULA_WATCH_TIME":
+			p.opts.fetchNebulaWatchTime = parseBool(value, defaultFetchNebulaWatchTime)
 		case "FETCH_ODYSEE_WATCH_TIME":
 			p.opts.fetchOdyseeWatchTime = parseBool(value, defaultFetchOdyseeWatchTime)
 		case "FETCH_YOUTUBE_WATCH_TIME":
