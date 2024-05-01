@@ -2021,6 +2021,24 @@ func TestAuthProxyUserCreationAdmin(t *testing.T) {
 	}
 }
 
+func TestFetchNebulaWatchTime(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("FETCH_NEBULA_WATCH_TIME", "1")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := true
+	result := opts.FetchNebulaWatchTime()
+
+	if result != expected {
+		t.Fatalf(`Unexpected FETCH_NEBULA_WATCH_TIME value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestFetchOdyseeWatchTime(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("FETCH_ODYSEE_WATCH_TIME", "1")
