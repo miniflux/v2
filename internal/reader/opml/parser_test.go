@@ -33,7 +33,7 @@ func TestParseOpmlWithoutCategories(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "CNET News.com", FeedURL: "http://news.com.com/2547-1_3-0-5.xml", SiteURL: "http://news.com.com/"})
+	expected = append(expected, &Subcription{Title: "CNET News.com", FeedURL: "http://news.com.com/2547-1_3-0-5.xml", SiteURL: "http://news.com.com/", Description: "Tech news and business reports by CNET News.com. Focused on information technology, core topics include computers, hardware, software, networking, and Internet media."})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {

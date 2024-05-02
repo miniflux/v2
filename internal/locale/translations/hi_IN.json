@@ -317,6 +317,7 @@
     "form.feed.label.title": "शीर्षक",
     "form.feed.label.site_url": "साइट यूआरएल",
     "form.feed.label.feed_url": "फ़ीड यूआरएल",
+    "form.feed.label.description": "विवरण",
     "form.feed.label.category": "श्रेणी",
     "form.feed.label.crawler": "मूल सामग्री प्राप्त करें",
     "form.feed.label.feed_username": "फ़ीड उपयोगकर्ता नाम",

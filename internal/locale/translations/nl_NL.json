@@ -317,6 +317,7 @@
     "form.feed.label.title": "Naam",
     "form.feed.label.site_url": "Website URL",
     "form.feed.label.feed_url": "Feed URL",
+    "form.feed.label.description": "Beschrijving",
     "form.feed.label.category": "Categorie",
     "form.feed.label.crawler": "Download originele content",
     "form.feed.label.feed_username": "Feed-gebruikersnaam",

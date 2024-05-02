@@ -327,6 +327,7 @@
     "form.feed.label.title": "Tytuł",
     "form.feed.label.site_url": "URL strony",
     "form.feed.label.feed_url": "URL kanału",
+    "form.feed.label.description": "Opis",
     "form.feed.label.category": "Kategoria",
     "form.feed.label.crawler": "Pobierz oryginalną treść",
     "form.feed.label.feed_username": "Subskrypcję nazwa użytkownika",

@@ -317,6 +317,7 @@
     "form.feed.label.title": "Título",
     "form.feed.label.site_url": "URL do site",
     "form.feed.label.feed_url": "URL da fonte",
+    "form.feed.label.description": "Descrição",
     "form.feed.label.category": "Categoria",
     "form.feed.label.crawler": "Obter conteúdo original",
     "form.feed.label.feed_username": "Nome de usuário da fonte",

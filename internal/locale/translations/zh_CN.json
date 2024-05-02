@@ -307,6 +307,7 @@
     "form.feed.label.title": "标题",
     "form.feed.label.site_url": "源网站 URL",
     "form.feed.label.feed_url": "订阅源 URL",
+    "form.feed.label.description": "描述",
     "form.feed.label.category": "类别",
     "form.feed.label.crawler": "抓取全文内容",
     "form.feed.label.feed_username": "源用户名",

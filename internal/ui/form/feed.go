@@ -15,6 +15,7 @@ type FeedForm struct {
 	FeedURL                     string
 	SiteURL                     string
 	Title                       string
+	Description                 string
 	ScraperRules                string
 	RewriteRules                string
 	BlocklistRules              string
@@ -43,6 +44,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.Title = f.Title
 	feed.SiteURL = f.SiteURL
 	feed.FeedURL = f.FeedURL
+	feed.Description = f.Description
 	feed.ScraperRules = f.ScraperRules
 	feed.RewriteRules = f.RewriteRules
 	feed.BlocklistRules = f.BlocklistRules
@@ -76,6 +78,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		FeedURL:                     r.FormValue("feed_url"),
 		SiteURL:                     r.FormValue("site_url"),
 		Title:                       r.FormValue("title"),
+		Description:                 r.FormValue("description"),
 		ScraperRules:                r.FormValue("scraper_rules"),
 		UserAgent:                   r.FormValue("user_agent"),
 		Cookie:                      r.FormValue("cookie"),

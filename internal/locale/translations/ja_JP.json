@@ -307,6 +307,7 @@
     "form.feed.label.title": "タイトル",
     "form.feed.label.site_url": "サイト URL",
     "form.feed.label.feed_url": "フィード URL",
+    "form.feed.label.description": "説明",
     "form.feed.label.category": "カテゴリ",
     "form.feed.label.crawler": "オリジナルの内容を取得",
     "form.feed.label.feed_username": "フィードのユーザー名",

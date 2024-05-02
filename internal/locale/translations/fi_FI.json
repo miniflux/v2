@@ -319,6 +319,7 @@
     "form.feed.label.title": "Otsikko",
     "form.feed.label.site_url": "Sivuston URL-osoite",
     "form.feed.label.feed_url": "Syötteen URL-osoite",
+    "form.feed.label.description": "Kuvaus",
     "form.feed.label.category": "Kategoria",
     "form.feed.label.crawler": "Nouda alkuperäinen sisältö",
     "form.feed.label.feed_username": "Syötteen käyttäjätunnus",

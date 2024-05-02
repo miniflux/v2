@@ -307,6 +307,7 @@
     "form.feed.label.title": "標題",
     "form.feed.label.site_url": "網站 URL",
     "form.feed.label.feed_url": "訂閱 Feed URL",
+    "form.feed.label.description": "描述",
     "form.feed.label.category": "類別",
     "form.feed.label.crawler": "下載原文內容",
     "form.feed.label.feed_username": "Feed 使用者名稱",

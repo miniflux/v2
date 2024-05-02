@@ -9,12 +9,14 @@ type Subcription struct {
 	SiteURL      string
 	FeedURL      string
 	CategoryName string
+	Description  string
 }
 
 // Equals compare two subscriptions.
 func (s Subcription) Equals(subscription *Subcription) bool {
 	return s.Title == subscription.Title && s.SiteURL == subscription.SiteURL &&
-		s.FeedURL == subscription.FeedURL && s.CategoryName == subscription.CategoryName
+		s.FeedURL == subscription.FeedURL && s.CategoryName == subscription.CategoryName &&
+		s.Description == subscription.Description
 }
 
 // SubcriptionList is a list of subscriptions.
