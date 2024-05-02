@@ -30,7 +30,7 @@ jobs:
         with:
           go-version: "1.22.x"
       - run: "go vet ./..."
-      - uses: golangci/golangci-lint-action@v4
+      - uses: golangci/golangci-lint-action@v5
         with:
           args: --timeout 10m --skip-dirs tests --disable errcheck --enable sqlclosecheck --enable misspell --enable gofmt --enable goimports --enable whitespace --enable gocritic
       - uses: dominikh/staticcheck-action@v1.3.1

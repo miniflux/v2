@@ -8,10 +8,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"miniflux.app/v2/internal/locale"
 )
@@ -71,12 +73,31 @@ func (r *ResponseHandler) Close() {
 	}
 }
 
+func (r *ResponseHandler) getReader(maxBodySize int64) io.ReadCloser {
+	contentEncoding := strings.ToLower(r.httpResponse.Header.Get("Content-Encoding"))
+	slog.Debug("Request response",
+		slog.String("effective_url", r.EffectiveURL()),
+		slog.String("content_length", r.httpResponse.Header.Get("Content-Length")),
+		slog.String("content_encoding", contentEncoding),
+		slog.String("content_type", r.httpResponse.Header.Get("Content-Type")),
+	)
+
+	reader := r.httpResponse.Body
+	switch contentEncoding {
+	case "br":
+		reader = NewBrotliReadCloser(r.httpResponse.Body)
+	case "gzip":
+		reader = NewGzipReadCloser(r.httpResponse.Body)
+	}
+	return http.MaxBytesReader(nil, reader, maxBodySize)
+}
+
 func (r *ResponseHandler) Body(maxBodySize int64) io.ReadCloser {
-	return http.MaxBytesReader(nil, r.httpResponse.Body, maxBodySize)
+	return r.getReader(maxBodySize)
 }
 
 func (r *ResponseHandler) ReadBody(maxBodySize int64) ([]byte, *locale.LocalizedErrorWrapper) {
-	limitedReader := http.MaxBytesReader(nil, r.httpResponse.Body, maxBodySize)
+	limitedReader := r.getReader(maxBodySize)
 
 	buffer, err := io.ReadAll(limitedReader)
 	if err != nil && err != io.EOF {

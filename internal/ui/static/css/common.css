@@ -1215,6 +1215,39 @@ audio, video {
     width: 100%;
 }
 
+.media-controls{
+    font-size: .9em;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.media-controls .media-control-label{
+    line-height: 1em;
+}
+
+.media-controls>div{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content:center;
+    min-width: 50%;
+    align-items: center;
+}
+
+.media-controls>div>*{
+    padding-left:12px;
+}
+
+.media-controls>div>*:first-child{
+    padding-left:0;
+}
+
+.media-controls span.speed-indicator{
+    /*monospace to ensure constant width even when value change. JS ensure the value is always on 4 characters (in most cases)
+    This reduce ui flickering due to element moving around a bit
+    */
+    font-family: monospace;
+}
+
 .integration-form summary {
     font-weight: 700;
 }

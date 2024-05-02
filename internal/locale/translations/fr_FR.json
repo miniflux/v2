@@ -529,5 +529,14 @@
     "error.unable_to_detect_rssbridge": "Impossible de détecter un flux RSS en utilisant RSS-Bridge: %v.",
     "error.feed_format_not_detected": "Impossible de détecter le format du flux : %v.",
     "form.prefs.label.media_playback_rate": "Vitesse de lecture de l'audio/vidéo",
-    "error.settings_media_playback_rate_range": "La vitesse de lecture est hors limites"
+    "error.settings_media_playback_rate_range": "La vitesse de lecture est hors limites",
+    "enclosure_media_controls.seek" : "Avancer/Reculer :",
+    "enclosure_media_controls.seek.title" : "Avancer/Reculer de %s seconds",
+    "enclosure_media_controls.speed" : "Vitesse :",
+    "enclosure_media_controls.speed.faster" : "Accélérer",
+    "enclosure_media_controls.speed.faster.title" : "Accélérer de %sx",
+    "enclosure_media_controls.speed.slower" : "Ralentir",
+    "enclosure_media_controls.speed.slower.title" : "Ralentir de %sx",
+    "enclosure_media_controls.speed.reset" : "Réinitialiser",
+    "enclosure_media_controls.speed.reset.title" : "Réinitialiser la vitesse de lecture à 1x"
 }

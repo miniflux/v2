@@ -29,7 +29,9 @@ func (h *handler) showIcon(w http.ResponseWriter, r *http.Request) {
 		b.WithHeader("Content-Security-Policy", `default-src 'self'`)
 		b.WithHeader("Content-Type", icon.MimeType)
 		b.WithBody(icon.Content)
-		b.WithoutCompression()
+		if icon.MimeType != "image/svg+xml" {
+			b.WithoutCompression()
+		}
 		b.Write()
 	})
 }
