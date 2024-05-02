@@ -27,11 +27,12 @@ type opmlHeader struct {
 }
 
 type opmlOutline struct {
-	Title    string                `xml:"title,attr,omitempty"`
-	Text     string                `xml:"text,attr"`
-	FeedURL  string                `xml:"xmlUrl,attr,omitempty"`
-	SiteURL  string                `xml:"htmlUrl,attr,omitempty"`
-	Outlines opmlOutlineCollection `xml:"outline,omitempty"`
+	Title       string                `xml:"title,attr,omitempty"`
+	Text        string                `xml:"text,attr"`
+	FeedURL     string                `xml:"xmlUrl,attr,omitempty"`
+	SiteURL     string                `xml:"htmlUrl,attr,omitempty"`
+	Description string                `xml:"description,attr,omitempty"`
+	Outlines    opmlOutlineCollection `xml:"outline,omitempty"`
 }
 
 func (outline opmlOutline) MarshalXML(e *xml.Encoder, start xml.StartElement) error {

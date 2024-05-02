@@ -63,6 +63,9 @@
             <label for="form-feed-url">{{ t "form.feed.label.feed_url" }}</label>
             <input type="url" name="feed_url" id="form-feed-url" placeholder="https://domain.tld/" value="{{ .form.FeedURL }}" spellcheck="false" required>
 
+            <label for="form-description">{{ t "form.feed.label.description" }}</label>
+            <textarea name="description" id="form-description" cols="40" rows="10" >{{ .form.Description }}</textarea>
+
             {{ if not .form.CategoryHidden }}
             <label><input type="checkbox" name="hide_globally" value="1"{{ if .form.HideGlobally }} checked{{ end }}> {{ t "form.feed.label.hide_globally" }}</label>
             {{ end }}

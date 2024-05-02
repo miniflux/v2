@@ -327,6 +327,7 @@
     "form.feed.label.title": "Назва",
     "form.feed.label.site_url": "URL-адреса сайту",
     "form.feed.label.feed_url": "URL-адреса стрічки",
+    "form.feed.label.description": "Опис",
     "form.feed.label.category": "Категорія",
     "form.feed.label.crawler": "Завантажувати оригінальний вміст",
     "form.feed.label.feed_username": "Ім’я користувача для завантаження",

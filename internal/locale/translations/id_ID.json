@@ -307,6 +307,7 @@
     "form.feed.label.title": "Judul",
     "form.feed.label.site_url": "URL Situs",
     "form.feed.label.feed_url": "URL Umpan",
+    "form.feed.label.description": "Deskripsi",
     "form.feed.label.category": "Kategori",
     "form.feed.label.crawler": "Ambil konten asli",
     "form.feed.label.feed_username": "Nama Pengguna Umpan",

@@ -29,6 +29,7 @@ func (h *Handler) Export(userID int64) (string, error) {
 			Title:        feed.Title,
 			FeedURL:      feed.FeedURL,
 			SiteURL:      feed.SiteURL,
+			Description:  feed.Description,
 			CategoryName: feed.Category.Title,
 		})
 	}
@@ -68,11 +69,12 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 			}
 
 			feed := &model.Feed{
-				UserID:   userID,
-				Title:    subscription.Title,
-				FeedURL:  subscription.FeedURL,
-				SiteURL:  subscription.SiteURL,
-				Category: category,
+				UserID:      userID,
+				Title:       subscription.Title,
+				FeedURL:     subscription.FeedURL,
+				SiteURL:     subscription.SiteURL,
+				Description: subscription.Description,
+				Category:    category,
 			}
 
 			h.store.CreateFeed(feed)

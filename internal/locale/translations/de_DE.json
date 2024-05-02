@@ -317,6 +317,7 @@
     "form.feed.label.title": "Titel",
     "form.feed.label.site_url": "URL der Webseite",
     "form.feed.label.feed_url": "URL des Abonnements",
+    "form.feed.label.description": "Beschreibung",
     "form.feed.label.category": "Kategorie",
     "form.feed.label.crawler": "Originalinhalt herunterladen",
     "form.feed.label.feed_username": "Benutzername des Abonnements",

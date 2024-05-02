@@ -28,6 +28,7 @@ type Feed struct {
 	FeedURL                     string    `json:"feed_url"`
 	SiteURL                     string    `json:"site_url"`
 	Title                       string    `json:"title"`
+	Description                 string    `json:"description"`
 	CheckedAt                   time.Time `json:"checked_at"`
 	NextCheckAt                 time.Time `json:"next_check_at"`
 	EtagHeader                  string    `json:"etag_header"`
@@ -167,6 +168,7 @@ type FeedModificationRequest struct {
 	FeedURL                     *string `json:"feed_url"`
 	SiteURL                     *string `json:"site_url"`
 	Title                       *string `json:"title"`
+	Description                 *string `json:"description"`
 	ScraperRules                *string `json:"scraper_rules"`
 	RewriteRules                *string `json:"rewrite_rules"`
 	BlocklistRules              *string `json:"blocklist_rules"`
@@ -199,6 +201,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.Title != nil && *f.Title != "" {
 		feed.Title = *f.Title
+	}
+
+	if f.Description != nil && *f.Description != "" {
+		feed.Description = *f.Description
 	}
 
 	if f.ScraperRules != nil {

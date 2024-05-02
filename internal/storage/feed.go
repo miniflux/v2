@@ -238,10 +238,11 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			url_rewrite_rules,
 			no_media_player,
 			apprise_service_urls,
-			disable_http2
+			disable_http2,
+			description
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
 		RETURNING
 			id
 	`
@@ -272,6 +273,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.NoMediaPlayer,
 		feed.AppriseServiceURLs,
 		feed.DisableHTTP2,
+		feed.Description,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -344,9 +346,10 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			url_rewrite_rules=$25,
 			no_media_player=$26,
 			apprise_service_urls=$27,
-			disable_http2=$28
+			disable_http2=$28,
+			description=$29
 		WHERE
-			id=$29 AND user_id=$30
+			id=$30 AND user_id=$31
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -377,6 +380,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.NoMediaPlayer,
 		feed.AppriseServiceURLs,
 		feed.DisableHTTP2,
+		feed.Description,
 		feed.ID,
 		feed.UserID,
 	)

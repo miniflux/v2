@@ -327,6 +327,7 @@
     "form.feed.label.title": "Название",
     "form.feed.label.site_url": "Адрес сайта",
     "form.feed.label.feed_url": "Адрес подписки",
+    "form.feed.label.description": "Описание",
     "form.feed.label.category": "Категория",
     "form.feed.label.crawler": "Извлечь оригинальное содержимое",
     "form.feed.label.feed_username": "Имя пользователя подписки",

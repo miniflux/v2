@@ -48,10 +48,11 @@ func convertSubscriptionsToOPML(subscriptions SubcriptionList) *opmlDocument {
 		category := opmlOutline{Text: categoryName, Outlines: make(opmlOutlineCollection, 0, len(groupedSubs[categoryName]))}
 		for _, subscription := range groupedSubs[categoryName] {
 			category.Outlines = append(category.Outlines, opmlOutline{
-				Title:   subscription.Title,
-				Text:    subscription.Title,
-				FeedURL: subscription.FeedURL,
-				SiteURL: subscription.SiteURL,
+				Title:       subscription.Title,
+				Text:        subscription.Title,
+				FeedURL:     subscription.FeedURL,
+				SiteURL:     subscription.SiteURL,
+				Description: subscription.Description,
 			})
 		}
 

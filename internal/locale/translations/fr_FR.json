@@ -317,6 +317,7 @@
     "form.feed.label.title": "Titre",
     "form.feed.label.site_url": "URL du site web",
     "form.feed.label.feed_url": "URL du flux",
+    "form.feed.label.description": "Description",
     "form.feed.label.category": "Catégorie",
     "form.feed.label.crawler": "Récupérer le contenu original",
     "form.feed.label.feed_username": "Nom d'utilisateur du flux",

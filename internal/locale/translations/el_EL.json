@@ -319,6 +319,7 @@
     "form.feed.label.title": "Τίτλος",
     "form.feed.label.site_url": "Διεύθυνση URL ιστότοπου",
     "form.feed.label.feed_url": "Διεύθυνση URL ροής",
+    "form.feed.label.description": "Περιγραφή",
     "form.feed.label.category": "Κατηγορία",
     "form.feed.label.crawler": "Λήψη αρχικού περιεχομένου",
     "form.feed.label.feed_username": "Όνομα Χρήστη ροής",

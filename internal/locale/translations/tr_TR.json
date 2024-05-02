@@ -154,6 +154,7 @@
   "form.feed.label.disabled": "Bu beslemeyi yenileme",
   "form.feed.label.feed_password": "Besleme Parolası",
   "form.feed.label.feed_url": "Besleme URL'si",
+  "form.feed.label.description": "Açıklama",
   "form.feed.label.feed_username": "Besleme Kullanıcı Adı",
   "form.feed.label.fetch_via_proxy": "Proxy ile çek",
   "form.feed.label.hide_globally": "Genel okunmamış listesindeki girişleri gizle",
