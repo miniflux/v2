@@ -56,6 +56,7 @@ const (
 	defaultMediaResourceTypes                 = "image"
 	defaultMediaProxyURL                      = ""
 	defaultFilterEntryMaxAgeDays              = 0
+	defaultFetchNebulaWatchTime               = false
 	defaultFetchOdyseeWatchTime               = false
 	defaultFetchYouTubeWatchTime              = false
 	defaultYouTubeEmbedUrlOverride            = "https://www.youtube-nocookie.com/embed/"
@@ -140,6 +141,7 @@ type Options struct {
 	mediaProxyMode                     string
 	mediaProxyResourceTypes            []string
 	mediaProxyCustomURL                string
+	fetchNebulaWatchTime               bool
 	fetchOdyseeWatchTime               bool
 	fetchYouTubeWatchTime              bool
 	filterEntryMaxAgeDays              int
@@ -216,6 +218,7 @@ func NewOptions() *Options {
 		mediaProxyResourceTypes:            []string{defaultMediaResourceTypes},
 		mediaProxyCustomURL:                defaultMediaProxyURL,
 		filterEntryMaxAgeDays:              defaultFilterEntryMaxAgeDays,
+		fetchNebulaWatchTime:               defaultFetchNebulaWatchTime,
 		fetchOdyseeWatchTime:               defaultFetchOdyseeWatchTime,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
 		youTubeEmbedUrlOverride:            defaultYouTubeEmbedUrlOverride,
@@ -486,6 +489,12 @@ func (o *Options) YouTubeEmbedUrlOverride() string {
 	return o.youTubeEmbedUrlOverride
 }
 
+// FetchNebulaWatchTime returns true if the Nebula video duration
+// should be fetched and used as a reading time.
+func (o *Options) FetchNebulaWatchTime() bool {
+	return o.fetchNebulaWatchTime
+}
+
 // FetchOdyseeWatchTime returns true if the Odysee video duration
 // should be fetched and used as a reading time.
 func (o *Options) FetchOdyseeWatchTime() bool {
@@ -647,6 +656,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"DISABLE_SCHEDULER_SERVICE":              !o.schedulerService,
 		"FILTER_ENTRY_MAX_AGE_DAYS":              o.filterEntryMaxAgeDays,
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
+		"FETCH_NEBULA_WATCH_TIME":                o.fetchNebulaWatchTime,
 		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
 		"HTTPS":                                  o.HTTPS,
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
