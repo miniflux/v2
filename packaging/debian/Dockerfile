@@ -1,6 +1,4 @@
-ARG BASE_IMAGE_ARCH="amd64"
-
-FROM ${BASE_IMAGE_ARCH}/golang:1.22-bookworm AS build
+FROM docker.io/golang:1.22-bookworm AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
