@@ -1,12 +1,12 @@
-APP          := miniflux
-DOCKER_IMAGE := miniflux/miniflux
-VERSION      := $(shell git describe --tags --abbrev=0 2>/dev/null)
-COMMIT       := $(shell git rev-parse --short HEAD 2>/dev/null)
-BUILD_DATE   := `date +%FT%T%z`
-LD_FLAGS     := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)' -X 'miniflux.app/v2/internal/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/internal/version.BuildDate=$(BUILD_DATE)'"
-PKG_LIST     := $(shell go list ./... | grep -v /vendor/)
-DB_URL       := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
-DEB_IMG_ARCH := amd64
+APP             := miniflux
+DOCKER_IMAGE    := miniflux/miniflux
+VERSION         := $(shell git describe --tags --abbrev=0 2>/dev/null)
+COMMIT          := $(shell git rev-parse --short HEAD 2>/dev/null)
+BUILD_DATE      := `date +%FT%T%z`
+LD_FLAGS        := "-s -w -X 'miniflux.app/v2/internal/version.Version=$(VERSION)' -X 'miniflux.app/v2/internal/version.Commit=$(COMMIT)' -X 'miniflux.app/v2/internal/version.BuildDate=$(BUILD_DATE)'"
+PKG_LIST        := $(shell go list ./... | grep -v /vendor/)
+DB_URL          := postgres://postgres:postgres@localhost/miniflux_test?sslmode=disable
+DOCKER_PLATFORM := amd64
 
 export PGPASSWORD := postgres
 
@@ -163,15 +163,15 @@ rpm: clean
 		rpmbuild -bb --define "_miniflux_version $(VERSION)" /root/rpmbuild/SPECS/miniflux.spec
 
 debian:
-	@ docker build --load \
-		--build-arg BASE_IMAGE_ARCH=$(DEB_IMG_ARCH) \
-		-t $(DEB_IMG_ARCH)/miniflux-deb-builder \
+	@ docker buildx build --load \
+		--platform linux/$(DOCKER_PLATFORM) \
+		-t miniflux-deb-builder \
 		-f packaging/debian/Dockerfile \
 		.
-	@ docker run --rm \
-		-v ${PWD}:/pkg $(DEB_IMG_ARCH)/miniflux-deb-builder
+	@ docker run --rm --platform linux/$(DOCKER_PLATFORM) \
+		-v ${PWD}:/pkg miniflux-deb-builder
 
 debian-packages: clean
-	$(MAKE) debian DEB_IMG_ARCH=amd64
-	$(MAKE) debian DEB_IMG_ARCH=arm64v8
-	$(MAKE) debian DEB_IMG_ARCH=arm32v7
+	$(MAKE) debian DOCKER_PLATFORM=amd64
+	$(MAKE) debian DOCKER_PLATFORM=arm64
+	$(MAKE) debian DOCKER_PLATFORM=arm/v7
