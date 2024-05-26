@@ -232,7 +232,14 @@ func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
 		parts := customReplaceRuleRegex.FindStringSubmatch(feed.UrlRewriteRules)
 
 		if len(parts) >= 3 {
-			re := regexp.MustCompile(parts[1])
+			re, err := regexp.Compile(parts[1])
+			if err != nil {
+				slog.Error("Failed on regexp compilation",
+					slog.String("url_rewrite_rules", feed.UrlRewriteRules),
+					slog.Any("error", err),
+				)
+				return url
+			}
 			url = re.ReplaceAllString(entry.URL, parts[2])
 			slog.Debug("Rewriting entry URL",
 				slog.String("original_entry_url", entry.URL),
