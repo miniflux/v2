@@ -30,6 +30,12 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	creds, err := h.store.WebAuthnCredentialsByUserID(loggedUser.ID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
 	settingsForm := form.NewSettingsForm(r)
 
 	sess := session.New(h.store, request.SessionID(r))
@@ -42,6 +48,10 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("user", loggedUser)
 	view.Set("countUnread", h.store.CountUnreadEntries(loggedUser.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
+	view.Set("default_home_pages", model.HomePages())
+	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
+	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(loggedUser.ID))
+	view.Set("webAuthnCerts", creds)
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
