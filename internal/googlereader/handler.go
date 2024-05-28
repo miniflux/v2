@@ -1022,7 +1022,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 			Title:         entry.Title,
 			Author:        entry.Author,
 			TimestampUsec: fmt.Sprintf("%d", entry.Date.UnixNano()/(int64(time.Microsecond)/int64(time.Nanosecond))),
-			CrawlTimeMsec: fmt.Sprintf("%d", entry.Date.UnixNano()/(int64(time.Microsecond)/int64(time.Nanosecond))),
+			CrawlTimeMsec: fmt.Sprintf("%d", entry.Date.UnixNano()/(int64(time.Millisecond)/int64(time.Nanosecond))),
 			Published:     entry.Date.Unix(),
 			Updated:       entry.Date.Unix(),
 			Categories:    categories,
