@@ -1021,10 +1021,10 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 			ID:            fmt.Sprintf(EntryIDLong, entry.ID),
 			Title:         entry.Title,
 			Author:        entry.Author,
-			TimestampUsec: fmt.Sprintf("%d", entry.Date.UnixNano()/(int64(time.Microsecond)/int64(time.Nanosecond))),
-			CrawlTimeMsec: fmt.Sprintf("%d", entry.Date.UnixNano()/(int64(time.Microsecond)/int64(time.Nanosecond))),
+			TimestampUsec: fmt.Sprintf("%d", entry.Date.UnixMicro()),
+			CrawlTimeMsec: fmt.Sprintf("%d", entry.CreatedAt.UnixMilli()),
 			Published:     entry.Date.Unix(),
-			Updated:       entry.Date.Unix(),
+			Updated:       entry.ChangedAt.Unix(),
 			Categories:    categories,
 			Canonical: []contentHREF{
 				{
