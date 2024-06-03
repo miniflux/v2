@@ -4,6 +4,9 @@
 package validator // import "miniflux.app/v2/internal/validator"
 
 import (
+	"slices"
+	"strings"
+
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/storage"
@@ -108,6 +111,18 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.BlockFilterEntryRules != nil {
+		if err := isValidFilterRules(*changes.BlockFilterEntryRules); err != nil {
+			return err
+		}
+	}
+
+	if changes.KeepFilterEntryRules != nil {
+		if err := isValidFilterRules(*changes.KeepFilterEntryRules); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -192,6 +207,33 @@ func validateDefaultHomePage(defaultHomePage string) *locale.LocalizedError {
 func validateMediaPlaybackRate(mediaPlaybackRate float64) *locale.LocalizedError {
 	if mediaPlaybackRate < 0.25 || mediaPlaybackRate > 4 {
 		return locale.NewLocalizedError("error.settings_media_playback_rate_range")
+	}
+	return nil
+}
+
+func isValidFilterRules(filterEntryRules string) *locale.LocalizedError {
+	// Valid Format: FieldName(RegEx)~FieldName(RegEx)~...
+	fieldNames := []string{"Title", "URL", "CommentsURL", "Content", "Author", "Tags"}
+
+	rules := strings.Split(filterEntryRules, "~")
+	for _, rule := range rules {
+		// Validate Rule Syntax
+		if !strings.Contains(rule, "(") || !strings.Contains(rule, ")") {
+			return locale.NewLocalizedError("error.settings_media_playback_rate_range")
+		}
+
+		// Split FieldName and RegEx
+		parts := strings.SplitN(rule, "(", 2)
+		parts[1] = parts[1][:len(parts)-1]
+
+		// Not a property of model.Entry
+		if !slices.Contains(fieldNames, parts[0]) {
+			return locale.NewLocalizedError("error.settings_media_playback_rate_range")
+		}
+
+		if !IsValidRegex(parts[1]) {
+			return locale.NewLocalizedError("error.settings_media_playback_rate_range")
+		}
 	}
 	return nil
 }

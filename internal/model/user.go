@@ -36,6 +36,8 @@ type User struct {
 	CategoriesSortingOrder string     `json:"categories_sorting_order"`
 	MarkReadOnView         bool       `json:"mark_read_on_view"`
 	MediaPlaybackRate      float64    `json:"media_playback_rate"`
+	BlockFilterEntryRules  string     `json:"block_filter_entry_rules"`
+	KeepFilterEntryRules   string     `json:"keep_filter_entry_rules"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -72,6 +74,8 @@ type UserModificationRequest struct {
 	CategoriesSortingOrder *string  `json:"categories_sorting_order"`
 	MarkReadOnView         *bool    `json:"mark_read_on_view"`
 	MediaPlaybackRate      *float64 `json:"media_playback_rate"`
+	BlockFilterEntryRules  *string  `json:"block_filter_entry_rules"`
+	KeepFilterEntryRules   *string  `json:"keep_filter_entry_rules"`
 }
 
 // Patch updates the User object with the modification request.
@@ -166,6 +170,14 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.MediaPlaybackRate != nil {
 		user.MediaPlaybackRate = *u.MediaPlaybackRate
+	}
+
+	if u.BlockFilterEntryRules != nil {
+		user.BlockFilterEntryRules = *u.BlockFilterEntryRules
+	}
+
+	if u.KeepFilterEntryRules != nil {
+		user.KeepFilterEntryRules = *u.KeepFilterEntryRules
 	}
 }
 

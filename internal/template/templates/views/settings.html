@@ -200,6 +200,22 @@
 
         <label for="form-custom-css">{{t "form.prefs.label.custom_css" }}</label>
         <textarea id="form-custom-css" name="custom_css" cols="40" rows="10" spellcheck="false">{{ .form.CustomCSS }}</textarea>
+
+        <h2>{{ t "page.settings.rules.title" }}</h2>
+        <div class="form-label-row">
+            <label for="form-blocklist-rules">
+                {{ t "form.prefs.label.block_filter_entry_rules" }}
+            </label>
+        </div>
+        <input type="text" name="block_filter_entry_rules" id="form-blocklist-rules" value="{{ .form.BlockFilterEntryRules }}" spellcheck="false">
+
+        <div class="form-label-row">
+            <label for="form-keeplist-rules">
+                {{ t "form.prefs.label.keep_filter_entry_rules" }}
+            </label>
+        </div>
+        <input type="text" name="keep_filter_entry_rules" id="form-keeplist-rules" value="{{ .form.KeepFilterEntryRules }}" spellcheck="false">
+
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>

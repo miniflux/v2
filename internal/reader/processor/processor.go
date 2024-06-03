@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -51,7 +52,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			slog.Int64("feed_id", feed.ID),
 			slog.String("feed_url", feed.FeedURL),
 		)
-		if isBlockedEntry(feed, entry) || !isAllowedEntry(feed, entry) || !isRecentEntry(entry) {
+		if isBlockedEntry(feed, entry, user) || !isAllowedEntry(feed, entry, user) || !isRecentEntry(entry) {
 			continue
 		}
 
@@ -121,7 +122,46 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 	feed.Entries = filteredEntries
 }
 
-func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
+func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
+	if user.BlockFilterEntryRules != "" {
+		rules := strings.Split(user.BlockFilterEntryRules, "~")
+		for _, rule := range rules {
+			parts := strings.SplitN(rule, "(", 2)
+			parts[1] = parts[1][:len(parts[1])-1]
+
+			var match bool
+			if parts[0] == "Title" {
+				match, _ = regexp.MatchString(parts[1], entry.Title)
+			} else if parts[0] == "URL" {
+				match, _ = regexp.MatchString(parts[1], entry.URL)
+			} else if parts[0] == "CommentsURL" {
+				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
+			} else if parts[0] == "Content" {
+				match, _ = regexp.MatchString(parts[1], entry.Content)
+			} else if parts[0] == "Author" {
+				match, _ = regexp.MatchString(parts[1], entry.Author)
+			} else if parts[0] == "Tags" {
+				containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+					match, _ = regexp.MatchString(parts[1], tag)
+					return match
+				})
+				if containsBlockedTag {
+					match = true
+				}
+			}
+
+			if match {
+				slog.Debug("Blocking entry based on rule",
+					slog.String("entry_url", entry.URL),
+					slog.Int64("feed_id", feed.ID),
+					slog.String("feed_url", feed.FeedURL),
+					slog.String("rule", rule),
+				)
+				return true
+			}
+		}
+	}
+
 	if feed.BlocklistRules == "" {
 		return false
 	}
@@ -152,7 +192,47 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry) bool {
 	return false
 }
 
-func isAllowedEntry(feed *model.Feed, entry *model.Entry) bool {
+func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
+	if user.KeepFilterEntryRules != "" {
+		rules := strings.Split(user.KeepFilterEntryRules, "~")
+		for _, rule := range rules {
+			parts := strings.SplitN(rule, "(", 2)
+			parts[1] = parts[1][:len(parts[1])-1]
+
+			var match bool
+			if parts[0] == "Title" {
+				match, _ = regexp.MatchString(parts[1], entry.Title)
+			} else if parts[0] == "URL" {
+				match, _ = regexp.MatchString(parts[1], entry.URL)
+			} else if parts[0] == "CommentsURL" {
+				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
+			} else if parts[0] == "Content" {
+				match, _ = regexp.MatchString(parts[1], entry.Content)
+			} else if parts[0] == "Author" {
+				match, _ = regexp.MatchString(parts[1], entry.Author)
+			} else if parts[0] == "Tags" {
+				containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+					match, _ = regexp.MatchString(parts[1], tag)
+					return match
+				})
+				if containsBlockedTag {
+					match = true
+				}
+			}
+
+			if match {
+				slog.Debug("Allowing entry based on rule",
+					slog.String("entry_url", entry.URL),
+					slog.Int64("feed_id", feed.ID),
+					slog.String("feed_url", feed.FeedURL),
+					slog.String("rule", rule),
+				)
+				return true
+			}
+		}
+		return false
+	}
+
 	if feed.KeeplistRules == "" {
 		return true
 	}
