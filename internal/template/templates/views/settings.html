@@ -201,7 +201,13 @@
         <label for="form-custom-css">{{t "form.prefs.label.custom_css" }}</label>
         <textarea id="form-custom-css" name="custom_css" cols="40" rows="10" spellcheck="false">{{ .form.CustomCSS }}</textarea>
 
-        <h2>{{ t "page.settings.rules.title" }}</h2>
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>{{ t "form.prefs.fieldset.global_feed_settings" }}</legend>
         <div class="form-label-row">
             <label for="form-blocklist-rules">
                 {{ t "form.prefs.label.block_filter_entry_rules" }}
