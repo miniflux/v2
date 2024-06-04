@@ -384,8 +384,6 @@
     "form.prefs.label.entry_order": "Entry sorting column",
     "form.prefs.label.default_home_page": "Default home page",
     "form.prefs.label.categories_sorting_order": "Categories sorting",
-    "form.prefs.label.block_filter_entry_rules": "Entry Block Rules",
-    "form.prefs.label.keep_filter_entry_rules": "Entry Keep Rules",
     "form.prefs.label.mark_read_on_view": "Automatically mark entries as read when viewed",
     "form.prefs.fieldset.application_settings": "Application Settings",
     "form.prefs.fieldset.authentication_settings": "Authentication Settings",

@@ -210,14 +210,14 @@
         <legend>{{ t "form.prefs.fieldset.global_feed_settings" }}</legend>
         <div class="form-label-row">
             <label for="form-blocklist-rules">
-                {{ t "form.prefs.label.block_filter_entry_rules" }}
+                {{ t "form.feed.label.blocklist_rules" }}
             </label>
         </div>
         <input type="text" name="block_filter_entry_rules" id="form-blocklist-rules" value="{{ .form.BlockFilterEntryRules }}" spellcheck="false">
 
         <div class="form-label-row">
             <label for="form-keeplist-rules">
-                {{ t "form.prefs.label.keep_filter_entry_rules" }}
+                {{ t "form.feed.label.keeplist_rules" }}
             </label>
         </div>
         <input type="text" name="keep_filter_entry_rules" id="form-keeplist-rules" value="{{ .form.KeepFilterEntryRules }}" spellcheck="false">
