@@ -15,23 +15,33 @@ func TestBlockingEntries(t *testing.T) {
 	var scenarios = []struct {
 		feed     *model.Feed
 		entry    *model.Entry
+		user     *model.User
 		expected bool
 	}{
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{URL: "https://example.com"}, true},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{URL: "https://different.com"}, false},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, true},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, false},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Tags: []string{"example", "something else"}}, true},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"example", "something else"}}, true},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"something different", "something else"}}, true},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Tags: []string{"something different", "something else"}}, false},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Example"}, true},
-		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Something different"}, false},
-		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{URL: "https://example.com"}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{URL: "https://different.com"}, &model.User{}, false},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, &model.User{}, false},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Tags: []string{"example", "something else"}}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"example", "something else"}}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"something different", "something else"}}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Tags: []string{"something different", "something else"}}, &model.User{}, false},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Example"}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlocklistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Something different"}, &model.User{}, false},
+		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, &model.User{}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{BlockFilterEntryRules: "URL((?i)example)~Title((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{URL: "https://different.com", Title: "Some Test"}, &model.User{BlockFilterEntryRules: "URL((?i)example)~Title((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{URL: "https://different.com", Title: "Some Example"}, &model.User{BlockFilterEntryRules: "URL((?i)example)~Title((?i)Test)"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{CommentsURL: "https://example.com", Content: "Some Example"}, &model.User{BlockFilterEntryRules: "CommentsURL((?i)example)~Content((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{CommentsURL: "https://different.com", Content: "Some Test"}, &model.User{BlockFilterEntryRules: "CommentsURL((?i)example)~Content((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{CommentsURL: "https://different.com", Content: "Some Example"}, &model.User{BlockFilterEntryRules: "CommentsURL((?i)example)~Content((?i)Test)"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Example", Tags: []string{"example", "something else"}}, &model.User{BlockFilterEntryRules: "Author((?i)example)~Tags((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{BlockFilterEntryRules: "Author((?i)example)~Tags((?i)example)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{BlockFilterEntryRules: "Author((?i)example)~Tags((?i)Test)"}, false},
 	}
 
 	for _, tc := range scenarios {
-		result := isBlockedEntry(tc.feed, tc.entry)
+		result := isBlockedEntry(tc.feed, tc.entry, tc.user)
 		if tc.expected != result {
 			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
 		}
@@ -42,23 +52,33 @@ func TestAllowEntries(t *testing.T) {
 	var scenarios = []struct {
 		feed     *model.Feed
 		entry    *model.Entry
+		user     *model.User
 		expected bool
 	}{
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "https://example.com"}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "https://different.com"}, false},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, false},
-		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different", Tags: []string{"example", "something else"}}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"example", "something else"}}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"something different", "something else"}}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something more", Tags: []string{"something different", "something else"}}, false},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Example"}, true},
-		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Something different"}, false},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "https://example.com"}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "https://different.com"}, &model.User{}, false},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Some Example"}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different"}, &model.User{}, false},
+		{&model.Feed{ID: 1}, &model.Entry{Title: "No rule defined"}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different", Tags: []string{"example", "something else"}}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"example", "something else"}}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Example", Tags: []string{"something different", "something else"}}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something more", Tags: []string{"something different", "something else"}}, &model.User{}, false},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Example"}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeeplistRules: "(?i)example"}, &model.Entry{Title: "Something different", Author: "Something different"}, &model.User{}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{KeepFilterEntryRules: "URL((?i)example)~Title((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{URL: "https://different.com", Title: "Some Test"}, &model.User{KeepFilterEntryRules: "URL((?i)example)~Title((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{URL: "https://different.com", Title: "Some Example"}, &model.User{KeepFilterEntryRules: "URL((?i)example)~Title((?i)Test)"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{CommentsURL: "https://example.com", Content: "Some Example"}, &model.User{KeepFilterEntryRules: "CommentsURL((?i)example)~Content((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{CommentsURL: "https://different.com", Content: "Some Test"}, &model.User{KeepFilterEntryRules: "CommentsURL((?i)example)~Content((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{CommentsURL: "https://different.com", Content: "Some Example"}, &model.User{KeepFilterEntryRules: "CommentsURL((?i)example)~Content((?i)Test)"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Example", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "Author((?i)example)~Tags((?i)Test)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "Author((?i)example)~Tags((?i)example)"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "Author((?i)example)~Tags((?i)Test)"}, false},
 	}
 
 	for _, tc := range scenarios {
-		result := isAllowedEntry(tc.feed, tc.entry)
+		result := isAllowedEntry(tc.feed, tc.entry, tc.user)
 		if tc.expected != result {
 			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
 		}
