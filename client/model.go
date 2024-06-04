@@ -84,8 +84,8 @@ type UserModificationRequest struct {
 	CategoriesSortingOrder *string  `json:"categories_sorting_order"`
 	MarkReadOnView         *bool    `json:"mark_read_on_view"`
 	MediaPlaybackRate      *float64 `json:"media_playback_rate"`
-	BlockFilterEntryRules  string   `json:"block_filter_entry_rules"`
-	KeepFilterEntryRules   string   `json:"keep_filter_entry_rules"`
+	BlockFilterEntryRules  *string  `json:"block_filter_entry_rules"`
+	KeepFilterEntryRules   *string  `json:"keep_filter_entry_rules"`
 }
 
 // Users represents a list of users.
