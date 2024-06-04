@@ -142,11 +142,11 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 			case "Author":
 				match, _ = regexp.MatchString(parts[1], entry.Author)
 			case "Tags":
-				containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
 					match, _ = regexp.MatchString(parts[1], tag)
 					return match
 				})
-				if containsBlockedTag {
+				if containsTag {
 					match = true
 				}
 			}
@@ -201,22 +201,23 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 			parts[1] = parts[1][:len(parts[1])-1]
 
 			var match bool
-			if parts[0] == "Title" {
+			switch parts[0] {
+			case "Title":
 				match, _ = regexp.MatchString(parts[1], entry.Title)
-			} else if parts[0] == "URL" {
+			case "URL":
 				match, _ = regexp.MatchString(parts[1], entry.URL)
-			} else if parts[0] == "CommentsURL" {
+			case "CommentsURL":
 				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
-			} else if parts[0] == "Content" {
+			case "Content":
 				match, _ = regexp.MatchString(parts[1], entry.Content)
-			} else if parts[0] == "Author" {
+			case "Author":
 				match, _ = regexp.MatchString(parts[1], entry.Author)
-			} else if parts[0] == "Tags" {
-				containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
+			case "Tags":
+				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
 					match, _ = regexp.MatchString(parts[1], tag)
 					return match
 				})
-				if containsBlockedTag {
+				if containsTag {
 					match = true
 				}
 			}
