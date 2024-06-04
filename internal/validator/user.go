@@ -220,25 +220,25 @@ func isValidFilterRules(filterEntryRules string, filterType string) *locale.Loca
 		// Check if rule starts with a valid fieldName
 		idx := slices.IndexFunc(fieldNames, func(fieldName string) bool { return strings.HasPrefix(rule, fieldName) })
 		if idx == -1 {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_entry_rule_fieldname_invalid", i+1)
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_fieldname_invalid", i+1)
 		}
 		fieldName := fieldNames[idx]
 		fieldRegEx, _ := strings.CutPrefix(rule, fieldName)
 
 		// Check if regex begins and ends with ()
 		if !strings.HasPrefix(fieldRegEx, "(") || !strings.HasSuffix(fieldRegEx, ")") {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_entry_rule_brackets_required", i+1)
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_brackets_required", i+1)
 		}
 		fieldRegEx = strings.TrimPrefix(fieldRegEx, "(")
 		fieldRegEx = strings.TrimSuffix(fieldRegEx, ")")
 
 		if fieldRegEx == "" {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_entry_rule_regex_required", i+1)
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_regex_required", i+1)
 		}
 
 		// Check if provided pattern is a valid RegEx
 		if !IsValidRegex(fieldRegEx) {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_entry_rule_invalid_regex", i+1)
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_invalid_regex", i+1)
 		}
 	}
 	return nil
