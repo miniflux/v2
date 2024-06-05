@@ -13,11 +13,11 @@ require (
 	github.com/prometheus/client_golang v1.19.1
 	github.com/tdewolff/minify/v2 v2.20.32
 	github.com/yuin/goldmark v1.7.1
-	golang.org/x/crypto v0.23.0
+	golang.org/x/crypto v0.24.0
 	golang.org/x/net v0.25.0
 	golang.org/x/oauth2 v0.20.0
 	golang.org/x/term v0.21.0
-	golang.org/x/text v0.15.0
+	golang.org/x/text v0.16.0
 	mvdan.cc/xurls/v2 v2.5.0
 )
 
