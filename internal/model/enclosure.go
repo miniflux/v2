@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 package model // import "miniflux.app/v2/internal/model"
+import "strings"
 
 // Enclosure represents an attachment.
 type Enclosure struct {
@@ -24,3 +25,12 @@ func (e Enclosure) Html5MimeType() string {
 
 // EnclosureList represents a list of attachments.
 type EnclosureList []*Enclosure
+
+func (el EnclosureList) ContainsAudioOrVideo() bool {
+	for _, enclosure := range el {
+		if strings.Contains(enclosure.MimeType, "audio/") || strings.Contains(enclosure.MimeType, "video/") {
+			return true
+		}
+	}
+	return false
+}

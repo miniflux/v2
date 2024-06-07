@@ -173,6 +173,9 @@
         <audio controls preload="metadata"
             data-last-position="{{ .MediaProgression }}"
             {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
+            {{ if $.user.MarkReadOnMediaPlayerCompletion }}
+               data-mark-read-on-completion="0.9"
+            {{ end }}
             data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
             data-enclosure-id="{{.ID}}"
             >
@@ -189,6 +192,9 @@
             <video controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
                 {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
+                {{ if $.user.MarkReadOnMediaPlayerCompletion }}
+                    data-mark-read-on-completion="0.9"
+                {{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 data-enclosure-id="{{.ID}}"
                 >
@@ -221,6 +227,9 @@
             <audio controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
                 {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
+                {{ if $.user.MarkReadOnMediaPlayerCompletion }}
+                    data-mark-read-on-completion="0.9"
+                {{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 data-enclosure-id="{{.ID}}"
                 >
@@ -237,6 +246,9 @@
             <video controls preload="metadata"
                 data-last-position="{{ .MediaProgression }}"
                 {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
+                {{ if $.user.MarkReadOnMediaPlayerCompletion }}
+                    data-mark-read-on-completion="0.9"
+                {{ end }}
                 data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
                 data-enclosure-id="{{.ID}}"
                 >

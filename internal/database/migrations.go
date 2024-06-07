@@ -937,4 +937,9 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN mark_read_on_media_player_completion bool default 'f';`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }
