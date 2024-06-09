@@ -35,6 +35,7 @@ var predefinedRules = map[string]string{
 	"openingsource.org":    "article.suxing-popup-gallery",
 	"osnews.com":           "div.newscontent1",
 	"phoronix.com":         "div.content",
+	"pitchfork.com":        "#main-content",
 	"pseudo-sciences.org":  "#art_main",
 	"quantamagazine.org":   ".outer--content, figure, script",
 	"raywenderlich.com":    "article",
