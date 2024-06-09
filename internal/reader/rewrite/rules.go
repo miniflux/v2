@@ -30,7 +30,7 @@ var predefinedRules = map[string]string{
 	"quantamagazine.org":     `add_youtube_video_from_id, remove("h6:not(.byline,.post__title__kicker), #comments, .next-post__content, .footer__section, figure .outer--content, script")`,
 	"sentfromthemoon.com":    "add_image_title",
 	"thedoghousediaries.com": "add_image_title",
-	"theverge.com":           `add_dynamic_image, remove("div.duet--recirculation--related-list")`,
+	"theverge.com":           `add_dynamic_image, remove("div.duet--recirculation--related-list, .hidden")`,
 	"treelobsters.com":       "add_image_title",
 	"webtoons.com":           `add_dynamic_image,replace("webtoon"|"swebtoon")`,
 	"www.qwantz.com":         "add_image_title,add_mailto_subject",
