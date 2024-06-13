@@ -5,10 +5,13 @@ package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
+	"net/url"
 	"regexp"
+	"strings"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration/rssbridge"
@@ -22,10 +25,19 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
+type youtubeKind string
+
+const (
+	youtubeIDKindChannel  youtubeKind = "channel"
+	youtubeIDKindVideo    youtubeKind = "video"
+	youtubeIDKindPlaylist youtubeKind = "playlist"
+)
+
 var (
-	youtubeChannelRegex  = regexp.MustCompile(`youtube\.com/channel/(.*)$`)
-	youtubeVideoRegex    = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
-	youtubePlaylistRegex = regexp.MustCompile(`youtube\.com/playlist\?list=(.*)$`)
+	youtubeHostRegex    = regexp.MustCompile(`youtube\.com$`)
+	youtubeChannelRegex = regexp.MustCompile(`channel/(.*)$`)
+
+	errNotYoutubeUrl = fmt.Errorf("this website is not a YouTube page")
 )
 
 type SubscriptionFinder struct {
@@ -75,43 +87,40 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		return Subscriptions{NewSubscription(responseHandler.EffectiveURL(), responseHandler.EffectiveURL(), feedFormat)}, nil
 	}
 
-	// Step 2) Check if the website URL is a YouTube channel.
-	slog.Debug("Try to detect feeds from YouTube channel page", slog.String("website_url", websiteURL))
-	subscriptions, localizedError := f.FindSubscriptionsFromYouTubeChannelPage(websiteURL)
-	if localizedError != nil {
-		return nil, localizedError
+	subscriptions := make(Subscriptions, 1)
+
+	// Step 2) Parse URL to find feeds from YouTube.
+	kind, _, err := youtubeURLIDExtractor(websiteURL)
+
+	// If YouTube url has been detected, return the YouTube feed
+	if err == nil || !errors.Is(err, errNotYoutubeUrl) {
+		switch kind {
+		case youtubeIDKindChannel:
+			slog.Debug("Try to detect feeds from YouTube channel page", slog.String("website_url", websiteURL))
+			subscriptions, localizedError = f.FindSubscriptionsFromYouTubeChannelPage(websiteURL)
+			if localizedError != nil {
+				return nil, localizedError
+			}
+		case youtubeIDKindVideo:
+			slog.Debug("Try to detect feeds from YouTube video page", slog.String("website_url", websiteURL))
+			subscriptions, localizedError = f.FindSubscriptionsFromYouTubeVideoPage(websiteURL)
+			if localizedError != nil {
+				return nil, localizedError
+			}
+		case youtubeIDKindPlaylist:
+			slog.Debug("Try to detect feeds from YouTube playlist page", slog.String("website_url", websiteURL))
+			subscriptions, localizedError = f.FindSubscriptionsFromYouTubePlaylistPage(websiteURL)
+			if localizedError != nil {
+				return nil, localizedError
+			}
+		}
+		if len(subscriptions) > 0 {
+			slog.Debug("Subscriptions found from YouTube page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
+			return subscriptions, nil
+		}
 	}
 
-	if len(subscriptions) > 0 {
-		slog.Debug("Subscriptions found from YouTube channel page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
-		return subscriptions, nil
-	}
-
-	// Step 3) Check if the website URL is a YouTube video.
-	slog.Debug("Try to detect feeds from YouTube video page", slog.String("website_url", websiteURL))
-	subscriptions, localizedError = f.FindSubscriptionsFromYouTubeVideoPage(websiteURL)
-	if localizedError != nil {
-		return nil, localizedError
-	}
-
-	if len(subscriptions) > 0 {
-		slog.Debug("Subscriptions found from YouTube video page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
-		return subscriptions, nil
-	}
-
-	// Step 4) Check if the website URL is a YouTube playlist.
-	slog.Debug("Try to detect feeds from YouTube playlist page", slog.String("website_url", websiteURL))
-	subscriptions, localizedError = f.FindSubscriptionsFromYouTubePlaylistPage(websiteURL)
-	if localizedError != nil {
-		return nil, localizedError
-	}
-
-	if len(subscriptions) > 0 {
-		slog.Debug("Subscriptions found from YouTube playlist page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
-		return subscriptions, nil
-	}
-
-	// Step 5) Parse web page to find feeds from HTML meta tags.
+	// Step 3) Parse web page to find feeds from HTML meta tags.
 	slog.Debug("Try to detect feeds from HTML meta tags",
 		slog.String("website_url", websiteURL),
 		slog.String("content_type", responseHandler.ContentType()),
@@ -126,7 +135,7 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		return subscriptions, nil
 	}
 
-	// Step 6) Check if the website URL can use RSS-Bridge.
+	// Step 4) Check if the website URL can use RSS-Bridge.
 	if rssBridgeURL != "" {
 		slog.Debug("Try to detect feeds with RSS-Bridge", slog.String("website_url", websiteURL))
 		subscriptions, localizedError := f.FindSubscriptionsFromRSSBridge(websiteURL, rssBridgeURL)
@@ -140,7 +149,7 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		}
 	}
 
-	// Step 7) Check if the website has a known feed URL.
+	// Step 5) Check if the website has a known feed URL.
 	slog.Debug("Try to detect feeds from well-known URLs", slog.String("website_url", websiteURL))
 	subscriptions, localizedError = f.FindSubscriptionsFromWellKnownURLs(websiteURL)
 	if localizedError != nil {
@@ -298,20 +307,24 @@ func (f *SubscriptionFinder) FindSubscriptionsFromRSSBridge(websiteURL, rssBridg
 }
 
 func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeChannelPage(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	matches := youtubeChannelRegex.FindStringSubmatch(websiteURL)
+	kind, id, _ := youtubeURLIDExtractor(websiteURL)
 
-	if len(matches) == 2 {
-		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, matches[1])
+	if kind == youtubeIDKindChannel {
+		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, id)
 		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
 	}
-
 	slog.Debug("This website is not a YouTube channel page, the regex doesn't match", slog.String("website_url", websiteURL))
 
 	return nil, nil
 }
 
 func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeVideoPage(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	if !youtubeVideoRegex.MatchString(websiteURL) {
+	kind, _, err := youtubeURLIDExtractor(websiteURL)
+	if err != nil {
+		slog.Debug("Could not parse url", slog.String("website_url", websiteURL))
+	}
+
+	if kind != youtubeIDKindVideo {
 		slog.Debug("This website is not a YouTube video page, the regex doesn't match", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
@@ -337,14 +350,49 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeVideoPage(websiteURL st
 }
 
 func (f *SubscriptionFinder) FindSubscriptionsFromYouTubePlaylistPage(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	matches := youtubePlaylistRegex.FindStringSubmatch(websiteURL)
+	kind, id, _ := youtubeURLIDExtractor(websiteURL)
 
-	if len(matches) == 2 {
-		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?playlist_id=%s`, matches[1])
+	if kind == youtubeIDKindPlaylist {
+		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?playlist_id=%s`, id)
 		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
 	}
 
 	slog.Debug("This website is not a YouTube playlist page, the regex doesn't match", slog.String("website_url", websiteURL))
 
 	return nil, nil
+}
+
+func youtubeURLIDExtractor(websiteURL string) (idKind youtubeKind, id string, err error) {
+	decodedUrl, err := url.Parse(websiteURL)
+	if err != nil {
+		return
+	}
+
+	if !youtubeHostRegex.MatchString(decodedUrl.Host) {
+		slog.Debug("This website is not a YouTube page, the regex doesn't match", slog.String("website_url", websiteURL))
+		err = errNotYoutubeUrl
+		return
+	}
+
+	switch {
+	case strings.HasPrefix(decodedUrl.Path, "/channel"):
+		idKind = youtubeIDKindChannel
+		matches := youtubeChannelRegex.FindStringSubmatch(decodedUrl.Path)
+		id = matches[1]
+		return
+	case strings.HasPrefix(decodedUrl.Path, "/watch") && decodedUrl.Query().Has("list"):
+		idKind = youtubeIDKindPlaylist
+		id = decodedUrl.Query().Get("list")
+		return
+	case strings.HasPrefix(decodedUrl.Path, "/watch"):
+		idKind = youtubeIDKindVideo
+		id = decodedUrl.Query().Get("v")
+		return
+	case strings.HasPrefix(decodedUrl.Path, "/playlist"):
+		idKind = youtubeIDKindPlaylist
+		id = decodedUrl.Query().Get("list")
+		return
+	}
+	err = fmt.Errorf("unable to extract youtube id from URL: %s", websiteURL)
+	return
 }
