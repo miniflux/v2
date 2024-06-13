@@ -109,6 +109,16 @@ func (r *RequestBuilder) IgnoreTLSErrors(value bool) *RequestBuilder {
 }
 
 func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, error) {
+	// We get the safe ciphers
+	ciphers := tls.CipherSuites()
+	if r.ignoreTLSErrors {
+		// and the insecure ones if we are ignoring TLS errors. This allows to connect to badly configured servers anyway
+		ciphers = append(ciphers, tls.InsecureCipherSuites()...)
+	}
+	cipherSuites := []uint16{}
+	for _, cipher := range ciphers {
+		cipherSuites = append(cipherSuites, cipher.ID)
+	}
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		// Setting `DialContext` disables HTTP/2, this option forces the transport to try HTTP/2 regardless.
@@ -128,6 +138,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		IdleConnTimeout: 10 * time.Second,
 
 		TLSClientConfig: &tls.Config{
+			CipherSuites:       cipherSuites,
 			InsecureSkipVerify: r.ignoreTLSErrors,
 		},
 	}
