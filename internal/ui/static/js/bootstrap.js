@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Could not do it backend side because I didn't know how to do it because of the template inclusion and
                 // the way the initial playback speed is handled. See enclosure_media_controls.html if you want to try to fix this
                 document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${element.dataset.enclosureId}"]`).forEach((speedI)=>{
-                    speedI.innerText = `${element.dataset.playbackRate}x`;
+                    speedI.innerText = `${parseFloat(element.dataset.playbackRate).toFixed(2)}x`;
                 });
             }
         }
