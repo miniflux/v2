@@ -213,14 +213,14 @@ func validateMediaPlaybackRate(mediaPlaybackRate float64) *locale.LocalizedError
 
 func isValidFilterRules(filterEntryRules string, filterType string) *locale.LocalizedError {
 	// Valid Format: FieldName(RegEx)~FieldName(RegEx)~...
-	fieldNames := []string{"Title", "URL", "CommentsURL", "Content", "Author", "Tags"}
+	fieldNames := []string{"EntryTitle", "EntryURL", "EntryCommentsURL", "EntryContent", "EntryAuthor", "EntryTag"}
 
-	rules := strings.Split(filterEntryRules, "~")
+	rules := strings.Split(filterEntryRules, "\n")
 	for i, rule := range rules {
 		// Check if rule starts with a valid fieldName
 		idx := slices.IndexFunc(fieldNames, func(fieldName string) bool { return strings.HasPrefix(rule, fieldName) })
 		if idx == -1 {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_fieldname_invalid", i+1)
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_fieldname_invalid", i+1, "'"+strings.Join(fieldNames, "', '")+"'")
 		}
 		fieldName := fieldNames[idx]
 		fieldRegEx, _ := strings.CutPrefix(rule, fieldName)
