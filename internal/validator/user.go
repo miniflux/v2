@@ -225,12 +225,11 @@ func isValidFilterRules(filterEntryRules string, filterType string) *locale.Loca
 		fieldName := fieldNames[idx]
 		fieldRegEx, _ := strings.CutPrefix(rule, fieldName)
 
-		// Check if regex begins and ends with ()
-		if !strings.HasPrefix(fieldRegEx, "(") || !strings.HasSuffix(fieldRegEx, ")") {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_brackets_required", i+1)
+		// Check if regex begins with a =
+		if !strings.HasPrefix(fieldRegEx, "=") {
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_seperator_required", i+1)
 		}
-		fieldRegEx = strings.TrimPrefix(fieldRegEx, "(")
-		fieldRegEx = strings.TrimSuffix(fieldRegEx, ")")
+		fieldRegEx = strings.TrimPrefix(fieldRegEx, "=")
 
 		if fieldRegEx == "" {
 			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_regex_required", i+1)
