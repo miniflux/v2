@@ -77,7 +77,7 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Build and Push Alpine images
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./packaging/docker/alpine/Dockerfile
@@ -86,7 +86,7 @@ jobs:
           tags: ${{ steps.docker_alpine_tags.outputs.tags }}
 
       - name: Build and Push Distroless images
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./packaging/docker/distroless/Dockerfile
