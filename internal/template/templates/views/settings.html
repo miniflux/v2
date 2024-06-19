@@ -213,14 +213,14 @@
                 {{ t "form.feed.label.blocklist_rules" }}
             </label>
         </div>
-        <input type="text" name="block_filter_entry_rules" id="form-blocklist-rules" value="{{ .form.BlockFilterEntryRules }}" spellcheck="false">
-
+        <textarea id="form-blocklist-rules" name="block_filter_entry_rules" cols="40" rows="10" spellcheck="false">{{ .form.BlockFilterEntryRules }}</textarea>
+        
         <div class="form-label-row">
             <label for="form-keeplist-rules">
                 {{ t "form.feed.label.keeplist_rules" }}
             </label>
         </div>
-        <input type="text" name="keep_filter_entry_rules" id="form-keeplist-rules" value="{{ .form.KeepFilterEntryRules }}" spellcheck="false">
+        <textarea id="form-keeplist-rules" name="keep_filter_entry_rules" cols="40" rows="10" spellcheck="false">{{ .form.KeepFilterEntryRules }}</textarea>        
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
