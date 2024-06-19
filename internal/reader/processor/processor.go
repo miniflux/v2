@@ -124,24 +124,23 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.BlockFilterEntryRules != "" {
-		rules := strings.Split(user.BlockFilterEntryRules, "~")
+		rules := strings.Split(user.BlockFilterEntryRules, "\n")
 		for _, rule := range rules {
-			parts := strings.SplitN(rule, "(", 2)
-			parts[1] = parts[1][:len(parts[1])-1]
+			parts := strings.SplitN(rule, "=", 2)
 
 			var match bool
 			switch parts[0] {
-			case "Title":
+			case "EntryTitle":
 				match, _ = regexp.MatchString(parts[1], entry.Title)
-			case "URL":
+			case "EntryURL":
 				match, _ = regexp.MatchString(parts[1], entry.URL)
-			case "CommentsURL":
+			case "EntryCommentsURL":
 				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
-			case "Content":
+			case "EntryContent":
 				match, _ = regexp.MatchString(parts[1], entry.Content)
-			case "Author":
+			case "EntryAuthor":
 				match, _ = regexp.MatchString(parts[1], entry.Author)
-			case "Tags":
+			case "EntryTag":
 				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
 					match, _ = regexp.MatchString(parts[1], tag)
 					return match
@@ -195,24 +194,23 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 
 func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.KeepFilterEntryRules != "" {
-		rules := strings.Split(user.KeepFilterEntryRules, "~")
+		rules := strings.Split(user.KeepFilterEntryRules, "\n")
 		for _, rule := range rules {
-			parts := strings.SplitN(rule, "(", 2)
-			parts[1] = parts[1][:len(parts[1])-1]
+			parts := strings.SplitN(rule, "=", 2)
 
 			var match bool
 			switch parts[0] {
-			case "Title":
+			case "EntryTitle":
 				match, _ = regexp.MatchString(parts[1], entry.Title)
-			case "URL":
+			case "EntryURL":
 				match, _ = regexp.MatchString(parts[1], entry.URL)
-			case "CommentsURL":
+			case "EntryCommentsURL":
 				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
-			case "Content":
+			case "EntryContent":
 				match, _ = regexp.MatchString(parts[1], entry.Content)
-			case "Author":
+			case "EntryAuthor":
 				match, _ = regexp.MatchString(parts[1], entry.Author)
-			case "Tags":
+			case "EntryTag":
 				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
 					match, _ = regexp.MatchString(parts[1], tag)
 					return match
