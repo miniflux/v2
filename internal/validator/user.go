@@ -227,7 +227,7 @@ func isValidFilterRules(filterEntryRules string, filterType string) *locale.Loca
 
 		// Check if regex begins with a =
 		if !strings.HasPrefix(fieldRegEx, "=") {
-			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_seperator_required", i+1)
+			return locale.NewLocalizedError("error.settings_"+filterType+"_rule_separator_required", i+1)
 		}
 		fieldRegEx = strings.TrimPrefix(fieldRegEx, "=")
 
