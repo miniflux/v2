@@ -11,7 +11,8 @@ import (
 
 func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, topicID *int64, disableWebPagePreview, disableNotification bool, disableButtons bool) error {
 	formattedText := fmt.Sprintf(
-		`<a href=%q>%s</a>`,
+		`<b>%s</b> - <a href=%q>%s</a>`,
+		feed.Title,
 		entry.URL,
 		entry.Title,
 	)
