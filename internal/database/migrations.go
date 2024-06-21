@@ -970,6 +970,7 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
+<<<<<<< HEAD
 		sql := `
 			ALTER TABLE integrations ADD COLUMN discord_enabled bool default 'f';
 			ALTER TABLE integrations ADD COLUMN discord_webhook_link text default '';
@@ -1012,6 +1013,11 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		sql := `
 			ALTER TABLE feeds ADD COLUMN ntfy_topic text default '';
 		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN cache_for_offline boolean default 'f'`
 		_, err = tx.Exec(sql)
 		return err
 	},

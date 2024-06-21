@@ -1,72 +1,87 @@
 // OnClick attaches a listener to the elements that match the selector.
 function onClick(selector, callback, noPreventDefault) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.onclick = (event) => {
-            if (!noPreventDefault) {
-                event.preventDefault();
-            }
-            callback(event);
-        };
-    });
+  document.querySelectorAll(selector).forEach((element) => {
+    element.onclick = (event) => {
+      if (!noPreventDefault) {
+        event.preventDefault();
+      }
+      callback(event);
+    };
+  });
 }
 
 function onAuxClick(selector, callback, noPreventDefault) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.onauxclick = (event) => {
-            if (!noPreventDefault) {
-                event.preventDefault();
-            }
-            callback(event);
-        };
-    });
+  document.querySelectorAll(selector).forEach((element) => {
+    element.onauxclick = (event) => {
+      if (!noPreventDefault) {
+        event.preventDefault();
+      }
+      callback(event);
+    };
+  });
 }
 
 // make logo element as button on mobile layout
 function checkMenuToggleModeByLayout() {
-    const logoElement = document.querySelector(".logo");
-    if (!logoElement) return;
+  const logoElement = document.querySelector(".logo");
+  if (!logoElement) return;
 
-    const homePageLinkElement = document.querySelector(".logo > a");
+  const homePageLinkElement = document.querySelector(".logo > a");
 
-    if (document.documentElement.clientWidth < 620) {
-        const navMenuElement = document.getElementById("header-menu");
-        const navMenuElementIsExpanded = navMenuElement.classList.contains("js-menu-show");
-        const logoToggleButtonLabel = logoElement.getAttribute("data-toggle-button-label");
-        logoElement.setAttribute("role", "button");
-        logoElement.setAttribute("tabindex", "0");
-        logoElement.setAttribute("aria-label", logoToggleButtonLabel);
-        logoElement.setAttribute("aria-expanded", navMenuElementIsExpanded?"true":"false");
-        homePageLinkElement.setAttribute("tabindex", "-1");
-    } else {
-        logoElement.removeAttribute("role");
-        logoElement.removeAttribute("tabindex");
-        logoElement.removeAttribute("aria-expanded");
-        logoElement.removeAttribute("aria-label");
-        homePageLinkElement.removeAttribute("tabindex");
-    }
+  if (document.documentElement.clientWidth < 620) {
+    const navMenuElement = document.getElementById("header-menu");
+    const navMenuElementIsExpanded =
+      navMenuElement.classList.contains("js-menu-show");
+    const logoToggleButtonLabel = logoElement.getAttribute(
+      "data-toggle-button-label",
+    );
+    logoElement.setAttribute("role", "button");
+    logoElement.setAttribute("tabindex", "0");
+    logoElement.setAttribute("aria-label", logoToggleButtonLabel);
+    logoElement.setAttribute(
+      "aria-expanded",
+      navMenuElementIsExpanded ? "true" : "false",
+    );
+    homePageLinkElement.setAttribute("tabindex", "-1");
+  } else {
+    logoElement.removeAttribute("role");
+    logoElement.removeAttribute("tabindex");
+    logoElement.removeAttribute("aria-expanded");
+    logoElement.removeAttribute("aria-label");
+    homePageLinkElement.removeAttribute("tabindex");
+  }
 }
 
 function fixVoiceOverDetailsSummaryBug() {
-    document.querySelectorAll("details").forEach((details) => {
-        const summaryElement = details.querySelector("summary");
-        summaryElement.setAttribute("role", "button");
-        summaryElement.setAttribute("aria-expanded", details.open? "true": "false");
+  document.querySelectorAll("details").forEach((details) => {
+    const summaryElement = details.querySelector("summary");
+    summaryElement.setAttribute("role", "button");
+    summaryElement.setAttribute(
+      "aria-expanded",
+      details.open ? "true" : "false",
+    );
 
-        details.addEventListener("toggle", () => {
-            summaryElement.setAttribute("aria-expanded", details.open? "true": "false");
-        });
+    details.addEventListener("toggle", () => {
+      summaryElement.setAttribute(
+        "aria-expanded",
+        details.open ? "true" : "false",
+      );
     });
+  });
 }
 
 // Show and hide the main menu on mobile devices.
 function toggleMainMenu(event) {
-    if (event.type === "keydown" && !(event.key === "Enter" || event.key === " ")) {
-        return;
-    }
+  if (
+    event.type === "keydown" &&
+    !(event.key === "Enter" || event.key === " ")
+  ) {
+    return;
+  }
 
-    if (event.currentTarget.getAttribute("role")) {
-        event.preventDefault();
-    }
+  if (event.currentTarget.getAttribute("role")) {
+    event.preventDefault();
+  }
 
     const menu = document.querySelector(".header nav ul");
     const menuToggleButton = document.querySelector(".logo");
@@ -80,64 +95,66 @@ function toggleMainMenu(event) {
 
 // Handle click events for the main menu (<li> and <a>).
 function onClickMainMenuListItem(event) {
-    const element = event.target;
+  const element = event.target;
 
-    if (element.tagName === "A") {
-        window.location.href = element.getAttribute("href");
-    } else {
-        const linkElement = element.querySelector("a") || element.closest("a");
-        window.location.href = linkElement.getAttribute("href");
-    }
+  if (element.tagName === "A") {
+    window.location.href = element.getAttribute("href");
+  } else {
+    const linkElement = element.querySelector("a") || element.closest("a");
+    window.location.href = linkElement.getAttribute("href");
+  }
 }
 
 // Change the button label when the page is loading.
 function handleSubmitButtons() {
-    document.querySelectorAll("form").forEach((element) => {
-        element.onsubmit = () => {
-            const button = element.querySelector("button");
-            if (button) {
-                button.textContent = button.dataset.labelLoading;
-                button.disabled = true;
-            }
-        };
-    });
+  document.querySelectorAll("form").forEach((element) => {
+    element.onsubmit = () => {
+      const button = element.querySelector("button");
+      if (button) {
+        button.textContent = button.dataset.labelLoading;
+        button.disabled = true;
+      }
+    };
+  });
 }
 
 // Show modal dialog with the list of keyboard shortcuts.
 function showKeyboardShortcuts() {
-    const template = document.getElementById("keyboard-shortcuts");
-    if (template !== null) {
-        ModalHandler.open(template.content, "dialog-title");
-    }
+  const template = document.getElementById("keyboard-shortcuts");
+  if (template !== null) {
+    ModalHandler.open(template.content, "dialog-title");
+  }
 }
 
 // Mark as read visible items of the current page.
 function markPageAsRead() {
-    const items = DomHelper.getVisibleElements(".items .item");
-    const entryIDs = [];
+  const items = DomHelper.getVisibleElements(".items .item");
+  const entryIDs = [];
 
-    items.forEach((element) => {
-        element.classList.add("item-status-read");
-        entryIDs.push(parseInt(element.dataset.id, 10));
+  items.forEach((element) => {
+    element.classList.add("item-status-read");
+    entryIDs.push(parseInt(element.dataset.id, 10));
+  });
+
+  if (entryIDs.length > 0) {
+    updateEntriesStatus(entryIDs, "read", () => {
+      // Make sure the Ajax request reach the server before we reload the page.
+
+      const element = document.querySelector(
+        ":is(a, button)[data-action=markPageAsRead]",
+      );
+      let showOnlyUnread = false;
+      if (element) {
+        showOnlyUnread = element.dataset.showOnlyUnread || false;
+      }
+
+      if (showOnlyUnread) {
+        window.location.href = window.location.href;
+      } else {
+        goToPage("next", true);
+      }
     });
-
-    if (entryIDs.length > 0) {
-        updateEntriesStatus(entryIDs, "read", () => {
-            // Make sure the Ajax request reach the server before we reload the page.
-
-            const element = document.querySelector(":is(a, button)[data-action=markPageAsRead]");
-            let showOnlyUnread = false;
-            if (element) {
-                showOnlyUnread = element.dataset.showOnlyUnread || false;
-            }
-
-            if (showOnlyUnread) {
-                window.location.href = window.location.href;
-            } else {
-                goToPage("next", true);
-            }
-        });
-    }
+  }
 }
 
 /**
@@ -148,6 +165,7 @@ function markPageAsRead() {
  * @param {boolean} setToRead
  */
 function handleEntryStatus(item, element, setToRead) {
+<<<<<<< HEAD
     const toasting = !element;
     const currentEntry = findEntry(element);
     if (currentEntry) {
@@ -164,110 +182,141 @@ function handleEntryStatus(item, element, setToRead) {
                 break;
             }
         }
+=======
+  const toasting = !element;
+  const currentEntry = findEntry(element);
+  if (currentEntry) {
+    if (
+      !setToRead ||
+      currentEntry.querySelector(":is(a, button)[data-toggle-status]").dataset
+        .value == "unread"
+    ) {
+      toggleEntryStatus(currentEntry, toasting);
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
     }
+    if (isListView() && currentEntry.classList.contains("current-item")) {
+      switch (item) {
+        case "previous":
+          goToListItem(-1);
+          break;
+        case "next":
+          goToListItem(1);
+          break;
+      }
+    }
+  }
 }
 
 // Add an icon-label span element.
 function appendIconLabel(element, labelTextContent) {
-    const span = document.createElement('span');
-    span.classList.add('icon-label');
-    span.textContent = labelTextContent;
-    element.appendChild(span);
+  const span = document.createElement("span");
+  span.classList.add("icon-label");
+  span.textContent = labelTextContent;
+  element.appendChild(span);
 }
 
 // Change the entry status to the opposite value.
 function toggleEntryStatus(element, toasting) {
-    const entryID = parseInt(element.dataset.id, 10);
-    const link = element.querySelector(":is(a, button)[data-toggle-status]");
+  const entryID = parseInt(element.dataset.id, 10);
+  const link = element.querySelector(":is(a, button)[data-toggle-status]");
 
-    const currentStatus = link.dataset.value;
-    const newStatus = currentStatus === "read" ? "unread" : "read";
+  const currentStatus = link.dataset.value;
+  const newStatus = currentStatus === "read" ? "unread" : "read";
 
-    link.querySelector("span").textContent = link.dataset.labelLoading;
-    updateEntriesStatus([entryID], newStatus, () => {
-        let iconElement, label;
+  link.querySelector("span").textContent = link.dataset.labelLoading;
+  updateEntriesStatus([entryID], newStatus, () => {
+    let iconElement, label;
 
-        if (currentStatus === "read") {
-            iconElement = document.querySelector("template#icon-read");
-            label = link.dataset.labelRead;
-            if (toasting) {
-                showToast(link.dataset.toastUnread, iconElement);
-            }
-        } else {
-            iconElement = document.querySelector("template#icon-unread");
-            label = link.dataset.labelUnread;
-            if (toasting) {
-                showToast(link.dataset.toastRead, iconElement);
-            }
-        }
+    if (currentStatus === "read") {
+      iconElement = document.querySelector("template#icon-read");
+      label = link.dataset.labelRead;
+      if (toasting) {
+        showToast(link.dataset.toastUnread, iconElement);
+      }
+    } else {
+      iconElement = document.querySelector("template#icon-unread");
+      label = link.dataset.labelUnread;
+      if (toasting) {
+        showToast(link.dataset.toastRead, iconElement);
+      }
+    }
 
-        link.replaceChildren(iconElement.content.cloneNode(true));
-        appendIconLabel(link, label);
-        link.dataset.value = newStatus;
+    link.replaceChildren(iconElement.content.cloneNode(true));
+    appendIconLabel(link, label);
+    link.dataset.value = newStatus;
 
-        if (element.classList.contains("item-status-" + currentStatus)) {
-            element.classList.remove("item-status-" + currentStatus);
-            element.classList.add("item-status-" + newStatus);
-        }
-    });
+    if (element.classList.contains("item-status-" + currentStatus)) {
+      element.classList.remove("item-status-" + currentStatus);
+      element.classList.add("item-status-" + newStatus);
+    }
+  });
 }
 
 // Mark a single entry as read.
 function markEntryAsRead(element) {
-    if (element.classList.contains("item-status-unread")) {
-        element.classList.remove("item-status-unread");
-        element.classList.add("item-status-read");
+  if (element.classList.contains("item-status-unread")) {
+    element.classList.remove("item-status-unread");
+    element.classList.add("item-status-read");
 
-        const entryID = parseInt(element.dataset.id, 10);
-        updateEntriesStatus([entryID], "read");
-    }
+    const entryID = parseInt(element.dataset.id, 10);
+    updateEntriesStatus([entryID], "read");
+  }
 }
 
 // Send the Ajax request to refresh all feeds in the background
 function handleRefreshAllFeeds() {
-    const url = document.body.dataset.refreshAllFeedsUrl;
-    if (url) {
-        window.location.href = url;
-    }
+  const url = document.body.dataset.refreshAllFeedsUrl;
+  if (url) {
+    window.location.href = url;
+  }
 }
 
 // Send the Ajax request to change entries statuses.
 function updateEntriesStatus(entryIDs, status, callback) {
-    const url = document.body.dataset.entriesStatusUrl;
-    const request = new RequestBuilder(url);
-    request.withBody({ entry_ids: entryIDs, status: status });
-    request.withCallback((resp) => {
-        resp.json().then(count => {
-            if (callback) {
-                callback(resp);
-            }
+  const url = document.body.dataset.entriesStatusUrl;
+  const request = new RequestBuilder(url);
+  request.withBody({ entry_ids: entryIDs, status: status });
+  request.withCallback((resp) => {
+    resp.json().then((count) => {
+      if (callback) {
+        callback(resp);
+      }
 
-            if (status === "read") {
-                decrementUnreadCounter(count);
-            } else {
-                incrementUnreadCounter(count);
-            }
-        });
+      if (status === "read") {
+        decrementUnreadCounter(count);
+      } else {
+        incrementUnreadCounter(count);
+      }
     });
-    request.execute();
+  });
+  request.execute();
 }
 
 // Handle save entry from list view and entry view.
 function handleSaveEntry(element) {
-    const toasting = !element;
-    const currentEntry = findEntry(element);
-    if (currentEntry) {
-        saveEntry(currentEntry.querySelector(":is(a, button)[data-save-entry]"), toasting);
-    }
+  const toasting = !element;
+  const currentEntry = findEntry(element);
+  if (currentEntry) {
+    saveEntry(
+      currentEntry.querySelector(":is(a, button)[data-save-entry]"),
+      toasting,
+    );
+  }
 }
 
 // Send the Ajax request to save an entry.
 function saveEntry(element, toasting) {
-    if (!element || element.dataset.completed) {
-        return;
-    }
+  if (!element || element.dataset.completed) {
+    return;
+  }
 
+  element.textContent = "";
+  appendIconLabel(element, element.dataset.labelLoading);
+
+  const request = new RequestBuilder(element.dataset.saveUrl);
+  request.withCallback(() => {
     element.textContent = "";
+<<<<<<< HEAD
     appendIconLabel(element, element.dataset.labelLoading);
 
     const request = new RequestBuilder(element.dataset.saveUrl);
@@ -281,113 +330,148 @@ function saveEntry(element, toasting) {
         }
     });
     request.execute();
+=======
+    appendIconLabel(element, element.dataset.labelDone);
+    element.dataset.completed = true;
+    if (toasting) {
+      const iconElement = document.querySelector("template#icon-save");
+      showToast(element.dataset.toastDone, iconElement);
+    }
+  });
+  request.execute();
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
 }
 
 // Handle bookmark from the list view and entry view.
 function handleBookmark(element) {
-    const toasting = !element;
-    const currentEntry = findEntry(element);
-    if (currentEntry) {
-        toggleBookmark(currentEntry, toasting);
-    }
+  const toasting = !element;
+  const currentEntry = findEntry(element);
+  if (currentEntry) {
+    toggleBookmark(currentEntry, toasting);
+  }
 }
 
 // Send the Ajax request and change the icon when bookmarking an entry.
 function toggleBookmark(parentElement, toasting) {
-    const buttonElement = parentElement.querySelector(":is(a, button)[data-toggle-bookmark]");
-    if (!buttonElement) {
-        return;
+  const buttonElement = parentElement.querySelector(
+    ":is(a, button)[data-toggle-bookmark]",
+  );
+  if (!buttonElement) {
+    return;
+  }
+
+  buttonElement.textContent = "";
+  appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
+
+  const request = new RequestBuilder(buttonElement.dataset.bookmarkUrl);
+  request.withCallback(() => {
+    const currentStarStatus = buttonElement.dataset.value;
+    const newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
+
+    let iconElement, label;
+    if (currentStarStatus === "star") {
+      iconElement = document.querySelector("template#icon-star");
+      label = buttonElement.dataset.labelStar;
+      if (toasting) {
+        showToast(buttonElement.dataset.toastUnstar, iconElement);
+      }
+    } else {
+      iconElement = document.querySelector("template#icon-unstar");
+      label = buttonElement.dataset.labelUnstar;
+      if (toasting) {
+        showToast(buttonElement.dataset.toastStar, iconElement);
+      }
     }
 
-    buttonElement.textContent = "";
-    appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
-
-    const request = new RequestBuilder(buttonElement.dataset.bookmarkUrl);
-    request.withCallback(() => {
-        const currentStarStatus = buttonElement.dataset.value;
-        const newStarStatus = currentStarStatus === "star" ? "unstar" : "star";
-
-        let iconElement, label;
-        if (currentStarStatus === "star") {
-            iconElement = document.querySelector("template#icon-star");
-            label = buttonElement.dataset.labelStar;
-            if (toasting) {
-                showToast(buttonElement.dataset.toastUnstar, iconElement);
-            }
-        } else {
-            iconElement = document.querySelector("template#icon-unstar");
-            label = buttonElement.dataset.labelUnstar;
-            if (toasting) {
-                showToast(buttonElement.dataset.toastStar, iconElement);
-            }
-        }
-
-        buttonElement.replaceChildren(iconElement.content.cloneNode(true));
-        appendIconLabel(buttonElement, label);
-        buttonElement.dataset.value = newStarStatus;
-    });
-    request.execute();
+    buttonElement.replaceChildren(iconElement.content.cloneNode(true));
+    appendIconLabel(buttonElement, label);
+    buttonElement.dataset.value = newStarStatus;
+  });
+  request.execute();
 }
 
 // Send the Ajax request to download the original web page.
 function handleFetchOriginalContent() {
-    if (isListView()) {
-        return;
-    }
+  if (isListView()) {
+    return;
+  }
 
-    const buttonElement = document.querySelector(":is(a, button)[data-fetch-content-entry]");
-    if (!buttonElement) {
-        return;
-    }
+  const buttonElement = document.querySelector(
+    ":is(a, button)[data-fetch-content-entry]",
+  );
+  if (!buttonElement) {
+    return;
+  }
 
-    const previousElement = buttonElement.cloneNode(true);
+  const previousElement = buttonElement.cloneNode(true);
 
+  buttonElement.textContent = "";
+  appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
+
+  const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
+  request.withCallback((response) => {
     buttonElement.textContent = "";
-    appendIconLabel(buttonElement, buttonElement.dataset.labelLoading);
+    buttonElement.appendChild(previousElement);
 
-    const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
-    request.withCallback((response) => {
-        buttonElement.textContent = '';
-        buttonElement.appendChild(previousElement);
-
-        response.json().then((data) => {
-            if (data.hasOwnProperty("content") && data.hasOwnProperty("reading_time")) {
-                document.querySelector(".entry-content").innerHTML = ttpolicy.createHTML(data.content);
-                const entryReadingtimeElement = document.querySelector(".entry-reading-time");
-                if (entryReadingtimeElement) {
-                    entryReadingtimeElement.textContent = data.reading_time;
-                }
-            }
-        });
+    response.json().then((data) => {
+      if (
+        data.hasOwnProperty("content") &&
+        data.hasOwnProperty("reading_time")
+      ) {
+        document.querySelector(".entry-content").innerHTML =
+          ttpolicy.createHTML(data.content);
+        const entryReadingtimeElement = document.querySelector(
+          ".entry-reading-time",
+        );
+        if (entryReadingtimeElement) {
+          entryReadingtimeElement.textContent = data.reading_time;
+        }
+      }
     });
-    request.execute();
+  });
+  request.execute();
 }
 
 function openOriginalLink(openLinkInCurrentTab) {
-    const entryLink = document.querySelector(".entry h1 a");
-    if (entryLink !== null) {
-        if (openLinkInCurrentTab) {
-            window.location.href = entryLink.getAttribute("href");
-        } else {
-            DomHelper.openNewTab(entryLink.getAttribute("href"));
-        }
-        return;
+  const entryLink = document.querySelector(".entry h1 a");
+  if (entryLink !== null) {
+    if (openLinkInCurrentTab) {
+      window.location.href = entryLink.getAttribute("href");
+    } else {
+      DomHelper.openNewTab(entryLink.getAttribute("href"));
     }
+    return;
+  }
 
-    const currentItemOriginalLink = document.querySelector(".current-item :is(a, button)[data-original-link]");
-    if (currentItemOriginalLink !== null) {
-        DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
+  const currentItemOriginalLink = document.querySelector(
+    ".current-item :is(a, button)[data-original-link]",
+  );
+  if (currentItemOriginalLink !== null) {
+    DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
 
+<<<<<<< HEAD
         const currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
         if (document.location.href !== document.querySelector(':is(a, button)[data-page=starred]').href) {
             goToListItem(1);
         }
         markEntryAsRead(currentItem);
+=======
+    const currentItem = document.querySelector(".current-item");
+    // If we are not on the list of starred items, move to the next item
+    if (
+      document.location.href !=
+      document.querySelector(":is(a, button)[data-page=starred]").href
+    ) {
+      goToListItem(1);
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
     }
+    markEntryAsRead(currentItem);
+  }
 }
 
 function openCommentLink(openLinkInCurrentTab) {
+<<<<<<< HEAD
     if (!isListView()) {
         const entryLink = document.querySelector(":is(a, button)[data-comments-link]");
         if (entryLink !== null) {
@@ -402,45 +486,75 @@ function openCommentLink(openLinkInCurrentTab) {
         if (currentItemCommentsLink !== null) {
             DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
         }
+=======
+  if (!isListView()) {
+    const entryLink = document.querySelector(
+      ":is(a, button)[data-comments-link]",
+    );
+    if (entryLink !== null) {
+      if (openLinkInCurrentTab) {
+        window.location.href = entryLink.getAttribute("href");
+      } else {
+        DomHelper.openNewTab(entryLink.getAttribute("href"));
+      }
+      return;
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
     }
+  } else {
+    const currentItemCommentsLink = document.querySelector(
+      ".current-item :is(a, button)[data-comments-link]",
+    );
+    if (currentItemCommentsLink !== null) {
+      DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
+    }
+  }
 }
 
 function openSelectedItem() {
-    const currentItemLink = document.querySelector(".current-item .item-title a");
-    if (currentItemLink !== null) {
-        window.location.href = currentItemLink.getAttribute("href");
-    }
+  const currentItemLink = document.querySelector(".current-item .item-title a");
+  if (currentItemLink !== null) {
+    window.location.href = currentItemLink.getAttribute("href");
+  }
 }
 
 function unsubscribeFromFeed() {
-    const unsubscribeLinks = document.querySelectorAll("[data-action=remove-feed]");
-    if (unsubscribeLinks.length === 1) {
-        const unsubscribeLink = unsubscribeLinks[0];
+  const unsubscribeLinks = document.querySelectorAll(
+    "[data-action=remove-feed]",
+  );
+  if (unsubscribeLinks.length === 1) {
+    const unsubscribeLink = unsubscribeLinks[0];
 
-        const request = new RequestBuilder(unsubscribeLink.dataset.url);
-        request.withCallback(() => {
-            if (unsubscribeLink.dataset.redirectUrl) {
-                window.location.href = unsubscribeLink.dataset.redirectUrl;
-            } else {
-                window.location.reload();
-            }
-        });
-        request.execute();
-    }
+    const request = new RequestBuilder(unsubscribeLink.dataset.url);
+    request.withCallback(() => {
+      if (unsubscribeLink.dataset.redirectUrl) {
+        window.location.href = unsubscribeLink.dataset.redirectUrl;
+      } else {
+        window.location.reload();
+      }
+    });
+    request.execute();
+  }
 }
 
 /**
  * @param {string} page Page to redirect to.
  * @param {boolean} fallbackSelf Refresh actual page if the page is not found.
  */
+<<<<<<< HEAD
 function goToPage(page, fallbackSelf = false) {
     const element = document.querySelector(":is(a, button)[data-page=" + page + "]");
+=======
+function goToPage(page, fallbackSelf) {
+  const element = document.querySelector(
+    ":is(a, button)[data-page=" + page + "]",
+  );
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
 
-    if (element) {
-        document.location.href = element.href;
-    } else if (fallbackSelf) {
-        window.location.reload();
-    }
+  if (element) {
+    document.location.href = element.href;
+  } else if (fallbackSelf) {
+    window.location.reload();
+  }
 }
 
 /**
@@ -448,14 +562,14 @@ function goToPage(page, fallbackSelf = false) {
  * @param {(number|event)} offset - many items to jump for focus.
  */
 function goToPrevious(offset) {
-    if (offset instanceof KeyboardEvent) {
-        offset = -1;
-    }
-    if (isListView()) {
-        goToListItem(offset);
-    } else {
-        goToPage("previous");
-    }
+  if (offset instanceof KeyboardEvent) {
+    offset = -1;
+  }
+  if (isListView()) {
+    goToListItem(offset);
+  } else {
+    goToPage("previous");
+  }
 }
 
 /**
@@ -463,36 +577,38 @@ function goToPrevious(offset) {
  * @param {(number|event)} offset - How many items to jump for focus.
  */
 function goToNext(offset) {
-    if (offset instanceof KeyboardEvent) {
-        offset = 1;
-    }
-    if (isListView()) {
-        goToListItem(offset);
-    } else {
-        goToPage("next");
-    }
+  if (offset instanceof KeyboardEvent) {
+    offset = 1;
+  }
+  if (isListView()) {
+    goToListItem(offset);
+  } else {
+    goToPage("next");
+  }
 }
 
 function goToFeedOrFeeds() {
-    if (isEntry()) {
-        goToFeed();
-    } else {
-        goToPage('feeds');
-    }
+  if (isEntry()) {
+    goToFeed();
+  } else {
+    goToPage("feeds");
+  }
 }
 
 function goToFeed() {
-    if (isEntry()) {
-        const feedAnchor = document.querySelector("span.entry-website a");
-        if (feedAnchor !== null) {
-            window.location.href = feedAnchor.href;
-        }
-    } else {
-        const currentItemFeed = document.querySelector(".current-item :is(a, button)[data-feed-link]");
-        if (currentItemFeed !== null) {
-            window.location.href = currentItemFeed.getAttribute("href");
-        }
+  if (isEntry()) {
+    const feedAnchor = document.querySelector("span.entry-website a");
+    if (feedAnchor !== null) {
+      window.location.href = feedAnchor.href;
     }
+  } else {
+    const currentItemFeed = document.querySelector(
+      ".current-item :is(a, button)[data-feed-link]",
+    );
+    if (currentItemFeed !== null) {
+      window.location.href = currentItemFeed.getAttribute("href");
+    }
+  }
 }
 
 // Sentinel values for specific list navigation
@@ -503,6 +619,7 @@ const BOTTOM = -9999;
  * @param {number} offset How many items to jump for focus.
  */
 function goToListItem(offset) {
+<<<<<<< HEAD
     const items = DomHelper.getVisibleElements(".items .item");
     if (items.length === 0) {
         return;
@@ -534,129 +651,172 @@ function goToListItem(offset) {
 
             break;
         }
+=======
+  const items = DomHelper.getVisibleElements(".items .item");
+  if (items.length === 0) {
+    return;
+  }
+
+  if (document.querySelector(".current-item") === null) {
+    items[0].classList.add("current-item");
+    items[0].focus();
+    return;
+  }
+
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].classList.contains("current-item")) {
+      items[i].classList.remove("current-item");
+
+      // By default adjust selection by offset
+      let itemOffset = (i + offset + items.length) % items.length;
+      // Allow jumping to top or bottom
+      if (offset == TOP) {
+        itemOffset = 0;
+      } else if (offset == BOTTOM) {
+        itemOffset = items.length - 1;
+      }
+      const item = items[itemOffset];
+
+      item.classList.add("current-item");
+      DomHelper.scrollPageTo(item);
+      item.focus();
+
+      break;
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
     }
+  }
 }
 
 function scrollToCurrentItem() {
-    const currentItem = document.querySelector(".current-item");
-    if (currentItem !== null) {
-        DomHelper.scrollPageTo(currentItem, true);
-    }
+  const currentItem = document.querySelector(".current-item");
+  if (currentItem !== null) {
+    DomHelper.scrollPageTo(currentItem, true);
+  }
 }
 
 function decrementUnreadCounter(n) {
-    updateUnreadCounterValue((current) => {
-        return current - n;
-    });
+  updateUnreadCounterValue((current) => {
+    return current - n;
+  });
 }
 
 function incrementUnreadCounter(n) {
-    updateUnreadCounterValue((current) => {
-        return current + n;
-    });
+  updateUnreadCounterValue((current) => {
+    return current + n;
+  });
 }
 
 function updateUnreadCounterValue(callback) {
-    document.querySelectorAll("span.unread-counter").forEach((element) => {
-        const oldValue = parseInt(element.textContent, 10);
-        element.textContent = callback(oldValue);
-    });
+  document.querySelectorAll("span.unread-counter").forEach((element) => {
+    const oldValue = parseInt(element.textContent, 10);
+    element.textContent = callback(oldValue);
+  });
 
-    if (window.location.href.endsWith('/unread')) {
-        const oldValue = parseInt(document.title.split('(')[1], 10);
-        const newValue = callback(oldValue);
+  if (window.location.href.endsWith("/unread")) {
+    const oldValue = parseInt(document.title.split("(")[1], 10);
+    const newValue = callback(oldValue);
 
-        document.title = document.title.replace(
-            /(.*?)\(\d+\)(.*?)/,
-            function (match, prefix, suffix, offset, string) {
-                return prefix + '(' + newValue + ')' + suffix;
-            }
-        );
-    }
+    document.title = document.title.replace(
+      /(.*?)\(\d+\)(.*?)/,
+      function (match, prefix, suffix, offset, string) {
+        return prefix + "(" + newValue + ")" + suffix;
+      },
+    );
+  }
 }
 
 function isEntry() {
-    return document.querySelector("section.entry") !== null;
+  return document.querySelector("section.entry") !== null;
 }
 
 function isListView() {
-    return document.querySelector(".items") !== null;
+  return document.querySelector(".items") !== null;
 }
 
 function findEntry(element) {
-    if (isListView()) {
-        if (element) {
-            return element.closest(".item");
-        }
-        return document.querySelector(".current-item");
+  if (isListView()) {
+    if (element) {
+      return element.closest(".item");
     }
-    return document.querySelector(".entry");
+    return document.querySelector(".current-item");
+  }
+  return document.querySelector(".entry");
 }
 
 function handleConfirmationMessage(linkElement, callback) {
+<<<<<<< HEAD
     if (linkElement.tagName !== 'A' && linkElement.tagName !== "BUTTON") {
         linkElement = linkElement.parentNode;
+=======
+  if (linkElement.tagName != "A" && linkElement.tagName != "BUTTON") {
+    linkElement = linkElement.parentNode;
+  }
+
+  linkElement.style.display = "none";
+
+  const containerElement = linkElement.parentNode;
+  const questionElement = document.createElement("span");
+
+  function createLoadingElement() {
+    const loadingElement = document.createElement("span");
+    loadingElement.className = "loading";
+    loadingElement.appendChild(
+      document.createTextNode(linkElement.dataset.labelLoading),
+    );
+
+    questionElement.remove();
+    containerElement.appendChild(loadingElement);
+  }
+
+  const yesElement = document.createElement("button");
+  yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
+  yesElement.onclick = (event) => {
+    event.preventDefault();
+
+    createLoadingElement();
+
+    callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
+  };
+
+  const noElement = document.createElement("button");
+  noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
+  noElement.onclick = (event) => {
+    event.preventDefault();
+
+    const noActionUrl = linkElement.dataset.noActionUrl;
+    if (noActionUrl) {
+      createLoadingElement();
+
+      callback(noActionUrl, linkElement.dataset.redirectUrl);
+    } else {
+      linkElement.style.display = "inline";
+      questionElement.remove();
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
     }
+  };
 
-    linkElement.style.display = "none";
+  questionElement.className = "confirm";
+  questionElement.appendChild(
+    document.createTextNode(linkElement.dataset.labelQuestion + " "),
+  );
+  questionElement.appendChild(yesElement);
+  questionElement.appendChild(document.createTextNode(", "));
+  questionElement.appendChild(noElement);
 
-    const containerElement = linkElement.parentNode;
-    const questionElement = document.createElement("span");
-
-    function createLoadingElement() {
-        const loadingElement = document.createElement("span");
-        loadingElement.className = "loading";
-        loadingElement.appendChild(document.createTextNode(linkElement.dataset.labelLoading));
-
-        questionElement.remove();
-        containerElement.appendChild(loadingElement);
-    }
-
-    const yesElement = document.createElement("button");
-    yesElement.appendChild(document.createTextNode(linkElement.dataset.labelYes));
-    yesElement.onclick = (event) => {
-        event.preventDefault();
-
-        createLoadingElement();
-
-        callback(linkElement.dataset.url, linkElement.dataset.redirectUrl);
-    };
-
-    const noElement = document.createElement("button");
-    noElement.appendChild(document.createTextNode(linkElement.dataset.labelNo));
-    noElement.onclick = (event) => {
-        event.preventDefault();
-
-        const noActionUrl = linkElement.dataset.noActionUrl;
-        if (noActionUrl) {
-            createLoadingElement();
-
-            callback(noActionUrl, linkElement.dataset.redirectUrl);
-        } else {
-            linkElement.style.display = "inline";
-            questionElement.remove();
-        }
-    };
-
-    questionElement.className = "confirm";
-    questionElement.appendChild(document.createTextNode(linkElement.dataset.labelQuestion + " "));
-    questionElement.appendChild(yesElement);
-    questionElement.appendChild(document.createTextNode(", "));
-    questionElement.appendChild(noElement);
-
-    containerElement.appendChild(questionElement);
+  containerElement.appendChild(questionElement);
 }
 
 function showToast(label, iconElement) {
-    if (!label || !iconElement) {
-        return;
-    }
+  if (!label || !iconElement) {
+    return;
+  }
 
-    const toastMsgElement = document.getElementById("toast-msg");
-    if (toastMsgElement) {
-        toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
-        appendIconLabel(toastMsgElement, label);
+  const toastMsgElement = document.getElementById("toast-msg");
+  if (toastMsgElement) {
+    toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
+    appendIconLabel(toastMsgElement, label);
 
+<<<<<<< HEAD
         const toastElementWrapper = document.getElementById("toast-wrapper");
         if (toastElementWrapper) {
             toastElementWrapper.classList.remove('toast-animate');
@@ -664,12 +824,21 @@ function showToast(label, iconElement) {
                 toastElementWrapper.classList.add('toast-animate');
             }, 100);
         }
+=======
+    const toastElementWrapper = document.getElementById("toast-wrapper");
+    if (toastElementWrapper) {
+      toastElementWrapper.classList.remove("toast-animate");
+      setTimeout(function () {
+        toastElementWrapper.classList.add("toast-animate");
+      }, 100);
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
     }
+  }
 }
 
 /** Navigate to the new subscription page. */
 function goToAddSubscription() {
-    window.location.href = document.body.dataset.addSubscriptionUrl;
+  window.location.href = document.body.dataset.addSubscriptionUrl;
 }
 
 /**
@@ -677,30 +846,40 @@ function goToAddSubscription() {
  * @param {Element} playerElement
  */
 function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
-    if (!isPlayerPlaying(playerElement)) {
-        return; //If the player is not playing, we do not want to save the progression and mark as read on completion
-    }
-    const currentPositionInSeconds = Math.floor(playerElement.currentTime); // we do not need a precise value
-    const lastKnownPositionInSeconds = parseInt(playerElement.dataset.lastPosition, 10);
-    const markAsReadOnCompletion = parseFloat(playerElement.dataset.markReadOnCompletion); //completion percentage to mark as read
-    const recordInterval = 10;
+  if (!isPlayerPlaying(playerElement)) {
+    return; //If the player is not playing, we do not want to save the progression and mark as read on completion
+  }
+  const currentPositionInSeconds = Math.floor(playerElement.currentTime); // we do not need a precise value
+  const lastKnownPositionInSeconds = parseInt(
+    playerElement.dataset.lastPosition,
+    10,
+  );
+  const markAsReadOnCompletion = parseFloat(
+    playerElement.dataset.markReadOnCompletion,
+  ); //completion percentage to mark as read
+  const recordInterval = 10;
 
-    // we limit the number of update to only one by interval. Otherwise, we would have multiple update per seconds
-    if (currentPositionInSeconds >= (lastKnownPositionInSeconds + recordInterval) ||
-        currentPositionInSeconds <= (lastKnownPositionInSeconds - recordInterval)
-    ) {
-        playerElement.dataset.lastPosition = currentPositionInSeconds.toString();
-        const request = new RequestBuilder(playerElement.dataset.saveUrl);
-        request.withBody({ progression: currentPositionInSeconds });
-        request.execute();
-        // Handle the mark as read on completion
-        if (markAsReadOnCompletion >= 0 && playerElement.duration > 0) {
-            const completion =  currentPositionInSeconds / playerElement.duration;
-            if (completion >= markAsReadOnCompletion) {
-                handleEntryStatus("none", document.querySelector(":is(a, button)[data-toggle-status]"), true);
-            }
-        }
+  // we limit the number of update to only one by interval. Otherwise, we would have multiple update per seconds
+  if (
+    currentPositionInSeconds >= lastKnownPositionInSeconds + recordInterval ||
+    currentPositionInSeconds <= lastKnownPositionInSeconds - recordInterval
+  ) {
+    playerElement.dataset.lastPosition = currentPositionInSeconds.toString();
+    const request = new RequestBuilder(playerElement.dataset.saveUrl);
+    request.withBody({ progression: currentPositionInSeconds });
+    request.execute();
+    // Handle the mark as read on completion
+    if (markAsReadOnCompletion >= 0 && playerElement.duration > 0) {
+      const completion = currentPositionInSeconds / playerElement.duration;
+      if (completion >= markAsReadOnCompletion) {
+        handleEntryStatus(
+          "none",
+          document.querySelector(":is(a, button)[data-toggle-status]"),
+          true,
+        );
+      }
     }
+  }
 }
 
 /**
@@ -709,59 +888,63 @@ function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
  * @returns {boolean}
  */
 function isPlayerPlaying(element) {
-    return element &&
-        element.currentTime > 0 &&
-        !element.paused &&
-        !element.ended &&
-        element.readyState > 2; //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+  return (
+    element &&
+    element.currentTime > 0 &&
+    !element.paused &&
+    !element.ended &&
+    element.readyState > 2
+  ); //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 }
 
 /**
  * handle new share entires and already shared entries
  */
 function handleShare() {
-    const link = document.querySelector(':is(a, button)[data-share-status]');
-    const title = document.querySelector("body > main > section > header > h1 > a");
-    if (link.dataset.shareStatus === "shared") {
-        checkShareAPI(title, link.href);
-    }
-    if (link.dataset.shareStatus === "share") {
-        const request = new RequestBuilder(link.href);
-        request.withCallback((r) => {
-            checkShareAPI(title, r.url);
-        });
-        request.withHttpMethod("GET");
-        request.execute();
-    }
+  const link = document.querySelector(":is(a, button)[data-share-status]");
+  const title = document.querySelector(
+    "body > main > section > header > h1 > a",
+  );
+  if (link.dataset.shareStatus === "shared") {
+    checkShareAPI(title, link.href);
+  }
+  if (link.dataset.shareStatus === "share") {
+    const request = new RequestBuilder(link.href);
+    request.withCallback((r) => {
+      checkShareAPI(title, r.url);
+    });
+    request.withHttpMethod("GET");
+    request.execute();
+  }
 }
 
 /**
-* wrapper for Web Share API
-*/
+ * wrapper for Web Share API
+ */
 function checkShareAPI(title, url) {
-    if (!navigator.canShare) {
-        console.error("Your browser doesn't support the Web Share API.");
-        window.location = url;
-        return;
-    }
-    try {
-        navigator.share({
-            title: title,
-            url: url
-        });
-    } catch (err) {
-        console.error(err);
-    }
-    window.location.reload();
+  if (!navigator.canShare) {
+    console.error("Your browser doesn't support the Web Share API.");
+    window.location = url;
+    return;
+  }
+  try {
+    navigator.share({
+      title: title,
+      url: url,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+  window.location.reload();
 }
 
 function getCsrfToken() {
-    const element = document.querySelector("body[data-csrf-token]");
-    if (element !== null) {
-        return element.dataset.csrfToken;
-    }
+  const element = document.querySelector("body[data-csrf-token]");
+  if (element !== null) {
+    return element.dataset.csrfToken;
+  }
 
-    return "";
+  return "";
 }
 
 /**
@@ -772,6 +955,7 @@ function getCsrfToken() {
  * @param {Element} button
  */
 function handleMediaControl(button) {
+<<<<<<< HEAD
     const action = button.dataset.enclosureAction;
     const value = parseFloat(button.dataset.actionValue);
     const targetEnclosureId = button.dataset.enclosureId;
@@ -802,4 +986,41 @@ function handleMediaControl(button) {
             break;
         }
     });
+=======
+  const action = button.dataset.enclosureAction;
+  const value = parseFloat(button.dataset.actionValue);
+  const targetEnclosureId = button.dataset.enclosureId;
+  const enclosures = document.querySelectorAll(
+    `audio[data-enclosure-id="${targetEnclosureId}"],video[data-enclosure-id="${targetEnclosureId}"]`,
+  );
+  const speedIndicator = document.querySelectorAll(
+    `span.speed-indicator[data-enclosure-id="${targetEnclosureId}"]`,
+  );
+  enclosures.forEach((enclosure) => {
+    switch (action) {
+      case "seek":
+        enclosure.currentTime =
+          enclosure.currentTime + value > 0 ? enclosure.currentTime + value : 0;
+        break;
+      case "speed":
+        // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.
+        // 0.25 was chosen because it will allow to get back to 1x in two "faster" click, and lower value with same property would be 0.
+        enclosure.playbackRate = Math.max(0.25, enclosure.playbackRate + value);
+        speedIndicator.forEach((speedI) => {
+          // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
+          // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
+          speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+        });
+        break;
+      case "speed-reset":
+        enclosure.playbackRate = value;
+        speedIndicator.forEach((speedI) => {
+          // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
+          // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
+          speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+        });
+        break;
+    }
+  });
+>>>>>>> 55d8ddfa (PWA: First implementation of offline mode)
 }

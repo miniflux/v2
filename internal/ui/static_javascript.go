@@ -31,7 +31,19 @@ func (h *handler) showJavascript(w http.ResponseWriter, r *http.Request) {
 		contents := static.JavascriptBundles[filename]
 
 		if filename == "service-worker" {
-			variables := fmt.Sprintf(`const OFFLINE_URL=%q;`, route.Path(h.router, "offline"))
+			user, err := h.store.UserByID(request.UserID(r))
+			if err != nil {
+				html.ServerError(w, r, err)
+				return
+			}
+
+			cacheForOffline := 0
+			if user.CacheForOffline {
+				cacheForOffline = 1
+			}
+
+			variables := fmt.Sprintf(`const OFFLINE_URL=%q;const USE_CACHE=%d;`, route.Path(h.router, "offline"), cacheForOffline)
+
 			contents = append([]byte(variables), contents...)
 		}
 

@@ -52,6 +52,7 @@ type SettingsForm struct {
 	MediaPlaybackRate     float64
 	BlockFilterEntryRules string
 	KeepFilterEntryRules  string
+	CacheForOffline       bool
 }
 
 // MarkAsReadBehavior returns the MarkReadBehavior from the given MarkReadOnView and MarkReadOnMediaPlayerCompletion values.
@@ -118,6 +119,8 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	MarkReadOnView, MarkReadOnMediaPlayerCompletion := ExtractMarkAsReadBehavior(s.MarkReadBehavior)
 	user.MarkReadOnView = MarkReadOnView
 	user.MarkReadOnMediaPlayerCompletion = MarkReadOnMediaPlayerCompletion
+
+	user.CacheForOffline = s.CacheForOffline
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -205,5 +208,6 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		MediaPlaybackRate:      mediaPlaybackRate,
 		BlockFilterEntryRules:  r.FormValue("block_filter_entry_rules"),
 		KeepFilterEntryRules:   r.FormValue("keep_filter_entry_rules"),
+		CacheForOffline:        r.FormValue("cache_for_offline") == "1",
 	}
 }
