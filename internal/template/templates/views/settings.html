@@ -114,6 +114,7 @@
         <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
         <label><input type="checkbox" name="mark_read_on_view" value="1" {{ if .form.MarkReadOnView }}checked{{ end }}> {{ t "form.prefs.label.mark_read_on_view" }}</label>
+        <label><input type="checkbox" name="cache_for_offline" value="1" {{ if .form.CacheForOffline }}checked{{ end }}> {{ t "form.prefs.label.cache_for_offline" }}</label>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

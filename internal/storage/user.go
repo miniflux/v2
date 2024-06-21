@@ -92,7 +92,8 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 			default_home_page,
 			categories_sorting_order,
 			mark_read_on_view,
-			media_playback_rate
+			media_playback_rate,
+			cache_for_offline
 	`
 
 	tx, err := s.db.Begin()
@@ -132,6 +133,7 @@ func (s *Storage) CreateUser(userCreationRequest *model.UserCreationRequest) (*m
 		&user.CategoriesSortingOrder,
 		&user.MarkReadOnView,
 		&user.MediaPlaybackRate,
+		&user.CacheForOffline,
 	)
 	if err != nil {
 		tx.Rollback()
@@ -189,9 +191,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				default_home_page=$20,
 				categories_sorting_order=$21,
 				mark_read_on_view=$22,
-				media_playback_rate=$23
+				media_playback_rate=$23,
+				cache_for_offline=$24
 			WHERE
-				id=$24
+				id=$25
 		`
 
 		_, err = s.db.Exec(
@@ -219,6 +222,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.CategoriesSortingOrder,
 			user.MarkReadOnView,
 			user.MediaPlaybackRate,
+			user.CacheForOffline,
 			user.ID,
 		)
 		if err != nil {
@@ -248,9 +252,10 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				default_home_page=$19,
 				categories_sorting_order=$20,
 				mark_read_on_view=$21,
-				media_playback_rate=$22
+				media_playback_rate=$22,
+				cache_for_offline=$23
 			WHERE
-				id=$23
+				id=$24
 		`
 
 		_, err := s.db.Exec(
@@ -277,6 +282,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 			user.CategoriesSortingOrder,
 			user.MarkReadOnView,
 			user.MediaPlaybackRate,
+			user.CacheForOffline,
 			user.ID,
 		)
 
@@ -325,7 +331,8 @@ func (s *Storage) UserByID(userID int64) (*model.User, error) {
 			default_home_page,
 			categories_sorting_order,
 			mark_read_on_view,
-			media_playback_rate
+			media_playback_rate,
+			cache_for_offline
 		FROM
 			users
 		WHERE
@@ -361,7 +368,8 @@ func (s *Storage) UserByUsername(username string) (*model.User, error) {
 			default_home_page,
 			categories_sorting_order,
 			mark_read_on_view,
-			media_playback_rate
+			media_playback_rate,
+			cache_for_offline
 		FROM
 			users
 		WHERE
@@ -397,7 +405,8 @@ func (s *Storage) UserByField(field, value string) (*model.User, error) {
 			default_home_page,
 			categories_sorting_order,
 			mark_read_on_view,
-			media_playback_rate
+			media_playback_rate,
+			cache_for_offline
 		FROM
 			users
 		WHERE
@@ -440,7 +449,8 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			u.default_home_page,
 			u.categories_sorting_order,
 			u.mark_read_on_view,
-			media_playback_rate
+			media_playback_rate,
+			u.cache_for_offline
 		FROM
 			users u
 		LEFT JOIN
@@ -478,6 +488,7 @@ func (s *Storage) fetchUser(query string, args ...interface{}) (*model.User, err
 		&user.CategoriesSortingOrder,
 		&user.MarkReadOnView,
 		&user.MediaPlaybackRate,
+		&user.CacheForOffline,
 	)
 
 	if err == sql.ErrNoRows {
@@ -586,7 +597,8 @@ func (s *Storage) Users() (model.Users, error) {
 			default_home_page,
 			categories_sorting_order,
 			mark_read_on_view,
-			media_playback_rate
+			media_playback_rate,
+			cache_for_offline
 		FROM
 			users
 		ORDER BY username ASC
@@ -625,6 +637,7 @@ func (s *Storage) Users() (model.Users, error) {
 			&user.CategoriesSortingOrder,
 			&user.MarkReadOnView,
 			&user.MediaPlaybackRate,
+			&user.CacheForOffline,
 		)
 
 		if err != nil {
