@@ -66,7 +66,7 @@ func (h *handler) showUnreadEntryPage(w http.ResponseWriter, r *http.Request) {
 		prevEntryRoute = route.Path(h.router, "unreadEntry", "entryID", prevEntry.ID)
 	}
 
-	if entry.ShouldMarkAsReadOnView(user) {
+	if entry.ShouldMarkAsReadOnView(user) && !request.IsServiceWorker(r) {
 		entry.Status = model.EntryStatusRead
 	}
 

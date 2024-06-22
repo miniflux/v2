@@ -132,6 +132,7 @@
     {{ if .flashErrorMessage }}
         <div role="alert" class="flash-error-message alert alert-error">{{ .flashErrorMessage }}</div>
     {{ end }}
+		<div id="offline-flag" role="alert" aria-live="assertive" aria-atomic="true" class="flash-message alert alert-warning hidden">{{ t "page.offline.warning" }}</div>
 
     {{template "page_header" .}}
 

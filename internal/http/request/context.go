@@ -140,6 +140,11 @@ func LastForceRefresh(r *http.Request) int64 {
 	return timestamp
 }
 
+// Determine if the request is from a service worker.
+func IsServiceWorker(r *http.Request) bool {
+	return r.Header.Get("Client-Type") == "service-worker"
+}
+
 // ClientIP returns the client IP address stored in the context.
 func ClientIP(r *http.Request) string {
 	return getContextStringValue(r, ClientIPContextKey)
