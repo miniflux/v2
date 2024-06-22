@@ -3,8 +3,6 @@
 const OFFLINE_VERSION = 2;
 const CACHE_NAME = "offline";
 
-console.log(USE_CACHE);
-
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
@@ -63,4 +61,38 @@ self.addEventListener("fetch", (event) => {
       })(),
     );
   }
+});
+
+self.addEventListener("load", async (event) => {
+  if (
+    navigator.onLine === true &&
+    event.target.location.pathname === "/unread" &&
+    USE_CACHE
+  ) {
+    const cache = await caches.open(CACHE_NAME);
+
+    for (let article of document.getElementsByTagName("article")) {
+      const as = article.getElementsByTagName("a");
+      if (as.length > 0) {
+        const a = as[0];
+        const href = a.href;
+        cache
+          .add(
+            new Request(href, {
+              headers: new Headers({
+                "Client-Type": "service-worker",
+              }),
+            }),
+          )
+          .then(() => {
+            article;
+          });
+      }
+    }
+  }
+});
+
+self.addEventListener("DOMContentLoaded", function () {
+  const offlineFlag = document.getElementById("offline-flag");
+  offlineFlag.classList.toggle("hidden", navigator.onLine);
 });

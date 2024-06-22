@@ -253,6 +253,7 @@
     "page.offline.title": "Offline Mode",
     "page.offline.message": "You are offline",
     "page.offline.refresh_page": "Try to refresh the page",
+    "page.offline.warning": "You are currently offline. Some features may not be available.",
     "page.webauthn_rename.title": "Rename Passkey",
     "alert.no_shared_entry": "There is no shared entry.",
     "alert.no_bookmark": "There are no starred entries.",
