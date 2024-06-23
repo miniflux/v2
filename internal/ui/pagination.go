@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 package ui // import "miniflux.app/v2/internal/ui"
-import (
-	"math"
-)
 
 type pagination struct {
 	Route        string
@@ -27,7 +24,7 @@ func getPagination(route string, total, offset, nbItemsPerPage int) pagination {
 	prevOffset := 0
 
 	firstOffset := 0
-	lastOffset := (int)(math.Floor(float64(total/nbItemsPerPage))) * nbItemsPerPage
+	lastOffset := (total / nbItemsPerPage) * nbItemsPerPage
 
 	showNext := (total - offset) > nbItemsPerPage
 	showPrev := offset > 0
