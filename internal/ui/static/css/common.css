@@ -710,6 +710,7 @@ template {
     font-size: 1.1em;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .pagination-top {
@@ -732,19 +733,38 @@ template {
 }
 
 .pagination > div {
-    flex: 1;
+    display: flex;
+}
+
+.pagination > div.pagination-backward > div {
+    padding-right: 15px;
+}
+
+.pagination > div.pagination-forward > div {
+    padding-left: 15px;
 }
 
 .pagination-next {
     text-align: right;
 }
 
-.pagination-prev:before {
-    content: "« ";
+.pagination-next:after {
+    content: " ›";
 }
 
-.pagination-next:after {
+.pagination-last {
+    text-align: right;
+}
+
+.pagination-last:after {
     content: " »";
+}
+
+.pagination-prev:before {
+    content: "‹ ";
+}
+.pagination-first:before {
+    content: "« ";
 }
 
 .pagination a {
