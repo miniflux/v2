@@ -25,6 +25,9 @@ func getPagination(route string, total, offset, nbItemsPerPage int) pagination {
 
 	firstOffset := 0
 	lastOffset := (total / nbItemsPerPage) * nbItemsPerPage
+	if lastOffset == total {
+		lastOffset = lastOffset - nbItemsPerPage
+	}
 
 	showNext := (total - offset) > nbItemsPerPage
 	showPrev := offset > 0
