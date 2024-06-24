@@ -100,6 +100,11 @@ type IntegrationForm struct {
 	RaindropToken                    string
 	RaindropCollectionID             string
 	RaindropTags                     string
+	BetulaEnabled                    bool
+	BetulaURL                        string
+	BetulaToken                      string
+	BetulaUsername                   string
+	BetulaPassword                   string
 }
 
 // Merge copy form values to the model.
@@ -189,6 +194,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.RaindropToken = i.RaindropToken
 	integration.RaindropCollectionID = i.RaindropCollectionID
 	integration.RaindropTags = i.RaindropTags
+	integration.BetulaEnabled = i.BetulaEnabled
+	integration.BetulaURL = i.BetulaURL
+	integration.BetulaToken = i.BetulaToken
+	integration.BetulaUsername = i.BetulaUsername
+	integration.BetulaPassword = i.BetulaPassword
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -281,6 +291,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		RaindropToken:                    r.FormValue("raindrop_token"),
 		RaindropCollectionID:             r.FormValue("raindrop_collection_id"),
 		RaindropTags:                     r.FormValue("raindrop_tags"),
+		BetulaEnabled:                    r.FormValue("betula_enabled") == "1",
+		BetulaURL:                        r.FormValue("betula_url"),
+		BetulaToken:                      r.FormValue("betula_token"),
+		BetulaUsername:                   r.FormValue("betula_username"),
+		BetulaPassword:                   r.FormValue("betula_password"),
 	}
 }
 

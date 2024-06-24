@@ -114,6 +114,11 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		RaindropToken:                    integration.RaindropToken,
 		RaindropCollectionID:             integration.RaindropCollectionID,
 		RaindropTags:                     integration.RaindropTags,
+		BetulaEnabled:                    integration.BetulaEnabled,
+		BetulaURL:                        integration.BetulaURL,
+		BetulaToken:                      integration.BetulaToken,
+		BetulaUsername:                   integration.BetulaUsername,
+		BetulaPassword:                   integration.BetulaPassword,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
