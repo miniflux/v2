@@ -197,7 +197,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			raindrop_enabled,
 			raindrop_token,
 			raindrop_collection_id,
-			raindrop_tags
+			raindrop_tags,
+			betula_enabled,
+			betula_url,
+			betula_token,
+			betula_username,
+			betula_password
 		FROM
 			integrations
 		WHERE
@@ -294,6 +299,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.RaindropToken,
 		&integration.RaindropCollectionID,
 		&integration.RaindropTags,
+		&integration.BetulaEnabled,
+		&integration.BetulaURL,
+		&integration.BetulaToken,
+		&integration.BetulaUsername,
+		&integration.BetulaPassword,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -398,9 +408,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			raindrop_enabled=$85,
 			raindrop_token=$86,
 			raindrop_collection_id=$87,
-			raindrop_tags=$88
+			raindrop_tags=$88,
+			betula_enabled=$89,
+			betula_url=$90,
+			betula_token=$91,
+			betula_username=$92,
+			betula_password=$93
 		WHERE
-			user_id=$89
+			user_id=$94
 	`
 	_, err := s.db.Exec(
 		query,
@@ -492,6 +507,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.RaindropToken,
 		integration.RaindropCollectionID,
 		integration.RaindropTags,
+		integration.BetulaEnabled,
+		integration.BetulaURL,
+		integration.BetulaToken,
+		integration.BetulaUsername,
+		integration.BetulaPassword,
 		integration.UserID,
 	)
 
@@ -530,7 +550,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				shaarli_enabled='t' OR
 				webhook_enabled='t' OR
 				omnivore_enabled='t' OR
-				raindrop_enabled='t'
+				raindrop_enabled='t' OR
+				betula_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
