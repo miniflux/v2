@@ -200,9 +200,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			raindrop_tags,
 			betula_enabled,
 			betula_url,
-			betula_token,
-			betula_username,
-			betula_password
+			betula_token
 		FROM
 			integrations
 		WHERE
@@ -302,8 +300,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.BetulaEnabled,
 		&integration.BetulaURL,
 		&integration.BetulaToken,
-		&integration.BetulaUsername,
-		&integration.BetulaPassword,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -411,11 +407,9 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			raindrop_tags=$88,
 			betula_enabled=$89,
 			betula_url=$90,
-			betula_token=$91,
-			betula_username=$92,
-			betula_password=$93
+			betula_token=$91
 		WHERE
-			user_id=$94
+			user_id=$92
 	`
 	_, err := s.db.Exec(
 		query,
@@ -510,8 +504,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.BetulaEnabled,
 		integration.BetulaURL,
 		integration.BetulaToken,
-		integration.BetulaUsername,
-		integration.BetulaPassword,
 		integration.UserID,
 	)
 

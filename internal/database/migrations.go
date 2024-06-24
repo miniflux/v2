@@ -908,8 +908,6 @@ var migrations = []func(tx *sql.Tx) error{
 			ALTER TABLE integrations ADD COLUMN betula_url text default '';
 			ALTER TABLE integrations ADD COLUMN betula_token text default '';
 			ALTER TABLE integrations ADD COLUMN betula_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN betula_username text default '';
-			ALTER TABLE integrations ADD COLUMN betula_password text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err

@@ -8,8 +8,6 @@ type Integration struct {
 	UserID                           int64
 	BetulaEnabled                    bool
 	BetulaURL                        string
-	BetulaUsername                   string
-	BetulaPassword                   string
 	BetulaToken                      string
 	PinboardEnabled                  bool
 	PinboardToken                    string

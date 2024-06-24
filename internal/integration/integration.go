@@ -40,10 +40,7 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 			slog.String("entry_url", entry.URL),
 		)
 
-		client := betula.NewClient(userIntegrations.BetulaURL,
-			userIntegrations.BetulaUsername,
-			userIntegrations.BetulaPassword,
-			userIntegrations.BetulaToken)
+		client := betula.NewClient(userIntegrations.BetulaURL, userIntegrations.BetulaToken)
 		err := client.CreateBookmark(
 			entry.URL,
 			entry.Title,

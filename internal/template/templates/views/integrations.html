@@ -38,6 +38,25 @@
         </div>
     </details>
 
+    <details {{ if .form.BetulaEnabled }}open{{ end }}>
+        <summary>Betula</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="betula_enabled" value="1" {{ if .form.BetulaEnabled }}checked{{ end }}> {{ t "form.integration.betula_activate" }}
+            </label>
+
+            <label for="form-betula-url">{{ t "form.integration.betula_url" }}</label>
+            <input type="url" name="betula_url" id="form-betula-url" value="{{ .form.BetulaURL }}" placeholder="http://links.bouncepaw.com" spellcheck="false">
+
+            <label for="form-betula-token">{{ t "form.integration.betula_token" }}</label>
+            <input type="text" name="betula_token" id="form-betula-token" value="{{ .form.BetulaToken }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.EspialEnabled }}open{{ end }}>
         <summary>Espial</summary>
         <div class="form-section">
