@@ -5,6 +5,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 
 import (
 	"net/http"
+	"regexp"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
@@ -52,6 +53,11 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view.Set("categories_sorting_options", model.CategoriesSortingOptions())
 	view.Set("countWebAuthnCerts", h.store.CountWebAuthnCredentialsByUserID(loggedUser.ID))
 	view.Set("webAuthnCerts", creds)
+
+	// Sanitize the end of the block & Keep rules
+	cleanEnd := regexp.MustCompile(`(?m)\r\n\s*$`)
+	settingsForm.BlockFilterEntryRules = cleanEnd.ReplaceAllLiteralString(settingsForm.BlockFilterEntryRules, "")
+	settingsForm.KeepFilterEntryRules = cleanEnd.ReplaceAllLiteralString(settingsForm.KeepFilterEntryRules, "")
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
