@@ -5,10 +5,10 @@ package integration // import "miniflux.app/v2/internal/integration"
 
 import (
 	"log/slog"
-	"miniflux.app/v2/internal/integration/betula"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration/apprise"
+	"miniflux.app/v2/internal/integration/betula"
 	"miniflux.app/v2/internal/integration/espial"
 	"miniflux.app/v2/internal/integration/instapaper"
 	"miniflux.app/v2/internal/integration/linkace"

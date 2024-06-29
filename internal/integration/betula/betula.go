@@ -2,12 +2,13 @@ package betula
 
 import (
 	"fmt"
-	"miniflux.app/v2/internal/urllib"
-	"miniflux.app/v2/internal/version"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"miniflux.app/v2/internal/urllib"
+	"miniflux.app/v2/internal/version"
 )
 
 const defaultClientTimeout = 10 * time.Second
