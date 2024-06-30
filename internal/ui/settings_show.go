@@ -42,6 +42,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		CategoriesSortingOrder: user.CategoriesSortingOrder,
 		MarkReadOnView:         user.MarkReadOnView,
 		MediaPlaybackRate:      user.MediaPlaybackRate,
+		CacheForOffline:        user.CacheForOffline,
 	}
 
 	timezones, err := h.store.Timezones()

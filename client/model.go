@@ -41,6 +41,7 @@ type User struct {
 	DefaultHomePage        string     `json:"default_home_page"`
 	CategoriesSortingOrder string     `json:"categories_sorting_order"`
 	MarkReadOnView         bool       `json:"mark_read_on_view"`
+	CacheForOffline        bool       `json:"cache_for_offline"`
 	MediaPlaybackRate      float64    `json:"media_playback_rate"`
 }
 

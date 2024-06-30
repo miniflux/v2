@@ -903,4 +903,9 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `ALTER TABLE users ADD COLUMN cache_for_offline boolean default 'f'`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

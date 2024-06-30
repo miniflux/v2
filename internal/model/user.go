@@ -36,6 +36,7 @@ type User struct {
 	CategoriesSortingOrder string     `json:"categories_sorting_order"`
 	MarkReadOnView         bool       `json:"mark_read_on_view"`
 	MediaPlaybackRate      float64    `json:"media_playback_rate"`
+	CacheForOffline        bool       `json:"cache_for_offline"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -72,6 +73,7 @@ type UserModificationRequest struct {
 	CategoriesSortingOrder *string  `json:"categories_sorting_order"`
 	MarkReadOnView         *bool    `json:"mark_read_on_view"`
 	MediaPlaybackRate      *float64 `json:"media_playback_rate"`
+	CacheForOffline        bool     `json:"cache_for_offline"`
 }
 
 // Patch updates the User object with the modification request.
@@ -166,6 +168,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.MediaPlaybackRate != nil {
 		user.MediaPlaybackRate = *u.MediaPlaybackRate
+	}
+
+	if u.CacheForOffline {
+		user.CacheForOffline = u.CacheForOffline
 	}
 }
 
