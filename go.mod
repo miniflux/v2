@@ -11,7 +11,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
 	github.com/prometheus/client_golang v1.19.1
-	github.com/tdewolff/minify/v2 v2.20.34
+	github.com/tdewolff/minify/v2 v2.20.35
 	github.com/yuin/goldmark v1.7.4
 	golang.org/x/crypto v0.24.0
 	golang.org/x/net v0.26.0
