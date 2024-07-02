@@ -56,12 +56,12 @@ func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bo
 		return false
 	}
 
-	if r.ETag() != "" && r.ETag() == lastEtagValue {
-		return false
+	if r.ETag() != "" {
+		return r.ETag() != lastEtagValue
 	}
 
-	if r.LastModified() != "" && r.LastModified() == lastModifiedValue {
-		return false
+	if r.LastModified() != "" {
+		return r.LastModified() != lastModifiedValue
 	}
 
 	return true
