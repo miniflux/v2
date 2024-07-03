@@ -6,6 +6,7 @@ package ui // import "miniflux.app/v2/internal/ui"
 import (
 	"net/http"
 	"regexp"
+	"strings"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
@@ -58,6 +59,9 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	cleanEnd := regexp.MustCompile(`(?m)\r\n\s*$`)
 	settingsForm.BlockFilterEntryRules = cleanEnd.ReplaceAllLiteralString(settingsForm.BlockFilterEntryRules, "")
 	settingsForm.KeepFilterEntryRules = cleanEnd.ReplaceAllLiteralString(settingsForm.KeepFilterEntryRules, "")
+	// Clean carriage returns for Windows environments
+	settingsForm.BlockFilterEntryRules = strings.ReplaceAll(settingsForm.BlockFilterEntryRules, "\r\n", "\n")
+	settingsForm.KeepFilterEntryRules = strings.ReplaceAll(settingsForm.KeepFilterEntryRules, "\r\n", "\n")
 
 	if validationErr := settingsForm.Validate(); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
