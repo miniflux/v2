@@ -34,6 +34,8 @@ type SettingsForm struct {
 	CategoriesSortingOrder string
 	MarkReadOnView         bool
 	MediaPlaybackRate      float64
+	BlockFilterEntryRules  string
+	KeepFilterEntryRules   string
 }
 
 // Merge updates the fields of the given user.
@@ -57,6 +59,8 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.CategoriesSortingOrder = s.CategoriesSortingOrder
 	user.MarkReadOnView = s.MarkReadOnView
 	user.MediaPlaybackRate = s.MediaPlaybackRate
+	user.BlockFilterEntryRules = s.BlockFilterEntryRules
+	user.KeepFilterEntryRules = s.KeepFilterEntryRules
 
 	if s.Password != "" {
 		user.Password = s.Password
@@ -133,5 +137,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		CategoriesSortingOrder: r.FormValue("categories_sorting_order"),
 		MarkReadOnView:         r.FormValue("mark_read_on_view") == "1",
 		MediaPlaybackRate:      mediaPlaybackRate,
+		BlockFilterEntryRules:  r.FormValue("block_filter_entry_rules"),
+		KeepFilterEntryRules:   r.FormValue("keep_filter_entry_rules"),
 	}
 }
