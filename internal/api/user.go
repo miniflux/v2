@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
@@ -86,9 +87,13 @@ func (h *handler) updateUser(w http.ResponseWriter, r *http.Request) {
 	cleanEnd := regexp.MustCompile(`(?m)\r\n\s*$`)
 	if userModificationRequest.BlockFilterEntryRules != nil {
 		*userModificationRequest.BlockFilterEntryRules = cleanEnd.ReplaceAllLiteralString(*userModificationRequest.BlockFilterEntryRules, "")
+		// Clean carriage returns for Windows environments
+		*userModificationRequest.BlockFilterEntryRules = strings.ReplaceAll(*userModificationRequest.BlockFilterEntryRules, "\r\n", "\n")
 	}
 	if userModificationRequest.KeepFilterEntryRules != nil {
 		*userModificationRequest.KeepFilterEntryRules = cleanEnd.ReplaceAllLiteralString(*userModificationRequest.KeepFilterEntryRules, "")
+		// Clean carriage returns for Windows environments
+		*userModificationRequest.KeepFilterEntryRules = strings.ReplaceAll(*userModificationRequest.KeepFilterEntryRules, "\r\n", "\n")
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, originalUser.ID, &userModificationRequest); validationErr != nil {
