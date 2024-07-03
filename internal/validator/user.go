@@ -212,7 +212,7 @@ func validateMediaPlaybackRate(mediaPlaybackRate float64) *locale.LocalizedError
 }
 
 func isValidFilterRules(filterEntryRules string, filterType string) *locale.LocalizedError {
-	// Valid Format: FieldName(RegEx)~FieldName(RegEx)~...
+	// Valid Format: FieldName=RegEx\nFieldName=RegEx...
 	fieldNames := []string{"EntryTitle", "EntryURL", "EntryCommentsURL", "EntryContent", "EntryAuthor", "EntryTag"}
 
 	rules := strings.Split(filterEntryRules, "\n")
