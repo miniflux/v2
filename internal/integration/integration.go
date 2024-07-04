@@ -8,6 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration/apprise"
+	"miniflux.app/v2/internal/integration/betula"
 	"miniflux.app/v2/internal/integration/espial"
 	"miniflux.app/v2/internal/integration/instapaper"
 	"miniflux.app/v2/internal/integration/linkace"
@@ -32,6 +33,30 @@ import (
 
 // SendEntry sends the entry to third-party providers when the user click on "Save".
 func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
+	if userIntegrations.BetulaEnabled {
+		slog.Debug("Sending entry to Betula",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := betula.NewClient(userIntegrations.BetulaURL, userIntegrations.BetulaToken)
+		err := client.CreateBookmark(
+			entry.URL,
+			entry.Title,
+			entry.Tags,
+		)
+
+		if err != nil {
+			slog.Error("Unable to send entry to Betula",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
 	if userIntegrations.PinboardEnabled {
 		slog.Debug("Sending entry to Pinboard",
 			slog.Int64("user_id", userIntegrations.UserID),
