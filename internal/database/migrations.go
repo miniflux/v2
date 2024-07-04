@@ -905,18 +905,18 @@ var migrations = []func(tx *sql.Tx) error{
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN betula_url text default '';
-			ALTER TABLE integrations ADD COLUMN betula_token text default '';
-			ALTER TABLE integrations ADD COLUMN betula_enabled bool default 'f';
+			ALTER TABLE users
+				ADD COLUMN block_filter_entry_rules text not null default '',
+				ADD COLUMN keep_filter_entry_rules text not null default ''
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx) (err error) {
 		sql := `
-			ALTER TABLE users
-				ADD COLUMN block_filter_entry_rules text not null default '',
-				ADD COLUMN keep_filter_entry_rules text not null default ''
+			ALTER TABLE integrations ADD COLUMN betula_url text default '';
+			ALTER TABLE integrations ADD COLUMN betula_token text default '';
+			ALTER TABLE integrations ADD COLUMN betula_enabled bool default 'f';
 		`
 		_, err = tx.Exec(sql)
 		return err
