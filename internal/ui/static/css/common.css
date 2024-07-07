@@ -1038,6 +1038,10 @@ article.category-has-unread {
     max-width: 100%;
 }
 
+.entry-content img {
+    height: auto;
+}
+
 .entry-content figure {
     margin-top: 15px;
     margin-bottom: 15px;
