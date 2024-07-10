@@ -1,3 +1,47 @@
+Version 2.1.4 (July 9, 2024)
+----------------------------
+
+* test: add unit tests for `IsModified()` behaviour
+* refactor: improve YouTube page feed detection
+* fix(ui): settings form is not populated correctly after validation errors
+* fix(ui): playback speed indicator precision
+* fix(ui): playback speed indicator on shared entries
+* fix(integration): preserve existing Pinboard bookmarks
+* fix(googlereader): set `CrawlTimeMsec` to the correct precision
+* fix(build): failed to solve container image `arm64v8/golang:1.22-bookworm`
+* fix(build): add `distroless` suffix on `latest` tag in GitHub workflow
+* fix: use `ETag` as a stronger validator than `Last-Modified`
+* fix: update `theverge.com` rewrite rule to avoid duplicate image
+* fix: incorrect Go package comment `reader/readingtime`
+* fix: error out for improper rewrite regexp when processing feed entries
+* fix: ensures that session cookies are not expiring before the session is cleaned up from the database as per `CLEANUP_REMOVE_SESSIONS_DAYS`
+* fix: `<img>` aspect ratio with `height: auto`
+* feat(ui): add `viewport-fit=cover`
+* feat(sanitizer): add support for HTML hidden attribute
+* feat(locale): update French translations
+* feat(integration): add Raindrop integration
+* feat(integration): add feed name to Telegram message
+* feat(integration): add Betula integration
+* feat: use of insecure TLS ciphers when "Allow self-signed or invalid certificates" is enabled to workaround some broken websites
+* feat: discover feeds from a Youtube playlist pages
+* feat: add navigation to last/first page
+* feat: add global block and keep filters
+* feat: add description field to feed settings
+* feat: add `pitchfork.com` scraping rule
+* feat: add `FETCH_NEBULA_WATCH_TIME` config option
+* Bump `github.com/PuerkitoBio/goquery` from` 1.9.1` to` 1.9.2`
+* Bump `github.com/prometheus/client_golang` from `1.19.0` to `1.19.1`
+* build(deps): bump `library/alpine` in `/packaging/docker/alpine`
+* build(deps): bump `golangci/golangci-lint-action` from `4` to `6`
+* build(deps): bump `golang.org/x/term` from `0.19.0` to `0.22.0`
+* build(deps): bump `golang.org/x/oauth2` from `0.19.0` to `0.21.0`
+* build(deps): bump `golang.org/x/net` from `0.22.0` to `0.27.0`
+* build(deps): bump `golang.org/x/crypto` from `0.24.0` to `0.25.0`
+* build(deps): bump `github.com/yuin/goldmark` from `1.7.1` to `1.7.4`
+* build(deps): bump `github.com/tdewolff/minify/v2` from `2.20.20` to `2.20.36`
+* build(deps): bump `github.com/coreos/go-oidc/v3` from `3.10.0` to `3.11.0`
+* build(deps): bump `docker/build-push-action` from `5` to `6`
+
 Version 2.1.3 (April 27, 2024)
 ------------------------------
 
