@@ -4,6 +4,7 @@
 package mediaproxy // import "miniflux.app/v2/internal/mediaproxy"
 
 import (
+	"slices"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
@@ -53,13 +54,15 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 				}
 			})
 
-			doc.Find("video").Each(func(i int, video *goquery.Selection) {
-				if posterAttrValue, ok := video.Attr("poster"); ok {
-					if shouldProxy(posterAttrValue, proxyOption) {
-						video.SetAttr("poster", proxifyFunction(router, posterAttrValue))
+			if !slices.Contains(config.Opts.MediaProxyResourceTypes(), "video") {
+				doc.Find("video").Each(func(i int, video *goquery.Selection) {
+					if posterAttrValue, ok := video.Attr("poster"); ok {
+						if shouldProxy(posterAttrValue, proxyOption) {
+							video.SetAttr("poster", proxifyFunction(router, posterAttrValue))
+						}
 					}
-				}
-			})
+				})
+			}
 
 		case "audio":
 			doc.Find("audio, audio source").Each(func(i int, audio *goquery.Selection) {
