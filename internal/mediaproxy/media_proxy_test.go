@@ -553,3 +553,28 @@ func TestProxyFilterVideoPoster(t *testing.T) {
 		t.Errorf(`Not expected output: got %s`, output)
 	}
 }
+
+func TestProxyFilterVideoPosterOnce(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("PROXY_OPTION", "all")
+	os.Setenv("PROXY_MEDIA_TYPES", "image,video")
+	os.Setenv("PROXY_PRIVATE_KEY", "test")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+
+	input := `<video poster="https://example.com/img.png" src="https://example.com/video.mp4"></video>`
+	expected := `<video poster="/proxy/aDFfroYL57q5XsojIzATT6OYUCkuVSPXYJQAVrotnLw=/aHR0cHM6Ly9leGFtcGxlLmNvbS9pbWcucG5n" src="/proxy/0y3LR8zlx8S8qJkj1qWFOO6x3a-5yf2gLWjGIJV5yyc=/aHR0cHM6Ly9leGFtcGxlLmNvbS92aWRlby5tcDQ="></video>`
+	output := RewriteDocumentWithRelativeProxyURL(r, input)
+
+	if expected != output {
+		t.Errorf(`Not expected output: got %s`, output)
+	}
+}
