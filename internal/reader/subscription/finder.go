@@ -29,7 +29,6 @@ type youtubeKind string
 
 const (
 	youtubeIDKindChannel  youtubeKind = "channel"
-	youtubeIDKindVideo    youtubeKind = "video"
 	youtubeIDKindPlaylist youtubeKind = "playlist"
 )
 
@@ -99,12 +98,6 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		case youtubeIDKindChannel:
 			slog.Debug("Try to detect feeds from YouTube channel page", slog.String("website_url", websiteURL))
 			subscriptions, localizedError = f.FindSubscriptionsFromYouTubeChannelPage(websiteURL)
-			if localizedError != nil {
-				return nil, localizedError
-			}
-		case youtubeIDKindVideo:
-			slog.Debug("Try to detect feeds from YouTube video page", slog.String("website_url", websiteURL))
-			subscriptions, localizedError = f.FindSubscriptionsFromYouTubeVideoPage(websiteURL)
 			if localizedError != nil {
 				return nil, localizedError
 			}
@@ -319,37 +312,6 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeChannelPage(websiteURL 
 	return nil, nil
 }
 
-func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeVideoPage(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
-	kind, _, err := youtubeURLIDExtractor(websiteURL)
-	if err != nil {
-		slog.Debug("Could not parse url", slog.String("website_url", websiteURL))
-	}
-
-	if kind != youtubeIDKindVideo {
-		slog.Debug("This website is not a YouTube video page, the regex doesn't match", slog.String("website_url", websiteURL))
-		return nil, nil
-	}
-
-	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(websiteURL))
-	defer responseHandler.Close()
-
-	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
-		return nil, localizedError
-	}
-
-	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
-	if docErr != nil {
-		return nil, locale.NewLocalizedErrorWrapper(docErr, "error.unable_to_parse_html_document", docErr)
-	}
-
-	if channelID, exists := doc.Find(`meta[itemprop="channelId"]`).First().Attr("content"); exists {
-		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, channelID)
-		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
-	}
-
-	return nil, nil
-}
-
 func (f *SubscriptionFinder) FindSubscriptionsFromYouTubePlaylistPage(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	kind, id, _ := youtubeURLIDExtractor(websiteURL)
 
@@ -384,10 +346,6 @@ func youtubeURLIDExtractor(websiteURL string) (idKind youtubeKind, id string, er
 	case strings.HasPrefix(decodedUrl.Path, "/watch") && decodedUrl.Query().Has("list"):
 		idKind = youtubeIDKindPlaylist
 		id = decodedUrl.Query().Get("list")
-		return
-	case strings.HasPrefix(decodedUrl.Path, "/watch"):
-		idKind = youtubeIDKindVideo
-		id = decodedUrl.Query().Get("v")
 		return
 	case strings.HasPrefix(decodedUrl.Path, "/playlist"):
 		idKind = youtubeIDKindPlaylist
