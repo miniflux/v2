@@ -9,6 +9,7 @@ on:
     branches: [ main ]
 jobs:
   docker-images:
+    if: github.repository == 'miniflux/v2'
     name: Docker Images
     permissions:
       packages: write
