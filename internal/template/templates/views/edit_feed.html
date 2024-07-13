@@ -142,7 +142,7 @@
                     {{ t "form.feed.label.blocklist_rules" }}
                 </label>
                 &nbsp;
-                <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -153,7 +153,7 @@
                     {{ t "form.feed.label.keeplist_rules" }}
                 </label>
                 &nbsp;
-                <a href=" https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#filtering-rules" target="_blank">
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -164,7 +164,7 @@
                     {{ t "form.feed.label.urlrewrite_rules" }}
                 </label>
                 &nbsp;
-                <a href=" https://miniflux.app/docs/rules.html#rewriteurl-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#rewriteurl-rules" target="_blank">
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -178,13 +178,36 @@
         <fieldset>
             <legend>{{ t "form.feed.fieldset.integration" }}</legend>
 
-            <div class="form-label-row">
-                <label for="form-apprise-service-urls">
-                    {{ t "form.feed.label.apprise_service_urls" }}
-                </label>
-                &nbsp;
-            </div>
-            <input type="text" name="apprise_service_urls" id="form-apprise-service-urls" value="{{ .form.AppriseServiceURLs }}" spellcheck="false">
+            <details>
+                <summary>Apprise</summary>
+                <div class="form-label-row">
+                    <label for="form-apprise-service-urls">
+                        {{ t "form.feed.label.apprise_service_urls" }}
+                    </label>
+                </div>
+                <input type="text" name="apprise_service_urls" id="form-apprise-service-urls" value="{{ .form.AppriseServiceURLs }}" spellcheck="false">
+            </details>
+
+            <details>
+                <summary>Ntfy</summary>
+                <label><input type="checkbox" name="ntfy_enabled" value="1" {{ if .form.NtfyEnabled }}checked{{ end }}> {{ t "form.feed.label.ntfy_activate" }}</label>
+                <div class="form-label-row">
+                    <label for="form-ntfy-priority">
+                        {{ t "form.feed.label.ntfy_priority" }}
+                    </label>
+                    &nbsp;
+                    <a href="https://docs.ntfy.sh/publish/#message-priority" target="_blank">
+                        {{ icon "external-link" }}
+                    </a>
+                </div>
+                <select id="form-ntfy-priority" name="ntfy_priority">
+                    <option value="5" {{ if eq .form.NtfyPriority 5 }}selected{{ end }}>5 - {{ t "form.feed.label.ntfy_max_priority" }}</option>
+                    <option value="4" {{ if eq .form.NtfyPriority 4 }}selected{{ end }}>4 - {{ t "form.feed.label.ntfy_high_priority" }}</option>
+                    <option value="3" {{ if eq .form.NtfyPriority 3 }}selected{{ end }}>3 - {{ t "form.feed.label.ntfy_default_priority" }}</option>
+                    <option value="2" {{ if eq .form.NtfyPriority 2 }}selected{{ end }}>2 - {{ t "form.feed.label.ntfy_low_priority" }}</option>
+                    <option value="1" {{ if eq .form.NtfyPriority 1 }}selected{{ end }}>1 - {{ t "form.feed.label.ntfy_min_priority" }}</option>
+                </select>
+            </details>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

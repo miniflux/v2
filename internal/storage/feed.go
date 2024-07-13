@@ -347,9 +347,11 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			no_media_player=$26,
 			apprise_service_urls=$27,
 			disable_http2=$28,
-			description=$29
+			description=$29,
+			ntfy_enabled=$30,
+			ntfy_priority=$31
 		WHERE
-			id=$30 AND user_id=$31
+			id=$32 AND user_id=$33
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -381,6 +383,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.AppriseServiceURLs,
 		feed.DisableHTTP2,
 		feed.Description,
+		feed.NtfyEnabled,
+		feed.NtfyPriority,
 		feed.ID,
 		feed.UserID,
 	)

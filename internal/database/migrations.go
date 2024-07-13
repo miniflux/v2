@@ -921,4 +921,20 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN ntfy_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN ntfy_url text default '';
+			ALTER TABLE integrations ADD COLUMN ntfy_topic text default '';
+			ALTER TABLE integrations ADD COLUMN ntfy_api_token text default '';
+			ALTER TABLE integrations ADD COLUMN ntfy_username text default '';
+			ALTER TABLE integrations ADD COLUMN ntfy_password text default '';
+			ALTER TABLE integrations ADD COLUMN ntfy_icon_url text default '';
+
+			ALTER TABLE feeds ADD COLUMN ntfy_enabled bool default 'f';
+			ALTER TABLE feeds ADD COLUMN ntfy_priority int default '3';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

@@ -200,7 +200,14 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			raindrop_tags,
 			betula_enabled,
 			betula_url,
-			betula_token
+			betula_token,
+			ntfy_enabled,
+			ntfy_topic,
+			ntfy_url,
+			ntfy_api_token,
+			ntfy_username,
+			ntfy_password,
+			ntfy_icon_url
 		FROM
 			integrations
 		WHERE
@@ -300,6 +307,13 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.BetulaEnabled,
 		&integration.BetulaURL,
 		&integration.BetulaToken,
+		&integration.NtfyEnabled,
+		&integration.NtfyTopic,
+		&integration.NtfyURL,
+		&integration.NtfyAPIToken,
+		&integration.NtfyUsername,
+		&integration.NtfyPassword,
+		&integration.NtfyIconURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -407,9 +421,16 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			raindrop_tags=$88,
 			betula_enabled=$89,
 			betula_url=$90,
-			betula_token=$91
+			betula_token=$91,
+			ntfy_enabled=$92,
+			ntfy_topic=$93,
+			ntfy_url=$94,
+			ntfy_api_token=$95,
+			ntfy_username=$96,
+			ntfy_password=$97,
+			ntfy_icon_url=$98
 		WHERE
-			user_id=$92
+			user_id=$99
 	`
 	_, err := s.db.Exec(
 		query,
@@ -504,6 +525,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.BetulaEnabled,
 		integration.BetulaURL,
 		integration.BetulaToken,
+		integration.NtfyEnabled,
+		integration.NtfyTopic,
+		integration.NtfyURL,
+		integration.NtfyAPIToken,
+		integration.NtfyUsername,
+		integration.NtfyPassword,
+		integration.NtfyIconURL,
 		integration.UserID,
 	)
 

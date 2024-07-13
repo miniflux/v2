@@ -16,6 +16,7 @@ import (
 	"miniflux.app/v2/internal/integration/linkwarden"
 	"miniflux.app/v2/internal/integration/matrixbot"
 	"miniflux.app/v2/internal/integration/notion"
+	"miniflux.app/v2/internal/integration/ntfy"
 	"miniflux.app/v2/internal/integration/nunuxkeeper"
 	"miniflux.app/v2/internal/integration/omnivore"
 	"miniflux.app/v2/internal/integration/pinboard"
@@ -467,6 +468,28 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 				slog.String("webhook_url", userIntegrations.WebhookURL),
 				slog.Any("error", err),
 			)
+		}
+	}
+
+	if userIntegrations.NtfyEnabled && feed.NtfyEnabled {
+		slog.Debug("Sending new entries to Ntfy",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int("nb_entries", len(entries)),
+			slog.Int64("feed_id", feed.ID),
+		)
+
+		client := ntfy.NewClient(
+			userIntegrations.NtfyURL,
+			userIntegrations.NtfyTopic,
+			userIntegrations.NtfyAPIToken,
+			userIntegrations.NtfyUsername,
+			userIntegrations.NtfyPassword,
+			userIntegrations.NtfyIconURL,
+			feed.NtfyPriority,
+		)
+
+		if err := client.SendMessages(feed, entries); err != nil {
+			slog.Warn("Unable to send new entries to Ntfy", slog.Any("error", err))
 		}
 	}
 
