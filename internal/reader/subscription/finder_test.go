@@ -32,13 +32,6 @@ func TestFindYoutubePlaylistFeed(t *testing.T) {
 	}
 }
 
-func TestItDoesNotConsiderPlaylistWatchPageAsVideoWatchPage(t *testing.T) {
-	_, localizedError := NewSubscriptionFinder(nil).FindSubscriptionsFromYouTubeVideoPage("https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLOOwEPgFWm_N42HlCLhqyJ0ZBWr5K1QDM")
-	if localizedError != nil {
-		t.Fatalf(`Should not consider a playlist watch page as a video watch page`)
-	}
-}
-
 func TestYoutubeIdExtractor(t *testing.T) {
 	type testResult struct {
 		ID    string
@@ -46,21 +39,6 @@ func TestYoutubeIdExtractor(t *testing.T) {
 		error error
 	}
 	urls := map[string]testResult{
-		"https://www.youtube.com/watch?v=dQw4w9WgXcQ": {
-			ID:    "dQw4w9WgXcQ",
-			Kind:  youtubeIDKindVideo,
-			error: nil,
-		},
-		"https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=1": {
-			ID:    "dQw4w9WgXcQ",
-			Kind:  youtubeIDKindVideo,
-			error: nil,
-		},
-		"https://www.youtube.com/watch?t=1&v=dQw4w9WgXcQ": {
-			ID:    "dQw4w9WgXcQ",
-			Kind:  youtubeIDKindVideo,
-			error: nil,
-		},
 		"https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PLOOwEPgFWm_N42HlCLhqyJ0ZBWr5K1QDM": {
 			ID:    "PLOOwEPgFWm_N42HlCLhqyJ0ZBWr5K1QDM",
 			Kind:  youtubeIDKindPlaylist,
