@@ -259,6 +259,37 @@
         </div>
     </details>
 
+    <details {{ if .form.NtfyEnabled }}open{{ end }}>
+        <summary>Ntfy</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="ntfy_enabled" value="1" {{ if .form.NtfyEnabled }}checked{{ end }}> {{ t "form.integration.ntfy_activate" }}
+            </label>
+
+            <label for="form-ntfy-topic">{{ t "form.integration.ntfy_topic" }}</label>
+            <input type="text" name="ntfy_topic" id="form-ntfy-topic" value="{{ .form.NtfyTopic }}" spellcheck="false">
+
+            <label for="form-ntfy-url">{{ t "form.integration.ntfy_url" }}</label>
+            <input type="url" name="ntfy_url" id="form-ntfy-url" value="{{ .form.NtfyURL }}" placeholder="https://ntfy.sh" spellcheck="false">
+
+            <label for="form-ntfy-api-token">{{ t "form.integration.ntfy_api_token" }}</label>
+            <input type="text" name="ntfy_api_token" id="form-ntfy-api-token" value="{{ .form.NtfyAPIToken }}" spellcheck="false">
+
+            <label for="form-ntfy-username">{{ t "form.integration.ntfy_username" }}</label>
+            <input type="text" name="ntfy_username" id="form-ntfy-username" value="{{ .form.NtfyUsername }}" spellcheck="false">
+
+            <label for="form-ntfy-password">{{ t "form.integration.ntfy_password" }}</label>
+            <input type="text" name="ntfy_password" id="form-ntfy-password" value="{{ .form.NtfyPassword }}" spellcheck="false">
+
+            <label for="form-ntfy-icon-url">{{ t "form.integration.ntfy_icon_url" }}</label>
+            <input type="url" name="ntfy_icon_url" id="form-ntfy-icon-url" value="{{ .form.NtfyIconURL }}" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.NunuxKeeperEnabled }}open{{ end }}>
         <summary>Nunux Keeper</summary>
         <div class="form-section">

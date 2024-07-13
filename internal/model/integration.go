@@ -97,4 +97,11 @@ type Integration struct {
 	RaindropToken                    string
 	RaindropCollectionID             string
 	RaindropTags                     string
+	NtfyEnabled                      bool
+	NtfyTopic                        string
+	NtfyURL                          string
+	NtfyAPIToken                     string
+	NtfyUsername                     string
+	NtfyPassword                     string
+	NtfyIconURL                      string
 }

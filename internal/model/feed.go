@@ -51,8 +51,10 @@ type Feed struct {
 	AllowSelfSignedCertificates bool      `json:"allow_self_signed_certificates"`
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	HideGlobally                bool      `json:"hide_globally"`
-	AppriseServiceURLs          string    `json:"apprise_service_urls"`
 	DisableHTTP2                bool      `json:"disable_http2"`
+	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+	NtfyEnabled                 bool      `json:"ntfy_enabled"`
+	NtfyPriority                int       `json:"ntfy_priority"`
 
 	// Non persisted attributes
 	Category *Category `json:"category,omitempty"`
