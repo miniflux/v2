@@ -87,10 +87,11 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		return Subscriptions{NewSubscription(responseHandler.EffectiveURL(), responseHandler.EffectiveURL(), feedFormat)}, nil
 	}
 
-	subscriptions := make(Subscriptions, 1)
+	var subscriptions Subscriptions
 
 	// Step 2) Parse URL to find feeds from YouTube.
 	kind, _, err := youtubeURLIDExtractor(websiteURL)
+	slog.Debug("YouTube URL ID extraction", slog.String("website_url", websiteURL), slog.Any("kind", kind), slog.Any("err", err))
 
 	// If YouTube url has been detected, return the YouTube feed
 	if err == nil || !errors.Is(err, errNotYoutubeUrl) {
@@ -393,6 +394,6 @@ func youtubeURLIDExtractor(websiteURL string) (idKind youtubeKind, id string, er
 		id = decodedUrl.Query().Get("list")
 		return
 	}
-	err = fmt.Errorf("unable to extract youtube id from URL: %s", websiteURL)
+	err = fmt.Errorf("finder: unable to extract youtube id from URL: %s", websiteURL)
 	return
 }
