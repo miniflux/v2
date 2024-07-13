@@ -91,7 +91,7 @@ func (c *Client) CreateBookmark(entryURL, entryTitle string, entryContent string
 
 		contentBodyHeader, err := json.Marshal(&partContentHeader{
 			Url:           entryURL,
-			ContentHeader: contentHeader{ContentType: "text/html"},
+			ContentHeader: contentHeader{ContentType: "text/html; charset=utf-8"},
 		})
 		if err != nil {
 			return fmt.Errorf("readeck: unable to encode request body (entry content header): %v", err)
