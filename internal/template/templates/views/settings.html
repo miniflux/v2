@@ -212,15 +212,22 @@
             <label for="form-blocklist-rules">
                 {{ t "form.feed.label.blocklist_rules" }}
             </label>
+            &nbsp;
+            <a href=" https://miniflux.app/docs/rules.html#global-filtering-rules" target="_blank">
+                {{ icon "external-link" }}
+            </a>
         </div>
         <textarea id="form-blocklist-rules" name="block_filter_entry_rules" cols="40" rows="10" spellcheck="false">{{ .form.BlockFilterEntryRules }}</textarea>
-        
+
         <div class="form-label-row">
             <label for="form-keeplist-rules">
                 {{ t "form.feed.label.keeplist_rules" }}
             </label>
+            <a href=" https://miniflux.app/docs/rules.html#global-filtering-rules" target="_blank">
+                {{ icon "external-link" }}
+            </a>
         </div>
-        <textarea id="form-keeplist-rules" name="keep_filter_entry_rules" cols="40" rows="10" spellcheck="false">{{ .form.KeepFilterEntryRules }}</textarea>        
+        <textarea id="form-keeplist-rules" name="keep_filter_entry_rules" cols="40" rows="10" spellcheck="false">{{ .form.KeepFilterEntryRules }}</textarea>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
