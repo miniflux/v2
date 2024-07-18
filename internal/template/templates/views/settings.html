@@ -15,6 +15,7 @@
         <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
+    {{ if not disableLocalAuth }}
     <fieldset>
         <legend>{{ t "form.prefs.fieldset.authentication_settings" }}</legend>
 
@@ -49,6 +50,7 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
         </div>
     </fieldset>
+    {{ end }}
 
     {{ if .webAuthnEnabled }}
     <fieldset>

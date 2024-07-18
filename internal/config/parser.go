@@ -227,6 +227,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.oidcDiscoveryEndpoint = parseString(value, defaultOAuth2OidcDiscoveryEndpoint)
 		case "OAUTH2_PROVIDER":
 			p.opts.oauth2Provider = parseString(value, defaultOAuth2Provider)
+		case "DISABLE_LOCAL_AUTH":
+			p.opts.disableLocalAuth = parseBool(value, defaultDisableLocalAuth)
 		case "HTTP_CLIENT_TIMEOUT":
 			p.opts.httpClientTimeout = parseInt(value, defaultHTTPClientTimeout)
 		case "HTTP_CLIENT_MAX_BODY_SIZE":

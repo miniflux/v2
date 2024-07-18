@@ -5,6 +5,7 @@
 
 {{ define "content"}}
 <section class="login-form">
+    {{ if not disableLocalAuth }}
     <form action="{{ route "checkLogin" }}" method="post">
         <input type="hidden" name="csrf" value="{{ .csrf }}">
 
@@ -22,6 +23,7 @@
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.loading" }}">{{ t "action.login" }}</button>
         </div>
     </form>
+    {{ end }}
     {{ if .webAuthnEnabled }}
     <div class="webauthn">
         <div role="alert" class="alert alert-error hidden" id="webauthn-error">
