@@ -54,14 +54,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' && vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' && vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -69,7 +69,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Quay Container Registry
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' && vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         uses: docker/login-action@v3
         with:
           registry: quay.io
@@ -78,6 +78,7 @@ jobs:
 
       - name: Build and Push Alpine images
         uses: docker/build-push-action@v6
+        if: ${{ vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         with:
           context: .
           file: ./packaging/docker/alpine/Dockerfile
@@ -87,6 +88,7 @@ jobs:
 
       - name: Build and Push Distroless images
         uses: docker/build-push-action@v6
+        if: ${{ vars.PUBLISH_DOCKER_IMAGES == 'true' }}
         with:
           context: .
           file: ./packaging/docker/distroless/Dockerfile
