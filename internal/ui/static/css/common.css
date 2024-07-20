@@ -336,6 +336,11 @@ a:hover {
         display: inline;
         padding-right: 15px;
     }
+
+    .pagination-backward,
+    .pagination-forward {
+        display: flex;
+    }
 }
 
 /* Tables */
@@ -732,10 +737,6 @@ template {
     padding-top: 8px;
 }
 
-.pagination > div {
-    display: flex;
-}
-
 .pagination > div.pagination-backward > div {
     padding-right: 15px;
 }
@@ -763,6 +764,7 @@ template {
 .pagination-prev:before {
     content: "‹ ";
 }
+
 .pagination-first:before {
     content: "« ";
 }
