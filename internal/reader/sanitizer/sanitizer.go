@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/reader/urlcleaner"
 	"miniflux.app/v2/internal/urllib"
 
 	"golang.org/x/net/html"
@@ -210,6 +211,10 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 
 				if !hasValidURIScheme(value) || isBlockedResource(value) {
 					continue
+				}
+
+				if cleanedURL, err := urlcleaner.RemoveTrackingParameters(value); err == nil {
+					value = cleanedURL
 				}
 			}
 		}
