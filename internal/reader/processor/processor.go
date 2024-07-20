@@ -21,6 +21,7 @@ import (
 	"miniflux.app/v2/internal/reader/rewrite"
 	"miniflux.app/v2/internal/reader/sanitizer"
 	"miniflux.app/v2/internal/reader/scraper"
+	"miniflux.app/v2/internal/reader/urlcleaner"
 	"miniflux.app/v2/internal/storage"
 
 	"github.com/PuerkitoBio/goquery"
@@ -56,7 +57,11 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			continue
 		}
 
-		websiteURL := getUrlFromEntry(feed, entry)
+		if cleanedURL, err := urlcleaner.RemoveTrackingParameters(entry.URL); err == nil {
+			entry.URL = cleanedURL
+		}
+
+		rewrittenURL := rewriteEntryURL(feed, entry)
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
 		if feed.Crawler && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
@@ -68,7 +73,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 				slog.String("feed_url", feed.FeedURL),
 				slog.Bool("entry_is_new", entryIsNew),
 				slog.Bool("force_refresh", forceRefresh),
-				slog.String("website_url", websiteURL),
+				slog.String("rewritten_url", rewrittenURL),
 			)
 
 			startTime := time.Now()
@@ -84,7 +89,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 			content, scraperErr := scraper.ScrapeWebsite(
 				requestBuilder,
-				websiteURL,
+				rewrittenURL,
 				feed.ScraperRules,
 			)
 
@@ -110,10 +115,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			}
 		}
 
-		rewrite.Rewriter(websiteURL, entry, feed.RewriteRules)
+		rewrite.Rewriter(rewrittenURL, entry, feed.RewriteRules)
 
-		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered.
-		entry.Content = sanitizer.Sanitize(websiteURL, entry.Content)
+		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered out.
+		entry.Content = sanitizer.Sanitize(rewrittenURL, entry.Content)
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 		filteredEntries = append(filteredEntries, entry)
@@ -264,7 +269,7 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
 func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User) error {
 	startTime := time.Now()
-	websiteURL := getUrlFromEntry(feed, entry)
+	rewrittenEntryURL := rewriteEntryURL(feed, entry)
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
@@ -277,7 +282,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 
 	content, scraperErr := scraper.ScrapeWebsite(
 		requestBuilder,
-		websiteURL,
+		rewrittenEntryURL,
 		feed.ScraperRules,
 	)
 
@@ -300,14 +305,14 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		}
 	}
 
-	rewrite.Rewriter(websiteURL, entry, entry.Feed.RewriteRules)
-	entry.Content = sanitizer.Sanitize(websiteURL, entry.Content)
+	rewrite.Rewriter(rewrittenEntryURL, entry, entry.Feed.RewriteRules)
+	entry.Content = sanitizer.Sanitize(rewrittenEntryURL, entry.Content)
 
 	return nil
 }
 
-func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
-	var url = entry.URL
+func rewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
+	var rewrittenURL = entry.URL
 	if feed.UrlRewriteRules != "" {
 		parts := customReplaceRuleRegex.FindStringSubmatch(feed.UrlRewriteRules)
 
@@ -318,26 +323,27 @@ func getUrlFromEntry(feed *model.Feed, entry *model.Entry) string {
 					slog.String("url_rewrite_rules", feed.UrlRewriteRules),
 					slog.Any("error", err),
 				)
-				return url
+				return rewrittenURL
 			}
-			url = re.ReplaceAllString(entry.URL, parts[2])
+			rewrittenURL = re.ReplaceAllString(entry.URL, parts[2])
 			slog.Debug("Rewriting entry URL",
 				slog.String("original_entry_url", entry.URL),
-				slog.String("rewritten_entry_url", url),
+				slog.String("rewritten_entry_url", rewrittenURL),
 				slog.Int64("feed_id", feed.ID),
 				slog.String("feed_url", feed.FeedURL),
 			)
 		} else {
 			slog.Debug("Cannot find search and replace terms for replace rule",
 				slog.String("original_entry_url", entry.URL),
-				slog.String("rewritten_entry_url", url),
+				slog.String("rewritten_entry_url", rewrittenURL),
 				slog.Int64("feed_id", feed.ID),
 				slog.String("feed_url", feed.FeedURL),
 				slog.String("url_rewrite_rules", feed.UrlRewriteRules),
 			)
 		}
 	}
-	return url
+
+	return rewrittenURL
 }
 
 func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool, user *model.User) {
