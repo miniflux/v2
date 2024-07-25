@@ -44,10 +44,10 @@ type SettingsForm struct {
 	CategoriesSortingOrder string
 	MarkReadOnView         bool
 	// MarkReadBehavior is a string representation of the MarkReadOnView and MarkReadOnMediaPlayerCompletion fields together
-	MarkReadBehavior  MarkReadBehavior
-	MediaPlaybackRate      float64
-	BlockFilterEntryRules  string
-	KeepFilterEntryRules   string
+	MarkReadBehavior      MarkReadBehavior
+	MediaPlaybackRate     float64
+	BlockFilterEntryRules string
+	KeepFilterEntryRules  string
 }
 
 // MarkAsReadBehavior returns the MarkReadBehavior from the given MarkReadOnView and MarkReadOnMediaPlayerCompletion values.
