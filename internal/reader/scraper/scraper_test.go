@@ -62,7 +62,7 @@ func TestSelectorRules(t *testing.T) {
 			t.Fatalf(`Unable to read file %q: %v`, filename, err)
 		}
 
-		actualResult, err := findContentUsingCustomRules(bytes.NewReader(html), rule)
+		_, actualResult, err := findContentUsingCustomRules(bytes.NewReader(html), rule)
 		if err != nil {
 			t.Fatalf(`Scraping error for %q - %q: %v`, filename, rule, err)
 		}
@@ -73,7 +73,67 @@ func TestSelectorRules(t *testing.T) {
 		}
 
 		if actualResult != strings.TrimSpace(string(expectedResult)) {
-			t.Errorf(`Unexpected result for %q, got "%s" instead of "%s"`, rule, actualResult, expectedResult)
+			t.Errorf(`Unexpected result for %q, got %q instead of %q`, rule, actualResult, expectedResult)
 		}
+	}
+}
+
+func TestParseBaseURLWithCustomRules(t *testing.T) {
+	html := `<html><head><base href="https://example.com/"></head><body><img src="image.jpg"></body></html>`
+	baseURL, _, err := findContentUsingCustomRules(strings.NewReader(html), "img")
+	if err != nil {
+		t.Fatalf(`Scraping error: %v`, err)
+	}
+
+	if baseURL != "https://example.com/" {
+		t.Errorf(`Unexpected base URL, got %q instead of "https://example.com/"`, baseURL)
+	}
+}
+
+func TestParseMultipleBaseURLWithCustomRules(t *testing.T) {
+	html := `<html><head><base href="https://example.com/"><base href="https://example.org/"/></head><body><img src="image.jpg"></body></html>`
+	baseURL, _, err := findContentUsingCustomRules(strings.NewReader(html), "img")
+	if err != nil {
+		t.Fatalf(`Scraping error: %v`, err)
+	}
+
+	if baseURL != "https://example.com/" {
+		t.Errorf(`Unexpected base URL, got %q instead of "https://example.com/"`, baseURL)
+	}
+}
+
+func TestParseRelativeBaseURLWithCustomRules(t *testing.T) {
+	html := `<html><head><base href="/test"></head><body><img src="image.jpg"></body></html>`
+	baseURL, _, err := findContentUsingCustomRules(strings.NewReader(html), "img")
+	if err != nil {
+		t.Fatalf(`Scraping error: %v`, err)
+	}
+
+	if baseURL != "" {
+		t.Errorf(`Unexpected base URL, got %q`, baseURL)
+	}
+}
+
+func TestParseEmptyBaseURLWithCustomRules(t *testing.T) {
+	html := `<html><head><base href=" "></head><body><img src="image.jpg"></body></html>`
+	baseURL, _, err := findContentUsingCustomRules(strings.NewReader(html), "img")
+	if err != nil {
+		t.Fatalf(`Scraping error: %v`, err)
+	}
+
+	if baseURL != "" {
+		t.Errorf(`Unexpected base URL, got %q instead of ""`, baseURL)
+	}
+}
+
+func TestParseMissingBaseURLWithCustomRules(t *testing.T) {
+	html := `<html><head></head><body><img src="image.jpg"></body></html>`
+	baseURL, _, err := findContentUsingCustomRules(strings.NewReader(html), "img")
+	if err != nil {
+		t.Fatalf(`Scraping error: %v`, err)
+	}
+
+	if baseURL != "" {
+		t.Errorf(`Unexpected base URL, got %q instead of ""`, baseURL)
 	}
 }

@@ -12,6 +12,8 @@ import (
 	"regexp"
 	"strings"
 
+	"miniflux.app/v2/internal/urllib"
+
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html"
 )
@@ -69,10 +71,17 @@ func (c candidateList) String() string {
 }
 
 // ExtractContent returns relevant content.
-func ExtractContent(page io.Reader) (string, error) {
+func ExtractContent(page io.Reader) (baseURL string, extractedContent string, err error) {
 	document, err := goquery.NewDocumentFromReader(page)
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	if hrefValue, exists := document.Find("head base").First().Attr("href"); exists {
+		hrefValue = strings.TrimSpace(hrefValue)
+		if urllib.IsAbsoluteURL(hrefValue) {
+			baseURL = hrefValue
+		}
 	}
 
 	document.Find("script,style").Each(func(i int, s *goquery.Selection) {
@@ -86,12 +95,13 @@ func ExtractContent(page io.Reader) (string, error) {
 	topCandidate := getTopCandidate(document, candidates)
 
 	slog.Debug("Readability parsing",
+		slog.String("base_url", baseURL),
 		slog.Any("candidates", candidates),
 		slog.Any("topCandidate", topCandidate),
 	)
 
-	output := getArticle(topCandidate, candidates)
-	return output, nil
+	extractedContent = getArticle(topCandidate, candidates)
+	return baseURL, extractedContent, nil
 }
 
 // Now that we have the top candidate, look through its siblings for content that might also be related.

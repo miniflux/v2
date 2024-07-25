@@ -61,6 +61,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			entry.URL = cleanedURL
 		}
 
+		pageBaseURL := ""
 		rewrittenURL := rewriteEntryURL(feed, entry)
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
 		if feed.Crawler && (entryIsNew || forceRefresh) {
@@ -87,11 +88,15 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 			requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
 			requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
-			content, scraperErr := scraper.ScrapeWebsite(
+			scrapedPageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
 				requestBuilder,
 				rewrittenURL,
 				feed.ScraperRules,
 			)
+
+			if scrapedPageBaseURL != "" {
+				pageBaseURL = scrapedPageBaseURL
+			}
 
 			if config.Opts.HasMetricsCollector() {
 				status := "success"
@@ -109,16 +114,20 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 					slog.String("feed_url", feed.FeedURL),
 					slog.Any("error", scraperErr),
 				)
-			} else if content != "" {
+			} else if extractedContent != "" {
 				// We replace the entry content only if the scraper doesn't return any error.
-				entry.Content = minifyEntryContent(content)
+				entry.Content = minifyEntryContent(extractedContent)
 			}
 		}
 
 		rewrite.Rewriter(rewrittenURL, entry, feed.RewriteRules)
 
+		if pageBaseURL == "" {
+			pageBaseURL = rewrittenURL
+		}
+
 		// The sanitizer should always run at the end of the process to make sure unsafe HTML is filtered out.
-		entry.Content = sanitizer.Sanitize(rewrittenURL, entry.Content)
+		entry.Content = sanitizer.Sanitize(pageBaseURL, entry.Content)
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
 		filteredEntries = append(filteredEntries, entry)
@@ -280,7 +289,7 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
-	content, scraperErr := scraper.ScrapeWebsite(
+	pageBaseURL, extractedContent, scraperErr := scraper.ScrapeWebsite(
 		requestBuilder,
 		rewrittenEntryURL,
 		feed.ScraperRules,
@@ -298,15 +307,15 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 		return scraperErr
 	}
 
-	if content != "" {
-		entry.Content = minifyEntryContent(content)
+	if extractedContent != "" {
+		entry.Content = minifyEntryContent(extractedContent)
 		if user.ShowReadingTime {
 			entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
 		}
 	}
 
 	rewrite.Rewriter(rewrittenEntryURL, entry, entry.Feed.RewriteRules)
-	entry.Content = sanitizer.Sanitize(rewrittenEntryURL, entry.Content)
+	entry.Content = sanitizer.Sanitize(pageBaseURL, entry.Content)
 
 	return nil
 }
