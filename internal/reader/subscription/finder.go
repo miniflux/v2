@@ -147,6 +147,13 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL, contentTyp
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_parse_html_document", err)
 	}
 
+	if hrefValue, exists := doc.Find("head base").First().Attr("href"); exists {
+		hrefValue = strings.TrimSpace(hrefValue)
+		if urllib.IsAbsoluteURL(hrefValue) {
+			websiteURL = hrefValue
+		}
+	}
+
 	var subscriptions Subscriptions
 	subscriptionURLs := make(map[string]bool)
 	for query, kind := range queries {
