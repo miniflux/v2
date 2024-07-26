@@ -24,6 +24,7 @@ var (
 		"a":          {"href", "title", "id"},
 		"abbr":       {"title"},
 		"acronym":    {"title"},
+		"aside":      {},
 		"audio":      {"src"},
 		"blockquote": {},
 		"br":         {},

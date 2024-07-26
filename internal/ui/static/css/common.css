@@ -1174,6 +1174,15 @@ article.category-has-unread {
     border-bottom: 1px dashed var(--entry-content-abbr-border-color);
 }
 
+.entry-content aside {
+    width: 30%;
+    padding: 1ch;
+    margin-left: 15px;
+    float: right;
+    font-style: italic;
+    border: dotted var(--entry-content-aside-border-color) 2px;
+}
+
 details.entry-enclosures {
     margin-top: 25px;
 }
