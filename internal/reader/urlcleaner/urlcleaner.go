@@ -78,12 +78,19 @@ func RemoveTrackingParameters(inputURL string) (string, error) {
 	}
 
 	queryParams := parsedURL.Query()
+	hasTrackers := false
 
 	// Remove tracking parameters
 	for param := range queryParams {
 		if trackingParams[strings.ToLower(param)] {
 			queryParams.Del(param)
+			hasTrackers = true
 		}
+	}
+
+	// Do not modify the URL if there are no tracking parameters
+	if !hasTrackers {
+		return inputURL, nil
 	}
 
 	parsedURL.RawQuery = queryParams.Encode()

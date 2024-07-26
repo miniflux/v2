@@ -11,9 +11,10 @@ import (
 
 func TestRemoveTrackingParams(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected string
+		name             string
+		input            string
+		expected         string
+		strictComparison bool
 	}{
 		{
 			name:     "URL with tracking parameters",
@@ -31,9 +32,10 @@ func TestRemoveTrackingParams(t *testing.T) {
 			expected: "https://example.com/page?id=123&foo=bar",
 		},
 		{
-			name:     "URL with no parameters",
-			input:    "https://example.com/page",
-			expected: "https://example.com/page",
+			name:             "URL with no parameters",
+			input:            "https://example.com/page",
+			expected:         "https://example.com/page",
+			strictComparison: true,
 		},
 		{
 			name:     "URL with mixed case tracking parameters",
@@ -61,14 +63,21 @@ func TestRemoveTrackingParams(t *testing.T) {
 			expected: "https://example.com/page?name=John+Doe",
 		},
 		{
+			name:             "Non-standard URL parameter with no tracker",
+			input:            "https://example.com/foo.jpg?crop/1420x708/format/webp",
+			expected:         "https://example.com/foo.jpg?crop/1420x708/format/webp",
+			strictComparison: true,
+		},
+		{
 			name:     "Invalid URL",
 			input:    "https://example|org/",
 			expected: "",
 		},
 		{
-			name:     "Non-HTTP URL",
-			input:    "mailto:user@example.org",
-			expected: "mailto:user@example.org",
+			name:             "Non-HTTP URL",
+			input:            "mailto:user@example.org",
+			expected:         "mailto:user@example.org",
+			strictComparison: true,
 		},
 	}
 
@@ -82,6 +91,9 @@ func TestRemoveTrackingParams(t *testing.T) {
 			} else {
 				if err != nil {
 					t.Errorf("Unexpected error: %v", err)
+				}
+				if tt.strictComparison && result != tt.expected {
+					t.Errorf("removeTrackingParams(%q) = %q, want %q", tt.input, result, tt.expected)
 				}
 				if !urlsEqual(result, tt.expected) {
 					t.Errorf("removeTrackingParams(%q) = %q, want %q", tt.input, result, tt.expected)
