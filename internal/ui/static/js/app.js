@@ -678,9 +678,13 @@ function goToAddSubscription() {
  * save player position to allow to resume playback later
  * @param {Element} playerElement
  */
-function handlePlayerProgressionSave(playerElement) {
+function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
+    if (!isPlayerPlaying(playerElement)) {
+        return; //If the player is not playing, we do not want to save the progression and mark as read on completion
+    }
     const currentPositionInSeconds = Math.floor(playerElement.currentTime); // we do not need a precise value
     const lastKnownPositionInSeconds = parseInt(playerElement.dataset.lastPosition, 10);
+    const markAsReadOnCompletion = parseFloat(playerElement.dataset.markReadOnCompletion); //completion percentage to mark as read
     const recordInterval = 10;
 
     // we limit the number of update to only one by interval. Otherwise, we would have multiple update per seconds
@@ -691,7 +695,27 @@ function handlePlayerProgressionSave(playerElement) {
         const request = new RequestBuilder(playerElement.dataset.saveUrl);
         request.withBody({ progression: currentPositionInSeconds });
         request.execute();
+        // Handle the mark as read on completion
+        if (markAsReadOnCompletion >= 0 && playerElement.duration > 0) {
+            const completion =  currentPositionInSeconds / playerElement.duration;
+            if (completion >= markAsReadOnCompletion) {
+                handleEntryStatus("none", document.querySelector(":is(a, button)[data-toggle-status]"), true);
+            }
+        }
     }
+}
+
+/**
+ * Check if the player is actually playing a media
+ * @param element the player element itself
+ * @returns {boolean}
+ */
+function isPlayerPlaying(element) {
+    return element &&
+        element.currentTime > 0 &&
+        !element.paused &&
+        !element.ended &&
+        element.readyState > 2; //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 }
 
 /**

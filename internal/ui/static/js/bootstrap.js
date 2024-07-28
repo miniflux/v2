@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (element.dataset.lastPosition) {
             element.currentTime = element.dataset.lastPosition;
         }
-        element.ontimeupdate = () => handlePlayerProgressionSave(element);
+        element.ontimeupdate = () => handlePlayerProgressionSaveAndMarkAsReadOnCompletion(element);
     });
 
     // Set media playback rate

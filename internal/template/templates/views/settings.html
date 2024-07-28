@@ -113,7 +113,14 @@
 
         <label><input type="checkbox" name="show_reading_time" value="1" {{ if .form.ShowReadingTime }}checked{{ end }}> {{ t "form.prefs.label.show_reading_time" }}</label>
 
-        <label><input type="checkbox" name="mark_read_on_view" value="1" {{ if .form.MarkReadOnView }}checked{{ end }}> {{ t "form.prefs.label.mark_read_on_view" }}</label>
+        <label><input type="radio" name="mark_read_behavior" value="{{ .const.NoAutoMarkAsRead }}"
+                      {{ if eq .form.MarkReadBehavior .const.NoAutoMarkAsRead }}checked{{end}}                          > {{ t "form.prefs.label.mark_read_manually" }}</label>
+        <label><input type="radio" name="mark_read_behavior" value="{{ .const.MarkAsReadOnView }}"
+                      {{ if eq .form.MarkReadBehavior .const.MarkAsReadOnView }}checked{{end}}                          > {{ t "form.prefs.label.mark_read_on_view" }}</label>
+        <label><input type="radio" name="mark_read_behavior" value="{{ .const.MarkAsReadOnViewButWaitForPlayerCompletion }}"
+                      {{ if eq .form.MarkReadBehavior .const.MarkAsReadOnViewButWaitForPlayerCompletion }}checked{{end}}> {{ t "form.prefs.label.mark_read_on_view_or_media_completion" }}</label>
+        <label><input type="radio" name="mark_read_behavior" value="{{ .const.MarkAsReadOnlyOnPlayerCompletion }}"
+                      {{ if eq .form.MarkReadBehavior .const.MarkAsReadOnlyOnPlayerCompletion }}checked{{end}}          > {{ t "form.prefs.label.mark_read_on_media_completion" }}</label>
 
         <div class="buttons">
             <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

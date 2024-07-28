@@ -40,7 +40,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		CJKReadingSpeed:        user.CJKReadingSpeed,
 		DefaultHomePage:        user.DefaultHomePage,
 		CategoriesSortingOrder: user.CategoriesSortingOrder,
-		MarkReadOnView:         user.MarkReadOnView,
+		MarkReadBehavior:       form.MarkAsReadBehavior(user.MarkReadOnView, user.MarkReadOnMediaPlayerCompletion),
 		MediaPlaybackRate:      user.MediaPlaybackRate,
 		BlockFilterEntryRules:  user.BlockFilterEntryRules,
 		KeepFilterEntryRules:   user.KeepFilterEntryRules,
@@ -61,6 +61,13 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
+	// In order to keep the continuity between form and model, I pass adhoc constants to the view
+	view.Set("const", map[string]interface{}{
+		"NoAutoMarkAsRead":                           form.NoAutoMarkAsRead,
+		"MarkAsReadOnView":                           form.MarkAsReadOnView,
+		"MarkAsReadOnViewButWaitForPlayerCompletion": form.MarkAsReadOnViewButWaitForPlayerCompletion,
+		"MarkAsReadOnlyOnPlayerCompletion":           form.MarkAsReadOnlyOnPlayerCompletion,
+	})
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages())
 	view.Set("timezones", timezones)

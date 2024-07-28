@@ -50,6 +50,22 @@ func NewEntry() *Entry {
 	}
 }
 
+// ShouldMarkAsReadOnView Return whether the entry should be marked as viewed considering all user settings and entry state.
+func (e *Entry) ShouldMarkAsReadOnView(user *User) bool {
+	// Already read, no need to mark as read again. Removed entries are not marked as read
+	if e.Status != EntryStatusUnread {
+		return false
+	}
+
+	// There is an enclosure, markAsRead will happen at enclosure completion time, no need to mark as read on view
+	if user.MarkReadOnMediaPlayerCompletion && e.Enclosures.ContainsAudioOrVideo() {
+		return false
+	}
+
+	// The user wants to mark as read on view
+	return user.MarkReadOnView
+}
+
 // Entries represents a list of entries.
 type Entries []*Entry
 
