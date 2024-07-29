@@ -9,13 +9,11 @@ import (
 	"encoding/base64"
 	"log/slog"
 	"net/url"
-	"path"
-
-	"miniflux.app/v2/internal/http/route"
 
 	"github.com/gorilla/mux"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/http/route"
 )
 
 func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
@@ -33,7 +31,7 @@ func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
 	return route.Path(router, "proxy", "encodedDigest", base64.URLEncoding.EncodeToString(digest), "encodedURL", base64.URLEncoding.EncodeToString([]byte(mediaURL)))
 }
 
-func ProxifyAbsoluteURL(router *mux.Router, host, mediaURL string) string {
+func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
 	if mediaURL == "" {
 		return ""
 	}
@@ -43,12 +41,13 @@ func ProxifyAbsoluteURL(router *mux.Router, host, mediaURL string) string {
 	}
 
 	proxifiedUrl := ProxifyRelativeURL(router, mediaURL)
-	scheme := "http"
-	if config.Opts.HTTPS {
-		scheme = "https"
+
+	absoluteURL, err := url.JoinPath(config.Opts.BaseURL(), proxifiedUrl)
+	if err != nil {
+		return mediaURL
 	}
 
-	return scheme + "://" + host + proxifiedUrl
+	return absoluteURL
 }
 
 func proxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
@@ -56,7 +55,7 @@ func proxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
 		return mediaURL
 	}
 
-	proxyUrl, err := url.Parse(customProxyURL)
+	absoluteURL, err := url.JoinPath(customProxyURL, base64.URLEncoding.EncodeToString([]byte(mediaURL)))
 	if err != nil {
 		slog.Error("Incorrect custom media proxy URL",
 			slog.String("custom_proxy_url", customProxyURL),
@@ -65,6 +64,5 @@ func proxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
 		return mediaURL
 	}
 
-	proxyUrl.Path = path.Join(proxyUrl.Path, base64.URLEncoding.EncodeToString([]byte(mediaURL)))
-	return proxyUrl.String()
+	return absoluteURL
 }

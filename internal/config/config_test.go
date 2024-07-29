@@ -259,6 +259,29 @@ func TestCustomBaseURLWithTrailingSlash(t *testing.T) {
 	}
 }
 
+func TestCustomBaseURLWithCustomPort(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if opts.BaseURL() != "http://example.org:88/folder" {
+		t.Fatalf(`Unexpected base URL, got "%s"`, opts.BaseURL())
+	}
+
+	if opts.RootURL() != "http://example.org:88" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, opts.RootURL())
+	}
+
+	if opts.BasePath() != "/folder" {
+		t.Fatalf(`Unexpected base path, got "%s"`, opts.BasePath())
+	}
+}
+
 func TestBaseURLWithoutScheme(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "example.org/folder/")
