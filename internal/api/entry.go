@@ -36,14 +36,14 @@ func (h *handler) getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b 
 		return
 	}
 
-	entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, r.Host, entry.Content)
+	entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content)
 	proxyOption := config.Opts.MediaProxyMode()
 
 	for i := range entry.Enclosures {
 		if proxyOption == "all" || proxyOption != "none" && !urllib.IsHTTPS(entry.Enclosures[i].URL) {
 			for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
 				if strings.HasPrefix(entry.Enclosures[i].MimeType, mediaType+"/") {
-					entry.Enclosures[i].URL = mediaproxy.ProxifyAbsoluteURL(h.router, r.Host, entry.Enclosures[i].URL)
+					entry.Enclosures[i].URL = mediaproxy.ProxifyAbsoluteURL(h.router, entry.Enclosures[i].URL)
 					break
 				}
 			}
@@ -164,7 +164,7 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	}
 
 	for i := range entries {
-		entries[i].Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, r.Host, entries[i].Content)
+		entries[i].Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entries[i].Content)
 	}
 
 	json.OK(w, r, &entriesResponse{Total: count, Entries: entries})

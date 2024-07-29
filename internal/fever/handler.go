@@ -324,7 +324,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 			FeedID:    entry.FeedID,
 			Title:     entry.Title,
 			Author:    entry.Author,
-			HTML:      mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, r.Host, entry.Content),
+			HTML:      mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content),
 			URL:       entry.URL,
 			IsSaved:   isSaved,
 			IsRead:    isRead,

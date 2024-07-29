@@ -174,7 +174,7 @@ func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
 	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, "localhost", input)
+	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
 	expected := `<p><img src="http://localhost/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
 
 	if expected != output {
@@ -182,12 +182,10 @@ func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
 	}
 }
 
-func TestAbsoluteProxyFilterWithHttpsScheme(t *testing.T) {
+func TestAbsoluteProxyFilterWithCustomPortInBaseURL(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("PROXY_OPTION", "all")
-	os.Setenv("PROXY_MEDIA_TYPES", "image")
-	os.Setenv("PROXY_PRIVATE_KEY", "test")
-	os.Setenv("HTTPS", "1")
+	os.Setenv("BASE_URL", "http://example.org:88/folder/")
+	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
 
 	var err error
 	parser := config.NewParser()
@@ -196,12 +194,16 @@ func TestAbsoluteProxyFilterWithHttpsScheme(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
+	if config.Opts.BaseURL() != "http://example.org:88/folder" {
+		t.Fatalf(`Unexpected base URL, got "%s"`, config.Opts.BaseURL())
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
-	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, "localhost", input)
-	expected := `<p><img src="https://localhost/proxy/LdPNR1GBDigeeNp2ArUQRyZsVqT_PWLfHGjYFrrWWIY=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
+	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
+	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
+	expected := `<p><img src="http://example.org:88/folder/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
 
 	if expected != output {
 		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
@@ -225,7 +227,7 @@ func TestAbsoluteProxyFilterWithHttpsAlwaysAndAudioTag(t *testing.T) {
 	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<audio src="https://website/folder/audio.mp3"></audio>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, "localhost", input)
+	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
 	expected := `<audio src="http://localhost/proxy/EmBTvmU5B17wGuONkeknkptYopW_Tl6Y6_W8oYbN_Xs=/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9hdWRpby5tcDM="></audio>`
 
 	if expected != output {
@@ -300,7 +302,7 @@ func TestAbsoluteProxyFilterWithHttpsAlwaysAndCustomProxyServer(t *testing.T) {
 	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, "localhost", input)
+	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
 	expected := `<p><img src="https://proxy-example/proxy/aHR0cHM6Ly93ZWJzaXRlL2ZvbGRlci9pbWFnZS5wbmc=" alt="Test"/></p>`
 
 	if expected != output {
