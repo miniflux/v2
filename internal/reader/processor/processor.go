@@ -4,6 +4,7 @@
 package processor
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -33,6 +34,7 @@ var (
 	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	nebulaRegex            = regexp.MustCompile(`^https://nebula\.tv`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
+	bilibiliRegex          = regexp.MustCompile(`bilibili\.com/video/av(.*)$`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
@@ -418,6 +420,25 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 		}
 	}
 
+	if shouldFetchBilibiliWatchTime(entry) {
+		if entryIsNew {
+			watchTime, err := fetchBilibiliWatchTime(entry.URL)
+			if err != nil {
+				slog.Warn("Unable to fetch Bilibili watch time",
+					slog.Int64("user_id", user.ID),
+					slog.Int64("entry_id", entry.ID),
+					slog.String("entry_url", entry.URL),
+					slog.Int64("feed_id", feed.ID),
+					slog.String("feed_url", feed.FeedURL),
+					slog.Any("error", err),
+				)
+			}
+			entry.ReadingTime = watchTime
+		} else {
+			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
+		}
+	}
+
 	// Handle YT error case and non-YT entries.
 	if entry.ReadingTime == 0 {
 		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
@@ -447,6 +468,15 @@ func shouldFetchOdyseeWatchTime(entry *model.Entry) bool {
 	}
 	matches := odyseeRegex.FindStringSubmatch(entry.URL)
 	return matches != nil
+}
+
+func shouldFetchBilibiliWatchTime(entry *model.Entry) bool {
+	if !config.Opts.FetchBilibiliWatchTime() {
+		return false
+	}
+	matches := bilibiliRegex.FindStringSubmatch(entry.URL)
+	urlMatchesBilibiliPattern := len(matches) == 2
+	return urlMatchesBilibiliPattern
 }
 
 func fetchYouTubeWatchTime(websiteURL string) (int, error) {
@@ -542,6 +572,54 @@ func fetchOdyseeWatchTime(websiteURL string) (int, error) {
 	}
 
 	return int(dur / 60), nil
+}
+
+func fetchBilibiliWatchTime(websiteURL string) (int, error) {
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to fetch Bilibili page", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return 0, localizedError.Error()
+	}
+
+	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+	if docErr != nil {
+		return 0, docErr
+	}
+
+	scriptContent := ""
+	doc.Find("script").Each(func(i int, s *goquery.Selection) {
+		if text := s.Text(); strings.Contains(text, "window.__playinfo__") {
+			scriptContent = text
+		}
+	})
+
+	if scriptContent == "" {
+		return 0, errors.New("window.__playinfo__ script not found")
+	}
+
+	startIndex := strings.Index(scriptContent, "window.__playinfo__=") + len("window.__playinfo__=")
+	endIndex := strings.Index(scriptContent[startIndex:], "};") + startIndex + 1
+	if startIndex == -1 || endIndex == -1 {
+		return 0, errors.New("unable to extract window.__playinfo__ JSON")
+	}
+	jsonContent := scriptContent[startIndex:endIndex]
+
+	var playInfo struct {
+		Data struct {
+			TimeLength int `json:"timelength"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal([]byte(jsonContent), &playInfo); err != nil {
+		return 0, fmt.Errorf("unable to parse playinfo JSON: %v", err)
+	}
+
+	return int(playInfo.Data.TimeLength / 1000 / 60), nil
 }
 
 // parseISO8601 parses an ISO 8601 duration string.
