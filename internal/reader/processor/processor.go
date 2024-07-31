@@ -4,7 +4,6 @@
 package processor
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -34,7 +33,7 @@ var (
 	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	nebulaRegex            = regexp.MustCompile(`^https://nebula\.tv`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
-	bilibiliRegex          = regexp.MustCompile(`bilibili\.com/video/av(.*)$`)
+	bilibiliRegex          = regexp.MustCompile(`bilibili\.com/video/(.*)$`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
@@ -592,34 +591,27 @@ func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 		return 0, docErr
 	}
 
-	scriptContent := ""
-	doc.Find("script").Each(func(i int, s *goquery.Selection) {
-		if text := s.Text(); strings.Contains(text, "window.__playinfo__") {
-			scriptContent = text
-		}
-	})
+	timelengthRegex := regexp.MustCompile(`"timelength":\s*(\d+)`)
+	timelengthMatches := timelengthRegex.FindStringSubmatch(doc.Text())
 
-	if scriptContent == "" {
-		return 0, errors.New("window.__playinfo__ script not found")
+	if len(timelengthMatches) < 2 {
+		return 0, errors.New("duration has not found")
 	}
 
-	startIndex := strings.Index(scriptContent, "window.__playinfo__=") + len("window.__playinfo__=")
-	endIndex := strings.Index(scriptContent[startIndex:], "};") + startIndex + 1
-	if startIndex == -1 || endIndex == -1 {
-		return 0, errors.New("unable to extract window.__playinfo__ JSON")
-	}
-	jsonContent := scriptContent[startIndex:endIndex]
-
-	var playInfo struct {
-		Data struct {
-			TimeLength int `json:"timelength"`
-		} `json:"data"`
-	}
-	if err := json.Unmarshal([]byte(jsonContent), &playInfo); err != nil {
-		return 0, fmt.Errorf("unable to parse playinfo JSON: %v", err)
+	milliseconddur, err := strconv.ParseInt(timelengthMatches[1], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("unable to parse duration %s: %v", timelengthMatches[1], err)
 	}
 
-	return int(playInfo.Data.TimeLength / 1000 / 60), nil
+	seconddur := milliseconddur / 1000
+
+	minutes := seconddur / 60
+
+	if seconddur%60 != 0 {
+		minutes++
+	}
+
+	return int(minutes), nil
 }
 
 // parseISO8601 parses an ISO 8601 duration string.
