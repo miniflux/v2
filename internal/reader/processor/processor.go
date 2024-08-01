@@ -34,6 +34,7 @@ var (
 	nebulaRegex            = regexp.MustCompile(`^https://nebula\.tv`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
 	bilibiliRegex          = regexp.MustCompile(`bilibili\.com/video/(.*)$`)
+	timelengthRegex        = regexp.MustCompile(`"timelength":\s*(\d+)`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
@@ -591,27 +592,23 @@ func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 		return 0, docErr
 	}
 
-	timelengthRegex := regexp.MustCompile(`"timelength":\s*(\d+)`)
 	timelengthMatches := timelengthRegex.FindStringSubmatch(doc.Text())
-
 	if len(timelengthMatches) < 2 {
 		return 0, errors.New("duration has not found")
 	}
 
-	milliseconddur, err := strconv.ParseInt(timelengthMatches[1], 10, 64)
+	durationMs, err := strconv.ParseInt(timelengthMatches[1], 10, 64)
 	if err != nil {
 		return 0, fmt.Errorf("unable to parse duration %s: %v", timelengthMatches[1], err)
 	}
 
-	seconddur := milliseconddur / 1000
-
-	minutes := seconddur / 60
-
-	if seconddur%60 != 0 {
-		minutes++
+	durationSec := durationMs / 1000
+	durationMin := durationSec / 60
+	if durationSec%60 != 0 {
+		durationMin++
 	}
 
-	return int(minutes), nil
+	return int(durationMin), nil
 }
 
 // parseISO8601 parses an ISO 8601 duration string.
