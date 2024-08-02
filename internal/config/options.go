@@ -56,6 +56,7 @@ const (
 	defaultMediaResourceTypes                 = "image"
 	defaultMediaProxyURL                      = ""
 	defaultFilterEntryMaxAgeDays              = 0
+	defaultFetchBilibiliWatchTime             = false
 	defaultFetchNebulaWatchTime               = false
 	defaultFetchOdyseeWatchTime               = false
 	defaultFetchYouTubeWatchTime              = false
@@ -141,6 +142,7 @@ type Options struct {
 	mediaProxyMode                     string
 	mediaProxyResourceTypes            []string
 	mediaProxyCustomURL                string
+	fetchBilibiliWatchTime             bool
 	fetchNebulaWatchTime               bool
 	fetchOdyseeWatchTime               bool
 	fetchYouTubeWatchTime              bool
@@ -218,6 +220,7 @@ func NewOptions() *Options {
 		mediaProxyResourceTypes:            []string{defaultMediaResourceTypes},
 		mediaProxyCustomURL:                defaultMediaProxyURL,
 		filterEntryMaxAgeDays:              defaultFilterEntryMaxAgeDays,
+		fetchBilibiliWatchTime:             defaultFetchBilibiliWatchTime,
 		fetchNebulaWatchTime:               defaultFetchNebulaWatchTime,
 		fetchOdyseeWatchTime:               defaultFetchOdyseeWatchTime,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
@@ -501,6 +504,12 @@ func (o *Options) FetchOdyseeWatchTime() bool {
 	return o.fetchOdyseeWatchTime
 }
 
+// FetchBilibiliWatchTime returns true if the Bilibili video duration
+// should be fetched and used as a reading time.
+func (o *Options) FetchBilibiliWatchTime() bool {
+	return o.fetchBilibiliWatchTime
+}
+
 // MediaProxyMode returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
 func (o *Options) MediaProxyMode() string {
 	return o.mediaProxyMode
@@ -658,6 +667,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"FETCH_YOUTUBE_WATCH_TIME":               o.fetchYouTubeWatchTime,
 		"FETCH_NEBULA_WATCH_TIME":                o.fetchNebulaWatchTime,
 		"FETCH_ODYSEE_WATCH_TIME":                o.fetchOdyseeWatchTime,
+		"FETCH_BILIBILI_WATCH_TIME":              o.fetchBilibiliWatchTime,
 		"HTTPS":                                  o.HTTPS,
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
 		"HTTP_CLIENT_PROXY":                      o.httpClientProxy,
