@@ -8,10 +8,8 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/integration"
@@ -20,7 +18,6 @@ import (
 	"miniflux.app/v2/internal/reader/processor"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/validator"
 )
 
@@ -37,18 +34,8 @@ func (h *handler) getEntryFromBuilder(w http.ResponseWriter, r *http.Request, b 
 	}
 
 	entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content)
-	proxyOption := config.Opts.MediaProxyMode()
 
-	for i := range entry.Enclosures {
-		if proxyOption == "all" || proxyOption != "none" && !urllib.IsHTTPS(entry.Enclosures[i].URL) {
-			for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
-				if strings.HasPrefix(entry.Enclosures[i].MimeType, mediaType+"/") {
-					entry.Enclosures[i].URL = mediaproxy.ProxifyAbsoluteURL(h.router, entry.Enclosures[i].URL)
-					break
-				}
-			}
-		}
-	}
+	entry.Enclosures.ProxifyEnclosureURL(h.router)
 
 	json.OK(w, r, entry)
 }
