@@ -2011,6 +2011,16 @@ func TestGetGlobalEntriesEndpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	feedIDEntry, err := regularUserClient.Feed(feedID)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feedIDEntry.HideGlobally != true {
+		t.Fatalf(`Expected feed to have globally_hidden set to true, was false.`)
+	}
+
 	/* Not filtering on GloballyVisible should return all entries */
 	feedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
 
