@@ -1986,6 +1986,54 @@ func TestGetAllEntriesEndpointWithFilter(t *testing.T) {
 	}
 }
 
+func TestGetGlobalEntriesEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL:      testConfig.testFeedURL,
+		HideGlobally: true,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	/* Not filtering on GloballyVisible should return all entries */
+	feedEntries, err := regularUserClient.Entries(&miniflux.Filter{FeedID: feedID})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feedEntries.Entries) == 0 {
+		t.Fatalf(`Expected entries but response contained none.`)
+	}
+
+	/* Feed is hidden globally, so this should be empty */
+	globallyVisibleEntries, err := regularUserClient.Entries(&miniflux.Filter{GloballyVisible: true})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(globallyVisibleEntries.Entries) != 0 {
+		t.Fatalf(`Expected no entries, got %d`, len(globallyVisibleEntries.Entries))
+	}
+}
+
 func TestGetEntryEndpoints(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {

@@ -685,6 +685,10 @@ func buildFilterQueryString(path string, filter *Filter) string {
 			values.Set("feed_id", strconv.FormatInt(filter.FeedID, 10))
 		}
 
+		if filter.GloballyVisible {
+			values.Set("globally_visible", "true")
+		}
+
 		for _, status := range filter.Statuses {
 			values.Add("status", status)
 		}
