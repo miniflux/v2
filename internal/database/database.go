@@ -32,7 +32,7 @@ func Migrate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
-	slog.Debug("Running database migrations",
+	slog.Info("Running database migrations",
 		slog.Int("current_version", currentVersion),
 		slog.Int("latest_version", schemaVersion),
 	)
