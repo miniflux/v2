@@ -19,11 +19,6 @@ func (h *handler) getEnclosureById(w http.ResponseWriter, r *http.Request) {
 	enclosure, err := h.store.GetEnclosure(enclosureID)
 
 	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	if enclosure == nil {
 		json.NotFound(w, r)
 		return
 	}
