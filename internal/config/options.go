@@ -70,6 +70,7 @@ const (
 	defaultOAuth2RedirectURL                  = ""
 	defaultOAuth2OidcDiscoveryEndpoint        = ""
 	defaultOAuth2Provider                     = ""
+	defaultDisableLocalAuth                   = false
 	defaultPocketConsumerKey                  = ""
 	defaultHTTPClientTimeout                  = 20
 	defaultHTTPClientMaxBodySize              = 15
@@ -154,6 +155,7 @@ type Options struct {
 	oauth2RedirectURL                  string
 	oidcDiscoveryEndpoint              string
 	oauth2Provider                     string
+	disableLocalAuth                   bool
 	pocketConsumerKey                  string
 	httpClientTimeout                  int
 	httpClientMaxBodySize              int64
@@ -231,6 +233,7 @@ func NewOptions() *Options {
 		oauth2RedirectURL:                  defaultOAuth2RedirectURL,
 		oidcDiscoveryEndpoint:              defaultOAuth2OidcDiscoveryEndpoint,
 		oauth2Provider:                     defaultOAuth2Provider,
+		disableLocalAuth:                   defaultDisableLocalAuth,
 		pocketConsumerKey:                  defaultPocketConsumerKey,
 		httpClientTimeout:                  defaultHTTPClientTimeout,
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
@@ -454,6 +457,11 @@ func (o *Options) OIDCDiscoveryEndpoint() string {
 // OAuth2Provider returns the name of the OAuth2 provider configured.
 func (o *Options) OAuth2Provider() string {
 	return o.oauth2Provider
+}
+
+// DisableLocalAUth returns true if the local user database should not be used to authenticate users
+func (o *Options) DisableLocalAuth() bool {
+	return o.disableLocalAuth
 }
 
 // HasHSTS returns true if HTTP Strict Transport Security is enabled.
@@ -695,6 +703,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"OAUTH2_PROVIDER":                        o.oauth2Provider,
 		"OAUTH2_REDIRECT_URL":                    o.oauth2RedirectURL,
 		"OAUTH2_USER_CREATION":                   o.oauth2UserCreationAllowed,
+		"DISABLE_LOCAL_AUTH":                     o.disableLocalAuth,
 		"POCKET_CONSUMER_KEY":                    redactSecretValue(o.pocketConsumerKey, redactSecret),
 		"POLLING_FREQUENCY":                      o.pollingFrequency,
 		"FORCE_REFRESH_INTERVAL":                 o.forceRefreshInterval,
