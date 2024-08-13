@@ -39,9 +39,9 @@
         {{ else if hasOAuth2Provider "oidc" }}
         <div class="panel">
             {{ if .user.OpenIDConnectID }}
-                <a href="{{ route "oauth2Unlink" "provider" "oidc" }}">{{ t "page.settings.unlink_oidc_account" }}</a>
+                <a href="{{ route "oauth2Unlink" "provider" "oidc" }}">{{ t "page.settings.unlink_oidc_account" oidcProviderName }}</a>
             {{ else }}
-                <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.settings.link_oidc_account" }}</a>
+                <a href="{{ route "oauth2Redirect" "provider" "oidc" }}">{{ t "page.settings.link_oidc_account" oidcProviderName }}</a>
             {{ end }}
         </div>
         {{ end }}
