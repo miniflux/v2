@@ -15,7 +15,7 @@ LABEL org.opencontainers.image.source=https://github.com/miniflux/v2
 LABEL org.opencontainers.image.documentation=https://miniflux.app/docs/
 
 EXPOSE 8080
-ENV LISTEN_ADDR 0.0.0.0:8080
+ENV LISTEN_ADDR=0.0.0.0:8080
 RUN apk --no-cache add ca-certificates tzdata
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 USER 65534
