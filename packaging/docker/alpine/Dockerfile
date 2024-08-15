@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:alpine3.19 AS build
+FROM docker.io/library/golang:alpine3.20 AS build
 RUN apk add --no-cache build-base git make
 ADD . /go/src/app
 WORKDIR /go/src/app
