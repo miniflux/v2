@@ -24,7 +24,6 @@ import (
 	mff "miniflux.app/v2/internal/reader/handler"
 	mfs "miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/storage"
-	"miniflux.app/v2/internal/urllib"
 	"miniflux.app/v2/internal/validator"
 
 	"github.com/gorilla/mux"
@@ -1004,18 +1003,8 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		}
 
 		entry.Content = mediaproxy.RewriteDocumentWithAbsoluteProxyURL(h.router, entry.Content)
-		proxyOption := config.Opts.MediaProxyMode()
 
-		for i := range entry.Enclosures {
-			if proxyOption == "all" || proxyOption != "none" && !urllib.IsHTTPS(entry.Enclosures[i].URL) {
-				for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
-					if strings.HasPrefix(entry.Enclosures[i].MimeType, mediaType+"/") {
-						entry.Enclosures[i].URL = mediaproxy.ProxifyAbsoluteURL(h.router, entry.Enclosures[i].URL)
-						break
-					}
-				}
-			}
-		}
+		entry.Enclosures.ProxifyEnclosureURL(h.router)
 
 		contentItems[i] = contentItem{
 			ID:            fmt.Sprintf(EntryIDLong, entry.ID),
