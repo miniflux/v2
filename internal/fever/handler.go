@@ -247,7 +247,6 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 	builder := h.store.NewEntryQueryBuilder(userID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithLimit(50)
-	builder.WithSorting("id", model.DefaultSortingDirection)
 
 	switch {
 	case request.HasQueryParam(r, "since_id"):
@@ -258,6 +257,7 @@ func (h *handler) handleItems(w http.ResponseWriter, r *http.Request) {
 				slog.Int64("since_id", sinceID),
 			)
 			builder.AfterEntryID(sinceID)
+			builder.WithSorting("id", "ASC")
 		}
 	case request.HasQueryParam(r, "max_id"):
 		maxID := request.QueryInt64Param(r, "max_id", 0)
