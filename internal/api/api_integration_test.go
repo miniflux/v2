@@ -67,9 +67,13 @@ func TestIncorrectEndpoint(t *testing.T) {
 	}
 
 	client := miniflux.NewClient("incorrect url")
-	_, err := client.Users()
-	if err == nil {
+	if _, err := client.Users(); err == nil {
 		t.Fatal(`Using an incorrect URL should raise an error`)
+	}
+
+	client = miniflux.NewClient("")
+	if _, err := client.Users(); err == nil {
+		t.Fatal(`Using an empty URL should raise an error`)
 	}
 }
 
@@ -2074,7 +2078,6 @@ func TestUpdateEnclosureEndpoint(t *testing.T) {
 	}
 
 	var enclosure *miniflux.Enclosure
-
 	for _, entry := range result.Entries {
 		if len(entry.Enclosures) > 0 {
 			enclosure = entry.Enclosures[0]
@@ -2089,13 +2092,11 @@ func TestUpdateEnclosureEndpoint(t *testing.T) {
 	err = regularUserClient.UpdateEnclosure(enclosure.ID, &miniflux.EnclosureUpdateRequest{
 		MediaProgression: 20,
 	})
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	updatedEnclosure, err := regularUserClient.Enclosure(enclosure.ID)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2134,7 +2135,6 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 	}
 
 	var expectedEnclosure *miniflux.Enclosure
-
 	for _, entry := range result.Entries {
 		if len(entry.Enclosures) > 0 {
 			expectedEnclosure = entry.Enclosures[0]
@@ -2147,7 +2147,6 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 	}
 
 	enclosure, err := regularUserClient.Enclosure(expectedEnclosure.ID)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -2155,7 +2154,12 @@ func TestGetEnclosureEndpoint(t *testing.T) {
 	if enclosure.ID != expectedEnclosure.ID {
 		t.Fatalf(`Invalid enclosureID, got %d while expecting %d`, enclosure.ID, expectedEnclosure.ID)
 	}
+
+	if _, err = regularUserClient.Enclosure(99999); err == nil {
+		t.Fatalf(`Fetching an inexisting enclosure should raise an error`)
+	}
 }
+
 func TestGetEntryEndpoints(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
