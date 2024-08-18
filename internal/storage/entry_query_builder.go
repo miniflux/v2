@@ -402,13 +402,13 @@ func (e *EntryQueryBuilder) GetEntryIDs() ([]int64, error) {
 	query := `
 		SELECT
 			e.id
-		FROM 
+		FROM
 			entries e
 		LEFT JOIN
 			feeds f
 		ON
-			f.id=e.feed_id 
-		WHERE 
+			f.id=e.feed_id
+		WHERE
 			%s %s
 	`
 
