@@ -1,3 +1,44 @@
+Version 2.2.0 (August 18, 2024)
+-------------------------------
+
+* refactor: simplify Youtube feeds discovery
+* fix(integration): define content encoding explicitly when sending article body to Readeck
+* fix(fever): correct sorting direction when using `max_id` argument
+* fix(client): Return `nil` and error if endpoint is an empty string
+* fix: video poster image URL is encoded twice when using `MEDIA_PROXY_MODE=all`
+* fix: use `BASE_URL` instead of `r.Host` to generate absolute media proxy URL
+* fix: panic during YouTube channel feed discovery
+* fix: honor `hide_globally` when creating a new feed through the api
+* fix: align pagination correctly on small screens with non-English text
+* fix: `store.GetEnclosure()` should return `nil` if no rows are returned
+* feat(locale): update Turkish translations
+* feat(locale): update French translations
+* feat(locale): update Chinese` translations
+* feat(integration): add ntfy integration
+* feat(api): add API routes `/v1/enclosures/{enclosureID}`
+* feat: validate `OAUTH2_PROVIDER` config option value
+* feat: remove YouTube video page subscription finder because `meta[itemprop="channelId"]` no longer exists
+* feat: remove well-known URL parameter trackers
+* feat: mark media as read when playback reaches 90%
+* feat: change log level to info when running migrations
+* feat: allow customizing the display name of the OpenID Connect provider
+* feat: add support for `base` HTML element when discovering feeds
+* feat: add support for `aside` HTML element in entry content
+* feat: Add option to disable local auth form
+* feat: add license info to Javascript files for LibreJS compatibility
+* feat: add `FETCH_BILIBILI_WATCH_TIME` config option
+* docs: update links to filtering rules
+* chore: avoid using legacy key/value format in Dockerfile
+* build(deps): bump `golang.org/x/oauth2` from `0.21.0` to `0.22.0`
+* build(deps): bump `golang.org/x/net` from `0.27.0` to `0.28.0`
+* build(deps): bump `golang.org/x/crypto` from `0.25.0` to `0.26.0`
+* build(deps): bump `github.com/tdewolff/minify/v2` from `2.20.36` to `2.20.37`
+* build(deps): bump `github.com/prometheus/client_golang`
+* build: update GitHub Actions to Go 1.23
+* build: publish OCI images only if `PUBLISH_DOCKER_IMAGES=true`
+* build: bump Alpine Linux build image to v3.20
+* build: add sha256 checksum file for published binaries
+
 Version 2.1.4 (July 9, 2024)
 ----------------------------
 

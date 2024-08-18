@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "March 23, 2024" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "August 18, 2024" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -239,6 +239,14 @@ Set the value to 1 to disable the HTTP service\&.
 .br
 Default is false (The HTTP service is enabled)\&.
 .TP
+.B DISABLE_LOCAL_AUTH
+Disable local authentication\&.
+.br
+When set to true, the username/password form is hidden from the login screen, and the
+options to change username/password or unlink OAuth2 account are hidden from the settings page.
+.br
+Default is false\&.
+.TP
 .B DISABLE_SCHEDULER_SERVICE
 Set the value to 1 to disable the internal scheduler service\&.
 .br
@@ -451,14 +459,6 @@ Default is OpenID Connect\&.
 Possible values are "google" or "oidc"\&.
 .br
 Default is empty\&.
-.TP
-.B DISABLE_LOCAL_AUTH
-Only use oauth2 for auth\&.
-.br
-When set to true, the username/password form is hidden from the login screen, and the
-options to change username/password or unlink oauth2 account are hidden from the settings page.
-.br
-Default is false\&.
 .TP
 .B OAUTH2_REDIRECT_URL
 OAuth2 redirect URL\&.
