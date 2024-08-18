@@ -283,6 +283,7 @@ type Filter struct {
 	CategoryID      int64
 	FeedID          int64
 	Statuses        []string
+	GloballyVisible bool
 }
 
 // EntryResultSet represents the response when fetching entries.

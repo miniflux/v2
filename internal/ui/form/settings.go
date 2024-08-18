@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
 )
@@ -86,7 +87,9 @@ func ExtractMarkAsReadBehavior(behavior MarkReadBehavior) (markReadOnView, markR
 
 // Merge updates the fields of the given user.
 func (s *SettingsForm) Merge(user *model.User) *model.User {
-	user.Username = s.Username
+	if !config.Opts.DisableLocalAuth() {
+		user.Username = s.Username
+	}
 	user.Theme = s.Theme
 	user.Language = s.Language
 	user.Timezone = s.Timezone
@@ -120,7 +123,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 
 // Validate makes sure the form values are valid.
 func (s *SettingsForm) Validate() *locale.LocalizedError {
-	if s.Username == "" || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
+	if (s.Username == "" && !config.Opts.DisableLocalAuth()) || s.Theme == "" || s.Language == "" || s.Timezone == "" || s.EntryDirection == "" || s.DisplayMode == "" || s.DefaultHomePage == "" {
 		return locale.NewLocalizedError("error.settings_mandatory_fields")
 	}
 

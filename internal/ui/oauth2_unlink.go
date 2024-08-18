@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/html"
 	"miniflux.app/v2/internal/http/route"
@@ -15,6 +16,14 @@ import (
 )
 
 func (h *handler) oauth2Unlink(w http.ResponseWriter, r *http.Request) {
+	if config.Opts.DisableLocalAuth() {
+		slog.Warn("blocking oauth2 unlink attempt, local auth is disabled",
+			slog.String("user_agent", r.UserAgent()),
+		)
+		html.Redirect(w, r, route.Path(h.router, "login"))
+		return
+	}
+
 	printer := locale.NewPrinter(request.UserLanguage(r))
 	provider := request.RouteStringParam(r, "provider")
 	if provider == "" {

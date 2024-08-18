@@ -442,10 +442,23 @@ OpenID Connect discovery endpoint\&.
 .br
 Default is empty\&.
 .TP
+.B OAUTH2_OIDC_PROVIDER_NAME
+Name to display for the OIDC provider\&.
+.br
+Default is OpenID Connect\&.
+.TP
 .B OAUTH2_PROVIDER
 Possible values are "google" or "oidc"\&.
 .br
 Default is empty\&.
+.TP
+.B DISABLE_LOCAL_AUTH
+Only use oauth2 for auth\&.
+.br
+When set to true, the username/password form is hidden from the login screen, and the
+options to change username/password or unlink oauth2 account are hidden from the settings page.
+.br
+Default is false\&.
 .TP
 .B OAUTH2_REDIRECT_URL
 OAuth2 redirect URL\&.

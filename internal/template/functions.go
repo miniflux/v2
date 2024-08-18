@@ -32,13 +32,15 @@ type funcMap struct {
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
-		"formatFileSize": formatFileSize,
-		"dict":           dict,
-		"hasKey":         hasKey,
-		"truncate":       truncate,
-		"isEmail":        isEmail,
-		"baseURL":        config.Opts.BaseURL,
-		"rootURL":        config.Opts.RootURL,
+		"formatFileSize":   formatFileSize,
+		"dict":             dict,
+		"hasKey":           hasKey,
+		"truncate":         truncate,
+		"isEmail":          isEmail,
+		"baseURL":          config.Opts.BaseURL,
+		"rootURL":          config.Opts.RootURL,
+		"disableLocalAuth": config.Opts.DisableLocalAuth,
+		"oidcProviderName": config.Opts.OIDCProviderName,
 		"hasOAuth2Provider": func(provider string) bool {
 			return config.Opts.OAuth2Provider() == provider
 		},

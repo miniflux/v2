@@ -136,6 +136,15 @@ func (h *handler) findEntries(w http.ResponseWriter, r *http.Request, feedID int
 	builder.WithLimit(limit)
 	builder.WithTags(tags)
 	builder.WithEnclosures()
+
+	if request.HasQueryParam(r, "globally_visible") {
+		globallyVisible := request.QueryBoolParam(r, "globally_visible", true)
+
+		if globallyVisible {
+			builder.WithGloballyVisible()
+		}
+	}
+
 	configureFilters(builder, r)
 
 	entries, err := builder.GetEntries()

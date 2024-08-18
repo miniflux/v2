@@ -21,9 +21,18 @@ import (
 func (h *handler) checkLogin(w http.ResponseWriter, r *http.Request) {
 	clientIP := request.ClientIP(r)
 	sess := session.New(h.store, request.SessionID(r))
-	authForm := form.NewAuthForm(r)
-
 	view := view.New(h.tpl, r, sess)
+
+	if config.Opts.DisableLocalAuth() {
+		slog.Warn("blocking local auth login attempt, local auth is disabled",
+			slog.String("client_ip", clientIP),
+			slog.String("user_agent", r.UserAgent()),
+		)
+		html.OK(w, r, view.Render("login"))
+		return
+	}
+
+	authForm := form.NewAuthForm(r)
 	view.Set("errorMessage", locale.NewLocalizedError("error.bad_credentials").Translate(request.UserLanguage(r)))
 	view.Set("form", authForm)
 

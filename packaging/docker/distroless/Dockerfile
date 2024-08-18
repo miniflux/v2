@@ -14,6 +14,6 @@ LABEL org.opencontainers.image.source=https://github.com/miniflux/v2
 LABEL org.opencontainers.image.documentation=https://miniflux.app/docs/
 
 EXPOSE 8080
-ENV LISTEN_ADDR 0.0.0.0:8080
+ENV LISTEN_ADDR=0.0.0.0:8080
 COPY --from=build /go/src/app/miniflux /usr/bin/miniflux
 CMD ["/usr/bin/miniflux"]
