@@ -13,18 +13,21 @@ import (
 	"miniflux.app/v2/internal/validator"
 )
 
-func (h *handler) getEnclosureById(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getEnclosureByID(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
 
 	enclosure, err := h.store.GetEnclosure(enclosureID)
-
 	if err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	if enclosure == nil {
 		json.NotFound(w, r)
 		return
 	}
 
 	userID := request.UserID(r)
-
 	if enclosure.UserID != userID {
 		json.NotFound(w, r)
 		return
@@ -35,11 +38,10 @@ func (h *handler) getEnclosureById(w http.ResponseWriter, r *http.Request) {
 	json.OK(w, r, enclosure)
 }
 
-func (h *handler) updateEnclosureById(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updateEnclosureByID(w http.ResponseWriter, r *http.Request) {
 	enclosureID := request.RouteInt64Param(r, "enclosureID")
 
 	var enclosureUpdateRequest model.EnclosureUpdateRequest
-
 	if err := json_parser.NewDecoder(r.Body).Decode(&enclosureUpdateRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
@@ -51,9 +53,8 @@ func (h *handler) updateEnclosureById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	enclosure, err := h.store.GetEnclosure(enclosureID)
-
 	if err != nil {
-		json.BadRequest(w, r, err)
+		json.ServerError(w, r, err)
 		return
 	}
 
@@ -63,14 +64,12 @@ func (h *handler) updateEnclosureById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := request.UserID(r)
-
 	if enclosure.UserID != userID {
 		json.NotFound(w, r)
 		return
 	}
 
 	enclosure.MediaProgression = enclosureUpdateRequest.MediaProgression
-
 	if err := h.store.UpdateEnclosure(enclosure); err != nil {
 		json.ServerError(w, r, err)
 		return
