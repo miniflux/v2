@@ -40,9 +40,9 @@ func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
 		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
+	// Note that the proxyified URL is relative to the root URL.
 	proxifiedUrl := ProxifyRelativeURL(router, mediaURL)
-
-	absoluteURL, err := url.JoinPath(config.Opts.BaseURL(), proxifiedUrl)
+	absoluteURL, err := url.JoinPath(config.Opts.RootURL(), proxifiedUrl)
 	if err != nil {
 		return mediaURL
 	}

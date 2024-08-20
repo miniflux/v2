@@ -182,7 +182,7 @@ func TestAbsoluteProxyFilterWithHttpsAlways(t *testing.T) {
 	}
 }
 
-func TestAbsoluteProxyFilterWithCustomPortInBaseURL(t *testing.T) {
+func TestAbsoluteProxyFilterWithCustomPortAndSubfolderInBaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example.org:88/folder/")
 	os.Setenv("MEDIA_PROXY_PRIVATE_KEY", "test")
@@ -198,11 +198,20 @@ func TestAbsoluteProxyFilterWithCustomPortInBaseURL(t *testing.T) {
 		t.Fatalf(`Unexpected base URL, got "%s"`, config.Opts.BaseURL())
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
+	if config.Opts.RootURL() != "http://example.org:88" {
+		t.Fatalf(`Unexpected root URL, got "%s"`, config.Opts.RootURL())
+	}
+
+	router := mux.NewRouter()
+
+	if config.Opts.BasePath() != "" {
+		router = router.PathPrefix(config.Opts.BasePath()).Subrouter()
+	}
+
+	router.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
 
 	input := `<p><img src="http://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithAbsoluteProxyURL(r, input)
+	output := RewriteDocumentWithAbsoluteProxyURL(router, input)
 	expected := `<p><img src="http://example.org:88/folder/proxy/okK5PsdNY8F082UMQEAbLPeUFfbe2WnNfInNmR9T4WA=/aHR0cDovL3dlYnNpdGUvZm9sZGVyL2ltYWdlLnBuZw==" alt="Test"/></p>`
 
 	if expected != output {
