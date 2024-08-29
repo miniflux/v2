@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Відмітити все як прочитане",
     "menu.show_all_entries": "Показати всі записи",
     "menu.show_only_unread_entries": "Показати тільки непрочитані записи",
+    "menu.show_only_starred_entries": "Показати тільки записи з зірочкою",
     "menu.refresh_feed": "Оновити",
     "menu.refresh_all_feeds": "Оновити всі стрічки у фоновому режимі",
     "menu.edit_feed": "Редагувати",

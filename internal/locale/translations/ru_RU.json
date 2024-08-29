@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Отметить всё как прочитанное",
     "menu.show_all_entries": "Показать все статьи",
     "menu.show_only_unread_entries": "Показывать только непрочитанные статьи",
+    "menu.show_only_starred_entries": "Показывать только избранные статьи",
     "menu.refresh_feed": "Обновить",
     "menu.refresh_all_feeds": "Обновить все подписки в фоне",
     "menu.edit_feed": "Изменить",

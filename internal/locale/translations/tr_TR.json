@@ -359,6 +359,7 @@
   "menu.shared_entries": "Paylaşılan makaleler",
   "menu.show_all_entries": "Tüm makaleleri göster",
   "menu.show_only_unread_entries": "Sadece okunmamış makaleleri göster",
+  "menu.show_only_starred_entries": "Sadece yıldızlanmış makaleleri göster",
   "menu.starred": "Yıldız",
   "menu.title": "Menü",
   "menu.unread": "Okunmadı",
