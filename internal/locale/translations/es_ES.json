@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Marcar todos como leídos",
     "menu.show_all_entries": "Mostrar todos los artículos",
     "menu.show_only_unread_entries": "Mostrar solo los artículos no leídos",
+    "menu.show_only_starred_entries": "Show only starred entries",
     "menu.refresh_feed": "Refrescar",
     "menu.refresh_all_feeds": "Refrescar todas las fuentes en el fondo",
     "menu.edit_feed": "Editar",

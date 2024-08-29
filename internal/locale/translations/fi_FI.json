@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Merkitse kaikki luetuksi",
     "menu.show_all_entries": "Näytä kaikki artikkelit",
     "menu.show_only_unread_entries": "Näytä vain lukemattomat artikkelit",
+    "menu.show_only_starred_entries": "Show only starred entries",
     "menu.refresh_feed": "Päivitä",
     "menu.refresh_all_feeds": "Päivitä kaikki syötteet taustalla",
     "menu.edit_feed": "Muokkaa",

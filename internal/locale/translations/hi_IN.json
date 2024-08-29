@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "सभी को पढ़ा हुआ मार्क करें",
     "menu.show_all_entries": "सभी प्रविष्टियाँ दिखाए",
     "menu.show_only_unread_entries": "सभी अपठित प्रविष्टियाँ दिखाए",
+    "menu.show_only_starred_entries": "Show only starred entries",
     "menu.refresh_feed": "ताज़ा करें",
     "menu.refresh_all_feeds": "पृष्ठभूमि में सभी फ़ीड को ताज़ा करें",
     "menu.edit_feed": "फ़ीड संपाद करे",
