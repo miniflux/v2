@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Alle als gelesen markieren",
     "menu.show_all_entries": "Zeige alle Artikel",
     "menu.show_only_unread_entries": "Nur ungelesene Artikel anzeigen",
+    "menu.show_only_starred_entries": "Nur markierte Artikel anzeigen",
     "menu.refresh_feed": "Aktualisieren",
     "menu.refresh_all_feeds": "Alle Abonnements im Hintergrund aktualisieren",
     "menu.edit_feed": "Bearbeiten",
