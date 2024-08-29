@@ -41,9 +41,22 @@
             <li>
                 <a class="page-link" href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
             </li>
+            <li>
+                <a class="page-link" href="{{ route "categoryEntriesStarred" "categoryID" .category.ID }}">{{ icon "star" }}{{ t "menu.show_only_starred_entries" }}</a>
+            </li>
+            {{ else if .showOnlyStarredEntries }}
+            <li>
+                <a class="page-link" href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+            </li>
+            <li>
+                <a class="page-link" href="{{ route "categoryEntriesAll" "categoryID" .category.ID }}">{{ icon "show-all-entries" }}{{ t "menu.show_all_entries" }}</a>
+            </li>
             {{ else }}
             <li>
                 <a class="page-link" href="{{ route "categoryEntries" "categoryID" .category.ID }}">{{ icon "show-unread-entries" }}{{ t "menu.show_only_unread_entries" }}</a>
+            </li>
+            <li>
+                <a class="page-link" href="{{ route "categoryEntriesStarred" "categoryID" .category.ID }}">{{ icon "star" }}{{ t "menu.show_only_starred_entries" }}</a>
             </li>
             {{ end }}
             <li>
