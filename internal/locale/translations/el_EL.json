@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Σημείωση όλων ως αναγνωσμένα",
     "menu.show_all_entries": "Εμφάνιση όλων των καταχωρήσεων",
     "menu.show_only_unread_entries": "Εμφάνιση μόνο μη αναγνωσμένων καταχωρήσεων",
+    "menu.show_only_starred_entries": "Εμφάνιση μόνο αγαπημένων καταχωρήσεων",
     "menu.refresh_feed": "Ανανέωση",
     "menu.refresh_all_feeds": "Ανανέωση όλων των ροών στο παρασκήνιο",
     "menu.edit_feed": "Επεξεργασία",

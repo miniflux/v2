@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Tout marquer comme lu",
     "menu.show_all_entries": "Afficher tous les articles",
     "menu.show_only_unread_entries": "Afficher uniquement les articles non lus",
+    "menu.show_only_starred_entries": "Afficher uniquement les favoris",
     "menu.refresh_feed": "Actualiser",
     "menu.refresh_all_feeds": "Actualiser les abonnements en arrière-plan",
     "menu.edit_feed": "Modifier",
