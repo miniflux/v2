@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "全部標為已讀",
     "menu.show_all_entries": "顯示所有文章",
     "menu.show_only_unread_entries": "僅顯示未讀文章",
+    "menu.show_only_starred_entries": "Show only starred entries",
     "menu.refresh_feed": "更新",
     "menu.refresh_all_feeds": "背景更新全部Feeds",
     "menu.edit_feed": "編輯",

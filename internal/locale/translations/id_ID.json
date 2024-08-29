@@ -41,6 +41,7 @@
     "menu.mark_all_as_read": "Tandai semua sebagai telah dibaca",
     "menu.show_all_entries": "Tampilkan semua entri",
     "menu.show_only_unread_entries": "Tampilkan hanya entri yang belum dibaca",
+    "menu.show_only_starred_entries": "Show only starred entries",
     "menu.refresh_feed": "Muat ulang",
     "menu.refresh_all_feeds": "Muat ulang semua umpan di latar belakang",
     "menu.edit_feed": "Sunting",
