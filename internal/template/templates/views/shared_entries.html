@@ -33,6 +33,9 @@
 {{ if not .entries }}
     <p role="alert" class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
 {{ else }}
+    <div class="pagination-top">
+        {{ template "pagination" .pagination }}
+    </div>
     <div class="items">
         {{ range .entries }}
         <article
@@ -81,6 +84,9 @@
             </div>
         </article>
         {{ end }}
+    </div>
+    <div class="pagination-bottom">
+        {{ template "pagination" .pagination }}
     </div>
 {{ end }}
 
