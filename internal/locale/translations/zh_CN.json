@@ -41,7 +41,7 @@
     "menu.mark_all_as_read": "全部标为已读",
     "menu.show_all_entries": "显示所有文章",
     "menu.show_only_unread_entries": "仅显示未读文章",
-    "menu.show_only_starred_entries": "Show only starred entries",
+    "menu.show_only_starred_entries": "仅显示已收藏文章",
     "menu.refresh_feed": "更新",
     "menu.refresh_all_feeds": "在后台更新全部源",
     "menu.edit_feed": "编辑",
@@ -92,18 +92,18 @@
     "entry.tags.label": "标签：",
     "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
-        "%d shared entry"
+        "%d 已分享的文章"
     ],
     "page.unread.title": "未读",
     "page.unread_entry_count": [
-        "%d unread entry"
+        "%d 未读的文章"
     ],
     "page.total_entry_count": [
-        "%d entry in total"
+        "%d 文章总数"
     ],
     "page.starred.title": "收藏",
     "page.starred_entry_count": [
-        "%d starred entry"
+        "%d 收藏的文章"
     ],
     "page.categories.title": "分类",
     "page.categories.no_feed": "没有源",
