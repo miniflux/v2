@@ -17,7 +17,7 @@ require (
 	golang.org/x/net v0.28.0
 	golang.org/x/oauth2 v0.23.0
 	golang.org/x/term v0.24.0
-	golang.org/x/text v0.17.0
+	golang.org/x/text v0.18.0
 	mvdan.cc/xurls/v2 v2.5.0
 )
 
