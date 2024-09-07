@@ -65,7 +65,7 @@ func newWebAuthn() (*webauthn.WebAuthn, error) {
 	return webauthn.New(&webauthn.Config{
 		RPDisplayName: "Miniflux",
 		RPID:          url.Hostname(),
-		RPOrigin:      config.Opts.RootURL(),
+		RPOrigins:     []string{config.Opts.RootURL()},
 	})
 }
 
