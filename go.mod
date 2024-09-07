@@ -1,6 +1,6 @@
 module miniflux.app/v2
 
-// +heroku goVersion go1.22
+// +heroku goVersion go1.23
 
 require (
 	github.com/PuerkitoBio/goquery v1.9.2
@@ -46,4 +46,4 @@ require (
 	google.golang.org/protobuf v1.34.2 // indirect
 )
 
-go 1.22
+go 1.23
