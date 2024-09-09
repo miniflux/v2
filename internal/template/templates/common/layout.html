@@ -35,9 +35,9 @@
     <link rel="stylesheet" type="text/css" href="{{ route "stylesheet" "name" .theme "checksum" .theme_checksum }}">
 
     {{ if and .user .user.Stylesheet }}
-    {{ $stylesheetNonce := nonce }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $stylesheetNonce }}'; require-trusted-types-for 'script'; trusted-types ttpolicy;">
-    <style nonce="{{ $stylesheetNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
+    {{ $cspNonce := nonce }}
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self' 'nonce-{{ $cspNonce }}'; require-trusted-types-for 'script'; trusted-types ttpolicy;">
+    <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
     {{ else }}
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types ttpolicy;">
     {{ end }}
