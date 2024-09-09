@@ -391,6 +391,7 @@
     "form.prefs.label.gesture_nav": "Gesto per navigare tra le voci",
     "form.prefs.label.show_reading_time": "Mostra il tempo di lettura stimato per gli articoli",
     "form.prefs.label.custom_css": "CSS personalizzati",
+    "form.prefs.label.custom_js": "JS personalizzati",
     "form.prefs.label.entry_order": "Colonna di ordinamento delle voci",
     "form.prefs.label.default_home_page": "Pagina iniziale predefinita",
     "form.prefs.label.categories_sorting_order": "Ordinamento delle categorie",

@@ -36,6 +36,7 @@ type SettingsForm struct {
 	KeyboardShortcuts      bool
 	ShowReadingTime        bool
 	CustomCSS              string
+	CustomJS               string
 	EntrySwipe             bool
 	GestureNav             string
 	DisplayMode            string
@@ -99,6 +100,7 @@ func (s *SettingsForm) Merge(user *model.User) *model.User {
 	user.KeyboardShortcuts = s.KeyboardShortcuts
 	user.ShowReadingTime = s.ShowReadingTime
 	user.Stylesheet = s.CustomCSS
+	user.CustomJS = s.CustomJS
 	user.EntrySwipe = s.EntrySwipe
 	user.GestureNav = s.GestureNav
 	user.DisplayMode = s.DisplayMode
@@ -180,6 +182,7 @@ func NewSettingsForm(r *http.Request) *SettingsForm {
 		KeyboardShortcuts:      r.FormValue("keyboard_shortcuts") == "1",
 		ShowReadingTime:        r.FormValue("show_reading_time") == "1",
 		CustomCSS:              r.FormValue("custom_css"),
+		CustomJS:               r.FormValue("custom_js"),
 		EntrySwipe:             r.FormValue("entry_swipe") == "1",
 		GestureNav:             r.FormValue("gesture_nav"),
 		DisplayMode:            r.FormValue("display_mode"),

@@ -391,6 +391,7 @@
     "form.prefs.label.gesture_nav": "प्रविष्टियों के बीच नेविगेट करने के लिए इशारा",
     "form.prefs.label.show_reading_time": "विषय के लिए अनुमानित पढ़ने का समय दिखाएं",
     "form.prefs.label.custom_css": "कस्टम सीएसएस",
+    "form.prefs.label.custom_js": "कस्टम जेएस",
     "form.prefs.label.entry_order": "प्रवेश छँटाई कॉलम",
     "form.prefs.label.default_home_page": "डिफ़ॉल्ट होमपेज़",
     "form.prefs.label.categories_sorting_order": "श्रेणियाँ छँटाई",

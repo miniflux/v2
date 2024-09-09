@@ -391,6 +391,7 @@
     "form.prefs.label.gesture_nav": "Gebaar om tussen artikelen te navigeren",
     "form.prefs.label.show_reading_time": "Toon geschatte leestijd van artikelen",
     "form.prefs.label.custom_css": "Aangepaste CSS",
+    "form.prefs.label.custom_js": "Aangepaste JS",
     "form.prefs.label.entry_order": "Artikelen sorteren",
     "form.prefs.label.default_home_page": "Startpagina",
     "form.prefs.label.categories_sorting_order": "Volgorde categorieën",
