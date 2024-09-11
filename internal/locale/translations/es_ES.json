@@ -297,7 +297,7 @@
     "error.settings_mandatory_fields": "Los campos de nombre de usuario, tema, idioma y zona horaria son obligatorios.",
     "error.settings_reading_speed_is_positive": "Las velocidades de lectura deben ser números enteros positivos.",
     "error.settings_block_rule_fieldname_invalid": "Regla de bloqueo no válida: a la regla #%d le falta un nombre de campo válido (Opciones: %s)",
-    "error.settings_block_rule_separator_required": "Regla de bloqueo no válida: el patrón de la regla #%d debe estar separado por un '="",
+    "error.settings_block_rule_separator_required": "Regla de bloqueo no válida: el patrón de la regla #%d debe estar separado por un '=",
     "error.settings_block_rule_regex_required": "Regla de bloqueo no válida: no se ha proporcionado el patrón de la regla #%d",
     "error.settings_block_rule_invalid_regex": "Regla de bloqueo no válida: el patrón de la regla #%d no es una expresión regular válida",
     "error.settings_keep_rule_fieldname_invalid": "Regla de mantenimiento no válida: a la regla #%d le falta un nombre de campo válido (Opciones: %s)",
