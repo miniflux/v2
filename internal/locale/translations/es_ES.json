@@ -357,7 +357,7 @@
     "form.feed.label.ntfy_min_priority": "Prioridad mínima a Ntfy",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Reglas",
-    "form.feed.fieldset.network_settings": "Ajustes de red,
+    "form.feed.fieldset.network_settings": "Ajustes de red",
     "form.feed.fieldset.integration": "Servicios de terceros",
     "form.category.label.title": "Título",
     "form.category.hide_globally": "Ocultar artículos en la lista global de no leídos",
