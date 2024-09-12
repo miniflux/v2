@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -87,13 +88,12 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Note: User-Agent HTTP header is omitted to avoid being blocked by bot protection mechanisms.
-	req.Header.Add("Connection", "close")
+	req.Header.Set("Connection", "close")
 
-	forwardedRequestHeader := []string{"Range", "Accept", "Accept-Encoding"}
+	forwardedRequestHeader := []string{"Range", "Accept", "Accept-Encoding", "User-Agent"}
 	for _, requestHeaderName := range forwardedRequestHeader {
 		if r.Header.Get(requestHeaderName) != "" {
-			req.Header.Add(requestHeaderName, r.Header.Get(requestHeaderName))
+			req.Header.Set(requestHeaderName, r.Header.Get(requestHeaderName))
 		}
 	}
 
@@ -128,7 +128,9 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 			slog.String("media_url", mediaURL),
 			slog.Int("status_code", resp.StatusCode),
 		)
-		html.NotFound(w, r)
+
+		// Forward the status code from the origin.
+		http.Error(w, fmt.Sprintf("Origin status code is %d", resp.StatusCode), resp.StatusCode)
 		return
 	}
 
