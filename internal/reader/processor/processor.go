@@ -582,12 +582,13 @@ func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 
 	bilibiliVideoId := bilibiliVideoIdRegex.FindStringSubmatch(websiteURL)
 	var bilibiliApiURL string
-	if bilibiliVideoId[1] != "" {
+	switch {
+	case bilibiliVideoId[1] != "":
 		bilibiliApiURL = "https://api.bilibili.com/x/web-interface/view?aid=" + bilibiliVideoId[1]
-	} else if bilibiliVideoId[2] != "" {
+	case bilibiliVideoId[2] != "":
 		bilibiliApiURL = "https://api.bilibili.com/x/web-interface/view?bvid=" + bilibiliVideoId[2]
-	} else {
-		return 0, errors.New("video id has not found")
+	default:
+		return 0, fmt.Errorf("video id has not found")
 	}
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(bilibiliApiURL))
