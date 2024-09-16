@@ -4,6 +4,7 @@
 package processor
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -34,7 +35,7 @@ var (
 	nebulaRegex            = regexp.MustCompile(`^https://nebula\.tv`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
 	bilibiliRegex          = regexp.MustCompile(`bilibili\.com/video/(.*)$`)
-	timelengthRegex        = regexp.MustCompile(`"timelength":\s*(\d+)`)
+	bilibiliVideoIdRegex   = regexp.MustCompile(`/video/(?:av(\d+)|BV([a-zA-Z0-9]+))`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
 )
@@ -579,36 +580,44 @@ func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 
-	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	bilibiliVideoId := bilibiliVideoIdRegex.FindStringSubmatch(websiteURL)
+	var bilibiliApiURL string
+	if bilibiliVideoId[1] != "" {
+		bilibiliApiURL = "https://api.bilibili.com/x/web-interface/view?aid=" + bilibiliVideoId[1]
+	} else if bilibiliVideoId[2] != "" {
+		bilibiliApiURL = "https://api.bilibili.com/x/web-interface/view?bvid=" + bilibiliVideoId[2]
+	} else {
+		return 0, errors.New("video id has not found")
+	}
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(bilibiliApiURL))
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
-		slog.Warn("Unable to fetch Bilibili page", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		slog.Warn("Unable to fetch Bilibili page", slog.String("website_url", bilibiliApiURL), slog.Any("error", localizedError.Error()))
 		return 0, localizedError.Error()
 	}
 
-	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
-	if docErr != nil {
+	var result map[string]interface{}
+	doc := json.NewDecoder(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+	if docErr := doc.Decode(&result); docErr != nil {
 		return 0, docErr
 	}
 
-	timelengthMatches := timelengthRegex.FindStringSubmatch(doc.Text())
-	if len(timelengthMatches) < 2 {
-		return 0, errors.New("duration has not found")
+	if data, ok := result["data"].(map[string]interface{}); ok {
+		if duration, ok := data["duration"].(float64); ok {
+			intDuration := int(duration)
+			durationMin := intDuration / 60
+			if intDuration%60 != 0 {
+				durationMin++
+			}
+			return int(durationMin), nil
+		} else {
+			return 0, fmt.Errorf("duration not found")
+		}
+	} else {
+		return 0, fmt.Errorf("data field not found")
 	}
-
-	durationMs, err := strconv.ParseInt(timelengthMatches[1], 10, 64)
-	if err != nil {
-		return 0, fmt.Errorf("unable to parse duration %s: %v", timelengthMatches[1], err)
-	}
-
-	durationSec := durationMs / 1000
-	durationMin := durationSec / 60
-	if durationSec%60 != 0 {
-		durationMin++
-	}
-
-	return int(durationMin), nil
 }
 
 // parseISO8601 parses an ISO 8601 duration string.
