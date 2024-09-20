@@ -34,7 +34,7 @@ var (
 	youtubeRegex           = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	nebulaRegex            = regexp.MustCompile(`^https://nebula\.tv`)
 	odyseeRegex            = regexp.MustCompile(`^https://odysee\.com`)
-	bilibiliRegex          = regexp.MustCompile(`bilibili\.com/video/(.*)$`)
+	bilibiliURLRegex       = regexp.MustCompile(`bilibili\.com/video/(.*)$`)
 	bilibiliVideoIdRegex   = regexp.MustCompile(`/video/(?:av(\d+)|BV([a-zA-Z0-9]+))`)
 	iso8601Regex           = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 	customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
@@ -475,7 +475,7 @@ func shouldFetchBilibiliWatchTime(entry *model.Entry) bool {
 	if !config.Opts.FetchBilibiliWatchTime() {
 		return false
 	}
-	matches := bilibiliRegex.FindStringSubmatch(entry.URL)
+	matches := bilibiliURLRegex.FindStringSubmatch(entry.URL)
 	urlMatchesBilibiliPattern := len(matches) == 2
 	return urlMatchesBilibiliPattern
 }
@@ -575,50 +575,66 @@ func fetchOdyseeWatchTime(websiteURL string) (int, error) {
 	return int(dur / 60), nil
 }
 
+func extractBilibiliVideoID(websiteURL string) (string, string, error) {
+	matches := bilibiliVideoIdRegex.FindStringSubmatch(websiteURL)
+	if matches == nil {
+		return "", "", fmt.Errorf("no video ID found in URL: %s", websiteURL)
+	}
+	if matches[1] != "" {
+		return "aid", matches[1], nil
+	}
+	if matches[2] != "" {
+		return "bvid", matches[2], nil
+	}
+	return "", "", fmt.Errorf("unexpected regex match result for URL: %s", websiteURL)
+}
+
 func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
 
-	bilibiliVideoId := bilibiliVideoIdRegex.FindStringSubmatch(websiteURL)
-	var bilibiliApiURL string
-	switch {
-	case bilibiliVideoId[1] != "":
-		bilibiliApiURL = "https://api.bilibili.com/x/web-interface/view?aid=" + bilibiliVideoId[1]
-	case bilibiliVideoId[2] != "":
-		bilibiliApiURL = "https://api.bilibili.com/x/web-interface/view?bvid=" + bilibiliVideoId[2]
-	default:
-		return 0, fmt.Errorf("video id has not found")
+	idType, videoID, extractErr := extractBilibiliVideoID(websiteURL)
+	if extractErr != nil {
+		return 0, extractErr
 	}
+	bilibiliApiURL := fmt.Sprintf("https://api.bilibili.com/x/web-interface/view?%s=%s", idType, videoID)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(bilibiliApiURL))
 	defer responseHandler.Close()
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
-		slog.Warn("Unable to fetch Bilibili page", slog.String("website_url", bilibiliApiURL), slog.Any("error", localizedError.Error()))
+		slog.Warn("Unable to fetch Bilibili API",
+			slog.String("website_url", bilibiliApiURL),
+			slog.Any("error", localizedError.Error()))
 		return 0, localizedError.Error()
 	}
 
 	var result map[string]interface{}
 	doc := json.NewDecoder(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
 	if docErr := doc.Decode(&result); docErr != nil {
-		return 0, docErr
+		return 0, fmt.Errorf("failed to decode API response: %v", docErr)
 	}
 
-	if data, ok := result["data"].(map[string]interface{}); ok {
-		if duration, ok := data["duration"].(float64); ok {
-			intDuration := int(duration)
-			durationMin := intDuration / 60
-			if intDuration%60 != 0 {
-				durationMin++
-			}
-			return int(durationMin), nil
-		} else {
-			return 0, fmt.Errorf("duration not found")
-		}
-	} else {
-		return 0, fmt.Errorf("data field not found")
+	if code, ok := result["code"].(float64); !ok || code != 0 {
+		return 0, fmt.Errorf("API returned error code: %v", result["code"])
 	}
+
+	data, ok := result["data"].(map[string]interface{})
+	if !ok {
+		return 0, fmt.Errorf("data field not found or not an object")
+	}
+
+	duration, ok := data["duration"].(float64)
+	if !ok {
+		return 0, fmt.Errorf("duration not found or not a number")
+	}
+	intDuration := int(duration)
+	durationMin := intDuration / 60
+	if intDuration%60 != 0 {
+		durationMin++
+	}
+	return durationMin, nil
 }
 
 // parseISO8601 parses an ISO 8601 duration string.
