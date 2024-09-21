@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    image: mcr.microsoft.com/devcontainers/go:1.22
+    image: mcr.microsoft.com/devcontainers/go:1.23
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
