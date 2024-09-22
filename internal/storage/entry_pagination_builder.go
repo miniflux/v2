@@ -45,7 +45,7 @@ func (e *EntryPaginationBuilder) WithFeedID(feedID int64) {
 // WithCategoryID adds category_id to the condition.
 func (e *EntryPaginationBuilder) WithCategoryID(categoryID int64) {
 	if categoryID != 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("f.category_id = $%d", len(e.args)+1))
+		e.conditions = append(e.conditions, fmt.Sprintf("fc.category_id = $%d", len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
 }
@@ -115,8 +115,9 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 				lag(e.id) over (order by e.%[1]s asc, e.id desc) as prev_id,
 				lead(e.id) over (order by e.%[1]s asc, e.id desc) as next_id
 			FROM entries AS e
-			JOIN feeds AS f ON f.id=e.feed_id
-			JOIN categories c ON c.id = f.category_id
+			LEFT JOIN feeds AS f ON f.id=e.feed_id
+			LEFT JOIN feed_categories fc ON fc.feed_id=f.id
+			LEFT JOIN categories c ON c.id=fc.category_id
 			WHERE %[2]s
 			ORDER BY e.%[1]s asc, e.id desc
 		)

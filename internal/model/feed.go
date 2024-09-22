@@ -57,9 +57,9 @@ type Feed struct {
 	NtfyPriority                int       `json:"ntfy_priority"`
 
 	// Non persisted attributes
-	Category *Category `json:"category,omitempty"`
-	Icon     *FeedIcon `json:"icon"`
-	Entries  Entries   `json:"entries,omitempty"`
+	Categories []*Category `json:"categories,omitempty"`
+	Icon       *FeedIcon   `json:"icon"`
+	Entries    Entries     `json:"entries,omitempty"`
 
 	TTL                    int    `json:"-"`
 	IconURL                string `json:"-"`
@@ -74,19 +74,20 @@ type FeedCounters struct {
 }
 
 func (f *Feed) String() string {
-	return fmt.Sprintf("ID=%d, UserID=%d, FeedURL=%s, SiteURL=%s, Title=%s, Category={%s}",
+	return fmt.Sprintf("ID=%d, UserID=%d, FeedURL=%s, SiteURL=%s, Title=%s",
 		f.ID,
 		f.UserID,
 		f.FeedURL,
 		f.SiteURL,
 		f.Title,
-		f.Category,
 	)
 }
 
 // WithCategoryID initializes the category attribute of the feed.
-func (f *Feed) WithCategoryID(categoryID int64) {
-	f.Category = &Category{ID: categoryID}
+func (f *Feed) WithCategoryIDs(categoryIDs []int64) {
+	for _, categoryID := range categoryIDs {
+		f.Categories = append(f.Categories, &Category{ID: categoryID})
+	}
 }
 
 // WithTranslatedErrorMessage adds a new error message and increment the error counter.
@@ -136,25 +137,25 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, newTTL int) {
 
 // FeedCreationRequest represents the request to create a feed.
 type FeedCreationRequest struct {
-	FeedURL                     string `json:"feed_url"`
-	CategoryID                  int64  `json:"category_id"`
-	UserAgent                   string `json:"user_agent"`
-	Cookie                      string `json:"cookie"`
-	Username                    string `json:"username"`
-	Password                    string `json:"password"`
-	Crawler                     bool   `json:"crawler"`
-	Disabled                    bool   `json:"disabled"`
-	NoMediaPlayer               bool   `json:"no_media_player"`
-	IgnoreHTTPCache             bool   `json:"ignore_http_cache"`
-	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
-	FetchViaProxy               bool   `json:"fetch_via_proxy"`
-	ScraperRules                string `json:"scraper_rules"`
-	RewriteRules                string `json:"rewrite_rules"`
-	BlocklistRules              string `json:"blocklist_rules"`
-	KeeplistRules               string `json:"keeplist_rules"`
-	HideGlobally                bool   `json:"hide_globally"`
-	UrlRewriteRules             string `json:"urlrewrite_rules"`
-	DisableHTTP2                bool   `json:"disable_http2"`
+	FeedURL                     string  `json:"feed_url"`
+	CategoryIDs                 []int64 `json:"category_ids"`
+	UserAgent                   string  `json:"user_agent"`
+	Cookie                      string  `json:"cookie"`
+	Username                    string  `json:"username"`
+	Password                    string  `json:"password"`
+	Crawler                     bool    `json:"crawler"`
+	Disabled                    bool    `json:"disabled"`
+	NoMediaPlayer               bool    `json:"no_media_player"`
+	IgnoreHTTPCache             bool    `json:"ignore_http_cache"`
+	AllowSelfSignedCertificates bool    `json:"allow_self_signed_certificates"`
+	FetchViaProxy               bool    `json:"fetch_via_proxy"`
+	ScraperRules                string  `json:"scraper_rules"`
+	RewriteRules                string  `json:"rewrite_rules"`
+	BlocklistRules              string  `json:"blocklist_rules"`
+	KeeplistRules               string  `json:"keeplist_rules"`
+	HideGlobally                bool    `json:"hide_globally"`
+	UrlRewriteRules             string  `json:"urlrewrite_rules"`
+	DisableHTTP2                bool    `json:"disable_http2"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -181,7 +182,7 @@ type FeedModificationRequest struct {
 	Cookie                      *string `json:"cookie"`
 	Username                    *string `json:"username"`
 	Password                    *string `json:"password"`
-	CategoryID                  *int64  `json:"category_id"`
+	CategoryIDs                 []int64 `json:"category_ids"`
 	Disabled                    *bool   `json:"disabled"`
 	NoMediaPlayer               *bool   `json:"no_media_player"`
 	IgnoreHTTPCache             *bool   `json:"ignore_http_cache"`
@@ -249,8 +250,11 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 		feed.Password = *f.Password
 	}
 
-	if f.CategoryID != nil && *f.CategoryID > 0 {
-		feed.Category.ID = *f.CategoryID
+	if len(f.CategoryIDs) > 0 {
+		feed.Categories = nil
+		for _, categoryID := range f.CategoryIDs {
+			feed.Categories = append(feed.Categories, &Category{ID: categoryID})
+		}
 	}
 
 	if f.Disabled != nil {

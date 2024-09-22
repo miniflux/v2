@@ -68,9 +68,9 @@ func TestParseOpmlWithCategories(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: "My Category 1"})
-	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: "My Category 1"})
-	expected = append(expected, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed3/", SiteURL: "http://example.org/3", CategoryName: "My Category 2"})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryNames: CategoryNameList{"My Category 1"}})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryNames: CategoryNameList{"My Category 1"}})
+	expected = append(expected, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed3/", SiteURL: "http://example.org/3", CategoryNames: CategoryNameList{"My Category 2"}})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
@@ -102,8 +102,8 @@ func TestParseOpmlWithEmptyTitleAndEmptySiteURL(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "http://example.org/1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: ""})
-	expected = append(expected, &Subcription{Title: "http://example.org/feed2/", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/feed2/", CategoryName: ""})
+	expected = append(expected, &Subcription{Title: "http://example.org/1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryNames: CategoryNameList{}})
+	expected = append(expected, &Subcription{Title: "http://example.org/feed2/", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/feed2/", CategoryNames: CategoryNameList{}})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
@@ -140,8 +140,8 @@ func TestParseOpmlVersion1(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: "Category 1"})
-	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: "Category 2"})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryNames: CategoryNameList{"Category 1"}})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryNames: CategoryNameList{"Category 2"}})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
@@ -174,8 +174,8 @@ func TestParseOpmlVersion1WithoutOuterOutline(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: ""})
-	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: ""})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryNames: CategoryNameList{}})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryNames: CategoryNameList{}})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
@@ -215,9 +215,9 @@ func TestParseOpmlVersion1WithSeveralNestedOutlines(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryName: "Some Category"})
-	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryName: "Some Category"})
-	expected = append(expected, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed3/", SiteURL: "http://example.org/3", CategoryName: "Another Category"})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/", SiteURL: "http://example.org/1", CategoryNames: CategoryNameList{"Some Category"}})
+	expected = append(expected, &Subcription{Title: "Feed 2", FeedURL: "http://example.org/feed2/", SiteURL: "http://example.org/2", CategoryNames: CategoryNameList{"Some Category"}})
+	expected = append(expected, &Subcription{Title: "Feed 3", FeedURL: "http://example.org/feed3/", SiteURL: "http://example.org/3", CategoryNames: CategoryNameList{"Another Category"}})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {
@@ -250,7 +250,7 @@ func TestParseOpmlWithInvalidCharacterEntity(t *testing.T) {
 	`
 
 	var expected SubcriptionList
-	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/a&b", SiteURL: "http://example.org/c&d", CategoryName: "Feed 1"})
+	expected = append(expected, &Subcription{Title: "Feed 1", FeedURL: "http://example.org/feed1/a&b", SiteURL: "http://example.org/c&d", CategoryNames: CategoryNameList{"Feed 1"}})
 
 	subscriptions, err := Parse(bytes.NewBufferString(data))
 	if err != nil {

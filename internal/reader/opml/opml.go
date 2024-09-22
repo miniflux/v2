@@ -29,6 +29,7 @@ type opmlHeader struct {
 type opmlOutline struct {
 	Title       string                `xml:"title,attr,omitempty"`
 	Text        string                `xml:"text,attr"`
+	Type        string                `xml:"type,attr,omitempty"`
 	FeedURL     string                `xml:"xmlUrl,attr,omitempty"`
 	SiteURL     string                `xml:"htmlUrl,attr,omitempty"`
 	Description string                `xml:"description,attr,omitempty"`

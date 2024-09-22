@@ -60,7 +60,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		SiteURL:         model.OptionalString(feedForm.SiteURL),
 		Title:           model.OptionalString(feedForm.Title),
 		Description:     model.OptionalString(feedForm.Description),
-		CategoryID:      model.OptionalNumber(feedForm.CategoryID),
+		CategoryIDs:     feedForm.CategoryIDs,
 		BlocklistRules:  model.OptionalString(feedForm.BlocklistRules),
 		KeeplistRules:   model.OptionalString(feedForm.KeeplistRules),
 		UrlRewriteRules: model.OptionalString(feedForm.UrlRewriteRules),

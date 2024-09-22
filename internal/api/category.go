@@ -120,7 +120,7 @@ func (h *handler) removeCategory(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 	categoryID := request.RouteInt64Param(r, "categoryID")
 
-	if !h.store.CategoryIDExists(userID, categoryID) {
+	if !h.store.CategoryIDsExists(userID, []int64{categoryID}) {
 		json.NotFound(w, r)
 		return
 	}

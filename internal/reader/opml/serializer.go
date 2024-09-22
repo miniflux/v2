@@ -37,7 +37,7 @@ func convertSubscriptionsToOPML(subscriptions SubcriptionList) *opmlDocument {
 	opmlDocument.Header.Title = "Miniflux"
 	opmlDocument.Header.DateCreated = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")
 
-	groupedSubs := groupSubscriptionsByFeed(subscriptions)
+	groupedSubs := groupSubscriptionsByCategory(subscriptions)
 	categories := make([]string, 0, len(groupedSubs))
 	for k := range groupedSubs {
 		categories = append(categories, k)
@@ -45,7 +45,7 @@ func convertSubscriptionsToOPML(subscriptions SubcriptionList) *opmlDocument {
 	sort.Strings(categories)
 
 	for _, categoryName := range categories {
-		category := opmlOutline{Text: categoryName, Outlines: make(opmlOutlineCollection, 0, len(groupedSubs[categoryName]))}
+		category := opmlOutline{Title: categoryName, Text: categoryName, Outlines: make(opmlOutlineCollection, 0, len(groupedSubs[categoryName]))}
 		for _, subscription := range groupedSubs[categoryName] {
 			category.Outlines = append(category.Outlines, opmlOutline{
 				Title:       subscription.Title,
@@ -62,11 +62,13 @@ func convertSubscriptionsToOPML(subscriptions SubcriptionList) *opmlDocument {
 	return opmlDocument
 }
 
-func groupSubscriptionsByFeed(subscriptions SubcriptionList) map[string]SubcriptionList {
+func groupSubscriptionsByCategory(subscriptions SubcriptionList) map[string]SubcriptionList {
 	groups := make(map[string]SubcriptionList)
 
 	for _, subscription := range subscriptions {
-		groups[subscription.CategoryName] = append(groups[subscription.CategoryName], subscription)
+		for _, categoryName := range subscription.CategoryNames {
+			groups[categoryName] = append(groups[categoryName], subscription)
+		}
 	}
 
 	return groups

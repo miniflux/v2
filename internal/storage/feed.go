@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"sort"
+	"strings"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
@@ -217,7 +218,6 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			feed_url,
 			site_url,
 			title,
-			category_id,
 			user_id,
 			etag_header,
 			last_modified_header,
@@ -242,7 +242,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			description
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
 		RETURNING
 			id
 	`
@@ -251,7 +251,6 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.FeedURL,
 		feed.SiteURL,
 		feed.Title,
-		feed.Category.ID,
 		feed.UserID,
 		feed.EtagHeader,
 		feed.LastModifiedHeader,
@@ -277,6 +276,20 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
+	}
+
+	sql = `
+		INSERT INTO feed_categories (feed_id, category_id)
+		VALUES
+			%s
+	`
+	var feedCategoryValues []string
+	for _, category := range feed.Categories {
+		feedCategoryValues = append(feedCategoryValues, fmt.Sprintf("(%d,%d)", feed.ID, category.ID))
+	}
+	sql = fmt.Sprintf(sql, strings.Join(feedCategoryValues, ","))
+	if _, err = s.db.Exec(sql); err != nil {
+		return fmt.Errorf(`store: unable to associate categories to feed %q: %v`, feed.FeedURL, err)
 	}
 
 	for _, entry := range feed.Entries {
@@ -322,42 +335,40 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			feed_url=$1,
 			site_url=$2,
 			title=$3,
-			category_id=$4,
-			etag_header=$5,
-			last_modified_header=$6,
-			checked_at=$7,
-			parsing_error_msg=$8,
-			parsing_error_count=$9,
-			scraper_rules=$10,
-			rewrite_rules=$11,
-			blocklist_rules=$12,
-			keeplist_rules=$13,
-			crawler=$14,
-			user_agent=$15,
-			cookie=$16,
-			username=$17,
-			password=$18,
-			disabled=$19,
-			next_check_at=$20,
-			ignore_http_cache=$21,
-			allow_self_signed_certificates=$22,
-			fetch_via_proxy=$23,
-			hide_globally=$24,
-			url_rewrite_rules=$25,
-			no_media_player=$26,
-			apprise_service_urls=$27,
-			disable_http2=$28,
-			description=$29,
-			ntfy_enabled=$30,
-			ntfy_priority=$31
+			etag_header=$4,
+			last_modified_header=$5,
+			checked_at=$6,
+			parsing_error_msg=$7,
+			parsing_error_count=$8,
+			scraper_rules=$9,
+			rewrite_rules=$10,
+			blocklist_rules=$11,
+			keeplist_rules=$12,
+			crawler=$13,
+			user_agent=$14,
+			cookie=$15,
+			username=$16,
+			password=$17,
+			disabled=$18,
+			next_check_at=$19,
+			ignore_http_cache=$20,
+			allow_self_signed_certificates=$21,
+			fetch_via_proxy=$22,
+			hide_globally=$23,
+			url_rewrite_rules=$24,
+			no_media_player=$25,
+			apprise_service_urls=$26,
+			disable_http2=$27,
+			description=$28,
+			ntfy_enabled=$29,
+			ntfy_priority=$30
 		WHERE
-			id=$32 AND user_id=$33
+			id=$31 AND user_id=$32
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
 		feed.SiteURL,
 		feed.Title,
-		feed.Category.ID,
 		feed.EtagHeader,
 		feed.LastModifiedHeader,
 		feed.CheckedAt,
@@ -388,9 +399,26 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.ID,
 		feed.UserID,
 	)
-
 	if err != nil {
 		return fmt.Errorf(`store: unable to update feed #%d (%s): %v`, feed.ID, feed.FeedURL, err)
+	}
+
+	// TODO keep track of changes separately
+	query = `
+		DELETE FROM feed_categories
+		WHERE feed_id=%d;
+
+		INSERT INTO feed_categories (feed_id, category_id)
+		VALUES
+			%s
+	`
+	var feedCategoryValues []string
+	for _, category := range feed.Categories {
+		feedCategoryValues = append(feedCategoryValues, fmt.Sprintf("(%d,%d)", feed.ID, category.ID))
+	}
+	query = fmt.Sprintf(query, feed.ID, strings.Join(feedCategoryValues, ","))
+	if _, err = s.db.Exec(query); err != nil {
+		return fmt.Errorf(`store: unable to update categories for feed #%d (%s): %v`, feed.ID, feed.FeedURL, err)
 	}
 
 	return nil

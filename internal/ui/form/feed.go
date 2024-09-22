@@ -6,6 +6,7 @@ package form // import "miniflux.app/v2/internal/ui/form"
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"miniflux.app/v2/internal/model"
 )
@@ -24,7 +25,7 @@ type FeedForm struct {
 	Crawler                     bool
 	UserAgent                   string
 	Cookie                      string
-	CategoryID                  int64
+	CategoryIDs                 []int64
 	Username                    string
 	Password                    string
 	IgnoreHTTPCache             bool
@@ -42,7 +43,9 @@ type FeedForm struct {
 
 // Merge updates the fields of the given feed.
 func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
-	feed.Category.ID = f.CategoryID
+	for _, categoryID := range f.CategoryIDs {
+		feed.Categories = append(feed.Categories, &model.Category{ID: categoryID})
+	}
 	feed.Title = f.Title
 	feed.SiteURL = f.SiteURL
 	feed.FeedURL = f.FeedURL
@@ -74,9 +77,13 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 
 // NewFeedForm parses the HTTP request and returns a FeedForm
 func NewFeedForm(r *http.Request) *FeedForm {
-	categoryID, err := strconv.Atoi(r.FormValue("category_id"))
-	if err != nil {
-		categoryID = 0
+	var categoryIDs []int64
+	for _, categoryIDStr := range strings.Split(r.FormValue("category_ids"), ",") {
+		categoryID, err := strconv.Atoi(categoryIDStr)
+		if err != nil {
+			continue
+		}
+		categoryIDs = append(categoryIDs, int64(categoryID))
 	}
 	ntfyPriority, err := strconv.Atoi(r.FormValue("ntfy_priority"))
 	if err != nil {
@@ -95,7 +102,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		KeeplistRules:               r.FormValue("keeplist_rules"),
 		UrlRewriteRules:             r.FormValue("urlrewrite_rules"),
 		Crawler:                     r.FormValue("crawler") == "1",
-		CategoryID:                  int64(categoryID),
+		CategoryIDs:                 categoryIDs,
 		Username:                    r.FormValue("feed_username"),
 		Password:                    r.FormValue("feed_password"),
 		IgnoreHTTPCache:             r.FormValue("ignore_http_cache") == "1",

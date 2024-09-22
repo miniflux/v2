@@ -25,14 +25,6 @@
                     <span aria-hidden="true">{{ .NumberOfVisibleEntries }}</span>
                     <span aria-hidden="true">)</span>
                 </span>
-                <span class="category">
-                    <a id="feed-category-{{ .ID }}"
-                       href="{{ route "categoryEntries" "categoryID" .Category.ID }}"
-                       aria-label="{{ t "page.category_label" .Category.Title }}"
-                    >
-                        {{ .Category.Title }}
-                    </a>
-                </span>
             </header>
             <div class="item-meta">
                 <ul class="item-meta-info">

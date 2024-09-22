@@ -61,11 +61,6 @@
                         {{ .Title }}
                     </a>
                 </h2>
-                <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">
-                        {{ .Feed.Category.Title }}
-                    </a>
-                </span>
             </header>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry }}
         </article>

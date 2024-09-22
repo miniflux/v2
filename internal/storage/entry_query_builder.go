@@ -6,6 +6,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -132,7 +133,7 @@ func (e *EntryQueryBuilder) WithFeedID(feedID int64) *EntryQueryBuilder {
 // WithCategoryID filter by category ID.
 func (e *EntryQueryBuilder) WithCategoryID(categoryID int64) *EntryQueryBuilder {
 	if categoryID > 0 {
-		e.conditions = append(e.conditions, fmt.Sprintf("f.category_id = $%d", len(e.args)+1))
+		e.conditions = append(e.conditions, fmt.Sprintf("fc.category_id = $%d", len(e.args)+1))
 		e.args = append(e.args, categoryID)
 	}
 	return e
@@ -220,10 +221,11 @@ func (e *EntryQueryBuilder) WithGloballyVisible() *EntryQueryBuilder {
 // CountEntries count the number of entries that match the condition.
 func (e *EntryQueryBuilder) CountEntries() (count int, err error) {
 	query := `
-		SELECT count(*)
+		SELECT count(DISTINCT e.id)
 		FROM entries e
-			JOIN feeds f ON f.id = e.feed_id
-			JOIN categories c ON c.id = f.category_id
+			LEFT JOIN feeds f ON f.id = e.feed_id
+			LEFT JOIN feed_categories fc ON fc.feed_id=f.id
+			LEFT JOIN categories c ON c.id=fc.category_id
 		WHERE %s
 	`
 	condition := e.buildCondition()
@@ -256,6 +258,7 @@ func (e *EntryQueryBuilder) GetEntry() (*model.Entry, error) {
 	return entries[0], nil
 }
 
+// TODO Don't return feeds and categories (still join to allow for filtering)
 // GetEntries returns a list of entries that match the condition.
 func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 	query := `
@@ -283,9 +286,9 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			f.site_url,
 			f.description,
 			f.checked_at,
-			f.category_id,
-			c.title as category_title,
-			c.hide_globally as category_hidden,
+			STRING_AGG(c.id::text, ',') as category_id,
+			STRING_AGG(c.title, ',') as category_title,
+			STRING_AGG(c.hide_globally::text, ',') as category_hidden,
 			f.scraper_rules,
 			f.rewrite_rules,
 			f.crawler,
@@ -300,12 +303,16 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		LEFT JOIN
 			feeds f ON f.id=e.feed_id
 		LEFT JOIN
-			categories c ON c.id=f.category_id
+			feed_categories fc ON fc.feed_id=f.id
+		LEFT JOIN
+			categories c ON c.id=fc.category_id
 		LEFT JOIN
 			feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN
 			users u ON u.id=e.user_id
-		WHERE %s %s
+		WHERE %s
+		GROUP BY e.id, f.id, u.timezone, fi.icon_id
+		%s
 	`
 
 	condition := e.buildCondition()
@@ -323,6 +330,9 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		var iconID sql.NullInt64
 		var tz string
 		var hasEnclosure sql.NullBool
+		var categoryIDsStr string
+		var categoryTitlesStr string
+		var categoryHiddensStr string
 
 		entry := model.NewEntry()
 
@@ -350,9 +360,9 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.SiteURL,
 			&entry.Feed.Description,
 			&entry.Feed.CheckedAt,
-			&entry.Feed.Category.ID,
-			&entry.Feed.Category.Title,
-			&entry.Feed.Category.HideGlobally,
+			&categoryIDsStr,
+			&categoryTitlesStr,
+			&categoryHiddensStr,
 			&entry.Feed.ScraperRules,
 			&entry.Feed.RewriteRules,
 			&entry.Feed.Crawler,
@@ -363,9 +373,24 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&iconID,
 			&tz,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
+		}
+
+		// TODO Better way to get list of categories
+		categoryIDs := strings.Split(categoryIDsStr, ",")
+		categoryTitles := strings.Split(categoryTitlesStr, ",")
+		categoryHiddens := strings.Split(categoryHiddensStr, ",")
+		for i := range categoryIDs {
+			categoryID, _ := strconv.Atoi(categoryIDs[i])
+			categoryHidden := categoryHiddens[i] == "1"
+			category := &model.Category{
+				ID:           int64(categoryID),
+				Title:        categoryTitles[i],
+				HideGlobally: categoryHidden,
+				UserID:       entry.Feed.UserID,
+			}
+			entry.Feed.Categories = append(entry.Feed.Categories, category)
 		}
 
 		if hasEnclosure.Valid && hasEnclosure.Bool && e.fetchEnclosures {
@@ -390,7 +415,6 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 		entry.Feed.ID = entry.FeedID
 		entry.Feed.UserID = entry.UserID
 		entry.Feed.Icon.FeedID = entry.FeedID
-		entry.Feed.Category.UserID = entry.UserID
 		entries = append(entries, entry)
 	}
 
