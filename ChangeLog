@@ -1,3 +1,27 @@
+Version 2.2.1 (September 28, 2024)
+----------------------------------
+
+* refactor: split processor package into smaller files
+* fix(mediaproxy): forward client user-agent to origin to bypass bot protection
+* fix: use root URL to generate absolute proxy URL
+* fix: remove progression save on shared entry
+* fix: add datasource variable and upgrade depecrated panels on the Grafana dashboard
+* feat(locale): update zh_CN translations
+* feat(locale): update Ukrainian translations
+* feat(locale): update Spanish translations
+* feat(locale): update Dutch translations
+* feat: use Bilibili API instead of web scraping to get videos watch time
+* feat: add pagination to shared entries listing
+* feat: add button to show only starred entries per category
+* build(deps): bump `golang.org/x/term` from `0.23.0` to `0.24.0`
+* build(deps): bump `golang.org/x/oauth2` from `0.22.0` to `0.23.0`
+* build(deps): bump `golang.org/x/net` from `0.28.0` to `0.29.0`
+* build(deps): bump `github.com/PuerkitoBio/goquery` from `1.9.2` to `1.10.0`
+* build(deps): bump `github.com/prometheus/client_golang` from `1.20.3` to `1.20.4`
+* build(deps): bump `github.com/go-webauthn/webauthn` from `0.10.2` to `0.11.2`
+* build: update go.mod to Go 1.23
+* build: bump devcontainer version to go 1.23
+
 Version 2.2.0 (August 18, 2024)
 -------------------------------
 
