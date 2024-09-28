@@ -39,6 +39,15 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var categoryIDs []int64
+	categoryHiddenGlobally := false
+	for _, category := range feed.Categories {
+		if category.HideGlobally {
+			categoryHiddenGlobally = true
+		}
+		categoryIDs = append(categoryIDs, category.ID)
+	}
+
 	feedForm := form.FeedForm{
 		SiteURL:                     feed.SiteURL,
 		FeedURL:                     feed.FeedURL,
@@ -52,7 +61,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		Crawler:                     feed.Crawler,
 		UserAgent:                   feed.UserAgent,
 		Cookie:                      feed.Cookie,
-		CategoryID:                  feed.Category.ID,
+		CategoryIDs:                 categoryIDs,
 		Username:                    feed.Username,
 		Password:                    feed.Password,
 		IgnoreHTTPCache:             feed.IgnoreHTTPCache,
@@ -61,7 +70,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		Disabled:                    feed.Disabled,
 		NoMediaPlayer:               feed.NoMediaPlayer,
 		HideGlobally:                feed.HideGlobally,
-		CategoryHidden:              feed.Category.HideGlobally,
+		CategoryHidden:              categoryHiddenGlobally,
 		AppriseServiceURLs:          feed.AppriseServiceURLs,
 		DisableHTTP2:                feed.DisableHTTP2,
 		NtfyEnabled:                 feed.NtfyEnabled,

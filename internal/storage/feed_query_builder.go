@@ -6,6 +6,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"miniflux.app/v2/internal/model"
@@ -40,9 +41,9 @@ func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 // WithCategoryID filter by category ID.
 func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 	if categoryID > 0 {
-		f.conditions = append(f.conditions, fmt.Sprintf("f.category_id = $%d", len(f.args)+1))
+		f.conditions = append(f.conditions, fmt.Sprintf("fc.category_id = $%d", len(f.args)+1))
 		f.args = append(f.args, categoryID)
-		f.counterConditions = append(f.counterConditions, fmt.Sprintf("f.category_id = $%d", len(f.counterArgs)+1))
+		f.counterConditions = append(f.counterConditions, fmt.Sprintf("fc.category_id = $%d", len(f.counterArgs)+1))
 		f.counterArgs = append(f.counterArgs, categoryID)
 		f.counterJoinFeeds = true
 	}
@@ -127,6 +128,7 @@ func (f *FeedQueryBuilder) GetFeed() (*model.Feed, error) {
 	return feeds[0], nil
 }
 
+// TODO Don't return categories (still join to allow for filtering)
 // GetFeeds returns a list of feeds that match the condition.
 func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 	var query = `
@@ -159,9 +161,9 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.disabled,
 			f.no_media_player,
 			f.hide_globally,
-			f.category_id,
-			c.title as category_title,
-			c.hide_globally as category_hidden,
+			STRING_AGG(c.id::text, ',') as category_id,
+			STRING_AGG(c.title, ',') as category_title,
+			STRING_AGG(c.hide_globally::text, ',') as category_hidden,
 			fi.icon_id,
 			u.timezone,
 			f.apprise_service_urls,
@@ -171,12 +173,15 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		FROM
 			feeds f
 		LEFT JOIN
-			categories c ON c.id=f.category_id
+			feed_categories fc ON fc.feed_id=f.id
+		LEFT JOIN
+			categories c ON c.id=fc.category_id
 		LEFT JOIN
 			feed_icons fi ON fi.feed_id=f.id
 		LEFT JOIN
 			users u ON u.id=f.user_id
 		WHERE %s
+		GROUP BY f.id, u.timezone, fi.icon_id
 		%s
 	`
 
@@ -198,7 +203,9 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		var feed model.Feed
 		var iconID sql.NullInt64
 		var tz string
-		feed.Category = &model.Category{}
+		var categoryIDsStr string
+		var categoryTitlesStr string
+		var categoryHiddensStr string
 
 		err := rows.Scan(
 			&feed.ID,
@@ -229,9 +236,9 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.Disabled,
 			&feed.NoMediaPlayer,
 			&feed.HideGlobally,
-			&feed.Category.ID,
-			&feed.Category.Title,
-			&feed.Category.HideGlobally,
+			&categoryIDsStr,
+			&categoryTitlesStr,
+			&categoryHiddensStr,
 			&iconID,
 			&tz,
 			&feed.AppriseServiceURLs,
@@ -239,9 +246,24 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.NtfyEnabled,
 			&feed.NtfyPriority,
 		)
-
 		if err != nil {
 			return nil, fmt.Errorf(`store: unable to fetch feeds row: %w`, err)
+		}
+
+		// TODO Better way to get list of categories
+		categoryIDs := strings.Split(categoryIDsStr, ",")
+		categoryTitles := strings.Split(categoryTitlesStr, ",")
+		categoryHiddens := strings.Split(categoryHiddensStr, ",")
+		for i := range categoryIDs {
+			categoryID, _ := strconv.Atoi(categoryIDs[i])
+			categoryHidden := categoryHiddens[i] == "1"
+			category := &model.Category{
+				ID:           int64(categoryID),
+				Title:        categoryTitles[i],
+				HideGlobally: categoryHidden,
+				UserID:       feed.UserID,
+			}
+			feed.Categories = append(feed.Categories, category)
 		}
 
 		if iconID.Valid {
@@ -264,7 +286,6 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		feed.NumberOfVisibleEntries = feed.ReadCount + feed.UnreadCount
 		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
 		feed.NextCheckAt = timezone.Convert(tz, feed.NextCheckAt)
-		feed.Category.UserID = feed.UserID
 		feeds = append(feeds, &feed)
 	}
 
@@ -290,7 +311,11 @@ func (f *FeedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 	`
 	join := ""
 	if f.counterJoinFeeds {
-		join = "LEFT JOIN feeds f ON f.id=e.feed_id"
+		join = `
+			LEFT JOIN feeds f ON f.id=e.feed_id
+			LEFT JOIN feed_categories fc ON fc.feed_id=f.id
+			LEFT JOIN categories c ON c.id=fc.category_id
+		`
 	}
 	query = fmt.Sprintf(query, join, f.buildCounterCondition())
 

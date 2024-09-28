@@ -96,9 +96,9 @@
                 <h2 id="entry-title-{{ .ID }}" class="item-title">
                     <a
                         {{ if $.showOnlyUnreadEntries }}
-                        href="{{ route "unreadCategoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
+                        href="{{ route "unreadCategoryEntry" "categoryID" (index .Feed.Categories 0).ID "entryID" .ID }}"
                         {{ else }}
-                        href="{{ route "categoryEntry" "categoryID" .Feed.Category.ID "entryID" .ID }}"
+                        href="{{ route "categoryEntry" "categoryID" (index .Feed.Categories 0).ID "entryID" .ID }}"
                         {{ end }}
                     >
                         {{ if ne .Feed.Icon.IconID 0 }}
@@ -107,11 +107,6 @@
                         {{ .Title }}
                     </a>
                 </h2>
-                <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}" aria-label="{{ t "page.category_label" .Feed.Category.Title }}">
-                        {{ .Feed.Category.Title }}
-                    </a>
-                </span>
             </header>
             {{ template "item_meta" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
         </article>

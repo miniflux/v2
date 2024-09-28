@@ -126,11 +126,6 @@
                 {{ end }}
             </span>
             {{ end }}
-            {{ if .user }}
-            <span class="category">
-                <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
-            </span>
-            {{ end }}
         </div>
         {{ if .entry.Tags }}
         <div class="entry-tags">

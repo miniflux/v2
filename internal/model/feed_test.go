@@ -19,14 +19,18 @@ const (
 
 func TestFeedCategorySetter(t *testing.T) {
 	feed := &Feed{}
-	feed.WithCategoryID(int64(123))
+	feed.WithCategoryIDs([]int64{int64(123)})
 
-	if feed.Category == nil {
-		t.Fatal(`The category field should not be null`)
+	if feed.Categories == nil {
+		t.Fatal(`The categories field should not be null`)
 	}
 
-	if feed.Category.ID != int64(123) {
-		t.Error(`The category ID must be set`)
+	if len(feed.Categories) != 1 {
+		t.Error(`The categories field must have exactly one entry`)
+	}
+
+	if feed.Categories[0].ID != int64(123) {
+		t.Error(`The categories ID must be set`)
 	}
 }
 

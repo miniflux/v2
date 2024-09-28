@@ -392,15 +392,17 @@ func (s *Storage) SetEntriesStatusCount(userID int64, entryIDs []int64, status s
 	}
 
 	query := `
-		SELECT count(*)
+		SELECT count(DISTINCT e.id)
 		FROM entries e
-		    JOIN feeds f ON (f.id = e.feed_id)
-		    JOIN categories c ON (c.id = f.category_id)
+		    LEFT JOIN feeds f ON (f.id = e.feed_id)
+				LEFT JOIN feed_categories fc ON fc.feed_id=f.id
+				LEFT JOIN categories c ON c.id=fc.category_id
 		WHERE e.user_id = $1
 			AND e.id = ANY($2)
 			AND NOT f.hide_globally
 			AND NOT c.hide_globally
 	`
+	fmt.Printf("QUERY: %s", query)
 	row := s.db.QueryRow(query, userID, pq.Array(entryIDs))
 	visible := 0
 	if err := row.Scan(&visible); err != nil {

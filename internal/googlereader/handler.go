@@ -756,8 +756,8 @@ func subscribe(newFeed Stream, category Stream, title string, store *storage.Sto
 	}
 
 	feedRequest := model.FeedCreationRequest{
-		FeedURL:    newFeed.ID,
-		CategoryID: destCategory.ID,
+		FeedURL:     newFeed.ID,
+		CategoryIDs: []int64{destCategory.ID},
 	}
 	verr := validator.ValidateFeedCreation(store, userID, &feedRequest)
 	if verr != nil {
@@ -821,7 +821,7 @@ func move(stream Stream, destination Stream, store *storage.Storage, userID int6
 		return err
 	}
 	feedModification := model.FeedModificationRequest{
-		CategoryID: &category.ID,
+		CategoryIDs: []int64{category.ID},
 	}
 	feedModification.Patch(feed)
 	return store.UpdateFeed(feed)
@@ -991,8 +991,8 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		}
 		categories := make([]string, 0)
 		categories = append(categories, userReadingList)
-		if entry.Feed.Category.Title != "" {
-			categories = append(categories, fmt.Sprintf(UserLabelPrefix, userID)+entry.Feed.Category.Title)
+		for _, category := range entry.Feed.Categories {
+			categories = append(categories, fmt.Sprintf(UserLabelPrefix, userID)+category.Title)
 		}
 		if entry.Status == model.EntryStatusRead {
 			categories = append(categories, userRead)
@@ -1209,11 +1209,15 @@ func (h *handler) subscriptionListHandler(w http.ResponseWriter, r *http.Request
 	}
 	result.Subscriptions = make([]subscription, 0)
 	for _, feed := range feeds {
+		var categories []subscriptionCategory
+		for _, category := range feed.Categories {
+			categories = append(categories, subscriptionCategory{fmt.Sprintf(UserLabelPrefix, userID) + category.Title, category.Title, "folder"})
+		}
 		result.Subscriptions = append(result.Subscriptions, subscription{
 			ID:         fmt.Sprintf(FeedPrefix+"%d", feed.ID),
 			Title:      feed.Title,
 			URL:        feed.FeedURL,
-			Categories: []subscriptionCategory{{fmt.Sprintf(UserLabelPrefix, userID) + feed.Category.Title, feed.Category.Title, "folder"}},
+			Categories: categories,
 			HTMLURL:    feed.SiteURL,
 			IconURL:    "", // TODO: Icons are base64 encoded in the DB.
 		})

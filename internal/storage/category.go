@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/lib/pq"
 	"miniflux.app/v2/internal/model"
@@ -28,12 +29,17 @@ func (s *Storage) CategoryTitleExists(userID int64, title string) bool {
 	return result
 }
 
-// CategoryIDExists checks if the given category exists into the database.
-func (s *Storage) CategoryIDExists(userID, categoryID int64) bool {
-	var result bool
-	query := `SELECT true FROM categories WHERE user_id=$1 AND id=$2`
-	s.db.QueryRow(query, userID, categoryID).Scan(&result)
-	return result
+// CategoryIDsExists checks if the given categories exists into the database.
+func (s *Storage) CategoryIDsExists(userID int64, categoryIDs []int64) bool {
+	var result int
+	query := `SELECT count(id) as count FROM categories WHERE user_id=$1 AND id IN $2`
+	var categoryIDsStr []string
+	for _, categoryID := range categoryIDs {
+		categoryIDsStr = append(categoryIDsStr, fmt.Sprintf("%d", categoryID))
+	}
+	categoryFilter := fmt.Sprintf("(%s)", strings.Join(categoryIDsStr, ","))
+	s.db.QueryRow(query, userID, categoryFilter).Scan(&result)
+	return result == len(categoryIDs)
 }
 
 // Category returns a category from the database.
@@ -122,11 +128,15 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 			c.user_id,
 			c.title,
 			c.hide_globally,
-			(SELECT count(*) FROM feeds WHERE feeds.category_id=c.id) AS count,
+			(SELECT count(*)
+			   FROM feeds
+			     JOIN feed_categories as fc ON (feeds.id=fc.feed_id)
+				 WHERE c.id = fc.category_id) AS count,
 			(SELECT count(*)
 			   FROM feeds
 			     JOIN entries ON (feeds.id = entries.feed_id)
-			   WHERE feeds.category_id = c.id AND entries.status = $1) AS count_unread
+			     JOIN feed_categories as fc ON (feeds.id=fc.feed_id)
+			   WHERE c.id = fc.category_id AND entries.status = $1) AS count_unread
 		FROM categories c
 		WHERE
 			user_id=$2

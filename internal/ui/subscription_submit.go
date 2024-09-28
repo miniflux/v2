@@ -90,7 +90,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			ETag:         subscriptionFinder.FeedResponseInfo().ETag,
 			LastModified: subscriptionFinder.FeedResponseInfo().LastModified,
 			FeedCreationRequest: model.FeedCreationRequest{
-				CategoryID:                  subscriptionForm.CategoryID,
+				CategoryIDs:                 []int64{subscriptionForm.CategoryID},
 				FeedURL:                     subscriptions[0].URL,
 				AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,
 				Crawler:                     subscriptionForm.Crawler,
@@ -117,7 +117,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
 	case n == 1 && !subscriptionFinder.IsFeedAlreadyDownloaded():
 		feed, localizedError := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
-			CategoryID:                  subscriptionForm.CategoryID,
+			CategoryIDs:                 []int64{subscriptionForm.CategoryID},
 			FeedURL:                     subscriptions[0].URL,
 			Crawler:                     subscriptionForm.Crawler,
 			AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,

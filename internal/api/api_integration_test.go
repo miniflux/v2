@@ -973,8 +973,8 @@ func TestMarkCategoryAsReadEndpoint(t *testing.T) {
 	}
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    testConfig.testFeedURL,
-		CategoryID: category.ID,
+		FeedURL:     testConfig.testFeedURL,
+		CategoryIDs: []int64{category.ID},
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -1017,8 +1017,8 @@ func TestCreateFeedEndpoint(t *testing.T) {
 	}
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    testConfig.testFeedURL,
-		CategoryID: category.ID,
+		FeedURL:     testConfig.testFeedURL,
+		CategoryIDs: []int64{category.ID},
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -1081,8 +1081,8 @@ func TestCreateFeedWithInexistingCategory(t *testing.T) {
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 
 	_, err = regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    testConfig.testFeedURL,
-		CategoryID: 123456789,
+		FeedURL:     testConfig.testFeedURL,
+		CategoryIDs: []int64{123456789},
 	})
 
 	if err == nil {
@@ -1319,7 +1319,7 @@ func TestUpdateFeedWithInvalidCategory(t *testing.T) {
 	}
 
 	feedUpdateRequest := &miniflux.FeedModificationRequest{
-		CategoryID: miniflux.SetOptionalField(int64(123456789)),
+		CategoryIDs: []int64{int64(123456789)},
 	}
 
 	if _, err := regularUserClient.UpdateFeed(feedID, feedUpdateRequest); err == nil {
@@ -1659,8 +1659,8 @@ func TestGetCategoryFeedsEndpoint(t *testing.T) {
 	}
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    testConfig.testFeedURL,
-		CategoryID: category.ID,
+		FeedURL:     testConfig.testFeedURL,
+		CategoryIDs: []int64{category.ID},
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -1870,8 +1870,8 @@ func TestGetAllCategoryEntriesEndpoint(t *testing.T) {
 	}
 
 	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
-		FeedURL:    testConfig.testFeedURL,
-		CategoryID: category.ID,
+		FeedURL:     testConfig.testFeedURL,
+		CategoryIDs: []int64{category.ID},
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -2214,7 +2214,7 @@ func TestGetEntryEndpoints(t *testing.T) {
 		t.Fatalf(`Invalid entryID, got %d`, entry.ID)
 	}
 
-	entry, err = regularUserClient.CategoryEntry(result.Entries[0].Feed.Category.ID, result.Entries[0].ID)
+	entry, err = regularUserClient.CategoryEntry(result.Entries[0].Feed.Categories[0].ID, result.Entries[0].ID)
 	if err != nil {
 		t.Fatal(err)
 	}

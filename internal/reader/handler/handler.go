@@ -36,7 +36,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 	}
 
-	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
+	if !store.CategoryIDsExists(userID, feedCreationRequest.CategoryIDs) {
 		return nil, locale.NewLocalizedErrorWrapper(ErrCategoryNotFound, "error.category_not_found")
 	}
 
@@ -68,7 +68,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.LastModifiedHeader = feedCreationRequest.LastModified
 	subscription.FeedURL = feedCreationRequest.FeedURL
 	subscription.DisableHTTP2 = feedCreationRequest.DisableHTTP2
-	subscription.WithCategoryID(feedCreationRequest.CategoryID)
+	subscription.WithCategoryIDs(feedCreationRequest.CategoryIDs)
 	subscription.CheckedNow()
 
 	processor.ProcessFeedEntries(store, subscription, user, true)
@@ -116,7 +116,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		return nil, locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)
 	}
 
-	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
+	if !store.CategoryIDsExists(userID, feedCreationRequest.CategoryIDs) {
 		return nil, locale.NewLocalizedErrorWrapper(ErrCategoryNotFound, "error.category_not_found")
 	}
 
@@ -173,7 +173,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.EtagHeader = responseHandler.ETag()
 	subscription.LastModifiedHeader = responseHandler.LastModified()
 	subscription.FeedURL = responseHandler.EffectiveURL()
-	subscription.WithCategoryID(feedCreationRequest.CategoryID)
+	subscription.WithCategoryIDs(feedCreationRequest.CategoryIDs)
 	subscription.CheckedNow()
 
 	processor.ProcessFeedEntries(store, subscription, user, true)

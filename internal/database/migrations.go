@@ -942,4 +942,21 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			CREATE TABLE feed_categories (
+				feed_id bigint not null,
+				category_id bigint not null,
+				primary key(feed_id, category_id),
+				foreign key (feed_id) references feeds(id) on delete cascade,
+				foreign key (category_id) references categories(id) on delete cascade
+			);
+
+			INSERT INTO feed_categories (feed_id, category_id) SELECT id AS feed_id, category_id FROM feeds;
+
+			ALTER TABLE feeds DROP COLUMN category_id;
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

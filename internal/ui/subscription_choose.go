@@ -48,7 +48,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 	}
 
 	feed, localizedError := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
-		CategoryID:                  subscriptionForm.CategoryID,
+		CategoryIDs:                 []int64{subscriptionForm.CategoryID},
 		FeedURL:                     subscriptionForm.URL,
 		Crawler:                     subscriptionForm.Crawler,
 		AllowSelfSignedCertificates: subscriptionForm.AllowSelfSignedCertificates,

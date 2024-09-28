@@ -28,17 +28,38 @@ func Parse(data io.Reader) (SubcriptionList, error) {
 }
 
 func getSubscriptionsFromOutlines(outlines opmlOutlineCollection, category string) (subscriptions SubcriptionList) {
+	// NOTE Using a map for set semantics to deduplicate subscriptions
+	subscriptionsMap := make(map[string]*Subcription)
 	for _, outline := range outlines {
 		if outline.IsSubscription() {
-			subscriptions = append(subscriptions, &Subcription{
-				Title:        outline.GetTitle(),
-				FeedURL:      outline.FeedURL,
-				SiteURL:      outline.GetSiteURL(),
-				Description:  outline.Description,
-				CategoryName: category,
-			})
+			subscription, ok := subscriptionsMap[outline.FeedURL]
+			if !ok || subscription == nil {
+				// Do not overwrite existing entry
+				subscription = &Subcription{
+					Title:       outline.GetTitle(),
+					FeedURL:     outline.FeedURL,
+					SiteURL:     outline.GetSiteURL(),
+					Description: outline.Description,
+				}
+				subscriptions = append(subscriptions, subscription)
+				subscriptionsMap[outline.FeedURL] = subscription
+			}
+			if category != "" {
+				subscription.CategoryNames = append(subscription.CategoryNames, category)
+			}
 		} else if outline.Outlines.HasChildren() {
-			subscriptions = append(subscriptions, getSubscriptionsFromOutlines(outline.Outlines, outline.GetTitle())...)
+			children := getSubscriptionsFromOutlines(outline.Outlines, outline.GetTitle())
+			for _, childSubscription := range children {
+				childFeedURL := childSubscription.FeedURL
+				subscription, ok := subscriptionsMap[childFeedURL]
+				if ok && subscription != nil {
+					// Do not overwrite existing entry
+					subscription.CategoryNames = append(subscription.CategoryNames, childSubscription.CategoryNames...)
+				} else {
+					subscriptions = append(subscriptions, childSubscription)
+					subscriptionsMap[childFeedURL] = childSubscription
+				}
+			}
 		}
 	}
 	return subscriptions
