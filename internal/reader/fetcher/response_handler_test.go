@@ -30,7 +30,7 @@ func TestIsModified(t *testing.T) {
 			ETag:         cachedEtag,
 			IsModified:   false,
 		},
-		// This case is invalid per RFC9110 8.8.1, so ETag takes precedence.
+		// ETag takes precedence per RFC9110 8.8.1.
 		"Last-Modified changed only": {
 			Status:       200,
 			LastModified: "Thu, 22 Oct 2015 07:28:00 GMT",
