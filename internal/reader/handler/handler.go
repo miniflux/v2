@@ -326,8 +326,6 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			go integration.PushEntries(originalFeed, newEntries, userIntegrations)
 		}
 
-		// We update caching headers only if the feed has been modified,
-		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()
 
@@ -343,6 +341,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
 		)
+		// Last-Modified may be updated even if ETag is not. In this case, per
+		// RFC9111 sections 3.2 and 4.3.4, the stored response must be updated.
+		if responseHandler.LastModified() != "" {
+			originalFeed.LastModifiedHeader = responseHandler.LastModified()
+		}
 	}
 
 	originalFeed.ResetErrorCounter()
