@@ -16,7 +16,7 @@ require (
 	golang.org/x/crypto v0.27.0
 	golang.org/x/net v0.29.0
 	golang.org/x/oauth2 v0.23.0
-	golang.org/x/term v0.24.0
+	golang.org/x/term v0.25.0
 	golang.org/x/text v0.18.0
 	mvdan.cc/xurls/v2 v2.5.0
 )
@@ -42,7 +42,7 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/tdewolff/parse/v2 v2.7.15 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/sys v0.26.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 )
 
