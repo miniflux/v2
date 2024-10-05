@@ -11,8 +11,8 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-// HasIcon checks if the given feed has an icon.
-func (s *Storage) HasIcon(feedID int64) bool {
+// HasFeedIcon checks if the given feed has an icon.
+func (s *Storage) HasFeedIcon(feedID int64) bool {
 	var result bool
 	query := `SELECT true FROM feed_icons WHERE feed_id=$1`
 	s.db.QueryRow(query, feedID).Scan(&result)
@@ -57,59 +57,50 @@ func (s *Storage) IconByFeedID(userID, feedID int64) (*model.Icon, error) {
 	return &icon, nil
 }
 
-// IconByHash returns an icon by the hash (checksum).
-func (s *Storage) IconByHash(icon *model.Icon) error {
-	err := s.db.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID)
-	if err == sql.ErrNoRows {
-		return nil
+// StoreFeedIcon creates or updates a feed icon.
+func (s *Storage) StoreFeedIcon(feedID int64, icon *model.Icon) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return fmt.Errorf(`store: unable to start transaction: %v`, err)
+	}
+
+	if err := tx.QueryRow(`SELECT id FROM icons WHERE hash=$1`, icon.Hash).Scan(&icon.ID); err == sql.ErrNoRows {
+		query := `
+			INSERT INTO icons
+				(hash, mime_type, content)
+			VALUES
+				($1, $2, $3)
+			RETURNING
+				id
+		`
+		err := tx.QueryRow(
+			query,
+			icon.Hash,
+			normalizeMimeType(icon.MimeType),
+			icon.Content,
+		).Scan(&icon.ID)
+
+		if err != nil {
+			tx.Rollback()
+			return fmt.Errorf(`store: unable to create icon: %v`, err)
+		}
 	} else if err != nil {
+		tx.Rollback()
 		return fmt.Errorf(`store: unable to fetch icon by hash %q: %v`, icon.Hash, err)
 	}
 
-	return nil
-}
-
-// CreateIcon creates a new icon.
-func (s *Storage) CreateIcon(icon *model.Icon) error {
-	query := `
-		INSERT INTO icons
-			(hash, mime_type, content)
-		VALUES
-			($1, $2, $3)
-		RETURNING
-			id
-	`
-	err := s.db.QueryRow(
-		query,
-		icon.Hash,
-		normalizeMimeType(icon.MimeType),
-		icon.Content,
-	).Scan(&icon.ID)
-
-	if err != nil {
-		return fmt.Errorf(`store: unable to create icon: %v`, err)
+	if _, err := tx.Exec(`DELETE FROM feed_icons WHERE feed_id=$1`, feedID); err != nil {
+		tx.Rollback()
+		return fmt.Errorf(`store: unable to delete feed icon: %v`, err)
 	}
 
-	return nil
-}
-
-// CreateFeedIcon creates an icon and associate the icon to the given feed.
-func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
-	err := s.IconByHash(icon)
-	if err != nil {
-		return err
+	if _, err := tx.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feedID, icon.ID); err != nil {
+		tx.Rollback()
+		return fmt.Errorf(`store: unable to associate feed and icon: %v`, err)
 	}
 
-	if icon.ID == 0 {
-		err := s.CreateIcon(icon)
-		if err != nil {
-			return err
-		}
-	}
-
-	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feedID, icon.ID)
-	if err != nil {
-		return fmt.Errorf(`store: unable to create feed icon: %v`, err)
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf(`store: unable to commit transaction: %v`, err)
 	}
 
 	return nil

@@ -56,11 +56,12 @@ type Feed struct {
 	NtfyEnabled                 bool      `json:"ntfy_enabled"`
 	NtfyPriority                int       `json:"ntfy_priority"`
 
-	// Non persisted attributes
+	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`
 	Icon     *FeedIcon `json:"icon"`
 	Entries  Entries   `json:"entries,omitempty"`
 
+	// Internal attributes (not exposed in the API and not persisted in the database)
 	TTL                    int    `json:"-"`
 	IconURL                string `json:"-"`
 	UnreadCount            int    `json:"-"`
