@@ -21,7 +21,7 @@ type User struct {
 	EntryDirection                  string     `json:"entry_sorting_direction"`
 	EntryOrder                      string     `json:"entry_sorting_order"`
 	Stylesheet                      string     `json:"stylesheet"`
-	CustomJS                        string     `json:"script"`
+	CustomJS                        string     `json:"custom_js"`
 	GoogleID                        string     `json:"google_id"`
 	OpenIDConnectID                 string     `json:"openid_connect_id"`
 	EntriesPerPage                  int        `json:"entries_per_page"`
@@ -61,7 +61,7 @@ type UserModificationRequest struct {
 	EntryDirection                  *string  `json:"entry_sorting_direction"`
 	EntryOrder                      *string  `json:"entry_sorting_order"`
 	Stylesheet                      *string  `json:"stylesheet"`
-	CustomJS                        *string  `json:"script"`
+	CustomJS                        *string  `json:"custom_js"`
 	GoogleID                        *string  `json:"google_id"`
 	OpenIDConnectID                 *string  `json:"openid_connect_id"`
 	EntriesPerPage                  *int     `json:"entries_per_page"`
