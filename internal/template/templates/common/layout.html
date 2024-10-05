@@ -36,12 +36,12 @@
 
     {{ if .user }}
     {{ $cspNonce := nonce }}
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self'{{ if .user.Stylesheet }} 'nonce-{{ $cspNonce }}'{{ end }}{{ if .user.Script }}; script-src 'self' 'nonce-{{ $cspNonce }}'{{ end }}; require-trusted-types-for 'script'; trusted-types ttpolicy;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; style-src 'self'{{ if .user.Stylesheet }} 'nonce-{{ $cspNonce }}'{{ end }}{{ if .user.CustomJS }}; script-src 'self' 'nonce-{{ $cspNonce }}'{{ end }}; require-trusted-types-for 'script'; trusted-types ttpolicy;">
     {{ if .user.Stylesheet }}
     <style nonce="{{ $cspNonce }}">{{ .user.Stylesheet | safeCSS }}</style>
     {{ end }}
-    {{ if .user.Script }}
-    <script type="module" nonce="{{ $cspNonce }}">{{ .user.Script | safeJS }}</script>
+    {{ if .user.CustomJS }}
+    <script type="module" nonce="{{ $cspNonce }}">{{ .user.CustomJS | safeJS }}</script>
     {{ end }}
     {{ else }}
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; media-src *; frame-src *; require-trusted-types-for 'script'; trusted-types ttpolicy;">
