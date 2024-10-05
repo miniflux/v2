@@ -93,13 +93,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	requestBuilder.IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(feedCreationRequest.DisableHTTP2)
 
-	checkFeedIcon(
-		store,
-		requestBuilder,
-		subscription.ID,
-		subscription.SiteURL,
-		subscription.IconURL,
-	)
+	icon.NewIconChecker(store, subscription).UpdateOrCreateFeedIcon()
 
 	return subscription, nil
 }
@@ -188,13 +182,8 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		slog.String("feed_url", subscription.FeedURL),
 	)
 
-	checkFeedIcon(
-		store,
-		requestBuilder,
-		subscription.ID,
-		subscription.SiteURL,
-		subscription.IconURL,
-	)
+	icon.NewIconChecker(store, subscription).UpdateOrCreateFeedIcon()
+
 	return subscription, nil
 }
 
@@ -270,6 +259,8 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		slog.Debug("Feed modified",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
+			slog.String("etag_header", originalFeed.EtagHeader),
+			slog.String("last_modified_header", originalFeed.LastModifiedHeader),
 		)
 
 		responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
@@ -293,8 +284,10 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 		// If the feed has a TTL defined, we use it to make sure we don't check it too often.
 		newTTL = updatedFeed.TTL
+
 		// Set the next check at with updated arguments.
 		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+
 		slog.Debug("Updated next check date",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
@@ -329,18 +322,18 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		originalFeed.EtagHeader = responseHandler.ETag()
 		originalFeed.LastModifiedHeader = responseHandler.LastModified()
 
-		checkFeedIcon(
-			store,
-			requestBuilder,
-			originalFeed.ID,
-			originalFeed.SiteURL,
-			updatedFeed.IconURL,
-		)
+		iconChecker := icon.NewIconChecker(store, originalFeed)
+		if forceRefresh {
+			iconChecker.UpdateOrCreateFeedIcon()
+		} else {
+			iconChecker.CreateFeedIconIfMissing()
+		}
 	} else {
 		slog.Debug("Feed not modified",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
 		)
+
 		// Last-Modified may be updated even if ETag is not. In this case, per
 		// RFC9111 sections 3.2 and 4.3.4, the stored response must be updated.
 		if responseHandler.LastModified() != "" {
@@ -358,33 +351,4 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	return nil
-}
-
-func checkFeedIcon(store *storage.Storage, requestBuilder *fetcher.RequestBuilder, feedID int64, websiteURL, feedIconURL string) {
-	if !store.HasIcon(feedID) {
-		iconFinder := icon.NewIconFinder(requestBuilder, websiteURL, feedIconURL)
-		if icon, err := iconFinder.FindIcon(); err != nil {
-			slog.Debug("Unable to find feed icon",
-				slog.Int64("feed_id", feedID),
-				slog.String("website_url", websiteURL),
-				slog.String("feed_icon_url", feedIconURL),
-				slog.Any("error", err),
-			)
-		} else if icon == nil {
-			slog.Debug("No icon found",
-				slog.Int64("feed_id", feedID),
-				slog.String("website_url", websiteURL),
-				slog.String("feed_icon_url", feedIconURL),
-			)
-		} else {
-			if err := store.CreateFeedIcon(feedID, icon); err != nil {
-				slog.Error("Unable to store feed icon",
-					slog.Int64("feed_id", feedID),
-					slog.String("website_url", websiteURL),
-					slog.String("feed_icon_url", feedIconURL),
-					slog.Any("error", err),
-				)
-			}
-		}
-	}
 }
