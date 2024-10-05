@@ -33,6 +33,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		KeyboardShortcuts:      user.KeyboardShortcuts,
 		ShowReadingTime:        user.ShowReadingTime,
 		CustomCSS:              user.Stylesheet,
+		CustomJS:               user.CustomJS,
 		EntrySwipe:             user.EntrySwipe,
 		GestureNav:             user.GestureNav,
 		DisplayMode:            user.DisplayMode,

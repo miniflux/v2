@@ -391,6 +391,7 @@
     "form.prefs.label.gesture_nav": "Χειρονομία για πλοήγηση μεταξύ των καταχωρήσεων",
     "form.prefs.label.show_reading_time": "Εμφάνιση εκτιμώμενου χρόνου ανάγνωσης για άρθρα",
     "form.prefs.label.custom_css": "Προσαρμοσμένο CSS",
+    "form.prefs.label.custom_js": "Προσαρμοσμένο JS",
     "form.prefs.label.entry_order": "Στήλη ταξινόμησης εισόδου",
     "form.prefs.label.default_home_page": "Προεπιλεγμένη αρχική σελίδα",
     "form.prefs.label.categories_sorting_order": "Ταξινόμηση κατηγοριών",

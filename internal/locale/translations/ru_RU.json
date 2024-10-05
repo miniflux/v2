@@ -401,6 +401,7 @@
     "form.prefs.label.gesture_nav": "Жест для перехода между статьями",
     "form.prefs.label.show_reading_time": "Показать примерное время чтения статей",
     "form.prefs.label.custom_css": "Пользовательский CSS",
+    "form.prefs.label.custom_js": "Пользовательский JS",
     "form.prefs.label.entry_order": "Столбец сортировки статей",
     "form.prefs.label.default_home_page": "Домашняя страница по умолчанию",
     "form.prefs.label.categories_sorting_order": "Сортировка категорий",

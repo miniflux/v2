@@ -293,6 +293,7 @@
   "form.prefs.label.categories_sorting_order": "Kategori sıralaması",
   "form.prefs.label.cjk_reading_speed": "Çince, Korece ve Japonca için okuma hızı (dakika başına karakter)",
   "form.prefs.label.custom_css": "Özel CSS",
+  "form.prefs.label.custom_js": "Özel JS",
   "form.prefs.label.default_home_page": "Varsayılan ana sayfa",
   "form.prefs.label.default_reading_speed": "Diğer diller için okuma hızı (dakika başına kelime)",
   "form.prefs.label.display_mode": "Progressive Web App (PWA) görüntüleme modu",

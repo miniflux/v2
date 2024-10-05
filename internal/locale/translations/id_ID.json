@@ -381,6 +381,7 @@
     "form.prefs.label.gesture_nav": "Isyarat untuk menavigasi antar entri",
     "form.prefs.label.show_reading_time": "Tampilkan perkiraan waktu baca untuk artikel",
     "form.prefs.label.custom_css": "Modifikasi CSS",
+    "form.prefs.label.custom_js": "Modifikasi JS",
     "form.prefs.label.entry_order": "Pengurutan Kolom Entri",
     "form.prefs.label.default_home_page": "Beranda Baku",
     "form.prefs.label.categories_sorting_order": "Pengurutan Kategori",
