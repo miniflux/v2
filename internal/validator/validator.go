@@ -7,7 +7,10 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"strings"
 )
+
+var domainRegex = regexp.MustCompile(`^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$`)
 
 // ValidateRange makes sure the offset/limit values are valid.
 func ValidateRange(offset, limit int) error {
@@ -42,4 +45,25 @@ func IsValidRegex(expr string) bool {
 func IsValidURL(absoluteURL string) bool {
 	_, err := url.ParseRequestURI(absoluteURL)
 	return err == nil
+}
+
+func IsValidDomain(domain string) bool {
+	domain = strings.ToLower(domain)
+
+	if len(domain) < 1 || len(domain) > 253 {
+		return false
+	}
+
+	return domainRegex.MatchString(domain)
+}
+
+func IsValidDomainList(value string) bool {
+	domains := strings.Split(strings.TrimSpace(value), " ")
+	for _, domain := range domains {
+		if !IsValidDomain(domain) {
+			return false
+		}
+	}
+
+	return true
 }

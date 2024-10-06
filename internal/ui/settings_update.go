@@ -85,6 +85,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		MediaPlaybackRate:     model.OptionalNumber(settingsForm.MediaPlaybackRate),
 		BlockFilterEntryRules: model.OptionalString(settingsForm.BlockFilterEntryRules),
 		KeepFilterEntryRules:  model.OptionalString(settingsForm.KeepFilterEntryRules),
+		ExternalFontHosts:     model.OptionalString(settingsForm.ExternalFontHosts),
 	}
 
 	if validationErr := validator.ValidateUserModification(h.store, loggedUser.ID, userModificationRequest); validationErr != nil {

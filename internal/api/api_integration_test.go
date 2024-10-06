@@ -592,6 +592,59 @@ func TestUpdateUserEndpointByChangingDefaultTheme(t *testing.T) {
 	}
 }
 
+func TestUpdateUserEndpointByChangingExternalFonts(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	userUpdateRequest := &miniflux.UserModificationRequest{
+		ExternalFontHosts: miniflux.SetOptionalField("  fonts.example.org  "),
+	}
+
+	updatedUser, err := regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedUser.ExternalFontHosts != "fonts.example.org" {
+		t.Fatalf(`Invalid external font hosts, got "%v"`, updatedUser.ExternalFontHosts)
+	}
+}
+
+func TestUpdateUserEndpointByChangingExternalFontsWithInvalidValue(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	userUpdateRequest := &miniflux.UserModificationRequest{
+		ExternalFontHosts: miniflux.SetOptionalField("'self' *"),
+	}
+
+	if _, err := regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest); err == nil {
+		t.Fatal(`Updating the user with an invalid external font host should raise an error`)
+	}
+}
+
 func TestUpdateUserEndpointByChangingCustomJS(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {

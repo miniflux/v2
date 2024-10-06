@@ -45,6 +45,7 @@ type User struct {
 	MediaPlaybackRate      float64    `json:"media_playback_rate"`
 	BlockFilterEntryRules  string     `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules   string     `json:"keep_filter_entry_rules"`
+	ExternalFontHosts      string     `json:"external_font_hosts"`
 }
 
 func (u User) String() string {
@@ -88,6 +89,7 @@ type UserModificationRequest struct {
 	MediaPlaybackRate      *float64 `json:"media_playback_rate"`
 	BlockFilterEntryRules  *string  `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules   *string  `json:"keep_filter_entry_rules"`
+	ExternalFontHosts      *string  `json:"external_font_hosts"`
 }
 
 // Users represents a list of users.
