@@ -210,7 +210,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	weeklyEntryCount := 0
-	newTTL := 0
+	refreshDelayInMinutes := 0
 	if config.Opts.PollingScheduler() == model.SchedulerEntryFrequency {
 		var weeklyCountErr error
 		weeklyEntryCount, weeklyCountErr = store.WeeklyFeedEntryCount(userID, feedID)
@@ -220,7 +220,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	originalFeed.CheckedNow()
-	originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+	originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUsernameAndPassword(originalFeed.Username, originalFeed.Password)
@@ -240,6 +240,19 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(originalFeed.FeedURL))
 	defer responseHandler.Close()
+
+	if responseHandler.IsRateLimited() {
+		retryDelayInSeconds := responseHandler.ParseRetryDelay()
+		refreshDelayInMinutes = retryDelayInSeconds / 60
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
+
+		slog.Warn("Feed is rate limited",
+			slog.String("feed_url", originalFeed.FeedURL),
+			slog.Int("retry_delay_in_seconds", retryDelayInSeconds),
+			slog.Int("refresh_delay_in_minutes", refreshDelayInMinutes),
+			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
+		)
+	}
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
 		slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
@@ -283,15 +296,15 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		}
 
 		// If the feed has a TTL defined, we use it to make sure we don't check it too often.
-		newTTL = updatedFeed.TTL
+		refreshDelayInMinutes = updatedFeed.TTL
 
 		// Set the next check at with updated arguments.
-		originalFeed.ScheduleNextCheck(weeklyEntryCount, newTTL)
+		originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
 
 		slog.Debug("Updated next check date",
 			slog.Int64("user_id", userID),
 			slog.Int64("feed_id", feedID),
-			slog.Int("ttl", newTTL),
+			slog.Int("refresh_delay_in_minutes", refreshDelayInMinutes),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
 
