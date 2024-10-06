@@ -123,6 +123,12 @@ func ValidateUserModification(store *storage.Storage, userID int64, changes *mod
 		}
 	}
 
+	if changes.ExternalFontHosts != nil {
+		if !IsValidDomainList(*changes.ExternalFontHosts) {
+			return locale.NewLocalizedError("error.settings_invalid_domain_list")
+		}
+	}
+
 	return nil
 }
 

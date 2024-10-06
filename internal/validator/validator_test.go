@@ -59,3 +59,21 @@ func TestIsValidRegex(t *testing.T) {
 		}
 	}
 }
+
+func TestIsValidDomain(t *testing.T) {
+	scenarios := map[string]bool{
+		"example.org":          true,
+		"example":              false,
+		"example.":             false,
+		"example..":            false,
+		"mail.example.com:443": false,
+		"*.example.com":        false,
+	}
+
+	for domain, expected := range scenarios {
+		result := IsValidDomain(domain)
+		if result != expected {
+			t.Errorf(`Unexpected result, got %v instead of %v`, result, expected)
+		}
+	}
+}

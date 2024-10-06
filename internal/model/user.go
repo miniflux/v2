@@ -22,6 +22,7 @@ type User struct {
 	EntryOrder                      string     `json:"entry_sorting_order"`
 	Stylesheet                      string     `json:"stylesheet"`
 	CustomJS                        string     `json:"custom_js"`
+	ExternalFontHosts               string     `json:"external_font_hosts"`
 	GoogleID                        string     `json:"google_id"`
 	OpenIDConnectID                 string     `json:"openid_connect_id"`
 	EntriesPerPage                  int        `json:"entries_per_page"`
@@ -62,6 +63,7 @@ type UserModificationRequest struct {
 	EntryOrder                      *string  `json:"entry_sorting_order"`
 	Stylesheet                      *string  `json:"stylesheet"`
 	CustomJS                        *string  `json:"custom_js"`
+	ExternalFontHosts               *string  `json:"external_font_hosts"`
 	GoogleID                        *string  `json:"google_id"`
 	OpenIDConnectID                 *string  `json:"openid_connect_id"`
 	EntriesPerPage                  *int     `json:"entries_per_page"`
@@ -122,6 +124,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.CustomJS != nil {
 		user.CustomJS = *u.CustomJS
+	}
+
+	if u.ExternalFontHosts != nil {
+		user.ExternalFontHosts = *u.ExternalFontHosts
 	}
 
 	if u.GoogleID != nil {
