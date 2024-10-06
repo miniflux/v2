@@ -112,12 +112,13 @@ func (f *Feed) CheckedNow() {
 }
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
-func (f *Feed) ScheduleNextCheck(weeklyCount int, newTTL int) {
-	f.TTL = newTTL
+func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelayInMinutes int) {
+	f.TTL = refreshDelayInMinutes
+
 	// Default to the global config Polling Frequency.
-	var intervalMinutes int
-	switch config.Opts.PollingScheduler() {
-	case SchedulerEntryFrequency:
+	intervalMinutes := config.Opts.SchedulerRoundRobinMinInterval()
+
+	if config.Opts.PollingScheduler() == SchedulerEntryFrequency {
 		if weeklyCount <= 0 {
 			intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
 		} else {
@@ -125,13 +126,13 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, newTTL int) {
 			intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
 			intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
 		}
-	default:
-		intervalMinutes = config.Opts.SchedulerRoundRobinMinInterval()
 	}
-	// If the feed has a TTL defined, we use it to make sure we don't check it too often.
-	if newTTL > intervalMinutes && newTTL > 0 {
-		intervalMinutes = newTTL
+
+	// If the feed has a TTL or a Retry-After defined, we use it to make sure we don't check it too often.
+	if refreshDelayInMinutes > 0 && refreshDelayInMinutes > intervalMinutes {
+		intervalMinutes = refreshDelayInMinutes
 	}
+
 	f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
 }
 

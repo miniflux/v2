@@ -13,7 +13,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"miniflux.app/v2/internal/locale"
 )
@@ -49,6 +51,26 @@ func (r *ResponseHandler) ETag() string {
 		return ""
 	}
 	return r.httpResponse.Header.Get("ETag")
+}
+
+func (r *ResponseHandler) ParseRetryDelay() int {
+	retryAfterHeaderValue := r.httpResponse.Header.Get("Retry-After")
+	if retryAfterHeaderValue != "" {
+		// First, try to parse as an integer (number of seconds)
+		if seconds, err := strconv.Atoi(retryAfterHeaderValue); err == nil {
+			return seconds
+		}
+
+		// If not an integer, try to parse as an HTTP-date
+		if t, err := time.Parse(time.RFC1123, retryAfterHeaderValue); err == nil {
+			return int(time.Until(t).Seconds())
+		}
+	}
+	return 0
+}
+
+func (r *ResponseHandler) IsRateLimited() bool {
+	return r.httpResponse.StatusCode == http.StatusTooManyRequests
 }
 
 func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bool {
