@@ -592,6 +592,35 @@ func TestUpdateUserEndpointByChangingDefaultTheme(t *testing.T) {
 	}
 }
 
+func TestUpdateUserEndpointByChangingCustomJS(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	userUpdateRequest := &miniflux.UserModificationRequest{
+		CustomJS: miniflux.SetOptionalField("alert('Hello, World!');"),
+	}
+
+	updatedUser, err := regularUserClient.UpdateUser(regularTestUser.ID, userUpdateRequest)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedUser.CustomJS != "alert('Hello, World!');" {
+		t.Fatalf(`Invalid custom JS, got %q`, updatedUser.CustomJS)
+	}
+}
+
 func TestUpdateUserEndpointByChangingDefaultThemeToInvalidValue(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
