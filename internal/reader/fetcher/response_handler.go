@@ -70,7 +70,7 @@ func (r *ResponseHandler) ParseRetryDelay() int {
 }
 
 func (r *ResponseHandler) IsRateLimited() bool {
-	return r.httpResponse.StatusCode == http.StatusTooManyRequests
+	return r.httpResponse != nil && r.httpResponse.StatusCode == http.StatusTooManyRequests
 }
 
 func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bool {
