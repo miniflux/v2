@@ -130,6 +130,29 @@ func (h *handler) markUserAsRead(w http.ResponseWriter, r *http.Request) {
 	json.NoContent(w, r)
 }
 
+func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) {
+	userID := request.RouteInt64Param(r, "userID")
+	if userID != request.UserID(r) {
+		json.Forbidden(w, r)
+		return
+	}
+	
+	if _, err := h.store.UserByID(userID); err != nil {
+		json.NotFound(w, r)
+		return
+	}
+
+	hasIntegrations := h.store.HasSaveEntry(userID)
+
+	response := struct {
+        HasIntegrations bool `json:"has_integrations"`
+    }{
+        HasIntegrations: hasIntegrations,
+    }
+
+	json.OK(w, r, response)
+}
+
 func (h *handler) users(w http.ResponseWriter, r *http.Request) {
 	if !request.IsAdminUser(r) {
 		json.Forbidden(w, r)
