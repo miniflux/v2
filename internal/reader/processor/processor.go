@@ -53,6 +53,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.Us
 
 		pageBaseURL := ""
 		rewrittenURL := rewriteEntryURL(feed, entry)
+		entry.URL = rewrittenURL
 		entryIsNew := store.IsNewEntry(feed.ID, entry.Hash)
 		if feed.Crawler && (entryIsNew || forceRefresh) {
 			slog.Debug("Scraping entry",
