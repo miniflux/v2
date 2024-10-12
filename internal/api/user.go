@@ -136,7 +136,7 @@ func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) 
 		json.Forbidden(w, r)
 		return
 	}
-	
+
 	if _, err := h.store.UserByID(userID); err != nil {
 		json.NotFound(w, r)
 		return
@@ -145,10 +145,10 @@ func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) 
 	hasIntegrations := h.store.HasSaveEntry(userID)
 
 	response := struct {
-        HasIntegrations bool `json:"has_integrations"`
-    }{
-        HasIntegrations: hasIntegrations,
-    }
+		HasIntegrations bool `json:"has_integrations"`
+	}{
+		HasIntegrations: hasIntegrations,
+	}
 
 	json.OK(w, r, response)
 }
