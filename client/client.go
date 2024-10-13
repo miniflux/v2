@@ -185,6 +185,25 @@ func (c *Client) MarkAllAsRead(userID int64) error {
 	return err
 }
 
+// FetchIntegrationsStatus fetches the integrations status for a user.
+func (c *Client) FetchIntegrationsStatus(userID int64) (bool, error) {
+	body, err := c.request.Get(fmt.Sprintf("/v1/users/%d/integrations/status", userID))
+	if err != nil {
+		return false, err
+	}
+	defer body.Close()
+
+	var response struct {
+		HasIntegrations bool `json:"has_integrations"`
+	}
+
+	if err := json.NewDecoder(body).Decode(&response); err != nil {
+		return false, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return response.HasIntegrations, nil
+}
+
 // Discover try to find subscriptions from a website.
 func (c *Client) Discover(url string) (Subscriptions, error) {
 	body, err := c.request.Post("/v1/discover", map[string]string{"url": url})
