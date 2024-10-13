@@ -2483,6 +2483,32 @@ func TestSaveEntryEndpoint(t *testing.T) {
 	}
 }
 
+func TestFetchIntegrationsStatusEndpoint(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	hasIntegrations, err := regularUserClient.FetchIntegrationsStatus(regularTestUser.ID)
+	if err != nil {
+		t.Fatalf("Failed to fetch integrations status: %v", err)
+	}
+
+	if hasIntegrations {
+		t.Fatalf("New user should not have integrations configured")
+	}
+}
+
 func TestFetchContentEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
