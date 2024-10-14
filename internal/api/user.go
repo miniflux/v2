@@ -131,11 +131,7 @@ func (h *handler) markUserAsRead(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) getIntegrationsStatus(w http.ResponseWriter, r *http.Request) {
-	userID := request.RouteInt64Param(r, "userID")
-	if userID != request.UserID(r) {
-		json.Forbidden(w, r)
-		return
-	}
+	userID := request.UserID(r)
 
 	if _, err := h.store.UserByID(userID); err != nil {
 		json.NotFound(w, r)
