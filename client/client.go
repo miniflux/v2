@@ -187,7 +187,7 @@ func (c *Client) MarkAllAsRead(userID int64) error {
 
 // FetchIntegrationsStatus fetches the integrations status for a user.
 func (c *Client) FetchIntegrationsStatus() (bool, error) {
-	body, err := c.request.Get(fmt.Sprintf("/v1/users/integrations/status"))
+	body, err := c.request.Get("/v1/users/integrations/status")
 	if err != nil {
 		return false, err
 	}
