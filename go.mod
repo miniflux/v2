@@ -12,7 +12,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/prometheus/client_golang v1.20.4
 	github.com/tdewolff/minify/v2 v2.20.37
-	github.com/yuin/goldmark v1.7.6
+	github.com/yuin/goldmark v1.7.7
 	golang.org/x/crypto v0.28.0
 	golang.org/x/net v0.30.0
 	golang.org/x/oauth2 v0.23.0
