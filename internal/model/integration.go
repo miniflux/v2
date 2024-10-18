@@ -104,4 +104,6 @@ type Integration struct {
 	NtfyUsername                     string
 	NtfyPassword                     string
 	NtfyIconURL                      string
+	CuboxEnabled                     bool
+	CuboxAPILink                     string
 }

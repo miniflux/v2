@@ -124,6 +124,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		NtfyUsername:                     integration.NtfyUsername,
 		NtfyPassword:                     integration.NtfyPassword,
 		NtfyIconURL:                      integration.NtfyIconURL,
+		CuboxEnabled:                     integration.CuboxEnabled,
+		CuboxAPILink:                     integration.CuboxAPILink,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

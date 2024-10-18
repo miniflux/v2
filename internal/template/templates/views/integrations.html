@@ -57,6 +57,22 @@
         </div>
     </details>
 
+    <details {{ if .form.CuboxEnabled }}open{{ end }}>
+        <summary>Cubox</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="cubox_enabled" value="1" {{ if .form.CuboxEnabled }}checked{{ end }}> {{ t "form.integration.cubox_activate" }}
+            </label>
+
+            <label for="form-cubox-api-link">{{ t "form.integration.cubox_api_link" }}</label>
+            <input type="url" name="cubox_api_link" id="form-cubox-api-link" value="{{ .form.CuboxAPILink }}" placeholder="https://cubox.pro/c/api/save/xxx" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.EspialEnabled }}open{{ end }}>
         <summary>Espial</summary>
         <div class="form-section">

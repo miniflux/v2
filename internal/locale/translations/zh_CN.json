@@ -345,6 +345,8 @@
     "form.feed.label.ntfy_default_priority": "Ntfy默认优先级",
     "form.feed.label.ntfy_low_priority": "Ntfy低优先级",
     "form.feed.label.ntfy_min_priority": "Ntfy最低优先级",
+    "form.integration.cubox_activate": "保存文章到 Cubox",
+    "form.integration.cubox_api_link": "Cubox API 链接",
     "form.feed.fieldset.general": "通用",
     "form.feed.fieldset.rules": "规则",
     "form.feed.fieldset.network_settings": "网络设置",

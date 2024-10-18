@@ -110,6 +110,8 @@ type IntegrationForm struct {
 	NtfyUsername                     string
 	NtfyPassword                     string
 	NtfyIconURL                      string
+	CuboxEnabled                     bool
+	CuboxAPILink                     string
 }
 
 // Merge copy form values to the model.
@@ -209,6 +211,8 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.NtfyUsername = i.NtfyUsername
 	integration.NtfyPassword = i.NtfyPassword
 	integration.NtfyIconURL = i.NtfyIconURL
+	integration.CuboxEnabled = i.CuboxEnabled
+	integration.CuboxAPILink = i.CuboxAPILink
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -311,6 +315,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		NtfyUsername:                     r.FormValue("ntfy_username"),
 		NtfyPassword:                     r.FormValue("ntfy_password"),
 		NtfyIconURL:                      r.FormValue("ntfy_icon_url"),
+		CuboxEnabled:                     r.FormValue("cubox_enabled") == "1",
+		CuboxAPILink:                     r.FormValue("cubox_api_link"),
 	}
 }
 
