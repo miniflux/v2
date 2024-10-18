@@ -510,6 +510,8 @@
     "form.integration.ntfy_username": "Ntfy Username (optional)",
     "form.integration.ntfy_password": "Ntfy Password (optional)",
     "form.integration.ntfy_icon_url": "Ntfy Icon URL (optional)",
+    "form.integration.cubox_activate": "Save entries to Cubox",
+    "form.integration.cubox_api_link": "Cubox API link",
     "form.api_key.label.description": "API Key Label",
     "form.submit.loading": "Loading…",
     "form.submit.saving": "Saving…",
