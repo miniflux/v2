@@ -9,6 +9,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration/apprise"
 	"miniflux.app/v2/internal/integration/betula"
+	"miniflux.app/v2/internal/integration/cubox"
 	"miniflux.app/v2/internal/integration/espial"
 	"miniflux.app/v2/internal/integration/instapaper"
 	"miniflux.app/v2/internal/integration/linkace"
@@ -314,6 +315,25 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 
 		if err := client.CreateDocument(entry.URL); err != nil {
 			slog.Error("Unable to send entry to Readwise",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
+	if userIntegrations.CuboxEnabled {
+		slog.Debug("Sending entry to Cubox",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := cubox.NewClient(userIntegrations.CuboxAPILink)
+
+		if err := client.SaveLink(entry.URL); err != nil {
+			slog.Error("Unable to send entry to Cubox",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),

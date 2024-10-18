@@ -365,6 +365,8 @@
     "form.feed.label.ntfy_default_priority": "Ntfy default priority",
     "form.feed.label.ntfy_low_priority": "Ntfy low priority",
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
+    "form.integration.cubox_activate": "Save entries to Cubox",
+    "form.integration.cubox_api_link": "Cubox API link",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Rules",
     "form.feed.fieldset.network_settings": "Network Settings",
