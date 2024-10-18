@@ -37,7 +37,6 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/users/{userID:[0-9]+}", handler.updateUser).Methods(http.MethodPut)
 	sr.HandleFunc("/users/{userID:[0-9]+}", handler.removeUser).Methods(http.MethodDelete)
 	sr.HandleFunc("/users/{userID:[0-9]+}/mark-all-as-read", handler.markUserAsRead).Methods(http.MethodPut)
-	sr.HandleFunc("/users/integrations/status", handler.getIntegrationsStatus).Methods(http.MethodGet)
 	sr.HandleFunc("/users/{username}", handler.userByUsername).Methods(http.MethodGet)
 	sr.HandleFunc("/me", handler.currentUser).Methods(http.MethodGet)
 	sr.HandleFunc("/categories", handler.createCategory).Methods(http.MethodPost)
@@ -75,6 +74,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/icons/{iconID}", handler.getIconByIconID).Methods(http.MethodGet)
 	sr.HandleFunc("/enclosures/{enclosureID}", handler.getEnclosureByID).Methods(http.MethodGet)
 	sr.HandleFunc("/enclosures/{enclosureID}", handler.updateEnclosureByID).Methods(http.MethodPut)
+	sr.HandleFunc("/integrations/status", handler.getIntegrationsStatus).Methods(http.MethodGet)
 	sr.HandleFunc("/version", handler.versionHandler).Methods(http.MethodGet)
 }
 

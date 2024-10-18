@@ -2499,7 +2499,7 @@ func TestFetchIntegrationsStatusEndpoint(t *testing.T) {
 
 	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
 
-	hasIntegrations, err := regularUserClient.FetchIntegrationsStatus()
+	hasIntegrations, err := regularUserClient.IntegrationsStatus()
 	if err != nil {
 		t.Fatalf("Failed to fetch integrations status: %v", err)
 	}
