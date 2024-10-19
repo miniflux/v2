@@ -336,6 +336,39 @@ func TestParseEntryWithoutLink(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithoutLinkAndWithoutGUID(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/</link>
+			<item>
+				<title>Item 1</title>
+			</item>
+			<item>
+				<title>Item 2</title>
+				<pubDate>Wed, 02 Oct 2002 08:00:00 GMT</pubDate>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 2 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Hash != "c5ddfeffb275254140796b8c080f372d65ebb1b0590e238b191f595d5fcd32ca" {
+		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[0].Hash)
+	}
+
+	if feed.Entries[1].Hash != "0a937478f9bdbfca2de5cdeeb5ee7b09678a3330fc7cc5b05169a50d4516c9a3" {
+		t.Errorf("Incorrect entry hash, got: %s", feed.Entries[1].Hash)
+	}
+}
+
 func TestParseEntryWithOnlyGuidPermalink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">
