@@ -220,6 +220,7 @@
     "page.settings.webauthn.last_seen_on": "Dernière utilisation",
     "page.settings.webauthn.register": "Enregister une nouvelle clé d’accès",
     "page.settings.webauthn.register.error": "Impossible d'enregistrer la clé d’accès",
+    "page.login.webauthn_login.help": "Veuillez saisir votre nom d'utilisateur si vous utilisez une clé de sécurité. Cela n'est pas nécessaire si vous utilisez une clé d'accès (Passkey).",
     "page.settings.webauthn.delete": [
         "Supprimer %d clé d’accès",
         "Supprimer %d clés d’accès"

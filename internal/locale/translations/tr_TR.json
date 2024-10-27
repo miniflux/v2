@@ -466,6 +466,7 @@
   "page.login.title": "Oturum aç",
   "page.login.webauthn_login": "Passkey ile giriş yap",
   "page.login.webauthn_login.error": "Passkey ile giriş yapılamıyor",
+  "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
   "page.new_api_key.title": "Yeni API Anahtarı",
   "page.new_category.title": "Yeni Kategori",
   "page.new_user.title": "Yeni Kullanıcı",

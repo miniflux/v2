@@ -220,6 +220,7 @@
     "page.settings.webauthn.last_seen_on": "Last Used",
     "page.settings.webauthn.register": "रजिस्टर पासकी",
     "page.settings.webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "%d पासकुंजी निकालें",
         "%d पासकी हटाएं"

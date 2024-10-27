@@ -220,6 +220,7 @@
     "page.settings.webauthn.last_seen_on": "Usado por última vez",
     "page.settings.webauthn.register": "Registrar clave de acceso",
     "page.settings.webauthn.register.error": "No se puede registrar la clave de acceso",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "Eliminar %d clave de acceso",
         "Eliminar %d claves de acceso"

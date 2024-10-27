@@ -675,6 +675,10 @@ template {
     max-width: 300px;
 }
 
+.webauthn {
+    margin-bottom: 20px;
+}
+
 /* Counters */
 .unread-counter-wrapper,
 .error-feeds-counter-wrapper {

@@ -220,6 +220,7 @@
     "page.settings.webauthn.last_seen_on": "Last Used",
     "page.settings.webauthn.register": "Registrar senha",
     "page.settings.webauthn.register.error": "Não foi possível registrar a senha",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "Remover %d senha",
         "Remover %d senhas"
