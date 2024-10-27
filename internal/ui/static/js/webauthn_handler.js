@@ -5,10 +5,20 @@ class WebAuthnHandler {
 
     static showErrorMessage(errorMessage) {
         console.log("webauthn error: " + errorMessage);
-        const alertElement = document.getElementById("webauthn-error");
+
+        const alertElement = document.getElementById("webauthn-error-alert");
         if (alertElement) {
-            alertElement.textContent += " (" + errorMessage + ")";
-            alertElement.classList.remove("hidden");
+            alertElement.remove();
+        }
+
+        const alertTemplateElement = document.getElementById("webauthn-error");
+        if (alertTemplateElement) {
+            const clonedElement = alertTemplateElement.content.cloneNode(true);
+            const errorMessageElement = clonedElement.getElementById("webauthn-error-message");
+            if (errorMessageElement) {
+                errorMessageElement.textContent = errorMessage;
+            }
+            alertTemplateElement.parentNode.insertBefore(clonedElement, alertTemplateElement);
         }
     }
 

@@ -220,6 +220,7 @@
     "page.settings.webauthn.last_seen_on": "Zuletzt genutzt",
     "page.settings.webauthn.register": "Hauptschlüssel registrieren",
     "page.settings.webauthn.register.error": "Hauptschlüssel kann nicht registriert werden",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "Entfernen Sie %d Hauptschlüssel",
         "%d Hauptschlüssel entfernen"

@@ -221,6 +221,7 @@
     "page.settings.webauthn.last_seen_on": "Laatst gebruikt",
     "page.settings.webauthn.register": "Passkey registreren",
     "page.settings.webauthn.register.error": "Kan passkey niet registreren",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "Verwijder %d passkey",
         "Verwijder %d passkeys"

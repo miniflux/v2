@@ -211,6 +211,7 @@
     "page.settings.webauthn.last_seen_on": "最后使用时间",
     "page.settings.webauthn.register": "注册 Passkey",
     "page.settings.webauthn.register.error": "无法注册 Passkey",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "删除 %d 个 Passkey"
     ],

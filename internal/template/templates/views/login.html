@@ -24,15 +24,27 @@
         </div>
     </form>
     {{ end }}
+    {{ if and (not disableLocalAuth) (.webAuthnEnabled) }}
+    <hr>
+    {{ end }}
     {{ if .webAuthnEnabled }}
     <div class="webauthn">
-        <div role="alert" class="alert alert-error hidden" id="webauthn-error">
-            {{ t "page.login.webauthn_login.error" }}
-        </div>
+        <template id="webauthn-error">
+            <div role="alert" class="alert alert-error" id="webauthn-error-alert">
+                <h4>{{ t "page.login.webauthn_login.error" }}</h4>
+                <p id="webauthn-error-message"></p>
+            </div>
+        </template>
         <div class="buttons">
             <button class="button button-primary" id="webauthn-login" disabled>{{ t "page.login.webauthn_login" }}</button>
         </div>
+        <div class="form-help">
+            <p>{{ t "page.login.webauthn_login.help" }}</p>
+        </div>
     </div>
+    {{ end }}
+    {{ if and (.webAuthnEnabled) (or (hasOAuth2Provider "google") (hasOAuth2Provider "oidc")) }}
+    <hr>
     {{ end }}
     {{ if hasOAuth2Provider "google" }}
     <div class="oauth2">

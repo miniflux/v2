@@ -229,6 +229,7 @@
     "page.settings.webauthn.last_seen_on": "Last Used",
     "page.settings.webauthn.register": "Зареєструвати пароль",
     "page.settings.webauthn.register.error": "Не вдалося зареєструвати ключ доступу",
+    "page.login.webauthn_login.help": "Please enter your username if you're using a security key. This is not required if you are using a Passkey (discoverable credentials).",
     "page.settings.webauthn.delete": [
         "Видалити %d ключ доступу",
         "Видаліть %d ключа доступу",
