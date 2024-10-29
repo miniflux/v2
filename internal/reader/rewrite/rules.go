@@ -3,6 +3,8 @@
 
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
+import "regexp"
+
 // List of predefined rewrite rules (alphabetically sorted)
 // Available rules: "add_image_title", "add_youtube_video"
 // domain => rule name
@@ -37,4 +39,43 @@ var predefinedRules = map[string]string{
 	"www.recalbox.com":       "parse_markdown",
 	"xkcd.com":               "add_image_title",
 	"youtube.com":            "add_youtube_video",
+}
+
+type RefererRule struct {
+	URLPattern *regexp.Regexp
+	Referer   string
+}
+
+// List of predefined referer rules
+var PredefinedRefererRules = []RefererRule{
+	{
+		URLPattern: regexp.MustCompile(`^https://\w+\.sinaimg\.cn`),
+		Referer:   "https://weibo.com",
+	},
+	{
+		URLPattern: regexp.MustCompile(`^https://i\.pximg\.net`),
+		Referer:   "https://www.pixiv.net",
+	},
+	{
+		URLPattern: regexp.MustCompile(`^https://cdnfile\.sspai\.com`),
+		Referer:   "https://sspai.com",
+	},
+	{
+		URLPattern: regexp.MustCompile(`^https://(?:\w|-)+\.cdninstagram\.com`),
+		Referer:   "https://www.instagram.com",
+	},
+	{
+		URLPattern: regexp.MustCompile(`^https://sp1\.piokok\.com`),
+		Referer:    "https://sp1.piokok.com",
+	},
+}
+
+// GetRefererForURL returns the referer for the given URL if it exists, otherwise an empty string.
+func GetRefererForURL(url string) string {
+	for _, rule := range PredefinedRefererRules {
+		if rule.URLPattern.MatchString(url) {
+			return rule.Referer
+		}
+	}
+	return ""
 }
