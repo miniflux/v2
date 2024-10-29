@@ -19,6 +19,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/reader/rewrite"
 )
 
 func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
@@ -89,6 +90,10 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.Header.Set("Connection", "close")
+
+	if referer := rewrite.GetRefererForURL(mediaURL); referer != "" {
+		req.Header.Set("Referer", referer)
+	}
 
 	forwardedRequestHeader := []string{"Range", "Accept", "Accept-Encoding", "User-Agent"}
 	for _, requestHeaderName := range forwardedRequestHeader {
