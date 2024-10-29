@@ -43,26 +43,26 @@ var predefinedRules = map[string]string{
 
 type RefererRule struct {
 	URLPattern *regexp.Regexp
-	Referer   string
+	Referer    string
 }
 
 // List of predefined referer rules
 var PredefinedRefererRules = []RefererRule{
 	{
 		URLPattern: regexp.MustCompile(`^https://\w+\.sinaimg\.cn`),
-		Referer:   "https://weibo.com",
+		Referer:    "https://weibo.com",
 	},
 	{
 		URLPattern: regexp.MustCompile(`^https://i\.pximg\.net`),
-		Referer:   "https://www.pixiv.net",
+		Referer:    "https://www.pixiv.net",
 	},
 	{
 		URLPattern: regexp.MustCompile(`^https://cdnfile\.sspai\.com`),
-		Referer:   "https://sspai.com",
+		Referer:    "https://sspai.com",
 	},
 	{
 		URLPattern: regexp.MustCompile(`^https://(?:\w|-)+\.cdninstagram\.com`),
-		Referer:   "https://www.instagram.com",
+		Referer:    "https://www.instagram.com",
 	},
 	{
 		URLPattern: regexp.MustCompile(`^https://sp1\.piokok\.com`),
