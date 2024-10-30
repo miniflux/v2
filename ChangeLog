@@ -1,3 +1,28 @@
+Version 2.2.2 (October 29, 2024)
+--------------------------------
+
+* fix(webauthn): add backup eligibility flag workaround to avoid a 401 response
+* fix: update `Last-Modified` if it changes in a 304 response
+* feat(webauthn): show help message regarding username and non-discoverable credentials
+* feat(rss): calculate hash based on item title/content for feeds without GUID and link
+* feat(locale): update Chinese translations
+* feat(locale): update Polish translations
+* feat(integration): add Cubox integration
+* feat(client): add `custom_js` field to Go API client
+* feat(api): add endpoint for user integration status
+* feat: update feed icon during force refresh
+* feat: take `Retry-After` header into consideration for rate limited feeds
+* feat: set entry URL to rewritten URL if a rewrite rule is defined
+* feat: replace `xurls` third-party module with an ad-hoc regexp
+* feat: add new settings option to allow external fonts
+* feat: add custom user JavaScript similar to custom CSS
+* chore: update test case comment
+* build(deps): bump `golang.org/x/net` from `0.29.0` to `0.30.0`
+* build(deps): bump `github.com/yuin/goldmark` from `1.7.4` to `1.7.8`
+* build(deps): bump `github.com/tdewolff/minify/v2` from `2.20.37` to `2.21.1`
+* build(deps): bump `github.com/prometheus/client_golang`
+* build(deps): bump `github.com/andybalholm/brotli` from `1.1.0` to `1.1.1`
+
 Version 2.2.1 (September 28, 2024)
 ----------------------------------
 
