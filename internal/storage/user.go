@@ -193,7 +193,7 @@ func (s *Storage) UpdateUser(user *model.User) error {
 				custom_js=$14,
 				external_font_hosts=$15,
 				google_id=$16,
-				openid_connect_id=$167,
+				openid_connect_id=$17,
 				display_mode=$18,
 				entry_order=$19,
 				default_reading_speed=$20,

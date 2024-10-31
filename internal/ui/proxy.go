@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"path"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -19,6 +20,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response"
 	"miniflux.app/v2/internal/http/response/html"
+	"miniflux.app/v2/internal/reader/rewrite"
 )
 
 func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
@@ -56,23 +58,23 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := url.Parse(string(decodedURL))
+	parsedMediaURL, err := url.Parse(string(decodedURL))
 	if err != nil {
 		html.BadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
-	if u.Scheme != "http" && u.Scheme != "https" {
+	if parsedMediaURL.Scheme != "http" && parsedMediaURL.Scheme != "https" {
 		html.BadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
-	if u.Host == "" {
+	if parsedMediaURL.Host == "" {
 		html.BadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
 
-	if !u.IsAbs() {
+	if !parsedMediaURL.IsAbs() {
 		html.BadRequest(w, r, errors.New("invalid URL provided"))
 		return
 	}
@@ -89,6 +91,10 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.Header.Set("Connection", "close")
+
+	if referer := rewrite.GetRefererForURL(mediaURL); referer != "" {
+		req.Header.Set("Referer", referer)
+	}
 
 	forwardedRequestHeader := []string{"Range", "Accept", "Accept-Encoding", "User-Agent"}
 	for _, requestHeaderName := range forwardedRequestHeader {
@@ -140,6 +146,11 @@ func (h *handler) mediaProxy(w http.ResponseWriter, r *http.Request) {
 		b.WithStatus(resp.StatusCode)
 		b.WithHeader("Content-Security-Policy", `default-src 'self'`)
 		b.WithHeader("Content-Type", resp.Header.Get("Content-Type"))
+
+		if filename := path.Base(parsedMediaURL.Path); filename != "" {
+			b.WithHeader("Content-Disposition", fmt.Sprintf(`inline; filename="%s"`, filename))
+		}
+
 		forwardedResponseHeader := []string{"Content-Encoding", "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"}
 		for _, responseHeaderName := range forwardedResponseHeader {
 			if resp.Header.Get(responseHeaderName) != "" {
