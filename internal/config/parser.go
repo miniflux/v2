@@ -279,6 +279,10 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.invidiousInstance = parseString(value, defaultInvidiousInstance)
 		case "WEBAUTHN":
 			p.opts.webAuthn = parseBool(value, defaultWebAuthn)
+		case "CHAT_GTP_URL":
+			p.opts.chatgptUrl = parseString(value, defaultChatGTPBaseURL)
+		case "CHAT_GTP_TOKEN":
+			p.opts.chatgptToken = parseString(value, defaultChatGTPToken)
 		}
 	}
 

@@ -4,7 +4,10 @@
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
+	"miniflux.app/v2/internal/config"
 	"strconv"
 	"strings"
 	"text/scanner"
@@ -12,6 +15,7 @@ import (
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
 
+	openai "github.com/sashabaranov/go-openai"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -68,6 +72,12 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 				slog.Any("rule", rule),
 				slog.String("entry_url", entryURL),
 			)
+		}
+	case "translators_title":
+		if len(rule.args) == 1 {
+			entry.Title = translatorsTitle(entry.Title, rule.args[0])
+		} else {
+			entry.Title = translatorsTitle(entry.Title, "zh-cn")
 		}
 	case "remove":
 		// Format: remove("#selector > .element, .another")
@@ -148,4 +158,32 @@ func getPredefinedRewriteRules(entryURL string) string {
 	}
 
 	return ""
+}
+
+func translatorsTitle(title string, targetLanguage string) string {
+	gptConfig := openai.DefaultConfig(config.Opts.GetChatGPTToken())
+	gptConfig.BaseURL = config.Opts.GetChatGPTUrl()
+	client := openai.NewClientWithConfig(gptConfig)
+	response, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: openai.GPT4oMini,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role: openai.ChatMessageRoleSystem,
+					Content: fmt.Sprintf(`
+You are a super translator and also a news anchor, proficient in various languages. I need you to help me translate the following news headlines into [%s], keeping the original meaning as much as possible. Proper nouns and abbreviations can be left untranslated. Do not say anything outside of the translation; serious penalties will apply if you do.`, targetLanguage),
+				},
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: title,
+				},
+			},
+		})
+	if err != nil {
+		slog.Error("Cannot translate title", err)
+		return title
+	}
+	slog.Debug("Translated title", slog.String("title", title), slog.String("translated_title", response.Choices[0].Message.Content))
+	return response.Choices[0].Message.Content
 }

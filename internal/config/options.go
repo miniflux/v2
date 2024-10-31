@@ -89,6 +89,8 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
+	defaultChatGTPToken                       = ""
+	defaultChatGTPBaseURL                     = "https://api.openai.com/v1"
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -177,6 +179,8 @@ type Options struct {
 	invidiousInstance                  string
 	mediaProxyPrivateKey               []byte
 	webAuthn                           bool
+	chatgptUrl                         string
+	chatgptToken                       string
 }
 
 // NewOptions returns Options with default values.
@@ -256,6 +260,8 @@ func NewOptions() *Options {
 		invidiousInstance:                  defaultInvidiousInstance,
 		mediaProxyPrivateKey:               crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
+		chatgptUrl:                         defaultChatGTPBaseURL,
+		chatgptToken:                       defaultChatGTPToken,
 	}
 }
 
@@ -652,6 +658,13 @@ func (o *Options) WebAuthn() bool {
 // FilterEntryMaxAgeDays returns the number of days after which entries should be retained.
 func (o *Options) FilterEntryMaxAgeDays() int {
 	return o.filterEntryMaxAgeDays
+}
+
+func (o *Options) GetChatGPTToken() string {
+	return o.chatgptToken
+}
+func (o *Options) GetChatGPTUrl() string {
+	return o.chatgptUrl
 }
 
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
