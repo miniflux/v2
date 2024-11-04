@@ -165,56 +165,55 @@
 {{ end }}
 {{ end }}
 <article class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
-    {{ if (and .entry.Enclosures (not .entry.Feed.NoMediaPlayer)) }}
-    {{ range .entry.Enclosures }}
-    {{ if ne .URL "" }}
-    {{ if hasPrefix .MimeType "audio/" }}
-    <div class="enclosure-audio" >
-        <audio controls preload="metadata"
-            {{ if $.user }}data-last-position="{{ .MediaProgression }}"{{ end }}
-            {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
-            {{ if $.user.MarkReadOnMediaPlayerCompletion }}
-               data-mark-read-on-completion="0.9"
-            {{ end }}
-            {{ if $.user }}data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"{{ end }}
-            data-enclosure-id="{{.ID}}"
-            >
-            {{ if (and $.user (mustBeProxyfied "audio")) }}
-            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
-            {{ else }}
-            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
-            {{ end }}
-        </audio>
-        {{ template "enclosure_media_controls" . }}
-    </div>
-        {{ else if hasPrefix .MimeType "video/" }}
-        <div class="enclosure-video">
-            <video controls preload="metadata"
-                {{ if $.user }}data-last-position="{{ .MediaProgression }}"{{ end }}
-                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
-                {{ if $.user.MarkReadOnMediaPlayerCompletion }}
-                    data-mark-read-on-completion="0.9"
+    {{ if not .entry.Feed.NoMediaPlayer }}
+        {{ $mediaPlayerEnclosure := .entry.Enclosures.FindMediaPlayerEnclosure }}
+
+        {{ if $mediaPlayerEnclosure }}
+            {{ with $mediaPlayerEnclosure }}
+                {{ if .IsAudio }}
+                    <div class="enclosure-audio" >
+                        <audio controls preload="metadata"
+                            {{ if $.user }}data-last-position="{{ .MediaProgression }}"{{ end }}
+                            {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
+                            {{ if $.user.MarkReadOnMediaPlayerCompletion }}data-mark-read-on-completion="0.9"{{ end }}
+                            {{ if $.user }}data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"{{ end }}
+                            data-enclosure-id="{{ .ID }}"
+                            >
+                            {{ if (and $.user (mustBeProxyfied "audio")) }}
+                            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+                            {{ else }}
+                            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+                            {{ end }}
+                        </audio>
+                        {{ template "enclosure_media_controls" . }}
+                    </div>
+                {{ else if .IsVideo }}
+                    <div class="enclosure-video">
+                        <video controls preload="metadata"
+                            {{ if $.user }}data-last-position="{{ .MediaProgression }}"{{ end }}
+                            {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
+                            {{ if $.user.MarkReadOnMediaPlayerCompletion }}data-mark-read-on-completion="0.9"{{ end }}
+                            {{ if $.user }}data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"{{ end }}
+                            data-enclosure-id="{{ .ID }}"
+                            >
+                            {{ if (and $.user (mustBeProxyfied "video")) }}
+                            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+                            {{ else }}
+                            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+                            {{ end }}
+                        </video>
+                        {{ template "enclosure_media_controls" . }}
+                    </div>
                 {{ end }}
-                {{ if $.user }}data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"{{ end }}
-                data-enclosure-id="{{.ID}}"
-                >
-                {{ if (and $.user (mustBeProxyfied "video")) }}
-                <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
-                {{ else }}
-                <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
-                {{ end }}
-            </video>
-            {{ template "enclosure_media_controls" . }}
-        </div>
+            {{ end }}
         {{ end }}
-        {{ end }}
-        {{ end }}
-        {{end}}
-        {{ if .user }}
+    {{ end }}
+
+    {{ if .user }}
         {{ noescape (proxyFilter .entry.Content) }}
-        {{ else }}
+    {{ else }}
         {{ noescape .entry.Content }}
-        {{ end }}
+    {{ end }}
 </article>
 {{ if .entry.Enclosures }}
 <details class="entry-enclosures">
@@ -222,45 +221,7 @@
     {{ range .entry.Enclosures }}
     {{ if ne .URL "" }}
     <div class="entry-enclosure">
-        {{ if hasPrefix .MimeType "audio/" }}
-        <div class="enclosure-audio">
-            <audio controls preload="metadata"
-                {{ if $.user }}data-last-position="{{ .MediaProgression }}"{{ end }}
-                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
-                {{ if $.user.MarkReadOnMediaPlayerCompletion }}
-                    data-mark-read-on-completion="0.9"
-                {{ end }}
-                {{ if $.user }}data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"{{ end }}
-                data-enclosure-id="{{.ID}}"
-                >
-                {{ if (and $.user (mustBeProxyfied "audio")) }}
-                <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
-                {{ else }}
-                <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
-                {{ end }}
-            </audio>
-            {{ template "enclosure_media_controls" . }}
-        </div>
-        {{ else if hasPrefix .MimeType "video/" }}
-        <div class="enclosure-video">
-            <video controls preload="metadata"
-                {{ if $.user }}data-last-position="{{ .MediaProgression }}"{{ end }}
-                {{ if $.user.MediaPlaybackRate }}data-playback-rate="{{ $.user.MediaPlaybackRate }}"{{ end }}
-                {{ if $.user.MarkReadOnMediaPlayerCompletion }}
-                    data-mark-read-on-completion="0.9"
-                {{ end }}
-                {{ if $.user }}data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"{{ end }}
-                data-enclosure-id="{{.ID}}"
-                >
-                {{ if (and $.user (mustBeProxyfied "video")) }}
-                <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
-                {{ else }}
-                <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
-                {{ end }}
-            </video>
-            {{ template "enclosure_media_controls" . }}
-        </div>
-        {{ else if hasPrefix .MimeType "image/" }}
+        {{ if .IsImage }}
         <div class="enclosure-image">
             {{ if (and $.user (mustBeProxyfied "image")) }}
             <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
@@ -271,7 +232,7 @@
         {{ end }}
 
         <div class="entry-enclosure-download">
-            <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
+            <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
             <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
         </div>
     </div>
