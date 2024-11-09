@@ -14,7 +14,7 @@ require (
 	github.com/tdewolff/minify/v2 v2.21.1
 	github.com/yuin/goldmark v1.7.8
 	golang.org/x/crypto v0.29.0
-	golang.org/x/net v0.30.0
+	golang.org/x/net v0.31.0
 	golang.org/x/oauth2 v0.24.0
 	golang.org/x/term v0.26.0
 	golang.org/x/text v0.20.0
