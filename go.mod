@@ -17,7 +17,7 @@ require (
 	golang.org/x/net v0.30.0
 	golang.org/x/oauth2 v0.24.0
 	golang.org/x/term v0.26.0
-	golang.org/x/text v0.19.0
+	golang.org/x/text v0.20.0
 )
 
 require (
