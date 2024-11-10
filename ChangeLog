@@ -1,3 +1,17 @@
+Version 2.2.3 (November 10, 2024)
+---------------------------------
+
+* fix: unable to change password due to a typo in SQL parameter
+* fix: show only one player when there are several audio/video enclosures
+* feat(mediaproxy): pass original filename in `Content-Disposition` header
+* feat(mediaproxy): implement referer spoofing for restricted media resources
+* feat(integration): update Shiori integration to use new API endpoints for login/bookmark
+* build(deps): bump `golang.org/x/text` from `0.19.0` to `0.20.0`
+* build(deps): bump `golang.org/x/term` from `0.25.0` to `0.26.0`
+* build(deps): bump `golang.org/x/oauth2` from `0.23.0` to `0.24.0`
+* build(deps): bump `golang.org/x/net` from `0.30.0` to `0.31.0`
+* build(deps): bump `golang.org/x/crypto` from `0.28.0` to `0.29.0`
+
 Version 2.2.2 (October 29, 2024)
 --------------------------------
 
