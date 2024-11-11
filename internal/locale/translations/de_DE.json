@@ -355,7 +355,7 @@
     "form.feed.label.ntfy_high_priority": "Hohe Ntfy-Priorität",
     "form.feed.label.ntfy_default_priority": "Normale Ntfy-Priorität",
     "form.feed.label.ntfy_low_priority": "Niedrige Ntfy-Priorität",
-    "form.feed.label.ntfy_min_priority": "Nirdrigste Ntfy-Priorität",
+    "form.feed.label.ntfy_min_priority": "Niedrigste Ntfy-Priorität",
     "form.integration.cubox_activate": "Einträge in Cubox speichern",
     "form.integration.cubox_api_link": "Cubox-API-Link",
     "form.feed.fieldset.general": "Allgemein",
