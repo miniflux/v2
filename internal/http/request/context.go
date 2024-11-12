@@ -31,7 +31,6 @@ const (
 	PocketRequestTokenContextKey
 	LastForceRefreshContextKey
 	ClientIPContextKey
-	GoogleReaderToken
 	WebAuthnDataContextKey
 )
 
@@ -42,11 +41,6 @@ func WebAuthnSessionData(r *http.Request) *model.WebAuthnSession {
 		}
 	}
 	return nil
-}
-
-// GoolgeReaderToken returns the google reader token if it exists.
-func GoolgeReaderToken(r *http.Request) string {
-	return getContextStringValue(r, GoogleReaderToken)
 }
 
 // IsAdminUser checks if the logged user is administrator.

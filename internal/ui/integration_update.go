@@ -49,24 +49,6 @@ func (h *handler) updateIntegration(w http.ResponseWriter, r *http.Request) {
 		integration.FeverToken = ""
 	}
 
-	if integration.GoogleReaderUsername != "" && h.store.HasDuplicateGoogleReaderUsername(user.ID, integration.GoogleReaderUsername) {
-		sess.NewFlashErrorMessage(printer.Print("error.duplicate_googlereader_username"))
-		html.Redirect(w, r, route.Path(h.router, "integrations"))
-		return
-	}
-
-	if integration.GoogleReaderEnabled {
-		if integrationForm.GoogleReaderPassword != "" {
-			integration.GoogleReaderPassword, err = crypto.HashPassword(integrationForm.GoogleReaderPassword)
-			if err != nil {
-				html.ServerError(w, r, err)
-				return
-			}
-		}
-	} else {
-		integration.GoogleReaderPassword = ""
-	}
-
 	if integrationForm.WebhookEnabled {
 		if integrationForm.WebhookURL == "" {
 			integration.WebhookEnabled = false

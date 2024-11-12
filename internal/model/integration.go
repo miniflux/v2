@@ -19,9 +19,6 @@ type Integration struct {
 	FeverEnabled                     bool
 	FeverUsername                    string
 	FeverToken                       string
-	GoogleReaderEnabled              bool
-	GoogleReaderUsername             string
-	GoogleReaderPassword             string
 	WallabagEnabled                  bool
 	WallabagOnlyURL                  bool
 	WallabagURL                      string

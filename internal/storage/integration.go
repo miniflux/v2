@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"golang.org/x/crypto/bcrypt"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -16,14 +15,6 @@ func (s *Storage) HasDuplicateFeverUsername(userID int64, feverUsername string) 
 	query := `SELECT true FROM integrations WHERE user_id != $1 AND fever_username=$2`
 	var result bool
 	s.db.QueryRow(query, userID, feverUsername).Scan(&result)
-	return result
-}
-
-// HasDuplicateGoogleReaderUsername checks if another user have the same Google Reader username.
-func (s *Storage) HasDuplicateGoogleReaderUsername(userID int64, googleReaderUsername string) bool {
-	query := `SELECT true FROM integrations WHERE user_id != $1 AND googlereader_username=$2`
-	var result bool
-	s.db.QueryRow(query, userID, googleReaderUsername).Scan(&result)
 	return result
 }
 
@@ -52,59 +43,6 @@ func (s *Storage) UserByFeverToken(token string) (*model.User, error) {
 	}
 }
 
-// GoogleReaderUserCheckPassword validates the Google Reader hashed password.
-func (s *Storage) GoogleReaderUserCheckPassword(username, password string) error {
-	var hash string
-
-	query := `
-		SELECT
-			googlereader_password
-		FROM
-			integrations
-		WHERE
-			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
-	`
-
-	err := s.db.QueryRow(query, username).Scan(&hash)
-	if err == sql.ErrNoRows {
-		return fmt.Errorf(`store: unable to find this user: %s`, username)
-	} else if err != nil {
-		return fmt.Errorf(`store: unable to fetch user: %v`, err)
-	}
-
-	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
-		return fmt.Errorf(`store: invalid password for "%s" (%v)`, username, err)
-	}
-
-	return nil
-}
-
-// GoogleReaderUserGetIntegration returns part of the Google Reader parts of the integration struct.
-func (s *Storage) GoogleReaderUserGetIntegration(username string) (*model.Integration, error) {
-	var integration model.Integration
-
-	query := `
-		SELECT
-			user_id,
-			googlereader_enabled,
-			googlereader_username,
-			googlereader_password
-		FROM
-			integrations
-		WHERE
-			integrations.googlereader_enabled='t' AND integrations.googlereader_username=$1
-	`
-
-	err := s.db.QueryRow(query, username).Scan(&integration.UserID, &integration.GoogleReaderEnabled, &integration.GoogleReaderUsername, &integration.GoogleReaderPassword)
-	if err == sql.ErrNoRows {
-		return &integration, fmt.Errorf(`store: unable to find this user: %s`, username)
-	} else if err != nil {
-		return &integration, fmt.Errorf(`store: unable to fetch user: %v`, err)
-	}
-
-	return &integration, nil
-}
-
 // Integration returns user integration settings.
 func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 	query := `
@@ -120,9 +58,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			fever_enabled,
 			fever_username,
 			fever_token,
-			googlereader_enabled,
-			googlereader_username,
-			googlereader_password,
 			wallabag_enabled,
 			wallabag_only_url,
 			wallabag_url,
@@ -228,9 +163,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.FeverEnabled,
 		&integration.FeverUsername,
 		&integration.FeverToken,
-		&integration.GoogleReaderEnabled,
-		&integration.GoogleReaderUsername,
-		&integration.GoogleReaderPassword,
 		&integration.WallabagEnabled,
 		&integration.WallabagOnlyURL,
 		&integration.WallabagURL,
@@ -358,9 +290,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pocket_enabled=$21,
 			pocket_access_token=$22,
 			pocket_consumer_key=$23,
-			googlereader_enabled=$24,
-			googlereader_username=$25,
-			googlereader_password=$26,
 			telegram_bot_enabled=$27,
 			telegram_bot_token=$28,
 			telegram_bot_chat_id=$29,
@@ -463,9 +392,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PocketEnabled,
 		integration.PocketAccessToken,
 		integration.PocketConsumerKey,
-		integration.GoogleReaderEnabled,
-		integration.GoogleReaderUsername,
-		integration.GoogleReaderPassword,
 		integration.TelegramBotEnabled,
 		integration.TelegramBotToken,
 		integration.TelegramBotChatID,
