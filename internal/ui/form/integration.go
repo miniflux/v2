@@ -93,9 +93,6 @@ type IntegrationForm struct {
 	WebhookSecret                    string
 	RSSBridgeEnabled                 bool
 	RSSBridgeURL                     string
-	OmnivoreEnabled                  bool
-	OmnivoreAPIKey                   string
-	OmnivoreURL                      string
 	RaindropEnabled                  bool
 	RaindropToken                    string
 	RaindropCollectionID             string
@@ -194,9 +191,6 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.WebhookURL = i.WebhookURL
 	integration.RSSBridgeEnabled = i.RSSBridgeEnabled
 	integration.RSSBridgeURL = i.RSSBridgeURL
-	integration.OmnivoreEnabled = i.OmnivoreEnabled
-	integration.OmnivoreAPIKey = i.OmnivoreAPIKey
-	integration.OmnivoreURL = i.OmnivoreURL
 	integration.RaindropEnabled = i.RaindropEnabled
 	integration.RaindropToken = i.RaindropToken
 	integration.RaindropCollectionID = i.RaindropCollectionID
@@ -298,9 +292,6 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		WebhookURL:                       r.FormValue("webhook_url"),
 		RSSBridgeEnabled:                 r.FormValue("rssbridge_enabled") == "1",
 		RSSBridgeURL:                     r.FormValue("rssbridge_url"),
-		OmnivoreEnabled:                  r.FormValue("omnivore_enabled") == "1",
-		OmnivoreAPIKey:                   r.FormValue("omnivore_api_key"),
-		OmnivoreURL:                      r.FormValue("omnivore_url"),
 		RaindropEnabled:                  r.FormValue("raindrop_enabled") == "1",
 		RaindropToken:                    r.FormValue("raindrop_token"),
 		RaindropCollectionID:             r.FormValue("raindrop_collection_id"),

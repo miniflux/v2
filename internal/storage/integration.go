@@ -191,9 +191,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			webhook_secret,
 			rssbridge_enabled,
 			rssbridge_url,
-			omnivore_enabled,
-			omnivore_api_key,
-			omnivore_url,
 			raindrop_enabled,
 			raindrop_token,
 			raindrop_collection_id,
@@ -299,9 +296,6 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.WebhookSecret,
 		&integration.RSSBridgeEnabled,
 		&integration.RSSBridgeURL,
-		&integration.OmnivoreEnabled,
-		&integration.OmnivoreAPIKey,
-		&integration.OmnivoreURL,
 		&integration.RaindropEnabled,
 		&integration.RaindropToken,
 		&integration.RaindropCollectionID,
@@ -413,9 +407,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			webhook_secret=$76,
 			rssbridge_enabled=$77,
 			rssbridge_url=$78,
-			omnivore_enabled=$79,
-			omnivore_api_key=$80,
-			omnivore_url=$81,
 			linkwarden_enabled=$82,
 			linkwarden_url=$83,
 			linkwarden_api_key=$84,
@@ -518,9 +509,6 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.WebhookSecret,
 		integration.RSSBridgeEnabled,
 		integration.RSSBridgeURL,
-		integration.OmnivoreEnabled,
-		integration.OmnivoreAPIKey,
-		integration.OmnivoreURL,
 		integration.LinkwardenEnabled,
 		integration.LinkwardenURL,
 		integration.LinkwardenAPIKey,
@@ -577,7 +565,6 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				readeck_enabled='t' OR
 				shaarli_enabled='t' OR
 				webhook_enabled='t' OR
-				omnivore_enabled='t' OR
 				raindrop_enabled='t' OR
 				betula_enabled='t' OR
 				cubox_enabled='t'

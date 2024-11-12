@@ -90,9 +90,6 @@ type Integration struct {
 	WebhookSecret                    string
 	RSSBridgeEnabled                 bool
 	RSSBridgeURL                     string
-	OmnivoreEnabled                  bool
-	OmnivoreAPIKey                   string
-	OmnivoreURL                      string
 	RaindropEnabled                  bool
 	RaindropToken                    string
 	RaindropCollectionID             string
