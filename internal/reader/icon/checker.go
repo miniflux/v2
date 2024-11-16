@@ -8,6 +8,7 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/nostr"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/storage"
 )
@@ -35,6 +36,17 @@ func (c *IconChecker) fetchAndStoreIcon() {
 	requestBuilder.DisableHTTP2(c.feed.DisableHTTP2)
 
 	iconFinder := NewIconFinder(requestBuilder, c.feed.FeedURL, c.feed.IconURL)
+
+	// TODO: look at this
+	if nostr, iconUrl := nostr.GetIcon(c.feed); nostr {
+		icon, err := iconFinder.DownloadIcon(iconUrl)
+		if err == nil {
+			if err := c.store.StoreFeedIcon(c.feed.ID, icon); err == nil {
+				return
+			}
+		}
+	}
+
 	if icon, err := iconFinder.FindIcon(); err != nil {
 		slog.Debug("Unable to find feed icon",
 			slog.Int64("feed_id", c.feed.ID),
@@ -80,5 +92,6 @@ func (c *IconChecker) CreateFeedIconIfMissing() {
 }
 
 func (c *IconChecker) UpdateOrCreateFeedIcon() {
+	slog.Info("hleeeeeeeeeello")
 	c.fetchAndStoreIcon()
 }

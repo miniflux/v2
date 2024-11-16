@@ -12,6 +12,7 @@ import (
 	"miniflux.app/v2/internal/integration"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/nostr"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/icon"
 	"miniflux.app/v2/internal/reader/parser"
@@ -112,6 +113,15 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 
 	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
 		return nil, locale.NewLocalizedErrorWrapper(ErrCategoryNotFound, "error.category_not_found")
+	}
+
+	if nostr, subscription := nostr.CreateFeed(store, user, feedCreationRequest); nostr {
+
+		// Icon refresh here for now
+		iconChecker := icon.NewIconChecker(store, subscription)
+		iconChecker.UpdateOrCreateFeedIcon()
+
+		return subscription, nil
 	}
 
 	requestBuilder := fetcher.NewRequestBuilder()
@@ -217,6 +227,11 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		if weeklyCountErr != nil {
 			return locale.NewLocalizedErrorWrapper(weeklyCountErr, "error.database_error", weeklyCountErr)
 		}
+	}
+
+	// TODO: this is probably not the best place to implement this
+	if nostr := nostr.RefreshFeed(store, user, originalFeed); nostr {
+		return nil
 	}
 
 	originalFeed.CheckedNow()

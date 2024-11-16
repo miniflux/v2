@@ -5,6 +5,7 @@ package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"log/slog"
@@ -16,6 +17,7 @@ import (
 	"miniflux.app/v2/internal/integration/rssbridge"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/nostr"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/parser"
 	"miniflux.app/v2/internal/urllib"
@@ -49,7 +51,26 @@ func (f *SubscriptionFinder) FeedResponseInfo() *model.FeedCreationRequestFromSu
 	return f.feedResponseInfo
 }
 
+func nostrFindSubscription(url string) (bool, Subscriptions) {
+	ctx := context.Background()
+
+	isNostr, profile := nostr.IsItNostr(url)
+	if !isNostr {
+		return false, nil
+	}
+
+	nprofile := profile.Nprofile(ctx, nostr.NostrSdk, 3)
+
+	return true, Subscriptions{NewSubscription(profile.Name, nprofile, parser.FormatNostr)}
+}
+
 func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
+
+	// Find a nostr subscription
+	if nostr, subscriptions := nostrFindSubscription(websiteURL); nostr {
+		return subscriptions, nil
+	}
+
 	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(websiteURL))
 	defer responseHandler.Close()
 
