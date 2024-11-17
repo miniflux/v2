@@ -7,7 +7,7 @@ require (
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/andybalholm/brotli v1.1.1
 	github.com/coreos/go-oidc/v3 v3.11.0
-	github.com/github-tijlxyz/goldmark-nostr v0.1.0
+	github.com/github-tijlxyz/goldmark-nostr v0.2.0
 	github.com/go-webauthn/webauthn v0.11.2
 	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
