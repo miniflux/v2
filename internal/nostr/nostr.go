@@ -97,7 +97,7 @@ func RefreshFeed(store *storage.Storage, user *model.User, originalFeed *model.F
 				}
 			}
 
-			nevent, err := nip19.EncodeEvent(event.ID, []string{event.Relay.String()}, event.PubKey)
+			naddr, err := nip19.EncodeEntity(event.PubKey, event.Kind, event.Tags.GetD(), relays)
 			if err != nil {
 				continue
 			}
@@ -113,8 +113,8 @@ func RefreshFeed(store *storage.Storage, user *model.User, originalFeed *model.F
 				Date:    publishedAt,
 				Title:   title,
 				Content: event.Content,
-				URL:     fmt.Sprintf("nostr:%s", nevent),
-				Hash:    fmt.Sprintf("nostr:%s", event.ID),
+				URL:     fmt.Sprintf("nostr:%s", naddr),
+				Hash:    fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
 			}
 
 			rewrite.Rewriter(entry.URL, entry, "parse_markdown")
@@ -143,13 +143,13 @@ func IsItNostr(url string) (bool, *sdk.ProfileMetadata) {
 	}
 
 	// check for nostr url prefixes
-	hasNostrPrefix := false
 	if strings.HasPrefix(url, "nostr://") {
 		url = url[8:]
-		hasNostrPrefix = true
 	} else if strings.HasPrefix(url, "nostr:") {
 		url = url[6:]
-		hasNostrPrefix = true
+	} else {
+		// only accept nostr: or nostr:// urls for now
+		return false, nil
 	}
 
 	// check for npub or nprofile
@@ -164,7 +164,7 @@ func IsItNostr(url string) (bool, *sdk.ProfileMetadata) {
 	}
 
 	// only do nip05 check when nostr prefix
-	if hasNostrPrefix && nip05.IsValidIdentifier(url) {
+	if nip05.IsValidIdentifier(url) {
 		profile, err := NostrSdk.FetchProfileFromInput(ctx, url)
 		if err != nil {
 			return false, nil
