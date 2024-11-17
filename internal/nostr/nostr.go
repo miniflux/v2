@@ -48,7 +48,7 @@ func CreateFeed(store *storage.Storage, user *model.User, feedCreationRequest *m
 		subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
 		subscription.HideGlobally = feedCreationRequest.HideGlobally
 		subscription.FeedURL = fmt.Sprintf("nostr:%s", nprofile)
-		subscription.SiteURL = fmt.Sprintf("nostr:%s", nprofile)
+		subscription.SiteURL = fmt.Sprintf("https://njump.me/%s", nprofile)
 		subscription.WithCategoryID(feedCreationRequest.CategoryID)
 		subscription.CheckedNow()
 
@@ -113,7 +113,7 @@ func RefreshFeed(store *storage.Storage, user *model.User, originalFeed *model.F
 				Date:    publishedAt,
 				Title:   title,
 				Content: event.Content,
-				URL:     fmt.Sprintf("nostr:%s", naddr),
+				URL:     fmt.Sprintf("https://njump.me/%s", naddr),
 				Hash:    fmt.Sprintf("nostr:%s:%s", event.PubKey, event.Tags.GetD()),
 			}
 

@@ -60,8 +60,8 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/fxamacker/cbor/v2 v2.7.0 h1:iM5WgngdRBanHcxugY4JySA0nk1wZorNOpTgCMedv5E=
 github.com/fxamacker/cbor/v2 v2.7.0/go.mod h1:pxXPTn3joSm21Gbwsv0w9OSA2y1HFR9qXEeXQVeNoDQ=
-github.com/github-tijlxyz/goldmark-nostr v0.0.1 h1:w/GnHJQCCqFUCYHGJzwcPp4usDBIDAZ9q47nW/57NMc=
-github.com/github-tijlxyz/goldmark-nostr v0.0.1/go.mod h1:ezZL9+JeyK9T5VQ4EdtBaREOr7hIuWORuzMwS9wRbA8=
+github.com/github-tijlxyz/goldmark-nostr v0.0.3 h1:JCGsvQ57dpKeKsDR76U/gpxySgQGOqEKzLckX3hIk9I=
+github.com/github-tijlxyz/goldmark-nostr v0.0.3/go.mod h1:ezZL9+JeyK9T5VQ4EdtBaREOr7hIuWORuzMwS9wRbA8=
 github.com/go-jose/go-jose/v4 v4.0.2 h1:R3l3kkBds16bO7ZFAEEcofK0MkrAJt3jlJznWZG0nvk=
 github.com/go-jose/go-jose/v4 v4.0.2/go.mod h1:WVf9LFMHh/QVrmqrOfqun0C45tMe3RoiKJMPvgWwLfY=
 github.com/go-webauthn/webauthn v0.11.2 h1:Fgx0/wlmkClTKlnOsdOQ+K5HcHDsDcYIvtYmfhEOSUc=

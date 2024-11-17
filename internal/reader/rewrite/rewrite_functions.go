@@ -415,7 +415,7 @@ func parseMarkdown(entryContent string) string {
 	var sb strings.Builder
 	md := goldmark.New(
 		goldmark.WithExtensions(
-			nostrGoldmarkExtension.NewNostr(),
+			nostrGoldmarkExtension.New(nostrGoldmarkExtension.WithStrict(), nostrGoldmarkExtension.WithNostrLink("https://njump.me/%s")),
 		),
 		goldmark.WithRendererOptions(
 			goldmarkhtml.WithUnsafe(),
