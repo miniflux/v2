@@ -17,6 +17,7 @@ import (
 	nethtml "golang.org/x/net/html"
 
 	"github.com/PuerkitoBio/goquery"
+	nostrGoldmarkExtension "github.com/github-tijlxyz/goldmark-nostr"
 	"github.com/yuin/goldmark"
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
 )
@@ -413,6 +414,9 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 func parseMarkdown(entryContent string) string {
 	var sb strings.Builder
 	md := goldmark.New(
+		goldmark.WithExtensions(
+			nostrGoldmarkExtension.NewNostr(),
+		),
 		goldmark.WithRendererOptions(
 			goldmarkhtml.WithUnsafe(),
 		),

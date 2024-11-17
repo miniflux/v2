@@ -178,6 +178,12 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 			continue
 		}
 
+		if tagName == "a" && attribute.Key == "href" && strings.HasPrefix(value, "nostr:") {
+			attrNames = append(attrNames, attribute.Key)
+			htmlAttrs = append(htmlAttrs, fmt.Sprintf(`%s="%s"`, attribute.Key, html.EscapeString(value)))
+			continue
+		}
+
 		if (tagName == "img" || tagName == "source") && attribute.Key == "srcset" {
 			value = sanitizeSrcsetAttr(baseURL, value)
 		}

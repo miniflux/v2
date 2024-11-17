@@ -92,6 +92,5 @@ func (c *IconChecker) CreateFeedIconIfMissing() {
 }
 
 func (c *IconChecker) UpdateOrCreateFeedIcon() {
-	slog.Info("hleeeeeeeeeello")
 	c.fetchAndStoreIcon()
 }

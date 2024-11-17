@@ -136,20 +136,21 @@ func RefreshFeed(store *storage.Storage, user *model.User, originalFeed *model.F
 	return false
 }
 
-func IsItNostr(url string) (bool, *sdk.ProfileMetadata) {
+func IsItNostr(candidateUrl string) (bool, *sdk.ProfileMetadata) {
+	url := candidateUrl
 	ctx := context.Background()
 	if NostrSdk == nil {
 		Initialize()
 	}
 
 	// check for nostr url prefixes
+	hasNostrPrefix := false
 	if strings.HasPrefix(url, "nostr://") {
+		hasNostrPrefix = true
 		url = url[8:]
 	} else if strings.HasPrefix(url, "nostr:") {
+		hasNostrPrefix = true
 		url = url[6:]
-	} else {
-		// only accept nostr: or nostr:// urls for now
-		return false, nil
 	}
 
 	// check for npub or nprofile
@@ -164,7 +165,7 @@ func IsItNostr(url string) (bool, *sdk.ProfileMetadata) {
 	}
 
 	// only do nip05 check when nostr prefix
-	if nip05.IsValidIdentifier(url) {
+	if hasNostrPrefix && nip05.IsValidIdentifier(url) {
 		profile, err := NostrSdk.FetchProfileFromInput(ctx, url)
 		if err != nil {
 			return false, nil
