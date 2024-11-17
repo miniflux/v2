@@ -29,14 +29,6 @@ type funcMap struct {
 	router *mux.Router
 }
 
-func editedDomainFunc(url string) string {
-	if result := urllib.Domain(url); result != "" {
-		return result
-	} else {
-		return urllib.Protocol(url)
-	}
-}
-
 // Map returns a map of template functions that are compiled during template parsing.
 func (f *funcMap) Map() template.FuncMap {
 	return template.FuncMap{
@@ -85,7 +77,7 @@ func (f *funcMap) Map() template.FuncMap {
 		"mustBeProxyfied": func(mediaType string) bool {
 			return slices.Contains(config.Opts.MediaProxyResourceTypes(), mediaType)
 		},
-		"domain":    editedDomainFunc,
+		"domain":    urllib.Domain,
 		"hasPrefix": strings.HasPrefix,
 		"contains":  strings.Contains,
 		"replace": func(str, old, new string) string {

@@ -80,16 +80,6 @@ func Domain(websiteURL string) string {
 	return parsedURL.Host
 }
 
-// Protocol returns only the protocol (scheme) part of the given URL.
-func Protocol(websiteURL string) string {
-	parsedURL, err := url.Parse(websiteURL)
-	if err != nil {
-		return ""
-	}
-
-	return parsedURL.Scheme
-}
-
 // JoinBaseURLAndPath returns a URL string with the provided path elements joined together.
 func JoinBaseURLAndPath(baseURL, path string) (string, error) {
 	if baseURL == "" {
