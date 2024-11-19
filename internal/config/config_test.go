@@ -2116,6 +2116,24 @@ func TestFetchYouTubeWatchTime(t *testing.T) {
 	}
 }
 
+func TestYouTubeApiKey(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("YOUTUBE_API_KEY", "AAAAAAAAAAAAAaaaaaaaaaaaaa0000000000000")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := "AAAAAAAAAAAAAaaaaaaaaaaaaa0000000000000"
+	result := opts.YouTubeApiKey()
+
+	if result != expected {
+		t.Fatalf(`Unexpected YOUTUBE_API_KEY value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestYouTubeEmbedUrlOverride(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
