@@ -11,7 +11,7 @@ import (
 // Timezones returns all timezones supported by the database.
 func (s *Storage) Timezones() (map[string]string, error) {
 	timezones := make(map[string]string)
-	rows, err := s.db.Query(`SELECT name FROM pg_timezone_names() ORDER BY name ASC`)
+	rows, err := s.db.Query(`SELECT name FROM pg_timezone_names ORDER BY name ASC`)
 	if err != nil {
 		return nil, fmt.Errorf(`store: unable to fetch timezones: %v`, err)
 	}
