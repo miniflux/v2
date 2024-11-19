@@ -60,6 +60,7 @@ const (
 	defaultFetchNebulaWatchTime               = false
 	defaultFetchOdyseeWatchTime               = false
 	defaultFetchYouTubeWatchTime              = false
+	defaultYouTubeApiKey                      = ""
 	defaultYouTubeEmbedUrlOverride            = "https://www.youtube-nocookie.com/embed/"
 	defaultCreateAdmin                        = false
 	defaultAdminUsername                      = ""
@@ -149,6 +150,7 @@ type Options struct {
 	fetchOdyseeWatchTime               bool
 	fetchYouTubeWatchTime              bool
 	filterEntryMaxAgeDays              int
+	youTubeApiKey                      string
 	youTubeEmbedUrlOverride            string
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
@@ -228,6 +230,7 @@ func NewOptions() *Options {
 		fetchNebulaWatchTime:               defaultFetchNebulaWatchTime,
 		fetchOdyseeWatchTime:               defaultFetchOdyseeWatchTime,
 		fetchYouTubeWatchTime:              defaultFetchYouTubeWatchTime,
+		youTubeApiKey:                      defaultYouTubeApiKey,
 		youTubeEmbedUrlOverride:            defaultYouTubeEmbedUrlOverride,
 		oauth2UserCreationAllowed:          defaultOAuth2UserCreation,
 		oauth2ClientID:                     defaultOAuth2ClientID,
@@ -503,6 +506,11 @@ func (o *Options) FetchYouTubeWatchTime() bool {
 	return o.fetchYouTubeWatchTime
 }
 
+// YouTubeApiKey returns the YouTube API key if defined.
+func (o *Options) YouTubeApiKey() string {
+	return o.youTubeApiKey
+}
+
 // YouTubeEmbedUrlOverride returns YouTube URL which will be used for embeds
 func (o *Options) YouTubeEmbedUrlOverride() string {
 	return o.youTubeEmbedUrlOverride
@@ -733,6 +741,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WATCHDOG":                               o.watchdog,
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
+		"YOUTUBE_API_KEY":                        redactSecretValue(o.youTubeApiKey, redactSecret),
 		"YOUTUBE_EMBED_URL_OVERRIDE":             o.youTubeEmbedUrlOverride,
 		"WEBAUTHN":                               o.webAuthn,
 	}

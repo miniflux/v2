@@ -271,6 +271,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.fetchOdyseeWatchTime = parseBool(value, defaultFetchOdyseeWatchTime)
 		case "FETCH_YOUTUBE_WATCH_TIME":
 			p.opts.fetchYouTubeWatchTime = parseBool(value, defaultFetchYouTubeWatchTime)
+		case "YOUTUBE_API_KEY":
+			p.opts.youTubeApiKey = parseString(value, defaultYouTubeApiKey)
 		case "YOUTUBE_EMBED_URL_OVERRIDE":
 			p.opts.youTubeEmbedUrlOverride = parseString(value, defaultYouTubeEmbedUrlOverride)
 		case "WATCHDOG":

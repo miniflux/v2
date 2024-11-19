@@ -4,9 +4,11 @@
 package processor
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/url"
 	"regexp"
 	"strconv"
 	"time"
@@ -33,6 +35,14 @@ func shouldFetchYouTubeWatchTime(entry *model.Entry) bool {
 }
 
 func fetchYouTubeWatchTime(websiteURL string) (int, error) {
+	if config.Opts.YouTubeApiKey() == "" {
+		return fetchYouTubeWatchTimeFromWebsite(websiteURL)
+	} else {
+		return fetchYouTubeWatchTimeFromApi(websiteURL)
+	}
+}
+
+func fetchYouTubeWatchTimeFromWebsite(websiteURL string) (int, error) {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
@@ -55,6 +65,61 @@ func fetchYouTubeWatchTime(websiteURL string) (int, error) {
 		return 0, errors.New("duration has not found")
 	}
 
+	dur, err := parseISO8601(durs)
+	if err != nil {
+		return 0, fmt.Errorf("unable to parse duration %s: %v", durs, err)
+	}
+
+	return int(dur.Minutes()), nil
+}
+
+func fetchYouTubeWatchTimeFromApi(websiteURL string) (int, error) {
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+
+	parsedWebsiteURL, err := url.Parse(websiteURL)
+	if err != nil {
+		return 0, fmt.Errorf("unable to parse URL: %v", err)
+	}
+
+	apiQuery := url.Values{}
+	apiQuery.Set("id", parsedWebsiteURL.Query().Get("v"))
+	apiQuery.Set("key", config.Opts.YouTubeApiKey())
+	apiQuery.Set("part", "contentDetails")
+
+	apiURL := url.URL{
+		Scheme:   "https",
+		Host:     "www.googleapis.com",
+		Path:     "youtube/v3/videos",
+		RawQuery: apiQuery.Encode(),
+	}
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(apiURL.String()))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to fetch contentDetails from YouTube API", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return 0, localizedError.Error()
+	}
+
+	var videos struct {
+		Items []struct {
+			ContentDetails struct {
+				Duration string `json:"duration"`
+			} `json:"contentDetails"`
+		} `json:"items"`
+	}
+
+	if err := json.NewDecoder(responseHandler.Body(config.Opts.HTTPClientMaxBodySize())).Decode(&videos); err != nil {
+		return 0, fmt.Errorf("unable to decode JSON: %v", err)
+	}
+
+	if n := len(videos.Items); n != 1 {
+		return 0, fmt.Errorf("invalid items length: %d", n)
+	}
+
+	durs := videos.Items[0].ContentDetails.Duration
 	dur, err := parseISO8601(durs)
 	if err != nil {
 		return 0, fmt.Errorf("unable to parse duration %s: %v", durs, err)
