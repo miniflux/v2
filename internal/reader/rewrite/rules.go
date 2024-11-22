@@ -12,7 +12,6 @@ var predefinedRules = map[string]string{
 	"abstrusegoose.com":      "add_image_title",
 	"amazingsuperpowers.com": "add_image_title",
 	"blog.cloudflare.com":    `add_image_title,remove("figure.kg-image-card figure.kg-image + img")`,
-	"blog.laravel.com":       "parse_markdown",
 	"cowbirdsinlove.com":     "add_image_title",
 	"drawingboardcomic.com":  "add_image_title",
 	"exocomics.com":          "add_image_title",
