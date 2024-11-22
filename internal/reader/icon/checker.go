@@ -34,32 +34,32 @@ func (c *IconChecker) fetchAndStoreIcon() {
 	requestBuilder.IgnoreTLSErrors(c.feed.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(c.feed.DisableHTTP2)
 
-	iconFinder := NewIconFinder(requestBuilder, c.feed.FeedURL, c.feed.IconURL)
+	iconFinder := NewIconFinder(requestBuilder, c.feed.SiteURL, c.feed.IconURL)
 	if icon, err := iconFinder.FindIcon(); err != nil {
 		slog.Debug("Unable to find feed icon",
 			slog.Int64("feed_id", c.feed.ID),
-			slog.String("website_url", c.feed.FeedURL),
+			slog.String("website_url", c.feed.SiteURL),
 			slog.String("feed_icon_url", c.feed.IconURL),
 			slog.Any("error", err),
 		)
 	} else if icon == nil {
 		slog.Debug("No icon found",
 			slog.Int64("feed_id", c.feed.ID),
-			slog.String("website_url", c.feed.FeedURL),
+			slog.String("website_url", c.feed.SiteURL),
 			slog.String("feed_icon_url", c.feed.IconURL),
 		)
 	} else {
 		if err := c.store.StoreFeedIcon(c.feed.ID, icon); err != nil {
 			slog.Error("Unable to store feed icon",
 				slog.Int64("feed_id", c.feed.ID),
-				slog.String("website_url", c.feed.FeedURL),
+				slog.String("website_url", c.feed.SiteURL),
 				slog.String("feed_icon_url", c.feed.IconURL),
 				slog.Any("error", err),
 			)
 		} else {
 			slog.Debug("Feed icon stored",
 				slog.Int64("feed_id", c.feed.ID),
-				slog.String("website_url", c.feed.FeedURL),
+				slog.String("website_url", c.feed.SiteURL),
 				slog.String("feed_icon_url", c.feed.IconURL),
 				slog.Int64("icon_id", icon.ID),
 				slog.String("icon_hash", icon.Hash),
