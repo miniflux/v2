@@ -68,6 +68,14 @@ var PredefinedRefererRules = []RefererRule{
 		URLPattern: regexp.MustCompile(`^https://sp1\.piokok\.com`),
 		Referer:    "https://sp1.piokok.com",
 	},
+	{
+		URLPattern: regexp.MustCompile(`^https://f\.video\.weibocdn\.com`),
+		Referer:    "https://weibo.com",
+	},
+	{
+		URLPattern: regexp.MustCompile(`^https://img\.hellogithub\.com`),
+		Referer:    "https://hellogithub.com",
+	},
 }
 
 // GetRefererForURL returns the referer for the given URL if it exists, otherwise an empty string.
