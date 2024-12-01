@@ -500,7 +500,7 @@
     "form.integration.raindrop_collection_id": "Collection ID",
     "form.integration.raindrop_tags": "Tags (comma-separated)",
     "form.integration.readeck_activate": "Зберігати статті до Readeck",
-    "form.integration.readeck_endpoint": "Readeck API Endpoint",
+    "form.integration.readeck_endpoint": "Readeck URL",
     "form.integration.readeck_api_key": "Ключ API Readeck",
     "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.readeck_only_url": "Надіслати лише URL (замість повного вмісту)",
