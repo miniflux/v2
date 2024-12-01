@@ -490,7 +490,7 @@
     "form.integration.raindrop_collection_id": "Collection ID",
     "form.integration.raindrop_tags": "Tags (comma-separated)",
     "form.integration.readeck_activate": "Readeck में विषयवस्तु सहेजें",
-    "form.integration.readeck_endpoint": "Readeck·एपीआई·समापन·बिंदु",
+    "form.integration.readeck_endpoint": "Readeck यूआरएल",
     "form.integration.readeck_api_key": "Readeck एपीआई कुंजी",
     "form.integration.readeck_labels": "Readeck Labels",
     "form.integration.readeck_only_url": "केवल URL भेजें (पूर्ण सामग्री के बजाय)",
