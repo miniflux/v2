@@ -38,8 +38,9 @@ func (c *Client) SendNotification(entry *model.Entry) error {
 	}
 
 	requestBody, err := json.Marshal(map[string]any{
-		"urls": c.servicesURL,
-		"body": message,
+		"urls":  c.servicesURL,
+		"body":  message,
+		"title": entry.Feed.Title,
 	})
 	if err != nil {
 		return fmt.Errorf("apprise: unable to encode request body: %v", err)
