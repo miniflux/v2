@@ -513,8 +513,30 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 		}
 	}
 
+	if userIntegrations.AppriseEnabled {
+		slog.Debug("Sending new entries to Apprise",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int("nb_entries", len(entries)),
+			slog.Int64("feed_id", feed.ID),
+		)
+
+		appriseServiceURLs := userIntegrations.AppriseServicesURL
+		if feed.AppriseServiceURLs != "" {
+			appriseServiceURLs = feed.AppriseServiceURLs
+		}
+
+		client := apprise.NewClient(
+			appriseServiceURLs,
+			userIntegrations.AppriseURL,
+		)
+
+		if err := client.SendNotification(feed, entries); err != nil {
+			slog.Warn("Unable to send new entries to Apprise", slog.Any("error", err))
+		}
+	}
+
 	// Integrations that only support sending individual entries
-	if userIntegrations.TelegramBotEnabled || userIntegrations.AppriseEnabled {
+	if userIntegrations.TelegramBotEnabled {
 		for _, entry := range entries {
 			if userIntegrations.TelegramBotEnabled {
 				slog.Debug("Sending a new entry to Telegram",
@@ -541,35 +563,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 					)
 				}
 			}
-
-			if userIntegrations.AppriseEnabled {
-				slog.Debug("Sending a new entry to Apprise",
-					slog.Int64("user_id", userIntegrations.UserID),
-					slog.Int64("entry_id", entry.ID),
-					slog.String("entry_url", entry.URL),
-					slog.String("apprise_url", userIntegrations.AppriseURL),
-				)
-
-				appriseServiceURLs := userIntegrations.AppriseServicesURL
-				if feed.AppriseServiceURLs != "" {
-					appriseServiceURLs = feed.AppriseServiceURLs
-				}
-
-				client := apprise.NewClient(
-					appriseServiceURLs,
-					userIntegrations.AppriseURL,
-				)
-
-				if err := client.SendNotification(entry); err != nil {
-					slog.Error("Unable to send entry to Apprise",
-						slog.Int64("user_id", userIntegrations.UserID),
-						slog.Int64("entry_id", entry.ID),
-						slog.String("entry_url", entry.URL),
-						slog.String("apprise_url", userIntegrations.AppriseURL),
-						slog.Any("error", err),
-					)
-				}
-			}
 		}
 	}
+
 }
