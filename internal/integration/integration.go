@@ -565,5 +565,4 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 			}
 		}
 	}
-
 }
