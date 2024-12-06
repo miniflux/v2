@@ -490,7 +490,7 @@
     "form.integration.raindrop_collection_id": "Sammlungs-ID",
     "form.integration.raindrop_tags": "Tags (kommagetrennt)",
     "form.integration.readeck_activate": "Artikel in Readeck speichern",
-    "form.integration.readeck_endpoint": "Readeck-API-Endpunkt",
+    "form.integration.readeck_endpoint": "Readeck-URL",
     "form.integration.readeck_api_key": "Readeck-API-Schlüssel",
     "form.integration.readeck_labels": "Readeck-Labels",
     "form.integration.readeck_only_url": "Nur URL senden (anstelle des vollständigen Inhalts)",
