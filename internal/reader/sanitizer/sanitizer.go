@@ -195,7 +195,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 				value = rewriteIframeURL(attribute.Val)
 			case tagName == "img" && attribute.Key == "src" && isValidDataAttribute(attribute.Val):
 				value = attribute.Val
-			case isAnchor("a", attribute):
+			case tagName == "a" && attribute.Key == "href" && strings.HasPrefix(attribute.Val, "#"):
 				value = attribute.Val
 				isAnchorLink = true
 			default:
@@ -441,10 +441,6 @@ func isValidDataAttribute(value string) bool {
 	return slices.ContainsFunc(dataAttributeAllowList, func(prefix string) bool {
 		return strings.HasPrefix(value, prefix)
 	})
-}
-
-func isAnchor(tagName string, attribute html.Attribute) bool {
-	return tagName == "a" && attribute.Key == "href" && strings.HasPrefix(attribute.Val, "#")
 }
 
 func isPositiveInteger(value string) bool {
