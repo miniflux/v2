@@ -111,7 +111,7 @@ func Sanitize(baseURL, input string) string {
 				continue
 			}
 
-			buffer.WriteString(html.EscapeString(token.Data))
+			buffer.WriteString(token.String())
 		case html.StartTagToken:
 			parentTag = tagName
 
@@ -121,36 +121,42 @@ func Sanitize(baseURL, input string) string {
 
 			if isBlockedTag(tagName) || slices.ContainsFunc(token.Attr, func(attr html.Attribute) bool { return attr.Key == "hidden" }) {
 				blockedStack = append(blockedStack, tagName)
-			} else if len(blockedStack) == 0 && isValidTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
+				continue
+			}
 
+			if len(blockedStack) == 0 && isValidTag(tagName) {
+				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + ">")
 					} else {
-						buffer.WriteString("<" + tagName + ">")
+						buffer.WriteString(token.String())
 					}
 
 					tagStack = append(tagStack, tagName)
 				}
 			}
 		case html.EndTagToken:
-			if len(blockedStack) > 0 && blockedStack[len(blockedStack)-1] == tagName {
-				blockedStack = blockedStack[:len(blockedStack)-1]
-			} else if len(blockedStack) == 0 && isValidTag(tagName) && slices.Contains(tagStack, tagName) {
-				buffer.WriteString("</" + tagName + ">")
+			if len(blockedStack) == 0 {
+				if isValidTag(tagName) && slices.Contains(tagStack, tagName) {
+					buffer.WriteString(token.String())
+				}
+			} else {
+				if blockedStack[len(blockedStack)-1] == tagName {
+					blockedStack = blockedStack[:len(blockedStack)-1]
+				}
 			}
 		case html.SelfClosingTagToken:
 			if isPixelTracker(tagName, token.Attr) {
 				continue
 			}
-			if isValidTag(tagName) && len(blockedStack) == 0 {
+			if len(blockedStack) == 0 && isValidTag(tagName) {
 				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + "/>")
 					} else {
-						buffer.WriteString("<" + tagName + "/>")
+						buffer.WriteString(token.String())
 					}
 				}
 			}
