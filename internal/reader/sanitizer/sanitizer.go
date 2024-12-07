@@ -245,10 +245,8 @@ func getExtraAttributes(tagName string) ([]string, []string) {
 }
 
 func isValidTag(tagName string) bool {
-	if _, ok := tagAllowList[tagName]; ok {
-		return true
-	}
-	return false
+	_, ok := tagAllowList[tagName]
+	return ok
 }
 
 func isValidAttribute(tagName, attributeName string) bool {
