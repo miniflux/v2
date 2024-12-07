@@ -361,7 +361,6 @@ func isBlockedResource(src string) bool {
 		"feedsportal.com",
 		"api.flattr.com",
 		"stats.wordpress.com",
-		"plus.google.com/share",
 		"twitter.com/share",
 		"feeds.feedburner.com",
 	}
