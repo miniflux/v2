@@ -98,6 +98,7 @@ func Sanitize(baseURL, input string) string {
 		}
 
 		token := tokenizer.Token()
+		tagName := token.DataAtom.String()
 		switch token.Type {
 		case html.TextToken:
 			if len(blockedStack) > 0 {
@@ -112,7 +113,6 @@ func Sanitize(baseURL, input string) string {
 
 			buffer.WriteString(html.EscapeString(token.Data))
 		case html.StartTagToken:
-			tagName := token.DataAtom.String()
 			parentTag = tagName
 
 			if isPixelTracker(tagName, token.Attr) {
@@ -135,14 +135,12 @@ func Sanitize(baseURL, input string) string {
 				}
 			}
 		case html.EndTagToken:
-			tagName := token.DataAtom.String()
 			if len(blockedStack) > 0 && blockedStack[len(blockedStack)-1] == tagName {
 				blockedStack = blockedStack[:len(blockedStack)-1]
 			} else if len(blockedStack) == 0 && isValidTag(tagName) && slices.Contains(tagStack, tagName) {
 				buffer.WriteString("</" + tagName + ">")
 			}
 		case html.SelfClosingTagToken:
-			tagName := token.DataAtom.String()
 			if isPixelTracker(tagName, token.Attr) {
 				continue
 			}
