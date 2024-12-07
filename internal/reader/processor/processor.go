@@ -25,7 +25,7 @@ import (
 	"github.com/tdewolff/minify/v2/html"
 )
 
-var customReplaceRuleRegex = regexp.MustCompile(`rewrite\("(.*)"\|"(.*)"\)`)
+var customReplaceRuleRegex = regexp.MustCompile(`rewrite\("([^"]+)"\|"([^"]+)"\)`)
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
 func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.User, forceRefresh bool) {
