@@ -181,11 +181,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 		}
 
 		if tagName == "img" && (attribute.Key == "width" || attribute.Key == "height") {
-			if !isPositiveInteger(value) {
-				continue
-			}
-
-			if isImageLargerThanLayout {
+			if isImageLargerThanLayout || !isPositiveInteger(value) {
 				continue
 			}
 		}
