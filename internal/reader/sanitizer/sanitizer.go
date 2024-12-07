@@ -452,16 +452,12 @@ func isPositiveInteger(value string) bool {
 	return false
 }
 
-func getAttributeValue(name string, attributes []html.Attribute) string {
+func getIntegerAttributeValue(name string, attributes []html.Attribute) int {
 	for _, attribute := range attributes {
 		if attribute.Key == name {
-			return attribute.Val
+			number, _ := strconv.Atoi(attribute.Val)
+			return number
 		}
 	}
-	return ""
-}
-
-func getIntegerAttributeValue(name string, attributes []html.Attribute) int {
-	number, _ := strconv.Atoi(getAttributeValue(name, attributes))
-	return number
+	return 0
 }
