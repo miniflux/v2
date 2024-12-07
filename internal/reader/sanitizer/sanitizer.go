@@ -420,8 +420,7 @@ func sanitizeSrcsetAttr(baseURL, value string) string {
 	imageCandidates := ParseSrcSetAttribute(value)
 
 	for _, imageCandidate := range imageCandidates {
-		absoluteURL, err := urllib.AbsoluteURL(baseURL, imageCandidate.ImageURL)
-		if err == nil {
+		if absoluteURL, err := urllib.AbsoluteURL(baseURL, imageCandidate.ImageURL); err == nil {
 			imageCandidate.ImageURL = absoluteURL
 		}
 	}
