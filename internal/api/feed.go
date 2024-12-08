@@ -121,6 +121,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	feedModificationRequest.Patch(originalFeed)
+	originalFeed.ResetErrorCounter()
 	if err := h.store.UpdateFeed(originalFeed); err != nil {
 		json.ServerError(w, r, err)
 		return
