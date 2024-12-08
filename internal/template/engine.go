@@ -55,6 +55,7 @@ func (e *Engine) ParseTemplates() error {
 		}
 		commonTemplateContents.Write(fileData)
 	}
+	ct := template.Must(template.New("common").Funcs(e.funcMap.Map()).Parse(commonTemplateContents.String()))
 
 	dirEntries, err = viewTemplateFiles.ReadDir("templates/views")
 	if err != nil {
@@ -63,20 +64,11 @@ func (e *Engine) ParseTemplates() error {
 
 	for _, dirEntry := range dirEntries {
 		templateName := dirEntry.Name()
-		fileData, err := viewTemplateFiles.ReadFile("templates/views/" + dirEntry.Name())
-		if err != nil {
-			return err
-		}
-
-		var templateContents strings.Builder
-		templateContents.WriteString(commonTemplateContents.String())
-		templateContents.Write(fileData)
-
 		slog.Debug("Parsing template",
 			slog.String("template_name", templateName),
 		)
 
-		e.templates[templateName] = template.Must(template.New("main").Funcs(e.funcMap.Map()).Parse(templateContents.String()))
+		e.templates[templateName] = template.Must(ct.ParseFS(viewTemplateFiles, "template/views/"+templateName))
 	}
 
 	dirEntries, err = standaloneTemplateFiles.ReadDir("templates/standalone")
@@ -86,15 +78,9 @@ func (e *Engine) ParseTemplates() error {
 
 	for _, dirEntry := range dirEntries {
 		templateName := dirEntry.Name()
-		fileData, err := standaloneTemplateFiles.ReadFile("templates/standalone/" + dirEntry.Name())
-		if err != nil {
-			return err
-		}
-
-		slog.Debug("Parsing template",
-			slog.String("template_name", templateName),
-		)
-		e.templates[templateName] = template.Must(template.New("base").Funcs(e.funcMap.Map()).Parse(string(fileData)))
+		slog.Debug("Parsing template", slog.String("template_name", templateName))
+		templatePath := "templates/standalone/" + templateName
+		e.templates[templateName] = template.Must(template.New("").Funcs(e.funcMap.Map()).ParseFS(standaloneTemplateFiles, templatePath))
 	}
 
 	return nil
