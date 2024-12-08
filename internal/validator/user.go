@@ -155,7 +155,7 @@ func validateTheme(theme string) *locale.LocalizedError {
 }
 
 func validateLanguage(language string) *locale.LocalizedError {
-	languages := locale.AvailableLanguages()
+	languages := locale.AvailableLanguages
 	if _, found := languages[language]; !found {
 		return locale.NewLocalizedError("error.invalid_language")
 	}

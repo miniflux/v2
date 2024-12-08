@@ -39,7 +39,7 @@ func TestLoadCatalog(t *testing.T) {
 }
 
 func TestAllKeysHaveValue(t *testing.T) {
-	for language := range AvailableLanguages() {
+	for language := range AvailableLanguages {
 		messages, err := loadTranslationFile(language)
 		if err != nil {
 			t.Fatalf(`Unable to load translation messages for language %q`, language)
@@ -71,7 +71,7 @@ func TestMissingTranslations(t *testing.T) {
 		t.Fatal(`Unable to parse reference language`)
 	}
 
-	for language := range AvailableLanguages() {
+	for language := range AvailableLanguages {
 		if language == refLang {
 			continue
 		}
@@ -90,7 +90,7 @@ func TestMissingTranslations(t *testing.T) {
 }
 
 func TestTranslationFilePluralForms(t *testing.T) {
-	for language := range AvailableLanguages() {
+	for language := range AvailableLanguages {
 		messages, err := loadTranslationFile(language)
 		if err != nil {
 			t.Fatalf(`Unable to load translation messages for language %q`, language)
