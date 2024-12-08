@@ -26,12 +26,12 @@ var (
 	divToPElementsRegexp = regexp.MustCompile(`(?i)<(a|blockquote|dl|div|img|ol|p|pre|table|ul)`)
 	sentenceRegexp       = regexp.MustCompile(`\.( |$)`)
 
-	blacklistCandidatesRegexp  = regexp.MustCompile(`(?i)popupbody|-ad|g-plus`)
-	okMaybeItsACandidateRegexp = regexp.MustCompile(`(?i)and|article|body|column|main|shadow`)
-	unlikelyCandidatesRegexp   = regexp.MustCompile(`(?i)banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|foot|header|legends|menu|modal|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|ad-break|agegate|pagination|pager|popup|yom-remote`)
+	blacklistCandidatesRegexp  = regexp.MustCompile(`popupbody|-ad|g-plus`)
+	okMaybeItsACandidateRegexp = regexp.MustCompile(`and|article|body|column|main|shadow`)
+	unlikelyCandidatesRegexp   = regexp.MustCompile(`banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|foot|header|legends|menu|modal|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|ad-break|agegate|pagination|pager|popup|yom-remote`)
 
-	negativeRegexp = regexp.MustCompile(`(?i)hidden|^hid$|hid$|hid|^hid |banner|combx|comment|com-|contact|foot|footer|footnote|masthead|media|meta|modal|outbrain|promo|related|scroll|share|shoutbox|sidebar|skyscraper|sponsor|shopping|tags|tool|widget|byline|author|dateline|writtenby|p-author`)
-	positiveRegexp = regexp.MustCompile(`(?i)article|body|content|entry|hentry|h-entry|main|page|pagination|post|text|blog|story`)
+	negativeRegexp = regexp.MustCompile(`hid|banner|combx|comment|com-|contact|foot|masthead|media|meta|modal|outbrain|promo|related|scroll|share|shoutbox|sidebar|skyscraper|sponsor|shopping|tags|tool|widget|byline|author|dateline|writtenby`)
+	positiveRegexp = regexp.MustCompile(`article|body|content|entry|hentry|h-entry|main|page|pagination|post|text|blog|story`)
 )
 
 type candidate struct {
@@ -154,9 +154,11 @@ func removeUnlikelyCandidates(document *goquery.Document) {
 		}
 		class, _ := s.Attr("class")
 		id, _ := s.Attr("id")
-		str := class + id
+		str := strings.ToLower(class + id)
 
-		if blacklistCandidatesRegexp.MatchString(str) || (unlikelyCandidatesRegexp.MatchString(str) && !okMaybeItsACandidateRegexp.MatchString(str)) {
+		if blacklistCandidatesRegexp.MatchString(str) {
+			removeNodes(s)
+		} else if unlikelyCandidatesRegexp.MatchString(str) && !okMaybeItsACandidateRegexp.MatchString(str) {
 			removeNodes(s)
 		}
 	})
@@ -276,6 +278,9 @@ func getClassWeight(s *goquery.Selection) float32 {
 	weight := 0
 	class, _ := s.Attr("class")
 	id, _ := s.Attr("id")
+
+	class = strings.ToLower(class)
+	id = strings.ToLower(id)
 
 	if class != "" {
 		if negativeRegexp.MatchString(class) {
