@@ -294,24 +294,16 @@ func isPixelTracker(tagName string, attributes []html.Attribute) bool {
 }
 
 func hasRequiredAttributes(tagName string, attributes []string) bool {
-	elements := map[string][]string{
-		"a":      {"href"},
-		"iframe": {"src"},
-		"img":    {"src"},
-		"source": {"src", "srcset"},
+	switch tagName {
+	case "a":
+		return slices.Contains(attributes, "href")
+	case "iframe", "img":
+		return slices.Contains(attributes, "src")
+	case "source":
+		return slices.Contains(attributes, "src") || slices.Contains(attributes, "srcset")
+	default:
+		return true
 	}
-
-	if attrs, ok := elements[tagName]; ok {
-		for _, attribute := range attributes {
-			if slices.Contains(attrs, attribute) {
-				return true
-			}
-		}
-
-		return false
-	}
-
-	return true
 }
 
 // See https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
