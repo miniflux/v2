@@ -28,8 +28,14 @@ import (
 var customReplaceRuleRegex = regexp.MustCompile(`rewrite\("([^"]+)"\|"([^"]+)"\)`)
 
 // ProcessFeedEntries downloads original web page for entries and apply filters.
-func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, user *model.User, forceRefresh bool) {
+func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, forceRefresh bool) {
 	var filteredEntries model.Entries
+
+	user, storeErr := store.UserByID(userID)
+	if storeErr != nil {
+		slog.Error("Database error", slog.Any("error", storeErr))
+		return
+	}
 
 	// Process older entries first
 	for i := len(feed.Entries) - 1; i >= 0; i-- {
