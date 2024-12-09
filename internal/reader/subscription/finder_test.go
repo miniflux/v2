@@ -481,3 +481,43 @@ func TestParseWebPageWithNoHref(t *testing.T) {
 		t.Fatal(`Incorrect number of subscriptions returned`)
 	}
 }
+
+func TestParseSiteMap(t *testing.T) {
+	htmlPage := `
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>http://www.example.com/</loc>
+      <lastmod>2005-01-01</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>http://www.example.com/feed/myfeed</loc>
+      <lastmod>2005-01-01</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>http://www.example.com/myfeed.xml</loc>
+      <lastmod>2005-01-01</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>http://www.example.com/atom_feed.xml</loc>
+      <lastmod>2005-01-01</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+</urlset> `
+
+	subscriptions, err := findSubscriptionsFromDownloadedSitemap(strings.NewReader(htmlPage))
+	if err != nil {
+		t.Fatalf(`Parsing a correctly formatted HTML page should not return any error: %v`, err)
+	}
+
+	if len(subscriptions) != 3 {
+		t.Fatal(`Incorrect number of subscriptions returned`)
+	}
+}

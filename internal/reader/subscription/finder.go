@@ -5,6 +5,7 @@ package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
 	"bytes"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"log/slog"
@@ -125,6 +126,14 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		slog.Debug("Subscriptions found with well-known URLs", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
 		return subscriptions, nil
 	}
+	// Step 7) Check if the website has feeds in its sitemap.
+	slog.Debug("Try to detect feeds from sitemap", slog.String("website_url", websiteURL))
+	if subscriptions, localizedError := f.FindSubscriptionsFromSitemap(websiteURL); localizedError != nil {
+		return nil, localizedError
+	} else if len(subscriptions) > 0 {
+		slog.Debug("Subscriptions found with sitemap", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
+		return subscriptions, nil
+	}
 
 	return nil, nil
 }
@@ -190,14 +199,16 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL, contentTyp
 
 func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
 	knownURLs := map[string]string{
-		"atom.xml":  parser.FormatAtom,
-		"feed.xml":  parser.FormatAtom,
-		"feed/":     parser.FormatAtom,
-		"rss.xml":   parser.FormatRSS,
-		"rss/":      parser.FormatRSS,
-		"index.rss": parser.FormatRSS,
-		"index.xml": parser.FormatRSS,
-		"feed.atom": parser.FormatAtom,
+		"atom.xml":   parser.FormatAtom,
+		"feed.xml":   parser.FormatAtom,
+		"feed":       parser.FormatAtom,
+		"rss.xml":    parser.FormatRSS,
+		"rss":        parser.FormatRSS,
+		"index.rss":  parser.FormatRSS,
+		"index.xml":  parser.FormatRSS,
+		"feed.atom":  parser.FormatAtom,
+		"atom":       parser.FormatAtom,
+		"index.atom": parser.FormatAtom,
 	}
 
 	websiteURLRoot := urllib.RootURL(websiteURL)
@@ -315,4 +326,67 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubePlaylistPage(websiteURL
 	}
 
 	return nil, nil
+}
+
+func (f *SubscriptionFinder) FindSubscriptionsFromSitemap(websiteURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
+	websiteURLRoot := urllib.RootURL(websiteURL)
+
+	responseHandler := fetcher.NewResponseHandler(f.requestBuilder.ExecuteRequest(websiteURLRoot + "/sitemap.xml"))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to find subscriptions", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return nil, localizedError
+	}
+
+	responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
+	if localizedError != nil {
+		slog.Warn("Unable to find subscriptions", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return nil, localizedError
+	}
+	return findSubscriptionsFromDownloadedSitemap(bytes.NewReader(responseBody))
+}
+
+func findSubscriptionsFromDownloadedSitemap(body io.Reader) (Subscriptions, *locale.LocalizedErrorWrapper) {
+	var subscriptions Subscriptions
+	loc := struct {
+		Content string `xml:",chardata"`
+	}{}
+
+	decoder := xml.NewDecoder(body)
+	for {
+		t, _ := decoder.Token()
+		if t == nil {
+			break
+		}
+		switch se := t.(type) {
+		case xml.StartElement:
+			if se.Name.Local != "loc" {
+				continue
+			}
+
+			if err := decoder.DecodeElement(&loc, &se); err != nil {
+				slog.Warn("Unable to decode loc", slog.Any("error", err))
+			}
+			feedUrl := loc.Content
+			switch {
+			case strings.Contains(feedUrl, ".xml"),
+				strings.Contains(feedUrl, "rss"):
+				subscriptions = append(subscriptions, &Subscription{
+					Type:  parser.FormatRSS,
+					Title: feedUrl,
+					URL:   feedUrl,
+				})
+			case strings.Contains(feedUrl, "feed"),
+				strings.Contains(feedUrl, "atom"):
+				subscriptions = append(subscriptions, &Subscription{
+					Type:  parser.FormatAtom,
+					Title: feedUrl,
+					URL:   feedUrl,
+				})
+			}
+		}
+	}
+
+	return subscriptions, nil
 }
