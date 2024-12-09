@@ -4,7 +4,6 @@
 package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
-	"fmt"
 	"io"
 	"regexp"
 	"slices"
@@ -19,7 +18,7 @@ import (
 )
 
 var (
-	youtubeEmbedRegex = regexp.MustCompile(`//(?:www\.)?youtube\.com/embed/(.+)$`)
+	youtubeEmbedRegex = regexp.MustCompile(`^(?:https?:)?//(?:www\.)?youtube\.com/embed/(.+)$`)
 	tagAllowList      = map[string][]string{
 		"a":          {"href", "title", "id"},
 		"abbr":       {"title"},
@@ -221,7 +220,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 		}
 
 		attrNames = append(attrNames, attribute.Key)
-		htmlAttrs = append(htmlAttrs, fmt.Sprintf(`%s=%q`, attribute.Key, html.EscapeString(value)))
+		htmlAttrs = append(htmlAttrs, attribute.Key+`="`+html.EscapeString(value)+`"`)
 	}
 
 	if !isAnchorLink {

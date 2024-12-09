@@ -91,8 +91,6 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 		entry.Content = addHackerNewsLinksUsing(entry.Content, "hack")
 	case "add_hn_links_using_opener":
 		entry.Content = addHackerNewsLinksUsing(entry.Content, "opener")
-	case "parse_markdown":
-		entry.Content = parseMarkdown(entry.Content)
 	case "remove_tables":
 		entry.Content = removeTables(entry.Content)
 	case "remove_clickbait":
