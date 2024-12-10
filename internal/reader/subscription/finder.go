@@ -25,7 +25,6 @@ import (
 )
 
 var (
-	youtubeHostRegex    = regexp.MustCompile(`youtube\.com$`)
 	youtubeChannelRegex = regexp.MustCompile(`channel/(.*)$`)
 )
 
@@ -284,7 +283,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeChannelPage(websiteURL 
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_site_url", err)
 	}
 
-	if !youtubeHostRegex.MatchString(decodedUrl.Host) {
+	if !strings.HasSuffix(decodedUrl.Host, "youtube.com") {
 		slog.Debug("This website is not a YouTube page, the regex doesn't match", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
@@ -303,7 +302,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubePlaylistPage(websiteURL
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.invalid_site_url", err)
 	}
 
-	if !youtubeHostRegex.MatchString(decodedUrl.Host) {
+	if !strings.HasSuffix(decodedUrl.Host, "youtube.com") {
 		slog.Debug("This website is not a YouTube page, the regex doesn't match", slog.String("website_url", websiteURL))
 		return nil, nil
 	}
