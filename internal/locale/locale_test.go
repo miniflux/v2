@@ -6,7 +6,7 @@ package locale // import "miniflux.app/v2/internal/locale"
 import "testing"
 
 func TestAvailableLanguages(t *testing.T) {
-	results := AvailableLanguages()
+	results := AvailableLanguages
 	for k, v := range results {
 		if k == "" {
 			t.Errorf(`Empty language key detected`)

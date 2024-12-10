@@ -44,7 +44,7 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
 	view.Set("themes", model.Themes())
-	view.Set("languages", locale.AvailableLanguages())
+	view.Set("languages", locale.AvailableLanguages)
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")
 	view.Set("user", loggedUser)
