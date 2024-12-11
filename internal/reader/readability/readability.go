@@ -77,7 +77,7 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 		return "", "", err
 	}
 
-	if hrefValue, exists := document.Find("head base").First().Attr("href"); exists {
+	if hrefValue, exists := document.FindMatcher(goquery.Single("head base")).Attr("href"); exists {
 		hrefValue = strings.TrimSpace(hrefValue)
 		if urllib.IsAbsoluteURL(hrefValue) {
 			baseURL = hrefValue
