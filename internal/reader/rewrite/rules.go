@@ -3,7 +3,10 @@
 
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
-import "regexp"
+import (
+	"net/url"
+	"strings"
+)
 
 // List of predefined rewrite rules (alphabetically sorted)
 // Available rules: "add_image_title", "add_youtube_video"
@@ -39,49 +42,32 @@ var predefinedRules = map[string]string{
 	"youtube.com":            "add_youtube_video",
 }
 
-type RefererRule struct {
-	URLPattern *regexp.Regexp
-	Referer    string
-}
-
-// List of predefined referer rules
-var PredefinedRefererRules = []RefererRule{
-	{
-		URLPattern: regexp.MustCompile(`^https://\w+\.sinaimg\.cn`),
-		Referer:    "https://weibo.com",
-	},
-	{
-		URLPattern: regexp.MustCompile(`^https://i\.pximg\.net`),
-		Referer:    "https://www.pixiv.net",
-	},
-	{
-		URLPattern: regexp.MustCompile(`^https://cdnfile\.sspai\.com`),
-		Referer:    "https://sspai.com",
-	},
-	{
-		URLPattern: regexp.MustCompile(`^https://(?:\w|-)+\.cdninstagram\.com`),
-		Referer:    "https://www.instagram.com",
-	},
-	{
-		URLPattern: regexp.MustCompile(`^https://sp1\.piokok\.com`),
-		Referer:    "https://sp1.piokok.com",
-	},
-	{
-		URLPattern: regexp.MustCompile(`^https://f\.video\.weibocdn\.com`),
-		Referer:    "https://weibo.com",
-	},
-	{
-		URLPattern: regexp.MustCompile(`^https://img\.hellogithub\.com`),
-		Referer:    "https://hellogithub.com",
-	},
-}
-
 // GetRefererForURL returns the referer for the given URL if it exists, otherwise an empty string.
-func GetRefererForURL(url string) string {
-	for _, rule := range PredefinedRefererRules {
-		if rule.URLPattern.MatchString(url) {
-			return rule.Referer
-		}
+func GetRefererForURL(u string) string {
+	parsedUrl, err := url.Parse(u)
+	if err != nil {
+		return ""
 	}
+
+	switch parsedUrl.Hostname() {
+	case "i.pximg.net":
+		return "https://www.pixiv.net"
+	case "sp1.piokok.com":
+		return "https://sp1.piokok.com"
+	case "cdnfile.sspai.com":
+		return "https://sspai.com"
+	case "f.video.weibocdn.com":
+		return "https://weibo.com"
+	case "img.hellogithub.com":
+		return "https://hellogithub.com"
+	}
+
+	switch {
+	case strings.HasSuffix(parsedUrl.Hostname(), ".sinaimg.cn"):
+		return "https://weibo.com"
+	case strings.HasSuffix(parsedUrl.Hostname(), ".cdninstagram.com"):
+		return "https://www.instagram.com"
+	}
+
 	return ""
 }
