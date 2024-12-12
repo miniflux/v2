@@ -48,7 +48,7 @@ func fetchNebulaWatchTime(websiteURL string) (int, error) {
 		return 0, docErr
 	}
 
-	durs, exists := doc.Find(`meta[property="video:duration"]`).First().Attr("content")
+	durs, exists := doc.FindMatcher(goquery.Single(`meta[property="video:duration"]`)).Attr("content")
 	// durs contains video watch time in seconds
 	if !exists {
 		return 0, errors.New("duration has not found")

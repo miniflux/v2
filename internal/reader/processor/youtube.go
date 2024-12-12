@@ -60,7 +60,7 @@ func fetchYouTubeWatchTimeFromWebsite(websiteURL string) (int, error) {
 		return 0, docErr
 	}
 
-	durs, exists := doc.Find(`meta[itemprop="duration"]`).First().Attr("content")
+	durs, exists := doc.FindMatcher(goquery.Single(`meta[itemprop="duration"]`)).Attr("content")
 	if !exists {
 		return 0, errors.New("duration has not found")
 	}

@@ -87,7 +87,7 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 		}
 	}
 
-	output, err := doc.Find("body").First().Html()
+	output, err := doc.FindMatcher(goquery.Single("body")).Html()
 	if err != nil {
 		return htmlDocument
 	}

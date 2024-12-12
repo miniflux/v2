@@ -44,7 +44,7 @@ func addImageTitle(entryURL, entryContent string) string {
 			img.ReplaceWithHtml(`<figure><img src="` + srcAttr + `" alt="` + altAttr + `"/><figcaption><p>` + html.EscapeString(titleAttr) + `</p></figcaption></figure>`)
 		})
 
-		output, _ := doc.Find("body").First().Html()
+		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 		return output
 	}
 
@@ -76,7 +76,7 @@ func addMailtoSubject(entryURL, entryContent string) string {
 			a.AppendHtml(" [" + html.EscapeString(subject) + "]")
 		})
 
-		output, _ := doc.Find("body").First().Html()
+		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 		return output
 	}
 
@@ -160,7 +160,7 @@ func addDynamicImage(entryURL, entryContent string) string {
 	}
 
 	if changed {
-		output, _ := doc.Find("body").First().Html()
+		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 		return output
 	}
 
@@ -197,7 +197,7 @@ func addDynamicIframe(entryURL, entryContent string) string {
 	})
 
 	if changed {
-		output, _ := doc.Find("body").First().Html()
+		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 		return output
 	}
 
@@ -217,7 +217,7 @@ func fixMediumImages(entryURL, entryContent string) string {
 		}
 	})
 
-	output, _ := doc.Find("body").First().Html()
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
 
@@ -239,7 +239,7 @@ func useNoScriptImages(entryURL, entryContent string) string {
 		}
 	})
 
-	output, _ := doc.Find("body").First().Html()
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
 
@@ -317,7 +317,7 @@ func removeCustom(entryContent string, selector string) string {
 
 	doc.Find(selector).Remove()
 
-	output, _ := doc.Find("body").First().Html()
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
 
@@ -344,7 +344,7 @@ func applyFuncOnTextContent(entryContent string, selector string, repl func(stri
 
 	doc.Find(selector).Each(treatChildren)
 
-	output, _ := doc.Find("body").First().Html()
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
 
@@ -401,7 +401,7 @@ func addHackerNewsLinksUsing(entryContent, app string) string {
 			}
 		})
 
-		output, _ := doc.Find("body").First().Html()
+		output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 		return output
 	}
 
@@ -420,7 +420,7 @@ func removeTables(entryContent string) string {
 
 	for _, selector := range selectors {
 		for {
-			loopElement = doc.Find(selector).First()
+			loopElement = doc.FindMatcher(goquery.Single(selector))
 
 			if loopElement.Length() == 0 {
 				break
@@ -436,6 +436,6 @@ func removeTables(entryContent string) string {
 		}
 	}
 
-	output, _ := doc.Find("body").First().Html()
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
