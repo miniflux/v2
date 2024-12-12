@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"regexp"
+	"net/url"
 	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
@@ -17,14 +17,17 @@ import (
 	"miniflux.app/v2/internal/reader/fetcher"
 )
 
-var nebulaRegex = regexp.MustCompile(`^https://nebula\.tv`)
-
 func shouldFetchNebulaWatchTime(entry *model.Entry) bool {
 	if !config.Opts.FetchNebulaWatchTime() {
 		return false
 	}
-	matches := nebulaRegex.FindStringSubmatch(entry.URL)
-	return matches != nil
+
+	u, err := url.Parse(entry.URL)
+	if err != nil {
+		return false
+	}
+
+	return u.Hostname() == "nebula.tv"
 }
 
 func fetchNebulaWatchTime(websiteURL string) (int, error) {
