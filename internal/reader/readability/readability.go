@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"math"
 	"regexp"
 	"strings"
 
@@ -108,7 +107,7 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 // Things like preambles, content split by ads that we removed, etc.
 func getArticle(topCandidate *candidate, candidates candidateList) string {
 	output := bytes.NewBufferString("<div>")
-	siblingScoreThreshold := float32(math.Max(10, float64(topCandidate.score*.2)))
+	siblingScoreThreshold := max(10, topCandidate.score*.2)
 
 	topCandidate.selection.Siblings().Union(topCandidate.selection).Each(func(i int, s *goquery.Selection) {
 		append := false
@@ -223,7 +222,7 @@ func getCandidates(document *goquery.Document) candidateList {
 		contentScore += float32(strings.Count(text, ",") + 1)
 
 		// For every 100 characters in this paragraph, add another point. Up to 3 points.
-		contentScore += float32(math.Min(float64(int(len(text)/100.0)), 3))
+		contentScore += float32(min(int(len(text)/100.0), 3))
 
 		candidates[parentNode].score += contentScore
 		if grandParentNode != nil {

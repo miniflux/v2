@@ -123,8 +123,8 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelayInMinutes int) {
 			intervalMinutes = config.Opts.SchedulerEntryFrequencyMaxInterval()
 		} else {
 			intervalMinutes = int(math.Round(float64(7*24*60) / float64(weeklyCount*config.Opts.SchedulerEntryFrequencyFactor())))
-			intervalMinutes = int(math.Min(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMaxInterval())))
-			intervalMinutes = int(math.Max(float64(intervalMinutes), float64(config.Opts.SchedulerEntryFrequencyMinInterval())))
+			intervalMinutes = min(intervalMinutes, config.Opts.SchedulerEntryFrequencyMaxInterval())
+			intervalMinutes = max(intervalMinutes, config.Opts.SchedulerEntryFrequencyMinInterval())
 		}
 	}
 
