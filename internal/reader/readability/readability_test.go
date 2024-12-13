@@ -4,6 +4,8 @@
 package readability // import "miniflux.app/v2/internal/reader/readability"
 
 import (
+	"bytes"
+	"os"
 	"strings"
 	"testing"
 )
@@ -159,5 +161,24 @@ func TestRemoveBlacklist(t *testing.T) {
 
 	if content != want {
 		t.Errorf(`Invalid content, got %s instead of %s`, content, want)
+	}
+}
+
+func BenchmarkExtractContent(b *testing.B) {
+	var testCases = map[string][]byte{
+		"miniflux_github.html":    {},
+		"miniflux_wikipedia.html": {},
+	}
+	for filename := range testCases {
+		data, err := os.ReadFile("testdata/" + filename)
+		if err != nil {
+			b.Fatalf(`Unable to read file %q: %v`, filename, err)
+		}
+		testCases[filename] = data
+	}
+	for range b.N {
+		for _, v := range testCases {
+			ExtractContent(bytes.NewReader(v))
+		}
 	}
 }
