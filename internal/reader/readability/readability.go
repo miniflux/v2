@@ -4,7 +4,6 @@
 package readability // import "miniflux.app/v2/internal/reader/readability"
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"log/slog"
@@ -23,7 +22,6 @@ const (
 
 var (
 	divToPElementsRegexp = regexp.MustCompile(`(?i)<(a|blockquote|dl|div|img|ol|p|pre|table|ul)`)
-	sentenceRegexp       = regexp.MustCompile(`\.( |$)`)
 
 	blacklistCandidatesRegexp  = regexp.MustCompile(`popupbody|-ad|g-plus`)
 	okMaybeItsACandidateRegexp = regexp.MustCompile(`and|article|body|column|main|shadow`)
@@ -84,7 +82,7 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 	}
 
 	document.Find("script,style").Each(func(i int, s *goquery.Selection) {
-		removeNodes(s)
+		s.Remove()
 	})
 
 	transformMisusedDivsIntoParagraphs(document)
@@ -106,7 +104,8 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 // Now that we have the top candidate, look through its siblings for content that might also be related.
 // Things like preambles, content split by ads that we removed, etc.
 func getArticle(topCandidate *candidate, candidates candidateList) string {
-	output := bytes.NewBufferString("<div>")
+	var output strings.Builder
+	output.WriteString("<div>")
 	siblingScoreThreshold := max(10, topCandidate.score*.2)
 
 	topCandidate.selection.Siblings().Union(topCandidate.selection).Each(func(i int, s *goquery.Selection) {
@@ -124,10 +123,14 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 			content := s.Text()
 			contentLength := len(content)
 
-			if contentLength >= 80 && linkDensity < .25 {
-				append = true
-			} else if contentLength < 80 && linkDensity == 0 && sentenceRegexp.MatchString(content) {
-				append = true
+			if contentLength >= 80 {
+				if linkDensity < .25 {
+					append = true
+				}
+			} else {
+				if linkDensity == 0 && containsSentence(content) {
+					append = true
+				}
 			}
 		}
 
@@ -138,7 +141,7 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 			}
 
 			html, _ := s.Html()
-			fmt.Fprintf(output, "<%s>%s</%s>", tag, html, tag)
+			output.WriteString("<" + tag + ">" + html + "</" + tag + ">")
 		}
 	})
 
@@ -156,9 +159,9 @@ func removeUnlikelyCandidates(document *goquery.Document) {
 		str := strings.ToLower(class + id)
 
 		if blacklistCandidatesRegexp.MatchString(str) {
-			removeNodes(s)
+			s.Remove()
 		} else if unlikelyCandidatesRegexp.MatchString(str) && !okMaybeItsACandidateRegexp.MatchString(str) {
-			removeNodes(s)
+			s.Remove()
 		}
 	})
 }
@@ -222,7 +225,7 @@ func getCandidates(document *goquery.Document) candidateList {
 		contentScore += float32(strings.Count(text, ",") + 1)
 
 		// For every 100 characters in this paragraph, add another point. Up to 3 points.
-		contentScore += float32(min(int(len(text)/100.0), 3))
+		contentScore += float32(min(len(text)/100.0, 3))
 
 		candidates[parentNode].score += contentScore
 		if grandParentNode != nil {
@@ -261,12 +264,13 @@ func scoreNode(s *goquery.Selection) *candidate {
 // Get the density of links as a percentage of the content
 // This is the amount of text that is inside a link divided by the total text in the node.
 func getLinkDensity(s *goquery.Selection) float32 {
-	linkLength := len(s.Find("a").Text())
 	textLength := len(s.Text())
 
 	if textLength == 0 {
 		return 0
 	}
+
+	linkLength := len(s.Find("a").Text())
 
 	return float32(linkLength) / float32(textLength)
 }
@@ -278,25 +282,20 @@ func getClassWeight(s *goquery.Selection) float32 {
 	class, _ := s.Attr("class")
 	id, _ := s.Attr("id")
 
-	class = strings.ToLower(class)
-	id = strings.ToLower(id)
-
 	if class != "" {
+		class = strings.ToLower(class)
 		if negativeRegexp.MatchString(class) {
 			weight -= 25
-		}
-
-		if positiveRegexp.MatchString(class) {
+		} else if positiveRegexp.MatchString(class) {
 			weight += 25
 		}
 	}
 
 	if id != "" {
+		id = strings.ToLower(id)
 		if negativeRegexp.MatchString(id) {
 			weight -= 25
-		}
-
-		if positiveRegexp.MatchString(id) {
+		} else if positiveRegexp.MatchString(id) {
 			weight += 25
 		}
 	}
@@ -314,11 +313,6 @@ func transformMisusedDivsIntoParagraphs(document *goquery.Document) {
 	})
 }
 
-func removeNodes(s *goquery.Selection) {
-	s.Each(func(i int, s *goquery.Selection) {
-		parent := s.Parent()
-		if parent.Length() > 0 {
-			parent.Get(0).RemoveChild(s.Get(0))
-		}
-	})
+func containsSentence(content string) bool {
+	return strings.HasSuffix(content, ".") || strings.Contains(content, ". ")
 }
