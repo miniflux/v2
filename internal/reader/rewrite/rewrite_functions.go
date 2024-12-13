@@ -27,7 +27,7 @@ var (
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
-func addImageTitle(entryURL, entryContent string) string {
+func addImageTitle(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent
@@ -51,7 +51,7 @@ func addImageTitle(entryURL, entryContent string) string {
 	return entryContent
 }
 
-func addMailtoSubject(entryURL, entryContent string) string {
+func addMailtoSubject(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent
@@ -83,7 +83,7 @@ func addMailtoSubject(entryURL, entryContent string) string {
 	return entryContent
 }
 
-func addDynamicImage(entryURL, entryContent string) string {
+func addDynamicImage(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent
@@ -167,7 +167,7 @@ func addDynamicImage(entryURL, entryContent string) string {
 	return entryContent
 }
 
-func addDynamicIframe(entryURL, entryContent string) string {
+func addDynamicIframe(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent
@@ -204,7 +204,7 @@ func addDynamicIframe(entryURL, entryContent string) string {
 	return entryContent
 }
 
-func fixMediumImages(entryURL, entryContent string) string {
+func fixMediumImages(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent
@@ -221,7 +221,7 @@ func fixMediumImages(entryURL, entryContent string) string {
 	return output
 }
 
-func useNoScriptImages(entryURL, entryContent string) string {
+func useNoScriptImages(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
 	if err != nil {
 		return entryContent
