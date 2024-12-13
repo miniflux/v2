@@ -23,7 +23,6 @@ var (
 	youtubeRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
 	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
 	invidioRegex   = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
-	imgRegex       = regexp.MustCompile(`<img [^>]+>`)
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
@@ -84,10 +83,11 @@ func addMailtoSubject(entryContent string) string {
 }
 
 func addDynamicImage(entryContent string) string {
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	parserHtml, err := nethtml.ParseWithOptions(strings.NewReader(entryContent), nethtml.ParseOptionEnableScripting(false))
 	if err != nil {
 		return entryContent
 	}
+	doc := goquery.NewDocumentFromNode(parserHtml)
 
 	// Ordered most preferred to least preferred.
 	candidateAttrs := []string{
@@ -149,12 +149,9 @@ func addDynamicImage(entryContent string) string {
 
 	if !changed {
 		doc.Find("noscript").Each(func(i int, noscript *goquery.Selection) {
-			matches := imgRegex.FindAllString(noscript.Text(), 2)
-
-			if len(matches) == 1 {
+			if img := noscript.Find("img"); img.Length() == 1 {
+				img.Unwrap()
 				changed = true
-
-				noscript.ReplaceWithHtml(matches[0])
 			}
 		})
 	}
