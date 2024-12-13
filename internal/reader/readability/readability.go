@@ -23,7 +23,6 @@ const (
 var (
 	divToPElementsRegexp = regexp.MustCompile(`(?i)<(a|blockquote|dl|div|img|ol|p|pre|table|ul)`)
 
-	blacklistCandidatesRegexp  = regexp.MustCompile(`popupbody|-ad|g-plus`)
 	okMaybeItsACandidateRegexp = regexp.MustCompile(`and|article|body|column|main|shadow`)
 	unlikelyCandidatesRegexp   = regexp.MustCompile(`banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|foot|header|legends|menu|modal|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|ad-break|agegate|pagination|pager|popup|yom-remote`)
 
@@ -81,9 +80,7 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 		}
 	}
 
-	document.Find("script,style").Each(func(i int, s *goquery.Selection) {
-		s.Remove()
-	})
+	document.Find("script,style").Remove()
 
 	transformMisusedDivsIntoParagraphs(document)
 	removeUnlikelyCandidates(document)
@@ -150,18 +147,29 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 }
 
 func removeUnlikelyCandidates(document *goquery.Document) {
+	var shouldRemove = func(str string) bool {
+		str = strings.ToLower(str)
+		if strings.Contains(str, "popupbody") || strings.Contains(str, "-ad") || strings.Contains(str, "g-plus") {
+			return true
+		} else if unlikelyCandidatesRegexp.MatchString(str) && !okMaybeItsACandidateRegexp.MatchString(str) {
+			return true
+		}
+		return false
+	}
+
 	document.Find("*").Each(func(i int, s *goquery.Selection) {
 		if s.Length() == 0 || s.Get(0).Data == "html" || s.Get(0).Data == "body" {
 			return
 		}
-		class, _ := s.Attr("class")
-		id, _ := s.Attr("id")
-		str := strings.ToLower(class + id)
 
-		if blacklistCandidatesRegexp.MatchString(str) {
-			s.Remove()
-		} else if unlikelyCandidatesRegexp.MatchString(str) && !okMaybeItsACandidateRegexp.MatchString(str) {
-			s.Remove()
+		if class, ok := s.Attr("class"); ok {
+			if shouldRemove(class) {
+				s.Remove()
+			}
+		} else if id, ok := s.Attr("id"); ok {
+			if shouldRemove(id) {
+				s.Remove()
+			}
 		}
 	})
 }
@@ -279,10 +287,8 @@ func getLinkDensity(s *goquery.Selection) float32 {
 // element looks good or bad.
 func getClassWeight(s *goquery.Selection) float32 {
 	weight := 0
-	class, _ := s.Attr("class")
-	id, _ := s.Attr("id")
 
-	if class != "" {
+	if class, ok := s.Attr("class"); ok {
 		class = strings.ToLower(class)
 		if negativeRegexp.MatchString(class) {
 			weight -= 25
@@ -291,7 +297,7 @@ func getClassWeight(s *goquery.Selection) float32 {
 		}
 	}
 
-	if id != "" {
+	if id, ok := s.Attr("id"); ok {
 		id = strings.ToLower(id)
 		if negativeRegexp.MatchString(id) {
 			weight -= 25
