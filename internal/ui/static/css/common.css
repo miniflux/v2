@@ -748,16 +748,12 @@ template {
     padding-left: 15px;
 }
 
-.pagination-next {
+.pagination-next, .pagination-last {
     text-align: right;
 }
 
 .pagination-next:after {
     content: " ›";
-}
-
-.pagination-last {
-    text-align: right;
 }
 
 .pagination-last:after {
