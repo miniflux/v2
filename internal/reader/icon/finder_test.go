@@ -146,7 +146,7 @@ func TestResizeIconSmallGif(t *testing.T) {
 }
 
 func TestResizeIconPng(t *testing.T) {
-	data, err := base64.StdEncoding.DecodeString("iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAAHElEQVR42mP8z/C/noFCwDhqyKgho4aMGkIlQwBrHSpf28Yx+gAAAABJRU5ErkJggg==")
+	data, err := base64.StdEncoding.DecodeString("iVBORw0KGgoAAAANSUhEUgAAACEAAAAhCAYAAABX5MJvAAAALUlEQVR42u3OMQEAAAgDoJnc6BpjDyRgcrcpGwkJCQkJCQkJCQkJCQkJCYmyB7NfUj/Kk4FkAAAAAElFTkSuQmCC")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +157,7 @@ func TestResizeIconPng(t *testing.T) {
 	resizedIcon := resizeIcon(&icon)
 
 	if bytes.Equal(data, resizedIcon.Content) {
-		t.Fatalf("Didn't convert png of 17x17")
+		t.Fatalf("Didn't convert png of 33x33")
 	}
 
 	config, _, err := image.DecodeConfig(bytes.NewReader(resizedIcon.Content))
@@ -165,7 +165,7 @@ func TestResizeIconPng(t *testing.T) {
 		t.Fatalf("Couln't decode resulting png: %v", err)
 	}
 
-	if config.Height != 16 || config.Width != 16 {
+	if config.Height != 32 || config.Width != 32 {
 		t.Fatalf("Was expecting an image of 16x16, got %dx%d", config.Width, config.Height)
 	}
 }
