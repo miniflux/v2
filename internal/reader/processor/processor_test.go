@@ -75,6 +75,8 @@ func TestAllowEntries(t *testing.T) {
 		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Example", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)Test"}, true},
 		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)example"}, true},
 		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)Test"}, false},
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 15, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-01-01,2024-12-31"}, true},
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2023, 12, 31, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-01-01,2024-12-31"}, false},
 	}
 
 	for _, tc := range scenarios {
