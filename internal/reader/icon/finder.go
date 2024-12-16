@@ -206,7 +206,7 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 		slog.Warn("unable to decode the metadata of the icon", slog.Any("error", err))
 		return icon
 	}
-	if config.Height <= 16 && config.Width <= 16 {
+	if config.Height <= 32 && config.Width <= 32 {
 		slog.Debug("icon don't need to be rescaled", slog.Int("height", config.Height), slog.Int("width", config.Width))
 		return icon
 	}
@@ -227,7 +227,7 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 		return icon
 	}
 
-	dst := image.NewRGBA(image.Rect(0, 0, 16, 16))
+	dst := image.NewRGBA(image.Rect(0, 0, 32, 32))
 	draw.BiLinear.Scale(dst, dst.Rect, src, src.Bounds(), draw.Over, nil)
 
 	var b bytes.Buffer
