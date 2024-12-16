@@ -470,6 +470,10 @@ func minifyEntryContent(entryContent string) string {
 }
 
 func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
+	if pattern == "future" {
+		return entryDate.After(time.Now())
+	}
+
 	parts := strings.SplitN(pattern, ":", 2)
 	if len(parts) != 2 {
 		return false
@@ -479,10 +483,6 @@ func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
 	dateStr := parts[1]
 
 	switch operator {
-	case "future":
-		if dateStr == "block" {
-			return entryDate.After(time.Now())
-		}
 	case "before":
 		targetDate, err := time.Parse("2006-01-02", dateStr)
 		if err != nil {
