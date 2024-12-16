@@ -751,11 +751,10 @@ function checkShareAPI(title, url) {
             title: title,
             url: url
         });
-        window.location.reload();
     } catch (err) {
         console.error(err);
-        window.location.reload();
     }
+    window.location.reload();
 }
 
 function getCsrfToken() {
