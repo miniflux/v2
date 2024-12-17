@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
+
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/model"
@@ -20,9 +23,6 @@ import (
 	"miniflux.app/v2/internal/reader/scraper"
 	"miniflux.app/v2/internal/reader/urlcleaner"
 	"miniflux.app/v2/internal/storage"
-
-	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/html"
 )
 
 var customReplaceRuleRegex = regexp.MustCompile(`rewrite\("([^"]+)"\|"([^"]+)"\)`)
@@ -141,6 +141,9 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 
 			var match bool
 			switch parts[0] {
+			case "EntryDate":
+				datePattern := parts[1]
+				match = isDateMatchingPattern(entry.Date, datePattern)
 			case "EntryTitle":
 				match, _ = regexp.MatchString(parts[1], entry.Title)
 			case "EntryURL":
@@ -211,6 +214,9 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 
 			var match bool
 			switch parts[0] {
+			case "EntryDate":
+				datePattern := parts[1]
+				match = isDateMatchingPattern(entry.Date, datePattern)
 			case "EntryTitle":
 				match, _ = regexp.MatchString(parts[1], entry.Title)
 			case "EntryURL":
@@ -461,4 +467,45 @@ func minifyEntryContent(entryContent string) string {
 	}
 
 	return entryContent
+}
+
+func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
+	if pattern == "future" {
+		return entryDate.After(time.Now())
+	}
+
+	parts := strings.SplitN(pattern, ":", 2)
+	if len(parts) != 2 {
+		return false
+	}
+
+	operator := parts[0]
+	dateStr := parts[1]
+
+	switch operator {
+	case "before":
+		targetDate, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return false
+		}
+		return entryDate.Before(targetDate)
+	case "after":
+		targetDate, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return false
+		}
+		return entryDate.After(targetDate)
+	case "between":
+		dates := strings.Split(dateStr, ",")
+		if len(dates) != 2 {
+			return false
+		}
+		startDate, err1 := time.Parse("2006-01-02", dates[0])
+		endDate, err2 := time.Parse("2006-01-02", dates[1])
+		if err1 != nil || err2 != nil {
+			return false
+		}
+		return entryDate.After(startDate) && entryDate.Before(endDate)
+	}
+	return false
 }
