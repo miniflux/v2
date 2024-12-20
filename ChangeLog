@@ -1,3 +1,64 @@
+Version 2.2.4 (December 20, 2024)
+---------------------------------
+
+* test(rewrite): add unit test for referer rewrite function
+* refactor(subscription): use `strings.HasSuffix` instead of a regex in `FindSubscriptionsFromYouTubePlaylistPage`
+* refactor(sanitizer): use `token.String()` instead of `html.EscapeString(token.Data)`
+* refactor(sanitizer): simplify `isValidTag`
+* refactor(sanitizer): simplify `hasRequiredAttributes`
+* refactor(sanitizer): remove condition because `config.Opts` is guaranteed to never be nil
+* refactor(sanitizer): remove a now-useless function after refactoring
+* refactor(sanitizer): refactor conditions to highlight their similitude, enabling further refactoring
+* refactor(sanitizer): optimize `strip_tags.go`
+* refactor(sanitizer): micro-optimizations of `srcset.go`
+* refactor(sanitizer): merge two conditions
+* refactor(sanitizer): inline a function in `sanitizeAttributes` and fix a bug in it
+* refactor(sanitizer): inline a condition in `sanitizeSrcsetAttr`
+* refactor(sanitizer): improve `rewriteIframeURL()`
+* refactor(sanitizer): Google+ isn't a thing anymore
+* refactor(sanitizer): change the scope of a variable
+* refactor(rewriter): replace regex with URL parsing for referrer override
+* refactor(rewriter): avoid the use of regex in `addDynamicImage`
+* refactor(rewrite): remove unused function arguments
+* refactor(readability): various improvements and optimizations
+* refactor(readability): simplify the regexes in `readability.go`
+* refactor(processor): use URL parsing instead of a regex
+* refactor(processor): improve the `rewrite` URL rule regex
+* refactor(locale): delay parsing of translations until they're used
+* refactor(js): factorise a line in `app.js`
+* refactor(handler): delay `store.UserByID()` as much as possible
+* refactor(css): replace `-ms-text-size-adjust` with `text-size-adjust`
+* refactor(css): remove `-webkit-clip-path`
+* refactor(css): factorise `.pagination-next` and `.pagination-last` together
+* refactor: use a better construct than `doc.Find(…).First()`
+* refactor: use `min/max` instead of `math.Min/math.Max`
+* refactor: refactor `internal/reader/readability/testdata`
+* refactor: optimize `sanitizeAttributes`
+* refactor: get rid of `numberOfPluralFormsPerLanguage` test-only variable
+* fix(storage): replace timezone function call with view
+* fix(consistency): align feed modification behavior between API and UI
+* fix(ci): fix grammar in pull-request template
+* fix: load icon from site URL instead of feed URL
+* fix: feed icon from xml ignored during force refresh
+* feat(rewrite)!: remove `parse_markdown` rewrite rule
+* feat(mediaproxy): update predefined referer spoofing rules for restricted media resources
+* feat(locale): update translations to clarify readeck URL instead of readeck API endpoint
+* feat(locale): update German translations
+* feat(locale): update Chinese translations
+* feat(apprise): update `SendNotification` to handle multiple entries and add logging
+* feat(apprise): add title in notification request body
+* feat: resize favicons before storing them in the database
+* feat: optionally fetch watch time from YouTube API instead of website
+* feat: only show the commit URL if it's not empty on `/about`
+* feat: add predefined scraper rules for `arstechnica.com`
+* feat: add date-based entry filtering rules
+* chore: remove `blog.laravel.com` rewrite rule
+* build(deps): bump `library/alpine` in `/packaging/docker/alpine` to `3.21`
+* build(deps): bump `golang.org/x/term` from `0.26.0` to `0.27.0`
+* build(deps): bump `golang.org/x/net` from `0.31.0` to `0.33.0`
+* build(deps): bump `golang.org/x/crypto` from `0.30.0` to `0.31.0`
+* build(deps): bump `github.com/tdewolff/minify/v2` from `2.21.1` to `2.21.2`
+
 Version 2.2.3 (November 10, 2024)
 ---------------------------------
 
