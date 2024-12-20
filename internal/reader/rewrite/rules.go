@@ -50,6 +50,8 @@ func GetRefererForURL(u string) string {
 	}
 
 	switch parsedUrl.Hostname() {
+	case "moyu.im":
+		return "https://i.jandan.net"
 	case "i.pximg.net":
 		return "https://www.pixiv.net"
 	case "sp1.piokok.com":
@@ -60,6 +62,10 @@ func GetRefererForURL(u string) string {
 		return "https://weibo.com"
 	case "img.hellogithub.com":
 		return "https://hellogithub.com"
+	case "bjp.org.cn":
+		return "https://bjp.org.cn"
+	case "appinn.com":
+		return "https://appinn.com"
 	}
 
 	switch {
@@ -67,6 +73,8 @@ func GetRefererForURL(u string) string {
 		return "https://weibo.com"
 	case strings.HasSuffix(parsedUrl.Hostname(), ".cdninstagram.com"):
 		return "https://www.instagram.com"
+	case strings.HasSuffix(parsedUrl.Hostname(), ".moyu.im"):
+		return "https://i.jandan.net"
 	}
 
 	return ""
