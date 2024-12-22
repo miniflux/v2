@@ -10,7 +10,7 @@ import (
 	"time"
 
 	// Postgresql driver import
-	_ "github.com/lib/pq"
+	pq "github.com/lib/pq"
 )
 
 // NewConnectionPool configures the database connection pool.
@@ -32,6 +32,14 @@ func Migrate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
+	driver := ""
+	switch db.Driver().(type) {
+	case *pq.Driver:
+		driver = "postgresql"
+	default:
+		panic(fmt.Sprintf("the driver %s isn't supported", db.Driver()))
+	}
+
 	slog.Info("Running database migrations",
 		slog.Int("current_version", currentVersion),
 		slog.Int("latest_version", schemaVersion),
@@ -45,7 +53,7 @@ func Migrate(db *sql.DB) error {
 			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 
-		if err := migrations[version](tx); err != nil {
+		if err := migrations[version](tx, driver); err != nil {
 			tx.Rollback()
 			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
