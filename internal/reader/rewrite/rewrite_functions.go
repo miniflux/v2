@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"miniflux.app/v2/internal/config"
 
@@ -25,6 +26,24 @@ var (
 	invidioRegex   = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
 	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
+
+// titlelize returns a copy of the string s with all Unicode letters that begin words
+// mapped to their Unicode title case.
+func titlelize(s string) string {
+	// A closure is used here to remember the previous character
+	// so that we can check if there is a space preceding the current
+	// character.
+	previous := ' '
+	return strings.Map(
+		func(current rune) rune {
+			if unicode.IsSpace(previous) {
+				previous = current
+				return unicode.ToTitle(current)
+			}
+			previous = current
+			return current
+		}, strings.ToLower(s))
+}
 
 func addImageTitle(entryContent string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
