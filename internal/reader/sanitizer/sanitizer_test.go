@@ -611,9 +611,9 @@ func TestReplaceYoutubeURLWithCustomURL(t *testing.T) {
 	}
 }
 
-func TestReplaceIframeURL(t *testing.T) {
+func TestReplaceIframeVimedoDNTURL(t *testing.T) {
 	input := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0"></iframe>`
-	expected := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	expected := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0&amp;dnt=1" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
 	output := Sanitize("http://example.org/", input)
 
 	if expected != output {

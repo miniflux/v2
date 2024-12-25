@@ -71,7 +71,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 		"MarkAsReadOnlyOnPlayerCompletion":           form.MarkAsReadOnlyOnPlayerCompletion,
 	})
 	view.Set("themes", model.Themes())
-	view.Set("languages", locale.AvailableLanguages())
+	view.Set("languages", locale.AvailableLanguages)
 	view.Set("timezones", timezones)
 	view.Set("menu", "settings")
 	view.Set("user", user)

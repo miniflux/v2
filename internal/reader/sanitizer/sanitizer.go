@@ -5,7 +5,7 @@ package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
 	"io"
-	"regexp"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -18,8 +18,7 @@ import (
 )
 
 var (
-	youtubeEmbedRegex = regexp.MustCompile(`^(?:https?:)?//(?:www\.)?youtube\.com/embed/(.+)$`)
-	tagAllowList      = map[string][]string{
+	tagAllowList = map[string][]string{
 		"a":          {"href", "title", "id"},
 		"abbr":       {"title"},
 		"acronym":    {"title"},
@@ -397,9 +396,27 @@ func isValidIframeSource(baseURL, src string) bool {
 }
 
 func rewriteIframeURL(link string) string {
-	matches := youtubeEmbedRegex.FindStringSubmatch(link)
-	if len(matches) == 2 {
-		return config.Opts.YouTubeEmbedUrlOverride() + matches[1]
+	u, err := url.Parse(link)
+	if err != nil {
+		return link
+	}
+
+	switch strings.TrimPrefix(u.Hostname(), "www.") {
+	case "youtube.com":
+		if strings.HasPrefix(u.Path, "/embed/") {
+			if len(u.RawQuery) > 0 {
+				return config.Opts.YouTubeEmbedUrlOverride() + strings.TrimPrefix(u.Path, "/embed/") + "?" + u.RawQuery
+			}
+			return config.Opts.YouTubeEmbedUrlOverride() + strings.TrimPrefix(u.Path, "/embed/")
+		}
+	case "player.vimeo.com":
+		// See https://help.vimeo.com/hc/en-us/articles/12426260232977-About-Player-parameters
+		if strings.HasPrefix(u.Path, "/video/") {
+			if len(u.RawQuery) > 0 {
+				return link + "&dnt=1"
+			}
+			return link + "?dnt=1"
+		}
 	}
 
 	return link

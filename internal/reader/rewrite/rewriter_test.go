@@ -256,7 +256,7 @@ func TestRewriteWithNoLazyImage(t *testing.T) {
 func TestRewriteWithLazyImage(t *testing.T) {
 	controlEntry := &model.Entry{
 		Title:   `A title`,
-		Content: `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Content: `<img src="https://example.org/image.jpg" data-url="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"/></noscript>`,
 	}
 	testEntry := &model.Entry{
 		Title:   `A title`,
@@ -272,7 +272,7 @@ func TestRewriteWithLazyImage(t *testing.T) {
 func TestRewriteWithLazyDivImage(t *testing.T) {
 	controlEntry := &model.Entry{
 		Title:   `A title`,
-		Content: `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"></noscript>`,
+		Content: `<img src="https://example.org/image.jpg" alt="Image"/><noscript><img src="https://example.org/fallback.jpg" alt="Fallback"/></noscript>`,
 	}
 	testEntry := &model.Entry{
 		Title:   `A title`,

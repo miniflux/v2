@@ -75,7 +75,7 @@ func findContentUsingCustomRules(page io.Reader, rules string) (baseURL string, 
 		return "", "", err
 	}
 
-	if hrefValue, exists := document.Find("head base").First().Attr("href"); exists {
+	if hrefValue, exists := document.FindMatcher(goquery.Single("head base")).Attr("href"); exists {
 		hrefValue = strings.TrimSpace(hrefValue)
 		if urllib.IsAbsoluteURL(hrefValue) {
 			baseURL = hrefValue

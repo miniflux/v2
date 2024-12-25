@@ -7,7 +7,7 @@
 
 html {
     -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -53,7 +53,6 @@ a:hover {
 .sr-only {
     border: 0 !important;
     clip: rect(1px, 1px, 1px, 1px) !important;
-    -webkit-clip-path: inset(50%) !important;
     clip-path: inset(50%) !important;
     height: 1px !important;
     overflow: hidden !important;
@@ -749,16 +748,12 @@ template {
     padding-left: 15px;
 }
 
-.pagination-next {
+.pagination-next, .pagination-last {
     text-align: right;
 }
 
 .pagination-next:after {
     content: " ›";
-}
-
-.pagination-last {
-    text-align: right;
 }
 
 .pagination-last:after {

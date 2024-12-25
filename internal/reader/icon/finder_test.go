@@ -4,8 +4,13 @@
 package icon // import "miniflux.app/v2/internal/reader/icon"
 
 import (
+	"bytes"
+	"encoding/base64"
+	"image"
 	"strings"
 	"testing"
+
+	"miniflux.app/v2/internal/model"
 )
 
 func TestParseImageDataURL(t *testing.T) {
@@ -123,5 +128,54 @@ func TestParseDocumentWithWhitespaceIconURL(t *testing.T) {
 
 	if iconURLs[0] != "/static/img/favicon.ico" {
 		t.Errorf(`Invalid icon URL, got %q`, iconURLs[0])
+	}
+}
+
+func TestResizeIconSmallGif(t *testing.T) {
+	data, err := base64.StdEncoding.DecodeString("R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==")
+	if err != nil {
+		t.Fatal(err)
+	}
+	icon := model.Icon{
+		Content:  data,
+		MimeType: "image/gif",
+	}
+	if !bytes.Equal(icon.Content, resizeIcon(&icon).Content) {
+		t.Fatalf("Converted gif smaller than 16x16")
+	}
+}
+
+func TestResizeIconPng(t *testing.T) {
+	data, err := base64.StdEncoding.DecodeString("iVBORw0KGgoAAAANSUhEUgAAACEAAAAhCAYAAABX5MJvAAAALUlEQVR42u3OMQEAAAgDoJnc6BpjDyRgcrcpGwkJCQkJCQkJCQkJCQkJCYmyB7NfUj/Kk4FkAAAAAElFTkSuQmCC")
+	if err != nil {
+		t.Fatal(err)
+	}
+	icon := model.Icon{
+		Content:  data,
+		MimeType: "image/png",
+	}
+	resizedIcon := resizeIcon(&icon)
+
+	if bytes.Equal(data, resizedIcon.Content) {
+		t.Fatalf("Didn't convert png of 33x33")
+	}
+
+	config, _, err := image.DecodeConfig(bytes.NewReader(resizedIcon.Content))
+	if err != nil {
+		t.Fatalf("Couln't decode resulting png: %v", err)
+	}
+
+	if config.Height != 32 || config.Width != 32 {
+		t.Fatalf("Was expecting an image of 16x16, got %dx%d", config.Width, config.Height)
+	}
+}
+
+func TestResizeInvalidImage(t *testing.T) {
+	icon := model.Icon{
+		Content:  []byte("invalid data"),
+		MimeType: "image/gif",
+	}
+	if !bytes.Equal(icon.Content, resizeIcon(&icon).Content) {
+		t.Fatalf("Tried to convert an invalid image")
 	}
 }

@@ -12,17 +12,26 @@ import (
 type translationDict map[string]interface{}
 type catalog map[string]translationDict
 
-var defaultCatalog catalog
+var defaultCatalog = make(catalog, len(AvailableLanguages))
 
 //go:embed translations/*.json
 var translationFiles embed.FS
 
+func GetTranslationDict(language string) (translationDict, error) {
+	if _, ok := defaultCatalog[language]; !ok {
+		var err error
+		if defaultCatalog[language], err = loadTranslationFile(language); err != nil {
+			return nil, err
+		}
+	}
+	return defaultCatalog[language], nil
+}
+
 // LoadCatalogMessages loads and parses all translations encoded in JSON.
 func LoadCatalogMessages() error {
 	var err error
-	defaultCatalog = make(catalog, len(AvailableLanguages()))
 
-	for language := range AvailableLanguages() {
+	for language := range AvailableLanguages {
 		defaultCatalog[language], err = loadTranslationFile(language)
 		if err != nil {
 			return err

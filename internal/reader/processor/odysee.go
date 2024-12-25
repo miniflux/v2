@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"regexp"
+	"net/url"
 	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
@@ -17,14 +17,17 @@ import (
 	"miniflux.app/v2/internal/reader/fetcher"
 )
 
-var odyseeRegex = regexp.MustCompile(`^https://odysee\.com`)
-
 func shouldFetchOdyseeWatchTime(entry *model.Entry) bool {
 	if !config.Opts.FetchOdyseeWatchTime() {
 		return false
 	}
-	matches := odyseeRegex.FindStringSubmatch(entry.URL)
-	return matches != nil
+
+	u, err := url.Parse(entry.URL)
+	if err != nil {
+		return false
+	}
+
+	return u.Hostname() == "odysee.com"
 }
 
 func fetchOdyseeWatchTime(websiteURL string) (int, error) {
@@ -45,7 +48,7 @@ func fetchOdyseeWatchTime(websiteURL string) (int, error) {
 		return 0, docErr
 	}
 
-	durs, exists := doc.Find(`meta[property="og:video:duration"]`).First().Attr("content")
+	durs, exists := doc.FindMatcher(goquery.Single(`meta[property="og:video:duration"]`)).Attr("content")
 	// durs contains video watch time in seconds
 	if !exists {
 		return 0, errors.New("duration has not found")

@@ -13,7 +13,6 @@ import (
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/database"
-	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/ui/static"
 	"miniflux.app/v2/internal/version"
@@ -151,10 +150,6 @@ func Parse() {
 
 	if config.Opts.IsDefaultDatabaseURL() {
 		slog.Info("The default value for DATABASE_URL is used")
-	}
-
-	if err := locale.LoadCatalogMessages(); err != nil {
-		printErrorAndExit(fmt.Errorf("unable to load translations: %v", err))
 	}
 
 	if err := static.CalculateBinaryFileChecksums(); err != nil {

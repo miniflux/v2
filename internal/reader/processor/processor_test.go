@@ -75,6 +75,12 @@ func TestAllowEntries(t *testing.T) {
 		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Example", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)Test"}, true},
 		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)example"}, true},
 		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{KeepFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)Test"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Date: time.Now().Add(24 * time.Hour)}, &model.User{KeepFilterEntryRules: "EntryDate=future"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Date: time.Now().Add(-24 * time.Hour)}, &model.User{KeepFilterEntryRules: "EntryDate=future"}, false},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=before:2024-03-15"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Date: time.Date(2024, 3, 16, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=after:2024-03-15"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Date: time.Date(2024, 3, 10, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-03-01,2024-03-15"}, true},
+		{&model.Feed{ID: 1, BlocklistRules: ""}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-03-01,2024-03-15"}, false},
 	}
 
 	for _, tc := range scenarios {

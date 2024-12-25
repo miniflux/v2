@@ -155,7 +155,7 @@ func validateTheme(theme string) *locale.LocalizedError {
 }
 
 func validateLanguage(language string) *locale.LocalizedError {
-	languages := locale.AvailableLanguages()
+	languages := locale.AvailableLanguages
 	if _, found := languages[language]; !found {
 		return locale.NewLocalizedError("error.invalid_language")
 	}
@@ -219,7 +219,7 @@ func validateMediaPlaybackRate(mediaPlaybackRate float64) *locale.LocalizedError
 
 func isValidFilterRules(filterEntryRules string, filterType string) *locale.LocalizedError {
 	// Valid Format: FieldName=RegEx\nFieldName=RegEx...
-	fieldNames := []string{"EntryTitle", "EntryURL", "EntryCommentsURL", "EntryContent", "EntryAuthor", "EntryTag"}
+	fieldNames := []string{"EntryTitle", "EntryURL", "EntryCommentsURL", "EntryContent", "EntryAuthor", "EntryTag", "EntryDate"}
 
 	rules := strings.Split(filterEntryRules, "\n")
 	for i, rule := range rules {

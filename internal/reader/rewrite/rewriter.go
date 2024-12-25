@@ -11,9 +11,6 @@ import (
 
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
-
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type rule struct {
@@ -24,13 +21,13 @@ type rule struct {
 func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	switch rule.name {
 	case "add_image_title":
-		entry.Content = addImageTitle(entryURL, entry.Content)
+		entry.Content = addImageTitle(entry.Content)
 	case "add_mailto_subject":
-		entry.Content = addMailtoSubject(entryURL, entry.Content)
+		entry.Content = addMailtoSubject(entry.Content)
 	case "add_dynamic_image":
-		entry.Content = addDynamicImage(entryURL, entry.Content)
+		entry.Content = addDynamicImage(entry.Content)
 	case "add_dynamic_iframe":
-		entry.Content = addDynamicIframe(entryURL, entry.Content)
+		entry.Content = addDynamicIframe(entry.Content)
 	case "add_youtube_video":
 		entry.Content = addYoutubeVideo(entryURL, entry.Content)
 	case "add_invidious_video":
@@ -46,9 +43,9 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	case "convert_text_link", "convert_text_links":
 		entry.Content = replaceTextLinks(entry.Content)
 	case "fix_medium_images":
-		entry.Content = fixMediumImages(entryURL, entry.Content)
+		entry.Content = fixMediumImages(entry.Content)
 	case "use_noscript_figure_images":
-		entry.Content = useNoScriptImages(entryURL, entry.Content)
+		entry.Content = useNoScriptImages(entry.Content)
 	case "replace":
 		// Format: replace("search-term"|"replace-term")
 		if len(rule.args) >= 2 {
@@ -94,7 +91,7 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	case "remove_tables":
 		entry.Content = removeTables(entry.Content)
 	case "remove_clickbait":
-		entry.Title = cases.Title(language.English).String(strings.ToLower(entry.Title))
+		entry.Title = titlelize(entry.Title)
 	}
 }
 

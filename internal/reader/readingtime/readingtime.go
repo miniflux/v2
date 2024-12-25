@@ -19,7 +19,7 @@ func EstimateReadingTime(content string, defaultReadingSpeed, cjkReadingSpeed in
 	sanitizedContent := sanitizer.StripTags(content)
 
 	// Litterature on language detection says that around 100 signes is enough, we're safe here.
-	truncationPoint := int(math.Min(float64(len(sanitizedContent)), 250))
+	truncationPoint := min(len(sanitizedContent), 250)
 
 	// We're only interested in identifying Japanse/Chinese/Korean
 	options := whatlanggo.Options{
