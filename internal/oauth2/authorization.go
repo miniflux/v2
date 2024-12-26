@@ -6,7 +6,6 @@ package oauth2 // import "miniflux.app/v2/internal/oauth2"
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"io"
 
 	"golang.org/x/oauth2"
 
@@ -33,17 +32,14 @@ func (u *Authorization) CodeVerifier() string {
 
 func GenerateAuthorization(config *oauth2.Config) *Authorization {
 	codeVerifier := crypto.GenerateRandomStringHex(32)
-
-	sha2 := sha256.New()
-	io.WriteString(sha2, codeVerifier)
-	codeChallenge := base64.RawURLEncoding.EncodeToString(sha2.Sum(nil))
+	sum := sha256.Sum256([]byte(codeVerifier))
 
 	state := crypto.GenerateRandomStringHex(24)
 
 	authUrl := config.AuthCodeURL(
 		state,
 		oauth2.SetAuthURLParam("code_challenge_method", "S256"),
-		oauth2.SetAuthURLParam("code_challenge", codeChallenge),
+		oauth2.SetAuthURLParam("code_challenge", base64.RawURLEncoding.EncodeToString(sum[:])),
 	)
 
 	return &Authorization{
