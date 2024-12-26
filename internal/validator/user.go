@@ -153,6 +153,10 @@ func validatePassword(password string) *locale.LocalizedError {
 
 // validateUsername return an error if the `username` argument contains
 // a character that isn't alphanumerical nor `_` and `-`.
+//
+// Note: this validation should not be applied to previously created usernames,
+// and cannot be applied to Google/OIDC accounts creation because the email
+// address is used for the username field.
 func validateUsername(username string) *locale.LocalizedError {
 	if strings.ContainsFunc(username, func(r rune) bool {
 		if unicode.IsLetter(r) || unicode.IsNumber(r) {
