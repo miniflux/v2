@@ -11,9 +11,6 @@ import (
 
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/urllib"
-
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type rule struct {
@@ -94,7 +91,7 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	case "remove_tables":
 		entry.Content = removeTables(entry.Content)
 	case "remove_clickbait":
-		entry.Title = cases.Title(language.English).String(strings.ToLower(entry.Title))
+		entry.Title = titlelize(entry.Title)
 	}
 }
 

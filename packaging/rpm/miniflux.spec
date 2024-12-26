@@ -16,8 +16,7 @@ BuildRoot: %{_topdir}/BUILD/%{name}-%{version}-%{release}
 BuildArch: x86_64
 Requires(pre): shadow-utils
 
-%{?systemd_requires}
-BuildRequires: systemd
+%{?systemd_ordering}
 
 AutoReqProv: no
 

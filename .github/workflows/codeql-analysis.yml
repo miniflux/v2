@@ -5,9 +5,17 @@ permissions: read-all
 on:
   push:
     branches: [ main ]
+    paths:
+      - '**.js'
+      - '**.go'
+      - '!**_test.go'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
+    paths:
+      - '**.js'
+      - '**.go'
+      - '!**_test.go'
   schedule:
     - cron: '45 22 * * 3'
 
@@ -22,8 +30,6 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        language: [ 'go', 'javascript' ]
 
     steps:
     - name: Checkout repository
