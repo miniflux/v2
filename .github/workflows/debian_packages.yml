@@ -5,11 +5,11 @@ on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
-  pull_request:
-    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 1,4'  # Runs at 00:00 UTC on Monday and Thursday
 jobs:
   test-packages:
-    if: github.event.pull_request
+    if: github.event_name == 'schedule'
     name: Test Packages
     runs-on: ubuntu-latest
     steps:
@@ -30,7 +30,7 @@ jobs:
     - name: List generated files
       run: ls -l *.deb
   build-packages-manually:
-    if: github.event_name != 'pull_request' && github.event_name != 'push'
+    if: github.event_name == 'workflow_dispatch'
     name: Build Packages Manually
     runs-on: ubuntu-latest
     steps:
