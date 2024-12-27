@@ -43,6 +43,7 @@ var (
 		"h4":         {"id"},
 		"h5":         {"id"},
 		"h6":         {"id"},
+		"hr":         {},
 		"iframe":     {"width", "height", "frameborder", "src", "allowfullscreen"},
 		"img":        {"alt", "title", "src", "srcset", "sizes", "width", "height"},
 		"ins":        {},
