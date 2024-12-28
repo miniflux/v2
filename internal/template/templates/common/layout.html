@@ -93,7 +93,7 @@
                     </a>
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
-                    <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }} ★</a>
+                    ★ <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }}</a>
                 </li>
                 <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
                     <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
