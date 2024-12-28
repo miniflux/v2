@@ -99,7 +99,7 @@
                     <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
                 </li>
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
-                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "menu.feeds" }}
+                    <a href="{{ route "feeds" }}" data-page="feeds">📜 {{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
