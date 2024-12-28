@@ -112,7 +112,7 @@
                     <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
                 </li>
                 <li {{ if eq .menu "search" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "/" }}">
-                    <a href="{{ route "search" }}" data-page="search">{{ t "menu.search" }}</a>
+                    <a href="{{ route "search" }}" data-page="search">🔎 {{ t "menu.search" }}</a>
                 </li>
                 <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
                     <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
