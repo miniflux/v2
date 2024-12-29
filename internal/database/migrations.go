@@ -496,7 +496,7 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	func(tx *sql.Tx, driver string) (err error) {
 		if driver == "postgresql" {
 			if _, err = tx.Exec(`ALTER TABLE users DROP COLUMN extra;`); err != nil {
-				return nil
+				return err
 			}
 		}
 		_, err = tx.Exec(`
