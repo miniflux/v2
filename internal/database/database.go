@@ -7,42 +7,18 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
-	"time"
-
-	// Postgresql driver import
-	pq "github.com/lib/pq"
 )
-
-// NewConnectionPool configures the database connection pool.
-func NewConnectionPool(dsn string, minConnections, maxConnections int, connectionLifetime time.Duration) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	db.SetMaxOpenConns(maxConnections)
-	db.SetMaxIdleConns(minConnections)
-	db.SetConnMaxLifetime(connectionLifetime)
-
-	return db, nil
-}
 
 // Migrate executes database migrations.
 func Migrate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
-	driver := ""
-	switch db.Driver().(type) {
-	case *pq.Driver:
-		driver = "postgresql"
-	default:
-		panic(fmt.Sprintf("the driver %s isn't supported", db.Driver()))
-	}
-
+	driver := getDriverStr()
 	slog.Info("Running database migrations",
 		slog.Int("current_version", currentVersion),
 		slog.Int("latest_version", schemaVersion),
+		slog.String("driver", driver),
 	)
 
 	for version := currentVersion; version < schemaVersion; version++ {
