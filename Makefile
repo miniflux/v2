@@ -150,6 +150,28 @@ clean-integration-test:
 	@ rm miniflux-test
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
+integration-test-sqlite:
+	go build -tags=sqlite -o miniflux-test main.go
+	DATABASE_URL='file::memory:?cache=shared' \
+	ADMIN_USERNAME=admin \
+	ADMIN_PASSWORD=test123 \
+	CREATE_ADMIN=1 \
+	RUN_MIGRATIONS=1 \
+	DEBUG=1 \
+	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
+
+	while ! nc -z localhost 8080; do sleep 1; done
+
+	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
+	TEST_MINIFLUX_ADMIN_USERNAME=admin \
+	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	go test -v -count=1 ./internal/api
+
+clean-integration-test-sqlite:
+	@ kill -9 `cat /tmp/miniflux.pid`
+	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
+	@ rm miniflux-test
+
 docker-image:
 	docker build --pull -t $(DOCKER_IMAGE):$(VERSION) -f packaging/docker/alpine/Dockerfile .
 
