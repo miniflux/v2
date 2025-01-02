@@ -513,6 +513,8 @@
     "form.integration.ntfy_username": "Ntfy gebruikersnaam (optioneel)",
     "form.integration.ntfy_password": "Ntfy wachtwoord (optioneel)",
     "form.integration.ntfy_icon_url": "Ntfy Icon URL (optioneel)",
+    "form.integration.discord_activate": "Artikelen opslaan in Discord",
+    "form.integration.discord_webhook_link": "Discord Webhook link",
     "form.api_key.label.description": "API-sleutel omschrijving",
     "form.submit.loading": "Laden...",
     "form.submit.saving": "Opslaan...",

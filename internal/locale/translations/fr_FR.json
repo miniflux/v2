@@ -513,6 +513,8 @@
     "form.integration.ntfy_username": "Nom d'utilisateur Ntfy (optionnel)",
     "form.integration.ntfy_password": "Mot de passe Ntfy (facultatif)",
     "form.integration.ntfy_icon_url": "URL de l'icône Ntfy (facultatif)",
+    "form.integration.discord_activate": "Envoyer les articles vers Discord",
+    "form.integration.discord_webhook_link": "URL du Webhook Discord",
     "form.api_key.label.description": "Libellé de la clé d'API",
     "form.submit.loading": "Chargement...",
     "form.submit.saving": "Sauvegarde en cours...",

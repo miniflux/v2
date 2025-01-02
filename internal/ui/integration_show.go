@@ -126,6 +126,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		NtfyIconURL:                      integration.NtfyIconURL,
 		CuboxEnabled:                     integration.CuboxEnabled,
 		CuboxAPILink:                     integration.CuboxAPILink,
+		DiscordEnabled:                   integration.DiscordEnabled,
+		DiscordWebhookLink:               integration.DiscordWebhookLink,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

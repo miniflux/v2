@@ -513,6 +513,8 @@
     "form.integration.ntfy_username": "Ntfy-Benutzername (optional)",
     "form.integration.ntfy_password": "Ntfy-Passwort (optional)",
     "form.integration.ntfy_icon_url": "Ntfy-Symbol-URL (optional)",
+    "form.integration.discord_activate": "Einträge zu Discord pushen",
+    "form.integration.discord_webhook_link": "Discord-Webhook-URL",
     "form.api_key.label.description": "API-Schlüsselbezeichnung",
     "form.submit.loading": "Lade...",
     "form.submit.saving": "Speichern...",
