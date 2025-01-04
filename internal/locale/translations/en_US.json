@@ -784,6 +784,7 @@
   "page.offline.message": "You are offline",
   "page.offline.refresh_page": "Try to refresh the page",
   "page.webauthn_rename.title": "Rename Passkey",
+  "page.cache.warning": "You're viewing a cached version. Refresh to see the latest one.",
   "alert.no_shared_entry": "There is no shared entry.",
   "alert.no_bookmark": "There are no starred entries.",
   "alert.no_category": "There is no category.",

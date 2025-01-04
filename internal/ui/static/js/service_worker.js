@@ -23,39 +23,53 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
+async function cacheFirstWithRefresh(request) {
+  const cache = await caches.open(CACHE_NAME);
+
+  const fetchResponsePromise = fetch(request).then(async (networkResponse) => {
+    if (!networkResponse.ok) return networkResponse;
+
+    const contentType = networkResponse.headers.get("Content-Type");
+    if (!contentType || !contentType.includes("text/html")) {
+      cache.put(request, networkResponse.clone());
+      return networkResponse;
+    }
+
+    const text = await networkResponse.clone().text();
+
+    const modifiedHtml = text.replace(/offline-hidden/g, "offline-visibe");
+
+    const clonedResponse = new Response(modifiedHtml, {
+      status: networkResponse.status,
+      statusText: networkResponse.statusText,
+      headers: networkResponse.headers,
+    });
+
+    cache.put(request, clonedResponse.clone());
+    return networkResponse;
+  });
+
+  return (await cache.match(request)) || (await fetchResponsePromise);
+}
+
 self.addEventListener("fetch", (event) => {
+  if (USE_CACHE) {
+    return event.respondWith(cacheFirstWithRefresh(event.request));
+  }
+
   // We proxify requests through fetch() only if we are offline because it's slower.
-  if (
-    USE_CACHE ||
-    (navigator.onLine === false && event.request.mode === "navigate")
-  ) {
+  if (navigator.onLine === false && event.request.mode === "navigate") {
     event.respondWith(
       (async () => {
         try {
           // Always try the network first.
-          const networkResponse = await fetch(event.request);
-          if (USE_CACHE) {
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(event.request, networkResponse.clone());
-          }
-          return networkResponse;
+          return await fetch(event.request);
         } catch (error) {
           // catch is only triggered if an exception is thrown, which is likely
           // due to a network error.
           // If fetch() returns a valid HTTP response with a response code in
           // the 4xx or 5xx range, the catch() will NOT be called.
           const cache = await caches.open(CACHE_NAME);
-
-          if (!USE_CACHE) {
-            return await cache.match(OFFLINE_URL);
-          }
-
-          const cachedResponse = await cache.match(event.request);
-
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-
           return await cache.match(OFFLINE_URL);
         }
       })(),
@@ -90,9 +104,4 @@ self.addEventListener("load", async (event) => {
       }
     }
   }
-});
-
-self.addEventListener("DOMContentLoaded", function () {
-  const offlineFlag = document.getElementById("offline-flag");
-  offlineFlag.classList.toggle("hidden", navigator.onLine);
 });
