@@ -25,23 +25,4 @@ class DomHelper {
         const elements = document.querySelectorAll(selector);
         return [...elements].filter((element) => this.isVisible(element));
     }
-
-    static hasPassiveEventListenerOption() {
-        var passiveSupported = false;
-
-        try {
-            var options = Object.defineProperty({}, "passive", {
-                get: function() {
-                    passiveSupported = true;
-                }
-            });
-
-            window.addEventListener("test", options, options);
-            window.removeEventListener("test", options, options);
-        } catch(err) {
-            passiveSupported = false;
-        }
-
-        return passiveSupported;
-    }
 }

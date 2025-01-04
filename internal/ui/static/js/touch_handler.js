@@ -158,26 +158,26 @@ class TouchHandler {
     }
 
     listen() {
-        const hasPassiveOption = DomHelper.hasPassiveEventListenerOption();
+        const eventListenerOptions = { passive: true };
 
         document.querySelectorAll(".entry-swipe").forEach((element) => {
-            element.addEventListener("touchstart", (e) => this.onItemTouchStart(e), hasPassiveOption ? { passive: true } : false);
-            element.addEventListener("touchmove", (e) => this.onItemTouchMove(e), hasPassiveOption ? { passive: false } : false);
-            element.addEventListener("touchend", (e) => this.onItemTouchEnd(e), hasPassiveOption ? { passive: true } : false);
-            element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
+            element.addEventListener("touchstart", (e) => this.onItemTouchStart(e), eventListenerOptions);
+            element.addEventListener("touchmove", (e) => this.onItemTouchMove(e));
+            element.addEventListener("touchend", (e) => this.onItemTouchEnd(e), eventListenerOptions);
+            element.addEventListener("touchcancel", () => this.reset(), eventListenerOptions);
         });
 
         const element = document.querySelector(".entry-content");
         if (element) {
             if (element.classList.contains("gesture-nav-tap")) {
-                element.addEventListener("touchend", (e) => this.onTapEnd(e), hasPassiveOption ? { passive: true } : false);
-                element.addEventListener("touchmove", () => this.reset(), hasPassiveOption ? { passive: true } : false);
-                element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchend", (e) => this.onTapEnd(e), eventListenerOptions);
+                element.addEventListener("touchmove", () => this.reset(), eventListenerOptions);
+                element.addEventListener("touchcancel", () => this.reset(), eventListenerOptions);
             } else if (element.classList.contains("gesture-nav-swipe")) {
-                element.addEventListener("touchstart", (e) => this.onContentTouchStart(e), hasPassiveOption ? { passive: true } : false);
-                element.addEventListener("touchmove", (e) => this.onContentTouchMove(e), hasPassiveOption ? { passive: true } : false);
-                element.addEventListener("touchend", (e) => this.onContentTouchEnd(e), hasPassiveOption ? { passive: true } : false);
-                element.addEventListener("touchcancel", () => this.reset(), hasPassiveOption ? { passive: true } : false);
+                element.addEventListener("touchstart", (e) => this.onContentTouchStart(e), eventListenerOptions);
+                element.addEventListener("touchmove", (e) => this.onContentTouchMove(e), eventListenerOptions);
+                element.addEventListener("touchend", (e) => this.onContentTouchEnd(e), eventListenerOptions);
+                element.addEventListener("touchcancel", () => this.reset(), eventListenerOptions);
             }
         }
     }
