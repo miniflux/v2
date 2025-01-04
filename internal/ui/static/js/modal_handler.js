@@ -1,15 +1,6 @@
 class ModalHandler {
-    static exists() {
-        return document.getElementById("modal-container") !== null;
-    }
-
-    static getModalContainer() {
-        return document.getElementById("modal-container");
-    }
-
     static getFocusableElements() {
-        const container = this.getModalContainer();
-
+        const container =  document.getElementById("modal-container");
         if (container === null) {
             return null;
         }
@@ -19,15 +10,14 @@ class ModalHandler {
 
     static setupFocusTrap() {
         const focusableElements = this.getFocusableElements();
-
         if (focusableElements === null) {
             return;
         }
 
         const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+        const lastFocusableElement = focusableElements.at(-1);
 
-        this.getModalContainer().onkeydown = (e) => {
+        document.getElementById("modal-container").onkeydown = (e) => {
             if (e.key !== 'Tab') {
                 return;
             }
@@ -51,7 +41,7 @@ class ModalHandler {
     }
 
     static open(fragment, initialFocusElementId) {
-        if (ModalHandler.exists()) {
+        if (document.getElementById("modal-container") !== null) {
             return;
         }
 
@@ -89,7 +79,7 @@ class ModalHandler {
     }
 
     static close() {
-        const container = this.getModalContainer();
+        const container = document.getElementById("modal-container");
         if (container !== null) {
             container.parentNode.removeChild(container);
         }

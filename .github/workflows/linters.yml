@@ -17,7 +17,7 @@ jobs:
       run: |
         sudo npm install -g jshint@2.13.6 eslint@8.57.0
     - name: Run jshint
-      run: jshint internal/ui/static/js/*.js
+      run: jshint --config .jshintrc internal/ui/static/js/*.js
     - name: Run ESLint
       run: eslint internal/ui/static/js/*.js
 
