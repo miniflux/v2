@@ -455,3 +455,29 @@ func removeTables(entryContent string) string {
 	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
+
+func fixGhostCards(entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	doc.Find("figure.kg-card").Each(func(i int, s *goquery.Selection) {
+		title := s.Find(".kg-bookmark-title").First().Text()
+		author := s.Find(".kg-bookmark-author").First().Text()
+		href := s.Find("a.kg-bookmark-container").First().AttrOr("href", "")
+
+		if href == "" {
+			return
+		}
+
+		if author == "" || strings.HasSuffix(title, author) {
+			s.SetHtml(fmt.Sprintf("<a href=\"%s\">%s</a>", href, title))
+		} else {
+			s.SetHtml(fmt.Sprintf("<a href=\"%s\">%s - %s</a>", href, title, author))
+		}
+	})
+
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
+	return output
+}
