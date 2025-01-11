@@ -100,7 +100,7 @@ func (b *Builder) Write() {
 func (b *Builder) writeHeaders() {
 	b.headers["X-Content-Type-Options"] = "nosniff"
 	b.headers["X-Frame-Options"] = "DENY"
-	b.headers["Referrer-Policy"] = "no-referrer"
+	b.headers["Referrer-Policy"] = "strict-origin"
 
 	for key, value := range b.headers {
 		b.w.Header().Set(key, value)

@@ -3,13 +3,24 @@
 const OFFLINE_VERSION = 2;
 const CACHE_NAME = "offline";
 
+const cachedPages = [
+  "/unread",
+  "/starred",
+  "/stylesheets",
+  "/app",
+  "/service-worker",
+  "/manifest.json",
+  "/feed/icon",
+  "/icon",
+];
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
 
       if (USE_CACHE) {
-        await cache.addAll(["/", "/unread", OFFLINE_URL]);
+        await cache.addAll(["/", "/unread", "/starred", OFFLINE_URL]);
       } else {
         // Setting {cache: 'reload'} in the new request will ensure that the
         // response isn't fulfilled from the HTTP cache; i.e., it will be from
@@ -49,12 +60,20 @@ async function cacheFirstWithRefresh(request) {
     return networkResponse;
   });
 
-  return (await cache.match(request)) || (await fetchResponsePromise);
+  try {
+    return (await cache.match(request)) || (await fetchResponsePromise);
+  } catch (error) {
+    const cache = await caches.open(CACHE_NAME);
+    return await cache.match(OFFLINE_URL);
+  }
 }
 
 self.addEventListener("fetch", (event) => {
   if (USE_CACHE) {
-    return event.respondWith(cacheFirstWithRefresh(event.request));
+    const url = new URL(event.request.url);
+    if (cachedPages.some((page) => url.pathname.startsWith(page))) {
+      return event.respondWith(cacheFirstWithRefresh(event.request));
+    }
   }
 
   // We proxify requests through fetch() only if we are offline because it's slower.

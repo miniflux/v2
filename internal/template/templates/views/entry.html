@@ -4,7 +4,7 @@
 <section class="entry" data-id="{{ .entry.ID }}" aria-labelledby="page-header-title">
     <header class="entry-header">
         <h1 id="page-header-title" dir="auto">
-            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="strict-origin">{{ .entry.Title }}</a>
         </h1>
         {{ if .user }}
         <div class="entry-actions">
@@ -79,7 +79,7 @@
                         class="page-link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        referrerpolicy="no-referrer"
+                        referrerpolicy="strict-origin"
                         data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
                 </li>
                 <li>
@@ -98,7 +98,7 @@
                         title="{{ t "entry.comments.title" }}"
                         target="_blank"
                         rel="noopener noreferrer"
-                        referrerpolicy="no-referrer"
+                        referrerpolicy="strict-origin"
                         data-comments-link="true"
                         >{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
                 </li>
@@ -232,7 +232,7 @@
         {{ end }}
 
         <div class="entry-enclosure-download">
-            <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
+            <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }}" target="_blank" rel="noopener noreferrer" referrerpolicy="strict-origin">{{ .URL | safeURL  }}</a>
             <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
         </div>
     </div>
