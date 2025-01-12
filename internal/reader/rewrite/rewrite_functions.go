@@ -472,9 +472,9 @@ func fixGhostCards(entryContent string) string {
 		}
 
 		if author == "" || strings.HasSuffix(title, author) {
-			s.SetHtml(fmt.Sprintf("<a href=\"%s\">%s</a>", href, title))
+			s.ReplaceWithHtml(fmt.Sprintf("<a href=\"%s\">%s</a>", href, title))
 		} else {
-			s.SetHtml(fmt.Sprintf("<a href=\"%s\">%s - %s</a>", href, title, author))
+			s.ReplaceWithHtml(fmt.Sprintf("<a href=\"%s\">%s - %s</a>", href, title, author))
 		}
 	})
 

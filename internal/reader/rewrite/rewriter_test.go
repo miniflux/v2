@@ -703,3 +703,132 @@ func TestAddImageTitle(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+
+func TestFixGhostCard(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+					<div class="kg-bookmark-metadata">
+						<img class="kg-bookmark-icon" src="https://example.org/favicon.ico" alt="">
+						<span class="kg-bookmark-author">Example</span>
+						<span class="kg-bookmark-publisher">Test Author</span>
+					</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="https://example.org/article">Example Article - Example</a>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestFixGhostCardNoCard(t *testing.T) {
+	testEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="https://example.org/article">Example Article - Example</a>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="https://example.org/article">Example Article - Example</a>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestFixGhostCardInvalidCard(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a href="https://example.org/article">This card does not have the required fields</a>
+		</figure>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a href="https://example.org/article">This card does not have the required fields</a>
+		</figure>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestFixGhostCardMissingAuthor(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="https://example.org/article">Example Article</a>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestFixGhostCardDuplicatedAuthor(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article - Example</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+					<div class="kg-bookmark-metadata">
+						<img class="kg-bookmark-icon" src="https://example.org/favicon.ico" alt="">
+						<span class="kg-bookmark-author">Example</span>
+						<span class="kg-bookmark-publisher">Test Author</span>
+					</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<a href="https://example.org/article">Example Article - Example</a>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
