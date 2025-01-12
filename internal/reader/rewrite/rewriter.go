@@ -92,6 +92,8 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 		entry.Content = removeTables(entry.Content)
 	case "remove_clickbait":
 		entry.Title = titlelize(entry.Title)
+	case "fix_ghost_cards":
+		entry.Content = fixGhostCards(entry.Content)
 	}
 }
 

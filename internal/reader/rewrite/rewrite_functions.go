@@ -455,3 +455,55 @@ func removeTables(entryContent string) string {
 	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
 	return output
 }
+
+func fixGhostCards(entryContent string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(entryContent))
+	if err != nil {
+		return entryContent
+	}
+
+	const cardSelector = "figure.kg-card"
+	var currentList *goquery.Selection
+
+	doc.Find(cardSelector).Each(func(i int, s *goquery.Selection) {
+		title := s.Find(".kg-bookmark-title").First().Text()
+		author := s.Find(".kg-bookmark-author").First().Text()
+		href := s.Find("a.kg-bookmark-container").First().AttrOr("href", "")
+
+		// if there is no link or title, skip processing
+		if href == "" || title == "" {
+			return
+		}
+
+		link := ""
+		if author == "" || strings.HasSuffix(title, author) {
+			link = fmt.Sprintf("<a href=\"%s\">%s</a>", href, title)
+		} else {
+			link = fmt.Sprintf("<a href=\"%s\">%s - %s</a>", href, title, author)
+		}
+
+		next := s.Next()
+
+		// if the next element is also a card, start a list
+		if next.Is(cardSelector) && currentList == nil {
+			currentList = s.BeforeHtml("<ul></ul>").Prev()
+		}
+
+		if currentList != nil {
+			// add this card to the list, then delete it
+			currentList.AppendHtml("<li>" + link + "</li>")
+			s.Remove()
+		} else {
+			// replace single card
+			s.ReplaceWithHtml(link)
+		}
+
+		// if the next element is not a card, start a new list
+		if !next.Is(cardSelector) && currentList != nil {
+			currentList = nil
+		}
+	})
+
+	output, _ := doc.FindMatcher(goquery.Single("body")).Html()
+	return strings.TrimSpace(output)
+}
