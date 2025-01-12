@@ -106,4 +106,6 @@ type Integration struct {
 	NtfyIconURL                      string
 	CuboxEnabled                     bool
 	CuboxAPILink                     string
+	DiscordEnabled                   bool
+	DiscordWebhookLink               string
 }

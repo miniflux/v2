@@ -10,6 +10,7 @@ import (
 	"miniflux.app/v2/internal/integration/apprise"
 	"miniflux.app/v2/internal/integration/betula"
 	"miniflux.app/v2/internal/integration/cubox"
+	"miniflux.app/v2/internal/integration/discord"
 	"miniflux.app/v2/internal/integration/espial"
 	"miniflux.app/v2/internal/integration/instapaper"
 	"miniflux.app/v2/internal/integration/linkace"
@@ -532,6 +533,22 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 
 		if err := client.SendNotification(feed, entries); err != nil {
 			slog.Warn("Unable to send new entries to Apprise", slog.Any("error", err))
+		}
+	}
+
+	if userIntegrations.DiscordEnabled {
+		slog.Debug("Sending new entries to Discord",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int("nb_entries", len(entries)),
+			slog.Int64("feed_id", feed.ID),
+		)
+
+		client := discord.NewClient(
+			userIntegrations.DiscordWebhookLink,
+		)
+
+		if err := client.SendDiscordMsg(feed, entries); err != nil {
+			slog.Warn("Unable to send new entries to Discord", slog.Any("error", err))
 		}
 	}
 

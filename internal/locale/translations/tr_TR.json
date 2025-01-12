@@ -288,6 +288,8 @@
   "form.feed.label.ntfy_min_priority": "Ntfy min priority",
   "form.integration.cubox_activate": "Save entries to Cubox",
   "form.integration.cubox_api_link": "Cubox API link",
+  "form.integration.discord_activate": "Makaleleri Discord'a gönder",
+  "form.integration.discord_webhook_link": "Discord hizmet Webhook'lerinin virgülle ayrılmış listesi",
   "form.prefs.fieldset.application_settings": "Uygulama Ayarları",
   "form.prefs.fieldset.authentication_settings": "Kimlik Doğrulama Ayarları",
   "form.prefs.fieldset.reader_settings": "Okuyucu Ayarları",

@@ -112,6 +112,8 @@ type IntegrationForm struct {
 	NtfyIconURL                      string
 	CuboxEnabled                     bool
 	CuboxAPILink                     string
+	DiscordEnabled                   bool
+	DiscordWebhookLink               string
 }
 
 // Merge copy form values to the model.
@@ -213,6 +215,8 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.NtfyIconURL = i.NtfyIconURL
 	integration.CuboxEnabled = i.CuboxEnabled
 	integration.CuboxAPILink = i.CuboxAPILink
+	integration.DiscordEnabled = i.DiscordEnabled
+	integration.DiscordWebhookLink = i.DiscordWebhookLink
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -317,6 +321,8 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		NtfyIconURL:                      r.FormValue("ntfy_icon_url"),
 		CuboxEnabled:                     r.FormValue("cubox_enabled") == "1",
 		CuboxAPILink:                     r.FormValue("cubox_api_link"),
+		DiscordEnabled:                   r.FormValue("discord_enabled") == "1",
+		DiscordWebhookLink:               r.FormValue("discord_webhook_link"),
 	}
 }
 

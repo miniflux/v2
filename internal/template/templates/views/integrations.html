@@ -73,6 +73,22 @@
         </div>
     </details>
 
+    <details {{ if .form.DiscordEnabled }}open{{ end }}>
+        <summary>Discord</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="discord_enabled" value="1" {{ if .form.DiscordEnabled }}checked{{ end }}> {{ t "form.integration.discord_activate" }}
+            </label>
+
+            <label for="form-discord-webhook-link">{{ t "form.integration.discord_webhook_link" }}</label>
+            <input type="url" name="discord_webhook_link" id="form-discord-webhook-link" value="{{ .form.DiscordWebhookLink }}" placeholder="https://discord.com/api/webhooks/xxx/xxx" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.EspialEnabled }}open{{ end }}>
         <summary>Espial</summary>
         <div class="form-section">
