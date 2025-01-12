@@ -832,3 +832,102 @@ func TestFixGhostCardDuplicatedAuthor(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+
+func TestFixGhostCardMultiple(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article1">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article 1 - Example</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+					<div class="kg-bookmark-metadata">
+						<img class="kg-bookmark-icon" src="https://example.org/favicon.ico" alt="">
+						<span class="kg-bookmark-author">Example</span>
+						<span class="kg-bookmark-publisher">Test Author</span>
+					</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>
+		<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article2">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article 2 - Example</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+					<div class="kg-bookmark-metadata">
+						<img class="kg-bookmark-icon" src="https://example.org/favicon.ico" alt="">
+						<span class="kg-bookmark-author">Example</span>
+						<span class="kg-bookmark-publisher">Test Author</span>
+					</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title:   `A title`,
+		Content: `<ul><li><a href="https://example.org/article1">Example Article 1 - Example</a></li><li><a href="https://example.org/article2">Example Article 2 - Example</a></li></ul>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestFixGhostCardMultipleSplit(t *testing.T) {
+	testEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article1">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article 1 - Example</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+					<div class="kg-bookmark-metadata">
+						<img class="kg-bookmark-icon" src="https://example.org/favicon.ico" alt="">
+						<span class="kg-bookmark-author">Example</span>
+						<span class="kg-bookmark-publisher">Test Author</span>
+					</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>
+		<p>This separates the two cards</p>
+		<figure class="kg-card kg-bookmark-card">
+			<a class="kg-bookmark-container" href="https://example.org/article2">
+				<div class="kg-bookmark-content">
+					<div class="kg-bookmark-title">Example Article 2 - Example</div>
+					<div class="kg-bookmark-description">Lorem ipsum odor amet, consectetuer adipiscing elit. Pretium magnis luctus ligula conubia quam, donec orci vehicula efficitur...</div>
+					<div class="kg-bookmark-metadata">
+						<img class="kg-bookmark-icon" src="https://example.org/favicon.ico" alt="">
+						<span class="kg-bookmark-author">Example</span>
+						<span class="kg-bookmark-publisher">Test Author</span>
+					</div>
+				</div>
+				<div class="kg-bookmark-thumbnail">
+					<img src="https://example.org/article-image.jpg" alt="" onerror="this.style.display = 'none'">
+				</div>
+			</a>
+		</figure>`,
+	}
+
+	controlEntry := &model.Entry{
+		Title: `A title`,
+		Content: `<a href="https://example.org/article1">Example Article 1 - Example</a>
+		<p>This separates the two cards</p>
+		<a href="https://example.org/article2">Example Article 2 - Example</a>`,
+	}
+	Rewriter("https://example.org/article", testEntry, `fix_ghost_cards`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
