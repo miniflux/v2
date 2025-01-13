@@ -523,6 +523,7 @@
     "form.integration.ntfy_username": "Ntfy Username (optional)",
     "form.integration.ntfy_password": "Ntfy Password (optional)",
     "form.integration.ntfy_icon_url": "Ntfy Icon URL (optional)",
+    "form.integration.ntfy_internal_links": "Use internal links on click (optional)",
     "form.integration.discord_activate": "Push entries to Discord",
     "form.integration.discord_webhook_link": "Discord Webhook link",
     "form.api_key.label.description": "Назва ключа API",

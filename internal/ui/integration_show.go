@@ -124,6 +124,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		NtfyUsername:                     integration.NtfyUsername,
 		NtfyPassword:                     integration.NtfyPassword,
 		NtfyIconURL:                      integration.NtfyIconURL,
+		NtfyInternalLinks:                integration.NtfyInternalLinks,
 		CuboxEnabled:                     integration.CuboxEnabled,
 		CuboxAPILink:                     integration.CuboxAPILink,
 		DiscordEnabled:                   integration.DiscordEnabled,

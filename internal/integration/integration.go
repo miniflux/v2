@@ -506,6 +506,7 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 			userIntegrations.NtfyUsername,
 			userIntegrations.NtfyPassword,
 			userIntegrations.NtfyIconURL,
+			userIntegrations.NtfyInternalLinks,
 			feed.NtfyPriority,
 		)
 
