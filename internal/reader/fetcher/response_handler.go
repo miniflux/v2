@@ -89,6 +89,15 @@ func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bo
 	return true
 }
 
+func (r *ResponseHandler) IsRedirect() bool {
+	return r.httpResponse != nil &&
+		(r.httpResponse.StatusCode == http.StatusMovedPermanently ||
+			r.httpResponse.StatusCode == http.StatusFound ||
+			r.httpResponse.StatusCode == http.StatusSeeOther ||
+			r.httpResponse.StatusCode == http.StatusTemporaryRedirect ||
+			r.httpResponse.StatusCode == http.StatusPermanentRedirect)
+}
+
 func (r *ResponseHandler) Close() {
 	if r.httpResponse != nil && r.httpResponse.Body != nil && r.clientErr == nil {
 		r.httpResponse.Body.Close()

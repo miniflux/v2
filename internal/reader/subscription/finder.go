@@ -228,8 +228,17 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWellKnownURLs(websiteURL strin
 			localizedError := responseHandler.LocalizedError()
 			responseHandler.Close()
 
+			// Do not add redirections to the possible list of subscriptions to avoid confusion.
+			if responseHandler.IsRedirect() {
+				slog.Debug("Ignore URL redirection during feed discovery", slog.String("fullURL", fullURL))
+				continue
+			}
+
 			if localizedError != nil {
-				slog.Debug("Unable to subscribe", slog.String("fullURL", fullURL), slog.Any("error", localizedError.Error()))
+				slog.Debug("Ignore invalid feed URL during feed discovery",
+					slog.String("fullURL", fullURL),
+					slog.Any("error", localizedError.Error()),
+				)
 				continue
 			}
 
