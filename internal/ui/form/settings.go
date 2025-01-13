@@ -16,7 +16,7 @@ import (
 // MarkReadBehavior list all possible behaviors for automatically marking an entry as read
 type MarkReadBehavior string
 
-var (
+const (
 	NoAutoMarkAsRead                           MarkReadBehavior = "no-auto"
 	MarkAsReadOnView                           MarkReadBehavior = "on-view"
 	MarkAsReadOnViewButWaitForPlayerCompletion MarkReadBehavior = "on-view-but-wait-for-player-completion"
