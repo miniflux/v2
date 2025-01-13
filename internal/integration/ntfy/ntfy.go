@@ -9,8 +9,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/version"
 )
@@ -22,14 +24,15 @@ const (
 
 type Client struct {
 	ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntfyIconURL string
+	ntfyInternalLinks                                                         bool
 	ntfyPriority                                                              int
 }
 
-func NewClient(ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntfyIconURL string, ntfyPriority int) *Client {
+func NewClient(ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntfyIconURL string, ntfyInternalLinks bool, ntfyPriority int) *Client {
 	if ntfyURL == "" {
 		ntfyURL = defaultNtfyURL
 	}
-	return &Client{ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntfyIconURL, ntfyPriority}
+	return &Client{ntfyURL, ntfyTopic, ntfyApiToken, ntfyUsername, ntfyPassword, ntfyIconURL, ntfyInternalLinks, ntfyPriority}
 }
 
 func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
@@ -46,12 +49,21 @@ func (c *Client) SendMessages(feed *model.Feed, entries model.Entries) error {
 			ntfyMessage.Icon = c.ntfyIconURL
 		}
 
+		if c.ntfyInternalLinks {
+			url, err := url.Parse(config.Opts.BaseURL())
+			if err != nil {
+				slog.Error("Unable to parse base URL", slog.Any("error", err))
+			} else {
+				ntfyMessage.Click = fmt.Sprintf("%s%s%d", url, "/unread/entry/", entry.ID)
+			}
+		}
+
 		slog.Debug("Sending Ntfy message",
 			slog.String("url", c.ntfyURL),
 			slog.String("topic", c.ntfyTopic),
 			slog.Int("priority", ntfyMessage.Priority),
 			slog.String("message", ntfyMessage.Message),
-			slog.String("entry_url", entry.URL),
+			slog.String("entry_url", ntfyMessage.Click),
 		)
 
 		if err := c.makeRequest(ntfyMessage); err != nil {

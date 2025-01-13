@@ -316,6 +316,10 @@
             <label for="form-ntfy-icon-url">{{ t "form.integration.ntfy_icon_url" }}</label>
             <input type="url" name="ntfy_icon_url" id="form-ntfy-icon-url" value="{{ .form.NtfyIconURL }}" spellcheck="false">
 
+            <label>
+                <input type="checkbox" name="ntfy_internal_links" value="1" {{ if .form.NtfyInternalLinks }}checked{{ end }}> {{ t "form.integration.ntfy_internal_links" }}
+            </label>
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>

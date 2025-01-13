@@ -523,6 +523,7 @@
     "form.integration.ntfy_username": "Login do ntfy (opcjonalny)",
     "form.integration.ntfy_password": "Hasło do ntfy (opcjonalne)",
     "form.integration.ntfy_icon_url": "Adres URL ikony ntfy (opcjonalny)",
+    "form.integration.ntfy_internal_links": "Use internal links on click (optional)",
     "form.integration.discord_activate": "Przesyłaj wpisy do Discord",
     "form.integration.discord_webhook_link": "Adres URL Webhook Discord",
     "form.api_key.label.description": "Etykieta klucza API",

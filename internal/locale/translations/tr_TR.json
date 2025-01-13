@@ -279,6 +279,7 @@
   "form.integration.ntfy_username": "Ntfy Username (optional)",
   "form.integration.ntfy_password": "Ntfy Password (optional)",
   "form.integration.ntfy_icon_url": "Ntfy Icon URL (optional)",
+  "form.integration.ntfy_internal_links": "Use internal links on click (optional)",
   "form.feed.label.ntfy_activate": "Push entries to ntfy",
   "form.feed.label.ntfy_priority": "Ntfy priority",
   "form.feed.label.ntfy_max_priority": "Ntfy max priority",

@@ -208,6 +208,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			ntfy_username,
 			ntfy_password,
 			ntfy_icon_url,
+			ntfy_internal_links,
 			cubox_enabled,
 			cubox_api_link,
 			discord_enabled,
@@ -318,6 +319,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.NtfyUsername,
 		&integration.NtfyPassword,
 		&integration.NtfyIconURL,
+		&integration.NtfyInternalLinks,
 		&integration.CuboxEnabled,
 		&integration.CuboxAPILink,
 		&integration.DiscordEnabled,
@@ -437,12 +439,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			ntfy_username=$96,
 			ntfy_password=$97,
 			ntfy_icon_url=$98,
-			cubox_enabled=$99,
-			cubox_api_link=$100,
-			discord_enabled=$101,
-			discord_webhook_link=$102
+			ntfy_internal_links=$99,
+			cubox_enabled=$100,
+			cubox_api_link=$101,
+			discord_enabled=$102,
+			discord_webhook_link=$103
 		WHERE
-			user_id=$103
+			user_id=$104
 	`
 	_, err := s.db.Exec(
 		query,
@@ -544,6 +547,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.NtfyUsername,
 		integration.NtfyPassword,
 		integration.NtfyIconURL,
+		integration.NtfyInternalLinks,
 		integration.CuboxEnabled,
 		integration.CuboxAPILink,
 		integration.DiscordEnabled,
