@@ -969,4 +969,17 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN discord_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN discord_webhook_link text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `ALTER TABLE integrations ADD COLUMN ntfy_internal_links bool default 'f';`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

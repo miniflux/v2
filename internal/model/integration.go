@@ -104,6 +104,9 @@ type Integration struct {
 	NtfyUsername                     string
 	NtfyPassword                     string
 	NtfyIconURL                      string
+	NtfyInternalLinks                bool
 	CuboxEnabled                     bool
 	CuboxAPILink                     string
+	DiscordEnabled                   bool
+	DiscordWebhookLink               string
 }

@@ -63,8 +63,7 @@ func (h *handler) showSettingsPage(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
-	// In order to keep the continuity between form and model, I pass adhoc constants to the view
-	view.Set("const", map[string]interface{}{
+	view.Set("readBehaviors", map[string]any{
 		"NoAutoMarkAsRead":                           form.NoAutoMarkAsRead,
 		"MarkAsReadOnView":                           form.MarkAsReadOnView,
 		"MarkAsReadOnViewButWaitForPlayerCompletion": form.MarkAsReadOnViewButWaitForPlayerCompletion,

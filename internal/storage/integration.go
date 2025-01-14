@@ -208,8 +208,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			ntfy_username,
 			ntfy_password,
 			ntfy_icon_url,
+			ntfy_internal_links,
 			cubox_enabled,
-			cubox_api_link
+			cubox_api_link,
+			discord_enabled,
+			discord_webhook_link
 		FROM
 			integrations
 		WHERE
@@ -316,8 +319,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.NtfyUsername,
 		&integration.NtfyPassword,
 		&integration.NtfyIconURL,
+		&integration.NtfyInternalLinks,
 		&integration.CuboxEnabled,
 		&integration.CuboxAPILink,
+		&integration.DiscordEnabled,
+		&integration.DiscordWebhookLink,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -433,10 +439,13 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			ntfy_username=$96,
 			ntfy_password=$97,
 			ntfy_icon_url=$98,
-			cubox_enabled=$99,
-			cubox_api_link=$100
+			ntfy_internal_links=$99,
+			cubox_enabled=$100,
+			cubox_api_link=$101,
+			discord_enabled=$102,
+			discord_webhook_link=$103
 		WHERE
-			user_id=$101
+			user_id=$104
 	`
 	_, err := s.db.Exec(
 		query,
@@ -538,8 +547,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.NtfyUsername,
 		integration.NtfyPassword,
 		integration.NtfyIconURL,
+		integration.NtfyInternalLinks,
 		integration.CuboxEnabled,
 		integration.CuboxAPILink,
+		integration.DiscordEnabled,
+		integration.DiscordWebhookLink,
 		integration.UserID,
 	)
 
@@ -580,7 +592,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				omnivore_enabled='t' OR
 				raindrop_enabled='t' OR
 				betula_enabled='t' OR
-				cubox_enabled='t'
+				cubox_enabled='t' OR
+				discord_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

@@ -5,7 +5,10 @@ package sanitizer // import "miniflux.app/v2/internal/reader/sanitizer"
 
 import (
 	"os"
+	"strings"
 	"testing"
+
+	"golang.org/x/net/html"
 
 	"miniflux.app/v2/internal/config"
 )
@@ -33,6 +36,28 @@ func BenchmarkSanitize(b *testing.B) {
 			Sanitize(v[0], v[1])
 		}
 	}
+}
+
+func FuzzSanitizer(f *testing.F) {
+	f.Fuzz(func(t *testing.T, orig string) {
+		tok := html.NewTokenizer(strings.NewReader(orig))
+		i := 0
+		for tok.Next() != html.ErrorToken {
+			i++
+		}
+
+		out := Sanitize("", orig)
+
+		tok = html.NewTokenizer(strings.NewReader(out))
+		j := 0
+		for tok.Next() != html.ErrorToken {
+			j++
+		}
+
+		if j > i {
+			t.Errorf("Got more html tokens in the sanitized html.")
+		}
+	})
 }
 
 func TestValidInput(t *testing.T) {

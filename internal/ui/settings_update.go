@@ -43,6 +43,12 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("form", settingsForm)
+	view.Set("readBehaviors", map[string]any{
+		"NoAutoMarkAsRead":                           form.NoAutoMarkAsRead,
+		"MarkAsReadOnView":                           form.MarkAsReadOnView,
+		"MarkAsReadOnViewButWaitForPlayerCompletion": form.MarkAsReadOnViewButWaitForPlayerCompletion,
+		"MarkAsReadOnlyOnPlayerCompletion":           form.MarkAsReadOnlyOnPlayerCompletion,
+	})
 	view.Set("themes", model.Themes())
 	view.Set("languages", locale.AvailableLanguages)
 	view.Set("timezones", timezones)

@@ -71,12 +71,11 @@ function toggleMainMenu(event) {
     const menu = document.querySelector(".header nav ul");
     const menuToggleButton = document.querySelector(".logo");
     if (menu.classList.contains("js-menu-show")) {
-        menu.classList.remove("js-menu-show");
         menuToggleButton.setAttribute("aria-expanded", false);
     } else {
-        menu.classList.add("js-menu-show");
         menuToggleButton.setAttribute("aria-expanded", true);
     }
+    menu.classList.toggle("js-menu-show");
 }
 
 // Handle click events for the main menu (<li> and <a>).
@@ -662,7 +661,7 @@ function showToast(label, iconElement) {
         const toastElementWrapper = document.getElementById("toast-wrapper");
         if (toastElementWrapper) {
             toastElementWrapper.classList.remove('toast-animate');
-            setTimeout(function () {
+            setTimeout(() => {
                 toastElementWrapper.classList.add('toast-animate');
             }, 100);
         }
@@ -782,7 +781,7 @@ function handleMediaControl(button) {
     enclosures.forEach((enclosure) => {
         switch (action) {
         case "seek":
-            enclosure.currentTime = enclosure.currentTime + value > 0 ? enclosure.currentTime + value : 0;
+            enclosure.currentTime = Math.min(enclosure.currentTime + value, 0);
             break;
         case "speed":
             // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.

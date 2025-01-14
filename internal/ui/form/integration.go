@@ -110,8 +110,11 @@ type IntegrationForm struct {
 	NtfyUsername                     string
 	NtfyPassword                     string
 	NtfyIconURL                      string
+	NtfyInternalLinks                bool
 	CuboxEnabled                     bool
 	CuboxAPILink                     string
+	DiscordEnabled                   bool
+	DiscordWebhookLink               string
 }
 
 // Merge copy form values to the model.
@@ -211,8 +214,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.NtfyUsername = i.NtfyUsername
 	integration.NtfyPassword = i.NtfyPassword
 	integration.NtfyIconURL = i.NtfyIconURL
+	integration.NtfyInternalLinks = i.NtfyInternalLinks
 	integration.CuboxEnabled = i.CuboxEnabled
 	integration.CuboxAPILink = i.CuboxAPILink
+	integration.DiscordEnabled = i.DiscordEnabled
+	integration.DiscordWebhookLink = i.DiscordWebhookLink
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -315,8 +321,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		NtfyUsername:                     r.FormValue("ntfy_username"),
 		NtfyPassword:                     r.FormValue("ntfy_password"),
 		NtfyIconURL:                      r.FormValue("ntfy_icon_url"),
+		NtfyInternalLinks:                r.FormValue("ntfy_internal_links") == "1",
 		CuboxEnabled:                     r.FormValue("cubox_enabled") == "1",
 		CuboxAPILink:                     r.FormValue("cubox_api_link"),
+		DiscordEnabled:                   r.FormValue("discord_enabled") == "1",
+		DiscordWebhookLink:               r.FormValue("discord_webhook_link"),
 	}
 }
 
