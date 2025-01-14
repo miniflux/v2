@@ -1,3 +1,15 @@
 {
-  "esversion": 8
+  "esversion": 11,
+  "bitwise": true,
+  "freeze": true,
+  "nonew": true,
+  "latedef": "nofunc",
+  "noarg": true,
+  "nocomma": true,
+  "nonbsp": true,
+  "nonew": true,
+  "browser": true,
+  "shadow": true,
+  "varstmt": true,
+  "noreturnawait": true
 }
