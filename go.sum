@@ -54,8 +54,8 @@ github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0leargg
 github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/tdewolff/minify/v2 v2.21.2 h1:VfTvmGVtBYhMTlUAeHtXM7XOsW0JT/6uMwUPPqgUs9k=
-github.com/tdewolff/minify/v2 v2.21.2/go.mod h1:Olje3eHdBnrMjINKffDsil/3NV98Iv7MhWf7556WQVg=
+github.com/tdewolff/minify/v2 v2.21.3 h1:KmhKNGrN/dGcvb2WDdB5yA49bo37s+hcD8RiF+lioV8=
+github.com/tdewolff/minify/v2 v2.21.3/go.mod h1:iGxHaGiONAnsYuo8CRyf8iPUcqRJVB/RhtEcTpqS7xw=
 github.com/tdewolff/parse/v2 v2.7.19 h1:7Ljh26yj+gdLFEq/7q9LT4SYyKtwQX4ocNrj45UCePg=
 github.com/tdewolff/parse/v2 v2.7.19/go.mod h1:3FbJWZp3XT9OWVN3Hmfp0p/a08v4h8J9W1aghka0soA=
 github.com/tdewolff/test v1.0.11-0.20231101010635-f1265d231d52/go.mod h1:6DAvZliBAAnD7rhVgwaM7DE5/d9NMOAJ09SqYqeK4QE=
