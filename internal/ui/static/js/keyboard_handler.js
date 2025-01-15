@@ -12,8 +12,8 @@ class KeyboardHandler {
 
     listen() {
         document.onkeydown = (event) => {
-            const key = this.getKey(event);
-            if (this.isEventIgnored(event, key) || this.isModifierKeyDown(event)) {
+            const key = KeyboardHandler.getKey(event);
+            if (this.isEventIgnored(event, key) || KeyboardHandler.isModifierKeyDown(event)) {
                 return;
             }
 
@@ -51,25 +51,18 @@ class KeyboardHandler {
             (this.queue.length < 1 && !this.triggers.has(key));
     }
 
-    isModifierKeyDown(event) {
+    static isModifierKeyDown(event) {
         return event.getModifierState("Control") || event.getModifierState("Alt") || event.getModifierState("Meta");
     }
 
-    getKey(event) {
-        const mapping = {
-            'Esc': 'Escape',
-            'Up': 'ArrowUp',
-            'Down': 'ArrowDown',
-            'Left': 'ArrowLeft',
-            'Right': 'ArrowRight'
-        };
-
-        for (const key in mapping) {
-            if (mapping.hasOwnProperty(key) && key === event.key) {
-                return mapping[key];
-            }
+    static getKey(event) {
+        switch (event.key) {
+        case 'Esc': return 'Escape';
+        case 'Up': return 'ArrowUp';
+        case 'Down': return 'ArrowDown';
+        case 'Left': return 'ArrowLeft';
+        case 'Right': return 'ArrowRight';
+        default: return event.key;
         }
-
-        return event.key;
     }
 }
