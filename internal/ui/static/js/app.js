@@ -781,7 +781,7 @@ function handleMediaControl(button) {
     enclosures.forEach((enclosure) => {
         switch (action) {
         case "seek":
-            enclosure.currentTime = Math.min(enclosure.currentTime + value, 0);
+            enclosure.currentTime = Math.max(enclosure.currentTime + value, 0);
             break;
         case "speed":
             // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.
