@@ -1,6 +1,7 @@
 {
   "esversion": 11,
   "bitwise": true,
+  "eqeqeq": true,
   "freeze": true,
   "nonew": true,
   "latedef": "nofunc",

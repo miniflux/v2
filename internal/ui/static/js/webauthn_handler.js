@@ -149,7 +149,7 @@ class WebAuthnHandler {
         }
         catch (err) {
             // Swallow aborted conditional logins
-            if (err instanceof DOMException && err.name == "AbortError") {
+            if (err instanceof DOMException && err.name === "AbortError") {
                 return;
             }
             WebAuthnHandler.showErrorMessage(err);
