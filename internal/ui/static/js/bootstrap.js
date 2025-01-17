@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials(); });
 
         const registerButton = document.getElementById("webauthn-register");
-        if (registerButton != null) {
+        if (registerButton !== null) {
             registerButton.disabled = false;
 
             onClick("#webauthn-register", () => {
@@ -66,13 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const loginButton = document.getElementById("webauthn-login");
-        if (loginButton != null) {
+        if (loginButton !== null) {
             const abortController = new AbortController();
             loginButton.disabled = false;
 
             onClick("#webauthn-login", () => {
                 const usernameField = document.getElementById("form-username");
-                if (usernameField != null) {
+                if (usernameField !== null) {
                     abortController.abort();
                     webauthnHandler.login(usernameField.value).catch(err => WebAuthnHandler.showErrorMessage(err));
                 }
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         handleEntryStatus("next", event.target, true);
     }, true);
     onAuxClick("a[data-original-link='true']", (event) => {
-        if (event.button == 1) {
+        if (event.button === 1) {
             handleEntryStatus("next", event.target, true);
         }
     }, true);
