@@ -1,7 +1,7 @@
 {
     "env": {
         "browser": true,
-        "es2017": true
+        "es2020": true
     },
     "rules": {
         "indent": ["error", 4]

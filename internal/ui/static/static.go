@@ -139,7 +139,7 @@ func GenerateJavascriptBundles() error {
 	JavascriptBundles = make(map[string][]byte)
 	JavascriptBundleChecksums = make(map[string]string)
 
-	jsMinifier := js.Minifier{Version: 2017}
+	jsMinifier := js.Minifier{Version: 2020}
 
 	minifier := minify.New()
 	minifier.AddFunc("text/javascript", jsMinifier.Minify)
