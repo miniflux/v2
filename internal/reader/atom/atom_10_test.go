@@ -492,6 +492,10 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 		</title>
 		<link href="http://example.org/c"/>
 	  </entry>
+	  <entry>
+		<title type="html"><![CDATA[Test with self-closing &lt;tag&gt;]]></title>
+		<link href="http://example.org/d"/>
+	  </entry>
 	</feed>`
 
 	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)), "10")
@@ -499,7 +503,11 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != "Code Test" {
+	if len(feed.Entries) != 4 {
+		t.Fatalf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].Title != "<code>Code</code> Test" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 
@@ -509,6 +517,10 @@ func TestParseEntryWithHTMLTitle(t *testing.T) {
 
 	if feed.Entries[2].Title != "Entry title with space around CDATA" {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[2].Title)
+	}
+
+	if feed.Entries[3].Title != "Test with self-closing <tag>" {
+		t.Errorf("Incorrect entry title, got: %q", feed.Entries[3].Title)
 	}
 }
 
@@ -537,7 +549,7 @@ func TestParseEntryWithXHTMLTitle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != `This is XHTML content.` {
+	if feed.Entries[0].Title != `This is <b>XHTML</b> content.` {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
@@ -643,7 +655,7 @@ func TestParseEntryWithDoubleEncodedEntitiesTitle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if feed.Entries[0].Title != `'AT&T'` {
+	if feed.Entries[0].Title != `&#39;AT&amp;T&#39;` {
 		t.Errorf("Incorrect entry title, got: %q", feed.Entries[0].Title)
 	}
 }
