@@ -435,7 +435,7 @@
     "form.integration.pocket_connect_link": "Conectar a la cuenta de Pocket",
     "form.integration.wallabag_activate": "Enviar artículos a Wallabag",
     "form.integration.wallabag_only_url": "Enviar solo URL (en lugar de contenido completo)",
-    "form.integration.wallabag_endpoint": "Acceso API de Wallabag",
+    "form.integration.wallabag_endpoint": "URL base de Wallabag",
     "form.integration.wallabag_client_id": "ID de cliente de Wallabag",
     "form.integration.wallabag_client_secret": "Secreto de cliente de Wallabag",
     "form.integration.wallabag_username": "Nombre de usuario de Wallabag",

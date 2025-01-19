@@ -265,7 +265,7 @@
   "form.integration.wallabag_activate": "Makaleleri Wallabag'e kaydet",
   "form.integration.wallabag_client_id": "Wallabag Client ID",
   "form.integration.wallabag_client_secret": "Wallabag Client Secret",
-  "form.integration.wallabag_endpoint": "Wallabag API Uç Noktası",
+  "form.integration.wallabag_endpoint": "Wallabag Üssü URL",
   "form.integration.wallabag_only_url": "Yalnızca URL gönder (tam makale yerine)",
   "form.integration.wallabag_password": "Wallabag Parolası",
   "form.integration.wallabag_username": "Wallabag Kullanıcı Adı",

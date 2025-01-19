@@ -435,7 +435,7 @@
     "form.integration.pocket_connect_link": "अपना पॉकेट खाता कनेक्ट करें",
     "form.integration.wallabag_activate": "विषय सहेजें वालाबाग में ",
     "form.integration.wallabag_only_url": "केवल URL भेजें (पूर्ण सामग्री के बजाय)",
-    "form.integration.wallabag_endpoint": "वालबैग एपीआई एंडपॉइंट",
+    "form.integration.wallabag_endpoint": "वल्लाबैग बेस यूआरएल",
     "form.integration.wallabag_client_id": "वालाबैग क्लाइंट आईडी",
     "form.integration.wallabag_client_secret": "वालाबैग क्लाइंट सीक्रेट",
     "form.integration.wallabag_username": "वालाबैग उपयोगकर्ता नाम",
