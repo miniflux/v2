@@ -445,7 +445,7 @@
     "form.integration.pocket_connect_link": "Подключить аккаунт Pocket",
     "form.integration.wallabag_only_url": "Отправлять только ссылку (без содержимого)",
     "form.integration.wallabag_activate": "Сохранять статьи в Wallabag",
-    "form.integration.wallabag_endpoint": "Конечная точка Wallabag API",
+    "form.integration.wallabag_endpoint": "URL-адрес базы Валлабаг",
     "form.integration.wallabag_client_id": "Номер клиента Wallabag",
     "form.integration.wallabag_client_secret": "Секретный код клиента Wallabag",
     "form.integration.wallabag_username": "Имя пользователя Wallabag",
