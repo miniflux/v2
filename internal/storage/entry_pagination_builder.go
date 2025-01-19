@@ -112,13 +112,13 @@ func (e *EntryPaginationBuilder) getPrevNextID(tx *sql.Tx) (prevID int64, nextID
 		WITH entry_pagination AS (
 			SELECT
 				e.id,
-				lag(e.id) over (order by e.%[1]s asc, e.id desc) as prev_id,
-				lead(e.id) over (order by e.%[1]s asc, e.id desc) as next_id
+				lag(e.id) over (order by e.%[1]s asc, e.created_at asc, e.id desc) as prev_id,
+				lead(e.id) over (order by e.%[1]s asc, e.created_at asc, e.id desc) as next_id
 			FROM entries AS e
 			JOIN feeds AS f ON f.id=e.feed_id
 			JOIN categories c ON c.id = f.category_id
 			WHERE %[2]s
-			ORDER BY e.%[1]s asc, e.id desc
+			ORDER BY e.%[1]s asc, e.created_at asc, e.id desc
 		)
 		SELECT prev_id, next_id FROM entry_pagination AS ep WHERE %[3]s;
 	`
