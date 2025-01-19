@@ -38,6 +38,7 @@ func (h *handler) showFeedEntriesAllPage(w http.ResponseWriter, r *http.Request)
 	builder.WithFeedID(feed.ID)
 	builder.WithoutStatus(model.EntryStatusRemoved)
 	builder.WithSorting(user.EntryOrder, user.EntryDirection)
+	builder.WithSorting("id", user.EntryDirection)
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
 

@@ -37,6 +37,7 @@ func (h *handler) showCategoryEntriesPage(w http.ResponseWriter, r *http.Request
 	builder := h.store.NewEntryQueryBuilder(user.ID)
 	builder.WithCategoryID(category.ID)
 	builder.WithSorting(user.EntryOrder, user.EntryDirection)
+	builder.WithSorting("id", user.EntryDirection)
 	builder.WithStatus(model.EntryStatusUnread)
 	builder.WithOffset(offset)
 	builder.WithLimit(user.EntriesPerPage)
