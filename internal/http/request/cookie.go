@@ -8,7 +8,7 @@ import "net/http"
 // CookieValue returns the cookie value.
 func CookieValue(r *http.Request, name string) string {
 	cookie, err := r.Cookie(name)
-	if err == http.ErrNoCookie {
+	if err != nil {
 		return ""
 	}
 
