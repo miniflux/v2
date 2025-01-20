@@ -433,7 +433,7 @@ function unsubscribeFromFeed() {
  * @param {string} page Page to redirect to.
  * @param {boolean} fallbackSelf Refresh actual page if the page is not found.
  */
-function goToPage(page, fallbackSelf) {
+function goToPage(page, fallbackSelf = true) {
     const element = document.querySelector(":is(a, button)[data-page=" + page + "]");
 
     if (element) {
