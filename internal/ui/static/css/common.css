@@ -306,8 +306,7 @@ a:hover {
 
     .header li {
         display: inline-block;
-        padding: 0;
-        padding-right: 12px;
+        padding: 0 12px 0 0;
         line-height: normal;
         border: none;
         font-size: 1.0em;
@@ -629,8 +628,7 @@ template {
     color: var(--modal-color);
     background: var(--modal-background);
     box-shadow: var(--modal-box-shadow);
-    padding: 5px;
-    padding-top: 30px;
+    padding: 30px 5px 5px;
 }
 
 #modal-left h3 {
