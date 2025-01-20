@@ -396,7 +396,6 @@ function openCommentLink(openLinkInCurrentTab) {
             } else {
                 DomHelper.openNewTab(entryLink.getAttribute("href"));
             }
-            return;
         }
     } else {
         const currentItemCommentsLink = document.querySelector(".current-item :is(a, button)[data-comments-link]");
