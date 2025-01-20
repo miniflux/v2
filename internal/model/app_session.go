@@ -24,7 +24,7 @@ type SessionData struct {
 	WebAuthnSessionData WebAuthnSession `json:"webauthn_session_data"`
 }
 
-func (s SessionData) String() string {
+func (s *SessionData) String() string {
 	return fmt.Sprintf(`CSRF=%q, OAuth2State=%q, OAuth2CodeVerifier=%q, FlashMsg=%q, FlashErrMsg=%q, Lang=%q, Theme=%q, PocketTkn=%q, LastForceRefresh=%s, WebAuthnSession=%q`,
 		s.CSRF,
 		s.OAuth2State,
@@ -40,7 +40,7 @@ func (s SessionData) String() string {
 }
 
 // Value converts the session data to JSON.
-func (s SessionData) Value() (driver.Value, error) {
+func (s *SessionData) Value() (driver.Value, error) {
 	j, err := json.Marshal(s)
 	return j, err
 }
