@@ -145,7 +145,7 @@ func (r *request) execute(method, path string, data interface{}) (io.ReadCloser,
 
 func (r *request) buildClient() http.Client {
 	return http.Client{
-		Timeout: time.Duration(defaultTimeout * time.Second),
+		Timeout: defaultTimeout * time.Second,
 	}
 }
 
