@@ -222,7 +222,7 @@ func resizeIcon(icon *model.Icon) *model.Icon {
 	case "image/gif":
 		src, err = gif.Decode(r)
 	}
-	if err != nil {
+	if err != nil || src == nil {
 		slog.Warn("unable to decode the icon", slog.Any("error", err))
 		return icon
 	}
