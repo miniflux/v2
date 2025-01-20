@@ -75,7 +75,7 @@ func (el EnclosureList) ContainsAudioOrVideo() bool {
 func (el EnclosureList) ProxifyEnclosureURL(router *mux.Router) {
 	proxyOption := config.Opts.MediaProxyMode()
 
-	if proxyOption == "all" || proxyOption != "none" {
+	if proxyOption != "none" {
 		for i := range el {
 			if urllib.IsHTTPS(el[i].URL) {
 				for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
