@@ -413,7 +413,7 @@ func (h *handler) deleteCredential(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.store.DeleteCredentialByHandle(uid, []byte(credentialHandle))
+	err = h.store.DeleteCredentialByHandle(uid, credentialHandle)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
