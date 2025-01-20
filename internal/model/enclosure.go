@@ -28,7 +28,7 @@ type EnclosureUpdateRequest struct {
 }
 
 // Html5MimeType will modify the actual MimeType to allow direct playback from HTML5 player for some kind of MimeType
-func (e Enclosure) Html5MimeType() string {
+func (e *Enclosure) Html5MimeType() string {
 	if e.MimeType == "video/m4v" {
 		return "video/x-m4v"
 	}
