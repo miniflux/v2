@@ -11,7 +11,7 @@ class DomHelper {
     }
 
     static scrollPageTo(element, evenIfOnScreen) {
-        const windowScrollPosition = window.pageYOffset;
+        const windowScrollPosition = window.scrollY;
         const windowHeight = document.documentElement.clientHeight;
         const viewportPosition = windowScrollPosition + windowHeight;
         const itemBottomPosition = element.offsetTop + element.offsetHeight;
