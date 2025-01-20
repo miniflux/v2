@@ -5,7 +5,7 @@ package locale // import "miniflux.app/v2/internal/locale"
 
 // See https://localization-guide.readthedocs.io/en/latest/l10n/pluralforms.html
 // And http://www.unicode.org/cldr/charts/29/supplemental/language_plural_rules.html
-var pluralForms = map[string](func(n int) int){
+var pluralForms = map[string]func(n int) int{
 	// nplurals=2; plural=(n != 1);
 	"default": func(n int) int {
 		if n != 1 {
