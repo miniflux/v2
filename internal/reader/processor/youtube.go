@@ -151,11 +151,11 @@ func parseISO8601(from string) (time.Duration, error) {
 
 		switch name {
 		case "hour":
-			d += (time.Duration(val) * time.Hour)
+			d += time.Duration(val) * time.Hour
 		case "minute":
-			d += (time.Duration(val) * time.Minute)
+			d += time.Duration(val) * time.Minute
 		case "second":
-			d += (time.Duration(val) * time.Second)
+			d += time.Duration(val) * time.Second
 		default:
 			return 0, fmt.Errorf("unknown field %s", name)
 		}
