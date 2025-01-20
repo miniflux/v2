@@ -69,7 +69,7 @@ func (c *Client) SendNotification(feed *model.Feed, entries model.Entries) error
 		if err != nil {
 			return fmt.Errorf("apprise: unable to send request: %v", err)
 		}
-		defer response.Body.Close()
+		response.Body.Close()
 
 		if response.StatusCode >= 400 {
 			return fmt.Errorf("apprise: unable to send a notification: url=%s status=%d", apiEndpoint, response.StatusCode)
