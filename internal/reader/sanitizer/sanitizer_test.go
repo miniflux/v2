@@ -685,3 +685,13 @@ func TestHiddenParagraph(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestAttributesAreStripped(t *testing.T) {
+	input := `<p style="color: red;">Some text.<hr style="color: blue"/>Test.</p>`
+	expected := `<p>Some text.<hr/>Test.</p>`
+
+	output := Sanitize("http://example.org/", input)
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}

@@ -127,9 +127,11 @@ func Sanitize(baseURL, input string) string {
 				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
+						// Rewrite the start tag with allowed attributes.
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + ">")
 					} else {
-						buffer.WriteString(token.String())
+						// Rewrite the start tag without any attributes.
+						buffer.WriteString("<" + tagName + ">")
 					}
 
 					tagStack = append(tagStack, tagName)
@@ -138,7 +140,7 @@ func Sanitize(baseURL, input string) string {
 		case html.EndTagToken:
 			if len(blockedStack) == 0 {
 				if isValidTag(tagName) && slices.Contains(tagStack, tagName) {
-					buffer.WriteString(token.String())
+					buffer.WriteString("</" + tagName + ">")
 				}
 			} else {
 				if blockedStack[len(blockedStack)-1] == tagName {
@@ -155,7 +157,7 @@ func Sanitize(baseURL, input string) string {
 					if len(attrNames) > 0 {
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + "/>")
 					} else {
-						buffer.WriteString(token.String())
+						buffer.WriteString("<" + tagName + "/>")
 					}
 				}
 			}
