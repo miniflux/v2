@@ -1,13 +1,11 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package processor
+package processor // import "miniflux.app/v2/internal/reader/processor
 
 import (
 	"log/slog"
 	"regexp"
-	"slices"
-	"strings"
 	"time"
 
 	"github.com/tdewolff/minify/v2"
@@ -127,155 +125,15 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		entry.Content = sanitizer.Sanitize(pageBaseURL, entry.Content)
 
 		updateEntryReadingTime(store, feed, entry, entryIsNew, user)
+
 		filteredEntries = append(filteredEntries, entry)
 	}
 
+	if user.ShowReadingTime && shouldFetchYouTubeWatchTimeInBulk() {
+		fetchYouTubeWatchTimeInBulk(filteredEntries)
+	}
+
 	feed.Entries = filteredEntries
-}
-
-func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	if user.BlockFilterEntryRules != "" {
-		rules := strings.Split(user.BlockFilterEntryRules, "\n")
-		for _, rule := range rules {
-			parts := strings.SplitN(rule, "=", 2)
-
-			var match bool
-			switch parts[0] {
-			case "EntryDate":
-				datePattern := parts[1]
-				match = isDateMatchingPattern(entry.Date, datePattern)
-			case "EntryTitle":
-				match, _ = regexp.MatchString(parts[1], entry.Title)
-			case "EntryURL":
-				match, _ = regexp.MatchString(parts[1], entry.URL)
-			case "EntryCommentsURL":
-				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
-			case "EntryContent":
-				match, _ = regexp.MatchString(parts[1], entry.Content)
-			case "EntryAuthor":
-				match, _ = regexp.MatchString(parts[1], entry.Author)
-			case "EntryTag":
-				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-					match, _ = regexp.MatchString(parts[1], tag)
-					return match
-				})
-				if containsTag {
-					match = true
-				}
-			}
-
-			if match {
-				slog.Debug("Blocking entry based on rule",
-					slog.String("entry_url", entry.URL),
-					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.String("rule", rule),
-				)
-				return true
-			}
-		}
-	}
-
-	if feed.BlocklistRules == "" {
-		return false
-	}
-
-	compiledBlocklist, err := regexp.Compile(feed.BlocklistRules)
-	if err != nil {
-		slog.Debug("Failed on regexp compilation",
-			slog.String("pattern", feed.BlocklistRules),
-			slog.Any("error", err),
-		)
-		return false
-	}
-
-	containsBlockedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-		return compiledBlocklist.MatchString(tag)
-	})
-
-	if compiledBlocklist.MatchString(entry.URL) || compiledBlocklist.MatchString(entry.Title) || compiledBlocklist.MatchString(entry.Author) || containsBlockedTag {
-		slog.Debug("Blocking entry based on rule",
-			slog.String("entry_url", entry.URL),
-			slog.Int64("feed_id", feed.ID),
-			slog.String("feed_url", feed.FeedURL),
-			slog.String("rule", feed.BlocklistRules),
-		)
-		return true
-	}
-
-	return false
-}
-
-func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	if user.KeepFilterEntryRules != "" {
-		rules := strings.Split(user.KeepFilterEntryRules, "\n")
-		for _, rule := range rules {
-			parts := strings.SplitN(rule, "=", 2)
-
-			var match bool
-			switch parts[0] {
-			case "EntryDate":
-				datePattern := parts[1]
-				match = isDateMatchingPattern(entry.Date, datePattern)
-			case "EntryTitle":
-				match, _ = regexp.MatchString(parts[1], entry.Title)
-			case "EntryURL":
-				match, _ = regexp.MatchString(parts[1], entry.URL)
-			case "EntryCommentsURL":
-				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
-			case "EntryContent":
-				match, _ = regexp.MatchString(parts[1], entry.Content)
-			case "EntryAuthor":
-				match, _ = regexp.MatchString(parts[1], entry.Author)
-			case "EntryTag":
-				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-					match, _ = regexp.MatchString(parts[1], tag)
-					return match
-				})
-				if containsTag {
-					match = true
-				}
-			}
-
-			if match {
-				slog.Debug("Allowing entry based on rule",
-					slog.String("entry_url", entry.URL),
-					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.String("rule", rule),
-				)
-				return true
-			}
-		}
-		return false
-	}
-
-	if feed.KeeplistRules == "" {
-		return true
-	}
-
-	compiledKeeplist, err := regexp.Compile(feed.KeeplistRules)
-	if err != nil {
-		slog.Debug("Failed on regexp compilation",
-			slog.String("pattern", feed.KeeplistRules),
-			slog.Any("error", err),
-		)
-		return false
-	}
-	containsAllowedTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-		return compiledKeeplist.MatchString(tag)
-	})
-
-	if compiledKeeplist.MatchString(entry.URL) || compiledKeeplist.MatchString(entry.Title) || compiledKeeplist.MatchString(entry.Author) || containsAllowedTag {
-		slog.Debug("Allow entry based on rule",
-			slog.String("entry_url", entry.URL),
-			slog.Int64("feed_id", feed.ID),
-			slog.String("feed_url", feed.FeedURL),
-			slog.String("rule", feed.KeeplistRules),
-		)
-		return true
-	}
-	return false
 }
 
 // ProcessEntryWebPage downloads the entry web page and apply rewrite rules.
@@ -358,94 +216,6 @@ func rewriteEntryURL(feed *model.Feed, entry *model.Entry) string {
 	return rewrittenURL
 }
 
-func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool, user *model.User) {
-	if !user.ShowReadingTime {
-		slog.Debug("Skip reading time estimation for this user", slog.Int64("user_id", user.ID))
-		return
-	}
-
-	if shouldFetchYouTubeWatchTime(entry) {
-		if entryIsNew {
-			watchTime, err := fetchYouTubeWatchTime(entry.URL)
-			if err != nil {
-				slog.Warn("Unable to fetch YouTube watch time",
-					slog.Int64("user_id", user.ID),
-					slog.Int64("entry_id", entry.ID),
-					slog.String("entry_url", entry.URL),
-					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.Any("error", err),
-				)
-			}
-			entry.ReadingTime = watchTime
-		} else {
-			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
-		}
-	}
-
-	if shouldFetchNebulaWatchTime(entry) {
-		if entryIsNew {
-			watchTime, err := fetchNebulaWatchTime(entry.URL)
-			if err != nil {
-				slog.Warn("Unable to fetch Nebula watch time",
-					slog.Int64("user_id", user.ID),
-					slog.Int64("entry_id", entry.ID),
-					slog.String("entry_url", entry.URL),
-					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.Any("error", err),
-				)
-			}
-			entry.ReadingTime = watchTime
-		} else {
-			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
-		}
-	}
-
-	if shouldFetchOdyseeWatchTime(entry) {
-		if entryIsNew {
-			watchTime, err := fetchOdyseeWatchTime(entry.URL)
-			if err != nil {
-				slog.Warn("Unable to fetch Odysee watch time",
-					slog.Int64("user_id", user.ID),
-					slog.Int64("entry_id", entry.ID),
-					slog.String("entry_url", entry.URL),
-					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.Any("error", err),
-				)
-			}
-			entry.ReadingTime = watchTime
-		} else {
-			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
-		}
-	}
-
-	if shouldFetchBilibiliWatchTime(entry) {
-		if entryIsNew {
-			watchTime, err := fetchBilibiliWatchTime(entry.URL)
-			if err != nil {
-				slog.Warn("Unable to fetch Bilibili watch time",
-					slog.Int64("user_id", user.ID),
-					slog.Int64("entry_id", entry.ID),
-					slog.String("entry_url", entry.URL),
-					slog.Int64("feed_id", feed.ID),
-					slog.String("feed_url", feed.FeedURL),
-					slog.Any("error", err),
-				)
-			}
-			entry.ReadingTime = watchTime
-		} else {
-			entry.ReadingTime = store.GetReadTime(feed.ID, entry.Hash)
-		}
-	}
-
-	// Handle YT error case and non-YT entries.
-	if entry.ReadingTime == 0 {
-		entry.ReadingTime = readingtime.EstimateReadingTime(entry.Content, user.DefaultReadingSpeed, user.CJKReadingSpeed)
-	}
-}
-
 func isRecentEntry(entry *model.Entry) bool {
 	if config.Opts.FilterEntryMaxAgeDays() == 0 || entry.Date.After(time.Now().AddDate(0, 0, -config.Opts.FilterEntryMaxAgeDays())) {
 		return true
@@ -467,45 +237,4 @@ func minifyEntryContent(entryContent string) string {
 	}
 
 	return entryContent
-}
-
-func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
-	if pattern == "future" {
-		return entryDate.After(time.Now())
-	}
-
-	parts := strings.SplitN(pattern, ":", 2)
-	if len(parts) != 2 {
-		return false
-	}
-
-	operator := parts[0]
-	dateStr := parts[1]
-
-	switch operator {
-	case "before":
-		targetDate, err := time.Parse("2006-01-02", dateStr)
-		if err != nil {
-			return false
-		}
-		return entryDate.Before(targetDate)
-	case "after":
-		targetDate, err := time.Parse("2006-01-02", dateStr)
-		if err != nil {
-			return false
-		}
-		return entryDate.After(targetDate)
-	case "between":
-		dates := strings.Split(dateStr, ",")
-		if len(dates) != 2 {
-			return false
-		}
-		startDate, err1 := time.Parse("2006-01-02", dates[0])
-		endDate, err2 := time.Parse("2006-01-02", dates[1])
-		if err1 != nil || err2 != nil {
-			return false
-		}
-		return entryDate.After(startDate) && entryDate.Before(endDate)
-	}
-	return false
 }
