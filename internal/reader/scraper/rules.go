@@ -44,7 +44,7 @@ var predefinedRules = map[string]string{
 	"slate.fr":             ".field-items",
 	"smbc-comics.com":      "div#cc-comicbody, div#aftercomic",
 	"swordscomic.com":      "img#comic-image, div#info-frame.tab-content-area",
-	"techcrunch.com":       "div.article-entry",
+	"techcrunch.com":       "div.entry-content",
 	"theoatmeal.com":       "div#comic",
 	"theregister.com":      "#top-col-story h2, #body",
 	"theverge.com":         "h2.inline:nth-child(2),h2.duet--article--dangerously-set-cms-markup,figure.w-full,div.duet--article--article-body-component",
