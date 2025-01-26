@@ -506,6 +506,8 @@
     "form.integration.ntfy_internal_links": "點選時使用內部連結 (選填)",
     "form.integration.discord_activate": "推送文章到 Discord",
     "form.integration.discord_webhook_link": "Discord Webhook 連結",
+    "form.integration.slack_activate": "推送文章到 Slack",
+    "form.integration.slack_webhook_link": "Slack Webhook 連結",
     "form.api_key.label.description": "API 金鑰標籤",
     "form.submit.loading": "載入中…",
     "form.submit.saving": "儲存中…",

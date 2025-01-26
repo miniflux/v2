@@ -516,6 +516,8 @@
     "form.integration.ntfy_internal_links": "Interne Links beim Klicken verwenden (optional)",
     "form.integration.discord_activate": "Einträge zu Discord pushen",
     "form.integration.discord_webhook_link": "Discord-Webhook-URL",
+    "form.integration.slack_activate": "Einträge zu Slack pushen",
+    "form.integration.slack_webhook_link": "Slack-Webhook-URL",
     "form.api_key.label.description": "API-Schlüsselbezeichnung",
     "form.submit.loading": "Lade...",
     "form.submit.saving": "Speichern...",

@@ -516,6 +516,8 @@
     "form.integration.ntfy_internal_links": "Utiliser les liens internes vers Miniflux (facultatif)",
     "form.integration.discord_activate": "Envoyer les articles vers Discord",
     "form.integration.discord_webhook_link": "URL du Webhook Discord",
+    "form.integration.slack_activate": "Envoyer les articles vers Slack",
+    "form.integration.slack_webhook_link": "URL du Webhook Slack",
     "form.api_key.label.description": "Libellé de la clé d'API",
     "form.submit.loading": "Chargement...",
     "form.submit.saving": "Sauvegarde en cours...",

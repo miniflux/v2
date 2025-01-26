@@ -516,6 +516,8 @@
     "form.integration.ntfy_internal_links": "Use internal links on click (optional)",
     "form.integration.discord_activate": "Artikelen opslaan in Discord",
     "form.integration.discord_webhook_link": "Discord Webhook link",
+    "form.integration.slack_activate": "Artikelen opslaan in Slack",
+    "form.integration.slack_webhook_link": "Slack Webhook link",
     "form.api_key.label.description": "API-sleutel omschrijving",
     "form.submit.loading": "Laden...",
     "form.submit.saving": "Opslaan...",
