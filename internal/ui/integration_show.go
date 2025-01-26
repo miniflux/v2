@@ -129,6 +129,8 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		CuboxAPILink:                     integration.CuboxAPILink,
 		DiscordEnabled:                   integration.DiscordEnabled,
 		DiscordWebhookLink:               integration.DiscordWebhookLink,
+		SlackEnabled:                     integration.SlackEnabled,
+		SlackWebhookLink:                 integration.SlackWebhookLink,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

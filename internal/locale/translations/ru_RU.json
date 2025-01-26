@@ -526,6 +526,8 @@
     "form.integration.ntfy_internal_links": "Use internal links on click (optional)",
     "form.integration.discord_activate": "Отправить статьи в Discord",
     "form.integration.discord_webhook_link": "Ссылка на Discord Webhook",
+    "form.integration.slack_activate": "Отправить статьи в Slack",
+    "form.integration.slack_webhook_link": "Ссылка на Slack Webhook",
     "form.api_key.label.description": "Описание API-ключа",
     "form.submit.loading": "Загрузка…",
     "form.submit.saving": "Сохранение…",

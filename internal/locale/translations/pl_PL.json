@@ -526,6 +526,8 @@
     "form.integration.ntfy_internal_links": "Używaj łączy wewnętrznych po kliknięciu (opcjonalnie)",
     "form.integration.discord_activate": "Przesyłaj wpisy do Discord",
     "form.integration.discord_webhook_link": "Adres URL Webhook Discord",
+    "form.integration.slack_activate": "Przesyłaj wpisy do Slack",
+    "form.integration.slack_webhook_link": "Adres URL Webhook Slack",
     "form.api_key.label.description": "Etykieta klucza API",
     "form.submit.loading": "Ładowanie…",
     "form.submit.saving": "Zapisywanie…",

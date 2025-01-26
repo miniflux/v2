@@ -212,7 +212,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			cubox_enabled,
 			cubox_api_link,
 			discord_enabled,
-			discord_webhook_link
+			discord_webhook_link,
+			slack_enabled,
+			slack_webhook_link
 		FROM
 			integrations
 		WHERE
@@ -324,6 +326,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.CuboxAPILink,
 		&integration.DiscordEnabled,
 		&integration.DiscordWebhookLink,
+		&integration.SlackEnabled,
+		&integration.SlackWebhookLink,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -443,9 +447,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			cubox_enabled=$100,
 			cubox_api_link=$101,
 			discord_enabled=$102,
-			discord_webhook_link=$103
+			discord_webhook_link=$103,
+			slack_enabled=$104,
+			slack_webhook_link=$105
 		WHERE
-			user_id=$104
+			user_id=$106
 	`
 	_, err := s.db.Exec(
 		query,
@@ -552,6 +558,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.CuboxAPILink,
 		integration.DiscordEnabled,
 		integration.DiscordWebhookLink,
+		integration.SlackEnabled,
+		integration.SlackWebhookLink,
 		integration.UserID,
 	)
 
@@ -593,7 +601,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				raindrop_enabled='t' OR
 				betula_enabled='t' OR
 				cubox_enabled='t' OR
-				discord_enabled='t'
+				discord_enabled='t' OR
+				slack_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

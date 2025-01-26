@@ -109,4 +109,6 @@ type Integration struct {
 	CuboxAPILink                     string
 	DiscordEnabled                   bool
 	DiscordWebhookLink               string
+	SlackEnabled                     bool
+	SlackWebhookLink                 string
 }

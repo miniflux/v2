@@ -291,6 +291,8 @@
   "form.integration.cubox_api_link": "Cubox API link",
   "form.integration.discord_activate": "Makaleleri Discord'a gönder",
   "form.integration.discord_webhook_link": "Discord hizmet Webhook'lerinin virgülle ayrılmış listesi",
+  "form.integration.slack_activate": "Makaleleri Slack'a gönder",
+  "form.integration.slack_webhook_link": "Slack hizmet Webhook'lerinin virgülle ayrılmış listesi",
   "form.prefs.fieldset.application_settings": "Uygulama Ayarları",
   "form.prefs.fieldset.authentication_settings": "Kimlik Doğrulama Ayarları",
   "form.prefs.fieldset.reader_settings": "Okuyucu Ayarları",

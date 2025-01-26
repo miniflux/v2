@@ -535,6 +535,22 @@
         </div>
     </details>
 
+    <details {{ if .form.SlackEnabled }}open{{ end }}>
+        <summary>Slack</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="slack_enabled" value="1" {{ if .form.SlackEnabled }}checked{{ end }}> {{ t "form.integration.slack_activate" }}
+            </label>
+
+            <label for="form-slack-webhook-link">{{ t "form.integration.slack_webhook_link" }}</label>
+            <input type="url" name="slack_webhook_link" id="form-slack-webhook-link" value="{{ .form.SlackWebhookLink }}" placeholder="https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.TelegramBotEnabled }}open{{ end }}>
         <summary>Telegram Bot</summary>
         <div class="form-section">
