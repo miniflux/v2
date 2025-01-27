@@ -35,10 +35,7 @@ type FeedForm struct {
 	HideGlobally                bool
 	CategoryHidden              bool // Category has "hide_globally"
 	AppriseServiceURLs          string
-<<<<<<< HEAD
-=======
 	WebhookURL                  string
->>>>>>> 86fc50b6 (fix)
 	DisableHTTP2                bool
 	NtfyEnabled                 bool
 	NtfyPriority                int
@@ -70,10 +67,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.NoMediaPlayer = f.NoMediaPlayer
 	feed.HideGlobally = f.HideGlobally
 	feed.AppriseServiceURLs = f.AppriseServiceURLs
-<<<<<<< HEAD
-=======
 	feed.WebhookURL = f.WebhookURL
->>>>>>> 86fc50b6 (fix)
 	feed.DisableHTTP2 = f.DisableHTTP2
 	feed.NtfyEnabled = f.NtfyEnabled
 	feed.NtfyPriority = f.NtfyPriority
@@ -113,10 +107,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		NoMediaPlayer:               r.FormValue("no_media_player") == "1",
 		HideGlobally:                r.FormValue("hide_globally") == "1",
 		AppriseServiceURLs:          r.FormValue("apprise_service_urls"),
-<<<<<<< HEAD
-=======
 		WebhookURL:                  r.FormValue("webhook_url"),
->>>>>>> 86fc50b6 (fix)
 		DisableHTTP2:                r.FormValue("disable_http2") == "1",
 		NtfyEnabled:                 r.FormValue("ntfy_enabled") == "1",
 		NtfyPriority:                ntfyPriority,

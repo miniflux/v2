@@ -63,10 +63,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		HideGlobally:                feed.HideGlobally,
 		CategoryHidden:              feed.Category.HideGlobally,
 		AppriseServiceURLs:          feed.AppriseServiceURLs,
-<<<<<<< HEAD
-=======
 		WebhookURL:                  feed.WebhookURL,
->>>>>>> 86fc50b6 (fix)
 		DisableHTTP2:                feed.DisableHTTP2,
 		NtfyEnabled:                 feed.NtfyEnabled,
 		NtfyPriority:                feed.NtfyPriority,
