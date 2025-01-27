@@ -990,4 +990,8 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN webhook_url text default '';`)
+		return err
+	},
 }
