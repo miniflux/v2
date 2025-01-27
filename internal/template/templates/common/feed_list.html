@@ -66,7 +66,11 @@
                             data-label-yes="{{ t "confirm.yes" }}"
                             data-label-no="{{ t "confirm.no" }}"
                             data-label-loading="{{ t "confirm.loading" }}"
-                            data-url="{{ route "removeFeed" "feedID" .ID }}">{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
+                            {{ if $.categoryID }}
+                                data-url="{{ route "removeCategoryFeed" "categoryID" $.categoryID "feedID" .ID }}"
+                            {{ else }}
+                                data-url="{{ route "removeFeed" "feedID" .ID }}"
+                            {{ end }}>{{ icon "delete" }}<span class="icon-label">{{ t "action.remove" }}</span></button>
                     </li>
                     {{ if .UnreadCount }}
                       <li class="item-meta-icons-mark-as-read">
