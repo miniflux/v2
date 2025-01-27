@@ -40,6 +40,14 @@ func (s *Storage) FeedExists(userID, feedID int64) bool {
 	return result
 }
 
+// CategoryFeedExists returns true if the given feed exists that belongs to the given category.
+func (s *Storage) CategoryFeedExists(userID, categoryID, feedID int64) bool {
+	var result bool
+	query := `SELECT true FROM feeds WHERE user_id=$1 AND category_id=$2 AND id=$3`
+	s.db.QueryRow(query, userID, categoryID, feedID).Scan(&result)
+	return result
+}
+
 // FeedURLExists checks if feed URL already exists.
 func (s *Storage) FeedURLExists(userID int64, feedURL string) bool {
 	var result bool
