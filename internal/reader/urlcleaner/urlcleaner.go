@@ -12,23 +12,24 @@ import (
 // Interesting lists:
 // https://raw.githubusercontent.com/AdguardTeam/AdguardFilters/master/TrackParamFilter/sections/general_url.txt
 // https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/query-stripping/records
+// https://github.com/Smile4ever/Neat-URL/blob/master/data/default-params-by-category.json
+// https://github.com/brave/brave-core/blob/master/components/query_filter/utils.cc
 var trackingParams = map[string]bool{
-	// https://en.wikipedia.org/wiki/UTM_parameters#Parameters
-	"utm_source":   true,
-	"utm_medium":   true,
-	"utm_campaign": true,
-	"utm_term":     true,
-	"utm_content":  true,
-
 	// Facebook Click Identifiers
-	"fbclid":    true,
-	"_openstat": true,
+	"fbclid":          true,
+	"_openstat":       true,
+	"fb_action_ids":   true,
+	"fb_action_types": true,
+	"fb_ref":          true,
+	"fb_source":       true,
+	"fb_comment_id":   true,
 
 	// Google Click Identifiers
 	"gclid":  true,
 	"dclid":  true,
 	"gbraid": true,
 	"wbraid": true,
+	"gclsrc": true,
 
 	// Yandex Click Identifiers
 	"yclid":  true,
@@ -53,6 +54,7 @@ var trackingParams = map[string]bool{
 	"__hssc":        true,
 	"__hstc":        true,
 	"__hsfp":        true,
+	"_hsmi":         true,
 	"hsctatracking": true,
 
 	// Olytics
@@ -61,10 +63,21 @@ var trackingParams = map[string]bool{
 	"oly_enc_id":  true,
 
 	// Vero Click Identifier
-	"vero_id": true,
+	"vero_id":   true,
+	"vero_conv": true,
 
 	// Marketo email tracking
 	"mkt_tok": true,
+
+	// Adobe email tracking
+	"sc_cid": true,
+
+	// Beehiiv
+	"_bhlid": true,
+
+	// Branch.io
+	"_branch_match_id": true,
+	"_branch_referrer": true,
 }
 
 func RemoveTrackingParameters(inputURL string) (string, error) {
@@ -82,7 +95,8 @@ func RemoveTrackingParameters(inputURL string) (string, error) {
 
 	// Remove tracking parameters
 	for param := range queryParams {
-		if trackingParams[strings.ToLower(param)] {
+		lowerParam := strings.ToLower(param)
+		if trackingParams[lowerParam] || strings.HasPrefix(lowerParam, "utm_") {
 			queryParams.Del(param)
 			hasTrackers = true
 		}
