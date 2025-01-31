@@ -293,12 +293,12 @@ func TestBuildInvalidJSONResponse(t *testing.T) {
 	handler.ServeHTTP(w, r)
 	resp := w.Result()
 
-	expectedStatusCode := http.StatusOK
+	expectedStatusCode := http.StatusInternalServerError
 	if resp.StatusCode != expectedStatusCode {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
 	}
 
-	expectedBody := ``
+	expectedBody := `{"error_message":"json: unsupported type: chan int"}`
 	actualBody := w.Body.String()
 	if actualBody != expectedBody {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
