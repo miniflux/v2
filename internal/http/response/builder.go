@@ -25,7 +25,7 @@ type Builder struct {
 	statusCode        int
 	headers           map[string]string
 	enableCompression bool
-	body              interface{}
+	body              any
 }
 
 // WithStatus uses the given status code to build the response.
@@ -41,7 +41,7 @@ func (b *Builder) WithHeader(key, value string) *Builder {
 }
 
 // WithBody uses the given body to build the response.
-func (b *Builder) WithBody(body interface{}) *Builder {
+func (b *Builder) WithBody(body any) *Builder {
 	b.body = body
 	return b
 }
