@@ -75,3 +75,17 @@ func TestConvertTimeWithIdenticalTimezone(t *testing.T) {
 		t.Fatalf(`Unexpected time, got hours=%d, minutes=%d, secs=%d`, hours, minutes, secs)
 	}
 }
+
+func TestConvertPostgresDateTimeWithNegativeTimezoneOffset(t *testing.T) {
+	tz := "US/Eastern"
+	input := time.Date(0, 1, 1, 0, 0, 0, 0, time.FixedZone("", -5))
+	output := Convert(tz, input)
+
+	if output.Location().String() != tz {
+		t.Fatalf(`Unexpected timezone, got %q instead of %s`, output.Location(), tz)
+	}
+
+	if year := output.Year(); year != 0 {
+		t.Fatalf(`Unexpected year, got %d instead of 0`, year)
+	}
+}

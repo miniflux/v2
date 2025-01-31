@@ -12,10 +12,14 @@ func Convert(tz string, t time.Time) time.Time {
 	userTimezone := getLocation(tz)
 
 	if t.Location().String() == "" {
+		if t.Before(time.Date(1, time.January, 1, 0, 0, 0, 0, time.UTC)) {
+			return time.Date(0, time.January, 1, 0, 0, 0, 0, userTimezone)
+		}
+
 		// In this case, the provided date is already converted to the user timezone by Postgres,
 		// but the timezone information is not set in the time struct.
 		// We cannot use time.In() because the date will be converted a second time.
-		t = time.Date(
+		return time.Date(
 			t.Year(),
 			t.Month(),
 			t.Day(),
@@ -26,7 +30,7 @@ func Convert(tz string, t time.Time) time.Time {
 			userTimezone,
 		)
 	} else if t.Location() != userTimezone {
-		t = t.In(userTimezone)
+		return t.In(userTimezone)
 	}
 
 	return t
