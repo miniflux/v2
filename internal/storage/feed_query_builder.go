@@ -165,6 +165,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			fi.icon_id,
 			u.timezone,
 			f.apprise_service_urls,
+			f.webhook_url,
 			f.disable_http2,
 			f.ntfy_enabled,
 			f.ntfy_priority
@@ -235,6 +236,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&iconID,
 			&tz,
 			&feed.AppriseServiceURLs,
+			&feed.WebhookURL,
 			&feed.DisableHTTP2,
 			&feed.NtfyEnabled,
 			&feed.NtfyPriority,

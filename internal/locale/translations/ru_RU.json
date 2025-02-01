@@ -352,6 +352,7 @@
     "form.feed.label.keeplist_rules": "Правила белого списка",
     "form.feed.label.urlrewrite_rules": "Правила перезаписи URL",
     "form.feed.label.apprise_service_urls": "Список ссылок сервисов Apprise, разделенный запятой",
+    "form.feed.label.webhook_url": "Override webhook url",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP кеш",
     "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
     "form.feed.label.disable_http2": "Disable HTTP/2 to avoid fingerprinting",

@@ -246,11 +246,12 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			url_rewrite_rules,
 			no_media_player,
 			apprise_service_urls,
+			webhook_url,
 			disable_http2,
 			description
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
 		RETURNING
 			id
 	`
@@ -280,6 +281,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
 		feed.AppriseServiceURLs,
+		feed.WebhookURL,
 		feed.DisableHTTP2,
 		feed.Description,
 	).Scan(&feed.ID)
@@ -354,12 +356,13 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			url_rewrite_rules=$25,
 			no_media_player=$26,
 			apprise_service_urls=$27,
-			disable_http2=$28,
-			description=$29,
-			ntfy_enabled=$30,
-			ntfy_priority=$31
+			webhook_url=$28,
+			disable_http2=$29,
+			description=$30,
+			ntfy_enabled=$31,
+			ntfy_priority=$32
 		WHERE
-			id=$32 AND user_id=$33
+			id=$33 AND user_id=$34
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -389,6 +392,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.UrlRewriteRules,
 		feed.NoMediaPlayer,
 		feed.AppriseServiceURLs,
+		feed.WebhookURL,
 		feed.DisableHTTP2,
 		feed.Description,
 		feed.NtfyEnabled,
