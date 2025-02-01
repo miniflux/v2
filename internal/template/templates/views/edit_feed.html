@@ -178,17 +178,17 @@
         <fieldset>
             <legend>{{ t "form.feed.fieldset.integration" }}</legend>
 
-            <details>
+            <details {{ if .form.AppriseServiceURLs }}open{{ end }}>
                 <summary>Apprise</summary>
                 <div class="form-label-row">
                     <label for="form-apprise-service-urls">
                         {{ t "form.feed.label.apprise_service_urls" }}
                     </label>
                 </div>
-                <input type="text" name="apprise_service_urls" id="form-apprise-service-urls" value="{{ .form.AppriseServiceURLs }}" spellcheck="false">
+                <input type="text" name="apprise_service_urls" id="form-apprise-service-urls" value="{{ .form.AppriseServiceURLs }}" spellcheck="false" autocomplete="off">
             </details>
 
-            <details>
+            <details {{ if .form.NtfyEnabled }}open{{ end }}>
                 <summary>Ntfy</summary>
                 <label><input type="checkbox" name="ntfy_enabled" value="1" {{ if .form.NtfyEnabled }}checked{{ end }}> {{ t "form.feed.label.ntfy_activate" }}</label>
                 <div class="form-label-row">
@@ -209,14 +209,14 @@
                 </select>
             </details>
 
-            <details>
+            <details {{ if .form.WebhookURL }}open{{ end }}>
                 <summary>Webhook</summary>
                 <div class="form-label-row">
                     <label for="form-webhook-url">
                         {{ t "form.feed.label.webhook_url" }}
                     </label>
                 </div>
-                <input type="url" name="webhook_url" id="form-webhook-url" value="{{ .form.WebhookURL }}" spellcheck="false">
+                <input type="url" name="webhook_url" id="form-webhook-url" value="{{ .form.WebhookURL }}" spellcheck="false" autocomplete="off">
             </details>
 
             <div class="buttons">
