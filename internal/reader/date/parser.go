@@ -354,9 +354,7 @@ func parseLocalTimeDates(layout, ds string) (t time.Time, err error) {
 	// Workaround for dates that don't use GMT.
 	if strings.HasSuffix(ds, "PST") || strings.HasSuffix(ds, "PDT") {
 		loc, _ = time.LoadLocation("America/Los_Angeles")
-	}
-
-	if strings.HasSuffix(ds, "EST") || strings.HasSuffix(ds, "EDT") {
+	} else if strings.HasSuffix(ds, "EST") || strings.HasSuffix(ds, "EDT") {
 		loc, _ = time.LoadLocation("America/New_York")
 	}
 
