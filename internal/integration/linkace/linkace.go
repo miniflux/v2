@@ -35,7 +35,7 @@ func (c *Client) AddURL(entryURL, entryTitle string) error {
 		return c == ',' || c == ' '
 	}
 
-	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/v1/links")
+	apiEndpoint, err := urllib.JoinBaseURLAndPath(c.baseURL, "/api/v2/links")
 	if err != nil {
 		return fmt.Errorf("linkace: invalid API endpoint: %v", err)
 	}
