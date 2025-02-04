@@ -16,10 +16,8 @@ import (
 
 var ErrFeedFormatNotDetected = errors.New("parser: unable to detect feed format")
 
-// ParseFeed analyzes the input data and returns a normalized feed object.
-func ParseFeed(baseURL string, r io.ReadSeeker) (*model.Feed, error) {
-	r.Seek(0, io.SeekStart)
-	format, version := DetectFeedFormat(r)
+// ParseFeedWithFormat returns a normalized feed object.
+func ParseFeedWithFormat(baseURL string, r io.ReadSeeker, format, version string) (*model.Feed, error) {
 	switch format {
 	case FormatAtom:
 		r.Seek(0, io.SeekStart)
@@ -36,4 +34,11 @@ func ParseFeed(baseURL string, r io.ReadSeeker) (*model.Feed, error) {
 	default:
 		return nil, ErrFeedFormatNotDetected
 	}
+}
+
+// ParseFeed analyzes the input data and returns a normalized feed object.
+func ParseFeed(baseURL string, r io.ReadSeeker) (*model.Feed, error) {
+	r.Seek(0, io.SeekStart)
+	format, version := DetectFeedFormat(r)
+	return ParseFeedWithFormat(baseURL, r, format, version)
 }

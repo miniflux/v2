@@ -275,7 +275,18 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			return localizedError
 		}
 
-		updatedFeed, parseErr := parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
+		var updatedFeed *model.Feed
+		var parseErr error
+		if originalFeed.Format != "" {
+			format, version := originalFeed.Format, originalFeed.FormatVersion
+			updatedFeed, parseErr = parser.ParseFeedWithFormat(responseHandler.EffectiveURL(), bytes.NewReader(responseBody), format, version)
+			if parseErr != nil { // Maybe the feed changed its format.
+				slog.Warn("Unable to parse feed with the given format", slog.String("feed_url", originalFeed.FeedURL), slog.String("format", format), slog.Any("error", parseErr))
+				updatedFeed, parseErr = parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
+			}
+		} else {
+			updatedFeed, parseErr = parser.ParseFeed(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
+		}
 		if parseErr != nil {
 			localizedError := locale.NewLocalizedErrorWrapper(parseErr, "error.unable_to_parse_feed", parseErr)
 

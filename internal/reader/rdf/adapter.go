@@ -29,6 +29,7 @@ func (r *RDFAdapter) BuildFeed(baseURL string) *model.Feed {
 		Title:   stripTags(r.rdf.Channel.Title),
 		FeedURL: strings.TrimSpace(baseURL),
 		SiteURL: strings.TrimSpace(r.rdf.Channel.Link),
+		Format:  "rdf",
 	}
 
 	if feed.Title == "" {

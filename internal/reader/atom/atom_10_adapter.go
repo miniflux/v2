@@ -29,6 +29,9 @@ func NewAtom10Adapter(atomFeed *Atom10Feed) *Atom10Adapter {
 func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 	feed := new(model.Feed)
 
+	feed.Format = "atom"
+	feed.FormatVersion = "10"
+
 	// Populate the feed URL.
 	feedURL := a.atomFeed.Links.firstLinkWithRelation("self")
 	if feedURL != "" {

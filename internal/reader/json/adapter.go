@@ -29,6 +29,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		Title:   strings.TrimSpace(j.jsonFeed.Title),
 		FeedURL: strings.TrimSpace(j.jsonFeed.FeedURL),
 		SiteURL: strings.TrimSpace(j.jsonFeed.HomePageURL),
+		Format:  "json",
 	}
 
 	if feed.FeedURL == "" {

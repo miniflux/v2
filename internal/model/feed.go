@@ -59,6 +59,8 @@ type Feed struct {
 	NtfyTopic                   string    `json:"ntfy_topic"`
 	PushoverEnabled             bool      `json:"pushover_enabled,omitempty"`
 	PushoverPriority            int       `json:"pushover_priority,omitempty"`
+	Format                      string    `json:"format"`
+	FormatVersion               string    `json:"format_version"`
 
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`

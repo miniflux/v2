@@ -248,10 +248,12 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			apprise_service_urls,
 			webhook_url,
 			disable_http2,
-			description
+			description,
+			format,
+			format_version
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29)
 		RETURNING
 			id
 	`
@@ -284,6 +286,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.WebhookURL,
 		feed.DisableHTTP2,
 		feed.Description,
+		feed.Format,
+		feed.FormatVersion,
 	).Scan(&feed.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed %q: %v`, feed.FeedURL, err)
@@ -363,9 +367,11 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			ntfy_priority=$32,
 			ntfy_topic=$33,
 			pushover_enabled=$34,
-			pushover_priority=$35
+			pushover_priority=$35,
+			format=$36,
+			format_version=$37
 		WHERE
-			id=$36 AND user_id=$37
+			id=$38 AND user_id=$39
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -403,6 +409,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.NtfyTopic,
 		feed.PushoverEnabled,
 		feed.PushoverPriority,
+		feed.Format,
+		feed.FormatVersion,
 		feed.ID,
 		feed.UserID,
 	)

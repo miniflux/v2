@@ -75,7 +75,7 @@ a:hover {
     padding: var(--padding-size);
     position: absolute;
     transition: translate 0.3s;
-    translate: -50% calc(-100% - calc(var(--padding-size) * 2) - calc(var(--border-size) * 2));
+    translate: -50% calc(-100% - var(--padding-size) * 2 - var(--border-size) * 2);
 }
 
 .skip-to-content-link:focus {

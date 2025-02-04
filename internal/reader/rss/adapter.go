@@ -31,6 +31,7 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		Title:   html.UnescapeString(strings.TrimSpace(r.rss.Channel.Title)),
 		FeedURL: strings.TrimSpace(baseURL),
 		SiteURL: strings.TrimSpace(r.rss.Channel.Link),
+		Format:  "rss",
 	}
 
 	// Ensure the Site URL is absolute.
