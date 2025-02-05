@@ -503,7 +503,7 @@
     "form.integration.shaarli_endpoint": "Shaarli-URL",
     "form.integration.shaarli_api_secret": "Shaarli-API-Geheimnis",
     "form.integration.webhook_activate": "Webhooks aktivieren",
-    "form.integration.webhook_url": "Standard Webhook-URL",
+    "form.integration.webhook_url": "Standard-Webhook-URL",
     "form.integration.webhook_secret": "Webhook-Geheimnis",
     "form.integration.rssbridge_activate": "Beim Hinzufügen von Abonnements RSS-Bridge prüfen.",
     "form.integration.rssbridge_url": "RSS-Bridge-Server-URL",
