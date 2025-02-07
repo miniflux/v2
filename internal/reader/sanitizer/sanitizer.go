@@ -66,7 +66,7 @@ var (
 		"sup":        {"id"},
 		"table":      {},
 		"td":         {"rowspan", "colspan"},
-		"tfooter":    {},
+		"tfoot":      {},
 		"th":         {"rowspan", "colspan"},
 		"thead":      {},
 		"time":       {"datetime"},
