@@ -9,8 +9,9 @@ func TruncateHTML(input string, max int) string {
 	text := StripTags(input)
 	text = strings.ReplaceAll(text, "\n", " ")
 	text = strings.ReplaceAll(text, "\t", " ")
-	text = strings.ReplaceAll(text, "  ", " ")
-	text = strings.TrimSpace(text)
+
+	// Collapse multiple spaces into a single space
+	text = strings.Join(strings.Fields(text), " ")
 
 	// Convert to runes to be safe with unicode
 	runes := []rune(text)
