@@ -209,6 +209,27 @@
                 </select>
             </details>
 
+            <details {{ if .form.PushoverEnabled }}open{{ end }}>
+                <summary>Pushover</summary>
+                <label><input type="checkbox" name="pushover_enabled" value="1" {{ if .form.PushoverEnabled }}checked{{ end }}> {{ t "form.feed.label.pushover_activate" }}</label>
+                <div class="form-label-row">
+                    <label for="form-pushover-priority">
+                        {{ t "form.feed.label.pushover_priority" }}
+                    </label>
+                    &nbsp;
+                    <a href="https://pushover.net/api#priority" target="_blank">
+                        {{ icon "external-link" }}
+                    </a>
+                </div>
+                <select id="form-pushover-priority" name="pushover_priority">
+                    <option value="2" {{ if eq .form.PushoverPriority 2 }}selected{{ end }}>2 - {{ t "form.feed.label.pushover_max_priority" }}</option>
+                    <option value="1" {{ if eq .form.PushoverPriority 1 }}selected{{ end }}>1 - {{ t "form.feed.label.pushover_high_priority" }}</option>
+                    <option value="0" {{ if eq .form.PushoverPriority 0 }}selected{{ end }}>0 - {{ t "form.feed.label.pushover_default_priority" }}</option>
+                    <option value="-1" {{ if eq .form.PushoverPriority -1 }}selected{{ end }}>-1 - {{ t "form.feed.label.pushover_low_priority" }}</option>
+                    <option value="-2" {{ if eq .form.PushoverPriority -2 }}selected{{ end }}>-2 - {{ t "form.feed.label.pushover_min_priority" }}</option>
+                </select>
+            </details>
+
             <details {{ if .form.WebhookURL }}open{{ end }}>
                 <summary>Webhook</summary>
                 <div class="form-label-row">

@@ -412,6 +412,31 @@
         </div>
     </details>
 
+    <details {{ if .form.PushoverEnabled }}open{{ end }}>
+        <summary>Pushover</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="pushover_enabled" value="1" {{ if .form.PushoverEnabled }}checked{{ end }}> {{ t "form.integration.pushover_activate" }}
+            </label>
+
+            <label for="form-pushover-token">{{ t "form.integration.pushover_token" }}</label>
+            <input type="text" name="pushover_token" id="form-pushover-token" value="{{ .form.PushoverToken }}" spellcheck="false">
+
+            <label for="form-pushover-user">{{ t "form.integration.pushover_user" }}</label>
+            <input type="text" name="pushover_user" id="form-pushover-user" value="{{ .form.PushoverUser }}" spellcheck="false">
+
+            <label for="form-pushover-device">{{ t "form.integration.pushover_device" }}</label>
+            <input type="text" name="pushover_device" id="form-pushover-device" value="{{ .form.PushoverDevice }}" spellcheck="false">
+
+            <label for="form-pushover-prefix">{{ t "form.integration.pushover_prefix" }}</label>
+            <input type="text" name="pushover_prefix" id="form-pushover-prefix" value="{{ .form.PushoverPrefix }}" spellcheck="false" placeholder="https://api.pushover.net">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.RaindropEnabled }}open{{ end }}>
         <summary>Raindrop</summary>
         <div class="form-section">

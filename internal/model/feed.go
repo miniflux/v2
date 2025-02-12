@@ -56,6 +56,8 @@ type Feed struct {
 	WebhookURL                  string    `json:"webhook_url"`
 	NtfyEnabled                 bool      `json:"ntfy_enabled"`
 	NtfyPriority                int       `json:"ntfy_priority"`
+	PushoverEnabled             bool      `json:"pushover_enabled,omitempty"`
+	PushoverPriority            int       `json:"pushover_priority,omitempty"`
 
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`

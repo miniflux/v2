@@ -214,7 +214,12 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			discord_enabled,
 			discord_webhook_link,
 			slack_enabled,
-			slack_webhook_link
+			slack_webhook_link,
+			pushover_enabled,
+			pushover_user,
+			pushover_token,
+			pushover_device,
+			pushover_prefix
 		FROM
 			integrations
 		WHERE
@@ -328,6 +333,11 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.DiscordWebhookLink,
 		&integration.SlackEnabled,
 		&integration.SlackWebhookLink,
+		&integration.PushoverEnabled,
+		&integration.PushoverUser,
+		&integration.PushoverToken,
+		&integration.PushoverDevice,
+		&integration.PushoverPrefix,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -449,9 +459,14 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			discord_enabled=$102,
 			discord_webhook_link=$103,
 			slack_enabled=$104,
-			slack_webhook_link=$105
+			slack_webhook_link=$105,
+			pushover_enabled=$106,
+			pushover_user=$107,
+			pushover_token=$108,
+			pushover_device=$109,
+			pushover_prefix=$110
 		WHERE
-			user_id=$106
+			user_id=$111
 	`
 	_, err := s.db.Exec(
 		query,
@@ -560,6 +575,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.DiscordWebhookLink,
 		integration.SlackEnabled,
 		integration.SlackWebhookLink,
+		integration.PushoverEnabled,
+		integration.PushoverUser,
+		integration.PushoverToken,
+		integration.PushoverDevice,
+		integration.PushoverPrefix,
 		integration.UserID,
 	)
 

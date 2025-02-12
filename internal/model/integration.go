@@ -111,4 +111,9 @@ type Integration struct {
 	DiscordWebhookLink               string
 	SlackEnabled                     bool
 	SlackWebhookLink                 string
+	PushoverEnabled                  bool
+	PushoverUser                     string
+	PushoverToken                    string
+	PushoverDevice                   string
+	PushoverPrefix                   string
 }

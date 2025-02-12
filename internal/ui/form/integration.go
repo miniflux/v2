@@ -117,6 +117,11 @@ type IntegrationForm struct {
 	DiscordWebhookLink               string
 	SlackEnabled                     bool
 	SlackWebhookLink                 string
+	PushoverEnabled                  bool
+	PushoverUser                     string
+	PushoverToken                    string
+	PushoverDevice                   string
+	PushoverPrefix                   string
 }
 
 // Merge copy form values to the model.
@@ -223,6 +228,11 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.DiscordWebhookLink = i.DiscordWebhookLink
 	integration.SlackEnabled = i.SlackEnabled
 	integration.SlackWebhookLink = i.SlackWebhookLink
+	integration.PushoverEnabled = i.PushoverEnabled
+	integration.PushoverUser = i.PushoverUser
+	integration.PushoverToken = i.PushoverToken
+	integration.PushoverDevice = i.PushoverDevice
+	integration.PushoverPrefix = i.PushoverPrefix
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -332,6 +342,11 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		DiscordWebhookLink:               r.FormValue("discord_webhook_link"),
 		SlackEnabled:                     r.FormValue("slack_enabled") == "1",
 		SlackWebhookLink:                 r.FormValue("slack_webhook_link"),
+		PushoverEnabled:                  r.FormValue("pushover_enabled") == "1",
+		PushoverUser:                     r.FormValue("pushover_user"),
+		PushoverToken:                    r.FormValue("pushover_token"),
+		PushoverDevice:                   r.FormValue("pushover_device"),
+		PushoverPrefix:                   r.FormValue("pushover_prefix"),
 	}
 }
 

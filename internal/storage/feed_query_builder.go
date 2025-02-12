@@ -168,7 +168,9 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.webhook_url,
 			f.disable_http2,
 			f.ntfy_enabled,
-			f.ntfy_priority
+			f.ntfy_priority,
+			f.pushover_enabled,
+			f.pushover_priority
 		FROM
 			feeds f
 		LEFT JOIN
@@ -240,6 +242,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.DisableHTTP2,
 			&feed.NtfyEnabled,
 			&feed.NtfyPriority,
+			&feed.PushoverEnabled,
+			&feed.PushoverPriority,
 		)
 
 		if err != nil {

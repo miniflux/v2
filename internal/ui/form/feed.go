@@ -39,6 +39,8 @@ type FeedForm struct {
 	DisableHTTP2                bool
 	NtfyEnabled                 bool
 	NtfyPriority                int
+	PushoverEnabled             bool
+	PushoverPriority            int
 }
 
 // Merge updates the fields of the given feed.
@@ -71,6 +73,8 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.DisableHTTP2 = f.DisableHTTP2
 	feed.NtfyEnabled = f.NtfyEnabled
 	feed.NtfyPriority = f.NtfyPriority
+	feed.PushoverEnabled = f.PushoverEnabled
+	feed.PushoverPriority = f.PushoverPriority
 	return feed
 }
 
@@ -84,6 +88,12 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	if err != nil {
 		ntfyPriority = 0
 	}
+
+	pushoverPriority, err := strconv.Atoi(r.FormValue("pushover_priority"))
+	if err != nil {
+		pushoverPriority = 0
+	}
+
 	return &FeedForm{
 		FeedURL:                     r.FormValue("feed_url"),
 		SiteURL:                     r.FormValue("site_url"),
@@ -111,5 +121,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		DisableHTTP2:                r.FormValue("disable_http2") == "1",
 		NtfyEnabled:                 r.FormValue("ntfy_enabled") == "1",
 		NtfyPriority:                ntfyPriority,
+		PushoverEnabled:             r.FormValue("pushover_enabled") == "1",
+		PushoverPriority:            pushoverPriority,
 	}
 }
