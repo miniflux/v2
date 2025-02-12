@@ -994,4 +994,18 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN webhook_url text default '';`)
 		return err
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN pushover_enabled bool default 'f';
+			ALTER TABLE integrations ADD COLUMN pushover_user text default '';
+			ALTER TABLE integrations ADD COLUMN pushover_token text default '';
+			ALTER TABLE integrations ADD COLUMN pushover_device text default '';
+			ALTER TABLE integrations ADD COLUMN pushover_prefix text default '';
+
+			ALTER TABLE feeds ADD COLUMN pushover_enabled bool default 'f';
+			ALTER TABLE feeds ADD COLUMN pushover_priority int default '0';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

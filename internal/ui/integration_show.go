@@ -131,6 +131,11 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		DiscordWebhookLink:               integration.DiscordWebhookLink,
 		SlackEnabled:                     integration.SlackEnabled,
 		SlackWebhookLink:                 integration.SlackWebhookLink,
+		PushoverEnabled:                  integration.PushoverEnabled,
+		PushoverUser:                     integration.PushoverUser,
+		PushoverToken:                    integration.PushoverToken,
+		PushoverDevice:                   integration.PushoverDevice,
+		PushoverPrefix:                   integration.PushoverPrefix,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))
