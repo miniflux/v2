@@ -77,6 +77,10 @@ func TestPluralRules(t *testing.T) {
 			1: 0,
 			5: 0,
 		},
+		"nan_Latn_pehoeji": {
+			1: 0,
+			5: 0,
+		},
 	}
 
 	for rule, values := range scenarios {
