@@ -3,7 +3,7 @@ module miniflux.app/v2
 // +heroku goVersion go1.23
 
 require (
-	github.com/PuerkitoBio/goquery v1.10.1
+	github.com/PuerkitoBio/goquery v1.10.2
 	github.com/andybalholm/brotli v1.1.1
 	github.com/coreos/go-oidc/v3 v3.12.0
 	github.com/go-webauthn/webauthn v0.11.2
