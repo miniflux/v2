@@ -111,7 +111,7 @@ type RSSImage struct {
 
 type RSSItem struct {
 	// Title is the title of the item.
-	Title string `xml:"rss title"`
+	Title RSSTitle `xml:"rss title"`
 
 	// Link is the URL of the item.
 	Link string `xml:"rss link"`
@@ -167,6 +167,11 @@ type RSSItem struct {
 	AtomLinks
 	itunes.ItunesItemElement
 	googleplay.GooglePlayItemElement
+}
+
+type RSSTitle struct {
+	Data  string `xml:",chardata"`
+	Inner string `xml:",innerxml"`
 }
 
 type RSSAuthor struct {

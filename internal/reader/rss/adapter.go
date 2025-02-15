@@ -173,13 +173,13 @@ func findFeedAuthor(rssChannel *RSSChannel) string {
 }
 
 func findEntryTitle(rssItem *RSSItem) string {
-	title := rssItem.Title
+	title := sanitizer.StripTags(rssItem.Title.Inner)
 
 	if rssItem.DublinCoreTitle != "" {
 		title = rssItem.DublinCoreTitle
 	}
 
-	return html.UnescapeString(strings.TrimSpace(title))
+	return html.UnescapeString(html.UnescapeString(strings.TrimSpace(title)))
 }
 
 func findEntryURL(rssItem *RSSItem) string {
