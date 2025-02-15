@@ -1023,6 +1023,30 @@ func TestParseEntryTitleWithWhitespaces(t *testing.T) {
 	}
 }
 
+func TestParseEntryTitleWithInnerHTML(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rss version="2.0">
+	<channel>
+		<title>Example</title>
+		<link>http://example.org</link>
+		<item>
+			<title>Test: <b>bold</b></title>
+			<link>http://www.example.org/entries/1</link>
+			<pubDate>Fri, 15 Jul 2005 00:00:00 -0500</pubDate>
+		</item>
+	</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Test: bold" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
 func TestParseEntryWithEnclosures(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">
