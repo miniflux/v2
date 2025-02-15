@@ -311,6 +311,184 @@ func TestParseEntryWithDCTitleOnly(t *testing.T) {
 	}
 }
 
+func TestParseFeedTitleWithHTMLEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example &nbsp; Feed</title>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != "Example \u00a0 Feed" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+	}
+}
+
+func TestParseFeedTitleWithUnicodeEntityAndCdata(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title><![CDATA[Jenny&#8217;s Newsletter]]></title>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Title != `Jenny’s Newsletter` {
+		t.Errorf(`Incorrect title, got: %q`, feed.Title)
+	}
+}
+
+func TestParseItemTitleWithHTMLEntity(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>&lt;/example&gt;</title>
+				<link>http://www.example.org/entries/1</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "</example>" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithNumericCharacterReference(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>&#931; &#xDF;</title>
+				<link>http://www.example.org/article.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Σ ß" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithDoubleEncodedEntities(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+		<channel>
+			<link>https://example.org/</link>
+			<title>Example</title>
+			<item>
+				<title>&amp;#39;Text&amp;#39;</title>
+				<link>http://www.example.org/article.html</link>
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "'Text'" {
+		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithWhitespaces(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rss version="2.0">
+	<channel>
+		<title>Example</title>
+		<link>http://example.org</link>
+		<item>
+			<title>
+				Some Title
+			</title>
+			<link>http://www.example.org/entries/1</link>
+		</item>
+	</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Some Title" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithCDATA(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rss version="2.0">
+	<channel>
+		<title>Example</title>
+		<link>http://example.org</link>
+		<item>
+			<title><![CDATA[This is a title]]></title>
+			<link>http://www.example.org/entries/1</link>
+		</item>
+	</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "This is a title" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
+func TestParseItemTitleWithInnerHTML(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<rss version="2.0">
+	<channel>
+		<title>Example</title>
+		<link>http://example.org</link>
+		<item>
+			<title>Test: <b>bold</b></title>
+			<link>http://www.example.org/entries/1</link>
+		</item>
+	</channel>
+	</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Entries[0].Title != "Test: bold" {
+		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
+	}
+}
+
 func TestParseEntryWithoutLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">
@@ -997,56 +1175,6 @@ func TestParseEntryWithFeedBurnerLink(t *testing.T) {
 	}
 }
 
-func TestParseEntryTitleWithWhitespaces(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rss version="2.0">
-	<channel>
-		<title>Example</title>
-		<link>http://example.org</link>
-		<item>
-			<title>
-				Some Title
-			</title>
-			<link>http://www.example.org/entries/1</link>
-			<pubDate>Fri, 15 Jul 2005 00:00:00 -0500</pubDate>
-		</item>
-	</channel>
-	</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Entries[0].Title != "Some Title" {
-		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
-	}
-}
-
-func TestParseEntryTitleWithInnerHTML(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-	<rss version="2.0">
-	<channel>
-		<title>Example</title>
-		<link>http://example.org</link>
-		<item>
-			<title>Test: <b>bold</b></title>
-			<link>http://www.example.org/entries/1</link>
-			<pubDate>Fri, 15 Jul 2005 00:00:00 -0500</pubDate>
-		</item>
-	</channel>
-	</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Entries[0].Title != "Test: bold" {
-		t.Errorf("Incorrect entry title, got: %s", feed.Entries[0].Title)
-	}
-}
-
 func TestParseEntryWithEnclosures(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss version="2.0">
@@ -1401,113 +1529,6 @@ func TestParseInvalidXml(t *testing.T) {
 	_, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
 	if err == nil {
 		t.Error("Parse should returns an error")
-	}
-}
-
-func TestParseFeedTitleWithHTMLEntity(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-		<channel>
-			<link>https://example.org/</link>
-			<title>Example &nbsp; Feed</title>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Title != "Example \u00a0 Feed" {
-		t.Errorf(`Incorrect title, got: %q`, feed.Title)
-	}
-}
-
-func TestParseFeedTitleWithUnicodeEntityAndCdata(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-		<channel>
-			<link>https://example.org/</link>
-			<title><![CDATA[Jenny&#8217;s Newsletter]]></title>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Title != `Jenny’s Newsletter` {
-		t.Errorf(`Incorrect title, got: %q`, feed.Title)
-	}
-}
-
-func TestParseItemTitleWithHTMLEntity(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-		<channel>
-			<link>https://example.org/</link>
-			<title>Example</title>
-			<item>
-				<title>&lt;/example&gt;</title>
-				<link>http://www.example.org/entries/1</link>
-			</item>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Entries[0].Title != "</example>" {
-		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
-	}
-}
-
-func TestParseItemTitleWithNumericCharacterReference(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-		<channel>
-			<link>https://example.org/</link>
-			<title>Example</title>
-			<item>
-				<title>&#931; &#xDF;</title>
-				<link>http://www.example.org/article.html</link>
-			</item>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Entries[0].Title != "Σ ß" {
-		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
-	}
-}
-
-func TestParseItemTitleWithDoubleEncodedEntities(t *testing.T) {
-	data := `<?xml version="1.0" encoding="utf-8"?>
-		<rss version="2.0" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
-		<channel>
-			<link>https://example.org/</link>
-			<title>Example</title>
-			<item>
-				<title>&amp;#39;Text&amp;#39;</title>
-				<link>http://www.example.org/article.html</link>
-			</item>
-		</channel>
-		</rss>`
-
-	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if feed.Entries[0].Title != "'Text'" {
-		t.Errorf(`Incorrect title, got: %q`, feed.Entries[0].Title)
 	}
 }
 
