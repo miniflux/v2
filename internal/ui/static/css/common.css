@@ -1173,21 +1173,10 @@ article.category-has-unread {
 
 .entry-content aside {
     font-size: 0.9em;
-    width: 30%;
     padding: 1ch;
-    margin-left: 15px;
-    float: right;
+    margin-bottom: 15px;
     font-style: italic;
     border: dotted var(--entry-content-aside-border-color) 2px;
-}
-
-@media (max-width: 620px) {
-    .entry-content aside {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 15px;
-        float: none;
-    }
 }
 
 details.entry-enclosures {
