@@ -119,9 +119,19 @@ func TestImgWithDataURL(t *testing.T) {
 	}
 }
 
-func TestImgWithSrcset(t *testing.T) {
+func TestImgWithSrcsetAttribute(t *testing.T) {
 	input := `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" src="example-640w.jpg" alt="Example">`
 	expected := `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" src="http://example.org/example-640w.jpg" alt="Example" loading="lazy">`
+	output := Sanitize("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithSrcsetAndNoSrcAttribute(t *testing.T) {
+	input := `<img srcset="example-320w.jpg, example-480w.jpg 1.5x,   example-640w.jpg 2x, example-640w.jpg 640w" alt="Example">`
+	expected := `<img srcset="http://example.org/example-320w.jpg, http://example.org/example-480w.jpg 1.5x, http://example.org/example-640w.jpg 2x, http://example.org/example-640w.jpg 640w" alt="Example" loading="lazy">`
 	output := Sanitize("http://example.org/", input)
 
 	if output != expected {
