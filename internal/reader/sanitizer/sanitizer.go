@@ -296,9 +296,9 @@ func hasRequiredAttributes(tagName string, attributes []string) bool {
 	switch tagName {
 	case "a":
 		return slices.Contains(attributes, "href")
-	case "iframe", "img":
+	case "iframe":
 		return slices.Contains(attributes, "src")
-	case "source":
+	case "source", "img":
 		return slices.Contains(attributes, "src") || slices.Contains(attributes, "srcset")
 	default:
 		return true
