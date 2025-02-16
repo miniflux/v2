@@ -21,12 +21,12 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/encoding"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/image/draw"
-	"golang.org/x/net/html/charset"
 )
 
 type IconFinder struct {
@@ -248,7 +248,7 @@ func findIconURLsFromHTMLDocument(body io.Reader, contentType string) ([]string,
 		"link[rel='apple-touch-icon-precomposed.png']",
 	}
 
-	htmlDocumentReader, err := charset.NewReader(body, contentType)
+	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
 	if err != nil {
 		return nil, fmt.Errorf("icon: unable to create charset reader: %w", err)
 	}

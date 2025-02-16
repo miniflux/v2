@@ -10,12 +10,12 @@ import (
 	"strings"
 
 	"miniflux.app/v2/internal/config"
+	"miniflux.app/v2/internal/reader/encoding"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readability"
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
-	"golang.org/x/net/html/charset"
 )
 
 func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string) (baseURL string, extractedContent string, err error) {
@@ -39,10 +39,11 @@ func ScrapeWebsite(requestBuilder *fetcher.RequestBuilder, pageURL, rules string
 		rules = getPredefinedScraperRules(pageURL)
 	}
 
-	htmlDocumentReader, err := charset.NewReader(
+	htmlDocumentReader, err := encoding.NewCharsetReader(
 		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
 		responseHandler.ContentType(),
 	)
+
 	if err != nil {
 		return "", "", fmt.Errorf("scraper: unable to read HTML document with charset reader: %v", err)
 	}

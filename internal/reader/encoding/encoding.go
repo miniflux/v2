@@ -5,6 +5,7 @@ package encoding // import "miniflux.app/v2/internal/reader/encoding"
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"unicode/utf8"
 
@@ -23,7 +24,11 @@ import (
 // - Feeds with encoding specified only in XML document and not in HTTP header
 // - Feeds with wrong encoding defined and already in UTF-8
 func CharsetReader(charsetLabel string, input io.Reader) (io.Reader, error) {
-	buffer, _ := io.ReadAll(input)
+	buffer, err := io.ReadAll(input)
+	if err != nil {
+		return nil, fmt.Errorf(`encoding: unable to read input: %w`, err)
+	}
+
 	r := bytes.NewReader(buffer)
 
 	// The document is already UTF-8, do not do anything (avoid double-encoding).
@@ -34,4 +39,25 @@ func CharsetReader(charsetLabel string, input io.Reader) (io.Reader, error) {
 
 	// Transform document to UTF-8 from the specified encoding in XML prolog.
 	return charset.NewReaderLabel(charsetLabel, r)
+}
+
+// NewCharsetReader returns an io.Reader that converts the content of r to UTF-8.
+func NewCharsetReader(r io.Reader, contentType string) (io.Reader, error) {
+	buffer, err := io.ReadAll(r)
+	if err != nil {
+		return nil, fmt.Errorf(`encoding: unable to read input: %w`, err)
+	}
+
+	internalReader := bytes.NewReader(buffer)
+
+	// The document is already UTF-8, do not do anything.
+	if utf8.Valid(buffer) {
+		return internalReader, nil
+	}
+
+	// Transform document to UTF-8 from the specified encoding in Content-Type header.
+	// Note that only the first 1024 bytes are used to detect the encoding.
+	// If the <meta charset> tag is not found in the first 1024 bytes, charset.DetermineEncoding returns "windows-1252" resulting in encoding issues.
+	// See https://html.spec.whatwg.org/multipage/parsing.html#determining-the-character-encoding
+	return charset.NewReader(internalReader, contentType)
 }

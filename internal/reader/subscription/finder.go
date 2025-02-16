@@ -16,12 +16,12 @@ import (
 	"miniflux.app/v2/internal/integration/rssbridge"
 	"miniflux.app/v2/internal/locale"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/reader/encoding"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/parser"
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
-	"golang.org/x/net/html/charset"
 )
 
 var (
@@ -136,7 +136,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromWebPage(websiteURL, contentTyp
 		"link[type='application/feed+json']": parser.FormatJSON,
 	}
 
-	htmlDocumentReader, err := charset.NewReader(body, contentType)
+	htmlDocumentReader, err := encoding.NewCharsetReader(body, contentType)
 	if err != nil {
 		return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_parse_html_document", err)
 	}
