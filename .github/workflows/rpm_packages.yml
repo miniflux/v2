@@ -6,10 +6,14 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
   schedule:
-    - cron: '0 0 * * 1,4'  # Runs at 00:00 UTC on Monday and Thursday
+    - cron: '0 0 * * 1,4' # Runs at 00:00 UTC on Monday and Thursday
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packaging/rpm/**' # Only run on changes to the rpm packaging files
 jobs:
   test-package:
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || github.event_name == 'pull_request'
     name: Test Packages
     runs-on: ubuntu-latest
     steps:
