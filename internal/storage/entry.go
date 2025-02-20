@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"slices"
 	"strings"
 	"time"
 
@@ -612,9 +611,18 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 	return
 }
 
-func removeDuplicates(l []string) []string {
-	slices.Sort(l)
-	return slices.Compact(l)
+// removeDuplicate removes duplicate entries from a slice while keeping order.
+// Some feeds expect tags to be shown in order, so we preserve it rather than sort.
+func removeDuplicates[T string | int](sliceList []T) []T {
+	allKeys := make(map[T]bool)
+	list := []T{}
+	for _, item := range sliceList {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }
 
 func removeEmpty(l []string) []string {
