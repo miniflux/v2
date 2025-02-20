@@ -14,6 +14,7 @@ import (
 // https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/query-stripping/records
 // https://github.com/Smile4ever/Neat-URL/blob/master/data/default-params-by-category.json
 // https://github.com/brave/brave-core/blob/master/components/query_filter/utils.cc
+// https://developers.google.com/analytics/devguides/collection/ga4/reference/config
 var trackingParams = map[string]bool{
 	// Facebook Click Identifiers
 	"fbclid":          true,
@@ -30,6 +31,14 @@ var trackingParams = map[string]bool{
 	"gbraid": true,
 	"wbraid": true,
 	"gclsrc": true,
+
+	// Google Analytics
+	"campaign_id":      true,
+	"campaign_medium":  true,
+	"campaign_name":    true,
+	"campaign_source":  true,
+	"campaign_term":    true,
+	"campaign_content": true,
 
 	// Yandex Click Identifiers
 	"yclid":  true,
