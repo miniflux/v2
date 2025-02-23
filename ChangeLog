@@ -1,7 +1,68 @@
+Version 2.2.6 (February 22, 2025)
+---------------------------------
+
+* test(encoding): add unit tests for `CharsetReader` function
+* refactor(xml): improve the performances of `NewXMLDecoder`
+* refactor(ui): remove superfluous cast
+* refactor(request): broaden an error condition when parsing cookies
+* refactor(processor): remove superfluous parenthesis
+* refactor(opml): don't define receivers on both values and pointer
+* refactor(model): simplify a condition
+* refactor(model): don't define methods both on instance and pointer
+* refactor(locale): sort JSON documents alphabetically by keys
+* refactor(locale): remove superfluous parenthesis
+* refactor(js): use proper types in `app.js`
+* refactor(js): replace the deprecated `window.pageYOffset` with `window.scollY`
+* refactor(js): remove a useless `return`
+* refactor(js): anchor `=` removal in `webauthn_handler.js` regex
+* refactor(js): add default value for parameter `fallbackSelf` in `goToPage` function
+* refactor(integration): don't use `defer` in a loop
+* refactor(icon): guard against a potential `null` dereference
+* refactor(date): use an else-if instead of two if statements
+* refactor(css): use shortcuts to declare padding
+* refactor(client): remove a useless cast
+* perf(sanitizer): remove two useless calls to `strings.ReplaceAll`
+* fix(ui): Redirect correctly post feed removal from category feeds list
+* fix(scraper): update TechCrunch scraper rule
+* fix(scraper): avoid encoding issue if charset meta tag is after 1024 bytes
+* fix(sanitizer): non-allowed attributes are not properly stripped
+* fix(sanitizer): correct HTML tag name from `tfooter` to `tfoot`
+* fix(rss): handle item title with `CDATA` content correctly
+* fix(locale): missing hyphen in `de_DE.json`
+* fix(css): avoid aside overflow on the pagination menu
+* fix(css): `--entry-content-aside-border-color` is missing from `system.css`
+* fix(api): return 500 response when JSON serialization fails
+* fix(api): JSON encoding is failing with dates at OAD and negative timezone offset
+* feat(urlcleaner): add trackers to the blocklist
+* feat(ui): open the `<details>` tag in edit feed page when the feature is enabled
+* feat(sanitizer): improve text truncation with better space handling
+* feat(sanitizer): allow `img` tags with only a `srcset` and no `src` attribute
+* feat(rss): add workaround for RSS item title with HTML content
+* feat(pushover): add integration with pushover.net
+* feat(processor): fetch YouTube watch time in bulk using the API
+* feat(locale): update Traditional Chinese translation
+* feat(locale): update Polish translation
+* feat(locale): update French translation
+* feat(locale): add Taiwanese POJ (nan-Latn-pehoeji)
+* feat(integration): update Linkace integration to support API v2
+* feat(integration): add webhook URL per feed
+* feat(integration): add Slack integration
+* feat(css): improve aside element position on smartphone
+* ci: update GitHub Actions workflows to use Go 1.24
+* ci: trigger packaging tests on pull requests
+* ci: add `commitlint` to validate PR commit messages
+* build(deps): bump `golang` in `/packaging/debian`
+* build(deps): bump `golang.org/x/term` from `0.28.0` to `0.29.0`
+* build(deps): bump `golang.org/x/oauth2` from `0.25.0` to `0.26.0`
+* build(deps): bump `golang.org/x/net` from `0.34.0` to `0.35.0`
+* build(deps): bump `golang.org/x/image` from `0.23.0` to `0.24.0`
+* build(deps): bump `golang.org/x/crypto` from `0.32.0` to `0.33.0`
+* build(deps): bump `github.com/PuerkitoBio/goquery` from `1.10.1` to `1.10.2`
+
 Version 2.2.5 (January 20, 2025)
 --------------------------------
 
-* tests(js): improve `.jshintrc` (strict comparison, etc...)
+* test(js): improve `.jshintrc` (strict comparison, etc...)
 * test(sanitizer): add a fuzzer
 * refactor(rewriter): use custom title case converter implementation instead of `golang.org/x/text/cases.Title()`
 * refactor(readingtime): replace `whatlanggo` package with an ad-hoc implementation
