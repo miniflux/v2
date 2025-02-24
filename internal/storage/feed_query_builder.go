@@ -169,6 +169,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.disable_http2,
 			f.ntfy_enabled,
 			f.ntfy_priority,
+			f.ntfy_topic,
 			f.pushover_enabled,
 			f.pushover_priority
 		FROM
@@ -242,6 +243,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.DisableHTTP2,
 			&feed.NtfyEnabled,
 			&feed.NtfyPriority,
+			&feed.NtfyTopic,
 			&feed.PushoverEnabled,
 			&feed.PushoverPriority,
 		)

@@ -192,6 +192,12 @@
                 <summary>Ntfy</summary>
                 <label><input type="checkbox" name="ntfy_enabled" value="1" {{ if .form.NtfyEnabled }}checked{{ end }}> {{ t "form.feed.label.ntfy_activate" }}</label>
                 <div class="form-label-row">
+                    <label for="form-ntfy-topic">
+                        {{ t "form.feed.label.ntfy_topic" }}
+                    </label>
+                </div>
+                <input type="text" name="ntfy_topic" id="form-ntfy-topic" value="{{ .form.NtfyTopic }}" spellcheck="false" autocomplete="off">
+                <div class="form-label-row">
                     <label for="form-ntfy-priority">
                         {{ t "form.feed.label.ntfy_priority" }}
                     </label>

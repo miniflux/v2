@@ -1008,4 +1008,11 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `
+			ALTER TABLE feeds ADD COLUMN ntfy_topic text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

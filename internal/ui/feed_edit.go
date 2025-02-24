@@ -67,6 +67,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		DisableHTTP2:                feed.DisableHTTP2,
 		NtfyEnabled:                 feed.NtfyEnabled,
 		NtfyPriority:                feed.NtfyPriority,
+		NtfyTopic:                   feed.NtfyTopic,
 		PushoverEnabled:             feed.PushoverEnabled,
 		PushoverPriority:            feed.PushoverPriority,
 	}

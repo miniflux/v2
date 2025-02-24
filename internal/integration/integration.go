@@ -502,15 +502,20 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 	}
 
 	if userIntegrations.NtfyEnabled && feed.NtfyEnabled {
+		ntfyTopic := feed.NtfyTopic
+		if ntfyTopic == "" {
+			ntfyTopic = userIntegrations.NtfyTopic
+		}
 		slog.Debug("Sending new entries to Ntfy",
 			slog.Int64("user_id", userIntegrations.UserID),
 			slog.Int("nb_entries", len(entries)),
 			slog.Int64("feed_id", feed.ID),
+			slog.String("topic", ntfyTopic),
 		)
 
 		client := ntfy.NewClient(
 			userIntegrations.NtfyURL,
-			userIntegrations.NtfyTopic,
+			ntfyTopic,
 			userIntegrations.NtfyAPIToken,
 			userIntegrations.NtfyUsername,
 			userIntegrations.NtfyPassword,

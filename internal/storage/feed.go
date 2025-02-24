@@ -361,10 +361,11 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			description=$30,
 			ntfy_enabled=$31,
 			ntfy_priority=$32,
-			pushover_enabled=$33,
-			pushover_priority=$34
+			ntfy_topic=$33,
+			pushover_enabled=$34,
+			pushover_priority=$35
 		WHERE
-			id=$35 AND user_id=$36
+			id=$36 AND user_id=$37
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -399,6 +400,7 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.Description,
 		feed.NtfyEnabled,
 		feed.NtfyPriority,
+		feed.NtfyTopic,
 		feed.PushoverEnabled,
 		feed.PushoverPriority,
 		feed.ID,
