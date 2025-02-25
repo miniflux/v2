@@ -12,7 +12,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/prometheus/client_golang v1.21.0
 	github.com/tdewolff/minify/v2 v2.21.3
-	golang.org/x/crypto v0.34.0
+	golang.org/x/crypto v0.35.0
 	golang.org/x/image v0.24.0
 	golang.org/x/net v0.35.0
 	golang.org/x/oauth2 v0.26.0
