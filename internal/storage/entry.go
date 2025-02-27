@@ -369,18 +369,8 @@ func (s *Storage) ArchiveEntries(status string, days, limit int) (int64, error) 
 // SetEntriesStatus update the status of the given list of entries.
 func (s *Storage) SetEntriesStatus(userID int64, entryIDs []int64, status string) error {
 	query := `UPDATE entries SET status=$1, changed_at=now() WHERE user_id=$2 AND id=ANY($3)`
-	result, err := s.db.Exec(query, status, userID, pq.Array(entryIDs))
-	if err != nil {
+	if _, err := s.db.Exec(query, status, userID, pq.Array(entryIDs)); err != nil {
 		return fmt.Errorf(`store: unable to update entries statuses %v: %v`, entryIDs, err)
-	}
-
-	count, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf(`store: unable to update these entries %v: %v`, entryIDs, err)
-	}
-
-	if count == 0 {
-		return errors.New(`store: nothing has been updated`)
 	}
 
 	return nil
