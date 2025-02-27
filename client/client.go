@@ -18,6 +18,7 @@ type Client struct {
 }
 
 // New returns a new Miniflux client.
+//
 // Deprecated: use NewClient instead.
 func New(endpoint string, credentials ...string) *Client {
 	return NewClient(endpoint, credentials...)
