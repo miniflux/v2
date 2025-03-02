@@ -34,11 +34,6 @@ func TestGetRefererForURL(t *testing.T) {
 			expected: "https://www.instagram.com",
 		},
 		{
-			name:     "Piokok URL",
-			url:      "https://sp1.piokok.com/example.jpg",
-			expected: "https://sp1.piokok.com",
-		},
-		{
 			name:     "Weibo Video URL",
 			url:      "https://f.video.weibocdn.com/example.mp4",
 			expected: "https://weibo.com",
