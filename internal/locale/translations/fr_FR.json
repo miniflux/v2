@@ -401,6 +401,7 @@
     "page.about.author": "Auteur :",
     "page.about.build_date": "Date de la compilation :",
     "page.about.credits": "Crédits",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Options de configuration globales",
     "page.about.go_version": "Version de Go :",
     "page.about.license": "Licence :",
@@ -420,10 +421,6 @@
     "page.api_keys.table.last_used_at": "Dernière utilisation",
     "page.api_keys.table.token": "Jeton",
     "page.api_keys.title": "Clés d'API",
-    "page.categories_count": [
-        "%d catégorie",
-        "%d catégories"
-    ],
     "page.categories.entries": "Articles",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
@@ -432,6 +429,10 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.title": "Catégories",
+    "page.categories_count": [
+        "%d catégorie",
+        "%d catégories"
+    ],
     "page.category_label": "Catégorie : %s",
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_feed.etag_header": "En-tête ETag :",
@@ -537,25 +538,25 @@
     "page.settings.webauthn.passkeys": "Clés d’accès",
     "page.settings.webauthn.register": "Enregister une nouvelle clé d’accès",
     "page.settings.webauthn.register.error": "Impossible d'enregistrer la clé d’accès",
+    "page.shared_entries.title": "Articles partagés",
     "page.shared_entries_count": [
         "%d article partagé",
         "%d articles partagés"
     ],
-    "page.shared_entries.title": "Articles partagés",
+    "page.starred.title": "Favoris",
     "page.starred_entry_count": [
         "%d favori",
         "%d favoris"
     ],
-    "page.starred.title": "Favoris",
     "page.total_entry_count": [
         "%d article au total",
         "%d articles au total"
     ],
+    "page.unread.title": "Non lus",
     "page.unread_entry_count": [
         "%d article non lu",
         "%d articles non lus"
     ],
-    "page.unread.title": "Non lus",
     "page.users.actions": "Actions",
     "page.users.admin.no": "Non",
     "page.users.admin.yes": "Oui",

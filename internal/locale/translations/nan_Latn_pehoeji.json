@@ -399,6 +399,7 @@
     "page.about.author": "Chok-chiá: ",
     "page.about.build_date": "Kiàn-tì li̍t-kî:",
     "page.about.credits": "Pán-koân",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Choân-he̍k siat-tēng soán-hāng",
     "page.about.go_version": "Go pán-pún:",
     "page.about.license": "Pàng-koân:",
@@ -418,9 +419,6 @@
     "page.api_keys.table.last_used_at": "Siōng-bóe pái sú-iōng",
     "page.api_keys.table.token": "Só-sî",
     "page.api_keys.title": "API só-sî",
-    "page.categories_count": [
-        "%d ê lūi-pia̍t"
-    ],
     "page.categories.entries": "Siau-sit",
     "page.categories.feed_count": [
         "Ū %d ê Siau-sit lâi-goân"
@@ -428,6 +426,9 @@
     "page.categories.feeds": "Siau-sit lâi-goân",
     "page.categories.no_feed": "Ah-bô siau-sit lâi-goân",
     "page.categories.title": "Lūi-pia̍t",
+    "page.categories_count": [
+        "%d ê lūi-pia̍t"
+    ],
     "page.category_label": "Lūi-pia̍t: %s",
     "page.edit_category.title": "Pian-chi̍p lūi-pia̍t: %s",
     "page.edit_feed.etag_header": "ETag piau-thâu:",
@@ -530,21 +531,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Chù-chheh Passkey",
     "page.settings.webauthn.register.error": "Bô-hoat-tō͘ chù-chheh Passkey",
+    "page.shared_entries.title": "Hun-hióng kè ê siau-sit",
     "page.shared_entries_count": [
         "Í-keng hun-hióng %d ê siau-sit"
     ],
-    "page.shared_entries.title": "Hun-hióng kè ê siau-sit",
+    "page.starred.title": "Siu-chông",
     "page.starred_entry_count": [
         "%d ê siu-chông ê siau-sit"
     ],
-    "page.starred.title": "Siu-chông",
     "page.total_entry_count": [
         "Lóng-chóng %d ê siau-sit"
     ],
+    "page.unread.title": "Ah-bōe tha̍k",
     "page.unread_entry_count": [
         "%d ê siau-sit ah-bōe tha̍k"
     ],
-    "page.unread.title": "Ah-bōe tha̍k",
     "page.users.actions": "chhau-chok",
     "page.users.admin.no": "Hóⁿ",
     "page.users.admin.yes": "Sī",

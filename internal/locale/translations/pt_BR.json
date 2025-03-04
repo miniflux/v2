@@ -401,6 +401,7 @@
     "page.about.author": "Autor:",
     "page.about.build_date": "Compilado em:",
     "page.about.credits": "Créditos",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "opções de configuração global",
     "page.about.go_version": "Go versão:",
     "page.about.license": "Licença:",
@@ -420,10 +421,6 @@
     "page.api_keys.table.last_used_at": "Ultima utilização",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chaves de API",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "Itens",
     "page.categories.feed_count": [
         "Existe %d fonte.",
@@ -432,6 +429,10 @@
     "page.categories.feeds": "Inscrições",
     "page.categories.no_feed": "Sem fonte.",
     "page.categories.title": "Categorias",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Editar categoria: %s",
     "page.edit_feed.etag_header": "Cabeçalho 'ETag':",
@@ -537,25 +538,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Registrar senha",
     "page.settings.webauthn.register.error": "Não foi possível registrar a senha",
+    "page.shared_entries.title": "Itens compartilhados",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Itens compartilhados",
+    "page.starred.title": "Favoritos",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "Favoritos",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Não lidos",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "Não lidos",
     "page.users.actions": "Ações",
     "page.users.admin.no": "Não",
     "page.users.admin.yes": "Sim",

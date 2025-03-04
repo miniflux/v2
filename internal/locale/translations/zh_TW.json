@@ -399,6 +399,7 @@
     "page.about.author": "作者：",
     "page.about.build_date": "建構日期：",
     "page.about.credits": "版權",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "全域設定選項",
     "page.about.go_version": "Go 版本：",
     "page.about.license": "授權：",
@@ -418,9 +419,6 @@
     "page.api_keys.table.last_used_at": "最後使用",
     "page.api_keys.table.token": "金鑰",
     "page.api_keys.title": "API 金鑰",
-    "page.categories_count": [
-        "%d 個分類"
-    ],
     "page.categories.entries": "檢視內容",
     "page.categories.feed_count": [
         "有 %d 個 Feed"
@@ -428,6 +426,9 @@
     "page.categories.feeds": "檢視 Feeds",
     "page.categories.no_feed": "沒有 Feed",
     "page.categories.title": "分類",
+    "page.categories_count": [
+        "%d 個分類"
+    ],
     "page.category_label": "分類：%s",
     "page.edit_category.title": "編輯分類 : %s",
     "page.edit_feed.etag_header": "ETag 標頭：",
@@ -530,21 +531,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "註冊 Passkey",
     "page.settings.webauthn.register.error": "無法註冊 Passkey",
+    "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
         "已分享 %d 篇文章"
     ],
-    "page.shared_entries.title": "已分享的文章",
+    "page.starred.title": "收藏",
     "page.starred_entry_count": [
         "%d 篇收藏文章"
     ],
-    "page.starred.title": "收藏",
     "page.total_entry_count": [
         "總共 %d 篇文章"
     ],
+    "page.unread.title": "未讀",
     "page.unread_entry_count": [
         "%d 篇未讀文章"
     ],
-    "page.unread.title": "未讀",
     "page.users.actions": "操作",
     "page.users.admin.no": "否",
     "page.users.admin.yes": "是",

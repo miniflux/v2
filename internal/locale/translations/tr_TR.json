@@ -401,6 +401,7 @@
     "page.about.author": "Yazar:",
     "page.about.build_date": "Oluşturulma Tarihi:",
     "page.about.credits": "Katkıda Bulunanlar",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Global yapılandırma seçenekleri",
     "page.about.go_version": "Go sürümü:",
     "page.about.license": "Lisans:",
@@ -420,10 +421,6 @@
     "page.api_keys.table.last_used_at": "Son Kullanılma",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API Anahtarları",
-    "page.categories_count": [
-        "%d kategori",
-        "%d kategori"
-    ],
     "page.categories.entries": "Makaleler",
     "page.categories.feed_count": [
         "%d besleme var.",
@@ -432,6 +429,10 @@
     "page.categories.feeds": "Beslemeler",
     "page.categories.no_feed": "Besleme yok.",
     "page.categories.title": "Kategoriler",
+    "page.categories_count": [
+        "%d kategori",
+        "%d kategori"
+    ],
     "page.category_label": "Kategori: %s",
     "page.edit_category.title": "Kategoriyi Düzenle: %s",
     "page.edit_feed.etag_header": "ETag başlığı:",
@@ -537,25 +538,25 @@
     "page.settings.webauthn.passkeys": "Passkeyler",
     "page.settings.webauthn.register": "Passkey'i kaydet",
     "page.settings.webauthn.register.error": "Passkey kaydedilemiyor",
+    "page.shared_entries.title": "Paylaşılan makaleler",
     "page.shared_entries_count": [
         "%d paylaşılan makaleler",
         "%d paylaşılan makaleler"
     ],
-    "page.shared_entries.title": "Paylaşılan makaleler",
+    "page.starred.title": "Yıldızlı",
     "page.starred_entry_count": [
         "%d yıldızlanmış makale",
         "%d yıldızlanmış makale"
     ],
-    "page.starred.title": "Yıldızlı",
     "page.total_entry_count": [
         "Toplamda %d makale",
         "Toplamda %d makale"
     ],
+    "page.unread.title": "Okunmadı",
     "page.unread_entry_count": [
         "Toplamda %d okunmamış makale",
         "Toplamda %d okunmamış makale"
     ],
-    "page.unread.title": "Okunmadı",
     "page.users.actions": "Eylemler",
     "page.users.admin.no": "Hayır",
     "page.users.admin.yes": "Evet",
