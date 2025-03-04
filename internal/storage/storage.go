@@ -42,3 +42,15 @@ func (s *Storage) Ping() error {
 func (s *Storage) DBStats() sql.DBStats {
 	return s.db.Stats()
 }
+
+// DBSize returns how much size the database is using in a pretty way.
+func (s *Storage) DBSize() (string, error) {
+	var size string
+
+	err := s.db.QueryRow("SELECT pg_size_pretty(pg_database_size(current_database()))").Scan(&size)
+	if err != nil {
+		return "", err
+	}
+
+	return size, nil
+}

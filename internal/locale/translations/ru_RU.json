@@ -403,6 +403,7 @@
     "page.about.author": "Автор:",
     "page.about.build_date": "Дата сборки:",
     "page.about.credits": "Авторы",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Глобальные параметры конфигурации",
     "page.about.go_version": "Версия Go:",
     "page.about.license": "Лицензия:",
@@ -422,11 +423,6 @@
     "page.api_keys.table.last_used_at": "Последнее использование",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
-    "page.categories_count": [
-        "%d category",
-        "%d categories",
-        "%d categories"
-    ],
     "page.categories.entries": "Cтатьи",
     "page.categories.feed_count": [
         "Есть %d подписка.",
@@ -436,6 +432,11 @@
     "page.categories.feeds": "Подписки",
     "page.categories.no_feed": "Нет подписок.",
     "page.categories.title": "Категории",
+    "page.categories_count": [
+        "%d category",
+        "%d categories",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Изменить категорию: %s",
     "page.edit_feed.etag_header": "Заголовок ETag:",
@@ -544,29 +545,29 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Зарегистрировать пароль",
     "page.settings.webauthn.register.error": "Не удается зарегистрировать пароль",
+    "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Общедоступные статьи",
+    "page.starred.title": "Избранное",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries",
         "%d starred entries"
     ],
-    "page.starred.title": "Избранное",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries",
         "%d unread entries"
     ],
-    "page.unread.title": "Непрочитанное",
     "page.users.actions": "Действия",
     "page.users.admin.no": "Нет",
     "page.users.admin.yes": "Да",

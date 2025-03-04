@@ -401,6 +401,7 @@
     "page.about.author": "Author:",
     "page.about.build_date": "Build Date:",
     "page.about.credits": "Credits",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Global configuration options",
     "page.about.go_version": "Go version:",
     "page.about.license": "License:",

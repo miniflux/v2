@@ -401,6 +401,7 @@
     "page.about.author": "Autor:",
     "page.about.build_date": "Datum der Kompilierung:",
     "page.about.credits": "Urheberrechte",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Globale Konfigurationsoptionen",
     "page.about.go_version": "Go-Version:",
     "page.about.license": "Lizenz:",
@@ -420,10 +421,6 @@
     "page.api_keys.table.last_used_at": "Zuletzt verwendeten",
     "page.api_keys.table.token": "Zeichen",
     "page.api_keys.title": "API-Schlüssel",
-    "page.categories_count": [
-        "%d Kategorie",
-        "%d Kategorien"
-    ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
@@ -432,6 +429,10 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.title": "Kategorien",
+    "page.categories_count": [
+        "%d Kategorie",
+        "%d Kategorien"
+    ],
     "page.category_label": "Kategorie: %s",
     "page.edit_category.title": "Kategorie bearbeiten: %s",
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
@@ -537,25 +538,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Hauptschlüssel registrieren",
     "page.settings.webauthn.register.error": "Hauptschlüssel kann nicht registriert werden",
+    "page.shared_entries.title": "Geteilte Artikel",
     "page.shared_entries_count": [
         "%d geteilter Artikel",
         "%d geteilte Artikel"
     ],
-    "page.shared_entries.title": "Geteilte Artikel",
+    "page.starred.title": "Lesezeichen",
     "page.starred_entry_count": [
         "%d Lesezeichen",
         "%d Lesezeichen"
     ],
-    "page.starred.title": "Lesezeichen",
     "page.total_entry_count": [
         "%d Artikel insgesamt",
         "%d Artikel insgesamt"
     ],
+    "page.unread.title": "Ungelesen",
     "page.unread_entry_count": [
         "%d ungelesener Artikel",
         "%d ungelesene Artikel"
     ],
-    "page.unread.title": "Ungelesen",
     "page.users.actions": "Aktionen",
     "page.users.admin.no": "Nein",
     "page.users.admin.yes": "Ja",

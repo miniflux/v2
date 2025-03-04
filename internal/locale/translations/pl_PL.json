@@ -403,6 +403,7 @@
     "page.about.author": "Autor:",
     "page.about.build_date": "Data opracowania:",
     "page.about.credits": "Prawa autorskie",
+    "page.about.db_usage": "Database size:",
     "page.about.global_config_options": "Globalne opcje konfiguracji",
     "page.about.go_version": "Wersja Go:",
     "page.about.license": "Licencja:",
@@ -422,11 +423,6 @@
     "page.api_keys.table.last_used_at": "Ostatnio używane",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Klucze API",
-    "page.categories_count": [
-        "%d kategoria",
-        "%d kategorie",
-        "%d kategorii"
-    ],
     "page.categories.entries": "Wpisy",
     "page.categories.feed_count": [
         "Jest %d kanał.",
@@ -436,6 +432,11 @@
     "page.categories.feeds": "Kanały",
     "page.categories.no_feed": "Brak kanałów.",
     "page.categories.title": "Kategorie",
+    "page.categories_count": [
+        "%d kategoria",
+        "%d kategorie",
+        "%d kategorii"
+    ],
     "page.category_label": "Kategoria: %s",
     "page.edit_category.title": "Edytuj kategorię: %s",
     "page.edit_feed.etag_header": "Nagłówek ETag:",
@@ -544,29 +545,29 @@
     "page.settings.webauthn.passkeys": "Klucze dostępu",
     "page.settings.webauthn.register": "Zarejestruj klucz dostępu",
     "page.settings.webauthn.register.error": "Nie można zarejestrować klucza dostępu",
+    "page.shared_entries.title": "Udostępnione wpisy",
     "page.shared_entries_count": [
         "%d udostępniony wpis",
         "%d udostępnione wpisy",
         "%d udostępnionych wpisów"
     ],
-    "page.shared_entries.title": "Udostępnione wpisy",
+    "page.starred.title": "Ulubione",
     "page.starred_entry_count": [
         "%d ulubiony wpis",
         "%d ulubione wpisy",
         "%d ulubionych wpisów"
     ],
-    "page.starred.title": "Ulubione",
     "page.total_entry_count": [
         "%d wpis łącznie",
         "%d wpisy łącznie",
         "%d wpisów łącznie"
     ],
+    "page.unread.title": "Nieprzeczytane",
     "page.unread_entry_count": [
         "%d nieprzeczytany wpis",
         "%d nieprzeczytane wpisy",
         "%d nieprzeczytanych wpisów"
     ],
-    "page.unread.title": "Nieprzeczytane",
     "page.users.actions": "Działania",
     "page.users.admin.no": "Nie",
     "page.users.admin.yes": "Tak",

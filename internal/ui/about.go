@@ -22,6 +22,8 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	dbSize, dbErr := h.store.DBSize()
+
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("version", version.Version)
@@ -34,6 +36,12 @@ func (h *handler) showAboutPage(w http.ResponseWriter, r *http.Request) {
 	view.Set("globalConfigOptions", config.Opts.SortedOptions(true))
 	view.Set("postgres_version", h.store.DatabaseVersion())
 	view.Set("go_version", runtime.Version())
+
+	if dbErr != nil {
+		view.Set("db_usage", dbErr)
+	} else {
+		view.Set("db_usage", dbSize)
+	}
 
 	html.OK(w, r, view.Render("about"))
 }
