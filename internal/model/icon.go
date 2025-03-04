@@ -10,10 +10,11 @@ import (
 
 // Icon represents a website icon (favicon)
 type Icon struct {
-	ID       int64  `json:"id"`
-	Hash     string `json:"hash"`
-	MimeType string `json:"mime_type"`
-	Content  []byte `json:"-"`
+	ID         int64  `json:"id"`
+	Hash       string `json:"hash"`
+	MimeType   string `json:"mime_type"`
+	Content    []byte `json:"-"`
+	ExternalID string `json:"external_id"`
 }
 
 // DataURL returns the data URL of the icon.
@@ -26,6 +27,7 @@ type Icons []*Icon
 
 // FeedIcon is a junction table between feeds and icons.
 type FeedIcon struct {
-	FeedID int64 `json:"feed_id"`
-	IconID int64 `json:"icon_id"`
+	FeedID         int64  `json:"feed_id"`
+	IconID         int64  `json:"icon_id"`
+	ExternalIconID string `json:"external_icon_id"`
 }
