@@ -5,6 +5,8 @@ package database // import "miniflux.app/v2/internal/database"
 
 import (
 	"database/sql"
+
+	"miniflux.app/v2/internal/crypto"
 )
 
 var schemaVersion = len(migrations)
@@ -1014,5 +1016,50 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		`
 		_, err = tx.Exec(sql)
 		return err
+	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `
+			ALTER TABLE icons ADD COLUMN external_id text default '';
+			CREATE UNIQUE INDEX icons_external_id_idx ON icons USING btree(external_id) WHERE external_id <> '';
+		`
+		_, err = tx.Exec(sql)
+
+		return err
+	},
+	func(tx *sql.Tx, _ string) (err error) {
+		_, err = tx.Exec(`
+				DECLARE id_cursor CURSOR FOR
+				SELECT
+					id
+				FROM icons
+				WHERE external_id = ''
+				FOR UPDATE`)
+		if err != nil {
+			return err
+		}
+		defer tx.Exec("CLOSE id_cursor")
+
+		for {
+			var id int64
+
+			if err := tx.QueryRow(`FETCH NEXT FROM id_cursor`).Scan(&id); err != nil {
+				if err == sql.ErrNoRows {
+					break
+				}
+				return err
+			}
+
+			_, err = tx.Exec(
+				`
+				UPDATE icons SET external_id = $1 WHERE id = $2
+				`,
+				crypto.GenerateRandomStringHex(20), id)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	},
 }

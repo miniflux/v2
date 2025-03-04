@@ -163,6 +163,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			c.title as category_title,
 			c.hide_globally as category_hidden,
 			fi.icon_id,
+			i.external_id,
 			u.timezone,
 			f.apprise_service_urls,
 			f.webhook_url,
@@ -178,6 +179,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			categories c ON c.id=f.category_id
 		LEFT JOIN
 			feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN
+			icons i ON i.id=fi.icon_id
 		LEFT JOIN
 			users u ON u.id=f.user_id
 		WHERE %s
@@ -201,6 +204,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 	for rows.Next() {
 		var feed model.Feed
 		var iconID sql.NullInt64
+		var externalIconID string
 		var tz string
 		feed.Category = &model.Category{}
 
@@ -237,6 +241,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.Category.Title,
 			&feed.Category.HideGlobally,
 			&iconID,
+			&externalIconID,
 			&tz,
 			&feed.AppriseServiceURLs,
 			&feed.WebhookURL,
@@ -253,9 +258,9 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 		}
 
 		if iconID.Valid {
-			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.Int64}
+			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.Int64, ExternalIconID: externalIconID}
 		} else {
-			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: 0}
+			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: 0, ExternalIconID: ""}
 		}
 
 		if readCounters != nil {
