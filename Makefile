@@ -116,6 +116,16 @@ run:
 clean:
 	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb $(APP)*.exe $(APP)*.sha256
 
+.PHONY: add-string
+add-string:
+	cd internal/locale/translations && \
+	for file in *.json; do \
+		jq --indent 4 --arg key "$(KEY)" --arg val "$(VAL)" \
+		   '. + {($$key): $$val} | to_entries | sort_by(.key) | from_entries' "$$file" > tmp && \
+		mv tmp "$$file"; \
+	done
+
+
 test:
 	go test -cover -race -count=1 ./...
 
