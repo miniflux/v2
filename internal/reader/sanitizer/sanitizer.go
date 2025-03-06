@@ -71,6 +71,7 @@ var (
 		"thead":      {},
 		"time":       {"datetime"},
 		"tr":         {},
+		"u":          {},
 		"ul":         {"id"},
 		"var":        {},
 		"video":      {"poster", "height", "width", "src"},
