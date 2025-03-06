@@ -198,7 +198,7 @@ func TestProtocolRelativeURL(t *testing.T) {
 }
 
 func TestInvalidTag(t *testing.T) {
-	input := `<p>My invalid <b>tag</b>.</p>`
+	input := `<p>My invalid <z>tag</z>.</p>`
 	expected := `<p>My invalid tag.</p>`
 	output := Sanitize("http://example.org/", input)
 
@@ -238,7 +238,7 @@ func TestUnknownTag(t *testing.T) {
 }
 
 func TestInvalidNestedTag(t *testing.T) {
-	input := `<p>My invalid <b>tag with some <em>valid</em> tag</b>.</p>`
+	input := `<p>My invalid <z>tag with some <em>valid</em> tag</z>.</p>`
 	expected := `<p>My invalid tag with some <em>valid</em> tag.</p>`
 	output := Sanitize("http://example.org/", input)
 
