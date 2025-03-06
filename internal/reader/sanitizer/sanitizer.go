@@ -25,6 +25,7 @@ var (
 		"aside":      {},
 		"audio":      {"src"},
 		"blockquote": {},
+		"b":          {},
 		"br":         {},
 		"caption":    {},
 		"cite":       {},
