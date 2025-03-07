@@ -403,7 +403,7 @@
     "page.about.author": "Autor:",
     "page.about.build_date": "Data opracowania:",
     "page.about.credits": "Prawa autorskie",
-    "page.about.db_usage": "Database size:",
+    "page.about.db_usage": "Rozmiar bazy danych:",
     "page.about.global_config_options": "Globalne opcje konfiguracji",
     "page.about.go_version": "Wersja Go:",
     "page.about.license": "Licencja:",
