@@ -60,6 +60,51 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 	return enclosures, nil
 }
 
+func (s *Storage) GetEnclosuresForEntries(entryIDs []int64) (map[int64]model.EnclosureList, error) {
+	query := `
+		SELECT
+			id,
+			user_id,
+			entry_id,
+			url,
+			size,
+			mime_type,
+		    media_progression
+		FROM
+			enclosures
+		WHERE
+			entry_id = ANY($1)
+		ORDER BY id ASC
+	`
+
+	rows, err := s.db.Query(query, pq.Array(entryIDs))
+	if err != nil {
+		return nil, fmt.Errorf("store: unable to fetch enclosures: %w", err)
+	}
+	defer rows.Close()
+
+	enclosuresMap := make(map[int64]model.EnclosureList)
+	for rows.Next() {
+		var enclosure model.Enclosure
+		err := rows.Scan(
+			&enclosure.ID,
+			&enclosure.UserID,
+			&enclosure.EntryID,
+			&enclosure.URL,
+			&enclosure.Size,
+			&enclosure.MimeType,
+			&enclosure.MediaProgression,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("store: unable to scan enclosure row: %w", err)
+		}
+
+		enclosuresMap[enclosure.EntryID] = append(enclosuresMap[enclosure.EntryID], &enclosure)
+	}
+
+	return enclosuresMap, nil
+}
+
 func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 	query := `
 		SELECT
