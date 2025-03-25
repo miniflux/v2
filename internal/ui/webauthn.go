@@ -235,7 +235,7 @@ func (h *handler) finishLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		sessionData.SessionData.UserID = parsedResponse.Response.UserHandle
+		sessionData.UserID = parsedResponse.Response.UserHandle
 		webAuthUser := WebAuthnUser{user, parsedResponse.Response.UserHandle, storedCredentials}
 
 		// Since go-webauthn v0.11.0, the backup eligibility flag is strictly validated, but Miniflux does not store this flag.

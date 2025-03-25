@@ -39,7 +39,7 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	// Try to find the feed URL from the Atom links.
-	for _, atomLink := range r.rss.Channel.AtomLinks.Links {
+	for _, atomLink := range r.rss.Channel.Links {
 		atomLinkHref := strings.TrimSpace(atomLink.Href)
 		if atomLinkHref != "" && atomLink.Rel == "self" {
 			if absoluteFeedURL, err := urllib.AbsoluteURL(feed.FeedURL, atomLinkHref); err == nil {
@@ -189,7 +189,7 @@ func findEntryURL(rssItem *RSSItem) string {
 		}
 	}
 
-	for _, atomLink := range rssItem.AtomLinks.Links {
+	for _, atomLink := range rssItem.Links {
 		if atomLink.Href != "" && (strings.EqualFold(atomLink.Rel, "alternate") || atomLink.Rel == "") {
 			return strings.TrimSpace(atomLink.Href)
 		}
@@ -253,8 +253,8 @@ func findEntryAuthor(rssItem *RSSItem) string {
 		author = rssItem.ItunesAuthor
 	case rssItem.DublinCoreCreator != "":
 		author = rssItem.DublinCoreCreator
-	case rssItem.AtomAuthor.PersonName() != "":
-		author = rssItem.AtomAuthor.PersonName()
+	case rssItem.PersonName() != "":
+		author = rssItem.PersonName()
 	case strings.Contains(rssItem.Author.Inner, "<![CDATA["):
 		author = rssItem.Author.Data
 	default:

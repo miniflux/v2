@@ -189,11 +189,15 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		case "PROXY_PRIVATE_KEY":
 			slog.Warn("The PROXY_PRIVATE_KEY environment variable is deprecated, use MEDIA_PROXY_PRIVATE_KEY instead")
 			randomKey := make([]byte, 16)
-			rand.Read(randomKey)
+			if _, err := rand.Read(randomKey); err != nil {
+				return fmt.Errorf("config: unable to generate random key: %w", err)
+			}
 			p.opts.mediaProxyPrivateKey = parseBytes(value, randomKey)
 		case "MEDIA_PROXY_PRIVATE_KEY":
 			randomKey := make([]byte, 16)
-			rand.Read(randomKey)
+			if _, err := rand.Read(randomKey); err != nil {
+				return fmt.Errorf("config: unable to generate random key: %w", err)
+			}
 			p.opts.mediaProxyPrivateKey = parseBytes(value, randomKey)
 		case "MEDIA_PROXY_CUSTOM_URL":
 			p.opts.mediaProxyCustomURL = parseString(value, defaultMediaProxyURL)
