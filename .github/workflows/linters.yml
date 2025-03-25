@@ -29,13 +29,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.24.x"
-      - uses: golangci/golangci-lint-action@v6
+      - uses: golangci/golangci-lint-action@v7
         with:
           args: >
             --timeout 10m
-            --exclude-dirs=tests
-            --disable errcheck
-            --enable sqlclosecheck,misspell,gofmt,goimports,whitespace,gocritic
+            --disable errcheck,staticcheck
+            --enable sqlclosecheck,misspell,whitespace,gocritic
       - uses: dominikh/staticcheck-action@v1.3.1
         with:
           version: "latest"
