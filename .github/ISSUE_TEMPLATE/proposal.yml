@@ -1,0 +1,86 @@
+name: "Proposal / RFC"
+description: "Propose a significant change, or architectural decision"
+title: "[Proposal]: "
+type: "Proposal"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to submit a proposal! Please provide detailed information to ensure a productive discussion.
+
+  - type: input
+    id: summary
+    attributes:
+      label: "Proposal Summary"
+      description: "A brief summary of the proposed change or idea."
+      placeholder: "e.g., Refactor database schema for performance optimization"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "Motivation and Context"
+      description: "Explain the problem this proposal addresses. Why is it necessary? What are the current limitations or pain points?"
+      placeholder: |
+        e.g.,
+        - The current database schema causes performance bottlenecks when querying large datasets.
+        - Adding this feature will improve scalability and reliability for large-scale use cases.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: "Proposed Solution"
+      description: "Describe the proposed solution or approach. Include technical details, diagrams, and examples where possible."
+      placeholder: |
+        e.g.,
+        - Redesign the schema to normalize tables and introduce indexing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives Considered"
+      description: "List any alternative approaches that were considered and explain why they were rejected."
+      placeholder: |
+        e.g.,
+        - Use Redis for caching, but it adds operational complexity.
+        - Stick with the current schema and optimize queries, but this has limited impact on performance.
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: "Impact and Risks"
+      description: "Describe the potential impact of this change. Highlight possible risks and backward compatibility concerns."
+      placeholder: |
+        e.g.,
+        - May require data migration with downtime.
+        - Could introduce breaking changes in API responses.
+        - Affects core functionality, requiring extensive testing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: "Additional Context or References"
+      description: "Add any relevant context, links to related discussions, RFCs, or design documents."
+      placeholder: "e.g., Links to research, GitHub issues, or similar projects"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: agreement
+    attributes:
+      label: "Checklist"
+      description: "Please confirm the following:"
+      options:
+        - label: "I have reviewed existing proposals to ensure this change hasn't been proposed before."
+          required: true
+        - label: "I agree to provide follow-up updates and maintain discussion on this proposal."
+          required: true

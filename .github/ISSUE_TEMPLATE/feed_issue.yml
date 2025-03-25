@@ -1,0 +1,84 @@
+name: "Feed/Website Issue"
+description: "Report problems with a specific feed or website"
+title: "[Feed Issue]: "
+type: "Feed Issue"
+labels: ["triage needed"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting an issue with a feed or website! Please provide detailed information to help us diagnose and resolve the problem.
+
+  - type: input
+    id: feed_url
+    attributes:
+      label: "Feed URL"
+      description: "Provide the URL of the feed that is not working correctly."
+      placeholder: "e.g., https://example.com/feed.xml"
+    validations:
+      required: true
+
+  - type: input
+    id: website_url
+    attributes:
+      label: "Website URL"
+      description: "Provide the URL of the website."
+      placeholder: "e.g., https://example.com"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem_description
+    attributes:
+      label: "Problem Description"
+      description: "Describe the issue you are experiencing with this feed."
+      placeholder: |
+        e.g.,
+        - The feed URL returns a 403 error.
+        - The content is malformed.
+        - Images are not loading in the web ui.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: "Expected Behavior"
+      description: "Describe what you expect to happen."
+      placeholder: "e.g., The feed should show the images correctly."
+    validations:
+      required: true
+
+  - type: textarea
+    id: error_logs
+    attributes:
+      label: "Relevant Logs or Error Output"
+      description: "Paste any relevant logs or error messages, if available."
+      render: shell
+      placeholder: "e.g., HTTP error codes, invalid XML warnings, etc."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: "Additional Context"
+      description: "Add any other context, screenshots, or related information to help us troubleshoot."
+      placeholder: "e.g., Is this a recurring problem? Did the feed work before?"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: troubleshooting
+    attributes:
+      label: "Troubleshooting Steps"
+      description: "Please confirm that you have tried the following:"
+      options:
+        - label: "I have checked if the feed URL is correct and accessible in a web browser."
+          required: true
+        - label: "I have checked if the feed URL is correct and accessible with `curl`."
+          required: true
+        - label: "I have verified that the feed is valid using an RSS/Atom validator."
+          required: false
+        - label: "I have searched for existing issues to avoid duplicates."
+          required: true
