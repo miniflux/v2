@@ -36,7 +36,7 @@ func (s WebAuthnSession) String() string {
 	if s.SessionData == nil {
 		return "{}"
 	}
-	return fmt.Sprintf("{Challenge: %s, UserID: %x}", s.SessionData.Challenge, s.SessionData.UserID)
+	return fmt.Sprintf("{Challenge: %s, UserID: %x}", s.Challenge, s.UserID)
 }
 
 type WebAuthnCredential struct {

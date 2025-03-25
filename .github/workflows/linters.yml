@@ -33,12 +33,10 @@ jobs:
         with:
           args: >
             --timeout 10m
-            --disable errcheck,staticcheck
+            --disable errcheck
             --enable sqlclosecheck,misspell,whitespace,gocritic
-      - uses: dominikh/staticcheck-action@v1.3.1
-        with:
-          version: "latest"
-          install-go: false
+      - name: Run gofmt linter
+        run: gofmt -d -e .
 
   commitlint:
     name: Commit Linter

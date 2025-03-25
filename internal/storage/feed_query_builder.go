@@ -318,9 +318,10 @@ func (f *FeedQueryBuilder) fetchFeedCounter() (unreadCounters map[int64]int, rea
 			return nil, nil, fmt.Errorf(`store: unable to fetch feed counter row: %w`, err)
 		}
 
-		if status == model.EntryStatusRead {
+		switch status {
+		case model.EntryStatusRead:
 			readCounters[feedID] = count
-		} else if status == model.EntryStatusUnread {
+		case model.EntryStatusUnread:
 			unreadCounters[feedID] = count
 		}
 	}

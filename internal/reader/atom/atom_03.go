@@ -116,12 +116,12 @@ type Atom03Content struct {
 func (a *Atom03Content) Content() string {
 	content := ""
 
-	switch {
-	case a.Mode == "xml":
+	switch a.Mode {
+	case "xml":
 		content = a.InnerXML
-	case a.Mode == "escaped":
+	case "escaped":
 		content = a.CharData
-	case a.Mode == "base64":
+	case "base64":
 		b, err := base64.StdEncoding.DecodeString(a.CharData)
 		if err == nil {
 			content = string(b)

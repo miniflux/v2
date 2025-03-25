@@ -49,10 +49,10 @@ func parseImageCandidate(input string) (*ImageCandidate, error) {
 	parts := strings.Split(strings.TrimSpace(input), " ")
 	nbParts := len(parts)
 
-	switch {
-	case nbParts == 1:
+	switch nbParts {
+	case 1:
 		return &ImageCandidate{ImageURL: parts[0]}, nil
-	case nbParts == 2:
+	case 2:
 		if !isValidWidthOrDensityDescriptor(parts[1]) {
 			return nil, fmt.Errorf(`srcset: invalid descriptor`)
 		}

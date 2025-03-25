@@ -77,7 +77,9 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 				Category:    category,
 			}
 
-			h.store.CreateFeed(feed)
+			if err := h.store.CreateFeed(feed); err != nil {
+				return fmt.Errorf(`opml: unable to create this feed: %q`, subscription.FeedURL)
+			}
 		}
 	}
 
