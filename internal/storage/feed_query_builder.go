@@ -204,7 +204,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 	for rows.Next() {
 		var feed model.Feed
 		var iconID sql.NullInt64
-		var externalIconID string
+		var externalIconID sql.NullString
 		var tz string
 		feed.Category = &model.Category{}
 
@@ -257,8 +257,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			return nil, fmt.Errorf(`store: unable to fetch feeds row: %w`, err)
 		}
 
-		if iconID.Valid {
-			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.Int64, ExternalIconID: externalIconID}
+		if iconID.Valid && externalIconID.Valid {
+			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: iconID.Int64, ExternalIconID: externalIconID.String}
 		} else {
 			feed.Icon = &model.FeedIcon{FeedID: feed.ID, IconID: 0, ExternalIconID: ""}
 		}
