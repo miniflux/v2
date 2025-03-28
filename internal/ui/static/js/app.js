@@ -721,7 +721,7 @@ function isPlayerPlaying(element) {
  */
 function handleShare() {
     const link = document.querySelector(':is(a, button)[data-share-status]');
-    const title = document.querySelector("body > main > section > header > h1 > a");
+    const title = document.querySelector(".entry-header > h1 > a");
     if (link.dataset.shareStatus === "shared") {
         checkShareAPI(title, link.href);
     }
@@ -746,7 +746,7 @@ function checkShareAPI(title, url) {
     }
     try {
         navigator.share({
-            title: title,
+            title: title ? title.textContent : url,
             url: url
         });
     } catch (err) {
