@@ -135,7 +135,14 @@
         {{ if .entry.Tags }}
         <div class="entry-tags">
             {{ t "entry.tags.label" }}
-	    {{range $i, $e := .entry.Tags}}{{if $i}}, {{end}}<a href="{{ route "tagEntriesAll" "tagName" (urlEncode $e) }}"><strong>{{ $e }}</strong></a>{{end}}
+            {{ range $i, $e := .entry.Tags }}
+                {{if $i}}, {{end}}
+                {{ if $.user }}
+                    <a href="{{ route "tagEntriesAll" "tagName" (urlEncode $e) }}"><strong>{{ $e }}</strong></a>
+                {{ else }}
+                    <strong>{{ $e }}</strong>
+                {{ end }}
+            {{ end }}
         </div>
         {{ end }}
         <div class="entry-date">
