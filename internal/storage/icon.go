@@ -59,7 +59,7 @@ func (s *Storage) IconByExternalID(externalIconID string) (*model.Icon, error) {
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("store: unable to fetch icon #%s: %w", externalIconID, err)
+		return nil, fmt.Errorf("store: unable to fetch icon %s: %w", externalIconID, err)
 	}
 
 	return &icon, nil
