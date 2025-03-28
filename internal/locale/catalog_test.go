@@ -83,7 +83,7 @@ func TestMissingTranslations(t *testing.T) {
 
 		for key := range references {
 			if _, found := messages[key]; !found {
-				t.Fatalf(`Translation key %q not found in language %q`, key, language)
+				t.Errorf(`Translation key %q not found in language %q`, key, language)
 			}
 		}
 	}
@@ -91,25 +91,26 @@ func TestMissingTranslations(t *testing.T) {
 
 func TestTranslationFilePluralForms(t *testing.T) {
 	var numberOfPluralFormsPerLanguage = map[string]int{
+		"de_DE":            2,
+		"el_EL":            2,
 		"en_US":            2,
 		"es_ES":            2,
+		"fi_FI":            2,
 		"fr_FR":            2,
-		"de_DE":            2,
-		"pl_PL":            3,
-		"pt_BR":            2,
-		"zh_CN":            1,
-		"zh_TW":            1,
-		"nan_Latn_pehoeji": 1,
-		"nl_NL":            2,
-		"ru_RU":            3,
+		"hi_IN":            2,
+		"id_ID":            1,
 		"it_IT":            2,
 		"ja_JP":            1,
+		"nan_Latn_pehoeji": 1,
+		"nl_NL":            2,
+		"pl_PL":            3,
+		"pt_BR":            2,
+		"ro_RO":            3,
+		"ru_RU":            3,
 		"tr_TR":            2,
-		"el_EL":            2,
-		"fi_FI":            2,
-		"hi_IN":            2,
 		"uk_UA":            3,
-		"id_ID":            1,
+		"zh_CN":            1,
+		"zh_TW":            1,
 	}
 	for language := range AvailableLanguages {
 		messages, err := loadTranslationFile(language)
