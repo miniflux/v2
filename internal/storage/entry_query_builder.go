@@ -293,6 +293,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			f.hide_globally,
 			f.no_media_player,
 			fi.icon_id,
+			i.external_id AS icon_external_id,
 			u.timezone
 		FROM
 			entries e
@@ -302,6 +303,8 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			categories c ON c.id=f.category_id
 		LEFT JOIN
 			feed_icons fi ON fi.feed_id=f.id
+		LEFT JOIN
+			icons i ON i.id=fi.icon_id
 		LEFT JOIN
 			users u ON u.id=e.user_id
 		WHERE %s %s
@@ -323,6 +326,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 
 	for rows.Next() {
 		var iconID sql.NullInt64
+		var externalIconID sql.NullString
 		var tz string
 
 		entry := model.NewEntry()
@@ -361,6 +365,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.HideGlobally,
 			&entry.Feed.NoMediaPlayer,
 			&iconID,
+			&externalIconID,
 			&tz,
 		)
 
@@ -368,8 +373,10 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			return nil, fmt.Errorf("store: unable to fetch entry row: %v", err)
 		}
 
-		if iconID.Valid {
+		if iconID.Valid && externalIconID.Valid && externalIconID.String != "" {
+			entry.Feed.Icon.FeedID = entry.FeedID
 			entry.Feed.Icon.IconID = iconID.Int64
+			entry.Feed.Icon.ExternalIconID = externalIconID.String
 		} else {
 			entry.Feed.Icon.IconID = 0
 		}

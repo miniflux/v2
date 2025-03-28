@@ -210,7 +210,6 @@ func (r RequestModifiers) String() string {
 func Serve(router *mux.Router, store *storage.Storage) {
 	handler := &handler{store, router}
 	router.HandleFunc("/accounts/ClientLogin", handler.clientLoginHandler).Methods(http.MethodPost).Name("ClientLogin")
-	router.HandleFunc("/reader/api/0/icons/{externalIconID}", handler.iconHandler).Methods(http.MethodGet).Name("Icons")
 
 	middleware := newMiddleware(store)
 	sr := router.PathPrefix("/reader/api/0").Subrouter()
@@ -728,39 +727,6 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *handler) iconHandler(w http.ResponseWriter, r *http.Request) {
-	clientIP := request.ClientIP(r)
-	externalIconID := request.RouteStringParam(r, "externalIconID")
-
-	slog.Debug("[GoogleReader] Handle /icons/{externalIconID}",
-		slog.String("handler", "iconHandler"),
-		slog.String("client_ip", clientIP),
-		slog.String("user_agent", r.UserAgent()),
-		slog.String("external_icon_id", externalIconID),
-	)
-
-	icon, err := h.store.IconByExternalID(externalIconID)
-	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-
-	if icon == nil {
-		json.NotFound(w, r)
-		return
-	}
-
-	response.New(w, r).WithCaching(icon.Hash, 72*time.Hour, func(b *response.Builder) {
-		b.WithHeader("Content-Security-Policy", `sandbox`)
-		b.WithHeader("Content-Type", icon.MimeType)
-		b.WithBody(icon.Content)
-		if icon.MimeType != "image/svg+xml" {
-			b.WithoutCompression()
-		}
-		b.Write()
-	})
-}
-
 func getFeed(stream Stream, store *storage.Storage, userID int64) (*model.Feed, error) {
 	feedID, err := strconv.ParseInt(stream.ID, 10, 64)
 	if err != nil {
@@ -863,7 +829,7 @@ func move(stream Stream, destination Stream, store *storage.Storage, userID int6
 
 func (h *handler) feedIconURL(f *model.Feed) string {
 	if f.Icon != nil && f.Icon.ExternalIconID != "" {
-		return config.Opts.RootURL() + route.Path(h.router, "Icons", "externalIconID", f.Icon.ExternalIconID)
+		return config.Opts.RootURL() + route.Path(h.router, "feedIcon", "externalIconID", f.Icon.ExternalIconID)
 	} else {
 		return ""
 	}

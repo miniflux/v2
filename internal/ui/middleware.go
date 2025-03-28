@@ -63,6 +63,13 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 
 func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if mux.CurrentRoute(r).GetName() == "feedIcon" {
+			// Skip app session handling for the feed icon route to avoid unnecessary session creation
+			// when fetching feed icons.
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		var err error
 		session := m.getAppSessionValueFromCookie(r)
 
@@ -154,6 +161,7 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 		"oauth2Redirect",
 		"oauth2Callback",
 		"appIcon",
+		"feedIcon",
 		"favicon",
 		"webManifest",
 		"robots",
