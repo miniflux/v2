@@ -39,5 +39,9 @@ func NewManager(ctx context.Context, clientID, clientSecret, redirectURL, oidcDi
 		}
 	}
 
+	if clientSecret == "" {
+		slog.Warn("OIDC client secret is empty or missing.")
+	}
+
 	return m
 }
