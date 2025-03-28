@@ -164,7 +164,7 @@
 </div>
 {{ end }}
 {{ end }}
-<article class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
+<article class="entry-content {{ if ne $.user.GestureNav "none" }}gesture-nav-{{ $.user.GestureNav }}{{ end }}" dir="auto">
     {{ if not .entry.Feed.NoMediaPlayer }}
         {{ $mediaPlayerEnclosure := .entry.Enclosures.FindMediaPlayerEnclosure }}
 
