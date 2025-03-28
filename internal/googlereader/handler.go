@@ -751,7 +751,7 @@ func (h *handler) iconHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.New(w, r).WithCaching(icon.Hash, 72*time.Hour, func(b *response.Builder) {
-		b.WithHeader("Content-Security-Policy", `default-src 'self'`)
+		b.WithHeader("Content-Security-Policy", `sandbox`)
 		b.WithHeader("Content-Type", icon.MimeType)
 		b.WithBody(icon.Content)
 		if icon.MimeType != "image/svg+xml" {
