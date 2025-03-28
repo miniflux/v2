@@ -37,7 +37,7 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
-	builder.WithHeader("Content-Security-Policy", `default-src 'self'`)
+	builder.WithHeader("Content-Security-Policy", `sandbox`)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithBody(err)
@@ -61,7 +61,7 @@ func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
 
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusBadRequest)
-	builder.WithHeader("Content-Security-Policy", `default-src 'self'`)
+	builder.WithHeader("Content-Security-Policy", `sandbox`)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
 	builder.WithBody(err)
