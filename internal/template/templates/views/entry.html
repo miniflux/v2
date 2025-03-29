@@ -67,11 +67,12 @@
                 </li>
                 {{ else }}
                 <li>
-                    <a href="{{ route "shareEntry" "entryID" .entry.ID }}"
-                        class="page-link"
-                        title="{{ t "entry.share.title" }}"
-                        data-share-status="share"
-                        target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.share.label" }}</span></a>
+                  <form method="post" action="{{route "shareEntry" "entryID" .entry.ID }}">
+                    <input type="hidden" name="csrf" value="{{ .csrf }}">
+                      <button type="submit" class="page-button">
+			{{ icon "share" }}<span class="icon-label">{{ t "entry.share.label" }}</span>
+		      </button>
+		  </form>
                 </li>
                 {{ end }}
                 <li>
