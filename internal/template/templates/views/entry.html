@@ -15,12 +15,12 @@
                         title="{{ t "entry.status.title" }}"
                         data-toggle-status="true"
                         data-label-loading="{{ t "entry.state.saving" }}"
-                        data-label-unread="{{ t "entry.status.unread" }}"
-                        data-label-read="{{ t "entry.status.read" }}"
+                        data-label-unread="{{ t "entry.status.mark_as_unread" }}"
+                        data-label-read="{{ t "entry.status.mark_as_read" }}"
                         data-toast-unread="{{ t "entry.status.toast.unread" }}"
                         data-toast-read="{{ t "entry.status.toast.read" }}"
                         data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                        >{{ if eq .entry.Status "unread" }}{{ icon "read" }}{{ else }}{{ icon "unread" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.read" }}{{ else }}{{ t "entry.status.unread" }}{{ end }}</span></button>
+                        >{{ if eq .entry.Status "unread" }}{{ icon "read" }}{{ else }}{{ icon "unread" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "unread" }}{{ t "entry.status.mark_as_read" }}{{ else }}{{ t "entry.status.mark_as_unread" }}{{ end }}</span></button>
                 </li>
                 <li>
                     <button

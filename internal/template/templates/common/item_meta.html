@@ -22,10 +22,10 @@
                 title="{{ t "entry.status.title" }}"
                 data-toggle-status="true"
                 data-label-loading="{{ t "entry.state.saving" }}"
-                data-label-read="{{ t "entry.status.read" }}"
-                data-label-unread="{{ t "entry.status.unread" }}"
+                data-label-read="{{ t "entry.status.mark_as_read" }}"
+                data-label-unread="{{ t "entry.status.mark_as_unread" }}"
                 data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></button>
+                >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.mark_as_unread" }}{{ else }}{{ t "entry.status.mark_as_read" }}{{ end }}</span></button>
         </li>
         <li class="item-meta-icons-star">
             <button
