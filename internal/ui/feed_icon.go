@@ -26,7 +26,7 @@ func (h *handler) showFeedIcon(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.New(w, r).WithCaching(icon.Hash, 72*time.Hour, func(b *response.Builder) {
-		b.WithHeader("Content-Security-Policy", `sandbox`)
+		b.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
 		b.WithHeader("Content-Type", icon.MimeType)
 		b.WithBody(icon.Content)
 		if icon.MimeType != "image/svg+xml" {
