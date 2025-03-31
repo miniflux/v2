@@ -719,11 +719,11 @@ function isPlayerPlaying(element) {
 /**
  * handle new share entires and already shared entries
  */
-function handleShare() {
+async function handleShare() {
     const link = document.querySelector(':is(a, button)[data-share-status]');
     const title = document.querySelector(".entry-header > h1 > a");
     if (link.dataset.shareStatus === "shared") {
-        checkShareAPI(title, link.href);
+        await checkShareAPI(title, link.href);
     }
     if (link.dataset.shareStatus === "share") {
         const request = new RequestBuilder(link.href);
@@ -738,14 +738,14 @@ function handleShare() {
 /**
 * wrapper for Web Share API
 */
-function checkShareAPI(title, url) {
+async function checkShareAPI(title, url) {
     if (!navigator.canShare) {
         console.error("Your browser doesn't support the Web Share API.");
         window.location = url;
         return;
     }
     try {
-        navigator.share({
+        await navigator.share({
             title: title ? title.textContent : url,
             url: url
         });
