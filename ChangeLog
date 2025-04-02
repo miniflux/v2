@@ -1,3 +1,47 @@
+Version 2.2.7 (April 1, 2025)
+-----------------------------
+
+* test(api): update base URL after upgrading Hugo
+* refactor(rewrite): reorganize referer rules and remove obsolete mappings
+* refactor: combine feed icon handlers to use only `externalIconID`
+* fix(ui): update share feature to correctly select the title element and handle empty titles
+* fix(ui): update entry tags display logic to show links based on user authentication
+* fix(ui): remove touch-action style to prevent horizontal scrolling issues
+* fix(ui): log a warning for an empty client secret
+* fix(ui): change labels from "Read / Unread" to "Mark as Read"
+* fix(ui): avoid 500 errors and NaN when marking a deleted entry as read
+* fix(subscription): add `/rss/feed.xml` to the list of known feed URLs
+* fix(security): use a more restrictive CSP for untrusted content
+* fix(rewrite): remove obsolete rule for `webtoons.com`
+* fix(processor): add missing quotation marks to import comments
+* fix(googlereader): return enclosures in the `streamItemContentsHandler` response
+* fix: address minor issues detected by Go linters
+* feat(urlcleaner): add more Google Analytics parameters
+* feat(storage): reduce the number of SQL queries when fetching entry enclosures
+* feat(sanitizer): allow the `<u>` tag in feeds
+* feat(sanitizer): allow the `<b>` tag
+* feat(locale): update Polish translation
+* feat(locale): add Romanian translation
+* feat(integrations/ntfy): make ntfy topics configurable per feed
+* feat(googlereader): add a feed icon endpoint
+* feat: show database size on the about page
+* feat: add a `make add string` command to add new localized strings
+* docs: update README
+* docs: update client README to remove references to deprecated functions
+* ci: replace GitHub Issue Markdown templates with YAML forms
+* build(deps): bump `golangci/golangci-lint-action` from `6` to `7`
+* build(deps): bump `golang.org/x/term` from `0.29.0` to `0.30.0`
+* build(deps): bump `golang.org/x/oauth2` from `0.26.0` to` 0.28.0`
+* build(deps): bump `golang.org/x/net` from `0.35.0` to `0.38.0`
+* build(deps): bump `golang.org/x/image` from `0.24.0` to `0.25.0`
+* build(deps): bump `golang.org/x/crypto` from `0.33.0` to `0.36.0`
+* build(deps): bump `github.com/tdewolff/minify/v2` from `2.21.3` to `2.22.4`
+* build(deps): bump `github.com/prometheus/client_golang`
+* build(deps): bump `github.com/golang-jwt/jwt/v5` from `5.2.1` to `5.2.2`
+* build(deps): bump `github.com/go-webauthn/webauthn` from `0.11.2` to `0.12.2`
+* build(deps): bump `github.com/go-jose/go-jose/v4` from `4.0.2` to `4.0.5`
+* build(deps): bump `github.com/coreos/go-oidc/v3` from `3.12.0` to `3.13.0`
+
 Version 2.2.6 (February 22, 2025)
 ---------------------------------
 
