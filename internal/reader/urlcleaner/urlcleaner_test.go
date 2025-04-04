@@ -14,6 +14,8 @@ func TestRemoveTrackingParams(t *testing.T) {
 		name             string
 		input            string
 		expected         string
+		baseUrl          string
+		feedUrl          string
 		strictComparison bool
 	}{
 		{
@@ -63,27 +65,63 @@ func TestRemoveTrackingParams(t *testing.T) {
 			expected: "https://example.com/page?name=John+Doe",
 		},
 		{
+			name:     "ref parameter for another url",
+			input:    "https://example.com/page?ref=test.com",
+			baseUrl:  "https://example.com/page",
+			expected: "https://example.com/page?ref=test.com",
+		},
+		{
+			name:     "ref parameter for feed url",
+			input:    "https://example.com/page?ref=feed.com",
+			baseUrl:  "https://example.com/page",
+			expected: "https://example.com/page",
+			feedUrl:  "http://feed.com",
+		},
+		{
+			name:     "ref parameter for site url",
+			input:    "https://example.com/page?ref=example.com",
+			baseUrl:  "https://example.com/page",
+			expected: "https://example.com/page",
+		},
+		{
+			name:     "ref parameter for base url",
+			input:    "https://example.com/page?ref=example.com",
+			expected: "https://example.com/page",
+			baseUrl:  "https://example.com",
+			feedUrl:  "https://feedburned.com/example",
+		},
+		{
+			name:     "ref parameter for base url on subdomain",
+			input:    "https://blog.exploits.club/some-path?ref=blog.exploits.club",
+			expected: "https://blog.exploits.club/some-path",
+			baseUrl:  "https://blog.exploits.club/some-path",
+			feedUrl:  "https://feedburned.com/exploit.club",
+		},
+		{
 			name:             "Non-standard URL parameter with no tracker",
 			input:            "https://example.com/foo.jpg?crop/1420x708/format/webp",
 			expected:         "https://example.com/foo.jpg?crop/1420x708/format/webp",
+			baseUrl:          "https://example.com/page",
 			strictComparison: true,
 		},
 		{
 			name:     "Invalid URL",
 			input:    "https://example|org/",
+			baseUrl:  "https://example.com/page",
 			expected: "",
 		},
 		{
 			name:             "Non-HTTP URL",
 			input:            "mailto:user@example.org",
 			expected:         "mailto:user@example.org",
+			baseUrl:          "https://example.com/page",
 			strictComparison: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := RemoveTrackingParameters(tt.input)
+			result, err := RemoveTrackingParameters(tt.baseUrl, tt.feedUrl, tt.input)
 			if tt.expected == "" {
 				if err == nil {
 					t.Errorf("Expected an error for invalid URL, but got none")
