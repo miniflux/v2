@@ -89,7 +89,13 @@ var trackingParams = map[string]bool{
 	"_branch_referrer": true,
 }
 
-func RemoveTrackingParameters(inputURL string) (string, error) {
+// Outbound tracking parameters are appending the website's url to outbound links.
+var trackingParamsOutbound = map[string]bool{
+	// Ghost
+	"ref": true,
+}
+
+func RemoveTrackingParameters(baseUrl, feedUrl, inputURL string) (string, error) {
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
 		return "", fmt.Errorf("urlcleaner: error parsing URL: %v", err)
@@ -97,6 +103,15 @@ func RemoveTrackingParameters(inputURL string) (string, error) {
 
 	if !strings.HasPrefix(parsedURL.Scheme, "http") {
 		return inputURL, nil
+	}
+
+	parsedBaseUrl, err := url.Parse(baseUrl)
+	if err != nil {
+		return "", fmt.Errorf("urlcleaner: error parsing base URL: %v", err)
+	}
+	parsedFeedUrl, err := url.Parse(feedUrl)
+	if err != nil {
+		return "", fmt.Errorf("urlcleaner: error parsing feed URL: %v", err)
 	}
 
 	queryParams := parsedURL.Query()
@@ -108,6 +123,16 @@ func RemoveTrackingParameters(inputURL string) (string, error) {
 		if trackingParams[lowerParam] || strings.HasPrefix(lowerParam, "utm_") {
 			queryParams.Del(param)
 			hasTrackers = true
+		}
+		if trackingParamsOutbound[lowerParam] {
+			// handle duplicate parameters like ?a=b&a=c&a=d…
+			for _, value := range queryParams[param] {
+				if value == parsedBaseUrl.Hostname() || value == parsedFeedUrl.Hostname() {
+					queryParams.Del(param)
+					hasTrackers = true
+					break
+				}
+			}
 		}
 	}
 

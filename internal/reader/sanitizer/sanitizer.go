@@ -217,7 +217,8 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 					continue
 				}
 
-				if cleanedURL, err := urlcleaner.RemoveTrackingParameters(value); err == nil {
+				// TODO use feedURL instead of baseURL twice.
+				if cleanedURL, err := urlcleaner.RemoveTrackingParameters(baseURL, baseURL, value); err == nil {
 					value = cleanedURL
 				}
 			}
