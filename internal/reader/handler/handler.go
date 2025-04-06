@@ -244,7 +244,12 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	}
 
 	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
-		slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
+		slog.Warn("Unable to fetch feed",
+			slog.Int64("user_id", userID),
+			slog.Int64("feed_id", feedID),
+			slog.String("feed_url", originalFeed.FeedURL),
+			slog.Any("error", localizedError.Error()),
+		)
 		user, storeErr := store.UserByID(userID)
 		if storeErr != nil {
 			return locale.NewLocalizedErrorWrapper(storeErr, "error.database_error", storeErr)

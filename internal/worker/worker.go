@@ -44,13 +44,5 @@ func (w *Worker) Run(c <-chan model.Job) {
 			}
 			metric.BackgroundFeedRefreshDuration.WithLabelValues(status).Observe(time.Since(startTime).Seconds())
 		}
-
-		if localizedError != nil {
-			slog.Warn("Unable to refresh a feed",
-				slog.Int64("user_id", job.UserID),
-				slog.Int64("feed_id", job.FeedID),
-				slog.Any("error", localizedError.Error()),
-			)
-		}
 	}
 }
