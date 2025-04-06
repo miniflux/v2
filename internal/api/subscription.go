@@ -11,6 +11,7 @@ import (
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/subscription"
 	"miniflux.app/v2/internal/validator"
@@ -36,11 +37,12 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
+	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
+	requestBuilder.UseCustomApplicationProxyURL(subscriptionDiscoveryRequest.FetchViaProxy)
 	requestBuilder.WithUserAgent(subscriptionDiscoveryRequest.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(subscriptionDiscoveryRequest.Cookie)
 	requestBuilder.WithUsernameAndPassword(subscriptionDiscoveryRequest.Username, subscriptionDiscoveryRequest.Password)
-	requestBuilder.UseProxy(subscriptionDiscoveryRequest.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(subscriptionDiscoveryRequest.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(subscriptionDiscoveryRequest.DisableHTTP2)
 

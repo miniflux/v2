@@ -240,7 +240,12 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		case "HTTP_CLIENT_MAX_BODY_SIZE":
 			p.opts.httpClientMaxBodySize = int64(parseInt(value, defaultHTTPClientMaxBodySize) * 1024 * 1024)
 		case "HTTP_CLIENT_PROXY":
-			p.opts.httpClientProxy = parseString(value, defaultHTTPClientProxy)
+			p.opts.httpClientProxyURL, err = url.Parse(parseString(value, defaultHTTPClientProxy))
+			if err != nil {
+				return fmt.Errorf("config: invalid HTTP_CLIENT_PROXY value: %w", err)
+			}
+		case "HTTP_CLIENT_PROXIES":
+			p.opts.httpClientProxies = parseStringList(value, []string{})
 		case "HTTP_CLIENT_USER_AGENT":
 			p.opts.httpClientUserAgent = parseString(value, defaultHTTPClientUserAgent)
 		case "HTTP_SERVER_TIMEOUT":

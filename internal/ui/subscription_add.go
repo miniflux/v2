@@ -36,7 +36,7 @@ func (h *handler) showAddSubscriptionPage(w http.ResponseWriter, r *http.Request
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 	view.Set("defaultUserAgent", config.Opts.HTTPClientUserAgent())
 	view.Set("form", &form.SubscriptionForm{CategoryID: 0})
-	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyConfigured())
+	view.Set("hasProxyConfigured", config.Opts.HasHTTPClientProxyURLConfigured())
 
 	html.OK(w, r, view.Render("add_subscription"))
 }

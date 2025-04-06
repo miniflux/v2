@@ -14,6 +14,7 @@ import (
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/proxyrotator"
 	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/reader/rewrite"
@@ -78,8 +79,9 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
 			requestBuilder.WithCookie(feed.Cookie)
 			requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-			requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
-			requestBuilder.UseProxy(feed.FetchViaProxy)
+			requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+			requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
+			requestBuilder.UseCustomApplicationProxyURL(feed.FetchViaProxy)
 			requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
 			requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
@@ -145,8 +147,9 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	requestBuilder.WithUserAgent(feed.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(feed.Cookie)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithProxy(config.Opts.HTTPClientProxy())
-	requestBuilder.UseProxy(feed.FetchViaProxy)
+	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
+	requestBuilder.UseCustomApplicationProxyURL(feed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feed.AllowSelfSignedCertificates)
 	requestBuilder.DisableHTTP2(feed.DisableHTTP2)
 
