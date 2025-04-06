@@ -5,6 +5,7 @@ package config // import "miniflux.app/v2/internal/config"
 
 import (
 	"fmt"
+	"net/url"
 	"sort"
 	"strings"
 	"time"
@@ -163,7 +164,8 @@ type Options struct {
 	pocketConsumerKey                  string
 	httpClientTimeout                  int
 	httpClientMaxBodySize              int64
-	httpClientProxy                    string
+	httpClientProxyURL                 *url.URL
+	httpClientProxies                  []string
 	httpClientUserAgent                string
 	httpServerTimeout                  int
 	authProxyHeader                    string
@@ -243,7 +245,8 @@ func NewOptions() *Options {
 		pocketConsumerKey:                  defaultPocketConsumerKey,
 		httpClientTimeout:                  defaultHTTPClientTimeout,
 		httpClientMaxBodySize:              defaultHTTPClientMaxBodySize * 1024 * 1024,
-		httpClientProxy:                    defaultHTTPClientProxy,
+		httpClientProxyURL:                 nil,
+		httpClientProxies:                  []string{},
 		httpClientUserAgent:                defaultHTTPClientUserAgent,
 		httpServerTimeout:                  defaultHTTPServerTimeout,
 		authProxyHeader:                    defaultAuthProxyHeader,
@@ -587,19 +590,29 @@ func (o *Options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
 }
 
-// HTTPClientProxy returns the proxy URL for HTTP client.
-func (o *Options) HTTPClientProxy() string {
-	return o.httpClientProxy
+// HTTPClientProxyURL returns the client HTTP proxy URL if configured.
+func (o *Options) HTTPClientProxyURL() *url.URL {
+	return o.httpClientProxyURL
+}
+
+// HasHTTPClientProxyURLConfigured returns true if the client HTTP proxy URL if configured.
+func (o *Options) HasHTTPClientProxyURLConfigured() bool {
+	return o.httpClientProxyURL != nil
+}
+
+// HTTPClientProxies returns the list of proxies.
+func (o *Options) HTTPClientProxies() []string {
+	return o.httpClientProxies
+}
+
+// HTTPClientProxiesString returns true if the list of rotating proxies are configured.
+func (o *Options) HasHTTPClientProxiesConfigured() bool {
+	return len(o.httpClientProxies) > 0
 }
 
 // HTTPServerTimeout returns the time limit in seconds before the HTTP server cancel the request.
 func (o *Options) HTTPServerTimeout() int {
 	return o.httpServerTimeout
-}
-
-// HasHTTPClientProxyConfigured returns true if the HTTP proxy is configured.
-func (o *Options) HasHTTPClientProxyConfigured() bool {
-	return o.httpClientProxy != ""
 }
 
 // AuthProxyHeader returns an HTTP header name that contains username for
@@ -664,6 +677,33 @@ func (o *Options) FilterEntryMaxAgeDays() int {
 
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
 func (o *Options) SortedOptions(redactSecret bool) []*Option {
+	var clientProxyURLRedacted string
+	if o.httpClientProxyURL != nil {
+		if redactSecret {
+			clientProxyURLRedacted = o.httpClientProxyURL.Redacted()
+		} else {
+			clientProxyURLRedacted = o.httpClientProxyURL.String()
+		}
+	}
+
+	var clientProxyURLsRedacted string
+	if len(o.httpClientProxies) > 0 {
+		if redactSecret {
+			var proxyURLs []string
+			for range o.httpClientProxies {
+				proxyURLs = append(proxyURLs, "<redacted>")
+			}
+			clientProxyURLsRedacted = strings.Join(proxyURLs, ",")
+		} else {
+			clientProxyURLsRedacted = strings.Join(o.httpClientProxies, ",")
+		}
+	}
+
+	var mediaProxyPrivateKeyValue string
+	if len(o.mediaProxyPrivateKey) > 0 {
+		mediaProxyPrivateKeyValue = "<binary-data>"
+	}
+
 	var keyValues = map[string]interface{}{
 		"ADMIN_PASSWORD":                         redactSecretValue(o.adminPassword, redactSecret),
 		"ADMIN_USERNAME":                         o.adminUsername,
@@ -694,7 +734,8 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"FETCH_BILIBILI_WATCH_TIME":              o.fetchBilibiliWatchTime,
 		"HTTPS":                                  o.HTTPS,
 		"HTTP_CLIENT_MAX_BODY_SIZE":              o.httpClientMaxBodySize,
-		"HTTP_CLIENT_PROXY":                      o.httpClientProxy,
+		"HTTP_CLIENT_PROXIES":                    clientProxyURLsRedacted,
+		"HTTP_CLIENT_PROXY":                      clientProxyURLRedacted,
 		"HTTP_CLIENT_TIMEOUT":                    o.httpClientTimeout,
 		"HTTP_CLIENT_USER_AGENT":                 o.httpClientUserAgent,
 		"HTTP_SERVER_TIMEOUT":                    o.httpServerTimeout,
@@ -729,7 +770,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":        o.mediaProxyHTTPClientTimeout,
 		"MEDIA_PROXY_RESOURCE_TYPES":             o.mediaProxyResourceTypes,
 		"MEDIA_PROXY_MODE":                       o.mediaProxyMode,
-		"MEDIA_PROXY_PRIVATE_KEY":                redactSecretValue(string(o.mediaProxyPrivateKey), redactSecret),
+		"MEDIA_PROXY_PRIVATE_KEY":                mediaProxyPrivateKeyValue,
 		"MEDIA_PROXY_CUSTOM_URL":                 o.mediaProxyCustomURL,
 		"ROOT_URL":                               o.rootURL,
 		"RUN_MIGRATIONS":                         o.runMigrations,

@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"miniflux.app/v2/internal/proxyrotator"
 )
 
 const (
@@ -21,12 +23,13 @@ const (
 
 type RequestBuilder struct {
 	headers          http.Header
-	clientProxyURL   string
+	clientProxyURL   *url.URL
 	useClientProxy   bool
 	clientTimeout    int
 	withoutRedirects bool
 	ignoreTLSErrors  bool
 	disableHTTP2     bool
+	proxyRotator     *proxyrotator.ProxyRotator
 }
 
 func NewRequestBuilder() *RequestBuilder {
@@ -78,12 +81,17 @@ func (r *RequestBuilder) WithUsernameAndPassword(username, password string) *Req
 	return r
 }
 
-func (r *RequestBuilder) WithProxy(proxyURL string) *RequestBuilder {
+func (r *RequestBuilder) WithProxyRotator(proxyRotator *proxyrotator.ProxyRotator) *RequestBuilder {
+	r.proxyRotator = proxyRotator
+	return r
+}
+
+func (r *RequestBuilder) WithCustomApplicationProxyURL(proxyURL *url.URL) *RequestBuilder {
 	r.clientProxyURL = proxyURL
 	return r
 }
 
-func (r *RequestBuilder) UseProxy(value bool) *RequestBuilder {
+func (r *RequestBuilder) UseCustomApplicationProxyURL(value bool) *RequestBuilder {
 	r.useClientProxy = value
 	return r
 }
@@ -151,15 +159,17 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		transport.TLSNextProto = map[string]func(string, *tls.Conn) http.RoundTripper{}
 	}
 
-	if r.useClientProxy && r.clientProxyURL != "" {
-		if proxyURL, err := url.Parse(r.clientProxyURL); err != nil {
-			slog.Warn("Unable to parse proxy URL",
-				slog.String("proxy_url", r.clientProxyURL),
-				slog.Any("error", err),
-			)
-		} else {
-			transport.Proxy = http.ProxyURL(proxyURL)
-		}
+	var clientProxyURL *url.URL
+	if r.useClientProxy && r.clientProxyURL != nil {
+		clientProxyURL = r.clientProxyURL
+	} else if r.proxyRotator != nil && r.proxyRotator.HasProxies() {
+		clientProxyURL = r.proxyRotator.GetNextProxy()
+	}
+
+	var clientProxyURLRedacted string
+	if clientProxyURL != nil {
+		transport.Proxy = http.ProxyURL(clientProxyURL)
+		clientProxyURLRedacted = clientProxyURL.Redacted()
 	}
 
 	client := &http.Client{
@@ -189,8 +199,8 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		slog.String("url", req.URL.String()),
 		slog.Any("headers", req.Header),
 		slog.Bool("without_redirects", r.withoutRedirects),
-		slog.Bool("with_proxy", r.useClientProxy),
-		slog.String("proxy_url", r.clientProxyURL),
+		slog.Bool("use_app_client_proxy", r.useClientProxy),
+		slog.String("client_proxy_url", clientProxyURLRedacted),
 		slog.Bool("ignore_tls_errors", r.ignoreTLSErrors),
 		slog.Bool("disable_http2", r.disableHTTP2),
 	))
