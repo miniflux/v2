@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math"
 	"net"
 	"net/http"
 	"net/url"
@@ -51,6 +52,33 @@ func (r *ResponseHandler) ETag() string {
 		return ""
 	}
 	return r.httpResponse.Header.Get("ETag")
+}
+
+func (r *ResponseHandler) ExpiresInMinutes() int {
+	expiresHeaderValue := r.httpResponse.Header.Get("Expires")
+	if expiresHeaderValue != "" {
+		t, err := time.Parse(time.RFC1123, expiresHeaderValue)
+		if err == nil {
+			return int(math.Ceil(time.Until(t).Minutes()))
+		}
+	}
+	return 0
+}
+
+func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
+	cacheControlHeaderValue := r.httpResponse.Header.Get("Cache-Control")
+	if cacheControlHeaderValue != "" {
+		for _, directive := range strings.Split(cacheControlHeaderValue, ",") {
+			directive = strings.TrimSpace(directive)
+			if strings.HasPrefix(directive, "max-age=") {
+				maxAge, err := strconv.Atoi(strings.TrimPrefix(directive, "max-age="))
+				if err == nil {
+					return int(math.Ceil(float64(maxAge) / 60))
+				}
+			}
+		}
+	}
+	return 0
 }
 
 func (r *ResponseHandler) ParseRetryDelay() int {

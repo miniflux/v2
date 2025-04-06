@@ -102,3 +102,75 @@ func TestRetryDelay(t *testing.T) {
 		})
 	}
 }
+
+func TestExpiresInMinutes(t *testing.T) {
+	var testCases = map[string]struct {
+		ExpiresHeader   string
+		ExpectedMinutes int
+	}{
+		"Empty header": {
+			ExpiresHeader:   "",
+			ExpectedMinutes: 0,
+		},
+		"Valid Expires header": {
+			ExpiresHeader:   time.Now().Add(10 * time.Minute).Format(time.RFC1123),
+			ExpectedMinutes: 10,
+		},
+		"Invalid Expires header": {
+			ExpiresHeader:   "invalid-date",
+			ExpectedMinutes: 0,
+		},
+	}
+	for name, tc := range testCases {
+		t.Run(name, func(tt *testing.T) {
+			header := http.Header{}
+			header.Add("Expires", tc.ExpiresHeader)
+			rh := ResponseHandler{
+				httpResponse: &http.Response{
+					Header: header,
+				},
+			}
+			if tc.ExpectedMinutes != rh.ExpiresInMinutes() {
+				t.Errorf("Expected %d, got %d for scenario %q", tc.ExpectedMinutes, rh.ExpiresInMinutes(), name)
+			}
+		})
+	}
+}
+
+func TestCacheControlMaxAgeInMinutes(t *testing.T) {
+	var testCases = map[string]struct {
+		CacheControlHeader string
+		ExpectedMinutes    int
+	}{
+		"Empty header": {
+			CacheControlHeader: "",
+			ExpectedMinutes:    0,
+		},
+		"Valid max-age": {
+			CacheControlHeader: "max-age=600",
+			ExpectedMinutes:    10,
+		},
+		"Invalid max-age": {
+			CacheControlHeader: "max-age=invalid",
+			ExpectedMinutes:    0,
+		},
+		"Multiple directives": {
+			CacheControlHeader: "no-cache, max-age=300",
+			ExpectedMinutes:    5,
+		},
+	}
+	for name, tc := range testCases {
+		t.Run(name, func(tt *testing.T) {
+			header := http.Header{}
+			header.Add("Cache-Control", tc.CacheControlHeader)
+			rh := ResponseHandler{
+				httpResponse: &http.Response{
+					Header: header,
+				},
+			}
+			if tc.ExpectedMinutes != rh.CacheControlMaxAgeInMinutes() {
+				t.Errorf("Expected %d, got %d for scenario %q", tc.ExpectedMinutes, rh.CacheControlMaxAgeInMinutes(), name)
+			}
+		})
+	}
+}
