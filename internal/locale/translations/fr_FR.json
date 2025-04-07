@@ -72,10 +72,10 @@
     "entry.state.loading": "Chargement...",
     "entry.state.saving": "Sauvegarde en cours...",
     "entry.status.mark_as_read": "Marquer comme lu",
+    "entry.status.mark_as_unread": "Marquer comme non lu",
     "entry.status.title": "Changer le statut de l'entrée",
     "entry.status.toast.read": "Marqué comme lu",
     "entry.status.toast.unread": "Marqué comme non lu",
-    "entry.status.mark_as_unread": "Marquer comme non lu",
     "entry.tags.label": "Libellés :",
     "entry.unshare.label": "Enlever le partage",
     "error.api_key_already_exists": "Cette clé d'API existe déjà.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "Page d'accueil par défaut invalide !",
     "error.invalid_display_mode": "Mode d'affichage de l'application web non valide.",
     "error.invalid_entry_direction": "Ordre de trie non valide.",
+    "error.invalid_feed_proxy_url": "L'URL du proxy n'est pas valide.",
     "error.invalid_feed_url": "URL de flux non valide.",
     "error.invalid_gesture_nav": "Navigation gestuelle non valide.",
     "error.invalid_language": "Langue non valide.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "Vous devez utiliser au moins 6 caractères pour le mot de passe.",
     "error.pocket_access_token": "Impossible de récupérer le jeton d'accès depuis Pocket !",
     "error.pocket_request_token": "Impossible de récupérer le jeton d'accès depuis Pocket !",
+    "error.proxy_url_not_empty": "L'URL du proxy ne peut pas être vide.",
     "error.settings_block_rule_fieldname_invalid": "Règle de blocage invalide : la règle n°%d ne contient pas un nom de champ valide (Options : %s)",
     "error.settings_block_rule_invalid_regex": "Règle de blocage invalide : le motif de la règle n°%d n'est pas une expression régulière valide",
     "error.settings_block_rule_regex_required": "Règle de blocage invalide : le motif de la règle n°%d n'est pas fourni",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Mot de passe du flux",
     "form.feed.label.feed_url": "URL du flux",
     "form.feed.label.feed_username": "Nom d'utilisateur du flux",
-    "form.feed.label.fetch_via_proxy": "Récupérer via proxy",
+    "form.feed.label.fetch_via_proxy": "Utiliser le proxy configuré au niveau de l'application",
     "form.feed.label.hide_globally": "Masquer les entrées dans la liste globale non lue",
     "form.feed.label.ignore_http_cache": "Ignorer le cache HTTP",
     "form.feed.label.keeplist_rules": "Règles d'autorisation",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Priorité minimale de notification",
     "form.feed.label.ntfy_priority": "Priorité de notification",
     "form.feed.label.ntfy_topic": "Sujet Ntfy (facultatif)",
+    "form.feed.label.proxy_url": "URL du proxy",
     "form.feed.label.pushover_activate": "Activer les notifications vers Pushover",
     "form.feed.label.pushover_default_priority": "Priorité par défaut",
     "form.feed.label.pushover_high_priority": "Priorité élevée",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Dernière utilisation",
     "page.api_keys.table.token": "Jeton",
     "page.api_keys.title": "Clés d'API",
+    "page.categories_count": [
+        "%d catégorie",
+        "%d catégories"
+    ],
     "page.categories.entries": "Articles",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.title": "Catégories",
-    "page.categories_count": [
-        "%d catégorie",
-        "%d catégories"
-    ],
     "page.category_label": "Catégorie : %s",
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_feed.etag_header": "En-tête ETag :",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Clés d’accès",
     "page.settings.webauthn.register": "Enregister une nouvelle clé d’accès",
     "page.settings.webauthn.register.error": "Impossible d'enregistrer la clé d’accès",
-    "page.shared_entries.title": "Articles partagés",
     "page.shared_entries_count": [
         "%d article partagé",
         "%d articles partagés"
     ],
-    "page.starred.title": "Favoris",
+    "page.shared_entries.title": "Articles partagés",
     "page.starred_entry_count": [
         "%d favori",
         "%d favoris"
     ],
+    "page.starred.title": "Favoris",
     "page.total_entry_count": [
         "%d article au total",
         "%d articles au total"
     ],
-    "page.unread.title": "Non lus",
     "page.unread_entry_count": [
         "%d article non lu",
         "%d articles non lus"
     ],
+    "page.unread.title": "Non lus",
     "page.users.actions": "Actions",
     "page.users.admin.no": "Non",
     "page.users.admin.yes": "Oui",

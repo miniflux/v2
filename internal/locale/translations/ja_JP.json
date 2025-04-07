@@ -70,10 +70,10 @@
     "entry.state.loading": "読み込み中…",
     "entry.state.saving": "保存中…",
     "entry.status.mark_as_read": "既読にする",
+    "entry.status.mark_as_unread": "未読に戻す",
     "entry.status.title": "記事の状態を変更",
     "entry.status.toast.read": "既読にしました",
     "entry.status.toast.unread": "未読にしました",
-    "entry.status.mark_as_unread": "未読に戻す",
     "entry.tags.label": "タグ:",
     "entry.unshare.label": "共有を解除",
     "error.api_key_already_exists": "この API キーは既に存在します。",
@@ -115,6 +115,7 @@
     "error.invalid_default_home_page": "デフォルトのトップページが無効です",
     "error.invalid_display_mode": "Web アプリの表示モードが無効です。",
     "error.invalid_entry_direction": "記事の表示順が無効です。",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "フィード URL が無効です。",
     "error.invalid_gesture_nav": "ジェスチャー ナビゲーションが無効です。",
     "error.invalid_language": "言語が無効です。",
@@ -126,6 +127,7 @@
     "error.password_min_length": "パスワードは6文字以上である必要があります。",
     "error.pocket_access_token": "Pocket の access token が取得できません!",
     "error.pocket_request_token": "Pocket の request token が取得できません!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -172,7 +174,7 @@
     "form.feed.label.feed_password": "フィードのパスワード",
     "form.feed.label.feed_url": "フィード URL",
     "form.feed.label.feed_username": "フィードのユーザー名",
-    "form.feed.label.fetch_via_proxy": "プロキシ経由で取得",
+    "form.feed.label.fetch_via_proxy": "アプリケーションレベルで設定されたプロキシを使用する",
     "form.feed.label.hide_globally": "未読一覧に記事を表示しない",
     "form.feed.label.ignore_http_cache": "HTTPキャッシュを無視",
     "form.feed.label.keeplist_rules": "Keep ルール",
@@ -185,6 +187,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -419,6 +422,9 @@
     "page.api_keys.table.last_used_at": "最終使用",
     "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
+    "page.categories_count": [
+        "%d category"
+    ],
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [
         "%d 件のフィードがあります。"
@@ -426,9 +432,6 @@
     "page.categories.feeds": "フィード一覧",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.title": "カテゴリ",
-    "page.categories_count": [
-        "%d category"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "カテゴリを編集: %s",
     "page.edit_feed.etag_header": "ETag ヘッダー:",
@@ -531,21 +534,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "パスキーを登録する",
     "page.settings.webauthn.register.error": "パスキーを登録できません",
-    "page.shared_entries.title": "共有エントリ",
     "page.shared_entries_count": [
         "%d shared entry"
     ],
-    "page.starred.title": "星付き",
+    "page.shared_entries.title": "共有エントリ",
     "page.starred_entry_count": [
         "%d starred entry"
     ],
+    "page.starred.title": "星付き",
     "page.total_entry_count": [
         "%d entry in total"
     ],
-    "page.unread.title": "未読",
     "page.unread_entry_count": [
         "%d unread entry"
     ],
+    "page.unread.title": "未読",
     "page.users.actions": "アクション",
     "page.users.admin.no": "非管理者",
     "page.users.admin.yes": "管理者",

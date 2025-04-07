@@ -31,6 +31,7 @@ func (c *IconChecker) fetchAndStoreIcon() {
 	requestBuilder.WithCookie(c.feed.Cookie)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomFeedProxyURL(c.feed.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 	requestBuilder.UseCustomApplicationProxyURL(c.feed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(c.feed.AllowSelfSignedCertificates)

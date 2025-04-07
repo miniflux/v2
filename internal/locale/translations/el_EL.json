@@ -72,10 +72,10 @@
     "entry.state.loading": "Φόρτωση...",
     "entry.state.saving": "Aποθήκευση...",
     "entry.status.mark_as_read": "Επισήμανση ως αναγνωσμένο",
+    "entry.status.mark_as_unread": "Επισήμανση ως μη αναγνωσμένο",
     "entry.status.title": "Αλλαγή κατάστασης καταχώρησης",
     "entry.status.toast.read": "Επισήμανση ως αναγνωσμένο",
     "entry.status.toast.unread": "Επισήμανση ως μη αναγνωσμένο",
-    "entry.status.mark_as_unread": "Επισήμανση ως μη αναγνωσμένο",
     "entry.tags.label": "Ετικέτες:",
     "entry.unshare.label": "Aναίρεση Διαμοιρασμού",
     "error.api_key_already_exists": "Αυτό το κλειδί API υπάρχει ήδη.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "Μη έγκυρη προεπιλεγμένη αρχική σελίδα!",
     "error.invalid_display_mode": "Μη έγκυρη λειτουργία εμφάνισης εφαρμογών ιστού.",
     "error.invalid_entry_direction": "Μη έγκυρη κατεύθυνση ταξινόμησης άρθρων.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "Μη έγκυρη διεύθυνση URL ροής.",
     "error.invalid_gesture_nav": "Μη έγκυρη πλοήγηση με χειρονομίες.",
     "error.invalid_language": "Μη έγκυρη γλώσσα.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "Ο κωδικός πρόσβασης πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
     "error.pocket_access_token": "Δεν είναι δυνατή η λήψη του access token από το Pocket!",
     "error.pocket_request_token": "Δεν είναι δυνατή η λήψη του request token από το Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Κωδικός Πρόσβασης ροής",
     "form.feed.label.feed_url": "Διεύθυνση URL ροής",
     "form.feed.label.feed_username": "Όνομα Χρήστη ροής",
-    "form.feed.label.fetch_via_proxy": "Λήψη μέσω διακομιστή μεσολάβησης",
+    "form.feed.label.fetch_via_proxy": "Χρησιμοποιήστε τον διακομιστή μεσολάβησης που έχει ρυθμιστεί σε επίπεδο εφαρμογής",
     "form.feed.label.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.feed.label.ignore_http_cache": "Αγνοήστε την προσωρινή μνήμη HTTP",
     "form.feed.label.keeplist_rules": "Κρατήστε Κανόνες",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Τελευταία Χρήση",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Κλειδιά API",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "Άρθρα",
     "page.categories.feed_count": [
         "Υπάρχει μία %d ροή.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Συνδρομές",
     "page.categories.no_feed": "Καμία ροή.",
     "page.categories.title": "Κατηγορίες",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Επεξεργασία κατηγορίας: % s",
     "page.edit_feed.etag_header": "Κεφαλίδα ETag:",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Εγγραφή κωδικού πρόσβασης",
     "page.settings.webauthn.register.error": "Δεν είναι δυνατή η εγγραφή του κωδικού πρόσβασης",
-    "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "Αγαπημένo",
+    "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "Αγαπημένo",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Μη αναγνωσμένα",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "Μη αναγνωσμένα",
     "page.users.actions": "Eνέργειες",
     "page.users.admin.no": "Όχι",
     "page.users.admin.yes": "Ναι.",

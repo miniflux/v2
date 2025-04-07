@@ -63,6 +63,7 @@ func (h *handler) showChooseSubscriptionPage(w http.ResponseWriter, r *http.Requ
 		UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 		FetchViaProxy:               subscriptionForm.FetchViaProxy,
 		DisableHTTP2:                subscriptionForm.DisableHTTP2,
+		ProxyURL:                    subscriptionForm.ProxyURL,
 	})
 	if localizedError != nil {
 		view.Set("form", subscriptionForm)

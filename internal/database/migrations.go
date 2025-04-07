@@ -1062,4 +1062,8 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 
 		return nil
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN proxy_url text default ''`)
+		return err
+	},
 }

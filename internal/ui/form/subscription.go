@@ -28,6 +28,7 @@ type SubscriptionForm struct {
 	KeeplistRules               string
 	UrlRewriteRules             string
 	DisableHTTP2                bool
+	ProxyURL                    string
 }
 
 // Validate makes sure the form values locale.are valid.
@@ -50,6 +51,10 @@ func (s *SubscriptionForm) Validate() *locale.LocalizedError {
 
 	if !validator.IsValidRegex(s.UrlRewriteRules) {
 		return locale.NewLocalizedError("error.feed_invalid_urlrewrite_rule")
+	}
+
+	if s.ProxyURL != "" && !validator.IsValidURL(s.ProxyURL) {
+		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 	}
 
 	return nil
@@ -78,5 +83,6 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		KeeplistRules:               r.FormValue("keeplist_rules"),
 		UrlRewriteRules:             r.FormValue("urlrewrite_rules"),
 		DisableHTTP2:                r.FormValue("disable_http2") == "1",
+		ProxyURL:                    r.FormValue("proxy_url"),
 	}
 }

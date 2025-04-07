@@ -151,6 +151,7 @@ type Feed struct {
 	Category                    *Category `json:"category,omitempty"`
 	HideGlobally                bool      `json:"hide_globally"`
 	DisableHTTP2                bool      `json:"disable_http2"`
+	ProxyURL                    string    `json:"proxy_url"`
 }
 
 // FeedCreationRequest represents the request to create a feed.
@@ -172,6 +173,7 @@ type FeedCreationRequest struct {
 	KeeplistRules               string `json:"keeplist_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
 	DisableHTTP2                bool   `json:"disable_http2"`
+	ProxyURL                    string `json:"proxy_url"`
 }
 
 // FeedModificationRequest represents the request to update a feed.
@@ -195,6 +197,7 @@ type FeedModificationRequest struct {
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
+	ProxyURL                    *string `json:"proxy_url"`
 }
 
 // FeedIcon represents the feed icon.

@@ -684,7 +684,6 @@ func (h *handler) quickAddHandler(w http.ResponseWriter, r *http.Request) {
 
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
 	var rssBridgeURL string

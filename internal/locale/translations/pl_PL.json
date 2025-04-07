@@ -74,10 +74,10 @@
     "entry.state.loading": "Ładowanie…",
     "entry.state.saving": "Zapisywanie…",
     "entry.status.mark_as_read": "Oznacz jako przeczytany",
+    "entry.status.mark_as_unread": "Oznacz jako nieprzeczytany",
     "entry.status.title": "Zmień status wpisu",
     "entry.status.toast.read": "Oznaczono jako przeczytany",
     "entry.status.toast.unread": "Oznaczono jako nieprzeczytany",
-    "entry.status.mark_as_unread": "Oznacz jako nieprzeczytany",
     "entry.tags.label": "Znaczniki:",
     "entry.unshare.label": "Cofnij udostępnianie",
     "error.api_key_already_exists": "Ten klucz API już istnieje.",
@@ -119,6 +119,7 @@
     "error.invalid_default_home_page": "Nieprawidłowa domyślna strona główna!",
     "error.invalid_display_mode": "Nieprawidłowy tryb wyświetlania aplikacji sieciowej.",
     "error.invalid_entry_direction": "Nieprawidłowa kolejność sortowania.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "Nieprawidłowy adres URL kanału.",
     "error.invalid_gesture_nav": "Nieprawidłowa nawigacja gestami.",
     "error.invalid_language": "Nieprawidłowy język.",
@@ -130,6 +131,7 @@
     "error.password_min_length": "Musisz użyć co najmniej 6 znaków.",
     "error.pocket_access_token": "Nie można pobrać tokena dostępu z Pocket!",
     "error.pocket_request_token": "Nie można pobrać tokena żądania z Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Nieprawidłowa reguła blokowania: w regule #%d brakuje prawidłowej nazwy pola (opcje: %s)",
     "error.settings_block_rule_invalid_regex": "Nieprawidłowa reguła blokowania: wzór reguły #%d nie jest prawidłowym wyrażeniem regularnym",
     "error.settings_block_rule_regex_required": "Nieprawidłowa reguła blokowania: nie podano wzorca reguły #%d",
@@ -176,7 +178,7 @@
     "form.feed.label.feed_password": "Hasło do subskrypcji",
     "form.feed.label.feed_url": "Adres URL kanału",
     "form.feed.label.feed_username": "Nazwa użytkownika subskrypcji",
-    "form.feed.label.fetch_via_proxy": "Pobierz przez proxy",
+    "form.feed.label.fetch_via_proxy": "Użyj proxy skonfigurowanego na poziomie aplikacji",
     "form.feed.label.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
     "form.feed.label.ignore_http_cache": "Zignoruj pamięć podręczną HTTP",
     "form.feed.label.keeplist_rules": "Reguły utrzymywania",
@@ -189,6 +191,7 @@
     "form.feed.label.ntfy_min_priority": "Minimalny priorytet ntfy",
     "form.feed.label.ntfy_priority": "Priorytet ntfy",
     "form.feed.label.ntfy_topic": "Temat ntfy (opcjonalny)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Prześlij wpisy do pushover.net",
     "form.feed.label.pushover_default_priority": "Domyślny priorytet Pushover",
     "form.feed.label.pushover_high_priority": "Wysoki priorytet Pushover",
@@ -423,6 +426,11 @@
     "page.api_keys.table.last_used_at": "Ostatnio używane",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Klucze API",
+    "page.categories_count": [
+        "%d kategoria",
+        "%d kategorie",
+        "%d kategorii"
+    ],
     "page.categories.entries": "Wpisy",
     "page.categories.feed_count": [
         "Jest %d kanał.",
@@ -432,11 +440,6 @@
     "page.categories.feeds": "Kanały",
     "page.categories.no_feed": "Brak kanałów.",
     "page.categories.title": "Kategorie",
-    "page.categories_count": [
-        "%d kategoria",
-        "%d kategorie",
-        "%d kategorii"
-    ],
     "page.category_label": "Kategoria: %s",
     "page.edit_category.title": "Edytuj kategorię: %s",
     "page.edit_feed.etag_header": "Nagłówek ETag:",
@@ -545,29 +548,29 @@
     "page.settings.webauthn.passkeys": "Klucze dostępu",
     "page.settings.webauthn.register": "Zarejestruj klucz dostępu",
     "page.settings.webauthn.register.error": "Nie można zarejestrować klucza dostępu",
-    "page.shared_entries.title": "Udostępnione wpisy",
     "page.shared_entries_count": [
         "%d udostępniony wpis",
         "%d udostępnione wpisy",
         "%d udostępnionych wpisów"
     ],
-    "page.starred.title": "Ulubione",
+    "page.shared_entries.title": "Udostępnione wpisy",
     "page.starred_entry_count": [
         "%d ulubiony wpis",
         "%d ulubione wpisy",
         "%d ulubionych wpisów"
     ],
+    "page.starred.title": "Ulubione",
     "page.total_entry_count": [
         "%d wpis łącznie",
         "%d wpisy łącznie",
         "%d wpisów łącznie"
     ],
-    "page.unread.title": "Nieprzeczytane",
     "page.unread_entry_count": [
         "%d nieprzeczytany wpis",
         "%d nieprzeczytane wpisy",
         "%d nieprzeczytanych wpisów"
     ],
+    "page.unread.title": "Nieprzeczytane",
     "page.users.actions": "Działania",
     "page.users.admin.no": "Nie",
     "page.users.admin.yes": "Tak",
