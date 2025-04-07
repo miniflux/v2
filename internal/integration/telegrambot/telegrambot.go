@@ -5,8 +5,12 @@ package telegrambot // import "miniflux.app/v2/internal/integration/telegrambot"
 
 import (
 	"fmt"
+	"log/slog"
+	"strconv"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/urllib"
 )
 
 func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, topicID *int64, disableWebPagePreview, disableNotification bool, disableButtons bool) error {
@@ -32,8 +36,16 @@ func PushEntry(feed *model.Feed, entry *model.Entry, botToken, chatID string, to
 	if !disableButtons {
 		var markupRow []*InlineKeyboardButton
 
-		websiteURLButton := InlineKeyboardButton{Text: "Go to website", URL: feed.SiteURL}
-		markupRow = append(markupRow, &websiteURLButton)
+		baseURL := config.Opts.BaseURL()
+		entryPath := "/unread/entry/" + strconv.FormatInt(entry.ID, 10)
+
+		minifluxEntryURL, err := urllib.JoinBaseURLAndPath(baseURL, entryPath)
+		if err != nil {
+			slog.Error("Unable to create Miniflux entry URL", slog.Any("error", err))
+		} else {
+			minifluxEntryURLButton := InlineKeyboardButton{Text: "Go to Miniflux", URL: minifluxEntryURL}
+			markupRow = append(markupRow, &minifluxEntryURLButton)
+		}
 
 		articleURLButton := InlineKeyboardButton{Text: "Go to article", URL: entry.URL}
 		markupRow = append(markupRow, &articleURLButton)
