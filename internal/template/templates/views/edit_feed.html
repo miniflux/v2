@@ -97,6 +97,9 @@
             <label for="form-user-agent">{{ t "form.feed.label.user_agent" }}</label>
             <input type="text" name="user_agent" id="form-user-agent" placeholder="{{ .defaultUserAgent }}" value="{{ .form.UserAgent }}" spellcheck="false">
 
+            <label for="form-proxy-url">{{ t "form.feed.label.proxy_url" }}</label>
+            <input type="url" name="proxy_url" id="form-proxy-url" value="{{ .form.ProxyURL }}" spellcheck="false">
+
             <label for="form-cookie">{{ t "form.feed.label.cookie" }}</label>
             <input type="text" name="cookie" id="form-cookie" value="{{ .form.Cookie }}" spellcheck="false">
 

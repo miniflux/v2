@@ -10,6 +10,7 @@ type SubscriptionDiscoveryRequest struct {
 	Cookie                      string `json:"cookie"`
 	Username                    string `json:"username"`
 	Password                    string `json:"password"`
+	ProxyURL                    string `json:"proxy_url"`
 	FetchViaProxy               bool   `json:"fetch_via_proxy"`
 	AllowSelfSignedCertificates bool   `json:"allow_self_signed_certificates"`
 	DisableHTTP2                bool   `json:"disable_http2"`

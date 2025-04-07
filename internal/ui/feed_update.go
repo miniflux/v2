@@ -64,6 +64,7 @@ func (h *handler) updateFeed(w http.ResponseWriter, r *http.Request) {
 		BlocklistRules:  model.OptionalString(feedForm.BlocklistRules),
 		KeeplistRules:   model.OptionalString(feedForm.KeeplistRules),
 		UrlRewriteRules: model.OptionalString(feedForm.UrlRewriteRules),
+		ProxyURL:        model.OptionalString(feedForm.ProxyURL),
 	}
 
 	if validationErr := validator.ValidateFeedModification(h.store, loggedUser.ID, feed.ID, feedModificationRequest); validationErr != nil {

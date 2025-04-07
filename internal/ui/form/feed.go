@@ -42,6 +42,7 @@ type FeedForm struct {
 	NtfyTopic                   string
 	PushoverEnabled             bool
 	PushoverPriority            int
+	ProxyURL                    string
 }
 
 // Merge updates the fields of the given feed.
@@ -77,6 +78,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.NtfyTopic = f.NtfyTopic
 	feed.PushoverEnabled = f.PushoverEnabled
 	feed.PushoverPriority = f.PushoverPriority
+	feed.ProxyURL = f.ProxyURL
 	return feed
 }
 
@@ -86,6 +88,7 @@ func NewFeedForm(r *http.Request) *FeedForm {
 	if err != nil {
 		categoryID = 0
 	}
+
 	ntfyPriority, err := strconv.Atoi(r.FormValue("ntfy_priority"))
 	if err != nil {
 		ntfyPriority = 0
@@ -126,5 +129,6 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		NtfyTopic:                   r.FormValue("ntfy_topic"),
 		PushoverEnabled:             r.FormValue("pushover_enabled") == "1",
 		PushoverPriority:            pushoverPriority,
+		ProxyURL:                    r.FormValue("proxy_url"),
 	}
 }

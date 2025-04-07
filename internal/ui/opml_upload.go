@@ -97,7 +97,6 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
-	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(opmlFileURL))
 	defer responseHandler.Close()

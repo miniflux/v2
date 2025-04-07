@@ -57,8 +57,9 @@ type Feed struct {
 	NtfyEnabled                 bool      `json:"ntfy_enabled"`
 	NtfyPriority                int       `json:"ntfy_priority"`
 	NtfyTopic                   string    `json:"ntfy_topic"`
-	PushoverEnabled             bool      `json:"pushover_enabled,omitempty"`
-	PushoverPriority            int       `json:"pushover_priority,omitempty"`
+	PushoverEnabled             bool      `json:"pushover_enabled"`
+	PushoverPriority            int       `json:"pushover_priority"`
+	ProxyURL                    string    `json:"proxy_url"`
 
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`
@@ -161,6 +162,7 @@ type FeedCreationRequest struct {
 	HideGlobally                bool   `json:"hide_globally"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
 	DisableHTTP2                bool   `json:"disable_http2"`
+	ProxyURL                    string `json:"proxy_url"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -195,6 +197,7 @@ type FeedModificationRequest struct {
 	FetchViaProxy               *bool   `json:"fetch_via_proxy"`
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
+	ProxyURL                    *string `json:"proxy_url"`
 }
 
 // Patch updates a feed with modified values.
@@ -285,6 +288,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.DisableHTTP2 != nil {
 		feed.DisableHTTP2 = *f.DisableHTTP2
+	}
+
+	if f.ProxyURL != nil {
+		feed.ProxyURL = *f.ProxyURL
 	}
 }
 

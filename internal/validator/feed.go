@@ -35,6 +35,10 @@ func ValidateFeedCreation(store *storage.Storage, userID int64, request *model.F
 		return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
 	}
 
+	if request.ProxyURL != "" && !IsValidURL(request.ProxyURL) {
+		return locale.NewLocalizedError("error.invalid_feed_proxy_url")
+	}
+
 	return nil
 }
 
@@ -85,6 +89,16 @@ func ValidateFeedModification(store *storage.Storage, userID, feedID int64, requ
 	if request.KeeplistRules != nil {
 		if !IsValidRegex(*request.KeeplistRules) {
 			return locale.NewLocalizedError("error.feed_invalid_keeplist_rule")
+		}
+	}
+
+	if request.ProxyURL != nil {
+		if *request.ProxyURL == "" {
+			return locale.NewLocalizedError("error.proxy_url_not_empty")
+		}
+
+		if !IsValidURL(*request.ProxyURL) {
+			return locale.NewLocalizedError("error.invalid_feed_proxy_url")
 		}
 	}
 

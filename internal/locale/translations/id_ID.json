@@ -70,10 +70,10 @@
     "entry.state.loading": "Memuat...",
     "entry.state.saving": "Menyimpan...",
     "entry.status.mark_as_read": "Telah dibaca",
+    "entry.status.mark_as_unread": "Belum dibaca",
     "entry.status.title": "Ubah status entri",
     "entry.status.toast.read": "Ditandai sebagai telah dibaca",
     "entry.status.toast.unread": "Ditandai sebagai belum dibaca",
-    "entry.status.mark_as_unread": "Belum dibaca",
     "entry.tags.label": "Tanda:",
     "entry.unshare.label": "Batal bagikan",
     "error.api_key_already_exists": "Kunci API ini sudah ada.",
@@ -115,6 +115,7 @@
     "error.invalid_default_home_page": "Beranda baku tidak valid!",
     "error.invalid_display_mode": "Mode tampilan aplikasi web tidak valid.",
     "error.invalid_entry_direction": "Urutan entri tidak valid.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "URL umpan tidak valid.",
     "error.invalid_gesture_nav": "Navigasi gestur tidak valid.",
     "error.invalid_language": "Bahasa tidak valid.",
@@ -126,6 +127,7 @@
     "error.password_min_length": "Kata sandi harus memiliki setidaknya 6 karakter.",
     "error.pocket_access_token": "Tidak bisa mendapatkan token akses dari Pocket!",
     "error.pocket_request_token": "Tidak bisa mendapatkan token permintaan dari Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -172,7 +174,7 @@
     "form.feed.label.feed_password": "Kata Sandi Umpan",
     "form.feed.label.feed_url": "URL Umpan",
     "form.feed.label.feed_username": "Nama Pengguna Umpan",
-    "form.feed.label.fetch_via_proxy": "Ambil via Proksi",
+    "form.feed.label.fetch_via_proxy": "Gunakan proxy yang dikonfigurasi di tingkat aplikasi",
     "form.feed.label.hide_globally": "Sembunyikan entri di daftar belum dibaca global",
     "form.feed.label.ignore_http_cache": "Abaikan Tembolok HTTP",
     "form.feed.label.keeplist_rules": "Aturan Simpan",
@@ -185,6 +187,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -419,6 +422,9 @@
     "page.api_keys.table.last_used_at": "Terakhir Digunakan",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Kunci API",
+    "page.categories_count": [
+        "%d category"
+    ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Ada %d umpan."
@@ -426,9 +432,6 @@
     "page.categories.feeds": "Langganan",
     "page.categories.no_feed": "Tidak ada umpan.",
     "page.categories.title": "Kategori",
-    "page.categories_count": [
-        "%d category"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Sunting Kategori: %s",
     "page.edit_feed.etag_header": "Tajuk ETag:",
@@ -531,21 +534,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Register passkey",
     "page.settings.webauthn.register.error": "Unable to register passkey",
-    "page.shared_entries.title": "Entri yang Dibagikan",
     "page.shared_entries_count": [
         "%d shared entry"
     ],
-    "page.starred.title": "Markah",
+    "page.shared_entries.title": "Entri yang Dibagikan",
     "page.starred_entry_count": [
         "%d starred entry"
     ],
+    "page.starred.title": "Markah",
     "page.total_entry_count": [
         "%d entry in total"
     ],
-    "page.unread.title": "Belum Dibaca",
     "page.unread_entry_count": [
         "%d unread entry"
     ],
+    "page.unread.title": "Belum Dibaca",
     "page.users.actions": "Tindakan",
     "page.users.admin.no": "Tidak",
     "page.users.admin.yes": "Ya",

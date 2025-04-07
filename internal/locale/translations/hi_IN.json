@@ -72,10 +72,10 @@
     "entry.state.loading": "लोड हो रहा है...",
     "entry.state.saving": "सहेजा जा रहा है...",
     "entry.status.mark_as_read": "पढ़े हुए का चिह्न",
+    "entry.status.mark_as_unread": "अपठित के रूप में चिह्नित करें",
     "entry.status.title": "प्रविष्टि स्थिति बदलें",
     "entry.status.toast.read": "पढ़ा हुआ चिह्नित करे",
     "entry.status.toast.unread": "अपठित के रूप में चिह्नित",
-    "entry.status.mark_as_unread": "अपठित के रूप में चिह्नित करें",
     "entry.tags.label": "टैग:",
     "entry.unshare.label": "न साझा कारें",
     "error.api_key_already_exists": "यह एपीआई कुंजी पहले से मौजूद है।",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "अमान्य डिफ़ॉल्ट मुखपृष्ठ!",
     "error.invalid_display_mode": "अमान्य वेब ऐप्लिकेशन प्रदर्शन मोड.",
     "error.invalid_entry_direction": "अमान्य प्रवेश दिशा।",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "दृष्टिकोण यूआरएल.",
     "error.invalid_gesture_nav": "अमान्य इशारा नेविगेशन।",
     "error.invalid_language": "अमान्य भाषा.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "पासवर्ड में कम से कम 6 अक्षर होने चाहिए।",
     "error.pocket_access_token": "पॉकेट से एक्सेस टोकन प्राप्त करने में असमर्थ!",
     "error.pocket_request_token": "पॉकेट से अनुरोध टोकन लाने में असमर्थ!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "फ़ीड पासवर्ड",
     "form.feed.label.feed_url": "फ़ीड यूआरएल",
     "form.feed.label.feed_username": "फ़ीड उपयोगकर्ता नाम",
-    "form.feed.label.fetch_via_proxy": "प्रॉक्सी के माध्यम से प्राप्त करें",
+    "form.feed.label.fetch_via_proxy": "एप्लिकेशन स्तर पर कॉन्फ़िगर किए गए प्रॉक्सी का उपयोग करें",
     "form.feed.label.hide_globally": "वैश्विक अपठित सूची में प्रविष्टियां छिपाएं",
     "form.feed.label.ignore_http_cache": "एचटीटीपी कैश पर ध्यान न दें",
     "form.feed.label.keeplist_rules": "नियम बनाए रखें",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "आखरी इस्त्तमाल किया गया",
     "page.api_keys.table.token": "टोकन",
     "page.api_keys.title": "एपीआई कुंजी",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "विषयवस्तुया",
     "page.categories.feed_count": [
         "%d फ़ीड बाकी है।",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "सदस्यता ले",
     "page.categories.no_feed": "कोई फ़ीड नहीं है।",
     "page.categories.title": "श्रेणियाँ",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "%s श्रेणी संपाद करे",
     "page.edit_feed.etag_header": "ईटाग हैडर:",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "रजिस्टर पासकी",
     "page.settings.webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
-    "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "तारांकित",
+    "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "तारांकित",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "अपठित",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "अपठित",
     "page.users.actions": "कार्रवाई",
     "page.users.admin.no": "नहीं",
     "page.users.admin.yes": "हां",

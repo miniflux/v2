@@ -72,10 +72,10 @@
     "entry.state.loading": "Cargando...",
     "entry.state.saving": "Guardando...",
     "entry.status.mark_as_read": "Marcar como leído",
+    "entry.status.mark_as_unread": "Marcar como no leído",
     "entry.status.title": "Cambiar estado del artículo",
     "entry.status.toast.read": "Marcado como leído",
     "entry.status.toast.unread": "Marcado como no leído",
-    "entry.status.mark_as_unread": "Marcar como no leído",
     "entry.tags.label": "Etiquetas:",
     "entry.unshare.label": "No compartir",
     "error.api_key_already_exists": "Esta clave API ya existe.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "¡Página de inicio por defecto no válida!",
     "error.invalid_display_mode": "Modo de visualización de la aplicación web no válido.",
     "error.invalid_entry_direction": "Dirección de artículo no válida.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "URL de feed no válida.",
     "error.invalid_gesture_nav": "Navegación por gestos no válida.",
     "error.invalid_language": "Idioma no válido.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "La contraseña debería tener al menos 6 caracteres.",
     "error.pocket_access_token": "Incapaz de obtener un token de acceso de Pocket!",
     "error.pocket_request_token": "Incapaz de obtener un token de solicitud de Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Regla de bloqueo no válida: a la regla #%d le falta un nombre de campo válido (Opciones: %s)",
     "error.settings_block_rule_invalid_regex": "Regla de bloqueo no válida: el patrón de la regla #%d no es una expresión regular válida",
     "error.settings_block_rule_regex_required": "Regla de bloqueo no válida: no se ha proporcionado el patrón de la regla #%d",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Contraseña de la fuente",
     "form.feed.label.feed_url": "URL de la fuente",
     "form.feed.label.feed_username": "Nombre de usuario de la fuente",
-    "form.feed.label.fetch_via_proxy": "Buscar a través de proxy",
+    "form.feed.label.fetch_via_proxy": "Usar el proxy configurado a nivel de la aplicación",
     "form.feed.label.hide_globally": "Ocultar artículos en la lista global de no leídos",
     "form.feed.label.ignore_http_cache": "Ignorar caché HTTP",
     "form.feed.label.keeplist_rules": "Reglas de Filtrado (Permitir)",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Prioridad mínima a Ntfy",
     "form.feed.label.ntfy_priority": "Prioridad Ntfy",
     "form.feed.label.ntfy_topic": "Tema Ntfy (opcional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Último utilizado",
     "page.api_keys.table.token": "simbólico",
     "page.api_keys.title": "Claves API",
+    "page.categories_count": [
+        "%d categoría",
+        "%d categorías"
+    ],
     "page.categories.entries": "Artículos",
     "page.categories.feed_count": [
         "Hay %d fuente.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Fuentes",
     "page.categories.no_feed": "Sin fuente.",
     "page.categories.title": "Categorías",
-    "page.categories_count": [
-        "%d categoría",
-        "%d categorías"
-    ],
     "page.category_label": "Categoría: %s",
     "page.edit_category.title": "Editar categoría: %s",
     "page.edit_feed.etag_header": "Cabecera de ETag:",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Claves de acceso",
     "page.settings.webauthn.register": "Registrar clave de acceso",
     "page.settings.webauthn.register.error": "No se puede registrar la clave de acceso",
-    "page.shared_entries.title": "Artículos compartidos",
     "page.shared_entries_count": [
         "%d artículo compartido",
         "%d artículos compartidos"
     ],
-    "page.starred.title": "Marcadores",
+    "page.shared_entries.title": "Artículos compartidos",
     "page.starred_entry_count": [
         "%d artículo marcado",
         "%d artículos marcados"
     ],
+    "page.starred.title": "Marcadores",
     "page.total_entry_count": [
         "%d artículo en total",
         "%d artículos en total"
     ],
-    "page.unread.title": "No leídos",
     "page.unread_entry_count": [
         "%d artículo no leído",
         "%d artículos no leídos"
     ],
+    "page.unread.title": "No leídos",
     "page.users.actions": "Acciones",
     "page.users.admin.no": "No",
     "page.users.admin.yes": "Sí",

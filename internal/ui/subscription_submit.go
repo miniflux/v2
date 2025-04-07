@@ -60,6 +60,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomFeedProxyURL(subscriptionForm.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 	requestBuilder.UseCustomApplicationProxyURL(subscriptionForm.FetchViaProxy)
 	requestBuilder.WithUserAgent(subscriptionForm.UserAgent, config.Opts.HTTPClientUserAgent())
@@ -107,6 +108,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 				UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 				FetchViaProxy:               subscriptionForm.FetchViaProxy,
 				DisableHTTP2:                subscriptionForm.DisableHTTP2,
+				ProxyURL:                    subscriptionForm.ProxyURL,
 			},
 		})
 		if localizedError != nil {
@@ -134,6 +136,7 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 			UrlRewriteRules:             subscriptionForm.UrlRewriteRules,
 			FetchViaProxy:               subscriptionForm.FetchViaProxy,
 			DisableHTTP2:                subscriptionForm.DisableHTTP2,
+			ProxyURL:                    subscriptionForm.ProxyURL,
 		})
 		if localizedError != nil {
 			v.Set("form", subscriptionForm)

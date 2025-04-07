@@ -72,10 +72,10 @@
     "entry.state.loading": "Ladataan...",
     "entry.state.saving": "Tallennetaan...",
     "entry.status.mark_as_read": "Merkitse luetuksi",
+    "entry.status.mark_as_unread": "Merkitse lukemattomaksi",
     "entry.status.title": "Vaihda artikkelin tilaa",
     "entry.status.toast.read": "Merkitty luetuksi",
     "entry.status.toast.unread": "Merkitty lukemattomaksi",
-    "entry.status.mark_as_unread": "Merkitse lukemattomaksi",
     "entry.tags.label": "Tags:",
     "entry.unshare.label": "Poista jako",
     "error.api_key_already_exists": "API-avain on jo olemassa.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "Väärä oletusarvoinen kotisivu!",
     "error.invalid_display_mode": "Virheellinen verkkosovelluksen näyttötila.",
     "error.invalid_entry_direction": "Invalid entry direction.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "Virheellinen syötteen URL-osoite.",
     "error.invalid_gesture_nav": "Virheellinen ele-navigointi.",
     "error.invalid_language": "Virheellinen kieli.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "Salasanassa on oltava vähintään 6 merkkiä.",
     "error.pocket_access_token": "Unable to fetch access token from Pocket!",
     "error.pocket_request_token": "Unable to fetch request token from Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Syötteen salasana",
     "form.feed.label.feed_url": "Syötteen URL-osoite",
     "form.feed.label.feed_username": "Syötteen käyttäjätunnus",
-    "form.feed.label.fetch_via_proxy": "Nouda välityspalvelimen kautta",
+    "form.feed.label.fetch_via_proxy": "Käytä sovellustasolla määritettyä välityspalvelinta",
     "form.feed.label.hide_globally": "Piilota artikkelit lukemattomien listassa",
     "form.feed.label.ignore_http_cache": "Ohita HTTP-välimuisti",
     "form.feed.label.keeplist_rules": "Keep-säännöt",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Viimeksi käytetty",
     "page.api_keys.table.token": "Tunnus",
     "page.api_keys.title": "API-avaimet",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "Artikkelit",
     "page.categories.feed_count": [
         "On %d syöte.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Tilaukset",
     "page.categories.no_feed": "Ei syötettä.",
     "page.categories.title": "Kategoriat",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Muokkaa kategoria: %s",
     "page.edit_feed.etag_header": "ETag-otsikko:",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Rekisteröi salasana",
     "page.settings.webauthn.register.error": "Salasanaa ei voi rekisteröidä",
-    "page.shared_entries.title": "Jaetut artikkelit",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "Suosikit",
+    "page.shared_entries.title": "Jaetut artikkelit",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "Suosikit",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Lukemattomat",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "Lukemattomat",
     "page.users.actions": "Toiminnot",
     "page.users.admin.no": "Ei",
     "page.users.admin.yes": "Kyllä",

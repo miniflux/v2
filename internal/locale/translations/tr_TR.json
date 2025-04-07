@@ -72,10 +72,10 @@
     "entry.state.loading": "Yükleniyor...",
     "entry.state.saving": "Kaydediliyor...",
     "entry.status.mark_as_read": "Okundu olarak işaretle",
+    "entry.status.mark_as_unread": "Okunmadı olarak işaretle",
     "entry.status.title": "Makele okundu durumunu değiştir",
     "entry.status.toast.read": "Okundu olarak işaretlendi",
     "entry.status.toast.unread": "Okunmamış olarak işaretlendi",
-    "entry.status.mark_as_unread": "Okunmadı olarak işaretle",
     "entry.tags.label": "Etiketler:",
     "entry.unshare.label": "Paylaşma",
     "error.api_key_already_exists": "Bu API anahtarı zaten mevcut.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "Geçersiz varsayılan ana sayfa!",
     "error.invalid_display_mode": "Geçersiz web uygulaması görüntüleme modu.",
     "error.invalid_entry_direction": "Geçersiz makele sıralaması.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "Geçersiz besleme URL'si.",
     "error.invalid_gesture_nav": "Hareketle gezinme geçersiz.",
     "error.invalid_language": "Geçersiz dil.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "Parola en az 6 karakter içermeli.",
     "error.pocket_access_token": "Pocket'tan access tokeni alınamıyor!",
     "error.pocket_request_token": "Pocket'tan request tokeni alınamıyor!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Geçersiz Engelleme kuralı: #%d kuralında geçerli bir alan adı eksik (Seçenekler: %s)",
     "error.settings_block_rule_invalid_regex": "Geçersiz Engelleme kuralı: #%d kuralı modeli geçerli bir düzenli ifade değil",
     "error.settings_block_rule_regex_required": "Geçersiz Engelleme kuralı: #%d kuralı modeli sağlanmadı",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Besleme Parolası",
     "form.feed.label.feed_url": "Besleme URL'si",
     "form.feed.label.feed_username": "Besleme Kullanıcı Adı",
-    "form.feed.label.fetch_via_proxy": "Proxy ile çek",
+    "form.feed.label.fetch_via_proxy": "Uygulama düzeyinde yapılandırılmış proxy'yi kullan",
     "form.feed.label.hide_globally": "Genel okunmamış listesindeki girişleri gizle",
     "form.feed.label.ignore_http_cache": "HTTP önbelleğini yoksay",
     "form.feed.label.keeplist_rules": "Saklama Kuralları",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Son Kullanılma",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API Anahtarları",
+    "page.categories_count": [
+        "%d kategori",
+        "%d kategori"
+    ],
     "page.categories.entries": "Makaleler",
     "page.categories.feed_count": [
         "%d besleme var.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Beslemeler",
     "page.categories.no_feed": "Besleme yok.",
     "page.categories.title": "Kategoriler",
-    "page.categories_count": [
-        "%d kategori",
-        "%d kategori"
-    ],
     "page.category_label": "Kategori: %s",
     "page.edit_category.title": "Kategoriyi Düzenle: %s",
     "page.edit_feed.etag_header": "ETag başlığı:",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Passkeyler",
     "page.settings.webauthn.register": "Passkey'i kaydet",
     "page.settings.webauthn.register.error": "Passkey kaydedilemiyor",
-    "page.shared_entries.title": "Paylaşılan makaleler",
     "page.shared_entries_count": [
         "%d paylaşılan makaleler",
         "%d paylaşılan makaleler"
     ],
-    "page.starred.title": "Yıldızlı",
+    "page.shared_entries.title": "Paylaşılan makaleler",
     "page.starred_entry_count": [
         "%d yıldızlanmış makale",
         "%d yıldızlanmış makale"
     ],
+    "page.starred.title": "Yıldızlı",
     "page.total_entry_count": [
         "Toplamda %d makale",
         "Toplamda %d makale"
     ],
-    "page.unread.title": "Okunmadı",
     "page.unread_entry_count": [
         "Toplamda %d okunmamış makale",
         "Toplamda %d okunmamış makale"
     ],
+    "page.unread.title": "Okunmadı",
     "page.users.actions": "Eylemler",
     "page.users.admin.no": "Hayır",
     "page.users.admin.yes": "Evet",

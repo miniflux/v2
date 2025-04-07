@@ -6,6 +6,7 @@ package fetcher // import "miniflux.app/v2/internal/reader/fetcher"
 import (
 	"crypto/tls"
 	"encoding/base64"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
@@ -30,6 +31,7 @@ type RequestBuilder struct {
 	ignoreTLSErrors  bool
 	disableHTTP2     bool
 	proxyRotator     *proxyrotator.ProxyRotator
+	feedProxyURL     string
 }
 
 func NewRequestBuilder() *RequestBuilder {
@@ -93,6 +95,11 @@ func (r *RequestBuilder) WithCustomApplicationProxyURL(proxyURL *url.URL) *Reque
 
 func (r *RequestBuilder) UseCustomApplicationProxyURL(value bool) *RequestBuilder {
 	r.useClientProxy = value
+	return r
+}
+
+func (r *RequestBuilder) WithCustomFeedProxyURL(proxyURL string) *RequestBuilder {
+	r.feedProxyURL = proxyURL
 	return r
 }
 
@@ -160,9 +167,17 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 	}
 
 	var clientProxyURL *url.URL
-	if r.useClientProxy && r.clientProxyURL != nil {
+
+	switch {
+	case r.feedProxyURL != "":
+		var err error
+		clientProxyURL, err = url.Parse(r.feedProxyURL)
+		if err != nil {
+			return nil, fmt.Errorf(`fetcher: invalid feed proxy URL %q: %w`, r.feedProxyURL, err)
+		}
+	case r.useClientProxy && r.clientProxyURL != nil:
 		clientProxyURL = r.clientProxyURL
-	} else if r.proxyRotator != nil && r.proxyRotator.HasProxies() {
+	case r.proxyRotator != nil && r.proxyRotator.HasProxies():
 		clientProxyURL = r.proxyRotator.GetNextProxy()
 	}
 

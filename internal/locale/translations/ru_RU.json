@@ -74,10 +74,10 @@
     "entry.state.loading": "Загрузка…",
     "entry.state.saving": "Сохранение…",
     "entry.status.mark_as_read": "Отметить как прочитанное",
+    "entry.status.mark_as_unread": "Пометить как непрочитанное",
     "entry.status.title": "Изменить статус записи",
     "entry.status.toast.read": "Помечено как прочитанное",
     "entry.status.toast.unread": "Помечено как непрочитанное",
-    "entry.status.mark_as_unread": "Пометить как непрочитанное",
     "entry.tags.label": "Теги:",
     "entry.unshare.label": "Удалить из общедоступных",
     "error.api_key_already_exists": "Этот API-ключ уже существует.",
@@ -119,6 +119,7 @@
     "error.invalid_default_home_page": "Недопустимая домашняя страница по умолчанию!",
     "error.invalid_display_mode": "Недопустимый режим отображения веб-приложения.",
     "error.invalid_entry_direction": "Недопустимая сортировка записей.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "Недействительная ссылка подписки.",
     "error.invalid_gesture_nav": "Недопустимая навигация жестами.",
     "error.invalid_language": "Недопустимый язык.",
@@ -130,6 +131,7 @@
     "error.password_min_length": "Вы должны использовать минимум 6 символов.",
     "error.pocket_access_token": "Не удалось получить ключ доступа от Pocket!",
     "error.pocket_request_token": "Не удалось получить request token от Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -176,7 +178,7 @@
     "form.feed.label.feed_password": "Пароль подписки",
     "form.feed.label.feed_url": "Адрес подписки",
     "form.feed.label.feed_username": "Имя пользователя подписки",
-    "form.feed.label.fetch_via_proxy": "Использовать прокси",
+    "form.feed.label.fetch_via_proxy": "Использовать прокси, настроенный на уровне приложения",
     "form.feed.label.hide_globally": "Скрыть записи в глобальном списке непрочитанных",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP кеш",
     "form.feed.label.keeplist_rules": "Правила белого списка",
@@ -189,6 +191,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -423,6 +426,11 @@
     "page.api_keys.table.last_used_at": "Последнее использование",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
+    "page.categories_count": [
+        "%d category",
+        "%d categories",
+        "%d categories"
+    ],
     "page.categories.entries": "Cтатьи",
     "page.categories.feed_count": [
         "Есть %d подписка.",
@@ -432,11 +440,6 @@
     "page.categories.feeds": "Подписки",
     "page.categories.no_feed": "Нет подписок.",
     "page.categories.title": "Категории",
-    "page.categories_count": [
-        "%d category",
-        "%d categories",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Изменить категорию: %s",
     "page.edit_feed.etag_header": "Заголовок ETag:",
@@ -545,29 +548,29 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Зарегистрировать пароль",
     "page.settings.webauthn.register.error": "Не удается зарегистрировать пароль",
-    "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries",
         "%d shared entries"
     ],
-    "page.starred.title": "Избранное",
+    "page.shared_entries.title": "Общедоступные статьи",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries",
         "%d starred entries"
     ],
+    "page.starred.title": "Избранное",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries",
         "%d unread entries"
     ],
+    "page.unread.title": "Непрочитанное",
     "page.users.actions": "Действия",
     "page.users.admin.no": "Нет",
     "page.users.admin.yes": "Да",

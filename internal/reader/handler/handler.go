@@ -30,6 +30,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	slog.Debug("Begin feed creation process from subscription discovery",
 		slog.Int64("user_id", userID),
 		slog.String("feed_url", feedCreationRequest.FeedURL),
+		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
 	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
@@ -65,6 +66,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.FeedURL = feedCreationRequest.FeedURL
 	subscription.DisableHTTP2 = feedCreationRequest.DisableHTTP2
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
+	subscription.ProxyURL = feedCreationRequest.ProxyURL
 	subscription.CheckedNow()
 
 	processor.ProcessFeedEntries(store, subscription, userID, true)
@@ -85,6 +87,7 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	requestBuilder.WithCookie(feedCreationRequest.Cookie)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomFeedProxyURL(feedCreationRequest.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 	requestBuilder.UseCustomApplicationProxyURL(feedCreationRequest.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates)
@@ -100,6 +103,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	slog.Debug("Begin feed creation process",
 		slog.Int64("user_id", userID),
 		slog.String("feed_url", feedCreationRequest.FeedURL),
+		slog.String("proxy_url", feedCreationRequest.ProxyURL),
 	)
 
 	if !store.CategoryIDExists(userID, feedCreationRequest.CategoryID) {
@@ -112,6 +116,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	requestBuilder.WithCookie(feedCreationRequest.Cookie)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomFeedProxyURL(feedCreationRequest.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 	requestBuilder.UseCustomApplicationProxyURL(feedCreationRequest.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(feedCreationRequest.AllowSelfSignedCertificates)
@@ -160,6 +165,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.EtagHeader = responseHandler.ETag()
 	subscription.LastModifiedHeader = responseHandler.LastModified()
 	subscription.FeedURL = responseHandler.EffectiveURL()
+	subscription.ProxyURL = feedCreationRequest.ProxyURL
 	subscription.WithCategoryID(feedCreationRequest.CategoryID)
 	subscription.CheckedNow()
 
@@ -216,6 +222,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	requestBuilder.WithCookie(originalFeed.Cookie)
 	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+	requestBuilder.WithCustomFeedProxyURL(originalFeed.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())
 	requestBuilder.UseCustomApplicationProxyURL(originalFeed.FetchViaProxy)
 	requestBuilder.IgnoreTLSErrors(originalFeed.AllowSelfSignedCertificates)

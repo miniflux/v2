@@ -172,7 +172,8 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			f.ntfy_priority,
 			f.ntfy_topic,
 			f.pushover_enabled,
-			f.pushover_priority
+			f.pushover_priority,
+			f.proxy_url
 		FROM
 			feeds f
 		LEFT JOIN
@@ -251,6 +252,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			&feed.NtfyTopic,
 			&feed.PushoverEnabled,
 			&feed.PushoverPriority,
+			&feed.ProxyURL,
 		)
 
 		if err != nil {

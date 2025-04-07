@@ -72,10 +72,10 @@
     "entry.state.loading": "Carregando...",
     "entry.state.saving": "Salvando...",
     "entry.status.mark_as_read": "Marcar como lido",
+    "entry.status.mark_as_unread": "Marcar como não lido",
     "entry.status.title": "Modificar estado deste item",
     "entry.status.toast.read": "Marcado como lido",
     "entry.status.toast.unread": "Marcado como não lido",
-    "entry.status.mark_as_unread": "Marcar como não lido",
     "entry.tags.label": "Etiquetas:",
     "entry.unshare.label": "Descompartilhar",
     "error.api_key_already_exists": "Essa chave de API já existe.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "Página inicial por defeito inválida!",
     "error.invalid_display_mode": "Modo de exibição de aplicativo inválido da web.",
     "error.invalid_entry_direction": "Direção de entrada inválida.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "URL de feed inválido.",
     "error.invalid_gesture_nav": "Navegação por gestos inválida.",
     "error.invalid_language": "Idioma inválido.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "A senha deve ter no mínimo 6 caracteres.",
     "error.pocket_access_token": "Não foi possível obter um token de acesso no Pocket!",
     "error.pocket_request_token": "Não foi possível obter um pedido de token no Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Senha da fonte",
     "form.feed.label.feed_url": "URL da fonte",
     "form.feed.label.feed_username": "Nome de usuário da fonte",
-    "form.feed.label.fetch_via_proxy": "Buscar via proxy",
+    "form.feed.label.fetch_via_proxy": "Usar o proxy configurado no nível da aplicação",
     "form.feed.label.hide_globally": "Ocultar entradas na lista global não lida",
     "form.feed.label.ignore_http_cache": "Ignorar cache HTTP",
     "form.feed.label.keeplist_rules": "Regras de permissão",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy min priority",
     "form.feed.label.ntfy_priority": "Ntfy priority",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Ultima utilização",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chaves de API",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "Itens",
     "page.categories.feed_count": [
         "Existe %d fonte.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Inscrições",
     "page.categories.no_feed": "Sem fonte.",
     "page.categories.title": "Categorias",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Editar categoria: %s",
     "page.edit_feed.etag_header": "Cabeçalho 'ETag':",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Registrar senha",
     "page.settings.webauthn.register.error": "Não foi possível registrar a senha",
-    "page.shared_entries.title": "Itens compartilhados",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "Favoritos",
+    "page.shared_entries.title": "Itens compartilhados",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "Favoritos",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Não lidos",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "Não lidos",
     "page.users.actions": "Ações",
     "page.users.admin.no": "Não",
     "page.users.admin.yes": "Sim",

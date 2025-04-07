@@ -72,10 +72,10 @@
     "entry.state.loading": "Laden...",
     "entry.state.saving": "Opslaan...",
     "entry.status.mark_as_read": "Markeren als gelezen",
+    "entry.status.mark_as_unread": "Markeren als ongelezen",
     "entry.status.title": "Verander artikelstatus",
     "entry.status.toast.read": "Gemarkeerd als gelezen",
     "entry.status.toast.unread": "Gemarkeerd als ongelezen",
-    "entry.status.mark_as_unread": "Markeren als ongelezen",
     "entry.tags.label": "Tags:",
     "entry.unshare.label": "Delen ongedaan maken",
     "error.api_key_already_exists": "Deze API-sleutel bestaat al.",
@@ -117,6 +117,7 @@
     "error.invalid_default_home_page": "Ongeldige startpagina!",
     "error.invalid_display_mode": "Ongeldige weergavemodus voor de webapp.",
     "error.invalid_entry_direction": "Ongeldige sorteervolgorde.",
+    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
     "error.invalid_feed_url": "Ongeldige feed URL.",
     "error.invalid_gesture_nav": "Ongeldige gebarennavigatie.",
     "error.invalid_language": "Ongeldige taal.",
@@ -128,6 +129,7 @@
     "error.password_min_length": "Minimaal 6 tekens gebruiken.",
     "error.pocket_access_token": "Kon geen toegangstoken ophalen van Pocket!",
     "error.pocket_request_token": "Kon geen aanvraagtoken ophalen van Pocket!",
+    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
     "error.settings_block_rule_fieldname_invalid": "Ongeldige blokkeerregel: regel #%d mist een geldige veldnaam (Opties: %s)",
     "error.settings_block_rule_invalid_regex": "Ongeldige blokkeerregel: het patroon van regel #%d is geen geldige regex",
     "error.settings_block_rule_regex_required": "Ongeldige blokkeerregel:  het patroon van regel #%d is niet opgegeven",
@@ -174,7 +176,7 @@
     "form.feed.label.feed_password": "Feed wachtwoord",
     "form.feed.label.feed_url": "Feed URL",
     "form.feed.label.feed_username": "Feed gebruikersnaam",
-    "form.feed.label.fetch_via_proxy": "Ophalen via proxy",
+    "form.feed.label.fetch_via_proxy": "Gebruik de proxy die op applicatieniveau is geconfigureerd",
     "form.feed.label.hide_globally": "Verberg artikelen in de globale ongelezen lijst",
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
     "form.feed.label.keeplist_rules": "Bewaarregels",
@@ -187,6 +189,7 @@
     "form.feed.label.ntfy_min_priority": "Ntfy minimale prioriteit",
     "form.feed.label.ntfy_priority": "Ntfy prioriteit",
     "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
@@ -421,6 +424,10 @@
     "page.api_keys.table.last_used_at": "Laatst gebruikt",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API-sleutels",
+    "page.categories_count": [
+        "%d categorie",
+        "%d categorieën"
+    ],
     "page.categories.entries": "Artikelen",
     "page.categories.feed_count": [
         "Er is %d feed.",
@@ -429,10 +436,6 @@
     "page.categories.feeds": "Feeds",
     "page.categories.no_feed": "Geen feed.",
     "page.categories.title": "Categorieën",
-    "page.categories_count": [
-        "%d categorie",
-        "%d categorieën"
-    ],
     "page.category_label": "Categorie: %s",
     "page.edit_category.title": "Bewerk categorie: %s",
     "page.edit_feed.etag_header": "ETAG header:",
@@ -538,25 +541,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Passkey registreren",
     "page.settings.webauthn.register.error": "Kan passkey niet registreren",
-    "page.shared_entries.title": "Gedeelde artikelen",
     "page.shared_entries_count": [
         "%d gedeeld artikel",
         "%d gedeelde artikelen"
     ],
-    "page.starred.title": "Favorieten",
+    "page.shared_entries.title": "Gedeelde artikelen",
     "page.starred_entry_count": [
         "%d favoriet artikel",
         "%d favoriete artikelen"
     ],
+    "page.starred.title": "Favorieten",
     "page.total_entry_count": [
         "%d artikel totaal",
         "%d artikelen totaal"
     ],
-    "page.unread.title": "Ongelezen",
     "page.unread_entry_count": [
         "%d ongelezen artikel",
         "%d ongelezen artikelen"
     ],
+    "page.unread.title": "Ongelezen",
     "page.users.actions": "Acties",
     "page.users.admin.no": "Nee",
     "page.users.admin.yes": "Ja",
