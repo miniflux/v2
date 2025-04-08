@@ -13,7 +13,7 @@ require (
 	github.com/prometheus/client_golang v1.21.1
 	github.com/tdewolff/minify/v2 v2.22.4
 	golang.org/x/crypto v0.37.0
-	golang.org/x/image v0.25.0
+	golang.org/x/image v0.26.0
 	golang.org/x/net v0.39.0
 	golang.org/x/oauth2 v0.29.0
 	golang.org/x/term v0.31.0
