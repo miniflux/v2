@@ -20,40 +20,42 @@ import (
 )
 
 const (
-	flagInfoHelp            = "Show build information"
-	flagVersionHelp         = "Show application version"
-	flagMigrateHelp         = "Run SQL migrations"
-	flagFlushSessionsHelp   = "Flush all sessions (disconnect users)"
-	flagCreateAdminHelp     = "Create an admin user from an interactive terminal"
-	flagResetPasswordHelp   = "Reset user password"
-	flagResetFeedErrorsHelp = "Clear all feed errors for all users"
-	flagDebugModeHelp       = "Show debug logs"
-	flagConfigFileHelp      = "Load configuration file"
-	flagConfigDumpHelp      = "Print parsed configuration values"
-	flagHealthCheckHelp     = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
-	flagRefreshFeedsHelp    = "Refresh a batch of feeds and exit"
-	flagRunCleanupTasksHelp = "Run cleanup tasks (delete old sessions and archives old entries)"
-	flagExportUserFeedsHelp = "Export user feeds (provide the username as argument)"
+	flagInfoHelp             = "Show build information"
+	flagVersionHelp          = "Show application version"
+	flagMigrateHelp          = "Run SQL migrations"
+	flagFlushSessionsHelp    = "Flush all sessions (disconnect users)"
+	flagCreateAdminHelp      = "Create an admin user from an interactive terminal"
+	flagResetPasswordHelp    = "Reset user password"
+	flagResetFeedErrorsHelp  = "Clear all feed errors for all users"
+	flagDebugModeHelp        = "Show debug logs"
+	flagConfigFileHelp       = "Load configuration file"
+	flagConfigDumpHelp       = "Print parsed configuration values"
+	flagHealthCheckHelp      = `Perform a health check on the given endpoint (the value "auto" try to guess the health check endpoint).`
+	flagRefreshFeedsHelp     = "Refresh a batch of feeds and exit"
+	flagRunCleanupTasksHelp  = "Run cleanup tasks (delete old sessions and archives old entries)"
+	flagExportUserFeedsHelp  = "Export user feeds (provide the username as argument)"
+	flagResetNextCheckAtHelp = "Reset the next check time for all feeds"
 )
 
 // Parse parses command line arguments.
 func Parse() {
 	var (
-		err                 error
-		flagInfo            bool
-		flagVersion         bool
-		flagMigrate         bool
-		flagFlushSessions   bool
-		flagCreateAdmin     bool
-		flagResetPassword   bool
-		flagResetFeedErrors bool
-		flagDebugMode       bool
-		flagConfigFile      string
-		flagConfigDump      bool
-		flagHealthCheck     string
-		flagRefreshFeeds    bool
-		flagRunCleanupTasks bool
-		flagExportUserFeeds string
+		err                      error
+		flagInfo                 bool
+		flagVersion              bool
+		flagMigrate              bool
+		flagFlushSessions        bool
+		flagCreateAdmin          bool
+		flagResetPassword        bool
+		flagResetFeedErrors      bool
+		flagResetFeedNextCheckAt bool
+		flagDebugMode            bool
+		flagConfigFile           string
+		flagConfigDump           bool
+		flagHealthCheck          string
+		flagRefreshFeeds         bool
+		flagRunCleanupTasks      bool
+		flagExportUserFeeds      string
 	)
 
 	flag.BoolVar(&flagInfo, "info", false, flagInfoHelp)
@@ -65,6 +67,7 @@ func Parse() {
 	flag.BoolVar(&flagCreateAdmin, "create-admin", false, flagCreateAdminHelp)
 	flag.BoolVar(&flagResetPassword, "reset-password", false, flagResetPasswordHelp)
 	flag.BoolVar(&flagResetFeedErrors, "reset-feed-errors", false, flagResetFeedErrorsHelp)
+	flag.BoolVar(&flagResetFeedNextCheckAt, "reset-feed-next-check-at", false, flagResetNextCheckAtHelp)
 	flag.BoolVar(&flagDebugMode, "debug", false, flagDebugModeHelp)
 	flag.StringVar(&flagConfigFile, "config-file", "", flagConfigFileHelp)
 	flag.StringVar(&flagConfigFile, "c", "", flagConfigFileHelp)
@@ -190,7 +193,16 @@ func Parse() {
 	}
 
 	if flagResetFeedErrors {
-		store.ResetFeedErrors()
+		if err := store.ResetFeedErrors(); err != nil {
+			printErrorAndExit(err)
+		}
+		return
+	}
+
+	if flagResetFeedNextCheckAt {
+		if err := store.ResetNextCheckAt(); err != nil {
+			printErrorAndExit(err)
+		}
 		return
 	}
 

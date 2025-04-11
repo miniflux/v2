@@ -485,3 +485,8 @@ func (s *Storage) ResetFeedErrors() error {
 	_, err := s.db.Exec(`UPDATE feeds SET parsing_error_count=0, parsing_error_msg=''`)
 	return err
 }
+
+func (s *Storage) ResetNextCheckAt() error {
+	_, err := s.db.Exec(`UPDATE feeds SET next_check_at=now()`)
+	return err
+}

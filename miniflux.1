@@ -5,8 +5,9 @@
 miniflux \- Minimalist and opinionated feed reader
 
 .SH SYNOPSIS
-\fBminiflux\fR [-vic] [-config-dump] [-config-file] [-create-admin] [-debug] [-flush-sessions]
-    [-healthcheck] [-info] [-migrate] [-refresh-feeds] [-reset-feed-errors] [-reset-password]
+\fBminiflux\fR [-vic] [-config-dump] [-config-file] [-create-admin] [-debug]
+    [-flush-sessions] [-healthcheck] [-info] [-migrate] [-refresh-feeds]
+    [-reset-feed-errors] [-reset-feed-next-check-at] [-reset-password]
     [-run-cleanup-tasks] [-version]
 
 .SH DESCRIPTION
@@ -81,6 +82,11 @@ Refresh a batch of feeds and exit\&.
 .B \-reset-feed-errors
 .RS 4
 Clear all feed errors for all users\&.
+.RE
+.PP
+.B \-reset-feed-next-check-at
+.RS 4
+Reset the next check time for all feeds\&.
 .RE
 .PP
 .B \-reset-password
