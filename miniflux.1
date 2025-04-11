@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "December 7, 2024" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "April 11, 2025" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -532,6 +532,11 @@ Default is 24 hours\&.
 Minimum interval in minutes for the entry frequency scheduler\&.
 .br
 Default is 5 minutes\&.
+.TP
+.B SCHEDULER_ROUND_ROBIN_MAX_INTERVAL
+Maximum interval in minutes for the round robin scheduler\&.
+.br
+Default is 1440 minutes (24 hours)\&.
 .TP
 .B SCHEDULER_ROUND_ROBIN_MIN_INTERVAL
 Minimum interval in minutes for the round robin scheduler\&.

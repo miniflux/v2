@@ -160,6 +160,8 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.schedulerEntryFrequencyFactor = parseInt(value, defaultSchedulerEntryFrequencyFactor)
 		case "SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":
 			p.opts.schedulerRoundRobinMinInterval = parseInt(value, defaultSchedulerRoundRobinMinInterval)
+		case "SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":
+			p.opts.schedulerRoundRobinMaxInterval = parseInt(value, defaultSchedulerRoundRobinMaxInterval)
 		case "POLLING_PARSING_ERROR_LIMIT":
 			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
 		case "PROXY_IMAGES":

@@ -117,9 +117,7 @@ func (f *Feed) CheckedNow() {
 }
 
 // ScheduleNextCheck set "next_check_at" of a feed based on the scheduler selected from the configuration.
-func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelayInMinutes int) {
-	f.TTL = refreshDelayInMinutes
-
+func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelayInMinutes int) int {
 	// Default to the global config Polling Frequency.
 	intervalMinutes := config.Opts.SchedulerRoundRobinMinInterval()
 
@@ -133,12 +131,21 @@ func (f *Feed) ScheduleNextCheck(weeklyCount int, refreshDelayInMinutes int) {
 		}
 	}
 
-	// If the feed has a TTL or a Retry-After defined, we use it to make sure we don't check it too often.
+	// Use the RSS TTL field, Retry-After, Cache-Control or Expires HTTP headers if defined.
 	if refreshDelayInMinutes > 0 && refreshDelayInMinutes > intervalMinutes {
 		intervalMinutes = refreshDelayInMinutes
 	}
 
+	// Limit the max interval value for misconfigured feeds.
+	switch config.Opts.PollingScheduler() {
+	case SchedulerRoundRobin:
+		intervalMinutes = min(intervalMinutes, config.Opts.SchedulerRoundRobinMaxInterval())
+	case SchedulerEntryFrequency:
+		intervalMinutes = min(intervalMinutes, config.Opts.SchedulerEntryFrequencyMaxInterval())
+	}
+
 	f.NextCheckAt = time.Now().Add(time.Minute * time.Duration(intervalMinutes))
+	return intervalMinutes
 }
 
 // FeedCreationRequest represents the request to create a feed.
