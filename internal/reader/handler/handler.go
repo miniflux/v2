@@ -240,12 +240,13 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 	if responseHandler.IsRateLimited() {
 		retryDelayInSeconds := responseHandler.ParseRetryDelay()
 		refreshDelayInMinutes = retryDelayInSeconds / 60
-		originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
+		calculatedNextCheckIntervalInMinutes := originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
 
 		slog.Warn("Feed is rate limited",
 			slog.String("feed_url", originalFeed.FeedURL),
 			slog.Int("retry_delay_in_seconds", retryDelayInSeconds),
 			slog.Int("refresh_delay_in_minutes", refreshDelayInMinutes),
+			slog.Int("calculated_next_check_interval_in_minutes", calculatedNextCheckIntervalInMinutes),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
 	}
@@ -316,7 +317,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		refreshDelayInMinutes = max(feedTTLValue, cacheControlMaxAgeValue, expiresValue)
 
 		// Set the next check at with updated arguments.
-		originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
+		calculatedNextCheckIntervalInMinutes := originalFeed.ScheduleNextCheck(weeklyEntryCount, refreshDelayInMinutes)
 
 		slog.Debug("Updated next check date",
 			slog.Int64("user_id", userID),
@@ -326,6 +327,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			slog.Int("cache_control_max_age_in_minutes", cacheControlMaxAgeValue),
 			slog.Int("expires_in_minutes", expiresValue),
 			slog.Int("refresh_delay_in_minutes", refreshDelayInMinutes),
+			slog.Int("calculated_next_check_interval_in_minutes", calculatedNextCheckIntervalInMinutes),
 			slog.Time("new_next_check_at", originalFeed.NextCheckAt),
 		)
 

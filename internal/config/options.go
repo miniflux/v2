@@ -37,6 +37,7 @@ const (
 	defaultSchedulerEntryFrequencyMaxInterval = 24 * 60
 	defaultSchedulerEntryFrequencyFactor      = 1
 	defaultSchedulerRoundRobinMinInterval     = 60
+	defaultSchedulerRoundRobinMaxInterval     = 1440
 	defaultPollingParsingErrorLimit           = 3
 	defaultRunMigrations                      = false
 	defaultDatabaseURL                        = "user=postgres password=postgres dbname=miniflux2 sslmode=disable"
@@ -137,6 +138,7 @@ type Options struct {
 	schedulerEntryFrequencyMaxInterval int
 	schedulerEntryFrequencyFactor      int
 	schedulerRoundRobinMinInterval     int
+	schedulerRoundRobinMaxInterval     int
 	pollingParsingErrorLimit           int
 	workerPoolSize                     int
 	createAdmin                        bool
@@ -220,6 +222,7 @@ func NewOptions() *Options {
 		schedulerEntryFrequencyMaxInterval: defaultSchedulerEntryFrequencyMaxInterval,
 		schedulerEntryFrequencyFactor:      defaultSchedulerEntryFrequencyFactor,
 		schedulerRoundRobinMinInterval:     defaultSchedulerRoundRobinMinInterval,
+		schedulerRoundRobinMaxInterval:     defaultSchedulerRoundRobinMaxInterval,
 		pollingParsingErrorLimit:           defaultPollingParsingErrorLimit,
 		workerPoolSize:                     defaultWorkerPoolSize,
 		createAdmin:                        defaultCreateAdmin,
@@ -431,6 +434,10 @@ func (o *Options) SchedulerEntryFrequencyFactor() int {
 
 func (o *Options) SchedulerRoundRobinMinInterval() int {
 	return o.schedulerRoundRobinMinInterval
+}
+
+func (o *Options) SchedulerRoundRobinMaxInterval() int {
+	return o.schedulerRoundRobinMaxInterval
 }
 
 // PollingParsingErrorLimit returns the limit of errors when to stop polling.
@@ -778,6 +785,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL": o.schedulerEntryFrequencyMinInterval,
 		"SCHEDULER_ENTRY_FREQUENCY_FACTOR":       o.schedulerEntryFrequencyFactor,
 		"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":     o.schedulerRoundRobinMinInterval,
+		"SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":     o.schedulerRoundRobinMaxInterval,
 		"SCHEDULER_SERVICE":                      o.schedulerService,
 		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WATCHDOG":                               o.watchdog,

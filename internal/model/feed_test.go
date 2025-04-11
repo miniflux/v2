@@ -144,6 +144,29 @@ func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval(t *test
 	checkTargetInterval(t, feed, expectedInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithRefreshDelayBelowMinInterval")
 }
 
+func TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMaxInterval(t *testing.T) {
+	os.Clearenv()
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	timeBefore := time.Now()
+	feed := &Feed{}
+
+	feed.ScheduleNextCheck(0, config.Opts.SchedulerRoundRobinMaxInterval()+30)
+
+	if feed.NextCheckAt.IsZero() {
+		t.Error(`The next_check_at must be set`)
+	}
+
+	expectedInterval := config.Opts.SchedulerRoundRobinMaxInterval()
+	checkTargetInterval(t, feed, expectedInterval, timeBefore, "TestFeedScheduleNextCheckRoundRobinWithRefreshDelayAboveMaxInterval")
+}
+
 func TestFeedScheduleNextCheckRoundRobinMinInterval(t *testing.T) {
 	minInterval := 1
 	os.Clearenv()

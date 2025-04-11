@@ -1028,6 +1028,41 @@ func TestSchedulerRoundRobin(t *testing.T) {
 	}
 }
 
+func TestDefaultSchedulerRoundRobinMaxIntervalValue(t *testing.T) {
+	os.Clearenv()
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := defaultSchedulerRoundRobinMaxInterval
+	result := opts.SchedulerRoundRobinMaxInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestSchedulerRoundRobinMaxInterval(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("SCHEDULER_ROUND_ROBIN_MAX_INTERVAL", "150")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := 150
+	result := opts.SchedulerRoundRobinMaxInterval()
+
+	if result != expected {
+		t.Fatalf(`Unexpected SCHEDULER_ROUND_ROBIN_MAX_INTERVAL value, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestPollingParsingErrorLimit(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("POLLING_PARSING_ERROR_LIMIT", "100")
