@@ -1,0 +1,81 @@
+name: "Documentation Issue"
+description: "Report issues or suggest improvements for the documentation"
+title: "[Docs]: "
+type: "Documentation"
+labels: ["triage needed"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the Miniflux documentation! Clear and accurate documentation helps everyone.
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: "Documentation Issue Type"
+      description: "What kind of documentation issue are you reporting?"
+      options:
+        - "Missing Information"
+        - "Incorrect Information"
+        - "Outdated Information"
+        - "Unclear Explanation"
+        - "Formatting/Structural Issue"
+        - "Typo/Grammar Error"
+        - "Documentation Request"
+        - "Other"
+    validations:
+      required: true
+
+  - type: input
+    id: summary
+    attributes:
+      label: "Summary"
+      description: "Briefly describe the documentation issue."
+      placeholder: "e.g., The API authentication section is outdated"
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: "Location"
+      description: "Where is the documentation you're referring to? Provide URLs, file paths, or section names."
+      placeholder: "e.g., README.md, docs/api.md, Installation section of the website"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Detailed Description"
+      description: "Provide a detailed description of the issue or improvement."
+      placeholder: "e.g., The API authentication section doesn't mention the new token-based authentication method introduced in version 2.0.5."
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_content
+    attributes:
+      label: "Current Content (if applicable)"
+      description: "What does the current documentation say?"
+      placeholder: "Paste the current documentation text here."
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggested_content
+    attributes:
+      label: "Suggested Changes"
+      description: "If you have specific suggestions for how to improve the documentation, please provide them here."
+      placeholder: "e.g., Add a new section about token-based authentication with these details..."
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: "Version"
+      description: "Which version of Miniflux does this documentation issue relate to?"
+      placeholder: "e.g., 2.2.6, or 'all versions'"
+    validations:
+      required: false
