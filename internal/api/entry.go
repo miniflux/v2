@@ -331,7 +331,14 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.OK(w, r, map[string]string{"content": entry.Content})
+	if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
+		json.ServerError(w, r, err)
+		return
+	}
+
+	readingTime := locale.NewPrinter(user.Language).Plural("entry.estimated_reading_time", entry.ReadingTime, entry.ReadingTime)
+
+	json.OK(w, r, map[string]string{"content": mediaproxy.RewriteDocumentWithRelativeProxyURL(h.router, entry.Content), "reading_time": readingTime})
 }
 
 func (h *handler) flushHistory(w http.ResponseWriter, r *http.Request) {
