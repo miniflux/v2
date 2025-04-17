@@ -331,6 +331,18 @@ func (h *handler) fetchContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	shouldUpdateContent := request.QueryBoolParam(r, "update_content", false)
+	if shouldUpdateContent {
+		if err := h.store.UpdateEntryTitleAndContent(entry); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+
+		json.OK(w, r, map[string]interface{}{"content": mediaproxy.RewriteDocumentWithRelativeProxyURL(h.router, entry.Content), "reading_time": entry.ReadingTime})
+
+		return
+	}
+
 	json.OK(w, r, map[string]string{"content": entry.Content})
 }
 
