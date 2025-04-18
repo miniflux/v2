@@ -1,3 +1,44 @@
+
+/**
+ * Open a new tab with the given URL.
+ *
+ * @param {string} url
+ */
+function openNewTab(url) {
+    const win = window.open("");
+    win.opener = null;
+    win.location = url;
+    win.focus();
+}
+
+/**
+ * Filter visible elements based on the selector.
+ *
+ * @param {string} selector
+ * @returns {Array<Element>}
+ */
+function getVisibleElements(selector) {
+    const elements = document.querySelectorAll(selector);
+    return [...elements].filter((element) => element.offsetParent !== null);
+}
+
+/**
+ * Scroll the page to the given element.
+ *
+ * @param {Element} element
+ * @param {boolean} evenIfOnScreen
+ */
+function scrollPageTo(element, evenIfOnScreen) {
+    const windowScrollPosition = window.scrollY;
+    const windowHeight = document.documentElement.clientHeight;
+    const viewportPosition = windowScrollPosition + windowHeight;
+    const itemBottomPosition = element.offsetTop + element.offsetHeight;
+
+    if (evenIfOnScreen || viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
+        window.scrollTo(0, element.offsetTop - 10);
+    }
+}
+
 // OnClick attaches a listener to the elements that match the selector.
 function onClick(selector, callback, noPreventDefault) {
     document.querySelectorAll(selector).forEach((element) => {
@@ -113,7 +154,7 @@ function showKeyboardShortcuts() {
 
 // Mark as read visible items of the current page.
 function markPageAsRead() {
-    const items = DomHelper.getVisibleElements(".items .item");
+    const items = getVisibleElements(".items .item");
     const entryIDs = [];
 
     items.forEach((element) => {
@@ -369,14 +410,14 @@ function openOriginalLink(openLinkInCurrentTab) {
         if (openLinkInCurrentTab) {
             window.location.href = entryLink.getAttribute("href");
         } else {
-            DomHelper.openNewTab(entryLink.getAttribute("href"));
+            openNewTab(entryLink.getAttribute("href"));
         }
         return;
     }
 
     const currentItemOriginalLink = document.querySelector(".current-item :is(a, button)[data-original-link]");
     if (currentItemOriginalLink !== null) {
-        DomHelper.openNewTab(currentItemOriginalLink.getAttribute("href"));
+        openNewTab(currentItemOriginalLink.getAttribute("href"));
 
         const currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
@@ -394,13 +435,13 @@ function openCommentLink(openLinkInCurrentTab) {
             if (openLinkInCurrentTab) {
                 window.location.href = entryLink.getAttribute("href");
             } else {
-                DomHelper.openNewTab(entryLink.getAttribute("href"));
+                openNewTab(entryLink.getAttribute("href"));
             }
         }
     } else {
         const currentItemCommentsLink = document.querySelector(".current-item :is(a, button)[data-comments-link]");
         if (currentItemCommentsLink !== null) {
-            DomHelper.openNewTab(currentItemCommentsLink.getAttribute("href"));
+            openNewTab(currentItemCommentsLink.getAttribute("href"));
         }
     }
 }
@@ -503,7 +544,7 @@ const BOTTOM = -9999;
  * @param {number} offset How many items to jump for focus.
  */
 function goToListItem(offset) {
-    const items = DomHelper.getVisibleElements(".items .item");
+    const items = getVisibleElements(".items .item");
     if (items.length === 0) {
         return;
     }
@@ -529,7 +570,7 @@ function goToListItem(offset) {
             const item = items[itemOffset];
 
             item.classList.add("current-item");
-            DomHelper.scrollPageTo(item);
+            scrollPageTo(item);
             item.focus();
 
             break;
@@ -540,7 +581,7 @@ function goToListItem(offset) {
 function scrollToCurrentItem() {
     const currentItem = document.querySelector(".current-item");
     if (currentItem !== null) {
-        DomHelper.scrollPageTo(currentItem, true);
+        scrollPageTo(currentItem, true);
     }
 }
 
