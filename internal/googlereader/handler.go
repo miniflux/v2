@@ -736,17 +736,16 @@ func getFeed(stream Stream, store *storage.Storage, userID int64) (*model.Feed, 
 	return store.FeedByID(userID, feedID)
 }
 
-func getOrCreateCategory(category Stream, store *storage.Storage, userID int64) (*model.Category, error) {
+func getOrCreateCategory(streamCategory Stream, store *storage.Storage, userID int64) (*model.Category, error) {
 	switch {
-	case category.ID == "":
+	case streamCategory.ID == "":
 		return store.FirstCategory(userID)
-	case store.CategoryTitleExists(userID, category.ID):
-		return store.CategoryByTitle(userID, category.ID)
+	case store.CategoryTitleExists(userID, streamCategory.ID):
+		return store.CategoryByTitle(userID, streamCategory.ID)
 	default:
-		catRequest := model.CategoryRequest{
-			Title: category.ID,
-		}
-		return store.CreateCategory(userID, &catRequest)
+		return store.CreateCategory(userID, &model.CategoryCreationRequest{
+			Title: streamCategory.ID,
+		})
 	}
 }
 
@@ -1144,20 +1143,23 @@ func (h *handler) renameTagHandler(w http.ResponseWriter, r *http.Request) {
 		json.NotFound(w, r)
 		return
 	}
-	categoryRequest := model.CategoryRequest{
-		Title: destination.ID,
+
+	categoryModificationRequest := model.CategoryModificationRequest{
+		Title: model.SetOptionalField(destination.ID),
 	}
-	verr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryRequest)
-	if verr != nil {
-		json.BadRequest(w, r, verr.Error())
+
+	if validationError := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryModificationRequest); validationError != nil {
+		json.BadRequest(w, r, validationError.Error())
 		return
 	}
-	categoryRequest.Patch(category)
-	err = h.store.UpdateCategory(category)
-	if err != nil {
+
+	categoryModificationRequest.Patch(category)
+
+	if err := h.store.UpdateCategory(category); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
+
 	OK(w, r)
 }
 

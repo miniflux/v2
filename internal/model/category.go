@@ -19,16 +19,24 @@ func (c *Category) String() string {
 	return fmt.Sprintf("ID=%d, UserID=%d, Title=%s", c.ID, c.UserID, c.Title)
 }
 
-// CategoryRequest represents the request to create or update a category.
-type CategoryRequest struct {
+type CategoryCreationRequest struct {
 	Title        string `json:"title"`
-	HideGlobally string `json:"hide_globally"`
+	HideGlobally bool   `json:"hide_globally"`
 }
 
-// Patch updates category fields.
-func (cr *CategoryRequest) Patch(category *Category) {
-	category.Title = cr.Title
-	category.HideGlobally = cr.HideGlobally != ""
+type CategoryModificationRequest struct {
+	Title        *string `json:"title"`
+	HideGlobally *bool   `json:"hide_globally"`
+}
+
+func (c *CategoryModificationRequest) Patch(category *Category) {
+	if c.Title != nil {
+		category.Title = *c.Title
+	}
+
+	if c.HideGlobally != nil {
+		category.HideGlobally = *c.HideGlobally
+	}
 }
 
 // Categories represents a list of categories.

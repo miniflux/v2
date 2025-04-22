@@ -97,9 +97,12 @@ type Users []User
 
 // Category represents a feed category.
 type Category struct {
-	ID     int64  `json:"id,omitempty"`
-	Title  string `json:"title,omitempty"`
-	UserID int64  `json:"user_id,omitempty"`
+	ID           int64  `json:"id"`
+	Title        string `json:"title"`
+	UserID       int64  `json:"user_id,omitempty"`
+	HideGlobally bool   `json:"hide_globally,omitempty"`
+	FeedCount    *int   `json:"feed_count,omitempty"`
+	TotalUnread  *int   `json:"total_unread,omitempty"`
 }
 
 func (c Category) String() string {
@@ -108,6 +111,18 @@ func (c Category) String() string {
 
 // Categories represents a list of categories.
 type Categories []*Category
+
+// CategoryCreationRequest represents the request to create a category.
+type CategoryCreationRequest struct {
+	Title        string `json:"title"`
+	HideGlobally bool   `json:"hide_globally"`
+}
+
+// CategoryModificationRequest represents the request to update a category.
+type CategoryModificationRequest struct {
+	Title        *string `json:"title"`
+	HideGlobally *bool   `json:"hide_globally"`
+}
 
 // Subscription represents a feed subscription.
 type Subscription struct {

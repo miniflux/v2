@@ -165,27 +165,30 @@ func (s *Storage) CategoriesWithFeedCount(userID int64) (model.Categories, error
 }
 
 // CreateCategory creates a new category.
-func (s *Storage) CreateCategory(userID int64, request *model.CategoryRequest) (*model.Category, error) {
+func (s *Storage) CreateCategory(userID int64, request *model.CategoryCreationRequest) (*model.Category, error) {
 	var category model.Category
 
 	query := `
 		INSERT INTO categories
-			(user_id, title)
+			(user_id, title, hide_globally)
 		VALUES
-			($1, $2)
+			($1, $2, $3)
 		RETURNING
 			id,
 			user_id,
-			title
+			title,
+			hide_globally
 	`
 	err := s.db.QueryRow(
 		query,
 		userID,
 		request.Title,
+		request.HideGlobally,
 	).Scan(
 		&category.ID,
 		&category.UserID,
 		&category.Title,
+		&category.HideGlobally,
 	)
 
 	if err != nil {
@@ -197,7 +200,7 @@ func (s *Storage) CreateCategory(userID int64, request *model.CategoryRequest) (
 
 // UpdateCategory updates an existing category.
 func (s *Storage) UpdateCategory(category *model.Category) error {
-	query := `UPDATE categories SET title=$1, hide_globally = $2 WHERE id=$3 AND user_id=$4`
+	query := `UPDATE categories SET title=$1, hide_globally=$2 WHERE id=$3 AND user_id=$4`
 	_, err := s.db.Exec(
 		query,
 		category.Title,

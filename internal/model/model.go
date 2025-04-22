@@ -20,3 +20,7 @@ func OptionalString(value string) *string {
 	}
 	return nil
 }
+
+func SetOptionalField[T any](value T) *T {
+	return &value
+}
