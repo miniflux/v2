@@ -10,13 +10,13 @@ import (
 // CategoryForm represents a feed form in the UI
 type CategoryForm struct {
 	Title        string
-	HideGlobally string
+	HideGlobally bool
 }
 
 // NewCategoryForm returns a new CategoryForm.
 func NewCategoryForm(r *http.Request) *CategoryForm {
 	return &CategoryForm{
 		Title:        r.FormValue("title"),
-		HideGlobally: r.FormValue("hide_globally"),
+		HideGlobally: r.FormValue("hide_globally") == "1",
 	}
 }

@@ -824,6 +824,10 @@ func TestCreateCategoryEndpoint(t *testing.T) {
 	if category.Title != categoryName {
 		t.Errorf(`Invalid title, got "%v" instead of "%v"`, category.Title, categoryName)
 	}
+
+	if category.HideGlobally {
+		t.Errorf(`Invalid hide globally value, got "%v"`, category.HideGlobally)
+	}
 }
 
 func TestCreateCategoryWithEmptyTitle(t *testing.T) {
@@ -865,7 +869,49 @@ func TestCannotCreateDuplicatedCategory(t *testing.T) {
 	}
 }
 
-func TestUpdateCatgoryEndpoint(t *testing.T) {
+func TestCreateCategoryWithOptions(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	newCategory, err := regularUserClient.CreateCategoryWithOptions(&miniflux.CategoryCreationRequest{
+		Title:        "My category",
+		HideGlobally: true,
+	})
+	if err != nil {
+		t.Fatalf(`Creating a category with options should not raise an error: %v`, err)
+	}
+
+	categories, err := regularUserClient.Categories()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, category := range categories {
+		if category.ID == newCategory.ID {
+			if category.Title != newCategory.Title {
+				t.Errorf(`Invalid title, got %q instead of %q`, category.Title, newCategory.Title)
+			}
+			if category.HideGlobally != true {
+				t.Errorf(`Invalid hide globally value, got "%v"`, category.HideGlobally)
+			}
+			break
+		}
+	}
+}
+
+func TestUpdateCategoryEndpoint(t *testing.T) {
 	testConfig := newIntegrationTestConfig()
 	if !testConfig.isConfigured() {
 		t.Skip(skipIntegrationTestsMessage)
@@ -902,6 +948,91 @@ func TestUpdateCatgoryEndpoint(t *testing.T) {
 
 	if updatedCategory.Title != "new title" {
 		t.Errorf(`Invalid title, got "%v" instead of "%v"`, updatedCategory.Title, "new title")
+	}
+
+	if updatedCategory.HideGlobally {
+		t.Errorf(`Invalid hide globally value, got "%v"`, updatedCategory.HideGlobally)
+	}
+}
+
+func TestUpdateCategoryWithOptions(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+
+	newCategory, err := regularUserClient.CreateCategoryWithOptions(&miniflux.CategoryCreationRequest{
+		Title: "My category",
+	})
+	if err != nil {
+		t.Fatalf(`Creating a category with options should not raise an error: %v`, err)
+	}
+
+	updatedCategory, err := regularUserClient.UpdateCategoryWithOptions(newCategory.ID, &miniflux.CategoryModificationRequest{
+		Title: miniflux.SetOptionalField("new title"),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedCategory.ID != newCategory.ID {
+		t.Errorf(`Invalid categoryID, got "%v"`, updatedCategory.ID)
+	}
+
+	if updatedCategory.Title != "new title" {
+		t.Errorf(`Invalid title, got "%v" instead of "%v"`, updatedCategory.Title, "new title")
+	}
+
+	if updatedCategory.HideGlobally {
+		t.Errorf(`Invalid hide globally value, got "%v"`, updatedCategory.HideGlobally)
+	}
+
+	updatedCategory, err = regularUserClient.UpdateCategoryWithOptions(newCategory.ID, &miniflux.CategoryModificationRequest{
+		HideGlobally: miniflux.SetOptionalField(true),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedCategory.ID != newCategory.ID {
+		t.Errorf(`Invalid categoryID, got "%v"`, updatedCategory.ID)
+	}
+
+	if updatedCategory.Title != "new title" {
+		t.Errorf(`Invalid title, got "%v" instead of "%v"`, updatedCategory.Title, "new title")
+	}
+
+	if !updatedCategory.HideGlobally {
+		t.Errorf(`Invalid hide globally value, got "%v"`, updatedCategory.HideGlobally)
+	}
+
+	updatedCategory, err = regularUserClient.UpdateCategoryWithOptions(newCategory.ID, &miniflux.CategoryModificationRequest{
+		HideGlobally: miniflux.SetOptionalField(false),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if updatedCategory.ID != newCategory.ID {
+		t.Errorf(`Invalid categoryID, got %q`, updatedCategory.ID)
+	}
+
+	if updatedCategory.Title != "new title" {
+		t.Errorf(`Invalid title, got %q instead of %q`, updatedCategory.Title, "new title")
+	}
+
+	if updatedCategory.HideGlobally {
+		t.Errorf(`Invalid hide globally value, got "%v"`, updatedCategory.HideGlobally)
 	}
 }
 

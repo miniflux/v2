@@ -19,18 +19,18 @@ import (
 func (h *handler) createCategory(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
 
-	var categoryRequest model.CategoryRequest
-	if err := json_parser.NewDecoder(r.Body).Decode(&categoryRequest); err != nil {
+	var categoryCreationRequest model.CategoryCreationRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&categoryCreationRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	if validationErr := validator.ValidateCategoryCreation(h.store, userID, &categoryRequest); validationErr != nil {
+	if validationErr := validator.ValidateCategoryCreation(h.store, userID, &categoryCreationRequest); validationErr != nil {
 		json.BadRequest(w, r, validationErr.Error())
 		return
 	}
 
-	category, err := h.store.CreateCategory(userID, &categoryRequest)
+	category, err := h.store.CreateCategory(userID, &categoryCreationRequest)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -54,20 +54,20 @@ func (h *handler) updateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var categoryRequest model.CategoryRequest
-	if err := json_parser.NewDecoder(r.Body).Decode(&categoryRequest); err != nil {
+	var categoryModificationRequest model.CategoryModificationRequest
+	if err := json_parser.NewDecoder(r.Body).Decode(&categoryModificationRequest); err != nil {
 		json.BadRequest(w, r, err)
 		return
 	}
 
-	if validationErr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryRequest); validationErr != nil {
+	if validationErr := validator.ValidateCategoryModification(h.store, userID, category.ID, &categoryModificationRequest); validationErr != nil {
 		json.BadRequest(w, r, validationErr.Error())
 		return
 	}
 
-	categoryRequest.Patch(category)
-	err = h.store.UpdateCategory(category)
-	if err != nil {
+	categoryModificationRequest.Patch(category)
+
+	if err := h.store.UpdateCategory(category); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}

@@ -239,8 +239,8 @@ func (c *Client) Categories() (Categories, error) {
 
 // CreateCategory creates a new category.
 func (c *Client) CreateCategory(title string) (*Category, error) {
-	body, err := c.request.Post("/v1/categories", map[string]interface{}{
-		"title": title,
+	body, err := c.request.Post("/v1/categories", &CategoryCreationRequest{
+		Title: title,
 	})
 	if err != nil {
 		return nil, err
@@ -255,11 +255,42 @@ func (c *Client) CreateCategory(title string) (*Category, error) {
 	return category, nil
 }
 
+// CreateCategoryWithOptions creates a new category with options.
+func (c *Client) CreateCategoryWithOptions(createRequest *CategoryCreationRequest) (*Category, error) {
+	body, err := c.request.Post("/v1/categories", createRequest)
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var category *Category
+	if err := json.NewDecoder(body).Decode(&category); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+	return category, nil
+}
+
 // UpdateCategory updates a category.
 func (c *Client) UpdateCategory(categoryID int64, title string) (*Category, error) {
-	body, err := c.request.Put(fmt.Sprintf("/v1/categories/%d", categoryID), map[string]interface{}{
-		"title": title,
+	body, err := c.request.Put(fmt.Sprintf("/v1/categories/%d", categoryID), &CategoryModificationRequest{
+		Title: SetOptionalField(title),
 	})
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var category *Category
+	if err := json.NewDecoder(body).Decode(&category); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return category, nil
+}
+
+// UpdateCategoryWithOptions updates a category with options.
+func (c *Client) UpdateCategoryWithOptions(categoryID int64, categoryChanges *CategoryModificationRequest) (*Category, error) {
+	body, err := c.request.Put(fmt.Sprintf("/v1/categories/%d", categoryID), categoryChanges)
 	if err != nil {
 		return nil, err
 	}

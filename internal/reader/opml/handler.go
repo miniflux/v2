@@ -61,7 +61,7 @@ func (h *Handler) Import(userID int64, data io.Reader) error {
 				}
 
 				if category == nil {
-					category, err = h.store.CreateCategory(userID, &model.CategoryRequest{Title: subscription.CategoryName})
+					category, err = h.store.CreateCategory(userID, &model.CategoryCreationRequest{Title: subscription.CategoryName})
 					if err != nil {
 						return fmt.Errorf(`opml: unable to create this category: %q`, subscription.CategoryName)
 					}

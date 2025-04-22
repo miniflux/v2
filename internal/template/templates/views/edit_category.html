@@ -31,7 +31,7 @@
     <input type="text" name="title" id="form-title" value="{{ .form.Title }}" required autofocus>
 
     <label>
-        <input type="checkbox" name="hide_globally" {{ if .form.HideGlobally }}checked{{ end }}>
+        <input type="checkbox" name="hide_globally" {{ if .form.HideGlobally }}checked{{ end }} value="1">
         {{ t "form.category.hide_globally" }}
     </label>
 

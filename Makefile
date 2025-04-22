@@ -144,7 +144,7 @@ integration-test:
 	ADMIN_PASSWORD=test123 \
 	CREATE_ADMIN=1 \
 	RUN_MIGRATIONS=1 \
-	DEBUG=1 \
+	LOG_LEVEL=debug \
 	./miniflux-test >/tmp/miniflux.log 2>&1 & echo "$$!" > "/tmp/miniflux.pid"
 
 	while ! nc -z localhost 8080; do sleep 1; done

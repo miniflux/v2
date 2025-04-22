@@ -20,8 +20,7 @@ func (h *handler) showEditCategoryPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	categoryID := request.RouteInt64Param(r, "categoryID")
-	category, err := h.store.Category(request.UserID(r), categoryID)
+	category, err := h.store.Category(request.UserID(r), request.RouteInt64Param(r, "categoryID"))
 	if err != nil {
 		html.ServerError(w, r, err)
 		return
@@ -34,10 +33,7 @@ func (h *handler) showEditCategoryPage(w http.ResponseWriter, r *http.Request) {
 
 	categoryForm := form.CategoryForm{
 		Title:        category.Title,
-		HideGlobally: "",
-	}
-	if category.HideGlobally {
-		categoryForm.HideGlobally = "checked"
+		HideGlobally: category.HideGlobally,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

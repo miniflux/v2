@@ -33,15 +33,15 @@ func (h *handler) saveCategory(w http.ResponseWriter, r *http.Request) {
 	view.Set("countUnread", h.store.CountUnreadEntries(loggedUser.ID))
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(loggedUser.ID))
 
-	categoryRequest := &model.CategoryRequest{Title: categoryForm.Title}
+	categoryCreationRequest := &model.CategoryCreationRequest{Title: categoryForm.Title}
 
-	if validationErr := validator.ValidateCategoryCreation(h.store, loggedUser.ID, categoryRequest); validationErr != nil {
+	if validationErr := validator.ValidateCategoryCreation(h.store, loggedUser.ID, categoryCreationRequest); validationErr != nil {
 		view.Set("errorMessage", validationErr.Translate(loggedUser.Language))
 		html.OK(w, r, view.Render("create_category"))
 		return
 	}
 
-	if _, err = h.store.CreateCategory(loggedUser.ID, categoryRequest); err != nil {
+	if _, err = h.store.CreateCategory(loggedUser.ID, categoryCreationRequest); err != nil {
 		html.ServerError(w, r, err)
 		return
 	}
