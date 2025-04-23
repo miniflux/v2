@@ -1,3 +1,33 @@
+Version 2.2.8 (April 22, 2025)
+------------------------------
+
+* refactor(js): replace `DomHelper` methods with standalone functions
+* refactor: avoid logging twice the feed errors in the background worker
+* fix(api): `hide_globally` categories field should be a boolean
+* fix(ui): add missing `await` when calling `navigator.share()` method
+* fix(ui): replace share link with a form button for better accessibility
+* feat(telegrambot): replace "Go to website" button with "Go to Miniflux"
+* feat(locale): update Polish translation
+* feat(locale): update German translation
+* feat(locale): update Chinese translation
+* feat(config): add `SCHEDULER_ROUND_ROBIN_MAX_INTERVAL` option
+* feat(cli): add `-reset-feed-next-check-at` argument
+* feat(api): add `update_content` query parameter to `/entries/{entryID}/fetch-content` endpoint
+* feat: use `Cache-Control` max-age and `Expires` headers to calculate next check
+* feat: implement proxy URL per feed
+* feat: add proxy rotation functionality
+* ci(linter): replace commitlint with a Python script
+* ci: add documentation issue template
+* build(deps): bump `golang.org/x/oauth2` from `0.28.0` to `0.29.0`
+* build(deps): bump `golang.org/x/net` from `0.38.0` to `0.39.0`
+* build(deps): bump `golang.org/x/image` from `0.25.0` to `0.26.0`
+* build(deps): bump `github.com/tdewolff/minify/v2` from `2.22.4` to `2.23.1`
+* build(deps): bump `github.com/PuerkitoBio/goquery` from `1.10.2` to `1.10.3`
+* build(deps): bump `github.com/prometheus/client_golang`
+* build(deps): bump `github.com/mattn/go-sqlite3` from `1.14.24` to `1.14.28`
+* build(deps): bump `github.com/go-webauthn/webauthn` from `0.12.2` to `0.12.3`
+* build(deps): bump `github.com/coreos/go-oidc/v3` from `3.13.0` to `3.14.1`
+
 Version 2.2.7 (April 1, 2025)
 -----------------------------
 
