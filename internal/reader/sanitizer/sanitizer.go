@@ -385,6 +385,7 @@ func isValidIframeSource(baseURL, src string) bool {
 		"dailymotion.com",
 		"youtube-nocookie.com",
 		"youtube.com",
+		"open.spotify.com",
 	}
 	domain := urllib.Domain(src)
 
