@@ -192,7 +192,7 @@ func (s *Storage) CreateCategory(userID int64, request *model.CategoryCreationRe
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf(`store: unable to create category %q: %v`, request.Title, err)
+		return nil, fmt.Errorf(`store: unable to create category %q for user ID %d: %v`, request.Title, userID, err)
 	}
 
 	return &category, nil

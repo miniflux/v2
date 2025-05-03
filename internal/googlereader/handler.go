@@ -800,10 +800,15 @@ func rename(stream Stream, title string, store *storage.Storage, userID int64) e
 	if title == "" {
 		return errors.New("empty title")
 	}
+
 	feed, err := getFeed(stream, store, userID)
 	if err != nil {
 		return err
 	}
+	if feed == nil {
+		return errors.New("feed not found")
+	}
+
 	feedModification := model.FeedModificationRequest{
 		Title: &title,
 	}
@@ -816,10 +821,18 @@ func move(stream Stream, destination Stream, store *storage.Storage, userID int6
 	if err != nil {
 		return err
 	}
+	if feed == nil {
+		return errors.New("feed not found")
+	}
+
 	category, err := getOrCreateCategory(destination, store, userID)
 	if err != nil {
 		return err
 	}
+	if category == nil {
+		return errors.New("category not found or unable to create category")
+	}
+
 	feedModification := model.FeedModificationRequest{
 		CategoryID: &category.ID,
 	}
