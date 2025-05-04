@@ -95,6 +95,8 @@ const (
 	ParamDestination = "dest"
 	// ParamContinuation -  name of the parameter for callers to pass to receive the next page of results
 	ParamContinuation = "c"
+	// ParamStreamType - name of the parameter for unix timestamp
+	ParamTimestamp = "ts"
 )
 
 var (
@@ -234,6 +236,7 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.HandleFunc("/subscription/quickadd", handler.quickAddHandler).Methods(http.MethodPost).Name("QuickAdd")
 	sr.HandleFunc("/stream/items/ids", handler.streamItemIDsHandler).Methods(http.MethodGet).Name("StreamItemIDs")
 	sr.HandleFunc("/stream/items/contents", handler.streamItemContentsHandler).Methods(http.MethodPost).Name("StreamItemsContents")
+	sr.HandleFunc("/mark-all-as-read", handler.markAllAsReadHandler).Methods(http.MethodPost).Name("MarkAllAsRead")
 	sr.PathPrefix("/").HandlerFunc(handler.serveHandler).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
 }
 
@@ -324,12 +327,12 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 		switch s.Type {
 		case ReadStream:
 			if _, ok := tags[KeptUnreadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s ad %s should not be supplied simultaneously", KeptUnread, Read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", KeptUnread, Read)
 			}
 			tags[ReadStream] = true
 		case KeptUnreadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s ad %s should not be supplied simultaneously", KeptUnread, Read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", KeptUnread, Read)
 			}
 			tags[ReadStream] = false
 		case StarredStream:
@@ -344,12 +347,12 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 		switch s.Type {
 		case ReadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s ad %s should not be supplied simultaneously", KeptUnread, Read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", KeptUnread, Read)
 			}
 			tags[ReadStream] = false
 		case KeptUnreadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s ad %s should not be supplied simultaneously", KeptUnread, Read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", KeptUnread, Read)
 			}
 			tags[ReadStream] = true
 		case StarredStream:
@@ -1550,4 +1553,83 @@ func (h *handler) handleFeedStreamHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	json.OK(w, r, streamIDResponse{itemRefs, continuation})
+}
+
+func (h *handler) markAllAsReadHandler(w http.ResponseWriter, r *http.Request) {
+	userID := request.UserID(r)
+	clientIP := request.ClientIP(r)
+
+	slog.Debug("[GoogleReader] Handle /mark-all-as-read",
+		slog.String("handler", "markAllAsReadHandler"),
+		slog.String("client_ip", clientIP),
+		slog.String("user_agent", r.UserAgent()),
+	)
+
+	if err := r.ParseForm(); err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	stream, err := getStream(r.Form.Get(ParamStreamID), userID)
+	if err != nil {
+		json.BadRequest(w, r, err)
+		return
+	}
+
+	var before time.Time
+	if timestampParamValue := r.Form.Get(ParamTimestamp); timestampParamValue != "" {
+		timestampParsedValue, err := strconv.ParseInt(timestampParamValue, 10, 64)
+		if err != nil {
+			json.BadRequest(w, r, err)
+			return
+		}
+
+		if timestampParsedValue > 0 {
+			// It's unclear if the timestamp is in seconds or microseconds, so we try both using a naive approach.
+			if len(timestampParamValue) >= 16 {
+				before = time.UnixMicro(timestampParsedValue)
+			} else {
+				before = time.Unix(timestampParsedValue, 0)
+			}
+		}
+	}
+
+	if before.IsZero() {
+		before = time.Now()
+	}
+
+	switch stream.Type {
+	case FeedStream:
+		feedID, err := strconv.ParseInt(stream.ID, 10, 64)
+		if err != nil {
+			json.BadRequest(w, r, err)
+			return
+		}
+		err = h.store.MarkFeedAsRead(userID, feedID, before)
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	case LabelStream:
+		category, err := h.store.CategoryByTitle(userID, stream.ID)
+		if err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+		if category == nil {
+			json.NotFound(w, r)
+			return
+		}
+		if err := h.store.MarkCategoryAsRead(userID, category.ID, before); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	case ReadingListStream:
+		if err = h.store.MarkAllAsReadBeforeDate(userID, before); err != nil {
+			json.ServerError(w, r, err)
+			return
+		}
+	}
+
+	OK(w, r)
 }

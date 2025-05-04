@@ -476,6 +476,30 @@ func (s *Storage) MarkAllAsRead(userID int64) error {
 	return nil
 }
 
+// MarkAllAsReadBeforeDate updates all user entries to the read status before the given date.
+func (s *Storage) MarkAllAsReadBeforeDate(userID int64, before time.Time) error {
+	query := `
+		UPDATE
+			entries
+		SET
+			status=$1,
+			changed_at=now()
+		WHERE
+			user_id=$2 AND status=$3 AND published_at < $4
+	`
+	result, err := s.db.Exec(query, model.EntryStatusRead, userID, model.EntryStatusUnread, before)
+	if err != nil {
+		return fmt.Errorf(`store: unable to mark all entries as read before %s: %v`, before.Format(time.RFC3339), err)
+	}
+	count, _ := result.RowsAffected()
+	slog.Debug("Marked all entries as read before date",
+		slog.Int64("user_id", userID),
+		slog.Int64("nb_entries", count),
+		slog.String("before", before.Format(time.RFC3339)),
+	)
+	return nil
+}
+
 // MarkGloballyVisibleFeedsAsRead updates all user entries to the read status.
 func (s *Storage) MarkGloballyVisibleFeedsAsRead(userID int64) error {
 	query := `
@@ -527,6 +551,7 @@ func (s *Storage) MarkFeedAsRead(userID, feedID int64, before time.Time) error {
 		slog.Int64("user_id", userID),
 		slog.Int64("feed_id", feedID),
 		slog.Int64("nb_entries", count),
+		slog.String("before", before.Format(time.RFC3339)),
 	)
 
 	return nil
@@ -563,6 +588,7 @@ func (s *Storage) MarkCategoryAsRead(userID, categoryID int64, before time.Time)
 		slog.Int64("user_id", userID),
 		slog.Int64("category_id", categoryID),
 		slog.Int64("nb_entries", count),
+		slog.String("before", before.Format(time.RFC3339)),
 	)
 
 	return nil
