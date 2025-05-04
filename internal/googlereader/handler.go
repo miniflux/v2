@@ -60,8 +60,6 @@ const (
 	BroadcastFriends = "broadcast-friends"
 	// Like is the suffix for like stream
 	Like = "like"
-	// EntryIDLong is the long entry id representation
-	EntryIDLong = "tag:google.com,2005:reader/item/%016x"
 )
 
 const (
@@ -370,28 +368,6 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 	return tags, nil
 }
 
-func getItemIDs(r *http.Request) ([]int64, error) {
-	items := r.Form[ParamItemIDs]
-	if len(items) == 0 {
-		return nil, fmt.Errorf("googlereader: no items requested")
-	}
-
-	itemIDs := make([]int64, len(items))
-
-	for i, item := range items {
-		var itemID int64
-		_, err := fmt.Sscanf(item, EntryIDLong, &itemID)
-		if err != nil {
-			itemID, err = strconv.ParseInt(item, 16, 64)
-			if err != nil {
-				return nil, fmt.Errorf("googlereader: could not parse item: %v", item)
-			}
-		}
-		itemIDs[i] = itemID
-	}
-	return itemIDs, nil
-}
-
 func checkOutputFormat(r *http.Request) error {
 	var output string
 	if r.Method == http.MethodPost {
@@ -568,7 +544,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	itemIDs, err := getItemIDs(r)
+	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -985,7 +961,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 	userRead := fmt.Sprintf(UserStreamPrefix, userID) + Read
 	userStarred := fmt.Sprintf(UserStreamPrefix, userID) + Starred
 
-	itemIDs, err := getItemIDs(r)
+	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -1058,7 +1034,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		entry.Enclosures.ProxifyEnclosureURL(h.router)
 
 		contentItems[i] = contentItem{
-			ID:            fmt.Sprintf(EntryIDLong, entry.ID),
+			ID:            convertEntryIDToLongFormItemID(entry.ID),
 			Title:         entry.Title,
 			Author:        entry.Author,
 			TimestampUsec: fmt.Sprintf("%d", entry.Date.UnixMicro()),
