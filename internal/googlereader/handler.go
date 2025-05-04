@@ -9,7 +9,6 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"miniflux.app/v2/internal/config"
@@ -35,183 +34,11 @@ type handler struct {
 	router *mux.Router
 }
 
-const (
-	// StreamPrefix is the prefix for astreams (read/starred/reading list and so on)
-	StreamPrefix = "user/-/state/com.google/"
-	// UserStreamPrefix is the user specific prefix for streams (read/starred/reading list and so on)
-	UserStreamPrefix = "user/%d/state/com.google/"
-	// LabelPrefix is the prefix for a label stream
-	LabelPrefix = "user/-/label/"
-	// UserLabelPrefix is the user specific prefix prefix for a label stream
-	UserLabelPrefix = "user/%d/label/"
-	// FeedPrefix is the prefix for a feed stream
-	FeedPrefix = "feed/"
-	// Read is the suffix for read stream
-	Read = "read"
-	// Starred is the suffix for starred stream
-	Starred = "starred"
-	// ReadingList is the suffix for reading list stream
-	ReadingList = "reading-list"
-	// KeptUnread is the suffix for kept unread stream
-	KeptUnread = "kept-unread"
-	// Broadcast is the suffix for broadcast stream
-	Broadcast = "broadcast"
-	// BroadcastFriends is the suffix for broadcast friends stream
-	BroadcastFriends = "broadcast-friends"
-	// Like is the suffix for like stream
-	Like = "like"
-)
-
-const (
-	// ParamItemIDs - name of the parameter with the item ids
-	ParamItemIDs = "i"
-	// ParamStreamID - name of the parameter containing the stream to be included
-	ParamStreamID = "s"
-	// ParamStreamExcludes - name of the parameter containing streams to be excluded
-	ParamStreamExcludes = "xt"
-	// ParamStreamFilters - name of the parameter containing streams to be included
-	ParamStreamFilters = "it"
-	// ParamStreamMaxItems - name of the parameter containing number of items per page/max items returned
-	ParamStreamMaxItems = "n"
-	// ParamStreamOrder - name of the parameter containing the sort criteria
-	ParamStreamOrder = "r"
-	// ParamStreamStartTime - name of the parameter containing epoch timestamp, filtering items older than
-	ParamStreamStartTime = "ot"
-	// ParamStreamStopTime - name of the parameter containing epoch timestamp, filtering items newer than
-	ParamStreamStopTime = "nt"
-	// ParamTagsRemove - name of the parameter containing tags (streams) to be removed
-	ParamTagsRemove = "r"
-	// ParamTagsAdd - name of the parameter containing tags (streams) to be added
-	ParamTagsAdd = "a"
-	// ParamSubscribeAction - name of the parameter indicating the action to take for subscription/edit
-	ParamSubscribeAction = "ac"
-	// ParamTitle - name of the parameter for the title of the subscription
-	ParamTitle = "t"
-	// ParamQuickAdd - name of the parameter for a URL being quick subscribed to
-	ParamQuickAdd = "quickadd"
-	// ParamDestination - name of the parameter for the new name of a tag
-	ParamDestination = "dest"
-	// ParamContinuation -  name of the parameter for callers to pass to receive the next page of results
-	ParamContinuation = "c"
-	// ParamStreamType - name of the parameter for unix timestamp
-	ParamTimestamp = "ts"
-)
-
 var (
 	errEmptyFeedTitle   = errors.New("googlereader: empty feed title")
 	errFeedNotFound     = errors.New("googlereader: feed not found")
 	errCategoryNotFound = errors.New("googlereader: category not found")
 )
-
-// StreamType represents the possible stream types
-type StreamType int
-
-const (
-	// NoStream - no stream type
-	NoStream StreamType = iota
-	// ReadStream - read stream type
-	ReadStream
-	// StarredStream - starred stream type
-	StarredStream
-	// ReadingListStream - reading list stream type
-	ReadingListStream
-	// KeptUnreadStream - kept unread stream type
-	KeptUnreadStream
-	// BroadcastStream - broadcast stream type
-	BroadcastStream
-	// BroadcastFriendsStream - broadcast friends stream type
-	BroadcastFriendsStream
-	// LabelStream - label stream type
-	LabelStream
-	// FeedStream - feed stream type
-	FeedStream
-	// LikeStream - like stream type
-	LikeStream
-)
-
-// Stream defines a stream type and its ID.
-type Stream struct {
-	Type StreamType
-	ID   string
-}
-
-func (s Stream) String() string {
-	return fmt.Sprintf("%v - '%s'", s.Type, s.ID)
-}
-
-func (st StreamType) String() string {
-	switch st {
-	case NoStream:
-		return "NoStream"
-	case ReadStream:
-		return "ReadStream"
-	case StarredStream:
-		return "StarredStream"
-	case ReadingListStream:
-		return "ReadingListStream"
-	case KeptUnreadStream:
-		return "KeptUnreadStream"
-	case BroadcastStream:
-		return "BroadcastStream"
-	case BroadcastFriendsStream:
-		return "BroadcastFriendsStream"
-	case LabelStream:
-		return "LabelStream"
-	case FeedStream:
-		return "FeedStream"
-	case LikeStream:
-		return "LikeStream"
-	default:
-		return st.String()
-	}
-}
-
-// RequestModifiers are the parsed request parameters.
-type RequestModifiers struct {
-	ExcludeTargets    []Stream
-	FilterTargets     []Stream
-	Streams           []Stream
-	Count             int
-	Offset            int
-	SortDirection     string
-	StartTime         int64
-	StopTime          int64
-	ContinuationToken string
-	UserID            int64
-}
-
-func (r RequestModifiers) String() string {
-	var results []string
-
-	results = append(results, fmt.Sprintf("UserID: %d", r.UserID))
-
-	var streamStr []string
-	for _, s := range r.Streams {
-		streamStr = append(streamStr, s.String())
-	}
-	results = append(results, fmt.Sprintf("Streams: [%s]", strings.Join(streamStr, ", ")))
-
-	var exclusions []string
-	for _, s := range r.ExcludeTargets {
-		exclusions = append(exclusions, s.String())
-	}
-	results = append(results, fmt.Sprintf("Exclusions: [%s]", strings.Join(exclusions, ", ")))
-
-	var filters []string
-	for _, s := range r.FilterTargets {
-		filters = append(filters, s.String())
-	}
-	results = append(results, fmt.Sprintf("Filters: [%s]", strings.Join(filters, ", ")))
-
-	results = append(results, fmt.Sprintf("Count: %d", r.Count))
-	results = append(results, fmt.Sprintf("Offset: %d", r.Offset))
-	results = append(results, fmt.Sprintf("Sort Direction: %s", r.SortDirection))
-	results = append(results, fmt.Sprintf("Continuation Token: %s", r.ContinuationToken))
-	results = append(results, fmt.Sprintf("Start Time: %d", r.StartTime))
-	results = append(results, fmt.Sprintf("Stop Time: %d", r.StopTime))
-
-	return strings.Join(results, "; ")
-}
 
 // Serve handles Google Reader API calls.
 func Serve(router *mux.Router, store *storage.Storage) {
@@ -236,87 +63,6 @@ func Serve(router *mux.Router, store *storage.Storage) {
 	sr.HandleFunc("/stream/items/contents", handler.streamItemContentsHandler).Methods(http.MethodPost).Name("StreamItemsContents")
 	sr.HandleFunc("/mark-all-as-read", handler.markAllAsReadHandler).Methods(http.MethodPost).Name("MarkAllAsRead")
 	sr.PathPrefix("/").HandlerFunc(handler.serveHandler).Methods(http.MethodPost, http.MethodGet).Name("GoogleReaderApiEndpoint")
-}
-
-func getStreamFilterModifiers(r *http.Request) (RequestModifiers, error) {
-	userID := request.UserID(r)
-
-	result := RequestModifiers{
-		SortDirection: "desc",
-		UserID:        userID,
-	}
-	streamOrder := request.QueryStringParam(r, ParamStreamOrder, "d")
-	if streamOrder == "o" {
-		result.SortDirection = "asc"
-	}
-	var err error
-	result.Streams, err = getStreams(request.QueryStringParamList(r, ParamStreamID), userID)
-	if err != nil {
-		return RequestModifiers{}, err
-	}
-	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, ParamStreamExcludes), userID)
-	if err != nil {
-		return RequestModifiers{}, err
-	}
-
-	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, ParamStreamFilters), userID)
-	if err != nil {
-		return RequestModifiers{}, err
-	}
-
-	result.Count = request.QueryIntParam(r, ParamStreamMaxItems, 0)
-	result.Offset = request.QueryIntParam(r, ParamContinuation, 0)
-	result.StartTime = request.QueryInt64Param(r, ParamStreamStartTime, int64(0))
-	result.StopTime = request.QueryInt64Param(r, ParamStreamStopTime, int64(0))
-	return result, nil
-}
-
-func getStream(streamID string, userID int64) (Stream, error) {
-	switch {
-	case strings.HasPrefix(streamID, FeedPrefix):
-		return Stream{Type: FeedStream, ID: strings.TrimPrefix(streamID, FeedPrefix)}, nil
-	case strings.HasPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID)) || strings.HasPrefix(streamID, StreamPrefix):
-		id := strings.TrimPrefix(streamID, fmt.Sprintf(UserStreamPrefix, userID))
-		id = strings.TrimPrefix(id, StreamPrefix)
-		switch id {
-		case Read:
-			return Stream{ReadStream, ""}, nil
-		case Starred:
-			return Stream{StarredStream, ""}, nil
-		case ReadingList:
-			return Stream{ReadingListStream, ""}, nil
-		case KeptUnread:
-			return Stream{KeptUnreadStream, ""}, nil
-		case Broadcast:
-			return Stream{BroadcastStream, ""}, nil
-		case BroadcastFriends:
-			return Stream{BroadcastFriendsStream, ""}, nil
-		case Like:
-			return Stream{LikeStream, ""}, nil
-		default:
-			return Stream{NoStream, ""}, fmt.Errorf("googlereader: unknown stream with id: %s", id)
-		}
-	case strings.HasPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID)) || strings.HasPrefix(streamID, LabelPrefix):
-		id := strings.TrimPrefix(streamID, fmt.Sprintf(UserLabelPrefix, userID))
-		id = strings.TrimPrefix(id, LabelPrefix)
-		return Stream{LabelStream, id}, nil
-	case streamID == "":
-		return Stream{NoStream, ""}, nil
-	default:
-		return Stream{NoStream, ""}, fmt.Errorf("googlereader: unknown stream type: %s", streamID)
-	}
-}
-
-func getStreams(streamIDs []string, userID int64) ([]Stream, error) {
-	streams := make([]Stream, 0)
-	for _, streamID := range streamIDs {
-		stream, err := getStream(streamID, userID)
-		if err != nil {
-			return []Stream{}, err
-		}
-		streams = append(streams, stream)
-	}
-	return streams, nil
 }
 
 func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType]bool, error) {
@@ -951,7 +697,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	requestModifiers, err := getStreamFilterModifiers(r)
+	requestModifiers, err := parseStreamFilterFromRequest(r)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
@@ -1303,7 +1049,7 @@ func (h *handler) streamItemIDsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rm, err := getStreamFilterModifiers(r)
+	rm, err := parseStreamFilterFromRequest(r)
 	if err != nil {
 		json.ServerError(w, r, err)
 		return
