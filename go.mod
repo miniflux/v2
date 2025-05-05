@@ -13,7 +13,7 @@ require (
 	github.com/prometheus/client_golang v1.22.0
 	github.com/tdewolff/minify/v2 v2.23.3
 	golang.org/x/crypto v0.37.0
-	golang.org/x/image v0.26.0
+	golang.org/x/image v0.27.0
 	golang.org/x/net v0.39.0
 	golang.org/x/oauth2 v0.29.0
 	golang.org/x/term v0.31.0
@@ -40,7 +40,7 @@ require (
 	github.com/tdewolff/parse/v2 v2.7.23 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 )
 
