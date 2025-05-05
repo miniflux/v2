@@ -4,7 +4,6 @@
 package googlereader // import "miniflux.app/v2/internal/googlereader"
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -13,37 +12,47 @@ import (
 
 const (
 	ItemIDPrefix = "tag:google.com,2005:reader/item/"
+	ItemIDFormat = "tag:google.com,2005:reader/item/%016x"
 )
 
 func convertEntryIDToLongFormItemID(entryID int64) string {
 	// The entry ID is a 64-bit integer, so we need to format it as a 16-character hexadecimal string.
-	return ItemIDPrefix + fmt.Sprintf("%016x", entryID)
+	return fmt.Sprintf(ItemIDFormat, entryID)
 }
 
-// parseItemID parses a Google Reader ID string.
-// It supports both the long form (tag:google.com,2005:reader/item/<hex_id>) and the short form (<decimal_id>).
+// Expected format: "tag:google.com,2005:reader/item/00000000148b9369" (hexadecimal string with prefix and padding)
+// NetNewsWire uses this format: "tag:google.com,2005:reader/item/2f2" (hexadecimal string with prefix and no padding)
+// Reeder uses this format: "000000000000048c" (hexadecimal string without prefix and padding)
+// Liferea uses this format: "12345" (decimal string)
 // It returns the parsed ID as a int64 and an error if parsing fails.
 func parseItemID(itemIDValue string) (int64, error) {
+	var itemID int64
 	if strings.HasPrefix(itemIDValue, ItemIDPrefix) {
-		hexID := strings.TrimPrefix(itemIDValue, ItemIDPrefix)
-
-		// It's always 16 characters wide.
-		if len(hexID) != 16 {
-			return 0, errors.New("long form ID has incorrect length")
-		}
-
-		parsedID, err := strconv.ParseInt(hexID, 16, 64)
+		n, err := fmt.Sscanf(itemIDValue, ItemIDFormat, &itemID)
 		if err != nil {
-			return 0, errors.New("failed to parse long form hex ID: " + err.Error())
+			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: %w", itemIDValue, err)
 		}
-		return parsedID, nil
-	} else {
-		parsedID, err := strconv.ParseInt(itemIDValue, 10, 64)
-		if err != nil {
-			return 0, errors.New("failed to parse short form decimal ID: " + err.Error())
+		if n != 1 {
+			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: expected 1 value, got %d", itemIDValue, n)
 		}
-		return parsedID, nil
+		if itemID == 0 {
+			return 0, fmt.Errorf("failed to parse hexadecimal item ID %s: item ID is zero", itemIDValue)
+		}
+		return itemID, nil
 	}
+
+	if len(itemIDValue) == 16 {
+		if n, err := fmt.Sscanf(itemIDValue, "%016x", &itemID); err == nil && n == 1 {
+			return itemID, nil
+		}
+	}
+
+	itemID, err := strconv.ParseInt(itemIDValue, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse decimal item ID %s: %w", itemIDValue, err)
+	}
+
+	return itemID, nil
 }
 
 func parseItemIDsFromRequest(r *http.Request) ([]int64, error) {
