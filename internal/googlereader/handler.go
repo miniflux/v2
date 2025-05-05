@@ -672,6 +672,7 @@ func (h *handler) editSubscriptionHandler(w http.ResponseWriter, r *http.Request
 
 func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := request.UserID(r)
+	userName := request.UserName(r)
 	clientIP := request.ClientIP(r)
 
 	slog.Debug("[GoogleReader] Handle /stream/items/contents",
@@ -688,11 +689,6 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 
 	err := r.ParseForm()
 	if err != nil {
-		json.ServerError(w, r, err)
-		return
-	}
-	var user *model.User
-	if user, err = h.store.UserByID(userID); err != nil {
 		json.ServerError(w, r, err)
 		return
 	}
@@ -743,7 +739,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 				HREF: config.Opts.RootURL() + route.Path(h.router, "StreamItemsContents"),
 			},
 		},
-		Author: user.Username,
+		Author: userName,
 	}
 	contentItems := make([]contentItem, len(entries))
 	for i, entry := range entries {

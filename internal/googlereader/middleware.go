@@ -177,6 +177,7 @@ func (m *middleware) apiKeyAuth(next http.Handler) http.Handler {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, request.UserIDContextKey, user.ID)
+		ctx = context.WithValue(ctx, request.UserNameContextKey, user.Username)
 		ctx = context.WithValue(ctx, request.UserTimezoneContextKey, user.Timezone)
 		ctx = context.WithValue(ctx, request.IsAdminUserContextKey, user.IsAdmin)
 		ctx = context.WithValue(ctx, request.IsAuthenticatedContextKey, true)
