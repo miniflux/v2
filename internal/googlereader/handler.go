@@ -292,7 +292,7 @@ func (h *handler) editTagHandler(w http.ResponseWriter, r *http.Request) {
 
 	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
-		json.ServerError(w, r, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -709,7 +709,7 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 
 	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
-		json.ServerError(w, r, err)
+		json.BadRequest(w, r, err)
 		return
 	}
 
@@ -733,22 +733,11 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if len(entries) == 0 {
-		json.BadRequest(w, r, fmt.Errorf("googlereader: no items returned from the database for item IDs: %v", itemIDs))
-		return
-	}
-
 	result := streamContentItems{
 		Direction: "ltr",
-		ID:        fmt.Sprintf("feed/%d", entries[0].FeedID),
-		Title:     entries[0].Feed.Title,
-		Alternate: []contentHREFType{
-			{
-				HREF: entries[0].Feed.SiteURL,
-				Type: "text/html",
-			},
-		},
-		Updated: time.Now().Unix(),
+		ID:        "user/-/state/com.google/reading-list",
+		Title:     "Reading List",
+		Updated:   time.Now().Unix(),
 		Self: []contentHREF{
 			{
 				HREF: config.Opts.RootURL() + route.Path(h.router, "StreamItemsContents"),
