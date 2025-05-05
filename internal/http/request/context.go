@@ -16,6 +16,7 @@ type ContextKey int
 // List of context keys.
 const (
 	UserIDContextKey ContextKey = iota
+	UserNameContextKey
 	UserTimezoneContextKey
 	IsAdminUserContextKey
 	IsAuthenticatedContextKey
@@ -62,6 +63,15 @@ func IsAuthenticated(r *http.Request) bool {
 // UserID returns the UserID of the logged user.
 func UserID(r *http.Request) int64 {
 	return getContextInt64Value(r, UserIDContextKey)
+}
+
+// UserName returns the username of the logged user.
+func UserName(r *http.Request) string {
+	value := getContextStringValue(r, UserNameContextKey)
+	if value == "" {
+		value = "unknown"
+	}
+	return value
 }
 
 // UserTimezone returns the timezone used by the logged user.

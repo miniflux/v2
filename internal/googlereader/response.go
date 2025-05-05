@@ -68,14 +68,13 @@ type tagsResponse struct {
 }
 
 type streamContentItems struct {
-	Direction string            `json:"direction"`
-	ID        string            `json:"id"`
-	Title     string            `json:"title"`
-	Self      []contentHREF     `json:"self"`
-	Alternate []contentHREFType `json:"alternate"`
-	Updated   int64             `json:"updated"`
-	Items     []contentItem     `json:"items"`
-	Author    string            `json:"author"`
+	Direction string        `json:"direction"`
+	ID        string        `json:"id"`
+	Title     string        `json:"title"`
+	Self      []contentHREF `json:"self"`
+	Updated   int64         `json:"updated"`
+	Items     []contentItem `json:"items"`
+	Author    string        `json:"author"`
 }
 
 type contentItem struct {
