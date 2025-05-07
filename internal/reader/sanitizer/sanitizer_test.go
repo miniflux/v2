@@ -705,3 +705,13 @@ func TestAttributesAreStripped(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestMathML(t *testing.T) {
+	input := `<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mn>2</mn></msup></math>`
+	expected := `<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mn>2</mn></msup></math>`
+	output := Sanitize("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
