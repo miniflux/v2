@@ -82,7 +82,7 @@ var (
 		"annotation":     {},
 		"annotation-xml": {},
 		"maction":        {},
-		"math":           {},
+		"math":           {"xmlns"},
 		"merror":         {},
 		"mfrac":          {},
 		"mi":             {},
@@ -131,7 +131,15 @@ func Sanitize(baseURL, input string) string {
 		}
 
 		token := tokenizer.Token()
-		tagName := token.DataAtom.String()
+
+		// Note: MathML elements are not fully supported by golang.org/x/net/html.
+		// See https://github.com/golang/net/blob/master/html/atom/gen.go
+		// and https://github.com/golang/net/blob/master/html/atom/table.go
+		tagName := token.Data
+		if tagName == "" {
+			continue
+		}
+
 		switch token.Type {
 		case html.TextToken:
 			if len(blockedStack) > 0 {
