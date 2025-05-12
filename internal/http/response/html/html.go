@@ -4,6 +4,7 @@
 package html // import "miniflux.app/v2/internal/http/response/html"
 
 import (
+	"html"
 	"log/slog"
 	"net/http"
 
@@ -38,9 +39,9 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusInternalServerError)
 	builder.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
-	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(err)
+	builder.WithBody(html.EscapeString(err.Error()))
 	builder.Write()
 }
 
@@ -62,9 +63,9 @@ func BadRequest(w http.ResponseWriter, r *http.Request, err error) {
 	builder := response.New(w, r)
 	builder.WithStatus(http.StatusBadRequest)
 	builder.WithHeader("Content-Security-Policy", response.ContentSecurityPolicyForUntrustedContent)
-	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
+	builder.WithHeader("Content-Type", "text/plain; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
-	builder.WithBody(err)
+	builder.WithBody(html.EscapeString(err.Error()))
 	builder.Write()
 }
 
