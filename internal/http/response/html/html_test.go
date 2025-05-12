@@ -58,7 +58,7 @@ func TestServerErrorResponse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ServerError(w, r, errors.New("Some error"))
+		ServerError(w, r, errors.New("Some error with injected HTML <script>alert('XSS')</script>"))
 	})
 
 	handler.ServeHTTP(w, r)
@@ -69,13 +69,13 @@ func TestServerErrorResponse(t *testing.T) {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
 	}
 
-	expectedBody := `Some error`
+	expectedBody := `Some error with injected HTML &lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;`
 	actualBody := w.Body.String()
 	if actualBody != expectedBody {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "text/html; charset=utf-8"
+	expectedContentType := "text/plain; charset=utf-8"
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
@@ -91,7 +91,7 @@ func TestBadRequestResponse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		BadRequest(w, r, errors.New("Some error"))
+		BadRequest(w, r, errors.New("Some error with injected HTML <script>alert('XSS')</script>"))
 	})
 
 	handler.ServeHTTP(w, r)
@@ -102,13 +102,13 @@ func TestBadRequestResponse(t *testing.T) {
 		t.Fatalf(`Unexpected status code, got %d instead of %d`, resp.StatusCode, expectedStatusCode)
 	}
 
-	expectedBody := `Some error`
+	expectedBody := `Some error with injected HTML &lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;`
 	actualBody := w.Body.String()
 	if actualBody != expectedBody {
 		t.Fatalf(`Unexpected body, got %s instead of %s`, actualBody, expectedBody)
 	}
 
-	expectedContentType := "text/html; charset=utf-8"
+	expectedContentType := "text/plain; charset=utf-8"
 	actualContentType := resp.Header.Get("Content-Type")
 	if actualContentType != expectedContentType {
 		t.Fatalf(`Unexpected content type, got %q instead of %q`, actualContentType, expectedContentType)
