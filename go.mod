@@ -6,7 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/andybalholm/brotli v1.1.1
 	github.com/coreos/go-oidc/v3 v3.14.1
-	github.com/go-webauthn/webauthn v0.12.3
+	github.com/go-webauthn/webauthn v0.13.0
 	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -20,9 +20,9 @@ require (
 )
 
 require (
-	github.com/go-webauthn/x v0.1.20 // indirect
+	github.com/go-webauthn/x v0.1.21 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
-	github.com/google/go-tpm v0.9.3 // indirect
+	github.com/google/go-tpm v0.9.5 // indirect
 )
 
 require (
