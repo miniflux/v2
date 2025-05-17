@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Automatically mark entries as read when viewed",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Playback speed of the audio/video",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Show estimated reading time for entries",
     "form.prefs.label.theme": "Theme",
     "form.prefs.label.timezone": "Timezone",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Last Used",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API Keys",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "Entries",
     "page.categories.feed_count": [
         "There is %d feed.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Feeds",
     "page.categories.no_feed": "No feed.",
     "page.categories.title": "Categories",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Edit Category: %s",
     "page.edit_feed.etag_header": "ETag header:",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Register passkey",
     "page.settings.webauthn.register.error": "Unable to register passkey",
+    "page.shared_entries.title": "Shared entries",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Shared entries",
+    "page.starred.title": "Starred",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "Starred",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Unread",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "Unread",
     "page.users.actions": "Actions",
     "page.users.admin.no": "No",
     "page.users.admin.yes": "Yes",

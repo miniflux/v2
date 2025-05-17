@@ -346,6 +346,7 @@
     "form.prefs.label.mark_read_on_view": "Phah khui ê sî-chūn sūn-sòa kā siau-sit chù chòe tha̍k kè",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Phah khui ê sî-chūn sūn-sòa kā siau-sit chù chòe tha̍k kè, m̄-koh nā-sī im-sìn, sī-sìn tio̍h tī hòng-sàng kàu 90%% ê si-chun chiah lâi chù",
     "form.prefs.label.media_playback_rate": "Im-sìn, sī-sìn pàng ê sok-tō͘",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Hián-sī siau-sit àn-sǹg ài gōa-kú lâi tha̍k",
     "form.prefs.label.theme": "Chú-tôe",
     "form.prefs.label.timezone": "Sî-khu",
@@ -426,9 +427,6 @@
     "page.api_keys.table.last_used_at": "Siōng-bóe pái sú-iōng",
     "page.api_keys.table.token": "Só-sî",
     "page.api_keys.title": "API só-sî",
-    "page.categories_count": [
-        "%d ê lūi-pia̍t"
-    ],
     "page.categories.entries": "Siau-sit",
     "page.categories.feed_count": [
         "Ū %d ê Siau-sit lâi-goân"
@@ -436,6 +434,9 @@
     "page.categories.feeds": "Siau-sit lâi-goân",
     "page.categories.no_feed": "Ah-bô siau-sit lâi-goân",
     "page.categories.title": "Lūi-pia̍t",
+    "page.categories_count": [
+        "%d ê lūi-pia̍t"
+    ],
     "page.category_label": "Lūi-pia̍t: %s",
     "page.edit_category.title": "Pian-chi̍p lūi-pia̍t: %s",
     "page.edit_feed.etag_header": "ETag piau-thâu:",
@@ -538,21 +539,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Chù-chheh Passkey",
     "page.settings.webauthn.register.error": "Bô-hoat-tō͘ chù-chheh Passkey",
+    "page.shared_entries.title": "Hun-hióng kè ê siau-sit",
     "page.shared_entries_count": [
         "Í-keng hun-hióng %d ê siau-sit"
     ],
-    "page.shared_entries.title": "Hun-hióng kè ê siau-sit",
+    "page.starred.title": "Siu-chông",
     "page.starred_entry_count": [
         "%d ê siu-chông ê siau-sit"
     ],
-    "page.starred.title": "Siu-chông",
     "page.total_entry_count": [
         "Lóng-chóng %d ê siau-sit"
     ],
+    "page.unread.title": "Ah-bōe tha̍k",
     "page.unread_entry_count": [
         "%d ê siau-sit ah-bōe tha̍k"
     ],
-    "page.unread.title": "Ah-bōe tha̍k",
     "page.users.actions": "chhau-chok",
     "page.users.admin.no": "Hóⁿ",
     "page.users.admin.yes": "Sī",

@@ -346,6 +346,7 @@
     "form.prefs.label.mark_read_on_view": "表示時にエントリを自動的に既読としてマークします",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "オーディオ/ビデオの再生速度",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "記事の推定読書時間を表示する",
     "form.prefs.label.theme": "テーマ",
     "form.prefs.label.timezone": "タイムゾーン",
@@ -426,9 +427,6 @@
     "page.api_keys.table.last_used_at": "最終使用",
     "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
-    "page.categories_count": [
-        "%d category"
-    ],
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [
         "%d 件のフィードがあります。"
@@ -436,6 +434,9 @@
     "page.categories.feeds": "フィード一覧",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.title": "カテゴリ",
+    "page.categories_count": [
+        "%d category"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "カテゴリを編集: %s",
     "page.edit_feed.etag_header": "ETag ヘッダー:",
@@ -538,21 +539,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "パスキーを登録する",
     "page.settings.webauthn.register.error": "パスキーを登録できません",
+    "page.shared_entries.title": "共有エントリ",
     "page.shared_entries_count": [
         "%d shared entry"
     ],
-    "page.shared_entries.title": "共有エントリ",
+    "page.starred.title": "星付き",
     "page.starred_entry_count": [
         "%d starred entry"
     ],
-    "page.starred.title": "星付き",
     "page.total_entry_count": [
         "%d entry in total"
     ],
+    "page.unread.title": "未読",
     "page.unread_entry_count": [
         "%d unread entry"
     ],
-    "page.unread.title": "未読",
     "page.users.actions": "アクション",
     "page.users.admin.no": "非管理者",
     "page.users.admin.yes": "管理者",

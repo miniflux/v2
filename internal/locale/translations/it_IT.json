@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Contrassegna automaticamente le voci come lette quando visualizzate",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Velocità di riproduzione dell'audio/video",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Mostra il tempo di lettura stimato per gli articoli",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Fuso orario",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Ultimo uso",
     "page.api_keys.table.token": "Gettone",
     "page.api_keys.title": "Chiavi API",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "Articoli",
     "page.categories.feed_count": [
         "C'è %d feed.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Abbonamenti",
     "page.categories.no_feed": "Nessun feed.",
     "page.categories.title": "Categorie",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Modifica categoria: %s",
     "page.edit_feed.etag_header": "Header ETag:",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Registra la chiave di accesso",
     "page.settings.webauthn.register.error": "Impossibile registrare la passkey",
+    "page.shared_entries.title": "Voci condivise",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Voci condivise",
+    "page.starred.title": "Preferiti",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "Preferiti",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Da leggere",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "Da leggere",
     "page.users.actions": "Azioni",
     "page.users.admin.no": "No",
     "page.users.admin.yes": "Sì",

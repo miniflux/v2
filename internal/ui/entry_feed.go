@@ -51,6 +51,11 @@ func (h *handler) showFeedEntryPage(w http.ResponseWriter, r *http.Request) {
 		entry.Status = model.EntryStatusRead
 	}
 
+	if user.AlwaysOpenExternalLinks {
+		html.Redirect(w, r, entry.URL)
+		return
+	}
+
 	entryPaginationBuilder := storage.NewEntryPaginationBuilder(h.store, user.ID, entry.ID, user.EntryOrder, user.EntryDirection)
 	entryPaginationBuilder.WithFeedID(feedID)
 	prevEntry, nextEntry, err := entryPaginationBuilder.Entries()

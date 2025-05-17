@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "देखे जाने पर स्वचालित रूप से प्रविष्टियों को पढ़ने के रूप में चिह्नित करें",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "ऑडियो/वीडियो की प्लेबैक गति",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "विषय के लिए अनुमानित पढ़ने का समय दिखाएं",
     "form.prefs.label.theme": "थीम",
     "form.prefs.label.timezone": "समय क्षेत्र",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "आखरी इस्त्तमाल किया गया",
     "page.api_keys.table.token": "टोकन",
     "page.api_keys.title": "एपीआई कुंजी",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "विषयवस्तुया",
     "page.categories.feed_count": [
         "%d फ़ीड बाकी है।",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "सदस्यता ले",
     "page.categories.no_feed": "कोई फ़ीड नहीं है।",
     "page.categories.title": "श्रेणियाँ",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "%s श्रेणी संपाद करे",
     "page.edit_feed.etag_header": "ईटाग हैडर:",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "रजिस्टर पासकी",
     "page.settings.webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
+    "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
+    "page.starred.title": "तारांकित",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "तारांकित",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "अपठित",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "अपठित",
     "page.users.actions": "कार्रवाई",
     "page.users.admin.no": "नहीं",
     "page.users.admin.yes": "हां",

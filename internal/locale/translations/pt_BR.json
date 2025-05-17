@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Marcar automaticamente as entradas como lidas quando visualizadas",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Velocidade de reprodução do áudio/vídeo",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Mostrar tempo estimado de leitura de artigos",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Fuso horário",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Ultima utilização",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chaves de API",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "Itens",
     "page.categories.feed_count": [
         "Existe %d fonte.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Inscrições",
     "page.categories.no_feed": "Sem fonte.",
     "page.categories.title": "Categorias",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Editar categoria: %s",
     "page.edit_feed.etag_header": "Cabeçalho 'ETag':",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Registrar senha",
     "page.settings.webauthn.register.error": "Não foi possível registrar a senha",
+    "page.shared_entries.title": "Itens compartilhados",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Itens compartilhados",
+    "page.starred.title": "Favoritos",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "Favoritos",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Não lidos",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "Não lidos",
     "page.users.actions": "Ações",
     "page.users.admin.no": "Não",
     "page.users.admin.yes": "Sim",
