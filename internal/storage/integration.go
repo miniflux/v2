@@ -219,7 +219,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			pushover_user,
 			pushover_token,
 			pushover_device,
-			pushover_prefix
+			pushover_prefix,
+			rssbridge_token
 		FROM
 			integrations
 		WHERE
@@ -338,6 +339,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.PushoverToken,
 		&integration.PushoverDevice,
 		&integration.PushoverPrefix,
+		&integration.RSSBridgeToken,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -464,9 +466,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			pushover_user=$107,
 			pushover_token=$108,
 			pushover_device=$109,
-			pushover_prefix=$110
+			pushover_prefix=$110,
+			rssbridge_token=$111
 		WHERE
-			user_id=$111
+			user_id=$112
 	`
 	_, err := s.db.Exec(
 		query,
@@ -580,6 +583,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.PushoverToken,
 		integration.PushoverDevice,
 		integration.PushoverPrefix,
+		integration.RSSBridgeToken,
 		integration.UserID,
 	)
 

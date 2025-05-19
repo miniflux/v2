@@ -513,6 +513,9 @@
             <label for="form-rssbridge-url">{{ t "form.integration.rssbridge_url" }}</label>
             <input type="url" name="rssbridge_url" id="form-rssbridge-url" value="{{ .form.RSSBridgeURL }}" spellcheck="false">
 
+            <label for="form-rssbridge-token">{{ t "form.integration.rssbridge_token" }}</label>
+            <input type="password" name="rssbridge_token" id="form-rssbridge-token" value="{{ .form.RSSBridgeToken }}" spellcheck="false">
+
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
             </div>

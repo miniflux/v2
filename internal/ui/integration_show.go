@@ -107,6 +107,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		WebhookSecret:                    integration.WebhookSecret,
 		RSSBridgeEnabled:                 integration.RSSBridgeEnabled,
 		RSSBridgeURL:                     integration.RSSBridgeURL,
+		RSSBridgeToken:                   integration.RSSBridgeToken,
 		OmnivoreEnabled:                  integration.OmnivoreEnabled,
 		OmnivoreAPIKey:                   integration.OmnivoreAPIKey,
 		OmnivoreURL:                      integration.OmnivoreURL,

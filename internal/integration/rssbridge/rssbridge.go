@@ -24,13 +24,16 @@ type BridgeMeta struct {
 	Name string `json:"name"`
 }
 
-func DetectBridges(rssBridgeURL, websiteURL string) ([]*Bridge, error) {
+func DetectBridges(rssBridgeURL, rssBridgeToken, websiteURL string) ([]*Bridge, error) {
 	endpointURL, err := url.Parse(rssBridgeURL)
 	if err != nil {
 		return nil, fmt.Errorf("RSS-Bridge: unable to parse bridge URL: %w", err)
 	}
 
 	values := endpointURL.Query()
+	if rssBridgeToken != "" {
+		values.Add("token", rssBridgeToken)
+	}
 	values.Add("action", "findfeed")
 	values.Add("format", "atom")
 	values.Add("url", websiteURL)
@@ -74,6 +77,15 @@ func DetectBridges(rssBridgeURL, websiteURL string) ([]*Bridge, error) {
 			bridge.URL = rssBridgeURL + bridge.URL[2:]
 
 			slog.Debug("Rewrited relative RSS bridge URL",
+				slog.String("name", bridge.BridgeMeta.Name),
+				slog.String("url", bridge.URL),
+			)
+		}
+
+		if rssBridgeToken != "" {
+			bridge.URL = bridge.URL + "&token=" + rssBridgeToken
+
+			slog.Debug("Appended token to RSS bridge URL",
 				slog.String("name", bridge.BridgeMeta.Name),
 				slog.String("url", bridge.URL),
 			)

@@ -1066,4 +1066,11 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(`ALTER TABLE feeds ADD COLUMN proxy_url text default ''`)
 		return err
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN rssbridge_token text default '';
+		`
+		_, err = tx.Exec(sql)
+		return
+	},
 }
