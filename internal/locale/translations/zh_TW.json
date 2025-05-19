@@ -293,6 +293,7 @@
     "form.integration.readwise_api_key": "Readwise Reader 存取金鑰",
     "form.integration.readwise_api_key_link": "取得您的 Readwise 存取金鑰",
     "form.integration.rssbridge_activate": "新增訂閱時檢查 RSS-Bridge",
+    "form.integration.rssbridge_token": "RSS-Bridge authentication token",
     "form.integration.rssbridge_url": "RSS-Bridge 伺服器的網址",
     "form.integration.shaarli_activate": "儲存文章到 Shaarli",
     "form.integration.shaarli_api_secret": "Shaarli API 金鑰",

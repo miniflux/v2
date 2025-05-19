@@ -293,6 +293,7 @@
     "form.integration.readwise_api_key": "Readwise Reader Acess Token",
     "form.integration.readwise_api_key_link": "Chhú-tek lí ê Readwise Acess Token",
     "form.integration.rssbridge_activate": "Sin cheng-ka siau-sit lâi-goân ê sî tio̍h RSS-Bridge",
+    "form.integration.rssbridge_token": "RSS-Bridge authentication token",
     "form.integration.rssbridge_url": "RSS-Bridge su-hāu-khì的bāng-chí",
     "form.integration.shaarli_activate": "Pó-chûn siau-sit kàu Shaarli",
     "form.integration.shaarli_api_secret": "Shaarli API só-sî",

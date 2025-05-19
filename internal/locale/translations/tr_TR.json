@@ -295,6 +295,7 @@
     "form.integration.readwise_api_key": "Readwise Reader Access Token",
     "form.integration.readwise_api_key_link": "Readwise Access Token'ınızı alın",
     "form.integration.rssbridge_activate": "Abonelik eklerken RSS-Bridge'i kontrol edin",
+    "form.integration.rssbridge_token": "RSS-Bridge authentication token",
     "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.integration.shaarli_activate": "Makaleleri Shaarli'ye kaydet",
     "form.integration.shaarli_api_secret": "Shaarli API Secret",

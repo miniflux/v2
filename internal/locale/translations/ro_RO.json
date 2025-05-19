@@ -297,6 +297,7 @@
     "form.integration.readwise_api_key": "Token Acces Readwise Reader",
     "form.integration.readwise_api_key_link": "Obțineți Token-ul de Acess pe Readwise",
     "form.integration.rssbridge_activate": "Verifică RSS-Bridge la adăugarea de abonamente",
+    "form.integration.rssbridge_token": "RSS-Bridge authentication token",
     "form.integration.rssbridge_url": "URL server RSS-Bridge",
     "form.integration.shaarli_activate": "Salvează articolele în Shaarli",
     "form.integration.shaarli_api_secret": "Secret API Shaarli",
