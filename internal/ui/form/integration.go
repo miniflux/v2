@@ -93,6 +93,7 @@ type IntegrationForm struct {
 	WebhookSecret                    string
 	RSSBridgeEnabled                 bool
 	RSSBridgeURL                     string
+	RSSBridgeToken                   string
 	OmnivoreEnabled                  bool
 	OmnivoreAPIKey                   string
 	OmnivoreURL                      string
@@ -204,6 +205,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.WebhookURL = i.WebhookURL
 	integration.RSSBridgeEnabled = i.RSSBridgeEnabled
 	integration.RSSBridgeURL = i.RSSBridgeURL
+	integration.RSSBridgeToken = i.RSSBridgeToken
 	integration.OmnivoreEnabled = i.OmnivoreEnabled
 	integration.OmnivoreAPIKey = i.OmnivoreAPIKey
 	integration.OmnivoreURL = i.OmnivoreURL
@@ -318,6 +320,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		WebhookURL:                       r.FormValue("webhook_url"),
 		RSSBridgeEnabled:                 r.FormValue("rssbridge_enabled") == "1",
 		RSSBridgeURL:                     r.FormValue("rssbridge_url"),
+		RSSBridgeToken:                   r.FormValue("rssbridge_token"),
 		OmnivoreEnabled:                  r.FormValue("omnivore_enabled") == "1",
 		OmnivoreAPIKey:                   r.FormValue("omnivore_api_key"),
 		OmnivoreURL:                      r.FormValue("omnivore_url"),

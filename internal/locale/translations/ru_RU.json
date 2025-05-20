@@ -297,6 +297,7 @@
     "form.integration.readwise_api_key": "Токен доступа в Readwise",
     "form.integration.readwise_api_key_link": "Получить токен доступа Readwise",
     "form.integration.rssbridge_activate": "Check RSS-Bridge when adding subscriptions",
+    "form.integration.rssbridge_token": "RSS-Bridge authentication token",
     "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.integration.shaarli_activate": "Сохранить статьи в Shaarli",
     "form.integration.shaarli_api_secret": "Секретный ключ Shaarli API",
