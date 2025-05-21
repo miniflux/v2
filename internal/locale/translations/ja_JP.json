@@ -406,6 +406,7 @@
     "page.about.build_date": "ビルド日時:",
     "page.about.credits": "著作権表示",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "グローバル構成オプション",
     "page.about.go_version": "Go バージョン:",
     "page.about.license": "ライセンス:",

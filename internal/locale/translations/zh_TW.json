@@ -406,6 +406,7 @@
     "page.about.build_date": "建構日期：",
     "page.about.credits": "版權",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "全域設定選項",
     "page.about.go_version": "Go 版本：",
     "page.about.license": "授權：",
