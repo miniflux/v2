@@ -410,6 +410,7 @@
     "page.about.build_date": "Дата сборки:",
     "page.about.credits": "Авторы",
     "page.about.db_usage": "Размер базы данных:",
+    "page.about.git_commit": "Git-коммит:",
     "page.about.global_config_options": "Глобальные параметры конфигурации",
     "page.about.go_version": "Версия Go:",
     "page.about.license": "Лицензия:",

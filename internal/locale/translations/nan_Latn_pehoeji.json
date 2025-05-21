@@ -406,6 +406,7 @@
     "page.about.build_date": "Kiàn-tì li̍t-kî:",
     "page.about.credits": "Pán-koân",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "Choân-he̍k siat-tēng soán-hāng",
     "page.about.go_version": "Go pán-pún:",
     "page.about.license": "Pàng-koân:",

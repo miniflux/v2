@@ -410,6 +410,7 @@
     "page.about.build_date": "Dată Build:",
     "page.about.credits": "Credit",
     "page.about.db_usage": "Utilizare Bază de Date",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "Opțiuni globale de configurare",
     "page.about.go_version": "Versiune Go:",
     "page.about.license": "Licență:",

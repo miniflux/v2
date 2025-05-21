@@ -408,6 +408,7 @@
     "page.about.build_date": "Valmistuspäivä:",
     "page.about.credits": "Kiitokset",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "Yleiset asetukset",
     "page.about.go_version": "Go-versio:",
     "page.about.license": "Lisenssi:",

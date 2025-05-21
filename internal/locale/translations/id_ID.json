@@ -406,6 +406,7 @@
     "page.about.build_date": "Tanggal Penyusunan:",
     "page.about.credits": "Pengembang",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "Pengaturan Konfigurasi Global",
     "page.about.go_version": "Versi Go:",
     "page.about.license": "Lisensi:",

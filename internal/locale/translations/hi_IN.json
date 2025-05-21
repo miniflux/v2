@@ -408,6 +408,7 @@
     "page.about.build_date": "बनाने की तिथि:",
     "page.about.credits": "आभार सूची",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "वैश्विक विन्यास विकल्प",
     "page.about.go_version": "गो संस्करण:",
     "page.about.license": "अनुज्ञा:",

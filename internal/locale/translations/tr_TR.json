@@ -408,6 +408,7 @@
     "page.about.build_date": "Oluşturulma Tarihi:",
     "page.about.credits": "Katkıda Bulunanlar",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "Global yapılandırma seçenekleri",
     "page.about.go_version": "Go sürümü:",
     "page.about.license": "Lisans:",

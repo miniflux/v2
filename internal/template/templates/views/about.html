@@ -13,7 +13,7 @@
     <ul>
         <li><strong>{{ t "page.about.version" }}</strong> <a href="https://github.com/miniflux/v2/releases/tag/{{ .version }}">{{ .version }}</a></li>
 	{{ if .commit }}
-        <li><strong>Git Commit</strong> <a href="https://github.com/miniflux/v2/commit/{{ .commit }}">{{ .commit }}</a></li>
+        <li><strong>{{ t "page.about.git_commit" }}</strong> <a href="https://github.com/miniflux/v2/commit/{{ .commit }}">{{ .commit }}</a></li>
 	{{ end }}
         <li><strong>{{ t "page.about.build_date" }}</strong> {{ .build_date }}</li>
         {{ if .user.IsAdmin }}<li><strong>{{ t "page.about.postgres_version" }}</strong> {{ .postgres_version }}</li>{{ end }}

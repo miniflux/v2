@@ -406,6 +406,7 @@
     "page.about.build_date": "构建日期：",
     "page.about.credits": "版权",
     "page.about.db_usage": "数据库容量",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "全局配置选项",
     "page.about.go_version": "Go 版本号：",
     "page.about.license": "协议：",

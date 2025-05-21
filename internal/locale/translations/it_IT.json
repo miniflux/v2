@@ -408,6 +408,7 @@
     "page.about.build_date": "Data della build:",
     "page.about.credits": "Crediti",
     "page.about.db_usage": "Database size:",
+    "page.about.git_commit": "Git Commit:",
     "page.about.global_config_options": "Opzioni di configurazione globali",
     "page.about.go_version": "Go versione:",
     "page.about.license": "Licenza:",
