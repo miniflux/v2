@@ -509,7 +509,7 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		_, err = tx.Exec(`
-			CREATE INDEX entries_feed_url_idx ON entries(feed_id, url);
+			CREATE INDEX entries_feed_url_idx ON entries(feed_id, url) WHERE length(url) < 2000;
 			CREATE INDEX entries_user_status_feed_idx ON entries(user_id, status, feed_id);
 			CREATE INDEX entries_user_status_changed_idx ON entries(user_id, status, changed_at);
 		`)
