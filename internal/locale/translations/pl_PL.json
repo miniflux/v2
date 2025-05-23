@@ -410,7 +410,7 @@
     "page.about.build_date": "Data opracowania:",
     "page.about.credits": "Prawa autorskie",
     "page.about.db_usage": "Rozmiar bazy danych:",
-    "page.about.git_commit": "Git Commit:",
+    "page.about.git_commit": "Zatwierdzenie Git:",
     "page.about.global_config_options": "Globalne opcje konfiguracji",
     "page.about.go_version": "Wersja Go:",
     "page.about.license": "Licencja:",
