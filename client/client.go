@@ -180,6 +180,45 @@ func (c *Client) DeleteUser(userID int64) error {
 	return c.request.Delete(fmt.Sprintf("/v1/users/%d", userID))
 }
 
+// APIKeys returns all API keys for the authenticated user.
+func (c *Client) APIKeys() (APIKeys, error) {
+	body, err := c.request.Get("/v1/api-keys")
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var apiKeys APIKeys
+	if err := json.NewDecoder(body).Decode(&apiKeys); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return apiKeys, nil
+}
+
+// CreateAPIKey creates a new API key for the authenticated user.
+func (c *Client) CreateAPIKey(description string) (*APIKey, error) {
+	body, err := c.request.Post("/v1/api-keys", &APIKeyCreationRequest{
+		Description: description,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer body.Close()
+
+	var apiKey *APIKey
+	if err := json.NewDecoder(body).Decode(&apiKey); err != nil {
+		return nil, fmt.Errorf("miniflux: response error (%v)", err)
+	}
+
+	return apiKey, nil
+}
+
+// DeleteAPIKey removes an API key for the authenticated user.
+func (c *Client) DeleteAPIKey(apiKeyID int64) error {
+	return c.request.Delete(fmt.Sprintf("/v1/api-keys/%d", apiKeyID))
+}
+
 // MarkAllAsRead marks all unread entries as read for a given user.
 func (c *Client) MarkAllAsRead(userID int64) error {
 	_, err := c.request.Put(fmt.Sprintf("/v1/users/%d/mark-all-as-read", userID), nil)

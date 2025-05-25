@@ -76,6 +76,9 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	sr.HandleFunc("/enclosures/{enclosureID}", handler.updateEnclosureByID).Methods(http.MethodPut)
 	sr.HandleFunc("/integrations/status", handler.getIntegrationsStatus).Methods(http.MethodGet)
 	sr.HandleFunc("/version", handler.versionHandler).Methods(http.MethodGet)
+	sr.HandleFunc("/api-keys", handler.createAPIKey).Methods(http.MethodPost)
+	sr.HandleFunc("/api-keys", handler.getAPIKeys).Methods(http.MethodGet)
+	sr.HandleFunc("/api-keys/{apiKeyID}", handler.deleteAPIKey).Methods(http.MethodDelete)
 }
 
 func (h *handler) versionHandler(w http.ResponseWriter, r *http.Request) {

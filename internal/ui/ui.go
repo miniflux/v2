@@ -136,7 +136,7 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 
 	// API Keys pages.
 	uiRouter.HandleFunc("/keys", handler.showAPIKeysPage).Name("apiKeys").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/keys/{keyID}/remove", handler.removeAPIKey).Name("removeAPIKey").Methods(http.MethodPost)
+	uiRouter.HandleFunc("/keys/{keyID}/delete", handler.deleteAPIKey).Name("deleteAPIKey").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/keys/create", handler.showCreateAPIKeyPage).Name("createAPIKey").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/keys/save", handler.saveAPIKey).Name("saveAPIKey").Methods(http.MethodPost)
 
