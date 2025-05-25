@@ -6,8 +6,11 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"fmt"
 
+	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 )
+
+var ErrAPIKeyNotFound = fmt.Errorf("store: API Key not found")
 
 // APIKeyExists checks if an API Key with the same description exists.
 func (s *Storage) APIKeyExists(userID int64, description string) bool {
@@ -66,37 +69,50 @@ func (s *Storage) APIKeys(userID int64) (model.APIKeys, error) {
 }
 
 // CreateAPIKey inserts a new API key.
-func (s *Storage) CreateAPIKey(apiKey *model.APIKey) error {
+func (s *Storage) CreateAPIKey(userID int64, description string) (*model.APIKey, error) {
 	query := `
 		INSERT INTO api_keys
 			(user_id, token, description)
 		VALUES
 			($1, $2, $3)
 		RETURNING
-			id, created_at
+			id, user_id, token, description, last_used_at, created_at
 	`
+	var apiKey model.APIKey
 	err := s.db.QueryRow(
 		query,
-		apiKey.UserID,
-		apiKey.Token,
-		apiKey.Description,
+		userID,
+		crypto.GenerateRandomStringHex(32),
+		description,
 	).Scan(
 		&apiKey.ID,
+		&apiKey.UserID,
+		&apiKey.Token,
+		&apiKey.Description,
+		&apiKey.LastUsedAt,
 		&apiKey.CreatedAt,
 	)
 	if err != nil {
-		return fmt.Errorf(`store: unable to create category: %v`, err)
+		return nil, fmt.Errorf(`store: unable to create API Key: %v`, err)
 	}
 
-	return nil
+	return &apiKey, nil
 }
 
-// RemoveAPIKey deletes an API Key.
-func (s *Storage) RemoveAPIKey(userID, keyID int64) error {
-	query := `DELETE FROM api_keys WHERE id = $1 AND user_id = $2`
-	_, err := s.db.Exec(query, keyID, userID)
+// DeleteAPIKey deletes an API Key.
+func (s *Storage) DeleteAPIKey(userID, keyID int64) error {
+	result, err := s.db.Exec(`DELETE FROM api_keys WHERE id = $1 AND user_id = $2`, keyID, userID)
 	if err != nil {
-		return fmt.Errorf(`store: unable to remove this API Key: %v`, err)
+		return fmt.Errorf(`store: unable to delete this API Key: %v`, err)
+	}
+
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf(`store: unable to delete this API Key: %v`, err)
+	}
+
+	if count == 0 {
+		return ErrAPIKeyNotFound
 	}
 
 	return nil
