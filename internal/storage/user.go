@@ -500,7 +500,7 @@ func (s *Storage) UserByAPIKey(token string) (*model.User, error) {
 			media_playback_rate,
 			u.block_filter_entry_rules,
 			u.keep_filter_entry_rules,
-			u.always_open_external_links,
+			u.always_open_external_links
 		FROM
 			users u
 		LEFT JOIN
