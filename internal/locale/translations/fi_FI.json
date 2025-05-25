@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Merkitse kohdat automaattisesti luetuiksi, kun niitä tarkastellaan",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Äänen/videon toistonopeus",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Näytä artikkeleiden arvioitu lukuaika",
     "form.prefs.label.theme": "Teema",
     "form.prefs.label.timezone": "Aikavyöhyke",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Viimeksi käytetty",
     "page.api_keys.table.token": "Tunnus",
     "page.api_keys.title": "API-avaimet",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "Artikkelit",
     "page.categories.feed_count": [
         "On %d syöte.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Tilaukset",
     "page.categories.no_feed": "Ei syötettä.",
     "page.categories.title": "Kategoriat",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Muokkaa kategoria: %s",
     "page.edit_feed.etag_header": "ETag-otsikko:",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Rekisteröi salasana",
     "page.settings.webauthn.register.error": "Salasanaa ei voi rekisteröidä",
+    "page.shared_entries.title": "Jaetut artikkelit",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Jaetut artikkelit",
+    "page.starred.title": "Suosikit",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "Suosikit",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Lukemattomat",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "Lukemattomat",
     "page.users.actions": "Toiminnot",
     "page.users.admin.no": "Ei",
     "page.users.admin.yes": "Kyllä",

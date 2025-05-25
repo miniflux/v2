@@ -350,6 +350,7 @@
     "form.prefs.label.mark_read_on_view": "Marchează intrările ca citite la vizualizare",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Marchează intrările ca citite la vizualizare. Pentru audio/video, marchează ca citit la redarea a 90%% de conținut",
     "form.prefs.label.media_playback_rate": "Viteza de rulare audio/video",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Afișare timp estimat de citire pentru înregistrări",
     "form.prefs.label.theme": "Temă",
     "form.prefs.label.timezone": "Fus orar",
@@ -430,11 +431,6 @@
     "page.api_keys.table.last_used_at": "Utilizat ultima dată",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chei API",
-    "page.categories_count": [
-        "%d categorie",
-        "%d categorii",
-        "%d categorie găsită"
-    ],
     "page.categories.entries": "Intrări",
     "page.categories.feed_count": [
         "Este %d flux.",
@@ -444,6 +440,11 @@
     "page.categories.feeds": "Fluxuri",
     "page.categories.no_feed": "Nici un flux.",
     "page.categories.title": "Categorii",
+    "page.categories_count": [
+        "%d categorie",
+        "%d categorii",
+        "%d categorie găsită"
+    ],
     "page.category_label": "Categorie: %s",
     "page.edit_category.title": "Editare Categorie: %s",
     "page.edit_feed.etag_header": "Antet ETag:",
@@ -552,29 +553,29 @@
     "page.settings.webauthn.passkeys": "Chei Acces",
     "page.settings.webauthn.register": "Înregistrare cheie acces",
     "page.settings.webauthn.register.error": "Eroare la înregistrarea cheii de acces",
+    "page.shared_entries.title": "Înregistrări partajate",
     "page.shared_entries_count": [
         "%d înregistrare partajată",
         "%d înregistrări partajate",
         "%d înregistrări partajate"
     ],
-    "page.shared_entries.title": "Înregistrări partajate",
+    "page.starred.title": "Marcate",
     "page.starred_entry_count": [
         "%d înregistrare marcată",
         "%d Înregistrări marcate",
         "%d Înregistrări marcate"
     ],
-    "page.starred.title": "Marcate",
     "page.total_entry_count": [
         "%d intrare în total",
         "%d intrări în total",
         "%d intrări în total"
     ],
+    "page.unread.title": "Necitite",
     "page.unread_entry_count": [
         "%d înregistrare necitită",
         "%d înregistrări necitite",
         "%d înregistrări necitite"
     ],
-    "page.unread.title": "Necitite",
     "page.users.actions": "Acțiuni",
     "page.users.admin.no": "Nu",
     "page.users.admin.yes": "Da",

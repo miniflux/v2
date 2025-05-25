@@ -346,6 +346,7 @@
     "form.prefs.label.mark_read_on_view": "Secara otomatis menandai entri sebagai telah dibaca saat dilihat",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Kecepatan pemutaran audio/video",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Tampilkan perkiraan waktu baca untuk artikel",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Zona Waktu",
@@ -426,9 +427,6 @@
     "page.api_keys.table.last_used_at": "Terakhir Digunakan",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Kunci API",
-    "page.categories_count": [
-        "%d category"
-    ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Ada %d umpan."
@@ -436,6 +434,9 @@
     "page.categories.feeds": "Langganan",
     "page.categories.no_feed": "Tidak ada umpan.",
     "page.categories.title": "Kategori",
+    "page.categories_count": [
+        "%d category"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Sunting Kategori: %s",
     "page.edit_feed.etag_header": "Tajuk ETag:",
@@ -538,21 +539,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Register passkey",
     "page.settings.webauthn.register.error": "Unable to register passkey",
+    "page.shared_entries.title": "Entri yang Dibagikan",
     "page.shared_entries_count": [
         "%d shared entry"
     ],
-    "page.shared_entries.title": "Entri yang Dibagikan",
+    "page.starred.title": "Markah",
     "page.starred_entry_count": [
         "%d starred entry"
     ],
-    "page.starred.title": "Markah",
     "page.total_entry_count": [
         "%d entry in total"
     ],
+    "page.unread.title": "Belum Dibaca",
     "page.unread_entry_count": [
         "%d unread entry"
     ],
-    "page.unread.title": "Belum Dibaca",
     "page.users.actions": "Tindakan",
     "page.users.admin.no": "Tidak",
     "page.users.admin.yes": "Ya",

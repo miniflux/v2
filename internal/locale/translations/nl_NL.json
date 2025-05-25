@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Markeer artikelen automatisch als gelezen wanneer ze worden bekeken",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Markeer artikelen als gelezen wanneer ze worden bekeken. Voor audio/video, markeer als gelezen bij 90%% voltooiing",
     "form.prefs.label.media_playback_rate": "Afspeelsnelheid van de audio/video",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Toon geschatte leestijd van artikelen",
     "form.prefs.label.theme": "Thema",
     "form.prefs.label.timezone": "Tijdzone",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Laatst gebruikt",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API-sleutels",
-    "page.categories_count": [
-        "%d categorie",
-        "%d categorieën"
-    ],
     "page.categories.entries": "Artikelen",
     "page.categories.feed_count": [
         "Er is %d feed.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Feeds",
     "page.categories.no_feed": "Geen feed.",
     "page.categories.title": "Categorieën",
+    "page.categories_count": [
+        "%d categorie",
+        "%d categorieën"
+    ],
     "page.category_label": "Categorie: %s",
     "page.edit_category.title": "Bewerk categorie: %s",
     "page.edit_feed.etag_header": "ETAG header:",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Passkey registreren",
     "page.settings.webauthn.register.error": "Kan passkey niet registreren",
+    "page.shared_entries.title": "Gedeelde artikelen",
     "page.shared_entries_count": [
         "%d gedeeld artikel",
         "%d gedeelde artikelen"
     ],
-    "page.shared_entries.title": "Gedeelde artikelen",
+    "page.starred.title": "Favorieten",
     "page.starred_entry_count": [
         "%d favoriet artikel",
         "%d favoriete artikelen"
     ],
-    "page.starred.title": "Favorieten",
     "page.total_entry_count": [
         "%d artikel totaal",
         "%d artikelen totaal"
     ],
+    "page.unread.title": "Ongelezen",
     "page.unread_entry_count": [
         "%d ongelezen artikel",
         "%d ongelezen artikelen"
     ],
-    "page.unread.title": "Ongelezen",
     "page.users.actions": "Acties",
     "page.users.admin.no": "Nee",
     "page.users.admin.yes": "Ja",

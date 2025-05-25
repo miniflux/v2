@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Marquer automatiquement les entrées comme lues lorsqu'elles sont consultées",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Marquer automatiquement les entrées comme lues lorsqu'elles sont consultées. Pour l'audio/vidéo, marquer comme lues après 90%%",
     "form.prefs.label.media_playback_rate": "Vitesse de lecture de l'audio/vidéo",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Afficher le temps de lecture estimé des articles",
     "form.prefs.label.theme": "Thème",
     "form.prefs.label.timezone": "Fuseau horaire",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Dernière utilisation",
     "page.api_keys.table.token": "Jeton",
     "page.api_keys.title": "Clés d'API",
-    "page.categories_count": [
-        "%d catégorie",
-        "%d catégories"
-    ],
     "page.categories.entries": "Articles",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.title": "Catégories",
+    "page.categories_count": [
+        "%d catégorie",
+        "%d catégories"
+    ],
     "page.category_label": "Catégorie : %s",
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_feed.etag_header": "En-tête ETag :",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Clés d’accès",
     "page.settings.webauthn.register": "Enregister une nouvelle clé d’accès",
     "page.settings.webauthn.register.error": "Impossible d'enregistrer la clé d’accès",
+    "page.shared_entries.title": "Articles partagés",
     "page.shared_entries_count": [
         "%d article partagé",
         "%d articles partagés"
     ],
-    "page.shared_entries.title": "Articles partagés",
+    "page.starred.title": "Favoris",
     "page.starred_entry_count": [
         "%d favori",
         "%d favoris"
     ],
-    "page.starred.title": "Favoris",
     "page.total_entry_count": [
         "%d article au total",
         "%d articles au total"
     ],
+    "page.unread.title": "Non lus",
     "page.unread_entry_count": [
         "%d article non lu",
         "%d articles non lus"
     ],
-    "page.unread.title": "Non lus",
     "page.users.actions": "Actions",
     "page.users.admin.no": "Non",
     "page.users.admin.yes": "Oui",

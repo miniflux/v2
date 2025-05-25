@@ -30,9 +30,9 @@
     "alert.pocket_linked": "Ваш Pocket аккаунт теперь привязан!",
     "alert.prefs_saved": "Предпочтения сохранены!",
     "alert.too_many_feeds_refresh": [
-	"Вы запустили слишком много обновлений подписок. Подождите %d минуту для нового запуска",
-	"Вы запустили слишком много обновлений подписок. Подождите %d минут для нового запуска",
-	"Вы запустили слишком много обновлений подписок. Подождите %d минут для нового запуска"
+        "Вы запустили слишком много обновлений подписок. Подождите %d минуту для нового запуска",
+        "Вы запустили слишком много обновлений подписок. Подождите %d минут для нового запуска",
+        "Вы запустили слишком много обновлений подписок. Подождите %d минут для нового запуска"
     ],
     "confirm.loading": "В процессе…",
     "confirm.no": "нет",
@@ -350,6 +350,7 @@
     "form.prefs.label.mark_read_on_view": "Автоматически отмечать записи как прочитанные при просмотре",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Отмечать статьи как прочитанные при просмотре. Для аудио/видео - при 90%% завершения воспроизведения",
     "form.prefs.label.media_playback_rate": "Скорость воспроизведения аудио/видео",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Показать примерное время чтения статей",
     "form.prefs.label.theme": "Тема",
     "form.prefs.label.timezone": "Часовой пояс",
@@ -430,11 +431,6 @@
     "page.api_keys.table.last_used_at": "Последнее использование",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
-    "page.categories_count": [
-        "%d категория",
-        "%d категории",
-        "%d категорий"
-    ],
     "page.categories.entries": "Статьи",
     "page.categories.feed_count": [
         "Есть %d подписка.",
@@ -444,6 +440,11 @@
     "page.categories.feeds": "Подписки",
     "page.categories.no_feed": "Нет подписок.",
     "page.categories.title": "Категории",
+    "page.categories_count": [
+        "%d категория",
+        "%d категории",
+        "%d категорий"
+    ],
     "page.category_label": "Категории: %s",
     "page.edit_category.title": "Изменить категорию: %s",
     "page.edit_feed.etag_header": "Заголовок ETag:",
@@ -552,29 +553,29 @@
     "page.settings.webauthn.passkeys": "Ключи доступа",
     "page.settings.webauthn.register": "Зарегистрировать пароль",
     "page.settings.webauthn.register.error": "Не удается зарегистрировать пароль",
+    "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d общедоступная статья",
         "%d общедоступных статьи",
         "%d общедоступных статей"
     ],
-    "page.shared_entries.title": "Общедоступные статьи",
+    "page.starred.title": "Избранное",
     "page.starred_entry_count": [
         "%d избранная статья",
         "%d избранные статьи",
         "%d избранных статей"
     ],
-    "page.starred.title": "Избранное",
     "page.total_entry_count": [
         "%d статья всего",
         "%d статьи всего",
         "%d статей всего"
     ],
+    "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d непрочитанная статья",
         "%d непрочитанных статьи",
         "%d непрочитанных статей"
     ],
-    "page.unread.title": "Непрочитанное",
     "page.users.actions": "Действия",
     "page.users.admin.no": "Нет",
     "page.users.admin.yes": "Да",

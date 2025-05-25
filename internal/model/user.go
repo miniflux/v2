@@ -41,6 +41,7 @@ type User struct {
 	MediaPlaybackRate               float64    `json:"media_playback_rate"`
 	BlockFilterEntryRules           string     `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules            string     `json:"keep_filter_entry_rules"`
+	AlwaysOpenExternalLinks         bool       `json:"always_open_external_links"`
 }
 
 // UserCreationRequest represents the request to create a user.
@@ -82,6 +83,7 @@ type UserModificationRequest struct {
 	MediaPlaybackRate               *float64 `json:"media_playback_rate"`
 	BlockFilterEntryRules           *string  `json:"block_filter_entry_rules"`
 	KeepFilterEntryRules            *string  `json:"keep_filter_entry_rules"`
+	AlwaysOpenExternalLinks         *bool    `json:"always_open_external_links"`
 }
 
 // Patch updates the User object with the modification request.
@@ -196,6 +198,10 @@ func (u *UserModificationRequest) Patch(user *User) {
 
 	if u.KeepFilterEntryRules != nil {
 		user.KeepFilterEntryRules = *u.KeepFilterEntryRules
+	}
+
+	if u.AlwaysOpenExternalLinks != nil {
+		user.AlwaysOpenExternalLinks = *u.AlwaysOpenExternalLinks
 	}
 }
 

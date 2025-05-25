@@ -88,6 +88,11 @@ func (h *handler) showUnreadCategoryEntryPage(w http.ResponseWriter, r *http.Req
 		}
 	}
 
+	if user.AlwaysOpenExternalLinks {
+		html.Redirect(w, r, entry.URL)
+		return
+	}
+
 	sess := session.New(h.store, request.SessionID(r))
 	view := view.New(h.tpl, r, sess)
 	view.Set("entry", entry)

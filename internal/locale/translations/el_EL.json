@@ -348,6 +348,7 @@
     "form.prefs.label.mark_read_on_view": "Αυτόματη επισήμανση καταχωρήσεων ως αναγνωσμένων κατά την προβολή",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Ταχύτητα αναπαραγωγής του ήχου/βίντεο",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "Εμφάνιση εκτιμώμενου χρόνου ανάγνωσης για άρθρα",
     "form.prefs.label.theme": "Θέμα",
     "form.prefs.label.timezone": "Ζώνη Ώρας",
@@ -428,10 +429,6 @@
     "page.api_keys.table.last_used_at": "Τελευταία Χρήση",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Κλειδιά API",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.categories.entries": "Άρθρα",
     "page.categories.feed_count": [
         "Υπάρχει μία %d ροή.",
@@ -440,6 +437,10 @@
     "page.categories.feeds": "Συνδρομές",
     "page.categories.no_feed": "Καμία ροή.",
     "page.categories.title": "Κατηγορίες",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Επεξεργασία κατηγορίας: % s",
     "page.edit_feed.etag_header": "Κεφαλίδα ETag:",
@@ -545,25 +546,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Εγγραφή κωδικού πρόσβασης",
     "page.settings.webauthn.register.error": "Δεν είναι δυνατή η εγγραφή του κωδικού πρόσβασης",
+    "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
+    "page.starred.title": "Αγαπημένo",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
-    "page.starred.title": "Αγαπημένo",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
+    "page.unread.title": "Μη αναγνωσμένα",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
-    "page.unread.title": "Μη αναγνωσμένα",
     "page.users.actions": "Eνέργειες",
     "page.users.admin.no": "Όχι",
     "page.users.admin.yes": "Ναι.",

@@ -346,6 +346,7 @@
     "form.prefs.label.mark_read_on_view": "查看时自动将条目标记为已读",
     "form.prefs.label.mark_read_on_view_or_media_completion": "当浏览时标记条目为已读。对于音频/视频，当播放完成90%%时标记为已读",
     "form.prefs.label.media_playback_rate": "音频/视频的播放速度",
+    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
     "form.prefs.label.show_reading_time": "显示文章的预计阅读时间",
     "form.prefs.label.theme": "主题",
     "form.prefs.label.timezone": "时区",
@@ -426,9 +427,6 @@
     "page.api_keys.table.last_used_at": "最后使用",
     "page.api_keys.table.token": "令牌",
     "page.api_keys.title": "API 密钥",
-    "page.categories_count": [
-        "%d 分类"
-    ],
     "page.categories.entries": "查看内容",
     "page.categories.feed_count": [
         "有 %d 个源"
@@ -436,6 +434,9 @@
     "page.categories.feeds": "查看源",
     "page.categories.no_feed": "没有源",
     "page.categories.title": "分类",
+    "page.categories_count": [
+        "%d 分类"
+    ],
     "page.category_label": "分类: %s",
     "page.edit_category.title": "编辑分类 : %s",
     "page.edit_feed.etag_header": "ETag 标题：",
@@ -538,21 +539,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "注册 Passkey",
     "page.settings.webauthn.register.error": "无法注册 Passkey",
+    "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
         "%d 已分享的文章"
     ],
-    "page.shared_entries.title": "已分享的文章",
+    "page.starred.title": "收藏",
     "page.starred_entry_count": [
         "%d 收藏的文章"
     ],
-    "page.starred.title": "收藏",
     "page.total_entry_count": [
         "%d 文章总数"
     ],
+    "page.unread.title": "未读",
     "page.unread_entry_count": [
         "%d 未读的文章"
     ],
-    "page.unread.title": "未读",
     "page.users.actions": "操作",
     "page.users.admin.no": "否",
     "page.users.admin.yes": "是",
