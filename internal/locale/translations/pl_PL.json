@@ -350,7 +350,7 @@
     "form.prefs.label.mark_read_on_view": "Automatycznie oznacz wpisy jako przeczytane podczas przeglądania",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Oznacz wpisy jako przeczytane po wyświetleniu. W przypadku audio i wideo oznacz jako przeczytane po ukończeniu 90%%",
     "form.prefs.label.media_playback_rate": "Szybkość odtwarzania audio i wideo",
-    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
+    "form.prefs.label.always_open_external_links": "Czytaj artykuły, otwierając łącza zewnętrzne",
     "form.prefs.label.show_reading_time": "Pokaż szacowany czas czytania wpisów",
     "form.prefs.label.theme": "Wygląd",
     "form.prefs.label.timezone": "Strefa czasowa",
