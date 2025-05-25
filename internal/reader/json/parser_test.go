@@ -41,6 +41,10 @@ func TestParseJsonFeedVersion1(t *testing.T) {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
 	}
 
+	if feed.Description != "" {
+		t.Errorf("Incorrect description, got: %s", feed.Description)
+	}
+
 	if feed.FeedURL != "https://example.org/feed.json" {
 		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
 	}
@@ -87,6 +91,26 @@ func TestParseJsonFeedVersion1(t *testing.T) {
 
 	if feed.Entries[1].Content != "<p>Hello, world!</p>" {
 		t.Errorf("Incorrect entry content, got: %s", feed.Entries[1].Content)
+	}
+}
+
+func TestParseFeedWithDescription(t *testing.T) {
+	data := `{
+		"version": "https://jsonfeed.org/version/1",
+		"title": "My Example Feed",
+		"description": "This is a sample feed description.",
+		"home_page_url": "https://example.org/",
+		"feed_url": "https://example.org/feed.json",
+		"items": []
+	}`
+
+	feed, err := Parse("https://example.org/feed.json", bytes.NewBufferString(data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Description != "This is a sample feed description." {
+		t.Errorf("Incorrect description, got: %s", feed.Description)
 	}
 }
 

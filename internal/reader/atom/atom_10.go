@@ -39,6 +39,10 @@ type Atom10Feed struct {
 	// atom:feed elements MUST contain exactly one atom:title element.
 	Title Atom10Text `xml:"http://www.w3.org/2005/Atom title"`
 
+	// The "atom:subtitle" element is a Text construct that
+	// contains a human-readable description or subtitle for the feed.
+	Subtitle Atom10Text `xml:"http://www.w3.org/2005/Atom subtitle"`
+
 	// The "atom:author" element is a Person construct that indicates the
 	// author of the entry or feed.
 	//

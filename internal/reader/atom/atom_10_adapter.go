@@ -55,6 +55,9 @@ func (a *Atom10Adapter) BuildFeed(baseURL string) *model.Feed {
 		feed.Title = feed.SiteURL
 	}
 
+	// Populate the feed description.
+	feed.Description = a.atomFeed.Subtitle.Body()
+
 	// Populate the feed icon.
 	if a.atomFeed.Icon != "" {
 		if absoluteIconURL, err := urllib.AbsoluteURL(feed.SiteURL, a.atomFeed.Icon); err == nil {
