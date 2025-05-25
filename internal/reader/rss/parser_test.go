@@ -67,6 +67,10 @@ func TestParseRss2Sample(t *testing.T) {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
 	}
 
+	if feed.Description != "Liftoff to Space Exploration." {
+		t.Errorf("Incorrect description, got: %s", feed.Description)
+	}
+
 	if feed.FeedURL != "http://liftoff.msfc.nasa.gov/rss.xml" {
 		t.Errorf("Incorrect feed URL, got: %s", feed.FeedURL)
 	}
@@ -235,6 +239,14 @@ func TestParseEntryWithoutTitleAndDescription(t *testing.T) {
 	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if feed.Description != "" {
+		t.Errorf("Expected empty feed description, got: %s", feed.Description)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Errorf("Expected 1 entry, got: %d", len(feed.Entries))
 	}
 
 	if feed.Entries[0].Title != "https://example.org/item" {

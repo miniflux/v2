@@ -23,8 +23,7 @@ func TestParseRDFSample(t *testing.T) {
 		<title>XML.com</title>
 		<link>http://xml.com/pub</link>
 		<description>
-		  XML.com features a rich mix of information and services
-		  for the XML community.
+		  XML.com features a rich mix of information and services for the XML community.
 		</description>
 
 		<image rdf:resource="http://xml.com/universal/images/xml_tiny.gif" />
@@ -82,6 +81,10 @@ func TestParseRDFSample(t *testing.T) {
 
 	if feed.Title != "XML.com" {
 		t.Errorf("Incorrect title, got: %s", feed.Title)
+	}
+
+	if feed.Description != "XML.com features a rich mix of information and services for the XML community." {
+		t.Errorf("Incorrect description, got: %s", feed.Description)
 	}
 
 	if feed.FeedURL != "http://xml.com/pub/rdf.xml" {

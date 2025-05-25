@@ -82,6 +82,29 @@ func TestParseAtomSample(t *testing.T) {
 	}
 }
 
+func TestParseFeedWithSubtitle(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+	<feed xmlns="http://www.w3.org/2005/Atom">
+	  <title>Example Feed</title>
+	  <subtitle>This is a subtitle</subtitle>
+	  <link href="http://example.org/"/>
+	  <updated>2003-12-13T18:30:02Z</updated>
+	  <author>
+		<name>John Doe</name>
+	  </author>
+	  <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+	</feed>`
+
+	feed, err := Parse("http://example.org/feed.xml", bytes.NewReader([]byte(data)), "10")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if feed.Description != "This is a subtitle" {
+		t.Errorf("Incorrect description, got: %s", feed.Description)
+	}
+}
+
 func TestParseFeedWithoutTitle(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<feed xmlns="http://www.w3.org/2005/Atom">
