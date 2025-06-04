@@ -94,6 +94,9 @@ type Integration struct {
 	OmnivoreEnabled                  bool
 	OmnivoreAPIKey                   string
 	OmnivoreURL                      string
+	KarakeepEnabled                  bool
+	KarakeepAPIKey                   string
+	KarakeepURL                      string
 	RaindropEnabled                  bool
 	RaindropToken                    string
 	RaindropCollectionID             string

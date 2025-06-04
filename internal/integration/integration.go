@@ -13,6 +13,7 @@ import (
 	"miniflux.app/v2/internal/integration/discord"
 	"miniflux.app/v2/internal/integration/espial"
 	"miniflux.app/v2/internal/integration/instapaper"
+	"miniflux.app/v2/internal/integration/karakeep"
 	"miniflux.app/v2/internal/integration/linkace"
 	"miniflux.app/v2/internal/integration/linkding"
 	"miniflux.app/v2/internal/integration/linkwarden"
@@ -420,6 +421,24 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		client := omnivore.NewClient(userIntegrations.OmnivoreAPIKey, userIntegrations.OmnivoreURL)
 		if err := client.SaveUrl(entry.URL); err != nil {
 			slog.Error("Unable to send entry to Omnivore",
+				slog.Int64("user_id", userIntegrations.UserID),
+				slog.Int64("entry_id", entry.ID),
+				slog.String("entry_url", entry.URL),
+				slog.Any("error", err),
+			)
+		}
+	}
+
+	if userIntegrations.KarakeepEnabled {
+		slog.Debug("Sending entry to Karakeep",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		client := karakeep.NewClient(userIntegrations.KarakeepAPIKey, userIntegrations.KarakeepURL)
+		if err := client.SaveUrl(entry.URL); err != nil {
+			slog.Error("Unable to send entry to Karakeep",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),

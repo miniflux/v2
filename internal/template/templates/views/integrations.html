@@ -364,6 +364,25 @@
         </div>
     </details>
 
+    <details {{ if .form.KarakeepEnabled }}open{{ end }}>
+        <summary>Karakeep</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="karakeep_enabled" value="1" {{ if .form.KarakeepEnabled }}checked{{ end }}> {{ t "form.integration.karakeep_activate" }}
+            </label>
+
+            <label for="form-karakeep-api-key">{{ t "form.integration.karakeep_api_key" }}</label>
+            <input type="text" name="karakeep_api_key" id="form-karakeep-api-key" value="{{ .form.KarakeepAPIKey }}" spellcheck="false">
+
+            <label for="form-karakeep-url">{{ t "form.integration.karakeep_url" }}</label>
+            <input type="url" name="karakeep_url" id="form-karakeep-url" value="{{ .form.KarakeepURL }}" placeholder="https://try.karakeep.app/api/v1/bookmarks" spellcheck="false">
+
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.PinboardEnabled }}open{{ end }}>
         <summary>Pinboard</summary>
         <div class="form-section">
