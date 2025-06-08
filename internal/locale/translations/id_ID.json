@@ -434,7 +434,7 @@
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Kunci API",
     "page.categories_count": [
-        "%d category"
+        "%d kategori"
     ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
@@ -546,18 +546,18 @@
     "page.settings.webauthn.register": "Daftar passkey",
     "page.settings.webauthn.register.error": "Tidak dapat mendaftarkan passkey",
     "page.shared_entries_count": [
-        "%d shared entry"
+        "%d entri yang dibagikan"
     ],
     "page.shared_entries.title": "Entri yang Dibagikan",
     "page.starred_entry_count": [
-        "%d starred entry"
+        "%d entri dimarkahi"
     ],
     "page.starred.title": "Markah",
     "page.total_entry_count": [
-        "%d entry in total"
+        "%d entri secara total"
     ],
     "page.unread_entry_count": [
-        "%d unread entry"
+        "%d entri belum dibaca"
     ],
     "page.unread.title": "Belum Dibaca",
     "page.users.actions": "Tindakan",

@@ -13,7 +13,7 @@
     "action.update": "更新",
     "alert.account_linked": "外部アカウントとリンクされました!",
     "alert.account_unlinked": "外部アカウントとのリンクが解除されました!",
-    "alert.background_feed_refresh": "All feeds are being refreshed in the background. You can continue to use Miniflux while this process is running.",
+    "alert.background_feed_refresh": "すべてのフィードがバックグラウンドで更新されています。この処理中も Miniflux を使い続けることができます。",
     "alert.feed_error": "このフィードには問題があります。",
     "alert.no_bookmark": "現在星付きはありません。",
     "alert.no_category": "カテゴリが存在しません。",
@@ -30,22 +30,22 @@
     "alert.pocket_linked": "Pocket アカウントとリンクされました!",
     "alert.prefs_saved": "設定情報は保存されました!",
     "alert.too_many_feeds_refresh": [
-        "You have triggered too many feed refreshes. Please wait %d minute before trying again."
+        "フィードの更新を要求しすぎました。%d 分後に再度お試しください。"
     ],
     "confirm.loading": "実行中…",
     "confirm.no": "いいえ",
     "confirm.question": "よろしいですか?",
     "confirm.question.refresh": "強制的に更新しますか？",
     "confirm.yes": "はい",
-    "enclosure_media_controls.seek": "Seek:",
-    "enclosure_media_controls.seek.title": "Seek %s seconds",
-    "enclosure_media_controls.speed": "Speed:",
-    "enclosure_media_controls.speed.faster": "Faster",
-    "enclosure_media_controls.speed.faster.title": "Faster by %sx",
-    "enclosure_media_controls.speed.reset": "Reset",
-    "enclosure_media_controls.speed.reset.title": "Reset speed to 1x",
-    "enclosure_media_controls.speed.slower": "Slower",
-    "enclosure_media_controls.speed.slower.title": "Slower by %sx",
+    "enclosure_media_controls.seek": "シーク:",
+    "enclosure_media_controls.seek.title": "%s 秒シーク",
+    "enclosure_media_controls.speed": "速度:",
+    "enclosure_media_controls.speed.faster": "速く",
+    "enclosure_media_controls.speed.faster.title": "%sx 速く",
+    "enclosure_media_controls.speed.reset": "リセット",
+    "enclosure_media_controls.speed.reset.title": "速度を1xにリセット",
+    "enclosure_media_controls.speed.slower": "遅く",
+    "enclosure_media_controls.speed.slower.title": "%sx 遅く",
     "entry.bookmark.toast.off": "星を外しました",
     "entry.bookmark.toast.on": "星を付けました",
     "entry.bookmark.toggle.off": "星を外す",
@@ -82,22 +82,22 @@
     "error.api_key_already_exists": "この API キーは既に存在します。",
     "error.bad_credentials": "ユーザー名かパスワードが間違っています。",
     "error.category_already_exists": "このカテゴリは既に存在します。",
-    "error.category_not_found": "This category does not exist or does not belong to this user.",
+    "error.category_not_found": "このカテゴリは存在しないか、このユーザーに属していません。",
     "error.database_error": "Database error: %v.",
     "error.different_passwords": "パスワードが一致しません。",
     "error.duplicate_fever_username": "既に同じ名前の Fever ユーザー名が使われています!",
     "error.duplicate_googlereader_username": "既に同じ名前の Google Reader ユーザー名が使われています!",
     "error.duplicate_linked_account": "別なユーザーが既にこのサービスの同じユーザーとリンクしています。",
-    "error.duplicated_feed": "This feed already exists.",
+    "error.duplicated_feed": "このフィードは既に存在します。",
     "error.empty_file": "このファイルは空です。",
     "error.entries_per_page_invalid": "ページあたりの記事数が無効です。",
     "error.feed_already_exists": "このフィードは既に存在します。",
     "error.feed_category_not_found": "このカテゴリは存在しないか、このユーザーに属していません。",
-    "error.feed_format_not_detected": "Unable to detect feed format: %v.",
+    "error.feed_format_not_detected": "フィードの形式を検出できません: %v.",
     "error.feed_invalid_blocklist_rule": "ブロックリストルールが無効です。",
     "error.feed_invalid_keeplist_rule": "リストの保持ルールが無効です。",
     "error.feed_mandatory_fields": "URL と カテゴリが必要です。",
-    "error.feed_not_found": "This feed does not exist or does not belong to this user.",
+    "error.feed_not_found": "このフィードは存在しないか、このユーザーに属していません。",
     "error.feed_title_not_empty": "フィードのタイトルを空にすることはできません。",
     "error.feed_url_not_empty": "フィード URL を空にすることはできません。",
     "error.fields_mandatory": "すべての項目が必要です。",
@@ -120,19 +120,19 @@
     "error.invalid_display_mode": "Web アプリの表示モードが無効です。",
     "error.invalid_entry_direction": "記事の表示順が無効です。",
     "error.invalid_entry_order": "記事の表示順が無効です。",
-    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
+    "error.invalid_feed_proxy_url": "プロキシURLが無効です。",
     "error.invalid_feed_url": "フィード URL が無効です。",
     "error.invalid_gesture_nav": "ジェスチャー ナビゲーションが無効です。",
     "error.invalid_language": "言語が無効です。",
     "error.invalid_site_url": "サイト URL が無効です。",
     "error.invalid_theme": "テーマが無効です。",
     "error.invalid_timezone": "タイムゾーンが無効です。",
-    "error.network_operation": "Miniflux is not able to reach this website due to a network error: %v.",
-    "error.network_timeout": "This website is too slow and the request timed out: %v",
+    "error.network_operation": "Miniflux はネットワークエラーのためこのウェブサイトに到達できません: %v.",
+    "error.network_timeout": "このウェブサイトは応答が遅すぎるためタイムアウトしました: %v",
     "error.password_min_length": "パスワードは6文字以上である必要があります。",
     "error.pocket_access_token": "Pocket の access token が取得できません!",
     "error.pocket_request_token": "Pocket の request token が取得できません!",
-    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
+    "error.proxy_url_not_empty": "プロキシURLを空にすることはできません。",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
     "error.settings_block_rule_regex_required": "Invalid Block rule: rule #%d's pattern is not provided",
@@ -152,8 +152,8 @@
     "error.unable_to_create_api_key": "この API キーを作成できません。",
     "error.unable_to_create_category": "このカテゴリは作成できません。",
     "error.unable_to_create_user": "このユーザーは作成できません。",
-    "error.unable_to_detect_rssbridge": "Unable to detect feed using RSS-Bridge: %v.",
-    "error.unable_to_parse_feed": "Unable to parse this feed: %v.",
+    "error.unable_to_detect_rssbridge": "RSS-Bridge を使ってフィードを検出できません: %v.",
+    "error.unable_to_parse_feed": "このフィードを解析できません: %v.",
     "error.unable_to_update_category": "このカテゴリは更新できません。",
     "error.unable_to_update_feed": "このフィードは更新できません。",
     "error.unable_to_update_user": "このユーザーは更新できません。",
@@ -434,7 +434,7 @@
     "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
     "page.categories_count": [
-        "%d category"
+        "%d 件のカテゴリ"
     ],
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [
@@ -521,7 +521,7 @@
     "page.offline.refresh_page": "ページを更新してみてください",
     "page.offline.title": "オフラインモード",
     "page.read_entry_count": [
-        "%d read entry"
+        "%d 件の既読エントリ"
     ],
     "page.search.title": "検索結果",
     "page.sessions.table.actions": "アクション",
@@ -546,18 +546,18 @@
     "page.settings.webauthn.register": "パスキーを登録する",
     "page.settings.webauthn.register.error": "パスキーを登録できません",
     "page.shared_entries_count": [
-        "%d shared entry"
+        "%d 件の共有エントリ"
     ],
     "page.shared_entries.title": "共有エントリ",
     "page.starred_entry_count": [
-        "%d starred entry"
+        "%d 件の星付きエントリ"
     ],
     "page.starred.title": "星付き",
     "page.total_entry_count": [
-        "%d entry in total"
+        "合計 %d 件のエントリ"
     ],
     "page.unread_entry_count": [
-        "%d unread entry"
+        "%d 件の未読エントリ"
     ],
     "page.unread.title": "未読",
     "page.users.actions": "アクション",
@@ -569,14 +569,14 @@
     "page.users.title": "ユーザー一覧",
     "page.users.username": "ユーザー名",
     "page.webauthn_rename.title": "Rename Passkey",
-    "pagination.first": "First",
-    "pagination.last": "Last",
+    "pagination.first": "最初",
+    "pagination.last": "最後",
     "pagination.next": "次",
     "pagination.previous": "前",
     "search.label": "検索",
     "search.placeholder": "…を検索",
-    "search.submit": "Search",
-    "skip_to_content": "Skip to content",
+    "search.submit": "検索",
+    "skip_to_content": "コンテンツへスキップ",
     "time_elapsed.days": [
         "%d 日前"
     ],

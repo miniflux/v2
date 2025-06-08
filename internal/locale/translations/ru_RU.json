@@ -338,7 +338,7 @@
     "form.prefs.fieldset.global_feed_settings": "Глобальные настройки подписок",
     "form.prefs.fieldset.reader_settings": "Настройки чтения",
     "form.prefs.help.external_font_hosts": "Список разрешённых внешних хостов для шрифтов, разделенных пробелами. Например: \"fonts.gstatic.com fonts.googleapis.com\".",
-    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
+    "form.prefs.label.always_open_external_links": "Читать статьи, открывая внешние ссылки",
     "form.prefs.label.categories_sorting_order": "Сортировка категорий",
     "form.prefs.label.cjk_reading_speed": "Скорость чтения на китайском, корейском и японском языках (знаков в минуту)",
     "form.prefs.label.custom_css": "Пользовательский CSS",
