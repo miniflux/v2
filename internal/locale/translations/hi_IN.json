@@ -77,6 +77,10 @@
     "entry.status.toast.read": "पढ़ा हुआ चिह्नित करे",
     "entry.status.toast.unread": "अपठित के रूप में चिह्नित",
     "entry.tags.label": "टैग:",
+    "entry.tags.more_tags_label": [
+        "Show %d more tag",
+        "Show %d more tags"
+    ],
     "entry.unshare.label": "न साझा कारें",
     "error.api_key_already_exists": "यह एपीआई कुंजी पहले से मौजूद है।",
     "error.bad_credentials": "अमान्य उपयोगकर्ता नाम या पासवर्ड।",
@@ -432,6 +436,10 @@
     "page.api_keys.table.last_used_at": "आखरी इस्त्तमाल किया गया",
     "page.api_keys.table.token": "टोकन",
     "page.api_keys.title": "एपीआई कुंजी",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "विषयवस्तुया",
     "page.categories.feed_count": [
         "%d फ़ीड बाकी है।",
@@ -440,10 +448,6 @@
     "page.categories.feeds": "सदस्यता ले",
     "page.categories.no_feed": "कोई फ़ीड नहीं है।",
     "page.categories.title": "श्रेणियाँ",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "%s श्रेणी संपाद करे",
     "page.edit_feed.etag_header": "ईटाग हैडर:",
@@ -549,25 +553,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "रजिस्टर पासकी",
     "page.settings.webauthn.register.error": "पासकी पंजीकृत करने में असमर्थ",
-    "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "तारांकित",
+    "page.shared_entries.title": "साझा किया हुआ प्रविष्टि",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "तारांकित",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "अपठित",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "अपठित",
     "page.users.actions": "कार्रवाई",
     "page.users.admin.no": "नहीं",
     "page.users.admin.yes": "हां",

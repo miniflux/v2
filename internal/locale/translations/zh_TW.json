@@ -75,6 +75,9 @@
     "entry.status.toast.read": "已標記為已讀",
     "entry.status.toast.unread": "已標記為未讀",
     "entry.tags.label": "標籤：",
+    "entry.tags.more_tags_label": [
+        "還有 %d 個標籤"
+    ],
     "entry.unshare.label": "取消分享",
     "error.api_key_already_exists": "此 API 金鑰已存在。",
     "error.bad_credentials": "使用者名稱或密碼無效",
@@ -430,6 +433,9 @@
     "page.api_keys.table.last_used_at": "最後使用",
     "page.api_keys.table.token": "金鑰",
     "page.api_keys.title": "API 金鑰",
+    "page.categories_count": [
+        "%d 個分類"
+    ],
     "page.categories.entries": "檢視內容",
     "page.categories.feed_count": [
         "有 %d 個 Feed"
@@ -437,9 +443,6 @@
     "page.categories.feeds": "檢視 Feeds",
     "page.categories.no_feed": "沒有 Feed",
     "page.categories.title": "分類",
-    "page.categories_count": [
-        "%d 個分類"
-    ],
     "page.category_label": "分類：%s",
     "page.edit_category.title": "編輯分類 : %s",
     "page.edit_feed.etag_header": "ETag 標頭：",
@@ -542,21 +545,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "註冊 Passkey",
     "page.settings.webauthn.register.error": "無法註冊 Passkey",
-    "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
         "已分享 %d 篇文章"
     ],
-    "page.starred.title": "收藏",
+    "page.shared_entries.title": "已分享的文章",
     "page.starred_entry_count": [
         "%d 篇收藏文章"
     ],
+    "page.starred.title": "收藏",
     "page.total_entry_count": [
         "總共 %d 篇文章"
     ],
-    "page.unread.title": "未讀",
     "page.unread_entry_count": [
         "%d 篇未讀文章"
     ],
+    "page.unread.title": "未讀",
     "page.users.actions": "操作",
     "page.users.admin.no": "否",
     "page.users.admin.yes": "是",

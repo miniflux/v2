@@ -79,6 +79,11 @@
     "entry.status.toast.read": "Відмічено прочитаним",
     "entry.status.toast.unread": "Відмічено непрочитаним",
     "entry.tags.label": "Теги:",
+    "entry.tags.more_tags_label": [
+        "Ще %d тег",
+        "Ще %d теги",
+        "Ще %d тегів"
+    ],
     "entry.unshare.label": "Не ділитися",
     "error.api_key_already_exists": "Такий ключ API вже існує.",
     "error.bad_credentials": "Невірне ім’я користувача або пароль.",
@@ -434,6 +439,11 @@
     "page.api_keys.table.last_used_at": "Дата останнього використання",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "Ключі API",
+    "page.categories_count": [
+        "%d category",
+        "%d categories",
+        "%d categories"
+    ],
     "page.categories.entries": "Статті",
     "page.categories.feed_count": [
         "Містить %d стрічку.",
@@ -443,11 +453,6 @@
     "page.categories.feeds": "Підписки",
     "page.categories.no_feed": "Немає стрічки.",
     "page.categories.title": "Категорії",
-    "page.categories_count": [
-        "%d category",
-        "%d categories",
-        "%d categories"
-    ],
     "page.category_label": "Категорія: %s",
     "page.edit_category.title": "Редагування категорії: %s",
     "page.edit_feed.etag_header": "Заголовок ETag:",
@@ -556,29 +561,29 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Зареєструвати пароль",
     "page.settings.webauthn.register.error": "Не вдалося зареєструвати ключ доступу",
-    "page.shared_entries.title": "Спільні записи",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries",
         "%d shared entries"
     ],
-    "page.starred.title": "З зірочкою",
+    "page.shared_entries.title": "Спільні записи",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries",
         "%d starred entries"
     ],
+    "page.starred.title": "З зірочкою",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Непрочитане",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries",
         "%d unread entries"
     ],
+    "page.unread.title": "Непрочитане",
     "page.users.actions": "Дії",
     "page.users.admin.no": "Ні",
     "page.users.admin.yes": "Так",

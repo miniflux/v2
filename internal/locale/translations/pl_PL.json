@@ -79,6 +79,11 @@
     "entry.status.toast.read": "Oznaczono jako przeczytany",
     "entry.status.toast.unread": "Oznaczono jako nieprzeczytany",
     "entry.tags.label": "Znaczniki:",
+    "entry.tags.more_tags_label": [
+        "Dodaj znacznik",
+        "Dodaj %d znaczniki",
+        "Dodaj %d znaczników"
+    ],
     "entry.unshare.label": "Cofnij udostępnianie",
     "error.api_key_already_exists": "Ten klucz API już istnieje.",
     "error.bad_credentials": "Nieprawidłowa nazwa użytkownika lub hasło.",
@@ -434,6 +439,11 @@
     "page.api_keys.table.last_used_at": "Ostatnio używane",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Klucze API",
+    "page.categories_count": [
+        "%d kategoria",
+        "%d kategorie",
+        "%d kategorii"
+    ],
     "page.categories.entries": "Wpisy",
     "page.categories.feed_count": [
         "Jest %d kanał.",
@@ -443,11 +453,6 @@
     "page.categories.feeds": "Kanały",
     "page.categories.no_feed": "Brak kanałów.",
     "page.categories.title": "Kategorie",
-    "page.categories_count": [
-        "%d kategoria",
-        "%d kategorie",
-        "%d kategorii"
-    ],
     "page.category_label": "Kategoria: %s",
     "page.edit_category.title": "Edytuj kategorię: %s",
     "page.edit_feed.etag_header": "Nagłówek ETag:",
@@ -556,29 +561,29 @@
     "page.settings.webauthn.passkeys": "Klucze dostępu",
     "page.settings.webauthn.register": "Zarejestruj klucz dostępu",
     "page.settings.webauthn.register.error": "Nie można zarejestrować klucza dostępu",
-    "page.shared_entries.title": "Udostępnione wpisy",
     "page.shared_entries_count": [
         "%d udostępniony wpis",
         "%d udostępnione wpisy",
         "%d udostępnionych wpisów"
     ],
-    "page.starred.title": "Ulubione",
+    "page.shared_entries.title": "Udostępnione wpisy",
     "page.starred_entry_count": [
         "%d ulubiony wpis",
         "%d ulubione wpisy",
         "%d ulubionych wpisów"
     ],
+    "page.starred.title": "Ulubione",
     "page.total_entry_count": [
         "%d wpis łącznie",
         "%d wpisy łącznie",
         "%d wpisów łącznie"
     ],
-    "page.unread.title": "Nieprzeczytane",
     "page.unread_entry_count": [
         "%d nieprzeczytany wpis",
         "%d nieprzeczytane wpisy",
         "%d nieprzeczytanych wpisów"
     ],
+    "page.unread.title": "Nieprzeczytane",
     "page.users.actions": "Działania",
     "page.users.admin.no": "Nie",
     "page.users.admin.yes": "Tak",

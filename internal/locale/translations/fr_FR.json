@@ -77,6 +77,10 @@
     "entry.status.toast.read": "Marqué comme lu",
     "entry.status.toast.unread": "Marqué comme non lu",
     "entry.tags.label": "Libellés :",
+    "entry.tags.more_tags_label": [
+        "Afficher %d libellé supplémentaire",
+        "Afficher %d libellés supplémentaires"
+    ],
     "entry.unshare.label": "Enlever le partage",
     "error.api_key_already_exists": "Cette clé d'API existe déjà.",
     "error.bad_credentials": "Mauvais identifiant ou mot de passe.",
@@ -331,7 +335,7 @@
     "form.prefs.fieldset.global_feed_settings": "Paramètres globaux des abonnements",
     "form.prefs.fieldset.reader_settings": "Paramètres du lecteur",
     "form.prefs.help.external_font_hosts": "Liste de domaine externes autorisés, séparés par des espaces. Par exemple : « fonts.gstatic.com fonts.googleapis.com ».",
-    "form.prefs.label.always_open_external_links": "Read articles by opening external links",
+    "form.prefs.label.always_open_external_links": "Lire les articles en ouvrant les liens externes",
     "form.prefs.label.categories_sorting_order": "Colonne de tri des catégories",
     "form.prefs.label.cjk_reading_speed": "Vitesse de lecture pour le chinois, le coréen et le japonais (caractères par minute)",
     "form.prefs.label.custom_css": "Feuille de style personnalisée",
@@ -432,6 +436,10 @@
     "page.api_keys.table.last_used_at": "Dernière utilisation",
     "page.api_keys.table.token": "Jeton",
     "page.api_keys.title": "Clés d'API",
+    "page.categories_count": [
+        "%d catégorie",
+        "%d catégories"
+    ],
     "page.categories.entries": "Articles",
     "page.categories.feed_count": [
         "Il y a %d abonnement.",
@@ -440,10 +448,6 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Aucun abonnement.",
     "page.categories.title": "Catégories",
-    "page.categories_count": [
-        "%d catégorie",
-        "%d catégories"
-    ],
     "page.category_label": "Catégorie : %s",
     "page.edit_category.title": "Modification de la catégorie : %s",
     "page.edit_feed.etag_header": "En-tête ETag :",
@@ -547,27 +551,27 @@
     "page.settings.webauthn.last_seen_on": "Dernière utilisation",
     "page.settings.webauthn.passkey_name": "Nom de la clé d’accès",
     "page.settings.webauthn.passkeys": "Clés d’accès",
-    "page.settings.webauthn.register": "Enregister une nouvelle clé d’accès",
+    "page.settings.webauthn.register": "Enregistrer une nouvelle clé d’accès",
     "page.settings.webauthn.register.error": "Impossible d'enregistrer la clé d’accès",
-    "page.shared_entries.title": "Articles partagés",
     "page.shared_entries_count": [
         "%d article partagé",
         "%d articles partagés"
     ],
-    "page.starred.title": "Favoris",
+    "page.shared_entries.title": "Articles partagés",
     "page.starred_entry_count": [
         "%d favori",
         "%d favoris"
     ],
+    "page.starred.title": "Favoris",
     "page.total_entry_count": [
         "%d article au total",
         "%d articles au total"
     ],
-    "page.unread.title": "Non lus",
     "page.unread_entry_count": [
         "%d article non lu",
         "%d articles non lus"
     ],
+    "page.unread.title": "Non lus",
     "page.users.actions": "Actions",
     "page.users.admin.no": "Non",
     "page.users.admin.yes": "Oui",

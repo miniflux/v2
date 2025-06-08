@@ -79,6 +79,11 @@
     "entry.status.toast.read": "Marcat ca citit",
     "entry.status.toast.unread": "Marcat ca necitit",
     "entry.tags.label": "Etichete:",
+    "entry.tags.more_tags_label": [
+        "Afișează încă o etichetă",
+        "Afișează încă %d etichete",
+        "Afișează încă %d de etichete"
+    ],
     "entry.unshare.label": "Elimină partajarea",
     "error.api_key_already_exists": "Această cheie API există deja.",
     "error.bad_credentials": "Utilizator sau parolă invalide.",
@@ -434,6 +439,11 @@
     "page.api_keys.table.last_used_at": "Utilizat ultima dată",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chei API",
+    "page.categories_count": [
+        "%d categorie",
+        "%d categorii",
+        "%d categorie găsită"
+    ],
     "page.categories.entries": "Intrări",
     "page.categories.feed_count": [
         "Este %d flux.",
@@ -443,11 +453,6 @@
     "page.categories.feeds": "Fluxuri",
     "page.categories.no_feed": "Nici un flux.",
     "page.categories.title": "Categorii",
-    "page.categories_count": [
-        "%d categorie",
-        "%d categorii",
-        "%d categorie găsită"
-    ],
     "page.category_label": "Categorie: %s",
     "page.edit_category.title": "Editare Categorie: %s",
     "page.edit_feed.etag_header": "Antet ETag:",
@@ -556,29 +561,29 @@
     "page.settings.webauthn.passkeys": "Chei Acces",
     "page.settings.webauthn.register": "Înregistrare cheie acces",
     "page.settings.webauthn.register.error": "Eroare la înregistrarea cheii de acces",
-    "page.shared_entries.title": "Înregistrări partajate",
     "page.shared_entries_count": [
         "%d înregistrare partajată",
         "%d înregistrări partajate",
         "%d înregistrări partajate"
     ],
-    "page.starred.title": "Marcate",
+    "page.shared_entries.title": "Înregistrări partajate",
     "page.starred_entry_count": [
         "%d înregistrare marcată",
         "%d Înregistrări marcate",
         "%d Înregistrări marcate"
     ],
+    "page.starred.title": "Marcate",
     "page.total_entry_count": [
         "%d intrare în total",
         "%d intrări în total",
         "%d intrări în total"
     ],
-    "page.unread.title": "Necitite",
     "page.unread_entry_count": [
         "%d înregistrare necitită",
         "%d înregistrări necitite",
         "%d înregistrări necitite"
     ],
+    "page.unread.title": "Necitite",
     "page.users.actions": "Acțiuni",
     "page.users.admin.no": "Nu",
     "page.users.admin.yes": "Da",

@@ -75,6 +75,9 @@
     "entry.status.toast.read": "既読にしました",
     "entry.status.toast.unread": "未読にしました",
     "entry.tags.label": "タグ:",
+    "entry.tags.more_tags_label": [
+        "%d 個のタグ"
+    ],
     "entry.unshare.label": "共有を解除",
     "error.api_key_already_exists": "この API キーは既に存在します。",
     "error.bad_credentials": "ユーザー名かパスワードが間違っています。",
@@ -430,6 +433,9 @@
     "page.api_keys.table.last_used_at": "最終使用",
     "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
+    "page.categories_count": [
+        "%d category"
+    ],
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [
         "%d 件のフィードがあります。"
@@ -437,9 +443,6 @@
     "page.categories.feeds": "フィード一覧",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.title": "カテゴリ",
-    "page.categories_count": [
-        "%d category"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "カテゴリを編集: %s",
     "page.edit_feed.etag_header": "ETag ヘッダー:",
@@ -542,21 +545,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "パスキーを登録する",
     "page.settings.webauthn.register.error": "パスキーを登録できません",
-    "page.shared_entries.title": "共有エントリ",
     "page.shared_entries_count": [
         "%d shared entry"
     ],
-    "page.starred.title": "星付き",
+    "page.shared_entries.title": "共有エントリ",
     "page.starred_entry_count": [
         "%d starred entry"
     ],
+    "page.starred.title": "星付き",
     "page.total_entry_count": [
         "%d entry in total"
     ],
-    "page.unread.title": "未読",
     "page.unread_entry_count": [
         "%d unread entry"
     ],
+    "page.unread.title": "未読",
     "page.users.actions": "アクション",
     "page.users.admin.no": "非管理者",
     "page.users.admin.yes": "管理者",
