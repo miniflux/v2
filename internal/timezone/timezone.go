@@ -4,7 +4,12 @@
 package timezone // import "miniflux.app/v2/internal/timezone"
 
 import (
+	"sync"
 	"time"
+)
+
+var (
+	tzCache = sync.Map{} // Cache for time locations to avoid loading them multiple times.
 )
 
 // Convert converts provided date time to actual timezone.
@@ -42,9 +47,15 @@ func Now(tz string) time.Time {
 }
 
 func getLocation(tz string) *time.Location {
+	if loc, ok := tzCache.Load(tz); ok {
+		return loc.(*time.Location)
+	}
+
 	loc, err := time.LoadLocation(tz)
 	if err != nil {
 		loc = time.Local
 	}
+
+	tzCache.Store(tz, loc)
 	return loc
 }
