@@ -337,7 +337,7 @@
     "form.prefs.fieldset.authentication_settings": "Ustawienia uwierzytelniania",
     "form.prefs.fieldset.global_feed_settings": "Globalne ustawienia kanałów",
     "form.prefs.fieldset.reader_settings": "Ustawienia czytnika",
-    "form.prefs.help.external_font_hosts": "Lista hostów zewnętrznych czcionek, na które należy zezwolić, rozdzielona spacjami. Na przykład: „fonts.gstatic.com fonts.googleapis.com”.",
+    "form.prefs.help.external_font_hosts": "Lista hostów zewnętrznych czcionek, na które należy zezwolić, rozdzielona spacjami. Na przykład: 'fonts.gstatic.com fonts.googleapis.com'.",
     "form.prefs.label.always_open_external_links": "Czytaj artykuły, otwierając łącza zewnętrzne",
     "form.prefs.label.categories_sorting_order": "Sortowanie kategorii",
     "form.prefs.label.cjk_reading_speed": "Szybkość czytania w języku chińskim, koreańskim i japońskim (znaki na minutę)",
