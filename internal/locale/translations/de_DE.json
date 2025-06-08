@@ -77,6 +77,10 @@
     "entry.status.toast.read": "Als gelesen markiert",
     "entry.status.toast.unread": "Als ungelesen markiert",
     "entry.tags.label": "Stichworte:",
+    "entry.tags.more_tags_label": [
+        "Zeige %d weiteres Schlagwort",
+        "Zeige %d weitere Schlagwörter"
+    ],
     "entry.unshare.label": "Nicht teilen",
     "error.api_key_already_exists": "Dieser API-Schlüssel ist bereits vorhanden.",
     "error.bad_credentials": "Benutzername oder Passwort ungültig.",
@@ -432,6 +436,10 @@
     "page.api_keys.table.last_used_at": "Zuletzt verwendeten",
     "page.api_keys.table.token": "Zeichen",
     "page.api_keys.title": "API-Schlüssel",
+    "page.categories_count": [
+        "%d Kategorie",
+        "%d Kategorien"
+    ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
@@ -440,10 +448,6 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.title": "Kategorien",
-    "page.categories_count": [
-        "%d Kategorie",
-        "%d Kategorien"
-    ],
     "page.category_label": "Kategorie: %s",
     "page.edit_category.title": "Kategorie bearbeiten: %s",
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
@@ -549,25 +553,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Hauptschlüssel registrieren",
     "page.settings.webauthn.register.error": "Hauptschlüssel kann nicht registriert werden",
-    "page.shared_entries.title": "Geteilte Artikel",
     "page.shared_entries_count": [
         "%d geteilter Artikel",
         "%d geteilte Artikel"
     ],
-    "page.starred.title": "Lesezeichen",
+    "page.shared_entries.title": "Geteilte Artikel",
     "page.starred_entry_count": [
         "%d Lesezeichen",
         "%d Lesezeichen"
     ],
+    "page.starred.title": "Lesezeichen",
     "page.total_entry_count": [
         "%d Artikel insgesamt",
         "%d Artikel insgesamt"
     ],
-    "page.unread.title": "Ungelesen",
     "page.unread_entry_count": [
         "%d ungelesener Artikel",
         "%d ungelesene Artikel"
     ],
+    "page.unread.title": "Ungelesen",
     "page.users.actions": "Aktionen",
     "page.users.admin.no": "Nein",
     "page.users.admin.yes": "Ja",
@@ -577,13 +581,13 @@
     "page.users.title": "Benutzer",
     "page.users.username": "Benutzername",
     "page.webauthn_rename.title": "Passkey umbenennen",
-    "pagination.first": "First",
-    "pagination.last": "Last",
+    "pagination.first": "Erste",
+    "pagination.last": "Letzte",
     "pagination.next": "Nächste",
     "pagination.previous": "Vorherige",
     "search.label": "Suche",
     "search.placeholder": "Suche...",
-    "search.submit": "Search",
+    "search.submit": "Suchen",
     "skip_to_content": "Zum Inhalt springen",
     "time_elapsed.days": [
         "vor %d Tag",

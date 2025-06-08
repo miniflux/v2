@@ -77,6 +77,10 @@
     "entry.status.toast.read": "Contrassegnato come letto",
     "entry.status.toast.unread": "Contrassegnato come non letto",
     "entry.tags.label": "Tag:",
+    "entry.tags.more_tags_label": [
+        "Show %d more tag",
+        "Show %d more tags"
+    ],
     "entry.unshare.label": "Unshare",
     "error.api_key_already_exists": "Questa chiave API esiste già.",
     "error.bad_credentials": "Nome utente o password non validi.",
@@ -432,6 +436,10 @@
     "page.api_keys.table.last_used_at": "Ultimo uso",
     "page.api_keys.table.token": "Gettone",
     "page.api_keys.title": "Chiavi API",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "Articoli",
     "page.categories.feed_count": [
         "C'è %d feed.",
@@ -440,10 +448,6 @@
     "page.categories.feeds": "Abbonamenti",
     "page.categories.no_feed": "Nessun feed.",
     "page.categories.title": "Categorie",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Modifica categoria: %s",
     "page.edit_feed.etag_header": "Header ETag:",
@@ -549,25 +553,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Registra la chiave di accesso",
     "page.settings.webauthn.register.error": "Impossibile registrare la passkey",
-    "page.shared_entries.title": "Voci condivise",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "Preferiti",
+    "page.shared_entries.title": "Voci condivise",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "Preferiti",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Da leggere",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "Da leggere",
     "page.users.actions": "Azioni",
     "page.users.admin.no": "No",
     "page.users.admin.yes": "Sì",

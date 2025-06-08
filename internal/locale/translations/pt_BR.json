@@ -77,6 +77,10 @@
     "entry.status.toast.read": "Marcado como lido",
     "entry.status.toast.unread": "Marcado como não lido",
     "entry.tags.label": "Etiquetas:",
+    "entry.tags.more_tags_label": [
+        "Show %d more tag",
+        "Show %d more tags"
+    ],
     "entry.unshare.label": "Descompartilhar",
     "error.api_key_already_exists": "Essa chave de API já existe.",
     "error.bad_credentials": "Usuário ou senha são inválidos.",
@@ -432,6 +436,10 @@
     "page.api_keys.table.last_used_at": "Ultima utilização",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chaves de API",
+    "page.categories_count": [
+        "%d category",
+        "%d categories"
+    ],
     "page.categories.entries": "Itens",
     "page.categories.feed_count": [
         "Existe %d fonte.",
@@ -440,10 +448,6 @@
     "page.categories.feeds": "Inscrições",
     "page.categories.no_feed": "Sem fonte.",
     "page.categories.title": "Categorias",
-    "page.categories_count": [
-        "%d category",
-        "%d categories"
-    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Editar categoria: %s",
     "page.edit_feed.etag_header": "Cabeçalho 'ETag':",
@@ -549,25 +553,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Registrar senha",
     "page.settings.webauthn.register.error": "Não foi possível registrar a senha",
-    "page.shared_entries.title": "Itens compartilhados",
     "page.shared_entries_count": [
         "%d shared entry",
         "%d shared entries"
     ],
-    "page.starred.title": "Favoritos",
+    "page.shared_entries.title": "Itens compartilhados",
     "page.starred_entry_count": [
         "%d starred entry",
         "%d starred entries"
     ],
+    "page.starred.title": "Favoritos",
     "page.total_entry_count": [
         "%d entry in total",
         "%d entries in total"
     ],
-    "page.unread.title": "Não lidos",
     "page.unread_entry_count": [
         "%d unread entry",
         "%d unread entries"
     ],
+    "page.unread.title": "Não lidos",
     "page.users.actions": "Ações",
     "page.users.admin.no": "Não",
     "page.users.admin.yes": "Sim",

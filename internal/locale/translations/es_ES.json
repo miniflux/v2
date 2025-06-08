@@ -77,6 +77,10 @@
     "entry.status.toast.read": "Marcado como leído",
     "entry.status.toast.unread": "Marcado como no leído",
     "entry.tags.label": "Etiquetas:",
+    "entry.tags.more_tags_label": [
+        "Show %d more tag",
+        "Show %d more tags"
+    ],
     "entry.unshare.label": "No compartir",
     "error.api_key_already_exists": "Esta clave API ya existe.",
     "error.bad_credentials": "Usuario o contraseña no válido.",
@@ -432,6 +436,10 @@
     "page.api_keys.table.last_used_at": "Último utilizado",
     "page.api_keys.table.token": "simbólico",
     "page.api_keys.title": "Claves API",
+    "page.categories_count": [
+        "%d categoría",
+        "%d categorías"
+    ],
     "page.categories.entries": "Artículos",
     "page.categories.feed_count": [
         "Hay %d fuente.",
@@ -440,10 +448,6 @@
     "page.categories.feeds": "Fuentes",
     "page.categories.no_feed": "Sin fuente.",
     "page.categories.title": "Categorías",
-    "page.categories_count": [
-        "%d categoría",
-        "%d categorías"
-    ],
     "page.category_label": "Categoría: %s",
     "page.edit_category.title": "Editar categoría: %s",
     "page.edit_feed.etag_header": "Cabecera de ETag:",
@@ -549,25 +553,25 @@
     "page.settings.webauthn.passkeys": "Claves de acceso",
     "page.settings.webauthn.register": "Registrar clave de acceso",
     "page.settings.webauthn.register.error": "No se puede registrar la clave de acceso",
-    "page.shared_entries.title": "Artículos compartidos",
     "page.shared_entries_count": [
         "%d artículo compartido",
         "%d artículos compartidos"
     ],
-    "page.starred.title": "Marcadores",
+    "page.shared_entries.title": "Artículos compartidos",
     "page.starred_entry_count": [
         "%d artículo marcado",
         "%d artículos marcados"
     ],
+    "page.starred.title": "Marcadores",
     "page.total_entry_count": [
         "%d artículo en total",
         "%d artículos en total"
     ],
-    "page.unread.title": "No leídos",
     "page.unread_entry_count": [
         "%d artículo no leído",
         "%d artículos no leídos"
     ],
+    "page.unread.title": "No leídos",
     "page.users.actions": "Acciones",
     "page.users.admin.no": "No",
     "page.users.admin.yes": "Sí",

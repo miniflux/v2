@@ -75,6 +75,9 @@
     "entry.status.toast.read": "已标为已读",
     "entry.status.toast.unread": "已标为未读",
     "entry.tags.label": "标签：",
+    "entry.tags.more_tags_label": [
+        "更多标签 (%d)"
+    ],
     "entry.unshare.label": "取消分享",
     "error.api_key_already_exists": "此 API 密钥已存在。",
     "error.bad_credentials": "用户名或密码无效",
@@ -430,6 +433,9 @@
     "page.api_keys.table.last_used_at": "最后使用",
     "page.api_keys.table.token": "令牌",
     "page.api_keys.title": "API 密钥",
+    "page.categories_count": [
+        "%d 分类"
+    ],
     "page.categories.entries": "查看内容",
     "page.categories.feed_count": [
         "有 %d 个源"
@@ -437,9 +443,6 @@
     "page.categories.feeds": "查看源",
     "page.categories.no_feed": "没有源",
     "page.categories.title": "分类",
-    "page.categories_count": [
-        "%d 分类"
-    ],
     "page.category_label": "分类: %s",
     "page.edit_category.title": "编辑分类 : %s",
     "page.edit_feed.etag_header": "ETag 标题：",
@@ -542,21 +545,21 @@
     "page.settings.webauthn.passkeys": "通行密钥列表",
     "page.settings.webauthn.register": "注册通行密钥",
     "page.settings.webauthn.register.error": "无法注册通行密钥",
-    "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
         "%d 已分享的文章"
     ],
-    "page.starred.title": "收藏",
+    "page.shared_entries.title": "已分享的文章",
     "page.starred_entry_count": [
         "%d 收藏的文章"
     ],
+    "page.starred.title": "收藏",
     "page.total_entry_count": [
         "%d 文章总数"
     ],
-    "page.unread.title": "未读",
     "page.unread_entry_count": [
         "%d 未读的文章"
     ],
+    "page.unread.title": "未读",
     "page.users.actions": "操作",
     "page.users.admin.no": "否",
     "page.users.admin.yes": "是",

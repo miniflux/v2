@@ -79,6 +79,11 @@
     "entry.status.toast.read": "Помечено как прочитанное",
     "entry.status.toast.unread": "Помечено как непрочитанное",
     "entry.tags.label": "Теги:",
+    "entry.tags.more_tags_label": [
+        "Ещё %d тег",
+        "Ещё %d тега",
+        "Ещё %d тегов"
+    ],
     "entry.unshare.label": "Удалить из общедоступных",
     "error.api_key_already_exists": "Этот API-ключ уже существует.",
     "error.bad_credentials": "Неверное имя пользователя или пароль.",
@@ -434,6 +439,11 @@
     "page.api_keys.table.last_used_at": "Последнее использование",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
+    "page.categories_count": [
+        "%d категория",
+        "%d категории",
+        "%d категорий"
+    ],
     "page.categories.entries": "Статьи",
     "page.categories.feed_count": [
         "Есть %d подписка.",
@@ -443,11 +453,6 @@
     "page.categories.feeds": "Подписки",
     "page.categories.no_feed": "Нет подписок.",
     "page.categories.title": "Категории",
-    "page.categories_count": [
-        "%d категория",
-        "%d категории",
-        "%d категорий"
-    ],
     "page.category_label": "Категории: %s",
     "page.edit_category.title": "Изменить категорию: %s",
     "page.edit_feed.etag_header": "Заголовок ETag:",
@@ -556,29 +561,29 @@
     "page.settings.webauthn.passkeys": "Ключи доступа",
     "page.settings.webauthn.register": "Зарегистрировать пароль",
     "page.settings.webauthn.register.error": "Не удается зарегистрировать пароль",
-    "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d общедоступная статья",
         "%d общедоступных статьи",
         "%d общедоступных статей"
     ],
-    "page.starred.title": "Избранное",
+    "page.shared_entries.title": "Общедоступные статьи",
     "page.starred_entry_count": [
         "%d избранная статья",
         "%d избранные статьи",
         "%d избранных статей"
     ],
+    "page.starred.title": "Избранное",
     "page.total_entry_count": [
         "%d статья всего",
         "%d статьи всего",
         "%d статей всего"
     ],
-    "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d непрочитанная статья",
         "%d непрочитанных статьи",
         "%d непрочитанных статей"
     ],
+    "page.unread.title": "Непрочитанное",
     "page.users.actions": "Действия",
     "page.users.admin.no": "Нет",
     "page.users.admin.yes": "Да",

@@ -75,6 +75,9 @@
     "entry.status.toast.read": "Chù chòe tha̍k kè chòe soah",
     "entry.status.toast.unread": "Chù chòe ah-bōe tha̍k chòe soah",
     "entry.tags.label": "Khan-á：",
+    "entry.tags.more_tags_label": [
+        "Kah %d khan-á"
+    ],
     "entry.unshare.label": "Chhú-siau hun-hióng",
     "error.api_key_already_exists": "Chit ê API só-sî í-keng chûn-chāi",
     "error.bad_credentials": "M̄-tio̍h ê kháu-chō miâ ah-sī bi̍t-bé.",
@@ -430,6 +433,9 @@
     "page.api_keys.table.last_used_at": "Siōng-bóe pái sú-iōng",
     "page.api_keys.table.token": "Só-sî",
     "page.api_keys.title": "API só-sî",
+    "page.categories_count": [
+        "%d ê lūi-pia̍t"
+    ],
     "page.categories.entries": "Siau-sit",
     "page.categories.feed_count": [
         "Ū %d ê Siau-sit lâi-goân"
@@ -437,9 +443,6 @@
     "page.categories.feeds": "Siau-sit lâi-goân",
     "page.categories.no_feed": "Ah-bô siau-sit lâi-goân",
     "page.categories.title": "Lūi-pia̍t",
-    "page.categories_count": [
-        "%d ê lūi-pia̍t"
-    ],
     "page.category_label": "Lūi-pia̍t: %s",
     "page.edit_category.title": "Pian-chi̍p lūi-pia̍t: %s",
     "page.edit_feed.etag_header": "ETag piau-thâu:",
@@ -542,21 +545,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Chù-chheh Passkey",
     "page.settings.webauthn.register.error": "Bô-hoat-tō͘ chù-chheh Passkey",
-    "page.shared_entries.title": "Hun-hióng kè ê siau-sit",
     "page.shared_entries_count": [
         "Í-keng hun-hióng %d ê siau-sit"
     ],
-    "page.starred.title": "Siu-chông",
+    "page.shared_entries.title": "Hun-hióng kè ê siau-sit",
     "page.starred_entry_count": [
         "%d ê siu-chông ê siau-sit"
     ],
+    "page.starred.title": "Siu-chông",
     "page.total_entry_count": [
         "Lóng-chóng %d ê siau-sit"
     ],
-    "page.unread.title": "Ah-bōe tha̍k",
     "page.unread_entry_count": [
         "%d ê siau-sit ah-bōe tha̍k"
     ],
+    "page.unread.title": "Ah-bōe tha̍k",
     "page.users.actions": "chhau-chok",
     "page.users.admin.no": "Hóⁿ",
     "page.users.admin.yes": "Sī",

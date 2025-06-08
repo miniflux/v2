@@ -136,13 +136,40 @@
         {{ if .entry.Tags }}
         <div class="entry-tags">
             {{ t "entry.tags.label" }}
-            {{ range $i, $e := .entry.Tags }}
-                {{if $i}}, {{end}}
-                {{ if $.user }}
-                    <a href="{{ route "tagEntriesAll" "tagName" (urlEncode $e) }}"><strong>{{ $e }}</strong></a>
-                {{ else }}
-                    <strong>{{ $e }}</strong>
+            {{ $allTags := .entry.Tags }}
+            {{ $numTags := len $allTags }}
+            {{ $tagsLimit := 5 }}
+            {{ $numerOfAdditionalTags := subtract $numTags $tagsLimit }}
+
+            <ul class="entry-tags-list">
+                {{ range $i, $tagName := $allTags }}
+                    {{ if lt $i $tagsLimit }}
+                        {{ if $.user }}
+                            <li><a href="{{ route "tagEntriesAll" "tagName" (urlEncode $tagName) }}"><strong>{{ $tagName }}</strong></a></li>
+                        {{ else }}
+                            <li><strong>{{ $tagName }}</strong></li>
+                        {{ end }}
+                    {{ end }}
                 {{ end }}
+            </ul>
+
+            {{ if gt $numTags $tagsLimit }}
+                <details class="entry-additional-tags">
+                    <summary>
+                        {{ plural "entry.tags.more_tags_label" $numerOfAdditionalTags $numerOfAdditionalTags }}
+                    </summary>
+                    <ul class="entry-tags-list">
+                    {{ range $idx, $tagName := $allTags }}
+                        {{ if ge $idx $tagsLimit }}
+                            {{ if $.user }}
+                                <li><a href="{{ route "tagEntriesAll" "tagName" (urlEncode $tagName) }}"><strong>{{ $tagName }}</strong></a></li>
+                            {{ else }}
+                                <li><strong>{{ $tagName }}</strong></li>
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                    </ul>
+                </details>
             {{ end }}
         </div>
         {{ end }}
