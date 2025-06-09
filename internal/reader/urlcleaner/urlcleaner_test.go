@@ -121,7 +121,10 @@ func TestRemoveTrackingParams(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := RemoveTrackingParameters(tt.baseUrl, tt.feedUrl, tt.input)
+			parsedBaseUrl, _ := url.Parse(tt.baseUrl)
+			parsedFeedUrl, _ := url.Parse(tt.feedUrl)
+			parsedInputUrl, _ := url.Parse(tt.input)
+			result, err := RemoveTrackingParameters(parsedBaseUrl, parsedFeedUrl, parsedInputUrl)
 			if tt.expected == "" {
 				if err == nil {
 					t.Errorf("Expected an error for invalid URL, but got none")
