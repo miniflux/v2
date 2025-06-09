@@ -75,7 +75,9 @@ func (o *oidcProvider) GetProfile(ctx context.Context, code, codeVerifier string
 		return nil, fmt.Errorf(`oidc: failed to parse user claims: %w`, err)
 	}
 
-	for _, value := range []string{userClaims.Email, userClaims.PreferredUsername, userClaims.Name, userClaims.Profile} {
+	// Use the first non-empty value from the claims to set the username.
+	// The order of preference is: preferred_username, email, name, profile.
+	for _, value := range []string{userClaims.PreferredUsername, userClaims.Email, userClaims.Name, userClaims.Profile} {
 		if value != "" {
 			profile.Username = value
 			break
