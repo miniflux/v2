@@ -1086,4 +1086,8 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(sql)
 		return
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		_, err = tx.Exec(`ALTER TABLE users ADD COLUMN open_external_links_in_new_tab bool default 't'`)
+		return err
+	},
 }

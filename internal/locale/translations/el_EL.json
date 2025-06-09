@@ -356,6 +356,7 @@
     "form.prefs.label.mark_read_on_view": "Αυτόματη επισήμανση καταχωρήσεων ως αναγνωσμένων κατά την προβολή",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Σήμανση καταχωρήσεων ως αναγνωσμένων κατά την προβολή. Για ήχο/βίντεο, σήμανση ως αναγνωσμένου στο 90%% ολοκλήρωσης",
     "form.prefs.label.media_playback_rate": "Ταχύτητα αναπαραγωγής του ήχου/βίντεο",
+    "form.prefs.label.open_external_links_in_new_tab": "Άνοιγμα εξωτερικών συνδέσμων σε νέα καρτέλα (προσθέτει target=\"_blank\" στους συνδέσμους)",
     "form.prefs.label.show_reading_time": "Εμφάνιση εκτιμώμενου χρόνου ανάγνωσης για άρθρα",
     "form.prefs.label.theme": "Θέμα",
     "form.prefs.label.timezone": "Ζώνη Ώρας",

@@ -3,7 +3,7 @@
 {{ define "page_header"}}
 <section class="page-header" aria-labelledby="page-header-title">
     <h1 id="page-header-title" dir="auto">
-        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="{{ .user.MarkReadOnView }}">{{ .feed.Title }}</a>
+        <a href="{{ .feed.SiteURL | safeURL  }}" title="{{ .feed.SiteURL }}" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }} rel="noopener noreferrer" referrerpolicy="no-referrer" data-original-link="{{ .user.MarkReadOnView }}">{{ .feed.Title }}</a>
         <span aria-hidden="true">({{ .total }})</span>
     </h1>
     <span class="sr-only">

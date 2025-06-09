@@ -55,7 +55,7 @@
                     {{ if .ShareCode }}
                     <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
                         title="{{ t "entry.shared_entry.title" }}"
-                        target="_blank">{{ icon "share" }}</a>
+                        {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>{{ icon "share" }}</a>
                     {{ end }}
                 </h2>
                 <span class="category"><a href="{{ route "categoryEntries" "categoryID" .Feed.Category.ID }}">{{ .Feed.Category.Title }}</a></span>

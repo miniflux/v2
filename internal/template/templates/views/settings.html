@@ -156,7 +156,7 @@
         <div class="form-label-row">
             <label for="form-display-mode">{{ t "form.prefs.label.display_mode" }}</label>
             &nbsp;
-            <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display" target="_blank">
+            <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                 {{ icon "external-link" }}
             </a>
         </div>
@@ -209,6 +209,8 @@
 
         <label><input type="checkbox" name="always_open_external_links" value="1" {{ if .form.AlwaysOpenExternalLinks }}checked{{ end }}> {{ t "form.prefs.label.always_open_external_links" }}</label>
 
+        <label><input type="checkbox" name="open_external_links_in_new_tab" value="1" {{ if .form.OpenExternalLinksInNewTab }}checked{{ end }}> {{ t "form.prefs.label.open_external_links_in_new_tab" }}</label>
+
         <label for="form-custom-css">{{t "form.prefs.label.custom_css" }}</label>
         <textarea id="form-custom-css" name="custom_css" cols="40" rows="10" spellcheck="false">{{ .form.CustomCSS }}</textarea>
 
@@ -231,7 +233,7 @@
                 {{ t "form.feed.label.blocklist_rules" }}
             </label>
             &nbsp;
-            <a href=" https://miniflux.app/docs/rules.html#global-filtering-rules" target="_blank">
+            <a href=" https://miniflux.app/docs/rules.html#global-filtering-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                 {{ icon "external-link" }}
             </a>
         </div>
@@ -241,7 +243,7 @@
             <label for="form-keeplist-rules">
                 {{ t "form.feed.label.keeplist_rules" }}
             </label>
-            <a href=" https://miniflux.app/docs/rules.html#global-filtering-rules" target="_blank">
+            <a href=" https://miniflux.app/docs/rules.html#global-filtering-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                 {{ icon "external-link" }}
             </a>
         </div>

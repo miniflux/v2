@@ -356,6 +356,7 @@
     "form.prefs.label.mark_read_on_view": "Marquer automatiquement les entrées comme lues lorsqu'elles sont consultées",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Marquer automatiquement les entrées comme lues lorsqu'elles sont consultées. Pour l'audio/vidéo, marquer comme lues après 90%%",
     "form.prefs.label.media_playback_rate": "Vitesse de lecture de l'audio/vidéo",
+    "form.prefs.label.open_external_links_in_new_tab": "Ouvrir les liens externes dans un nouvel onglet (ajoute target=\"_blank\" aux liens)",
     "form.prefs.label.show_reading_time": "Afficher le temps de lecture estimé des articles",
     "form.prefs.label.theme": "Thème",
     "form.prefs.label.timezone": "Fuseau horaire",
