@@ -6,6 +6,7 @@ package storage // import "miniflux.app/v2/internal/storage"
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"miniflux.app/v2/internal/model"
@@ -40,9 +41,9 @@ func NewFeedQueryBuilder(store *Storage, userID int64) *FeedQueryBuilder {
 // WithCategoryID filter by category ID.
 func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 	if categoryID > 0 {
-		f.conditions = append(f.conditions, fmt.Sprintf("f.category_id = $%d", len(f.args)+1))
+		f.conditions = append(f.conditions, "f.category_id = $"+strconv.Itoa(len(f.args)+1))
 		f.args = append(f.args, categoryID)
-		f.counterConditions = append(f.counterConditions, fmt.Sprintf("f.category_id = $%d", len(f.counterArgs)+1))
+		f.counterConditions = append(f.counterConditions, "f.category_id = $"+strconv.Itoa(len(f.counterArgs)+1))
 		f.counterArgs = append(f.counterArgs, categoryID)
 		f.counterJoinFeeds = true
 	}
@@ -52,7 +53,7 @@ func (f *FeedQueryBuilder) WithCategoryID(categoryID int64) *FeedQueryBuilder {
 // WithFeedID filter by feed ID.
 func (f *FeedQueryBuilder) WithFeedID(feedID int64) *FeedQueryBuilder {
 	if feedID > 0 {
-		f.conditions = append(f.conditions, fmt.Sprintf("f.id = $%d", len(f.args)+1))
+		f.conditions = append(f.conditions, "f.id = $"+strconv.Itoa(len(f.args)+1))
 		f.args = append(f.args, feedID)
 	}
 	return f
