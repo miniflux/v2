@@ -72,6 +72,7 @@
 
             <label><input type="checkbox" name="no_media_player" {{ if .form.NoMediaPlayer }}checked{{ end }} value="1" >  {{ t "form.feed.label.no_media_player" }} </label>
             <label><input type="checkbox" name="disabled" value="1" {{ if .form.Disabled }}checked{{ end }}> {{ t "form.feed.label.disabled" }}</label>
+            <label><input type="checkbox" name="deduplicate_against_all" value="1" {{ if .form.DeduplicateAgainstAll }}checked{{ end }}> {{ t "form.feed.label.deduplicate_against_all" }}</label>
 
             <div class="buttons">
                 <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>

@@ -60,6 +60,7 @@ type Feed struct {
 	PushoverEnabled             bool      `json:"pushover_enabled"`
 	PushoverPriority            int       `json:"pushover_priority"`
 	ProxyURL                    string    `json:"proxy_url"`
+	DeduplicateAgainstAll       bool      `json:"deduplicate_against_all"`
 
 	// Non-persisted attributes
 	Category *Category `json:"category,omitempty"`
@@ -170,6 +171,7 @@ type FeedCreationRequest struct {
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
 	DisableHTTP2                bool   `json:"disable_http2"`
 	ProxyURL                    string `json:"proxy_url"`
+	DeduplicateAgainstAll       bool   `json:"deduplicate_against_all"`
 }
 
 type FeedCreationRequestFromSubscriptionDiscovery struct {
@@ -205,6 +207,7 @@ type FeedModificationRequest struct {
 	HideGlobally                *bool   `json:"hide_globally"`
 	DisableHTTP2                *bool   `json:"disable_http2"`
 	ProxyURL                    *string `json:"proxy_url"`
+	DeduplicateAgainstAll       *bool   `json:"deduplicate_against_all"`
 }
 
 // Patch updates a feed with modified values.
@@ -299,6 +302,10 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 
 	if f.ProxyURL != nil {
 		feed.ProxyURL = *f.ProxyURL
+	}
+
+	if f.DeduplicateAgainstAll != nil {
+		feed.DeduplicateAgainstAll = *f.DeduplicateAgainstAll
 	}
 }
 

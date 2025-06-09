@@ -43,6 +43,7 @@ type FeedForm struct {
 	PushoverEnabled             bool
 	PushoverPriority            int
 	ProxyURL                    string
+	DeduplicateAgainstAll       bool
 }
 
 // Merge updates the fields of the given feed.
@@ -79,6 +80,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.PushoverEnabled = f.PushoverEnabled
 	feed.PushoverPriority = f.PushoverPriority
 	feed.ProxyURL = f.ProxyURL
+	feed.DeduplicateAgainstAll = f.DeduplicateAgainstAll
 	return feed
 }
 
@@ -130,5 +132,6 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		PushoverEnabled:             r.FormValue("pushover_enabled") == "1",
 		PushoverPriority:            pushoverPriority,
 		ProxyURL:                    r.FormValue("proxy_url"),
+		DeduplicateAgainstAll:       r.FormValue("deduplicate_against_all") == "1",
 	}
 }

@@ -225,6 +225,19 @@ func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
 	return result, nil
 }
 
+// entryExistsAnywhere checks if an entry already exists in other feeds based on its hash.
+func (s *Storage) entryExistsAnywhere(tx *sql.Tx, entry *model.Entry) (bool, error) {
+	var result bool
+
+	err := tx.QueryRow(`SELECT true FROM entries WHERE hash=$1`, entry.Hash).Scan(&result)
+
+	if err != nil && err != sql.ErrNoRows {
+		return result, fmt.Errorf(`store: unable to check if entry exists: %v`, err)
+	}
+
+	return result, nil
+}
+
 func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
 	var result bool
 	s.db.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2`, feedID, entryHash).Scan(&result)
@@ -268,7 +281,7 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 }
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
-func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
+func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool, deduplicateAgainstAll bool) (newEntries model.Entries, err error) {
 	var entryHashes []string
 
 	for _, entry := range entries {
@@ -280,7 +293,16 @@ func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries
 			return nil, fmt.Errorf(`store: unable to start transaction: %v`, err)
 		}
 
-		entryExists, err := s.entryExists(tx, entry)
+		entryExists := false
+		if deduplicateAgainstAll {
+			entryExists, err = s.entryExistsAnywhere(tx, entry)
+			// maybe another feed was refreshed and has this entry as well,
+			//  so we need to markd it as removed here.
+			updateExistingEntries = true
+			entry.Status = model.EntryStatusRemoved
+		} else {
+			entryExists, err = s.entryExists(tx, entry)
+		}
 		if err != nil {
 			if rollbackErr := tx.Rollback(); rollbackErr != nil {
 				return nil, fmt.Errorf(`store: unable to rollback transaction: %v (rolled back due to: %v)`, rollbackErr, err)
