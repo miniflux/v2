@@ -35,8 +35,8 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 	}
 
 	// Ensure the Site URL is absolute.
-	if siteURL, err := urllib.AbsoluteURL(baseURL, feed.SiteURL); err == nil {
-		feed.SiteURL = siteURL
+	if absoluteSiteURL, err := urllib.AbsoluteURL(baseURL, feed.SiteURL); err == nil {
+		feed.SiteURL = absoluteSiteURL
 	}
 
 	// Try to find the feed URL from the Atom links.

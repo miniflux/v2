@@ -21,7 +21,10 @@ func IsAbsoluteURL(link string) bool {
 // AbsoluteURL converts the input URL as absolute URL if necessary.
 func AbsoluteURL(baseURL, input string) (string, error) {
 	if strings.HasPrefix(input, "//") {
-		input = "https://" + input[2:]
+		return "https:" + input, nil
+	}
+	if strings.HasPrefix(input, "https://") || strings.HasPrefix(input, "http://") {
+		return input, nil
 	}
 
 	u, err := url.Parse(input)
