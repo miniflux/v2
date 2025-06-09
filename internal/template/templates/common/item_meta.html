@@ -43,7 +43,7 @@
                 <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.shared_entry.title" }}"
-                    target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+                    {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
             </li>
             <li class="item-meta-icons-delete">
                 <button
@@ -71,7 +71,7 @@
         <li class="item-meta-icons-external-url">
             <a href="{{ .entry.URL | safeURL  }}"
                 aria-describedby="entry-title-{{ .entry.ID }}"
-                target="_blank"
+                {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
                 rel="noopener noreferrer"
                 referrerpolicy="no-referrer"
                 data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
@@ -81,7 +81,7 @@
                 <a href="{{ .entry.CommentsURL | safeURL  }}"
                     aria-describedby="entry-title-{{ .entry.ID }}"
                     title="{{ t "entry.comments.title" }}"
-                    target="_blank"
+                    {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
                     rel="noopener noreferrer"
                     referrerpolicy="no-referrer"
                     data-comments-link="true">{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>

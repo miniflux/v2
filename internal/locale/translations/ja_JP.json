@@ -353,6 +353,7 @@
     "form.prefs.label.mark_read_on_view": "表示時にエントリを自動的に既読としてマークします",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "オーディオ/ビデオの再生速度",
+    "form.prefs.label.open_external_links_in_new_tab": "外部リンクを新しいタブで開く（リンクに target=\"_blank\" を追加）",
     "form.prefs.label.show_reading_time": "記事の推定読書時間を表示する",
     "form.prefs.label.theme": "テーマ",
     "form.prefs.label.timezone": "タイムゾーン",

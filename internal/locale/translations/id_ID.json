@@ -353,6 +353,7 @@
     "form.prefs.label.mark_read_on_view": "Secara otomatis menandai entri sebagai telah dibaca saat dilihat",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Tandai entri sebagai telah dibaca ketika dilihat. Untuk audio/video, tandai sebagai telah dibaca ketika sudah 90% didengar/ditonton.",
     "form.prefs.label.media_playback_rate": "Kecepatan pemutaran audio/video",
+    "form.prefs.label.open_external_links_in_new_tab": "Buka tautan eksternal di tab baru (menambahkan target=\"_blank\" ke tautan)",
     "form.prefs.label.show_reading_time": "Tampilkan perkiraan waktu baca untuk artikel",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Zona Waktu",

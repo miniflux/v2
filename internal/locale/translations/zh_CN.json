@@ -353,6 +353,7 @@
     "form.prefs.label.mark_read_on_view": "查看时自动将条目标记为已读",
     "form.prefs.label.mark_read_on_view_or_media_completion": "当浏览时标记条目为已读。对于音频/视频，当播放完成90%%时标记为已读",
     "form.prefs.label.media_playback_rate": "音频/视频的播放速度",
+    "form.prefs.label.open_external_links_in_new_tab": "在新标签页中打开外部链接（为链接添加 target=\"_blank\"）",
     "form.prefs.label.show_reading_time": "显示文章的预计阅读时间",
     "form.prefs.label.theme": "主题",
     "form.prefs.label.timezone": "时区",

@@ -124,7 +124,7 @@
                     {{ t "form.feed.label.scraper_rules" }}
                 </label>
                 &nbsp;
-                <a href="https://miniflux.app/docs/rules.html#scraper-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#scraper-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -135,7 +135,7 @@
                     {{ t "form.feed.label.rewrite_rules" }}
                 </label>
                 &nbsp;
-                <a href="https://miniflux.app/docs/rules.html#rewrite-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#rewrite-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -145,7 +145,7 @@
                     {{ t "form.feed.label.blocklist_rules" }}
                 </label>
                 &nbsp;
-                <a href="https://miniflux.app/docs/rules.html#feed-filtering-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#feed-filtering-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -156,7 +156,7 @@
                     {{ t "form.feed.label.keeplist_rules" }}
                 </label>
                 &nbsp;
-                <a href="https://miniflux.app/docs/rules.html#feed-filtering-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#feed-filtering-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -167,7 +167,7 @@
                     {{ t "form.feed.label.urlrewrite_rules" }}
                 </label>
                 &nbsp;
-                <a href="https://miniflux.app/docs/rules.html#rewriteurl-rules" target="_blank">
+                <a href="https://miniflux.app/docs/rules.html#rewriteurl-rules" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                     {{ icon "external-link" }}
                 </a>
             </div>
@@ -205,7 +205,7 @@
                         {{ t "form.feed.label.ntfy_priority" }}
                     </label>
                     &nbsp;
-                    <a href="https://docs.ntfy.sh/publish/#message-priority" target="_blank">
+                    <a href="https://docs.ntfy.sh/publish/#message-priority" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                         {{ icon "external-link" }}
                     </a>
                 </div>
@@ -226,7 +226,7 @@
                         {{ t "form.feed.label.pushover_priority" }}
                     </label>
                     &nbsp;
-                    <a href="https://pushover.net/api#priority" target="_blank">
+                    <a href="https://pushover.net/api#priority" {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}>
                         {{ icon "external-link" }}
                     </a>
                 </div>

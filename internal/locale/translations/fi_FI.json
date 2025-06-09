@@ -356,6 +356,7 @@
     "form.prefs.label.mark_read_on_view": "Merkitse kohdat automaattisesti luetuiksi, kun niitä tarkastellaan",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Äänen/videon toistonopeus",
+    "form.prefs.label.open_external_links_in_new_tab": "Avaa ulkoiset linkit uuteen välilehteen (lisää target=\"_blank\" linkkeihin)",
     "form.prefs.label.show_reading_time": "Näytä artikkeleiden arvioitu lukuaika",
     "form.prefs.label.theme": "Teema",
     "form.prefs.label.timezone": "Aikavyöhyke",

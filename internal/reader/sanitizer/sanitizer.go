@@ -112,14 +112,23 @@ var (
 	}
 )
 
-// Sanitize returns safe HTML.
-func Sanitize(baseURL, input string) string {
+type SanitizerOptions struct {
+	OpenLinksInNewTab bool
+}
+
+func SanitizeHTMLWithDefaultOptions(baseURL, rawHTML string) string {
+	return SanitizeHTML(baseURL, rawHTML, &SanitizerOptions{
+		OpenLinksInNewTab: true,
+	})
+}
+
+func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) string {
 	var buffer strings.Builder
 	var tagStack []string
 	var parentTag string
 	var blockedStack []string
 
-	tokenizer := html.NewTokenizer(strings.NewReader(input))
+	tokenizer := html.NewTokenizer(strings.NewReader(rawHTML))
 	for {
 		if tokenizer.Next() == html.ErrorToken {
 			err := tokenizer.Err()
@@ -166,7 +175,7 @@ func Sanitize(baseURL, input string) string {
 			}
 
 			if len(blockedStack) == 0 && isValidTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
+				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr, sanitizerOptions)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						// Rewrite the start tag with allowed attributes.
@@ -194,7 +203,7 @@ func Sanitize(baseURL, input string) string {
 				continue
 			}
 			if len(blockedStack) == 0 && isValidTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr)
+				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr, sanitizerOptions)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + "/>")
@@ -207,7 +216,7 @@ func Sanitize(baseURL, input string) string {
 	}
 }
 
-func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([]string, string) {
+func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
 	var htmlAttrs, attrNames []string
 	var err error
 	var isImageLargerThanLayout bool
@@ -269,7 +278,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 	}
 
 	if !isAnchorLink {
-		extraAttrNames, extraHTMLAttributes := getExtraAttributes(tagName)
+		extraAttrNames, extraHTMLAttributes := getExtraAttributes(tagName, sanitizerOptions)
 		if len(extraAttrNames) > 0 {
 			attrNames = append(attrNames, extraAttrNames...)
 			htmlAttrs = append(htmlAttrs, extraHTMLAttributes...)
@@ -279,10 +288,16 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute) ([
 	return attrNames, strings.Join(htmlAttrs, " ")
 }
 
-func getExtraAttributes(tagName string) ([]string, []string) {
+func getExtraAttributes(tagName string, sanitizerOptions *SanitizerOptions) ([]string, []string) {
 	switch tagName {
 	case "a":
-		return []string{"rel", "target", "referrerpolicy"}, []string{`rel="noopener noreferrer"`, `target="_blank"`, `referrerpolicy="no-referrer"`}
+		attributeNames := []string{"rel", "referrerpolicy"}
+		htmlAttributes := []string{`rel="noopener noreferrer"`, `referrerpolicy="no-referrer"`}
+		if sanitizerOptions.OpenLinksInNewTab {
+			attributeNames = append(attributeNames, "target")
+			htmlAttributes = append(htmlAttributes, `target="_blank"`)
+		}
+		return attributeNames, htmlAttributes
 	case "video", "audio":
 		return []string{"controls"}, []string{"controls"}
 	case "iframe":

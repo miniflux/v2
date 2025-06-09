@@ -356,6 +356,7 @@
     "form.prefs.label.mark_read_on_view": "Markeer artikelen automatisch als gelezen wanneer ze worden bekeken",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Markeer artikelen als gelezen wanneer ze worden bekeken. Voor audio/video, markeer als gelezen bij 90%% voltooiing",
     "form.prefs.label.media_playback_rate": "Afspeelsnelheid van de audio/video",
+    "form.prefs.label.open_external_links_in_new_tab": "Open externe links in een nieuw tabblad (voegt target=\"_blank\" toe aan links)",
     "form.prefs.label.show_reading_time": "Toon geschatte leestijd van artikelen",
     "form.prefs.label.theme": "Thema",
     "form.prefs.label.timezone": "Tijdzone",

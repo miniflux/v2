@@ -356,6 +356,7 @@
     "form.prefs.label.mark_read_on_view": "Contrassegna automaticamente le voci come lette quando visualizzate",
     "form.prefs.label.mark_read_on_view_or_media_completion": "Mark entries as read when viewed. For audio/video, mark as read at 90%% completion",
     "form.prefs.label.media_playback_rate": "Velocità di riproduzione dell'audio/video",
+    "form.prefs.label.open_external_links_in_new_tab": "Apri i link esterni in una nuova scheda (aggiunge target=\"_blank\" ai link)",
     "form.prefs.label.show_reading_time": "Mostra il tempo di lettura stimato per gli articoli",
     "form.prefs.label.theme": "Tema",
     "form.prefs.label.timezone": "Fuso orario",
