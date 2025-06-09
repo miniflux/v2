@@ -16,11 +16,15 @@ import (
 // NewXMLDecoder returns a XML decoder that filters illegal characters.
 func NewXMLDecoder(data io.ReadSeeker) *xml.Decoder {
 	var decoder *xml.Decoder
-	buffer, _ := io.ReadAll(data)
-	enc := getEncoding(buffer)
+
+	// This is way fasted than io.ReadAll(data) as the buffer can be allocated in one go instead of dynamically grown.
+	buffer := &bytes.Buffer{}
+	io.Copy(buffer, data)
+
+	enc := getEncoding(buffer.Bytes())
 	if enc == "" || strings.EqualFold(enc, "utf-8") {
 		// filter invalid chars now, since decoder.CharsetReader not called for utf-8 content
-		filteredBytes := bytes.Map(filterValidXMLChar, buffer)
+		filteredBytes := bytes.Map(filterValidXMLChar, buffer.Bytes())
 		decoder = xml.NewDecoder(bytes.NewReader(filteredBytes))
 	} else {
 		// filter invalid chars later within decoder.CharsetReader
