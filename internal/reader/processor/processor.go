@@ -5,6 +5,7 @@ package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
 	"log/slog"
+	"net/url"
 	"regexp"
 	"time"
 
@@ -36,6 +37,10 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 		return
 	}
 
+	// The errors are handled in RemoveTrackingParameters.
+	parsedFeedURL, _ := url.Parse(feed.FeedURL)
+	parsedSiteURL, _ := url.Parse(feed.SiteURL)
+
 	// Process older entries first
 	for i := len(feed.Entries) - 1; i >= 0; i-- {
 		entry := feed.Entries[i]
@@ -52,7 +57,8 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			continue
 		}
 
-		if cleanedURL, err := urlcleaner.RemoveTrackingParameters(feed.FeedURL, feed.SiteURL, entry.URL); err == nil {
+		parsedInputUrl, _ := url.Parse(entry.URL)
+		if cleanedURL, err := urlcleaner.RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl); err == nil {
 			entry.URL = cleanedURL
 		}
 

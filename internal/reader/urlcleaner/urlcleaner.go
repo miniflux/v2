@@ -95,26 +95,12 @@ var trackingParamsOutbound = map[string]bool{
 	"ref": true,
 }
 
-func RemoveTrackingParameters(baseUrl, feedUrl, inputURL string) (string, error) {
-	parsedURL, err := url.Parse(inputURL)
-	if err != nil {
-		return "", fmt.Errorf("urlcleaner: error parsing URL: %v", err)
+func RemoveTrackingParameters(parsedFeedURL, parsedSiteURL, parsedInputUrl *url.URL) (string, error) {
+	if parsedFeedURL == nil || parsedSiteURL == nil || parsedInputUrl == nil {
+		return "", fmt.Errorf("urlcleaner: one of the URLs is nil")
 	}
 
-	if !strings.HasPrefix(parsedURL.Scheme, "http") {
-		return inputURL, nil
-	}
-
-	parsedBaseUrl, err := url.Parse(baseUrl)
-	if err != nil {
-		return "", fmt.Errorf("urlcleaner: error parsing base URL: %v", err)
-	}
-	parsedFeedUrl, err := url.Parse(feedUrl)
-	if err != nil {
-		return "", fmt.Errorf("urlcleaner: error parsing feed URL: %v", err)
-	}
-
-	queryParams := parsedURL.Query()
+	queryParams := parsedInputUrl.Query()
 	hasTrackers := false
 
 	// Remove tracking parameters
@@ -127,7 +113,7 @@ func RemoveTrackingParameters(baseUrl, feedUrl, inputURL string) (string, error)
 		if trackingParamsOutbound[lowerParam] {
 			// handle duplicate parameters like ?a=b&a=c&a=d…
 			for _, value := range queryParams[param] {
-				if value == parsedBaseUrl.Hostname() || value == parsedFeedUrl.Hostname() {
+				if value == parsedFeedURL.Hostname() || value == parsedSiteURL.Hostname() {
 					queryParams.Del(param)
 					hasTrackers = true
 					break
@@ -138,14 +124,11 @@ func RemoveTrackingParameters(baseUrl, feedUrl, inputURL string) (string, error)
 
 	// Do not modify the URL if there are no tracking parameters
 	if !hasTrackers {
-		return inputURL, nil
+		return parsedInputUrl.String(), nil
 	}
 
-	parsedURL.RawQuery = queryParams.Encode()
-
-	// Remove trailing "?" if query string is empty
-	cleanedURL := parsedURL.String()
-	cleanedURL = strings.TrimSuffix(cleanedURL, "?")
+	parsedInputUrl.RawQuery = queryParams.Encode()
+	cleanedURL := strings.TrimSuffix(parsedInputUrl.String(), "?")
 
 	return cleanedURL, nil
 }
