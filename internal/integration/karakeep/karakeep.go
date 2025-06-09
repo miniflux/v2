@@ -21,40 +21,33 @@ type errorResponse struct {
 	Error string `json:"error"`
 }
 
-type successResponse struct {
-	CreatedAt string `json:"createdAt"`
-	Content   struct {
-		Type string `json:"type"`
-		Url  string `json:"url"`
-	}
+type saveURLPayload struct {
+	Type string `json:"type"`
+	URL  string `json:"url"`
 }
 
-type Client interface {
-	SaveUrl(url string) error
-}
-
-type client struct {
+type Client struct {
 	wrapped     *http.Client
 	apiEndpoint string
 	apiToken    string
 }
 
-func NewClient(apiToken string, apiEndpoint string) Client {
-	return &client{wrapped: &http.Client{Timeout: defaultClientTimeout}, apiEndpoint: apiEndpoint, apiToken: apiToken}
+func NewClient(apiToken string, apiEndpoint string) *Client {
+	return &Client{wrapped: &http.Client{Timeout: defaultClientTimeout}, apiEndpoint: apiEndpoint, apiToken: apiToken}
 }
 
-func (c *client) SaveUrl(url string) error {
-	var payload = map[string]interface{}{
-		"type": "link",
-		"url":  url,
-	}
-	b, err := json.Marshal(payload)
+func (c *Client) SaveURL(entryURL string) error {
+	requestBody, err := json.Marshal(&saveURLPayload{
+		Type: "link",
+		URL:  entryURL,
+	})
 	if err != nil {
-		return err
+		return fmt.Errorf("karakeep: unable to encode request body: %v", err)
 	}
-	req, err := http.NewRequest(http.MethodPost, c.apiEndpoint, bytes.NewReader(b))
+
+	req, err := http.NewRequest(http.MethodPost, c.apiEndpoint, bytes.NewReader(requestBody))
 	if err != nil {
-		return err
+		return fmt.Errorf("karakeep: unable to create request: %v", err)
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.apiToken))
@@ -63,26 +56,25 @@ func (c *client) SaveUrl(url string) error {
 
 	resp, err := c.wrapped.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("karakeep: unable to send request: %v", err)
 	}
-
 	defer resp.Body.Close()
-	b, err = io.ReadAll(resp.Body)
+
+	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("karakeep: failed to parse response: %s", err)
 	}
 
-	if resp.StatusCode >= 400 {
-		var errResponse errorResponse
-		if err = json.Unmarshal(b, &errResponse); err != nil {
-			return fmt.Errorf("karakeep: failed to save URL: status=%d %s", resp.StatusCode, string(b))
-		}
-		return fmt.Errorf("karakeep: failed to save URL: status=%d errorcode=%s %s", resp.StatusCode, errResponse.Code, errResponse.Error)
+	if resp.Header.Get("Content-Type") != "application/json" {
+		return fmt.Errorf("karakeep: unexpected content type response: %s", resp.Header.Get("Content-Type"))
 	}
 
-	var successReponse successResponse
-	if err = json.Unmarshal(b, &successReponse); err != nil {
-		return fmt.Errorf("karakeep: failed to parse response, however the request appears successful, is the url correct?: status=%d %s", resp.StatusCode, string(b))
+	if resp.StatusCode != http.StatusCreated {
+		var errResponse errorResponse
+		if err := json.Unmarshal(responseBody, &errResponse); err != nil {
+			return fmt.Errorf("karakeep: unable to parse error response: status=%d body=%s", resp.StatusCode, string(responseBody))
+		}
+		return fmt.Errorf("karakeep: failed to save URL: status=%d errorcode=%s %s", resp.StatusCode, errResponse.Code, errResponse.Error)
 	}
 
 	return nil
