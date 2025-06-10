@@ -27,7 +27,6 @@
     "alert.no_tag_entry": "没有与此标签匹配的条目。",
     "alert.no_unread_entry": "目前没有未读文章",
     "alert.no_user": "您是目前仅有的用户",
-    "alert.pocket_linked": "您的 Pocket 帐户现已关联",
     "alert.prefs_saved": "设置已存储！",
     "alert.too_many_feeds_refresh": [
         "多次触发订阅源更新，请等待 %d 分钟后重试。"
@@ -130,8 +129,6 @@
     "error.network_operation": "Miniflux 无法访问该网站由于网络错误: %v。",
     "error.network_timeout": "该网站响应过慢，请求超时: %v",
     "error.password_min_length": "请至少输入 6 个字符",
-    "error.pocket_access_token": "无法从 Pocket 获取访问令牌！",
-    "error.pocket_request_token": "无法从 Pocket 获取请求令牌！",
     "error.proxy_url_not_empty": "代理 URL 不能为空。",
     "error.settings_block_rule_fieldname_invalid": "无效的阻止规则: 规则 #%d 缺少合法的字段名 (可选: %s)",
     "error.settings_block_rule_invalid_regex": "无效的阻止规则: 规则 #%d 的模式字符不是合法的正则表达式。",
@@ -277,10 +274,6 @@
     "form.integration.pinboard_bookmark": "标记为未读",
     "form.integration.pinboard_tags": "Pinboard 标签",
     "form.integration.pinboard_token": "Pinboard API 令牌",
-    "form.integration.pocket_access_token": "Pocket 访问令牌",
-    "form.integration.pocket_activate": "将文章保存到 Pocket",
-    "form.integration.pocket_connect_link": "连接您的 Pocket 帐户",
-    "form.integration.pocket_consumer_key": "Pocket 用户密钥",
     "form.integration.pushover_activate": "将条目推送至 Pushover",
     "form.integration.pushover_device": "Pushover 装置（可选）",
     "form.integration.pushover_prefix": "Pushover URL 前缀（可选）",

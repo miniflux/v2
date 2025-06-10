@@ -44,9 +44,6 @@ type IntegrationForm struct {
 	EspialTags                       string
 	ReadwiseEnabled                  bool
 	ReadwiseAPIKey                   string
-	PocketEnabled                    bool
-	PocketAccessToken                string
-	PocketConsumerKey                string
 	TelegramBotEnabled               bool
 	TelegramBotToken                 string
 	TelegramBotChatID                string
@@ -160,9 +157,6 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.EspialTags = i.EspialTags
 	integration.ReadwiseEnabled = i.ReadwiseEnabled
 	integration.ReadwiseAPIKey = i.ReadwiseAPIKey
-	integration.PocketEnabled = i.PocketEnabled
-	integration.PocketAccessToken = i.PocketAccessToken
-	integration.PocketConsumerKey = i.PocketConsumerKey
 	integration.TelegramBotEnabled = i.TelegramBotEnabled
 	integration.TelegramBotToken = i.TelegramBotToken
 	integration.TelegramBotChatID = i.TelegramBotChatID
@@ -278,9 +272,6 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		EspialTags:                       r.FormValue("espial_tags"),
 		ReadwiseEnabled:                  r.FormValue("readwise_enabled") == "1",
 		ReadwiseAPIKey:                   r.FormValue("readwise_api_key"),
-		PocketEnabled:                    r.FormValue("pocket_enabled") == "1",
-		PocketAccessToken:                r.FormValue("pocket_access_token"),
-		PocketConsumerKey:                r.FormValue("pocket_consumer_key"),
 		TelegramBotEnabled:               r.FormValue("telegram_bot_enabled") == "1",
 		TelegramBotToken:                 r.FormValue("telegram_bot_token"),
 		TelegramBotChatID:                r.FormValue("telegram_bot_chat_id"),

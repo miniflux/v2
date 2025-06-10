@@ -27,7 +27,6 @@
     "alert.no_tag_entry": "沒有與此標籤相符的文章。",
     "alert.no_unread_entry": "目前沒有未讀文章",
     "alert.no_user": "您是唯一的使用者",
-    "alert.pocket_linked": "您的 Pocket 帳戶已關聯",
     "alert.prefs_saved": "設定已儲存！",
     "alert.too_many_feeds_refresh": [
         "您已觸發過太多次 Feed 更新，請等待 %d 分鐘後再嘗試。"
@@ -130,8 +129,6 @@
     "error.network_operation": "Miniflux 無法連線到該網站，可能是網路問題：%v。",
     "error.network_timeout": "該網站回應過慢，請求逾時：%v。",
     "error.password_min_length": "請至少輸入 6 個字元",
-    "error.pocket_access_token": "無法從 Pocket 取得存取金鑰！",
-    "error.pocket_request_token": "無法從 Pocket 取得請求金鑰！",
     "error.proxy_url_not_empty": "代理伺服器網址不能為空。",
     "error.settings_block_rule_fieldname_invalid": "無效的封鎖規則：規則 #%d 缺少有效的欄位名稱 (可用選項：%s)",
     "error.settings_block_rule_invalid_regex": "無效的封鎖規則：規則 #%d 的模式不是合法的正規表示式",
@@ -277,10 +274,6 @@
     "form.integration.pinboard_bookmark": "標記為未讀",
     "form.integration.pinboard_tags": "Pinboard 標籤",
     "form.integration.pinboard_token": "Pinboard API Token",
-    "form.integration.pocket_access_token": "Pocket 存取金鑰",
-    "form.integration.pocket_activate": "儲存文章到 Pocket",
-    "form.integration.pocket_connect_link": "連線您的 Pocket 帳戶",
-    "form.integration.pocket_consumer_key": "Pocket 使用者金鑰",
     "form.integration.pushover_activate": "Push entries to Pushover",
     "form.integration.pushover_device": "Pushover device (optional)",
     "form.integration.pushover_prefix": "Pushover URL prefix (optional)",

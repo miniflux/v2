@@ -19,13 +19,12 @@ type SessionData struct {
 	FlashErrorMessage   string          `json:"flash_error_message"`
 	Language            string          `json:"language"`
 	Theme               string          `json:"theme"`
-	PocketRequestToken  string          `json:"pocket_request_token"`
 	LastForceRefresh    string          `json:"last_force_refresh"`
 	WebAuthnSessionData WebAuthnSession `json:"webauthn_session_data"`
 }
 
 func (s *SessionData) String() string {
-	return fmt.Sprintf(`CSRF=%q, OAuth2State=%q, OAuth2CodeVerifier=%q, FlashMsg=%q, FlashErrMsg=%q, Lang=%q, Theme=%q, PocketTkn=%q, LastForceRefresh=%s, WebAuthnSession=%q`,
+	return fmt.Sprintf(`CSRF=%q, OAuth2State=%q, OAuth2CodeVerifier=%q, FlashMsg=%q, FlashErrMsg=%q, Lang=%q, Theme=%q, LastForceRefresh=%s, WebAuthnSession=%q`,
 		s.CSRF,
 		s.OAuth2State,
 		s.OAuth2CodeVerifier,
@@ -33,7 +32,6 @@ func (s *SessionData) String() string {
 		s.FlashErrorMessage,
 		s.Language,
 		s.Theme,
-		s.PocketRequestToken,
 		s.LastForceRefresh,
 		s.WebAuthnSessionData,
 	)
