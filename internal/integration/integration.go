@@ -6,7 +6,6 @@ package integration // import "miniflux.app/v2/internal/integration"
 import (
 	"log/slog"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/integration/apprise"
 	"miniflux.app/v2/internal/integration/betula"
 	"miniflux.app/v2/internal/integration/cubox"
@@ -23,7 +22,6 @@ import (
 	"miniflux.app/v2/internal/integration/nunuxkeeper"
 	"miniflux.app/v2/internal/integration/omnivore"
 	"miniflux.app/v2/internal/integration/pinboard"
-	"miniflux.app/v2/internal/integration/pocket"
 	"miniflux.app/v2/internal/integration/pushover"
 	"miniflux.app/v2/internal/integration/raindrop"
 	"miniflux.app/v2/internal/integration/readeck"
@@ -189,24 +187,6 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 
 		if err := client.CreateLink(entry.URL, entry.Title, userIntegrations.EspialTags); err != nil {
 			slog.Error("Unable to send entry to Espial",
-				slog.Int64("user_id", userIntegrations.UserID),
-				slog.Int64("entry_id", entry.ID),
-				slog.String("entry_url", entry.URL),
-				slog.Any("error", err),
-			)
-		}
-	}
-
-	if userIntegrations.PocketEnabled {
-		slog.Debug("Sending entry to Pocket",
-			slog.Int64("user_id", userIntegrations.UserID),
-			slog.Int64("entry_id", entry.ID),
-			slog.String("entry_url", entry.URL),
-		)
-
-		client := pocket.NewClient(config.Opts.PocketConsumerKey(userIntegrations.PocketConsumerKey), userIntegrations.PocketAccessToken)
-		if err := client.AddURL(entry.URL, entry.Title); err != nil {
-			slog.Error("Unable to send entry to Pocket",
 				slog.Int64("user_id", userIntegrations.UserID),
 				slog.Int64("entry_id", entry.ID),
 				slog.String("entry_url", entry.URL),

@@ -27,7 +27,6 @@
     "alert.no_tag_entry": "Tidak ada entri yang cocok dengan tag ini.",
     "alert.no_unread_entry": "Belum ada artikel yang dibaca.",
     "alert.no_user": "Anda adalah satu-satunya pengguna.",
-    "alert.pocket_linked": "Akun Pocket Anda sudah terhubung!",
     "alert.prefs_saved": "Preferensi disimpan!",
     "alert.too_many_feeds_refresh": [
         "Anda terlalu banyak menyegarkan umpan. Mohon tunggu %d menit sebelum mencoba lagi."
@@ -130,8 +129,6 @@
     "error.network_operation": "Miniflux tidak dapat menjangkau situs ini dikarenakan galat jaringan: %v.",
     "error.network_timeout": "Situs ini terlalu lambat dan permintaan ke situs terlalu lama: %v",
     "error.password_min_length": "Kata sandi harus memiliki setidaknya 6 karakter.",
-    "error.pocket_access_token": "Tidak bisa mendapatkan token akses dari Pocket!",
-    "error.pocket_request_token": "Tidak bisa mendapatkan token permintaan dari Pocket!",
     "error.proxy_url_not_empty": "URL proksi tidak boleh kosong.",
     "error.settings_block_rule_fieldname_invalid": "Aturan blokir tidak valid: aturan #%d tidak mempunyai nama bidang yang valid (Opsi: %s)",
     "error.settings_block_rule_invalid_regex": "Aturan blokir tidak valid: aturan pola #%d bukan ekspresi regular (regex) yang valid",
@@ -277,10 +274,6 @@
     "form.integration.pinboard_bookmark": "Tandai markah sebagai belum dibaca",
     "form.integration.pinboard_tags": "Tanda di Pinboard",
     "form.integration.pinboard_token": "Token API Pinboard",
-    "form.integration.pocket_access_token": "Token Akses Pocket",
-    "form.integration.pocket_activate": "Simpan artikel ke Pocket",
-    "form.integration.pocket_connect_link": "Hubungkan akun Pocket Anda",
-    "form.integration.pocket_consumer_key": "Kunci Pelanggan Pocket",
     "form.integration.pushover_activate": "Kirim artikel ke Pushover",
     "form.integration.pushover_device": "Perangkat Pushover (opsional)",
     "form.integration.pushover_prefix": "Prefiks URL Pushover (opsional)",

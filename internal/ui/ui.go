@@ -126,8 +126,6 @@ func Serve(router *mux.Router, store *storage.Storage, pool *worker.Pool) {
 	uiRouter.HandleFunc("/settings", handler.updateSettings).Name("updateSettings").Methods(http.MethodPost)
 	uiRouter.HandleFunc("/integrations", handler.showIntegrationPage).Name("integrations").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/integration", handler.updateIntegration).Name("updateIntegration").Methods(http.MethodPost)
-	uiRouter.HandleFunc("/integration/pocket/authorize", handler.pocketAuthorize).Name("pocketAuthorize").Methods(http.MethodGet)
-	uiRouter.HandleFunc("/integration/pocket/callback", handler.pocketCallback).Name("pocketCallback").Methods(http.MethodGet)
 	uiRouter.HandleFunc("/about", handler.showAboutPage).Name("about").Methods(http.MethodGet)
 
 	// Session pages.

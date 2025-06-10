@@ -27,7 +27,6 @@
     "alert.no_tag_entry": "このタグに一致するエントリーはありません。",
     "alert.no_unread_entry": "未読の記事はありません。",
     "alert.no_user": "あなたが唯一のユーザーです。",
-    "alert.pocket_linked": "Pocket アカウントとリンクされました!",
     "alert.prefs_saved": "設定情報は保存されました!",
     "alert.too_many_feeds_refresh": [
         "フィードの更新を要求しすぎました。%d 分後に再度お試しください。"
@@ -130,8 +129,6 @@
     "error.network_operation": "Miniflux はネットワークエラーのためこのウェブサイトに到達できません: %v.",
     "error.network_timeout": "このウェブサイトは応答が遅すぎるためタイムアウトしました: %v",
     "error.password_min_length": "パスワードは6文字以上である必要があります。",
-    "error.pocket_access_token": "Pocket の access token が取得できません!",
-    "error.pocket_request_token": "Pocket の request token が取得できません!",
     "error.proxy_url_not_empty": "プロキシURLを空にすることはできません。",
     "error.settings_block_rule_fieldname_invalid": "Invalid Block rule: rule #%d is missing a valid field name (Options: %s)",
     "error.settings_block_rule_invalid_regex": "Invalid Block rule: rule #%d's pattern is not a valid regex",
@@ -277,10 +274,6 @@
     "form.integration.pinboard_bookmark": "ブックマークを未読にする",
     "form.integration.pinboard_tags": "Pinboard の Tag",
     "form.integration.pinboard_token": "Pinboard の API Token",
-    "form.integration.pocket_access_token": "Pocket の Access Token",
-    "form.integration.pocket_activate": "Pocket に記事を保存する",
-    "form.integration.pocket_connect_link": "Pocket account に接続",
-    "form.integration.pocket_consumer_key": "Pocket の Consumer Key",
     "form.integration.pushover_activate": "Push entries to Pushover",
     "form.integration.pushover_device": "Pushover device (optional)",
     "form.integration.pushover_prefix": "Pushover URL prefix (optional)",

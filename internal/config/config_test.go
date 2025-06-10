@@ -1466,41 +1466,6 @@ func TestCreateAdmin(t *testing.T) {
 	}
 }
 
-func TestPocketConsumerKeyFromEnvVariable(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("POCKET_CONSUMER_KEY", "something")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := "something"
-	result := opts.PocketConsumerKey("default")
-
-	if result != expected {
-		t.Fatalf(`Unexpected POCKET_CONSUMER_KEY value, got %q instead of %q`, result, expected)
-	}
-}
-
-func TestPocketConsumerKeyFromUserPrefs(t *testing.T) {
-	os.Clearenv()
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := "default"
-	result := opts.PocketConsumerKey("default")
-
-	if result != expected {
-		t.Fatalf(`Unexpected POCKET_CONSUMER_KEY value, got %q instead of %q`, result, expected)
-	}
-}
-
 func TestMediaProxyMode(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("MEDIA_PROXY_MODE", "all")
@@ -1968,8 +1933,6 @@ func TestParseConfigFile(t *testing.T) {
 
 DEBUG = yes
 
- POCKET_CONSUMER_KEY= >#1234
-
 Invalid text
 `)
 
@@ -1992,12 +1955,6 @@ Invalid text
 
 	if opts.LogLevel() != "debug" {
 		t.Errorf(`Unexpected debug mode value, got %q`, opts.LogLevel())
-	}
-
-	expected := ">#1234"
-	result := opts.PocketConsumerKey("default")
-	if result != expected {
-		t.Errorf(`Unexpected POCKET_CONSUMER_KEY value, got %q instead of %q`, result, expected)
 	}
 
 	if err := tmpfile.Close(); err != nil {

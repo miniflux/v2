@@ -1090,4 +1090,13 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 		_, err = tx.Exec(`ALTER TABLE users ADD COLUMN open_external_links_in_new_tab bool default 't'`)
 		return err
 	},
+	func(tx *sql.Tx, _ string) (err error) {
+		sql := `
+			ALTER TABLE integrations DROP COLUMN pocket_enabled;
+			ALTER TABLE integrations DROP COLUMN pocket_access_token;
+			ALTER TABLE integrations DROP COLUMN pocket_consumer_key;
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

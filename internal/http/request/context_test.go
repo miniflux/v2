@@ -390,28 +390,6 @@ func TestFlashErrorMessage(t *testing.T) {
 	}
 }
 
-func TestPocketRequestToken(t *testing.T) {
-	r, _ := http.NewRequest("GET", "http://example.org", nil)
-
-	result := PocketRequestToken(r)
-	expected := ""
-
-	if result != expected {
-		t.Errorf(`Unexpected context value, got %q instead of %q`, result, expected)
-	}
-
-	ctx := r.Context()
-	ctx = context.WithValue(ctx, PocketRequestTokenContextKey, "request token")
-	r = r.WithContext(ctx)
-
-	result = PocketRequestToken(r)
-	expected = "request token"
-
-	if result != expected {
-		t.Errorf(`Unexpected context value, got %q instead of %q`, result, expected)
-	}
-}
-
 func TestClientIP(t *testing.T) {
 	r, _ := http.NewRequest("GET", "http://example.org", nil)
 

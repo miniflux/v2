@@ -213,10 +213,6 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.adminPassword = parseString(value, defaultAdminPassword)
 		case "ADMIN_PASSWORD_FILE":
 			p.opts.adminPassword = readSecretFile(value, defaultAdminPassword)
-		case "POCKET_CONSUMER_KEY":
-			p.opts.pocketConsumerKey = parseString(value, defaultPocketConsumerKey)
-		case "POCKET_CONSUMER_KEY_FILE":
-			p.opts.pocketConsumerKey = readSecretFile(value, defaultPocketConsumerKey)
 		case "OAUTH2_USER_CREATION":
 			p.opts.oauth2UserCreationAllowed = parseBool(value, defaultOAuth2UserCreation)
 		case "OAUTH2_CLIENT_ID":
