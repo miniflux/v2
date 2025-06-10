@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-var domainRegex = regexp.MustCompile(`^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$`)
+var domainRegex = regexp.MustCompile(`^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$`)
 
 // ValidateRange makes sure the offset/limit values are valid.
 func ValidateRange(offset, limit int) error {
