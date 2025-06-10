@@ -1227,6 +1227,12 @@ details.entry-enclosures {
     max-width: 100%;
 }
 
+.entry-external-link {
+    font-size: 0.8em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 /* Confirmation */
 .confirm {
     font-weight: 500;
