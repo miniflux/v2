@@ -99,6 +99,16 @@ func TestImgWithIncorrectWidthAndHeightAttribute(t *testing.T) {
 	}
 }
 
+func TestImgWithEmptywidthAndHeightAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="" height="">`
+	expected := `<img src="https://example.org/image.png" loading="lazy">`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
 func TestImgWithTextDataURL(t *testing.T) {
 	input := `<img src="data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==" alt="Example">`
 	expected := ``
