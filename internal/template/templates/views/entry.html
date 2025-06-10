@@ -69,20 +69,12 @@
                 <li>
                     <form method="post" action="{{route "shareEntry" "entryID" .entry.ID }}">
                         <input type="hidden" name="csrf" value="{{ .csrf }}">
-                          <button type="submit" class="page-button">
-		              {{ icon "share" }}<span class="icon-label">{{ t "entry.share.label" }}</span>
-	                  </button>
-		    </form>
+                        <button type="submit" class="page-button">
+                            {{ icon "share" }}<span class="icon-label">{{ t "entry.share.label" }}</span>
+                        </button>
+                    </form>
                 </li>
                 {{ end }}
-                <li>
-                    <a href="{{ .entry.URL | safeURL  }}"
-                        class="page-link"
-                        {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
-                        rel="noopener noreferrer"
-                        referrerpolicy="no-referrer"
-                        data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
-                </li>
                 <li>
                     <button
                         class="page-button"
@@ -173,6 +165,14 @@
             {{ end }}
         </div>
         {{ end }}
+        <div class="entry-external-link">
+            <a
+                href="{{ .entry.URL | safeURL  }}"
+                {{ if $.user.OpenExternalLinksInNewTab }}target="_blank"{{ end }}
+                rel="noopener noreferrer"
+                referrerpolicy="no-referrer"
+                data-original-link="{{ $.user.MarkReadOnView }}">{{ .entry.URL }}</span></a>
+        </div>
         <div class="entry-date">
             {{ if .user }}
             <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
@@ -275,7 +275,6 @@
     {{ end }}
 </details>
 {{ end }}
-
 
 {{ if .user }}
 <div class="pagination-entry-bottom">
