@@ -234,6 +234,10 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute, sa
 			continue
 		}
 
+		if tagName == "math" && attribute.Key == "xmlns" && value != "http://www.w3.org/1998/Math/MathML" {
+			value = "http://www.w3.org/1998/Math/MathML"
+		}
+
 		if tagName == "img" && attribute.Key == "fetchpriority" {
 			if !isValidFetchPriorityValue(value) {
 				continue

@@ -829,3 +829,13 @@ func TestMathML(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestInvalidMathMLXMLNamespace(t *testing.T) {
+	input := `<math xmlns="http://example.org"><msup><mi>x</mi><mn>2</mn></msup></math>`
+	expected := `<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>x</mi><mn>2</mn></msup></math>`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
