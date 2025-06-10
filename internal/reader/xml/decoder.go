@@ -61,9 +61,11 @@ func filterValidXMLChars(s []byte) []byte {
 		if r >= utf8.RuneSelf {
 			r, wid = utf8.DecodeRune(s[i:])
 		}
-		if r = filterValidXMLChar(r); r >= 0 {
-			utf8.EncodeRune(s[j:], r)
-			j += wid
+		if r != utf8.RuneError {
+			if r = filterValidXMLChar(r); r >= 0 {
+				utf8.EncodeRune(s[j:], r)
+				j += wid
+			}
 		}
 		i += wid
 	}
