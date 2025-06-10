@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"unicode/utf8"
 )
 
 func TestXMLDocumentWithIllegalUnicodeCharacters(t *testing.T) {
@@ -80,4 +81,26 @@ func TestXMLDocumentWithIncorrectEncodingField(t *testing.T) {
 	if x.Title != expected {
 		t.Errorf("Incorrect entry title, expected: %s, got: %s", expected, x.Title)
 	}
+}
+
+func TestFilterValidXMLCharsWithInvalidUTF8Sequence(t *testing.T) {
+	// Create input with invalid UTF-8 sequence
+	input := []byte{0x41, 0xC0, 0xAF, 0x42} // 'A', invalid UTF-8, 'B'
+
+	filtered := filterValidXMLChars(input)
+
+	// The function would replace invalid UTF-8 with replacement char
+	// rather than properly filtering
+	if utf8.Valid(filtered) {
+		r, _ := utf8.DecodeRune(filtered[1:])
+		if r == utf8.RuneError {
+			t.Error("Invalid UTF-8 was not properly filtered")
+		}
+	}
+}
+
+func FuzzFilterValidXMLChars(f *testing.F) {
+	f.Fuzz(func(t *testing.T, s []byte) {
+		filterValidXMLChars(s)
+	})
 }
