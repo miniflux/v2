@@ -541,6 +541,9 @@ func isValidDataAttribute(value string) bool {
 }
 
 func isPositiveInteger(value string) bool {
+	if value == "" {
+		return false
+	}
 	if number, err := strconv.Atoi(value); err == nil {
 		return number > 0
 	}
