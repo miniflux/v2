@@ -97,9 +97,8 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	}
 }
 
-// Rewriter modify item contents with a set of rewriting rules.
-func Rewriter(entryURL string, entry *model.Entry, customRewriteRules string) {
-	rulesList := getPredefinedRewriteRules(entryURL)
+func ApplyContentRewriteRules(entry *model.Entry, customRewriteRules string) {
+	rulesList := getPredefinedRewriteRules(entry.URL)
 	if customRewriteRules != "" {
 		rulesList = customRewriteRules
 	}
@@ -109,11 +108,11 @@ func Rewriter(entryURL string, entry *model.Entry, customRewriteRules string) {
 
 	slog.Debug("Rewrite rules applied",
 		slog.Any("rules", rules),
-		slog.String("entry_url", entryURL),
+		slog.String("entry_url", entry.URL),
 	)
 
 	for _, rule := range rules {
-		rule.applyRule(entryURL, entry)
+		rule.applyRule(entry.URL, entry)
 	}
 }
 
