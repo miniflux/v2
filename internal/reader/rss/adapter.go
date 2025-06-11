@@ -169,8 +169,11 @@ func findFeedAuthor(rssChannel *RSSChannel) string {
 		author = rssChannel.ManagingEditor
 	case rssChannel.Webmaster != "":
 		author = rssChannel.Webmaster
+	default:
+		return ""
 	}
-	return sanitizer.StripTags(strings.TrimSpace(author))
+
+	return strings.TrimSpace(sanitizer.StripTags(author))
 }
 
 func findEntryTitle(rssItem *RSSItem) string {
@@ -258,8 +261,10 @@ func findEntryAuthor(rssItem *RSSItem) string {
 		author = rssItem.PersonName()
 	case strings.Contains(rssItem.Author.Inner, "<![CDATA["):
 		author = rssItem.Author.Data
-	default:
+	case rssItem.Author.Inner != "":
 		author = rssItem.Author.Inner
+	default:
+		return ""
 	}
 
 	return strings.TrimSpace(sanitizer.StripTags(author))
