@@ -119,7 +119,7 @@ type Options struct {
 	databaseMinConns                   int
 	databaseConnectionLifetime         int
 	runMigrations                      bool
-	listenAddr                         string
+	listenAddr                         []string
 	certFile                           string
 	certDomain                         string
 	certKeyFile                        string
@@ -202,7 +202,7 @@ func NewOptions() *Options {
 		databaseMinConns:                   defaultDatabaseMinConns,
 		databaseConnectionLifetime:         defaultDatabaseConnectionLifetime,
 		runMigrations:                      defaultRunMigrations,
-		listenAddr:                         defaultListenAddr,
+		listenAddr:                         []string{defaultListenAddr},
 		certFile:                           defaultCertFile,
 		certDomain:                         defaultCertDomain,
 		certKeyFile:                        defaultKeyFile,
@@ -339,7 +339,7 @@ func (o *Options) DatabaseConnectionLifetime() time.Duration {
 }
 
 // ListenAddr returns the listen address for the HTTP server.
-func (o *Options) ListenAddr() string {
+func (o *Options) ListenAddr() []string {
 	return o.listenAddr
 }
 
@@ -740,7 +740,7 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"HTTP_SERVICE":                           o.httpService,
 		"INVIDIOUS_INSTANCE":                     o.invidiousInstance,
 		"KEY_FILE":                               o.certKeyFile,
-		"LISTEN_ADDR":                            o.listenAddr,
+		"LISTEN_ADDR":                            strings.Join(o.listenAddr, ","),
 		"LOG_FILE":                               o.logFile,
 		"LOG_DATE_TIME":                          o.logDateTime,
 		"LOG_FORMAT":                             o.logFormat,

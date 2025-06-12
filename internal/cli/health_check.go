@@ -14,7 +14,7 @@ import (
 
 func doHealthCheck(healthCheckEndpoint string) {
 	if healthCheckEndpoint == "auto" {
-		healthCheckEndpoint = "http://" + config.Opts.ListenAddr() + config.Opts.BasePath() + "/healthcheck"
+		healthCheckEndpoint = "http://" + config.Opts.ListenAddr()[0] + config.Opts.BasePath() + "/healthcheck"
 	}
 
 	slog.Debug("Executing health check request", slog.String("endpoint", healthCheckEndpoint))

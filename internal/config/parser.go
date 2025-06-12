@@ -94,7 +94,7 @@ func (p *Parser) parseLines(lines []string) (err error) {
 		case "PORT":
 			port = value
 		case "LISTEN_ADDR":
-			p.opts.listenAddr = parseString(value, defaultListenAddr)
+			p.opts.listenAddr = parseStringList(value, []string{defaultListenAddr})
 		case "DATABASE_URL":
 			p.opts.databaseURL = parseString(value, defaultDatabaseURL)
 		case "DATABASE_URL_FILE":
@@ -258,7 +258,7 @@ func (p *Parser) parseLines(lines []string) (err error) {
 	}
 
 	if port != "" {
-		p.opts.listenAddr = ":" + port
+		p.opts.listenAddr = []string{":" + port}
 	}
 
 	youtubeEmbedURL, err := url.Parse(p.opts.youTubeEmbedUrlOverride)
@@ -338,6 +338,10 @@ func parseStringList(value string, fallback []string) []string {
 	items := strings.Split(value, ",")
 	for _, item := range items {
 		itemValue := strings.TrimSpace(item)
+
+		if itemValue == "" {
+			continue
+		}
 
 		if _, found := strMap[itemValue]; !found {
 			strMap[itemValue] = true
