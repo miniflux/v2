@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	divToPElementsRegexp = regexp.MustCompile(`(?i)<(a|blockquote|dl|div|img|ol|p|pre|table|ul)`)
+	divToPElementsRegexp = regexp.MustCompile(`(?i)<(?:a|blockquote|dl|div|img|ol|p|pre|table|ul)[ />]`)
 
 	okMaybeItsACandidateRegexp = regexp.MustCompile(`and|article|body|column|main|shadow`)
 	unlikelyCandidatesRegexp   = regexp.MustCompile(`banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|foot|header|legends|menu|modal|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|ad-break|agegate|pagination|pager|popup|yom-remote`)
