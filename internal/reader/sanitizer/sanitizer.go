@@ -128,6 +128,9 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 	var parentTag string
 	var blockedStack []string
 
+	// Errors are a non-issue, so they're handled later in the function.
+	parsedBaseUrl, _ := url.Parse(baseURL)
+
 	tokenizer := html.NewTokenizer(strings.NewReader(rawHTML))
 	for {
 		if tokenizer.Next() == html.ErrorToken {
@@ -175,7 +178,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 			}
 
 			if len(blockedStack) == 0 && isValidTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr, sanitizerOptions)
+				attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, baseURL, tagName, token.Attr, sanitizerOptions)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						// Rewrite the start tag with allowed attributes.
@@ -203,7 +206,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 				continue
 			}
 			if len(blockedStack) == 0 && isValidTag(tagName) {
-				attrNames, htmlAttributes := sanitizeAttributes(baseURL, tagName, token.Attr, sanitizerOptions)
+				attrNames, htmlAttributes := sanitizeAttributes(parsedBaseUrl, baseURL, tagName, token.Attr, sanitizerOptions)
 				if hasRequiredAttributes(tagName, attrNames) {
 					if len(attrNames) > 0 {
 						buffer.WriteString("<" + tagName + " " + htmlAttributes + "/>")
@@ -216,7 +219,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 	}
 }
 
-func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
+func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
 	var htmlAttrs, attrNames []string
 	var err error
 	var isImageLargerThanLayout bool
@@ -226,8 +229,6 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute, sa
 		imgWidth := getIntegerAttributeValue("width", attributes)
 		isImageLargerThanLayout = imgWidth > 750
 	}
-
-	parsedBaseUrl, _ := url.Parse(baseURL)
 
 	for _, attribute := range attributes {
 		value := attribute.Val
@@ -265,7 +266,7 @@ func sanitizeAttributes(baseURL, tagName string, attributes []html.Attribute, sa
 		if isExternalResourceAttribute(attribute.Key) {
 			switch {
 			case tagName == "iframe":
-				if !isValidIframeSource(baseURL, attribute.Val) {
+				if !isValidIframeSource(parsedBaseUrl, baseURL, attribute.Val) {
 					continue
 				}
 				value = rewriteIframeURL(attribute.Val)
@@ -447,7 +448,7 @@ func isBlockedResource(src string) bool {
 	})
 }
 
-func isValidIframeSource(baseURL, src string) bool {
+func isValidIframeSource(parsedBaseUrl *url.URL, baseURL, src string) bool {
 	whitelist := []string{
 		"bandcamp.com",
 		"cdn.embedly.com",
@@ -464,8 +465,13 @@ func isValidIframeSource(baseURL, src string) bool {
 	}
 	domain := urllib.Domain(src)
 
+	baseDomain := baseURL
+	if parsedBaseUrl != nil {
+		baseDomain = parsedBaseUrl.Hostname()
+	}
+
 	// allow iframe from same origin
-	if urllib.Domain(baseURL) == domain {
+	if baseDomain == domain {
 		return true
 	}
 
