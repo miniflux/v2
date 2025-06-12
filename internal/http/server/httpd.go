@@ -4,6 +4,7 @@
 package httpd // import "miniflux.app/v2/internal/http/server"
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log/slog"
 	"net"
@@ -29,36 +30,84 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
-func StartWebServer(store *storage.Storage, pool *worker.Pool) *http.Server {
+func StartWebServer(store *storage.Storage, pool *worker.Pool) []*http.Server {
+	listenAddresses := config.Opts.ListenAddr()
+	var httpServers []*http.Server
+
 	certFile := config.Opts.CertFile()
 	keyFile := config.Opts.CertKeyFile()
 	certDomain := config.Opts.CertDomain()
-	listenAddr := config.Opts.ListenAddr()
-	server := &http.Server{
-		ReadTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
-		WriteTimeout: time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
-		IdleTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
-		Handler:      setupHandler(store, pool),
+	var sharedAutocertTLSConfig *tls.Config
+
+	if certDomain != "" {
+		slog.Debug("Configuring autocert manager and shared TLS config", slog.String("domain", certDomain))
+		certManager := autocert.Manager{
+			Cache:      storage.NewCertificateCache(store),
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(certDomain),
+		}
+
+		sharedAutocertTLSConfig = &tls.Config{}
+		sharedAutocertTLSConfig.GetCertificate = certManager.GetCertificate
+		sharedAutocertTLSConfig.NextProtos = []string{"h2", "http/1.1", acme.ALPNProto}
+
+		challengeServer := &http.Server{
+			Handler: certManager.HTTPHandler(nil),
+			Addr:    ":http",
+		}
+		slog.Info("Starting ACME HTTP challenge server for autocert", slog.String("address", challengeServer.Addr))
+		go func() {
+			if err := challengeServer.ListenAndServe(); err != http.ErrServerClosed {
+				slog.Error("ACME HTTP challenge server failed", slog.Any("error", err))
+			}
+		}()
+		config.Opts.HTTPS = true
+		httpServers = append(httpServers, challengeServer)
 	}
 
-	switch {
-	case os.Getenv("LISTEN_PID") == strconv.Itoa(os.Getpid()):
-		startSystemdSocketServer(server)
-	case strings.HasPrefix(listenAddr, "/"):
-		startUnixSocketServer(server, listenAddr)
-	case certDomain != "":
-		config.Opts.HTTPS = true
-		startAutoCertTLSServer(server, certDomain, store)
-	case certFile != "" && keyFile != "":
-		config.Opts.HTTPS = true
-		server.Addr = listenAddr
-		startTLSServer(server, certFile, keyFile)
-	default:
-		server.Addr = listenAddr
-		startHTTPServer(server)
+	for i, listenAddr := range listenAddresses {
+		server := &http.Server{
+			ReadTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
+			WriteTimeout: time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
+			IdleTimeout:  time.Duration(config.Opts.HTTPServerTimeout()) * time.Second,
+			Handler:      setupHandler(store, pool),
+		}
+
+		if !strings.HasPrefix(listenAddr, "/") && os.Getenv("LISTEN_PID") != strconv.Itoa(os.Getpid()) {
+			server.Addr = listenAddr
+		}
+
+		shouldAddServer := true
+
+		switch {
+		case os.Getenv("LISTEN_PID") == strconv.Itoa(os.Getpid()):
+			if i == 0 {
+				slog.Info("Starting server using systemd socket for the first listen address", slog.String("address_info", listenAddr))
+				startSystemdSocketServer(server)
+			} else {
+				slog.Warn("Systemd socket activation: Only the first listen address is used by systemd. Other addresses ignored.", slog.String("skipped_address", listenAddr))
+				shouldAddServer = false
+			}
+		case strings.HasPrefix(listenAddr, "/"): // Unix socket
+			startUnixSocketServer(server, listenAddr)
+		case certDomain != "" && (listenAddr == ":https" || (i == 0 && strings.Contains(listenAddr, ":"))):
+			server.Addr = listenAddr
+			startAutoCertTLSServer(server, sharedAutocertTLSConfig)
+		case certFile != "" && keyFile != "":
+			server.Addr = listenAddr
+			startTLSServer(server, certFile, keyFile)
+			config.Opts.HTTPS = true
+		default:
+			server.Addr = listenAddr
+			startHTTPServer(server)
+		}
+
+		if shouldAddServer {
+			httpServers = append(httpServers, server)
+		}
 	}
 
-	return server
+	return httpServers
 }
 
 func startSystemdSocketServer(server *http.Server) {
@@ -71,56 +120,42 @@ func startSystemdSocketServer(server *http.Server) {
 
 		slog.Info(`Starting server using systemd socket`)
 		if err := server.Serve(listener); err != http.ErrServerClosed {
-			printErrorAndExit(`Server failed to start: %v`, err)
+			printErrorAndExit(`Systemd socket server failed to start: %v`, err)
 		}
 	}()
 }
 
 func startUnixSocketServer(server *http.Server, socketFile string) {
-	os.Remove(socketFile)
+	if err := os.Remove(socketFile); err != nil && !os.IsNotExist(err) {
+		printErrorAndExit("Unable to remove existing Unix socket %s: %v", socketFile, err)
+	}
+	listener, err := net.Listen("unix", socketFile)
+	if err != nil {
+		printErrorAndExit(`Server failed to listen on Unix socket %s: %v`, socketFile, err)
+	}
 
-	go func(sock string) {
-		listener, err := net.Listen("unix", sock)
-		if err != nil {
-			printErrorAndExit(`Server failed to start: %v`, err)
-		}
-		defer listener.Close()
+	if err := os.Chmod(socketFile, 0666); err != nil {
+		printErrorAndExit(`Unable to change socket permission for %s: %v`, socketFile, err)
+	}
 
-		if err := os.Chmod(sock, 0666); err != nil {
-			printErrorAndExit(`Unable to change socket permission: %v`, err)
-		}
-
-		slog.Info("Starting server using a Unix socket", slog.String("socket", sock))
+	go func() {
+		slog.Info("Starting server using a Unix socket", slog.String("socket", socketFile))
 		if err := server.Serve(listener); err != http.ErrServerClosed {
-			printErrorAndExit(`Server failed to start: %v`, err)
+			printErrorAndExit(fmt.Sprintf("Unix socket server failed to start on %s: %%v", socketFile), err)
 		}
-	}(socketFile)
+	}()
 }
 
-func startAutoCertTLSServer(server *http.Server, certDomain string, store *storage.Storage) {
-	server.Addr = ":https"
-	certManager := autocert.Manager{
-		Cache:      storage.NewCertificateCache(store),
-		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist(certDomain),
-	}
-	server.TLSConfig.GetCertificate = certManager.GetCertificate
-	server.TLSConfig.NextProtos = []string{"h2", "http/1.1", acme.ALPNProto}
-
-	// Handle http-01 challenge.
-	s := &http.Server{
-		Handler: certManager.HTTPHandler(nil),
-		Addr:    ":http",
-	}
-	go s.ListenAndServe()
+func startAutoCertTLSServer(server *http.Server, autoTLSConfig *tls.Config) {
+	server.TLSConfig.GetCertificate = autoTLSConfig.GetCertificate
+	server.TLSConfig.NextProtos = autoTLSConfig.NextProtos
 
 	go func() {
 		slog.Info("Starting TLS server using automatic certificate management",
 			slog.String("listen_address", server.Addr),
-			slog.String("domain", certDomain),
 		)
 		if err := server.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
-			printErrorAndExit(`Server failed to start: %v`, err)
+			printErrorAndExit(fmt.Sprintf("Autocert server failed to start on %s: %%v", server.Addr), err)
 		}
 	}()
 }
@@ -133,7 +168,7 @@ func startTLSServer(server *http.Server, certFile, keyFile string) {
 			slog.String("key_file", keyFile),
 		)
 		if err := server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
-			printErrorAndExit(`Server failed to start: %v`, err)
+			printErrorAndExit(fmt.Sprintf("TLS server failed to start on %s: %%v", server.Addr), err)
 		}
 	}()
 }
@@ -144,7 +179,7 @@ func startHTTPServer(server *http.Server) {
 			slog.String("listen_address", server.Addr),
 		)
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
-			printErrorAndExit(`Server failed to start: %v`, err)
+			printErrorAndExit(fmt.Sprintf("HTTP server failed to start on %s: %%v", server.Addr), err)
 		}
 	}()
 }

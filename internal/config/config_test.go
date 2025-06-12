@@ -6,6 +6,7 @@ package config // import "miniflux.app/v2/internal/config"
 import (
 	"bytes"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -428,18 +429,18 @@ func TestListenAddr(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := "foobar"
+	expected := []string{"foobar"}
 	result := opts.ListenAddr()
 
-	if result != expected {
-		t.Fatalf(`Unexpected LISTEN_ADDR value, got %q instead of %q`, result, expected)
+	if !reflect.DeepEqual(result, expected) {
+		t.Fatalf(`Unexpected LISTEN_ADDR value, got %v instead of %v`, result, expected)
 	}
 }
 
 func TestListenAddrWithPortDefined(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("PORT", "3000")
-	os.Setenv("LISTEN_ADDR", "foobar")
+	os.Setenv("LISTEN_ADDR", "foobar") // This should be overridden by PORT
 
 	parser := NewParser()
 	opts, err := parser.ParseEnvironmentVariables()
@@ -447,11 +448,11 @@ func TestListenAddrWithPortDefined(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := ":3000"
+	expected := []string{":3000"}
 	result := opts.ListenAddr()
 
-	if result != expected {
-		t.Fatalf(`Unexpected LISTEN_ADDR value, got %q instead of %q`, result, expected)
+	if !reflect.DeepEqual(result, expected) {
+		t.Fatalf(`Unexpected LISTEN_ADDR value when PORT is set, got %v instead of %v`, result, expected)
 	}
 }
 
@@ -464,11 +465,11 @@ func TestDefaultListenAddrValue(t *testing.T) {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
 
-	expected := defaultListenAddr
+	expected := []string{defaultListenAddr}
 	result := opts.ListenAddr()
 
-	if result != expected {
-		t.Fatalf(`Unexpected LISTEN_ADDR value, got %q instead of %q`, result, expected)
+	if !reflect.DeepEqual(result, expected) {
+		t.Fatalf(`Unexpected default LISTEN_ADDR value, got %v instead of %v`, result, expected)
 	}
 }
 
