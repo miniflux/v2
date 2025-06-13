@@ -29,7 +29,7 @@ func (rule rule) applyRule(entryURL string, entry *model.Entry) {
 	case "add_dynamic_iframe":
 		entry.Content = addDynamicIframe(entry.Content)
 	case "add_youtube_video":
-		entry.Content = addYoutubeVideo(entryURL, entry.Content)
+		entry.Content = addYoutubeVideoRewriteRule(entryURL, entry.Content)
 	case "add_invidious_video":
 		entry.Content = addInvidiousVideo(entryURL, entry.Content)
 	case "add_youtube_video_using_invidious_player":
