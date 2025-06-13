@@ -21,10 +21,11 @@ import (
 )
 
 var (
-	youtubeRegex   = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
-	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
-	invidioRegex   = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
-	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
+	youtubeVideoRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
+	youtubeShortRegex = regexp.MustCompile(`youtube\.com/shorts/([a-zA-Z0-9_-]{11})$`)
+	youtubeIdRegex    = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
+	invidioRegex      = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
+	textLinkRegex     = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
 // titlelize returns a copy of the string s with all Unicode letters that begin words
@@ -259,22 +260,34 @@ func useNoScriptImages(entryContent string) string {
 	return output
 }
 
-func addYoutubeVideo(entryURL, entryContent string) string {
-	matches := youtubeRegex.FindStringSubmatch(entryURL)
+func getYoutubVideoIDFromURL(entryURL string) string {
+	matches := youtubeVideoRegex.FindStringSubmatch(entryURL)
+
+	if len(matches) != 2 {
+		matches = youtubeShortRegex.FindStringSubmatch(entryURL)
+	}
 
 	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="` + config.Opts.YouTubeEmbedUrlOverride() + matches[1] + `" allowfullscreen></iframe>`
-		return video + `<br>` + entryContent
+		return matches[1]
+	}
+	return ""
+}
+
+func addVideoPlayerIframe(absoluteVideoURL, entryContent string) string {
+	video := `<iframe width="650" height="350" frameborder="0" src="` + absoluteVideoURL + `" allowfullscreen></iframe>`
+	return video + `<br>` + entryContent
+}
+
+func addYoutubeVideoRewriteRule(entryURL, entryContent string) string {
+	if videoURL := getYoutubVideoIDFromURL(entryURL); videoURL != "" {
+		return addVideoPlayerIframe(config.Opts.YouTubeEmbedUrlOverride()+videoURL, entryContent)
 	}
 	return entryContent
 }
 
 func addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent string) string {
-	matches := youtubeRegex.FindStringSubmatch(entryURL)
-
-	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="https://` + config.Opts.InvidiousInstance() + `/embed/` + matches[1] + `" allowfullscreen></iframe>`
-		return video + `<br>` + entryContent
+	if videoURL := getYoutubVideoIDFromURL(entryURL); videoURL != "" {
+		return addVideoPlayerIframe(`https://`+config.Opts.InvidiousInstance()+`/embed/`+videoURL, entryContent)
 	}
 	return entryContent
 }

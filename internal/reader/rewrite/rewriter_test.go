@@ -66,7 +66,7 @@ func TestRewriteWithNoMatchingRule(t *testing.T) {
 	}
 }
 
-func TestRewriteWithYoutubeLink(t *testing.T) {
+func TestRewriteYoutubeVideoLink(t *testing.T) {
 	config.Opts = config.NewOptions()
 
 	controlEntry := &model.Entry{
@@ -86,7 +86,47 @@ func TestRewriteWithYoutubeLink(t *testing.T) {
 	}
 }
 
-func TestRewriteWithYoutubeLinkAndCustomEmbedURL(t *testing.T) {
+func TestRewriteYoutubeShortLink(t *testing.T) {
+	config.Opts = config.NewOptions()
+
+	controlEntry := &model.Entry{
+		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
+		Title:   `A title`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/1LUWKWZkPjo" allowfullscreen></iframe><br>Video Description`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	ApplyContentRewriteRules(testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteIncorrectYoutubeLink(t *testing.T) {
+	config.Opts = config.NewOptions()
+
+	controlEntry := &model.Entry{
+		URL:     "https://www.youtube.com/some-page",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://www.youtube.com/some-page",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+	ApplyContentRewriteRules(testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
 
@@ -109,6 +149,46 @@ func TestRewriteWithYoutubeLinkAndCustomEmbedURL(t *testing.T) {
 		Content: `Video Description`,
 	}
 	ApplyContentRewriteRules(testEntry, ``)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteYoutubeVideoLinkUsingInvidious(t *testing.T) {
+	config.Opts = config.NewOptions()
+	controlEntry := &model.Entry{
+		URL:     "https://www.youtube.com/watch?v=1234",
+		Title:   `A title`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/1234" allowfullscreen></iframe><br>Video Description`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://www.youtube.com/watch?v=1234",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+
+	ApplyContentRewriteRules(testEntry, `add_youtube_video_using_invidious_player`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
+
+func TestRewriteYoutubeShortLinkUsingInvidious(t *testing.T) {
+	config.Opts = config.NewOptions()
+	controlEntry := &model.Entry{
+		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
+		Title:   `A title`,
+		Content: `<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/1LUWKWZkPjo" allowfullscreen></iframe><br>Video Description`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://www.youtube.com/shorts/1LUWKWZkPjo",
+		Title:   `A title`,
+		Content: `Video Description`,
+	}
+
+	ApplyContentRewriteRules(testEntry, `add_youtube_video_using_invidious_player`)
 
 	if !reflect.DeepEqual(testEntry, controlEntry) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
