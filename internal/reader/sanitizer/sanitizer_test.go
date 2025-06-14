@@ -887,3 +887,29 @@ func TestInvalidMathMLXMLNamespace(t *testing.T) {
 		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
 	}
 }
+
+func TestBlockedResourcesSubstrings(t *testing.T) {
+	input := `<p>Before paragraph.</p><img src="http://stats.wordpress.com/something.php" alt="Blocked Resource"><p>After paragraph.</p>`
+	expected := `<p>Before paragraph.</p><p>After paragraph.</p>`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+
+	input = `<p>Before paragraph.</p><img src="http://twitter.com/share?text=This+is+google+a+search+engine&url=https%3A%2F%2Fwww.google.com" alt="Blocked Resource"><p>After paragraph.</p>`
+	expected = `<p>Before paragraph.</p><p>After paragraph.</p>`
+	output = SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+
+	input = `<p>Before paragraph.</p><img src="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.google.com%[title]=This+Is%2C+Google+a+search+engine" alt="Blocked Resource"><p>After paragraph.</p>`
+	expected = `<p>Before paragraph.</p><p>After paragraph.</p>`
+	output = SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}

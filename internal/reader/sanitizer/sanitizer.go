@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	tagAllowList = map[string][]string{
+	allowedHTMLTagsAndAttributes = map[string][]string{
 		"a":          {"href", "title", "id"},
 		"abbr":       {"title"},
 		"acronym":    {"title"},
@@ -124,6 +124,78 @@ var (
 		"w.soundcloud.com":     {},
 		"youtube-nocookie.com": {},
 		"youtube.com":          {},
+	}
+
+	blockedResourceURLSubstrings = []string{
+		"api.flattr.com",
+		"feeds.feedburner.com",
+		"feedsportal.com",
+		"pinterest.com/pin/create/button/",
+		"stats.wordpress.com",
+		"twitter.com/intent/tweet",
+		"twitter.com/share",
+		"www.facebook.com/sharer.php",
+		"www.linkedin.com/shareArticle",
+	}
+
+	validURISchemes = map[string]struct{}{
+		"apt":       {},
+		"bitcoin":   {},
+		"callto":    {},
+		"dav":       {},
+		"davs":      {},
+		"ed2k":      {},
+		"facetime":  {},
+		"feed":      {},
+		"ftp":       {},
+		"geo":       {},
+		"git":       {},
+		"gopher":    {},
+		"http":      {},
+		"https":     {},
+		"irc":       {},
+		"irc6":      {},
+		"ircs":      {},
+		"itms-apps": {},
+		"itms":      {},
+		"magnet":    {},
+		"mailto":    {},
+		"news":      {},
+		"nntp":      {},
+		"rtmp":      {},
+		"sftp":      {},
+		"sip":       {},
+		"sips":      {},
+		"skype":     {},
+		"spotify":   {},
+		"ssh":       {},
+		"steam":     {},
+		"svn":       {},
+		"svn+ssh":   {},
+		"tel":       {},
+		"webcal":    {},
+		"xmpp":      {},
+		// iOS Apps
+		"opener": {}, // https://www.opener.link
+		"hack":   {}, // https://apps.apple.com/it/app/hack-for-hacker-news-reader/id1464477788?l=en-GB
+	}
+
+	blockedTags = map[string]struct{}{
+		"noscript": {},
+		"script":   {},
+		"style":    {},
+	}
+
+	dataAttributeAllowedPrefixes = []string{
+		"data:image/avif",
+		"data:image/apng",
+		"data:image/png",
+		"data:image/svg",
+		"data:image/svg+xml",
+		"data:image/jpg",
+		"data:image/jpeg",
+		"data:image/gif",
+		"data:image/webp",
 	}
 )
 
@@ -345,12 +417,12 @@ func getExtraAttributes(tagName string, sanitizerOptions *SanitizerOptions) ([]s
 }
 
 func isValidTag(tagName string) bool {
-	_, ok := tagAllowList[tagName]
+	_, ok := allowedHTMLTagsAndAttributes[tagName]
 	return ok
 }
 
 func isValidAttribute(tagName, attributeName string) bool {
-	if attributes, ok := tagAllowList[tagName]; ok {
+	if attributes, ok := allowedHTMLTagsAndAttributes[tagName]; ok {
 		return slices.Contains(attributes, attributeName)
 	}
 	return false
@@ -400,66 +472,21 @@ func hasRequiredAttributes(tagName string, attributes []string) bool {
 }
 
 // See https://www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
-func hasValidURIScheme(src string) bool {
-	whitelist := []string{
-		"apt:",
-		"bitcoin:",
-		"callto:",
-		"dav:",
-		"davs:",
-		"ed2k://",
-		"facetime://",
-		"feed:",
-		"ftp://",
-		"geo:",
-		"gopher://",
-		"git://",
-		"http://",
-		"https://",
-		"irc://",
-		"irc6://",
-		"ircs://",
-		"itms://",
-		"itms-apps://",
-		"magnet:",
-		"mailto:",
-		"news:",
-		"nntp:",
-		"rtmp://",
-		"sip:",
-		"sips:",
-		"skype:",
-		"spotify:",
-		"ssh://",
-		"sftp://",
-		"steam://",
-		"svn://",
-		"svn+ssh://",
-		"tel:",
-		"webcal://",
-		"xmpp:",
-
-		// iOS Apps
-		"opener://", // https://www.opener.link
-		"hack://",   // https://apps.apple.com/it/app/hack-for-hacker-news-reader/id1464477788?l=en-GB
+func hasValidURIScheme(absoluteURL string) bool {
+	colonIndex := strings.IndexByte(absoluteURL, ':')
+	// Scheme must exist (colonIndex > 0). An empty scheme (e.g. ":foo") is not allowed.
+	if colonIndex <= 0 {
+		return false
 	}
 
-	return slices.ContainsFunc(whitelist, func(prefix string) bool {
-		return strings.HasPrefix(src, prefix)
-	})
+	scheme := absoluteURL[:colonIndex]
+	_, ok := validURISchemes[strings.ToLower(scheme)]
+	return ok
 }
 
-func isBlockedResource(src string) bool {
-	blacklist := []string{
-		"feedsportal.com",
-		"api.flattr.com",
-		"stats.wordpress.com",
-		"twitter.com/share",
-		"feeds.feedburner.com",
-	}
-
-	return slices.ContainsFunc(blacklist, func(element string) bool {
-		return strings.Contains(src, element)
+func isBlockedResource(absoluteURL string) bool {
+	return slices.ContainsFunc(blockedResourceURLSubstrings, func(element string) bool {
+		return strings.Contains(absoluteURL, element)
 	})
 }
 
@@ -509,13 +536,8 @@ func rewriteIframeURL(link string) string {
 }
 
 func isBlockedTag(tagName string) bool {
-	blacklist := []string{
-		"noscript",
-		"script",
-		"style",
-	}
-
-	return slices.Contains(blacklist, tagName)
+	_, ok := blockedTags[tagName]
+	return ok
 }
 
 func sanitizeSrcsetAttr(baseURL, value string) string {
@@ -531,20 +553,12 @@ func sanitizeSrcsetAttr(baseURL, value string) string {
 }
 
 func isValidDataAttribute(value string) bool {
-	var dataAttributeAllowList = []string{
-		"data:image/avif",
-		"data:image/apng",
-		"data:image/png",
-		"data:image/svg",
-		"data:image/svg+xml",
-		"data:image/jpg",
-		"data:image/jpeg",
-		"data:image/gif",
-		"data:image/webp",
+	for _, prefix := range dataAttributeAllowedPrefixes {
+		if strings.HasPrefix(value, prefix) {
+			return true
+		}
 	}
-	return slices.ContainsFunc(dataAttributeAllowList, func(prefix string) bool {
-		return strings.HasPrefix(value, prefix)
-	})
+	return false
 }
 
 func isPositiveInteger(value string) bool {
