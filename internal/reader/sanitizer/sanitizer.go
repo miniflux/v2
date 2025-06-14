@@ -110,6 +110,21 @@ var (
 		"munderover":     {},
 		"semantics":      {},
 	}
+
+	iframeAllowList = map[string]struct{}{
+		"bandcamp.com":         {},
+		"cdn.embedly.com":      {},
+		"dailymotion.com":      {},
+		"open.spotify.com":     {},
+		"player.bilibili.com":  {},
+		"player.twitch.tv":     {},
+		"player.vimeo.com":     {},
+		"soundcloud.com":       {},
+		"vk.com":               {},
+		"w.soundcloud.com":     {},
+		"youtube-nocookie.com": {},
+		"youtube.com":          {},
+	}
 )
 
 type SanitizerOptions struct {
@@ -266,7 +281,7 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attribu
 		if isExternalResourceAttribute(attribute.Key) {
 			switch {
 			case tagName == "iframe":
-				if !isValidIframeSource(parsedBaseUrl, baseURL, attribute.Val) {
+				if !isValidIframeSource(attribute.Val) {
 					continue
 				}
 				value = rewriteIframeURL(attribute.Val)
@@ -448,39 +463,22 @@ func isBlockedResource(src string) bool {
 	})
 }
 
-func isValidIframeSource(parsedBaseUrl *url.URL, baseURL, src string) bool {
-	whitelist := []string{
-		"bandcamp.com",
-		"cdn.embedly.com",
-		"player.bilibili.com",
-		"player.twitch.tv",
-		"player.vimeo.com",
-		"soundcloud.com",
-		"vk.com",
-		"w.soundcloud.com",
-		"dailymotion.com",
-		"youtube-nocookie.com",
-		"youtube.com",
-		"open.spotify.com",
-	}
-	domain := urllib.Domain(src)
+func isValidIframeSource(iframeSourceURL string) bool {
+	iframeSourceDomain := strings.TrimPrefix(urllib.Domain(iframeSourceURL), "www.")
 
-	baseDomain := baseURL
-	if parsedBaseUrl != nil {
-		baseDomain = parsedBaseUrl.Hostname()
-	}
-
-	// allow iframe from same origin
-	if baseDomain == domain {
+	if _, ok := iframeAllowList[iframeSourceDomain]; ok {
 		return true
 	}
 
-	// allow iframe from custom invidious instance
-	if config.Opts.InvidiousInstance() == domain {
+	if ytDomain := config.Opts.YouTubeEmbedDomain(); ytDomain != "" && iframeSourceDomain == strings.TrimPrefix(ytDomain, "www.") {
 		return true
 	}
 
-	return slices.Contains(whitelist, strings.TrimPrefix(domain, "www."))
+	if invidiousInstance := config.Opts.InvidiousInstance(); invidiousInstance != "" && iframeSourceDomain == strings.TrimPrefix(invidiousInstance, "www.") {
+		return true
+	}
+
+	return false
 }
 
 func rewriteIframeURL(link string) string {

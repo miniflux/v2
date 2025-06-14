@@ -2169,12 +2169,33 @@ func TestYouTubeApiKey(t *testing.T) {
 	}
 }
 
+func TestDefaultYouTubeEmbedUrl(t *testing.T) {
+	os.Clearenv()
+
+	opts, err := NewParser().ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := "https://www.youtube-nocookie.com/embed/"
+	result := opts.YouTubeEmbedUrlOverride()
+
+	if result != expected {
+		t.Fatalf(`Unexpected default value, got %v instead of %v`, result, expected)
+	}
+
+	expected = "www.youtube-nocookie.com"
+	result = opts.YouTubeEmbedDomain()
+	if result != expected {
+		t.Fatalf(`Unexpected YouTube embed domain, got %v instead of %v`, result, expected)
+	}
+}
+
 func TestYouTubeEmbedUrlOverride(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
 
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
+	opts, err := NewParser().ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}
@@ -2184,6 +2205,12 @@ func TestYouTubeEmbedUrlOverride(t *testing.T) {
 
 	if result != expected {
 		t.Fatalf(`Unexpected YOUTUBE_EMBED_URL_OVERRIDE value, got %v instead of %v`, result, expected)
+	}
+
+	expected = "invidious.custom"
+	result = opts.YouTubeEmbedDomain()
+	if result != expected {
+		t.Fatalf(`Unexpected YouTube embed domain, got %v instead of %v`, result, expected)
 	}
 }
 

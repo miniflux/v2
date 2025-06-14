@@ -155,6 +155,7 @@ type Options struct {
 	filterEntryMaxAgeDays              int
 	youTubeApiKey                      string
 	youTubeEmbedUrlOverride            string
+	youTubeEmbedDomain                 string
 	oauth2UserCreationAllowed          bool
 	oauth2ClientID                     string
 	oauth2ClientSecret                 string
@@ -521,9 +522,17 @@ func (o *Options) YouTubeApiKey() string {
 	return o.youTubeApiKey
 }
 
-// YouTubeEmbedUrlOverride returns YouTube URL which will be used for embeds
+// YouTubeEmbedUrlOverride returns the YouTube embed URL override if defined.
 func (o *Options) YouTubeEmbedUrlOverride() string {
 	return o.youTubeEmbedUrlOverride
+}
+
+// YouTubeEmbedDomain returns the domain used for YouTube embeds.
+func (o *Options) YouTubeEmbedDomain() string {
+	if o.youTubeEmbedDomain != "" {
+		return o.youTubeEmbedDomain
+	}
+	return "www.youtube-nocookie.com"
 }
 
 // FetchNebulaWatchTime returns true if the Nebula video duration

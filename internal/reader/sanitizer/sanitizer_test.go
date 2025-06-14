@@ -13,12 +13,6 @@ import (
 	"miniflux.app/v2/internal/config"
 )
 
-func TestMain(m *testing.M) {
-	config.Opts = config.NewOptions()
-	exitCode := m.Run()
-	os.Exit(exitCode)
-}
-
 func BenchmarkSanitize(b *testing.B) {
 	var testCases = map[string][]string{
 		"miniflux_github.html":    {"https://github.com/miniflux/v2", ""},
@@ -352,6 +346,8 @@ func TestInvalidNestedTag(t *testing.T) {
 }
 
 func TestInvalidIFrame(t *testing.T) {
+	config.Opts = config.NewOptions()
+
 	input := `<iframe src="http://example.org/"></iframe>`
 	expected := ``
 	output := SanitizeHTMLWithDefaultOptions("http://example.com/", input)
@@ -361,7 +357,51 @@ func TestInvalidIFrame(t *testing.T) {
 	}
 }
 
+func TestSameDomainIFrame(t *testing.T) {
+	config.Opts = config.NewOptions()
+
+	input := `<iframe src="http://example.com/test"></iframe>`
+	expected := ``
+	output := SanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
+func TestInvidiousIFrame(t *testing.T) {
+	config.Opts = config.NewOptions()
+
+	input := `<iframe src="https://yewtu.be/watch?v=video_id"></iframe>`
+	expected := `<iframe src="https://yewtu.be/watch?v=video_id" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	output := SanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
+func TestCustomYoutubeEmbedURL(t *testing.T) {
+	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://www.invidious.custom/embed/")
+
+	defer os.Clearenv()
+	var err error
+	if config.Opts, err = config.NewParser().ParseEnvironmentVariables(); err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	input := `<iframe src="https://www.invidious.custom/embed/1234"></iframe>`
+	expected := `<iframe src="https://www.invidious.custom/embed/1234" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	output := SanitizeHTMLWithDefaultOptions("http://example.com/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
 func TestIFrameWithChildElements(t *testing.T) {
+	config.Opts = config.NewOptions()
+
 	input := `<iframe src="https://www.youtube.com/"><p>test</p></iframe>`
 	expected := `<iframe src="https://www.youtube.com/" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
 	output := SanitizeHTMLWithDefaultOptions("http://example.com/", input)
@@ -750,13 +790,11 @@ func TestReplaceProtocolRelativeYoutubeURL(t *testing.T) {
 }
 
 func TestReplaceYoutubeURLWithCustomURL(t *testing.T) {
-	os.Clearenv()
+	defer os.Clearenv()
 	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
 
 	var err error
-	parser := config.NewParser()
-	config.Opts, err = parser.ParseEnvironmentVariables()
-
+	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
 	if err != nil {
 		t.Fatalf(`Parsing failure: %v`, err)
 	}

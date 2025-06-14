@@ -298,6 +298,13 @@ func (p *Parser) parseLines(lines []string) (err error) {
 	if port != "" {
 		p.opts.listenAddr = ":" + port
 	}
+
+	youtubeEmbedURL, err := url.Parse(p.opts.youTubeEmbedUrlOverride)
+	if err != nil {
+		return fmt.Errorf("config: invalid YOUTUBE_EMBED_URL_OVERRIDE value: %w", err)
+	}
+	p.opts.youTubeEmbedDomain = youtubeEmbedURL.Hostname()
+
 	return nil
 }
 
