@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/url"
 	"os"
 	"strconv"
@@ -87,12 +86,6 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			if parsedValue == "json" || parsedValue == "text" {
 				p.opts.logFormat = parsedValue
 			}
-		case "DEBUG":
-			slog.Warn("The DEBUG environment variable is deprecated, use LOG_LEVEL instead")
-			parsedValue := parseBool(value, defaultDebug)
-			if parsedValue {
-				p.opts.logLevel = "debug"
-			}
 		case "BASE_URL":
 			p.opts.baseURL, p.opts.rootURL, p.opts.basePath, err = parseBaseURL(value)
 			if err != nil {
@@ -162,37 +155,12 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			p.opts.schedulerRoundRobinMaxInterval = parseInt(value, defaultSchedulerRoundRobinMaxInterval)
 		case "POLLING_PARSING_ERROR_LIMIT":
 			p.opts.pollingParsingErrorLimit = parseInt(value, defaultPollingParsingErrorLimit)
-		case "PROXY_IMAGES":
-			slog.Warn("The PROXY_IMAGES environment variable is deprecated, use MEDIA_PROXY_MODE instead")
-			p.opts.mediaProxyMode = parseString(value, defaultMediaProxyMode)
-		case "PROXY_HTTP_CLIENT_TIMEOUT":
-			slog.Warn("The PROXY_HTTP_CLIENT_TIMEOUT environment variable is deprecated, use MEDIA_PROXY_HTTP_CLIENT_TIMEOUT instead")
-			p.opts.mediaProxyHTTPClientTimeout = parseInt(value, defaultMediaProxyHTTPClientTimeout)
 		case "MEDIA_PROXY_HTTP_CLIENT_TIMEOUT":
 			p.opts.mediaProxyHTTPClientTimeout = parseInt(value, defaultMediaProxyHTTPClientTimeout)
-		case "PROXY_OPTION":
-			slog.Warn("The PROXY_OPTION environment variable is deprecated, use MEDIA_PROXY_MODE instead")
-			p.opts.mediaProxyMode = parseString(value, defaultMediaProxyMode)
 		case "MEDIA_PROXY_MODE":
 			p.opts.mediaProxyMode = parseString(value, defaultMediaProxyMode)
-		case "PROXY_MEDIA_TYPES":
-			slog.Warn("The PROXY_MEDIA_TYPES environment variable is deprecated, use MEDIA_PROXY_RESOURCE_TYPES instead")
-			p.opts.mediaProxyResourceTypes = parseStringList(value, []string{defaultMediaResourceTypes})
 		case "MEDIA_PROXY_RESOURCE_TYPES":
 			p.opts.mediaProxyResourceTypes = parseStringList(value, []string{defaultMediaResourceTypes})
-		case "PROXY_IMAGE_URL":
-			slog.Warn("The PROXY_IMAGE_URL environment variable is deprecated, use MEDIA_PROXY_CUSTOM_URL instead")
-			p.opts.mediaProxyCustomURL = parseString(value, defaultMediaProxyURL)
-		case "PROXY_URL":
-			slog.Warn("The PROXY_URL environment variable is deprecated, use MEDIA_PROXY_CUSTOM_URL instead")
-			p.opts.mediaProxyCustomURL = parseString(value, defaultMediaProxyURL)
-		case "PROXY_PRIVATE_KEY":
-			slog.Warn("The PROXY_PRIVATE_KEY environment variable is deprecated, use MEDIA_PROXY_PRIVATE_KEY instead")
-			randomKey := make([]byte, 16)
-			if _, err := rand.Read(randomKey); err != nil {
-				return fmt.Errorf("config: unable to generate random key: %w", err)
-			}
-			p.opts.mediaProxyPrivateKey = parseBytes(value, randomKey)
 		case "MEDIA_PROXY_PRIVATE_KEY":
 			randomKey := make([]byte, 16)
 			if _, err := rand.Read(randomKey); err != nil {
