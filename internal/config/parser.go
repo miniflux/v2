@@ -93,8 +93,6 @@ func (p *Parser) parseLines(lines []string) (err error) {
 			if parsedValue {
 				p.opts.logLevel = "debug"
 			}
-		case "SERVER_TIMING_HEADER":
-			p.opts.serverTimingHeader = parseBool(value, defaultTiming)
 		case "BASE_URL":
 			p.opts.baseURL, p.opts.rootURL, p.opts.basePath, err = parseBaseURL(value)
 			if err != nil {
