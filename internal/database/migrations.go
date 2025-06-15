@@ -211,12 +211,13 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN wallabag_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN wallabag_url text default '';
-			ALTER TABLE integrations ADD COLUMN wallabag_client_id text default '';
-			ALTER TABLE integrations ADD COLUMN wallabag_client_secret text default '';
-			ALTER TABLE integrations ADD COLUMN wallabag_username text default '';
-			ALTER TABLE integrations ADD COLUMN wallabag_password text default '';
+			ALTER TABLE integrations
+				ADD COLUMN wallabag_enabled bool default 'f',
+				ADD COLUMN wallabag_url text default '',
+				ADD COLUMN wallabag_client_id text default '',
+				ADD COLUMN wallabag_client_secret text default '',
+				ADD COLUMN wallabag_username text default '',
+				ADD COLUMN wallabag_password text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -236,9 +237,10 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN nunux_keeper_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN nunux_keeper_url text default '';
-			ALTER TABLE integrations ADD COLUMN nunux_keeper_api_key text default '';
+			ALTER TABLE integrations
+				ADD COLUMN nunux_keeper_enabled bool default 'f',
+				ADD COLUMN nunux_keeper_url text default '',
+				ADD COLUMN nunux_keeper_api_key text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -255,9 +257,10 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN pocket_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN pocket_access_token text default '';
-			ALTER TABLE integrations ADD COLUMN pocket_consumer_key text default '';
+			ALTER TABLE integrations
+				ADD COLUMN pocket_enabled bool default 'f',
+				ADD COLUMN pocket_access_token text default '',
+				ADD COLUMN pocket_consumer_key text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -271,8 +274,9 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE feeds ADD COLUMN username text default '';
-			ALTER TABLE feeds ADD COLUMN password text default '';
+			ALTER TABLE feeds
+				ADD COLUMN username text default '',
+				ADD COLUMN password text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -558,9 +562,10 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN telegram_bot_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN telegram_bot_token text default '';
-			ALTER TABLE integrations ADD COLUMN telegram_bot_chat_id text default '';
+			ALTER TABLE integrations
+				ADD COLUMN telegram_bot_enabled bool default 'f',
+				ADD COLUMN telegram_bot_token text default '',
+				ADD COLUMN telegram_bot_chat_id text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -575,28 +580,31 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN googlereader_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN googlereader_username text default '';
-			ALTER TABLE integrations ADD COLUMN googlereader_password text default '';
+			ALTER TABLE integrations
+				ADD COLUMN googlereader_enabled bool default 'f',
+				ADD COLUMN googlereader_username text default '',
+				ADD COLUMN googlereader_password text default '';
 			`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN espial_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN espial_url text default '';
-			ALTER TABLE integrations ADD COLUMN espial_api_key text default '';
-			ALTER TABLE integrations ADD COLUMN espial_tags text default 'miniflux';
+			ALTER TABLE integrations
+				ADD COLUMN espial_enabled bool default 'f',
+				ADD COLUMN espial_url text default '',
+				ADD COLUMN espial_api_key text default '',
+				ADD COLUMN espial_tags text default 'miniflux';
 			`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN linkding_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN linkding_url text default '';
-			ALTER TABLE integrations ADD COLUMN linkding_api_key text default '';
+			ALTER TABLE integrations
+				ADD COLUMN linkding_enabled bool default 'f',
+				ADD COLUMN linkding_url text default '',
+				ADD COLUMN linkding_api_key text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -609,8 +617,9 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		_, err = tx.Exec(`
-			ALTER TABLE users ADD COLUMN default_reading_speed int default 265;
-			ALTER TABLE users ADD COLUMN cjk_reading_speed int default 500;
+			ALTER TABLE users
+				ADD COLUMN default_reading_speed int default 265,
+				ADD COLUMN cjk_reading_speed int default 500;
 		`)
 		return
 	},
@@ -634,11 +643,12 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN matrix_bot_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN matrix_bot_user text default '';
-			ALTER TABLE integrations ADD COLUMN matrix_bot_password text default '';
-			ALTER TABLE integrations ADD COLUMN matrix_bot_url text default '';
-			ALTER TABLE integrations ADD COLUMN matrix_bot_chat_id text default '';
+			ALTER TABLE integrations
+				ADD COLUMN matrix_bot_enabled bool default 'f',
+				ADD COLUMN matrix_bot_user text default '',
+				ADD COLUMN matrix_bot_password text default '',
+				ADD COLUMN matrix_bot_url text default '',
+				ADD COLUMN matrix_bot_chat_id text default '';
 		`
 		_, err = tx.Exec(sql)
 		return
@@ -657,8 +667,9 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
 			ALTER TABLE users RENAME double_tap TO gesture_nav;
-			ALTER TABLE users ALTER COLUMN gesture_nav SET DATA TYPE text using case when gesture_nav = true then 'tap' when gesture_nav = false then 'none' end;
-			ALTER TABLE users ALTER COLUMN gesture_nav SET default 'tap';
+			ALTER TABLE users
+				ALTER COLUMN gesture_nav SET DATA TYPE text using case when gesture_nav = true then 'tap' when gesture_nav = false then 'none' end,
+				ALTER COLUMN gesture_nav SET default 'tap';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -720,45 +731,50 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN notion_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN notion_token text default '';
-			ALTER TABLE integrations ADD COLUMN notion_page_id text default '';
+			ALTER TABLE integrations
+				ADD COLUMN notion_enabled bool default 'f',
+				ADD COLUMN notion_token text default '',
+				ADD COLUMN notion_page_id text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN readwise_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN readwise_api_key text default '';
+			ALTER TABLE integrations
+				ADD COLUMN readwise_enabled bool default 'f',
+				ADD COLUMN readwise_api_key text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN apprise_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN apprise_url text default '';
-			ALTER TABLE integrations ADD COLUMN apprise_services_url text default '';
+			ALTER TABLE integrations
+				ADD COLUMN apprise_enabled bool default 'f',
+				ADD COLUMN apprise_url text default '',
+				ADD COLUMN apprise_services_url text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN shiori_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN shiori_url text default '';
-			ALTER TABLE integrations ADD COLUMN shiori_username text default '';
-			ALTER TABLE integrations ADD COLUMN shiori_password text default '';
+			ALTER TABLE integrations
+				ADD COLUMN shiori_enabled bool default 'f',
+				ADD COLUMN shiori_url text default '',
+				ADD COLUMN shiori_username text default '',
+				ADD COLUMN shiori_password text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN shaarli_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN shaarli_url text default '';
-			ALTER TABLE integrations ADD COLUMN shaarli_api_secret text default '';
+			ALTER TABLE integrations
+				ADD COLUMN shaarli_enabled bool default 'f',
+				ADD COLUMN shaarli_url text default '',
+				ADD COLUMN shaarli_api_secret text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -771,18 +787,20 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN webhook_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN webhook_url text default '';
-			ALTER TABLE integrations ADD COLUMN webhook_secret text default '';
+			ALTER TABLE integrations
+				ADD COLUMN webhook_enabled bool default 'f',
+				ADD COLUMN webhook_url text default '',
+				ADD COLUMN webhook_secret text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN telegram_bot_topic_id int;
-			ALTER TABLE integrations ADD COLUMN telegram_bot_disable_web_page_preview bool default 'f';
-			ALTER TABLE integrations ADD COLUMN telegram_bot_disable_notification bool default 'f';
+			ALTER TABLE integrations
+				ADD COLUMN telegram_bot_topic_id int,
+				ADD COLUMN telegram_bot_disable_web_page_preview bool default 'f',
+				ADD COLUMN telegram_bot_disable_notification bool default 'f';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -812,8 +830,9 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN rssbridge_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN rssbridge_url text default '';
+			ALTER TABLE integrations
+				ADD COLUMN rssbridge_enabled bool default 'f',
+				ADD COLUMN rssbridge_url text default '';
 		`
 		_, err = tx.Exec(sql)
 		return
@@ -838,41 +857,45 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN omnivore_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN omnivore_api_key text default '';
-			ALTER TABLE integrations ADD COLUMN omnivore_url text default '';
+			ALTER TABLE integrations
+				ADD COLUMN omnivore_enabled bool default 'f',
+				ADD COLUMN omnivore_api_key text default '',
+				ADD COLUMN omnivore_url text default '';
 		`
 		_, err = tx.Exec(sql)
 		return
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN linkace_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN linkace_url text default '';
-			ALTER TABLE integrations ADD COLUMN linkace_api_key text default '';
-			ALTER TABLE integrations ADD COLUMN linkace_tags text default '';
-			ALTER TABLE integrations ADD COLUMN linkace_is_private bool default 't';
-			ALTER TABLE integrations ADD COLUMN linkace_check_disabled bool default 't';
+			ALTER TABLE integrations
+				ADD COLUMN linkace_enabled bool default 'f',
+				ADD COLUMN linkace_url text default '',
+				ADD COLUMN linkace_api_key text default '',
+				ADD COLUMN linkace_tags text default '',
+				ADD COLUMN linkace_is_private bool default 't',
+				ADD COLUMN linkace_check_disabled bool default 't';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN linkwarden_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN linkwarden_url text default '';
-			ALTER TABLE integrations ADD COLUMN linkwarden_api_key text default '';
+			ALTER TABLE integrations
+				ADD COLUMN linkwarden_enabled bool default 'f',
+				ADD COLUMN linkwarden_url text default '',
+				ADD COLUMN linkwarden_api_key text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN readeck_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN readeck_only_url bool default 'f';
-			ALTER TABLE integrations ADD COLUMN readeck_url text default '';
-			ALTER TABLE integrations ADD COLUMN readeck_api_key text default '';
-			ALTER TABLE integrations ADD COLUMN readeck_labels text default '';
+			ALTER TABLE integrations
+				ADD COLUMN readeck_enabled bool default 'f',
+				ADD COLUMN readeck_only_url bool default 'f',
+				ADD COLUMN readeck_url text default '',
+				ADD COLUMN readeck_api_key text default '',
+				ADD COLUMN readeck_labels text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -901,10 +924,11 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN raindrop_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN raindrop_token text default '';
-			ALTER TABLE integrations ADD COLUMN raindrop_collection_id text default '';
-			ALTER TABLE integrations ADD COLUMN raindrop_tags text default '';
+			ALTER TABLE integrations
+				ADD COLUMN raindrop_enabled bool default 'f',
+				ADD COLUMN raindrop_token text default '',
+				ADD COLUMN raindrop_collection_id text default '',
+				ADD COLUMN raindrop_tags text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -925,25 +949,28 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN betula_url text default '';
-			ALTER TABLE integrations ADD COLUMN betula_token text default '';
-			ALTER TABLE integrations ADD COLUMN betula_enabled bool default 'f';
+			ALTER TABLE integrations
+				ADD COLUMN betula_url text default '',
+				ADD COLUMN betula_token text default '',
+				ADD COLUMN betula_enabled bool default 'f';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN ntfy_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN ntfy_url text default '';
-			ALTER TABLE integrations ADD COLUMN ntfy_topic text default '';
-			ALTER TABLE integrations ADD COLUMN ntfy_api_token text default '';
-			ALTER TABLE integrations ADD COLUMN ntfy_username text default '';
-			ALTER TABLE integrations ADD COLUMN ntfy_password text default '';
-			ALTER TABLE integrations ADD COLUMN ntfy_icon_url text default '';
+			ALTER TABLE integrations
+				ADD COLUMN ntfy_enabled bool default 'f',
+				ADD COLUMN ntfy_url text default '',
+				ADD COLUMN ntfy_topic text default '',
+				ADD COLUMN ntfy_api_token text default '',
+				ADD COLUMN ntfy_username text default '',
+				ADD COLUMN ntfy_password text default '',
+				ADD COLUMN ntfy_icon_url text default '';
 
-			ALTER TABLE feeds ADD COLUMN ntfy_enabled bool default 'f';
-			ALTER TABLE feeds ADD COLUMN ntfy_priority int default '3';
+			ALTER TABLE feeds
+				ADD COLUMN ntfy_enabled bool default 'f',
+				ADD COLUMN ntfy_priority int default '3';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -965,16 +992,18 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN cubox_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN cubox_api_link text default '';
+			ALTER TABLE integrations
+				ADD COLUMN cubox_enabled bool default 'f',
+				ADD COLUMN cubox_api_link text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN discord_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN discord_webhook_link text default '';
+			ALTER TABLE integrations
+				ADD COLUMN discord_enabled bool default 'f',
+				ADD COLUMN discord_webhook_link text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -986,8 +1015,9 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN slack_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN slack_webhook_link text default '';
+			ALTER TABLE integrations
+				ADD COLUMN slack_enabled bool default 'f',
+				ADD COLUMN slack_webhook_link text default '';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -998,14 +1028,16 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN pushover_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN pushover_user text default '';
-			ALTER TABLE integrations ADD COLUMN pushover_token text default '';
-			ALTER TABLE integrations ADD COLUMN pushover_device text default '';
-			ALTER TABLE integrations ADD COLUMN pushover_prefix text default '';
+			ALTER TABLE integrations
+				ADD COLUMN pushover_enabled bool default 'f',
+				ADD COLUMN pushover_user text default '',
+				ADD COLUMN pushover_token text default '',
+				ADD COLUMN pushover_device text default '',
+				ADD COLUMN pushover_prefix text default '';
 
-			ALTER TABLE feeds ADD COLUMN pushover_enabled bool default 'f';
-			ALTER TABLE feeds ADD COLUMN pushover_priority int default '0';
+			ALTER TABLE feeds
+				ADD COLUMN pushover_enabled bool default 'f',
+				ADD COLUMN pushover_priority int default '0';
 		`
 		_, err = tx.Exec(sql)
 		return err
@@ -1071,7 +1103,7 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 			ALTER TABLE integrations ADD COLUMN rssbridge_token text default '';
 		`
 		_, err = tx.Exec(sql)
-		return
+		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		_, err = tx.Exec(`ALTER TABLE users ADD COLUMN always_open_external_links bool default 'f'`)
@@ -1079,12 +1111,13 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations ADD COLUMN karakeep_enabled bool default 'f';
-			ALTER TABLE integrations ADD COLUMN karakeep_api_key text default '';
-			ALTER TABLE integrations ADD COLUMN karakeep_url text default '';
+			ALTER TABLE integrations
+				ADD COLUMN karakeep_enabled bool default 'f',
+			 	ADD COLUMN karakeep_api_key text default '',
+				ADD COLUMN karakeep_url text default '';
 		`
 		_, err = tx.Exec(sql)
-		return
+		return err
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		_, err = tx.Exec(`ALTER TABLE users ADD COLUMN open_external_links_in_new_tab bool default 't'`)
