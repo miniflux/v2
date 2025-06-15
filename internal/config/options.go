@@ -111,7 +111,6 @@ type Options struct {
 	hsts                               bool
 	httpService                        bool
 	schedulerService                   bool
-	serverTimingHeader                 bool
 	baseURL                            string
 	rootURL                            string
 	basePath                           string
@@ -195,7 +194,6 @@ func NewOptions() *Options {
 		hsts:                               defaultHSTS,
 		httpService:                        defaultHTTPService,
 		schedulerService:                   defaultSchedulerService,
-		serverTimingHeader:                 defaultTiming,
 		baseURL:                            defaultBaseURL,
 		rootURL:                            defaultRootURL,
 		basePath:                           defaultBasePath,
@@ -298,11 +296,6 @@ func (o *Options) HasMaintenanceMode() bool {
 // MaintenanceMessage returns maintenance message.
 func (o *Options) MaintenanceMessage() string {
 	return o.maintenanceMessage
-}
-
-// HasServerTimingHeader returns true if server-timing headers enabled.
-func (o *Options) HasServerTimingHeader() bool {
-	return o.serverTimingHeader
 }
 
 // BaseURL returns the application base URL with path.
@@ -784,7 +777,6 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 		"SCHEDULER_ROUND_ROBIN_MIN_INTERVAL":     o.schedulerRoundRobinMinInterval,
 		"SCHEDULER_ROUND_ROBIN_MAX_INTERVAL":     o.schedulerRoundRobinMaxInterval,
 		"SCHEDULER_SERVICE":                      o.schedulerService,
-		"SERVER_TIMING_HEADER":                   o.serverTimingHeader,
 		"WATCHDOG":                               o.watchdog,
 		"WORKER_POOL_SIZE":                       o.workerPoolSize,
 		"YOUTUBE_API_KEY":                        redactSecretValue(o.youTubeApiKey, redactSecret),
