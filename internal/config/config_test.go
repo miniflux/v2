@@ -184,35 +184,6 @@ func TestLogFormatWithInvalidValue(t *testing.T) {
 	}
 }
 
-func TestDebugModeOn(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("DEBUG", "1")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	if opts.LogLevel() != "debug" {
-		t.Fatalf(`Unexpected debug mode value, got %q`, opts.LogLevel())
-	}
-}
-
-func TestDebugModeOff(t *testing.T) {
-	os.Clearenv()
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	if opts.LogLevel() != "info" {
-		t.Fatalf(`Unexpected debug mode value, got %q`, opts.LogLevel())
-	}
-}
-
 func TestCustomBaseURL(t *testing.T) {
 	os.Clearenv()
 	os.Setenv("BASE_URL", "http://example.org")
@@ -1652,147 +1623,6 @@ func TestMediaProxyPrivateKey(t *testing.T) {
 	}
 }
 
-func TestProxyImagesOptionForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_IMAGES", "all")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := []string{"image"}
-	if len(expected) != len(opts.MediaProxyResourceTypes()) {
-		t.Fatalf(`Unexpected PROXY_IMAGES value, got %v instead of %v`, opts.MediaProxyResourceTypes(), expected)
-	}
-
-	resultMap := make(map[string]bool)
-	for _, mediaType := range opts.MediaProxyResourceTypes() {
-		resultMap[mediaType] = true
-	}
-
-	for _, mediaType := range expected {
-		if !resultMap[mediaType] {
-			t.Fatalf(`Unexpected PROXY_IMAGES value, got %v instead of %v`, opts.MediaProxyResourceTypes(), expected)
-		}
-	}
-
-	expectedProxyOption := "all"
-	result := opts.MediaProxyMode()
-	if result != expectedProxyOption {
-		t.Fatalf(`Unexpected PROXY_OPTION value, got %q instead of %q`, result, expectedProxyOption)
-	}
-}
-
-func TestProxyImageURLForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_IMAGE_URL", "http://example.org/proxy")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := "http://example.org/proxy"
-	result := opts.MediaCustomProxyURL()
-	if result != expected {
-		t.Fatalf(`Unexpected PROXY_IMAGE_URL value, got %q instead of %q`, result, expected)
-	}
-}
-
-func TestProxyURLOptionForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_URL", "http://example.org/proxy")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	expected := "http://example.org/proxy"
-	result := opts.MediaCustomProxyURL()
-	if result != expected {
-		t.Fatalf(`Unexpected PROXY_URL value, got %q instead of %q`, result, expected)
-	}
-}
-
-func TestProxyMediaTypesOptionForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_MEDIA_TYPES", "image,audio")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-	expected := []string{"audio", "image"}
-	if len(expected) != len(opts.MediaProxyResourceTypes()) {
-		t.Fatalf(`Unexpected PROXY_MEDIA_TYPES value, got %v instead of %v`, opts.MediaProxyResourceTypes(), expected)
-	}
-
-	resultMap := make(map[string]bool)
-	for _, mediaType := range opts.MediaProxyResourceTypes() {
-		resultMap[mediaType] = true
-	}
-
-	for _, mediaType := range expected {
-		if !resultMap[mediaType] {
-			t.Fatalf(`Unexpected PROXY_MEDIA_TYPES value, got %v instead of %v`, opts.MediaProxyResourceTypes(), expected)
-		}
-	}
-}
-
-func TestProxyOptionForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_OPTION", "all")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-	expected := "all"
-	result := opts.MediaProxyMode()
-	if result != expected {
-		t.Fatalf(`Unexpected PROXY_OPTION value, got %q instead of %q`, result, expected)
-	}
-}
-
-func TestProxyHTTPClientTimeoutOptionForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_HTTP_CLIENT_TIMEOUT", "24")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-	expected := 24
-	result := opts.MediaProxyHTTPClientTimeout()
-	if result != expected {
-		t.Fatalf(`Unexpected PROXY_HTTP_CLIENT_TIMEOUT value, got %d instead of %d`, result, expected)
-	}
-}
-
-func TestProxyPrivateKeyOptionForBackwardCompatibility(t *testing.T) {
-	os.Clearenv()
-	os.Setenv("PROXY_PRIVATE_KEY", "foobar")
-
-	parser := NewParser()
-	opts, err := parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-	expected := []byte("foobar")
-	result := opts.MediaProxyPrivateKey()
-	if !bytes.Equal(result, expected) {
-		t.Fatalf(`Unexpected PROXY_PRIVATE_KEY value, got %q instead of %q`, result, expected)
-	}
-}
-
 func TestHTTPSOff(t *testing.T) {
 	os.Clearenv()
 
@@ -1931,7 +1761,7 @@ func TestParseConfigFile(t *testing.T) {
 	content := []byte(`
  # This is a comment
 
-DEBUG = yes
+LOG_LEVEL = debug
 
 Invalid text
 `)
@@ -1954,7 +1784,7 @@ Invalid text
 	}
 
 	if opts.LogLevel() != "debug" {
-		t.Errorf(`Unexpected debug mode value, got %q`, opts.LogLevel())
+		t.Errorf(`Unexpected log level value, got %q`, opts.LogLevel())
 	}
 
 	if err := tmpfile.Close(); err != nil {
