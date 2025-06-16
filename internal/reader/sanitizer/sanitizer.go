@@ -134,8 +134,8 @@ var (
 		"stats.wordpress.com",
 		"twitter.com/intent/tweet",
 		"twitter.com/share",
-		"www.facebook.com/sharer.php",
-		"www.linkedin.com/shareArticle",
+		"facebook.com/sharer.php",
+		"linkedin.com/shareArticle",
 	}
 
 	validURISchemes = map[string]struct{}{
