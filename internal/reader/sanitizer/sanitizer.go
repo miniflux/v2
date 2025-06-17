@@ -492,7 +492,7 @@ func isBlockedResource(absoluteURL string) bool {
 }
 
 func isValidIframeSource(iframeSourceURL string) bool {
-	iframeSourceDomain := strings.TrimPrefix(urllib.Domain(iframeSourceURL), "www.")
+	iframeSourceDomain := urllib.DomainWithoutWWW(iframeSourceURL)
 
 	if _, ok := iframeAllowList[iframeSourceDomain]; ok {
 		return true
