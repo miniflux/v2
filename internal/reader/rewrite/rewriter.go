@@ -136,11 +136,9 @@ func parseRules(rulesText string) (rules []rule) {
 }
 
 func getPredefinedRewriteRules(entryURL string) string {
-	urlDomain := urllib.Domain(entryURL)
-	for domain, rules := range predefinedRules {
-		if strings.Contains(urlDomain, domain) {
-			return rules
-		}
+	urlDomain := urllib.DomainWithoutWWW(entryURL)
+	if rules, ok := predefinedRules[urlDomain]; ok {
+		return rules
 	}
 
 	return ""
