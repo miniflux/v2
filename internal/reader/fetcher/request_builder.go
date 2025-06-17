@@ -130,7 +130,7 @@ func (r *RequestBuilder) ExecuteRequest(requestURL string) (*http.Response, erro
 		// and the insecure ones if we are ignoring TLS errors. This allows to connect to badly configured servers anyway
 		ciphers = append(ciphers, tls.InsecureCipherSuites()...)
 	}
-	cipherSuites := []uint16{}
+	cipherSuites := make([]uint16, 0, len(ciphers))
 	for _, cipher := range ciphers {
 		cipherSuites = append(cipherSuites, cipher.ID)
 	}
