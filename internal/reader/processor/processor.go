@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/url"
 	"regexp"
+	"slices"
 	"time"
 
 	"github.com/tdewolff/minify/v2"
@@ -42,9 +43,7 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 	parsedSiteURL, _ := url.Parse(feed.SiteURL)
 
 	// Process older entries first
-	for i := len(feed.Entries) - 1; i >= 0; i-- {
-		entry := feed.Entries[i]
-
+	for _, entry := range slices.Backward(feed.Entries) {
 		slog.Debug("Processing entry",
 			slog.Int64("user_id", user.ID),
 			slog.String("entry_url", entry.URL),
