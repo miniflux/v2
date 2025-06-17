@@ -322,26 +322,25 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attribu
 			value = "http://www.w3.org/1998/Math/MathML"
 		}
 
-		if tagName == "img" && attribute.Key == "fetchpriority" {
-			if !isValidFetchPriorityValue(value) {
-				continue
-			}
-		}
-
-		if tagName == "img" && attribute.Key == "decoding" {
-			if !isValidDecodingValue(value) {
-				continue
+		if tagName == "img" {
+			switch attribute.Key {
+			case "fetchpriority":
+				if !isValidFetchPriorityValue(value) {
+					continue
+				}
+			case "decoding":
+				if !isValidDecodingValue(value) {
+					continue
+				}
+			case "width", "height":
+				if isImageLargerThanLayout || !isPositiveInteger(value) {
+					continue
+				}
 			}
 		}
 
 		if (tagName == "img" || tagName == "source") && attribute.Key == "srcset" {
 			value = sanitizeSrcsetAttr(baseURL, value)
-		}
-
-		if tagName == "img" && (attribute.Key == "width" || attribute.Key == "height") {
-			if isImageLargerThanLayout || !isPositiveInteger(value) {
-				continue
-			}
 		}
 
 		if isExternalResourceAttribute(attribute.Key) {
@@ -511,11 +510,11 @@ func rewriteIframeURL(link string) string {
 
 	switch strings.TrimPrefix(u.Hostname(), "www.") {
 	case "youtube.com":
-		if strings.HasPrefix(u.Path, "/embed/") {
+		if pathWithoutEmbed, ok := strings.CutPrefix(u.Path, "/embed/"); ok {
 			if len(u.RawQuery) > 0 {
-				return config.Opts.YouTubeEmbedUrlOverride() + strings.TrimPrefix(u.Path, "/embed/") + "?" + u.RawQuery
+				return config.Opts.YouTubeEmbedUrlOverride() + pathWithoutEmbed + "?" + u.RawQuery
 			}
-			return config.Opts.YouTubeEmbedUrlOverride() + strings.TrimPrefix(u.Path, "/embed/")
+			return config.Opts.YouTubeEmbedUrlOverride() + pathWithoutEmbed
 		}
 	case "player.vimeo.com":
 		// See https://help.vimeo.com/hc/en-us/articles/12426260232977-About-Player-parameters
@@ -534,9 +533,8 @@ func isBlockedTag(tagName string) bool {
 	switch tagName {
 	case "noscript", "script", "style":
 		return true
-	default:
-		return false
 	}
+	return false
 }
 
 func sanitizeSrcsetAttr(baseURL, value string) string {
@@ -581,11 +579,17 @@ func getIntegerAttributeValue(name string, attributes []html.Attribute) int {
 }
 
 func isValidFetchPriorityValue(value string) bool {
-	allowedValues := []string{"high", "low", "auto"}
-	return slices.Contains(allowedValues, value)
+	switch value {
+	case "high", "low", "auto":
+		return true
+	}
+	return false
 }
 
 func isValidDecodingValue(value string) bool {
-	allowedValues := []string{"sync", "async", "auto"}
-	return slices.Contains(allowedValues, value)
+	switch value {
+	case "sync", "async", "auto":
+		return true
+	}
+	return false
 }
