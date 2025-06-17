@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
+var textLinkRegex = regexp.MustCompile(`(?mi)(\bhttps?://[^\s]+)[.]?(?:\s|$)`)
 
 // Specs: https://www.rssboard.org/media-rss
 type MediaItemElement struct {
