@@ -440,7 +440,7 @@ func isPixelTracker(tagName string, attributes []html.Attribute) bool {
 	hasWidth := false
 
 	for _, attribute := range attributes {
-		if attribute.Val == "1" {
+		if attribute.Val == "1" || attribute.Val == "0" {
 			switch attribute.Key {
 			case "height":
 				hasHeight = true
