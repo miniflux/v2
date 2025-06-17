@@ -3,13 +3,7 @@
 
 package rewrite // import "miniflux.app/v2/internal/reader/rewrite"
 
-import (
-	"net/url"
-	"strings"
-)
-
 // List of predefined rewrite rules (alphabetically sorted)
-// Available rules: "add_image_title", "add_youtube_video"
 // domain => rule name
 var predefinedRules = map[string]string{
 	"abstrusegoose.com":      "add_image_title",
@@ -39,40 +33,4 @@ var predefinedRules = map[string]string{
 	"www.qwantz.com":         "add_image_title,add_mailto_subject",
 	"xkcd.com":               "add_image_title",
 	"youtube.com":            "add_youtube_video",
-}
-
-// GetRefererForURL returns the referer for the given URL if it exists, otherwise an empty string.
-func GetRefererForURL(u string) string {
-	parsedUrl, err := url.Parse(u)
-	if err != nil {
-		return ""
-	}
-
-	switch parsedUrl.Hostname() {
-	case "appinn.com":
-		return "https://appinn.com"
-	case "bjp.org.cn":
-		return "https://bjp.org.cn"
-	case "cdnfile.sspai.com":
-		return "https://sspai.com"
-	case "f.video.weibocdn.com":
-		return "https://weibo.com"
-	case "i.pximg.net":
-		return "https://www.pixiv.net"
-	case "img.hellogithub.com":
-		return "https://hellogithub.com"
-	case "moyu.im":
-		return "https://i.jandan.net"
-	}
-
-	switch {
-	case strings.HasSuffix(parsedUrl.Hostname(), ".cdninstagram.com"):
-		return "https://www.instagram.com"
-	case strings.HasSuffix(parsedUrl.Hostname(), ".moyu.im"):
-		return "https://i.jandan.net"
-	case strings.HasSuffix(parsedUrl.Hostname(), ".sinaimg.cn"):
-		return "https://weibo.com"
-	}
-
-	return ""
 }

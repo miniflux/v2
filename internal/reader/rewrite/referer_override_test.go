@@ -44,6 +44,11 @@ func TestGetRefererForURL(t *testing.T) {
 			expected: "https://hellogithub.com",
 		},
 		{
+			name:     "Park Blogs",
+			url:      "https://www.parkablogs.com/sites/default/files/2025/image.jpg",
+			expected: "https://www.parkablogs.com",
+		},
+		{
 			name:     "Non-matching URL",
 			url:      "https://example.com/image.jpg",
 			expected: "",
