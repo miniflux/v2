@@ -4,12 +4,59 @@
 package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
+	"errors"
+	"fmt"
 	"log/slog"
+	"strconv"
 
+	"github.com/PuerkitoBio/goquery"
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
+	"miniflux.app/v2/internal/proxyrotator"
+	"miniflux.app/v2/internal/reader/fetcher"
 	"miniflux.app/v2/internal/reader/readingtime"
 	"miniflux.app/v2/internal/storage"
 )
+
+func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
+	requestBuilder := fetcher.NewRequestBuilder()
+	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
+	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
+
+	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
+	defer responseHandler.Close()
+
+	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
+		slog.Warn("Unable to fetch watch time", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
+		return 0, localizedError.Error()
+	}
+
+	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+	if docErr != nil {
+		return 0, docErr
+	}
+
+	duration, exists := doc.FindMatcher(goquery.Single(query)).Attr("content")
+	if !exists {
+		return 0, errors.New("duration has not found")
+	}
+
+	ret := 0
+	if isoDate {
+		parsedDuration, err := parseISO8601(duration)
+		if err != nil {
+			return 0, fmt.Errorf("unable to parse iso duration %s: %v", duration, err)
+		}
+		ret = int(parsedDuration.Minutes())
+	} else {
+		parsedDuration, err := strconv.ParseInt(duration, 10, 64)
+		if err != nil {
+			return 0, fmt.Errorf("unable to parse duration %s: %v", duration, err)
+		}
+		ret = int(parsedDuration / 60)
+	}
+	return ret, nil
+}
 
 func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *model.Entry, entryIsNew bool, user *model.User) {
 	if !user.ShowReadingTime {
