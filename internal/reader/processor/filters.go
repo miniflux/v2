@@ -13,35 +13,34 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
+// TODO factorize isBlockedEntry and isAllowedEntry
+
 func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.BlockFilterEntryRules != "" {
 		rules := strings.Split(user.BlockFilterEntryRules, "\n")
 		for _, rule := range rules {
+			match := false
 			parts := strings.SplitN(rule, "=", 2)
+			if len(parts) != 2 {
+				return false
+			}
+			part, pattern := parts[0], parts[1]
 
-			var match bool
-			switch parts[0] {
+			switch part {
 			case "EntryDate":
-				datePattern := parts[1]
-				match = isDateMatchingPattern(entry.Date, datePattern)
+				match = isDateMatchingPattern(pattern, entry.Date)
 			case "EntryTitle":
-				match, _ = regexp.MatchString(parts[1], entry.Title)
+				match, _ = regexp.MatchString(pattern, entry.Title)
 			case "EntryURL":
-				match, _ = regexp.MatchString(parts[1], entry.URL)
+				match, _ = regexp.MatchString(pattern, entry.URL)
 			case "EntryCommentsURL":
-				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
+				match, _ = regexp.MatchString(pattern, entry.CommentsURL)
 			case "EntryContent":
-				match, _ = regexp.MatchString(parts[1], entry.Content)
+				match, _ = regexp.MatchString(pattern, entry.Content)
 			case "EntryAuthor":
-				match, _ = regexp.MatchString(parts[1], entry.Author)
+				match, _ = regexp.MatchString(pattern, entry.Author)
 			case "EntryTag":
-				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-					match, _ = regexp.MatchString(parts[1], tag)
-					return match
-				})
-				if containsTag {
-					match = true
-				}
+				match = containsRegexPattern(pattern, entry.Tags)
 			}
 
 			if match {
@@ -90,31 +89,28 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 	if user.KeepFilterEntryRules != "" {
 		rules := strings.Split(user.KeepFilterEntryRules, "\n")
 		for _, rule := range rules {
+			match := false
 			parts := strings.SplitN(rule, "=", 2)
+			if len(parts) != 2 {
+				return false
+			}
+			part, pattern := parts[0], parts[1]
 
-			var match bool
-			switch parts[0] {
+			switch part {
 			case "EntryDate":
-				datePattern := parts[1]
-				match = isDateMatchingPattern(entry.Date, datePattern)
+				match = isDateMatchingPattern(pattern, entry.Date)
 			case "EntryTitle":
-				match, _ = regexp.MatchString(parts[1], entry.Title)
+				match, _ = regexp.MatchString(pattern, entry.Title)
 			case "EntryURL":
-				match, _ = regexp.MatchString(parts[1], entry.URL)
+				match, _ = regexp.MatchString(pattern, entry.URL)
 			case "EntryCommentsURL":
-				match, _ = regexp.MatchString(parts[1], entry.CommentsURL)
+				match, _ = regexp.MatchString(pattern, entry.CommentsURL)
 			case "EntryContent":
-				match, _ = regexp.MatchString(parts[1], entry.Content)
+				match, _ = regexp.MatchString(pattern, entry.Content)
 			case "EntryAuthor":
-				match, _ = regexp.MatchString(parts[1], entry.Author)
+				match, _ = regexp.MatchString(pattern, entry.Author)
 			case "EntryTag":
-				containsTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
-					match, _ = regexp.MatchString(parts[1], tag)
-					return match
-				})
-				if containsTag {
-					match = true
-				}
+				match = containsRegexPattern(pattern, entry.Tags)
 			}
 
 			if match {
@@ -158,7 +154,7 @@ func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 	return false
 }
 
-func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
+func isDateMatchingPattern(pattern string, entryDate time.Time) bool {
 	if pattern == "future" {
 		return entryDate.After(time.Now())
 	}
@@ -168,8 +164,7 @@ func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
 		return false
 	}
 
-	operator := parts[0]
-	dateStr := parts[1]
+	operator, dateStr := parts[0], parts[1]
 
 	switch operator {
 	case "before":
@@ -189,9 +184,12 @@ func isDateMatchingPattern(entryDate time.Time, pattern string) bool {
 		if len(dates) != 2 {
 			return false
 		}
-		startDate, err1 := time.Parse("2006-01-02", dates[0])
-		endDate, err2 := time.Parse("2006-01-02", dates[1])
-		if err1 != nil || err2 != nil {
+		startDate, err := time.Parse("2006-01-02", dates[0])
+		if err != nil {
+			return false
+		}
+		endDate, err := time.Parse("2006-01-02", dates[1])
+		if err != nil {
 			return false
 		}
 		return entryDate.After(startDate) && entryDate.Before(endDate)
