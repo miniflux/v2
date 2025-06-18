@@ -94,7 +94,7 @@ func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
 			continue
 		}
 
-		videosEntriesMapping[getVideoIDFromYouTubeURL(entry.URL)] = entry
+		videosEntriesMapping[youtubeVideoID] = entry
 		videoIDs = append(videoIDs, youtubeVideoID)
 	}
 
