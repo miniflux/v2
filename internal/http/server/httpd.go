@@ -4,7 +4,6 @@
 package httpd // import "miniflux.app/v2/internal/http/server"
 
 import (
-	"crypto/tls"
 	"fmt"
 	"log/slog"
 	"net"
@@ -98,26 +97,6 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 	}(socketFile)
 }
 
-func tlsConfig() *tls.Config {
-	// See https://blog.cloudflare.com/exposing-go-on-the-internet/
-	// And https://wiki.mozilla.org/Security/Server_Side_TLS
-	return &tls.Config{
-		MinVersion: tls.VersionTLS12,
-		CurvePreferences: []tls.CurveID{
-			tls.CurveP256,
-			tls.X25519,
-		},
-		CipherSuites: []uint16{
-			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
-			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-		},
-	}
-}
-
 func startAutoCertTLSServer(server *http.Server, certDomain string, store *storage.Storage) {
 	server.Addr = ":https"
 	certManager := autocert.Manager{
@@ -125,7 +104,6 @@ func startAutoCertTLSServer(server *http.Server, certDomain string, store *stora
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist(certDomain),
 	}
-	server.TLSConfig = tlsConfig()
 	server.TLSConfig.GetCertificate = certManager.GetCertificate
 	server.TLSConfig.NextProtos = []string{"h2", "http/1.1", acme.ALPNProto}
 
@@ -148,7 +126,6 @@ func startAutoCertTLSServer(server *http.Server, certDomain string, store *stora
 }
 
 func startTLSServer(server *http.Server, certFile, keyFile string) {
-	server.TLSConfig = tlsConfig()
 	go func() {
 		slog.Info("Starting TLS server using a certificate",
 			slog.String("listen_address", server.Addr),
