@@ -81,7 +81,7 @@ func fetchYouTubeWatchTimeForSingleEntry(websiteURL string) (int, error) {
 }
 
 func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
-	var videosEntriesMapping = make(map[string]*model.Entry)
+	var videosEntriesMapping = make(map[string]*model.Entry, len(entries))
 	var videoIDs []string
 
 	for _, entry := range entries {
@@ -154,7 +154,7 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 		return nil, fmt.Errorf("youtube: unable to decode JSON: %v", err)
 	}
 
-	watchTimeMap := make(map[string]time.Duration)
+	watchTimeMap := make(map[string]time.Duration, len(videos.Items))
 	for _, video := range videos.Items {
 		duration, err := parseISO8601(video.ContentDetails.Duration)
 		if err != nil {
