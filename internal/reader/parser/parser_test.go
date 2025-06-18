@@ -22,7 +22,7 @@ func BenchmarkParse(b *testing.B) {
 		}
 		testCases[filename][1] = string(data)
 	}
-	for range b.N {
+	for b.Loop() {
 		for _, v := range testCases {
 			ParseFeed(v[0], strings.NewReader(v[1]))
 		}

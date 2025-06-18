@@ -25,7 +25,7 @@ func BenchmarkSanitize(b *testing.B) {
 		}
 		testCases[filename][1] = string(data)
 	}
-	for range b.N {
+	for b.Loop() {
 		for _, v := range testCases {
 			SanitizeHTMLWithDefaultOptions(v[0], v[1])
 		}

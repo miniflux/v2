@@ -80,7 +80,7 @@ func TestEstimateReadingTime(t *testing.T) {
 }
 
 func BenchmarkEstimateReadingTime(b *testing.B) {
-	for range b.N {
+	for b.Loop() {
 		for _, sample := range samples {
 			EstimateReadingTime(sample, 200, 500)
 		}
