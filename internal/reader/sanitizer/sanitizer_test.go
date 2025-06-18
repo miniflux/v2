@@ -818,13 +818,23 @@ func TestReplaceYoutubeURLWithCustomURL(t *testing.T) {
 	}
 }
 
-func TestReplaceIframeVimedoDNTURL(t *testing.T) {
+func TestVimeoIframeRewriteWithQueryString(t *testing.T) {
 	input := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0"></iframe>`
 	expected := `<iframe src="https://player.vimeo.com/video/123456?title=0&amp;byline=0&amp;dnt=1" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
 	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if expected != output {
-		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
+	}
+}
+
+func TestVimeoIframeRewriteWithoutQueryString(t *testing.T) {
+	input := `<iframe src="https://player.vimeo.com/video/123456"></iframe>`
+	expected := `<iframe src="https://player.vimeo.com/video/123456?dnt=1" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: %q != %q`, expected, output)
 	}
 }
 
