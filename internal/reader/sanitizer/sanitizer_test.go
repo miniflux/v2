@@ -709,8 +709,18 @@ func TestImageSrcWithTrackers(t *testing.T) {
 	}
 }
 
-func TestPixelTracker(t *testing.T) {
+func Test1x1PixelTracker(t *testing.T) {
 	input := `<p><img src="https://tracker1.example.org/" height="1" width="1"> and <img src="https://tracker2.example.org/" height="1" width="1"/></p>`
+	expected := `<p> and </p>`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if expected != output {
+		t.Errorf(`Wrong output: "%s" != "%s"`, expected, output)
+	}
+}
+
+func Test0x0PixelTracker(t *testing.T) {
+	input := `<p><img src="https://tracker1.example.org/" height="0" width="0"> and <img src="https://tracker2.example.org/" height="0" width="0"/></p>`
 	expected := `<p> and </p>`
 	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
