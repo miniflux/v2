@@ -80,7 +80,7 @@ func (r *RDFAdapter) BuildFeed(baseURL string) *model.Feed {
 			hashValue = item.Title + item.Description // Fallback to the title and description if the link is empty.
 		}
 
-		entry.Hash = crypto.Hash(hashValue)
+		entry.Hash = crypto.SHA256(hashValue)
 
 		// Populate the entry date.
 		entry.Date = time.Now()
