@@ -24,7 +24,6 @@ import (
 
 var (
 	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
-	iso8601Regex = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
 )
 
 func isYouTubeVideoURL(websiteURL string) bool {
@@ -158,42 +157,6 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 		watchTimeMap[video.ID] = duration
 	}
 	return watchTimeMap, nil
-}
-
-func parseISO8601(from string) (time.Duration, error) {
-	var match []string
-	var d time.Duration
-
-	if iso8601Regex.MatchString(from) {
-		match = iso8601Regex.FindStringSubmatch(from)
-	} else {
-		return 0, errors.New("youtube: could not parse duration string")
-	}
-
-	for i, name := range iso8601Regex.SubexpNames() {
-		part := match[i]
-		if i == 0 || name == "" || part == "" {
-			continue
-		}
-
-		val, err := strconv.ParseInt(part, 10, 64)
-		if err != nil {
-			return 0, err
-		}
-
-		switch name {
-		case "hour":
-			d += time.Duration(val) * time.Hour
-		case "minute":
-			d += time.Duration(val) * time.Minute
-		case "second":
-			d += time.Duration(val) * time.Second
-		default:
-			return 0, fmt.Errorf("youtube: unknown field %s", name)
-		}
-	}
-
-	return d, nil
 }
 
 type youtubeVideoListResponse struct {
