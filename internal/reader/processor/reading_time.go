@@ -17,13 +17,10 @@ func updateEntryReadingTime(store *storage.Storage, feed *model.Feed, entry *mod
 		return
 	}
 
-	// Define a type for watch time fetching functions
-	type watchTimeFetcher func(string) (int, error)
-
 	// Define watch time fetching scenarios
 	watchTimeScenarios := []struct {
 		shouldFetch func(*model.Entry) bool
-		fetchFunc   watchTimeFetcher
+		fetchFunc   func(string) (int, error)
 		platform    string
 	}{
 		{shouldFetchYouTubeWatchTimeForSingleEntry, fetchYouTubeWatchTimeForSingleEntry, "YouTube"},
