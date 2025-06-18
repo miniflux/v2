@@ -103,7 +103,7 @@ func (a *Atom03Adapter) BuildFeed(baseURL string) *model.Feed {
 		// Generate the entry hash.
 		for _, value := range []string{atomEntry.ID, atomEntry.Links.OriginalLink()} {
 			if value != "" {
-				entry.Hash = crypto.Hash(value)
+				entry.Hash = crypto.SHA256(value)
 				break
 			}
 		}

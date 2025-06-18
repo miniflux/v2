@@ -11,18 +11,22 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"hash/fnv"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// HashFromBytes returns a SHA-256 checksum of the input.
+// HashFromBytes returns a non-cryptographic checksum of the input.
 func HashFromBytes(value []byte) string {
-	return fmt.Sprintf("%x", sha256.Sum256(value))
+	h := fnv.New128a()
+	h.Write(value)
+	return hex.EncodeToString(h.Sum(nil))
 }
 
-// Hash returns a SHA-256 checksum of a string.
-func Hash(value string) string {
-	return HashFromBytes([]byte(value))
+// SHA256 returns a SHA-256 checksum of a string.
+func SHA256(value string) string {
+	h := sha256.Sum256([]byte(value))
+	return hex.EncodeToString(h[:])
 }
 
 // GenerateRandomBytes returns random bytes.

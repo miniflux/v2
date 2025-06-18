@@ -161,7 +161,7 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 		for _, value := range []string{item.ID, item.URL, item.ContentText + item.ContentHTML + item.Summary} {
 			value = strings.TrimSpace(value)
 			if value != "" {
-				entry.Hash = crypto.Hash(value)
+				entry.Hash = crypto.SHA256(value)
 				break
 			}
 		}

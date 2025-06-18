@@ -104,11 +104,11 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		// Generate the entry hash.
 		switch {
 		case item.GUID.Data != "":
-			entry.Hash = crypto.Hash(item.GUID.Data)
+			entry.Hash = crypto.SHA256(item.GUID.Data)
 		case entryURL != "":
-			entry.Hash = crypto.Hash(entryURL)
+			entry.Hash = crypto.SHA256(entryURL)
 		default:
-			entry.Hash = crypto.Hash(entry.Title + entry.Content)
+			entry.Hash = crypto.SHA256(entry.Title + entry.Content)
 		}
 
 		// Find CommentsURL if defined.
