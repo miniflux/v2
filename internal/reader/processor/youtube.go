@@ -5,16 +5,11 @@ package processor // import "miniflux.app/v2/internal/reader/processor"
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log/slog"
 	"net/url"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
-
-	"github.com/PuerkitoBio/goquery"
 
 	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
@@ -22,12 +17,8 @@ import (
 	"miniflux.app/v2/internal/reader/fetcher"
 )
 
-var (
-	youtubeRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
-)
-
 func isYouTubeVideoURL(websiteURL string) bool {
-	return len(youtubeRegex.FindStringSubmatch(websiteURL)) == 2
+	return strings.Contains(websiteURL, "youtube.com/watch?v=")
 }
 
 func getVideoIDFromYouTubeURL(websiteURL string) string {
@@ -48,36 +39,7 @@ func shouldFetchYouTubeWatchTimeInBulk() bool {
 }
 
 func fetchYouTubeWatchTimeForSingleEntry(websiteURL string) (int, error) {
-	slog.Debug("Fetching YouTube watch time for a single entry", slog.String("website_url", websiteURL))
-
-	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
-	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
-
-	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))
-	defer responseHandler.Close()
-
-	if localizedError := responseHandler.LocalizedError(); localizedError != nil {
-		slog.Warn("Unable to fetch YouTube page", slog.String("website_url", websiteURL), slog.Any("error", localizedError.Error()))
-		return 0, localizedError.Error()
-	}
-
-	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
-	if docErr != nil {
-		return 0, docErr
-	}
-
-	htmlDuration, exists := doc.FindMatcher(goquery.Single(`meta[itemprop="duration"]`)).Attr("content")
-	if !exists {
-		return 0, errors.New("youtube: duration has not found")
-	}
-
-	parsedDuration, err := parseISO8601(htmlDuration)
-	if err != nil {
-		return 0, fmt.Errorf("youtube: unable to parse duration %s: %v", htmlDuration, err)
-	}
-
-	return int(parsedDuration.Minutes()), nil
+	return fetchWatchTime(websiteURL, `meta[itemprop="duration"]`, true)
 }
 
 func fetchYouTubeWatchTimeInBulk(entries []*model.Entry) {
