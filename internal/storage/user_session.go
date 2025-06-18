@@ -4,10 +4,10 @@
 package storage // import "miniflux.app/v2/internal/storage"
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"fmt"
 
-	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -56,7 +56,7 @@ func (s *Storage) UserSessions(userID int64) (model.UserSessions, error) {
 
 // CreateUserSessionFromUsername creates a new user session.
 func (s *Storage) CreateUserSessionFromUsername(username, userAgent, ip string) (sessionID string, userID int64, err error) {
-	token := crypto.GenerateRandomString(64)
+	token := rand.Text()
 
 	tx, err := s.db.Begin()
 	if err != nil {

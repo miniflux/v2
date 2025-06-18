@@ -8,7 +8,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
-	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 
@@ -28,16 +27,8 @@ func Hash(value string) string {
 // GenerateRandomBytes returns random bytes.
 func GenerateRandomBytes(size int) []byte {
 	b := make([]byte, size)
-	if _, err := rand.Read(b); err != nil {
-		panic(err)
-	}
-
+	rand.Read(b)
 	return b
-}
-
-// GenerateRandomString returns a random string.
-func GenerateRandomString(size int) string {
-	return base64.URLEncoding.EncodeToString(GenerateRandomBytes(size))
 }
 
 // GenerateRandomStringHex returns a random hexadecimal string.

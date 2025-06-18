@@ -4,10 +4,10 @@
 package storage // import "miniflux.app/v2/internal/storage"
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"fmt"
 
-	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -19,9 +19,9 @@ func (s *Storage) CreateAppSessionWithUserPrefs(userID int64) (*model.Session, e
 	}
 
 	session := model.Session{
-		ID: crypto.GenerateRandomString(32),
+		ID: rand.Text(),
 		Data: &model.SessionData{
-			CSRF:     crypto.GenerateRandomString(64),
+			CSRF:     rand.Text(),
 			Theme:    user.Theme,
 			Language: user.Language,
 		},
@@ -33,9 +33,9 @@ func (s *Storage) CreateAppSessionWithUserPrefs(userID int64) (*model.Session, e
 // CreateAppSession creates a new application session.
 func (s *Storage) CreateAppSession() (*model.Session, error) {
 	session := model.Session{
-		ID: crypto.GenerateRandomString(32),
+		ID: rand.Text(),
 		Data: &model.SessionData{
-			CSRF: crypto.GenerateRandomString(64),
+			CSRF: rand.Text(),
 		},
 	}
 
