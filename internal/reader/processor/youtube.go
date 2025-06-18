@@ -142,7 +142,14 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 		return nil, localizedError.Error()
 	}
 
-	var videos youtubeVideoListResponse
+	videos := struct {
+		Items []struct {
+			ID             string `json:"id"`
+			ContentDetails struct {
+				Duration string `json:"duration"`
+			} `json:"contentDetails"`
+		} `json:"items"`
+	}{}
 	if err := json.NewDecoder(responseHandler.Body(config.Opts.HTTPClientMaxBodySize())).Decode(&videos); err != nil {
 		return nil, fmt.Errorf("youtube: unable to decode JSON: %v", err)
 	}
@@ -157,13 +164,4 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 		watchTimeMap[video.ID] = duration
 	}
 	return watchTimeMap, nil
-}
-
-type youtubeVideoListResponse struct {
-	Items []struct {
-		ID             string `json:"id"`
-		ContentDetails struct {
-			Duration string `json:"duration"`
-		} `json:"contentDetails"`
-	} `json:"items"`
 }
