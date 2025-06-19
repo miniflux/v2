@@ -40,6 +40,7 @@ func TestBlockingEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{BlockFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)Test"}, false},
 		{&model.Feed{ID: 1}, &model.Entry{Author: "Different", Tags: []string{"example", "test"}}, &model.User{BlockFilterEntryRules: "EntryAuthor\nEntryTag=(?i)Test"}, true},
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "EntryDate=before:2024-03-15"}, true},
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "UnknownRuleType=test"}, false},
 	}
 
 	for _, tc := range scenarios {
