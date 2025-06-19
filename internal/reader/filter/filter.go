@@ -17,30 +17,31 @@ import (
 
 func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.BlockFilterEntryRules != "" {
-		rules := strings.SplitSeq(user.BlockFilterEntryRules, "\n")
-		for rule := range rules {
+		for rule := range strings.SplitSeq(user.BlockFilterEntryRules, "\n") {
 			match := false
+
 			parts := strings.SplitN(rule, "=", 2)
 			if len(parts) != 2 {
-				return false
+				continue
 			}
-			part, pattern := parts[0], parts[1]
 
-			switch part {
+			ruleKey, ruleValue := parts[0], parts[1]
+
+			switch ruleKey {
 			case "EntryDate":
-				match = isDateMatchingPattern(pattern, entry.Date)
+				match = isDateMatchingPattern(ruleValue, entry.Date)
 			case "EntryTitle":
-				match, _ = regexp.MatchString(pattern, entry.Title)
+				match, _ = regexp.MatchString(ruleValue, entry.Title)
 			case "EntryURL":
-				match, _ = regexp.MatchString(pattern, entry.URL)
+				match, _ = regexp.MatchString(ruleValue, entry.URL)
 			case "EntryCommentsURL":
-				match, _ = regexp.MatchString(pattern, entry.CommentsURL)
+				match, _ = regexp.MatchString(ruleValue, entry.CommentsURL)
 			case "EntryContent":
-				match, _ = regexp.MatchString(pattern, entry.Content)
+				match, _ = regexp.MatchString(ruleValue, entry.Content)
 			case "EntryAuthor":
-				match, _ = regexp.MatchString(pattern, entry.Author)
+				match, _ = regexp.MatchString(ruleValue, entry.Author)
 			case "EntryTag":
-				match = containsRegexPattern(pattern, entry.Tags)
+				match = containsRegexPattern(ruleValue, entry.Tags)
 			}
 
 			if match {
@@ -87,30 +88,31 @@ func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 
 func IsAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.KeepFilterEntryRules != "" {
-		rules := strings.SplitSeq(user.KeepFilterEntryRules, "\n")
-		for rule := range rules {
+		for rule := range strings.SplitSeq(user.KeepFilterEntryRules, "\n") {
 			match := false
+
 			parts := strings.SplitN(rule, "=", 2)
 			if len(parts) != 2 {
-				return false
+				continue
 			}
-			part, pattern := parts[0], parts[1]
 
-			switch part {
+			ruleKey, ruleValue := parts[0], parts[1]
+
+			switch ruleKey {
 			case "EntryDate":
-				match = isDateMatchingPattern(pattern, entry.Date)
+				match = isDateMatchingPattern(ruleValue, entry.Date)
 			case "EntryTitle":
-				match, _ = regexp.MatchString(pattern, entry.Title)
+				match, _ = regexp.MatchString(ruleValue, entry.Title)
 			case "EntryURL":
-				match, _ = regexp.MatchString(pattern, entry.URL)
+				match, _ = regexp.MatchString(ruleValue, entry.URL)
 			case "EntryCommentsURL":
-				match, _ = regexp.MatchString(pattern, entry.CommentsURL)
+				match, _ = regexp.MatchString(ruleValue, entry.CommentsURL)
 			case "EntryContent":
-				match, _ = regexp.MatchString(pattern, entry.Content)
+				match, _ = regexp.MatchString(ruleValue, entry.Content)
 			case "EntryAuthor":
-				match, _ = regexp.MatchString(pattern, entry.Author)
+				match, _ = regexp.MatchString(ruleValue, entry.Author)
 			case "EntryTag":
-				match = containsRegexPattern(pattern, entry.Tags)
+				match = containsRegexPattern(ruleValue, entry.Tags)
 			}
 
 			if match {
@@ -164,23 +166,23 @@ func isDateMatchingPattern(pattern string, entryDate time.Time) bool {
 		return false
 	}
 
-	operator, dateStr := parts[0], parts[1]
+	ruleType, inputDate := parts[0], parts[1]
 
-	switch operator {
+	switch ruleType {
 	case "before":
-		targetDate, err := time.Parse("2006-01-02", dateStr)
+		targetDate, err := time.Parse("2006-01-02", inputDate)
 		if err != nil {
 			return false
 		}
 		return entryDate.Before(targetDate)
 	case "after":
-		targetDate, err := time.Parse("2006-01-02", dateStr)
+		targetDate, err := time.Parse("2006-01-02", inputDate)
 		if err != nil {
 			return false
 		}
 		return entryDate.After(targetDate)
 	case "between":
-		dates := strings.Split(dateStr, ",")
+		dates := strings.Split(inputDate, ",")
 		if len(dates) != 2 {
 			return false
 		}
