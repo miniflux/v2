@@ -38,7 +38,7 @@ func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
 
 	duration, exists := doc.FindMatcher(goquery.Single(query)).Attr("content")
 	if !exists {
-		return 0, errors.New("duration has not found")
+		return 0, errors.New("duration not found")
 	}
 
 	ret := 0

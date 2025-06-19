@@ -27,7 +27,7 @@ func parseISO8601(from string) (time.Duration, error) {
 	if iso8601Regex.MatchString(from) {
 		match = iso8601Regex.FindStringSubmatch(from)
 	} else {
-		return 0, errors.New("youtube: could not parse duration string")
+		return 0, errors.New("processor: could not parse duration string")
 	}
 
 	for i, name := range iso8601Regex.SubexpNames() {
@@ -49,7 +49,7 @@ func parseISO8601(from string) (time.Duration, error) {
 		case "second":
 			d += time.Duration(val) * time.Second
 		default:
-			return 0, fmt.Errorf("youtube: unknown field %s", name)
+			return 0, fmt.Errorf("processor: unknown field %s", name)
 		}
 	}
 
