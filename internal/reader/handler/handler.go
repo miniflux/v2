@@ -61,6 +61,8 @@ func CreateFeedFromSubscriptionDiscovery(store *storage.Storage, userID int64, f
 	subscription.BlocklistRules = feedCreationRequest.BlocklistRules
 	subscription.KeeplistRules = feedCreationRequest.KeeplistRules
 	subscription.UrlRewriteRules = feedCreationRequest.UrlRewriteRules
+	subscription.BlockFilterEntryRules = feedCreationRequest.BlockFilterEntryRules
+	subscription.KeepFilterEntryRules = feedCreationRequest.KeepFilterEntryRules
 	subscription.EtagHeader = feedCreationRequest.ETag
 	subscription.LastModifiedHeader = feedCreationRequest.LastModified
 	subscription.FeedURL = feedCreationRequest.FeedURL
@@ -158,9 +160,11 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 	subscription.FetchViaProxy = feedCreationRequest.FetchViaProxy
 	subscription.ScraperRules = feedCreationRequest.ScraperRules
 	subscription.RewriteRules = feedCreationRequest.RewriteRules
+	subscription.UrlRewriteRules = feedCreationRequest.UrlRewriteRules
 	subscription.BlocklistRules = feedCreationRequest.BlocklistRules
 	subscription.KeeplistRules = feedCreationRequest.KeeplistRules
-	subscription.UrlRewriteRules = feedCreationRequest.UrlRewriteRules
+	subscription.BlockFilterEntryRules = feedCreationRequest.BlockFilterEntryRules
+	subscription.KeepFilterEntryRules = feedCreationRequest.KeepFilterEntryRules
 	subscription.HideGlobally = feedCreationRequest.HideGlobally
 	subscription.EtagHeader = responseHandler.ETag()
 	subscription.LastModifiedHeader = responseHandler.LastModified()

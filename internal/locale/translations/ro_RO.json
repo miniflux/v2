@@ -172,7 +172,8 @@
     "form.feed.fieldset.rules": "Reguli",
     "form.feed.label.allow_self_signed_certificates": "Permite certificatele auto-semnate sau invalide",
     "form.feed.label.apprise_service_urls": "Lista de URL-uri ale serviciilor Apprise separate prin virgule",
-    "form.feed.label.blocklist_rules": "Reguli de Blocare",
+    "form.feed.label.block_filter_entry_rules": "Reguli de Blocare a Intrărilor",
+    "form.feed.label.blocklist_rules": "Filtre de Blocare Bazate pe Regex",
     "form.feed.label.category": "Categorie",
     "form.feed.label.cookie": "Setare Cookie-uri",
     "form.feed.label.crawler": "Aduce conținutul original",
@@ -185,7 +186,8 @@
     "form.feed.label.fetch_via_proxy": "Utilizați proxy-ul configurat la nivelul aplicației",
     "form.feed.label.hide_globally": "Ascunde intrările în lista globală de articole necitite",
     "form.feed.label.ignore_http_cache": "Ignoră cache HTTP",
-    "form.feed.label.keeplist_rules": "Reguli de Păstrare",
+    "form.feed.label.keep_filter_entry_rules": "Reguli de Permitere a Intrărilor",
+    "form.feed.label.keeplist_rules": "Filtre de Păstrare Bazate pe Regex",
     "form.feed.label.no_media_player": "Nu există player media (audio/video)",
     "form.feed.label.ntfy_activate": "Împinge intrările la ntfy",
     "form.feed.label.ntfy_default_priority": "Prioritate predefinită Ntfy",
@@ -195,7 +197,7 @@
     "form.feed.label.ntfy_min_priority": "Prioritate minimă Ntfy",
     "form.feed.label.ntfy_priority": "Prioritate Ntfy",
     "form.feed.label.ntfy_topic": "Subiect Ntfy (opțional)",
-    "form.feed.label.proxy_url": "Proxy URL",
+    "form.feed.label.proxy_url": "URL Proxy",
     "form.feed.label.pushover_activate": "Activează Pushover",
     "form.feed.label.pushover_default_priority": "Prioritate implicită Pushover",
     "form.feed.label.pushover_high_priority": "Prioritate ridicată Pushover",
@@ -203,7 +205,7 @@
     "form.feed.label.pushover_max_priority": "Prioritate maximă Pushover",
     "form.feed.label.pushover_min_priority": "Prioritate minimă Pushover",
     "form.feed.label.pushover_priority": "Prioritate Pushover",
-    "form.feed.label.rewrite_rules": "Rescrie Regulile",
+    "form.feed.label.rewrite_rules": "Reguli de Rescriere a Conținutului",
     "form.feed.label.scraper_rules": "Reguli de Eliminare",
     "form.feed.label.site_url": "Adresă URL",
     "form.feed.label.title": "Titlu",
@@ -222,7 +224,7 @@
     "form.integration.cubox_api_link": "Link APi Cubox",
     "form.integration.discord_activate": "Împinge intrările pe Discord",
     "form.integration.discord_webhook_link": "Link Webhook Discord",
-    "form.integration.espial_activate": "Save entries to Espial",
+    "form.integration.espial_activate": "Salvează intrările în Espial",
     "form.integration.espial_api_key": "Cheie API Espial",
     "form.integration.espial_endpoint": "Punct acces API Espial",
     "form.integration.espial_tags": "Etichete Espial",
@@ -433,11 +435,6 @@
     "page.api_keys.table.last_used_at": "Utilizat ultima dată",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Chei API",
-    "page.categories_count": [
-        "%d categorie",
-        "%d categorii",
-        "%d categorie găsită"
-    ],
     "page.categories.entries": "Intrări",
     "page.categories.feed_count": [
         "Este %d flux.",
@@ -447,6 +444,11 @@
     "page.categories.feeds": "Fluxuri",
     "page.categories.no_feed": "Nici un flux.",
     "page.categories.title": "Categorii",
+    "page.categories_count": [
+        "%d categorie",
+        "%d categorii",
+        "%d categorie găsită"
+    ],
     "page.category_label": "Categorie: %s",
     "page.edit_category.title": "Editare Categorie: %s",
     "page.edit_feed.etag_header": "Antet ETag:",
@@ -555,29 +557,29 @@
     "page.settings.webauthn.passkeys": "Chei Acces",
     "page.settings.webauthn.register": "Înregistrare cheie acces",
     "page.settings.webauthn.register.error": "Eroare la înregistrarea cheii de acces",
+    "page.shared_entries.title": "Înregistrări partajate",
     "page.shared_entries_count": [
         "%d înregistrare partajată",
         "%d înregistrări partajate",
         "%d înregistrări partajate"
     ],
-    "page.shared_entries.title": "Înregistrări partajate",
+    "page.starred.title": "Marcate",
     "page.starred_entry_count": [
         "%d înregistrare marcată",
         "%d Înregistrări marcate",
         "%d Înregistrări marcate"
     ],
-    "page.starred.title": "Marcate",
     "page.total_entry_count": [
         "%d intrare în total",
         "%d intrări în total",
         "%d intrări în total"
     ],
+    "page.unread.title": "Necitite",
     "page.unread_entry_count": [
         "%d înregistrare necitită",
         "%d înregistrări necitite",
         "%d înregistrări necitite"
     ],
-    "page.unread.title": "Necitite",
     "page.users.actions": "Acțiuni",
     "page.users.admin.no": "Nu",
     "page.users.admin.yes": "Da",

@@ -169,7 +169,8 @@
     "form.feed.fieldset.rules": "Κανόνες",
     "form.feed.label.allow_self_signed_certificates": "Να επιτρέπονται αυτο-υπογεγραμμένα ή μη έγκυρα πιστοποιητικά",
     "form.feed.label.apprise_service_urls": "Λίστα διευθύνσεων URL υπηρεσιών Apprise διαχωρισμένων με κόμμα",
-    "form.feed.label.blocklist_rules": "Κανόνες Αποκλεισμού",
+    "form.feed.label.block_filter_entry_rules": "Κανόνες Αποκλεισμού Καταχωρήσεων",
+    "form.feed.label.blocklist_rules": "Φίλτρα Αποκλεισμού Βασισμένα σε Regex",
     "form.feed.label.category": "Κατηγορία",
     "form.feed.label.cookie": "Ορισμός Cookies",
     "form.feed.label.crawler": "Λήψη αρχικού περιεχομένου",
@@ -182,7 +183,8 @@
     "form.feed.label.fetch_via_proxy": "Χρησιμοποιήστε τον διακομιστή μεσολάβησης που έχει ρυθμιστεί σε επίπεδο εφαρμογής",
     "form.feed.label.hide_globally": "Απόκρυψη καταχωρήσεων σε γενική λίστα μη αναγνωσμένων",
     "form.feed.label.ignore_http_cache": "Αγνοήστε την προσωρινή μνήμη HTTP",
-    "form.feed.label.keeplist_rules": "Κρατήστε Κανόνες",
+    "form.feed.label.keep_filter_entry_rules": "Κανόνες Επιτρεπόμενων Καταχωρήσεων",
+    "form.feed.label.keeplist_rules": "Φίλτρα Διατήρησης Βασισμένα σε Regex",
     "form.feed.label.no_media_player": "Χωρίς πρόγραμμα αναπαραγωγής πολυμέσων (ήχος/βίντεο)",
     "form.feed.label.ntfy_activate": "Προώθηση καταχωρήσεων στο ntfy",
     "form.feed.label.ntfy_default_priority": "Προεπιλεγμένη προτεραιότητα Ntfy",
@@ -200,7 +202,7 @@
     "form.feed.label.pushover_max_priority": "Μέγιστη προτεραιότητα Pushover",
     "form.feed.label.pushover_min_priority": "Ελάχιστη προτεραιότητα Pushover",
     "form.feed.label.pushover_priority": "Προτεραιότητα μηνύματος Pushover",
-    "form.feed.label.rewrite_rules": "Κανόνες Μετατροπής",
+    "form.feed.label.rewrite_rules": "Κανόνες Επανασύνταξης Περιεχομένου",
     "form.feed.label.scraper_rules": "Κανόνες Scraper",
     "form.feed.label.site_url": "Διεύθυνση URL ιστότοπου",
     "form.feed.label.title": "Τίτλος",
@@ -247,7 +249,7 @@
     "form.integration.linkding_api_key": "Κλειδί API Linkding",
     "form.integration.linkding_bookmark": "Σημείωση του σελιδοδείκτη ως μη αναγνωσμένου",
     "form.integration.linkding_endpoint": "Τελικό σημείο Linkding API",
-    "form.integration.linkding_tags": "Linkding Tags",
+    "form.integration.linkding_tags": "Ετικέτες Linkding",
     "form.integration.linkwarden_activate": "Αποθήκευση άρθρων στο Linkwarden",
     "form.integration.linkwarden_api_key": "Κλειδί API Linkwarden",
     "form.integration.linkwarden_endpoint": "Τελικό σημείο Linkwarden API",
@@ -276,7 +278,7 @@
     "form.integration.pinboard_activate": "Αποθήκευση άρθρων στο Pinboard",
     "form.integration.pinboard_bookmark": "Σημείωση του σελιδοδείκτη ως μη αναγνωσμένου",
     "form.integration.pinboard_tags": "Ετικέτες Pinboard",
-    "form.integration.pinboard_token": "Pinboard API Token",
+    "form.integration.pinboard_token": "Διακριτικό API Pinboard",
     "form.integration.pushover_activate": "Προώθηση καταχωρήσεων στο Pushover",
     "form.integration.pushover_device": "Συσκευή Pushover (προαιρετικό)",
     "form.integration.pushover_prefix": "Πρόθεμα διεύθυνσης URL Pushover (προαιρετικό)",
@@ -289,7 +291,7 @@
     "form.integration.readeck_activate": "Αποθήκευση άρθρων στο Readeck",
     "form.integration.readeck_api_key": "Κλειδί API Readeck",
     "form.integration.readeck_endpoint": "Τελικό σημείο Readeck API",
-    "form.integration.readeck_labels": "Readeck Labels",
+    "form.integration.readeck_labels": "Ετικέτες Readeck",
     "form.integration.readeck_only_url": "Αποστολή μόνο URL (αντί για πλήρες περιεχόμενο)",
     "form.integration.readwise_activate": "Αποθήκευση καταχωρήσεων στο Readwise Reader",
     "form.integration.readwise_api_key": "Διακριτικό πρόσβασης Readwise Reader",
@@ -410,7 +412,7 @@
     "page.about.build_date": "Ημερομηνία Κατασκευής:",
     "page.about.credits": "Συνεισφέροντες",
     "page.about.db_usage": "Μέγεθος βάσης δεδομένων:",
-    "page.about.git_commit": "Git Commit:",
+    "page.about.git_commit": "Υποβολή Git:",
     "page.about.global_config_options": "Γενικές ρυθμίσεις",
     "page.about.go_version": "Έκδοση Go:",
     "page.about.license": "Άδεια:",
@@ -430,10 +432,6 @@
     "page.api_keys.table.last_used_at": "Τελευταία Χρήση",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Κλειδιά API",
-    "page.categories_count": [
-        "%d κατηγορία",
-        "%d κατηγορίες"
-    ],
     "page.categories.entries": "Άρθρα",
     "page.categories.feed_count": [
         "Υπάρχει μία %d ροή.",
@@ -442,6 +440,10 @@
     "page.categories.feeds": "Συνδρομές",
     "page.categories.no_feed": "Καμία ροή.",
     "page.categories.title": "Κατηγορίες",
+    "page.categories_count": [
+        "%d κατηγορία",
+        "%d κατηγορίες"
+    ],
     "page.category_label": "Κατηγορία: %s",
     "page.edit_category.title": "Επεξεργασία κατηγορίας: % s",
     "page.edit_feed.etag_header": "Κεφαλίδα ETag:",
@@ -547,25 +549,25 @@
     "page.settings.webauthn.passkeys": "Κωδικοί πρόσβασης",
     "page.settings.webauthn.register": "Εγγραφή κωδικού πρόσβασης",
     "page.settings.webauthn.register.error": "Δεν είναι δυνατή η εγγραφή του κωδικού πρόσβασης",
+    "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
     "page.shared_entries_count": [
         "%d κοινόχρηστη καταχώρηση",
         "%d κοινόχρηστες καταχωρήσεις"
     ],
-    "page.shared_entries.title": "Κοινόχρηστες Καταχωρήσεις",
+    "page.starred.title": "Αγαπημένo",
     "page.starred_entry_count": [
         "%d καταχώρηση με αστέρι",
         "%d καταχωρήσεις με αστέρι"
     ],
-    "page.starred.title": "Αγαπημένo",
     "page.total_entry_count": [
         "%d καταχώρηση συνολικά",
         "%d καταχωρήσεις συνολικά"
     ],
+    "page.unread.title": "Μη αναγνωσμένα",
     "page.unread_entry_count": [
         "%d μη αναγνωσμένη καταχώρηση",
         "%d μη αναγνωσμένες καταχωρήσεις"
     ],
-    "page.unread.title": "Μη αναγνωσμένα",
     "page.users.actions": "Eνέργειες",
     "page.users.admin.no": "Όχι",
     "page.users.admin.yes": "Ναι.",

@@ -166,7 +166,8 @@
     "form.feed.fieldset.rules": "规则",
     "form.feed.label.allow_self_signed_certificates": "允许自签名证书或无效证书",
     "form.feed.label.apprise_service_urls": "使用逗号分隔的 Apprise 服务 URL 列表",
-    "form.feed.label.blocklist_rules": "阻止规则",
+    "form.feed.label.block_filter_entry_rules": "条目屏蔽规则",
+    "form.feed.label.blocklist_rules": "基于正则表达式的屏蔽过滤器",
     "form.feed.label.category": "类别",
     "form.feed.label.cookie": "设置 Cookies",
     "form.feed.label.crawler": "抓取全文内容",
@@ -179,7 +180,8 @@
     "form.feed.label.fetch_via_proxy": "使用在应用程序级别配置的代理",
     "form.feed.label.hide_globally": "隐藏全局未读列表中的文章",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 缓存",
-    "form.feed.label.keeplist_rules": "保留规则",
+    "form.feed.label.keep_filter_entry_rules": "条目允许规则",
+    "form.feed.label.keeplist_rules": "基于正则表达式的保留过滤器",
     "form.feed.label.no_media_player": "没有媒体播放器(音频/视频)",
     "form.feed.label.ntfy_activate": "推送条目到ntfy",
     "form.feed.label.ntfy_default_priority": "Ntfy 默认优先级",
@@ -197,7 +199,7 @@
     "form.feed.label.pushover_max_priority": "Pushover 最高优先级",
     "form.feed.label.pushover_min_priority": "Pushover 最低优先级",
     "form.feed.label.pushover_priority": "Pushover 消息优先级",
-    "form.feed.label.rewrite_rules": "重写规则",
+    "form.feed.label.rewrite_rules": "内容重写规则",
     "form.feed.label.scraper_rules": "抓取规则",
     "form.feed.label.site_url": "源网站 URL",
     "form.feed.label.title": "标题",
@@ -309,7 +311,7 @@
     "form.integration.telegram_bot_disable_web_page_preview": "禁用网页预览",
     "form.integration.telegram_bot_token": "机器人令牌",
     "form.integration.telegram_chat_id": "聊天 ID",
-    "form.integration.telegram_topic_id": "Topic ID",
+    "form.integration.telegram_topic_id": "主题ID",
     "form.integration.wallabag_activate": "保存文章到 Wallabag",
     "form.integration.wallabag_client_id": "Wallabag 客户端 ID",
     "form.integration.wallabag_client_secret": "Wallabag 客户端 密钥",
@@ -407,7 +409,7 @@
     "page.about.build_date": "构建日期：",
     "page.about.credits": "版权",
     "page.about.db_usage": "数据库容量",
-    "page.about.git_commit": "Git Commit:",
+    "page.about.git_commit": "Git提交:",
     "page.about.global_config_options": "全局配置选项",
     "page.about.go_version": "Go 版本号：",
     "page.about.license": "协议：",
@@ -427,9 +429,6 @@
     "page.api_keys.table.last_used_at": "最后使用",
     "page.api_keys.table.token": "令牌",
     "page.api_keys.title": "API 密钥",
-    "page.categories_count": [
-        "%d 分类"
-    ],
     "page.categories.entries": "查看内容",
     "page.categories.feed_count": [
         "有 %d 个源"
@@ -437,6 +436,9 @@
     "page.categories.feeds": "查看源",
     "page.categories.no_feed": "没有源",
     "page.categories.title": "分类",
+    "page.categories_count": [
+        "%d 分类"
+    ],
     "page.category_label": "分类: %s",
     "page.edit_category.title": "编辑分类 : %s",
     "page.edit_feed.etag_header": "ETag 标题：",
@@ -539,21 +541,21 @@
     "page.settings.webauthn.passkeys": "通行密钥列表",
     "page.settings.webauthn.register": "注册通行密钥",
     "page.settings.webauthn.register.error": "无法注册通行密钥",
+    "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
         "%d 已分享的文章"
     ],
-    "page.shared_entries.title": "已分享的文章",
+    "page.starred.title": "收藏",
     "page.starred_entry_count": [
         "%d 收藏的文章"
     ],
-    "page.starred.title": "收藏",
     "page.total_entry_count": [
         "%d 文章总数"
     ],
+    "page.unread.title": "未读",
     "page.unread_entry_count": [
         "%d 未读的文章"
     ],
-    "page.unread.title": "未读",
     "page.users.actions": "操作",
     "page.users.admin.no": "否",
     "page.users.admin.yes": "是",

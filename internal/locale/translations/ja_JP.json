@@ -82,7 +82,7 @@
     "error.bad_credentials": "ユーザー名かパスワードが間違っています。",
     "error.category_already_exists": "このカテゴリは既に存在します。",
     "error.category_not_found": "このカテゴリは存在しないか、このユーザーに属していません。",
-    "error.database_error": "Database error: %v.",
+    "error.database_error": "データベースエラー: %v。",
     "error.different_passwords": "パスワードが一致しません。",
     "error.duplicate_fever_username": "既に同じ名前の Fever ユーザー名が使われています!",
     "error.duplicate_googlereader_username": "既に同じ名前の Google Reader ユーザー名が使われています!",
@@ -100,12 +100,12 @@
     "error.feed_title_not_empty": "フィードのタイトルを空にすることはできません。",
     "error.feed_url_not_empty": "フィード URL を空にすることはできません。",
     "error.fields_mandatory": "すべての項目が必要です。",
-    "error.http_bad_gateway": "The website is not available at the moment due to a bad gateway error. The problem is not on Miniflux side. Please, try again later.",
-    "error.http_body_read": "Unable to read the HTTP body: %v.",
-    "error.http_client_error": "HTTP client error: %v.",
-    "error.http_empty_response": "The HTTP response is empty. Perhaps, this website is using a bot protection mechanism?",
-    "error.http_empty_response_body": "The HTTP response body is empty.",
-    "error.http_forbidden": "Access to this website is forbidden. Perhaps, this website has a bot protection mechanism?",
+    "error.http_bad_gateway": "ウェブサイトは、不正なゲートウェイエラーのため現在利用できません。問題はMiniflux側にはありません。後でもう一度お試しください。",
+    "error.http_body_read": "HTTP本文を読み取れません: %v。",
+    "error.http_client_error": "HTTPクライアントエラー: %v。",
+    "error.http_empty_response": "HTTP応答が空です。おそらく、このウェブサイトはボット保護メカニズムを使用していますか？",
+    "error.http_empty_response_body": "HTTP応答本文が空です。",
+    "error.http_forbidden": "このウェブサイトへのアクセスは禁止されています。おそらく、このウェブサイトはボット保護メカニズムを持っていますか？",
     "error.http_gateway_timeout": "The website is not available at the moment due to a gateway timeout error. The problem is not on Miniflux side. Please, try again later.",
     "error.http_internal_server_error": "The website is not available at the moment due to a server error. The problem is not on Miniflux side. Please, try again later.",
     "error.http_not_authorized": "Access to this website is not authorized. It could be a bad username or password.",
@@ -166,7 +166,8 @@
     "form.feed.fieldset.rules": "Rules",
     "form.feed.label.allow_self_signed_certificates": "自己署名証明書または無効な証明書を許可する",
     "form.feed.label.apprise_service_urls": "Comma separated list of Apprise service URLs",
-    "form.feed.label.blocklist_rules": "Block ルール",
+    "form.feed.label.block_filter_entry_rules": "エントリブロッキングルール",
+    "form.feed.label.blocklist_rules": "正規表現ベースのブロッキングフィルター",
     "form.feed.label.category": "カテゴリ",
     "form.feed.label.cookie": "Cookie の設定",
     "form.feed.label.crawler": "オリジナルの内容を取得",
@@ -179,7 +180,8 @@
     "form.feed.label.fetch_via_proxy": "アプリケーションレベルで設定されたプロキシを使用する",
     "form.feed.label.hide_globally": "未読一覧に記事を表示しない",
     "form.feed.label.ignore_http_cache": "HTTPキャッシュを無視",
-    "form.feed.label.keeplist_rules": "Keep ルール",
+    "form.feed.label.keep_filter_entry_rules": "エントリ許可ルール",
+    "form.feed.label.keeplist_rules": "正規表現ベースのキープフィルター",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.ntfy_activate": "Push entries to ntfy",
     "form.feed.label.ntfy_default_priority": "Ntfy default priority",
@@ -197,7 +199,7 @@
     "form.feed.label.pushover_max_priority": "Pushover max priority",
     "form.feed.label.pushover_min_priority": "Pushover min priority",
     "form.feed.label.pushover_priority": "Pushover message priority",
-    "form.feed.label.rewrite_rules": "Rewrite ルール",
+    "form.feed.label.rewrite_rules": "コンテンツ書き換えルール",
     "form.feed.label.scraper_rules": "Scraper ルール",
     "form.feed.label.site_url": "サイト URL",
     "form.feed.label.title": "タイトル",
@@ -427,9 +429,6 @@
     "page.api_keys.table.last_used_at": "最終使用",
     "page.api_keys.table.token": "トークン",
     "page.api_keys.title": "API キー",
-    "page.categories_count": [
-        "%d 件のカテゴリ"
-    ],
     "page.categories.entries": "記事一覧",
     "page.categories.feed_count": [
         "%d 件のフィードがあります。"
@@ -437,6 +436,9 @@
     "page.categories.feeds": "フィード一覧",
     "page.categories.no_feed": "フィードはありません。",
     "page.categories.title": "カテゴリ",
+    "page.categories_count": [
+        "%d 件のカテゴリ"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "カテゴリを編集: %s",
     "page.edit_feed.etag_header": "ETag ヘッダー:",
@@ -539,21 +541,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "パスキーを登録する",
     "page.settings.webauthn.register.error": "パスキーを登録できません",
+    "page.shared_entries.title": "共有エントリ",
     "page.shared_entries_count": [
         "%d 件の共有エントリ"
     ],
-    "page.shared_entries.title": "共有エントリ",
+    "page.starred.title": "星付き",
     "page.starred_entry_count": [
         "%d 件の星付きエントリ"
     ],
-    "page.starred.title": "星付き",
     "page.total_entry_count": [
         "合計 %d 件のエントリ"
     ],
+    "page.unread.title": "未読",
     "page.unread_entry_count": [
         "%d 件の未読エントリ"
     ],
-    "page.unread.title": "未読",
     "page.users.actions": "アクション",
     "page.users.admin.no": "非管理者",
     "page.users.admin.yes": "管理者",

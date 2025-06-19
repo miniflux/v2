@@ -1,6 +1,6 @@
 {
     "action.cancel": "annuleren",
-    "action.download": "Download",
+    "action.download": "Downloaden",
     "action.edit": "Bewerken",
     "action.home_screen": "Toevoegen aan startscherm",
     "action.import": "Importeren",
@@ -42,7 +42,7 @@
     "enclosure_media_controls.speed": "Snelheid:",
     "enclosure_media_controls.speed.faster": "Versnel",
     "enclosure_media_controls.speed.faster.title": "Versnel met %sx",
-    "enclosure_media_controls.speed.reset": "Reset",
+    "enclosure_media_controls.speed.reset": "Resetten",
     "enclosure_media_controls.speed.reset.title": "Reset snelheid naar 1x",
     "enclosure_media_controls.speed.slower": "Vertraag",
     "enclosure_media_controls.speed.slower.title": "Vertraag met %sx",
@@ -169,7 +169,8 @@
     "form.feed.fieldset.rules": "Regels",
     "form.feed.label.allow_self_signed_certificates": "Zelfondertekende of ongeldige certificaten toestaan",
     "form.feed.label.apprise_service_urls": "Door komma's gescheiden lijst van Apprise service URL's",
-    "form.feed.label.blocklist_rules": "Blokkeerregels",
+    "form.feed.label.block_filter_entry_rules": "Blokkeerregels voor Items",
+    "form.feed.label.blocklist_rules": "Regex-gebaseerde Blokkeerfilters",
     "form.feed.label.category": "Categorie",
     "form.feed.label.cookie": "Cookies instellen",
     "form.feed.label.crawler": "Download originele inhoud",
@@ -182,7 +183,8 @@
     "form.feed.label.fetch_via_proxy": "Gebruik de proxy die op applicatieniveau is geconfigureerd",
     "form.feed.label.hide_globally": "Verberg artikelen in de globale ongelezen lijst",
     "form.feed.label.ignore_http_cache": "Negeer HTTP-cache",
-    "form.feed.label.keeplist_rules": "Bewaarregels",
+    "form.feed.label.keep_filter_entry_rules": "Toestaan Regels voor Items",
+    "form.feed.label.keeplist_rules": "Regex-gebaseerde Bewaarfilters",
     "form.feed.label.no_media_player": "Geen mediaspeler (audio/video)",
     "form.feed.label.ntfy_activate": "Artikelen naar ntfy sturen",
     "form.feed.label.ntfy_default_priority": "Ntfy standaard prioriteit",
@@ -191,7 +193,7 @@
     "form.feed.label.ntfy_max_priority": "Ntfy maximale prioriteit",
     "form.feed.label.ntfy_min_priority": "Ntfy minimale prioriteit",
     "form.feed.label.ntfy_priority": "Ntfy prioriteit",
-    "form.feed.label.ntfy_topic": "Ntfy topic (optional)",
+    "form.feed.label.ntfy_topic": "Ntfy onderwerp (optioneel)",
     "form.feed.label.proxy_url": "Proxy URL",
     "form.feed.label.pushover_activate": "Stuur artikelen naar pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover standaard prioriteit",
@@ -200,7 +202,7 @@
     "form.feed.label.pushover_max_priority": "Pushover maximale prioriteit",
     "form.feed.label.pushover_min_priority": "Pushover minimale prioriteit",
     "form.feed.label.pushover_priority": "Pushover berichtprioriteit",
-    "form.feed.label.rewrite_rules": "Herschrijfregels",
+    "form.feed.label.rewrite_rules": "Inhoud Herschrijfregels",
     "form.feed.label.scraper_rules": "Extractieregels",
     "form.feed.label.site_url": "Website URL",
     "form.feed.label.title": "Titel",
@@ -430,10 +432,6 @@
     "page.api_keys.table.last_used_at": "Laatst gebruikt",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "API-sleutels",
-    "page.categories_count": [
-        "%d categorie",
-        "%d categorieën"
-    ],
     "page.categories.entries": "Artikelen",
     "page.categories.feed_count": [
         "Er is %d feed.",
@@ -442,6 +440,10 @@
     "page.categories.feeds": "Feeds",
     "page.categories.no_feed": "Geen feed.",
     "page.categories.title": "Categorieën",
+    "page.categories_count": [
+        "%d categorie",
+        "%d categorieën"
+    ],
     "page.category_label": "Categorie: %s",
     "page.edit_category.title": "Bewerk categorie: %s",
     "page.edit_feed.etag_header": "ETAG header:",
@@ -547,25 +549,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Passkey registreren",
     "page.settings.webauthn.register.error": "Kan passkey niet registreren",
+    "page.shared_entries.title": "Gedeelde artikelen",
     "page.shared_entries_count": [
         "%d gedeeld artikel",
         "%d gedeelde artikelen"
     ],
-    "page.shared_entries.title": "Gedeelde artikelen",
+    "page.starred.title": "Favorieten",
     "page.starred_entry_count": [
         "%d favoriet artikel",
         "%d favoriete artikelen"
     ],
-    "page.starred.title": "Favorieten",
     "page.total_entry_count": [
         "%d artikel totaal",
         "%d artikelen totaal"
     ],
+    "page.unread.title": "Ongelezen",
     "page.unread_entry_count": [
         "%d ongelezen artikel",
         "%d ongelezen artikelen"
     ],
-    "page.unread.title": "Ongelezen",
     "page.users.actions": "Acties",
     "page.users.admin.no": "Nee",
     "page.users.admin.yes": "Ja",

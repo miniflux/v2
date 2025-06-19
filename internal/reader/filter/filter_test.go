@@ -41,6 +41,7 @@ func TestBlockingEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Author: "Different", Tags: []string{"example", "test"}}, &model.User{BlockFilterEntryRules: "EntryAuthor\nEntryTag=(?i)Test"}, true},
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "EntryDate=before:2024-03-15"}, true},
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "UnknownRuleType=test"}, false},
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
 	}
 
 	for _, tc := range scenarios {
@@ -93,6 +94,7 @@ func TestAllowEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-03-15"}, false},              // missing second date in range
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=abcd"}, false},                            // no colon in rule value
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=unknown:2024-03-15"}, false},              // unknown rule type
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
 	}
 
 	for _, tc := range scenarios {

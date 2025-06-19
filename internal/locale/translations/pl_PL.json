@@ -172,7 +172,8 @@
     "form.feed.fieldset.rules": "Reguły",
     "form.feed.label.allow_self_signed_certificates": "Zezwalaj na samopodpisane lub nieprawidłowe certyfikaty",
     "form.feed.label.apprise_service_urls": "Rozdzielana przecinkami lista adresów URL usług Appprise",
-    "form.feed.label.blocklist_rules": "Reguły blokowania",
+    "form.feed.label.block_filter_entry_rules": "Reguły Blokowania Wpisów",
+    "form.feed.label.blocklist_rules": "Filtry Blokujące Oparte na Regex",
     "form.feed.label.category": "Kategoria",
     "form.feed.label.cookie": "Ustaw ciasteczka",
     "form.feed.label.crawler": "Pobierz oryginalną treść",
@@ -185,7 +186,8 @@
     "form.feed.label.fetch_via_proxy": "Użyj serwera proxy skonfigurowanego na poziomie aplikacji",
     "form.feed.label.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
     "form.feed.label.ignore_http_cache": "Zignoruj pamięć podręczną HTTP",
-    "form.feed.label.keeplist_rules": "Reguły utrzymywania",
+    "form.feed.label.keep_filter_entry_rules": "Reguły Zezwalania na Wpisy",
+    "form.feed.label.keeplist_rules": "Filtry Zachowywania Oparte na Regex",
     "form.feed.label.no_media_player": "Brak odtwarzacza multimedialnego (audio i wideo)",
     "form.feed.label.ntfy_activate": "Prześlij wpisy do ntfy",
     "form.feed.label.ntfy_default_priority": "Domyślny priorytet ntfy",
@@ -203,7 +205,7 @@
     "form.feed.label.pushover_max_priority": "Maksymalny priorytet Pushover",
     "form.feed.label.pushover_min_priority": "Minimalny priorytet Pushover",
     "form.feed.label.pushover_priority": "Priorytet wiadomości Pushover",
-    "form.feed.label.rewrite_rules": "Reguły zapisu",
+    "form.feed.label.rewrite_rules": "Reguły Przepisywania Treści",
     "form.feed.label.scraper_rules": "Reguły ekstrakcji",
     "form.feed.label.site_url": "Adres URL strony",
     "form.feed.label.title": "Tytuł",
@@ -308,7 +310,7 @@
     "form.integration.shiori_password": "Hasło do Shiori",
     "form.integration.shiori_username": "Login do Shiori",
     "form.integration.slack_activate": "Przesyłaj wpisy do Slack",
-    "form.integration.slack_webhook_link": "Slack Webhook link",
+    "form.integration.slack_webhook_link": "Link Webhook Slack",
     "form.integration.telegram_bot_activate": "Przesyłaj nowe wpisy do czatu Telegram",
     "form.integration.telegram_bot_disable_buttons": "Wyłącz przyciski",
     "form.integration.telegram_bot_disable_notification": "Wyłącz powiadomienie",
@@ -433,11 +435,6 @@
     "page.api_keys.table.last_used_at": "Ostatnio używane",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Klucze API",
-    "page.categories_count": [
-        "%d kategoria",
-        "%d kategorie",
-        "%d kategorii"
-    ],
     "page.categories.entries": "Wpisy",
     "page.categories.feed_count": [
         "Jest %d kanał.",
@@ -447,6 +444,11 @@
     "page.categories.feeds": "Kanały",
     "page.categories.no_feed": "Brak kanałów.",
     "page.categories.title": "Kategorie",
+    "page.categories_count": [
+        "%d kategoria",
+        "%d kategorie",
+        "%d kategorii"
+    ],
     "page.category_label": "Kategoria: %s",
     "page.edit_category.title": "Edytuj kategorię: %s",
     "page.edit_feed.etag_header": "Nagłówek ETag:",
@@ -555,29 +557,29 @@
     "page.settings.webauthn.passkeys": "Klucze dostępu",
     "page.settings.webauthn.register": "Zarejestruj klucz dostępu",
     "page.settings.webauthn.register.error": "Nie można zarejestrować klucza dostępu",
+    "page.shared_entries.title": "Udostępnione wpisy",
     "page.shared_entries_count": [
         "%d udostępniony wpis",
         "%d udostępnione wpisy",
         "%d udostępnionych wpisów"
     ],
-    "page.shared_entries.title": "Udostępnione wpisy",
+    "page.starred.title": "Ulubione",
     "page.starred_entry_count": [
         "%d ulubiony wpis",
         "%d ulubione wpisy",
         "%d ulubionych wpisów"
     ],
-    "page.starred.title": "Ulubione",
     "page.total_entry_count": [
         "%d wpis łącznie",
         "%d wpisy łącznie",
         "%d wpisów łącznie"
     ],
+    "page.unread.title": "Nieprzeczytane",
     "page.unread_entry_count": [
         "%d nieprzeczytany wpis",
         "%d nieprzeczytane wpisy",
         "%d nieprzeczytanych wpisów"
     ],
-    "page.unread.title": "Nieprzeczytane",
     "page.users.actions": "Działania",
     "page.users.admin.no": "Nie",
     "page.users.admin.yes": "Tak",

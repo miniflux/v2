@@ -17,9 +17,11 @@
     <input type="hidden" name="feed_password" value="{{ .form.Password }}">
     <input type="hidden" name="scraper_rules" value="{{ .form.ScraperRules }}">
     <input type="hidden" name="rewrite_rules" value="{{ .form.RewriteRules }}">
+    <input type="hidden" name="urlrewrite_rules" value="{{ .form.UrlRewriteRules }}">
     <input type="hidden" name="blocklist_rules" value="{{ .form.BlocklistRules }}">
     <input type="hidden" name="keeplist_rules" value="{{ .form.KeeplistRules }}">
-    <input type="hidden" name="urlrewrite_rules" value="{{ .form.UrlRewriteRules }}">
+    <input type="hidden" name="block_filter_entry_rules" value="{{ .form.BlockFilterEntryRules }}">
+    <input type="hidden" name="keep_filter_entry_rules" value="{{ .form.KeepFilterEntryRules }}">
     <input type="hidden" name="proxy_url" value="{{ .form.ProxyURL }}">
     {{ if .form.FetchViaProxy }}
     <input type="hidden" name="fetch_via_proxy" value="1">

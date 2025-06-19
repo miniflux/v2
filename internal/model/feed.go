@@ -40,6 +40,8 @@ type Feed struct {
 	Crawler                     bool      `json:"crawler"`
 	BlocklistRules              string    `json:"blocklist_rules"`
 	KeeplistRules               string    `json:"keeplist_rules"`
+	BlockFilterEntryRules       string    `json:"block_filter_entry_rules"`
+	KeepFilterEntryRules        string    `json:"keep_filter_entry_rules"`
 	UrlRewriteRules             string    `json:"urlrewrite_rules"`
 	UserAgent                   string    `json:"user_agent"`
 	Cookie                      string    `json:"cookie"`
@@ -166,6 +168,8 @@ type FeedCreationRequest struct {
 	RewriteRules                string `json:"rewrite_rules"`
 	BlocklistRules              string `json:"blocklist_rules"`
 	KeeplistRules               string `json:"keeplist_rules"`
+	BlockFilterEntryRules       string `json:"block_filter_entry_rules"`
+	KeepFilterEntryRules        string `json:"keep_filter_entry_rules"`
 	HideGlobally                bool   `json:"hide_globally"`
 	UrlRewriteRules             string `json:"urlrewrite_rules"`
 	DisableHTTP2                bool   `json:"disable_http2"`
@@ -189,8 +193,10 @@ type FeedModificationRequest struct {
 	ScraperRules                *string `json:"scraper_rules"`
 	RewriteRules                *string `json:"rewrite_rules"`
 	BlocklistRules              *string `json:"blocklist_rules"`
-	KeeplistRules               *string `json:"keeplist_rules"`
 	UrlRewriteRules             *string `json:"urlrewrite_rules"`
+	KeeplistRules               *string `json:"keeplist_rules"`
+	BlockFilterEntryRules       *string `json:"block_filter_entry_rules"`
+	KeepFilterEntryRules        *string `json:"keep_filter_entry_rules"`
 	Crawler                     *bool   `json:"crawler"`
 	UserAgent                   *string `json:"user_agent"`
 	Cookie                      *string `json:"cookie"`
@@ -233,16 +239,24 @@ func (f *FeedModificationRequest) Patch(feed *Feed) {
 		feed.RewriteRules = *f.RewriteRules
 	}
 
-	if f.KeeplistRules != nil {
-		feed.KeeplistRules = *f.KeeplistRules
-	}
-
 	if f.UrlRewriteRules != nil {
 		feed.UrlRewriteRules = *f.UrlRewriteRules
 	}
 
+	if f.KeeplistRules != nil {
+		feed.KeeplistRules = *f.KeeplistRules
+	}
+
 	if f.BlocklistRules != nil {
 		feed.BlocklistRules = *f.BlocklistRules
+	}
+
+	if f.BlockFilterEntryRules != nil {
+		feed.BlockFilterEntryRules = *f.BlockFilterEntryRules
+	}
+
+	if f.KeepFilterEntryRules != nil {
+		feed.KeepFilterEntryRules = *f.KeepFilterEntryRules
 	}
 
 	if f.Crawler != nil {
