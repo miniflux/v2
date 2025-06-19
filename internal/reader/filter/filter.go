@@ -21,14 +21,9 @@ const (
 )
 
 func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	if user.BlockFilterEntryRules != "" {
-		if matchesEntryFilterRules(user.BlockFilterEntryRules, entry, feed, filterActionBlock) {
-			return true
-		}
-	}
-
-	if feed.BlockFilterEntryRules != "" {
-		if matchesEntryFilterRules(feed.BlockFilterEntryRules, entry, feed, filterActionBlock) {
+	combinedRules := combineFilterRules(user.BlockFilterEntryRules, feed.BlockFilterEntryRules)
+	if combinedRules != "" {
+		if matchesEntryFilterRules(combinedRules, entry, feed, filterActionBlock) {
 			return true
 		}
 	}
@@ -41,12 +36,9 @@ func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 }
 
 func IsAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	if user.KeepFilterEntryRules != "" {
-		return matchesEntryFilterRules(user.KeepFilterEntryRules, entry, feed, filterActionAllow)
-	}
-
-	if feed.KeepFilterEntryRules != "" {
-		return matchesEntryFilterRules(feed.KeepFilterEntryRules, entry, feed, filterActionAllow)
+	combinedRules := combineFilterRules(user.KeepFilterEntryRules, feed.KeepFilterEntryRules)
+	if combinedRules != "" {
+		return matchesEntryFilterRules(combinedRules, entry, feed, filterActionAllow)
 	}
 
 	if feed.KeeplistRules == "" {
@@ -54,6 +46,24 @@ func IsAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 	}
 
 	return matchesEntryRegexRules(feed.KeeplistRules, entry, feed, filterActionAllow)
+}
+
+func combineFilterRules(userRules, feedRules string) string {
+	var combinedRules strings.Builder
+
+	userRules = strings.TrimSpace(userRules)
+	feedRules = strings.TrimSpace(feedRules)
+
+	if userRules != "" {
+		combinedRules.WriteString(userRules)
+	}
+	if feedRules != "" {
+		if combinedRules.Len() > 0 {
+			combinedRules.WriteString("\n")
+		}
+		combinedRules.WriteString(feedRules)
+	}
+	return combinedRules.String()
 }
 
 func matchesEntryFilterRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
