@@ -163,10 +163,11 @@
     "form.feed.fieldset.general": "Umum",
     "form.feed.fieldset.integration": "Pengaturan Pihak Ketiga",
     "form.feed.fieldset.network_settings": "Pengaturan Jaringan",
-    "form.feed.fieldset.rules": "Rules",
+    "form.feed.fieldset.rules": "Aturan",
     "form.feed.label.allow_self_signed_certificates": "Perbolehkan sertifikat web tidak valid atau sertifikasi sendiri",
     "form.feed.label.apprise_service_urls": "Daftar yang dipisahkan koma untuk URL layanan Apprise",
-    "form.feed.label.blocklist_rules": "Aturan Blokir",
+    "form.feed.label.block_filter_entry_rules": "Aturan Pemblokiran Entri",
+    "form.feed.label.blocklist_rules": "Filter Pemblokiran Berbasis Regex",
     "form.feed.label.category": "Kategori",
     "form.feed.label.cookie": "Atur Kuki",
     "form.feed.label.crawler": "Ambil konten asli",
@@ -179,8 +180,9 @@
     "form.feed.label.fetch_via_proxy": "Gunakan proksi yang dikonfigurasi di tingkat aplikasi",
     "form.feed.label.hide_globally": "Sembunyikan entri di daftar belum dibaca global",
     "form.feed.label.ignore_http_cache": "Abaikan Tembolok HTTP",
-    "form.feed.label.keeplist_rules": "Aturan Simpan",
-    "form.feed.label.no_media_player": "No media player (audio/video)",
+    "form.feed.label.keep_filter_entry_rules": "Aturan Izin Entri",
+    "form.feed.label.keeplist_rules": "Filter Simpan Berbasis Regex",
+    "form.feed.label.no_media_player": "Tidak ada pemutar media (audio/video)",
     "form.feed.label.ntfy_activate": "Kirim artikel ke ntfy",
     "form.feed.label.ntfy_default_priority": "Prioritas baku Ntfy",
     "form.feed.label.ntfy_high_priority": "Priroritas tinggi Ntfy",
@@ -197,7 +199,7 @@
     "form.feed.label.pushover_max_priority": "Prioritas maksimal Pushover",
     "form.feed.label.pushover_min_priority": "Prioritas minimal Pushover",
     "form.feed.label.pushover_priority": "Prioritas pesan Pushover",
-    "form.feed.label.rewrite_rules": "Aturan Tulis Ulang",
+    "form.feed.label.rewrite_rules": "Aturan Penulisan Ulang Konten",
     "form.feed.label.scraper_rules": "Aturan Pengambil Data",
     "form.feed.label.site_url": "URL Situs",
     "form.feed.label.title": "Judul",
@@ -427,9 +429,6 @@
     "page.api_keys.table.last_used_at": "Terakhir Digunakan",
     "page.api_keys.table.token": "Token",
     "page.api_keys.title": "Kunci API",
-    "page.categories_count": [
-        "%d kategori"
-    ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Ada %d umpan."
@@ -437,6 +436,9 @@
     "page.categories.feeds": "Langganan",
     "page.categories.no_feed": "Tidak ada umpan.",
     "page.categories.title": "Kategori",
+    "page.categories_count": [
+        "%d kategori"
+    ],
     "page.category_label": "Category: %s",
     "page.edit_category.title": "Sunting Kategori: %s",
     "page.edit_feed.etag_header": "Tajuk ETag:",
@@ -539,21 +541,21 @@
     "page.settings.webauthn.passkeys": "Passkey",
     "page.settings.webauthn.register": "Daftar passkey",
     "page.settings.webauthn.register.error": "Tidak dapat mendaftarkan passkey",
+    "page.shared_entries.title": "Entri yang Dibagikan",
     "page.shared_entries_count": [
         "%d entri yang dibagikan"
     ],
-    "page.shared_entries.title": "Entri yang Dibagikan",
+    "page.starred.title": "Markah",
     "page.starred_entry_count": [
         "%d entri dimarkahi"
     ],
-    "page.starred.title": "Markah",
     "page.total_entry_count": [
         "%d entri secara total"
     ],
+    "page.unread.title": "Belum Dibaca",
     "page.unread_entry_count": [
         "%d entri belum dibaca"
     ],
-    "page.unread.title": "Belum Dibaca",
     "page.users.actions": "Tindakan",
     "page.users.admin.no": "Tidak",
     "page.users.admin.yes": "Ya",

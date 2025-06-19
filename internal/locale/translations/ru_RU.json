@@ -172,7 +172,8 @@
     "form.feed.fieldset.rules": "Правила",
     "form.feed.label.allow_self_signed_certificates": "Разрешить самоподписанные или недействительные сертификаты",
     "form.feed.label.apprise_service_urls": "Список ссылок сервисов Apprise, разделенный запятой",
-    "form.feed.label.blocklist_rules": "Правила черного списка",
+    "form.feed.label.block_filter_entry_rules": "Правила блокировки записей",
+    "form.feed.label.blocklist_rules": "Фильтры блокировки на основе регулярных выражений",
     "form.feed.label.category": "Категория",
     "form.feed.label.cookie": "Установить куки",
     "form.feed.label.crawler": "Извлечь оригинальное содержимое",
@@ -185,7 +186,8 @@
     "form.feed.label.fetch_via_proxy": "Использовать прокси, настроенный на уровне приложения",
     "form.feed.label.hide_globally": "Скрыть записи в глобальном списке непрочитанных",
     "form.feed.label.ignore_http_cache": "Игнорировать HTTP кеш",
-    "form.feed.label.keeplist_rules": "Правила белого списка",
+    "form.feed.label.keep_filter_entry_rules": "Правила разрешения записей",
+    "form.feed.label.keeplist_rules": "Фильтры сохранения на основе регулярных выражений",
     "form.feed.label.no_media_player": "Отключить медиаплеер (аудио и видео)",
     "form.feed.label.ntfy_activate": "Отправлять статьи в ntfy",
     "form.feed.label.ntfy_default_priority": "По умолчанию",
@@ -203,7 +205,7 @@
     "form.feed.label.pushover_max_priority": "Высший",
     "form.feed.label.pushover_min_priority": "Минимальный",
     "form.feed.label.pushover_priority": "Приоритет сообщений Pushover",
-    "form.feed.label.rewrite_rules": "Правила перезаписи",
+    "form.feed.label.rewrite_rules": "Правила переписывания содержимого",
     "form.feed.label.scraper_rules": "Правила сборщика",
     "form.feed.label.site_url": "Адрес сайта",
     "form.feed.label.title": "Название",
@@ -433,11 +435,6 @@
     "page.api_keys.table.last_used_at": "Последнее использование",
     "page.api_keys.table.token": "Токен",
     "page.api_keys.title": "API-ключи",
-    "page.categories_count": [
-        "%d категория",
-        "%d категории",
-        "%d категорий"
-    ],
     "page.categories.entries": "Статьи",
     "page.categories.feed_count": [
         "Есть %d подписка.",
@@ -447,6 +444,11 @@
     "page.categories.feeds": "Подписки",
     "page.categories.no_feed": "Нет подписок.",
     "page.categories.title": "Категории",
+    "page.categories_count": [
+        "%d категория",
+        "%d категории",
+        "%d категорий"
+    ],
     "page.category_label": "Категории: %s",
     "page.edit_category.title": "Изменить категорию: %s",
     "page.edit_feed.etag_header": "Заголовок ETag:",
@@ -472,7 +474,7 @@
     "page.integration.bookmarklet.help": "Эта специальная ссылка позволит вам подписаться на сайт, используя обыкновенную закладку в вашем браузере.",
     "page.integration.bookmarklet.instructions": "Перетащите эту ссылку в ваши закладки.",
     "page.integration.bookmarklet.name": "Добавить в Miniflux",
-    "page.integration.miniflux_api": "Miniflux API",
+    "page.integration.miniflux_api": "API Miniflux",
     "page.integration.miniflux_api_endpoint": "Конечная точка API",
     "page.integration.miniflux_api_password": "Пароль",
     "page.integration.miniflux_api_password_value": "Пароль вашего аккаунта",
@@ -555,29 +557,29 @@
     "page.settings.webauthn.passkeys": "Ключи доступа",
     "page.settings.webauthn.register": "Зарегистрировать пароль",
     "page.settings.webauthn.register.error": "Не удается зарегистрировать пароль",
+    "page.shared_entries.title": "Общедоступные статьи",
     "page.shared_entries_count": [
         "%d общедоступная статья",
         "%d общедоступных статьи",
         "%d общедоступных статей"
     ],
-    "page.shared_entries.title": "Общедоступные статьи",
+    "page.starred.title": "Избранное",
     "page.starred_entry_count": [
         "%d избранная статья",
         "%d избранные статьи",
         "%d избранных статей"
     ],
-    "page.starred.title": "Избранное",
     "page.total_entry_count": [
         "%d статья всего",
         "%d статьи всего",
         "%d статей всего"
     ],
+    "page.unread.title": "Непрочитанное",
     "page.unread_entry_count": [
         "%d непрочитанная статья",
         "%d непрочитанных статьи",
         "%d непрочитанных статей"
     ],
-    "page.unread.title": "Непрочитанное",
     "page.users.actions": "Действия",
     "page.users.admin.no": "Нет",
     "page.users.admin.yes": "Да",

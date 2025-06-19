@@ -239,6 +239,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			rewrite_rules,
 			blocklist_rules,
 			keeplist_rules,
+			block_filter_entry_rules,
+			keep_filter_entry_rules,
 			ignore_http_cache,
 			allow_self_signed_certificates,
 			fetch_via_proxy,
@@ -252,7 +254,7 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 			proxy_url
 		)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30)
 		RETURNING
 			id
 	`
@@ -275,6 +277,8 @@ func (s *Storage) CreateFeed(feed *model.Feed) error {
 		feed.RewriteRules,
 		feed.BlocklistRules,
 		feed.KeeplistRules,
+		feed.BlockFilterEntryRules,
+		feed.KeepFilterEntryRules,
 		feed.IgnoreHTTPCache,
 		feed.AllowSelfSignedCertificates,
 		feed.FetchViaProxy,
@@ -344,31 +348,33 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 			rewrite_rules=$11,
 			blocklist_rules=$12,
 			keeplist_rules=$13,
-			crawler=$14,
-			user_agent=$15,
-			cookie=$16,
-			username=$17,
-			password=$18,
-			disabled=$19,
-			next_check_at=$20,
-			ignore_http_cache=$21,
-			allow_self_signed_certificates=$22,
-			fetch_via_proxy=$23,
-			hide_globally=$24,
-			url_rewrite_rules=$25,
-			no_media_player=$26,
-			apprise_service_urls=$27,
-			webhook_url=$28,
-			disable_http2=$29,
-			description=$30,
-			ntfy_enabled=$31,
-			ntfy_priority=$32,
-			ntfy_topic=$33,
-			pushover_enabled=$34,
-			pushover_priority=$35,
-			proxy_url=$36
+			block_filter_entry_rules=$14,
+			keep_filter_entry_rules=$15,
+			crawler=$16,
+			user_agent=$17,
+			cookie=$18,
+			username=$19,
+			password=$20,
+			disabled=$21,
+			next_check_at=$22,
+			ignore_http_cache=$23,
+			allow_self_signed_certificates=$24,
+			fetch_via_proxy=$25,
+			hide_globally=$26,
+			url_rewrite_rules=$27,
+			no_media_player=$28,
+			apprise_service_urls=$29,
+			webhook_url=$30,
+			disable_http2=$31,
+			description=$32,
+			ntfy_enabled=$33,
+			ntfy_priority=$34,
+			ntfy_topic=$35,
+			pushover_enabled=$36,
+			pushover_priority=$37,
+			proxy_url=$38
 		WHERE
-			id=$37 AND user_id=$38
+			id=$39 AND user_id=$40
 	`
 	_, err = s.db.Exec(query,
 		feed.FeedURL,
@@ -384,6 +390,8 @@ func (s *Storage) UpdateFeed(feed *model.Feed) (err error) {
 		feed.RewriteRules,
 		feed.BlocklistRules,
 		feed.KeeplistRules,
+		feed.BlockFilterEntryRules,
+		feed.KeepFilterEntryRules,
 		feed.Crawler,
 		feed.UserAgent,
 		feed.Cookie,

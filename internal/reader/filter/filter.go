@@ -21,36 +21,42 @@ const (
 )
 
 func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	// Check user-defined block rules first
 	if user.BlockFilterEntryRules != "" {
-		if matchesUserRules(user.BlockFilterEntryRules, entry, feed, filterActionBlock) {
+		if matchesEntryFilterRules(user.BlockFilterEntryRules, entry, feed, filterActionBlock) {
 			return true
 		}
 	}
 
-	// Check feed-level blocklist rules
+	if feed.BlockFilterEntryRules != "" {
+		if matchesEntryFilterRules(feed.BlockFilterEntryRules, entry, feed, filterActionBlock) {
+			return true
+		}
+	}
+
 	if feed.BlocklistRules == "" {
 		return false
 	}
 
-	return matchesFeedRules(feed.BlocklistRules, entry, feed, filterActionBlock)
+	return matchesEntryRegexRules(feed.BlocklistRules, entry, feed, filterActionBlock)
 }
 
 func IsAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	// Check user-defined keep rules first
 	if user.KeepFilterEntryRules != "" {
-		return matchesUserRules(user.KeepFilterEntryRules, entry, feed, filterActionAllow)
+		return matchesEntryFilterRules(user.KeepFilterEntryRules, entry, feed, filterActionAllow)
 	}
 
-	// Check feed-level keeplist rules
+	if feed.KeepFilterEntryRules != "" {
+		return matchesEntryFilterRules(feed.KeepFilterEntryRules, entry, feed, filterActionAllow)
+	}
+
 	if feed.KeeplistRules == "" {
 		return true
 	}
 
-	return matchesFeedRules(feed.KeeplistRules, entry, feed, filterActionAllow)
+	return matchesEntryRegexRules(feed.KeeplistRules, entry, feed, filterActionAllow)
 }
 
-func matchesUserRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
+func matchesEntryFilterRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
 	for rule := range strings.SplitSeq(rules, "\n") {
 		if matchesRule(rule, entry) {
 			logFilterAction(entry, feed, rule, filterAction)
@@ -60,10 +66,10 @@ func matchesUserRules(rules string, entry *model.Entry, feed *model.Feed, filter
 	return false
 }
 
-func matchesFeedRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
+func matchesEntryRegexRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
 	compiledRegex, err := regexp.Compile(rules)
 	if err != nil {
-		slog.Debug("Failed on regexp compilation",
+		slog.Warn("Failed on regexp compilation",
 			slog.String("pattern", rules),
 			slog.Any("error", err),
 		)

@@ -169,7 +169,8 @@
     "form.feed.fieldset.rules": "Regeln",
     "form.feed.label.allow_self_signed_certificates": "Erlaube selbstsignierte oder ungültige Zertifikate",
     "form.feed.label.apprise_service_urls": "Kommaseparierte Liste der Apprise-Service-URLs",
-    "form.feed.label.blocklist_rules": "Blockierregeln",
+    "form.feed.label.block_filter_entry_rules": "Eintrags-Sperrregeln",
+    "form.feed.label.blocklist_rules": "Regex-basierte Sperrfilter",
     "form.feed.label.category": "Kategorie",
     "form.feed.label.cookie": "Cookies setzen",
     "form.feed.label.crawler": "Originalinhalt herunterladen",
@@ -182,7 +183,8 @@
     "form.feed.label.fetch_via_proxy": "Den auf Anwendungsebene konfigurierten Proxy verwenden",
     "form.feed.label.hide_globally": "Einträge in der globalen Ungelesen-Liste ausblenden",
     "form.feed.label.ignore_http_cache": "Ignoriere HTTP-Cache",
-    "form.feed.label.keeplist_rules": "Erlaubnisregeln",
+    "form.feed.label.keep_filter_entry_rules": "Eintrags-Erlaubnisregeln",
+    "form.feed.label.keeplist_rules": "Regex-basierte Behalte-Filter",
     "form.feed.label.no_media_player": "Kein Media-Player (Audio/Video)",
     "form.feed.label.ntfy_activate": "Einträge zu ntfy pushen",
     "form.feed.label.ntfy_default_priority": "Normale Ntfy-Priorität",
@@ -200,7 +202,7 @@
     "form.feed.label.pushover_max_priority": "Höchste Pushoverpriorität",
     "form.feed.label.pushover_min_priority": "Niedrigste Pushoverpriorität",
     "form.feed.label.pushover_priority": "Pushover-Nachrichtenpriorität",
-    "form.feed.label.rewrite_rules": "Umschreiberegeln",
+    "form.feed.label.rewrite_rules": "Inhalts-Umschreibregeln",
     "form.feed.label.scraper_rules": "Extraktionsregeln",
     "form.feed.label.site_url": "URL der Webseite",
     "form.feed.label.title": "Titel",
@@ -295,7 +297,7 @@
     "form.integration.readwise_api_key": "Readwise-Reader-Zugangstoken",
     "form.integration.readwise_api_key_link": "Erhalten Sie Ihren Readwise-Zugangstoken",
     "form.integration.rssbridge_activate": "Beim Hinzufügen von Abonnements RSS-Bridge prüfen.",
-    "form.integration.rssbridge_token": "RSS-Bridge authentication token",
+    "form.integration.rssbridge_token": "RSS-Bridge-Authentifizierungs-Token",
     "form.integration.rssbridge_url": "RSS-Bridge-Server-URL",
     "form.integration.shaarli_activate": "Artikel in Shaarli speichern",
     "form.integration.shaarli_api_secret": "Shaarli-API-Geheimnis",
@@ -403,7 +405,7 @@
     "menu.show_only_starred_entries": "Nur markierte Artikel anzeigen",
     "menu.show_only_unread_entries": "Nur ungelesene Artikel anzeigen",
     "menu.starred": "Lesezeichen",
-    "menu.title": "Menu",
+    "menu.title": "Menü",
     "menu.unread": "Ungelesen",
     "menu.users": "Benutzer",
     "page.about.author": "Autor:",
@@ -430,10 +432,6 @@
     "page.api_keys.table.last_used_at": "Zuletzt verwendeten",
     "page.api_keys.table.token": "Zeichen",
     "page.api_keys.title": "API-Schlüssel",
-    "page.categories_count": [
-        "%d Kategorie",
-        "%d Kategorien"
-    ],
     "page.categories.entries": "Artikel",
     "page.categories.feed_count": [
         "Es gibt %d Abonnement.",
@@ -442,6 +440,10 @@
     "page.categories.feeds": "Abonnements",
     "page.categories.no_feed": "Kein Abonnement.",
     "page.categories.title": "Kategorien",
+    "page.categories_count": [
+        "%d Kategorie",
+        "%d Kategorien"
+    ],
     "page.category_label": "Kategorie: %s",
     "page.edit_category.title": "Kategorie bearbeiten: %s",
     "page.edit_feed.etag_header": "ETag-Kopfzeile:",
@@ -547,25 +549,25 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "Hauptschlüssel registrieren",
     "page.settings.webauthn.register.error": "Hauptschlüssel kann nicht registriert werden",
+    "page.shared_entries.title": "Geteilte Artikel",
     "page.shared_entries_count": [
         "%d geteilter Artikel",
         "%d geteilte Artikel"
     ],
-    "page.shared_entries.title": "Geteilte Artikel",
+    "page.starred.title": "Lesezeichen",
     "page.starred_entry_count": [
         "%d Lesezeichen",
         "%d Lesezeichen"
     ],
-    "page.starred.title": "Lesezeichen",
     "page.total_entry_count": [
         "%d Artikel insgesamt",
         "%d Artikel insgesamt"
     ],
+    "page.unread.title": "Ungelesen",
     "page.unread_entry_count": [
         "%d ungelesener Artikel",
         "%d ungelesene Artikel"
     ],
-    "page.unread.title": "Ungelesen",
     "page.users.actions": "Aktionen",
     "page.users.admin.no": "Nein",
     "page.users.admin.yes": "Ja",

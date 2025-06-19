@@ -122,7 +122,7 @@
     "error.invalid_display_mode": "Modo de visualización de la aplicación web no válido.",
     "error.invalid_entry_direction": "Dirección de artículo no válida.",
     "error.invalid_entry_order": "Orden de artículo no válido.",
-    "error.invalid_feed_proxy_url": "Invalid proxy URL.",
+    "error.invalid_feed_proxy_url": "URL de proxy inválida.",
     "error.invalid_feed_url": "URL de feed no válida.",
     "error.invalid_gesture_nav": "Navegación por gestos no válida.",
     "error.invalid_language": "Idioma no válido.",
@@ -132,12 +132,12 @@
     "error.network_operation": "Miniflux no puede acceder a este sitio web debido a un error de red: %v.",
     "error.network_timeout": "Este sitio web es demasiado lento y se agotó el tiempo de espera de la solicitud: %v",
     "error.password_min_length": "La contraseña debería tener al menos 6 caracteres.",
-    "error.proxy_url_not_empty": "The proxy URL cannot be empty.",
+    "error.proxy_url_not_empty": "La URL del proxy no puede estar vacía.",
     "error.settings_block_rule_fieldname_invalid": "Regla de bloqueo no válida: a la regla #%d le falta un nombre de campo válido (Opciones: %s)",
     "error.settings_block_rule_invalid_regex": "Regla de bloqueo no válida: el patrón de la regla #%d no es una expresión regular válida",
     "error.settings_block_rule_regex_required": "Regla de bloqueo no válida: no se ha proporcionado el patrón de la regla #%d",
     "error.settings_block_rule_separator_required": "Regla de bloqueo no válida: el patrón de la regla #%d debe estar separado por un '='",
-    "error.settings_invalid_domain_list": "Invalid domain list. Please provide a space separated list of domains.",
+    "error.settings_invalid_domain_list": "Lista de dominios inválida. Por favor proporcione una lista de dominios separados por espacios.",
     "error.settings_keep_rule_fieldname_invalid": "Regla de mantenimiento no válida: a la regla #%d le falta un nombre de campo válido (Opciones: %s)",
     "error.settings_keep_rule_invalid_regex": "Regla de mantenimiento no válida: el patrón de la regla #%d no es una expresión regular válida",
     "error.settings_keep_rule_regex_required": "Regla de conservación no válida: no se ha proporcionado la regla #%d patrón",
@@ -169,7 +169,8 @@
     "form.feed.fieldset.rules": "Reglas",
     "form.feed.label.allow_self_signed_certificates": "Permitir certificados autofirmados o no válidos",
     "form.feed.label.apprise_service_urls": "Lista separada por comas de las URL del servicio Apprise",
-    "form.feed.label.blocklist_rules": "Reglas de Filtrado (Bloquear)",
+    "form.feed.label.block_filter_entry_rules": "Reglas de Bloqueo de Entradas",
+    "form.feed.label.blocklist_rules": "Filtros de Bloqueo Basados en Regex",
     "form.feed.label.category": "Categoría",
     "form.feed.label.cookie": "Configurar las cookies",
     "form.feed.label.crawler": "Obtener rastreador original",
@@ -182,7 +183,8 @@
     "form.feed.label.fetch_via_proxy": "Usar el proxy configurado a nivel de la aplicación",
     "form.feed.label.hide_globally": "Ocultar artículos en la lista global de no leídos",
     "form.feed.label.ignore_http_cache": "Ignorar caché HTTP",
-    "form.feed.label.keeplist_rules": "Reglas de Filtrado (Permitir)",
+    "form.feed.label.keep_filter_entry_rules": "Reglas de Permitir Entradas",
+    "form.feed.label.keeplist_rules": "Filtros de Mantener Basados en Regex",
     "form.feed.label.no_media_player": "Sin reproductor multimedia (audio/video)",
     "form.feed.label.ntfy_activate": "Enviar entradas a ntfy",
     "form.feed.label.ntfy_default_priority": "Prioridad predeterminada a Ntfy",
@@ -192,7 +194,7 @@
     "form.feed.label.ntfy_min_priority": "Prioridad mínima a Ntfy",
     "form.feed.label.ntfy_priority": "Prioridad Ntfy",
     "form.feed.label.ntfy_topic": "Tema Ntfy (opcional)",
-    "form.feed.label.proxy_url": "Proxy URL",
+    "form.feed.label.proxy_url": "URL del Proxy",
     "form.feed.label.pushover_activate": "Enviar artículos a pushover.net",
     "form.feed.label.pushover_default_priority": "Prioridad predeterminada de Pushover",
     "form.feed.label.pushover_high_priority": "Prioridad alta de Pushover",
@@ -200,7 +202,7 @@
     "form.feed.label.pushover_max_priority": "Prioridad máxima de Pushover",
     "form.feed.label.pushover_min_priority": "Prioridad mínima de Pushover",
     "form.feed.label.pushover_priority": "Prioridad del mensaje de Pushover",
-    "form.feed.label.rewrite_rules": "Reglas de reescribir",
+    "form.feed.label.rewrite_rules": "Reglas de Reescritura de Contenido",
     "form.feed.label.scraper_rules": "Reglas de extracción de información",
     "form.feed.label.site_url": "URL del sitio",
     "form.feed.label.title": "Título",
@@ -430,10 +432,6 @@
     "page.api_keys.table.last_used_at": "Último utilizado",
     "page.api_keys.table.token": "simbólico",
     "page.api_keys.title": "Claves API",
-    "page.categories_count": [
-        "%d categoría",
-        "%d categorías"
-    ],
     "page.categories.entries": "Artículos",
     "page.categories.feed_count": [
         "Hay %d fuente.",
@@ -442,6 +440,10 @@
     "page.categories.feeds": "Fuentes",
     "page.categories.no_feed": "Sin fuente.",
     "page.categories.title": "Categorías",
+    "page.categories_count": [
+        "%d categoría",
+        "%d categorías"
+    ],
     "page.category_label": "Categoría: %s",
     "page.edit_category.title": "Editar categoría: %s",
     "page.edit_feed.etag_header": "Cabecera de ETag:",
@@ -547,25 +549,25 @@
     "page.settings.webauthn.passkeys": "Claves de acceso",
     "page.settings.webauthn.register": "Registrar clave de acceso",
     "page.settings.webauthn.register.error": "No se puede registrar la clave de acceso",
+    "page.shared_entries.title": "Artículos compartidos",
     "page.shared_entries_count": [
         "%d artículo compartido",
         "%d artículos compartidos"
     ],
-    "page.shared_entries.title": "Artículos compartidos",
+    "page.starred.title": "Marcadores",
     "page.starred_entry_count": [
         "%d artículo marcado",
         "%d artículos marcados"
     ],
-    "page.starred.title": "Marcadores",
     "page.total_entry_count": [
         "%d artículo en total",
         "%d artículos en total"
     ],
+    "page.unread.title": "No leídos",
     "page.unread_entry_count": [
         "%d artículo no leído",
         "%d artículos no leídos"
     ],
-    "page.unread.title": "No leídos",
     "page.users.actions": "Acciones",
     "page.users.admin.no": "No",
     "page.users.admin.yes": "Sí",

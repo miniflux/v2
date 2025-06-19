@@ -24,9 +24,11 @@ type SubscriptionForm struct {
 	Password                    string
 	ScraperRules                string
 	RewriteRules                string
+	UrlRewriteRules             string
 	BlocklistRules              string
 	KeeplistRules               string
-	UrlRewriteRules             string
+	BlockFilterEntryRules       string
+	KeepFilterEntryRules        string
 	DisableHTTP2                bool
 	ProxyURL                    string
 }
@@ -79,9 +81,11 @@ func NewSubscriptionForm(r *http.Request) *SubscriptionForm {
 		Password:                    r.FormValue("feed_password"),
 		ScraperRules:                r.FormValue("scraper_rules"),
 		RewriteRules:                r.FormValue("rewrite_rules"),
+		UrlRewriteRules:             r.FormValue("urlrewrite_rules"),
 		BlocklistRules:              r.FormValue("blocklist_rules"),
 		KeeplistRules:               r.FormValue("keeplist_rules"),
-		UrlRewriteRules:             r.FormValue("urlrewrite_rules"),
+		KeepFilterEntryRules:        r.FormValue("keep_filter_entry_rules"),
+		BlockFilterEntryRules:       r.FormValue("block_filter_entry_rules"),
 		DisableHTTP2:                r.FormValue("disable_http2") == "1",
 		ProxyURL:                    r.FormValue("proxy_url"),
 	}

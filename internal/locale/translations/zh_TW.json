@@ -166,7 +166,8 @@
     "form.feed.fieldset.rules": "規則",
     "form.feed.label.allow_self_signed_certificates": "允許自簽或無效的憑證",
     "form.feed.label.apprise_service_urls": "使用逗號分隔的 Apprise 服務網址列表",
-    "form.feed.label.blocklist_rules": "過濾規則",
+    "form.feed.label.block_filter_entry_rules": "條目封鎖規則",
+    "form.feed.label.blocklist_rules": "基於正則表達式的封鎖過濾器",
     "form.feed.label.category": "類別",
     "form.feed.label.cookie": "設定 Cookies",
     "form.feed.label.crawler": "下載原文內容",
@@ -179,7 +180,8 @@
     "form.feed.label.fetch_via_proxy": "使用應用程式層級設定的代理",
     "form.feed.label.hide_globally": "在全域未讀列表中隱藏文章",
     "form.feed.label.ignore_http_cache": "忽略 HTTP 快取",
-    "form.feed.label.keeplist_rules": "保留規則",
+    "form.feed.label.keep_filter_entry_rules": "條目允許規則",
+    "form.feed.label.keeplist_rules": "基於正則表達式的保留過濾器",
     "form.feed.label.no_media_player": "無媒體播放器 (音訊/視訊)",
     "form.feed.label.ntfy_activate": "推送文章到 ntfy",
     "form.feed.label.ntfy_default_priority": "Ntfy 預設優先順序",
@@ -189,28 +191,28 @@
     "form.feed.label.ntfy_min_priority": "Ntfy 最低優先順序",
     "form.feed.label.ntfy_priority": "Ntfy 優先順序",
     "form.feed.label.ntfy_topic": "Ntfy topic (選填)",
-    "form.feed.label.proxy_url": "Proxy URL",
+    "form.feed.label.proxy_url": "代理URL",
     "form.feed.label.pushover_activate": "Push entries to pushover.net",
     "form.feed.label.pushover_default_priority": "Pushover default priority",
     "form.feed.label.pushover_high_priority": "Pushover high priority",
     "form.feed.label.pushover_low_priority": "Pushover low priority",
     "form.feed.label.pushover_max_priority": "Pushover max priority",
     "form.feed.label.pushover_min_priority": "Pushover min priority",
-    "form.feed.label.pushover_priority": "Pushover message priority",
-    "form.feed.label.rewrite_rules": "重寫規則",
+    "form.feed.label.pushover_priority": "Pushover消息優先級",
+    "form.feed.label.rewrite_rules": "內容重寫規則",
     "form.feed.label.scraper_rules": "抓取規則",
     "form.feed.label.site_url": "網站網址",
     "form.feed.label.title": "標題",
     "form.feed.label.urlrewrite_rules": "網址重寫規則",
     "form.feed.label.user_agent": "覆蓋預設的使用者代理",
-    "form.feed.label.webhook_url": "Override webhook url",
+    "form.feed.label.webhook_url": "覆蓋webhook URL",
     "form.import.label.file": "OPML 檔案",
     "form.import.label.url": "URL",
     "form.integration.apprise_activate": "推送文章到 Apprise",
     "form.integration.apprise_services_url": "使用逗號分隔的 Apprise 服務網址列表",
     "form.integration.apprise_url": "Apprise API 網址",
     "form.integration.betula_activate": "儲存文章到 Betula",
-    "form.integration.betula_token": "Betula Token",
+    "form.integration.betula_token": "Betula令牌",
     "form.integration.betula_url": "Betula 伺服器網址",
     "form.integration.cubox_activate": "儲存文章到 Cubox",
     "form.integration.cubox_api_link": "Cubox API 連結",
@@ -427,9 +429,6 @@
     "page.api_keys.table.last_used_at": "最後使用",
     "page.api_keys.table.token": "金鑰",
     "page.api_keys.title": "API 金鑰",
-    "page.categories_count": [
-        "%d 個分類"
-    ],
     "page.categories.entries": "檢視內容",
     "page.categories.feed_count": [
         "有 %d 個 Feed"
@@ -437,6 +436,9 @@
     "page.categories.feeds": "檢視 Feeds",
     "page.categories.no_feed": "沒有 Feed",
     "page.categories.title": "分類",
+    "page.categories_count": [
+        "%d 個分類"
+    ],
     "page.category_label": "分類：%s",
     "page.edit_category.title": "編輯分類 : %s",
     "page.edit_feed.etag_header": "ETag 標頭：",
@@ -539,21 +541,21 @@
     "page.settings.webauthn.passkeys": "Passkeys",
     "page.settings.webauthn.register": "註冊 Passkey",
     "page.settings.webauthn.register.error": "無法註冊 Passkey",
+    "page.shared_entries.title": "已分享的文章",
     "page.shared_entries_count": [
         "已分享 %d 篇文章"
     ],
-    "page.shared_entries.title": "已分享的文章",
+    "page.starred.title": "收藏",
     "page.starred_entry_count": [
         "%d 篇收藏文章"
     ],
-    "page.starred.title": "收藏",
     "page.total_entry_count": [
         "總共 %d 篇文章"
     ],
+    "page.unread.title": "未讀",
     "page.unread_entry_count": [
         "%d 篇未讀文章"
     ],
-    "page.unread.title": "未讀",
     "page.users.actions": "操作",
     "page.users.admin.no": "否",
     "page.users.admin.yes": "是",
