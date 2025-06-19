@@ -42,6 +42,11 @@ func TestBlockingEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "EntryDate=before:2024-03-15"}, true},
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "UnknownRuleType=test"}, false},
 		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
+		// Test cases for merged user and feed BlockFilterEntryRules
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)website"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{BlockFilterEntryRules: "   EntryTitle=(?i)title   "}, true}, // User rule matches
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Other"}, &model.User{BlockFilterEntryRules: "EntryTitle=(?i)title"}, true},       // Feed rule matches
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://different.com", Title: "Some Other"}, &model.User{BlockFilterEntryRules: "EntryTitle=(?i)title"}, false},    // Neither rule matches
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{BlockFilterEntryRules: "EntryTitle=(?i)title"}, true},       // Both rules would match
 	}
 
 	for _, tc := range scenarios {
@@ -95,6 +100,11 @@ func TestAllowEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=abcd"}, false},                            // no colon in rule value
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=unknown:2024-03-15"}, false},              // unknown rule type
 		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
+		// Test cases for merged user and feed KeepFilterEntryRules
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)website"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, true},    // User rule matches
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Other"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, true},    // Feed rule matches
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://different.com", Title: "Some Other"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, false}, // Neither rule matches
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, true},    // Both rules would match
 	}
 
 	for _, tc := range scenarios {
