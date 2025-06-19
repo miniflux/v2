@@ -71,12 +71,3 @@ func minifyContent(content string) string {
 
 	return content
 }
-
-func containsRegexPattern(pattern string, entries []string) bool {
-	for _, entry := range entries {
-		if matched, _ := regexp.MatchString(pattern, entry); matched {
-			return true
-		}
-	}
-	return false
-}

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package processor // import "miniflux.app/v2/internal/reader/processor"
+package filter // import "miniflux.app/v2/internal/reader/filter"
 
 import (
 	"log/slog"
@@ -15,10 +15,10 @@ import (
 
 // TODO factorize isBlockedEntry and isAllowedEntry
 
-func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
+func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.BlockFilterEntryRules != "" {
-		rules := strings.Split(user.BlockFilterEntryRules, "\n")
-		for _, rule := range rules {
+		rules := strings.SplitSeq(user.BlockFilterEntryRules, "\n")
+		for rule := range rules {
 			match := false
 			parts := strings.SplitN(rule, "=", 2)
 			if len(parts) != 2 {
@@ -85,10 +85,10 @@ func isBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool
 	return false
 }
 
-func isAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
+func IsAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
 	if user.KeepFilterEntryRules != "" {
-		rules := strings.Split(user.KeepFilterEntryRules, "\n")
-		for _, rule := range rules {
+		rules := strings.SplitSeq(user.KeepFilterEntryRules, "\n")
+		for rule := range rules {
 			match := false
 			parts := strings.SplitN(rule, "=", 2)
 			if len(parts) != 2 {
@@ -193,6 +193,15 @@ func isDateMatchingPattern(pattern string, entryDate time.Time) bool {
 			return false
 		}
 		return entryDate.After(startDate) && entryDate.Before(endDate)
+	}
+	return false
+}
+
+func containsRegexPattern(pattern string, entries []string) bool {
+	for _, entry := range entries {
+		if matched, _ := regexp.MatchString(pattern, entry); matched {
+			return true
+		}
 	}
 	return false
 }
