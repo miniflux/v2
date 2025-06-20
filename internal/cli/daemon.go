@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"miniflux.app/v2/internal/config"
-	httpd "miniflux.app/v2/internal/http/server"
+	"miniflux.app/v2/internal/http/server"
 	"miniflux.app/v2/internal/metric"
 	"miniflux.app/v2/internal/storage"
 	"miniflux.app/v2/internal/systemd"
@@ -35,7 +35,7 @@ func startDaemon(store *storage.Storage) {
 
 	var httpServers []*http.Server
 	if config.Opts.HasHTTPService() {
-		httpServers = httpd.StartWebServer(store, pool)
+		httpServers = server.StartWebServer(store, pool)
 	}
 
 	if config.Opts.HasMetricsCollector() {
