@@ -269,7 +269,7 @@ func (s *Storage) cleanupEntries(feedID int64, entryHashes []string) error {
 
 // RefreshFeedEntries updates feed entries while refreshing a feed.
 func (s *Storage) RefreshFeedEntries(userID, feedID int64, entries model.Entries, updateExistingEntries bool) (newEntries model.Entries, err error) {
-	var entryHashes []string
+	entryHashes := make([]string, 0, len(entries))
 
 	for _, entry := range entries {
 		entry.UserID = userID
