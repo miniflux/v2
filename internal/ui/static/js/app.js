@@ -147,9 +147,7 @@ function handleSubmitButtons() {
 // Show modal dialog with the list of keyboard shortcuts.
 function showKeyboardShortcuts() {
     const template = document.getElementById("keyboard-shortcuts");
-    if (template !== null) {
-        ModalHandler.open(template.content, "dialog-title");
-    }
+    ModalHandler.open(template.content, "dialog-title");
 }
 
 // Mark as read visible items of the current page.
@@ -694,18 +692,14 @@ function showToast(label, iconElement) {
     }
 
     const toastMsgElement = document.getElementById("toast-msg");
-    if (toastMsgElement) {
-        toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
-        appendIconLabel(toastMsgElement, label);
+    toastMsgElement.replaceChildren(iconElement.content.cloneNode(true));
+    appendIconLabel(toastMsgElement, label);
 
-        const toastElementWrapper = document.getElementById("toast-wrapper");
-        if (toastElementWrapper) {
-            toastElementWrapper.classList.remove('toast-animate');
-            setTimeout(() => {
-                toastElementWrapper.classList.add('toast-animate');
-            }, 100);
-        }
-    }
+    const toastElementWrapper = document.getElementById("toast-wrapper");
+    toastElementWrapper.classList.remove('toast-animate');
+    setTimeout(() => {
+        toastElementWrapper.classList.add('toast-animate');
+    }, 100);
 }
 
 /** Navigate to the new subscription page. */
