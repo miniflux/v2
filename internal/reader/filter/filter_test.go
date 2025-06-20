@@ -40,6 +40,9 @@ func TestBlockingEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Author: "Different", Tags: []string{"example", "something else"}}, &model.User{BlockFilterEntryRules: "EntryAuthor=(?i)example\nEntryTag=(?i)Test"}, false},
 		{&model.Feed{ID: 1}, &model.Entry{Author: "Different", Tags: []string{"example", "test"}}, &model.User{BlockFilterEntryRules: "EntryAuthor\nEntryTag=(?i)Test"}, true},
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "EntryDate=before:2024-03-15"}, true},
+		// Test max-age filter
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "EntryDate=max-age:30d"}, true},      // Entry from Jan 1, 2024 is definitely older than 30 days
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "EntryDate=max-age:invalid"}, false}, // Invalid duration format
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 3, 14, 0, 0, 0, 0, time.UTC)}, &model.User{BlockFilterEntryRules: "UnknownRuleType=test"}, false},
 		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
 		// Test cases for merged user and feed BlockFilterEntryRules
@@ -97,8 +100,11 @@ func TestAllowEntries(t *testing.T) {
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:invalid-date,2024-03-15"}, false}, // invalid date format
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-03-15,invalid-date"}, false}, // invalid date format
 		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=between:2024-03-15"}, false},              // missing second date in range
-		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=abcd"}, false},                            // no colon in rule value
-		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=unknown:2024-03-15"}, false},              // unknown rule type
+		// Test max-age filter
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=max-age:30d"}, true},          // Entry from Jan 1, 2024 is definitely older than 30 days
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=max-age:invalid"}, false},     // Invalid duration format
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=abcd"}, false},               // no colon in rule value
+		{&model.Feed{ID: 1}, &model.Entry{Date: time.Date(2024, 2, 28, 0, 0, 0, 0, time.UTC)}, &model.User{KeepFilterEntryRules: "EntryDate=unknown:2024-03-15"}, false}, // unknown rule type
 		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
 		// Test cases for merged user and feed KeepFilterEntryRules
 		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)website"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, true},    // User rule matches
@@ -112,5 +118,56 @@ func TestAllowEntries(t *testing.T) {
 		if tc.expected != result {
 			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
 		}
+	}
+}
+
+func TestParseDuration(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected time.Duration
+		err      bool
+	}{
+		{"30d", 30 * 24 * time.Hour, false},
+		{"1h", time.Hour, false},
+		{"2m", 2 * time.Minute, false},
+		{"invalid", 0, true},
+		{"5x", 0, true}, // Invalid unit
+	}
+
+	for _, test := range tests {
+		result, err := parseDuration(test.input)
+		if (err != nil) != test.err {
+			t.Errorf("parseDuration(%q) error = %v, expected error: %v", test.input, err, test.err)
+			continue
+		}
+		if result != test.expected {
+			t.Errorf("parseDuration(%q) = %v, expected %v", test.input, result, test.expected)
+		}
+	}
+}
+
+func TestMaxAgeFilter(t *testing.T) {
+	now := time.Now()
+	oldEntry := &model.Entry{
+		Title: "Old Entry",
+		Date:  now.Add(-48 * time.Hour), // 48 hours ago
+	}
+	newEntry := &model.Entry{
+		Title: "New Entry",
+		Date:  now.Add(-30 * time.Minute), // 30 minutes ago
+	}
+
+	// Test blocking old entries
+	feed := &model.Feed{ID: 1}
+	user := &model.User{BlockFilterEntryRules: "EntryDate=max-age:1d"}
+
+	// Old entry should be blocked (48 hours > 1 day is true)
+	if !IsBlockedEntry(feed, oldEntry, user) {
+		t.Error("Expected old entry to be blocked with max-age:1d")
+	}
+
+	// New entry should not be blocked
+	if IsBlockedEntry(feed, newEntry, user) {
+		t.Error("Expected new entry to not be blocked with max-age:1d")
 	}
 }
