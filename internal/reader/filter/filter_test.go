@@ -4,9 +4,11 @@
 package filter // import "miniflux.app/v2/internal/reader/filter"
 
 import (
+	"os"
 	"testing"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/model"
 )
 
@@ -169,5 +171,68 @@ func TestMaxAgeFilter(t *testing.T) {
 	// New entry should not be blocked
 	if IsBlockedEntry(feed, newEntry, user) {
 		t.Error("Expected new entry to not be blocked with max-age:1d")
+	}
+}
+
+func TestIsBlockedGlobally(t *testing.T) {
+	var err error
+	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if isBlockedGlobally(&model.Entry{Title: "Test Entry", Date: time.Date(2020, 5, 1, 05, 05, 05, 05, time.UTC)}) {
+		t.Error("Expected no entries to be blocked globally when max-age is not set")
+	}
+
+	os.Setenv("FILTER_ENTRY_MAX_AGE_DAYS", "30")
+	defer os.Clearenv()
+
+	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	if !isBlockedGlobally(&model.Entry{Title: "Test Entry", Date: time.Date(2020, 5, 1, 05, 05, 05, 05, time.UTC)}) {
+		t.Error("Expected entries to be blocked globally when max-age is set")
+	}
+
+	if isBlockedGlobally(&model.Entry{Title: "Test Entry", Date: time.Now().Add(-2 * time.Hour)}) {
+		t.Error("Expected entries not to be blocked globally when they are within the max-age limit")
+	}
+}
+
+func TestIsBlockedEntryWithGlobalMaxAge(t *testing.T) {
+	os.Setenv("FILTER_ENTRY_MAX_AGE_DAYS", "30")
+	defer os.Clearenv()
+
+	var err error
+	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	entry := &model.Entry{Title: "Test Entry", Date: time.Now().Add(-31 * 24 * time.Hour)} // 31 days old
+	feed := &model.Feed{ID: 1}
+	user := &model.User{}
+
+	if !IsBlockedEntry(feed, entry, user) {
+		t.Error("Expected entry to be blocked due to global max-age rule")
+	}
+}
+
+func TestIsBlockedEntryWithDefaultGlobalMaxAge(t *testing.T) {
+	var err error
+	config.Opts, err = config.NewParser().ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	entry := &model.Entry{Title: "Test Entry", Date: time.Now().Add(-31 * 24 * time.Hour)} // 31 days old
+	feed := &model.Feed{ID: 1}
+	user := &model.User{}
+
+	if IsBlockedEntry(feed, entry, user) {
+		t.Error("Expected entry not to be blocked due to default global max-age rule")
 	}
 }
