@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -183,6 +184,13 @@ func isDateMatchingPattern(pattern string, entryDate time.Time) bool {
 			return false
 		}
 		return entryDate.After(startDate) && entryDate.Before(endDate)
+	case "max-age":
+		duration, err := parseDuration(inputDate)
+		if err != nil {
+			return false
+		}
+		cutoffDate := time.Now().Add(-duration)
+		return entryDate.Before(cutoffDate)
 	}
 	return false
 }
@@ -194,4 +202,24 @@ func containsRegexPattern(pattern string, entries []string) bool {
 		}
 	}
 	return false
+}
+
+func parseDuration(duration string) (time.Duration, error) {
+	// Handle common duration formats like "30d", "7d", "1h", "1m", etc.
+	// Go's time.ParseDuration doesn't support days, so we handle them manually
+	if strings.HasSuffix(duration, "d") {
+		daysStr := strings.TrimSuffix(duration, "d")
+		days := 0
+		if daysStr != "" {
+			var err error
+			days, err = strconv.Atoi(daysStr)
+			if err != nil {
+				return 0, err
+			}
+		}
+		return time.Duration(days) * 24 * time.Hour, nil
+	}
+
+	// For other durations (hours, minutes, seconds), use Go's built-in parser
+	return time.ParseDuration(duration)
 }
