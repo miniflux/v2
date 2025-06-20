@@ -1125,9 +1125,10 @@ var migrations = []func(tx *sql.Tx, driver string) error{
 	},
 	func(tx *sql.Tx, _ string) (err error) {
 		sql := `
-			ALTER TABLE integrations DROP COLUMN pocket_enabled;
-			ALTER TABLE integrations DROP COLUMN pocket_access_token;
-			ALTER TABLE integrations DROP COLUMN pocket_consumer_key;
+			ALTER TABLE integrations
+				DROP COLUMN pocket_enabled,
+				DROP COLUMN pocket_access_token,
+				DROP COLUMN pocket_consumer_key;
 		`
 		_, err = tx.Exec(sql)
 		return err
