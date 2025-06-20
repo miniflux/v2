@@ -162,6 +162,11 @@ func removeUnlikelyCandidates(document *goquery.Document) {
 			return
 		}
 
+		// Don't remove elements within code blocks (pre or code tags)
+		if s.Closest("pre, code").Length() > 0 {
+			return
+		}
+
 		if class, ok := s.Attr("class"); ok {
 			if shouldRemove(class) {
 				s.Remove()
