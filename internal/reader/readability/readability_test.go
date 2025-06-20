@@ -164,6 +164,28 @@ func TestRemoveBlacklist(t *testing.T) {
 	}
 }
 
+func TestNestedSpanInCodeBlock(t *testing.T) {
+	html := `
+		<html>
+			<head>
+				<title>Test</title>
+			</head>
+			<body>
+				<article><p>Some content</p><pre><code class="hljs-built_in">Code block with <span class="hljs-built_in">nested span</span> <span class="hljs-comment"># exit 1</span></code></pre></article>
+			</body>
+		</html>`
+	want := `<div><div><p>Some content</p><pre><code class="hljs-built_in">Code block with <span class="hljs-built_in">nested span</span> <span class="hljs-comment"># exit 1</span></code></pre></div></div>`
+
+	_, result, err := ExtractContent(strings.NewReader(html))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result != want {
+		t.Errorf(`Invalid content, got %s instead of %s`, result, want)
+	}
+}
+
 func BenchmarkExtractContent(b *testing.B) {
 	var testCases = map[string][]byte{
 		"miniflux_github.html":    {},
