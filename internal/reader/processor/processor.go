@@ -47,7 +47,8 @@ func ProcessFeedEntries(store *storage.Storage, feed *model.Feed, userID int64, 
 			slog.Int64("feed_id", feed.ID),
 			slog.String("feed_url", feed.FeedURL),
 		)
-		if filter.IsBlockedEntry(feed, entry, user) || !filter.IsAllowedEntry(feed, entry, user) || !isRecentEntry(entry) {
+
+		if filter.IsBlockedEntry(feed, entry, user) || !filter.IsAllowedEntry(feed, entry, user) {
 			continue
 		}
 
@@ -182,11 +183,4 @@ func ProcessEntryWebPage(feed *model.Feed, entry *model.Entry, user *model.User)
 	entry.Content = sanitizer.SanitizeHTML(webpageBaseURL, entry.Content, &sanitizer.SanitizerOptions{OpenLinksInNewTab: user.OpenExternalLinksInNewTab})
 
 	return nil
-}
-
-func isRecentEntry(entry *model.Entry) bool {
-	if config.Opts.FilterEntryMaxAgeDays() == 0 || entry.Date.After(time.Now().AddDate(0, 0, -config.Opts.FilterEntryMaxAgeDays())) {
-		return true
-	}
-	return false
 }
