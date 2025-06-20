@@ -141,7 +141,7 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 	go func() {
 		slog.Info("Starting server using a Unix socket", slog.String("socket", socketFile))
 		if err := server.Serve(listener); err != http.ErrServerClosed {
-			printErrorAndExit(fmt.Sprintf("Unix socket server failed to start on %s: %%v", socketFile), err)
+			printErrorAndExit("Unix socket server failed to start on %s: %v", socketFile, err)
 		}
 	}()
 }
@@ -155,7 +155,7 @@ func startAutoCertTLSServer(server *http.Server, autoTLSConfig *tls.Config) {
 			slog.String("listen_address", server.Addr),
 		)
 		if err := server.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
-			printErrorAndExit(fmt.Sprintf("Autocert server failed to start on %s: %%v", server.Addr), err)
+			printErrorAndExit("Autocert server failed to start on %s: %v", server.Addr, err)
 		}
 	}()
 }
@@ -168,7 +168,7 @@ func startTLSServer(server *http.Server, certFile, keyFile string) {
 			slog.String("key_file", keyFile),
 		)
 		if err := server.ListenAndServeTLS(certFile, keyFile); err != http.ErrServerClosed {
-			printErrorAndExit(fmt.Sprintf("TLS server failed to start on %s: %%v", server.Addr), err)
+			printErrorAndExit("TLS server failed to start on %s: %v", server.Addr, err)
 		}
 	}()
 }
@@ -179,7 +179,7 @@ func startHTTPServer(server *http.Server) {
 			slog.String("listen_address", server.Addr),
 		)
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
-			printErrorAndExit(fmt.Sprintf("HTTP server failed to start on %s: %%v", server.Addr), err)
+			printErrorAndExit("HTTP server failed to start on %s: %v", server.Addr, err)
 		}
 	}()
 }
