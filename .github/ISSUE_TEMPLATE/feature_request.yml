@@ -63,3 +63,5 @@ body:
           required: true
         - label: "I understand that feature requests are not guaranteed to be implemented."
           required: true
+        - label: "I agree to follow the project's contribution guidelines."
+          required: true

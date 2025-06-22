@@ -84,3 +84,5 @@ body:
           required: true
         - label: "I agree to provide follow-up updates and maintain discussion on this proposal."
           required: true
+        - label: "I agree to follow the project's contribution guidelines."
+          required: true
