@@ -168,6 +168,7 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 // Note: we do not update the published date because some feeds do not contains any date,
 // it default to time.Now() which could change the order of items on the history page.
 func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
+	// Note: This query uses entries_feed_id_hash_key index (filtering on user_id is not necessary).
 	query := `
 		UPDATE
 			entries
@@ -181,7 +182,7 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			document_vectors = setweight(to_tsvector(left(coalesce($1, ''), 500000)), 'A') || setweight(to_tsvector(left(coalesce($4, ''), 500000)), 'B'),
 			tags=$10
 		WHERE
-			user_id=$7 AND feed_id=$8 AND hash=$9
+			feed_id=$8 AND hash=$9
 		RETURNING
 			id
 	`
@@ -227,6 +228,7 @@ func (s *Storage) entryExists(tx *sql.Tx, entry *model.Entry) (bool, error) {
 
 func (s *Storage) IsNewEntry(feedID int64, entryHash string) bool {
 	var result bool
+	// Note: This query uses entries_feed_id_hash_key index (filtering on user_id is not necessary).
 	s.db.QueryRow(`SELECT true FROM entries WHERE feed_id=$1 AND hash=$2`, feedID, entryHash).Scan(&result)
 	return !result
 }
