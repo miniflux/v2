@@ -1,5 +1,5 @@
 .\" Manpage for miniflux.
-.TH "MINIFLUX" "1" "June 15, 2025" "\ \&" "\ \&"
+.TH "MINIFLUX" "1" "June 23, 2025" "\ \&" "\ \&"
 
 .SH NAME
 miniflux \- Minimalist and opinionated feed reader
@@ -343,6 +343,8 @@ Default is empty\&.
 .TP
 .B LISTEN_ADDR
 Address to listen on. Use absolute path to listen on Unix socket (/var/run/miniflux.sock)\&.
+.br
+Multiple addresses can be specified, separated by commas. For example: 127.0.0.1:8080, 127.0.0.1:8081\&.
 .br
 Default is 127.0.0.1:8080\&.
 .TP
