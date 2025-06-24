@@ -139,14 +139,33 @@ func startUnixSocketServer(server *http.Server, socketFile string) {
 	}
 
 	go func() {
-		slog.Info("Starting server using a Unix socket", slog.String("socket", socketFile))
-		if err := server.Serve(listener); err != http.ErrServerClosed {
-			printErrorAndExit("Unix socket server failed to start on %s: %v", socketFile, err)
+		certFile := config.Opts.CertFile()
+		keyFile := config.Opts.CertKeyFile()
+
+		if certFile != "" && keyFile != "" {
+			slog.Info("Starting TLS server using a Unix socket",
+				slog.String("socket", socketFile),
+				slog.String("cert_file", certFile),
+				slog.String("key_file", keyFile),
+			)
+			// Ensure HTTPS is marked as true if any listener uses TLS
+			config.Opts.HTTPS = true
+			if err := server.ServeTLS(listener, certFile, keyFile); err != http.ErrServerClosed {
+				printErrorAndExit("TLS Unix socket server failed to start on %s: %v", socketFile, err)
+			}
+		} else {
+			slog.Info("Starting server using a Unix socket", slog.String("socket", socketFile))
+			if err := server.Serve(listener); err != http.ErrServerClosed {
+				printErrorAndExit("Unix socket server failed to start on %s: %v", socketFile, err)
+			}
 		}
 	}()
 }
 
 func startAutoCertTLSServer(server *http.Server, autoTLSConfig *tls.Config) {
+	if server.TLSConfig == nil {
+		server.TLSConfig = &tls.Config{}
+	}
 	server.TLSConfig.GetCertificate = autoTLSConfig.GetCertificate
 	server.TLSConfig.NextProtos = autoTLSConfig.NextProtos
 
