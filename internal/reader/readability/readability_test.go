@@ -1314,3 +1314,19 @@ func TestContainsSentence(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkGetWeight(b *testing.B) {
+	testCases := []string{
+		"p-3 color-bg-accent-emphasis color-fg-on-emphasis show-on-focus js-skip-to-content",
+		"d-flex flex-column mb-3",
+		"AppHeader-search-control AppHeader-search-control-overflow",
+		"Button Button--iconOnly Button--invisible Button--medium mr-1 px-2 py-0 d-flex flex-items-center rounded-1 color-fg-muted",
+		"sr-only",
+		"validation-12753bbc-b4d1-4e10-bec6-92e585d1699d",
+	}
+	for range b.N {
+		for _, v := range testCases {
+			getWeight(v)
+		}
+	}
+}

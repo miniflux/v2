@@ -27,8 +27,8 @@ var (
 	maybeCandidate    = [...]string{"and", "article", "body", "column", "main", "shadow"}
 	unlikelyCandidate = [...]string{"banner", "breadcrumbs", "combx", "comment", "community", "cover-wrap", "disqus", "extra", "foot", "header", "legends", "menu", "modal", "related", "remark", "replies", "rss", "shoutbox", "sidebar", "skyscraper", "social", "sponsor", "supplemental", "ad-break", "agegate", "pagination", "pager", "popup", "yom-remote"}
 
-	negativeRegexp = regexp.MustCompile(`hid|banner|combx|comment|com-|contact|foot|masthead|media|meta|modal|outbrain|promo|related|scroll|share|shoutbox|sidebar|skyscraper|sponsor|shopping|tags|tool|widget|byline|author|dateline|writtenby`)
-	positiveRegexp = regexp.MustCompile(`article|body|content|entry|hentry|h-entry|main|page|pagination|post|text|blog|story`)
+	positive = [...]string{"article", "blog", "body", "content", "entry", "h-entry", "hentry", "main", "page", "pagination", "post", "story", "text"}
+	negative = [...]string{"author", "banner", "byline", "com-", "combx", "comment", "contact", "dateline", "foot", "hid", "masthead", "media", "meta", "modal", "outbrain", "promo", "related", "scroll", "share", "shopping", "shoutbox", "sidebar", "skyscraper", "sponsor", "tags", "tool", "widget", "writtenby"}
 )
 
 type candidate struct {
@@ -303,24 +303,28 @@ func getClassWeight(s *goquery.Selection) float32 {
 	weight := 0
 
 	if class, ok := s.Attr("class"); ok {
-		class = strings.ToLower(class)
-		if negativeRegexp.MatchString(class) {
-			weight -= 25
-		} else if positiveRegexp.MatchString(class) {
-			weight += 25
-		}
+		weight += getWeight(class)
 	}
-
 	if id, ok := s.Attr("id"); ok {
-		id = strings.ToLower(id)
-		if negativeRegexp.MatchString(id) {
-			weight -= 25
-		} else if positiveRegexp.MatchString(id) {
-			weight += 25
-		}
+		weight += getWeight(id)
 	}
 
 	return float32(weight)
+}
+
+func getWeight(s string) int {
+	s = strings.ToLower(s)
+	for _, pos := range negative {
+		if strings.Contains(s, pos) {
+			return -25
+		}
+	}
+	for _, pos := range positive {
+		if strings.Contains(s, pos) {
+			return +25
+		}
+	}
+	return 0
 }
 
 func transformMisusedDivsIntoParagraphs(document *goquery.Document) {
