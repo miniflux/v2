@@ -61,8 +61,11 @@ func minifyContent(content string) string {
 
 	// Options required to avoid breaking the HTML content.
 	m.Add("text/html", &html.Minifier{
-		KeepEndTags: true,
-		KeepQuotes:  true,
+		KeepEndTags:         true,
+		KeepQuotes:          true,
+		KeepComments:        false,
+		KeepSpecialComments: false,
+		KeepDefaultAttrVals: false,
 	})
 
 	if minifiedHTML, err := m.String("text/html", content); err == nil {
