@@ -104,19 +104,19 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 func getArticle(topCandidate *candidate, candidates candidateList) string {
 	var output strings.Builder
 	output.WriteString("<div>")
-	siblingScoreThreshold := max(10, topCandidate.score*.2)
+	siblingScoreThreshold := max(10, topCandidate.score/5)
 
 	topCandidate.selection.Siblings().Union(topCandidate.selection).Each(func(i int, s *goquery.Selection) {
 		append := false
+		tag := "div"
 		node := s.Get(0)
 
 		if node == topCandidate.Node() {
 			append = true
 		} else if c, ok := candidates[node]; ok && c.score >= siblingScoreThreshold {
 			append = true
-		}
-
-		if s.Is("p") {
+		} else if s.Is("p") {
+			tag = node.Data
 			linkDensity := getLinkDensity(s)
 			content := s.Text()
 			contentLength := len(content)
@@ -126,18 +126,15 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 					append = true
 				}
 			} else {
-				if linkDensity == 0 && containsSentence(content) {
-					append = true
+				if linkDensity == 0 {
+					if containsSentence(content) {
+						append = true
+					}
 				}
 			}
 		}
 
 		if append {
-			tag := "div"
-			if s.Is("p") {
-				tag = node.Data
-			}
-
 			html, _ := s.Html()
 			output.WriteString("<" + tag + ">" + html + "</" + tag + ">")
 		}
