@@ -186,6 +186,34 @@ func TestNestedSpanInCodeBlock(t *testing.T) {
 	}
 }
 
+func TestMisusedDivs(t *testing.T) {
+	html := `
+		<html>
+			<head>
+				<title>Test</title>
+			</head>
+			<body>
+				<div>
+					<span>something</span>
+					<i>italics!</i>
+				</div>
+			</body>
+		</html>`
+	want := `<div><div><p><span>something</span><i>italics!</i></p></div></div>`
+
+	_, result, err := ExtractContent(strings.NewReader(html))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result = strings.ReplaceAll(result, "\n", "")
+	result = strings.ReplaceAll(result, " ", "")
+	result = strings.ReplaceAll(result, "\t", "")
+	if result != want {
+		t.Errorf(`Invalid content, got %s instead of %s`, result, want)
+	}
+}
+
 func BenchmarkExtractContent(b *testing.B) {
 	var testCases = map[string][]byte{
 		"miniflux_github.html":    {},
