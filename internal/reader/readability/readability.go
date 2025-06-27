@@ -21,8 +21,6 @@ const (
 )
 
 var (
-	divToPElementsRegexp = regexp.MustCompile(`(?i)<(?:a|blockquote|dl|div|img|ol|p|pre|table|ul)[ />]`)
-
 	okMaybeItsACandidateRegexp = regexp.MustCompile(`and|article|body|column|main|shadow`)
 	unlikelyCandidatesRegexp   = regexp.MustCompile(`banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|foot|header|legends|menu|modal|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|ad-break|agegate|pagination|pager|popup|yom-remote`)
 
@@ -316,10 +314,16 @@ func getClassWeight(s *goquery.Selection) float32 {
 
 func transformMisusedDivsIntoParagraphs(document *goquery.Document) {
 	document.Find("div").Each(func(i int, s *goquery.Selection) {
-		html, _ := s.Html()
-		if !divToPElementsRegexp.MatchString(html) {
-			node := s.Get(0)
-			node.Data = "p"
+		for _, node := range s.Children().Nodes {
+			switch node.Data {
+			case "a", "blockquote", "div", "dl",
+				"img", "ol", "p", "pre",
+				"table", "ul":
+				return
+			default:
+				node := s.Get(0)
+				node.Data = "p"
+			}
 		}
 	})
 }
