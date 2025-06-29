@@ -25,8 +25,8 @@ const (
 type RequestBuilder struct {
 	headers          http.Header
 	clientProxyURL   *url.URL
-	useClientProxy   bool
 	clientTimeout    int
+	useClientProxy   bool
 	withoutRedirects bool
 	ignoreTLSErrors  bool
 	disableHTTP2     bool
