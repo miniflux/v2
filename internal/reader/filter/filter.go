@@ -166,7 +166,7 @@ func logFilterAction(entry *model.Entry, feed *model.Feed, filterRule string, fi
 		slog.String("feed_url", feed.FeedURL),
 		slog.String("entry_url", entry.URL),
 		slog.String("filter_rule", filterRule),
-		slog.Any("filter_action", filterAction),
+		slog.String("filter_action", string(filterAction)),
 	)
 }
 
