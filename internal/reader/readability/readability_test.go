@@ -1274,7 +1274,7 @@ func TestGetLinkDensity(t *testing.T) {
 			// Use a small epsilon for float comparison
 			epsilon := float32(0.001)
 			if result < tc.expected-epsilon || result > tc.expected+epsilon {
-				t.Errorf("Expected link density %f, got %f", tc.expected, result)
+				t.Errorf("Expected link density %f, got %f for %s", tc.expected, result, tc.name)
 			}
 		})
 	}
