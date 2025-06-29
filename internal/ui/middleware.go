@@ -40,13 +40,13 @@ func (m *middleware) handleUserSession(next http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 			} else {
 				slog.Debug("Redirecting to login page because no user session has been found",
-					slog.Any("url", r.RequestURI),
+					slog.String("url", r.RequestURI),
 				)
 				html.Redirect(w, r, route.Path(m.router, "login"))
 			}
 		} else {
 			slog.Debug("User session found",
-				slog.Any("url", r.RequestURI),
+				slog.String("url", r.RequestURI),
 				slog.Int64("user_id", session.UserID),
 				slog.Int64("user_session_id", session.ID),
 			)
@@ -102,7 +102,7 @@ func (m *middleware) handleAppSession(next http.Handler) http.Handler {
 
 			if !crypto.ConstantTimeCmp(session.Data.CSRF, formValue) && !crypto.ConstantTimeCmp(session.Data.CSRF, headerValue) {
 				slog.Warn("Invalid or missing CSRF token",
-					slog.Any("url", r.RequestURI),
+					slog.String("url", r.RequestURI),
 					slog.String("form_csrf", formValue),
 					slog.String("header_csrf", headerValue),
 				)
@@ -141,7 +141,7 @@ func (m *middleware) getAppSessionValueFromCookie(r *http.Request) *model.Sessio
 	session, err := m.store.AppSession(cookieValue)
 	if err != nil {
 		slog.Debug("Unable to fetch app session from the database; another session will be created",
-			slog.Any("cookie_value", cookieValue),
+			slog.String("cookie_value", cookieValue),
 			slog.Any("error", err),
 		)
 		return nil
@@ -185,7 +185,7 @@ func (m *middleware) getUserSessionFromCookie(r *http.Request) *model.UserSessio
 	session, err := m.store.UserSessionByToken(cookieValue)
 	if err != nil {
 		slog.Error("Unable to fetch user session from the database",
-			slog.Any("cookie_value", cookieValue),
+			slog.String("cookie_value", cookieValue),
 			slog.Any("error", err),
 		)
 		return nil

@@ -1092,7 +1092,7 @@ func (h *handler) handleReadingListStreamHandler(w http.ResponseWriter, r *http.
 				slog.String("handler", "handleReadingListStreamHandler"),
 				slog.String("client_ip", clientIP),
 				slog.String("user_agent", r.UserAgent()),
-				slog.Any("filter_type", s.Type),
+				slog.Int("filter_type", int(s.Type)),
 			)
 		}
 	}
