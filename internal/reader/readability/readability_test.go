@@ -362,3 +362,283 @@ func TestGetClassWeightRegexPatterns(t *testing.T) {
 		})
 	}
 }
+
+func TestRemoveUnlikelyCandidates(t *testing.T) {
+	testCases := []struct {
+		name     string
+		html     string
+		expected string
+	}{
+		{
+			name:     "removes elements with popupbody class",
+			html:     `<html><body><div class="popupbody">popup content</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "removes elements with -ad in class",
+			html:     `<html><body><div class="super-ad">ad content</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "removes elements with g-plus in class",
+			html:     `<html><body><div class="g-plus-share">social content</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "removes elements with unlikely candidates in class",
+			html:     `<html><body><div class="banner">banner</div><div class="sidebar">sidebar</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "preserves elements with unlikely candidates but also good candidates in class",
+			html:     `<html><body><div class="banner article">mixed content</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="banner article">mixed content</div><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "removes elements with unlikely candidates in id",
+			html:     `<html><body><div id="banner">banner</div><div id="main-content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div id="main-content">good content</div></body></html>`,
+		},
+		{
+			name:     "preserves elements with unlikely candidates but also good candidates in id",
+			html:     `<html><body><div id="comment-article">mixed content</div><div id="main">good content</div></body></html>`,
+			expected: `<html><head></head><body><div id="comment-article">mixed content</div><div id="main">good content</div></body></html>`,
+		},
+		{
+			name:     "preserves html and body tags",
+			html:     `<html class="banner"><body class="sidebar"><div class="banner">content</div></body></html>`,
+			expected: `<html class="banner"><head></head><body class="sidebar"></body></html>`,
+		},
+		{
+			name:     "preserves elements within code blocks",
+			html:     `<html><body><pre><code><span class="banner">code content</span></code></pre><div class="banner">remove this</div></body></html>`,
+			expected: `<html><head></head><body><pre><code><span class="banner">code content</span></code></pre></body></html>`,
+		},
+		{
+			name:     "preserves elements within pre tags",
+			html:     `<html><body><pre><div class="sidebar">preformatted content</div></pre><div class="sidebar">remove this</div></body></html>`,
+			expected: `<html><head></head><body><pre><div class="sidebar">preformatted content</div></pre></body></html>`,
+		},
+		{
+			name:     "case insensitive matching",
+			html:     `<html><body><div class="BANNER">uppercase banner</div><div class="Banner">mixed case banner</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "multiple unlikely patterns in single class",
+			html:     `<html><body><div class="banner sidebar footer">multiple bad</div><div class="content">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="content">good content</div></body></html>`,
+		},
+		{
+			name:     "elements without class or id are preserved",
+			html:     `<html><body><div>no attributes</div><p>paragraph</p></body></html>`,
+			expected: `<html><head></head><body><div>no attributes</div><p>paragraph</p></body></html>`,
+		},
+		{
+			name:     "removes nested unlikely elements",
+			html:     `<html><body><div class="main"><div class="banner">nested banner</div><p>good content</p></div></body></html>`,
+			expected: `<html><head></head><body><div class="main"><p>good content</p></div></body></html>`,
+		},
+		{
+			name:     "comprehensive unlikely candidates test",
+			html:     `<html><body><div class="breadcrumbs">breadcrumbs</div><div class="combx">combx</div><div class="comment">comment</div><div class="community">community</div><div class="cover-wrap">cover-wrap</div><div class="disqus">disqus</div><div class="extra">extra</div><div class="foot">foot</div><div class="header">header</div><div class="legends">legends</div><div class="menu">menu</div><div class="modal">modal</div><div class="related">related</div><div class="remark">remark</div><div class="replies">replies</div><div class="rss">rss</div><div class="shoutbox">shoutbox</div><div class="skyscraper">skyscraper</div><div class="social">social</div><div class="sponsor">sponsor</div><div class="supplemental">supplemental</div><div class="ad-break">ad-break</div><div class="agegate">agegate</div><div class="pagination">pagination</div><div class="pager">pager</div><div class="popup">popup</div><div class="yom-remote">yom-remote</div><div class="article">good content</div></body></html>`,
+			expected: `<html><head></head><body><div class="article">good content</div></body></html>`,
+		},
+		{
+			name:     "preserves good candidates that contain unlikely words",
+			html:     `<html><body><div class="banner article">should be preserved</div><div class="comment main">should be preserved</div><div class="sidebar body">should be preserved</div><div class="footer column">should be preserved</div><div class="header and">should be preserved</div><div class="menu shadow">should be preserved</div><div class="pure-banner">should be removed</div></body></html>`,
+			expected: `<html><head></head><body><div class="banner article">should be preserved</div><div class="comment main">should be preserved</div><div class="sidebar body">should be preserved</div><div class="footer column">should be preserved</div><div class="header and">should be preserved</div><div class="menu shadow">should be preserved</div></body></html>`,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(tc.html))
+			if err != nil {
+				t.Fatalf("Failed to parse HTML: %v", err)
+			}
+
+			removeUnlikelyCandidates(doc)
+
+			result, err := doc.Html()
+			if err != nil {
+				t.Fatalf("Failed to get HTML: %v", err)
+			}
+
+			// Normalize whitespace for comparison
+			result = strings.TrimSpace(result)
+			expected := strings.TrimSpace(tc.expected)
+
+			if result != expected {
+				t.Errorf("\nExpected:\n%s\n\nGot:\n%s", expected, result)
+			}
+		})
+	}
+}
+
+func TestRemoveUnlikelyCandidatesShouldRemoveFunction(t *testing.T) {
+	// Test the internal shouldRemove function behavior through the public interface
+	testCases := []struct {
+		name     string
+		attr     string
+		attrType string // "class" or "id"
+		expected bool   // true if should be removed
+	}{
+		// Special hardcoded cases
+		{"popupbody in class", "popupbody", "class", true},
+		{"contains popupbody in class", "main-popupbody-content", "class", true},
+		{"ad suffix in class", "super-ad", "class", true},
+		{"ad in middle of class", "pre-ad-post", "class", true},
+		{"g-plus in class", "g-plus-share", "class", true},
+		{"contains g-plus in class", "social-g-plus-button", "class", true},
+
+		// Unlikely candidates regexp
+		{"banner class", "banner", "class", true},
+		{"breadcrumbs class", "breadcrumbs", "class", true},
+		{"comment class", "comment", "class", true},
+		{"sidebar class", "sidebar", "class", true},
+		{"footer class", "footer", "class", true},
+
+		// Unlikely candidates with good candidates (should not be removed)
+		{"banner with article", "banner article", "class", false},
+		{"comment with main", "comment main", "class", false},
+		{"sidebar with body", "sidebar body", "class", false},
+		{"footer with column", "footer column", "class", false},
+		{"menu with shadow", "menu shadow", "class", false},
+
+		// Case insensitive
+		{"uppercase banner", "BANNER", "class", true},
+		{"mixed case comment", "Comment", "class", true},
+		{"uppercase with good", "BANNER ARTICLE", "class", false},
+
+		// ID attributes
+		{"banner id", "banner", "id", true},
+		{"comment id", "comment", "id", true},
+		{"banner with article id", "banner article", "id", false},
+
+		// Good candidates only
+		{"article class", "article", "class", false},
+		{"main class", "main", "class", false},
+		{"content class", "content", "class", false},
+		{"body class", "body", "class", false},
+
+		// No matches
+		{"random class", "random-class", "class", false},
+		{"normal content", "normal-content", "class", false},
+		{"empty string", "", "class", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var html string
+			if tc.attrType == "class" {
+				html = `<html><body><div class="` + tc.attr + `">content</div></body></html>`
+			} else {
+				html = `<html><body><div id="` + tc.attr + `">content</div></body></html>`
+			}
+
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+			if err != nil {
+				t.Fatalf("Failed to parse HTML: %v", err)
+			}
+
+			// Count elements before removal
+			beforeCount := doc.Find("div").Length()
+
+			removeUnlikelyCandidates(doc)
+
+			// Count elements after removal
+			afterCount := doc.Find("div").Length()
+
+			wasRemoved := beforeCount > afterCount
+
+			if wasRemoved != tc.expected {
+				t.Errorf("Expected element to be removed: %v, but was removed: %v", tc.expected, wasRemoved)
+			}
+		})
+	}
+}
+
+func TestRemoveUnlikelyCandidatesPreservation(t *testing.T) {
+	testCases := []struct {
+		name        string
+		html        string
+		description string
+	}{
+		{
+			name:        "preserves html tag",
+			html:        `<html class="banner sidebar footer"><body><div>content</div></body></html>`,
+			description: "HTML tag should never be removed regardless of class",
+		},
+		{
+			name:        "preserves body tag",
+			html:        `<html><body class="banner sidebar footer"><div>content</div></body></html>`,
+			description: "Body tag should never be removed regardless of class",
+		},
+		{
+			name:        "preserves elements in pre tags",
+			html:        `<html><body><pre><span class="banner">code</span></pre></body></html>`,
+			description: "Elements within pre tags should be preserved",
+		},
+		{
+			name:        "preserves elements in code tags",
+			html:        `<html><body><code><span class="sidebar">code</span></code></body></html>`,
+			description: "Elements within code tags should be preserved",
+		},
+		{
+			name:        "preserves nested elements in code blocks",
+			html:        `<html><body><pre><code><div class="comment"><span class="banner">nested</span></div></code></pre></body></html>`,
+			description: "Deeply nested elements in code blocks should be preserved",
+		},
+		{
+			name:        "preserves elements in mixed code scenarios",
+			html:        `<html><body><div class="main"><pre><span class="sidebar">code</span></pre><code><div class="banner">more code</div></code></div></body></html>`,
+			description: "Multiple code block scenarios should work correctly",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(tc.html))
+			if err != nil {
+				t.Fatalf("Failed to parse HTML: %v", err)
+			}
+
+			// Count specific elements before removal
+			beforeHtml := doc.Find("html").Length()
+			beforeBody := doc.Find("body").Length()
+			beforePre := doc.Find("pre").Length()
+			beforeCode := doc.Find("code").Length()
+
+			removeUnlikelyCandidates(doc)
+
+			// Count specific elements after removal
+			afterHtml := doc.Find("html").Length()
+			afterBody := doc.Find("body").Length()
+			afterPre := doc.Find("pre").Length()
+			afterCode := doc.Find("code").Length()
+
+			// These elements should always be preserved
+			if beforeHtml != afterHtml {
+				t.Errorf("HTML elements were removed: before=%d, after=%d", beforeHtml, afterHtml)
+			}
+			if beforeBody != afterBody {
+				t.Errorf("Body elements were removed: before=%d, after=%d", beforeBody, afterBody)
+			}
+			if beforePre != afterPre {
+				t.Errorf("Pre elements were removed: before=%d, after=%d", beforePre, afterPre)
+			}
+			if beforeCode != afterCode {
+				t.Errorf("Code elements were removed: before=%d, after=%d", beforeCode, afterCode)
+			}
+
+			// Verify that elements within code blocks are preserved
+			if tc.name == "preserves elements in pre tags" || tc.name == "preserves elements in code tags" || tc.name == "preserves nested elements in code blocks" {
+				spanInCode := doc.Find("pre span, code span, pre div, code div").Length()
+				if spanInCode == 0 {
+					t.Error("Elements within code blocks were incorrectly removed")
+				}
+			}
+		})
+	}
+}
