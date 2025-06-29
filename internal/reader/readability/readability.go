@@ -300,15 +300,33 @@ func scoreNode(s *goquery.Selection) *candidate {
 // Get the density of links as a percentage of the content
 // This is the amount of text that is inside a link divided by the total text in the node.
 func getLinkDensity(s *goquery.Selection) float32 {
-	textLength := len(s.Text())
+	var getLengthOfTextContent func(*html.Node) int
+	getLengthOfTextContent = func(n *html.Node) int {
+		total := 0
+		if n.Type == html.TextNode {
+			total += len(n.Data)
+		}
+		if n.FirstChild != nil {
+			for c := n.FirstChild; c != nil; c = c.NextSibling {
+				total += getLengthOfTextContent(c)
+			}
+		}
+		return total
+	}
 
-	if textLength == 0 {
+	sum := 0
+	for _, n := range s.Nodes {
+		sum += getLengthOfTextContent(n)
+	}
+
+	if sum == 0 {
 		return 0
 	}
 
+	// TODO: use something better than materializing the HTML.
 	linkLength := len(s.Find("a").Text())
 
-	return float32(linkLength) / float32(textLength)
+	return float32(linkLength) / float32(sum)
 }
 
 // Get an elements class/id weight. Uses regular expressions to tell if this
