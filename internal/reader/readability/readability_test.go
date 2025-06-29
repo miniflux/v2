@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func TestBaseURL(t *testing.T) {
@@ -202,5 +204,161 @@ func BenchmarkExtractContent(b *testing.B) {
 		for _, v := range testCases {
 			ExtractContent(bytes.NewReader(v))
 		}
+	}
+}
+
+func TestGetClassWeight(t *testing.T) {
+	testCases := []struct {
+		name     string
+		html     string
+		expected float32
+	}{
+		{
+			name:     "no class or id",
+			html:     `<div>content</div>`,
+			expected: 0,
+		},
+		{
+			name:     "positive class only",
+			html:     `<div class="article">content</div>`,
+			expected: 25,
+		},
+		{
+			name:     "negative class only",
+			html:     `<div class="comment">content</div>`,
+			expected: -25,
+		},
+		{
+			name:     "positive id only",
+			html:     `<div id="main">content</div>`,
+			expected: 25,
+		},
+		{
+			name:     "negative id only",
+			html:     `<div id="sidebar">content</div>`,
+			expected: -25,
+		},
+		{
+			name:     "positive class and positive id",
+			html:     `<div class="content" id="main">content</div>`,
+			expected: 50,
+		},
+		{
+			name:     "negative class and negative id",
+			html:     `<div class="comment" id="sidebar">content</div>`,
+			expected: -50,
+		},
+		{
+			name:     "positive class and negative id",
+			html:     `<div class="article" id="comment">content</div>`,
+			expected: 0,
+		},
+		{
+			name:     "negative class and positive id",
+			html:     `<div class="banner" id="content">content</div>`,
+			expected: 0,
+		},
+		{
+			name:     "multiple positive classes",
+			html:     `<div class="article content">content</div>`,
+			expected: 25,
+		},
+		{
+			name:     "multiple negative classes",
+			html:     `<div class="comment sidebar">content</div>`,
+			expected: -25,
+		},
+		{
+			name:     "mixed positive and negative classes",
+			html:     `<div class="article comment">content</div>`,
+			expected: -25, // negative takes precedence since it's checked first
+		},
+		{
+			name:     "case insensitive class",
+			html:     `<div class="ARTICLE">content</div>`,
+			expected: 25,
+		},
+		{
+			name:     "case insensitive id",
+			html:     `<div id="MAIN">content</div>`,
+			expected: 25,
+		},
+		{
+			name:     "non-matching class and id",
+			html:     `<div class="random" id="unknown">content</div>`,
+			expected: 0,
+		},
+		{
+			name:     "empty class and id",
+			html:     `<div class="" id="">content</div>`,
+			expected: 0,
+		},
+		{
+			name:     "class with special characters",
+			html:     `<div class="com-section">content</div>`,
+			expected: -25, // matches com- in negative regex
+		},
+		{
+			name:     "id with special characters",
+			html:     `<div id="h-entry-123">content</div>`,
+			expected: 25, // matches h-entry in positive regex
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(tc.html))
+			if err != nil {
+				t.Fatalf("Failed to parse HTML: %v", err)
+			}
+
+			selection := doc.Find("div").First()
+			if selection.Length() == 0 {
+				t.Fatal("No div element found in HTML")
+			}
+
+			result := getClassWeight(selection)
+			if result != tc.expected {
+				t.Errorf("Expected weight %f, got %f", tc.expected, result)
+			}
+		})
+	}
+}
+
+func TestGetClassWeightRegexPatterns(t *testing.T) {
+	// Test specific regex patterns used in getClassWeight
+	positiveWords := []string{"article", "body", "content", "entry", "hentry", "h-entry", "main", "page", "pagination", "post", "text", "blog", "story"}
+	negativeWords := []string{"hid", "banner", "combx", "comment", "com-", "contact", "foot", "masthead", "media", "meta", "modal", "outbrain", "promo", "related", "scroll", "share", "shoutbox", "sidebar", "skyscraper", "sponsor", "shopping", "tags", "tool", "widget", "byline", "author", "dateline", "writtenby"}
+
+	for _, word := range positiveWords {
+		t.Run("positive_"+word, func(t *testing.T) {
+			html := `<div class="` + word + `">content</div>`
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+			if err != nil {
+				t.Fatalf("Failed to parse HTML: %v", err)
+			}
+
+			selection := doc.Find("div").First()
+			result := getClassWeight(selection)
+			if result != 25 {
+				t.Errorf("Expected positive weight 25 for word '%s', got %f", word, result)
+			}
+		})
+	}
+
+	for _, word := range negativeWords {
+		t.Run("negative_"+word, func(t *testing.T) {
+			html := `<div class="` + word + `">content</div>`
+			doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+			if err != nil {
+				t.Fatalf("Failed to parse HTML: %v", err)
+			}
+
+			selection := doc.Find("div").First()
+			result := getClassWeight(selection)
+			if result != -25 {
+				t.Errorf("Expected negative weight -25 for word '%s', got %f", word, result)
+			}
+		})
 	}
 }
