@@ -312,17 +312,20 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attribu
 	}
 
 	for _, attribute := range attributes {
-		value := attribute.Val
-
 		if !isValidAttribute(tagName, attribute.Key) {
 			continue
 		}
 
-		if tagName == "math" && attribute.Key == "xmlns" && value != "http://www.w3.org/1998/Math/MathML" {
-			value = "http://www.w3.org/1998/Math/MathML"
-		}
+		value := attribute.Val
 
-		if tagName == "img" {
+		switch tagName {
+		case "math":
+			if attribute.Key == "xmlns" {
+				if value != "http://www.w3.org/1998/Math/MathML" {
+					value = "http://www.w3.org/1998/Math/MathML"
+				}
+			}
+		case "img":
 			switch attribute.Key {
 			case "fetchpriority":
 				if !isValidFetchPriorityValue(value) {
@@ -336,11 +339,13 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attribu
 				if isImageLargerThanLayout || !isPositiveInteger(value) {
 					continue
 				}
+			case "srcset":
+				value = sanitizeSrcsetAttr(baseURL, value)
 			}
-		}
-
-		if (tagName == "img" || tagName == "source") && attribute.Key == "srcset" {
-			value = sanitizeSrcsetAttr(baseURL, value)
+		case "source":
+			if attribute.Key == "srcset" {
+				value = sanitizeSrcsetAttr(baseURL, value)
+			}
 		}
 
 		if isExternalResourceAttribute(attribute.Key) {
