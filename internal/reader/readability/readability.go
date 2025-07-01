@@ -361,10 +361,24 @@ func getWeight(s string) int {
 
 func transformMisusedDivsIntoParagraphs(document *goquery.Document) {
 	document.Find("div").Each(func(i int, s *goquery.Selection) {
-		html, _ := s.Html()
-		if !divToPElementsRegexp.MatchString(html) {
+		nodes := s.Children().Nodes
+
+		if len(nodes) == 0 {
 			node := s.Get(0)
 			node.Data = "p"
+			return
+		}
+
+		for _, node := range nodes {
+			switch node.Data {
+			case "a", "blockquote", "div", "dl",
+				"img", "ol", "p", "pre",
+				"table", "ul":
+				return
+			default:
+				node := s.Get(0)
+				node.Data = "p"
+			}
 		}
 	})
 }
