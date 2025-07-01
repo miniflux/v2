@@ -27,8 +27,8 @@ var (
 	maybeCandidate    = [...]string{"and", "article", "body", "column", "main", "shadow"}
 	unlikelyCandidate = [...]string{"banner", "breadcrumbs", "combx", "comment", "community", "cover-wrap", "disqus", "extra", "foot", "header", "legends", "menu", "modal", "related", "remark", "replies", "rss", "shoutbox", "sidebar", "skyscraper", "social", "sponsor", "supplemental", "ad-break", "agegate", "pagination", "pager", "popup", "yom-remote"}
 
-	positive = [...]string{"article", "blog", "body", "content", "entry", "h-entry", "hentry", "main", "page", "pagination", "post", "story", "text"}
-	negative = [...]string{"author", "banner", "byline", "com-", "combx", "comment", "contact", "dateline", "foot", "hid", "masthead", "media", "meta", "modal", "outbrain", "promo", "related", "scroll", "share", "shopping", "shoutbox", "sidebar", "skyscraper", "sponsor", "tags", "tool", "widget", "writtenby"}
+	positiveKeywords = [...]string{"article", "blog", "body", "content", "entry", "h-entry", "hentry", "main", "page", "pagination", "post", "story", "text"}
+	negativeKeywords = [...]string{"author", "banner", "byline", "com-", "combx", "comment", "contact", "dateline", "foot", "hid", "masthead", "media", "meta", "modal", "outbrain", "promo", "related", "scroll", "share", "shopping", "shoutbox", "sidebar", "skyscraper", "sponsor", "tags", "tool", "widget", "writtenby"}
 )
 
 type candidate struct {
@@ -37,23 +37,31 @@ type candidate struct {
 }
 
 func (c *candidate) Node() *html.Node {
+	if c.selection.Length() == 0 {
+		return nil
+	}
 	return c.selection.Get(0)
 }
 
 func (c *candidate) String() string {
+	node := c.Node()
+	if node == nil {
+		return fmt.Sprintf("empty => %f", c.score)
+	}
+
 	id, _ := c.selection.Attr("id")
 	class, _ := c.selection.Attr("class")
 
 	switch {
 	case id != "" && class != "":
-		return fmt.Sprintf("%s#%s.%s => %f", c.Node().DataAtom, id, class, c.score)
+		return fmt.Sprintf("%s#%s.%s => %f", node.DataAtom, id, class, c.score)
 	case id != "":
-		return fmt.Sprintf("%s#%s => %f", c.Node().DataAtom, id, c.score)
+		return fmt.Sprintf("%s#%s => %f", node.DataAtom, id, c.score)
 	case class != "":
-		return fmt.Sprintf("%s.%s => %f", c.Node().DataAtom, class, c.score)
+		return fmt.Sprintf("%s.%s => %f", node.DataAtom, class, c.score)
 	}
 
-	return fmt.Sprintf("%s => %f", c.Node().DataAtom, c.score)
+	return fmt.Sprintf("%s => %f", node.DataAtom, c.score)
 }
 
 type candidateList map[*html.Node]*candidate
@@ -111,7 +119,8 @@ func getArticle(topCandidate *candidate, candidates candidateList) string {
 		tag := "div"
 		node := s.Get(0)
 
-		if node == topCandidate.Node() {
+		topNode := topCandidate.Node()
+		if topNode != nil && node == topNode {
 			append = true
 		} else if c, ok := candidates[node]; ok && c.score >= siblingScoreThreshold {
 			append = true
@@ -147,14 +156,14 @@ func shouldRemoveCandidate(str string) bool {
 	str = strings.ToLower(str)
 
 	// Those candidates have no false-positives, no need to check against `maybeCandidate`
-	for _, strong := range strongCandidates {
-		if strings.Contains(str, strong) {
+	for _, strongCandidate := range strongCandidates {
+		if strings.Contains(str, strongCandidate) {
 			return true
 		}
 	}
 
-	for _, unlikely := range unlikelyCandidate {
-		if strings.Contains(str, unlikely) {
+	for _, unlikelyCandidate := range unlikelyCandidate {
+		if strings.Contains(str, unlikelyCandidate) {
 			// Do we have a false positive?
 			for _, maybe := range maybeCandidate {
 				if strings.Contains(str, maybe) {
@@ -268,6 +277,11 @@ func getCandidates(document *goquery.Document) candidateList {
 func scoreNode(s *goquery.Selection) *candidate {
 	c := &candidate{selection: s, score: 0}
 
+	// Check if selection is empty to avoid panic
+	if s.Length() == 0 {
+		return c
+	}
+
 	switch s.Get(0).DataAtom.String() {
 	case "div":
 		c.score += 5
@@ -314,13 +328,13 @@ func getClassWeight(s *goquery.Selection) float32 {
 
 func getWeight(s string) int {
 	s = strings.ToLower(s)
-	for _, pos := range negative {
-		if strings.Contains(s, pos) {
+	for _, keyword := range negativeKeywords {
+		if strings.Contains(s, keyword) {
 			return -25
 		}
 	}
-	for _, pos := range positive {
-		if strings.Contains(s, pos) {
+	for _, keyword := range positiveKeywords {
+		if strings.Contains(s, keyword) {
 			return +25
 		}
 	}
