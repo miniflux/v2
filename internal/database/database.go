@@ -14,11 +14,9 @@ func Migrate(db *sql.DB) error {
 	var currentVersion int
 	db.QueryRow(`SELECT version FROM schema_version`).Scan(&currentVersion)
 
-	driver := getDriverStr()
 	slog.Info("Running database migrations",
 		slog.Int("current_version", currentVersion),
 		slog.Int("latest_version", schemaVersion),
-		slog.String("driver", driver),
 	)
 
 	for version := currentVersion; version < schemaVersion; version++ {
@@ -29,7 +27,7 @@ func Migrate(db *sql.DB) error {
 			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
 
-		if err := migrations[version](tx, driver); err != nil {
+		if err := migrations[version](tx); err != nil {
 			tx.Rollback()
 			return fmt.Errorf("[Migration v%d] %v", newVersion, err)
 		}
