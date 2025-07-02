@@ -241,7 +241,6 @@ func getTopCandidate(document *goquery.Document, candidates candidateList) *cand
 // Loop through all paragraphs, and assign a score to them based on how content-y they look.
 // Then add their score to their parent node.
 // A score is determined by things like number of commas, class names, etc.
-// Maybe eventually link density.
 func getCandidates(document *goquery.Document) candidateList {
 	candidates := make(candidateList)
 
@@ -324,31 +323,12 @@ func scoreNode(s *goquery.Selection) *candidate {
 // Get the density of links as a percentage of the content
 // This is the amount of text that is inside a link divided by the total text in the node.
 func getLinkDensity(s *goquery.Selection) float32 {
-	var getLengthOfTextContent func(*html.Node) int
-	getLengthOfTextContent = func(n *html.Node) int {
-		total := 0
-		if n.Type == html.TextNode {
-			total += len(n.Data)
-		}
-		if n.FirstChild != nil {
-			for c := n.FirstChild; c != nil; c = c.NextSibling {
-				total += getLengthOfTextContent(c)
-			}
-		}
-		return total
-	}
-
-	sum := 0
-	for _, n := range s.Nodes {
-		sum += getLengthOfTextContent(n)
-	}
-
+	sum := getSelectionLength(s)
 	if sum == 0 {
 		return 0
 	}
 
-	// TODO: use something better than materializing the HTML.
-	linkLength := len(s.Find("a").Text())
+	linkLength := getSelectionLength(s.Find("a"))
 
 	return float32(linkLength) / float32(sum)
 }
