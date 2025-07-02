@@ -400,8 +400,8 @@ func transformMisusedDivsIntoParagraphs(document *goquery.Document) {
 				"table", "ul":
 				return
 			default:
-				node := s.Get(0)
-				node.Data = "p"
+				currentNode := s.Get(0)
+				currentNode.Data = "p"
 			}
 		}
 	})
