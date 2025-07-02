@@ -2479,3 +2479,16 @@ func TestCandidateStringEdgeCases(t *testing.T) {
 		}
 	})
 }
+
+func TestExtractContentWithBrokenReader(t *testing.T) {
+	if _, _, err := ExtractContent(&brokenReader{}); err == nil {
+		t.Error("Expected ExtractContent to return an error with broken reader")
+	}
+}
+
+// brokenReader implements io.Reader but always returns an error
+type brokenReader struct{}
+
+func (br *brokenReader) Read(p []byte) (n int, err error) {
+	return 0, fmt.Errorf("simulated read error")
+}
