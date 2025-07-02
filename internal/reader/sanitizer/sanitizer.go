@@ -303,13 +303,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attributes []html.Attribute, sanitizerOptions *SanitizerOptions) ([]string, string) {
 	var htmlAttrs, attrNames []string
 	var err error
-	var isImageLargerThanLayout bool
 	var isAnchorLink bool
-
-	if tagName == "img" {
-		imgWidth := getIntegerAttributeValue("width", attributes)
-		isImageLargerThanLayout = imgWidth > 750
-	}
 
 	for _, attribute := range attributes {
 		if !isValidAttribute(tagName, attribute.Key) {
@@ -336,7 +330,12 @@ func sanitizeAttributes(parsedBaseUrl *url.URL, baseURL, tagName string, attribu
 					continue
 				}
 			case "width", "height":
-				if isImageLargerThanLayout || !isPositiveInteger(value) {
+				if !isPositiveInteger(value) {
+					continue
+				}
+
+				// Discard width and height attributes when width is larger than Miniflux layout (750px)
+				if imgWidth := getIntegerAttributeValue("width", attributes); imgWidth > 750 {
 					continue
 				}
 			case "srcset":
