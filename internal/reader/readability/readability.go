@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"regexp"
 	"strings"
 
 	"miniflux.app/v2/internal/urllib"
@@ -16,13 +15,9 @@ import (
 	"golang.org/x/net/html"
 )
 
-const (
-	defaultTagsToScore = "section,h2,h3,h4,h5,h6,p,td,pre,div"
-)
+const defaultTagsToScore = "section,h2,h3,h4,h5,h6,p,td,pre,div"
 
 var (
-	divToPElementsRegexp = regexp.MustCompile(`(?i)<(?:a|blockquote|dl|div|img|ol|p|pre|table|ul)[ />]`)
-
 	strongCandidates  = [...]string{"popupbody", "-ad", "g-plus"}
 	maybeCandidate    = [...]string{"and", "article", "body", "column", "main", "shadow"}
 	unlikelyCandidate = [...]string{"banner", "breadcrumbs", "combx", "comment", "community", "cover-wrap", "disqus", "extra", "foot", "header", "legends", "menu", "modal", "related", "remark", "replies", "rss", "shoutbox", "sidebar", "skyscraper", "social", "sponsor", "supplemental", "ad-break", "agegate", "pagination", "pager", "popup", "yom-remote"}
