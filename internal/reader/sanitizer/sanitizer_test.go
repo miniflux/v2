@@ -73,7 +73,7 @@ func TestImgWithWidthAndHeightAttribute(t *testing.T) {
 	}
 }
 
-func TestImgWithWidthAndHeightAttributeLargerThanMinifluxLayout(t *testing.T) {
+func TestImgWithWidthAttributeLargerThanMinifluxLayout(t *testing.T) {
 	input := `<img src="https://example.org/image.png" width="1200" height="675">`
 	expected := `<img src="https://example.org/image.png" loading="lazy">`
 	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
@@ -93,9 +93,49 @@ func TestImgWithIncorrectWidthAndHeightAttribute(t *testing.T) {
 	}
 }
 
-func TestImgWithEmptywidthAndHeightAttribute(t *testing.T) {
+func TestImgWithIncorrectWidthAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="10px" height="20">`
+	expected := `<img src="https://example.org/image.png" height="20" loading="lazy">`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithEmptyWidthAndHeightAttribute(t *testing.T) {
 	input := `<img src="https://example.org/image.png" width="" height="">`
 	expected := `<img src="https://example.org/image.png" loading="lazy">`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithIncorrectHeightAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="10" height="20px">`
+	expected := `<img src="https://example.org/image.png" width="10" loading="lazy">`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithNegativeWidthAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="-10" height="20">`
+	expected := `<img src="https://example.org/image.png" height="20" loading="lazy">`
+	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
+
+	if output != expected {
+		t.Errorf(`Wrong output: %s`, output)
+	}
+}
+
+func TestImgWithNegativeHeightAttribute(t *testing.T) {
+	input := `<img src="https://example.org/image.png" width="10" height="-20">`
+	expected := `<img src="https://example.org/image.png" width="10" loading="lazy">`
 	output := SanitizeHTMLWithDefaultOptions("http://example.org/", input)
 
 	if output != expected {
