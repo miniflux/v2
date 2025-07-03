@@ -18,22 +18,34 @@ func IsAbsoluteURL(link string) bool {
 	return u.IsAbs()
 }
 
-// AbsoluteURL converts the input URL as absolute URL if necessary.
-func AbsoluteURL(baseURL, input string) (string, error) {
+// GetAbsoluteURL return the absolute form of `input` is possible, as well as its parser form.
+func GetAbsoluteURL(input string) (string, *url.URL, error) {
 	if strings.HasPrefix(input, "//") {
-		return "https:" + input, nil
+		return "https:" + input, nil, nil
 	}
 	if strings.HasPrefix(input, "https://") || strings.HasPrefix(input, "http://") {
-		return input, nil
+		return input, nil, nil
 	}
 
 	u, err := url.Parse(input)
 	if err != nil {
-		return "", fmt.Errorf("unable to parse input URL: %v", err)
+		return "", nil, fmt.Errorf("unable to parse input URL: %v", err)
 	}
 
 	if u.IsAbs() {
-		return u.String(), nil
+		return u.String(), u, nil
+	}
+	return "", u, nil
+}
+
+// AbsoluteURL converts the input URL as absolute URL if necessary.
+func AbsoluteURL(baseURL, input string) (string, error) {
+	absURL, u, err := GetAbsoluteURL(input)
+	if err != nil {
+		return "", err
+	}
+	if absURL != "" {
+		return absURL, nil
 	}
 
 	base, err := url.Parse(baseURL)
