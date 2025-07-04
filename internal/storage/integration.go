@@ -221,6 +221,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			karakeep_enabled,
 			karakeep_api_key,
 			karakeep_url
+			archiveorg_enabled,
 		FROM
 			integrations
 		WHERE
@@ -340,6 +341,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.KarakeepEnabled,
 		&integration.KarakeepAPIKey,
 		&integration.KarakeepURL,
+		&integration.ArchiveorgEnabled,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -467,9 +469,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			rssbridge_token=$108,
 			karakeep_enabled=$109,
 			karakeep_api_key=$110,
-			karakeep_url=$111
+			karakeep_url=$111,
+			archiveorg_enabled=$112
 		WHERE
-			user_id=$112
+			user_id=$113
 	`
 	_, err := s.db.Exec(
 		query,
@@ -584,6 +587,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.KarakeepEnabled,
 		integration.KarakeepAPIKey,
 		integration.KarakeepURL,
+		integration.ArchiveorgEnabled,
 		integration.UserID,
 	)
 
@@ -626,7 +630,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				betula_enabled='t' OR
 				cubox_enabled='t' OR
 				discord_enabled='t' OR
-				slack_enabled='t'
+				slack_enabled='t' OR
+				archiveorg_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {
