@@ -209,6 +209,7 @@
     "form.feed.label.webhook_url": "Timpa URL Webhook",
     "form.import.label.file": "Berkas OPML",
     "form.import.label.url": "URL",
+    "form.integration.archiveorg_activate": "Push entries to archive.org",
     "form.integration.apprise_activate": "Kirim artikel ke Apprise",
     "form.integration.apprise_services_url": "Daftar yang dipisahkan koma untuk URL layanan Apprise",
     "form.integration.apprise_url": "URL API Apprise",

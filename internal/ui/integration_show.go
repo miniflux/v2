@@ -142,6 +142,7 @@ func (h *handler) showIntegrationPage(w http.ResponseWriter, r *http.Request) {
 		PushoverToken:                    integration.PushoverToken,
 		PushoverDevice:                   integration.PushoverDevice,
 		PushoverPrefix:                   integration.PushoverPrefix,
+		ArchiveorgEnabled:                integration.ArchiveorgEnabled,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

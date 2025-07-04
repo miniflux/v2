@@ -212,6 +212,7 @@
     "form.feed.label.webhook_url": "Invalidar la URL del webhook",
     "form.import.label.file": "Archivo OPML",
     "form.import.label.url": "URL",
+    "form.integration.archiveorg_activate": "Enviar entradas a archive.org",
     "form.integration.apprise_activate": "Enviar artículos a Apprise",
     "form.integration.apprise_services_url": "Lista separada por comas de las URL del servicio Apprise",
     "form.integration.apprise_url": "URL de la API de Apprise",

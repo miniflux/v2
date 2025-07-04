@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"miniflux.app/v2/internal/integration/apprise"
+	"miniflux.app/v2/internal/integration/archiveorg"
 	"miniflux.app/v2/internal/integration/betula"
 	"miniflux.app/v2/internal/integration/cubox"
 	"miniflux.app/v2/internal/integration/discord"
@@ -398,6 +399,16 @@ func SendEntry(entry *model.Entry, userIntegrations *model.Integration) {
 		}
 	}
 
+	if userIntegrations.ArchiveorgEnabled {
+		slog.Debug("Sending entry to archive.org",
+			slog.Int64("user_id", userIntegrations.UserID),
+			slog.Int64("entry_id", entry.ID),
+			slog.String("entry_url", entry.URL),
+		)
+
+		archiveorg.NewClient().SendURL(entry.URL, entry.Title)
+	}
+
 	if userIntegrations.WebhookEnabled {
 		var webhookURL string
 		if entry.Feed != nil && entry.Feed.WebhookURL != "" {
@@ -506,7 +517,6 @@ func PushEntries(feed *model.Feed, entries model.Entries, userIntegrations *mode
 			)
 		}
 	}
-
 	if userIntegrations.WebhookEnabled {
 		var webhookURL string
 		if feed.WebhookURL != "" {

@@ -129,6 +129,7 @@ type IntegrationForm struct {
 	PushoverToken                    string
 	PushoverDevice                   string
 	PushoverPrefix                   string
+	ArchiveorgEnabled                bool
 }
 
 // Merge copy form values to the model.
@@ -247,6 +248,7 @@ func (i IntegrationForm) Merge(integration *model.Integration) {
 	integration.PushoverToken = i.PushoverToken
 	integration.PushoverDevice = i.PushoverDevice
 	integration.PushoverPrefix = i.PushoverPrefix
+	integration.ArchiveorgEnabled = i.ArchiveorgEnabled
 }
 
 // NewIntegrationForm returns a new IntegrationForm.
@@ -368,6 +370,7 @@ func NewIntegrationForm(r *http.Request) *IntegrationForm {
 		PushoverToken:                    r.FormValue("pushover_token"),
 		PushoverDevice:                   r.FormValue("pushover_device"),
 		PushoverPrefix:                   r.FormValue("pushover_prefix"),
+		ArchiveorgEnabled:                r.FormValue("archiveorg_enabled") == "1",
 	}
 }
 

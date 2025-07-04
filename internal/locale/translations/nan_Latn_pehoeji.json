@@ -209,6 +209,7 @@
     "form.feed.label.webhook_url": "Ngī kái webhook bāng-chí",
     "form.import.label.file": "OPML tóng-àn",
     "form.import.label.url": "URL",
+    "form.integration.archiveorg_activate": "Push entries to archive.org",
     "form.integration.apprise_activate": "Thui sàng siau-sit khì Apprise",
     "form.integration.apprise_services_url": "Iōng tō͘-tiám keh khui ê Apprise ho̍k-bū bāng-chí lia̍t-pió",
     "form.integration.apprise_url": "Apprise API bāng-chí",

@@ -15,6 +15,18 @@
         <div role="alert" class="alert alert-error">{{ .errorMessage }}</div>
     {{ end }}
 
+    <details {{ if .form.ArchiveorgEnabled }}open{{ end }}>
+        <summary>Archive.org</summary>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" name="archiveorg_enabled" value="1" {{ if .form.ArchiveorgEnabled }}checked{{ end }}> {{ t "form.integration.archiveorg_activate" }}
+            </label>
+            <div class="buttons">
+                <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+            </div>
+        </div>
+    </details>
+
     <details {{ if .form.AppriseEnabled }}open{{ end }}>
         <summary>Apprise</summary>
         <div class="form-section">
