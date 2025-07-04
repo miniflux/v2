@@ -226,7 +226,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			linktaco_api_token,
 			linktaco_org_slug,
 			linktaco_tags,
-			linktaco_visibility
+			linktaco_visibility,
+			archiveorg_enabled
 		FROM
 			integrations
 		WHERE
@@ -352,6 +353,7 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.LinktacoOrgSlug,
 		&integration.LinktacoTags,
 		&integration.LinktacoVisibility,
+		&integration.ArchiveorgEnabled,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -485,9 +487,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			linktaco_api_token=$114,
 			linktaco_org_slug=$115,
 			linktaco_tags=$116,
-			linktaco_visibility=$117
+			linktaco_visibility=$117,
+			archiveorg_enabled=$118
 		WHERE
-			user_id=$118
+			user_id=$119
 	`
 	_, err := s.db.Exec(
 		query,
@@ -608,6 +611,7 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.LinktacoOrgSlug,
 		integration.LinktacoTags,
 		integration.LinktacoVisibility,
+		integration.ArchiveorgEnabled,
 		integration.UserID,
 	)
 
@@ -651,7 +655,8 @@ func (s *Storage) HasSaveEntry(userID int64) (result bool) {
 				betula_enabled='t' OR
 				cubox_enabled='t' OR
 				discord_enabled='t' OR
-				slack_enabled='t'
+				slack_enabled='t' OR
+				archiveorg_enabled='t'
 			)
 	`
 	if err := s.db.QueryRow(query, userID).Scan(&result); err != nil {

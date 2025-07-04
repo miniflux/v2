@@ -123,4 +123,5 @@ type Integration struct {
 	PushoverToken                    string
 	PushoverDevice                   string
 	PushoverPrefix                   string
+	ArchiveorgEnabled                bool
 }

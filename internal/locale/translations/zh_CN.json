@@ -209,6 +209,7 @@
     "form.feed.label.webhook_url": "覆盖 Webhook URL",
     "form.import.label.file": "OPML 文件",
     "form.import.label.url": "URL",
+    "form.integration.archiveorg_activate": "将新条目推送到 archive.org",
     "form.integration.apprise_activate": "将新条目推送到 Apprise",
     "form.integration.apprise_services_url": "使用逗号分隔的 Apprise 服务 URL 列表",
     "form.integration.apprise_url": "Apprise API URL",

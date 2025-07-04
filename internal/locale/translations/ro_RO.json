@@ -215,6 +215,7 @@
     "form.feed.label.webhook_url": "URL Webhook (pentru a primi notificări despre evenimentele de intrare)",
     "form.import.label.file": "Fișier OPML",
     "form.import.label.url": "URL",
+    "form.integration.archiveorg_activate": "Trimite înregistrările pe archive.org",
     "form.integration.apprise_activate": "Trimite înregistrările pe Apprise",
     "form.integration.apprise_services_url": "URL-uri separate de virgulă cu servicii Apprise",
     "form.integration.apprise_url": "URL API Apprise",

@@ -1341,4 +1341,11 @@ var migrations = [...]func(tx *sql.Tx) error{
 
 		return nil
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE integrations ADD COLUMN archiveorg_enabled bool default 'f'
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }
