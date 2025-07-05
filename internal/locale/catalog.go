@@ -27,19 +27,6 @@ func getTranslationDict(language string) (translationDict, error) {
 	return defaultCatalog[language], nil
 }
 
-// LoadCatalogMessages loads and parses all translations encoded in JSON.
-func LoadCatalogMessages() error {
-	var err error
-
-	for language := range AvailableLanguages {
-		defaultCatalog[language], err = loadTranslationFile(language)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func loadTranslationFile(language string) (translationDict, error) {
 	translationFileData, err := translationFiles.ReadFile(fmt.Sprintf("translations/%s.json", language))
 	if err != nil {
