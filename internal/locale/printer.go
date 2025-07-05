@@ -22,7 +22,7 @@ func (p *Printer) Print(key string) string {
 }
 
 // Printf is like fmt.Printf, but using language-specific formatting.
-func (p *Printer) Printf(key string, args ...interface{}) string {
+func (p *Printer) Printf(key string, args ...any) string {
 	translation := key
 
 	if dict, err := GetTranslationDict(p.language); err == nil {
