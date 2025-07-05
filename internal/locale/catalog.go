@@ -28,7 +28,7 @@ func getTranslationDict(language string) (translationDict, error) {
 }
 
 func loadTranslationFile(language string) (translationDict, error) {
-	translationFileData, err := translationFiles.ReadFile(fmt.Sprintf("translations/%s.json", language))
+	translationFileData, err := translationFiles.ReadFile("translations/" + language + ".json")
 	if err != nil {
 		return nil, err
 	}
