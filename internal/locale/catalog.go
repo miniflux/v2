@@ -17,7 +17,7 @@ var defaultCatalog = make(catalog, len(AvailableLanguages))
 //go:embed translations/*.json
 var translationFiles embed.FS
 
-func GetTranslationDict(language string) (translationDict, error) {
+func getTranslationDict(language string) (translationDict, error) {
 	if _, ok := defaultCatalog[language]; !ok {
 		var err error
 		if defaultCatalog[language], err = loadTranslationFile(language); err != nil {
