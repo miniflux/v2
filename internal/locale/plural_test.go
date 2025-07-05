@@ -90,7 +90,7 @@ func TestPluralRules(t *testing.T) {
 
 	for rule, values := range scenarios {
 		for input, expected := range values {
-			result := pluralForms[rule](input)
+			result := getPluralForm(rule, input)
 			if result != expected {
 				t.Errorf(`Unexpected result for %q rule, got %d instead of %d for %d as input`, rule, result, expected, input)
 			}

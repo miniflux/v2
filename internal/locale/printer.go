@@ -57,12 +57,7 @@ func (p *Printer) Plural(key string, n int, args ...interface{}) string {
 			return key
 		}
 
-		pluralForm, found := pluralForms[p.language]
-		if !found {
-			pluralForm = pluralForms["default"]
-		}
-
-		index := pluralForm(n)
+		index := getPluralForm(p.language, n)
 		if len(plurals) > index {
 			return fmt.Sprintf(plurals[index], args...)
 		}
