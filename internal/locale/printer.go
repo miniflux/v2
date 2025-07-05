@@ -11,7 +11,7 @@ type Printer struct {
 }
 
 func (p *Printer) Print(key string) string {
-	if dict, err := GetTranslationDict(p.language); err == nil {
+	if dict, err := getTranslationDict(p.language); err == nil {
 		if str, ok := dict[key]; ok {
 			if translation, ok := str.(string); ok {
 				return translation
@@ -25,12 +25,12 @@ func (p *Printer) Print(key string) string {
 func (p *Printer) Printf(key string, args ...any) string {
 	translation := key
 
-	if dict, err := GetTranslationDict(p.language); err == nil {
 		str, found := dict[key]
 		if found {
 			var valid bool
 			translation, valid = str.(string)
 			if !valid {
+	if dict, err := getTranslationDict(p.language); err == nil {
 				translation = key
 			}
 		}
@@ -41,7 +41,7 @@ func (p *Printer) Printf(key string, args ...any) string {
 
 // Plural returns the translation of the given key by using the language plural form.
 func (p *Printer) Plural(key string, n int, args ...interface{}) string {
-	dict, err := GetTranslationDict(p.language)
+	dict, err := getTranslationDict(p.language)
 	if err != nil {
 		return key
 	}
