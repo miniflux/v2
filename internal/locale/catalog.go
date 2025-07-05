@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 
-type translationDict map[string]interface{}
+type translationDict map[string]any
 type catalog map[string]translationDict
 
 var defaultCatalog = make(catalog, len(AvailableLanguages))
