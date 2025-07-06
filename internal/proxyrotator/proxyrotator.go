@@ -38,23 +38,19 @@ func NewProxyRotator(proxyURLs []string) (*ProxyRotator, error) {
 
 // GetNextProxy returns the next proxy in the rotation.
 func (pr *ProxyRotator) GetNextProxy() *url.URL {
-	pr.mutex.Lock()
-	defer pr.mutex.Unlock()
-
 	if len(pr.proxies) == 0 {
 		return nil
 	}
 
+	pr.mutex.Lock()
 	proxy := pr.proxies[pr.currentIndex]
 	pr.currentIndex = (pr.currentIndex + 1) % len(pr.proxies)
+	pr.mutex.Unlock()
 
 	return proxy
 }
 
 // HasProxies checks if there are any proxies available in the rotator.
 func (pr *ProxyRotator) HasProxies() bool {
-	pr.mutex.Lock()
-	defer pr.mutex.Unlock()
-
 	return len(pr.proxies) > 0
 }
