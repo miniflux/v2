@@ -23,8 +23,6 @@ const (
 	defaultHSTS                               = true
 	defaultHTTPService                        = true
 	defaultSchedulerService                   = true
-	defaultDebug                              = false
-	defaultTiming                             = false
 	defaultBaseURL                            = "http://localhost"
 	defaultRootURL                            = "http://localhost"
 	defaultBasePath                           = ""
