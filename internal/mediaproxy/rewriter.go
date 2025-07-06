@@ -108,6 +108,14 @@ func proxifySourceSet(element *goquery.Selection, router *mux.Router, proxifyFun
 }
 
 func shouldProxy(attrValue, proxyOption string) bool {
-	return !strings.HasPrefix(attrValue, "data:") &&
-		(proxyOption == "all" || !urllib.IsHTTPS(attrValue))
+	if strings.HasPrefix(attrValue, "data:") {
+		return false
+	}
+	if proxyOption == "all" {
+		return true
+	}
+	if !urllib.IsHTTPS(attrValue) {
+		return true
+	}
+	return false
 }
