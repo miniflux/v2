@@ -117,6 +117,12 @@ func (p *parser) parseLines(lines []string) (err error) {
 			p.opts.HTTPS = parseBool(value, defaultHTTPS)
 		case "DISABLE_SCHEDULER_SERVICE":
 			p.opts.schedulerService = !parseBool(value, defaultSchedulerService)
+		case "DISABLE_API":
+			p.opts.disableAPI = parseBool(value, defaultDisableAPI)
+		case "DISABLE_FEVER_API":
+			p.opts.disableFeverAPI = parseBool(value, defaultDisableFeverAPI)
+		case "DISABLE_GOOGLEREADER_API":
+			p.opts.disableGoogleReaderAPI = parseBool(value, defaultDisableGoogleReaderAPI)
 		case "DISABLE_HTTP_SERVICE":
 			p.opts.httpService = !parseBool(value, defaultHTTPService)
 		case "CERT_FILE":

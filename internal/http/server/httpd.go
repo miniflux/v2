@@ -242,9 +242,15 @@ func setupHandler(store *storage.Storage, pool *worker.Pool) *mux.Router {
 
 	subrouter.Use(middleware)
 
-	fever.Serve(subrouter, store)
-	googlereader.Serve(subrouter, store)
-	api.Serve(subrouter, store, pool)
+	if !config.Opts.DisableFeverAPI() {
+		fever.Serve(subrouter, store)
+	}
+	if !config.Opts.DisableGoogleReaderAPI() {
+		googlereader.Serve(subrouter, store)
+	}
+	if !config.Opts.DisableAPI() {
+		api.Serve(subrouter, store, pool)
+	}
 	ui.Serve(subrouter, store, pool)
 
 	subrouter.HandleFunc("/healthcheck", readinessProbe).Name("healthcheck")

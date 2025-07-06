@@ -90,6 +90,9 @@ const (
 	defaultWatchdog                           = true
 	defaultInvidiousInstance                  = "yewtu.be"
 	defaultWebAuthn                           = false
+	defaultDisableFeverAPI                    = false
+	defaultDisableGoogleReaderAPI             = false
+	defaultDisableAPI                         = false
 )
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
@@ -180,6 +183,9 @@ type options struct {
 	invidiousInstance                  string
 	mediaProxyPrivateKey               []byte
 	webAuthn                           bool
+	disableFeverAPI                    bool
+	disableGoogleReaderAPI             bool
+	disableAPI                         bool
 }
 
 // NewOptions returns Options with default values.
@@ -260,6 +266,9 @@ func NewOptions() *options {
 		invidiousInstance:                  defaultInvidiousInstance,
 		mediaProxyPrivateKey:               crypto.GenerateRandomBytes(16),
 		webAuthn:                           defaultWebAuthn,
+		disableFeverAPI:                    defaultDisableFeverAPI,
+		disableGoogleReaderAPI:             defaultDisableGoogleReaderAPI,
+		disableAPI:                         defaultDisableAPI,
 	}
 }
 
@@ -667,6 +676,21 @@ func (o *options) WebAuthn() bool {
 	return o.webAuthn
 }
 
+// DisableGoogleReaderAPI returns true if the Google Reader API should be disabled
+func (o *options) DisableGoogleReaderAPI() bool {
+	return o.disableGoogleReaderAPI
+}
+
+// DisableFeverAPI returns true if the Fever API should be disabled
+func (o *options) DisableFeverAPI() bool {
+	return o.disableFeverAPI
+}
+
+// DisableAPI returns true if the API should be disabled
+func (o *options) DisableAPI() bool {
+	return o.disableAPI
+}
+
 // FilterEntryMaxAgeDays returns the number of days after which entries should be retained.
 func (o *options) FilterEntryMaxAgeDays() int {
 	return o.filterEntryMaxAgeDays
@@ -781,6 +805,9 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"YOUTUBE_API_KEY":                        redactSecretValue(o.youTubeApiKey, redactSecret),
 		"YOUTUBE_EMBED_URL_OVERRIDE":             o.youTubeEmbedUrlOverride,
 		"WEBAUTHN":                               o.webAuthn,
+		"DISABLE_FEVER_API":                      o.disableFeverAPI,
+		"DISABLE_GOOGLEREADER_API":               o.disableGoogleReaderAPI,
+		"DISABLE_API":                            o.disableAPI,
 	}
 
 	sortedKeys := slices.Sorted(maps.Keys(keyValues))

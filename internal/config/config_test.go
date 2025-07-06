@@ -2104,3 +2104,57 @@ func TestInvalidHTTPClientProxy(t *testing.T) {
 		t.Fatalf(`Expected error for invalid HTTP_CLIENT_PROXY value, but got none`)
 	}
 }
+
+func TestDisableAPI(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_API", "1")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := true
+	result := opts.DisableAPI()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_API value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableGoogleReaderAPI(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_GOOGLEREADER_API", "1")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := true
+	result := opts.DisableGoogleReaderAPI()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_API value, got %v instead of %v`, result, expected)
+	}
+}
+
+func TestDisableFeverAPI(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("DISABLE_FEVER_API", "1")
+
+	parser := NewParser()
+	opts, err := parser.ParseEnvironmentVariables()
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	expected := true
+	result := opts.DisableFeverAPI()
+
+	if result != expected {
+		t.Fatalf(`Unexpected DISABLE_FEVER_API value, got %v instead of %v`, result, expected)
+	}
+}
