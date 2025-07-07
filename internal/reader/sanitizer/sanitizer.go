@@ -211,7 +211,7 @@ func SanitizeHTML(baseURL, rawHTML string, sanitizerOptions *SanitizerOptions) s
 
 	// Educated guess about how big the sanitized HTML will be,
 	// to reduce the amount of buffer re-allocations in this function.
-	estimatedRatio := int(float32(len(rawHTML)) * 0.75)
+	estimatedRatio := len(rawHTML) * 3 / 4
 	buffer.Grow(estimatedRatio)
 
 	// Errors are a non-issue, so they're handled later in the function.
