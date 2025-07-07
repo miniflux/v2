@@ -4,4 +4,4 @@
 package config // import "miniflux.app/v2/internal/config"
 
 // Opts holds parsed configuration options.
-var Opts *Options
+var Opts *options

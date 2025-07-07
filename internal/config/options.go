@@ -95,14 +95,14 @@ const (
 
 var defaultHTTPClientUserAgent = "Mozilla/5.0 (compatible; Miniflux/" + version.Version + "; +https://miniflux.app)"
 
-// Option contains a key to value map of a single option. It may be used to output debug strings.
-type Option struct {
+// option contains a key to value map of a single option. It may be used to output debug strings.
+type option struct {
 	Key   string
-	Value interface{}
+	Value any
 }
 
-// Options contains configuration options.
-type Options struct {
+// options contains configuration options.
+type options struct {
 	HTTPS                              bool
 	logFile                            string
 	logDateTime                        bool
@@ -184,8 +184,8 @@ type Options struct {
 }
 
 // NewOptions returns Options with default values.
-func NewOptions() *Options {
-	return &Options{
+func NewOptions() *options {
+	return &options{
 		HTTPS:                              defaultHTTPS,
 		logFile:                            defaultLogFile,
 		logDateTime:                        defaultLogDateTime,
@@ -264,261 +264,261 @@ func NewOptions() *Options {
 	}
 }
 
-func (o *Options) LogFile() string {
+func (o *options) LogFile() string {
 	return o.logFile
 }
 
 // LogDateTime returns true if the date/time should be displayed in log messages.
-func (o *Options) LogDateTime() bool {
+func (o *options) LogDateTime() bool {
 	return o.logDateTime
 }
 
 // LogFormat returns the log format.
-func (o *Options) LogFormat() string {
+func (o *options) LogFormat() string {
 	return o.logFormat
 }
 
 // LogLevel returns the log level.
-func (o *Options) LogLevel() string {
+func (o *options) LogLevel() string {
 	return o.logLevel
 }
 
 // SetLogLevel sets the log level.
-func (o *Options) SetLogLevel(level string) {
+func (o *options) SetLogLevel(level string) {
 	o.logLevel = level
 }
 
 // HasMaintenanceMode returns true if maintenance mode is enabled.
-func (o *Options) HasMaintenanceMode() bool {
+func (o *options) HasMaintenanceMode() bool {
 	return o.maintenanceMode
 }
 
 // MaintenanceMessage returns maintenance message.
-func (o *Options) MaintenanceMessage() string {
+func (o *options) MaintenanceMessage() string {
 	return o.maintenanceMessage
 }
 
 // BaseURL returns the application base URL with path.
-func (o *Options) BaseURL() string {
+func (o *options) BaseURL() string {
 	return o.baseURL
 }
 
 // RootURL returns the base URL without path.
-func (o *Options) RootURL() string {
+func (o *options) RootURL() string {
 	return o.rootURL
 }
 
 // BasePath returns the application base path according to the base URL.
-func (o *Options) BasePath() string {
+func (o *options) BasePath() string {
 	return o.basePath
 }
 
 // IsDefaultDatabaseURL returns true if the default database URL is used.
-func (o *Options) IsDefaultDatabaseURL() bool {
+func (o *options) IsDefaultDatabaseURL() bool {
 	return o.databaseURL == defaultDatabaseURL
 }
 
 // DatabaseURL returns the database URL.
-func (o *Options) DatabaseURL() string {
+func (o *options) DatabaseURL() string {
 	return o.databaseURL
 }
 
 // DatabaseMaxConns returns the maximum number of database connections.
-func (o *Options) DatabaseMaxConns() int {
+func (o *options) DatabaseMaxConns() int {
 	return o.databaseMaxConns
 }
 
 // DatabaseMinConns returns the minimum number of database connections.
-func (o *Options) DatabaseMinConns() int {
+func (o *options) DatabaseMinConns() int {
 	return o.databaseMinConns
 }
 
 // DatabaseConnectionLifetime returns the maximum amount of time a connection may be reused.
-func (o *Options) DatabaseConnectionLifetime() time.Duration {
+func (o *options) DatabaseConnectionLifetime() time.Duration {
 	return time.Duration(o.databaseConnectionLifetime) * time.Minute
 }
 
 // ListenAddr returns the listen address for the HTTP server.
-func (o *Options) ListenAddr() []string {
+func (o *options) ListenAddr() []string {
 	return o.listenAddr
 }
 
 // CertFile returns the SSL certificate filename if any.
-func (o *Options) CertFile() string {
+func (o *options) CertFile() string {
 	return o.certFile
 }
 
 // CertKeyFile returns the private key filename for custom SSL certificate.
-func (o *Options) CertKeyFile() string {
+func (o *options) CertKeyFile() string {
 	return o.certKeyFile
 }
 
 // CertDomain returns the domain to use for Let's Encrypt certificate.
-func (o *Options) CertDomain() string {
+func (o *options) CertDomain() string {
 	return o.certDomain
 }
 
 // CleanupFrequencyHours returns the interval in hours for cleanup jobs.
-func (o *Options) CleanupFrequencyHours() int {
+func (o *options) CleanupFrequencyHours() int {
 	return o.cleanupFrequencyHours
 }
 
 // CleanupArchiveReadDays returns the number of days after which marking read items as removed.
-func (o *Options) CleanupArchiveReadDays() int {
+func (o *options) CleanupArchiveReadDays() int {
 	return o.cleanupArchiveReadDays
 }
 
 // CleanupArchiveUnreadDays returns the number of days after which marking unread items as removed.
-func (o *Options) CleanupArchiveUnreadDays() int {
+func (o *options) CleanupArchiveUnreadDays() int {
 	return o.cleanupArchiveUnreadDays
 }
 
 // CleanupArchiveBatchSize returns the number of entries to archive for each interval.
-func (o *Options) CleanupArchiveBatchSize() int {
+func (o *options) CleanupArchiveBatchSize() int {
 	return o.cleanupArchiveBatchSize
 }
 
 // CleanupRemoveSessionsDays returns the number of days after which to remove sessions.
-func (o *Options) CleanupRemoveSessionsDays() int {
+func (o *options) CleanupRemoveSessionsDays() int {
 	return o.cleanupRemoveSessionsDays
 }
 
 // WorkerPoolSize returns the number of background worker.
-func (o *Options) WorkerPoolSize() int {
+func (o *options) WorkerPoolSize() int {
 	return o.workerPoolSize
 }
 
 // PollingFrequency returns the interval to refresh feeds in the background.
-func (o *Options) PollingFrequency() int {
+func (o *options) PollingFrequency() int {
 	return o.pollingFrequency
 }
 
 // ForceRefreshInterval returns the force refresh interval
-func (o *Options) ForceRefreshInterval() int {
+func (o *options) ForceRefreshInterval() int {
 	return o.forceRefreshInterval
 }
 
 // BatchSize returns the number of feeds to send for background processing.
-func (o *Options) BatchSize() int {
+func (o *options) BatchSize() int {
 	return o.batchSize
 }
 
 // PollingScheduler returns the scheduler used for polling feeds.
-func (o *Options) PollingScheduler() string {
+func (o *options) PollingScheduler() string {
 	return o.pollingScheduler
 }
 
 // SchedulerEntryFrequencyMaxInterval returns the maximum interval in minutes for the entry frequency scheduler.
-func (o *Options) SchedulerEntryFrequencyMaxInterval() int {
+func (o *options) SchedulerEntryFrequencyMaxInterval() int {
 	return o.schedulerEntryFrequencyMaxInterval
 }
 
 // SchedulerEntryFrequencyMinInterval returns the minimum interval in minutes for the entry frequency scheduler.
-func (o *Options) SchedulerEntryFrequencyMinInterval() int {
+func (o *options) SchedulerEntryFrequencyMinInterval() int {
 	return o.schedulerEntryFrequencyMinInterval
 }
 
 // SchedulerEntryFrequencyFactor returns the factor for the entry frequency scheduler.
-func (o *Options) SchedulerEntryFrequencyFactor() int {
+func (o *options) SchedulerEntryFrequencyFactor() int {
 	return o.schedulerEntryFrequencyFactor
 }
 
-func (o *Options) SchedulerRoundRobinMinInterval() int {
+func (o *options) SchedulerRoundRobinMinInterval() int {
 	return o.schedulerRoundRobinMinInterval
 }
 
-func (o *Options) SchedulerRoundRobinMaxInterval() int {
+func (o *options) SchedulerRoundRobinMaxInterval() int {
 	return o.schedulerRoundRobinMaxInterval
 }
 
 // PollingParsingErrorLimit returns the limit of errors when to stop polling.
-func (o *Options) PollingParsingErrorLimit() int {
+func (o *options) PollingParsingErrorLimit() int {
 	return o.pollingParsingErrorLimit
 }
 
 // IsOAuth2UserCreationAllowed returns true if user creation is allowed for OAuth2 users.
-func (o *Options) IsOAuth2UserCreationAllowed() bool {
+func (o *options) IsOAuth2UserCreationAllowed() bool {
 	return o.oauth2UserCreationAllowed
 }
 
 // OAuth2ClientID returns the OAuth2 Client ID.
-func (o *Options) OAuth2ClientID() string {
+func (o *options) OAuth2ClientID() string {
 	return o.oauth2ClientID
 }
 
 // OAuth2ClientSecret returns the OAuth2 client secret.
-func (o *Options) OAuth2ClientSecret() string {
+func (o *options) OAuth2ClientSecret() string {
 	return o.oauth2ClientSecret
 }
 
 // OAuth2RedirectURL returns the OAuth2 redirect URL.
-func (o *Options) OAuth2RedirectURL() string {
+func (o *options) OAuth2RedirectURL() string {
 	return o.oauth2RedirectURL
 }
 
 // OIDCDiscoveryEndpoint returns the OAuth2 OIDC discovery endpoint.
-func (o *Options) OIDCDiscoveryEndpoint() string {
+func (o *options) OIDCDiscoveryEndpoint() string {
 	return o.oidcDiscoveryEndpoint
 }
 
 // OIDCProviderName returns the OAuth2 OIDC provider's display name
-func (o *Options) OIDCProviderName() string {
+func (o *options) OIDCProviderName() string {
 	return o.oidcProviderName
 }
 
 // OAuth2Provider returns the name of the OAuth2 provider configured.
-func (o *Options) OAuth2Provider() string {
+func (o *options) OAuth2Provider() string {
 	return o.oauth2Provider
 }
 
 // DisableLocalAUth returns true if the local user database should not be used to authenticate users
-func (o *Options) DisableLocalAuth() bool {
+func (o *options) DisableLocalAuth() bool {
 	return o.disableLocalAuth
 }
 
 // HasHSTS returns true if HTTP Strict Transport Security is enabled.
-func (o *Options) HasHSTS() bool {
+func (o *options) HasHSTS() bool {
 	return o.hsts
 }
 
 // RunMigrations returns true if the environment variable RUN_MIGRATIONS is not empty.
-func (o *Options) RunMigrations() bool {
+func (o *options) RunMigrations() bool {
 	return o.runMigrations
 }
 
 // CreateAdmin returns true if the environment variable CREATE_ADMIN is not empty.
-func (o *Options) CreateAdmin() bool {
+func (o *options) CreateAdmin() bool {
 	return o.createAdmin
 }
 
 // AdminUsername returns the admin username if defined.
-func (o *Options) AdminUsername() string {
+func (o *options) AdminUsername() string {
 	return o.adminUsername
 }
 
 // AdminPassword returns the admin password if defined.
-func (o *Options) AdminPassword() string {
+func (o *options) AdminPassword() string {
 	return o.adminPassword
 }
 
 // FetchYouTubeWatchTime returns true if the YouTube video duration
 // should be fetched and used as a reading time.
-func (o *Options) FetchYouTubeWatchTime() bool {
+func (o *options) FetchYouTubeWatchTime() bool {
 	return o.fetchYouTubeWatchTime
 }
 
 // YouTubeApiKey returns the YouTube API key if defined.
-func (o *Options) YouTubeApiKey() string {
+func (o *options) YouTubeApiKey() string {
 	return o.youTubeApiKey
 }
 
 // YouTubeEmbedUrlOverride returns the YouTube embed URL override if defined.
-func (o *Options) YouTubeEmbedUrlOverride() string {
+func (o *options) YouTubeEmbedUrlOverride() string {
 	return o.youTubeEmbedUrlOverride
 }
 
 // YouTubeEmbedDomain returns the domain used for YouTube embeds.
-func (o *Options) YouTubeEmbedDomain() string {
+func (o *options) YouTubeEmbedDomain() string {
 	if o.youTubeEmbedDomain != "" {
 		return o.youTubeEmbedDomain
 	}
@@ -527,154 +527,154 @@ func (o *Options) YouTubeEmbedDomain() string {
 
 // FetchNebulaWatchTime returns true if the Nebula video duration
 // should be fetched and used as a reading time.
-func (o *Options) FetchNebulaWatchTime() bool {
+func (o *options) FetchNebulaWatchTime() bool {
 	return o.fetchNebulaWatchTime
 }
 
 // FetchOdyseeWatchTime returns true if the Odysee video duration
 // should be fetched and used as a reading time.
-func (o *Options) FetchOdyseeWatchTime() bool {
+func (o *options) FetchOdyseeWatchTime() bool {
 	return o.fetchOdyseeWatchTime
 }
 
 // FetchBilibiliWatchTime returns true if the Bilibili video duration
 // should be fetched and used as a reading time.
-func (o *Options) FetchBilibiliWatchTime() bool {
+func (o *options) FetchBilibiliWatchTime() bool {
 	return o.fetchBilibiliWatchTime
 }
 
 // MediaProxyMode returns "none" to never proxy, "http-only" to proxy non-HTTPS, "all" to always proxy.
-func (o *Options) MediaProxyMode() string {
+func (o *options) MediaProxyMode() string {
 	return o.mediaProxyMode
 }
 
 // MediaProxyResourceTypes returns a slice of resource types to proxy.
-func (o *Options) MediaProxyResourceTypes() []string {
+func (o *options) MediaProxyResourceTypes() []string {
 	return o.mediaProxyResourceTypes
 }
 
 // MediaCustomProxyURL returns the custom proxy URL for medias.
-func (o *Options) MediaCustomProxyURL() string {
+func (o *options) MediaCustomProxyURL() string {
 	return o.mediaProxyCustomURL
 }
 
 // MediaProxyHTTPClientTimeout returns the time limit in seconds before the proxy HTTP client cancel the request.
-func (o *Options) MediaProxyHTTPClientTimeout() int {
+func (o *options) MediaProxyHTTPClientTimeout() int {
 	return o.mediaProxyHTTPClientTimeout
 }
 
 // MediaProxyPrivateKey returns the private key used by the media proxy.
-func (o *Options) MediaProxyPrivateKey() []byte {
+func (o *options) MediaProxyPrivateKey() []byte {
 	return o.mediaProxyPrivateKey
 }
 
 // HasHTTPService returns true if the HTTP service is enabled.
-func (o *Options) HasHTTPService() bool {
+func (o *options) HasHTTPService() bool {
 	return o.httpService
 }
 
 // HasSchedulerService returns true if the scheduler service is enabled.
-func (o *Options) HasSchedulerService() bool {
+func (o *options) HasSchedulerService() bool {
 	return o.schedulerService
 }
 
 // HTTPClientTimeout returns the time limit in seconds before the HTTP client cancel the request.
-func (o *Options) HTTPClientTimeout() int {
+func (o *options) HTTPClientTimeout() int {
 	return o.httpClientTimeout
 }
 
 // HTTPClientMaxBodySize returns the number of bytes allowed for the HTTP client to transfer.
-func (o *Options) HTTPClientMaxBodySize() int64 {
+func (o *options) HTTPClientMaxBodySize() int64 {
 	return o.httpClientMaxBodySize
 }
 
 // HTTPClientProxyURL returns the client HTTP proxy URL if configured.
-func (o *Options) HTTPClientProxyURL() *url.URL {
+func (o *options) HTTPClientProxyURL() *url.URL {
 	return o.httpClientProxyURL
 }
 
 // HasHTTPClientProxyURLConfigured returns true if the client HTTP proxy URL if configured.
-func (o *Options) HasHTTPClientProxyURLConfigured() bool {
+func (o *options) HasHTTPClientProxyURLConfigured() bool {
 	return o.httpClientProxyURL != nil
 }
 
 // HTTPClientProxies returns the list of proxies.
-func (o *Options) HTTPClientProxies() []string {
+func (o *options) HTTPClientProxies() []string {
 	return o.httpClientProxies
 }
 
 // HTTPClientProxiesString returns true if the list of rotating proxies are configured.
-func (o *Options) HasHTTPClientProxiesConfigured() bool {
+func (o *options) HasHTTPClientProxiesConfigured() bool {
 	return len(o.httpClientProxies) > 0
 }
 
 // HTTPServerTimeout returns the time limit in seconds before the HTTP server cancel the request.
-func (o *Options) HTTPServerTimeout() int {
+func (o *options) HTTPServerTimeout() int {
 	return o.httpServerTimeout
 }
 
 // AuthProxyHeader returns an HTTP header name that contains username for
 // authentication using auth proxy.
-func (o *Options) AuthProxyHeader() string {
+func (o *options) AuthProxyHeader() string {
 	return o.authProxyHeader
 }
 
 // IsAuthProxyUserCreationAllowed returns true if user creation is allowed for
 // users authenticated using auth proxy.
-func (o *Options) IsAuthProxyUserCreationAllowed() bool {
+func (o *options) IsAuthProxyUserCreationAllowed() bool {
 	return o.authProxyUserCreation
 }
 
 // HasMetricsCollector returns true if metrics collection is enabled.
-func (o *Options) HasMetricsCollector() bool {
+func (o *options) HasMetricsCollector() bool {
 	return o.metricsCollector
 }
 
 // MetricsRefreshInterval returns the refresh interval in seconds.
-func (o *Options) MetricsRefreshInterval() int {
+func (o *options) MetricsRefreshInterval() int {
 	return o.metricsRefreshInterval
 }
 
 // MetricsAllowedNetworks returns the list of networks allowed to connect to the metrics endpoint.
-func (o *Options) MetricsAllowedNetworks() []string {
+func (o *options) MetricsAllowedNetworks() []string {
 	return o.metricsAllowedNetworks
 }
 
-func (o *Options) MetricsUsername() string {
+func (o *options) MetricsUsername() string {
 	return o.metricsUsername
 }
 
-func (o *Options) MetricsPassword() string {
+func (o *options) MetricsPassword() string {
 	return o.metricsPassword
 }
 
 // HTTPClientUserAgent returns the global User-Agent header for miniflux.
-func (o *Options) HTTPClientUserAgent() string {
+func (o *options) HTTPClientUserAgent() string {
 	return o.httpClientUserAgent
 }
 
 // HasWatchdog returns true if the systemd watchdog is enabled.
-func (o *Options) HasWatchdog() bool {
+func (o *options) HasWatchdog() bool {
 	return o.watchdog
 }
 
 // InvidiousInstance returns the invidious instance used by miniflux
-func (o *Options) InvidiousInstance() string {
+func (o *options) InvidiousInstance() string {
 	return o.invidiousInstance
 }
 
 // WebAuthn returns true if WebAuthn logins are supported
-func (o *Options) WebAuthn() bool {
+func (o *options) WebAuthn() bool {
 	return o.webAuthn
 }
 
 // FilterEntryMaxAgeDays returns the number of days after which entries should be retained.
-func (o *Options) FilterEntryMaxAgeDays() int {
+func (o *options) FilterEntryMaxAgeDays() int {
 	return o.filterEntryMaxAgeDays
 }
 
 // SortedOptions returns options as a list of key value pairs, sorted by keys.
-func (o *Options) SortedOptions(redactSecret bool) []*Option {
+func (o *options) SortedOptions(redactSecret bool) []*option {
 	var clientProxyURLRedacted string
 	if o.httpClientProxyURL != nil {
 		if redactSecret {
@@ -790,14 +790,14 @@ func (o *Options) SortedOptions(redactSecret bool) []*Option {
 	}
 	sort.Strings(keys)
 
-	var sortedOptions []*Option
+	var sortedOptions []*option
 	for _, key := range keys {
-		sortedOptions = append(sortedOptions, &Option{Key: key, Value: keyValues[key]})
+		sortedOptions = append(sortedOptions, &option{Key: key, Value: keyValues[key]})
 	}
 	return sortedOptions
 }
 
-func (o *Options) String() string {
+func (o *options) String() string {
 	var builder strings.Builder
 
 	for _, option := range o.SortedOptions(false) {
