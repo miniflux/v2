@@ -118,7 +118,7 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 
 	watchTimeMap := make(map[string]time.Duration, len(videos.Items))
 	for _, video := range videos.Items {
-		duration, err := parseISO8601(video.ContentDetails.Duration)
+		duration, err := parseISO8601Duration(video.ContentDetails.Duration)
 		if err != nil {
 			slog.Warn("Unable to parse ISO8601 duration", slog.Any("error", err))
 			continue

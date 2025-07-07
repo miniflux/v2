@@ -14,9 +14,9 @@ import (
 	"github.com/tdewolff/minify/v2/html"
 )
 
-// parseISO8601 parses a restricted subset of ISO8601 dates, mainly for youtube video durations
-func parseISO8601(from string) (time.Duration, error) {
-	after, ok := strings.CutPrefix(from, "PT")
+// parseISO8601Duration parses a subset of ISO8601 durations, mainly for youtube video.
+func parseISO8601Duration(duration string) (time.Duration, error) {
+	after, ok := strings.CutPrefix(duration, "PT")
 	if !ok {
 		return 0, errors.New("the period doesn't start with PT")
 	}
