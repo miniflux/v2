@@ -10,6 +10,11 @@ type Printer struct {
 	language string
 }
 
+// NewPrinter creates a new Printer instance for the given language.
+func NewPrinter(language string) *Printer {
+	return &Printer{language}
+}
+
 func (p *Printer) Print(key string) string {
 	if dict, err := getTranslationDict(p.language); err == nil {
 		if str, ok := dict[key]; ok {
@@ -64,9 +69,4 @@ func (p *Printer) Plural(key string, n int, args ...interface{}) string {
 	}
 
 	return key
-}
-
-// NewPrinter creates a new Printer.
-func NewPrinter(language string) *Printer {
-	return &Printer{language}
 }
