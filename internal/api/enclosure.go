@@ -7,6 +7,7 @@ import (
 	json_parser "encoding/json"
 	"net/http"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/http/request"
 	"miniflux.app/v2/internal/http/response/json"
 	"miniflux.app/v2/internal/model"
@@ -33,7 +34,7 @@ func (h *handler) getEnclosureByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	enclosure.ProxifyEnclosureURL(h.router)
+	enclosure.ProxifyEnclosureURL(h.router, config.Opts.MediaProxyMode(), config.Opts.MediaProxyResourceTypes())
 
 	json.OK(w, r, enclosure)
 }
