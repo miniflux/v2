@@ -589,3 +589,145 @@ func TestProxyFilterVideoPosterOnce(t *testing.T) {
 		t.Errorf(`Not expected output: got %s`, output)
 	}
 }
+
+func TestShouldProxifyURLWithMimeType(t *testing.T) {
+	testCases := []struct {
+		name                    string
+		mediaURL                string
+		mediaMimeType           string
+		mediaProxyOption        string
+		mediaProxyResourceTypes []string
+		expected                bool
+	}{
+		{
+			name:                    "Empty URL should not be proxified",
+			mediaURL:                "",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                false,
+		},
+		{
+			name:                    "Data URL should not be proxified",
+			mediaURL:                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+			mediaMimeType:           "image/png",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                false,
+		},
+		{
+			name:                    "HTTP URL with all mode and matching MIME type should be proxified",
+			mediaURL:                "http://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                true,
+		},
+		{
+			name:                    "HTTPS URL with all mode and matching MIME type should be proxified",
+			mediaURL:                "https://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                true,
+		},
+		{
+			name:                    "HTTP URL with http-only mode and matching MIME type should be proxified",
+			mediaURL:                "http://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "http-only",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                true,
+		},
+		{
+			name:                    "HTTPS URL with http-only mode should not be proxified",
+			mediaURL:                "https://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "http-only",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                false,
+		},
+		{
+			name:                    "URL with none mode should not be proxified",
+			mediaURL:                "http://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "none",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                false,
+		},
+		{
+			name:                    "URL with matching MIME type should be proxified",
+			mediaURL:                "http://example.com/video.mp4",
+			mediaMimeType:           "video/mp4",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"video"},
+			expected:                true,
+		},
+		{
+			name:                    "URL with non-matching MIME type should not be proxified",
+			mediaURL:                "http://example.com/video.mp4",
+			mediaMimeType:           "video/mp4",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                false,
+		},
+		{
+			name:                    "URL with multiple resource types and matching MIME type should be proxified",
+			mediaURL:                "http://example.com/audio.mp3",
+			mediaMimeType:           "audio/mp3",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image", "audio", "video"},
+			expected:                true,
+		},
+		{
+			name:                    "URL with multiple resource types but non-matching MIME type should not be proxified",
+			mediaURL:                "http://example.com/document.pdf",
+			mediaMimeType:           "application/pdf",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image", "audio", "video"},
+			expected:                false,
+		},
+		{
+			name:                    "URL with empty resource types should not be proxified",
+			mediaURL:                "http://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{},
+			expected:                false,
+		},
+		{
+			name:                    "URL with partial MIME type match should be proxified",
+			mediaURL:                "http://example.com/image.jpg",
+			mediaMimeType:           "image/jpeg",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"image"},
+			expected:                true,
+		},
+		{
+			name:                    "URL with audio MIME type and audio resource type should be proxified",
+			mediaURL:                "http://example.com/song.ogg",
+			mediaMimeType:           "audio/ogg",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"audio"},
+			expected:                true,
+		},
+		{
+			name:                    "URL with video MIME type and video resource type should be proxified",
+			mediaURL:                "http://example.com/movie.webm",
+			mediaMimeType:           "video/webm",
+			mediaProxyOption:        "all",
+			mediaProxyResourceTypes: []string{"video"},
+			expected:                true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := ShouldProxifyURLWithMimeType(tc.mediaURL, tc.mediaMimeType, tc.mediaProxyOption, tc.mediaProxyResourceTypes)
+			if result != tc.expected {
+				t.Errorf("Expected %v, got %v for URL: %s, MIME type: %s, proxy option: %s, resource types: %v",
+					tc.expected, result, tc.mediaURL, tc.mediaMimeType, tc.mediaProxyOption, tc.mediaProxyResourceTypes)
+			}
+		})
+	}
+}

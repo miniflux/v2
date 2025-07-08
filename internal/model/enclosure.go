@@ -7,9 +7,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"miniflux.app/v2/internal/config"
+
 	"miniflux.app/v2/internal/mediaproxy"
-	"miniflux.app/v2/internal/urllib"
 )
 
 // Enclosure represents an attachment.
@@ -52,6 +51,13 @@ func (e *Enclosure) IsImage() bool {
 	return strings.HasSuffix(mediaURL, ".jpg") || strings.HasSuffix(mediaURL, ".jpeg") || strings.HasSuffix(mediaURL, ".png") || strings.HasSuffix(mediaURL, ".gif")
 }
 
+// ProxifyEnclosureURL modifies the enclosure URL to use the media proxy if necessary.
+func (e *Enclosure) ProxifyEnclosureURL(router *mux.Router, mediaProxyOption string, mediaProxyResourceTypes []string) {
+	if mediaproxy.ShouldProxifyURLWithMimeType(e.URL, e.MimeType, mediaProxyOption, mediaProxyResourceTypes) {
+		e.URL = mediaproxy.ProxifyAbsoluteURL(router, e.URL)
+	}
+}
+
 // EnclosureList represents a list of attachments.
 type EnclosureList []*Enclosure
 
@@ -77,31 +83,8 @@ func (el EnclosureList) ContainsAudioOrVideo() bool {
 	return false
 }
 
-func (el EnclosureList) ProxifyEnclosureURL(router *mux.Router) {
-	proxyOption := config.Opts.MediaProxyMode()
-
-	if proxyOption != "none" {
-		for i := range el {
-			if urllib.IsHTTPS(el[i].URL) {
-				proxifyAbsoluteURLIfMimeType(el[i], router)
-			}
-		}
-	}
-}
-
-func (e *Enclosure) ProxifyEnclosureURL(router *mux.Router) {
-	proxyOption := config.Opts.MediaProxyMode()
-
-	if proxyOption == "all" || proxyOption != "none" && !urllib.IsHTTPS(e.URL) {
-		proxifyAbsoluteURLIfMimeType(e, router)
-	}
-}
-
-func proxifyAbsoluteURLIfMimeType(e *Enclosure, router *mux.Router) {
-	for _, mediaType := range config.Opts.MediaProxyResourceTypes() {
-		if strings.HasPrefix(e.MimeType, mediaType+"/") {
-			e.URL = mediaproxy.ProxifyAbsoluteURL(router, e.URL)
-			break
-		}
+func (el EnclosureList) ProxifyEnclosureURL(router *mux.Router, mediaProxyOption string, mediaProxyResourceTypes []string) {
+	for _, enclosure := range el {
+		enclosure.ProxifyEnclosureURL(router, mediaProxyOption, mediaProxyResourceTypes)
 	}
 }
