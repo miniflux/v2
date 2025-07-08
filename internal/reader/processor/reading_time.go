@@ -43,7 +43,7 @@ func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
 
 	ret := 0
 	if isoDate {
-		parsedDuration, err := parseISO8601(duration)
+		parsedDuration, err := parseISO8601Duration(duration)
 		if err != nil {
 			return 0, fmt.Errorf("unable to parse iso duration %s: %v", duration, err)
 		}

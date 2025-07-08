@@ -157,6 +157,10 @@ func (j *JSONAdapter) BuildFeed(baseURL string) *model.Feed {
 			}
 		}
 
+		// Sort and deduplicate tags.
+		slices.Sort(entry.Tags)
+		entry.Tags = slices.Compact(entry.Tags)
+
 		// Generate a hash for the entry.
 		for _, value := range []string{item.ID, item.URL, item.ContentText + item.ContentHTML + item.Summary} {
 			value = strings.TrimSpace(value)

@@ -33,8 +33,11 @@ func TestParser(t *testing.T) {
 }
 
 func TestLoadCatalog(t *testing.T) {
-	if err := LoadCatalogMessages(); err != nil {
-		t.Fatal(err)
+	for language := range AvailableLanguages {
+		_, err := loadTranslationFile(language)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 

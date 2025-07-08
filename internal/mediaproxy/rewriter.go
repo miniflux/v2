@@ -41,7 +41,7 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 		case "image":
 			doc.Find("img, picture source").Each(func(i int, img *goquery.Selection) {
 				if srcAttrValue, ok := img.Attr("src"); ok {
-					if shouldProxy(srcAttrValue, proxyOption) {
+					if shouldProxifyURL(srcAttrValue, proxyOption) {
 						img.SetAttr("src", proxifyFunction(router, srcAttrValue))
 					}
 				}
@@ -54,7 +54,7 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 			if !slices.Contains(config.Opts.MediaProxyResourceTypes(), "video") {
 				doc.Find("video").Each(func(i int, video *goquery.Selection) {
 					if posterAttrValue, ok := video.Attr("poster"); ok {
-						if shouldProxy(posterAttrValue, proxyOption) {
+						if shouldProxifyURL(posterAttrValue, proxyOption) {
 							video.SetAttr("poster", proxifyFunction(router, posterAttrValue))
 						}
 					}
@@ -64,7 +64,7 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 		case "audio":
 			doc.Find("audio, audio source").Each(func(i int, audio *goquery.Selection) {
 				if srcAttrValue, ok := audio.Attr("src"); ok {
-					if shouldProxy(srcAttrValue, proxyOption) {
+					if shouldProxifyURL(srcAttrValue, proxyOption) {
 						audio.SetAttr("src", proxifyFunction(router, srcAttrValue))
 					}
 				}
@@ -73,13 +73,13 @@ func genericProxyRewriter(router *mux.Router, proxifyFunction urlProxyRewriter, 
 		case "video":
 			doc.Find("video, video source").Each(func(i int, video *goquery.Selection) {
 				if srcAttrValue, ok := video.Attr("src"); ok {
-					if shouldProxy(srcAttrValue, proxyOption) {
+					if shouldProxifyURL(srcAttrValue, proxyOption) {
 						video.SetAttr("src", proxifyFunction(router, srcAttrValue))
 					}
 				}
 
 				if posterAttrValue, ok := video.Attr("poster"); ok {
-					if shouldProxy(posterAttrValue, proxyOption) {
+					if shouldProxifyURL(posterAttrValue, proxyOption) {
 						video.SetAttr("poster", proxifyFunction(router, posterAttrValue))
 					}
 				}
@@ -99,7 +99,7 @@ func proxifySourceSet(element *goquery.Selection, router *mux.Router, proxifyFun
 	imageCandidates := sanitizer.ParseSrcSetAttribute(srcsetAttrValue)
 
 	for _, imageCandidate := range imageCandidates {
-		if shouldProxy(imageCandidate.ImageURL, proxyOption) {
+		if shouldProxifyURL(imageCandidate.ImageURL, proxyOption) {
 			imageCandidate.ImageURL = proxifyFunction(router, imageCandidate.ImageURL)
 		}
 	}
@@ -107,7 +107,33 @@ func proxifySourceSet(element *goquery.Selection, router *mux.Router, proxifyFun
 	element.SetAttr("srcset", imageCandidates.String())
 }
 
-func shouldProxy(attrValue, proxyOption string) bool {
-	return !strings.HasPrefix(attrValue, "data:") &&
-		(proxyOption == "all" || !urllib.IsHTTPS(attrValue))
+// shouldProxifyURL checks if the media URL should be proxified based on the media proxy option and URL scheme.
+func shouldProxifyURL(mediaURL, mediaProxyOption string) bool {
+	switch {
+	case mediaURL == "":
+		return false
+	case strings.HasPrefix(mediaURL, "data:"):
+		return false
+	case mediaProxyOption == "all":
+		return true
+	case mediaProxyOption != "none" && !urllib.IsHTTPS(mediaURL):
+		return true
+	default:
+		return false
+	}
+}
+
+// ShouldProxifyURLWithMimeType checks if the media URL should be proxified based on the media proxy option, URL scheme, and MIME type.
+func ShouldProxifyURLWithMimeType(mediaURL, mediaMimeType, mediaProxyOption string, mediaProxyResourceTypes []string) bool {
+	if !shouldProxifyURL(mediaURL, mediaProxyOption) {
+		return false
+	}
+
+	for _, mediaType := range mediaProxyResourceTypes {
+		if strings.HasPrefix(mediaMimeType, mediaType+"/") {
+			return true
+		}
+	}
+
+	return false
 }

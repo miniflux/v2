@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 
-type translationDict map[string]interface{}
+type translationDict map[string]any
 type catalog map[string]translationDict
 
 var defaultCatalog = make(catalog, len(AvailableLanguages))
@@ -17,7 +17,7 @@ var defaultCatalog = make(catalog, len(AvailableLanguages))
 //go:embed translations/*.json
 var translationFiles embed.FS
 
-func GetTranslationDict(language string) (translationDict, error) {
+func getTranslationDict(language string) (translationDict, error) {
 	if _, ok := defaultCatalog[language]; !ok {
 		var err error
 		if defaultCatalog[language], err = loadTranslationFile(language); err != nil {
@@ -27,21 +27,8 @@ func GetTranslationDict(language string) (translationDict, error) {
 	return defaultCatalog[language], nil
 }
 
-// LoadCatalogMessages loads and parses all translations encoded in JSON.
-func LoadCatalogMessages() error {
-	var err error
-
-	for language := range AvailableLanguages {
-		defaultCatalog[language], err = loadTranslationFile(language)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func loadTranslationFile(language string) (translationDict, error) {
-	translationFileData, err := translationFiles.ReadFile(fmt.Sprintf("translations/%s.json", language))
+	translationFileData, err := translationFiles.ReadFile("translations/" + language + ".json")
 	if err != nil {
 		return nil, err
 	}

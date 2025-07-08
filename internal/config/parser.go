@@ -16,20 +16,20 @@ import (
 	"strings"
 )
 
-// Parser handles configuration parsing.
-type Parser struct {
-	opts *Options
+// parser handles configuration parsing.
+type parser struct {
+	opts *options
 }
 
 // NewParser returns a new Parser.
-func NewParser() *Parser {
-	return &Parser{
+func NewParser() *parser {
+	return &parser{
 		opts: NewOptions(),
 	}
 }
 
 // ParseEnvironmentVariables loads configuration values from environment variables.
-func (p *Parser) ParseEnvironmentVariables() (*Options, error) {
+func (p *parser) ParseEnvironmentVariables() (*options, error) {
 	err := p.parseLines(os.Environ())
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (p *Parser) ParseEnvironmentVariables() (*Options, error) {
 }
 
 // ParseFile loads configuration values from a local file.
-func (p *Parser) ParseFile(filename string) (*Options, error) {
+func (p *parser) ParseFile(filename string) (*options, error) {
 	fp, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (p *Parser) ParseFile(filename string) (*Options, error) {
 	return p.opts, nil
 }
 
-func (p *Parser) parseFileContent(r io.Reader) (lines []string) {
+func (p *parser) parseFileContent(r io.Reader) (lines []string) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -63,7 +63,7 @@ func (p *Parser) parseFileContent(r io.Reader) (lines []string) {
 	return lines
 }
 
-func (p *Parser) parseLines(lines []string) (err error) {
+func (p *parser) parseLines(lines []string) (err error) {
 	var port string
 
 	for _, line := range lines {

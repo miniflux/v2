@@ -5,11 +5,9 @@ package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/url"
-	"regexp"
 	"strings"
 
 	"miniflux.app/v2/internal/config"
@@ -22,10 +20,6 @@ import (
 	"miniflux.app/v2/internal/urllib"
 
 	"github.com/PuerkitoBio/goquery"
-)
-
-var (
-	youtubeChannelRegex = regexp.MustCompile(`channel/(.*)$`)
 )
 
 type SubscriptionFinder struct {
@@ -300,8 +294,8 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeChannelPage(websiteURL 
 		return nil, nil
 	}
 
-	if matches := youtubeChannelRegex.FindStringSubmatch(decodedUrl.Path); len(matches) == 2 {
-		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?channel_id=%s`, matches[1])
+	if _, channelID, found := strings.Cut(decodedUrl.Path, "channel/"); found {
+		feedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID
 		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
 	}
 
@@ -321,7 +315,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubePlaylistPage(websiteURL
 
 	if (strings.HasPrefix(decodedUrl.Path, "/watch") && decodedUrl.Query().Has("list")) || strings.HasPrefix(decodedUrl.Path, "/playlist") {
 		playlistID := decodedUrl.Query().Get("list")
-		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?playlist_id=%s`, playlistID)
+		feedURL := "https://www.youtube.com/feeds/videos.xml?playlist_id=" + playlistID
 		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
 	}
 

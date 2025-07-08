@@ -6,53 +6,56 @@ package processor // import "miniflux.app/v2/internal/reader/processor"
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/html"
 )
 
-// TODO: use something less horrible than a regex to parse ISO 8601 durations.
+// parseISO8601Duration parses a subset of ISO8601 durations, mainly for youtube video.
+func parseISO8601Duration(duration string) (time.Duration, error) {
+	after, ok := strings.CutPrefix(duration, "PT")
+	if !ok {
+		return 0, errors.New("the period doesn't start with PT")
+	}
 
-var (
-	iso8601Regex = regexp.MustCompile(`^P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<week>\d+)W)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?$`)
-)
-
-func parseISO8601(from string) (time.Duration, error) {
-	var match []string
 	var d time.Duration
+	num := ""
 
-	if iso8601Regex.MatchString(from) {
-		match = iso8601Regex.FindStringSubmatch(from)
-	} else {
-		return 0, errors.New("processor: could not parse duration string")
-	}
+	for _, char := range after {
+		var val float64
+		var err error
 
-	for i, name := range iso8601Regex.SubexpNames() {
-		part := match[i]
-		if i == 0 || name == "" || part == "" {
-			continue
-		}
-
-		val, err := strconv.ParseInt(part, 10, 64)
-		if err != nil {
-			return 0, err
-		}
-
-		switch name {
-		case "hour":
+		switch char {
+		case 'Y', 'W', 'D':
+			return 0, fmt.Errorf("the '%c' specifier isn't supported", char)
+		case 'H':
+			if val, err = strconv.ParseFloat(num, 64); err != nil {
+				return 0, err
+			}
 			d += time.Duration(val) * time.Hour
-		case "minute":
+			num = ""
+		case 'M':
+			if val, err = strconv.ParseFloat(num, 64); err != nil {
+				return 0, err
+			}
 			d += time.Duration(val) * time.Minute
-		case "second":
+			num = ""
+		case 'S':
+			if val, err = strconv.ParseFloat(num, 64); err != nil {
+				return 0, err
+			}
 			d += time.Duration(val) * time.Second
+			num = ""
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.':
+			num += string(char)
+			continue
 		default:
-			return 0, fmt.Errorf("processor: unknown field %s", name)
+			return 0, errors.New("invalid character in the period")
 		}
 	}
-
 	return d, nil
 }
 
