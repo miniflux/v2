@@ -2842,3 +2842,32 @@ func TestFlushHistoryEndpoint(t *testing.T) {
 		t.Fatalf(`Invalid total, got %d`, removedEntries.Total)
 	}
 }
+func TestRemoveFeedAsRegularUser(t *testing.T) {
+	testConfig := newIntegrationTestConfig()
+	if !testConfig.isConfigured() {
+		t.Skip(skipIntegrationTestsMessage)
+	}
+
+	adminClient := miniflux.NewClient(testConfig.testBaseURL, testConfig.testAdminUsername, testConfig.testAdminPassword)
+	regularTestUser, err := adminClient.CreateUser(testConfig.genRandomUsername(), testConfig.testRegularPassword, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer adminClient.DeleteUser(regularTestUser.ID)
+
+	regularUserClient := miniflux.NewClient(testConfig.testBaseURL, regularTestUser.Username, testConfig.testRegularPassword)
+	feedID, err := regularUserClient.CreateFeed(&miniflux.FeedCreationRequest{
+		FeedURL: testConfig.testFeedURL,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := regularUserClient.DeleteFeed(feedID); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := regularUserClient.Feed(feedID); err == nil {
+		t.Errorf(`Got a feed (%d) even though it was deleted, was expecting an error instead.`, feedID)
+	}
+}
