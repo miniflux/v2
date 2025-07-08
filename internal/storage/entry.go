@@ -78,12 +78,20 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 			title=$1,
 			content=$2,
 			reading_time=$3,
-			document_vectors = setweight(to_tsvector($1), 'A') || setweight(to_tsvector($2), 'B')
+			document_vectors = setweight(to_tsvector($4), 'A') || setweight(to_tsvector($5), 'B')
 		WHERE
-			id=$4 AND user_id=$5
+			id=$6 AND user_id=$7
 	`
 
-	if _, err := s.db.Exec(query, truncateString(entry.Title), truncateString(entry.Content), entry.ReadingTime, entry.ID, entry.UserID); err != nil {
+	if _, err := s.db.Exec(
+		query,
+		entry.Title,
+		entry.Content,
+		entry.ReadingTime,
+		truncateString(entry.Title),
+		truncateString(entry.Content),
+		entry.ID,
+		entry.UserID); err != nil {
 		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
 	}
 
@@ -122,24 +130,26 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 				$9,
 				$10,
 				now(),
-				setweight(to_tsvector($1), 'A') || setweight(to_tsvector($6), 'B'),
-				$11
+				setweight(to_tsvector($11), 'A') || setweight(to_tsvector($12), 'B'),
+				$13
 			)
 		RETURNING
 			id, status, created_at, changed_at
 	`
 	err := tx.QueryRow(
 		query,
-		truncateString(entry.Title),
+		entry.Title,
 		entry.Hash,
 		entry.URL,
 		entry.CommentsURL,
 		entry.Date,
-		truncateString(entry.Content),
+		entry.Content,
 		entry.Author,
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
+		truncateString(entry.Title),
+		truncateString(entry.Content),
 		pq.Array(entry.Tags),
 	).Scan(
 		&entry.ID,
@@ -178,21 +188,23 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 			content=$4,
 			author=$5,
 			reading_time=$6,
-			document_vectors = setweight(to_tsvector($1), 'A') || setweight(to_tsvector($4), 'B'),
-			tags=$10
+			document_vectors = setweight(to_tsvector($7), 'A') || setweight(to_tsvector($8), 'B'),
+			tags=$12
 		WHERE
-			user_id=$7 AND feed_id=$8 AND hash=$9
+			user_id=$9 AND feed_id=$10 AND hash=$11
 		RETURNING
 			id
 	`
 	err := tx.QueryRow(
 		query,
-		truncateString(entry.Title),
+		entry.Title,
 		entry.URL,
 		entry.CommentsURL,
-		truncateString(entry.Content),
+		entry.Content,
 		entry.Author,
 		entry.ReadingTime,
+		truncateString(entry.Title),
+		truncateString(entry.Content),
 		entry.UserID,
 		entry.FeedID,
 		entry.Hash,
