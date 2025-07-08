@@ -7,6 +7,7 @@ import (
 	"html"
 	"log/slog"
 	"path"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -124,31 +125,13 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		}
 
 		// Populate entry categories.
-		for _, tag := range item.Categories {
-			if tag != "" {
-				entry.Tags = append(entry.Tags, tag)
-			}
-		}
-		for _, tag := range item.MediaCategories.Labels() {
-			if tag != "" {
-				entry.Tags = append(entry.Tags, tag)
-			}
-		}
+		entry.Tags = findEntryTags(&item)
 		if len(entry.Tags) == 0 {
-			for _, tag := range r.rss.Channel.Categories {
-				if tag != "" {
-					entry.Tags = append(entry.Tags, tag)
-				}
-			}
-			for _, tag := range r.rss.Channel.GetItunesCategories() {
-				if tag != "" {
-					entry.Tags = append(entry.Tags, tag)
-				}
-			}
-			if r.rss.Channel.GooglePlayCategory.Text != "" {
-				entry.Tags = append(entry.Tags, r.rss.Channel.GooglePlayCategory.Text)
-			}
+			entry.Tags = findFeedTags(&r.rss.Channel)
 		}
+		// Sort and deduplicate tags.
+		slices.Sort(entry.Tags)
+		entry.Tags = slices.Compact(entry.Tags)
 
 		feed.Entries = append(feed.Entries, entry)
 	}
@@ -174,6 +157,30 @@ func findFeedAuthor(rssChannel *RSSChannel) string {
 	}
 
 	return strings.TrimSpace(sanitizer.StripTags(author))
+}
+
+func findFeedTags(rssChannel *RSSChannel) []string {
+	tags := make([]string, 0)
+
+	for _, tag := range rssChannel.Categories {
+		tag = strings.TrimSpace(tag)
+		if tag != "" {
+			tags = append(tags, tag)
+		}
+	}
+
+	for _, tag := range rssChannel.GetItunesCategories() {
+		tag = strings.TrimSpace(tag)
+		if tag != "" {
+			tags = append(tags, tag)
+		}
+	}
+
+	if tag := strings.TrimSpace(rssChannel.GooglePlayCategory.Text); tag != "" {
+		tags = append(tags, tag)
+	}
+
+	return tags
 }
 
 func findEntryTitle(rssItem *RSSItem) string {
@@ -268,6 +275,26 @@ func findEntryAuthor(rssItem *RSSItem) string {
 	}
 
 	return strings.TrimSpace(sanitizer.StripTags(author))
+}
+
+func findEntryTags(rssItem *RSSItem) []string {
+	tags := make([]string, 0)
+
+	for _, tag := range rssItem.Categories {
+		tag = strings.TrimSpace(tag)
+		if tag != "" {
+			tags = append(tags, tag)
+		}
+	}
+
+	for _, tag := range rssItem.MediaCategories.Labels() {
+		tag = strings.TrimSpace(tag)
+		if tag != "" {
+			tags = append(tags, tag)
+		}
+	}
+
+	return tags
 }
 
 func findEntryEnclosures(rssItem *RSSItem, siteURL string) model.EnclosureList {

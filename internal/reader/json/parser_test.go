@@ -790,7 +790,9 @@ func TestParseItemTags(t *testing.T) {
 				"tags": [
 					" tag 1",
 					" ",
-					"tag 2"
+					"tag 2",
+					"tag 2",
+					"aaa"
 				]
 			}
 		]
@@ -801,14 +803,19 @@ func TestParseItemTags(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(feed.Entries[0].Tags) != 2 {
+	if len(feed.Entries) != 1 {
+		t.Errorf("Incorrect number of entries, got: %d", len(feed.Entries))
+	}
+
+	if len(feed.Entries[0].Tags) != 3 {
 		t.Errorf("Incorrect number of Tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := "tag 2"
-	result := feed.Entries[0].Tags[1]
-	if result != expected {
-		t.Errorf("Incorrect entry tag, got %q instead of %q", result, expected)
+	expected := []string{"aaa", "tag 1", "tag 2"}
+	for i, tag := range feed.Entries[0].Tags {
+		if tag != expected[i] {
+			t.Errorf("Incorrect entry tag, got %q instead of %q", tag, expected[i])
+		}
 	}
 }
 

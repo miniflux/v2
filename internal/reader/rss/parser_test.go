@@ -1971,6 +1971,9 @@ func TestParseEntryWithCategories(t *testing.T) {
 				<link>https://example.org/item</link>
 				<category>Category 1</category>
 				<category><![CDATA[Category 2]]></category>
+				<category>Category 2</category>
+				<category>Category 0</category>
+				<category>   </category>
 			</item>
 		</channel>
 		</rss>`
@@ -1980,11 +1983,11 @@ func TestParseEntryWithCategories(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(feed.Entries[0].Tags) != 2 {
+	if len(feed.Entries[0].Tags) != 3 {
 		t.Fatalf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := []string{"Category 1", "Category 2"}
+	expected := []string{"Category 0", "Category 1", "Category 2"}
 	result := feed.Entries[0].Tags
 
 	for i, tag := range result {
@@ -2022,7 +2025,7 @@ func TestParseFeedWithItunesCategories(t *testing.T) {
 		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := []string{"Society & Culture", "Documentary", "Health", "Mental Health"}
+	expected := []string{"Documentary", "Health", "Mental Health", "Society & Culture"}
 	result := feed.Entries[0].Tags
 
 	for i, tag := range result {
@@ -2091,12 +2094,12 @@ func TestParseEntryWithMediaCategories(t *testing.T) {
 		t.Errorf("Incorrect number of tags, got: %d", len(feed.Entries[0].Tags))
 	}
 
-	expected := []string{"Visual Art", "Ace Ventura - Pet Detective"}
+	expected := []string{"Ace Ventura - Pet Detective", "Visual Art"}
 	result := feed.Entries[0].Tags
 
 	for i, tag := range result {
 		if tag != expected[i] {
-			t.Errorf("Incorrect tag, got: %q", tag)
+			t.Errorf("Incorrect entry tag, got %q instead of %q", tag, expected[i])
 		}
 	}
 }
