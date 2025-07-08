@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log/slog"
 	"sort"
 
 	"miniflux.app/v2/internal/config"
@@ -458,29 +457,9 @@ func (s *Storage) UpdateFeedError(feed *model.Feed) (err error) {
 // RemoveFeed removes a feed and all entries.
 // This operation can takes time if the feed has lot of entries.
 func (s *Storage) RemoveFeed(userID, feedID int64) error {
-	rows, err := s.db.Query(`SELECT id FROM entries WHERE user_id=$1 AND feed_id=$2`, userID, feedID)
-	if err != nil {
-		return fmt.Errorf(`store: unable to get user feed entries: %v`, err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var entryID int64
-		if err := rows.Scan(&entryID); err != nil {
-			return fmt.Errorf(`store: unable to read user feed entry ID: %v`, err)
-		}
-
-		slog.Debug("Deleting entry",
-			slog.Int64("user_id", userID),
-			slog.Int64("feed_id", feedID),
-			slog.Int64("entry_id", entryID),
-		)
-
-		if _, err := s.db.Exec(`DELETE FROM entries WHERE id=$1 AND user_id=$2`, entryID, userID); err != nil {
-			return fmt.Errorf(`store: unable to delete user feed entries #%d: %v`, entryID, err)
-		}
-	}
-
+	// Since entries have a `references` on `feeds(id)` with an `on delete cascade`,
+	// we can simply remove the correct `feeds(id)` and postgresql will take care of deleting the
+	// corresponding entries.
 	if _, err := s.db.Exec(`DELETE FROM feeds WHERE id=$1 AND user_id=$2`, feedID, userID); err != nil {
 		return fmt.Errorf(`store: unable to delete feed #%d: %v`, feedID, err)
 	}
