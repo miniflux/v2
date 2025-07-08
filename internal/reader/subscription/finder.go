@@ -5,7 +5,6 @@ package subscription // import "miniflux.app/v2/internal/reader/subscription"
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log/slog"
 	"net/url"
@@ -295,8 +294,8 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubeChannelPage(websiteURL 
 		return nil, nil
 	}
 
-	if _, after, found := strings.Cut(decodedUrl.Path, "channel/"); found {
-		feedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=" + after
+	if _, channelID, found := strings.Cut(decodedUrl.Path, "channel/"); found {
+		feedURL := "https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID
 		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
 	}
 
@@ -316,7 +315,7 @@ func (f *SubscriptionFinder) FindSubscriptionsFromYouTubePlaylistPage(websiteURL
 
 	if (strings.HasPrefix(decodedUrl.Path, "/watch") && decodedUrl.Query().Has("list")) || strings.HasPrefix(decodedUrl.Path, "/playlist") {
 		playlistID := decodedUrl.Query().Get("list")
-		feedURL := fmt.Sprintf(`https://www.youtube.com/feeds/videos.xml?playlist_id=%s`, playlistID)
+		feedURL := "https://www.youtube.com/feeds/videos.xml?playlist_id=" + playlistID
 		return Subscriptions{NewSubscription(websiteURL, feedURL, parser.FormatAtom)}, nil
 	}
 
