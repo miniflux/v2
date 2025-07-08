@@ -137,6 +137,8 @@ func (a *Atom10Adapter) populateEntries(siteURL string) model.Entries {
 		if len(categories) == 0 {
 			categories = a.atomFeed.Categories.CategoryNames()
 		}
+
+		// Sort and deduplicate categories.
 		sort.Strings(categories)
 		entry.Tags = slices.Compact(categories)
 
