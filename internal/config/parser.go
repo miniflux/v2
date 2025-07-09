@@ -66,10 +66,12 @@ func (p *parser) parseFileContent(r io.Reader) (lines []string) {
 func (p *parser) parseLines(lines []string) (err error) {
 	var port string
 
-	for _, line := range lines {
-		fields := strings.SplitN(line, "=", 2)
-		key := strings.TrimSpace(fields[0])
-		value := strings.TrimSpace(fields[1])
+	for lineNum, line := range lines {
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			return fmt.Errorf("config: unable to parse configuration, invalid format on line %d", lineNum)
+		}
+		key, value = strings.TrimSpace(key), strings.TrimSpace(value)
 
 		switch key {
 		case "LOG_FILE":
@@ -275,9 +277,7 @@ func parseBaseURL(value string) (string, string, string, error) {
 		return defaultBaseURL, defaultRootURL, "", nil
 	}
 
-	if value[len(value)-1:] == "/" {
-		value = value[:len(value)-1]
-	}
+	value = strings.TrimSuffix(value, "/")
 
 	parsedURL, err := url.Parse(value)
 	if err != nil {
@@ -333,19 +333,14 @@ func parseStringList(value string, fallback []string) []string {
 	}
 
 	var strList []string
-	strMap := make(map[string]bool)
+	present := make(map[string]bool)
 
-	items := strings.Split(value, ",")
-	for _, item := range items {
-		itemValue := strings.TrimSpace(item)
-
-		if itemValue == "" {
-			continue
-		}
-
-		if _, found := strMap[itemValue]; !found {
-			strMap[itemValue] = true
-			strList = append(strList, itemValue)
+	for item := range strings.SplitSeq(value, ",") {
+		if itemValue := strings.TrimSpace(item); itemValue != "" {
+			if !present[itemValue] {
+				present[itemValue] = true
+				strList = append(strList, itemValue)
+			}
 		}
 	}
 
