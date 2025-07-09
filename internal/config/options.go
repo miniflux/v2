@@ -5,8 +5,9 @@ package config // import "miniflux.app/v2/internal/config"
 
 import (
 	"fmt"
+	"maps"
 	"net/url"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 
@@ -782,14 +783,9 @@ func (o *options) SortedOptions(redactSecret bool) []*option {
 		"WEBAUTHN":                               o.webAuthn,
 	}
 
-	keys := make([]string, 0, len(keyValues))
-	for key := range keyValues {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-
-	var sortedOptions []*option
-	for _, key := range keys {
+	sortedKeys := slices.Sorted(maps.Keys(keyValues))
+	var sortedOptions = make([]*option, 0, len(sortedKeys))
+	for _, key := range sortedKeys {
 		sortedOptions = append(sortedOptions, &option{Key: key, Value: keyValues[key]})
 	}
 	return sortedOptions
