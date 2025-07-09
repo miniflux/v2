@@ -15,7 +15,7 @@ require (
 	golang.org/x/image v0.28.0
 	golang.org/x/net v0.41.0
 	golang.org/x/oauth2 v0.30.0
-	golang.org/x/term v0.32.0
+	golang.org/x/term v0.33.0
 )
 
 require (
@@ -38,7 +38,7 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/tdewolff/parse/v2 v2.8.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 )
