@@ -86,8 +86,8 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 
 	document.Find("script,style").Remove()
 
-	transformMisusedDivsIntoParagraphs(document)
 	removeUnlikelyCandidates(document)
+	transformMisusedDivsIntoParagraphs(document)
 
 	candidates := getCandidates(document)
 	topCandidate := getTopCandidate(document, candidates)
