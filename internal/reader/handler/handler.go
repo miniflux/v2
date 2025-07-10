@@ -132,7 +132,7 @@ func CreateFeed(store *storage.Storage, userID int64, feedCreationRequest *model
 		return nil, localizedError
 	}
 
-	responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
+	responseBody, localizedError := responseHandler.ReadBody()
 	if localizedError != nil {
 		slog.Warn("Unable to fetch feed", slog.String("feed_url", feedCreationRequest.FeedURL), slog.Any("error", localizedError.Error()))
 		return nil, localizedError
@@ -290,7 +290,7 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 			slog.String("last_modified_header", originalFeed.LastModifiedHeader),
 		)
 
-		responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
+		responseBody, localizedError := responseHandler.ReadBody()
 		if localizedError != nil {
 			slog.Warn("Unable to fetch feed", slog.String("feed_url", originalFeed.FeedURL), slog.Any("error", localizedError.Error()))
 			return localizedError

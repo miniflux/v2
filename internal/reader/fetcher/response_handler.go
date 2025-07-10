@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/locale"
 )
 
@@ -132,7 +133,7 @@ func (r *ResponseHandler) Close() {
 	}
 }
 
-func (r *ResponseHandler) getReader(maxBodySize int64) io.ReadCloser {
+func (r *ResponseHandler) getReader() io.ReadCloser {
 	contentEncoding := strings.ToLower(r.httpResponse.Header.Get("Content-Encoding"))
 	slog.Debug("Request response",
 		slog.String("effective_url", r.EffectiveURL()),
@@ -148,15 +149,15 @@ func (r *ResponseHandler) getReader(maxBodySize int64) io.ReadCloser {
 	case "gzip":
 		reader = NewGzipReadCloser(r.httpResponse.Body)
 	}
-	return http.MaxBytesReader(nil, reader, maxBodySize)
+	return http.MaxBytesReader(nil, reader, config.Opts.HTTPClientMaxBodySize())
 }
 
-func (r *ResponseHandler) Body(maxBodySize int64) io.ReadCloser {
-	return r.getReader(maxBodySize)
+func (r *ResponseHandler) Body() io.ReadCloser {
+	return r.getReader()
 }
 
-func (r *ResponseHandler) ReadBody(maxBodySize int64) ([]byte, *locale.LocalizedErrorWrapper) {
-	limitedReader := r.getReader(maxBodySize)
+func (r *ResponseHandler) ReadBody() ([]byte, *locale.LocalizedErrorWrapper) {
+	limitedReader := r.getReader()
 
 	buffer, err := io.ReadAll(limitedReader)
 	if err != nil && err != io.EOF {

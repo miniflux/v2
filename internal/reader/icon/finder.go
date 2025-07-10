@@ -18,7 +18,6 @@ import (
 	"slices"
 	"strings"
 
-	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/crypto"
 	"miniflux.app/v2/internal/model"
 	"miniflux.app/v2/internal/reader/encoding"
@@ -120,7 +119,7 @@ func (f *IconFinder) FetchIconsFromHTMLDocument() (*model.Icon, error) {
 	}
 
 	iconURLs, err := findIconURLsFromHTMLDocument(
-		responseHandler.Body(config.Opts.HTTPClientMaxBodySize()),
+		responseHandler.Body(),
 		responseHandler.ContentType(),
 	)
 	if err != nil {
@@ -176,7 +175,7 @@ func (f *IconFinder) DownloadIcon(iconURL string) (*model.Icon, error) {
 		return nil, fmt.Errorf("icon: unable to download website icon: %w", localizedError.Error())
 	}
 
-	responseBody, localizedError := responseHandler.ReadBody(config.Opts.HTTPClientMaxBodySize())
+	responseBody, localizedError := responseHandler.ReadBody()
 	if localizedError != nil {
 		return nil, fmt.Errorf("icon: unable to read response body: %w", localizedError.Error())
 	}

@@ -108,7 +108,7 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if impErr := opml.NewHandler(h.store).Import(user.ID, responseHandler.Body(config.Opts.HTTPClientMaxBodySize())); impErr != nil {
+	if impErr := opml.NewHandler(h.store).Import(user.ID, responseHandler.Body()); impErr != nil {
 		view.Set("errorMessage", impErr)
 		html.OK(w, r, view.Render("import"))
 		return

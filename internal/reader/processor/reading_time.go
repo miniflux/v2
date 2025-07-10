@@ -31,7 +31,7 @@ func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
 		return 0, localizedError.Error()
 	}
 
-	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+	doc, docErr := goquery.NewDocumentFromReader(responseHandler.Body())
 	if docErr != nil {
 		return 0, docErr
 	}

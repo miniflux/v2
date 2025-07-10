@@ -64,7 +64,7 @@ func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 	}
 
 	var result map[string]any
-	doc := json.NewDecoder(responseHandler.Body(config.Opts.HTTPClientMaxBodySize()))
+	doc := json.NewDecoder(responseHandler.Body())
 	if docErr := doc.Decode(&result); docErr != nil {
 		return 0, fmt.Errorf("failed to decode API response: %v", docErr)
 	}

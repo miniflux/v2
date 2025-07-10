@@ -112,7 +112,7 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 			} `json:"contentDetails"`
 		} `json:"items"`
 	}{}
-	if err := json.NewDecoder(responseHandler.Body(config.Opts.HTTPClientMaxBodySize())).Decode(&videos); err != nil {
+	if err := json.NewDecoder(responseHandler.Body()).Decode(&videos); err != nil {
 		return nil, fmt.Errorf("youtube: unable to decode JSON: %v", err)
 	}
 
