@@ -56,7 +56,7 @@ func TestIsModified(t *testing.T) {
 			header := http.Header{}
 			header.Add("Last-Modified", tc.LastModified)
 			header.Add("ETag", tc.ETag)
-			rh := ResponseHandler{
+			rh := responseHandler{
 				httpResponse: &http.Response{
 					StatusCode: tc.Status,
 					Header:     header,
@@ -91,7 +91,7 @@ func TestRetryDelay(t *testing.T) {
 		t.Run(name, func(tt *testing.T) {
 			header := http.Header{}
 			header.Add("Retry-After", tc.RetryAfterHeader)
-			rh := ResponseHandler{
+			rh := responseHandler{
 				httpResponse: &http.Response{
 					Header: header,
 				},
@@ -125,7 +125,7 @@ func TestExpiresInMinutes(t *testing.T) {
 		t.Run(name, func(tt *testing.T) {
 			header := http.Header{}
 			header.Add("Expires", tc.ExpiresHeader)
-			rh := ResponseHandler{
+			rh := responseHandler{
 				httpResponse: &http.Response{
 					Header: header,
 				},
@@ -163,7 +163,7 @@ func TestCacheControlMaxAgeInMinutes(t *testing.T) {
 		t.Run(name, func(tt *testing.T) {
 			header := http.Header{}
 			header.Add("Cache-Control", tc.CacheControlHeader)
-			rh := ResponseHandler{
+			rh := responseHandler{
 				httpResponse: &http.Response{
 					Header: header,
 				},

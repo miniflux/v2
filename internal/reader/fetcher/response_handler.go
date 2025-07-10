@@ -22,24 +22,24 @@ import (
 	"miniflux.app/v2/internal/locale"
 )
 
-type ResponseHandler struct {
+type responseHandler struct {
 	httpResponse *http.Response
 	clientErr    error
 }
 
-func NewResponseHandler(httpResponse *http.Response, clientErr error) *ResponseHandler {
-	return &ResponseHandler{httpResponse: httpResponse, clientErr: clientErr}
+func NewResponseHandler(httpResponse *http.Response, clientErr error) *responseHandler {
+	return &responseHandler{httpResponse: httpResponse, clientErr: clientErr}
 }
 
-func (r *ResponseHandler) EffectiveURL() string {
+func (r *responseHandler) EffectiveURL() string {
 	return r.httpResponse.Request.URL.String()
 }
 
-func (r *ResponseHandler) ContentType() string {
+func (r *responseHandler) ContentType() string {
 	return r.httpResponse.Header.Get("Content-Type")
 }
 
-func (r *ResponseHandler) LastModified() string {
+func (r *responseHandler) LastModified() string {
 	// Ignore caching headers for feeds that do not want any cache.
 	if r.httpResponse.Header.Get("Expires") == "0" {
 		return ""
@@ -47,7 +47,7 @@ func (r *ResponseHandler) LastModified() string {
 	return r.httpResponse.Header.Get("Last-Modified")
 }
 
-func (r *ResponseHandler) ETag() string {
+func (r *responseHandler) ETag() string {
 	// Ignore caching headers for feeds that do not want any cache.
 	if r.httpResponse.Header.Get("Expires") == "0" {
 		return ""
@@ -55,7 +55,7 @@ func (r *ResponseHandler) ETag() string {
 	return r.httpResponse.Header.Get("ETag")
 }
 
-func (r *ResponseHandler) ExpiresInMinutes() int {
+func (r *responseHandler) ExpiresInMinutes() int {
 	expiresHeaderValue := r.httpResponse.Header.Get("Expires")
 	if expiresHeaderValue != "" {
 		t, err := time.Parse(time.RFC1123, expiresHeaderValue)
@@ -66,7 +66,7 @@ func (r *ResponseHandler) ExpiresInMinutes() int {
 	return 0
 }
 
-func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
+func (r *responseHandler) CacheControlMaxAgeInMinutes() int {
 	cacheControlHeaderValue := r.httpResponse.Header.Get("Cache-Control")
 	if cacheControlHeaderValue != "" {
 		for directive := range strings.SplitSeq(cacheControlHeaderValue, ",") {
@@ -82,7 +82,7 @@ func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
 	return 0
 }
 
-func (r *ResponseHandler) ParseRetryDelay() int {
+func (r *responseHandler) ParseRetryDelay() int {
 	retryAfterHeaderValue := r.httpResponse.Header.Get("Retry-After")
 	if retryAfterHeaderValue != "" {
 		// First, try to parse as an integer (number of seconds)
@@ -98,11 +98,11 @@ func (r *ResponseHandler) ParseRetryDelay() int {
 	return 0
 }
 
-func (r *ResponseHandler) IsRateLimited() bool {
+func (r *responseHandler) IsRateLimited() bool {
 	return r.httpResponse != nil && r.httpResponse.StatusCode == http.StatusTooManyRequests
 }
 
-func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bool {
+func (r *responseHandler) IsModified(lastEtagValue, lastModifiedValue string) bool {
 	if r.httpResponse.StatusCode == http.StatusNotModified {
 		return false
 	}
@@ -118,7 +118,7 @@ func (r *ResponseHandler) IsModified(lastEtagValue, lastModifiedValue string) bo
 	return true
 }
 
-func (r *ResponseHandler) IsRedirect() bool {
+func (r *responseHandler) IsRedirect() bool {
 	return r.httpResponse != nil &&
 		(r.httpResponse.StatusCode == http.StatusMovedPermanently ||
 			r.httpResponse.StatusCode == http.StatusFound ||
@@ -127,13 +127,13 @@ func (r *ResponseHandler) IsRedirect() bool {
 			r.httpResponse.StatusCode == http.StatusPermanentRedirect)
 }
 
-func (r *ResponseHandler) Close() {
+func (r *responseHandler) Close() {
 	if r.httpResponse != nil && r.httpResponse.Body != nil && r.clientErr == nil {
 		r.httpResponse.Body.Close()
 	}
 }
 
-func (r *ResponseHandler) getReader() io.ReadCloser {
+func (r *responseHandler) getReader() io.ReadCloser {
 	contentEncoding := strings.ToLower(r.httpResponse.Header.Get("Content-Encoding"))
 	slog.Debug("Request response",
 		slog.String("effective_url", r.EffectiveURL()),
@@ -152,11 +152,11 @@ func (r *ResponseHandler) getReader() io.ReadCloser {
 	return http.MaxBytesReader(nil, reader, config.Opts.HTTPClientMaxBodySize())
 }
 
-func (r *ResponseHandler) Body() io.ReadCloser {
+func (r *responseHandler) Body() io.ReadCloser {
 	return r.getReader()
 }
 
-func (r *ResponseHandler) ReadBody() ([]byte, *locale.LocalizedErrorWrapper) {
+func (r *responseHandler) ReadBody() ([]byte, *locale.LocalizedErrorWrapper) {
 	limitedReader := r.getReader()
 
 	buffer, err := io.ReadAll(limitedReader)
@@ -175,7 +175,7 @@ func (r *ResponseHandler) ReadBody() ([]byte, *locale.LocalizedErrorWrapper) {
 	return buffer, nil
 }
 
-func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
+func (r *responseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	if r.clientErr != nil {
 		switch {
 		case isSSLError(r.clientErr):
