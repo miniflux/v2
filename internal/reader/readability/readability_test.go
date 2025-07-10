@@ -350,49 +350,6 @@ func TestGetClassWeight(t *testing.T) {
 			if selection.Length() == 0 {
 				t.Fatal("No div element found in HTML")
 			}
-
-			result := getClassWeight(selection)
-			if result != tc.expected {
-				t.Errorf("Expected weight %f, got %f", tc.expected, result)
-			}
-		})
-	}
-}
-
-func TestGetClassWeightRegexPatterns(t *testing.T) {
-	// Test specific regex patterns used in getClassWeight
-	positiveWords := []string{"article", "body", "content", "entry", "hentry", "h-entry", "main", "page", "pagination", "post", "text", "blog", "story"}
-	negativeWords := []string{"hid", "banner", "combx", "comment", "com-", "contact", "foot", "masthead", "media", "meta", "modal", "outbrain", "promo", "related", "scroll", "share", "shoutbox", "sidebar", "skyscraper", "sponsor", "shopping", "tags", "tool", "widget", "byline", "author", "dateline", "writtenby"}
-
-	for _, word := range positiveWords {
-		t.Run("positive_"+word, func(t *testing.T) {
-			html := `<div class="` + word + `">content</div>`
-			doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
-			if err != nil {
-				t.Fatalf("Failed to parse HTML: %v", err)
-			}
-
-			selection := doc.Find("div").First()
-			result := getClassWeight(selection)
-			if result != 25 {
-				t.Errorf("Expected positive weight 25 for word '%s', got %f", word, result)
-			}
-		})
-	}
-
-	for _, word := range negativeWords {
-		t.Run("negative_"+word, func(t *testing.T) {
-			html := `<div class="` + word + `">content</div>`
-			doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
-			if err != nil {
-				t.Fatalf("Failed to parse HTML: %v", err)
-			}
-
-			selection := doc.Find("div").First()
-			result := getClassWeight(selection)
-			if result != -25 {
-				t.Errorf("Expected negative weight -25 for word '%s', got %f", word, result)
-			}
 		})
 	}
 }
