@@ -29,7 +29,6 @@ func (c *IconChecker) fetchAndStoreIcon() {
 	requestBuilder := fetcher.NewRequestBuilder()
 	requestBuilder.WithUserAgent(c.feed.UserAgent, config.Opts.HTTPClientUserAgent())
 	requestBuilder.WithCookie(c.feed.Cookie)
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 	requestBuilder.WithCustomFeedProxyURL(c.feed.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())

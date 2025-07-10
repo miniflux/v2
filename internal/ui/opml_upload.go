@@ -95,7 +95,6 @@ func (h *handler) fetchOPML(w http.ResponseWriter, r *http.Request) {
 	view.Set("countErrorFeeds", h.store.CountUserFeedsWithErrors(user.ID))
 
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(opmlFileURL))

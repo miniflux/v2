@@ -14,11 +14,11 @@ import (
 	"slices"
 	"time"
 
+	"miniflux.app/v2/internal/config"
 	"miniflux.app/v2/internal/proxyrotator"
 )
 
 const (
-	defaultHTTPClientTimeout     = 20
 	defaultHTTPClientMaxBodySize = 15 * 1024 * 1024
 	defaultAcceptHeader          = "application/xml, application/atom+xml, application/rss+xml, application/rdf+xml, application/feed+json, text/html, */*;q=0.9"
 )
@@ -36,10 +36,12 @@ type RequestBuilder struct {
 }
 
 func NewRequestBuilder() *RequestBuilder {
-	return &RequestBuilder{
+	req := &RequestBuilder{
 		headers:       make(http.Header),
-		clientTimeout: defaultHTTPClientTimeout,
+		clientTimeout: config.Opts.HTTPClientTimeout(),
 	}
+
+	return req
 }
 
 func (r *RequestBuilder) WithHeader(key, value string) *RequestBuilder {
@@ -101,11 +103,6 @@ func (r *RequestBuilder) UseCustomApplicationProxyURL(value bool) *RequestBuilde
 
 func (r *RequestBuilder) WithCustomFeedProxyURL(proxyURL string) *RequestBuilder {
 	r.feedProxyURL = proxyURL
-	return r
-}
-
-func (r *RequestBuilder) WithTimeout(timeout int) *RequestBuilder {
-	r.clientTimeout = timeout
 	return r
 }
 

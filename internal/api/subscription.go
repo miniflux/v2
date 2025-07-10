@@ -38,7 +38,6 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 	}
 
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 	requestBuilder.WithCustomFeedProxyURL(subscriptionDiscoveryRequest.ProxyURL)
 	requestBuilder.WithCustomApplicationProxyURL(config.Opts.HTTPClientProxyURL())

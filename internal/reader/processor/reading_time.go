@@ -20,7 +20,6 @@ import (
 
 func fetchWatchTime(websiteURL, query string, isoDate bool) (int, error) {
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(websiteURL))

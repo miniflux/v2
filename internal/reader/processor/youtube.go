@@ -93,7 +93,6 @@ func fetchYouTubeWatchTimeFromApiInBulk(videoIDs []string) (map[string]time.Dura
 	}
 
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
 	responseHandler := fetcher.NewResponseHandler(requestBuilder.ExecuteRequest(apiURL.String()))

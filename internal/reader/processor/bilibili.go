@@ -43,7 +43,6 @@ func extractBilibiliVideoID(websiteURL string) (string, string, error) {
 
 func fetchBilibiliWatchTime(websiteURL string) (int, error) {
 	requestBuilder := fetcher.NewRequestBuilder()
-	requestBuilder.WithTimeout(config.Opts.HTTPClientTimeout())
 	requestBuilder.WithProxyRotator(proxyrotator.ProxyRotatorInstance)
 
 	idType, videoID, extractErr := extractBilibiliVideoID(websiteURL)
