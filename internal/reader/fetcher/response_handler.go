@@ -68,10 +68,10 @@ func (r *ResponseHandler) ExpiresInMinutes() int {
 func (r *ResponseHandler) CacheControlMaxAgeInMinutes() int {
 	cacheControlHeaderValue := r.httpResponse.Header.Get("Cache-Control")
 	if cacheControlHeaderValue != "" {
-		for _, directive := range strings.Split(cacheControlHeaderValue, ",") {
+		for directive := range strings.SplitSeq(cacheControlHeaderValue, ",") {
 			directive = strings.TrimSpace(directive)
-			if strings.HasPrefix(directive, "max-age=") {
-				maxAge, err := strconv.Atoi(strings.TrimPrefix(directive, "max-age="))
+			if after, ok := strings.CutPrefix(directive, "max-age="); ok {
+				maxAge, err := strconv.Atoi(after)
 				if err == nil {
 					return int(math.Ceil(float64(maxAge) / 60))
 				}
