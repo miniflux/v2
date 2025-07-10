@@ -169,7 +169,7 @@ func (r *ResponseHandler) ReadBody() ([]byte, *locale.LocalizedErrorWrapper) {
 	}
 
 	if len(buffer) == 0 {
-		return nil, locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: empty response body"), "error.http_empty_response_body")
+		return nil, locale.NewLocalizedErrorWrapper(errors.New("fetcher: empty response body"), "error.http_empty_response_body")
 	}
 
 	return buffer, nil
@@ -193,21 +193,21 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 
 	switch r.httpResponse.StatusCode {
 	case http.StatusUnauthorized:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: access unauthorized (401 status code)"), "error.http_not_authorized")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: access unauthorized (401 status code)"), "error.http_not_authorized")
 	case http.StatusForbidden:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: access forbidden (403 status code)"), "error.http_forbidden")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: access forbidden (403 status code)"), "error.http_forbidden")
 	case http.StatusTooManyRequests:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: too many requests (429 status code)"), "error.http_too_many_requests")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: too many requests (429 status code)"), "error.http_too_many_requests")
 	case http.StatusNotFound, http.StatusGone:
 		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: resource not found (%d status code)", r.httpResponse.StatusCode), "error.http_resource_not_found")
 	case http.StatusInternalServerError:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: remote server error (%d status code)", r.httpResponse.StatusCode), "error.http_internal_server_error")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: remote server error (500 status code)"), "error.http_internal_server_error")
 	case http.StatusBadGateway:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: bad gateway (%d status code)", r.httpResponse.StatusCode), "error.http_bad_gateway")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: bad gateway (502 status code)"), "error.http_bad_gateway")
 	case http.StatusServiceUnavailable:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: service unavailable (%d status code)", r.httpResponse.StatusCode), "error.http_service_unavailable")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: service unavailable (503 status code)"), "error.http_service_unavailable")
 	case http.StatusGatewayTimeout:
-		return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: gateway timeout (%d status code)", r.httpResponse.StatusCode), "error.http_gateway_timeout")
+		return locale.NewLocalizedErrorWrapper(errors.New("fetcher: gateway timeout (504 status code)"), "error.http_gateway_timeout")
 	}
 
 	if r.httpResponse.StatusCode >= 400 {
@@ -217,7 +217,7 @@ func (r *ResponseHandler) LocalizedError() *locale.LocalizedErrorWrapper {
 	if r.httpResponse.StatusCode != 304 {
 		// Content-Length = -1 when no Content-Length header is sent.
 		if r.httpResponse.ContentLength == 0 {
-			return locale.NewLocalizedErrorWrapper(fmt.Errorf("fetcher: empty response body"), "error.http_empty_response_body")
+			return locale.NewLocalizedErrorWrapper(errors.New("fetcher: empty response body"), "error.http_empty_response_body")
 		}
 	}
 
