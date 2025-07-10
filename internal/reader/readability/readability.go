@@ -208,14 +208,18 @@ func shouldRemoveCandidate(str string) bool {
 }
 
 func removeUnlikelyCandidates(document *goquery.Document) {
-	document.Find("*").Each(func(i int, s *goquery.Selection) {
-		if s.Length() == 0 || s.Get(0).Data == "html" || s.Get(0).Data == "body" {
-			return
+	// Only select tags with either a class or an id attribute,
+	// and never the html nor body tags, as we don't want to ever remove them.
+	selector := "[class]:not(body,html)" + "," + "[id]:not(body,html)"
+
+	for _, s := range document.Find(selector).EachIter() {
+		if s.Length() == 0 {
+			continue
 		}
 
 		// Don't remove elements within code blocks (pre or code tags)
-		if s.Closest("pre, code").Length() > 0 {
-			return
+		if s.Closest("pre,code").Length() > 0 {
+			continue
 		}
 
 		if class, ok := s.Attr("class"); ok && shouldRemoveCandidate(class) {
@@ -223,7 +227,7 @@ func removeUnlikelyCandidates(document *goquery.Document) {
 		} else if id, ok := s.Attr("id"); ok && shouldRemoveCandidate(id) {
 			s.Remove()
 		}
-	})
+	}
 }
 
 func getTopCandidate(document *goquery.Document, candidates candidateList) *candidate {
