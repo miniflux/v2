@@ -103,15 +103,27 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 }
 
 func getSelectionLength(s *goquery.Selection) int {
-	var getLengthOfTextContent func(*html.Node) int
-	getLengthOfTextContent = func(n *html.Node) int {
+	return sumMapOnSelection(s, func(s string) int { return len(s) })
+}
+
+func getSelectionCommaCount(s *goquery.Selection) int {
+	return sumMapOnSelection(s, func(s string) int { return strings.Count(s, ",") })
+}
+
+// sumMapOnSelection maps `f` on the selection, and return the sum of the result.
+// This construct is used instead of goquery.Selection's .Text() method,
+// to avoid materializing the text to simply map/sum on it, saving a significant
+// amount of memory of large selections, and reducing the pressure on the garbage-collector.
+func sumMapOnSelection(s *goquery.Selection, f func(str string) int) int {
+	var recursiveFunction func(*html.Node) int
+	recursiveFunction = func(n *html.Node) int {
 		total := 0
 		if n.Type == html.TextNode {
-			total += len(n.Data)
+			total += f(n.Data)
 		}
 		if n.FirstChild != nil {
 			for c := n.FirstChild; c != nil; c = c.NextSibling {
-				total += getLengthOfTextContent(c)
+				total += recursiveFunction(c)
 			}
 		}
 		return total
@@ -119,7 +131,7 @@ func getSelectionLength(s *goquery.Selection) int {
 
 	sum := 0
 	for _, n := range s.Nodes {
-		sum += getLengthOfTextContent(n)
+		sum += recursiveFunction(n)
 	}
 	return sum
 }
@@ -246,38 +258,30 @@ func getCandidates(document *goquery.Document) candidateList {
 			return
 		}
 
+		// Add a point for the paragraph itself as a base.
+		contentScore := 1
+
+		// Add points for any commas within this paragraph.
+		contentScore += getSelectionCommaCount(s) + 1
+
+		// For every 100 characters in this paragraph, add another point. Up to 3 points.
+		contentScore += min(textLen/100, 3)
+
 		parent := s.Parent()
 		parentNode := parent.Get(0)
-
-		grandParent := parent.Parent()
-		var grandParentNode *html.Node
-		if grandParent.Length() > 0 {
-			grandParentNode = grandParent.Get(0)
-		}
-
 		if _, found := candidates[parentNode]; !found {
 			candidates[parentNode] = scoreNode(parent)
 		}
+		candidates[parentNode].score += float32(contentScore)
 
-		if grandParentNode != nil {
+		// The score of the current node influences its grandparent's one as well, but scaled to 50%.
+		grandParent := parent.Parent()
+		if grandParent.Length() > 0 {
+			grandParentNode := grandParent.Get(0)
 			if _, found := candidates[grandParentNode]; !found {
 				candidates[grandParentNode] = scoreNode(grandParent)
 			}
-		}
-
-		// Add a point for the paragraph itself as a base.
-		contentScore := float32(1.0)
-
-		// Add points for any commas within this paragraph.
-		text := s.Text()
-		contentScore += float32(strings.Count(text, ",") + 1)
-
-		// For every 100 characters in this paragraph, add another point. Up to 3 points.
-		contentScore += float32(min(textLen/100.0, 3))
-
-		candidates[parentNode].score += contentScore
-		if grandParentNode != nil {
-			candidates[grandParentNode].score += contentScore / 2.0
+			candidates[grandParentNode].score += float32(contentScore) / 2.0
 		}
 	})
 
