@@ -115,7 +115,7 @@ func TestParseInvalidImageDataURLWithWrongPrefix(t *testing.T) {
 func TestParseDocumentWithWhitespaceIconURL(t *testing.T) {
 	html := `<link rel="shortcut icon" href="
 		/static/img/favicon.ico
-	">`
+	"><link rel='shortcut icon'><link rel='shortcut icon' href="  ">`
 
 	iconURLs, err := findIconURLsFromHTMLDocument(strings.NewReader(html), "text/html")
 	if err != nil {
