@@ -98,6 +98,29 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 	return nil
 }
 
+// UpdateEntryOpened updates entry opened flag
+func (s *Storage) UpdateEntryOpened(entry *model.Entry) error {
+	query := `
+		UPDATE
+			entries
+		SET
+			opened=$1
+		WHERE
+			id=$2 AND user_id=$3
+	`
+
+	if _, err := s.db.Exec(
+		query,
+		entry.Opened,
+		entry.ID,
+		entry.UserID); err != nil {
+		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
+	}
+
+	return nil
+}
+
+
 // createEntry add a new entry.
 func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 	query := `
