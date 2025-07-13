@@ -74,30 +74,28 @@ func getStream(streamID string, userID int64) (Stream, error) {
 	switch {
 	case strings.HasPrefix(streamID, feedPrefix):
 		return Stream{Type: FeedStream, ID: strings.TrimPrefix(streamID, feedPrefix)}, nil
-	case strings.HasPrefix(streamID, fmt.Sprintf(userStreamPrefix, userID)),
-		strings.HasPrefix(streamID, streamPrefix):
+	case strings.HasPrefix(streamID, fmt.Sprintf(userStreamPrefix, userID)), strings.HasPrefix(streamID, streamPrefix):
 		id := strings.TrimPrefix(streamID, fmt.Sprintf(userStreamPrefix, userID))
 		id = strings.TrimPrefix(id, streamPrefix)
 		switch id {
-		case read:
+		case readStreamSuffix:
 			return Stream{ReadStream, ""}, nil
-		case starred:
+		case starredStreamSuffix:
 			return Stream{StarredStream, ""}, nil
-		case readingList:
+		case readingListStreamSuffix:
 			return Stream{ReadingListStream, ""}, nil
-		case keptUnread:
+		case keptUnreadStreamSuffix:
 			return Stream{KeptUnreadStream, ""}, nil
-		case broadcast:
+		case broadcastStreamSuffix:
 			return Stream{BroadcastStream, ""}, nil
-		case broadcastFriends:
+		case broadcastFriendsStreamSuffix:
 			return Stream{BroadcastFriendsStream, ""}, nil
-		case like:
+		case likeStreamSuffix:
 			return Stream{LikeStream, ""}, nil
 		default:
 			return Stream{NoStream, ""}, fmt.Errorf("googlereader: unknown stream with id: %s", id)
 		}
-	case strings.HasPrefix(streamID, fmt.Sprintf(userLabelPrefix, userID)),
-		strings.HasPrefix(streamID, labelPrefix):
+	case strings.HasPrefix(streamID, fmt.Sprintf(userLabelPrefix, userID)), strings.HasPrefix(streamID, labelPrefix):
 		id := strings.TrimPrefix(streamID, fmt.Sprintf(userLabelPrefix, userID))
 		id = strings.TrimPrefix(id, labelPrefix)
 		return Stream{LabelStream, id}, nil

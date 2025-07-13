@@ -71,12 +71,12 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 		switch s.Type {
 		case ReadStream:
 			if _, ok := tags[KeptUnreadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnread, read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
 			}
 			tags[ReadStream] = true
 		case KeptUnreadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnread, read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
 			}
 			tags[ReadStream] = false
 		case StarredStream:
@@ -91,17 +91,17 @@ func checkAndSimplifyTags(addTags []Stream, removeTags []Stream) (map[StreamType
 		switch s.Type {
 		case ReadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnread, read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
 			}
 			tags[ReadStream] = false
 		case KeptUnreadStream:
 			if _, ok := tags[ReadStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnread, read)
+				return nil, fmt.Errorf("googlereader: %s and %s should not be supplied simultaneously", keptUnreadStreamSuffix, readStreamSuffix)
 			}
 			tags[ReadStream] = true
 		case StarredStream:
 			if _, ok := tags[StarredStream]; ok {
-				return nil, fmt.Errorf("googlereader: %s should not be supplied for add and remove simultaneously", starred)
+				return nil, fmt.Errorf("googlereader: %s should not be supplied for add and remove simultaneously", starredStreamSuffix)
 			}
 			tags[StarredStream] = false
 		case BroadcastStream, LikeStream:
@@ -701,9 +701,9 @@ func (h *handler) streamItemContentsHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	userReadingList := fmt.Sprintf(userStreamPrefix, userID) + readingList
-	userRead := fmt.Sprintf(userStreamPrefix, userID) + read
-	userStarred := fmt.Sprintf(userStreamPrefix, userID) + starred
+	userReadingList := fmt.Sprintf(userStreamPrefix, userID) + readingListStreamSuffix
+	userRead := fmt.Sprintf(userStreamPrefix, userID) + readStreamSuffix
+	userStarred := fmt.Sprintf(userStreamPrefix, userID) + starredStreamSuffix
 
 	itemIDs, err := parseItemIDsFromRequest(r)
 	if err != nil {
@@ -936,7 +936,7 @@ func (h *handler) tagListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	result.Tags = make([]subscriptionCategory, 0)
 	result.Tags = append(result.Tags, subscriptionCategory{
-		ID: fmt.Sprintf(userStreamPrefix, userID) + starred,
+		ID: fmt.Sprintf(userStreamPrefix, userID) + starredStreamSuffix,
 	})
 	for _, category := range categories {
 		result.Tags = append(result.Tags, subscriptionCategory{
