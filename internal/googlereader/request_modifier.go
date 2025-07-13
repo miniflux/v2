@@ -64,28 +64,28 @@ func parseStreamFilterFromRequest(r *http.Request) (RequestModifiers, error) {
 		UserID:        userID,
 	}
 
-	streamOrder := request.QueryStringParam(r, ParamStreamOrder, "d")
+	streamOrder := request.QueryStringParam(r, paramStreamOrder, "d")
 	if streamOrder == "o" {
 		result.SortDirection = "asc"
 	}
 	var err error
-	result.Streams, err = getStreams(request.QueryStringParamList(r, ParamStreamID), userID)
+	result.Streams, err = getStreams(request.QueryStringParamList(r, paramStreamID), userID)
 	if err != nil {
 		return RequestModifiers{}, err
 	}
-	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, ParamStreamExcludes), userID)
-	if err != nil {
-		return RequestModifiers{}, err
-	}
-
-	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, ParamStreamFilters), userID)
+	result.ExcludeTargets, err = getStreams(request.QueryStringParamList(r, paramStreamExcludes), userID)
 	if err != nil {
 		return RequestModifiers{}, err
 	}
 
-	result.Count = request.QueryIntParam(r, ParamStreamMaxItems, 0)
-	result.Offset = request.QueryIntParam(r, ParamContinuation, 0)
-	result.StartTime = request.QueryInt64Param(r, ParamStreamStartTime, int64(0))
-	result.StopTime = request.QueryInt64Param(r, ParamStreamStopTime, int64(0))
+	result.FilterTargets, err = getStreams(request.QueryStringParamList(r, paramStreamFilters), userID)
+	if err != nil {
+		return RequestModifiers{}, err
+	}
+
+	result.Count = request.QueryIntParam(r, paramStreamMaxItems, 0)
+	result.Offset = request.QueryIntParam(r, paramContinuation, 0)
+	result.StartTime = request.QueryInt64Param(r, paramStreamStartTime, int64(0))
+	result.StopTime = request.QueryInt64Param(r, paramStreamStopTime, int64(0))
 	return result, nil
 }
