@@ -14,18 +14,18 @@ const (
 	userLabelPrefix = "user/%d/label/"
 	// feedPrefix is the prefix for a feed stream
 	feedPrefix = "feed/"
-	// read is the suffix for read stream
-	read = "read"
-	// starred is the suffix for starred stream
-	starred = "starred"
-	// readingList is the suffix for reading list stream
-	readingList = "reading-list"
-	// keptUnread is the suffix for kept unread stream
-	keptUnread = "kept-unread"
-	// broadcast is the suffix for broadcast stream
-	broadcast = "broadcast"
-	// broadcastFriends is the suffix for broadcast friends stream
-	broadcastFriends = "broadcast-friends"
-	// like is the suffix for like stream
-	like = "like"
+	// readStreamSuffix is the suffix for read stream
+	readStreamSuffix = "read"
+	// starredStreamSuffix is the suffix for starred stream
+	starredStreamSuffix = "starred"
+	// readingListStreamSuffix is the suffix for reading list stream
+	readingListStreamSuffix = "reading-list"
+	// keptUnreadStreamSuffix is the suffix for kept unread stream
+	keptUnreadStreamSuffix = "kept-unread"
+	// broadcastStreamSuffix is the suffix for broadcast stream
+	broadcastStreamSuffix = "broadcast"
+	// broadcastFriendsStreamSuffix is the suffix for broadcast friends stream
+	broadcastFriendsStreamSuffix = "broadcast-friends"
+	// likeStreamSuffix is the suffix for like stream
+	likeStreamSuffix = "like"
 )
