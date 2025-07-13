@@ -34,6 +34,6 @@ const (
 	paramDestination = "dest"
 	// paramContinuation -  name of the parameter for callers to pass to receive the next page of results
 	paramContinuation = "c"
-	// ParamStreamType - name of the parameter for unix timestamp
+	// paramTimestamp - name of the parameter for unix timestamp
 	paramTimestamp = "ts"
 )
