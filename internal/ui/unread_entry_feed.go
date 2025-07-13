@@ -41,14 +41,6 @@ func (h *handler) showUnreadFeedEntryPage(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if !entry.Opened {
-		entry.Opened = true
-		if err := h.store.UpdateEntryOpened(entry); err != nil {
-			html.ServerError(w, r, err)
-			return
-		}
-	}
-
 	if entry.ShouldMarkAsReadOnView(user) {
 		err = h.store.SetEntriesStatus(user.ID, []int64{entry.ID}, model.EntryStatusRead)
 		if err != nil {
