@@ -101,7 +101,7 @@ func (e *Engine) ParseTemplates() error {
 }
 
 // Render process a template.
-func (e *Engine) Render(name string, data map[string]interface{}) []byte {
+func (e *Engine) Render(name string, data map[string]any) []byte {
 	tpl, ok := e.templates[name]
 	if !ok {
 		panic("This template does not exists: " + name)
@@ -114,19 +114,8 @@ func (e *Engine) Render(name string, data map[string]interface{}) []byte {
 		"elapsed": func(timezone string, t time.Time) string {
 			return elapsedTime(printer, timezone, t)
 		},
-		"t": func(key interface{}, args ...interface{}) string {
-			switch k := key.(type) {
-			case string:
-				return printer.Printf(k, args...)
-			case error:
-				return k.Error()
-			default:
-				return ""
-			}
-		},
-		"plural": func(key string, n int, args ...interface{}) string {
-			return printer.Plural(key, n, args...)
-		},
+		"t":      printer.Printf,
+		"plural": printer.Plural,
 	})
 
 	var b bytes.Buffer
