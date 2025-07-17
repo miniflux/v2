@@ -17,7 +17,9 @@ func TestPrintfWithMissingLanguage(t *testing.T) {
 func TestPrintfWithMissingKey(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"k": "v",
+			singulars: map[string]string{
+				"k": "v",
+			},
 		},
 	}
 
@@ -30,7 +32,9 @@ func TestPrintfWithMissingKey(t *testing.T) {
 func TestPrintfWithExistingKey(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"auth.username": "Login",
+			singulars: map[string]string{
+				"auth.username": "Login",
+			},
 		},
 	}
 
@@ -43,10 +47,14 @@ func TestPrintfWithExistingKey(t *testing.T) {
 func TestPrintfWithExistingKeyAndPlaceholder(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"key": "Test: %s",
+			singulars: map[string]string{
+				"key": "Test: %s",
+			},
 		},
 		"fr_FR": translationDict{
-			"key": "Test : %s",
+			singulars: map[string]string{
+				"key": "Test : %s",
+			},
 		},
 	}
 
@@ -59,31 +67,19 @@ func TestPrintfWithExistingKeyAndPlaceholder(t *testing.T) {
 func TestPrintfWithMissingKeyAndPlaceholder(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"auth.username": "Login",
+			singulars: map[string]string{
+				"auth.username": "Login",
+			},
 		},
 		"fr_FR": translationDict{
-			"auth.username": "Identifiant",
+			singulars: map[string]string{
+				"auth.username": "Identifiant",
+			},
 		},
 	}
 
 	translation := NewPrinter("fr_FR").Printf("Status: %s", "ok")
 	if translation != "Status: ok" {
-		t.Errorf(`Wrong translation, got %q`, translation)
-	}
-}
-
-func TestPrintfWithInvalidValue(t *testing.T) {
-	defaultCatalog = catalog{
-		"en_US": translationDict{
-			"auth.username": "Login",
-		},
-		"fr_FR": translationDict{
-			"auth.username": true,
-		},
-	}
-
-	translation := NewPrinter("fr_FR").Printf("auth.username")
-	if translation != "auth.username" {
 		t.Errorf(`Wrong translation, got %q`, translation)
 	}
 }
@@ -100,7 +96,9 @@ func TestPrintWithMissingLanguage(t *testing.T) {
 func TestPrintWithMissingKey(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"existing.key": "value",
+			singulars: map[string]string{
+				"existing.key": "value",
+			},
 		},
 	}
 
@@ -113,7 +111,9 @@ func TestPrintWithMissingKey(t *testing.T) {
 func TestPrintWithExistingKey(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"auth.username": "Login",
+			singulars: map[string]string{
+				"auth.username": "Login",
+			},
 		},
 	}
 
@@ -126,13 +126,19 @@ func TestPrintWithExistingKey(t *testing.T) {
 func TestPrintWithDifferentLanguages(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"greeting": "Hello",
+			singulars: map[string]string{
+				"greeting": "Hello",
+			},
 		},
 		"fr_FR": translationDict{
-			"greeting": "Bonjour",
+			singulars: map[string]string{
+				"greeting": "Bonjour",
+			},
 		},
 		"es_ES": translationDict{
-			"greeting": "Hola",
+			singulars: map[string]string{
+				"greeting": "Hola",
+			},
 		},
 	}
 
@@ -153,46 +159,12 @@ func TestPrintWithDifferentLanguages(t *testing.T) {
 	}
 }
 
-func TestPrintWithInvalidTranslationType(t *testing.T) {
-	defaultCatalog = catalog{
-		"en_US": translationDict{
-			"valid.key":   "valid string",
-			"invalid.key": 12345, // not a string
-		},
-	}
-
-	printer := NewPrinter("en_US")
-
-	// Valid string should work
-	translation := printer.Print("valid.key")
-	if translation != "valid string" {
-		t.Errorf(`Wrong translation for valid key, got %q`, translation)
-	}
-
-	// Invalid type should return the key itself
-	translation = printer.Print("invalid.key")
-	if translation != "invalid.key" {
-		t.Errorf(`Wrong translation for invalid key, got %q`, translation)
-	}
-}
-
-func TestPrintWithNilTranslation(t *testing.T) {
-	defaultCatalog = catalog{
-		"en_US": translationDict{
-			"nil.key": nil,
-		},
-	}
-
-	translation := NewPrinter("en_US").Print("nil.key")
-	if translation != "nil.key" {
-		t.Errorf(`Wrong translation for nil value, got %q`, translation)
-	}
-}
-
 func TestPrintWithEmptyKey(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"": "empty key translation",
+			singulars: map[string]string{
+				"": "empty key translation",
+			},
 		},
 	}
 
@@ -205,7 +177,9 @@ func TestPrintWithEmptyKey(t *testing.T) {
 func TestPrintWithEmptyTranslation(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"empty.value": "",
+			singulars: map[string]string{
+				"empty.value": "",
+			},
 		},
 	}
 
@@ -218,10 +192,14 @@ func TestPrintWithEmptyTranslation(t *testing.T) {
 func TestPluralWithDefaultRule(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"number_of_users": []string{"%d user (%s)", "%d users (%s)"},
+			plurals: map[string][]string{
+				"number_of_users": {"%d user (%s)", "%d users (%s)"},
+			},
 		},
 		"fr_FR": translationDict{
-			"number_of_users": []string{"%d utilisateur (%s)", "%d utilisateurs (%s)"},
+			plurals: map[string][]string{
+				"number_of_users": {"%d utilisateur (%s)", "%d utilisateurs (%s)"},
+			},
 		},
 	}
 
@@ -242,10 +220,14 @@ func TestPluralWithDefaultRule(t *testing.T) {
 func TestPluralWithRussianRule(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"time_elapsed.years": []string{"%d year", "%d years"},
+			plurals: map[string][]string{
+				"time_elapsed.years": {"%d year", "%d years"},
+			},
 		},
 		"ru_RU": translationDict{
-			"time_elapsed.years": []string{"%d год назад", "%d года назад", "%d лет назад"},
+			plurals: map[string][]string{
+				"time_elapsed.years": {"%d год назад", "%d года назад", "%d лет назад"},
+			},
 		},
 	}
 
@@ -273,25 +255,11 @@ func TestPluralWithRussianRule(t *testing.T) {
 func TestPluralWithMissingTranslation(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"number_of_users": []string{"%d user (%s)", "%d users (%s)"},
+			plurals: map[string][]string{
+				"number_of_users": {"%d user (%s)", "%d users (%s)"},
+			},
 		},
 		"fr_FR": translationDict{},
-	}
-	translation := NewPrinter("fr_FR").Plural("number_of_users", 2)
-	expected := "number_of_users"
-	if translation != expected {
-		t.Errorf(`Wrong translation, got %q instead of %q`, translation, expected)
-	}
-}
-
-func TestPluralWithInvalidValues(t *testing.T) {
-	defaultCatalog = catalog{
-		"en_US": translationDict{
-			"number_of_users": []string{"%d user (%s)", "%d users (%s)"},
-		},
-		"fr_FR": translationDict{
-			"number_of_users": "must be a slice",
-		},
 	}
 	translation := NewPrinter("fr_FR").Plural("number_of_users", 2)
 	expected := "number_of_users"
@@ -309,63 +277,21 @@ func TestPluralWithMissingLanguage(t *testing.T) {
 	}
 }
 
-func TestPluralWithAnySliceType(t *testing.T) {
-	defaultCatalog = catalog{
-		"en_US": translationDict{
-			"test.key": []any{"%d item", "%d items"},
-		},
-	}
-
-	printer := NewPrinter("en_US")
-
-	translation := printer.Plural("test.key", 1, 1)
-	expected := "1 item"
-	if translation != expected {
-		t.Errorf(`Wrong translation for singular, got %q instead of %q`, translation, expected)
-	}
-
-	translation = printer.Plural("test.key", 2, 2)
-	expected = "2 items"
-	if translation != expected {
-		t.Errorf(`Wrong translation for plural, got %q instead of %q`, translation, expected)
-	}
-}
-
-func TestPluralWithMixedAnySliceTypes(t *testing.T) {
-	defaultCatalog = catalog{
-		"en_US": translationDict{
-			"mixed.key": []any{"single: %s", "multiple: %s", "many: %s"},
-		},
-	}
-
-	printer := NewPrinter("en_US")
-
-	// Test first element (should convert first any element to string)
-	translation := printer.Plural("mixed.key", 0, "test") // n=0 uses index 0
-	expected := "single: test"
-	if translation != expected {
-		t.Errorf(`Wrong translation for index 0, got %q instead of %q`, translation, expected)
-	}
-
-	// Test second element (should use plural form)
-	translation = printer.Plural("mixed.key", 2, "items") // plural form for default language
-	expected = "multiple: items"
-	if translation != expected {
-		t.Errorf(`Wrong translation for index 1, got %q instead of %q`, translation, expected)
-	}
-}
-
 func TestPluralWithIndexOutOfBounds(t *testing.T) {
 	defaultCatalog = catalog{
 		"test_lang": translationDict{
-			"limited.key": []string{"only one form"},
+			plurals: map[string][]string{
+				"limited.key": {"only one form"},
+			},
 		},
 	}
 
 	// Force a scenario where getPluralForm might return an index >= len(plurals)
 	// We'll create a scenario with Czech language rules
 	defaultCatalog["cs_CZ"] = translationDict{
-		"limited.key": []string{"one form only"}, // Only one form, but Czech has 3 plural forms
+		plurals: map[string][]string{
+			"limited.key": {"one form only"}, // Only one form, but Czech has 3 plural forms
+		},
 	}
 
 	printer := NewPrinter("cs_CZ")
@@ -380,13 +306,19 @@ func TestPluralWithIndexOutOfBounds(t *testing.T) {
 func TestPluralWithVariousLanguageRules(t *testing.T) {
 	defaultCatalog = catalog{
 		"ar_AR": translationDict{
-			"items": []string{"no items", "one item", "two items", "few items", "many items", "other items"},
+			plurals: map[string][]string{
+				"items": {"no items", "one item", "two items", "few items", "many items", "other items"},
+			},
 		},
 		"pl_PL": translationDict{
-			"files": []string{"one file", "few files", "many files"},
+			plurals: map[string][]string{
+				"files": {"one file", "few files", "many files"},
+			},
 		},
 		"ja_JP": translationDict{
-			"photos": []string{"photos"},
+			plurals: map[string][]string{
+				"photos": {"photos"},
+			},
 		},
 	}
 

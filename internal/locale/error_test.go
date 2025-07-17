@@ -46,10 +46,14 @@ func TestLocalizedErrorWrapper_Translate(t *testing.T) {
 	// Set up test catalog
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.test_key": "Error: %s (code: %d)",
+			singulars: map[string]string{
+				"error.test_key": "Error: %s (code: %d)",
+			},
 		},
 		"fr_FR": translationDict{
-			"error.test_key": "Erreur : %s (code : %d)",
+			singulars: map[string]string{
+				"error.test_key": "Erreur : %s (code : %d)",
+			},
 		},
 	}
 
@@ -92,7 +96,9 @@ func TestLocalizedErrorWrapper_TranslateWithEmptyKey(t *testing.T) {
 func TestLocalizedErrorWrapper_TranslateWithNoArgs(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.simple": "Simple error message",
+			singulars: map[string]string{
+				"error.simple": "Simple error message",
+			},
 		},
 	}
 
@@ -128,7 +134,9 @@ func TestNewLocalizedError(t *testing.T) {
 func TestLocalizedError_String(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.validation": "Validation failed for %s: %s",
+			singulars: map[string]string{
+				"error.validation": "Validation failed for %s: %s",
+			},
 		},
 	}
 
@@ -158,7 +166,9 @@ func TestLocalizedError_StringWithMissingTranslation(t *testing.T) {
 func TestLocalizedError_Error(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.database": "Database connection failed: %s",
+			singulars: map[string]string{
+				"error.database": "Database connection failed: %s",
+			},
 		},
 	}
 
@@ -178,10 +188,14 @@ func TestLocalizedError_Error(t *testing.T) {
 func TestLocalizedError_Translate(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.permission": "Permission denied for %s",
+			singulars: map[string]string{
+				"error.permission": "Permission denied for %s",
+			},
 		},
 		"es_ES": translationDict{
-			"error.permission": "Permiso denegado para %s",
+			singulars: map[string]string{
+				"error.permission": "Permiso denegado para %s",
+			},
 		},
 	}
 
@@ -212,10 +226,14 @@ func TestLocalizedError_Translate(t *testing.T) {
 func TestLocalizedError_TranslateWithNoArgs(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.generic": "An error occurred",
+			singulars: map[string]string{
+				"error.generic": "An error occurred",
+			},
 		},
 		"de_DE": translationDict{
-			"error.generic": "Ein Fehler ist aufgetreten",
+			singulars: map[string]string{
+				"error.generic": "Ein Fehler ist aufgetreten",
+			},
 		},
 	}
 
@@ -239,7 +257,9 @@ func TestLocalizedError_TranslateWithNoArgs(t *testing.T) {
 func TestLocalizedError_TranslateWithComplexArgs(t *testing.T) {
 	defaultCatalog = catalog{
 		"en_US": translationDict{
-			"error.complex": "Error %d: %s occurred at %s with severity %s",
+			singulars: map[string]string{
+				"error.complex": "Error %d: %s occurred at %s with severity %s",
+			},
 		},
 	}
 

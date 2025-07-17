@@ -17,10 +17,8 @@ func NewPrinter(language string) *Printer {
 
 func (p *Printer) Print(key string) string {
 	if dict, err := getTranslationDict(p.language); err == nil {
-		if str, ok := dict[key]; ok {
-			if translation, ok := str.(string); ok {
-				return translation
-			}
+		if str, ok := dict.singulars[key]; ok {
+			return str
 		}
 	}
 	return key
@@ -31,10 +29,8 @@ func (p *Printer) Printf(key string, args ...any) string {
 	translation := key
 
 	if dict, err := getTranslationDict(p.language); err == nil {
-		if str, ok := dict[key]; ok {
-			if translation, ok = str.(string); !ok {
-				translation = key
-			}
+		if str, ok := dict.singulars[key]; ok {
+			translation = str
 		}
 	}
 
@@ -42,29 +38,16 @@ func (p *Printer) Printf(key string, args ...any) string {
 }
 
 // Plural returns the translation of the given key by using the language plural form.
-func (p *Printer) Plural(key string, n int, args ...interface{}) string {
+func (p *Printer) Plural(key string, n int, args ...any) string {
 	dict, err := getTranslationDict(p.language)
 	if err != nil {
 		return key
 	}
 
-	if choices, found := dict[key]; found {
-		var plurals []string
-
-		switch v := choices.(type) {
-		case []string:
-			plurals = v
-		case []any:
-			for _, v := range v {
-				plurals = append(plurals, fmt.Sprint(v))
-			}
-		default:
-			return key
-		}
-
+	if choices, found := dict.plurals[key]; found {
 		index := getPluralForm(p.language, n)
-		if len(plurals) > index {
-			return fmt.Sprintf(plurals[index], args...)
+		if len(choices) > index {
+			return fmt.Sprintf(choices[index], args...)
 		}
 	}
 

@@ -3,7 +3,9 @@
 
 package locale // import "miniflux.app/v2/internal/locale"
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestParserWithInvalidData(t *testing.T) {
 	_, err := parseTranslationMessages([]byte(`{`))
@@ -18,16 +20,12 @@ func TestParser(t *testing.T) {
 		t.Fatalf(`Unexpected parsing error: %v`, err)
 	}
 
-	if translations == nil {
-		t.Fatal(`Translations should not be nil`)
-	}
-
-	value, found := translations["k"]
+	value, found := translations.singulars["k"]
 	if !found {
-		t.Fatal(`The translation should contains the defined key`)
+		t.Fatalf(`The translation %v should contains the defined key`, translations.singulars)
 	}
 
-	if value.(string) != "v" {
+	if value != "v" {
 		t.Fatal(`The translation key should contains the defined value`)
 	}
 }
@@ -48,20 +46,22 @@ func TestAllKeysHaveValue(t *testing.T) {
 			t.Fatalf(`Unable to load translation messages for language %q`, language)
 		}
 
-		if len(messages) == 0 {
-			t.Fatalf(`The language %q doesn't have any messages`, language)
+		if len(messages.singulars) == 0 {
+			t.Fatalf(`The language %q doesn't have any messages for singulars`, language)
 		}
 
-		for k, v := range messages {
-			switch value := v.(type) {
-			case string:
-				if value == "" {
-					t.Errorf(`The key %q for the language %q has an empty string as value`, k, language)
-				}
-			case []any:
-				if len(value) == 0 {
-					t.Errorf(`The key %q for the language %q has an empty list as value`, k, language)
-				}
+		if len(messages.plurals) == 0 {
+			t.Fatalf(`The language %q doesn't have any messages for plurals`, language)
+		}
+
+		for k, v := range messages.singulars {
+			if len(v) == 0 {
+				t.Errorf(`The key %q for singulars for the language %q has an empty list as value`, k, language)
+			}
+		}
+		for k, v := range messages.plurals {
+			if len(v) == 0 {
+				t.Errorf(`The key %q for plurals for the language %q has an empty list as value`, k, language)
 			}
 		}
 	}
@@ -84,9 +84,14 @@ func TestMissingTranslations(t *testing.T) {
 			t.Fatalf(`Parsing error for language %q`, language)
 		}
 
-		for key := range references {
-			if _, found := messages[key]; !found {
-				t.Errorf(`Translation key %q not found in language %q`, key, language)
+		for key := range references.singulars {
+			if _, found := messages.singulars[key]; !found {
+				t.Errorf(`Translation key %q not found in language %q singulars`, key, language)
+			}
+		}
+		for key := range references.plurals {
+			if _, found := messages.plurals[key]; !found {
+				t.Errorf(`Translation key %q not found in language %q plurals`, key, language)
 			}
 		}
 	}
@@ -121,11 +126,9 @@ func TestTranslationFilePluralForms(t *testing.T) {
 			t.Fatalf(`Unable to load translation messages for language %q`, language)
 		}
 
-		for k, v := range messages {
-			if value, ok := v.([]any); ok {
-				if len(value) != numberOfPluralFormsPerLanguage[language] {
-					t.Errorf(`The key %q for the language %q does not have the expected number of plurals, got %d instead of %d`, k, language, len(value), numberOfPluralFormsPerLanguage[language])
-				}
+		for k, v := range messages.plurals {
+			if len(v) != numberOfPluralFormsPerLanguage[language] {
+				t.Errorf(`The key %q for the language %q does not have the expected number of plurals, got %d instead of %d`, k, language, len(v), numberOfPluralFormsPerLanguage[language])
 			}
 		}
 	}
