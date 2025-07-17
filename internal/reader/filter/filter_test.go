@@ -52,12 +52,15 @@ func TestBlockingEntries(t *testing.T) {
 		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Other"}, &model.User{BlockFilterEntryRules: "EntryTitle=(?i)title"}, true},       // Feed rule matches
 		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://different.com", Title: "Some Other"}, &model.User{BlockFilterEntryRules: "EntryTitle=(?i)title"}, false},    // Neither rule matches
 		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{BlockFilterEntryRules: "EntryTitle=(?i)title"}, true},       // Both rules would match
+		// Test multiple rules with \r\n separators
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example\r\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
+		{&model.Feed{ID: 1, BlockFilterEntryRules: "EntryURL=(?i)example\r\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://different.com", Title: "Some Test"}, &model.User{}, true},
 	}
 
-	for _, tc := range scenarios {
+	for index, tc := range scenarios {
 		result := IsBlockedEntry(tc.feed, tc.entry, tc.user)
 		if tc.expected != result {
-			t.Errorf(`Unexpected result, got %v for entry %q`, result, tc.entry.Title)
+			t.Errorf(`Unexpected result for scenario %d, got %v for entry %q`, index, result, tc.entry.Title)
 		}
 	}
 }
@@ -113,6 +116,10 @@ func TestAllowEntries(t *testing.T) {
 		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Other"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, true},    // Feed rule matches
 		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://different.com", Title: "Some Other"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, false}, // Neither rule matches
 		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example"}, &model.Entry{URL: "https://example.com", Title: "Some Title"}, &model.User{KeepFilterEntryRules: "EntryTitle=(?i)title"}, true},    // Both rules would match
+		// Test multiple rules with \r\n separators
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example\r\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://example.com", Title: "Some Example"}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example\r\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://different.com", Title: "Some Test"}, &model.User{}, true},
+		{&model.Feed{ID: 1, KeepFilterEntryRules: "EntryURL=(?i)example\r\nEntryTitle=(?i)Test"}, &model.Entry{URL: "https://different.com", Title: "Some Example"}, &model.User{}, false},
 	}
 
 	for _, tc := range scenarios {
