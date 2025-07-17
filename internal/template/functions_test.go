@@ -43,18 +43,6 @@ func TestDictWithInvalidMap(t *testing.T) {
 	}
 }
 
-func TestHasKey(t *testing.T) {
-	input := map[string]string{"k": "v"}
-
-	if !hasKey(input, "k") {
-		t.Fatal(`This key exists in the map and should returns true`)
-	}
-
-	if hasKey(input, "missing") {
-		t.Fatal(`This key doesn't exists in the given map and should returns false`)
-	}
-}
-
 func TestTruncateWithShortTexts(t *testing.T) {
 	scenarios := []string{"Short text", "Короткий текст"}
 
