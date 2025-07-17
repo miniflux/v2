@@ -128,6 +128,7 @@ func matchesEntryRegexRules(rules string, entry *model.Entry, feed *model.Feed, 
 }
 
 func matchesRule(rule string, entry *model.Entry) bool {
+	rule = strings.TrimSpace(strings.ReplaceAll(rule, "\r\n", ""))
 	parts := strings.SplitN(rule, "=", 2)
 	if len(parts) != 2 {
 		return false
