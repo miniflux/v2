@@ -79,7 +79,13 @@ func (r *RSSAdapter) BuildFeed(baseURL string) *model.Feed {
 		// Populate the entry URL.
 		entryURL := findEntryURL(&item)
 		if entryURL == "" {
-			entry.URL = feed.SiteURL
+			// Fallback to the first enclosure URL if it exists.
+			if len(entry.Enclosures) > 0 && entry.Enclosures[0].URL != "" {
+				entry.URL = entry.Enclosures[0].URL
+			} else {
+				// Fallback to the feed URL if no entry URL is found.
+				entry.URL = feed.SiteURL
+			}
 		} else {
 			if absoluteEntryURL, err := urllib.AbsoluteURL(feed.SiteURL, entryURL); err == nil {
 				entry.URL = absoluteEntryURL
