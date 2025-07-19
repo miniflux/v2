@@ -632,6 +632,34 @@ func TestParseEntryWithMultipleAtomLinks(t *testing.T) {
 	}
 }
 
+func TestParseEntryWithoutLinkAndWithEnclosureURLs(t *testing.T) {
+	data := `<?xml version="1.0" encoding="utf-8"?>
+		<rss version="2.0">
+		<channel>
+			<link>https://example.org/feed</link>
+			<item>
+				<guid isPermaLink="false">guid</guid>
+				<enclosure url=" " length="155844084" type="audio/mpeg" />
+				<enclosure url="https://audio-file" length="155844084" type="audio/mpeg" />
+				<enclosure url="https://another-audio-file" length="155844084" type="audio/mpeg" />
+			</item>
+		</channel>
+		</rss>`
+
+	feed, err := Parse("https://example.org/", bytes.NewReader([]byte(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(feed.Entries) != 1 {
+		t.Fatalf("Expected 1 entry, got: %d", len(feed.Entries))
+	}
+
+	if feed.Entries[0].URL != "https://audio-file" {
+		t.Errorf("Incorrect entry link, got: %q", feed.Entries[0].URL)
+	}
+}
+
 func TestParseFeedURLWithAtomLink(t *testing.T) {
 	data := `<?xml version="1.0" encoding="utf-8"?>
 		<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
