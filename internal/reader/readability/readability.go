@@ -94,8 +94,8 @@ func ExtractContent(page io.Reader) (baseURL string, extractedContent string, er
 
 	slog.Debug("Readability parsing",
 		slog.String("base_url", baseURL),
-		slog.Any("candidates", candidates),
-		slog.Any("topCandidate", topCandidate),
+		slog.String("candidates", candidates.String()),
+		slog.String("topCandidate", topCandidate.String()),
 	)
 
 	extractedContent = getArticle(topCandidate, candidates)
