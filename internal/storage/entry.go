@@ -16,8 +16,6 @@ import (
 	"github.com/lib/pq"
 )
 
-const truncationLen = 500000
-
 // CountAllEntries returns the number of entries for each status in the database.
 func (s *Storage) CountAllEntries() map[string]int64 {
 	rows, err := s.db.Query(`SELECT status, count(*) FROM entries GROUP BY status`)
@@ -88,8 +86,8 @@ func (s *Storage) UpdateEntryTitleAndContent(entry *model.Entry) error {
 		entry.Title,
 		entry.Content,
 		entry.ReadingTime,
-		truncateString(entry.Title),
-		truncateString(entry.Content),
+		truncateStringForTSVectorField(entry.Title),
+		truncateStringForTSVectorField(entry.Content),
 		entry.ID,
 		entry.UserID); err != nil {
 		return fmt.Errorf(`store: unable to update entry #%d: %v`, entry.ID, err)
@@ -148,8 +146,8 @@ func (s *Storage) createEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.UserID,
 		entry.FeedID,
 		entry.ReadingTime,
-		truncateString(entry.Title),
-		truncateString(entry.Content),
+		truncateStringForTSVectorField(entry.Title),
+		truncateStringForTSVectorField(entry.Content),
 		pq.Array(entry.Tags),
 	).Scan(
 		&entry.ID,
@@ -203,8 +201,8 @@ func (s *Storage) updateEntry(tx *sql.Tx, entry *model.Entry) error {
 		entry.Content,
 		entry.Author,
 		entry.ReadingTime,
-		truncateString(entry.Title),
-		truncateString(entry.Content),
+		truncateStringForTSVectorField(entry.Title),
+		truncateStringForTSVectorField(entry.Content),
 		entry.UserID,
 		entry.FeedID,
 		entry.Hash,
@@ -640,9 +638,30 @@ func (s *Storage) UnshareEntry(userID int64, entryID int64) (err error) {
 	return
 }
 
-func truncateString(s string) string {
-	if len(s) > truncationLen {
-		return s[:truncationLen]
+// truncateStringForTSVectorField truncates a string to fit within the maximum size for a TSVector field in PostgreSQL.
+func truncateStringForTSVectorField(s string) string {
+	// The length of a tsvector (lexemes + positions) must be less than 1 megabyte.
+	const maxTSVectorSize = 1024 * 1024
+
+	if len(s) < maxTSVectorSize {
+		return s
 	}
-	return s
+
+	// Truncate to fit under the limit, ensuring we don't break UTF-8 characters
+	truncated := s[:maxTSVectorSize-1]
+
+	// Walk backwards to find the last complete UTF-8 character
+	for i := len(truncated) - 1; i >= 0; i-- {
+		if (truncated[i] & 0x80) == 0 {
+			// ASCII character, we can stop here
+			return truncated[:i+1]
+		}
+		if (truncated[i] & 0xC0) == 0xC0 {
+			// Start of a multi-byte UTF-8 character
+			return truncated[:i]
+		}
+	}
+
+	// Fallback: return empty string if we can't find a valid UTF-8 boundary
+	return ""
 }
