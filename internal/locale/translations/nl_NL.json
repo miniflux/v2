@@ -252,7 +252,7 @@
     "form.integration.linkding_tags": "Linkding tags",
     "form.integration.linkwarden_activate": "Artikelen opslaan in Linkwarden",
     "form.integration.linkwarden_api_key": "Linkwarden API-sleutel",
-    "form.integration.linkwarden_endpoint": "Linkwarden URL",
+    "form.integration.linkwarden_endpoint": "Linkwarden Basis URL",
     "form.integration.matrix_bot_activate": "Nieuwe artikelen opslaan in Matrix",
     "form.integration.matrix_bot_chat_id": "ID van Matrix-kamer",
     "form.integration.matrix_bot_password": "Wachtwoord voor Matrix-gebruiker",

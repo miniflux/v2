@@ -252,7 +252,7 @@
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkwarden_activate": "Save entries to Linkwarden",
     "form.integration.linkwarden_api_key": "Linkwarden API key",
-    "form.integration.linkwarden_endpoint": "Linkwarden API Endpoint",
+    "form.integration.linkwarden_endpoint": "लिंकवर्डन बेस यूआरएलL",
     "form.integration.matrix_bot_activate": "नए लेखों को मैट्रिक्स में स्थानांतरित करें",
     "form.integration.matrix_bot_chat_id": "मैट्रिक्स रूम की आईडी",
     "form.integration.matrix_bot_password": "मैट्रिक्स उपयोगकर्ता के लिए पासवर्ड",

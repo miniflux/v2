@@ -255,7 +255,7 @@
     "form.integration.linkding_tags": "Теги Linkding",
     "form.integration.linkwarden_activate": "Сохранять статьи в Linkwarden",
     "form.integration.linkwarden_api_key": "API-ключ Linkwarden",
-    "form.integration.linkwarden_endpoint": "Конечная точка Linkwarden API",
+    "form.integration.linkwarden_endpoint": "Базовый URL-адрес Linkwarden",
     "form.integration.matrix_bot_activate": "Отправлять статьи в Matrix",
     "form.integration.matrix_bot_chat_id": "ID комнаты Matrix",
     "form.integration.matrix_bot_password": "Пароль пользователя Matrix",

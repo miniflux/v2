@@ -249,7 +249,7 @@
     "form.integration.linkding_tags": "Linkding 標籤",
     "form.integration.linkwarden_activate": "儲存文章到 Linkwarden",
     "form.integration.linkwarden_api_key": "Linkwarden API 金鑰",
-    "form.integration.linkwarden_endpoint": "Linkwarden API 端點",
+    "form.integration.linkwarden_endpoint": "Linkwarden 基本 URL",
     "form.integration.matrix_bot_activate": "推送文章到 Matrix",
     "form.integration.matrix_bot_chat_id": "Matrix 房間 ID",
     "form.integration.matrix_bot_password": "Matrix 密碼",

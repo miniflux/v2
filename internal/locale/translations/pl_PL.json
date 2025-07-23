@@ -255,7 +255,7 @@
     "form.integration.linkding_tags": "Znaczniki Linkding",
     "form.integration.linkwarden_activate": "Zapisuj wpisy w Linkwarden",
     "form.integration.linkwarden_api_key": "Klucz API do Linkwarden",
-    "form.integration.linkwarden_endpoint": "Punkt końcowy API Linkwarden",
+    "form.integration.linkwarden_endpoint": "Podstawowy adres URL Linkwardena",
     "form.integration.matrix_bot_activate": "Przesyłaj nowe wpisy do Matrix",
     "form.integration.matrix_bot_chat_id": "Identyfikator pokoju Matrix",
     "form.integration.matrix_bot_password": "Hasło do Matrix",

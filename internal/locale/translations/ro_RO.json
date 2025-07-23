@@ -255,7 +255,7 @@
     "form.integration.linkding_tags": "TAG-uri Linkding",
     "form.integration.linkwarden_activate": "Salvează intrările în Linkwarden",
     "form.integration.linkwarden_api_key": "Cheie API Linkwarden",
-    "form.integration.linkwarden_endpoint": "Endpoint API Linkwarden",
+    "form.integration.linkwarden_endpoint": "URL-ul de bază Linkwarden",
     "form.integration.matrix_bot_activate": "Împinge intrările noi pe Matrix",
     "form.integration.matrix_bot_chat_id": "ID-ul Camerei Matrix",
     "form.integration.matrix_bot_password": "Parola utilizatorului Matrix",
