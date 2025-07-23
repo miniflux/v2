@@ -148,7 +148,7 @@ type options struct {
 	mediaProxyHTTPClientTimeout        int
 	mediaProxyMode                     string
 	mediaProxyResourceTypes            []string
-	mediaProxyCustomURL                string
+	mediaProxyCustomURL                *url.URL
 	fetchBilibiliWatchTime             bool
 	fetchNebulaWatchTime               bool
 	fetchOdyseeWatchTime               bool
@@ -229,7 +229,7 @@ func NewOptions() *options {
 		mediaProxyHTTPClientTimeout:        defaultMediaProxyHTTPClientTimeout,
 		mediaProxyMode:                     defaultMediaProxyMode,
 		mediaProxyResourceTypes:            []string{defaultMediaResourceTypes},
-		mediaProxyCustomURL:                defaultMediaProxyURL,
+		mediaProxyCustomURL:                nil,
 		filterEntryMaxAgeDays:              defaultFilterEntryMaxAgeDays,
 		fetchBilibiliWatchTime:             defaultFetchBilibiliWatchTime,
 		fetchNebulaWatchTime:               defaultFetchNebulaWatchTime,
@@ -563,7 +563,7 @@ func (o *options) MediaProxyResourceTypes() []string {
 }
 
 // MediaCustomProxyURL returns the custom proxy URL for medias.
-func (o *options) MediaCustomProxyURL() string {
+func (o *options) MediaCustomProxyURL() *url.URL {
 	return o.mediaProxyCustomURL
 }
 

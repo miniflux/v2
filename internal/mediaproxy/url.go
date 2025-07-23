@@ -7,7 +7,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"log/slog"
 	"net/url"
 
 	"github.com/gorilla/mux"
@@ -21,7 +20,7 @@ func ProxifyRelativeURL(router *mux.Router, mediaURL string) string {
 		return ""
 	}
 
-	if customProxyURL := config.Opts.MediaCustomProxyURL(); customProxyURL != "" {
+	if customProxyURL := config.Opts.MediaCustomProxyURL(); customProxyURL != nil {
 		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
@@ -36,7 +35,7 @@ func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
 		return ""
 	}
 
-	if customProxyURL := config.Opts.MediaCustomProxyURL(); customProxyURL != "" {
+	if customProxyURL := config.Opts.MediaCustomProxyURL(); customProxyURL != nil {
 		return proxifyURLWithCustomProxy(mediaURL, customProxyURL)
 	}
 
@@ -50,19 +49,11 @@ func ProxifyAbsoluteURL(router *mux.Router, mediaURL string) string {
 	return absoluteURL
 }
 
-func proxifyURLWithCustomProxy(mediaURL, customProxyURL string) string {
-	if customProxyURL == "" {
+func proxifyURLWithCustomProxy(mediaURL string, customProxyURL *url.URL) string {
+	if customProxyURL == nil {
 		return mediaURL
 	}
 
-	absoluteURL, err := url.JoinPath(customProxyURL, base64.URLEncoding.EncodeToString([]byte(mediaURL)))
-	if err != nil {
-		slog.Error("Incorrect custom media proxy URL",
-			slog.String("custom_proxy_url", customProxyURL),
-			slog.Any("error", err),
-		)
-		return mediaURL
-	}
-
-	return absoluteURL
+	absoluteURL := customProxyURL.JoinPath(base64.URLEncoding.EncodeToString([]byte(mediaURL)))
+	return absoluteURL.String()
 }

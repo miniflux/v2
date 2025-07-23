@@ -278,19 +278,8 @@ func TestProxyFilterWithHttpsAlwaysAndIncorrectCustomProxyServer(t *testing.T) {
 	var err error
 	parser := config.NewParser()
 	config.Opts, err = parser.ParseEnvironmentVariables()
-	if err != nil {
-		t.Fatalf(`Parsing failure: %v`, err)
-	}
-
-	r := mux.NewRouter()
-	r.HandleFunc("/proxy/{encodedDigest}/{encodedURL}", func(w http.ResponseWriter, r *http.Request) {}).Name("proxy")
-
-	input := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-	output := RewriteDocumentWithRelativeProxyURL(r, input)
-	expected := `<p><img src="https://website/folder/image.png" alt="Test"/></p>`
-
-	if expected != output {
-		t.Errorf(`Not expected output: got %q instead of %q`, output, expected)
+	if err == nil {
+		t.Fatalf(`Incorrect proxy URL silently accepted (MEDIA_PROXY_CUSTOM_URL=%q): %q`, os.Getenv("MEDIA_PROXY_CUSTOM_URL"), config.Opts.MediaCustomProxyURL())
 	}
 }
 

@@ -170,7 +170,10 @@ func (p *parser) parseLines(lines []string) (err error) {
 			rand.Read(randomKey)
 			p.opts.mediaProxyPrivateKey = parseBytes(value, randomKey)
 		case "MEDIA_PROXY_CUSTOM_URL":
-			p.opts.mediaProxyCustomURL = parseString(value, defaultMediaProxyURL)
+			p.opts.mediaProxyCustomURL, err = url.Parse(parseString(value, defaultMediaProxyURL))
+			if err != nil {
+				return fmt.Errorf("config: invalid MEDIA_PROXY_CUSTOM_URL value: %w", err)
+			}
 		case "CREATE_ADMIN":
 			p.opts.createAdmin = parseBool(value, defaultCreateAdmin)
 		case "ADMIN_USERNAME":
