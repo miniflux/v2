@@ -1601,7 +1601,8 @@ func TestMediaProxyCustomURL(t *testing.T) {
 	}
 	expected := "http://example.org/proxy"
 	result := opts.MediaCustomProxyURL()
-	if result != expected {
+
+	if result == nil || result.String() != expected {
 		t.Fatalf(`Unexpected MEDIA_PROXY_CUSTOM_URL value, got %q instead of %q`, result, expected)
 	}
 }
