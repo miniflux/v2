@@ -22,16 +22,12 @@ export PGPASSWORD := postgres
 	darwin-amd64 \
 	darwin-arm64 \
 	freebsd-amd64 \
-	freebsd-x86 \
 	openbsd-amd64 \
-	openbsd-x86 \
-	netbsd-x86 \
 	netbsd-amd64 \
-	windows-amd64 \
-	windows-x86 \
 	build \
 	run \
 	clean \
+	add-string \
 	test \
 	lint \
 	integration-test \
@@ -85,30 +81,7 @@ openbsd-amd64:
 	@ GOOS=openbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
 	@ sha256sum $(APP)-$@ > $(APP)-$@.sha256
 
-windows-amd64:
-	@ GOOS=windows GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
-	@ sha256sum $(APP)-$@.exe > $(APP)-$@.exe.sha256
-
-build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64 windows-amd64
-
-# NOTE: unsupported targets
-netbsd-amd64:
-	@ CGO_ENABLED=0 GOOS=netbsd GOARCH=amd64 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
-
-linux-x86:
-	@ CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
-
-freebsd-x86:
-	@ CGO_ENABLED=0 GOOS=freebsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
-
-netbsd-x86:
-	@ CGO_ENABLED=0 GOOS=netbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
-
-openbsd-x86:
-	@ GOOS=openbsd GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@ main.go
-
-windows-x86:
-	@ GOOS=windows GOARCH=386 go build -ldflags=$(LD_FLAGS) -o $(APP)-$@.exe main.go
+build: linux-amd64 linux-arm64 linux-armv7 linux-armv6 linux-armv5 darwin-amd64 darwin-arm64 freebsd-amd64 openbsd-amd64
 
 run:
 	@ LOG_DATE_TIME=1 LOG_LEVEL=debug RUN_MIGRATIONS=1 CREATE_ADMIN=1 ADMIN_USERNAME=admin ADMIN_PASSWORD=test123 go run main.go
@@ -116,7 +89,6 @@ run:
 clean:
 	@ rm -f $(APP)-* $(APP) $(APP)*.rpm $(APP)*.deb $(APP)*.exe $(APP)*.sha256
 
-.PHONY: add-string
 add-string:
 	cd internal/locale/translations && \
 	for file in *.json; do \
@@ -124,7 +96,6 @@ add-string:
 		   '. + {($$key): $$val} | to_entries | sort_by(.key) | from_entries' "$$file" > tmp && \
 		mv tmp "$$file"; \
 	done
-
 
 test:
 	go test -cover -race -count=1 ./...
