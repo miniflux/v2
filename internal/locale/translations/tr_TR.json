@@ -252,7 +252,7 @@
     "form.integration.linkding_tags": "Linkding Etiketleri",
     "form.integration.linkwarden_activate": "Makaleleri Linkwarden'e kaydet",
     "form.integration.linkwarden_api_key": "Linkwarden API Anahtarı",
-    "form.integration.linkwarden_endpoint": "Linkwarden API Uç Noktası",
+    "form.integration.linkwarden_endpoint": "Linkwarden Temel URL'si",
     "form.integration.matrix_bot_activate": "Yeni makaleleri Matrix'e aktarın",
     "form.integration.matrix_bot_chat_id": "Matrix odasının kimliği",
     "form.integration.matrix_bot_password": "Matrix kullanıcısı için parola",

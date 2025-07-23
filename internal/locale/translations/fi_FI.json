@@ -252,7 +252,7 @@
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkwarden_activate": "Tallenna artikkelit Linkkiin",
     "form.integration.linkwarden_api_key": "Linkwarden API-avain",
-    "form.integration.linkwarden_endpoint": "Linkwarden API-päätepiste",
+    "form.integration.linkwarden_endpoint": "Linkwarden Base URL",
     "form.integration.matrix_bot_activate": "Siirrä uudet artikkelit Matrixiin",
     "form.integration.matrix_bot_chat_id": "Matrix-huoneen tunnus",
     "form.integration.matrix_bot_password": "Matrix-käyttäjän salasana",

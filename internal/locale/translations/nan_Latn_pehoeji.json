@@ -249,7 +249,7 @@
     "form.integration.linkding_tags": "Linkding khan-á",
     "form.integration.linkwarden_activate": "Pó-chûn siau-sit kàu Linkwarden",
     "form.integration.linkwarden_api_key": "Linkwarden API só-sî",
-    "form.integration.linkwarden_endpoint": "Linkwarden API thâu",
+    "form.integration.linkwarden_endpoint": "Linkwarden Base URL",
     "form.integration.matrix_bot_activate": "Thui-sàng siau-sit kàu Matrix",
     "form.integration.matrix_bot_chat_id": "Matrix pâng-keng ID",
     "form.integration.matrix_bot_password": "Matrix bi̍t-bé",

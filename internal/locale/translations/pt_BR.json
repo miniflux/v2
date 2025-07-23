@@ -252,7 +252,7 @@
     "form.integration.linkding_tags": "Linkding Tags",
     "form.integration.linkwarden_activate": "Salvar itens no Linkwarden",
     "form.integration.linkwarden_api_key": "Chave de API do Linkwarden",
-    "form.integration.linkwarden_endpoint": "Endpoint de API do Linkwarden",
+    "form.integration.linkwarden_endpoint": "URL base do Linkwarden",
     "form.integration.matrix_bot_activate": "Transferir novos artigos para o Matrix",
     "form.integration.matrix_bot_chat_id": "Identificação da sala Matrix",
     "form.integration.matrix_bot_password": "Palavra-passe para utilizador da Matrix",
