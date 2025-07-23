@@ -125,6 +125,11 @@ integration-test:
 	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
 	go test -v -count=1 ./internal/api
 
+	TEST_MINIFLUX_BASE_URL=http://127.0.0.1:8080 \
+	TEST_MINIFLUX_ADMIN_USERNAME=admin \
+	TEST_MINIFLUX_ADMIN_PASSWORD=test123 \
+	go test -v -count=1 ./internal/template
+
 clean-integration-test:
 	@ kill -9 `cat /tmp/miniflux.pid`
 	@ rm -f /tmp/miniflux.pid /tmp/miniflux.log
