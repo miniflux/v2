@@ -6,34 +6,36 @@ package googlereader // import "miniflux.app/v2/internal/googlereader"
 import (
 	"fmt"
 	"net/http"
-
-	"miniflux.app/v2/internal/http/response"
 )
 
-type login struct {
+type loginResponse struct {
 	SID  string `json:"SID,omitempty"`
 	LSID string `json:"LSID,omitempty"`
 	Auth string `json:"Auth,omitempty"`
 }
 
-func (l login) String() string {
+func (l loginResponse) String() string {
 	return fmt.Sprintf("SID=%s\nLSID=%s\nAuth=%s\n", l.SID, l.LSID, l.Auth)
 }
 
-type userInfo struct {
+type userInfoResponse struct {
 	UserID        string `json:"userId"`
 	UserName      string `json:"userName"`
 	UserProfileID string `json:"userProfileId"`
 	UserEmail     string `json:"userEmail"`
 }
 
-type subscription struct {
-	ID         string                 `json:"id"`
-	Title      string                 `json:"title"`
-	Categories []subscriptionCategory `json:"categories"`
-	URL        string                 `json:"url"`
-	HTMLURL    string                 `json:"htmlUrl"`
-	IconURL    string                 `json:"iconUrl"`
+type subscriptionResponse struct {
+	ID         string                         `json:"id"`
+	Title      string                         `json:"title"`
+	Categories []subscriptionCategoryResponse `json:"categories"`
+	URL        string                         `json:"url"`
+	HTMLURL    string                         `json:"htmlUrl"`
+	IconURL    string                         `json:"iconUrl"`
+}
+
+type subscriptionsResponse struct {
+	Subscriptions []subscriptionResponse `json:"subscriptions"`
 }
 
 type quickAddResponse struct {
@@ -43,13 +45,10 @@ type quickAddResponse struct {
 	StreamName string `json:"streamName,omitempty"`
 }
 
-type subscriptionCategory struct {
+type subscriptionCategoryResponse struct {
 	ID    string `json:"id"`
 	Label string `json:"label,omitempty"`
 	Type  string `json:"type,omitempty"`
-}
-type subscriptionsResponse struct {
-	Subscriptions []subscription `json:"subscriptions"`
 }
 
 type itemRef struct {
@@ -64,10 +63,10 @@ type streamIDResponse struct {
 }
 
 type tagsResponse struct {
-	Tags []subscriptionCategory `json:"tags"`
+	Tags []subscriptionCategoryResponse `json:"tags"`
 }
 
-type streamContentItems struct {
+type streamContentItemsResponse struct {
 	Direction string        `json:"direction"`
 	ID        string        `json:"id"`
 	Title     string        `json:"title"`
@@ -118,21 +117,15 @@ type contentItemOrigin struct {
 	HTMLUrl  string `json:"htmlUrl"`
 }
 
-// Unauthorized sends a not authorized error to the client.
-func Unauthorized(w http.ResponseWriter, r *http.Request) {
-	builder := response.New(w, r)
-	builder.WithStatus(http.StatusUnauthorized)
-	builder.WithHeader("Content-Type", "text/plain")
-	builder.WithHeader("X-Reader-Google-Bad-Token", "true")
-	builder.WithBody("Unauthorized")
-	builder.Write()
+func sendUnauthorizedResponse(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("X-Reader-Google-Bad-Token", "true")
+	w.WriteHeader(http.StatusUnauthorized)
+	w.Write([]byte("Unauthorized"))
 }
 
-// OK sends a ok response to the client.
-func OK(w http.ResponseWriter, r *http.Request) {
-	builder := response.New(w, r)
-	builder.WithStatus(http.StatusOK)
-	builder.WithHeader("Content-Type", "text/plain")
-	builder.WithBody("OK")
-	builder.Write()
+func sendOkayResponse(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
