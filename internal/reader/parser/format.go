@@ -4,9 +4,9 @@
 package parser // import "miniflux.app/v2/internal/reader/parser"
 
 import (
-	"bytes"
 	"encoding/xml"
 	"io"
+	"unicode"
 
 	rxml "miniflux.app/v2/internal/reader/xml"
 )
@@ -22,11 +22,7 @@ const (
 
 // DetectFeedFormat tries to guess the feed format from input data.
 func DetectFeedFormat(r io.ReadSeeker) (string, string) {
-	var dataArray = [32]byte{}
-	data := dataArray[:]
-	r.Read(data)
-
-	if bytes.HasPrefix(bytes.TrimSpace(data), []byte("{")) {
+	if isJSON, err := detectJSONFormat(r); err == nil && isJSON {
 		return FormatJSON, ""
 	}
 
@@ -57,4 +53,37 @@ func DetectFeedFormat(r io.ReadSeeker) (string, string) {
 	}
 
 	return FormatUnknown, ""
+}
+
+// detectJSONFormat checks if the reader contains JSON by reading until it finds
+// the first non-whitespace character or reaches EOF/error.
+func detectJSONFormat(r io.ReadSeeker) (bool, error) {
+	const bufferSize = 32
+	buffer := make([]byte, bufferSize)
+
+	for {
+		n, err := r.Read(buffer)
+		if n == 0 {
+			if err == io.EOF {
+				return false, nil // No non-whitespace content found
+			}
+			return false, err
+		}
+
+		// Check each byte in the buffer
+		for i := range n {
+			ch := buffer[i]
+			// Skip whitespace characters (space, tab, newline, carriage return, etc.)
+			if unicode.IsSpace(rune(ch)) {
+				continue
+			}
+			// First non-whitespace character determines if it's JSON
+			return ch == '{', nil
+		}
+
+		// If we've read less than bufferSize, we've reached EOF
+		if n < bufferSize {
+			return false, nil
+		}
+	}
 }

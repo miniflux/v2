@@ -77,3 +77,56 @@ func TestDetectUnknown(t *testing.T) {
 		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatUnknown)
 	}
 }
+
+func TestDetectJSONWithLargeLeadingWhitespace(t *testing.T) {
+	leadingWhitespace := strings.Repeat(" ", 10000)
+	data := leadingWhitespace + `{
+		"version" : "https://jsonfeed.org/version/1",
+		"title" : "Example with lots of leading whitespace"
+	}`
+	format, _ := DetectFeedFormat(strings.NewReader(data))
+
+	if format != FormatJSON {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
+	}
+}
+
+func TestDetectJSONWithMixedWhitespace(t *testing.T) {
+	leadingWhitespace := strings.Repeat("\n\t  ", 10000)
+	data := leadingWhitespace + `{
+		"version" : "https://jsonfeed.org/version/1",
+		"title" : "Example with mixed whitespace"
+	}`
+	format, _ := DetectFeedFormat(strings.NewReader(data))
+
+	if format != FormatJSON {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
+	}
+}
+
+func TestDetectOnlyWhitespace(t *testing.T) {
+	data := strings.Repeat(" \t\n\r", 10000)
+	format, _ := DetectFeedFormat(strings.NewReader(data))
+
+	if format != FormatUnknown {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatUnknown)
+	}
+}
+
+func TestDetectJSONSmallerThanBuffer(t *testing.T) {
+	data := `{"version":"1"}` // This is only 15 bytes, well below the 32-byte buffer
+	format, _ := DetectFeedFormat(strings.NewReader(data))
+
+	if format != FormatJSON {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
+	}
+}
+
+func TestDetectJSONWithWhitespaceSmallerThanBuffer(t *testing.T) {
+	data := `  {"title":"test"}  `
+	format, _ := DetectFeedFormat(strings.NewReader(data))
+
+	if format != FormatJSON {
+		t.Errorf(`Wrong format detected: %q instead of %q`, format, FormatJSON)
+	}
+}
