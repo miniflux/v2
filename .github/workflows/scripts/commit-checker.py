@@ -4,8 +4,10 @@ import sys
 import argparse
 from typing import Match
 
-# Conventional commit pattern
-CONVENTIONAL_COMMIT_PATTERN: str = r"^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9-]+\))?!?: .{1,100}"
+# Conventional commit pattern (including Git revert messages)
+CONVENTIONAL_COMMIT_PATTERN: str = (
+    r"^((build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9-]+\))?!?: .{1,100}|Revert .+)"
+)
 
 
 def get_commit_message(commit_hash: str) -> str:
@@ -23,9 +25,7 @@ def get_commit_message(commit_hash: str) -> str:
         sys.exit(1)
 
 
-def check_commit_message(
-    message: str, pattern: str = CONVENTIONAL_COMMIT_PATTERN
-) -> bool:
+def check_commit_message(message: str, pattern: str = CONVENTIONAL_COMMIT_PATTERN) -> bool:
     """Check if commit message follows conventional commit format."""
     first_line: str = message.split("\n")[0]
     match: Match[str] | None = re.match(pattern, first_line)
@@ -50,9 +50,7 @@ def check_commit_range(base_ref: str, head_ref: str) -> list[dict[str, str]]:
         for commit_hash in commit_hashes:
             message: str = get_commit_message(commit_hash)
             if not check_commit_message(message):
-                non_compliant.append(
-                    {"hash": commit_hash, "message": message.split("\n")[0]}
-                )
+                non_compliant.append({"hash": commit_hash, "message": message.split("\n")[0]})
 
         return non_compliant
     except subprocess.CalledProcessError as e:
@@ -61,15 +59,9 @@ def check_commit_range(base_ref: str, head_ref: str) -> list[dict[str, str]]:
 
 
 def main() -> None:
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        description="Check conventional commit compliance"
-    )
-    parser.add_argument(
-        "--base", required=True, help="Base ref (starting commit, exclusive)"
-    )
-    parser.add_argument(
-        "--head", required=True, help="Head ref (ending commit, inclusive)"
-    )
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(description="Check conventional commit compliance")
+    parser.add_argument("--base", required=True, help="Base ref (starting commit, exclusive)")
+    parser.add_argument("--head", required=True, help="Head ref (ending commit, inclusive)")
     args: argparse.Namespace = parser.parse_args()
 
     non_compliant: list[dict[str, str]] = check_commit_range(args.base, args.head)
@@ -80,9 +72,7 @@ def main() -> None:
             print(f"- {commit['hash'][:8]}: {commit['message']}")
         print("\nPlease ensure your commit messages follow the format:")
         print("type(scope): subject")
-        print(
-            "\nWhere type is one of: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test"
-        )
+        print("\nWhere type is one of: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test")
         sys.exit(1)
     else:
         print("All commits follow the conventional commit format!")
