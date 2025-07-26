@@ -1,3 +1,62 @@
+Version 2.2.11 (July 26, 2025)
+------------------------------
+
+### ✨ New Features
+
+* **TLS support for Unix sockets**: Miniflux can now serve TLS over Unix domain sockets using `CERT_FILE` and `KEY_FILE` ([#fcf86e3](https://github.com/miniflux/v2/commit/fcf86e3)).
+* **RSS fallback**: If a feed entry has no URL, Miniflux now uses the enclosure URL as a fallback ([#d9de9d1](https://github.com/miniflux/v2/commit/d9de9d1)).
+* **Bearer token for Linkwarden**: The Linkwarden integration now uses Bearer token authorization instead of cookies ([#1d11623](https://github.com/miniflux/v2/commit/1d11623)).
+* **Cookie policy improvement**: `SameSiteStrictMode` is enforced for cookies when OAuth2/OIDC is not used ([#135ce1d](https://github.com/miniflux/v2/commit/135ce1d)).
+* **Readability engine**: Avoid removing elements with the `content` class during readability parsing ([#66b269e](https://github.com/miniflux/v2/commit/66b269e)).
+
+### 🛠️ Improvements
+
+* **Massive readability engine refactoring** and performance optimizations:
+
+  * Improved performance of `getClassWeight`, `getLinkDensity`, and `transformMisusedDivsIntoParagraphs`.
+  * Simplified and optimized internal logic of `removeUnlikelyCandidates`, `getSelectionLength`, and `getArticle`.
+  * Reduced memory allocation in sanitizer and readability components.
+* **Storage optimization**: Strings are now truncated on the Go side to respect `tsvector` limits, reducing DB load and ensuring valid UTF-8 ([#703f113](https://github.com/miniflux/v2/commit/703f113)).
+* **Simplified and clarified internal code structure**:
+
+  * Major cleanup and size optimization of internal structs (`Feed`, `FeedCreationRequest`, etc.).
+  * Reduced memory use and improved CPU cache locality.
+  * Numerous refactors across `config`, `template`, `locale`, `subscription`, and `fetcher` modules.
+
+### 🐛 Bug Fixes
+
+* Fixed an issue with feeds having excessive leading whitespace causing parser buffer issues ([#54abd0a](https://github.com/miniflux/v2/commit/54abd0a)).
+* Properly preserve UTF-8 when truncating strings for full-text search ([#703f113](https://github.com/miniflux/v2/commit/703f113)).
+* Fixed logic error in enclosure type detection ([#50d5cb9](https://github.com/miniflux/v2/commit/50d5cb9)).
+* Fixed incorrect filter rule parsing of Windows-style newlines ([#dc81725](https://github.com/miniflux/v2/commit/dc81725)).
+* Fixed a panic in `startAutoCertTLSServer` function when using Let's Encrypt automatic certificates ([#f7a6b02](https://github.com/miniflux/v2/commit/f7a6b02))
+* Improved UI spacing consistency around header/footer ([#32fbb4e](https://github.com/miniflux/v2/commit/32fbb4e)).
+
+### ⚠️ Breaking Changes
+
+* **Windows binary no longer distributed**: Windows is no longer a supported platform for binary distribution. Users must build from source if needed ([#b470b18](https://github.com/miniflux/v2/commit/b470b18)).
+
+### 🧪 Tests & CI
+
+* Test coverage significantly increased for modules like `readability`, `sanitizer`, `processor`, `locale`, and `storage`.
+* Commit linter updated to support new Git revert message format.
+
+### 🐘 Docker & Environment
+
+* Base Docker image updated to Alpine 3.22.
+* PostgreSQL Docker example updated to use the latest version.
+
+### 🌐 Localization
+
+* Updated Chinese and German translations.
+
+### 🔒 Dependency Updates
+
+* Bumped `github.com/go-webauthn/webauthn` to `0.13.4`
+* Bumped `github.com/tdewolff/minify/v2` to `2.23.10`
+* Bumped `golang.org/x/*` modules: `image`, `net`, `term`, `crypto`
+* Bumped `github.com/andybalholm/brotli` to `1.2.0`
+
 Version 2.2.10 (June 23, 2025)
 ------------------------------
 
