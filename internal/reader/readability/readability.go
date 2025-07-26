@@ -18,9 +18,9 @@ import (
 const defaultTagsToScore = "section,h2,h3,h4,h5,h6,p,td,pre,div"
 
 var (
-	strongCandidates  = [...]string{"popupbody", "-ad", "g-plus"}
-	maybeCandidate    = [...]string{"and", "article", "body", "column", "main", "shadow"}
-	unlikelyCandidate = [...]string{"banner", "breadcrumbs", "combx", "comment", "community", "cover-wrap", "disqus", "extra", "foot", "header", "legends", "menu", "modal", "related", "remark", "replies", "rss", "shoutbox", "sidebar", "skyscraper", "social", "sponsor", "supplemental", "ad-break", "agegate", "pagination", "pager", "popup", "yom-remote"}
+	strongCandidatesToRemove  = [...]string{"popupbody", "-ad", "g-plus"}
+	maybeCandidateToRemove    = [...]string{"and", "article", "body", "column", "main", "shadow", "content"}
+	unlikelyCandidateToRemove = [...]string{"banner", "breadcrumbs", "combx", "comment", "community", "cover-wrap", "disqus", "extra", "foot", "header", "legends", "menu", "modal", "related", "remark", "replies", "rss", "shoutbox", "sidebar", "skyscraper", "social", "sponsor", "supplemental", "ad-break", "agegate", "pagination", "pager", "popup", "yom-remote"}
 
 	positiveKeywords = [...]string{"article", "blog", "body", "content", "entry", "h-entry", "hentry", "main", "page", "pagination", "post", "story", "text"}
 	negativeKeywords = [...]string{"author", "banner", "byline", "com-", "combx", "comment", "contact", "dateline", "foot", "hid", "masthead", "media", "meta", "modal", "outbrain", "promo", "related", "scroll", "share", "shopping", "shoutbox", "sidebar", "skyscraper", "sponsor", "tags", "tool", "widget", "writtenby"}
@@ -185,17 +185,17 @@ func shouldRemoveCandidate(str string) bool {
 	str = strings.ToLower(str)
 
 	// Those candidates have no false-positives, no need to check against `maybeCandidate`
-	for _, strongCandidate := range strongCandidates {
-		if strings.Contains(str, strongCandidate) {
+	for _, strongCandidateToRemove := range strongCandidatesToRemove {
+		if strings.Contains(str, strongCandidateToRemove) {
 			return true
 		}
 	}
 
-	for _, unlikelyCandidate := range unlikelyCandidate {
-		if strings.Contains(str, unlikelyCandidate) {
+	for _, unlikelyCandidateToRemove := range unlikelyCandidateToRemove {
+		if strings.Contains(str, unlikelyCandidateToRemove) {
 			// Do we have a false positive?
-			for _, maybe := range maybeCandidate {
-				if strings.Contains(str, maybe) {
+			for _, maybeCandidateToRemove := range maybeCandidateToRemove {
+				if strings.Contains(str, maybeCandidateToRemove) {
 					return false
 				}
 			}
