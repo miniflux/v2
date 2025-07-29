@@ -175,8 +175,9 @@ a:hover {
     white-space: nowrap;
 }
 
+#header-menu .icon,
 .page-header ul a .icon {
-    padding-bottom: 2px;
+    margin-bottom: 2px;
 }
 
 .page-header-action-form {
@@ -239,7 +240,7 @@ a:hover {
 
 #btn-add-to-home-screen {
     text-decoration: none;
-    line-height: 30px;
+    height: 30px;
     color: #fff;
     background-color: transparent;
     border: 0;
@@ -282,13 +283,13 @@ a:hover {
 }
 
 /* Hide the logo when there is not enough space to display menus when using languages more verbose than English */
-@media (min-width: 620px) and (max-width: 830px) {
+@media (min-width: 620px) and (max-width: 850px) {
     .logo {
         display: none;
     }
 }
 
-@media (min-width: 830px) {
+@media (min-width: 850px) {
     .logo {
         padding-right: 8px;
     }
@@ -297,7 +298,7 @@ a:hover {
 @media (min-width: 620px) {
     body {
         margin: auto;
-        max-width: 820px;
+        max-width: 900px; /* Wide enough to display the logo and the menu one a single row for any languages */
     }
 
     .header {
@@ -306,14 +307,13 @@ a:hover {
 
     .header li {
         display: inline-block;
-        padding: 0 12px 0 0;
+        padding: 0 5px 0 0;
         line-height: normal;
         border: none;
         font-size: 1.0em;
     }
 
     .header nav {
-        align-items: end;
         flex-direction: row;
     }
 
@@ -931,9 +931,9 @@ article.category-has-unread {
 /* Icons */
 .icon,
 .icon-label {
-    vertical-align: middle;
+    vertical-align: text-bottom;
     display: inline-block;
-    padding-right: 2px;
+    margin-right: 2px;
 }
 
 .icon {

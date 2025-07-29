@@ -85,20 +85,20 @@
                         aria-label="{{ t "menu.unread" }}, {{ plural "page.unread_entry_count" .countUnread .countUnread }}"
                         {{ end }}
                     >
-                        {{ t "menu.unread" }}
+                        {{ icon "entries" }}{{ t "menu.unread" }}
                         {{ if gt .countUnread 0 }}
                         <span class="unread-counter-wrapper" aria-hidden="true">(<span class="unread-counter">{{ .countUnread }}</span>)</span>
                         {{ end }}
                     </a>
                 </li>
                 <li {{ if eq .menu "starred" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g b" }}">
-                    <a href="{{ route "starred" }}" data-page="starred">{{ t "menu.starred" }}</a>
+                    <a href="{{ route "starred" }}" data-page="starred">{{ icon "star" }}{{ t "menu.starred" }}</a>
                 </li>
                 <li {{ if eq .menu "history" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g h" }}">
-                    <a href="{{ route "history" }}" data-page="history">{{ t "menu.history" }}</a>
+                    <a href="{{ route "history" }}" data-page="history">{{ icon "history" }}{{ t "menu.history" }}</a>
                 </li>
                 <li {{ if eq .menu "feeds" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g f" }}">
-                    <a href="{{ route "feeds" }}" data-page="feeds">{{ t "menu.feeds" }}
+                    <a href="{{ route "feeds" }}" data-page="feeds">{{ icon "feeds" }}{{ t "menu.feeds" }}
                       {{ if gt .countErrorFeeds 0 }}
                           <span class="error-feeds-counter-wrapper">(<span class="error-feeds-counter">{{ .countErrorFeeds }}</span>)</span>
                       {{ end }}
@@ -108,17 +108,17 @@
                     </a>
                 </li>
                 <li {{ if eq .menu "categories" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g c" }}">
-                    <a href="{{ route "categories" }}" data-page="categories">{{ t "menu.categories" }}</a>
+                    <a href="{{ route "categories" }}" data-page="categories">{{ icon "categories" }}{{ t "menu.categories" }}</a>
                 </li>
                 <li {{ if eq .menu "search" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "/" }}">
-                    <a href="{{ route "search" }}" data-page="search">{{ t "menu.search" }}</a>
+                    <a href="{{ route "search" }}" data-page="search">{{ icon "search" }}{{ t "menu.search" }}</a>
                 </li>
                 <li {{ if eq .menu "settings" }}class="active"{{ end }} title="{{ t "tooltip.keyboard_shortcuts" "g s" }}">
-                    <a href="{{ route "settings" }}" data-page="settings">{{ t "menu.settings" }}</a>
+                    <a href="{{ route "settings" }}" data-page="settings">{{ icon "settings" }}{{ t "menu.settings" }}</a>
                 </li>
                 {{ if not hasAuthProxy }}
                     <li>
-                        <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
+                        <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ icon "logout" }}{{ t "menu.logout" }}</a>
                     </li>
                 {{ end }}
             </ul>
