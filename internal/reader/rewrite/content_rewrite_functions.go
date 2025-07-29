@@ -21,11 +21,8 @@ import (
 )
 
 var (
-	youtubeVideoRegex = regexp.MustCompile(`youtube\.com/watch\?v=(.*)$`)
-	youtubeShortRegex = regexp.MustCompile(`youtube\.com/shorts/([a-zA-Z0-9_-]{11})$`)
-	youtubeIdRegex    = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
-	invidioRegex      = regexp.MustCompile(`https?://(.*)/watch\?v=(.*)`)
-	textLinkRegex     = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
+	youtubeIdRegex = regexp.MustCompile(`youtube_id"?\s*[:=]\s*"([a-zA-Z0-9_-]{11})"`)
+	textLinkRegex  = regexp.MustCompile(`(?mi)(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])`)
 )
 
 // titlelize returns a copy of the string s with all Unicode letters that begin words
@@ -261,15 +258,29 @@ func useNoScriptImages(entryContent string) string {
 }
 
 func getYoutubVideoIDFromURL(entryURL string) string {
-	matches := youtubeVideoRegex.FindStringSubmatch(entryURL)
-
-	if len(matches) != 2 {
-		matches = youtubeShortRegex.FindStringSubmatch(entryURL)
+	u, err := url.Parse(entryURL)
+	if err != nil {
+		return ""
 	}
 
-	if len(matches) == 2 {
-		return matches[1]
+	if !strings.HasSuffix(u.Hostname(), "youtube.com") {
+		return ""
 	}
+
+	if u.Path == "/watch" {
+		if v := u.Query().Get("v"); v != "" {
+			return v
+		}
+		return ""
+	}
+
+	if id, found := strings.CutPrefix(u.Path, "/shorts/"); found {
+		if len(id) == 11 {
+			// youtube shorts id are always 11 chars.
+			return id
+		}
+	}
+
 	return ""
 }
 
@@ -311,11 +322,29 @@ func addYoutubeVideoFromId(entryContent string) string {
 }
 
 func addInvidiousVideo(entryURL, entryContent string) string {
-	matches := invidioRegex.FindStringSubmatch(entryURL)
-	if len(matches) == 3 {
-		return addVideoPlayerIframe(`https://`+matches[1]+`/embed/`+matches[2], entryContent)
+	u, err := url.Parse(entryURL)
+	if err != nil {
+		return entryContent
 	}
-	return entryContent
+
+	if u.Path != "/watch" {
+		return entryContent
+	}
+
+	v := u.Query().Get("v")
+	if v == "" {
+		return entryContent
+	}
+
+	src := "https://" + u.Hostname() + `/embed/` + v
+	for key, val := range u.Query() {
+		if key == "v" || len(val) != 1 {
+			continue
+		}
+		src += "&" + key + "=" + val[0]
+	}
+
+	return addVideoPlayerIframe(src, entryContent)
 }
 
 func addPDFLink(entryURL, entryContent string) string {
