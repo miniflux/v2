@@ -797,6 +797,23 @@ func TestRewriteRemoveCustom(t *testing.T) {
 		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
 	}
 }
+func TestRewriteRemoveQuotedSelector(t *testing.T) {
+	controlEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum</div>`,
+	}
+	testEntry := &model.Entry{
+		URL:     "https://example.org/article",
+		Title:   `A title`,
+		Content: `<div>Lorem Ipsum<img alt="LINUX KERNEL" src="/assets/categories/linuxkernel.webp" width="100" height="100"></div>`,
+	}
+	ApplyContentRewriteRules(testEntry, `remove("img[src^='/assets/categories/']")`)
+
+	if !reflect.DeepEqual(testEntry, controlEntry) {
+		t.Errorf(`Not expected output: got "%+v" instead of "%+v"`, testEntry, controlEntry)
+	}
+}
 
 func TestRewriteAddCastopodEpisode(t *testing.T) {
 	controlEntry := &model.Entry{
