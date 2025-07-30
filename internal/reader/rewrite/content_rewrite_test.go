@@ -195,6 +195,138 @@ func TestRewriteYoutubeShortLinkUsingInvidious(t *testing.T) {
 	}
 }
 
+func TestAddYoutubeVideoFromId(t *testing.T) {
+	config.Opts = config.NewOptions()
+
+	scenarios := map[string]string{
+		// Test with single YouTube ID
+		`Some content with youtube ID <script type="text/javascript" data-reactid="6">window.__APOLLO_STATE__ = {youtube_id: "9uASADiYe_8"}</script>`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/9uASADiYe_8" allowfullscreen></iframe><br>Some content with youtube ID <script type="text/javascript" data-reactid="6">window.__APOLLO_STATE__ = {youtube_id: "9uASADiYe_8"}</script>`,
+
+		// Test with multiple YouTube IDs
+		`Content with youtube_id: "dQw4w9WgXcQ" and youtube_id: "jNQXAC9IVRw"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br><iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/jNQXAC9IVRw" allowfullscreen></iframe><br>Content with youtube_id: "dQw4w9WgXcQ" and youtube_id: "jNQXAC9IVRw"`,
+
+		// Test with YouTube ID using equals sign
+		`Some content with youtube_id = "dQw4w9WgXcQ"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some content with youtube_id = "dQw4w9WgXcQ"`,
+
+		// Test with spaces around delimiters
+		`Some content with youtube_id : "dQw4w9WgXcQ"`: `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some content with youtube_id : "dQw4w9WgXcQ"`,
+
+		// Test with YouTube ID without quotes (regex requires quotes)
+		`Some content with youtube_id: dQw4w9WgXcQ and more`: `Some content with youtube_id: dQw4w9WgXcQ and more`,
+
+		// Test with no YouTube ID
+		`Some regular content without any video ID`: `Some regular content without any video ID`,
+
+		// Test with invalid YouTube ID (wrong length)
+		`Some content with youtube_id: "invalid"`: `Some content with youtube_id: "invalid"`,
+
+		// Test with empty content
+		``: ``,
+	}
+
+	for input, expected := range scenarios {
+		actual := addYoutubeVideoFromId(input)
+		if actual != expected {
+			t.Errorf(`addYoutubeVideoFromId test failed for input "%s"`, input)
+			t.Errorf(`Expected: "%s"`, expected)
+			t.Errorf(`Actual: "%s"`, actual)
+		}
+	}
+}
+
+func TestAddYoutubeVideoFromIdWithCustomEmbedURL(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("YOUTUBE_EMBED_URL_OVERRIDE", "https://invidious.custom/embed/")
+
+	var err error
+	parser := config.NewParser()
+	config.Opts, err = parser.ParseEnvironmentVariables()
+
+	if err != nil {
+		t.Fatalf(`Parsing failure: %v`, err)
+	}
+
+	input := `Some content with youtube_id: "dQw4w9WgXcQ"`
+	expected := `<iframe width="650" height="350" frameborder="0" src="https://invidious.custom/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some content with youtube_id: "dQw4w9WgXcQ"`
+
+	actual := addYoutubeVideoFromId(input)
+	if actual != expected {
+		t.Errorf(`addYoutubeVideoFromId with custom embed URL failed`)
+		t.Errorf(`Expected: "%s"`, expected)
+		t.Errorf(`Actual: "%s"`, actual)
+	}
+}
+
+func TestAddInvidiousVideo(t *testing.T) {
+	scenarios := map[string][]string{
+		// Test with various Invidious instances
+		"https://invidious.io/watch?v=dQw4w9WgXcQ": {
+			"Some video content",
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Some video content`,
+		},
+		"https://yewtu.be/watch?v=jNQXAC9IVRw": {
+			"Another video description",
+			`<iframe width="650" height="350" frameborder="0" src="https://yewtu.be/embed/jNQXAC9IVRw" allowfullscreen></iframe><br>Another video description`,
+		},
+		"http://invidious.snopyta.org/watch?v=dQw4w9WgXcQ": {
+			"HTTP instance test",
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.snopyta.org/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>HTTP instance test`,
+		},
+		"https://youtube.com/watch?v=dQw4w9WgXcQ": {
+			"YouTube URL (also matches regex)",
+			`<iframe width="650" height="350" frameborder="0" src="https://youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>YouTube URL (also matches regex)`,
+		},
+		"https://example.org/watch?v=dQw4w9WgXcQ": {
+			"Any domain with watch pattern",
+			`<iframe width="650" height="350" frameborder="0" src="https://example.org/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>Any domain with watch pattern`,
+		},
+
+		// Test with query parameters
+		"https://invidious.io/watch?v=dQw4w9WgXcQ&t=30s": {
+			"Video with timestamp",
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ&t=30s" allowfullscreen></iframe><br>Video with timestamp`,
+		},
+
+		// Test with more complex query parameters
+		"https://invidious.io/watch?v=dQw4w9WgXcQ&t=30s&autoplay=1": {
+			"Video with multiple parameters",
+			`<iframe width="650" height="350" frameborder="0" src="https://invidious.io/embed/dQw4w9WgXcQ&t=30s&autoplay=1" allowfullscreen></iframe><br>Video with multiple parameters`,
+		},
+
+		// Test with non-matching URLs (should return content unchanged)
+		"https://invidious.io/": {
+			"Invidious homepage",
+			"Invidious homepage",
+		},
+		"https://invidious.io/some-other-page": {
+			"Other page",
+			"Other page",
+		},
+		"https://invidious.io/search?q=test": {
+			"Search page",
+			"Search page",
+		},
+
+		// Test with empty content
+		"https://empty.invidious.io/watch?v=dQw4w9WgXcQ": {
+			"",
+			`<iframe width="650" height="350" frameborder="0" src="https://empty.invidious.io/embed/dQw4w9WgXcQ" allowfullscreen></iframe><br>`,
+		},
+	}
+
+	for entryURL, testData := range scenarios {
+		entryContent := testData[0]
+		expected := testData[1]
+
+		actual := addInvidiousVideo(entryURL, entryContent)
+		if actual != expected {
+			t.Errorf(`addInvidiousVideo test failed for URL "%s" and content "%s"`, entryURL, entryContent)
+			t.Errorf(`Expected: "%s"`, expected)
+			t.Errorf(`Actual: "%s"`, actual)
+		}
+	}
+}
+
 func TestRewriteWithInexistingCustomRule(t *testing.T) {
 	controlEntry := &model.Entry{
 		URL:     "https://www.youtube.com/watch?v=1234",
