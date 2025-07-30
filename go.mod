@@ -5,7 +5,7 @@ module miniflux.app/v2
 require (
 	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/andybalholm/brotli v1.2.0
-	github.com/coreos/go-oidc/v3 v3.14.1
+	github.com/coreos/go-oidc/v3 v3.15.0
 	github.com/go-webauthn/webauthn v0.13.4
 	github.com/gorilla/mux v1.8.1
 	github.com/lib/pq v1.10.9
