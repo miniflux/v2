@@ -273,9 +273,12 @@ func getYoutubVideoIDFromURL(entryURL string) string {
 	return ""
 }
 
+func buildVideoPlayerIframe(absoluteVideoURL string) string {
+	return `<iframe width="650" height="350" frameborder="0" src="` + absoluteVideoURL + `" allowfullscreen></iframe>`
+}
+
 func addVideoPlayerIframe(absoluteVideoURL, entryContent string) string {
-	video := `<iframe width="650" height="350" frameborder="0" src="` + absoluteVideoURL + `" allowfullscreen></iframe>`
-	return video + `<br>` + entryContent
+	return buildVideoPlayerIframe(absoluteVideoURL) + `<br>` + entryContent
 }
 
 func addYoutubeVideoRewriteRule(entryURL, entryContent string) string {
@@ -292,29 +295,25 @@ func addYoutubeVideoUsingInvidiousPlayer(entryURL, entryContent string) string {
 	return entryContent
 }
 
+// For reference: https://github.com/miniflux/v2/pull/1314
 func addYoutubeVideoFromId(entryContent string) string {
 	matches := youtubeIdRegex.FindAllStringSubmatch(entryContent, -1)
 	if matches == nil {
 		return entryContent
 	}
-	sb := strings.Builder{}
+	videoPlayerHTML := ""
 	for _, match := range matches {
 		if len(match) == 2 {
-			sb.WriteString(`<iframe width="650" height="350" frameborder="0" src="`)
-			sb.WriteString(config.Opts.YouTubeEmbedUrlOverride())
-			sb.WriteString(match[1])
-			sb.WriteString(`" allowfullscreen></iframe><br>`)
+			videoPlayerHTML += buildVideoPlayerIframe(config.Opts.YouTubeEmbedUrlOverride()+match[1]) + "<br>"
 		}
 	}
-	sb.WriteString(entryContent)
-	return sb.String()
+	return videoPlayerHTML + entryContent
 }
 
 func addInvidiousVideo(entryURL, entryContent string) string {
 	matches := invidioRegex.FindStringSubmatch(entryURL)
 	if len(matches) == 3 {
-		video := `<iframe width="650" height="350" frameborder="0" src="https://` + matches[1] + `/embed/` + matches[2] + `" allowfullscreen></iframe>`
-		return video + `<br>` + entryContent
+		return addVideoPlayerIframe(`https://`+matches[1]+`/embed/`+matches[2], entryContent)
 	}
 	return entryContent
 }
