@@ -10,7 +10,7 @@ import (
 )
 
 // OK writes a standard XML response with a status 200 OK.
-func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
+func OK[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
 	builder := response.New(w, r)
 	builder.WithHeader("Content-Type", "text/xml; charset=utf-8")
 	builder.WithBody(body)
@@ -18,7 +18,7 @@ func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
 }
 
 // Attachment forces the XML document to be downloaded by the web browser.
-func Attachment(w http.ResponseWriter, r *http.Request, filename string, body interface{}) {
+func Attachment[T []byte | string](w http.ResponseWriter, r *http.Request, filename string, body T) {
 	builder := response.New(w, r)
 	builder.WithHeader("Content-Type", "text/xml; charset=utf-8")
 	builder.WithAttachment(filename)

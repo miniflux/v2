@@ -13,7 +13,7 @@ import (
 )
 
 // OK creates a new HTML response with a 200 status code.
-func OK(w http.ResponseWriter, r *http.Request, body interface{}) {
+func OK[T []byte | string](w http.ResponseWriter, r *http.Request, body T) {
 	builder := response.New(w, r)
 	builder.WithHeader("Content-Type", "text/html; charset=utf-8")
 	builder.WithHeader("Cache-Control", "no-cache, max-age=0, must-revalidate, no-store")
