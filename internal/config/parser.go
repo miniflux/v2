@@ -165,9 +165,7 @@ func (p *parser) parseLines(lines []string) (err error) {
 			p.opts.mediaProxyResourceTypes = parseStringList(value, []string{defaultMediaResourceTypes})
 		case "MEDIA_PROXY_PRIVATE_KEY":
 			randomKey := make([]byte, 16)
-			if _, err := rand.Read(randomKey); err != nil {
-				return fmt.Errorf("config: unable to generate random key: %w", err)
-			}
+			rand.Read(randomKey)
 			p.opts.mediaProxyPrivateKey = parseBytes(value, randomKey)
 		case "MEDIA_PROXY_CUSTOM_URL":
 			p.opts.mediaProxyCustomURL = parseString(value, defaultMediaProxyURL)
