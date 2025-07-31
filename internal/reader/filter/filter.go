@@ -1,5 +1,25 @@
 // SPDX-FileCopyrightText: Copyright The Miniflux Authors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+//
+// Package filter provides functions to filter entries based on user-defined rules.
+//
+// There are two types of rules:
+//
+// Block Rules: Ignore articles that match the regex.
+// Keep Rules: Retain only articles that match the regex.
+//
+// Rules are processed in this order:
+//
+// 1. User block filter rules
+// 2. Feed block filter rules
+// 3. User keep filter rules
+// 4. Feed keep filter rules
+//
+// Each rule must be on a separate line.
+// Duplicate rules are allowed. For example, having multiple EntryTitle rules is possible.
+// The provided regex should use the RE2 syntax.
+// The order of the rules matters as the processor stops on the first match for both Block and Keep rules.
+// Invalid rules are ignored.
 
 package filter // import "miniflux.app/v2/internal/reader/filter"
 
@@ -15,12 +35,71 @@ import (
 	"miniflux.app/v2/internal/model"
 )
 
-type filterActionType string
+type filterRule struct {
+	Type  string
+	Value string
+}
 
-const (
-	filterActionBlock filterActionType = "block"
-	filterActionAllow filterActionType = "allow"
-)
+type filterRules []filterRule
+
+func ParseRules(userRules, feedRules string) filterRules {
+	rules := make(filterRules, 0)
+	for line := range strings.SplitSeq(strings.TrimSpace(userRules), "\n") {
+		if valid, filterRule := parseRule(line); valid {
+			rules = append(rules, filterRule)
+		}
+	}
+	for line := range strings.SplitSeq(strings.TrimSpace(feedRules), "\n") {
+		if valid, filterRule := parseRule(line); valid {
+			rules = append(rules, filterRule)
+		}
+	}
+	return rules
+}
+
+func parseRule(userDefinedRule string) (bool, filterRule) {
+	userDefinedRule = strings.TrimSpace(strings.ReplaceAll(userDefinedRule, "\r\n", ""))
+	parts := strings.SplitN(userDefinedRule, "=", 2)
+	if len(parts) != 2 {
+		return false, filterRule{}
+	}
+	return true, filterRule{
+		Type:  strings.TrimSpace(parts[0]),
+		Value: strings.TrimSpace(parts[1]),
+	}
+}
+
+func IsBlockedEntry(blockRules filterRules, allowRules filterRules, feed *model.Feed, entry *model.Entry) bool {
+	if isBlockedGlobally(entry) {
+		return true
+	}
+
+	if matchesEntryFilterRules(blockRules, feed, entry) {
+		return true
+	}
+
+	if matches, valid := matchesEntryRegexRules(feed.BlocklistRules, feed, entry); valid && matches {
+		return true
+	}
+
+	// If allow rules exist, only entries that match them should be retained
+	if len(allowRules) > 0 {
+		if !matchesEntryFilterRules(allowRules, feed, entry) {
+			return true // Block entry if it doesn't match any allow rules
+		}
+		return false // Allow entry if it matches allow rules
+	}
+
+	// If keeplist rules exist, only entries that match them should be retained
+	if feed.KeeplistRules != "" {
+		if matches, valid := matchesEntryRegexRules(feed.KeeplistRules, feed, entry); valid && !matches {
+			return true // Block entry if it doesn't match keeplist rules
+		}
+		return false // Allow entry if it matches keeplist rules or rule is invalid (ignored)
+	}
+
+	return false
+}
 
 func isBlockedGlobally(entry *model.Entry) bool {
 	if config.Opts == nil {
@@ -42,74 +121,20 @@ func isBlockedGlobally(entry *model.Entry) bool {
 	return false
 }
 
-func IsBlockedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	if isBlockedGlobally(entry) {
-		return true
+// matchesEntryRegexRules checks if the entry matches the regex rules defined in the feed or user settings.
+// It returns true if the entry matches the regex pattern, and a boolean indicating if the regex is valid.
+func matchesEntryRegexRules(regexPattern string, feed *model.Feed, entry *model.Entry) (bool, bool) {
+	if regexPattern == "" {
+		return false, true // No pattern means rule is valid but doesn't match
 	}
 
-	combinedRules := combineFilterRules(user.BlockFilterEntryRules, feed.BlockFilterEntryRules)
-	if combinedRules != "" {
-		if matchesEntryFilterRules(combinedRules, entry, feed, filterActionBlock) {
-			return true
-		}
-	}
-
-	if feed.BlocklistRules == "" {
-		return false
-	}
-
-	return matchesEntryRegexRules(feed.BlocklistRules, entry, feed, filterActionBlock)
-}
-
-func IsAllowedEntry(feed *model.Feed, entry *model.Entry, user *model.User) bool {
-	combinedRules := combineFilterRules(user.KeepFilterEntryRules, feed.KeepFilterEntryRules)
-	if combinedRules != "" {
-		return matchesEntryFilterRules(combinedRules, entry, feed, filterActionAllow)
-	}
-
-	if feed.KeeplistRules == "" {
-		return true
-	}
-
-	return matchesEntryRegexRules(feed.KeeplistRules, entry, feed, filterActionAllow)
-}
-
-func combineFilterRules(userRules, feedRules string) string {
-	var combinedRules strings.Builder
-
-	userRules = strings.TrimSpace(userRules)
-	feedRules = strings.TrimSpace(feedRules)
-
-	if userRules != "" {
-		combinedRules.WriteString(userRules)
-	}
-	if feedRules != "" {
-		if combinedRules.Len() > 0 {
-			combinedRules.WriteString("\n")
-		}
-		combinedRules.WriteString(feedRules)
-	}
-	return combinedRules.String()
-}
-
-func matchesEntryFilterRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
-	for rule := range strings.SplitSeq(rules, "\n") {
-		if matchesRule(rule, entry) {
-			logFilterAction(entry, feed, rule, filterAction)
-			return true
-		}
-	}
-	return false
-}
-
-func matchesEntryRegexRules(rules string, entry *model.Entry, feed *model.Feed, filterAction filterActionType) bool {
-	compiledRegex, err := regexp.Compile(rules)
+	compiledRegex, err := regexp.Compile(regexPattern)
 	if err != nil {
 		slog.Warn("Failed on regexp compilation",
-			slog.String("pattern", rules),
+			slog.String("regex_pattern", regexPattern),
 			slog.Any("error", err),
 		)
-		return false
+		return false, false // Invalid regex pattern
 	}
 
 	containsMatchingTag := slices.ContainsFunc(entry.Tags, func(tag string) bool {
@@ -120,55 +145,60 @@ func matchesEntryRegexRules(rules string, entry *model.Entry, feed *model.Feed, 
 		compiledRegex.MatchString(entry.Title) ||
 		compiledRegex.MatchString(entry.Author) ||
 		containsMatchingTag {
-		logFilterAction(entry, feed, rules, filterAction)
-		return true
+		slog.Debug("Entry matches regex rule",
+			slog.String("entry_url", entry.URL),
+			slog.String("entry_title", entry.Title),
+			slog.String("entry_author", entry.Author),
+			slog.String("feed_url", feed.FeedURL),
+			slog.String("regex_pattern", regexPattern),
+		)
+		return true, true // Pattern matches and is valid
 	}
 
+	return false, true // Pattern is valid but doesn't match
+}
+
+func matchesEntryFilterRules(rules filterRules, feed *model.Feed, entry *model.Entry) bool {
+	for _, rule := range rules {
+		if matchesRule(rule, entry) {
+			slog.Debug("Entry matches filter rule",
+				slog.String("entry_url", entry.URL),
+				slog.String("entry_title", entry.Title),
+				slog.String("entry_author", entry.Author),
+				slog.String("feed_url", feed.FeedURL),
+				slog.String("rule_type", rule.Type),
+				slog.String("rule_value", rule.Value),
+			)
+			return true
+		}
+	}
 	return false
 }
 
-func matchesRule(rule string, entry *model.Entry) bool {
-	rule = strings.TrimSpace(strings.ReplaceAll(rule, "\r\n", ""))
-	parts := strings.SplitN(rule, "=", 2)
-	if len(parts) != 2 {
-		return false
-	}
-
-	ruleType, ruleValue := parts[0], parts[1]
-
-	switch ruleType {
+func matchesRule(rule filterRule, entry *model.Entry) bool {
+	switch rule.Type {
 	case "EntryDate":
-		return isDateMatchingPattern(ruleValue, entry.Date)
+		return isDateMatchingPattern(rule.Value, entry.Date)
 	case "EntryTitle":
-		match, _ := regexp.MatchString(ruleValue, entry.Title)
+		match, _ := regexp.MatchString(rule.Value, entry.Title)
 		return match
 	case "EntryURL":
-		match, _ := regexp.MatchString(ruleValue, entry.URL)
+		match, _ := regexp.MatchString(rule.Value, entry.URL)
 		return match
 	case "EntryCommentsURL":
-		match, _ := regexp.MatchString(ruleValue, entry.CommentsURL)
+		match, _ := regexp.MatchString(rule.Value, entry.CommentsURL)
 		return match
 	case "EntryContent":
-		match, _ := regexp.MatchString(ruleValue, entry.Content)
+		match, _ := regexp.MatchString(rule.Value, entry.Content)
 		return match
 	case "EntryAuthor":
-		match, _ := regexp.MatchString(ruleValue, entry.Author)
+		match, _ := regexp.MatchString(rule.Value, entry.Author)
 		return match
 	case "EntryTag":
-		return containsRegexPattern(ruleValue, entry.Tags)
+		return containsRegexPattern(rule.Value, entry.Tags)
 	}
 
 	return false
-}
-
-func logFilterAction(entry *model.Entry, feed *model.Feed, filterRule string, filterAction filterActionType) {
-	slog.Debug("Filtering entry based on rule",
-		slog.Int64("feed_id", feed.ID),
-		slog.String("feed_url", feed.FeedURL),
-		slog.String("entry_url", entry.URL),
-		slog.String("filter_rule", filterRule),
-		slog.String("filter_action", string(filterAction)),
-	)
 }
 
 func isDateMatchingPattern(pattern string, entryDate time.Time) bool {
@@ -221,9 +251,9 @@ func isDateMatchingPattern(pattern string, entryDate time.Time) bool {
 	return false
 }
 
-func containsRegexPattern(pattern string, entries []string) bool {
-	for _, entry := range entries {
-		if matched, _ := regexp.MatchString(pattern, entry); matched {
+func containsRegexPattern(pattern string, items []string) bool {
+	for _, item := range items {
+		if matched, _ := regexp.MatchString(pattern, item); matched {
 			return true
 		}
 	}
