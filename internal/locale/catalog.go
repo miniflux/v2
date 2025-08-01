@@ -61,7 +61,7 @@ func (t *translationDict) UnmarshalJSON(data []byte) error {
 		case string:
 			m.singulars[key] = vtype
 		case []any:
-			for _, translation := range value.([]any) {
+			for _, translation := range vtype {
 				if translationStr, ok := translation.(string); ok {
 					m.plurals[key] = append(m.plurals[key], translationStr)
 				} else {
