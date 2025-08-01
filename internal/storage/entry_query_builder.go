@@ -292,6 +292,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			f.cookie,
 			f.hide_globally,
 			f.no_media_player,
+			f.webhook_url,
 			fi.icon_id,
 			i.external_id AS icon_external_id,
 			u.timezone
@@ -364,6 +365,7 @@ func (e *EntryQueryBuilder) GetEntries() (model.Entries, error) {
 			&entry.Feed.Cookie,
 			&entry.Feed.HideGlobally,
 			&entry.Feed.NoMediaPlayer,
+			&entry.Feed.WebhookURL,
 			&iconID,
 			&externalIconID,
 			&tz,
