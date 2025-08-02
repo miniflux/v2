@@ -1094,3 +1094,203 @@ function initializeMediaPlayerHandlers() {
         }
     });
 }
+
+/**
+ * Initialize the service worker and PWA installation prompt.
+ */
+function initializeServiceWorker() {
+    // Register service worker if supported
+    if ("serviceWorker" in navigator) {
+        const serviceWorkerURL = document.body.dataset.serviceWorkerUrl;
+        if (serviceWorkerURL) {
+            navigator.serviceWorker.register(ttpolicy.createScriptURL(serviceWorkerURL), {
+                type: "module"
+            }).catch((error) => {
+                console.error("Service Worker registration failed:", error);
+            });
+        }
+    }
+
+    // PWA installation prompt handling
+    window.addEventListener("beforeinstallprompt", (event) => {
+        let deferredPrompt = event;
+        const promptHomeScreen = document.getElementById("prompt-home-screen");
+        const btnAddToHomeScreen = document.getElementById("btn-add-to-home-screen");
+
+        if (!promptHomeScreen || !btnAddToHomeScreen) return;
+
+        promptHomeScreen.style.display = "block";
+
+        btnAddToHomeScreen.addEventListener("click", (event) => {
+            event.preventDefault();
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+                deferredPrompt = null;
+                promptHomeScreen.style.display = "none";
+            });
+        });
+    });
+}
+
+/**
+ * Initialize WebAuthn handlers if supported.
+ */
+function initializeWebAuthn() {
+    if (!WebAuthnHandler.isWebAuthnSupported()) return;
+
+    const webauthnHandler = new WebAuthnHandler();
+
+    // Setup delete credentials handler
+    onClick("#webauthn-delete", () => { webauthnHandler.removeAllCredentials(); });
+
+    // Setup registration
+    const registerButton = document.getElementById("webauthn-register");
+    if (registerButton) {
+        registerButton.disabled = false;
+        onClick("#webauthn-register", () => {
+            webauthnHandler.register().catch((err) => WebAuthnHandler.showErrorMessage(err));
+        });
+    }
+
+    // Setup login
+    const loginButton = document.getElementById("webauthn-login");
+    const usernameField = document.getElementById("form-username");
+
+    if (loginButton && usernameField) {
+        const abortController = new AbortController();
+        loginButton.disabled = false;
+
+        onClick("#webauthn-login", () => {
+            abortController.abort();
+            webauthnHandler.login(usernameField.value).catch(err => WebAuthnHandler.showErrorMessage(err));
+        });
+
+        webauthnHandler.conditionalLogin(abortController).catch(err => WebAuthnHandler.showErrorMessage(err));
+    }
+}
+
+/**
+ * Initialize keyboard shortcuts for navigation and actions.
+ */
+function initializeKeyboardShortcuts() {
+    if (document.querySelector("body[data-disable-keyboard-shortcuts=true]")) return;
+
+    const keyboardHandler = new KeyboardHandler();
+
+    // Navigation shortcuts
+    keyboardHandler.on("g u", () => goToPage("unread"));
+    keyboardHandler.on("g b", () => goToPage("starred"));
+    keyboardHandler.on("g h", () => goToPage("history"));
+    keyboardHandler.on("g f", goToFeedOrFeedsPage);
+    keyboardHandler.on("g c", () => goToPage("categories"));
+    keyboardHandler.on("g s", () => goToPage("settings"));
+    keyboardHandler.on("g g", () => goToPreviousPage(TOP));
+    keyboardHandler.on("G", () => goToNextPage(BOTTOM));
+    keyboardHandler.on("/", () => goToPage("search"));
+
+    // Item navigation
+    keyboardHandler.on("ArrowLeft", goToPreviousPage);
+    keyboardHandler.on("ArrowRight", goToNextPage);
+    keyboardHandler.on("k", goToPreviousPage);
+    keyboardHandler.on("p", goToPreviousPage);
+    keyboardHandler.on("j", goToNextPage);
+    keyboardHandler.on("n", goToNextPage);
+    keyboardHandler.on("h", () => goToPage("previous"));
+    keyboardHandler.on("l", () => goToPage("next"));
+    keyboardHandler.on("z t", scrollToCurrentItem);
+
+    // Item actions
+    keyboardHandler.on("o", openSelectedItem);
+    keyboardHandler.on("Enter", () => openSelectedItem());
+    keyboardHandler.on("v", () => openOriginalLink(false));
+    keyboardHandler.on("V", () => openOriginalLink(true));
+    keyboardHandler.on("c", () => openCommentLink(false));
+    keyboardHandler.on("C", () => openCommentLink(true));
+
+    // Entry management
+    keyboardHandler.on("m", () => handleEntryStatus("next"));
+    keyboardHandler.on("M", () => handleEntryStatus("previous"));
+    keyboardHandler.on("A", markPageAsRead);
+    keyboardHandler.on("s", () => handleSaveEntry());
+    keyboardHandler.on("d", handleFetchOriginalContent);
+    keyboardHandler.on("f", () => handleBookmark());
+
+    // Feed actions
+    keyboardHandler.on("F", goToFeedPage);
+    keyboardHandler.on("R", handleRefreshAllFeeds);
+    keyboardHandler.on("+", goToAddSubscriptionPage);
+    keyboardHandler.on("#", unsubscribeFromFeed);
+
+    // UI actions
+    keyboardHandler.on("?", showKeyboardShortcuts);
+    keyboardHandler.on("Escape", () => ModalHandler.close());
+    keyboardHandler.on("a", () => {
+        const enclosureElement = document.querySelector('.entry-enclosures');
+        if (enclosureElement) {
+            enclosureElement.toggleAttribute('open');
+        }
+    });
+
+    keyboardHandler.listen();
+}
+
+/**
+ * Initialize touch handler for mobile devices.
+ */
+function initializeTouchHandler() {
+    const touchHandler = new TouchHandler();
+    touchHandler.listen();
+}
+
+/**
+ * Initialize click handlers for various UI elements.
+ */
+function initializeClickHandlers() {
+    // Entry actions
+    onClick(":is(a, button)[data-save-entry]", (event) => handleSaveEntry(event.target));
+    onClick(":is(a, button)[data-toggle-bookmark]", (event) => handleBookmark(event.target));
+    onClick(":is(a, button)[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
+    onClick(":is(a, button)[data-fetch-content-entry]", handleFetchOriginalContent);
+    onClick(":is(a, button)[data-share-status]", handleShare);
+
+    // Page actions with confirmation
+    onClick(":is(a, button)[data-action=markPageAsRead]", (event) =>
+        handleConfirmationMessage(event.target, markPageAsRead));
+
+    // Generic confirmation handler
+    onClick(":is(a, button)[data-confirm]", (event) => {
+        handleConfirmationMessage(event.target, (url, redirectURL) => {
+            const request = new RequestBuilder(url);
+            request.withCallback((response) => {
+                if (redirectURL) {
+                    window.location.href = redirectURL;
+                } else if (response?.redirected && response.url) {
+                    window.location.href = response.url;
+                } else {
+                    window.location.reload();
+                }
+            });
+            request.execute();
+        });
+    });
+
+    // Original link handlers (both click and middle-click)
+    const handleOriginalLink = (event) => handleEntryStatus("next", event.target, true);
+
+    onClick("a[data-original-link='true']", handleOriginalLink, true);
+    onAuxClick("a[data-original-link='true']", (event) => {
+        if (event.button === 1) {
+            handleOriginalLink(event);
+        }
+    }, true);
+}
+
+// Initialize application handlers
+initializeMainMenuHandlers();
+initializeFormHandlers();
+initializeMediaPlayerHandlers();
+initializeWebAuthn();
+initializeKeyboardShortcuts();
+initializeTouchHandler();
+initializeClickHandlers();
+initializeServiceWorker();
