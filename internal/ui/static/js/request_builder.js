@@ -9,8 +9,8 @@ class RequestBuilder {
             body: null,
             headers: new Headers({
                 "Content-Type": "application/json",
-                "X-Csrf-Token": getCsrfToken()
-            })
+                "X-Csrf-Token": getCsrfToken(),
+            }),
         };
     }
 

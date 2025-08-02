@@ -1,4 +1,3 @@
-
 /**
  * Open a new tab with the given URL.
  *
@@ -34,7 +33,11 @@ function scrollPageTo(element, evenIfOnScreen) {
     const viewportPosition = windowScrollPosition + windowHeight;
     const itemBottomPosition = element.offsetTop + element.offsetHeight;
 
-    if (evenIfOnScreen || viewportPosition - itemBottomPosition < 0 || viewportPosition - element.offsetTop > windowHeight) {
+    if (
+        evenIfOnScreen ||
+        viewportPosition - itemBottomPosition < 0 ||
+        viewportPosition - element.offsetTop > windowHeight
+    ) {
         window.scrollTo(0, element.offsetTop - 10);
     }
 }
@@ -76,7 +79,7 @@ function checkMenuToggleModeByLayout() {
         logoElement.setAttribute("role", "button");
         logoElement.setAttribute("tabindex", "0");
         logoElement.setAttribute("aria-label", logoToggleButtonLabel);
-        logoElement.setAttribute("aria-expanded", navMenuElementIsExpanded?"true":"false");
+        logoElement.setAttribute("aria-expanded", navMenuElementIsExpanded ? "true" : "false");
         homePageLinkElement.setAttribute("tabindex", "-1");
     } else {
         logoElement.removeAttribute("role");
@@ -91,10 +94,10 @@ function fixVoiceOverDetailsSummaryBug() {
     document.querySelectorAll("details").forEach((details) => {
         const summaryElement = details.querySelector("summary");
         summaryElement.setAttribute("role", "button");
-        summaryElement.setAttribute("aria-expanded", details.open? "true": "false");
+        summaryElement.setAttribute("aria-expanded", details.open ? "true" : "false");
 
         details.addEventListener("toggle", () => {
-            summaryElement.setAttribute("aria-expanded", details.open? "true": "false");
+            summaryElement.setAttribute("aria-expanded", details.open ? "true" : "false");
         });
     });
 }
@@ -182,6 +185,7 @@ function markPageAsRead() {
 /**
  * Handle entry status changes from the list view and entry view.
  * Focus the next or the previous entry if it exists.
+ *
  * @param {string} item Item to focus: "previous" or "next".
  * @param {Element} element
  * @param {boolean} setToRead
@@ -193,14 +197,14 @@ function handleEntryStatus(item, element, setToRead) {
         if (!setToRead || currentEntry.querySelector(":is(a, button)[data-toggle-status]").dataset.value === "unread") {
             toggleEntryStatus(currentEntry, toasting);
         }
-        if (isListView() && currentEntry.classList.contains('current-item')) {
+        if (isListView() && currentEntry.classList.contains("current-item")) {
             switch (item) {
-            case "previous":
-                goToListItem(-1);
-                break;
-            case "next":
-                goToListItem(1);
-                break;
+                case "previous":
+                    goToListItem(-1);
+                    break;
+                case "next":
+                    goToListItem(1);
+                    break;
             }
         }
     }
@@ -208,8 +212,8 @@ function handleEntryStatus(item, element, setToRead) {
 
 // Add an icon-label span element.
 function appendIconLabel(element, labelTextContent) {
-    const span = document.createElement('span');
-    span.classList.add('icon-label');
+    const span = document.createElement("span");
+    span.classList.add("icon-label");
     span.textContent = labelTextContent;
     element.appendChild(span);
 }
@@ -276,7 +280,7 @@ function updateEntriesStatus(entryIDs, status, callback) {
     const request = new RequestBuilder(url);
     request.withBody({ entry_ids: entryIDs, status: status });
     request.withCallback((resp) => {
-        resp.json().then(count => {
+        resp.json().then((count) => {
             if (callback) {
                 callback(resp);
             }
@@ -386,7 +390,7 @@ function handleFetchOriginalContent() {
 
     const request = new RequestBuilder(buttonElement.dataset.fetchContentUrl);
     request.withCallback((response) => {
-        buttonElement.textContent = '';
+        buttonElement.textContent = "";
         buttonElement.appendChild(previousElement);
 
         response.json().then((data) => {
@@ -419,7 +423,7 @@ function openOriginalLink(openLinkInCurrentTab) {
 
         const currentItem = document.querySelector(".current-item");
         // If we are not on the list of starred items, move to the next item
-        if (document.location.href !== document.querySelector(':is(a, button)[data-page=starred]').href) {
+        if (document.location.href !== document.querySelector(":is(a, button)[data-page=starred]").href) {
             goToListItem(1);
         }
         markEntryAsRead(currentItem);
@@ -516,7 +520,7 @@ function goToFeedOrFeeds() {
     if (isEntry()) {
         goToFeed();
     } else {
-        goToPage('feeds');
+        goToPage("feeds");
     }
 }
 
@@ -601,16 +605,13 @@ function updateUnreadCounterValue(callback) {
         element.textContent = callback(oldValue);
     });
 
-    if (window.location.href.endsWith('/unread')) {
-        const oldValue = parseInt(document.title.split('(')[1], 10);
+    if (window.location.href.endsWith("/unread")) {
+        const oldValue = parseInt(document.title.split("(")[1], 10);
         const newValue = callback(oldValue);
 
-        document.title = document.title.replace(
-            /(.*?)\(\d+\)(.*?)/,
-            function (match, prefix, suffix, offset, string) {
-                return prefix + '(' + newValue + ')' + suffix;
-            }
-        );
+        document.title = document.title.replace(/(.*?)\(\d+\)(.*?)/, function (match, prefix, suffix, offset, string) {
+            return prefix + "(" + newValue + ")" + suffix;
+        });
     }
 }
 
@@ -633,7 +634,7 @@ function findEntry(element) {
 }
 
 function handleConfirmationMessage(linkElement, callback) {
-    if (linkElement.tagName !== 'A' && linkElement.tagName !== "BUTTON") {
+    if (linkElement.tagName !== "A" && linkElement.tagName !== "BUTTON") {
         linkElement = linkElement.parentNode;
     }
 
@@ -696,9 +697,9 @@ function showToast(label, iconElement) {
     appendIconLabel(toastMsgElement, label);
 
     const toastElementWrapper = document.getElementById("toast-wrapper");
-    toastElementWrapper.classList.remove('toast-animate');
+    toastElementWrapper.classList.remove("toast-animate");
     setTimeout(() => {
-        toastElementWrapper.classList.add('toast-animate');
+        toastElementWrapper.classList.add("toast-animate");
     }, 100);
 }
 
@@ -721,8 +722,9 @@ function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
     const recordInterval = 10;
 
     // we limit the number of update to only one by interval. Otherwise, we would have multiple update per seconds
-    if (currentPositionInSeconds >= (lastKnownPositionInSeconds + recordInterval) ||
-        currentPositionInSeconds <= (lastKnownPositionInSeconds - recordInterval)
+    if (
+        currentPositionInSeconds >= lastKnownPositionInSeconds + recordInterval ||
+        currentPositionInSeconds <= lastKnownPositionInSeconds - recordInterval
     ) {
         playerElement.dataset.lastPosition = currentPositionInSeconds.toString();
         const request = new RequestBuilder(playerElement.dataset.saveUrl);
@@ -730,7 +732,7 @@ function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
         request.execute();
         // Handle the mark as read on completion
         if (markAsReadOnCompletion >= 0 && playerElement.duration > 0) {
-            const completion =  currentPositionInSeconds / playerElement.duration;
+            const completion = currentPositionInSeconds / playerElement.duration;
             if (completion >= markAsReadOnCompletion) {
                 handleEntryStatus("none", document.querySelector(":is(a, button)[data-toggle-status]"), true);
             }
@@ -744,18 +746,14 @@ function handlePlayerProgressionSaveAndMarkAsReadOnCompletion(playerElement) {
  * @returns {boolean}
  */
 function isPlayerPlaying(element) {
-    return element &&
-        element.currentTime > 0 &&
-        !element.paused &&
-        !element.ended &&
-        element.readyState > 2; //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+    return element && element.currentTime > 0 && !element.paused && !element.ended && element.readyState > 2; //https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
 }
 
 /**
  * handle new share entires and already shared entries
  */
 async function handleShare() {
-    const link = document.querySelector(':is(a, button)[data-share-status]');
+    const link = document.querySelector(":is(a, button)[data-share-status]");
     const title = document.querySelector(".entry-header > h1 > a");
     if (link.dataset.shareStatus === "shared") {
         await checkShareAPI(title, link.href);
@@ -771,8 +769,8 @@ async function handleShare() {
 }
 
 /**
-* wrapper for Web Share API
-*/
+ * wrapper for Web Share API
+ */
 async function checkShareAPI(title, url) {
     if (!navigator.canShare) {
         console.error("Your browser doesn't support the Web Share API.");
@@ -782,7 +780,7 @@ async function checkShareAPI(title, url) {
     try {
         await navigator.share({
             title: title ? title.textContent : url,
-            url: url
+            url: url,
         });
     } catch (err) {
         console.error(err);
@@ -810,31 +808,33 @@ function handleMediaControl(button) {
     const action = button.dataset.enclosureAction;
     const value = parseFloat(button.dataset.actionValue);
     const targetEnclosureId = button.dataset.enclosureId;
-    const enclosures = document.querySelectorAll(`audio[data-enclosure-id="${targetEnclosureId}"],video[data-enclosure-id="${targetEnclosureId}"]`);
+    const enclosures = document.querySelectorAll(
+        `audio[data-enclosure-id="${targetEnclosureId}"],video[data-enclosure-id="${targetEnclosureId}"]`
+    );
     const speedIndicator = document.querySelectorAll(`span.speed-indicator[data-enclosure-id="${targetEnclosureId}"]`);
     enclosures.forEach((enclosure) => {
         switch (action) {
-        case "seek":
-            enclosure.currentTime = Math.max(enclosure.currentTime + value, 0);
-            break;
-        case "speed":
-            // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.
-            // 0.25 was chosen because it will allow to get back to 1x in two "faster" click, and lower value with same property would be 0.
-            enclosure.playbackRate = Math.max(0.25, enclosure.playbackRate + value);
-            speedIndicator.forEach((speedI) => {
-                // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
-                // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
-                speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
-            });
-            break;
-        case "speed-reset":
-            enclosure.playbackRate = value ;
-            speedIndicator.forEach((speedI) => {
-                // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
-                // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
-                speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
-            });
-            break;
+            case "seek":
+                enclosure.currentTime = Math.max(enclosure.currentTime + value, 0);
+                break;
+            case "speed":
+                // I set a floor speed of 0.25 to avoid too slow speed where it gives the impression it stopped.
+                // 0.25 was chosen because it will allow to get back to 1x in two "faster" click, and lower value with same property would be 0.
+                enclosure.playbackRate = Math.max(0.25, enclosure.playbackRate + value);
+                speedIndicator.forEach((speedI) => {
+                    // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
+                    // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
+                    speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+                });
+                break;
+            case "speed-reset":
+                enclosure.playbackRate = value;
+                speedIndicator.forEach((speedI) => {
+                    // Two digit precision to ensure we always have the same number of characters (4) to avoid controls moving when clicking buttons because of more or less characters.
+                    // The trick only work on rate less than 10, but it feels an acceptable tread of considering the feature
+                    speedI.innerText = `${enclosure.playbackRate.toFixed(2)}x`;
+                });
+                break;
         }
     });
 }

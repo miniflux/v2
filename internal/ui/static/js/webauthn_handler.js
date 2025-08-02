@@ -23,9 +23,11 @@ class WebAuthnHandler {
     }
 
     async isConditionalLoginSupported() {
-        return WebAuthnHandler.isWebAuthnSupported() &&
+        return (
+            WebAuthnHandler.isWebAuthnSupported() &&
             window.PublicKeyCredential.isConditionalMediationAvailable &&
-            window.PublicKeyCredential.isConditionalMediationAvailable();
+            window.PublicKeyCredential.isConditionalMediationAvailable()
+        );
     }
 
     async conditionalLogin(abortController) {
@@ -35,7 +37,7 @@ class WebAuthnHandler {
     }
 
     decodeBuffer(value) {
-        return Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+        return Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
     }
 
     encodeBuffer(value) {
@@ -55,7 +57,7 @@ class WebAuthnHandler {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-Csrf-Token": getCsrfToken()
+                "X-Csrf-Token": getCsrfToken(),
             },
             body: JSON.stringify(data),
         });
@@ -90,10 +92,14 @@ class WebAuthnHandler {
         }
 
         const credentialCreationOptions = await registerBeginResponse.json();
-        credentialCreationOptions.publicKey.challenge = this.decodeBuffer(credentialCreationOptions.publicKey.challenge);
+        credentialCreationOptions.publicKey.challenge = this.decodeBuffer(
+            credentialCreationOptions.publicKey.challenge
+        );
         credentialCreationOptions.publicKey.user.id = this.decodeBuffer(credentialCreationOptions.publicKey.user.id);
-        if (Object.hasOwn(credentialCreationOptions.publicKey, 'excludeCredentials')) {
-            credentialCreationOptions.publicKey.excludeCredentials.forEach((credential) => credential.id = this.decodeBuffer(credential.id));
+        if (Object.hasOwn(credentialCreationOptions.publicKey, "excludeCredentials")) {
+            credentialCreationOptions.publicKey.excludeCredentials.forEach(
+                (credential) => (credential.id = this.decodeBuffer(credential.id))
+            );
         }
 
         const attestation = await navigator.credentials.create(credentialCreationOptions);
@@ -134,8 +140,10 @@ class WebAuthnHandler {
         const credentialRequestOptions = await loginBeginResponse.json();
         credentialRequestOptions.publicKey.challenge = this.decodeBuffer(credentialRequestOptions.publicKey.challenge);
 
-        if (Object.hasOwn(credentialRequestOptions.publicKey, 'allowCredentials')) {
-            credentialRequestOptions.publicKey.allowCredentials.forEach((credential) => credential.id = this.decodeBuffer(credential.id));
+        if (Object.hasOwn(credentialRequestOptions.publicKey, "allowCredentials")) {
+            credentialRequestOptions.publicKey.allowCredentials.forEach(
+                (credential) => (credential.id = this.decodeBuffer(credential.id))
+            );
         }
 
         if (abortController) {
@@ -146,8 +154,7 @@ class WebAuthnHandler {
         let assertion;
         try {
             assertion = await navigator.credentials.get(credentialRequestOptions);
-        }
-        catch (err) {
+        } catch (err) {
             // Swallow aborted conditional logins
             if (err instanceof DOMException && err.name === "AbortError") {
                 return;

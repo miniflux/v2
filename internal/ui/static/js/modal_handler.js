@@ -28,7 +28,7 @@ class ModalHandler {
         const lastFocusableElement = focusableElements[focusableElements.length - 1];
 
         this.getModalContainer().onkeydown = (e) => {
-            if (e.key !== 'Tab') {
+            if (e.key !== "Tab") {
                 return;
             }
 

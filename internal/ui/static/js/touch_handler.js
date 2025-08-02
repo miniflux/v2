@@ -9,7 +9,7 @@ class TouchHandler {
             move: { x: -1, y: -1 },
             moved: false,
             time: 0,
-            element: null
+            element: null,
         };
     }
 
@@ -18,7 +18,7 @@ class TouchHandler {
             const horizontalDistance = Math.abs(this.touch.move.x - this.touch.start.x);
             const verticalDistance = Math.abs(this.touch.move.y - this.touch.start.y);
 
-            if (horizontalDistance > 30 && verticalDistance < 70 || this.touch.moved) {
+            if ((horizontalDistance > 30 && verticalDistance < 70) || this.touch.moved) {
                 return this.touch.move.x - this.touch.start.x;
             }
         }

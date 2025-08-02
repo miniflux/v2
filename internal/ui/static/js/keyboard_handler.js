@@ -46,9 +46,11 @@ class KeyboardHandler {
     }
 
     isEventIgnored(event, key) {
-        return event.target.tagName === "INPUT" ||
+        return (
+            event.target.tagName === "INPUT" ||
             event.target.tagName === "TEXTAREA" ||
-            (this.queue.length < 1 && !this.triggers.has(key));
+            (this.queue.length < 1 && !this.triggers.has(key))
+        );
     }
 
     static isModifierKeyDown(event) {
@@ -57,12 +59,18 @@ class KeyboardHandler {
 
     static getKey(event) {
         switch (event.key) {
-        case 'Esc': return 'Escape';
-        case 'Up': return 'ArrowUp';
-        case 'Down': return 'ArrowDown';
-        case 'Left': return 'ArrowLeft';
-        case 'Right': return 'ArrowRight';
-        default: return event.key;
+            case "Esc":
+                return "Escape";
+            case "Up":
+                return "ArrowUp";
+            case "Down":
+                return "ArrowDown";
+            case "Left":
+                return "ArrowLeft";
+            case "Right":
+                return "ArrowRight";
+            default:
+                return event.key;
         }
     }
 }
