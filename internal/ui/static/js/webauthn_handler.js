@@ -7,9 +7,10 @@ class WebAuthnHandler {
         console.log("webauthn error: " + errorMessage);
 
         const alertElement = document.getElementById("webauthn-error-alert");
-        if (alertElement) {
-            alertElement.remove();
+        if (!alertElement) {
+            return;
         }
+        alertElement.remove();
 
         const alertTemplateElement = document.getElementById("webauthn-error");
         if (alertTemplateElement) {
