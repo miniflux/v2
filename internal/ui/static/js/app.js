@@ -23,6 +23,15 @@ function getVisibleElements(selector) {
 }
 
 /**
+ * Get all visible entries on the current page.
+ *
+ * @return {Array<Element>}
+ */
+function getVisibleEntries() {
+    return getVisibleElements(".items .item");
+}
+
+/**
  * Scroll the page to the given element.
  *
  * @param {Element} element
@@ -152,7 +161,7 @@ function showKeyboardShortcuts() {
 
 // Mark as read visible items of the current page.
 function markPageAsRead() {
-    const items = getVisibleElements(".items .item");
+    const items = getVisibleEntries();
     const entryIDs = [];
 
     items.forEach((element) => {
@@ -182,19 +191,22 @@ function markPageAsRead() {
 /**
  * Handle entry status changes from the list view and entry view.
  * Focus the next or the previous entry if it exists.
- * @param {string} item Item to focus: "previous" or "next".
- * @param {Element} element
- * @param {boolean} setToRead
+ *
+ * @param {string} navigationDirection Navigation direction: "previous" or "next".
+ * @param {Element} element Element that triggered the action.
+ * @param {boolean} setToRead If true, set the entry to read instead of toggling the status.
+ * @returns {void}
  */
-function handleEntryStatus(item, element, setToRead) {
+function handleEntryStatus(navigationDirection, element, setToRead) {
     const toasting = !element;
     const currentEntry = findEntry(element);
+
     if (currentEntry) {
         if (!setToRead || currentEntry.querySelector(":is(a, button)[data-toggle-status]").dataset.value === "unread") {
             toggleEntryStatus(currentEntry, toasting);
         }
         if (isListView() && currentEntry.classList.contains('current-item')) {
-            switch (item) {
+            switch (navigationDirection) {
             case "previous":
                 goToListItem(-1);
                 break;
@@ -247,6 +259,10 @@ function toggleEntryStatus(element, toasting) {
         if (element.classList.contains("item-status-" + currentStatus)) {
             element.classList.remove("item-status-" + currentStatus);
             element.classList.add("item-status-" + newStatus);
+        }
+
+        if (isListView() && getVisibleEntries().length === 0) {
+            window.location.reload();
         }
     });
 }
@@ -542,7 +558,7 @@ const BOTTOM = -9999;
  * @param {number} offset How many items to jump for focus.
  */
 function goToListItem(offset) {
-    const items = getVisibleElements(".items .item");
+    const items = getVisibleEntries();
     if (items.length === 0) {
         return;
     }
